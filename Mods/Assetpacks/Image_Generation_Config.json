@@ -131,6 +131,22 @@
           "_comment": "last resort (user 2026-10-17): any image no act/position/after_sex entry names, sexual or not (cinderella 297 clothed tease, 335 restrained tentacle pose, a girl riding a horse). No clauses = always matches. Replaces sfw" }
     ],
 
+    "_character_emotions_doc": "ComfyUI Character Selector only: manual emotion ID -> prompts plus optional requireActorTags (all), requireAnyActorTags (any), excludeActorTags (none). Guards use case-sensitive actor-profile !tag (absence) semantics and only the selected exported character's original actor_tags, never action flags. Unknown/ineligible selections are ignored. none is universal and adds nothing. actorTags/removeActorTags overlay a deep copy before all optional/body-token rule evaluation; unrelated real states remain, so sleeping and timestop can coexist. Expression prompts append only to main_naked_prompt and main_clothed_prompt with case-sensitive comma-tag deduplication; support_prompt is unchanged. custom_prompt appends literal temporary text only to those two main outputs and is preserved as custom_main_prompt metadata in the registered snapshot, never inserted into action or composition text. State overrides need a compatible character export with guarded __base__ rules (unconscious suppresses open eyes/halo and enables closed eyes/sleeping; timestop alone preserves eyes/halo). Legacy flattened prompts cannot truly override those states: re-export rather than deleting arbitrary prompt tokens.",
+    "character_emotions": {
+        "none":         { "prompts": [] },
+        "neutral":      { "prompts": ["expressionless"], "requireActorTags": ["humanrace"], "excludeActorTags": ["unconscious", "timestopped"] },
+        "happy":        { "prompts": ["smile"], "requireActorTags": ["humanrace"], "excludeActorTags": ["unconscious", "timestopped"] },
+        "sad":          { "prompts": ["sad"], "requireActorTags": ["humanrace"], "excludeActorTags": ["unconscious", "timestopped"] },
+        "angry":        { "prompts": ["angry"], "requireActorTags": ["humanrace"], "excludeActorTags": ["unconscious", "timestopped"] },
+        "surprised":    { "prompts": ["surprised"], "requireActorTags": ["humanrace"], "excludeActorTags": ["unconscious", "timestopped"] },
+        "embarrassed":  { "prompts": ["blush"], "requireActorTags": ["humanrace"], "excludeActorTags": ["unconscious", "timestopped"] },
+        "scared":       { "prompts": ["scared"], "requireActorTags": ["humanrace"], "excludeActorTags": ["unconscious", "timestopped"] },
+        "disgusted":    { "prompts": ["disgust"], "requireActorTags": ["humanrace"], "excludeActorTags": ["unconscious", "timestopped"] },
+        "crying":       { "prompts": ["crying", "tears"], "requireActorTags": ["humanrace"], "excludeActorTags": ["unconscious", "timestopped"] },
+        "sleeping":     { "prompts": ["sleeping", "closed eyes"], "requireActorTags": ["humanrace"], "actorTags": ["sleeping", "unconscious"] },
+        "timestopped":  { "prompts": ["expressionless", "empty eyes"], "requireActorTags": ["humanrace"], "actorTags": ["timestop", "timestopped", "doll", "empty"], "removeActorTags": ["timeResume"] }
+    },
+
     "_emotion_pass_doc": "Images whose category is listed get a second pass during Tag (ComfyUI node MisteraFaceEmotion, workflow Assets/Editor/ImageClassifier/EmotionWorkflow_API.json): the face is cropped, WD14 tags the crop (rules: face:<tag>), and the VLM picks ONE of these labels for the crop (rules: vlm:<label>, score 1). Changing labels or prompt re-runs the pass on the next Tag.",
     "emotion_pass": {
         "_comment": "disabled for now (categories empty): portraits keep their original names. Put \"portrait\" back to run the face crop + VLM pass during Tag.",
@@ -254,160 +270,539 @@
         }
     },
 
-    "_prompt_scene_doc": "Game only (ActionScenePromptUtility, Docs/ImagePortraits/Plan_ActionPromptTags.md): the image prompt of what an actor is doing - the REVERSE of portrait_global (game tags -> prompt). Read on every build, edits apply without a restart. Collected (tags only): every interaction = one doer + receiver + command (receiver none = solo act) with the command's comTags + portraitTags + job type tags; every actor = GetActorTag + its EP portrait action tags + its SHORT TAG (code: humanoid girl / boy / futa; other races their species from RaceType - dog, horse, pig, bear, goblin, android; else other). Condition syntax as the classifier: an entry 'a|b' = OR, all = every entry, any = at least one, none = no entry. Count tags (scene wide, every rule set): '<short tag>:N' (girl:N, boy:N, futa:N, dog:N ...), 'other:N' (every actor that is not girl / boy / futa, species included), 'actors:N', 'doers:N', 'receivers:N'; 'N+' = at least N. The {count} prompt counts futa as girl and every species as other (1girl, 1other). Root output sections include composition, pairs, one per doer, one per receiver, scene, room. Output is hierarchical: pairs[].actions contains each pair's child action sections, not standalone root interaction sections. A pair section's tags contain only its relative pair description, not child action prompts. Use the layout markers documented in _prompt_scene_rules_doc to place complete pair groups.",
-    "_prompt_derived_tags_doc": "Run before the rules, in order (later entries see earlier additions), twice: for the scene (sides = all doers / all receivers, adds scene tags) and for every interaction (sides = its doer / receiver, adds to that interaction). add = tags added when the entry matches. Own all/any/none = conditions in that context; doer / receiver = { all, any, none } on that side; differs = every entry matches exactly one side. Within an entry, | means OR: differs [petite1|petite2] compares (doer has either tag) != (receiver has either tag), so petite1 versus petite2 does not differ. Multiple entries are ANDed.",
+    "_prompt_scene_doc": "Game only (ActionScenePromptUtility): generation rules reverse portrait_global (game tags -> prompts). Read on every build. Each raw source interaction has one doer, optional receiver, command tags, job tags and source-local actor tags; actors carry their short tags (girl / boy / futa or species). Clause arrays all/any/none use | for alternatives. Scene count tags include <short tag>:N, other:N, actors:N, doers:N and receivers:N; N+ means at least N. {count} counts futa as girl. Fixed root output order: composition, complete pair groups (relative pair prompt followed by child actions), actors (doers then receivers), room. There is no scene output section or configurable layout. The first selected option declaring view locks a coherent global view before rendering and sets result.pov; scene.usePov remains unchanged POV eligibility, exposed as pov_possible. Later camera choices must use that same view; other local groups may test view:pov / view:external. POV is declared by a camera option with view: pov and literal pov in its prompts, never by a scene rule, semantic {pov} marker or camera cleanup. POV omits the player's actor section. Source matching sees scene-wide pov_possible eligibility, not unrelated action flags.",
+    "_prompt_derived_tags_doc": "Derive tags in order on each raw source interaction, using only its doer / receiver and source tags. all/any/none are source conditions; doer / receiver are side-local clause blocks; differs requires each clause to match exactly one side (| groups alternatives before comparing). bestiality and futa_with_female are source-local flags, never recomputed from unrelated scene actors. futa_with_female uses two directional rules for an actual futa and female pairing. Scene and composite aggregation unions flags from actual matched sources only; it must not infer a pairing from global actor flags. Later derivations see earlier additions.",
     "prompt_derived_tags": [
+        {"add":["futa_with_female"],"doer":{"all":["futa"]},"receiver":{"all":["girl"],"none":["boy|futa"]}},
+        {"add":["futa_with_female"],"doer":{"all":["girl"],"none":["boy|futa"]},"receiver":{"all":["futa"]}},
         { "add": ["interracial"], "differs": ["black"], "_comment": "one side black, the other not" },
         { "add": ["bestiality"], "all": ["sex"], "differs": ["animal"], "_comment": "an animal (race type animal: horse, dog, pig, bear) on one side only" },
         { "add": ["yuri"], "all": ["sex"], "doer": { "all": ["girl"], "none": ["boy|futa"] }, "receiver": { "all": ["girl"], "none": ["boy|futa"] } }
     ],
-    "_prompt_pair_derived_tags_doc": "Run in listed order for each ActionScenePair before prompt_pair_rules; later entries see earlier additions. SceneDerivedTag-compatible entries: add is a tag list; all/any/none are clause lists on pair-local tags (the grouped actions and its actors), main/support are { all, any, none } blocks on that actor only, pairKind selects distinct / self / solo. differs is an AND list of clauses: each clause must match exactly one actor; | groups alternatives BEFORE comparing sides, so differs [petite1|petite2] does not match petite1 versus petite2. Pair flags must be derived locally, not borrowed from unrelated scene-wide interactions. Relative derivations require pairKind distinct: self has the same actor on both sides, solo has no support. yuri remains a derived flag without prompt output, as before.",
+    "_prompt_pair_derived_tags_doc": "Run in listed order for each ActionScenePair before prompt_pair_rules; later entries see earlier additions. SceneDerivedTag-compatible entries: add is a tag list; all/any/none are clause lists on pair-local tags (the grouped actions and its actors), main/support are { all, any, none } blocks on that actor only, pairKind selects distinct / self / solo. differs is an AND list of clauses: each clause must match exactly one actor; | groups alternatives BEFORE comparing sides, so differs [petite1|petite2] does not match petite1 versus petite2. Pair flags must be derived locally, not borrowed from unrelated scene-wide interactions. Relative derivations require pairKind distinct: self has the same actor on both sides, solo has no support. The yuri flag is emitted through its own prompt_pair_rules entry for valid distinct female/female sexual pairs.",
     "prompt_pair_derived_tags": [
         { "add": ["interracial"], "pairKind": "distinct", "differs": ["black"] },
         { "add": ["bestiality"], "pairKind": "distinct", "all": ["sex"], "differs": ["animal"] },
         { "add": ["yuri"], "pairKind": "distinct", "all": ["sex"], "main": { "all": ["girl"], "none": ["boy|futa"] }, "support": { "all": ["girl"], "none": ["boy|futa"] } }
     ],
-    "_prompt_pair_rules_doc": "Once per ActionScenePair, using the same rule tree/chance/pick semantics as other prompt rules, with main/support actor condition blocks, pairKind and differs also supported. main is the scene's main character, NOT the action's doer; support is the other character. Actions between the same main/support identities group across APs, commands and both doer/receiver directions; actions retain their individual directions. distinct = two different actors, self = explicit same-actor target, solo = no target/support; self and solo are separate groups. Output is a parent pair section: section.actor = main character, section.partner = support character, section.actions = child action ScenePromptSections; selected rule IDs live in pair.rules. Pair tags contain only the relative pair description; child action prompts stay in pairs[].actions. $main.shortTag$ / $support.shortTag$ expand to those actors' short tags (not workflow placeholders or deferred body-group requests). No matching pair rule means no relative pair prompt, but child actions still contribute. The root uses mode all: interracial and bestiality flags can both emit, then size_difference emits at most one branch. Exact size precedence: main petite/support not petite -> larger support, smaller main; support petite/main not petite -> larger main, smaller support; main large/support not large -> larger main, smaller support; support large/main not large -> larger support, smaller main. The first matching branch wins, so petite overrides conflicting large evidence; equal petite status falls through to large. large is an inactive placeholder until actor tagging supplies it: no detection code is added. Size requires distinct and interracial OR bestiality. {pair} places the combined group; {interaction} is an alias of {pair}. Workflow $actions$ has one combined entry per pair in layout order: 'pair prompt, action1 prompt, action2 prompt', omitting empty prompts, with || between pairs. There is no separate pair placeholder or independently placed action output; $scene$ is unchanged.",
+    "_prompt_pair_rules_doc": "Once per ActionScenePair, using its independent rule tree (mode all / first), not the unified action rules. main/support actor condition blocks, pairKind and differs are supported. main is the scene's main character, NOT the action's doer; support is the other character. Actions between the same main/support identities group across APs, commands and both directions, retaining each action's doer/receiver. distinct = different actors, self = explicit same-actor target, solo = no support; self and solo remain separate. A parent pair section has actor = main, partner = support and actions = child action sections; selected pair IDs live in pair.rules. Pair tags contain only the relative pair description, never child action prompts. $main.shortTag$ / $support.shortTag$ expand actor short tags, not workflow placeholders or group requests. No pair-rule match leaves relative output empty but retains child actions. The root mode all emits interracial and bestiality independently. Size is owned exclusively by each action's local sizeDifference option group, not by pair rules. Fixed output order is composition, complete pair groups, actors, room; no layout markers or scene output. Workflow $actions$ has one combined entry per pair: relative pair prompt, then child prompts, omitting empty text, with || between pairs.",
     "prompt_pair_rules": {
         "mode": "all",
         "children": [
-            { "id": "interracial", "all": ["interracial"], "pairKind": "distinct", "prompts": "interracial" },
-            { "id": "bestiality", "all": ["bestiality"], "pairKind": "distinct", "prompts": "bestiality" },
-            { "id": "size_difference", "all": ["interracial|bestiality"], "pairKind": "distinct", "mode": "first", "children": [
-                { "id": "main_petite", "main": { "all": ["petite"] }, "support": { "none": ["petite"] }, "prompts": "size difference, larger $support.shortTag$, smaller $main.shortTag$" },
-                { "id": "support_petite", "support": { "all": ["petite"] }, "main": { "none": ["petite"] }, "prompts": "size difference, larger $main.shortTag$, smaller $support.shortTag$" },
-                { "id": "main_large", "main": { "all": ["large"] }, "support": { "none": ["large"] }, "prompts": "size difference, larger $main.shortTag$, smaller $support.shortTag$" },
-                { "id": "support_large", "support": { "all": ["large"] }, "main": { "none": ["large"] }, "prompts": "size difference, larger $support.shortTag$, smaller $main.shortTag$" }
-            ]}
+            { "id": "interracial", "all": ["interracial"], "pairKind": "distinct", "prompts": ["interracial"] },
+            { "id": "bestiality", "all": ["bestiality"], "pairKind": "distinct", "prompts": ["bestiality"] },
+            { "id": "yuri", "all": ["yuri"], "pairKind": "distinct", "prompts": ["yuri"] }
         ]
     },
-    "_prompt_rules_doc": "Rule trees (composition / interaction / pair / scene). A node applies when its conditions (all/any/none) match and its chance roll passes (chance 0-1, default 1; a new roll every build; a failed roll = not applied, the next sibling gets its turn). mode first: the first child that applies wins, the rest are skipped (put the specific rule before the generic one); mode all: every child that applies adds. A group applies when it has own prompts / an eligible pick or at least one child applied. prompts = comma separated tags; pick = weighted alternatives [ { weight, all, any, none, prompts } ], one eligible entry is chosen. Pick conditions use the same context and | clauses as their rule; e.g. none [bestiality] excludes hand-dependent positions. Excluded or nonpositive-weight picks are removed before calculating weights. A node whose picks are all excluded and has no own prompts or applying children does not apply, allowing first-mode fallback.",
-    "_prompt_composition_rules_doc": "Once per scene: the composition section. {count} = the merged count tags (futa counted as girl: 1girl, 2boys; a species named once: horse, dog; actors without species: 1other). No rule applied = the count tags alone.",
+    "_prompt_rules_doc": "All action rules live in the ordered prompt_composite_action_rules array, including single-source families. Each rule owns its base prompts and independent options object; action roots and option records also allow optional scenePrompts arrays of strings for final scene natural language, separate from prompts. Only group and choice IDs are shared via prompt_action_option_rules; there are no shared behavior templates, references or combined variant IDs. Every local group contains exactly its complete canonical option ID set, in its own priority order. Automatic selection uses the FIRST eligible choice independently per group; a valid Build option preference tries its choice first without bypassing local predicates or view constraints. Unmatched optional groups emit nothing and inapplicable groups are omitted entirely, never injected from the registry. Selected base and option prompts are combined; every prompts value is an array of strings. Record selected option metadata as group:id on the action. Rule and choice predicates may use all/any/none and standard pairKind/main/support/differs conditions. Establish the global view from the first selected view option before rendering; later view choices respect it and other groups may test view:pov / view:external. POV camera choices require pov_possible and emit literal pov; no post-render camera cleanup or scene POV output exists. Keep nested inline {A|B|C} choices unexpanded in authored data and ComfyUI templates; runtime tag rendering may resolve each independently before comma splitting prompts, never comma-splitting scenePrompts natural language. Braces without a top-level pipe remain literal semantic markers/placeholders, including {count}, {doer} and {receiver}; do not consume them as random choices. Composition and pair rules retain independent rule-tree semantics: mode all emits every applying child; mode first emits the first applying child. Game section order is fixed: composition, pairs with actions, actors, room; final scene text includes the registry promotions and scenePrompts documented below.",
+    "_prompt_composition_rules_doc": "Once per scene: the composition section, first in the fixed output order composition / pairs with child actions / actors / room. {count} = the merged count tags (futa counted as girl: 1girl, 2boys; a species named once: horse, dog; actors without species: 1other). No rule applied = the count tags alone. Composition rules and their existing prompt wording remain independent of the unified action rules.",
+    "_comfy_scene_builder_doc": "Action Selector snapshots composition, pair rule definitions and scene_pair_prompts into action_data. Character registration collects short tags by node identity; Scene Builder evaluates the final registry, outputs action_prompt with unpromoted pair-relative tags and one rendered action, and outputs scene_prompt as composition followed by promoted scene-pair prompts and scenePrompts natural-language sentences. Count predicates keep girl/boy/futa separate; rendered {count} merges futa into girls. Registered actors are counted once even with both roles. Counts use shortTag, never shortName or shortPrompt. A distinct female/female sexual pair emits yuri through prompt_pair_rules, never from girl:2 alone. One-to-many role graphs have an unambiguous anchor; many-to-many graphs without source endpoints report ambiguity instead of inventing every possible pair. Local action options are finalized against actual scene facts (camera first); canonical templates and option preferences stay unchanged and inline alternatives remain unexpanded. Emotions and custom character corrections belong only to main-character prompt outputs, not support or composition.",
+    "_scene_pair_prompts_doc": "FLAG -> array of prompt strings. Promote only registered flags established by actual source-derived facts or pair context.tags to the final scene output after composition and before scenePrompts natural language. Deduplicate promoted prompts scene-wide and remove only their exact matching tags from action/pair output dynamically; retain all existing derivation and pair-rule definitions. Never infer pairings from unrelated global actor tags. futa_with_female already comes from prompt_derived_tags and needs no duplicate pair derivation. Yuri is promoted for a valid derived female/female pair, not from actor counts alone. Flags omitted from this registry remain action/pair-local.",
+    "scene_pair_prompts": {
+        "interracial": ["interracial"],
+        "bestiality": ["bestiality"],
+        "futa_with_female": ["futa with female"],
+        "yuri": ["yuri"]
+    },
     "prompt_composition_rules": {
         "mode": "all",
         "children": [
             { "id": "count", "mode": "first", "children": [
-                { "id": "gangbang",   "all": ["actors:5+", "receivers:1"],  "prompts": "{count}, gangbang, group sex" },
-                { "id": "mmf",        "all": ["girl:1", "boy:2", "futa:0"],  "prompts": "{count}, mmf threesome, group sex" },
-                { "id": "ffm",        "all": ["girl:2", "boy:1", "futa:0"],  "prompts": "{count}, ffm threesome, group sex" },
-                { "id": "solo",       "all": ["actors:1"],                  "prompts": "{count}, solo" },
-                { "id": "trio",       "all": ["actors:3"],                  "prompts": "{count}, threesome, group sex", "_comment": "gender agnostic fallback after mmf / ffm" },
-                { "id": "duo",        "all": ["actors:2"],                  "prompts": "{count}, couple focus", "_comment": "gender agnostic fallback" },
-                { "id": "default",                                          "prompts": "{count}" }
+                { "id": "gangbang",   "all": ["actors:5+", "receivers:1"],  "prompts": ["{count}, gangbang, group sex"] },
+                { "id": "mmf",        "all": ["girl:1", "boy:2", "futa:0"],  "prompts": ["{count}, mmf threesome, group sex"] },
+                { "id": "ffm",        "all": ["girl:2", "boy:1", "futa:0"],  "prompts": ["{count}, ffm threesome, group sex"] },
+                { "id": "solo",       "all": ["actors:1"],                  "prompts": ["{count}, solo"] },
+                { "id": "trio",       "all": ["actors:3"],                  "prompts": ["{count}, threesome, group sex"], "_comment": "gender agnostic fallback after mmf / ffm" },
+                { "id": "duo",        "all": ["actors:2"],                  "prompts": ["{count}, couple focus"], "_comment": "gender agnostic fallback" },
+                { "id": "default",                                          "prompts": ["{count}"] }
             ]},
             { "id": "tags", "mode": "all", "children": [
-                { "id": "sex",         "all": ["sex"],         "prompts": "sex" },
-                { "id": "rough_sex",   "all": ["raped"],       "prompts": "rough sex" }
+                { "id": "sex",         "all": ["sex"],         "prompts": ["sex"] },
+                { "id": "rough_sex",   "all": ["raped"],       "prompts": ["rough sex"] }
             ]}
         ]
     },
-    "_prompt_actor_groups_doc": "Deferred character detail groups. ActorPromptRule.promptGroups routes its entire output; BodyInternal_Base.promptGroups routes ordinary organ and requested trait/skill promptTags, but not promptTags_always (silhouette stays unconditional). Existing clothing/body/action checks still apply. In scene generation, grouped details are omitted unless a selected interaction prompt requests them with a standalone $doer.group$ or $receiver.group$ token. Requests add details to that actor's own prompt, not the interaction text; multiple requests merge without duplicate tags. Known empty groups and missing solo receivers contribute nothing; unknown requests warn and are removed. Plain portraits retain their existing flat collection. These groups declare detail relevance, not geometric camera visibility: camera choices remain independent, so request conservatively.",
+    "_prompt_actor_groups_doc": "Deferred character detail groups. ActorPromptRule.promptGroups routes its entire output; BodyInternal_Base.promptGroups routes ordinary organ and requested trait/skill promptTags, not promptTags_always. Existing clothing/body/action checks still apply. Selected local rule and option prompts request standalone $doer.group$ / $receiver.group$ tokens; single-source rules also expose $main.group$ / $support.group$, and composites use $main.group$ / $<slot>.support.group$. The same selectors expose shortTag, shortName, shortPrompt and be (see _prompt_scene_grammar_doc); these text/grammar tokens are not deferred group requests. {doer} / {receiver} preserve the source actors' short-tag expansion; absent receivers contribute nothing. These requests add details to that actor's own prompt, not the action text; merged requests deduplicate. Known empty groups contribute nothing; unknown requests warn and are removed. Preserve requests within their individual inline pose branches, so unselected poses request nothing. Plain portraits retain flat collection. Groups express detail relevance, not geometric camera visibility.",
     "prompt_actor_groups": ["lower_front", "lower_back", "torso_front"],
-    "_prompt_interaction_rules_doc": "Once per interaction owned by a main/support pair: action-only child prompts in pairs[].actions, not a separate top-level actions list. doer:x / receiver:x = that action's participants; a plain tag = the interaction's tags or either actor's. {doer} / {receiver} inside a tag become their short tags (girl / boy / futa / other) - use them only where they add information ('{receiver} on back, {doer} on top' -> 'girl on back, boy on top'); the count is in the composition section. A tag naming {receiver} is dropped in a solo act. Standalone $doer.group$ / $receiver.group$ tokens request deferred character details from prompt_actor_groups; they are consumed before workflow substitution. No rule applied = empty action prompt, retaining the action record within its pair. $actions$ combines each pair's relative prompt followed by its child action prompts, with || between pairs.",
-    "prompt_interaction_rules": {
-        "mode": "all",
-        "children": [
-            { "id": "act", "mode": "first", "children": [
-                { "_comment": "Each game act picks one of the classifier positions it stands for (portrait_global.names puts doggy first on prone_bone and the other supported asset names, pooling them under the implemented command). Equal weights; tune them freely.", "id": "doggy", "all": ["doggy"], "prompts": "sex from behind", "pick": [
-                    { "weight": 1, "prompts": "doggystyle, all fours, $receiver.lower_back$" },
-                    { "weight": 1, "prompts": "prone bone, on stomach" },
-                    { "weight": 1, "none": ["bestiality"], "prompts": "full nelson" },
-                    { "weight": 1, "prompts": "spooning, on side" },
-                    { "weight": 1, "none": ["bestiality"], "prompts": "reverse suspended congress, carrying" }
-                ]},
-                { "_comment": "who lies under whom only on the lying positions (girl on back, boy on top)", "id": "missionary", "all": ["missionary"], "pick": [
-                    { "weight": 1, "prompts": "missionary, spread legs, {doer} on top of {receiver}, $receiver.lower_front$" },
-                    { "weight": 1, "prompts": "mating press, legs up, folded, {doer} on top of {receiver}, $receiver.lower_front$" },
-                    { "weight": 1, "prompts": "leg lock, {doer} on top of {receiver}, {receiver} under {doer} between legs" },
-                    { "weight": 1, "none": ["bestiality"], "prompts": "suspended congress, carrying" },
-                    { "weight": 1, "none": ["bestiality"], "prompts": "standing sex, against wall, leg up" },
-                    { "weight": 1, "none": ["bestiality"], "prompts": "upside-down" }
-                ]},
-                { "_comment": "the doer rides: {doer} on top (girl on top / futa on top)", "id": "cowgirl", "all": ["cowgirl"], "prompts": "{doer} on top", "pick": [
-                    { "weight": 1, "prompts": "cowgirl position, straddling, $doer.torso_front$" },
-                    { "weight": 1, "prompts": "reverse cowgirl position, $doer.lower_back$" },
-                    { "weight": 1, "prompts": "squatting cowgirl position, $doer.lower_front$" },
-                    { "weight": 1, "prompts": "sitting on person" },
-                    { "weight": 1, "prompts": "sitting on lap, face-to-face" }
-                ]},
-                { "id": "irrumatio",           "all": ["irrumatio"],            "prompts": "irrumatio, fellatio, forced", "pick": [
-                    { "weight": 1, "prompts": "deepthroat" },
-                    { "weight": 1, "none": ["bestiality"], "prompts": "hand on another's head" },
-                    { "weight": 1, "prompts": "face fucking" }
-                ]},
-                { "id": "paizuri_fellatio",    "all": ["blowjob", "boobjob"],   "prompts": "paizuri, fellatio, $doer.torso_front$, $receiver.lower_front$" },
-                { "id": "blowjob", "all": ["blowjob"], "pick": [
-                    { "weight": 1, "prompts": "fellatio" },
-                    { "weight": 1, "prompts": "fellatio, licking penis" },
-                    { "weight": 1, "prompts": "fellatio, testicle sucking" },
-                    { "weight": 1, "prompts": "69, fellatio, cunnilingus" }
-                ]},
-                { "id": "paizuri", "all": ["boobjob"], "pick": [
-                    { "weight": 1, "prompts": "paizuri, $doer.torso_front$" },
-                    { "weight": 1, "prompts": "straddling paizuri, $doer.torso_front$" },
-                    { "weight": 1, "prompts": "perpendicular paizuri, $doer.torso_front$" }
-                ]},
-                { "id": "cunnilingus",         "all": ["cunnilingus"],          "prompts": "cunnilingus, spread legs, $receiver.lower_front$" },
-                { "id": "rimjob", "all": ["rimjob"], "prompts": "anilingus", "pick": [
-                    { "weight": 1, "prompts": "" },
-                    { "weight": 1, "prompts": "handjob, reach-around" }
-                ]},
-                { "id": "intercrural",         "all": ["intercrural"],          "prompts": "thigh sex" },
-                { "id": "handjob", "all": ["handjob"], "pick": [
-                    { "weight": 1, "prompts": "handjob" },
-                    { "weight": 1, "prompts": "two-handed handjob" },
-                    { "weight": 1, "prompts": "hairjob" },
-                    { "weight": 1, "prompts": "armpit sex" }
-                ]},
-                { "id": "footjob", "all": ["footjob"], "pick": [
-                    { "weight": 1, "prompts": "footjob" },
-                    { "weight": 1, "prompts": "two-footed footjob" }
-                ]},
-                { "id": "fingering",           "all": ["fingering"],            "prompts": "fingering" },
-                { "id": "breast_grab", "all": ["breasts"], "pick": [
-                    { "weight": 1, "prompts": "grabbing another's breast" },
-                    { "weight": 1, "prompts": "grabbing from behind, groping" },
-                    { "weight": 1, "prompts": "breast sucking" }
-                ]},
-                { "id": "kiss", "all": ["kiss"], "pick": [
-                    { "weight": 1, "prompts": "kiss" },
-                    { "weight": 1, "prompts": "french kiss, tongue" }
-                ]},
-                { "id": "masturbation_girl", "all": ["masturbate", "doer:girl|doer:futa"], "pick": [
-                    { "weight": 1, "prompts": "female masturbation, fingering, $doer.lower_front$" },
-                    { "weight": 1, "prompts": "female masturbation, clitoral stimulation, $doer.lower_front$" },
-                    { "weight": 1, "prompts": "masturbation, dildo, object insertion" },
-                    { "weight": 1, "prompts": "masturbation, vibrator" },
-                    { "weight": 1, "prompts": "anal object insertion, butt plug, $doer.lower_back$" },
-                    { "weight": 1, "prompts": "grabbing own breast, breast masturbation, $doer.torso_front$" }
-                ]},
-                { "id": "masturbation",        "all": ["masturbate"],           "prompts": "masturbation" }
-            ]},
-            { "id": "modifiers", "mode": "all", "children": [
-                { "id": "futa_with_female",  "all": ["doer:girl|receiver:girl", "doer:futa|receiver:futa"], "prompts": "futa with female" },
-                { "id": "anal",              "all": ["anal"],                 "prompts": "anal" },
-                { "id": "sleeping",          "all": ["receiver:sleeping"],    "prompts": "sleeping, sleep molestation" },
-                { "id": "vaginal",          "all": ["vagina"],    "prompts": "vaginal" }
-
-            ]}
-        ]
+    "_prompt_composite_action_rules_doc": "Ordered unified array of {id, actions, distinctSupports (optional), prompts, options}, with optional all/any/none and pair conditions for rule eligibility. Rule IDs are globally unique; choice IDs are unique within their owning group. Every rule owns all its option predicates and prompt arrays; groups are independent first-match lists, not Cartesian variants. Inapplicable groups are absent, and an optional group with no match emits nothing or metadata. Each actions requirement {id, mainRole (optional), all/any/none (optional), anyOf (optional)} binds a DISTINCT raw source involving the scene main actor. Requirement base conditions must hold AND, when anyOf is present, at least one alternative must hold. Each alternative uses the same predicate shape without id, including its own optional mainRole. mainRole receiver/doer selects that side; self means an explicit same-actor target, solo means absent support; omitted mainRole is unrestricted. Backtrack over complete assignments; distinctSupports requires different real supports. Multi-source rules precede fallback single-source rules. The first eligible multi-source rule with a complete binding wins once scene-wide; suppress covered single-source poses and requests, then match remaining sources against single-source rules in priority order. No matching single rule retains an empty action record. Emit a composite once in its first requirement's pair and retain every bound source's provenance. <slot>:<tag> reads only that bound source (penetration:anal cannot borrow oral flags). Plain tags and doer:x / receiver:x are source-local for singles; unqualified composite flags aggregate only actually bound sources. Pair conditions use the first requirement's main/support pair. Record selected options as group:id metadata. Combine base prompts with selected option prompts, retaining branch-local deferred requests. $doer / $receiver / $main / $support aliases are available for singles; composites expose $main and $<slot>.support selectors. {doer} / {receiver} remain source actor placeholders.",
+    "_prompt_composite_search_doc": "Check candidate sets before assignment; cap each multi-source rule at 10000 matching steps, warning and trying the next rule on exhaustion. Check rule conditions and camera view eligibility while backtracking, before resolving nested random choices. Establish the scene-wide view from the first selected option with view: pov / external before rendering; later camera groups choose only compatible choices. Other groups may test view:pov / view:external against that resolved view, regardless of group order. pov_possible is scene eligibility, not a selected view or a source action flag. Camera choices contain camera prompts; pose pools contain no camera tags. Only canonical group and option IDs are shared through prompt_action_option_rules; predicates, prompts and view behavior remain action-local, with no shared behavior templates, variant references, modifier passes or scene passes. Sleeping actor state remains separate and unchanged. Forced spitroast selects fellatio and forced through its own oral group.",
+    "_prompt_scene_prompts_schema_doc": "Action root records and local option records optionally accept scenePrompts, an ARRAY of strings separate from prompts; every existing prompts value must still be an array of strings. Combine root scenePrompts with selected options' scenePrompts into final scene natural language after composition and promoted scene_pair_prompts. Do not comma-split natural-language sentences or actor descriptions. Root sentences enforce generic action-family roles, not a selected pose; no coupled-choice mechanism is needed. Preserve every inline {A|B} choice unexpanded in authored data and ComfyUI templates. Existing prompts, options, classifiers and position pools are unchanged.",
+    "_prompt_scene_grammar_doc": "Text selectors use $selector.shortName$, $selector.shortPrompt$, $selector.shortTag$ and $selector.be$. shortName is authored at Template.promptProfile.shortName, never a manually inserted character/model name in action rules. shortPrompt is the classifier, optional distinct name and runtime body description parenthesized per actor; group members are individually parenthesized and joined with ' and ', not comma-split into tags. shortTag retains existing classifier/count and filtered-label semantics; counts remain shortTag-only. be resolves to is for one actual unique actor and are for multiple actual unique actors, never from words or commas in a description. Place be before the gerund and finish each sentence with a period. Single-source sentences use raw source doer/receiver aliases, following the original game COM actor direction; ComfyUI's existing roles-map compiler rewrites these aliases exactly as it does body tokens. Spitroast uses authored actDoer/actReceiver group IDs directly without inventing which support performs oral stimulation. Self-action sentences address each present role without requiring a partner; identical sentences for a shared self actor deduplicate. Grammar selectors are valid text tokens, not unknown deferred body-group requests; no new legacy raw markers are needed.",
+    "_prompt_action_option_rules_doc": "Shared canonical IDs only: each group maps to an array of option IDs, never predicates, prompts or view templates. Group IDs and option IDs within each group must be valid and unique case-insensitively; local references must match canonical spelling exactly (case-sensitive). Every action using a group must declare exactly its complete option ID set; local order may vary to express priority. Inapplicable groups are omitted entirely, not added globally. All conditions, prompts, optional scenePrompts string arrays and view declarations remain action-local. Local options may use anyOf as ordered conditional branches: parent conditions must hold AND the first matching branch is selected; no matching branch makes the option ineligible. Combine inherited parent prompts with that branch's prompts, and likewise combine optional parent and branch scenePrompts arrays. Branches have no ID and do not change the parent option's canonical class or selected group:id metadata. A malformed registry or any unknown group, missing choice or extra choice rejects the entire action catalogue. Build optionPreferences uses canonical group-to-choice IDs: absent or auto preserves automatic local priority; unknown IDs warn and are ignored. A requested choice is tried first only when its local conditions and view constraints hold; otherwise normal automatic selection applies without bypassing game state. Non-futa selections use an explicit non_futa choice with empty prompts and are retained in selected option metadata.",
+    "_prompt_action_roles_doc": "Each actions requirement may declare roles mapping source sides to arbitrary action-local role group IDs, e.g. {doer: actDoer, receiver: actReceiver}; these IDs are implicit per action, not a global registry or hardcoded actor identities. A matching anyOf branch may override source mappings; branches that override supply all mappings and need no base aliases. Collect members only from actual bound AP sources and deduplicate by actual actor identity. Explicit self receivers resolve to the doer; absent receivers add no member. roleID:any:tag matches any member; roleID:all:tag requires a nonempty group and every member. Both quantifiers are false for empty groups. Plain roleID:tag means any, and !tag negates the member tag test. Within a member predicate, & joins tests on the SAME actor before applying any/all: roleID:any:horse&!petite requires one non-petite horse, never a petite horse plus a different non-petite member. Filtered short-tag expansions use the same per-actor conjunction semantics: $roleID.horse&!petite$ includes only non-petite horses. $roleID.petite$ / $roleID.!petite$ expand short tags of petite / non-petite members only; $roleID.shortTag$ expands all members. These filtered short-tag expansions are action text, not deferred body-group requests. actReceiver / actDoer follow each family's authored physical role convention, not universal dominance. Spitroast merges its shared main into one actReceiver and its two distinct supports into two actDoers, including the reversed blowjob source mapping. Unity source.roles matching and source-local scopes remain unchanged.",
+    "_prompt_size_difference_doc": "Every action owns all five sizeDifference choices in authored automatic priority order extremeSmallSub, extremeSmallDom, smallSub, smallDom, none. extremeSmallSub requires a petite actReceiver and a non-petite horse in actDoer (horse&!petite on the same actor); extremeSmallDom reverses these tests. Extreme choices emit size difference and extreme size difference, labeling only petite members smaller and non-petite horses larger through matching filters. A horse that is itself petite cannot count as the larger extreme actor; other species such as dog do not trigger extreme sizing unless a future author explicitly adds them. Normal smallSub has two ordered anyOf branches: first a petite non-horse actReceiver versus a non-petite actDoer, then a non-petite non-horse actReceiver versus any horse actDoer, including petite horses. smallDom mirrors these roles. Each normal choice inherits size difference and adds only its first matching branch's filtered smaller/larger labels, without interracial, bestiality or large gates. Excluding horses from the petite smaller branch prevents a petite horse being labeled smaller than an adult non-horse; the adult non-horse versus horse branch instead labels the horse larger. Extreme choices take automatic priority over normal choices; within each tier Sub precedes Dom when mixed groups allow both directions. Both uniformly petite groups (including petite horses) select none; two non-petite non-horse groups or two non-petite horse groups also select none, while a non-petite non-horse versus a horse now selects the corresponding normal choice. none is unconditional and emits no prompts, allowing an explicit preference to disable sizing. optionPreferences accepts auto / extremeSmallSub / extremeSmallDom / smallSub / smallDom / none; requested non-none choices must still pass local predicates. All 18 actions retain their local groups, including both masturbation rules: self uses the same actor on both sides and solo has an empty actDoer group, so neither produces a size difference. The selector UI node may partially defer choices until actual source bindings and actor tags are available; expose all five canonical choices without inventing partners, then resolve eligible preferences at build time.",
+    "_comfy_actor_registration_doc": "ComfyUI uses explicit registrations rather than guessing actors from the game-only source role mappings. Action Selector creates an empty actor_registrations dictionary and preserves prompt_template, local option definitions, preferences and source-role audit data. Character Selector exposes ONLY two role flags: is_doer directly registers actDoer membership and is_receiver directly registers actReceiver membership; there is no second set of role flags. When building the node template, scope game aliases such as doer / receiver and source-slot aliases using each source.roles mapping to those registered action-role groups, rather than treating game source sides as universal actDoer / actReceiver identities. Unity source.roles matching remains unchanged. Each selector stores a full exported snapshot under its stable node ID; updating that node refreshes its registration, while separate nodes remain separate actors even with the same portrait ID. The action_data output retains the original template and every full registration snapshot. Its prompt output renders a private copy using all registrations so far, including size conditions and filtered actor labels; no partial result destroys the template. Chain action_data through characters and use the final node's prompt output. Inline {A|B} choices remain unexpanded. Size predicates read actor_tags, never infer petite from prompt text; re-export older records that lack body-type property tags.",
+    "prompt_action_option_rules": {
+        "penetration": ["anal", "vaginal"],
+        "oral": ["forced", "blowjob"],
+        "isfuta": ["futa", "non_futa"],
+        "sizeDifference":["extremeSmallSub", "extremeSmallDom", "smallSub", "smallDom", "none"],
+        "camera": ["pov", "random_angles"],
+        "participants": ["human", "bestiality"]
     },
-    "_prompt_scene_rules_doc": "Once per scene: the scene section (plain tags) and the section order. doer:x / receiver:x = any actor on that side. {pov} = draw the player as pov: 'pov' goes into the scene section and the player's actor section is left out; only works with the scene tag pov_possible (the player is involved and is not the main actor), so gate the rule on it and give it a chance. Layout markers (optional): {composition} (or {count}) {pair} {doer} {receiver} {scene} {room} - sections are joined in the order the markers first appear; sections no rule places: composition first, the rest in the default order. {pair} places each complete pair group (relative pair prompt followed by its child actions); {interaction} is an alias of {pair} for existing layouts, not a separate action placement. Workflow $actions$ joins one combined entry per pair with ||; within each entry nonempty pair and child action prompts are comma joined. doer / receiver sections = each actor's own prompt (CollectActorTags with that actor's tags), room = Room_Base.promptTags + prison / bedroom.",
-    "prompt_scene_rules": {
-        "mode": "all",
-        "children": [
-            { "id": "ahegao", "all": ["raped"], "chance": 0.5, "prompts": "ahegao", "_comment": "rough sex moved to the composition tags" },
-            { "id": "view", "mode": "first", "children": [
-                { "_comment": "the player's view; a failed roll falls through to the camera pick", "id": "pov", "all": ["pov_possible"], "chance": 0.5, "prompts": "{pov}" },
-                { "id": "camera", "all": ["sex"], "pick": [
-                    { "weight": 1, "prompts": "view from side" },
-                    { "weight": 1, "prompts": "view from side, dutch angle" },
-                    { "weight": 1, "prompts": "view from behind" },
-                    { "weight": 1, "prompts": "view from behind, dutch angle" },
-                    { "weight": 1, "prompts": "front view" },
-                    { "weight": 1, "prompts": "front view, dutch angle" }
-                ]}
-            ]}
-        ]
-    }
+    "prompt_composite_action_rules": [
+        {
+            "id": "spitroast",
+            "actionTags": ["sex"],
+            "actions": [
+                { "id": "penetration", "mainRole": "receiver", "any": ["doggy|missionary"], "roles": { "doer": "actDoer", "receiver": "actReceiver" } },
+                { "id": "oral", "anyOf": [
+                    { "mainRole": "receiver", "all": ["irrumatio"], "roles": { "doer": "actDoer", "receiver": "actReceiver" } },
+                    { "mainRole": "doer", "all": ["blowjob"], "none": ["irrumatio"], "roles": { "doer": "actReceiver", "receiver": "actDoer" } }
+                ] }
+            ],
+            "distinctSupports": true,
+            "prompts": ["spitroast"],
+            "scenePrompts": ["$actDoer.shortPrompt$ $actDoer.be$ having sex with $actReceiver.shortPrompt$."],
+            "options": {
+                "penetration": [
+                    { "id": "anal", "all": ["penetration:anal"], "prompts": ["anal"] },
+                    { "id": "vaginal", "none": ["penetration:anal"], "prompts": ["vaginal"] }
+                ],
+                "oral": [
+                    { "id": "forced", "all": ["oral:irrumatio"], "prompts": ["fellatio", "forced"] },
+                    { "id": "blowjob", "none": ["oral:irrumatio"], "prompts": ["fellatio"] }
+                ],
+                "sizeDifference":[
+                    { "id": "extremeSmallSub", "all": ["actReceiver:any:petite", "actDoer:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actReceiver.petite$", "larger $actDoer.horse&!petite$"] },
+                    { "id": "extremeSmallDom", "all": ["actDoer:any:petite", "actReceiver:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actDoer.petite$", "larger $actReceiver.horse&!petite$"] },
+                    { "id": "smallSub", "prompts": ["size difference"], "anyOf": [{ "all": ["actReceiver:any:petite&!horse", "actDoer:any:!petite"], "prompts": ["smaller $actReceiver.petite&!horse$", "larger $actDoer.!petite$"] }, { "all": ["actReceiver:any:!petite&!horse", "actDoer:any:horse"], "prompts": ["smaller $actReceiver.!petite&!horse$", "larger $actDoer.horse$"] }] },
+                    { "id": "smallDom", "prompts": ["size difference"], "anyOf": [{ "all": ["actDoer:any:petite&!horse", "actReceiver:any:!petite"], "prompts": ["smaller $actDoer.petite&!horse$", "larger $actReceiver.!petite$"] }, { "all": ["actDoer:any:!petite&!horse", "actReceiver:any:horse"], "prompts": ["smaller $actDoer.!petite&!horse$", "larger $actReceiver.horse$"] }] },
+                    { "id": "none", "prompts": [] }
+                ],
+                "isfuta": [
+                    { "id": "futa", "all": ["futa_with_female"], "prompts": ["futa with female"] },
+                    { "id": "non_futa", "none": ["futa_with_female"], "prompts": [] }
+                ],
+                "camera": [
+                    { "id": "pov", "none": ["bestiality"], "all": ["pov_possible"], "view": "pov", "prompts": ["pov"] },
+                    { "id": "random_angles", "view": "external", "prompts": ["{from side|from above}"] }
+                ]
+            }
+        },
+        {
+            "id": "doggy",
+            "actionTags": ["sex"],
+            "actions": [{ "id": "action", "all": ["doggy"], "roles": { "doer": "actDoer", "receiver": "actReceiver" } }],
+            "prompts": ["sex from behind"],
+            "scenePrompts": ["$doer.shortPrompt$ $doer.be$ having sex with $receiver.shortPrompt$."],
+            "options": {
+                "sizeDifference": [
+                    { "id": "extremeSmallSub", "all": ["actReceiver:any:petite", "actDoer:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actReceiver.petite$", "larger $actDoer.horse&!petite$"] },
+                    { "id": "extremeSmallDom", "all": ["actDoer:any:petite", "actReceiver:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actDoer.petite$", "larger $actReceiver.horse&!petite$"] },
+                    { "id": "smallSub", "prompts": ["size difference"], "anyOf": [{ "all": ["actReceiver:any:petite&!horse", "actDoer:any:!petite"], "prompts": ["smaller $actReceiver.petite&!horse$", "larger $actDoer.!petite$"] }, { "all": ["actReceiver:any:!petite&!horse", "actDoer:any:horse"], "prompts": ["smaller $actReceiver.!petite&!horse$", "larger $actDoer.horse$"] }] },
+                    { "id": "smallDom", "prompts": ["size difference"], "anyOf": [{ "all": ["actDoer:any:petite&!horse", "actReceiver:any:!petite"], "prompts": ["smaller $actDoer.petite&!horse$", "larger $actReceiver.!petite$"] }, { "all": ["actDoer:any:!petite&!horse", "actReceiver:any:horse"], "prompts": ["smaller $actDoer.!petite&!horse$", "larger $actReceiver.horse$"] }] },
+                    { "id": "none", "prompts": [] }
+                ],
+                "participants": [
+                    { "id": "human", "none": ["bestiality"], "prompts": ["{doggystyle, all fours, $receiver.lower_back$|prone bone, on stomach|full nelson|spooning, on side|reverse suspended congress, carrying}"] },
+                    { "id": "bestiality", "all": ["bestiality"], "prompts": ["{doggystyle, all fours, $receiver.lower_back$|prone bone, on stomach|spooning, on side}"] }
+                ],
+                "penetration": [
+                    { "id": "anal", "all": ["anal"], "prompts": ["anal"] },
+                    { "id": "vaginal", "none": ["anal"], "prompts": ["vaginal"] }
+                ],
+                "isfuta": [
+                    { "id": "futa", "all": ["futa_with_female"], "prompts": ["futa with female"] },
+                    { "id": "non_futa", "none": ["futa_with_female"], "prompts": [] }
+                ],
+                "camera": [
+                    { "id": "pov", "none": ["bestiality"], "all": ["pov_possible"], "view": "pov", "prompts": ["pov"] },
+                    { "id": "random_angles", "view": "external", "prompts": ["{from side|from above}"] }
+                ]
+            }
+        },
+        {
+            "id": "missionary",
+            "actionTags": ["sex"],
+            "actions": [{ "id": "action", "all": ["missionary"], "roles": { "doer": "actDoer", "receiver": "actReceiver" } }],
+            "prompts": [],
+            "scenePrompts": ["$doer.shortPrompt$ $doer.be$ having sex with $receiver.shortPrompt$."],
+            "options": {
+                "sizeDifference": [
+                    { "id": "extremeSmallSub", "all": ["actReceiver:any:petite", "actDoer:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actReceiver.petite$", "larger $actDoer.horse&!petite$"] },
+                    { "id": "extremeSmallDom", "all": ["actDoer:any:petite", "actReceiver:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actDoer.petite$", "larger $actReceiver.horse&!petite$"] },
+                    { "id": "smallSub", "prompts": ["size difference"], "anyOf": [{ "all": ["actReceiver:any:petite&!horse", "actDoer:any:!petite"], "prompts": ["smaller $actReceiver.petite&!horse$", "larger $actDoer.!petite$"] }, { "all": ["actReceiver:any:!petite&!horse", "actDoer:any:horse"], "prompts": ["smaller $actReceiver.!petite&!horse$", "larger $actDoer.horse$"] }] },
+                    { "id": "smallDom", "prompts": ["size difference"], "anyOf": [{ "all": ["actDoer:any:petite&!horse", "actReceiver:any:!petite"], "prompts": ["smaller $actDoer.petite&!horse$", "larger $actReceiver.!petite$"] }, { "all": ["actDoer:any:!petite&!horse", "actReceiver:any:horse"], "prompts": ["smaller $actDoer.!petite&!horse$", "larger $actReceiver.horse$"] }] },
+                    { "id": "none", "prompts": [] }
+                ],
+                "participants": [
+                    { "id": "human", "none": ["bestiality"], "prompts": ["{missionary, spread legs, {doer} on top of {receiver}, $receiver.lower_front$, $receiver.torso_front$|mating press, legs up, folded, {doer} on top of {receiver}, $receiver.lower_front$, $receiver.torso_front$|leg lock, {doer} on top of {receiver}, {receiver} under {doer} between legs, $receiver.torso_front$|suspended congress, carrying|standing sex, against wall, leg up|upside-down}"] },
+                    { "id": "bestiality", "all": ["bestiality"], "prompts": ["{doer} on top of {receiver}", "{missionary, spread legs, $receiver.lower_front$, $receiver.torso_front$|mating press, legs up, folded, $receiver.lower_front$, $receiver.torso_front$|leg lock, {receiver} under {doer} between legs, $receiver.torso_front$}"] }
+                ],
+                "penetration": [
+                    { "id": "anal", "all": ["anal"], "prompts": ["anal"] },
+                    { "id": "vaginal", "none": ["anal"], "prompts": ["vaginal"] }
+                ],
+                "isfuta": [
+                    { "id": "futa", "all": ["futa_with_female"], "prompts": ["futa with female"] },
+                    { "id": "non_futa", "none": ["futa_with_female"], "prompts": [] }
+                ],
+                "camera": [
+                    { "id": "pov", "none": ["bestiality"], "all": ["pov_possible"], "view": "pov", "prompts": ["pov"] },
+                    { "id": "random_angles", "view": "external", "prompts": ["{from side|from above}"] }
+                ]
+            }
+        },
+        {
+            "id": "cowgirl",
+            "actionTags": ["sex"],
+            "actions": [{ "id": "action", "all": ["cowgirl"], "roles": { "doer": "actReceiver", "receiver": "actDoer" } }],
+            "scenePrompts": ["$doer.shortPrompt$ $doer.be$ straddling $receiver.shortPrompt$."],
+            "prompts": ["{doer} on top", "{cowgirl position, straddling, $doer.torso_front$|reverse cowgirl position, $doer.lower_back$|squatting cowgirl position, $doer.lower_front$, $doer.torso_front$|sitting on person|sitting on lap, face-to-face, $doer.torso_front$}"],
+            "options": {
+                "sizeDifference": [
+                    { "id": "extremeSmallSub", "all": ["actReceiver:any:petite", "actDoer:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actReceiver.petite$", "larger $actDoer.horse&!petite$"] },
+                    { "id": "extremeSmallDom", "all": ["actDoer:any:petite", "actReceiver:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actDoer.petite$", "larger $actReceiver.horse&!petite$"] },
+                    { "id": "smallSub", "prompts": ["size difference"], "anyOf": [{ "all": ["actReceiver:any:petite&!horse", "actDoer:any:!petite"], "prompts": ["smaller $actReceiver.petite&!horse$", "larger $actDoer.!petite$"] }, { "all": ["actReceiver:any:!petite&!horse", "actDoer:any:horse"], "prompts": ["smaller $actReceiver.!petite&!horse$", "larger $actDoer.horse$"] }] },
+                    { "id": "smallDom", "prompts": ["size difference"], "anyOf": [{ "all": ["actDoer:any:petite&!horse", "actReceiver:any:!petite"], "prompts": ["smaller $actDoer.petite&!horse$", "larger $actReceiver.!petite$"] }, { "all": ["actDoer:any:!petite&!horse", "actReceiver:any:horse"], "prompts": ["smaller $actDoer.!petite&!horse$", "larger $actReceiver.horse$"] }] },
+                    { "id": "none", "prompts": [] }
+                ],
+                "penetration": [
+                    { "id": "anal", "all": ["anal"], "prompts": ["anal"] },
+                    { "id": "vaginal", "none": ["anal"], "prompts": ["vaginal"] }
+                ],
+                "isfuta": [
+                    { "id": "futa", "all": ["futa_with_female"], "prompts": ["futa with female"] },
+                    { "id": "non_futa", "none": ["futa_with_female"], "prompts": [] }
+                ],
+                "camera": [
+                    { "id": "pov", "none": ["bestiality"], "all": ["pov_possible"], "view": "pov", "prompts": ["pov"] },
+                    { "id": "random_angles", "view": "external", "prompts": ["{from side|from above}"] }
+                ]
+            }
+        },
+        {
+            "id": "irrumatio",
+            "actionTags": ["sex"],
+            "actions": [{ "id": "action", "all": ["irrumatio"], "roles": { "doer": "actDoer", "receiver": "actReceiver" } }],
+            "prompts": ["irrumatio", "fellatio", "forced"],
+            "scenePrompts": ["$doer.shortPrompt$ $doer.be$ receiving oral sex from $receiver.shortPrompt$."],
+            "options": {
+                "sizeDifference": [
+                    { "id": "extremeSmallSub", "all": ["actReceiver:any:petite", "actDoer:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actReceiver.petite$", "larger $actDoer.horse&!petite$"] },
+                    { "id": "extremeSmallDom", "all": ["actDoer:any:petite", "actReceiver:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actDoer.petite$", "larger $actReceiver.horse&!petite$"] },
+                    { "id": "smallSub", "prompts": ["size difference"], "anyOf": [{ "all": ["actReceiver:any:petite&!horse", "actDoer:any:!petite"], "prompts": ["smaller $actReceiver.petite&!horse$", "larger $actDoer.!petite$"] }, { "all": ["actReceiver:any:!petite&!horse", "actDoer:any:horse"], "prompts": ["smaller $actReceiver.!petite&!horse$", "larger $actDoer.horse$"] }] },
+                    { "id": "smallDom", "prompts": ["size difference"], "anyOf": [{ "all": ["actDoer:any:petite&!horse", "actReceiver:any:!petite"], "prompts": ["smaller $actDoer.petite&!horse$", "larger $actReceiver.!petite$"] }, { "all": ["actDoer:any:!petite&!horse", "actReceiver:any:horse"], "prompts": ["smaller $actDoer.!petite&!horse$", "larger $actReceiver.horse$"] }] },
+                    { "id": "none", "prompts": [] }
+                ],
+                "participants": [
+                    { "id": "human", "none": ["bestiality"], "prompts": ["{deepthroat|hand on another's head|face fucking}"] },
+                    { "id": "bestiality", "all": ["bestiality"], "prompts": ["{deepthroat|face fucking}"] }
+                ],
+                "isfuta": [
+                    { "id": "futa", "all": ["futa_with_female"], "prompts": ["futa with female"] },
+                    { "id": "non_futa", "none": ["futa_with_female"], "prompts": [] }
+                ],
+                "camera": [
+                    { "id": "pov", "none": ["bestiality"], "all": ["pov_possible"], "view": "pov", "prompts": ["pov"] },
+                    { "id": "random_angles", "view": "external", "prompts": ["{from side|from above}"] }
+                ]
+            }
+        },
+        {
+            "id": "paizuri_fellatio",
+            "actionTags": ["sex"],
+            "actions": [{ "id": "action", "all": ["blowjob", "boobjob"], "roles": { "doer": "actReceiver", "receiver": "actDoer" } }],
+            "prompts": ["paizuri", "fellatio", "$doer.torso_front$", "$receiver.lower_front$"],
+            "scenePrompts": ["$doer.shortPrompt$ $doer.be$ providing stimulation to $receiver.shortPrompt$."],
+            "options": {
+                "sizeDifference": [
+                    { "id": "extremeSmallSub", "all": ["actReceiver:any:petite", "actDoer:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actReceiver.petite$", "larger $actDoer.horse&!petite$"] },
+                    { "id": "extremeSmallDom", "all": ["actDoer:any:petite", "actReceiver:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actDoer.petite$", "larger $actReceiver.horse&!petite$"] },
+                    { "id": "smallSub", "prompts": ["size difference"], "anyOf": [{ "all": ["actReceiver:any:petite&!horse", "actDoer:any:!petite"], "prompts": ["smaller $actReceiver.petite&!horse$", "larger $actDoer.!petite$"] }, { "all": ["actReceiver:any:!petite&!horse", "actDoer:any:horse"], "prompts": ["smaller $actReceiver.!petite&!horse$", "larger $actDoer.horse$"] }] },
+                    { "id": "smallDom", "prompts": ["size difference"], "anyOf": [{ "all": ["actDoer:any:petite&!horse", "actReceiver:any:!petite"], "prompts": ["smaller $actDoer.petite&!horse$", "larger $actReceiver.!petite$"] }, { "all": ["actDoer:any:!petite&!horse", "actReceiver:any:horse"], "prompts": ["smaller $actDoer.!petite&!horse$", "larger $actReceiver.horse$"] }] },
+                    { "id": "none", "prompts": [] }
+                ],
+                "isfuta": [
+                    { "id": "futa", "all": ["futa_with_female"], "prompts": ["futa with female"] },
+                    { "id": "non_futa", "none": ["futa_with_female"], "prompts": [] }
+                ],
+                "camera": [
+                    { "id": "pov", "none": ["bestiality"], "all": ["pov_possible"], "view": "pov", "prompts": ["pov"] },
+                    { "id": "random_angles", "view": "external", "prompts": ["{from side|from above}"] }
+                ]
+            }
+        },
+        {
+            "id": "blowjob",
+            "actionTags": ["sex"],
+            "actions": [{ "id": "action", "all": ["blowjob"], "roles": { "doer": "actReceiver", "receiver": "actDoer" } }],
+            "scenePrompts": ["$doer.shortPrompt$ $doer.be$ performing oral stimulation on $receiver.shortPrompt$."],
+            "prompts": ["fellatio", "{|licking penis|testicle sucking|69, cunnilingus}"],
+            "options": {
+                "sizeDifference": [
+                    { "id": "extremeSmallSub", "all": ["actReceiver:any:petite", "actDoer:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actReceiver.petite$", "larger $actDoer.horse&!petite$"] },
+                    { "id": "extremeSmallDom", "all": ["actDoer:any:petite", "actReceiver:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actDoer.petite$", "larger $actReceiver.horse&!petite$"] },
+                    { "id": "smallSub", "prompts": ["size difference"], "anyOf": [{ "all": ["actReceiver:any:petite&!horse", "actDoer:any:!petite"], "prompts": ["smaller $actReceiver.petite&!horse$", "larger $actDoer.!petite$"] }, { "all": ["actReceiver:any:!petite&!horse", "actDoer:any:horse"], "prompts": ["smaller $actReceiver.!petite&!horse$", "larger $actDoer.horse$"] }] },
+                    { "id": "smallDom", "prompts": ["size difference"], "anyOf": [{ "all": ["actDoer:any:petite&!horse", "actReceiver:any:!petite"], "prompts": ["smaller $actDoer.petite&!horse$", "larger $actReceiver.!petite$"] }, { "all": ["actDoer:any:!petite&!horse", "actReceiver:any:horse"], "prompts": ["smaller $actDoer.!petite&!horse$", "larger $actReceiver.horse$"] }] },
+                    { "id": "none", "prompts": [] }
+                ],
+                "isfuta": [
+                    { "id": "futa", "all": ["futa_with_female"], "prompts": ["futa with female"] },
+                    { "id": "non_futa", "none": ["futa_with_female"], "prompts": [] }
+                ],
+                "camera": [
+                    { "id": "pov", "none": ["bestiality"], "all": ["pov_possible"], "view": "pov", "prompts": ["pov"] },
+                    { "id": "random_angles", "view": "external", "prompts": ["{from side|from above}"] }
+                ]
+            }
+        },
+        {
+            "id": "paizuri",
+            "actionTags": ["sex"],
+            "actions": [{ "id": "action", "all": ["boobjob"], "roles": { "doer": "actReceiver", "receiver": "actDoer" } }],
+            "scenePrompts": ["$doer.shortPrompt$ $doer.be$ using their chest to stimulate $receiver.shortPrompt$."],
+            "prompts": ["$doer.torso_front$", "{paizuri|straddling paizuri|perpendicular paizuri}"],
+            "options": {
+                "sizeDifference": [
+                    { "id": "extremeSmallSub", "all": ["actReceiver:any:petite", "actDoer:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actReceiver.petite$", "larger $actDoer.horse&!petite$"] },
+                    { "id": "extremeSmallDom", "all": ["actDoer:any:petite", "actReceiver:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actDoer.petite$", "larger $actReceiver.horse&!petite$"] },
+                    { "id": "smallSub", "prompts": ["size difference"], "anyOf": [{ "all": ["actReceiver:any:petite&!horse", "actDoer:any:!petite"], "prompts": ["smaller $actReceiver.petite&!horse$", "larger $actDoer.!petite$"] }, { "all": ["actReceiver:any:!petite&!horse", "actDoer:any:horse"], "prompts": ["smaller $actReceiver.!petite&!horse$", "larger $actDoer.horse$"] }] },
+                    { "id": "smallDom", "prompts": ["size difference"], "anyOf": [{ "all": ["actDoer:any:petite&!horse", "actReceiver:any:!petite"], "prompts": ["smaller $actDoer.petite&!horse$", "larger $actReceiver.!petite$"] }, { "all": ["actDoer:any:!petite&!horse", "actReceiver:any:horse"], "prompts": ["smaller $actDoer.!petite&!horse$", "larger $actReceiver.horse$"] }] },
+                    { "id": "none", "prompts": [] }
+                ],
+                "isfuta": [
+                    { "id": "futa", "all": ["futa_with_female"], "prompts": ["futa with female"] },
+                    { "id": "non_futa", "none": ["futa_with_female"], "prompts": [] }
+                ],
+                "camera": [
+                    { "id": "pov", "none": ["bestiality"], "all": ["pov_possible"], "view": "pov", "prompts": ["pov"] },
+                    { "id": "random_angles", "view": "external", "prompts": ["{from side|from above}"] }
+                ]
+            }
+        },
+        {
+            "id": "cunnilingus",
+            "actionTags": ["sex"],
+            "actions": [{ "id": "action", "all": ["cunnilingus"], "roles": { "doer": "actReceiver", "receiver": "actDoer" } }],
+            "prompts": ["cunnilingus", "spread legs", "$receiver.lower_front$"],
+            "scenePrompts": ["$doer.shortPrompt$ $doer.be$ performing oral stimulation on $receiver.shortPrompt$."],
+            "options": {
+                "sizeDifference": [
+                    { "id": "extremeSmallSub", "all": ["actReceiver:any:petite", "actDoer:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actReceiver.petite$", "larger $actDoer.horse&!petite$"] },
+                    { "id": "extremeSmallDom", "all": ["actDoer:any:petite", "actReceiver:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actDoer.petite$", "larger $actReceiver.horse&!petite$"] },
+                    { "id": "smallSub", "prompts": ["size difference"], "anyOf": [{ "all": ["actReceiver:any:petite&!horse", "actDoer:any:!petite"], "prompts": ["smaller $actReceiver.petite&!horse$", "larger $actDoer.!petite$"] }, { "all": ["actReceiver:any:!petite&!horse", "actDoer:any:horse"], "prompts": ["smaller $actReceiver.!petite&!horse$", "larger $actDoer.horse$"] }] },
+                    { "id": "smallDom", "prompts": ["size difference"], "anyOf": [{ "all": ["actDoer:any:petite&!horse", "actReceiver:any:!petite"], "prompts": ["smaller $actDoer.petite&!horse$", "larger $actReceiver.!petite$"] }, { "all": ["actDoer:any:!petite&!horse", "actReceiver:any:horse"], "prompts": ["smaller $actDoer.!petite&!horse$", "larger $actReceiver.horse$"] }] },
+                    { "id": "none", "prompts": [] }
+                ],
+                "isfuta": [
+                    { "id": "futa", "all": ["futa_with_female"], "prompts": ["futa with female"] },
+                    { "id": "non_futa", "none": ["futa_with_female"], "prompts": [] }
+                ],
+                "camera": [
+                    { "id": "pov", "none": ["bestiality"], "all": ["pov_possible"], "view": "pov", "prompts": ["pov"] },
+                    { "id": "random_angles", "view": "external", "prompts": ["{from side|from above}"] }
+                ]
+            }
+        },
+        {
+            "id": "rimjob",
+            "actionTags": ["sex"],
+            "actions": [{ "id": "action", "all": ["rimjob"], "roles": { "doer": "actReceiver", "receiver": "actDoer" } }],
+            "scenePrompts": ["$doer.shortPrompt$ $doer.be$ performing oral stimulation on $receiver.shortPrompt$."],
+            "prompts": ["anilingus", "{|handjob, reach-around}", "$receiver.lower_back$"],
+            "options": {
+                "sizeDifference": [
+                    { "id": "extremeSmallSub", "all": ["actReceiver:any:petite", "actDoer:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actReceiver.petite$", "larger $actDoer.horse&!petite$"] },
+                    { "id": "extremeSmallDom", "all": ["actDoer:any:petite", "actReceiver:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actDoer.petite$", "larger $actReceiver.horse&!petite$"] },
+                    { "id": "smallSub", "prompts": ["size difference"], "anyOf": [{ "all": ["actReceiver:any:petite&!horse", "actDoer:any:!petite"], "prompts": ["smaller $actReceiver.petite&!horse$", "larger $actDoer.!petite$"] }, { "all": ["actReceiver:any:!petite&!horse", "actDoer:any:horse"], "prompts": ["smaller $actReceiver.!petite&!horse$", "larger $actDoer.horse$"] }] },
+                    { "id": "smallDom", "prompts": ["size difference"], "anyOf": [{ "all": ["actDoer:any:petite&!horse", "actReceiver:any:!petite"], "prompts": ["smaller $actDoer.petite&!horse$", "larger $actReceiver.!petite$"] }, { "all": ["actDoer:any:!petite&!horse", "actReceiver:any:horse"], "prompts": ["smaller $actDoer.!petite&!horse$", "larger $actReceiver.horse$"] }] },
+                    { "id": "none", "prompts": [] }
+                ],
+                "isfuta": [
+                    { "id": "futa", "all": ["futa_with_female"], "prompts": ["futa with female"] },
+                    { "id": "non_futa", "none": ["futa_with_female"], "prompts": [] }
+                ],
+                "camera": [
+                    { "id": "pov", "none": ["bestiality"], "all": ["pov_possible"], "view": "pov", "prompts": ["pov"] },
+                    { "id": "random_angles", "view": "external", "prompts": ["{from side|from above}"] }
+                ]
+            }
+        },
+        {
+            "id": "intercrural",
+            "actionTags": ["sex"],
+            "actions": [{ "id": "action", "all": ["intercrural"], "roles": { "doer": "actDoer", "receiver": "actReceiver" } }],
+            "prompts": ["thigh sex"],
+            "scenePrompts": ["$doer.shortPrompt$ $doer.be$ having sex with $receiver.shortPrompt$."],
+            "options": {
+                "sizeDifference": [
+                    { "id": "extremeSmallSub", "all": ["actReceiver:any:petite", "actDoer:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actReceiver.petite$", "larger $actDoer.horse&!petite$"] },
+                    { "id": "extremeSmallDom", "all": ["actDoer:any:petite", "actReceiver:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actDoer.petite$", "larger $actReceiver.horse&!petite$"] },
+                    { "id": "smallSub", "prompts": ["size difference"], "anyOf": [{ "all": ["actReceiver:any:petite&!horse", "actDoer:any:!petite"], "prompts": ["smaller $actReceiver.petite&!horse$", "larger $actDoer.!petite$"] }, { "all": ["actReceiver:any:!petite&!horse", "actDoer:any:horse"], "prompts": ["smaller $actReceiver.!petite&!horse$", "larger $actDoer.horse$"] }] },
+                    { "id": "smallDom", "prompts": ["size difference"], "anyOf": [{ "all": ["actDoer:any:petite&!horse", "actReceiver:any:!petite"], "prompts": ["smaller $actDoer.petite&!horse$", "larger $actReceiver.!petite$"] }, { "all": ["actDoer:any:!petite&!horse", "actReceiver:any:horse"], "prompts": ["smaller $actDoer.!petite&!horse$", "larger $actReceiver.horse$"] }] },
+                    { "id": "none", "prompts": [] }
+                ],
+                "isfuta": [
+                    { "id": "futa", "all": ["futa_with_female"], "prompts": ["futa with female"] },
+                    { "id": "non_futa", "none": ["futa_with_female"], "prompts": [] }
+                ],
+                "camera": [
+                    { "id": "pov", "none": ["bestiality"], "all": ["pov_possible"], "view": "pov", "prompts": ["pov"] },
+                    { "id": "random_angles", "view": "external", "prompts": ["{from side|front view}"] }
+                ]
+            }
+        },
+        {
+            "id": "handjob",
+            "actionTags": ["sex"],
+            "actions": [{ "id": "action", "all": ["handjob"], "roles": { "doer": "actDoer", "receiver": "actReceiver" } }],
+            "scenePrompts": ["$doer.shortPrompt$ $doer.be$ using their hands to stimulate $receiver.shortPrompt$."],
+            "prompts": ["{handjob|two-handed handjob|hairjob|armpit sex}"],
+            "options": {
+                "sizeDifference": [
+                    { "id": "extremeSmallSub", "all": ["actReceiver:any:petite", "actDoer:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actReceiver.petite$", "larger $actDoer.horse&!petite$"] },
+                    { "id": "extremeSmallDom", "all": ["actDoer:any:petite", "actReceiver:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actDoer.petite$", "larger $actReceiver.horse&!petite$"] },
+                    { "id": "smallSub", "prompts": ["size difference"], "anyOf": [{ "all": ["actReceiver:any:petite&!horse", "actDoer:any:!petite"], "prompts": ["smaller $actReceiver.petite&!horse$", "larger $actDoer.!petite$"] }, { "all": ["actReceiver:any:!petite&!horse", "actDoer:any:horse"], "prompts": ["smaller $actReceiver.!petite&!horse$", "larger $actDoer.horse$"] }] },
+                    { "id": "smallDom", "prompts": ["size difference"], "anyOf": [{ "all": ["actDoer:any:petite&!horse", "actReceiver:any:!petite"], "prompts": ["smaller $actDoer.petite&!horse$", "larger $actReceiver.!petite$"] }, { "all": ["actDoer:any:!petite&!horse", "actReceiver:any:horse"], "prompts": ["smaller $actDoer.!petite&!horse$", "larger $actReceiver.horse$"] }] },
+                    { "id": "none", "prompts": [] }
+                ],
+                "isfuta": [
+                    { "id": "futa", "all": ["futa_with_female"], "prompts": ["futa with female"] },
+                    { "id": "non_futa", "none": ["futa_with_female"], "prompts": [] }
+                ],
+                "camera": [
+                    { "id": "pov", "none": ["bestiality"], "all": ["pov_possible"], "view": "pov", "prompts": ["pov"] },
+                    { "id": "random_angles", "view": "external", "prompts": ["{from side|from above|front view}"] }
+                ]
+            }
+        },
+        {
+            "id": "footjob",
+            "actionTags": ["sex"],
+            "actions": [{ "id": "action", "all": ["footjob"], "roles": { "doer": "actDoer", "receiver": "actReceiver" } }],
+            "scenePrompts": ["$doer.shortPrompt$ $doer.be$ using their feet to stimulate $receiver.shortPrompt$."],
+            "prompts": ["{footjob|two-footed footjob}"],
+            "options": {
+                "sizeDifference": [
+                    { "id": "extremeSmallSub", "all": ["actReceiver:any:petite", "actDoer:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actReceiver.petite$", "larger $actDoer.horse&!petite$"] },
+                    { "id": "extremeSmallDom", "all": ["actDoer:any:petite", "actReceiver:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actDoer.petite$", "larger $actReceiver.horse&!petite$"] },
+                    { "id": "smallSub", "prompts": ["size difference"], "anyOf": [{ "all": ["actReceiver:any:petite&!horse", "actDoer:any:!petite"], "prompts": ["smaller $actReceiver.petite&!horse$", "larger $actDoer.!petite$"] }, { "all": ["actReceiver:any:!petite&!horse", "actDoer:any:horse"], "prompts": ["smaller $actReceiver.!petite&!horse$", "larger $actDoer.horse$"] }] },
+                    { "id": "smallDom", "prompts": ["size difference"], "anyOf": [{ "all": ["actDoer:any:petite&!horse", "actReceiver:any:!petite"], "prompts": ["smaller $actDoer.petite&!horse$", "larger $actReceiver.!petite$"] }, { "all": ["actDoer:any:!petite&!horse", "actReceiver:any:horse"], "prompts": ["smaller $actDoer.!petite&!horse$", "larger $actReceiver.horse$"] }] },
+                    { "id": "none", "prompts": [] }
+                ],
+                "isfuta": [
+                    { "id": "futa", "all": ["futa_with_female"], "prompts": ["futa with female"] },
+                    { "id": "non_futa", "none": ["futa_with_female"], "prompts": [] }
+                ],
+                "camera": [
+                    { "id": "pov", "none": ["bestiality"], "all": ["pov_possible"], "view": "pov", "prompts": ["pov"] },
+                    { "id": "random_angles", "view": "external", "prompts": ["{from side|from above}"] }
+                ]
+            }
+        },
+        {
+            "id": "fingering",
+            "actionTags": ["sex"],
+            "actions": [{ "id": "action", "all": ["fingering"], "roles": { "doer": "actDoer", "receiver": "actReceiver" } }],
+            "prompts": ["fingering", "$receiver.lower_front$"],
+            "scenePrompts": ["$doer.shortPrompt$ $doer.be$ fingering $receiver.shortPrompt$."],
+            "options": {
+                "sizeDifference": [
+                    { "id": "extremeSmallSub", "all": ["actReceiver:any:petite", "actDoer:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actReceiver.petite$", "larger $actDoer.horse&!petite$"] },
+                    { "id": "extremeSmallDom", "all": ["actDoer:any:petite", "actReceiver:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actDoer.petite$", "larger $actReceiver.horse&!petite$"] },
+                    { "id": "smallSub", "prompts": ["size difference"], "anyOf": [{ "all": ["actReceiver:any:petite&!horse", "actDoer:any:!petite"], "prompts": ["smaller $actReceiver.petite&!horse$", "larger $actDoer.!petite$"] }, { "all": ["actReceiver:any:!petite&!horse", "actDoer:any:horse"], "prompts": ["smaller $actReceiver.!petite&!horse$", "larger $actDoer.horse$"] }] },
+                    { "id": "smallDom", "prompts": ["size difference"], "anyOf": [{ "all": ["actDoer:any:petite&!horse", "actReceiver:any:!petite"], "prompts": ["smaller $actDoer.petite&!horse$", "larger $actReceiver.!petite$"] }, { "all": ["actDoer:any:!petite&!horse", "actReceiver:any:horse"], "prompts": ["smaller $actDoer.!petite&!horse$", "larger $actReceiver.horse$"] }] },
+                    { "id": "none", "prompts": [] }
+                ],
+                "isfuta": [
+                    { "id": "futa", "all": ["futa_with_female"], "prompts": ["futa with female"] },
+                    { "id": "non_futa", "none": ["futa_with_female"], "prompts": [] }
+                ],
+                "camera": [
+                    { "id": "pov", "none": ["bestiality"], "all": ["pov_possible"], "view": "pov", "prompts": ["pov"] },
+                    { "id": "random_angles", "view": "external", "prompts": ["{from side|from above}"] }
+                ]
+            }
+        },
+        {
+            "id": "breast_grab",
+            "actionTags": ["sex"],
+            "actions": [{ "id": "action", "all": ["breasts"], "roles": { "doer": "actDoer", "receiver": "actReceiver" } }],
+            "scenePrompts": ["$doer.shortPrompt$ $doer.be$ giving chest stimulation to $receiver.shortPrompt$."],
+            "prompts": ["{grabbing another's breast|grabbing from behind, groping|breast sucking}", "$receiver.torso_front$"],
+            "options": {
+                "sizeDifference": [
+                    { "id": "extremeSmallSub", "all": ["actReceiver:any:petite", "actDoer:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actReceiver.petite$", "larger $actDoer.horse&!petite$"] },
+                    { "id": "extremeSmallDom", "all": ["actDoer:any:petite", "actReceiver:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actDoer.petite$", "larger $actReceiver.horse&!petite$"] },
+                    { "id": "smallSub", "prompts": ["size difference"], "anyOf": [{ "all": ["actReceiver:any:petite&!horse", "actDoer:any:!petite"], "prompts": ["smaller $actReceiver.petite&!horse$", "larger $actDoer.!petite$"] }, { "all": ["actReceiver:any:!petite&!horse", "actDoer:any:horse"], "prompts": ["smaller $actReceiver.!petite&!horse$", "larger $actDoer.horse$"] }] },
+                    { "id": "smallDom", "prompts": ["size difference"], "anyOf": [{ "all": ["actDoer:any:petite&!horse", "actReceiver:any:!petite"], "prompts": ["smaller $actDoer.petite&!horse$", "larger $actReceiver.!petite$"] }, { "all": ["actDoer:any:!petite&!horse", "actReceiver:any:horse"], "prompts": ["smaller $actDoer.!petite&!horse$", "larger $actReceiver.horse$"] }] },
+                    { "id": "none", "prompts": [] }
+                ],
+                "isfuta": [
+                    { "id": "futa", "all": ["futa_with_female"], "prompts": ["futa with female"] },
+                    { "id": "non_futa", "none": ["futa_with_female"], "prompts": [] }
+                ],
+                "camera": [
+                    { "id": "pov", "none": ["bestiality"], "all": ["pov_possible"], "view": "pov", "prompts": ["pov"] },
+                    { "id": "random_angles", "view": "external", "prompts": ["{from side|from above|front view}"] }
+                ]
+            }
+        },
+        {
+            "id": "kiss",
+            "actionTags": ["sex"],
+            "actions": [{ "id": "action", "all": ["kiss"], "roles": { "doer": "actDoer", "receiver": "actReceiver" } }],
+            "scenePrompts": ["$doer.shortPrompt$ $doer.be$ kissing $receiver.shortPrompt$."],
+            "prompts": ["{kiss|french kiss, tongue}"],
+            "options": {
+                "sizeDifference": [
+                    { "id": "extremeSmallSub", "all": ["actReceiver:any:petite", "actDoer:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actReceiver.petite$", "larger $actDoer.horse&!petite$"] },
+                    { "id": "extremeSmallDom", "all": ["actDoer:any:petite", "actReceiver:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actDoer.petite$", "larger $actReceiver.horse&!petite$"] },
+                    { "id": "smallSub", "prompts": ["size difference"], "anyOf": [{ "all": ["actReceiver:any:petite&!horse", "actDoer:any:!petite"], "prompts": ["smaller $actReceiver.petite&!horse$", "larger $actDoer.!petite$"] }, { "all": ["actReceiver:any:!petite&!horse", "actDoer:any:horse"], "prompts": ["smaller $actReceiver.!petite&!horse$", "larger $actDoer.horse$"] }] },
+                    { "id": "smallDom", "prompts": ["size difference"], "anyOf": [{ "all": ["actDoer:any:petite&!horse", "actReceiver:any:!petite"], "prompts": ["smaller $actDoer.petite&!horse$", "larger $actReceiver.!petite$"] }, { "all": ["actDoer:any:!petite&!horse", "actReceiver:any:horse"], "prompts": ["smaller $actDoer.!petite&!horse$", "larger $actReceiver.horse$"] }] },
+                    { "id": "none", "prompts": [] }
+                ],
+                "isfuta": [
+                    { "id": "futa", "all": ["futa_with_female"], "prompts": ["futa with female"] },
+                    { "id": "non_futa", "none": ["futa_with_female"], "prompts": [] }
+                ],
+                "camera": [
+                    { "id": "pov", "none": ["bestiality"], "all": ["pov_possible"], "view": "pov", "prompts": ["pov"] },
+                    { "id": "random_angles", "view": "external", "prompts": ["{from side|from above}"] }
+                ]
+            }
+        },
+        {
+            "id": "masturbation_girl",
+            "actionTags": ["sex"],
+            "actions": [{ "id": "action", "all": ["masturbate", "doer:girl|doer:futa"], "anyOf": [{ "mainRole": "self" }, { "mainRole": "solo" }], "roles": { "doer": "actReceiver", "receiver": "actDoer" } }],
+            "scenePrompts": ["$actDoer.shortPrompt$ $actDoer.be$ masturbating.", "$actReceiver.shortPrompt$ $actReceiver.be$ masturbating."],
+            "prompts": ["{female masturbation, fingering, $doer.lower_front$|female masturbation, clitoral stimulation, $doer.lower_front$|masturbation, dildo, object insertion|masturbation, vibrator|anal object insertion, butt plug, $doer.lower_back$|grabbing own breast, breast masturbation, $doer.torso_front$}"],
+            "options": {
+                "sizeDifference": [
+                    { "id": "extremeSmallSub", "all": ["actReceiver:any:petite", "actDoer:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actReceiver.petite$", "larger $actDoer.horse&!petite$"] },
+                    { "id": "extremeSmallDom", "all": ["actDoer:any:petite", "actReceiver:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actDoer.petite$", "larger $actReceiver.horse&!petite$"] },
+                    { "id": "smallSub", "prompts": ["size difference"], "anyOf": [{ "all": ["actReceiver:any:petite&!horse", "actDoer:any:!petite"], "prompts": ["smaller $actReceiver.petite&!horse$", "larger $actDoer.!petite$"] }, { "all": ["actReceiver:any:!petite&!horse", "actDoer:any:horse"], "prompts": ["smaller $actReceiver.!petite&!horse$", "larger $actDoer.horse$"] }] },
+                    { "id": "smallDom", "prompts": ["size difference"], "anyOf": [{ "all": ["actDoer:any:petite&!horse", "actReceiver:any:!petite"], "prompts": ["smaller $actDoer.petite&!horse$", "larger $actReceiver.!petite$"] }, { "all": ["actDoer:any:!petite&!horse", "actReceiver:any:horse"], "prompts": ["smaller $actDoer.!petite&!horse$", "larger $actReceiver.horse$"] }] },
+                    { "id": "none", "prompts": [] }
+                ],
+                "camera": [
+                    { "id": "pov", "none": ["bestiality"], "all": ["pov_possible"], "view": "pov", "prompts": ["pov"] },
+                    { "id": "random_angles", "view": "external", "prompts": ["{from side|from above}"] }
+                ]
+            }
+        },
+        {
+            "id": "masturbation",
+            "actionTags": ["sex"],
+            "actions": [{ "id": "action", "all": ["masturbate"], "anyOf": [{ "mainRole": "self" }, { "mainRole": "solo" }], "roles": { "doer": "actReceiver", "receiver": "actDoer" } }],
+            "prompts": ["masturbation"],
+            "scenePrompts": ["$actDoer.shortPrompt$ $actDoer.be$ masturbating.", "$actReceiver.shortPrompt$ $actReceiver.be$ masturbating."],
+            "options": {
+                "sizeDifference": [
+                    { "id": "extremeSmallSub", "all": ["actReceiver:any:petite", "actDoer:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actReceiver.petite$", "larger $actDoer.horse&!petite$"] },
+                    { "id": "extremeSmallDom", "all": ["actDoer:any:petite", "actReceiver:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actDoer.petite$", "larger $actReceiver.horse&!petite$"] },
+                    { "id": "smallSub", "prompts": ["size difference"], "anyOf": [{ "all": ["actReceiver:any:petite&!horse", "actDoer:any:!petite"], "prompts": ["smaller $actReceiver.petite&!horse$", "larger $actDoer.!petite$"] }, { "all": ["actReceiver:any:!petite&!horse", "actDoer:any:horse"], "prompts": ["smaller $actReceiver.!petite&!horse$", "larger $actDoer.horse$"] }] },
+                    { "id": "smallDom", "prompts": ["size difference"], "anyOf": [{ "all": ["actDoer:any:petite&!horse", "actReceiver:any:!petite"], "prompts": ["smaller $actDoer.petite&!horse$", "larger $actReceiver.!petite$"] }, { "all": ["actDoer:any:!petite&!horse", "actReceiver:any:horse"], "prompts": ["smaller $actDoer.!petite&!horse$", "larger $actReceiver.horse$"] }] },
+                    { "id": "none", "prompts": [] }
+                ],
+                "camera": [
+                    { "id": "pov", "none": ["bestiality"], "all": ["pov_possible"], "view": "pov", "prompts": ["pov"] },
+                    { "id": "random_angles", "view": "external", "prompts": ["{from side|from above}"] }
+                ]
+            }
+        }
+    ]
 }

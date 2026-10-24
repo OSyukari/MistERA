@@ -104,6 +104,7 @@
         ],
     
       "promptProfile": {
+          "shortName": "himari",
           "prompts": [ "himari_\\(blue_archive\\)" ],
 
           "NEED FIXING: desired body prompt":"sitting in wheelchair, purple eyes, white iris, slender, pointy ears, earclip, mole",
@@ -118,7 +119,7 @@
             { "_comment": "replaces the default eyes_open: eye colour trait + white iris", "id": "eyes_open", "requireKeywords": [ "Eyes" ], "excludeActorTags": [ "unconscious" ], "traitGroups": [ "trait_EyeColor" ], "prompts": [ "white iris" ] },
             { "_comment": "halo while awake", "id": "halo", "requireBodyTags": [ "head" ], "excludeActorTags": [ "unconscious" ], "prompts": [ "black and white halo", "two-tone halo" ] },
             { "_comment": "mole, seen with the face", "id": "himari_mole", "requireBodyTags": [ "head" ], "requireKeywords": [ "Face" ], "prompts": [ "mole" ] },
-            { "_comment": "in her wheelchair while awake and able to move (not restrained / imprisoned / immobilized), not while doing something private (bath, toilet...); time stop keeps it", "id": "himari_wheelchair", "excludeActorTags": [ "unconscious" ], "charaReq": { "requireMovement_ignoreTimestop": true, "requireNoPrivacyAction": true }, "prompts": [ "sitting in wheelchair" ] }
+            { "_comment": "in her wheelchair while awake and able to move (not restrained / imprisoned / immobilized), not during sex or private actions (bath, toilet...); time stop keeps it", "id": "himari_wheelchair", "excludeActorTags": [ "unconscious", "sex" ], "charaReq": { "requireMovement_ignoreTimestop": true, "requireNoPrivacyAction": true }, "prompts": [ "sitting in wheelchair" ] }
           ]
       },
       "_comment_defaultHairstyle": "Long wavy white hair with blunt bangs (prompt feedback).",

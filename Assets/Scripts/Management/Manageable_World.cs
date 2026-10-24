@@ -53,6 +53,10 @@ public class Manageable_World : Manageable
     [JsonProperty] int transitRoomRefID = -1;
     [JsonIgnore] Room_Instance transitRoomCache = null;
 
+    /// <summary> every character's reputation in this world, with its sources (Reputation.cs / ReputationUtility) </summary>
+    [JsonProperty] WorldReputation reputation = null;
+    [JsonIgnore] public WorldReputation Reputation { get { if (reputation == null) reputation = new WorldReputation(); return reputation; } }
+
     [JsonIgnore]
     public override Room_Instance MainExit
     {

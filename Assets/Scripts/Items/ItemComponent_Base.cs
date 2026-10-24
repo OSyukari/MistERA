@@ -63,6 +63,8 @@ public abstract class ItemComponent_Base
     /// main actors fame). Most components do nothing.
     /// </summary>
     public virtual void OnSold(int count, long revenue) { }
+    /// <summary> OnSold with the selling faction (SalesManager calls this one) - defaults to OnSold(count, revenue) </summary>
+    public virtual void OnSold(int count, long revenue, Manageable seller) { OnSold(count, revenue); }
 
     /// <summary>
     /// Seller renown (SalesManager.Renown) earned when count copies of the owning item are sold. Most

@@ -375,8 +375,22 @@
                 "_comment_fame": "each copy sold gives every main actor famePerBuyer fame of fameType",
                 "fameType": "av",
                 "famePerBuyer": 1.0,
+                "reputationClassID": "rep_av_sales",
                 "_comment_rankTrackID": "price premium = highest pricePremium among main actors' levels on this rank track, fixed at save",
                 "rankTrackID": "rank_av_actress",
+
+                "_comment_charaReq": "editor-only creation gate: every participating actor must be the player, or a signed actress (erav_actress_status == 2 on her relationship toward the player). Actors without a live character are skipped.",
+                "charaReq_main": {
+                    "playerExempt": true,
+                    "requireKojoVariables_towardPlayer": [
+                        { "variableID": "erav_actress_status", "operand": "eq", "value": 2 }
+                    ],
+                    "kojoVariableFailKey": "ui_videoEdit_charaReq_notSignedActress"
+                },
+                "charaReq_supporting": {
+                    "playerExempt": true,
+                    "excludeActorBaseID": [ "ErAV_Kanon" ]
+                },
 
                 "minimumScoreRequirement": 30,
 
@@ -470,7 +484,18 @@
 
                 "fameType": "av",
                 "famePerBuyer": 0.3,
+                "reputationClassID": "rep_av_sales",
                 "rankTrackID": "rank_av_actress",
+
+                "_comment_charaReq": "editor-only creation gate: every participating actor must be the player, or a signed actress (erav_actress_status == 2 on her relationship toward the player). Actors without a live character are skipped.",
+                "charaReq_main": {
+                    "playerExempt": true,
+                    "excludeActorBaseID": [ "ErAV_Kanon" ]
+                },
+                "charaReq_supporting": {
+                    "playerExempt": true,
+                    "excludeActorBaseID": [ "ErAV_Kanon" ]
+                },
 
                 "minimumScoreRequirement": 10,
 
@@ -546,8 +571,18 @@
 
                 "fameType": "leaked",
                 "famePerBuyer": 1.0,
+                "reputationClassID": "rep_leaked_sales",
                 "rankTrackID": "rank_av_actress",
 
+                "_comment_charaReq": "editor-only creation gate: every participating actor must be the player, or a signed actress (erav_actress_status == 2 on her relationship toward the player). Actors without a live character are skipped.",
+                "charaReq_main": {
+                    "playerExempt": true,
+                    "excludeActorBaseID": [ "ErAV_Kanon" ]
+                },
+                "charaReq_supporting": {
+                    "playerExempt": true,
+                    "excludeActorBaseID": [ "ErAV_Kanon" ]
+                },
                 "minimumScoreRequirement": 10,
 
                 "referenceMinutes": 0,

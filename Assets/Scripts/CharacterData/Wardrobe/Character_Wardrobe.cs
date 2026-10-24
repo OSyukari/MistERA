@@ -136,8 +136,9 @@ public class Character_Wardrobe
     }
 
     /// <summary>
-    /// The character holds memberType in jobGiver (Manageable.AddToFaction, and lazily while resolving the scheduled
-    /// outfit): register its key and copy in the type's outfit (MemberType.outfit) once. Returns the key.
+    /// The character holds memberType in jobGiver (Manageable.AddToFaction, a booking acting under it, and lazily while
+    /// resolving the scheduled outfit): register its key and copy in the type's outfit (MemberType.outfit) once. A
+    /// recreation membership (MemberType.recreation) registers every one of its activities too. Returns the key.
     /// </summary>
     public string RegisterMemberType(I_IsJobGiver jobGiver, MemberType memberType)
     {
@@ -146,7 +147,29 @@ public class Character_Wardrobe
         RegisterKey(key);
         var source = memberType.OutfitKeyType?.outfit;
         if (source != null) SeedOutfit(key, source);
+        var activities = memberType.recreation?.activities;
+        if (activities != null) foreach (var a in activities) if (a != null) RegisterActivity(jobGiver.FactionID, a);
         return key;
+    }
+
+    /// <summary>
+    /// After loading (Character_Trainable.PostReloadUpdate): register the keys of every faction membership and booking the
+    /// character has now - saves from before the keys were tracked only knew the outfits' keys.
+    /// </summary>
+    public void RegisterCurrentKeys()
+    {
+        var f = owner?.FactionManager;
+        if (f == null) return;
+        foreach (var faction in f.Factions)
+        {
+            if (faction != null) RegisterMemberType(faction, faction.GetMemberType(owner));
+        }
+        foreach (var b in f.RecreationBookings)
+        {
+            if (b == null || b.Faction == null) continue;
+            if (b.MemberType != null) RegisterMemberType(b.Faction, b.MemberType);
+            RegisterActivity(b.Faction.FactionID, RecreationUtility.ResolveActivity(f, b));
+        }
     }
 
     /// <summary> the character books / visits activity at factionID: register its key and copy in its outfit once. Returns the key. </summary>
@@ -156,6 +179,56 @@ public class Character_Wardrobe
         RegisterKey(key);
         if (activity?.outfit != null) SeedOutfit(key, activity.outfit);
         return key;
+    }
+
+    /// <summary>
+    /// Every outfit slot to list (wardrobe UI), outfit or not: the reserved keys (always), then the known membertype /
+    /// activity keys still in effect (IsCurrentKey). Keys no longer in effect (a faction left, an old post) stay stored -
+    /// rejoining lists them again with their outfit; generic membertype keys and party keys are not listed.
+    /// </summary>
+    public List<WardrobeEntry> GetEntries()
+    {
+        var result = new List<WardrobeEntry>();
+        foreach (var key in OutfitUtility.ReservedKeys) result.Add(new WardrobeEntry(key, GetOutfit(key)));
+        foreach (var key in knownKeys)
+        {
+            var kind = OutfitUtility.ParseKey(key, out _, out _);
+            if (kind != OutfitKeyKind.MemberType && kind != OutfitKeyKind.Activity) continue;
+            if (!IsCurrentKey(key)) continue;
+            result.Add(new WardrobeEntry(key, GetOutfit(key)));
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// The key belongs to what the character has now: a reserved key; a membertype key of a faction the character holds
+    /// that type in (or a booking acts under); an activity key of a held recreation membership's activities, or of a
+    /// booking's activity. Generic and party keys: false.
+    /// </summary>
+    public bool IsCurrentKey(string key)
+    {
+        var kind = OutfitUtility.ParseKey(key, out var factionID, out _);
+        if (kind == OutfitKeyKind.Reserved) return true;
+        if (kind != OutfitKeyKind.MemberType && kind != OutfitKeyKind.Activity) return false;
+        var f = owner?.FactionManager;
+        if (f == null) return false;
+
+        foreach (var faction in f.Factions)
+        {
+            if (faction == null || faction.FactionID != factionID) continue;
+            var memberType = faction.GetMemberType(owner);
+            if (memberType == null) continue;
+            if (kind == OutfitKeyKind.MemberType && OutfitUtility.MemberTypeKey(factionID, memberType) == key) return true;
+            var activities = memberType.recreation?.activities;
+            if (kind == OutfitKeyKind.Activity && activities != null && activities.Exists(a => a != null && OutfitUtility.ActivityKey(factionID, a) == key)) return true;
+        }
+        foreach (var b in f.RecreationBookings)
+        {
+            if (b == null || b.Faction == null || b.Faction.FactionID != factionID) continue;
+            if (kind == OutfitKeyKind.MemberType && b.MemberType != null && OutfitUtility.MemberTypeKey(factionID, b.MemberType) == key) return true;
+            if (kind == OutfitKeyKind.Activity && OutfitUtility.ActivityKey(factionID, RecreationUtility.ResolveActivity(f, b)) == key) return true;
+        }
+        return false;
     }
 
     public OutfitSet GetOutfit(string key)

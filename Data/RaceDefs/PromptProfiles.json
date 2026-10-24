@@ -12,6 +12,7 @@
                     { "id": "hair_pattern", "requireKeywords": ["Hair"], "requireAnyActorTags": ["humanrace", "humanoid", "android"], "excludeTraits": ["trait_HairColorPattern_monotone"], "traitGroups": ["trait_HairColorPattern", "trait_HairColorSecondary"] },
                     { "id": "eyes_open",   "requireKeywords": ["Eyes"], "excludeActorTags": ["unconscious"], "traitGroups": ["trait_EyeColor"] },
                     { "id": "eyes_closed", "requireKeywords": ["Eyes"], "requireActorTags": ["unconscious"], "prompts": ["closed eyes"] },
+                    { "id": "sleeping",    "requireActorTags": ["sleeping"], "prompts": ["sleeping"] },
                     { "id": "body",        "traitGroups": ["trait_BodyType"] },
                     { "id": "skin",        "traitGroups": ["trait_SkinColor"] },
                     { "id": "timestop",    "requireActorTags": ["timestopped"], "prompts": [] }

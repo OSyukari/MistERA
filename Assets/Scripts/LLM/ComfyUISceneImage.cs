@@ -109,7 +109,7 @@ public static class ComfyUISceneImage
     /// section starting with its short tag, all joined with ||; $mainActors$ = the $actors$ entry of the main actor (the actor the scene was
     /// collected for, ActionSceneTags.mainActor), $secondaryActors$ = the other entries; $actors_complex$ = the entries with a large prompt
     /// (more than ComplexActorMinTags, || list), $actors_simple$ = every actor's full prompt up to that limit, otherwise its shortPrompt;
-    /// simple entries are joined with ", " in actor order and duplicates are kept;
+    /// simple entries are joined with ", " in actor order and duplicates are kept; the player is omitted in POV mode;
     /// $prompt$ = the flat prompt; $seed$ = the request seed; $wd14_threshold$ / $wd14_character_threshold$ = tagger thresholds;
     /// $exclude_tags$ = the config's excluded_tags joined with commas.
     /// </summary>
@@ -125,6 +125,7 @@ public static class ComfyUISceneImage
         {
             foreach (var actor in t.actors)
             {
+                if (p.pov && actor.isPlayer) continue;
                 // POV actors have no section, but Build still resolves their deferred details.
                 var full = p.actorPrompts[actor.character];
                 var own = full.Where(tag => !string.Equals(tag, actor.shortTag, StringComparison.OrdinalIgnoreCase)).ToList();

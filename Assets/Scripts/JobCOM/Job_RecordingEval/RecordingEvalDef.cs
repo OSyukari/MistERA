@@ -12,6 +12,39 @@ using Newtonsoft.Json;
  * 
  */
 
+/// <summary>
+/// CharaReq for recording evaluators: requireConscious / requireAction default to false (actors are checked while
+/// the recording is edited, not while they act). cost_EN / cost_ST are only checked, never spent - leave them 0.
+/// requireJobFaction / MemberTypeScope.JobFaction resolve against the studio owning the edit.
+/// </summary>
+public class RecordingCharaReq : CharaReq
+{
+    public RecordingCharaReq()
+    {
+        requireConscious = false;
+        requireAction = false;
+    }
+
+    /// <summary> The player character passes this whole requirement unconditionally. </summary>
+    public bool playerExempt = false;
+
+    /// <summary>
+    /// The actor's baseID must not be any of these. Checked by RecordingEvaluatorInstance, not CharaReqUtility.
+    /// </summary>
+    [JsonConverter(typeof(StringOrListConverter))]
+    public List<string> excludeActorBaseID = new List<string>();
+
+    /// <summary>
+    /// Every entry must pass on the actor's relationship toward the player (fails if they have none).
+    /// Checked by RecordingEvaluatorInstance, not CharaReqUtility.
+    /// </summary>
+    public List<RequireKojoVariable> requireKojoVariables_towardPlayer = new List<RequireKojoVariable>();
+    public List<RequireKojoVariable> requireKojoVariables_towardSelf = new List<RequireKojoVariable>();
+
+    /// <summary> Tooltip key ($name$) shown when requireKojoVariables_towardPlayer fails. </summary>
+    public string kojoVariableFailKey = "ui_videoEdit_charaReq_kojoVariable";
+}
+
 public class RecordingEvaluator
 {
     public string id = "";
@@ -71,6 +104,14 @@ public class RecordingEvaluator
         public float aboveMaxPenaltyPerMinute = 0f;
     }
 
+    /// <summary>
+    /// Optional, editor-only (canvas_videoEdit). Every main / supporting actor with a live character must pass,
+    /// or the recording is disqualified under this evaluator. Actors without a live character are skipped.
+    /// Gates creation only - saved recordings are never re-checked. null = no requirement.
+    /// </summary>
+    public RecordingCharaReq charaReq_main = null;
+    public RecordingCharaReq charaReq_supporting = null;
+
 
     /// <summary>
     /// Recording is considered below-standard/unsellable under this evaluator if totalScore
@@ -96,6 +137,11 @@ public class RecordingEvaluator
     /// </summary>
     public string fameType = "";
     public float famePerBuyer = 0f;
+    /// <summary>
+    /// Optional ReputationModClass the same fame is also recorded under, in the seller's world reputation (ItemComponent_Records.OnSold).
+    /// Empty = not recorded.
+    /// </summary>
+    public string reputationClassID = "";
 
     /// <summary>
     /// Rank track (Ranks index) whose level pricePremium sets a recording's price premium: at save, the

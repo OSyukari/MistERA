@@ -69,19 +69,24 @@ public class ItemComponent_Records : ItemComponent_Base
 
     /// <summary>
     /// Each copy sold gives every main actor famePerBuyer fame of the evaluator's fameType. Actors with no
-    /// live instance any more are skipped.
+    /// live instance any more are skipped. With a reputationClassID the same amount is also recorded in the seller's
+    /// world reputation (ReputationUtility - source "sold $count$ copies"); ranks still read Character_Trainable.Fame.
     /// </summary>
-    public override void OnSold(int count, long revenue)
+    public override void OnSold(int count, long revenue, Manageable seller)
     {
         if (Records == null || count <= 0 || string.IsNullOrEmpty(Records.evaluatorID)) return;
         var evaluator = scr_System_Serializer.current.MasterList.ErAV.GetRecordingEvaluatorByID(Records.evaluatorID);
         if (evaluator == null || string.IsNullOrEmpty(evaluator.fameType) || evaluator.famePerBuyer <= 0f) return;
 
         float amount = count * evaluator.famePerBuyer;
+        var worldID = string.IsNullOrEmpty(evaluator.reputationClassID) ? "" : ReputationUtility.ResolveWorldID(seller);
+        var args = new Dictionary<string, string>() { { "count", count.ToString() } };
         foreach (var baseID in Records.MainActorIDs)
         {
             var actor = scr_System_CampaignManager.current.HasInstanceCharaWithBaseID(baseID);
-            if (actor != null) actor.Fame.AddFame(amount, evaluator.fameType);
+            if (actor == null) continue;
+            actor.Fame.AddFame(amount, evaluator.fameType);
+            if (worldID != "") ReputationUtility.Mod(actor, evaluator.reputationClassID, amount, worldID, args);
         }
     }
 

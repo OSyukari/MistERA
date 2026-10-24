@@ -168,12 +168,36 @@ public class Manageable_Party : I_IsJobGiver
         this._recurringCooldown = 0;
         this._recurringTicked = false;
     }
+    /// <summary>
+    /// The expedition definition whose schedule (Expedition.followSchedule) this non-player (MIA) party keeps; null = a
+    /// player party, or no schedule (members stay on the job until exhausted).
+    /// </summary>
+    [JsonIgnore] public Expedition ScheduleExpedition
+    {
+        get
+        {
+            if (this.isPlayerFaction) return null;
+            var def = this.Job?.Expedition?.Base;
+            return def != null && def.followSchedule ? def : null;
+        }
+    }
+
     [JsonIgnore]
-    public bool isMealHour { get { return this.OwnerFaction.isMealHour; } }
+    public bool isMealHour { get { return isMealHourAt(scr_System_Time.current.getCurrentTime().Hour); } }
 
     public bool isMealHourAt(int hour)
     {
+        var def = ScheduleExpedition;
+        if (def != null && def.HasMealHours) return def.mealHours.Contains(hour);
         return this.OwnerFaction.isMealHourAt(hour);
+    }
+
+    /// <summary> Active hour of the party's schedule: the scheduled expedition's ActiveHours when set, else the owner faction. </summary>
+    public bool IsScheduleActiveHour(int hour)
+    {
+        var def = ScheduleExpedition;
+        if (def != null && def.HasActiveHours) return def.ActiveHours.Contains(hour);
+        return this.OwnerFaction.IsActiveHour(hour);
     }
     public bool AllowPassNight = true;
     public int RecurringCooldown = 0;
@@ -217,6 +241,9 @@ public class Manageable_Party : I_IsJobGiver
     {
         var home = this.OwnerFaction;
         int wakeHour = (home != null && home.HasDayNight) ? home.DayStartHour : 6;
+        // scheduled MIA expedition with its own day: wake at the start of its ActiveHours
+        var def = ScheduleExpedition;
+        if (def != null && def.ActiveStartHour() >= 0) wakeHour = def.ActiveStartHour();
 
         int maxSleepHours = 0;
         foreach (var c in ManagedChara) maxSleepHours = Math.Max(maxSleepHours, c.Stats.SleepHours);
@@ -355,6 +382,8 @@ public class Manageable_Party : I_IsJobGiver
         this._recurringTicked = true;
         Job.RemainingMinutes = Job.Expedition.Base.DurationHour > 0 ? Job.Expedition.Base.DurationHour * 60 : -1;
         Job.status = Job_Expedition.ExpeditionStatus.active;
+        // MIA location extras (Expedition.campFurniture / provisions), removed again when the expedition is replaced or cleared
+        Job.ApplyExpeditionAdditions();
         if (runBeginEvent) ExpeditionUtility.StartBeginEvent(Job);
     }
 
@@ -667,13 +696,39 @@ public class Manageable_Party : I_IsJobGiver
         if (memberOutfits.Remove(c.RefID)) c.Wardrobe?.NotifyOutfitEdited(OutfitKey);
     }
 
+    /// <summary> c's party outfit before the last SetOutfitKeepPrevious (event ApplyPartyOutfit); a null value = she had none </summary>
+    [JsonProperty] protected Dictionary<int, OutfitSet> previousMemberOutfits = new Dictionary<int, OutfitSet>();
+
+    /// <summary> SetOutfit, keeping the outfit it replaces (one level) for RevertOutfit </summary>
+    public void SetOutfitKeepPrevious(Character_Trainable c, OutfitSet outfit)
+    {
+        if (c == null || outfit == null) return;
+        if (previousMemberOutfits == null) previousMemberOutfits = new Dictionary<int, OutfitSet>();
+        var current = GetOutfit(c);
+        previousMemberOutfits[c.RefID] = current?.Clone();
+        SetOutfit(c, outfit);
+    }
+
+    /// <summary> puts back the outfit kept by SetOutfitKeepPrevious (none kept = she had no party outfit). False if nothing was kept. </summary>
+    public bool RevertOutfit(Character_Trainable c)
+    {
+        if (c == null || previousMemberOutfits == null || !previousMemberOutfits.TryGetValue(c.RefID, out var previous)) return false;
+        previousMemberOutfits.Remove(c.RefID);
+        if (previous != null) SetOutfit(c, previous);
+        else RemoveOutfit(c);
+        return true;
+    }
+
     [JsonProperty] protected bool _remove_dirty = false;
     protected bool DeletingBlocker = false;
+    /// <summary> CleanupDetection removed this party (room and inventory are gone) </summary>
+    [JsonIgnore] public bool isDeleted { get { return DeletingBlocker; } }
     public void RemoveFromFaction(Character_Trainable c)
     {
         if (c == null) return;
         charaGuestStatus.Remove(c.RefID);
         memberOutfits?.Remove(c.RefID);
+        previousMemberOutfits?.Remove(c.RefID);
 
         // c may still think this is their active party (e.g. UI-driven roster removal
         // does not route through Character_Factions.RemoveFromParty), which would let
@@ -691,9 +746,61 @@ public class Manageable_Party : I_IsJobGiver
         CleanupDetection();
     }
 
+    bool returningHiddenPoolWorkers = false;
+
+    [JsonProperty] List<int> retiringHiddenCast = new List<int>();
+    [JsonProperty] bool hiddenCastRetirementPending = false;
+    [JsonIgnore] public bool HasRetiringHiddenCast { get { return hiddenCastRetirementPending || retiringHiddenCast.Count > 0; } }
+
+    internal List<PartyMemberSnapshot> SnapshotMembers()
+    {
+        return charaGuestStatus.Select(member => new PartyMemberSnapshot { charaRef = member.Key, memberTypeID = member.Value }).ToList();
+    }
+
+    internal void MarkPreviousHiddenCastForRetirement()
+    {
+        // An active intro may not have retained its borrowed workers yet. The barrier must survive that empty roster.
+        hiddenCastRetirementPending = true;
+        foreach (var c in ManagedChara)
+            if (c != null && !string.IsNullOrEmpty(c.fallbackPoolID) && GetMemberType(c)?.isHidden == true
+                && !retiringHiddenCast.Contains(c.RefID)) retiringHiddenCast.Add(c.RefID);
+    }
+
+    // Pending packages can scope hidden members only when they start. Keep the old roster intact until those
+    // scenes finish, and delay the replacement intro rather than letting two stays' casts mix in that scope.
+    internal bool HasSceneReferences()
+    {
+        var campaign = scr_System_CampaignManager.current;
+        if (campaign == null) return true;
+        var parties = campaign.Factions.SelectMany(f => f.SubFactions).Concat(new[] { this }).Distinct();
+        foreach (var party in parties)
+            foreach (var entries in party.Job.ExpeditionResults.Values)
+                foreach (var entry in entries)
+                    if ((entry.unresolved != null && !entry.unresolved.isResolved && (party == this || ExpeditionUtility.ReferencesParty(entry.unresolved, this, retiringHiddenCast)))
+                        || (entry.pendingSilent != null && (party == this || ExpeditionUtility.ReferencesParty(entry.pendingSilent, this, retiringHiddenCast)))) return true;
+        var events = scr_UpdateHandler.current?.EventHandler?.activeEvents;
+        if (events != null && events.Any(ev => ExpeditionUtility.ReferencesParty(ev, this, retiringHiddenCast))) return true;
+        return ExpeditionSilentRunner.IsUsingParty(this);
+    }
+
+    internal bool TryRetirePreviousHiddenCast()
+    {
+        if (!HasRetiringHiddenCast) return true;
+        if (HasSceneReferences()) return false;
+        var workers = retiringHiddenCast.Select(id => scr_System_CampaignManager.current.FindInstanceByID(id))
+            .Where(c => c != null && GetMemberType(c)?.isHidden == true && !string.IsNullOrEmpty(c.fallbackPoolID)).ToList();
+        if (workers.Any(c => c.CurrentJob != null || (c.InteractionJob != null && c.InteractionJob.isActive))) return false;
+        ReturnHiddenPoolWorkers(workers);
+        retiringHiddenCast.Clear();
+        hiddenCastRetirementPending = false;
+        return true;
+    }
+
     public bool CleanupDetection()
     {
         if (isPlayerFaction) return false;
+        if (returningHiddenPoolWorkers) return false;
+        ReturnHiddenPoolWorkers();
 
         bool delete = true;
         foreach (var i in ManagedRefs)
@@ -707,6 +814,7 @@ public class Manageable_Party : I_IsJobGiver
             }
         }
 
+        if (delete && HasSceneReferences()) return false;
         if (delete)
         {
             DeletingBlocker = true;
@@ -725,7 +833,52 @@ public class Manageable_Party : I_IsJobGiver
             return true;
         }
         else return false;
-        
+
+    }
+
+    /// <summary>
+    /// A hidden pooled worker (an intro's cast - event AddToPartyHidden) is no temporary actor, so it would keep the party
+    /// alive once the captives are gone (and a temporary one would be deleted with it). When everyone left is such a
+    /// worker or a removable temporary actor, the workers leave the party - and the hidden membership of the owner faction
+    /// the party gave them - and go back to their pool (FallbackWorkerManager.ReleaseToPool). Called by CleanupDetection.
+    /// </summary>
+    void ReturnHiddenPoolWorkers()
+    {
+        var pooled = new List<Character_Trainable>();
+        foreach (var i in ManagedRefs)
+        {
+            var cc = scr_System_CampaignManager.current.FindInstanceByID(i);
+            if (cc == null) continue;
+            if (!string.IsNullOrEmpty(cc.fallbackPoolID) && GetMemberType(cc)?.isHidden == true)
+            {
+                pooled.Add(cc);
+                continue;
+            }
+            // someone real is still here (same test as the deletion below)
+            if (!cc.isTemporaryActor || cc.FactionManager.HasPlayerFaction || cc.CurrentJob != null) return;
+        }
+        if (pooled.Count == 0) return;
+        if (HasSceneReferences()) return;
+        if (pooled.Any(c => c.CurrentJob != null || (c.InteractionJob != null && c.InteractionJob.isActive))) return;
+
+        ReturnHiddenPoolWorkers(pooled);
+    }
+
+    void ReturnHiddenPoolWorkers(List<Character_Trainable> pooled)
+    {
+        returningHiddenPoolWorkers = true;
+        try
+        {
+            foreach (var w in pooled)
+            {
+                w.FactionManager.RemoveFromParty(this);
+                RemoveFromFaction(w);
+                if (OwnerFaction != null && OwnerFaction.isManagedChara(w.RefID) && OwnerFaction.GetMemberType(w)?.isHidden == true)
+                    OwnerFaction.RemoveFromFaction(w);
+            }
+        }
+        finally { returningHiddenPoolWorkers = false; }
+        foreach (var w in pooled) FallbackWorkerManager.ReleaseToPool(w);
     }
 
 
@@ -1053,8 +1206,8 @@ public class Manageable_Party : I_IsJobGiver
                         if (this.FactionOwnerRoot.isManagedChara(c)) victimNames.Add(scr_System_CampaignManager.current.FindInstanceByID(c).CallName);
                     }
                     // send rescue event
-                    var r1 = this.Job.AddResult(rescueText.Replace("$victims$",String.Join(",", victimNames)), new List<string>(), relevantActors, false);
-                    var r2 = k.Job.AddResult(LocalizeDictionary.QueryThenParse("ui_management_expedition_rescueReceiverText"), new List<string>(), relevantActors, false);
+                    var r1 = this.Job.AddResult(rescueText.Replace("$victims$",String.Join(",", victimNames)), new List<string>(), relevantActors);
+                    var r2 = k.Job.AddResult(LocalizeDictionary.QueryThenParse("ui_management_expedition_rescueReceiverText"), new List<string>(), relevantActors);
 
                     var package = new SerializableEventPackage();
                     package.eventID = kexp.Base.rescueEventID;
@@ -1067,6 +1220,8 @@ public class Manageable_Party : I_IsJobGiver
                     List<int> victims = new List<int>();
                     foreach (var i in relevantActors)
                     {
+                        var actor = scr_System_CampaignManager.current.FindInstanceByID(i);
+                        if (actor == null || GetMemberType(actor)?.isHidden == true) continue;
                         party.Add(i);
                         switch (GetTeamComp(i))
                         {
@@ -1085,7 +1240,8 @@ public class Manageable_Party : I_IsJobGiver
 
                     foreach(var i in scr_System_CampaignManager.current.CharaRefsInRoom(k.Room.RefID))
                     {
-                        if (this.FactionOwnerRoot.isMember(i)) victims.Add(i);
+                        var victim = scr_System_CampaignManager.current.FindInstanceByID(i);
+                        if (victim != null && k.GetMemberType(victim)?.isHidden != true && this.FactionOwnerRoot.isMember(i)) victims.Add(i);
                     }
 
                     package.Targets.Add("victims", victims);

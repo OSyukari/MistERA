@@ -167,6 +167,35 @@ public class FactionInventory : Inventory
     }
 
     /// <summary>
+    /// Takes up to count of baseID out of the actual stock and destroys it - also on a non-player inventory, where
+    /// RemoveItem only hands out copies. For undoing what was put in (Job_Expedition.UndoExpeditionAdditions). Returns
+    /// how many were removed (less than count when some are gone, e.g. looted or eaten).
+    /// </summary>
+    public int RemoveOwnStock(string baseID, int count)
+    {
+        int removed = 0;
+        var lists = Contents.FindAll(x => x != null && x.BaseID == baseID);
+        for (int i = lists.Count - 1; i >= 0 && removed < count; i--)
+        {
+            var item = lists[i];
+            int take = Math.Min(item.Count, count - removed);
+            if (take <= 0) continue;
+            if (item.Count <= take)
+            {
+                this.Remove(item);
+                scr_System_CampaignManager.current.Unregister(item);
+            }
+            else
+            {
+                foreach (string tag in item.Tags) if (tag != "" && tracker.ContainsKey(tag)) tracker[tag] -= take;
+                item.ModCount(-take);
+            }
+            removed += take;
+        }
+        return removed;
+    }
+
+    /// <summary>
     /// Same removal logic as RemoveItem(baseID, count), but scoped by an arbitrary predicate instead of
     /// BaseID equality - needed when a caller's grouping is finer than BaseID (e.g. SalesManager.ItemMatch,
     /// where two listings can share a BaseID but have different RetailIDs).

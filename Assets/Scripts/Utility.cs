@@ -495,6 +495,14 @@ public static class UtilityEX
                     if (!collect.Contains(c.FirstName)) collect.Add(c.FirstName);
                 }
                 return true;
+            case "refID":
+                // Mainly for Set/ModSelfKojoVariable's string-passed value argument ("$victim.refID$") - storing a
+                // character reference in an int kojo variable, read back by RefID_FromSelfKojoVariable/appendAsCharaName.
+                if (c != null)
+                {
+                    if (!collect.Contains(c.RefID.ToString())) collect.Add(c.RefID.ToString());
+                }
+                return true;
             case "room_name":
                 var room = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
                 if (room != null)
@@ -1383,6 +1391,7 @@ public static class UtilityEX
                     string evID = parsed[2];
                     string evLbl = parsed.Count() >= 4 ? parsed[3] : "";
                     scr_UpdateHandler.current.EventHandler.StartEvent(eventTarget, evID, evLbl, true);
+                    parsedSuccessful = true;
                 }
                 else
                 {
@@ -1419,6 +1428,7 @@ public static class UtilityEX
                             scr_System_CampaignManager.current.Unregister(i);
                             Debug.LogError($"ingestItem: [{chara.FirstName}] fail to ingest [{i.DisplayName}]");
                         }
+                        else parsedSuccessful = true;
                     }
                     else
                     {
@@ -1435,7 +1445,11 @@ public static class UtilityEX
                 {
                     var selfChara = scr_System_CampaignManager.current.FindInstanceByID(kojoRelSelf);
                     var targetRel = selfChara == null ? null : selfChara.Relationships.FindRelationshipWith(kojoRelTarget);
-                    if (targetRel != null) selfChara.Relationships.ModKojoVariable(isdaily, targetRel, parsed[3], value);
+                    if (targetRel != null)
+                    {
+                        selfChara.Relationships.ModKojoVariable(isdaily, targetRel, parsed[3], value);
+                        parsedSuccessful = true;
+                    }
                 }
                 else
                 {
@@ -1447,6 +1461,7 @@ public static class UtilityEX
                 {
                     var advanceHour = (targetHour - scr_System_Time.current.getCurrentTime().Hour) % 24;
                     scr_System_Time.current.UpdateTime(0, advanceHour, 0);
+                    parsedSuccessful = true;
                 }
                 else
                 {
@@ -1457,7 +1472,7 @@ public static class UtilityEX
                 if (parsed.Count() >= 2 && int.TryParse(parsed[1], out int advanceDays))
                 {
                     scr_UpdateHandler.current.ResetLogsFirstLine();
-                    scr_System_Time.current.UpdateTime(advanceDays, 0, 0);
+                    scr_System_Time.current.DebugAdvanceDays(advanceDays);
                     scr_System_CampaignManager.current.NotifyUpdate();
                     parsedSuccessful = true;
                 }
@@ -1492,6 +1507,7 @@ public static class UtilityEX
                             //{
                                 var itemInstance = WorldManager.Instantiate(parsed[2], "", addItemCount);
                                 chara.Inventory.AddItem(itemInstance);
+                            parsedSuccessful = true;
                             //}
                         }
                     }
@@ -1510,6 +1526,7 @@ public static class UtilityEX
                             //{
                                 var itemInstance = WorldManager.Instantiate(parsed[2], "", addItemCount);
                                 chara.Inventory.AddItem(itemInstance);
+                            parsedSuccessful = true;
                             //}
                         }
                     }
@@ -1517,6 +1534,7 @@ public static class UtilityEX
                 break;
             case "furnitureUnpack":
                 scr_System_CampaignManager.current.QueueFurniturePacking(scr_System_CampaignManager.current.GetCharaRoomInstance(scr_System_CampaignManager.current.Player.RefID));
+                parsedSuccessful = true;
                 break;
             case "showQuestStages":
                 if (true)
@@ -1552,13 +1570,14 @@ public static class UtilityEX
 
                     Debug.Log($"showQuestStages result {results.Count}:\n{String.Join("\n", results)}");
 
-                    //parsedSuccessful = true;
+                    parsedSuccessful = true;
                 }
                 break;
             case "ascii":
                 if (true)
                 {
                     scr_System_CentralControl.current.DisplaySetting.asciiRenderEnabled.Toggle();
+                    parsedSuccessful = true;
                 }
                 break;
             case "debug_refuse_salary_payment":
@@ -1669,12 +1688,13 @@ public static class UtilityEX
                 {
                     var job = scr_System_CampaignManager.current.FindJobInstanceByID(targetjobref);
                     scr_System_CentralControl.current.CurrentInspectJob = job;
+                    parsedSuccessful = true;
                 }
                 break;
             case "resetAllActorJobs":
 
                 scr_System_CampaignManager.current.ResetAllActorJobs();
-
+                parsedSuccessful = true;
                 break;
             case "spawnChara":
                 if (parsed.Count() >= 2)
@@ -1741,6 +1761,7 @@ public static class UtilityEX
                         scr_UpdateHandler.current.ResetLogsFirstLine();
 
                         target.TickMenstruation(adv_year, adv_month, adv_day, true, true);
+                        parsedSuccessful = true;
                     }
                 }
                 break;
@@ -1759,6 +1780,7 @@ public static class UtilityEX
                         break;
                     }
                     target.TickWomb(true);
+                    parsedSuccessful = true;
                 }
                 break;
             case "wombAddSpermByRef":

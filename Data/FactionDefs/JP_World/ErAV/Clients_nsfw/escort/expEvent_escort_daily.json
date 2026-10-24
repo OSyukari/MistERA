@@ -1,0 +1,2143 @@
+{
+    "_doc": "Shared escort encounters: exploration shopping/sightseeing/meal/partyGames/nearMiss; nightVisit is featureNightEventIDs off-time content (ActiveHours complement). Night visit requires retained hidden cast at result eligibility, restores that cast once, chooses one singleton and keeps it in the party. Wake route explicitly DisruptSleep; sleep route does not. Action branches gate actual success, failure and success share one cleanup. Existing narrative/localization preserved.",
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_erav_escort_shopping",
+                "eventString_Ongoing": "exp_event_erav_escort_shopping_ongoing",
+                "DurationMinutes": 60,
+                "baseWeight": 10,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false,
+                    "charaReq_Select": {
+                        "cost_EN": 4,
+                        "cost_ST": 4
+                    }
+                },
+                "timeWeightMods": [
+                    {
+                        "hours": [20, 21, 22, 23],
+                        "weightMult": 0
+                    }
+                ],
+                "possibleResults": [
+                    {
+                        "baseWeight": 3,
+                        "resultText": "exp_event_erav_escort_shopping_result_outfitGood",
+                        "results_factions": [
+                            {
+                                "entry_results": {
+                                    "ExpeditionProgressMod": 30
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_erav_escort_shopping_result_outfitBad",
+                        "results_characters": [
+                            {
+                                "entry_results": {
+                                    "type": "statMod_ST",
+                                    "value": "-6"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "baseWeight": 3,
+                        "resultText": "exp_event_erav_escort_shopping_result_giftGood",
+                        "results_factions": [
+                            {
+                                "entry_results": {
+                                    "ExpeditionProgressMod": 30
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_erav_escort_shopping_result_giftBad",
+                        "results_characters": [
+                            {
+                                "entry_results": {
+                                    "type": "statMod_ST",
+                                    "value": "-6"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_erav_escort_shopping_result_model",
+                        "results_characters": [
+                            {
+                                "entry_results": {
+                                    "type": "statMod_ST",
+                                    "value": "-8"
+                                }
+                            },
+                            {
+                                "entry_results": {
+                                    "type": "statMod_EN",
+                                    "value": "-4"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_erav_escort_shopping_result_rest",
+                        "results_characters": [
+                            {
+                                "entry_results": {
+                                    "type": "statMod_EN",
+                                    "value": "10"
+                                }
+                            },
+                            {
+                                "entry_results": {
+                                    "type": "statMod_ST",
+                                    "value": "10"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_erav_escort_shopping_result_groped",
+                        "teamRequirement": { "minTeamCount": 1, "maxTeamCount": 1, "allowPrisoner": true, "requireCombat": false },
+                        "eventID": "event_erav_escort_daily_action",
+                        "eventMode": "auto",
+                        "eventAppendStringKey": "escort_daily_outcome",
+                        "eventAppendString": "exp_event_erav_escort_shopping_result_groped",
+                        "results_characters": [
+                            {
+                                "entry_results": {
+                                    "type": "statMod_ST",
+                                    "value": "-6"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_erav_escort_shopping_result_fittingService",
+                        "teamRequirement": { "minTeamCount": 1, "maxTeamCount": 1, "allowPrisoner": true, "requireCombat": false },
+                        "eventID": "event_erav_escort_daily_action",
+                        "eventMode": "auto",
+                        "eventAppendStringKey": "escort_daily_outcome",
+                        "eventAppendString": "exp_event_erav_escort_shopping_result_fittingService",
+                        "results_characters": [
+                            {
+                                "entry_results": {
+                                    "type": "statMod_ST",
+                                    "value": "-4"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_erav_escort_shopping_result_buttTouch",
+                        "teamRequirement": { "minTeamCount": 1, "maxTeamCount": 1, "allowPrisoner": true, "requireCombat": false },
+                        "eventID": "event_erav_escort_daily_action",
+                        "eventMode": "auto",
+                        "eventAppendStringKey": "escort_daily_outcome",
+                        "eventAppendString": "exp_event_erav_escort_shopping_result_buttTouch"
+                    },
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_erav_escort_shopping_result_cosplay",
+                        "results_characters": [
+                            {
+                                "entry_results": {
+                                    "type": "statMod_EN",
+                                    "value": "-4"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "eventID": "exp_event_erav_escort_sightseeing",
+                "eventString_Ongoing": "exp_event_erav_escort_sightseeing_ongoing",
+                "DurationMinutes": 60,
+                "baseWeight": 10,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false,
+                    "charaReq_Select": {
+                        "cost_EN": 4,
+                        "cost_ST": 6
+                    }
+                },
+                "timeWeightMods": [
+                    {
+                        "hours": [20, 21, 22, 23],
+                        "weightMult": 0
+                    }
+                ],
+                "possibleResults": [
+                    {
+                        "baseWeight": 3,
+                        "resultText": "exp_event_erav_escort_sightseeing_result_guideGood",
+                        "results_factions": [
+                            {
+                                "entry_results": {
+                                    "ExpeditionProgressMod": 30
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_erav_escort_sightseeing_result_lost",
+                        "results_characters": [
+                            {
+                                "entry_results": {
+                                    "type": "statMod_ST",
+                                    "value": "-8"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "baseWeight": 3,
+                        "resultText": "exp_event_erav_escort_sightseeing_result_photoGood",
+                        "results_factions": [
+                            {
+                                "entry_results": {
+                                    "ExpeditionProgressMod": 20
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_erav_escort_sightseeing_result_photoBad",
+                        "results_characters": [
+                            {
+                                "entry_results": {
+                                    "type": "statMod_ST",
+                                    "value": "-4"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_escort_sightseeing_result_posted",
+                        "teamRequirement": { "minTeamCount": 1, "maxTeamCount": 1, "allowPrisoner": true, "requireCombat": false },
+                        "eventID": "event_erav_escort_daily_action",
+                        "eventMode": "auto",
+                        "eventAppendStringKey": "escort_daily_outcome",
+                        "eventAppendString": "exp_event_erav_escort_sightseeing_result_posted",
+                        "results_characters": [
+                            {
+                                "entry_results": {
+                                    "reputation": {
+                                        "classID": "rep_leaked_online",
+                                        "amount": 2,
+                                        "args": {
+                                            "activity": "erav_escort_activity_sightseeing"
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_escort_sightseeing_result_gropeLeak",
+                        "teamRequirement": { "minTeamCount": 1, "maxTeamCount": 1, "allowPrisoner": true, "requireCombat": false },
+                        "eventID": "event_erav_escort_daily_action",
+                        "eventMode": "auto",
+                        "eventAppendStringKey": "escort_daily_outcome",
+                        "eventAppendString": "exp_event_erav_escort_sightseeing_result_gropeLeak",
+                        "results_characters": [
+                            {
+                                "entry_results": {
+                                    "type": "statMod_ST",
+                                    "value": "-4"
+                                }
+                            },
+                            {
+                                "entry_results": {
+                                    "reputation": {
+                                        "classID": "rep_leaked_online",
+                                        "amount": 2,
+                                        "args": {
+                                            "activity": "erav_escort_activity_sightseeing"
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_erav_escort_sightseeing_result_luggage",
+                        "results_characters": [
+                            {
+                                "entry_results": {
+                                    "type": "statMod_EN",
+                                    "value": "10"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_escort_sightseeing_result_gropedOnly",
+                        "teamRequirement": { "minTeamCount": 1, "maxTeamCount": 1, "allowPrisoner": true, "requireCombat": false },
+                        "eventID": "event_erav_escort_daily_action",
+                        "eventMode": "auto",
+                        "eventAppendStringKey": "escort_daily_outcome",
+                        "eventAppendString": "exp_event_erav_escort_sightseeing_result_gropedOnly"
+                    },
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_escort_sightseeing_result_inFrame",
+                        "teamRequirement": { "minTeamCount": 1, "maxTeamCount": 1, "allowPrisoner": true, "requireCombat": false },
+                        "eventID": "event_erav_escort_daily_action",
+                        "eventMode": "auto",
+                        "eventAppendStringKey": "escort_daily_outcome",
+                        "eventAppendString": "exp_event_erav_escort_sightseeing_result_inFrame"
+                    }
+                ]
+            },
+            {
+                "eventID": "exp_event_erav_escort_meal",
+                "eventString_Ongoing": "exp_event_erav_escort_meal_ongoing",
+                "DurationMinutes": 60,
+                "baseWeight": 10,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "timeWeightMods": [
+                    {
+                        "hours": [9, 10, 15, 16, 23],
+                        "weightMult": 0
+                    }
+                ],
+                "possibleResults": [
+                    {
+                        "baseWeight": 30,
+                        "resultText": "exp_event_erav_escort_meal_result_serve",
+                        "results_factions": [
+                            {
+                                "entry_results": {
+                                    "ExpeditionProgressMod": 20
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "baseWeight": 20,
+                        "resultText": "exp_event_erav_escort_meal_result_menuBad",
+                        "results_characters": [
+                            {
+                                "entry_results": {
+                                    "type": "statMod_ST",
+                                    "value": "-4"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "baseWeight": 30,
+                        "resultText": "exp_event_erav_escort_meal_result_rest",
+                        "results_characters": [
+                            {
+                                "entry_results": {
+                                    "type": "statMod_EN",
+                                    "value": "12"
+                                }
+                            },
+                            {
+                                "entry_results": {
+                                    "type": "statMod_ST",
+                                    "value": "8"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "baseWeight": 20,
+                        "resultText": "exp_event_erav_escort_meal_result_late",
+                        "timeWeightMods": [
+                            {
+                                "hours": [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+                                "weightMult": 0
+                            }
+                        ],
+                        "results_characters": [
+                            {
+                                "entry_results": {
+                                    "type": "statMod_EN",
+                                    "value": "-6"
+                                }
+                            },
+                            {
+                                "entry_results": {
+                                    "type": "statMod_ST",
+                                    "value": "-4"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "baseWeight": 20,
+                        "resultText": "exp_event_erav_escort_meal_result_forcedDrink",
+                        "teamRequirement": { "minTeamCount": 1, "maxTeamCount": 1, "allowPrisoner": true, "requireCombat": false },
+                        "eventID": "event_erav_escort_daily_action",
+                        "eventMode": "auto",
+                        "eventAppendStringKey": "escort_daily_outcome",
+                        "eventAppendString": "exp_event_erav_escort_meal_result_forcedDrink",
+                        "timeWeightMods": [{ "hours": [9, 10, 11, 15, 16], "weightMult": 0 }],
+                        "results_characters": [
+                            {
+                                "entry_results": {
+                                    "type": "statMod_EN",
+                                    "value": "-6"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_erav_escort_meal_result_goodPour",
+                        "teamRequirement": { "minTeamCount": 1, "maxTeamCount": 1, "allowPrisoner": true, "requireCombat": false },
+                        "eventID": "event_erav_escort_daily_action",
+                        "eventMode": "auto",
+                        "eventAppendStringKey": "escort_daily_outcome",
+                        "eventAppendString": "exp_event_erav_escort_meal_result_goodPour",
+                        "timeWeightMods": [{ "hours": [9, 10, 11, 15, 16], "weightMult": 0 }],
+                        "results_factions": [
+                            {
+                                "entry_results": {
+                                    "ExpeditionProgressMod": 20
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "baseWeight": 20,
+                        "resultText": "exp_event_erav_escort_meal_result_underTable",
+                        "teamRequirement": { "minTeamCount": 1, "maxTeamCount": 1, "allowPrisoner": true, "requireCombat": false },
+                        "eventID": "event_erav_escort_daily_action",
+                        "eventMode": "auto",
+                        "eventAppendStringKey": "escort_daily_outcome",
+                        "eventAppendString": "exp_event_erav_escort_meal_result_underTable",
+                        "results_characters": [
+                            {
+                                "entry_results": {
+                                    "type": "statMod_ST",
+                                    "value": "-4"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "baseWeight": 10,
+                        "resultText": "exp_event_erav_escort_meal_result_nyotai",
+                        "teamRequirement": { "minTeamCount": 1, "maxTeamCount": 1, "allowPrisoner": true, "requireCombat": false },
+                        "eventID": "event_erav_escort_daily_action",
+                        "eventMode": "auto",
+                        "eventAppendStringKey": "escort_daily_outcome",
+                        "eventAppendString": "exp_event_erav_escort_meal_result_nyotai",
+                        "timeWeightMods": [
+                            {
+                                "hours": [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+                                "weightMult": 0
+                            }
+                        ],
+                        "results_characters": [
+                            {
+                                "entry_results": {
+                                    "type": "statMod_ST",
+                                    "value": "-6"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "eventID": "exp_event_erav_escort_partyGames",
+                "eventString_Ongoing": "exp_event_erav_escort_partyGames_ongoing",
+                "DurationMinutes": 60,
+                "baseWeight": 10,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "timeWeightMods": [
+                    {
+                        "hours": [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+                        "weightMult": 0
+                    }
+                ],
+                "possibleResults": [
+                    {
+                        "baseWeight": 3,
+                        "resultText": "exp_event_erav_escort_partyGames_result_win",
+                        "teamRequirement": { "minTeamCount": 1, "maxTeamCount": 1, "allowPrisoner": true, "requireCombat": false },
+                        "eventID": "event_erav_escort_daily_action",
+                        "eventMode": "auto",
+                        "eventAppendStringKey": "escort_daily_outcome",
+                        "eventAppendString": "exp_event_erav_escort_partyGames_result_win",
+                        "results_factions": [
+                            {
+                                "entry_results": {
+                                    "ExpeditionProgressMod": 20
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "baseWeight": 3,
+                        "resultText": "exp_event_erav_escort_partyGames_result_errand",
+                        "results_characters": [
+                            {
+                                "entry_results": {
+                                    "type": "statMod_ST",
+                                    "value": "-6"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_erav_escort_partyGames_result_rules",
+                        "results_characters": [
+                            {
+                                "entry_results": {
+                                    "type": "statMod_EN",
+                                    "value": "-2"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_erav_escort_partyGames_result_late",
+                        "results_characters": [
+                            {
+                                "entry_results": {
+                                    "type": "statMod_EN",
+                                    "value": "-8"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_erav_escort_partyGames_result_strip",
+                        "teamRequirement": { "minTeamCount": 1, "maxTeamCount": 1, "allowPrisoner": true, "requireCombat": false },
+                        "eventID": "event_erav_escort_daily_action",
+                        "eventMode": "auto",
+                        "eventAppendStringKey": "escort_daily_outcome",
+                        "eventAppendString": "exp_event_erav_escort_partyGames_result_strip",
+                        "results_characters": [
+                            {
+                                "entry_results": {
+                                    "type": "statMod_EN",
+                                    "value": "-4"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_erav_escort_partyGames_result_fingerPenalty",
+                        "teamRequirement": { "minTeamCount": 1, "maxTeamCount": 1, "allowPrisoner": true, "requireCombat": false },
+                        "eventID": "event_erav_escort_daily_action",
+                        "eventMode": "auto",
+                        "eventAppendStringKey": "escort_daily_outcome",
+                        "eventAppendString": "exp_event_erav_escort_partyGames_result_fingerPenalty",
+                        "results_characters": [
+                            {
+                                "entry_results": {
+                                    "type": "statMod_ST",
+                                    "value": "-6"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_erav_escort_partyGames_result_oralPenalty",
+                        "teamRequirement": { "minTeamCount": 1, "maxTeamCount": 1, "allowPrisoner": true, "requireCombat": false },
+                        "eventID": "event_erav_escort_daily_action",
+                        "eventMode": "auto",
+                        "eventAppendStringKey": "escort_daily_outcome",
+                        "eventAppendString": "exp_event_erav_escort_partyGames_result_oralPenalty",
+                        "results_characters": [
+                            {
+                                "entry_results": {
+                                    "type": "statMod_ST",
+                                    "value": "-4"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_erav_escort_partyGames_result_drinkPenalty",
+                        "teamRequirement": { "minTeamCount": 1, "maxTeamCount": 1, "allowPrisoner": true, "requireCombat": false },
+                        "eventID": "event_erav_escort_daily_action",
+                        "eventMode": "auto",
+                        "eventAppendStringKey": "escort_daily_outcome",
+                        "eventAppendString": "exp_event_erav_escort_partyGames_result_drinkPenalty",
+                        "results_characters": [
+                            {
+                                "entry_results": {
+                                    "type": "statMod_EN",
+                                    "value": "-6"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "eventID": "exp_event_erav_escort_nearMiss",
+                "eventString_Ongoing": "exp_event_erav_escort_nearMiss_ongoing",
+                "DurationMinutes": 30,
+                "baseWeight": 4,
+                "cooldownHours": 24,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "maxTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "timeWeightMods": [
+                    {
+                        "hours": [21, 22, 23],
+                        "weightMult": 0
+                    }
+                ],
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_escort_nearMiss_result",
+                        "eventID": "event_erav_escort_nearMiss",
+                        "eventMode": "auto"
+                    }
+                ]
+            },
+            {
+                "eventID": "exp_event_erav_escort_nightVisit",
+                "eventString_Ongoing": "exp_event_erav_escort_nightVisit_ongoing",
+                "DurationMinutes": 90,
+                "baseWeight": 6,
+                "cooldownHours": 24,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false,
+                    "maxTeamCount": 1
+                },
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_escort_nightVisit_result",
+                        "eventID": "event_erav_escort_nightVisit",
+                        "eventMode": "auto"
+                    }
+                ]
+            }
+        ]
+    },
+    "Events": {
+        "list": [
+            {
+                "ID": "event_erav_escort_daily_action",
+                "_comment": "Shared daily result dispatch. Result-scoped teamRequirement keeps party singleton. Eligibility requires retained hidden cast; restore that roster once, then select one retained client. Preparation and cleanup are scene-local; never recover the captive or release the cast.",
+                "SelfValidator": {
+                    "chara_conditions": [{ "parameters": ["exists"] }]
+                },
+                "TargetValidators": [
+                    {
+                        "refKeys": ["hidden_clients"],
+                        "baseScope": "PartyMembersOfRef",
+                        "extraScopeArguments": ["party", "membertype_hidden"],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "start",
+                        "options": [
+                            {
+                                "option": "_prepare",
+                                "Results": [
+                                    { "Type": "FullRecovery", "arguments": ["hidden_clients", "true"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "select_client"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [{ "Type": "JumpToLabel", "arguments": ["", "error"] }]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "select_client",
+                        "line": "",
+                        "nextEventID": "event_erav_escort_daily_action_scene",
+                        "nextEntryLabel": "move_client"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "error",
+                        "line": "event_erav_escort_daily_action_error",
+                        "nextEntryLabel": "cleanup"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "cleanup",
+                        "line": "",
+                        "Results": [
+                            { "Type": "FlushMessageExpAll" },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            },
+            {
+                "ID": "event_erav_escort_daily_action_scene",
+                "_comment": "Move the retained singleton client to the party before reversed APs. Comparisons dispatch separately from effects. Check access before removing unlocked clothing; only preparation paths request Redress. APs retain their own anatomy/readiness/access validation and flush actual gains once through common cleanup. nyotai randomly selects the explicitly specified oral_B/oral_V, client -> party; no new narrative or forced daily climax.",
+                "SelfValidator": {
+                    "chara_conditions": [{ "parameters": ["exists"] }]
+                },
+                "TargetValidators": [
+                    {
+                        "refKeys": ["client"],
+                        "baseScope": "PartyMembersOfRef",
+                        "extraScopeArguments": ["party", "membertype_hidden"],
+                        "minTargetCount": 1,
+                        "maxTargetCount": 1,
+                        "pickAmongValidTargets": true
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "move_client",
+                        "options": [
+                            { "option": "_execute", "Results": [
+                                { "Type": "MoveToTargetRoom", "arguments": ["client", "party"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "preparation_dispatch"] }
+                            ] },
+                            { "option": "_failed", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "error"] }] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "preparation_dispatch",
+                        "options": [
+                            { "option": "_photo_posted", "Results": [
+                                { "Type": "AppendStringEquals", "arguments": ["escort_daily_outcome", "exp_event_erav_escort_sightseeing_result_posted"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "photo_roll"] }
+                            ] },
+                            { "option": "_photo_both", "Results": [
+                                { "Type": "AppendStringEquals", "arguments": ["escort_daily_outcome", "exp_event_erav_escort_sightseeing_result_gropeLeak"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "photo_roll"] }
+                            ] },
+                            { "option": "_photo_touch", "Results": [
+                                { "Type": "AppendStringEquals", "arguments": ["escort_daily_outcome", "exp_event_erav_escort_sightseeing_result_gropedOnly"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "photo_roll"] }
+                            ] },
+                            { "option": "_photo_neither", "Results": [
+                                { "Type": "AppendStringEquals", "arguments": ["escort_daily_outcome", "exp_event_erav_escort_sightseeing_result_inFrame"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "photo_roll"] }
+                            ] },
+                            { "option": "_meal_drink", "Results": [
+                                { "Type": "AppendStringEquals", "arguments": ["escort_daily_outcome", "exp_event_erav_escort_meal_result_forcedDrink"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "drink_party_execute"] }
+                            ] },
+                            { "option": "_game_drink", "Results": [
+                                { "Type": "AppendStringEquals", "arguments": ["escort_daily_outcome", "exp_event_erav_escort_partyGames_result_drinkPenalty"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "drink_party_execute"] }
+                            ] },
+                            { "option": "_meal_win", "Results": [
+                                { "Type": "AppendStringEquals", "arguments": ["escort_daily_outcome", "exp_event_erav_escort_meal_result_goodPour"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "drink_client_execute"] }
+                            ] },
+                            { "option": "_game_win", "Results": [
+                                { "Type": "AppendStringEquals", "arguments": ["escort_daily_outcome", "exp_event_erav_escort_partyGames_result_win"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "drink_client_execute"] }
+                            ] },
+                            { "option": "_butt", "Results": [
+                                { "Type": "AppendStringEquals", "arguments": ["escort_daily_outcome", "exp_event_erav_escort_shopping_result_buttTouch"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "butt_execute"] }
+                            ] },
+                            { "option": "_kiss", "Results": [
+                                { "Type": "AppendStringEquals", "arguments": ["escort_daily_outcome", "nearMiss_seen"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "party_access"] }
+                            ] },
+                            { "option": "_strip", "Results": [
+                                { "Type": "AppendStringEquals", "arguments": ["escort_daily_outcome", "exp_event_erav_escort_partyGames_result_strip"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "strip_access"] }
+                            ] },
+                            { "option": "_prepare", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "party_access"] }] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "photo_roll",
+                        "line": "",
+                        "Results": [{ "Type": "RollWeighted", "arguments": ["daily_photo_quality", "good", "3", "bad", "2"] }],
+                        "nextEntryLabel": "photo_quality"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "photo_quality",
+                        "_comment": "The four in-frame outcomes have equal weight and identical eligibility: touch/upload are independent 50% axes. Satisfaction is a separate 3:2 roll for every combination.",
+                        "options": [
+                            { "option": "_good", "Results": [
+                                { "Type": "AppendStringEquals", "arguments": ["daily_photo_quality", "good"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "photo_good"] }
+                            ] },
+                            { "option": "_bad", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "photo_bad"] }] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "photo_good",
+                        "line": "event_erav_escort_daily_photo_good",
+                        "Results": [{ "Type": "ModExpeditionProgress", "arguments": ["20"] }],
+                        "nextEntryLabel": "photo_touch_pick"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "photo_bad",
+                        "line": "event_erav_escort_daily_photo_bad",
+                        "Results": [{ "Type": "ModStatEXValue", "arguments": ["party", "stats_derived_extended_stamina", "-4"] }],
+                        "nextEntryLabel": "photo_touch_pick"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "photo_touch_pick",
+                        "options": [
+                            { "option": "_both", "Results": [
+                                { "Type": "AppendStringEquals", "arguments": ["escort_daily_outcome", "exp_event_erav_escort_sightseeing_result_gropeLeak"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "party_body_access"] }
+                            ] },
+                            { "option": "_touch", "Results": [
+                                { "Type": "AppendStringEquals", "arguments": ["escort_daily_outcome", "exp_event_erav_escort_sightseeing_result_gropedOnly"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "party_body_access"] }
+                            ] },
+                            { "option": "_no_touch", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "cleanup"] }] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "party_access",
+                        "options": [
+                            {
+                                "option": "_kiss_accessible",
+                                "target_chara_conditions": { "party": [{ "charaReq": {
+                                    "requireConscious": false, "requireAction": false,
+                                    "BodyTags": ["mouth"], "minRevealingScore": 1
+                                } }] },
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["escort_daily_outcome", "nearMiss_seen"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "client_access"] }
+                                ]
+                            },
+                            {
+                                "option": "_oral_accessible",
+                                "target_chara_conditions": { "party": [{ "charaReq": {
+                                    "requireConscious": false, "requireAction": false,
+                                    "BodyTags": ["mouth"], "minRevealingScore": 1
+                                } }] },
+                                "Results": [{ "Type": "JumpToLabel", "arguments": ["", "oral_access_pick"] }]
+                            },
+                            {
+                                "option": "_already_accessible",
+                                "target_chara_conditions": { "party": [{ "charaReq": {
+                                    "requireConscious": false, "requireAction": false,
+                                    "requireUndressedTags": ["mouth", "breast", "clit", "vagina", "lower"],
+                                    "clothingRequirement": "None", "minRevealingScore": 0
+                                } }] },
+                                "Results": [{ "Type": "JumpToLabel", "arguments": ["", "client_access"] }]
+                            },
+                            { "option": "_prepare", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "party_undress"] }] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "oral_access_pick",
+                        "options": [
+                            { "option": "_fitting", "Results": [
+                                { "Type": "AppendStringEquals", "arguments": ["escort_daily_outcome", "exp_event_erav_escort_shopping_result_fittingService"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "client_access"] }
+                            ] },
+                            { "option": "_meal", "Results": [
+                                { "Type": "AppendStringEquals", "arguments": ["escort_daily_outcome", "exp_event_erav_escort_meal_result_underTable"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "client_access"] }
+                            ] },
+                            { "option": "_game", "Results": [
+                                { "Type": "AppendStringEquals", "arguments": ["escort_daily_outcome", "exp_event_erav_escort_partyGames_result_oralPenalty"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "client_access"] }
+                            ] },
+                            { "option": "_other", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "party_body_access"] }] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "party_body_access",
+                        "options": [
+                            {
+                                "option": "_accessible",
+                                "target_chara_conditions": { "party": [{ "charaReq": {
+                                    "requireConscious": false, "requireAction": false,
+                                    "requireUndressedTags": ["breast", "clit", "vagina"],
+                                    "clothingRequirement": "None", "minRevealingScore": 0
+                                } }] },
+                                "Results": [{ "Type": "JumpToLabel", "arguments": ["", "client_access"] }]
+                            },
+                            { "option": "_prepare", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "party_undress"] }] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "strip_access",
+                        "options": [
+                            {
+                                "option": "_nothing_to_remove",
+                                "target_chara_conditions": { "party": [{ "charaReq": {
+                                    "requireConscious": false, "requireAction": false,
+                                    "requireUndressedTags": ["head", "torso", "lower", "arm", "leg"],
+                                    "clothingRequirement": "None", "minRevealingScore": -1
+                                } }] },
+                                "Results": [{ "Type": "JumpToLabel", "arguments": ["", "cleanup"] }]
+                            },
+                            { "option": "_prepare", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "strip_execute"] }] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "strip_execute",
+                        "options": [
+                            { "option": "_execute", "Results": [
+                                { "Type": "RollWeighted", "arguments": ["daily_party_redress", "true", "1"] },
+                                { "Type": "Undress", "arguments": ["party", "None", "Erotic", "true"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "cleanup"] }
+                            ] },
+                            { "option": "_failed", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "error"] }] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "party_undress",
+                        "options": [
+                            { "option": "_execute", "Results": [
+                                { "Type": "RollWeighted", "arguments": ["daily_party_redress", "true", "1"] },
+                                { "Type": "Undress", "arguments": ["party", "None", "SeeThrough", "true"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "client_access"] }
+                            ] },
+                            { "option": "_failed", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "error"] }] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "client_access",
+                        "options": [
+                            { "option": "_shopping_touch", "Results": [
+                                { "Type": "AppendStringEquals", "arguments": ["escort_daily_outcome", "exp_event_erav_escort_shopping_result_groped"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "dispatch"] }
+                            ] },
+                            { "option": "_sightseeing_touch", "Results": [
+                                { "Type": "AppendStringEquals", "arguments": ["escort_daily_outcome", "exp_event_erav_escort_sightseeing_result_gropeLeak"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "dispatch"] }
+                            ] },
+                            { "option": "_sightseeing_only", "Results": [
+                                { "Type": "AppendStringEquals", "arguments": ["escort_daily_outcome", "exp_event_erav_escort_sightseeing_result_gropedOnly"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "dispatch"] }
+                            ] },
+                            { "option": "_finger", "Results": [
+                                { "Type": "AppendStringEquals", "arguments": ["escort_daily_outcome", "exp_event_erav_escort_partyGames_result_fingerPenalty"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "dispatch"] }
+                            ] },
+                            {
+                                "option": "_kiss_accessible",
+                                "target_chara_conditions": { "client": [{ "charaReq": {
+                                    "requireConscious": false, "requireAction": false,
+                                    "BodyTags": ["mouth"], "minRevealingScore": 1
+                                } }] },
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["escort_daily_outcome", "nearMiss_seen"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "kiss_execute"] }
+                                ]
+                            },
+                            {
+                                "option": "_nyotai_accessible",
+                                "target_chara_conditions": { "client": [{ "charaReq": {
+                                    "requireConscious": false, "requireAction": false,
+                                    "BodyTags": ["mouth"], "minRevealingScore": 1
+                                } }] },
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["escort_daily_outcome", "exp_event_erav_escort_meal_result_nyotai"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "dispatch"] }
+                                ]
+                            },
+                            {
+                                "option": "_already_accessible",
+                                "target_chara_conditions": { "client": [{ "charaReq": {
+                                    "requireConscious": false, "requireAction": false,
+                                    "requireUndressedTags": ["mouth", "penis"],
+                                    "clothingRequirement": "None", "minRevealingScore": 0
+                                } }] },
+                                "Results": [{ "Type": "JumpToLabel", "arguments": ["", "dispatch"] }]
+                            },
+                            { "option": "_prepare", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "client_undress"] }] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "client_undress",
+                        "options": [
+                            { "option": "_execute", "Results": [
+                                { "Type": "RollWeighted", "arguments": ["daily_client_redress", "true", "1"] },
+                                { "Type": "Undress", "arguments": ["client", "None", "SeeThrough", "true"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "dispatch"] }
+                            ] },
+                            { "option": "_failed", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "error"] }] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "dispatch",
+                        "options": [
+                            { "option": "_nearMiss_seen", "Results": [
+                                { "Type": "AppendStringEquals", "arguments": ["escort_daily_outcome", "nearMiss_seen"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "kiss_execute"] }
+                            ] },
+                            {
+                                "option": "_sightseeing_gropedOnly",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["escort_daily_outcome", "exp_event_erav_escort_sightseeing_result_gropedOnly"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "caress_execute"] }
+                                ]
+                            },
+                            {
+                                "option": "_meal_nyotai",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["escort_daily_outcome", "exp_event_erav_escort_meal_result_nyotai"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "nyotai_pick"] }
+                                ]
+                            },
+                            {
+                                "option": "_partyGames_strip",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["escort_daily_outcome", "exp_event_erav_escort_partyGames_result_strip"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "cleanup"] }
+                                ]
+                            },
+                            {
+                                "option": "_shopping_groped",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["escort_daily_outcome", "exp_event_erav_escort_shopping_result_groped"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "caress_execute"] }
+                                ]
+                            },
+                            {
+                                "option": "_sightseeing_gropeLeak",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["escort_daily_outcome", "exp_event_erav_escort_sightseeing_result_gropeLeak"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "caress_execute"] }
+                                ]
+                            },
+                            {
+                                "option": "_shopping_fittingService",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["escort_daily_outcome", "exp_event_erav_escort_shopping_result_fittingService"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "oral_execute"] }
+                                ]
+                            },
+                            {
+                                "option": "_meal_underTable",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["escort_daily_outcome", "exp_event_erav_escort_meal_result_underTable"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "oral_execute"] }
+                                ]
+                            },
+                            {
+                                "option": "_partyGames_oralPenalty",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["escort_daily_outcome", "exp_event_erav_escort_partyGames_result_oralPenalty"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "oral_execute"] }
+                                ]
+                            },
+                            {
+                                "option": "_partyGames_fingerPenalty",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["escort_daily_outcome", "exp_event_erav_escort_partyGames_result_fingerPenalty"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "finger_execute"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [{ "Type": "JumpToLabel", "arguments": ["", "error"] }]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "nyotai_pick",
+                        "line": "",
+                        "Results": [{ "Type": "RollWeighted", "arguments": ["daily_nyotai", "B", "1", "V", "1"] }],
+                        "nextEntryLabel": "nyotai_branch"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "nyotai_branch",
+                        "options": [
+                            { "option": "_B", "Results": [
+                                { "Type": "AppendStringEquals", "arguments": ["daily_nyotai", "B"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "nyotai_B_execute"] }
+                            ] },
+                            { "option": "_V", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "nyotai_V_execute"] }] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "nyotai_B_execute",
+                        "options": [
+                            { "option": "_execute", "Results": [
+                                { "Type": "ExecuteAPOnSingleChara", "arguments": ["client", "party", "com_sex_oral_B", "1"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "cleanup"] }
+                            ] },
+                            { "option": "_failed", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "error"] }] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "nyotai_V_execute",
+                        "options": [
+                            { "option": "_execute", "Results": [
+                                { "Type": "ExecuteAPOnSingleChara", "arguments": ["client", "party", "com_sex_oral_V", "1"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "cleanup"] }
+                            ] },
+                            { "option": "_failed", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "error"] }] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "butt_execute",
+                        "options": [
+                            { "option": "_execute", "Results": [
+                                { "Type": "ExecuteAPOnSingleChara", "arguments": ["client", "party", "com_touch_butt", "1"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "cleanup"] }
+                            ] },
+                            { "option": "_failed", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "error"] }] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "kiss_execute",
+                        "options": [
+                            { "option": "_execute", "Results": [
+                                { "Type": "ExecuteAPOnSingleChara", "arguments": ["client", "party", "com_sex_oral_kiss", "1"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "cleanup"] }
+                            ] },
+                            { "option": "_failed", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "error"] }] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "drink_party_execute",
+                        "options": [
+                            { "option": "_execute", "Results": [
+                                { "Type": "IngestItem", "arguments": ["party", "consumable_alcohol_wine", "1", "stomach"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "cleanup"] }
+                            ] },
+                            { "option": "_failed", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "error"] }] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "drink_client_execute",
+                        "options": [
+                            { "option": "_execute", "Results": [
+                                { "Type": "IngestItem", "arguments": ["client", "consumable_alcohol_wine", "1", "stomach"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "cleanup"] }
+                            ] },
+                            { "option": "_failed", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "error"] }] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "caress_execute",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["client", "party", "com_sex_finger_caress_B", "1"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "cleanup"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [{ "Type": "JumpToLabel", "arguments": ["", "error"] }]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "oral_execute",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["party", "client", "com_sex_oral_P", "1"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "cleanup"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [{ "Type": "JumpToLabel", "arguments": ["", "error"] }]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "finger_execute",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["client", "party", "com_sex_finger_insert_V", "1"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "cleanup"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [{ "Type": "JumpToLabel", "arguments": ["", "error"] }]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "error",
+                        "line": "event_erav_escort_daily_action_error",
+                        "nextEntryLabel": "cleanup"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "cleanup",
+                        "options": [
+                            { "option": "_changed", "Results": [
+                                { "Type": "AppendStringEquals", "arguments": ["daily_party_redress", "true"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "redress_party"] }
+                            ] },
+                            { "option": "_unchanged", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "cleanup_client"] }] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "redress_party",
+                        "line": "",
+                        "Results": [{ "Type": "Redress", "arguments": ["party"] }],
+                        "nextEntryLabel": "cleanup_client"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "cleanup_client",
+                        "options": [
+                            { "option": "_changed", "Results": [
+                                { "Type": "AppendStringEquals", "arguments": ["daily_client_redress", "true"] },
+                                { "Type": "JumpToLabel", "arguments": ["", "redress_client"] }
+                            ] },
+                            { "option": "_unchanged", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "finish"] }] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "redress_client",
+                        "line": "",
+                        "Results": [{ "Type": "Redress", "arguments": ["client"] }],
+                        "nextEntryLabel": "finish"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "finish",
+                        "line": "",
+                        "Results": [
+                            { "Type": "FlushMessageExpAll" },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            },
+            {
+                "ID": "event_erav_escort_nearMiss",
+                "_comment": "Auto (silent) event of exp_event_erav_escort_nearMiss. Self = player, Targets[party] = the captive. Lines go into the exploration log entry. Branch options hold comparisons + jump only; the last option of each branch is the fallback.",
+                "SelfValidator": {
+                    "chara_conditions": [
+                        {
+                            "parameters": ["exists"]
+                        }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refKeys": ["hidden_clients"],
+                        "baseScope": "PartyMembersOfRef",
+                        "extraScopeArguments": ["party", "membertype_hidden"],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "start",
+                        "line": "",
+                        "Results": [
+                            { "Type": "ClassifyDay", "arguments": ["party", "nm_day", "nm_aff", "student=membertype_jp_high_school_student", "worker=membertype_jp_convenience_store_clerk|membertype_jp_mall_clerk"] },
+                            { "Type": "RollWeighted", "arguments": ["nm_outcome", "dodge", "5", "excuse", "3", "seen", "2"] }
+                        ],
+                        "nextEntryLabel": "day_branch"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "day_branch",
+                        "options": [
+                            {
+                                "option": "_holiday_student",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["nm_day", "holiday"] },
+                                    { "Type": "AppendStringEquals", "arguments": ["nm_aff", "student"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "day_holiday_student"] }
+                                ]
+                            },
+                            {
+                                "option": "_holiday_worker",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["nm_day", "holiday"] },
+                                    { "Type": "AppendStringEquals", "arguments": ["nm_aff", "worker"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "day_holiday_worker"] }
+                                ]
+                            },
+                            {
+                                "option": "_holiday_none",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["nm_day", "holiday"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "day_holiday_none"] }
+                                ]
+                            },
+                            {
+                                "option": "_offday_student",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["nm_day", "offday"] },
+                                    { "Type": "AppendStringEquals", "arguments": ["nm_aff", "student"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "day_offday_student"] }
+                                ]
+                            },
+                            {
+                                "option": "_offday_worker",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["nm_day", "offday"] },
+                                    { "Type": "AppendStringEquals", "arguments": ["nm_aff", "worker"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "day_offday_worker"] }
+                                ]
+                            },
+                            {
+                                "option": "_offday_none",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["nm_day", "offday"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "day_offday_none"] }
+                                ]
+                            },
+                            {
+                                "option": "_workday_student",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["nm_aff", "student"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "day_workday_student"] }
+                                ]
+                            },
+                            {
+                                "option": "_workday_worker",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["nm_aff", "worker"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "day_workday_worker"] }
+                                ]
+                            },
+                            {
+                                "option": "_workday_none",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "day_workday_none"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "day_holiday_student",
+                        "line": "event_erav_escort_nearMiss_day_holiday_student",
+                        "nextEntryLabel": "outcome_branch"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "day_holiday_worker",
+                        "line": "event_erav_escort_nearMiss_day_holiday_worker",
+                        "nextEntryLabel": "outcome_branch"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "day_holiday_none",
+                        "line": "event_erav_escort_nearMiss_day_holiday_none",
+                        "nextEntryLabel": "outcome_branch"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "day_offday_student",
+                        "line": "event_erav_escort_nearMiss_day_offday_student",
+                        "nextEntryLabel": "outcome_branch"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "day_offday_worker",
+                        "line": "event_erav_escort_nearMiss_day_offday_worker",
+                        "nextEntryLabel": "outcome_branch"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "day_offday_none",
+                        "line": "event_erav_escort_nearMiss_day_offday_none",
+                        "nextEntryLabel": "outcome_branch"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "day_workday_student",
+                        "line": "event_erav_escort_nearMiss_day_workday_student",
+                        "nextEntryLabel": "outcome_branch"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "day_workday_worker",
+                        "line": "event_erav_escort_nearMiss_day_workday_worker",
+                        "nextEntryLabel": "outcome_branch"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "day_workday_none",
+                        "line": "event_erav_escort_nearMiss_day_workday_none",
+                        "nextEntryLabel": "outcome_branch"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "outcome_branch",
+                        "options": [
+                            {
+                                "option": "_dodge",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["nm_outcome", "dodge"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "out_dodge"] }
+                                ]
+                            },
+                            {
+                                "option": "_excuse",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["nm_outcome", "excuse"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "out_excuse"] }
+                                ]
+                            },
+                            {
+                                "option": "_seen_student",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["nm_aff", "student"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "out_seen_student"] }
+                                ]
+                            },
+                            {
+                                "option": "_seen_worker",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["nm_aff", "worker"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "out_seen_worker"] }
+                                ]
+                            },
+                            {
+                                "option": "_seen_none",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "out_seen_none"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "out_dodge",
+                        "line": "event_erav_escort_nearMiss_out_dodge",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "out_excuse",
+                        "line": "event_erav_escort_nearMiss_out_excuse",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "out_seen_student",
+                        "line": "event_erav_escort_nearMiss_out_seen",
+                        "Results": [
+                            { "Type": "ModReputation", "arguments": ["party", "rep_notoriety_witnessed", "2", "", "witness=erav_escort_witness_student", "activity=erav_escort_activity_street"] },
+                            { "Type": "RollWeighted", "arguments": ["escort_daily_outcome", "nearMiss_seen", "1"] }
+                        ],
+                        "nextEventID": "event_erav_escort_daily_action",
+                        "nextEntryLabel": "start"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "out_seen_worker",
+                        "line": "event_erav_escort_nearMiss_out_seen",
+                        "Results": [
+                            { "Type": "ModReputation", "arguments": ["party", "rep_notoriety_witnessed", "2", "", "witness=erav_escort_witness_worker", "activity=erav_escort_activity_street"] },
+                            { "Type": "RollWeighted", "arguments": ["escort_daily_outcome", "nearMiss_seen", "1"] }
+                        ],
+                        "nextEventID": "event_erav_escort_daily_action",
+                        "nextEntryLabel": "start"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "out_seen_none",
+                        "line": "event_erav_escort_nearMiss_out_seen",
+                        "Results": [
+                            { "Type": "ModReputation", "arguments": ["party", "rep_notoriety_witnessed", "2", "", "witness=erav_escort_witness_none", "activity=erav_escort_activity_street"] },
+                            { "Type": "RollWeighted", "arguments": ["escort_daily_outcome", "nearMiss_seen", "1"] }
+                        ],
+                        "nextEventID": "event_erav_escort_daily_action",
+                        "nextEntryLabel": "start"
+                    }
+                ]
+            },
+            {
+                "ID": "event_erav_escort_nightVisit",
+                "_comment": "Determine party wake/sleep mode before any client preparation. The wake route disrupts party sleep once with discarded wake output; the sleep route never wakes the party. Restore hidden clients separately, then select a singleton. The captive is not recovered. nextEventID preserves the selected mode and party context.",
+                "SelfValidator": {
+                    "chara_conditions": [
+                        {
+                            "parameters": ["exists"]
+                        }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refKeys": ["hidden_clients"],
+                        "baseScope": "PartyMembersOfRef",
+                        "extraScopeArguments": ["party", "membertype_hidden"],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "start",
+                        "line": "",
+                        "Results": [
+                            { "Type": "RollWeighted", "arguments": ["nv_mode", "wake", "1", "sleep", "1"] },
+                            { "Type": "RollWeighted", "arguments": ["nv_hole", "front", "3", "back", "1"] },
+                            { "Type": "RollWeighted", "arguments": ["nv_after", "mouth", "2", "rim", "1"] }
+                        ],
+                        "nextEntryLabel": "choose_party_mode"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "choose_party_mode",
+                        "options": [
+                            {
+                                "option": "_sleep",
+                                "target_chara_conditions": { "party": [{ "parameters": ["isSleeping"] }] },
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["nv_mode", "sleep"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "prepare_clients"] }
+                                ]
+                            },
+                            {
+                                "option": "_wake",
+                                "Results": [{ "Type": "JumpToLabel", "arguments": ["", "wake_party"] }]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "wake_party",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "RollWeighted", "arguments": ["nv_mode", "wake", "1"] },
+                                    { "Type": "DisruptSleep", "arguments": ["party", "true"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "prepare_clients"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [{ "Type": "JumpToLabel", "arguments": ["", "error"] }]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "prepare_clients",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "FullRecovery", "arguments": ["hidden_clients", "true"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "move_client"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "move_client",
+                        "line": "",
+                        "nextEventID": "event_erav_escort_nightVisit_scene",
+                        "nextEntryLabel": "move_client"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "error",
+                        "line": "event_erav_escort_nightVisit_error",
+                        "nextEntryLabel": "error_finalize"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "error_finalize",
+                        "line": "",
+                        "Results": [
+                            { "Type": "FlushMessageExpAll" },
+                            { "Type": "Redress", "arguments": ["party"] },
+                            { "Type": "SetMemoryNameOverride", "arguments": ["party", "event_erav_escort_nightVisit_memory", "event_erav_escort_nightVisit_error", "false", "true", "true", "silentLines"] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            },
+            {
+                "ID": "event_erav_escort_nightVisit_scene",
+                "_comment": "Entered after party wake/sleep mode is fixed and hidden-client readiness restored. Select one retained hidden client; no fresh loan/release. Trust nv_mode without a second sleeping check or wake call. Gates contain comparisons + jump only. AP failures go to neutral error and common cleanup.",
+                "SelfValidator": {
+                    "chara_conditions": [
+                        {
+                            "parameters": ["exists"]
+                        }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refKeys": ["client"],
+                        "baseScope": "PartyMembersOfRef",
+                        "extraScopeArguments": ["party", "membertype_hidden"],
+                        "minTargetCount": 1,
+                        "maxTargetCount": 1,
+                        "pickAmongValidTargets": true
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "move_client",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "MoveToTargetRoom", "arguments": ["client", "party"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "mode_pick"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "mode_pick",
+                        "_comment": "Use the mode selected before client preparation; do not re-check or wake the party here.",
+                        "options": [
+                            {
+                                "option": "_sleep",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["nv_mode", "sleep"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "sleep_start_execute"] }
+                                ]
+                            },
+                            {
+                                "option": "_wake",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "wake_prepare"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "wake_prepare",
+                        "options": [
+                            {
+                                "option": "_prepare",
+                                "Results": [
+                                    { "Type": "Undress", "arguments": ["party", "None", "SeeThrough", "true"] },
+                                    { "Type": "Undress", "arguments": ["client", "None", "SeeThrough", "true"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "wake_fore_execute"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "wake_fore_execute",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["client", "party", "com_sex_finger_insert_V", "10"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "wake_fore"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "wake_fore",
+                        "line": "event_erav_escort_nightVisit_wake_fore",
+                        "nextEntryLabel": "wake_pos_pick"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "wake_pos_pick",
+                        "options": [
+                            {
+                                "option": "_back",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["nv_hole", "back"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "wake_back_execute"] }
+                                ]
+                            },
+                            {
+                                "option": "_front",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "wake_front_execute"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "wake_front_execute",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteSexAPOnSingleCharaTillClimax", "arguments": ["client", "party", "com_sex_P_missionary", "100", "client"] },
+                                    { "Type": "FlushMessageExpAll" },
+                                    { "Type": "JumpToLabel", "arguments": ["", "wake_front"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "wake_front",
+                        "line": "event_erav_escort_nightVisit_wake_front",
+                        "nextEntryLabel": "wake_after_pick"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "wake_back_execute",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteSexAPOnSingleCharaTillClimax", "arguments": ["client", "party", "com_sex_P_doggy_A", "100", "client"] },
+                                    { "Type": "FlushMessageExpAll" },
+                                    { "Type": "JumpToLabel", "arguments": ["", "wake_back"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "wake_back",
+                        "line": "event_erav_escort_nightVisit_wake_back",
+                        "nextEntryLabel": "wake_after_pick"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "wake_after_pick",
+                        "options": [
+                            {
+                                "option": "_mouth",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["nv_after", "mouth"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "wake_after_mouth_execute"] }
+                                ]
+                            },
+                            {
+                                "option": "_rim",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "wake_after_rim_execute"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "wake_after_mouth_execute",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["client", "party", "com_sex_oral_P_Force", "1"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "wake_after_mouth"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "wake_after_mouth",
+                        "line": "event_erav_escort_nightVisit_wake_after_mouth",
+                        "nextEntryLabel": "wake_end"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "wake_after_rim_execute",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["party", "client", "com_sex_oral_A", "1"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "wake_after_rim"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "wake_after_rim",
+                        "line": "event_erav_escort_nightVisit_wake_after_rim",
+                        "nextEntryLabel": "wake_end"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "wake_end",
+                        "line": "event_erav_escort_nightVisit_wake_end",
+                        "Results": [],
+                        "nextEntryLabel": "cleanup"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "sleep_start_execute",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "Undress", "arguments": ["party", "None", "SeeThrough", "true"] },
+                                    { "Type": "Undress", "arguments": ["client", "None", "SeeThrough", "true"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "sleep_start"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "sleep_start",
+                        "line": "event_erav_escort_nightVisit_sleep_start",
+                        "nextEntryLabel": "sleep_fore_execute"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "sleep_fore_execute",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["client", "party", "com_sex_finger_insert_V", "10"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "sleep_fore"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "sleep_fore",
+                        "line": "event_erav_escort_nightVisit_sleep_fore",
+                        "nextEntryLabel": "sleep_pos_pick"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "sleep_pos_pick",
+                        "options": [
+                            {
+                                "option": "_back",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["nv_hole", "back"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "sleep_back_execute"] }
+                                ]
+                            },
+                            {
+                                "option": "_front",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "sleep_front_execute"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "sleep_front_execute",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteSexAPOnSingleCharaTillClimax", "arguments": ["client", "party", "com_sex_P_missionary", "100", "client"] },
+                                    { "Type": "FlushMessageExpAll" },
+                                    { "Type": "JumpToLabel", "arguments": ["", "sleep_front"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "sleep_front",
+                        "line": "event_erav_escort_nightVisit_sleep_front",
+                        "nextEntryLabel": "sleep_end"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "sleep_back_execute",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteSexAPOnSingleCharaTillClimax", "arguments": ["client", "party", "com_sex_P_doggy_A", "100", "client"] },
+                                    { "Type": "FlushMessageExpAll" },
+                                    { "Type": "JumpToLabel", "arguments": ["", "sleep_back"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "sleep_back",
+                        "line": "event_erav_escort_nightVisit_sleep_back",
+                        "nextEntryLabel": "sleep_end"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "sleep_end",
+                        "line": "event_erav_escort_nightVisit_sleep_end",
+                        "Results": [],
+                        "nextEntryLabel": "cleanup"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "error",
+                        "line": "event_erav_escort_nightVisit_error",
+                        "Results": [],
+                        "nextEntryLabel": "cleanup"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "cleanup",
+                        "line": "",
+                        "Results": [
+                            { "Type": "FlushMessageExpAll" },
+                            { "Type": "Redress", "arguments": ["party"] },
+                            { "Type": "Redress", "arguments": ["client"] },
+                            { "Type": "SetMemoryNameOverride", "arguments": ["party", "event_erav_escort_nightVisit_memory", "event_erav_escort_nightVisit_error", "false", "true", "true", "silentLines"] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "event_erav_escort_daily_action_error": "当前动作未能完成，安排已结束。",
+                "exp_event_erav_escort_shopping_result_buttTouch": "$names$陪客人逛店时，被客人伸手摸了屁股",
+                "exp_event_erav_escort_sightseeing_result_gropedOnly": "$names$与客人合照时遭到骚扰，照片没有上传",
+                "exp_event_erav_escort_sightseeing_result_inFrame": "$names$陪客人合了影，照片没有上传",
+                "event_erav_escort_daily_photo_good": "$party.name$陪客人拍的合照让客人很满意",
+                "event_erav_escort_daily_photo_bad": "$party.name$陪客人拍的合照没让客人满意",
+                "exp_event_erav_escort_shopping": "陪同购物",
+                "exp_event_erav_escort_shopping_ongoing": "$names$陪着客人逛商场",
+                "exp_event_erav_escort_shopping_result_outfitGood": "$names$帮客人挑的衣服很合客人的心意，让客人心情大好",
+                "exp_event_erav_escort_shopping_result_outfitBad": "$names$挑的衣服不合客人口味，被要求重挑了好几回",
+                "exp_event_erav_escort_shopping_result_giftGood": "$names$推荐的伴手礼让客人很满意",
+                "exp_event_erav_escort_shopping_result_giftBad": "$names$推荐的伴手礼被客人嫌弃，只好陪着又逛了几家店",
+                "exp_event_erav_escort_shopping_result_model": "$names$被客人拉去试衣间当模特，来回换了好几套衣服",
+                "exp_event_erav_escort_shopping_result_rest": "$names$趁客人挑东西的空档，在长椅上歇了片刻",
+                "exp_event_erav_escort_shopping_result_groped": "换上暴露装束的$names$在店员面前被揉着胸量了尺寸",
+                "exp_event_erav_escort_shopping_result_fittingService": "$names$被带进试衣间跪着用嘴侍奉了客人",
+                "exp_event_erav_escort_shopping_result_cosplay": "$names$被要求换上角色扮演服，又被牵着走过店堂给所有人看",
+                "exp_event_erav_escort_sightseeing": "陪同观光",
+                "exp_event_erav_escort_sightseeing_ongoing": "$names$带着客人在景点间奔走",
+                "exp_event_erav_escort_sightseeing_result_guideGood": "$names$顺利带客人走完了行程，翻译也没出差错",
+                "exp_event_erav_escort_sightseeing_result_lost": "$names$带错了路，绕了大半圈才找到地方",
+                "exp_event_erav_escort_sightseeing_result_photoGood": "$names$帮客人拍的照片让客人很满意",
+                "exp_event_erav_escort_sightseeing_result_photoBad": "$names$拍的照片被客人挑出不少毛病，只好反复重拍",
+                "exp_event_erav_escort_sightseeing_result_posted": "$names$被客人拉进合照，照片很快被发到了网上",
+                "exp_event_erav_escort_sightseeing_result_gropeLeak": "$names$入镜时被身后的人揉遍胸口，那段视频当晚就流到了网上",
+                "exp_event_erav_escort_sightseeing_result_luggage": "$names$留下看管行李，难得清闲了片刻",
+                "exp_event_erav_escort_meal": "陪同用餐",
+                "exp_event_erav_escort_meal_ongoing": "$names$陪客人在餐厅用餐",
+                "exp_event_erav_escort_meal_result_serve": "$names$帮客人布菜倒茶，客人吃得很尽兴",
+                "exp_event_erav_escort_meal_result_menuBad": "$names$翻译菜单时出了错，上来的菜不合客人口味",
+                "exp_event_erav_escort_meal_result_rest": "$names$跟着吃了顿饱饭，总算缓过气来",
+                "exp_event_erav_escort_meal_result_late": "$names$陪客人吃到深夜，自己却没顾上吃几口",
+                "exp_event_erav_escort_meal_result_forcedDrink": "输了划拳的$names$被灌下了满杯的葡萄酒",
+                "exp_event_erav_escort_meal_result_goodPour": "$names$把客人喝趴下了",
+                "exp_event_erav_escort_meal_result_underTable": "$names$在桌布底下用嘴侍奉了整顿饭",
+                "exp_event_erav_escort_meal_result_nyotai": "被摆上桌面当了餐台的$names$，被客人边吃边舔到席散",
+                "exp_event_erav_escort_partyGames": "酒店游戏",
+                "exp_event_erav_escort_partyGames_ongoing": "$names$在套房里陪客人玩游戏",
+                "exp_event_erav_escort_partyGames_result_win": "$names$在牌局上连赢了几把，客人反倒玩得更起劲",
+                "exp_event_erav_escort_partyGames_result_errand": "$names$输了游戏，被打发去便利店买零食",
+                "exp_event_erav_escort_partyGames_result_rules": "$names$看不懂手机游戏的规则，成了大家取笑的对象",
+                "exp_event_erav_escort_partyGames_result_late": "$names$被留着陪玩到深夜",
+                "exp_event_erav_escort_partyGames_result_strip": "输掉牌局的$names$被罚脱光衣服站着",
+                "exp_event_erav_escort_partyGames_result_fingerPenalty": "输掉牌局的$names$被罚坐上客人的手掌，被当众指奸到牌局继续",
+                "exp_event_erav_escort_partyGames_result_oralPenalty": "输掉骰子局的$names$被罚跪到沙发前，用嘴侍奉赢家直到散场",
+                "exp_event_erav_escort_partyGames_result_drinkPenalty": "连输数把的$names$被按规矩灌到舌头发直",
+                "exp_event_erav_escort_nearMiss": "熟悉的面孔",
+                "exp_event_erav_escort_nearMiss_ongoing": "$names$陪客人走在热闹的街上",
+                "exp_event_erav_escort_nearMiss_result": "$names$在人群里看见了熟悉的面孔",
+                "event_erav_escort_nearMiss_day_holiday_student": "是趁着放假出来玩的同学，正朝这边走来",
+                "event_erav_escort_nearMiss_day_holiday_worker": "是趁着假日出游的同事，正朝这边走来",
+                "event_erav_escort_nearMiss_day_holiday_none": "是假日出游的熟人，正朝这边走来",
+                "event_erav_escort_nearMiss_day_offday_student": "是周末出来逛街的同学，正朝这边走来",
+                "event_erav_escort_nearMiss_day_offday_worker": "是休息日出门的同事，正朝这边走来",
+                "event_erav_escort_nearMiss_day_offday_none": "是周末出门的熟人，正朝这边走来",
+                "event_erav_escort_nearMiss_day_workday_student": "是放学路上的同学，正朝这边走来",
+                "event_erav_escort_nearMiss_day_workday_worker": "是出来跑外勤的同事，正朝这边走来",
+                "event_erav_escort_nearMiss_day_workday_none": "是路过的熟人，正朝这边走来",
+                "event_erav_escort_nearMiss_out_dodge": "$party.name$赶紧躲到客人身后，总算没被认出来",
+                "event_erav_escort_nearMiss_out_excuse": "对方认出了$party.name$，她推说是在帮亲戚接待客人，勉强糊弄了过去",
+                "event_erav_escort_nearMiss_out_seen": "对方认出了$party.name$，看她的眼神变得古怪起来",
+                "erav_escort_witness_student": "同学",
+                "erav_escort_witness_worker": "同事",
+                "erav_escort_witness_none": "熟人",
+                "erav_escort_activity_street": "陪客人逛街",
+                "erav_escort_activity_sightseeing": "陪客人观光",
+                "exp_event_erav_escort_nightVisit": "夜访",
+                "event_erav_escort_nightVisit_memory": "夜访",
+                "exp_event_erav_escort_nightVisit_ongoing": "$names$的房门在深夜被推开了",
+                "exp_event_erav_escort_nightVisit_result": "客人深夜来到了$names$的房间",
+                "event_erav_escort_nightVisit_wake_fore": "客人把$party.name$从被窝里摇醒，手指随即探进内裤按上私处，拨开缝隙抠了进去。\n半梦半醒的身体被搅出黏腻的水声。她攥紧被角压住嗓子，没敢出声。",
+                "event_erav_escort_nightVisit_wake_front": "手指抽出去的瞬间，肉棒跟着抵进湿开的私处，整根没入到最深处。\n客人掐着她的腰开始抽送，每记都顶到深处。被窝里的撞击声越来越响，她连攥床单的力气都散了。\n最后客人把腰抵死在她腿间，精液尽数灌了进去。",
+                "event_erav_escort_nightVisit_wake_back": "客人把她的腰抬高，龟头抵住肛门缓缓撑了进去。\n后穴被整根贯穿时她闷哼出声，床单被攥出深深的褶皱。\n客人伏在她背上加速顶弄，最后整根没入，把精液泄进了肠壁深处。",
+                "event_erav_escort_nightVisit_wake_after_mouth": "客人把软下来的肉棒塞回她嘴里，命令她含着舔干净。\n她用舌尖把残留的精液和爱液逐处舐净，客人的呼吸很快就沉了下去。",
+                "event_erav_escort_nightVisit_wake_after_rim": "客人趴回枕头上，抓着她的后颈把她的脸按进自己股间，命令她舔肛门。\n她的舌尖刚抵上褶皱处，头顶便响起了鼾声。她被按着继续舔，直到攥着她的手松开。",
+                "event_erav_escort_nightVisit_wake_end": "客人睡熟后手还搭在她的胸口。精液顺着股缝在床单上洇开，$party.name$睁着眼睛，数着窗帘缝里的天色慢慢变亮。",
+                "event_erav_escort_nightVisit_sleep_start": "客人放轻动作掀开被角，把她的内裤褪到脚踝。私处暴露在冷气里，$party.name$只是皱了皱眉，翻出半声呓语。",
+                "event_erav_escort_nightVisit_sleep_fore": "客人的手指拨开阴唇探了进去，在甬道里缓慢地抠弄。\n睡梦里的身体诚实地泛起湿意，爱液顺着指缝溢出来。她曲起腰，喉间漏出细碎的哼。",
+                "event_erav_escort_nightVisit_sleep_front": "肉棒抵开濡湿的私处，缓缓整根没入。她在睡梦中绷紧脚背，没有被弄醒。\n客人压低身子缓慢抽送，睡熟的内壁把肉棒咬得很紧。最后他把精液泄在她子宫口，抽身时带出的白浊淌在了床单上。",
+                "event_erav_escort_nightVisit_sleep_back": "客人把她的身子侧拢进怀里，龟头抵住肛门，借着残余的爱液缓缓挤了进去。\n她的眉心拧紧，呼吸始终匀长。客人在紧热的肠壁里顶弄到泄精，整根埋着抖了几下才退出来。",
+                "event_erav_escort_nightVisit_sleep_end": "客人替她掖回被角，轻手轻脚地离开了房间。\n$party.name$睡到了早上。白浊干涸在股缝里，被褥上的痕迹要照进阳光才看得见。",
+                "event_erav_escort_nightVisit_error": "夜访未能完成，当前安排已结束。"
+            }
+        }
+    }
+}

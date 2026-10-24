@@ -5,9 +5,22 @@ using Newtonsoft.Json;
 
 public class ExpResults
 {
+    public enum EventMode
+    {
+        /// <summary> the event is banked as a log button (or played at once by the immediateRunExpeditionEvent preference) </summary>
+        banked,
+        /// <summary> the event starts right away as a normal (visible) event - same as runImmediate </summary>
+        immediate,
+        /// <summary> the event plays silently (ExpeditionSilentRunner) at the job's next update: no popup, its lines go into
+        /// this result's log entry and AP / EXP / kojo output into the entry's tooltip </summary>
+        auto
+    }
+
     public int baseWeight = 0;
     public Requirement_Manageable_Party teamRequirement = new Requirement_Manageable_Party();
     public List<ExpEvents.WeightModifier> weightMods = new List<ExpEvents.WeightModifier>();
+    /// <summary> time of day, as ExpEvents.timeWeightMods - a final weight below 1 = not rollable at that hour </summary>
+    public List<ExpEvents.TimeWeightModifier> timeWeightMods = new List<ExpEvents.TimeWeightModifier>();
 
     public string resultText = "";
 
@@ -26,6 +39,9 @@ public class ExpResults
     public string eventAppendString = "";
     //public bool noJobLogging = false;
     public bool runImmediate = false;
+    /// <summary> how eventID plays (runImmediate true still means immediate) </summary>
+    public EventMode eventMode = EventMode.banked;
+    [JsonIgnore] public EventMode EffectiveEventMode { get { return runImmediate ? EventMode.immediate : eventMode; } }
 
     /// <summary>
     /// If query fail (because no npc with this baseID exist), then generate<br/>

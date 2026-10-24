@@ -25,9 +25,28 @@ public class ExpeditionMessageEntry
     }
 
     public SerializableEventPackage unresolved = null;
+    /// <summary> an auto (silent) result event waiting for the job's next update (Job_Expedition.QueueSilentRun) - cleared when it plays </summary>
+    public SerializableEventPackage pendingSilent = null;
     public string resolveEventName = "";
     public string resolveMessage = "";
     public List<string> resolveTooltips = new List<string>();
+
+    /// <summary> a party member's memory entry mirroring this log entry (Job_Expedition.SyncLogMemory) </summary>
+    public class MemoryLink
+    {
+        /// <summary> MemoryManager key of the entry </summary>
+        public long key = -1;
+        /// <summary> Tooltips lines already mirrored </summary>
+        public int tooltips = 0;
+        /// <summary> title last mirrored </summary>
+        public string title = "";
+        /// <summary> the memory's title is this log entry's (false: merged into an entry titled otherwise - title goes to the tooltip lines) </summary>
+        public bool ownsTitle = true;
+    }
+    /// <summary> party member refID -> memory entry mirroring this log entry </summary>
+    public Dictionary<int, MemoryLink> memoryLinks = new Dictionary<int, MemoryLink>();
+    /// <summary> false: never mirrored into memory (ExpResults.logCharaMemory off) </summary>
+    public bool mirrorMemory = true;
 
     public void NotifyCharaExit(int refID)
     {
@@ -64,6 +83,7 @@ public class SerializableEventPackage
     public string eventID = "";
     public string eventLabel = "";
     public Dictionary<string, List<int>> Targets = new Dictionary<string, List<int>>();
+    public Dictionary<int, List<PartyMemberSnapshot>> PartyMemberSnapshots = new Dictionary<int, List<PartyMemberSnapshot>>();
     public Dictionary<string, List<string>> AppendStrings = new Dictionary<string, List<string>>();
     public bool overrideTargetScope = false;
     public List<EventScope_Target> targetScopes = new List<EventScope_Target>();
@@ -166,14 +186,68 @@ public class Job_Expedition : Job
     public override void OnAfterDeserialize()
     {
         base.OnAfterDeserialize();
+        // silent runs banked before the save play at the next update
+        RebuildPendingSilentRuns();
+    }
+
+    void RebuildPendingSilentRuns()
+    {
+        pendingSilentRuns.Clear();
+        foreach (var list in ExpeditionResults.Values)
+            foreach (var entry in list)
+                if (entry != null && entry.pendingSilent != null && !pendingSilentRuns.Contains(entry)) pendingSilentRuns.Add(entry);
+    }
+
+    // ── silent exploration events (ExpResults.eventMode auto, ExpeditionSilentRunner) ──
+    [JsonIgnore] protected List<ExpeditionMessageEntry> pendingSilentRuns = new List<ExpeditionMessageEntry>();
+
+    /// <summary>
+    /// Banks package on m (its log entry) for ExpeditionSilentRunner, played at this job's next UpdateStatus - never inside
+    /// the exploration action that rolled it. m.pendingSilent is saved with the log, so a save in between keeps the run.
+    /// </summary>
+    public void QueueSilentRun(ExpeditionMessageEntry m, SerializableEventPackage package)
+    {
+        if (m == null || package == null) return;
+        // AddResult hands back an unstored entry when it merged into an identical line of the same minute - keep ours
+        bool stored = false;
+        foreach (var list in ExpeditionResults.Values) if (list.Contains(m)) { stored = true; break; }
+        if (!stored)
+        {
+            var now = scr_System_Time.current.getCurrentTime();
+            if (ExpeditionResults.TryGetValue(now, out var atNow)) atNow.Add(m);
+            else ExpeditionResults.Add(now, new List<ExpeditionMessageEntry>() { m });
+        }
+        m.pendingSilent = package;
+        if (!pendingSilentRuns.Contains(m)) pendingSilentRuns.Add(m);
+    }
+
+    protected void RunPendingSilentEvents()
+    {
+        if (pendingSilentRuns.Count == 0) return;
+        // Execution order must match reconstruction from the persisted, timestamp-sorted log after reload.
+        RebuildPendingSilentRuns();
+        var runs = new List<ExpeditionMessageEntry>(pendingSilentRuns);
+        pendingSilentRuns.Clear();
+        foreach (var m in runs)
+        {
+            // A preceding run can transfer the remaining log entries to another job reentrantly.
+            if (OwnsLogEntry(m)) ExpeditionSilentRunner.Run(this, m);
+        }
+    }
+
+    internal bool OwnsLogEntry(ExpeditionMessageEntry entry)
+    {
+        return entry != null && ExpeditionResults.Values.Any(entries => entries.Contains(entry));
     }
 
     [JsonIgnore] public override bool CanBeInterrupted { get { return true; } }
 
     public SortedDictionary<DateTime, List<ExpeditionMessageEntry>> ExpeditionResults = new SortedDictionary<DateTime, List<ExpeditionMessageEntry>>();
 
-    protected void TryMerge(DateTime time, ExpeditionMessageEntry ExpeditionResult)
+    /// <returns> the stored entry: ExpeditionResult, or the identical line it merged into </returns>
+    protected ExpeditionMessageEntry TryMerge(DateTime time, ExpeditionMessageEntry ExpeditionResult)
     {
+        var stored = ExpeditionResult;
         if (ExpeditionResults.ContainsKey(time))
         {
             bool merged = false;
@@ -185,6 +259,7 @@ public class Job_Expedition : Job
                     i.Tags = i.Tags.Distinct().ToList();
                     i.Characters.AddRange(ExpeditionResult.Characters);
                     i.Characters = i.Characters.Distinct().ToList();
+                    if (!merged) stored = i;
                     merged = true;
                 }
             }
@@ -194,13 +269,14 @@ public class Job_Expedition : Job
         {
             ExpeditionResults.Add(scr_System_Time.current.getCurrentTime(), new List<ExpeditionMessageEntry>() { ExpeditionResult });
         }
+        return stored;
     }
 
     public override void AddActor(int charaRef, string priorityCOMID = "", string priorityCOMTag = "")
     {
         base.AddActor(charaRef, priorityCOMID, priorityCOMTag);
 
-        if (isActive && hasUnresolvedResult)
+        if (isActive && hasUnresolvedResult && FactionOwner_Party.GetMemberType(scr_System_CampaignManager.current.FindInstanceByID(charaRef))?.isHidden != true)
         {
             foreach (var i in ExpeditionResults)
             {
@@ -246,11 +322,15 @@ public class Job_Expedition : Job
         {
             foreach (var entry in entries)
             {
-                var package = entry.unresolved;
-                if (package == null || package.AppendStrings.ContainsKey(ExpeditionUtility.FeatureKeywordsKey)) continue;
-                var source = package.rescueJobID < 0 ? Expedition
-                    : (scr_System_CampaignManager.current.FindJobInstanceByID(package.rescueJobID) as Job_Expedition)?.Expedition;
-                ExpeditionUtility.InjectFeatureKeywords(package.AppendStrings, source);
+                foreach (var package in new[] { entry.unresolved, entry.pendingSilent })
+                {
+                    if (package == null) continue;
+                    if (!package.AppendStrings.ContainsKey(ExpeditionUtility.JobRefKey)) ExpeditionUtility.InjectJobRef(package.AppendStrings, this);
+                    if (package.AppendStrings.ContainsKey(ExpeditionUtility.FeatureKeywordsKey)) continue;
+                    var source = package.rescueJobID < 0 ? Expedition
+                        : (scr_System_CampaignManager.current.FindJobInstanceByID(package.rescueJobID) as Job_Expedition)?.Expedition;
+                    ExpeditionUtility.InjectFeatureKeywords(package.AppendStrings, source);
+                }
             }
         }
     }
@@ -263,13 +343,27 @@ public class Job_Expedition : Job
         foreach(var i in this.ExpeditionResults)
         {
             // both logs can hold the same timestamp (e.g. this party's MIA notice and the new party's capture line)
-            if (other.ExpeditionResults.TryGetValue(i.Key, out var existing)) existing.AddRange(i.Value);
-            else other.ExpeditionResults.Add(i.Key, i.Value);
+            if (!other.ExpeditionResults.TryGetValue(i.Key, out var existing))
+                other.ExpeditionResults.Add(i.Key, existing = new List<ExpeditionMessageEntry>());
+            foreach (var entry in i.Value)
+            {
+                if (!existing.Contains(entry)) existing.Add(entry);
+                foreach (var package in new[] { entry.unresolved, entry.pendingSilent })
+                {
+                    if (package == null) continue;
+                    // Job ownership follows the log; actor IDs and feature/location snapshots stay captured.
+                    if (!package.AppendStrings.TryGetValue(ExpeditionUtility.JobRefKey, out var refs)
+                        || refs == null || refs.Count == 0 || !int.TryParse(refs[0], out var jobRef) || jobRef == RefID)
+                        ExpeditionUtility.InjectJobRef(package.AppendStrings, other);
+                }
+            }
         }
+        pendingSilentRuns.Clear();
         this.ExpeditionResults.Clear();
+        other.RebuildPendingSilentRuns();
     }
 
-    public ExpeditionMessageEntry AddResult(string s, List<string> tags, List<Character_Trainable> chara, bool registerMemory = false)
+    public ExpeditionMessageEntry AddResult(string s, List<string> tags, List<Character_Trainable> chara, bool registerMemory = true)
     {
         var charaRefs = new List<int>();
         foreach (var c in chara)
@@ -280,15 +374,148 @@ public class Job_Expedition : Job
         return AddResult(s, tags, charaRefs, registerMemory);
     }
 
-    public ExpeditionMessageEntry AddResult(string s, List<string> tags, List<int> chara, bool registerMemory = false)
+    /// <param name="registerMemory">mirror the stored log entry into the party members' memory (SyncLogMemory) - off only
+    /// for placeholder lines whose real text arrives later (their caller syncs then)</param>
+    public ExpeditionMessageEntry AddResult(string s, List<string> tags, List<int> chara, bool registerMemory = true, bool merge = true)
     {
         var result = new ExpeditionMessageEntry();
         result.EventDescription = s;
         result.Tags = tags;
         result.Characters = chara;
 
-        TryMerge(scr_System_Time.current.getCurrentTime(), result);
+        var now = scr_System_Time.current.getCurrentTime();
+        var stored = result;
+        if (merge) stored = TryMerge(now, result);
+        else if (ExpeditionResults.TryGetValue(now, out var entries)) entries.Add(result);
+        else ExpeditionResults.Add(now, new List<ExpeditionMessageEntry> { result });
+        if (registerMemory) SyncLogMemory(stored);
         return result;
+    }
+
+    // ── log -> memory mirror (Docs/Expeditions/Plan_ExpLogMemoryMirror.md) ──
+
+    /// <summary>
+    /// Mirrors log entry m into the memory of every non-hidden party member: one memory entry per log entry and member, found
+    /// again through m.memoryLinks (never by timestamp). Log title (FullDescription, resolveMessage below it once resolved)
+    /// -> memory title (entryDescription), log Tooltips -> memory tooltip lines (memInstanceDescription). Idempotent - call
+    /// it after every change of m. A title set explicitly (SetMemoryNameOverride, departure) is kept.
+    /// </summary>
+    public void SyncLogMemory(ExpeditionMessageEntry m)
+    {
+        if (m == null || !m.mirrorMemory) return;
+        var title = LogMemoryTitle(m);
+        if (string.IsNullOrWhiteSpace(title)) return;
+        foreach (var c in LogMemoryRecipients())
+        {
+            m.memoryLinks.TryGetValue(c.RefID, out var link);
+            var entry = link == null || link.key < 0 ? null : c.Memory.FindEntryByDateTime(new DateTime(link.key));
+            if (entry == null)
+            {
+                link = new ExpeditionMessageEntry.MemoryLink();
+                m.memoryLinks[c.RefID] = link;
+                entry = CreateLogMemory(c, m, title, link);
+                if (entry == null) continue;
+            }
+            else if (title != link.title)
+            {
+                if (!link.ownsTitle && !entry.explicitTitleOverride && entry.descriptionOverride == null) entry.memInstanceDescription.Add(title);
+                // kept when set explicitly since the last sync
+                else if (link.ownsTitle && !entry.explicitTitleOverride && entry.descriptionOverride == null && entry.entryDescription == link.title) entry.entryDescription = title;
+                link.title = title;
+            }
+
+            for (int i = link.tooltips; i < m.Tooltips.Count; i++)
+            {
+                if (!string.IsNullOrWhiteSpace(m.Tooltips[i])) entry.memInstanceDescription.Add(m.Tooltips[i]);
+            }
+            link.tooltips = m.Tooltips.Count;
+            entry.RefreshCache();
+        }
+    }
+
+    /// <summary>
+    /// Before a scene of m plays: tries to move each member's memory to now so AP COM memories can join it.
+    /// Explicit overrides use the event's identity resolver, not this best-effort timestamp move.
+    /// </summary>
+    public void TouchLogMemory(ExpeditionMessageEntry m)
+    {
+        if (m == null) return;
+        foreach (var c in LogMemoryRecipients())
+        {
+            if (!m.memoryLinks.TryGetValue(c.RefID, out var link) || link.key < 0) continue;
+            var entry = c.Memory.FindEntryByDateTime(new DateTime(link.key));
+            if (entry == null) continue;
+            long key = c.Memory.MoveToNow(entry);
+            if (key >= 0) link.key = key;
+            else
+            {
+                // Another entry can own now. Keep the original identity/timestamps; the event resolver
+                // still targets this link, while ordinary COM merging retains its existing behavior.
+                link.key = c.Memory.KeyOf(entry);
+            }
+        }
+    }
+
+    internal Memory_Entry ResolveLogMemory(ExpeditionMessageEntry m, Character_Trainable actor, bool createIfMissing)
+    {
+        if (m == null || !m.mirrorMemory || actor?.Memory == null) return null;
+        m.memoryLinks.TryGetValue(actor.RefID, out var link);
+        var entry = link == null || link.key < 0 ? null : actor.Memory.FindEntryByDateTime(new DateTime(link.key));
+        if (entry != null || !createIfMissing) return entry;
+
+        // Create through the original log mapping, including explicitly targeted actors no longer on the job.
+        link = new ExpeditionMessageEntry.MemoryLink();
+        m.memoryLinks[actor.RefID] = link;
+        entry = CreateLogMemory(actor, m, LogMemoryTitle(m), link);
+        if (entry != null)
+        {
+            // The explicitly targeted actor may no longer be included in the party-wide sync.
+            foreach (var tooltip in m.Tooltips)
+                if (!string.IsNullOrWhiteSpace(tooltip)) entry.memInstanceDescription.Add(tooltip);
+            link.tooltips = m.Tooltips.Count;
+            entry.RefreshCache();
+        }
+        SyncLogMemory(m);
+        return entry;
+    }
+
+    static string LogMemoryTitle(ExpeditionMessageEntry m)
+    {
+        var title = m.FullDescription;
+        // the expedition log shows resolveMessage below the title once the banked event is resolved
+        if (!string.IsNullOrEmpty(m.resolveMessage) && (m.unresolved == null || m.unresolved.isResolved))
+            title = string.IsNullOrEmpty(title) ? m.resolveMessage : $"{title}\n{m.resolveMessage}";
+        return title;
+    }
+
+    IEnumerable<Character_Trainable> LogMemoryRecipients()
+    {
+        var party = FactionOwner_Party;
+        if (party == null) yield break;
+        foreach (var c in party.ManagedChara)
+        {
+            if (c == null || c.Memory == null || party.GetMemberType(c)?.isHidden == true) continue;
+            yield return c;
+        }
+    }
+
+    static Memory_Entry CreateLogMemory(Character_Trainable c, ExpeditionMessageEntry m, string title, ExpeditionMessageEntry.MemoryLink link)
+    {
+        // the MemInstance only carries the involved characters - text lives in the entry's title / tooltip lines
+        var targets = m.Characters == null ? new List<int>() : m.Characters.Where(x => x != c.RefID).Distinct().ToList();
+        var mem = new MemInstance(targets, new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.Neutral, "");
+        var entry = c.Memory.AddEntry(mem, new List<string>() { "forbidMerge" });
+        if (entry == null) return null;
+        link.key = c.Memory.KeyOf(entry);
+        link.title = title;
+
+        bool created = entry.interactions.Count == 1 && entry.interactions[0] == mem;
+        // merged into an entry of the same tick: title it only if nothing did yet
+        link.ownsTitle = !entry.explicitTitleOverride && entry.descriptionOverride == null && (created || entry.entryDescription == "");
+        if (link.ownsTitle) entry.entryDescription = title;
+        else if (!entry.explicitTitleOverride && entry.descriptionOverride == null) entry.memInstanceDescription.Add(title);
+        if (created) entry.disableRoomName = true;
+        return entry;
     }
 
     public enum ExpeditionStatus
@@ -335,9 +562,22 @@ public class Job_Expedition : Job
         }
 
         if (tickPackage) this.packageCooldown = Math.Max(this.packageCooldown - 1, 0);
+        // auto result events rolled since the last update - only on the regular tick: UpdateStatus(.., tickPackage false) is
+        // also called from inside party operations (e.g. Manageable_Party kidnap handling), possibly mid-event
+        if (tickPackage) RunPendingSilentEvents();
+        if (tickPackage && FactionOwner_Party.TryRetirePreviousHiddenCast() && BeginEventPending)
+        {
+            beginEventPending = false;
+            if (ExpeditionUtility.StartBeginEvent(this)) return;
+        }
         if (!this.FactionOwner_Party.isPlayerFaction)
         {
             TickSelfRelease(tickPackage);
+            // scheduled MIA (Expedition.followSchedule): only the rest/active switch - never the player path's
+            // departure / returning / inventory hand-over below
+            if (FactionOwner_Party.ScheduleExpedition != null
+                && (this.status == ExpeditionStatus.active || this.status == ExpeditionStatus.resting))
+                UpdateRestStatus(currentHour);
             TickOffTimeEvents(tickPackage);
             return;
         }
@@ -397,8 +637,12 @@ public class Job_Expedition : Job
                     var newMem = new MemInstance(new List<int>(), new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.Neutral, memstr);
 
                     var entry = c.Memory.AddEntry(newMem, new List<string>() { "forbidMerge" });
-                    //entry.entryDescription = memstr;
+                    // the "Exploring ..." entry (status is active now): it merged into the start line's mirrored memory of
+                    // this tick, whose title moves to the tooltip lines - later log lines get entries of their own
+                    if (entry.entryDescription != "" && entry.entryDescription != DisplayName) entry.memInstanceDescription.Add(entry.entryDescription);
+                    entry.entryDescription = DisplayName;
                     entry.disableRoomName = true;
+                    entry.RefreshCache();
                 }
             }
         }
@@ -420,18 +664,7 @@ public class Job_Expedition : Job
         }
         else if (this.status == ExpeditionStatus.active || this.status == ExpeditionStatus.resting)
         {
-            var previous = this.status;
-            if (this.FactionOwner_Party.OwnerFaction.mealHours.Contains(currentHour)
-                    || ((this.FactionOwner_Party.AllowPassNight || this.FactionOwner_Party.BaseDuration > 23)
-                            && (this.FactionOwner_Party.SleepHours.Contains(currentHour) || !this.FactionOwner_Party.OwnerFaction.IsActiveHour(currentHour)))) this.status = ExpeditionStatus.resting;
-            else this.status = ExpeditionStatus.active;
-
-            // rest begins: members put away the party-gear layers not kept for rest (OutfitSet.restKeepLayers); Redress
-            // leaves them off while resting and puts them back once the party is active again
-            if (previous != ExpeditionStatus.resting && this.status == ExpeditionStatus.resting)
-            {
-                foreach (var c in this.FactionOwner.ManagedChara) c?.Wardrobe?.OnPartyRestStart();
-            }
+            UpdateRestStatus(currentHour);
         }
 
         if (departed && (status == ExpeditionStatus.active || status == ExpeditionStatus.resting)
@@ -503,6 +736,7 @@ public class Job_Expedition : Job
                     List<string> obtained = new List<string>();
                     FactionOwner_Party.Inventory.Dump(FactionOwner_Party.OwnerFaction.Inventory, obtained);
                     result.Tooltips.Add($"obtained {String.Join(", ", obtained)}");
+                    if (OwnsLogEntry(result)) SyncLogMemory(result);
                     FactionOwner_Party.ExpeditionEnd();
                     ReleaseCompletedExpedition();
                 }
@@ -511,6 +745,115 @@ public class Job_Expedition : Job
                     Debug.Log($"Actor remain [{String.Join("|", remaining)}]");
                 }
             }
+        }
+    }
+
+    /// <summary> Job RefIDs of the furniture this expedition added to the party room (Expedition.campFurniture). </summary>
+    [JsonProperty] protected List<int> addedFurnitureJobRefs = new List<int>();
+    /// <summary> Item ID -> count this expedition put into the party inventory (Expedition.provisions). </summary>
+    [JsonProperty] protected Dictionary<string, int> addedProvisions = new Dictionary<string, int>();
+    [JsonProperty] protected bool expeditionAdditionsApplied = false;
+
+    /// <summary>
+    /// Non-player (MIA) party, at the expedition's start (Manageable_Party.ForceStartExpedition): adds the definition's
+    /// campFurniture to the party room (on top of what is there - nothing is replaced) and its provisions to the party
+    /// inventory, recording exactly what was added. Once per expedition; UndoExpeditionAdditions takes it back from the
+    /// record (never from the definition, which may have changed since).
+    /// </summary>
+    public void ApplyExpeditionAdditions()
+    {
+        var party = this.FactionOwner_Party;
+        var def = this.Expedition?.Base;
+        if (expeditionAdditionsApplied || party == null || party.isPlayerFaction || def == null) return;
+        expeditionAdditionsApplied = true;
+
+        var room = party.Room;
+        if (room != null && def.campFurniture != null)
+        {
+            foreach (var id in def.campFurniture)
+            {
+                if (string.IsNullOrEmpty(id)) continue;
+                var inst = room.AddFurniture(id);
+                if (inst == null)
+                {
+                    Debug.LogError($"Expedition [{def.ExpeditionID}] campFurniture [{id}] not found");
+                    continue;
+                }
+                if (inst.JobGiver == null)
+                {   // gives no commands - useless here and not trackable by job
+                    room.RemoveFurniture(inst);
+                    Debug.LogError($"Expedition [{def.ExpeditionID}] campFurniture [{id}] gives no commands, skipped");
+                    continue;
+                }
+                addedFurnitureJobRefs.Add(inst.JobGiver.RefID);
+            }
+        }
+
+        if (def.provisions != null)
+        {
+            foreach (var entry in def.provisions)
+            {
+                if (entry == null || string.IsNullOrEmpty(entry.itemID)) continue;
+                var item = WorldManager.Instantiate(entry);
+                if (item == null)
+                {
+                    Debug.LogError($"Expedition [{def.ExpeditionID}] provision [{entry.itemID}] not found");
+                    continue;
+                }
+                int count = item.Count;
+                if (!party.Inventory.AddItem(item)) continue;
+                addedProvisions.TryGetValue(item.BaseID, out var had);
+                addedProvisions[item.BaseID] = had + count;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Takes back what ApplyExpeditionAdditions recorded: the added furniture (Room.RemoveFurniture also evicts its
+    /// actors and drops the party's job posts) and up to the added provision counts (what was looted or eaten is simply
+    /// gone). A deleted party (CleanupDetection - room and inventory already gone) only drops the record.
+    /// </summary>
+    public void UndoExpeditionAdditions()
+    {
+        if (!expeditionAdditionsApplied && addedFurnitureJobRefs.Count == 0 && addedProvisions.Count == 0) return;
+        var party = this.FactionOwner_Party;
+        if (party != null && !party.isDeleted)
+        {
+            var room = party.Room;
+            if (room != null)
+            {
+                foreach (var jobRef in addedFurnitureJobRefs)
+                {
+                    var inst = room.Furnitures.Find(x => x.JobGiver != null && x.JobGiver.RefID == jobRef);
+                    if (inst != null) room.RemoveFurniture(inst);
+                }
+            }
+            foreach (var kvp in addedProvisions) party.Inventory.RemoveOwnStock(kvp.Key, kvp.Value);
+        }
+        addedFurnitureJobRefs.Clear();
+        addedProvisions.Clear();
+        expeditionAdditionsApplied = false;
+    }
+
+    /// <summary>
+    /// active <-> resting by the party's schedule: meal hours, and (overnight trips) its sleep window and inactive hours.
+    /// Hours come from the party (Manageable_Party.isMealHourAt / IsScheduleActiveHour / SleepHours - the scheduled MIA
+    /// expedition's own hours, else the owner faction). Resting releases members from this job (UpdateActorPackage).
+    /// </summary>
+    void UpdateRestStatus(int currentHour)
+    {
+        var party = this.FactionOwner_Party;
+        var previous = this.status;
+        if (party.isMealHourAt(currentHour)
+                || ((party.AllowPassNight || party.BaseDuration > 23)
+                        && (party.SleepHours.Contains(currentHour) || !party.IsScheduleActiveHour(currentHour)))) this.status = ExpeditionStatus.resting;
+        else this.status = ExpeditionStatus.active;
+
+        // rest begins: members put away the party-gear layers not kept for rest (OutfitSet.restKeepLayers); Redress
+        // leaves them off while resting and puts them back once the party is active again
+        if (previous != ExpeditionStatus.resting && this.status == ExpeditionStatus.resting)
+        {
+            foreach (var c in this.FactionOwner.ManagedChara) c?.Wardrobe?.OnPartyRestStart();
         }
     }
 
@@ -542,6 +885,7 @@ public class Job_Expedition : Job
     /// </summary>
     protected void TickSelfRelease(bool tickPackage)
     {
+        if (BeginEventPending || FactionOwner_Party.HasRetiringHiddenCast) return;
         if (selfReleaseFired || this.Expedition == null || this.Expedition.Base == null || !this.Expedition.Base.CanSelfRelease) return;
 
         if (RemainingMinutes > 0 && tickPackage) RemainingMinutes = Math.Max(0, RemainingMinutes - 1);
@@ -571,7 +915,7 @@ public class Job_Expedition : Job
         package.Targets.Add("victims", new List<int>(victimRefs));
         ExpeditionUtility.InjectFeatureKeywords(package.AppendStrings, Expedition);
 
-        var entry = AddResult(LocalizeDictionary.QueryThenParse("ui_management_expedition_selfReleaseText"), new List<string>(), new List<int>(victimRefs));
+        var entry = AddResult(LocalizeDictionary.QueryThenParse("ui_management_expedition_selfReleaseText"), new List<string>(), new List<int>(victimRefs), merge: false);
         entry.unresolved = package;
         selfReleaseFired = true;
 
@@ -793,6 +1137,10 @@ public class Job_Expedition : Job
     public void SetExpedition(ExpeditionInstance exp)
     {
         var previous = Expedition;
+        if (previous != exp && previous != null) FactionOwner_Party?.MarkPreviousHiddenCastForRetirement();
+        beginEventPending = false;
+        // the previous expedition's room / inventory extras go before anything else (MIA -> MIA reuse, release, cleanup)
+        UndoExpeditionAdditions();
         SnapshotPendingEventFeatures();
         _exp = null;
         // A new assignment has not departed; the previous trip's zero timer must not complete it.
@@ -805,6 +1153,10 @@ public class Job_Expedition : Job
 
         //Debug.LogError($"SetExpedition! {this.expeditionRefID}");
     }
+
+    [JsonProperty] bool beginEventPending = false;
+    [JsonIgnore] public bool BeginEventPending { get { return beginEventPending; } }
+    internal void DeferBeginEvent() { beginEventPending = true; }
 
     [JsonIgnore]
     public ExpeditionInstance Expedition
@@ -836,7 +1188,7 @@ public class Job_Expedition : Job
         {
             foreach(var i in this.ExpeditionResults.Values)
             {
-                foreach (var j in i) if (j.unresolved != null) return true;
+                foreach (var j in i) if (j.unresolved != null || j.pendingSilent != null) return true;
             }
             return false;
         }
@@ -1143,7 +1495,8 @@ public class Job_Expedition : Job
         while (loop < 10)
         {
             loop++;
-            var newAP = ExpeditionUtility.RandEvent(c, Expedition, this.FactionOwner_Party);
+            // debug: the first roll lists every pool event's weight and why it can't be rolled
+            var newAP = ExpeditionUtility.RandEvent(c, Expedition, this.FactionOwner_Party, loop == 1 ? debug : null);
             if (newAP == null) continue;
             if (!newAP.Actors.Contains(c)) continue;
             newAP.ReEstablishParent(this);// = this;

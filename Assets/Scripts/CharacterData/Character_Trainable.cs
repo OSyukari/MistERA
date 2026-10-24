@@ -2699,12 +2699,84 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     /// </summary>
     public void DisruptSleep()
     {
+        DisruptSleep(null);
+    }
+
+    /// <summary>Same wake mechanics, but auto events and silent result batches retain notification output.</summary>
+    public void DisruptSleep(EventInstance eventContext)
+    {
         if (!isSleeping) return;
         var sleeping = Stats.GetStatusByStringMatch(StatsUtility.Status_Sleeping);
         float missing = (sleeping != null && sleeping.duration > 0 ? sleeping.duration : 0) + ScheduledSleepMissingMinutes;
         if (missing > 0) Stats.AddOrModStatus(StatsUtility.Status_SleepDeprived, missing, (int)(missing * 0.5f));
         ScheduledSleepMissingMinutes = 0;
-        WakeUp(true);
+        WakeUp(true, eventContext);
+    }
+
+    static EventInstance CreateWakeupNotification(Character_Trainable self, EventInstance context)
+    {
+        bool suppress = context != null && (context.EntryResultsSilentActive || MessageCollect.PresentationSuppressed);
+        bool contained = context != null && (context.silent || suppress);
+        var notification = new EventInstance(self, "OnCharaWakeUp", "", immediateInit: !contained);
+        if (contained)
+        {
+            // Set silent before LoadNext: validation failure must not touch the normal EventManager either.
+            notification.silent = true;
+            notification.SilentSink = suppress ? null : context.SilentSink;
+            notification.message = suppress ? context.message
+                : new MessageCollect(true, false) { accumulateExperience = true };
+        }
+        return notification;
+    }
+
+    static void EmitWakeupReaction(EventInstance notification, MessageCollect_KojoEntry message)
+    {
+        if (notification.silent)
+        {
+            if (notification.SilentSink != null) message?.DumpMessage(notification.SilentSink.Tooltips);
+        }
+        else scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(message));
+    }
+
+    static void CollectWakeupJob(EventInstance notification, Job job)
+    {
+        if (!notification.silent) { job.NotifyDescriptionsOutOfUpdate(); return; }
+        job.m.exp.AddRelevantChara(job.actorRefID);
+        job.m.exp.AddRelevantChara(job.actorJobComplete);
+        job.m.exp.AddRelevantChara(job.actorRemove);
+        if (ReferenceEquals(notification.message, job.m)) return;
+        if (notification.SilentSink != null) notification.SilentSink.Capture(job.m);
+        else notification.message.Merge(job.m);
+    }
+
+    static void DispatchWakeupNotification(EventInstance notification, EventInstance context)
+    {
+        if (!notification.silent)
+        {
+            scr_UpdateHandler.current.EventHandler.StartEvent(notification, false);
+            return;
+        }
+
+        bool suppress = ReferenceEquals(notification.message, context.message);
+        try
+        {
+            using (suppress ? MessageCollect.SuppressPresentation(notification.message) : null)
+            {
+                notification.LoadNext("OnCharaWakeUp", "");
+                int steps = 0;
+                while (notification.canRun && steps++ < ExpeditionSilentRunner.MaxSteps) notification.Start();
+                if (notification.canRun) notification.Terminate("contextual wake notification exceeded step limit");
+            }
+        }
+        finally
+        {
+            // A batch owns this collector and its one final summary. Never drain or clear it here.
+            if (!suppress)
+            {
+                try { notification.SilentSink?.Capture(notification.message); }
+                finally { notification.message.Clear(); }
+            }
+        }
     }
 
     /// <summary>
@@ -2712,6 +2784,11 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     /// if immediate, then actually execute
     /// </summary>
     public void WakeUp(bool immediate)
+    {
+        WakeUp(immediate, null);
+    }
+
+    void WakeUp(bool immediate, EventInstance eventContext)
     {
         if (!immediate) 
         {
@@ -2736,11 +2813,12 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                 var memInst = new MemInstance(new List<int>(), new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.None, LocalizeDictionary.QueryThenParse("ui_entry_memory_sleep_end"));
                 var memEntry = this.Memory.AddEntry(memInst, new List<string>() { "forbidMerge" });
 
-                memEntry.entryDescription = memInst.description;
+                if (!memEntry.explicitTitleOverride && memEntry.descriptionOverride == null)
+                    memEntry.entryDescription = memInst.description;
                 // re-check every AP
                 UtilityEX.GetAPsFrom(this, out List<ActionPackage> aps);
 
-                var wakeupEV = new EventInstance(this, "OnCharaWakeUp", "");
+                var wakeupEV = CreateWakeupNotification(this, eventContext);
                 var callbacks = new List<Action>();
                 var appends = new List<Action>();
 
@@ -2751,6 +2829,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
                 foreach (var ap in aps)
                 {
+                    // Retained execution history is not a live action to reconsider on waking.
+                    if (ap.Duration <= 0) continue;
                     var result = ap.retryRequest(this, "justWokenUp");
 
                     if (!result)
@@ -2758,8 +2838,9 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                         if (!jobLists_refuse.Contains(ap.job)) jobLists_refuse.Add(ap.job);
                         //Debug.LogError($"Wakeup revalidating ap {ap.targetCOM.displayName} on {this.FirstName}, isDoer {ap.doer.Contains(this)} isReceiver {ap.receiver.Contains(this)}, result {result}");
                         //ap.ExecutePackageOutsideUpdate();
-                        ap.ExecutePackageOutsideUpdate(eventCollector: apEventCollector);
-                        if (ap.job.isVisibleToPlayer || ap.isOwnRoomVisibleToPlayer) ap.job.CollectLogs(ap);
+                        ap.ExecutePackageOutsideUpdate(wakeupEV.silent ? wakeupEV.message : null, eventCollector: apEventCollector);
+                        if (wakeupEV.silent || ap.job.isVisibleToPlayer || ap.isOwnRoomVisibleToPlayer)
+                            ap.job.CollectLogs(ap, wakeupEV.silent ? wakeupEV.message : null);
 
                         ap.DisablePackage();
                         scr_System_CampaignManager.current.Unregister(ap);
@@ -2796,13 +2877,14 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                             }
                             if (ap.ListEP.Count < 1) Debug.LogError("Erorr ap ep null");
                         }
-                        if (ap.job.isVisibleToPlayer || ap.isOwnRoomVisibleToPlayer) ap.job.CollectLogs(ap);
+                        if (wakeupEV.silent || ap.job.isVisibleToPlayer || ap.isOwnRoomVisibleToPlayer)
+                            ap.job.CollectLogs(ap, wakeupEV.silent ? wakeupEV.message : null);
                     }
                 }
 
                 foreach (var job in jobLists_accept)
                 {
-                    callbacks.Add(job.NotifyDescriptionsOutOfUpdate);
+                    callbacks.Add(() => CollectWakeupJob(wakeupEV, job));
 
                     if (jobLists_refuse.Contains(job)) jobLists_refuse.Remove(job);
                 }
@@ -2815,10 +2897,12 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                         UtilityEX.StringReplace(ref message);
                         (job as Job_Sex_Group).FlagActorLeave(this.RefID, message);
                     }
-                    callbacks.Add(job.NotifyDescriptionsOutOfUpdate);
+                    callbacks.Add(() => CollectWakeupJob(wakeupEV, job));
                 }
 
-                callbacks.AddRange(apEventCollector);
+                // These deferred callbacks launch interactive OnAPRefuse events. Rejection mechanics above
+                // still run, but an auto/batched wake must not enqueue those normal-UI follow-up choices.
+                if (!wakeupEV.silent) callbacks.AddRange(apEventCollector);
 
                 var selfTags = new List<string>();
                 if (Memory == null || Memory.consciousnessMemory == null)
@@ -2855,7 +2939,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                     // invokes it (after OnCharaWakeUp's Line entry has already queued its own message via
                     // AddEventCallback), and queuing AddLog here rather than calling it directly keeps our
                     // message behind that already-queued one in eventCallbacks instead of jumping ahead of it.
-                    appends.Add(() => scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(message)));
+                    appends.Add(() => EmitWakeupReaction(wakeupEV, message));
                 }
                 else if (refused.Count >= 1)
                 {
@@ -2863,11 +2947,12 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                     var message = this.Relationships.Personality.GetKOJOMessage("OnNightAssaultFailure", randRel, selfTags, new List<string>());
                     if (message != null && message.message == "") message.message = $"(OnNightAssaultFailure: {FirstName})";
                     Debug.Log($"({FirstName}) detected night assault refuse count {refused.Count}, random select {randRel.TargetName}, message {message}, apEventCollector {apEventCollector.Count}");
-                    appends.Add(() => scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(message)));
+                    appends.Add(() => EmitWakeupReaction(wakeupEV, message));
                     // add moodlet, reduce relationship -> mod relationship record are from ep. or can we directly inject into updatehandler ?
                     // directly add explog to updatehandler's log
                     var relationship = randRel.Owner.Relationships;
-                    var logger = scr_System_CampaignManager.current.isCharaVisibleToPlayer(this.RefID) ? scr_UpdateHandler.current.GetExpLogs() : null;
+                    var logger = wakeupEV.silent ? wakeupEV.message.exp
+                        : scr_System_CampaignManager.current.isCharaVisibleToPlayer(this.RefID) ? scr_UpdateHandler.current.GetExpLogs() : null;
                     relationship.IncreaseRelationshipWith(randRel.TargetID, RelationshipScoreType.Trust, -30, logger);
                     relationship.IncreaseRelationshipWith(randRel.TargetID, RelationshipScoreType.Fear, 30, logger);
 
@@ -2877,13 +2962,15 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                     memInst.description = LocalizeDictionary.QueryThenParse("memory_onNightAssaultFailed").Replace("$target$", randRel.Target.FirstName);
                     memInst.AddMoodletScore(-2, -4, 0);
 
-                    memEntry.entryDescription = memInst.description;
+                    if (!memEntry.explicitTitleOverride && memEntry.descriptionOverride == null)
+                        memEntry.entryDescription = memInst.description;
                     memEntry.Duration = Stats.MemoryLength * 10;
                     memEntry.ReEstablishParent(this);
 
                     var memInst_2 = new MemInstance(new List<int>(), new List<string>(), "", -1, -1, true, Memory_Response.None, Memory_Attitude.None, LocalizeDictionary.QueryThenParse("memory_onNightAssaultCaught").Replace("$target$", randRel.Owner.FirstName));
                     var memEntry_2 = randRel.Target.Memory.AddEntry(memInst_2, new List<string>() { "forbidMerge" });
-                    memEntry_2.entryDescription = memInst_2.description;
+                    if (!memEntry_2.explicitTitleOverride && memEntry_2.descriptionOverride == null)
+                        memEntry_2.entryDescription = memInst_2.description;
                 }
                 else if (jobLists_accept.Count >= 1)
                 {
@@ -2909,7 +2996,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                         memInst.description = LocalizeDictionary.QueryThenParse("memory_onNightAssaultDiscover");
                         memInst.AddMoodletScore(selfTags.Count, (-selfTags.Count - 1) * 2, 0);
 
-                        memEntry.entryDescription = memInst.description;
+                        if (!memEntry.explicitTitleOverride && memEntry.descriptionOverride == null)
+                            memEntry.entryDescription = memInst.description;
                         memEntry.Duration = Stats.MemoryLength * 10;
                         memEntry.ReEstablishParent(this);
                     }
@@ -2930,14 +3018,17 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                 // earlier means those ExecuteCallback steps run against still-empty lists.
                 //scr_UpdateHandler.current.EventHandler.StartEvent(this, "OnCharaWakeUp", "", false);
                 wakeupEV.FunctionCalls.Add("jobCallback", callbacks);
-                if (this.InteractionJob.isVisibleToPlayer) wakeupEV.FunctionCalls.Add("onWakeUp", appends);
-                scr_UpdateHandler.current.EventHandler.StartEvent(wakeupEV, false);
+                if (wakeupEV.silent || this.InteractionJob.isVisibleToPlayer) wakeupEV.FunctionCalls.Add("onWakeUp", appends);
+                try { DispatchWakeupNotification(wakeupEV, eventContext); }
+                finally
+                {
+                    this.Stats.RefreshAllStats();
+                    Memory.ConsciousnessRegained_End();
+                }
 
                 // if exit job, then removeactor already called endongoingmemory
                 // so, if last memory is ended and uncons, then, problem!
 
-                this.Stats.RefreshAllStats();
-                Memory.ConsciousnessRegained_End();
 
 
                 /*
@@ -3332,6 +3423,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     {
         if (this.Relationships != null) Relationships.PostReloadUpdate();
         if (this.factionManager != null) factionManager.PostReloadUpdate_Recreation();
+        // factions and bookings are resolved now: register their wardrobe keys (saves from before keys were tracked)
+        this.wardrobe?.RegisterCurrentKeys();
     }
 
     public void OnAfterDeserialize()

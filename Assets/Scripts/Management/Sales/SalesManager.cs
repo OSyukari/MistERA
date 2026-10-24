@@ -867,7 +867,7 @@ public class SalesManager
                     registry.RegisterEdition(picked, Owner.ID).AddSale(Owner.ID, take, pickPayment);
                     foreach (var c in picked.Comps)
                     {
-                        c.OnSold(take, pickPayment);
+                        c.OnSold(take, pickPayment, Owner);
                         if (inst.isPublic) AddRenown(c.GetSalesRenown(take));
                     }
 

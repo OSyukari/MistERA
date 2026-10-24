@@ -166,23 +166,25 @@ public static class Utility
 
     public static string GetRelativeDayString(DateTime current, DateTime target)
     {
-        var difference = current - target;
-        if (difference.Days >= 365)
+        // calendar-day difference, not elapsed time
+        int dayDiff = (current.Date - target.Date).Days;
+        if (dayDiff >= 365)
         {
-            return LocalizeDictionary.QueryThenParse("ui_entry_memory_daystring_today")
-                .Replace("$count$", $"{current.Year - target.Year}");
+            return LocalizeDictionary.QueryThenParse("ui_entry_memory_daystring_years")
+                .Replace("$count$", $"{Math.Max(1, current.Year - target.Year)}");
         }
-        else if (difference.Days >= 30)
+        else if (dayDiff >= 30)
         {
-            return LocalizeDictionary.QueryThenParse("ui_entry_memory_daystring_today")
-                .Replace("$count$", $"{(current.Month < target.Month ? current.Month + 12 : current.Month) - target.Month}");
+            int monthDiff = (current.Year - target.Year) * 12 + current.Month - target.Month;
+            return LocalizeDictionary.QueryThenParse("ui_entry_memory_daystring_months")
+                .Replace("$count$", $"{Math.Max(1, monthDiff)}");
         }
-        else if (current.DayOfYear != target.DayOfYear)
+        else if (dayDiff > 0)
         {
-            return LocalizeDictionary.QueryThenParse("ui_entry_memory_daystring_today")
-                .Replace("$count$",$"{Math.Ceiling(difference.TotalDays)}");
+            return LocalizeDictionary.QueryThenParse("ui_entry_memory_daystring_days")
+                .Replace("$count$", $"{dayDiff}");
         }
-        else return LocalizeDictionary.QueryThenParse("ui_entry_memory_daystring_today"); 
+        else return LocalizeDictionary.QueryThenParse("ui_entry_memory_daystring_today");
     }
 
     /// <summary>

@@ -115,6 +115,10 @@ public class canvas_videoEdit : scr_Menu
         // if any, and otherwise stays null until the player picks one via BuildEvaluatorSelectionButtons -
         // the draft-pick + Actions dictionary still get built regardless.
         evalInstance = new RecordingEvaluatorInstance(comp, false);
+        // editor-only actor charaReq gate; the constructor's first scoring pass ran without it, the
+        // recalculate + ValidateAll at the end of InitializeWithArgument re-scores with it on
+        evalInstance.checkActorCharaReq = true;
+        evalInstance.jobFaction = factionOwner;
 
         var replaceStrings = new Dictionary<string, string>();
 
@@ -843,6 +847,7 @@ public class canvas_videoEdit : scr_Menu
             if (parent.evalInstance != null && parent.evalInstance.disqualified)
             {
                 tooltip += $"final item disqualified by evaluator, cannot save";
+                if (parent.evalInstance.charaReqFailed) tooltip += "\n" + string.Join("\n", parent.evalInstance.charaReqTooltip);
                 return false;
             }
             return true;
@@ -981,6 +986,7 @@ public class canvas_videoEdit : scr_Menu
             if (parent.evalInstance != null && parent.evalInstance.disqualified)
             {
                 tooltip += $"final item disqualified by evaluator, cannot create";
+                if (parent.evalInstance.charaReqFailed) tooltip += "\n" + string.Join("\n", parent.evalInstance.charaReqTooltip);
                 return false;
             }
             if (parent.originalItem == null || parent.originalItem.Comp_Records == null || parent.originalItem.Comp_Records.storeItemID == "")

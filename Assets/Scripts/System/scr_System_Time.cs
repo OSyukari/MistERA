@@ -107,6 +107,25 @@ public class scr_System_Time : MonoBehaviour
     public bool TimeStopStrict { get { return timeStop == TimestopState.timestop; } }
     public bool TimeResume { get { return timeStop < TimestopState.timestop && timeStop > TimestopState.normal; } }
 
+    /// <summary>The date a running debug day skip (DebugAdvanceDays) lands on; null when none is running. Runtime only.</summary>
+    DateTime? debugSkipLastDay = null;
+    /// <summary>
+    /// A debug day skip (console advanceTime) is running and has not reached its last day yet: per-day planning that
+    /// the skip would only cancel again (recreation bookings / sessions / activity jobs) waits for the last day.
+    /// </summary>
+    public bool DebugSkipBeforeLastDay { get { return debugSkipLastDay.HasValue && currentDate.Date < debugSkipLastDay.Value; } }
+
+    /// <summary>
+    /// Debug only (console advanceTime): advances days days like UpdateTime, flagging every day but the last as
+    /// DebugSkipBeforeLastDay - the last day's update (the midnight rollover onto it) and every hour after it run as usual.
+    /// </summary>
+    public void DebugAdvanceDays(int days)
+    {
+        debugSkipLastDay = days > 1 ? currentDate.Date.AddDays(days) : (DateTime?)null;
+        try { UpdateTime(days, 0, 0); }
+        finally { debugSkipLastDay = null; }
+    }
+
     public void initializeTime(int initYear = 1980, int initMonth = 08, int initDay = 01, int initHour = 7, int initMinute = 0, int initSecond = 0)
     {
         startDate = new DateTime(initYear, initMonth, initDay, initHour, initMinute, initSecond);

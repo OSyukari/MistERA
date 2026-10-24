@@ -1,5 +1,5 @@
 {
-    "_doc": "gang/daily: neutral interactive writer skeleton. Major weight 1, party-wide cooldown 24 hours, exactly one female participant. Existing actor roles and COM IDs retained; one validated AP per phase, with separate preparation and AP success/failure branches. Full/first-only (where available)/skip choices differ in executed APs and final banked summary. No guaranteed physiological outcomes. Every ending redresses, returns all borrowed scopes, and resolves. Legacy dictionary keys retained as placeholders. No chronological order assumed.",
+    "_doc": "gang/daily: existing narrative and COM IDs retained. Exactly one female participant. Group loans use stable singleton actor keys, with original aggregate keys retained for preparation/cleanup. Client readiness is restored once at setup. Each formerly grouped AP is an ordered sequence of explicit client-to-captive pairs, each with its own failure gate; the original client-only oral phases remain client-only. Full/first-only/skip policy is unchanged. Every ending redresses, releases partial/full singleton loans, and resolves. No guaranteed physiological outcomes or chronology.",
     "ExplorationEvents": {
         "list": [
             {
@@ -49,10 +49,26 @@
                                 },
                                 "Results": [
                                     { "Type": "RequestFallbackWorker", "arguments": ["client", "ErAV_KiryuGumi_Office", "membertype_erav_client_gang_a", "erav_client_gang_a", "1", "true"] },
-                                    { "Type": "RequestFallbackWorker", "arguments": ["support", "ErAV_KiryuGumi_Office", "membertype_erav_client_gang_b", "erav_client_gang_b", "3", "true"] },
-                                    { "Type": "RequestFallbackWorker", "arguments": ["support", "ErAV_KiryuGumi_Office", "membertype_erav_client_gang_c", "erav_client_gang_c", "3", "true"] },
+                                    { "Type": "RequestFallbackWorker", "arguments": ["support_actor_1", "ErAV_KiryuGumi_Office", "membertype_erav_client_gang_b", "erav_client_gang_b", "1", "true"] },
+                                    { "Type": "RequestFallbackWorker", "arguments": ["support_actor_2", "ErAV_KiryuGumi_Office", "membertype_erav_client_gang_b", "erav_client_gang_b", "1", "true"] },
+                                    { "Type": "RequestFallbackWorker", "arguments": ["support_actor_3", "ErAV_KiryuGumi_Office", "membertype_erav_client_gang_b", "erav_client_gang_b", "1", "true"] },
+                                    { "Type": "RequestFallbackWorker", "arguments": ["support_actor_4", "ErAV_KiryuGumi_Office", "membertype_erav_client_gang_c", "erav_client_gang_c", "1", "true"] },
+                                    { "Type": "RequestFallbackWorker", "arguments": ["support_actor_5", "ErAV_KiryuGumi_Office", "membertype_erav_client_gang_c", "erav_client_gang_c", "1", "true"] },
+                                    { "Type": "RequestFallbackWorker", "arguments": ["support_actor_6", "ErAV_KiryuGumi_Office", "membertype_erav_client_gang_c", "erav_client_gang_c", "1", "true"] },
+                                    { "Type": "CopyTargets", "arguments": ["support_actor_1", "support"] },
+                                    { "Type": "CopyTargets", "arguments": ["support_actor_2", "support", "add"] },
+                                    { "Type": "CopyTargets", "arguments": ["support_actor_3", "support", "add"] },
+                                    { "Type": "CopyTargets", "arguments": ["support_actor_4", "support", "add"] },
+                                    { "Type": "CopyTargets", "arguments": ["support_actor_5", "support", "add"] },
+                                    { "Type": "CopyTargets", "arguments": ["support_actor_6", "support", "add"] },
                                     { "Type": "CopyTargets", "arguments": ["client", "enemy"] },
-                                    { "Type": "CopyTargets", "arguments": ["support", "enemy", "add"] },
+                                    { "Type": "CopyTargets", "arguments": ["support_actor_1", "enemy", "add"] },
+                                    { "Type": "CopyTargets", "arguments": ["support_actor_2", "enemy", "add"] },
+                                    { "Type": "CopyTargets", "arguments": ["support_actor_3", "enemy", "add"] },
+                                    { "Type": "CopyTargets", "arguments": ["support_actor_4", "enemy", "add"] },
+                                    { "Type": "CopyTargets", "arguments": ["support_actor_5", "enemy", "add"] },
+                                    { "Type": "CopyTargets", "arguments": ["support_actor_6", "enemy", "add"] },
+                                    { "Type": "FullRecovery", "arguments": ["enemy"] },
                                     { "Type": "MoveToTargetRoom", "arguments": ["enemy", "party"] },
                                     { "Type": "JumpToLabel", "arguments": ["", "scene"] }
                                 ]
@@ -167,14 +183,128 @@
                         "label": "phase_2_execute",
                         "options": [
                             {
-                                "option": "_try_ap",
+                                "option": "_execute",
                                 "Results": [
-                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["enemy", "party", "com_sex_P_doggy", "1"] },
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["client", "party", "com_sex_P_doggy", "1"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "phase_2_execute_actor_2"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "phase_2_execute_actor_2",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["support_actor_1", "party", "com_sex_P_doggy", "1"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "phase_2_execute_actor_3"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "phase_2_execute_actor_3",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["support_actor_2", "party", "com_sex_P_doggy", "1"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "phase_2_execute_actor_4"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "phase_2_execute_actor_4",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["support_actor_3", "party", "com_sex_P_doggy", "1"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "phase_2_execute_actor_5"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "phase_2_execute_actor_5",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["support_actor_4", "party", "com_sex_P_doggy", "1"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "phase_2_execute_actor_6"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "phase_2_execute_actor_6",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["support_actor_5", "party", "com_sex_P_doggy", "1"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "phase_2_execute_actor_7"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "phase_2_execute_actor_7",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["support_actor_6", "party", "com_sex_P_doggy", "1"] },
                                     { "Type": "JumpToLabel", "arguments": ["", "phase_2_success"] }
                                 ]
                             },
                             {
-                                "option": "_ap_failed",
+                                "option": "_failed",
                                 "Results": [
                                     { "Type": "JumpToLabel", "arguments": ["", "failed"] }
                                 ]
@@ -239,9 +369,14 @@
                         "Results": [
                             { "Type": "Redress", "arguments": ["party"] },
                             { "Type": "Redress", "arguments": ["client"] },
-                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
                             { "Type": "Redress", "arguments": ["support"] },
-                            { "Type": "ReleaseFallbackWorker", "arguments": ["support"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support_actor_1"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support_actor_2"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support_actor_3"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support_actor_4"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support_actor_5"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support_actor_6"] },
                             { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
                         ],
                         "isLast": true
@@ -253,9 +388,14 @@
                         "Results": [
                             { "Type": "Redress", "arguments": ["party"] },
                             { "Type": "Redress", "arguments": ["client"] },
-                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
                             { "Type": "Redress", "arguments": ["support"] },
-                            { "Type": "ReleaseFallbackWorker", "arguments": ["support"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support_actor_1"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support_actor_2"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support_actor_3"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support_actor_4"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support_actor_5"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support_actor_6"] },
                             { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
                         ],
                         "isLast": true
@@ -267,9 +407,14 @@
                         "Results": [
                             { "Type": "Redress", "arguments": ["party"] },
                             { "Type": "Redress", "arguments": ["client"] },
-                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
                             { "Type": "Redress", "arguments": ["support"] },
-                            { "Type": "ReleaseFallbackWorker", "arguments": ["support"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support_actor_1"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support_actor_2"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support_actor_3"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support_actor_4"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support_actor_5"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support_actor_6"] },
                             { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
                         ],
                         "isLast": true
@@ -281,9 +426,14 @@
                         "Results": [
                             { "Type": "Redress", "arguments": ["party"] },
                             { "Type": "Redress", "arguments": ["client"] },
-                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
                             { "Type": "Redress", "arguments": ["support"] },
-                            { "Type": "ReleaseFallbackWorker", "arguments": ["support"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support_actor_1"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support_actor_2"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support_actor_3"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support_actor_4"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support_actor_5"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support_actor_6"] },
                             { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
                         ],
                         "isLast": true
@@ -295,9 +445,14 @@
                         "Results": [
                             { "Type": "Redress", "arguments": ["party"] },
                             { "Type": "Redress", "arguments": ["client"] },
-                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
                             { "Type": "Redress", "arguments": ["support"] },
-                            { "Type": "ReleaseFallbackWorker", "arguments": ["support"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support_actor_1"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support_actor_2"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support_actor_3"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support_actor_4"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support_actor_5"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support_actor_6"] },
                             { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
                         ],
                         "isLast": true
@@ -309,7 +464,7 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "exp_event_erav_gang_daily": "日常·干",
+                "exp_event_erav_gang_daily": "日常·随叫随到",
                 "exp_event_erav_gang_daily_ongoing": "包层里的牌局照常开着，$names$随叫随到。",
                 "exp_event_erav_gang_daily_result": "牌桌上手气最差的那个人，把$names$拽了过去。",
                 "event_erav_gang_daily_01": "矮桌上摆着便利店塑料袋装的吃的，牌打到半，谁手感差了，就拽她过来「转转运」。\n「先说好啊，哥几个：她是抵账劳务，不是白嫖的风俗。温柔点——弄坏了你们赔。」\n「「「了解——！」」」",
@@ -317,7 +472,7 @@
                 "event_erav_gang_daily_03": "睡觉的通铺上，队伍沿着铺位排出去。前面的人还没完事，后面的人已经候上了，边看边自己解决。\n榻榻米、窗台、走廊、浴室的更衣凳——用的间隙，她被命令保持张开的样子等着，「省点前戏工夫」。",
                 "event_erav_gang_daily_04": "深夜，通铺正中间的她被摆好姿势。半梦半醒之间被进入、被灌满，完事后对方拍拍她的腰倒头就睡。\n她连睁眼的力气都省了，身体自己在黑暗里配合着起伏。",
                 "event_erav_gang_daily_err": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。",
-                "event_erav_gang_daily": "日常·干",
+                "event_erav_gang_daily": "日常·随叫随到",
                 "event_erav_gang_daily_writer_opening": "矮桌上摆着便利店塑料袋装的吃的，牌打到半，谁手感差了，就拽她过来「转转运」。\n「先说好啊，哥几个：她是抵账劳务，不是白嫖的风俗。温柔点——弄坏了你们赔。」\n「「「了解——！」」」",
                 "event_erav_gang_daily_writer_choose_full": "继续完整流程",
                 "event_erav_gang_daily_writer_choose_first_only": "仅进行首个阶段",
@@ -331,7 +486,7 @@
                 "event_erav_gang_daily_writer_summary_failed": "本次流程未能完成。",
                 "event_erav_gang_daily_writer_summary_skipped": "已跳过本次事件。",
                 "event_erav_gang_daily_writer_summary_error": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。",
-                "event_erav_gang_daily_writer_header": "日常·干"
+                "event_erav_gang_daily_writer_header": "日常·随叫随到"
             }
         }
     }

@@ -13,12 +13,49 @@ public enum MessageCollect_Type
     after,
     kojo,
     kojo_after,
-    exp
+    exp,
+    results
 }
 
 
 public class MessageCollect
 {
+    [ThreadStatic] static int presentationSuppressionDepth;
+    [ThreadStatic] static MessageCollect deferredPresentation;
+    public static bool PresentationSuppressed => presentationSuppressionDepth > 0;
+
+    /// <summary>Synchronous only: callers must dispose before yielding or queuing later work.</summary>
+    public static IDisposable SuppressPresentation(MessageCollect deferred = null) => new PresentationScope(deferred);
+
+    sealed class PresentationScope : IDisposable
+    {
+        bool disposed;
+        readonly MessageCollect previous;
+        public PresentationScope(MessageCollect deferred)
+        {
+            previous = deferredPresentation;
+            deferredPresentation = deferred ?? previous;
+            presentationSuppressionDepth++;
+        }
+        public void Dispose()
+        {
+            if (disposed) return;
+            disposed = true;
+            deferredPresentation = previous;
+            presentationSuppressionDepth--;
+        }
+    }
+
+    bool DeferPresentation()
+    {
+        if (!PresentationSuppressed) return false;
+        if (deferredPresentation != null && deferredPresentation != this)
+        {
+            deferredPresentation.exp.Accumulate(exp);
+            Clear();
+        }
+        return true;
+    }
 
     /// <summary>
     /// Injected when recording finalize
@@ -34,6 +71,7 @@ public class MessageCollect
             i += messages_before.Count;
             i += messages_after.Count;
             i += messages_kojo.Count;
+            i += messages_results.Count;
             i += messages_exp.Count;
             i += messages_kojo_after.Count;
             return i;
@@ -51,6 +89,7 @@ public class MessageCollect
         messages_after.Remove(rec);
 
         messages_kojo.Remove(rec as KojoCollector);
+        messages_results.Remove(rec);
         messages_exp.Remove(rec);
         messages_kojo_after.Remove(rec as KojoCollector);
 
@@ -64,6 +103,12 @@ public class MessageCollect
     [JsonProperty] protected List<I_Records> messages_before = new List<I_Records>();
     [JsonProperty] protected List<I_Records> messages_after = new List<I_Records>();
     [JsonProperty] protected List<KojoCollector> messages_kojo = new List<KojoCollector>();
+    /// <summary>
+    /// Completed packages' result checks and completion kojo (ActionPackage.LogResultCheck). Flushed after the begin
+    /// texts and kojo, so a package that begins and completes in the same update (eg. 1 minute) reads in order:
+    /// checks -> before -> kojo -> results -> exp -> kojo_after -> after.
+    /// </summary>
+    [JsonProperty] protected List<I_Records> messages_results = new List<I_Records>();
     public ExperienceLog exp = new ExperienceLog();
     public List<I_Records> messages_exp = new List<I_Records>();
     public List<KojoCollector> messages_kojo_after = new List<KojoCollector>();
@@ -78,6 +123,7 @@ public class MessageCollect
         foreach (var m in messages_before) m.ReadActorRecord(recTable);
         foreach (var m in messages_after) m.ReadActorRecord(recTable);
         foreach (var m in messages_kojo) m.ReadActorRecord(recTable);
+        foreach (var m in messages_results) m.ReadActorRecord(recTable);
         foreach (var m in messages_exp) m.ReadActorRecord(recTable);
         foreach (var m in messages_kojo_after) m.ReadActorRecord(recTable);
         foreach(var ap in this.apRecords)  ap.ReadActorRecord(recTable);
@@ -113,6 +159,7 @@ public class MessageCollect
 
         Scan(messages_checks);
         Scan(messages_before);
+        Scan(messages_results);
         Scan(messages_after);
         Scan(messages_exp);
 
@@ -155,6 +202,7 @@ public class MessageCollect
 
         Scan(messages_checks);
         Scan(messages_before);
+        Scan(messages_results);
         Scan(messages_exp);
         Scan(messages_after);
 
@@ -188,6 +236,7 @@ public class MessageCollect
         foreach (var m in messages_before) m.RecordActor(recTable);
         foreach (var m in messages_after) m.RecordActor(recTable);
         foreach (var m in messages_kojo) m.RecordActor(recTable);
+        foreach (var m in messages_results) m.RecordActor(recTable);
         foreach (var m in messages_exp) m.RecordActor(recTable);
         foreach (var m in messages_kojo_after) m.RecordActor(recTable);
 
@@ -204,12 +253,14 @@ public class MessageCollect
 
     public void AddMessage_Before(I_Records desc, Room_Instance recording)
     {
+        if (PresentationSuppressed) return;
         var player = scr_System_CampaignManager.current.Player;
         bool visible = desc.VisibleTo(player, recording);
         AddMessage_Before(desc, visible, recording, desc.RightAlign(player));
     }
     public void AddMessage_Before(I_Records desc, int recording)
     {
+        if (PresentationSuppressed) return;
         var player = scr_System_CampaignManager.current.Player;
         var room = scr_System_CampaignManager.current.Map.GetRoomByRef(recording);
         bool visible = desc.VisibleTo(player, room);
@@ -224,17 +275,20 @@ public class MessageCollect
     /// <param name="rightAlign"></param>
     public void AddMessage_Before(I_Records desc, bool visible, Room_Instance recording, bool rightAlign = false)
     {
+        if (PresentationSuppressed) return;
         if (visible) this.messages_before.Add(desc);
         if (sendRecording && recording != null && recording.HasRecording) recording.NotifyDescCollect(desc, MessageCollect_Type.before);
     }
     public void AddMessage_EXP(I_Records desc, Room_Instance recording = null)
     {
+        if (PresentationSuppressed) return;
         this.messages_exp.Add(desc);
         //if (recording != null && recording.HasRecording) recording.NotifyDescCollect(desc, MessageCollect_Type.exp);
     }
 
     public void AddMessage_After(I_Records desc, Room_Instance recording = null)
     {
+        if (PresentationSuppressed) return;
         this.messages_after.Add(desc);
         if (recording != null && recording.HasRecording) recording.NotifyDescCollect(desc, MessageCollect_Type.after);
     }
@@ -244,12 +298,20 @@ public class MessageCollect
     {
         get
         {
-            return this.messages_checks.Count > 0;
+            return this.messages_checks.Count > 0 || this.messages_results.Count > 0;
         }
+    }
+
+    public void AddMessage_Results(I_Records desc, Room_Instance recording = null)
+    {
+        if (PresentationSuppressed) return;
+        this.messages_results.Add(desc);
+        if (sendRecording && recording != null && recording.HasRecording) recording.NotifyDescCollect(desc, MessageCollect_Type.results);
     }
 
     public void AddMessage_Checks(I_Records desc, Room_Instance recording = null)
     {
+        if (PresentationSuppressed) return;
         if (desc is DescriptionCollector)
         {
            // Debug.LogError($"addcheck with tags {String.Join(" ", (desc as DescriptionCollector).displayTagsOverride)}");
@@ -260,6 +322,7 @@ public class MessageCollect
 
     public void FinalizeEXP(List<int> relevantActorInject, bool visible, Room_Instance recording)
     {
+        if (DeferPresentation()) return;
         this.exp.Finalize(out var desc);
         if (desc != null)
         {
@@ -270,12 +333,14 @@ public class MessageCollect
     }
     public void FinalizeEXP(List<int> relevantActorInject, out DescriptionCollector desc, bool printMessage = true, bool printClimax = true, bool printStats = true)
     {
+        if (DeferPresentation()) { desc = null; return; }
         this.exp.Finalize(out desc, printMessage, printClimax, printStats);
         if (desc != null) desc.LoadActors(relevantActorInject);
     }
 
     public void AddKojo(KojoCollector m, Room_Instance room, bool tryMerge = false)
     {
+        if (PresentationSuppressed) return;
         //Debug.Log("AppendKojoMessage");
         var player = scr_System_CampaignManager.current.Player;
         bool visible = m.VisibleTo(player, room);
@@ -304,21 +369,47 @@ public class MessageCollect
 
     public void FlushCollectLogs(Character_Trainable visible = null)
     {
+        if (DeferPresentation()) return;
         var cnManager = scr_System_CampaignManager.current;
         if (visible == null) visible = scr_System_CampaignManager.current.Player;
-
-        foreach(var check in messages_checks) cnManager.AddLog(check, visible, true, replaceStrings);
-        foreach (var msg in messages_before) cnManager.AddLog(msg, visible, true, replaceStrings);
-        foreach (var kvp in messages_kojo) cnManager.AddLog(kvp, false, kvp.RightAlign(visible), kvp.tooltip, replaceStrings);
 
         exp.Finalize(out var desc);
         if (desc != null) this.messages_exp.Add(desc);
 
-        foreach(var msg in messages_exp) cnManager.AddLog(msg, visible, true, replaceStrings);
-        foreach (var kvp in messages_kojo_after) cnManager.AddLog(kvp, false, kvp.RightAlign(visible), kvp.tooltip, replaceStrings);
-        foreach (var msg in messages_after) cnManager.AddLog(msg, visible, true, replaceStrings);
+        // sections (accept / result / after): the logs panel auto-prints within a section, each later one waits for a click
+        bool firstSection = true;
+        if (BeginSection(cnManager, AcceptSectionCount, ref firstSection))
+        {
+            foreach (var check in messages_checks) cnManager.AddLog(check, visible, true, replaceStrings);
+            foreach (var msg in messages_before) cnManager.AddLog(msg, visible, true, replaceStrings);
+            foreach (var kvp in messages_kojo) cnManager.AddLog(kvp, false, kvp.RightAlign(visible), kvp.tooltip, replaceStrings);
+        }
+        if (BeginSection(cnManager, ResultSectionCount, ref firstSection))
+        {
+            foreach (var msg in messages_results) cnManager.AddLog(msg, visible, true, replaceStrings);
+            foreach (var msg in messages_exp) cnManager.AddLog(msg, visible, true, replaceStrings);
+        }
+        if (BeginSection(cnManager, AfterSectionCount, ref firstSection))
+        {
+            foreach (var kvp in messages_kojo_after) cnManager.AddLog(kvp, false, kvp.RightAlign(visible), kvp.tooltip, replaceStrings);
+            foreach (var msg in messages_after) cnManager.AddLog(msg, visible, true, replaceStrings);
+        }
+        cnManager.EndLogSections();
         //cnManager.AddLog(-1, String.Join("\n", messages_after), true);
         Clear();
+    }
+
+    int AcceptSectionCount { get { return messages_checks.Count + messages_before.Count + messages_kojo.Count; } }
+    int ResultSectionCount { get { return messages_results.Count + messages_exp.Count; } }
+    int AfterSectionCount { get { return messages_kojo_after.Count + messages_after.Count; } }
+
+    /// <summary> starts a log section when it has messages (scr_System_CampaignManager.BeginLogSection) </summary>
+    static bool BeginSection(scr_System_CampaignManager cnManager, int count, ref bool firstSection)
+    {
+        if (count < 1) return false;
+        cnManager.BeginLogSection(firstSection);
+        firstSection = false;
+        return true;
     }
 
     public Dictionary<string, string> replaceStrings = new Dictionary<string, string>();
@@ -350,32 +441,92 @@ public class MessageCollect
     /// <param name="visible"></param>
     public void FlushCollectLogsCallback(Character_Trainable visible = null, UISpec displaySnapshot = null)
     {
+        if (DeferPresentation()) return;
         var cnManager = scr_System_CampaignManager.current;
         if (visible == null) visible = scr_System_CampaignManager.current.Player;
-
-        foreach (var check in messages_checks) 
-            scr_UpdateHandler.current.AddEventCallback(() => cnManager.AddLog(check, visible, true, null, displaySnapshot));
-
-        foreach(var m in messages_before) 
-            scr_UpdateHandler.current.AddEventCallback(() => cnManager.AddLog(m, visible, true, null, displaySnapshot));
-
-        foreach (var kvp in messages_kojo)  scr_UpdateHandler.current.AddEventCallback(() => cnManager.AddLog(kvp, false, kvp.RightAlign(visible), kvp.tooltip));
 
         exp.Finalize(out var exps);
         if (exps != null) messages_exp.Add(exps);
 
+        if (MessageCount == 0) { Clear(); return; }
+
+        // sections as FlushCollectLogs - started from callbacks too, since the logs only reach the panel when those run
+        bool firstSection = true;
+        void QueueSection(int count)
+        {
+            if (count < 1) return;
+            bool isFirst = firstSection;
+            firstSection = false;
+            scr_UpdateHandler.current.AddEventCallback(() => cnManager.BeginLogSection(isFirst));
+        }
+
+        QueueSection(AcceptSectionCount);
+        foreach (var check in messages_checks)
+            scr_UpdateHandler.current.AddEventCallback(() => cnManager.AddLog(check, visible, true, null, displaySnapshot));
+
+        foreach(var m in messages_before)
+            scr_UpdateHandler.current.AddEventCallback(() => cnManager.AddLog(m, visible, true, null, displaySnapshot));
+
+        foreach (var kvp in messages_kojo)  scr_UpdateHandler.current.AddEventCallback(() => cnManager.AddLog(kvp, false, kvp.RightAlign(visible), kvp.tooltip));
+
+        QueueSection(ResultSectionCount);
+        foreach (var r in messages_results)
+            scr_UpdateHandler.current.AddEventCallback(() => cnManager.AddLog(r, visible, true, null, displaySnapshot));
+
         foreach(var kvp in messages_exp)
             scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(kvp, visible, true, null, displaySnapshot));
-        
 
+
+        QueueSection(AfterSectionCount);
         foreach (var kvp in messages_kojo_after)
             scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(kvp, false, kvp.RightAlign(visible), kvp.tooltip));
-        
+
         //var s = String.Join("\n", messages_after);
-        foreach (var m in messages_after) 
+        foreach (var m in messages_after)
             scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(m, visible, true, null, displaySnapshot));
         // scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, s, true));
+        scr_UpdateHandler.current.AddEventCallback(() => cnManager.EndLogSections());
         Clear();
+    }
+
+    /// <summary>
+    /// Silent event runs (ExpeditionSilentRunner): every section as plain text, in the order FlushCollectLogsCallback prints
+    /// them (checks, before, kojo, results, exp incl. first-experience lines, kojo_after incl. first-experience kojo, after
+    /// incl. climax kojo), ignoring player visibility, then Clear(). Nothing reaches the screen.
+    /// </summary>
+    public void DrainToText(List<string> into, Character_Trainable perspective = null)
+    {
+        if (DeferPresentation()) return;
+        if (perspective == null) perspective = scr_System_CampaignManager.current.Player;
+        exp.Finalize(out var exps);
+        if (exps != null) messages_exp.Add(exps);
+
+        foreach (var m in messages_checks) RecordText(m, perspective, into);
+        foreach (var m in messages_before) RecordText(m, perspective, into);
+        foreach (var m in messages_kojo) RecordText(m, perspective, into);
+        foreach (var m in messages_results) RecordText(m, perspective, into);
+        foreach (var m in messages_exp) RecordText(m, perspective, into);
+        foreach (var m in messages_kojo_after) RecordText(m, perspective, into);
+        foreach (var m in messages_after) RecordText(m, perspective, into);
+        Clear();
+    }
+
+    /// <summary> The text a record would print (description: as AddLog picks it for perspective; kojo: every node). </summary>
+    public static void RecordText(I_Records record, Character_Trainable perspective, List<string> into)
+    {
+        if (record == null || into == null) return;
+        if (record is DescriptionCollector desc)
+        {
+            var text = desc.DirectlyRelated(perspective) ? desc.message : desc.message_excludeRelated;
+            if (!string.IsNullOrWhiteSpace(text)) into.Add(text.Trim('\n'));
+        }
+        else if (record is KojoCollector kol)
+        {
+            if (kol.collect == null) return;
+            var lines = new List<string>();
+            kol.collect.DumpMessage(lines);
+            foreach (var line in lines) if (!string.IsNullOrWhiteSpace(line)) into.Add(line.Trim('\n'));
+        }
     }
 
     public void FlushCollectedLogsIntoUI(DateTime timestamp, canvas_videoEdit canvas, Dictionary<string, string> replaceStrings, scr_actionHolder rect)
@@ -404,6 +555,7 @@ public class MessageCollect
         foreach (var check in messages_checks) canvas.PrintEntry_1(check, replaceStrings, rect);
         foreach (var msg in messages_before) canvas.PrintEntry_1(msg, replaceStrings, rect);
         foreach (var kvp in messages_kojo) canvas.PrintEntry_1(kvp,   replaceStrings, rect);
+        foreach (var msg in messages_results) canvas.PrintEntry_1(msg, replaceStrings, rect);
 
         foreach (var msg in messages_exp) canvas.PrintEntry_1(msg,   replaceStrings, rect);
         foreach (var kvp in messages_kojo_after) canvas.PrintEntry_1(kvp,   replaceStrings, rect);
@@ -423,6 +575,7 @@ public class MessageCollect
         messages_before.Clear();
         messages_after.Clear();
         messages_kojo.Clear();
+        messages_results.Clear();
         messages_kojo_after.Clear();
         messages_exp.Clear();
         exp.Clear();
@@ -432,6 +585,7 @@ public class MessageCollect
 
     public void AddKojo(KojoCollector kojo, bool tryMerge = false)
     {
+        if (PresentationSuppressed) return;
         //this.messages_kojo.Add(m.collect);
         if (tryMerge)
         {
@@ -451,6 +605,7 @@ public class MessageCollect
 
     public void AddKojoAfter(KojoCollector kojo, bool tryMerge = false)
     {
+        if (PresentationSuppressed) return;
         //this.messages_kojo.Add(m.collect);
         if (tryMerge)
         {
@@ -508,7 +663,16 @@ public class MessageCollect
             }
             else if (debug) Debug.LogError($"dropping nonvisible check {mm.Dump}");
         }
-        foreach (var mm in m.messages_kojo_after) 
+        foreach (var mm in m.messages_results)
+        {
+            if (mm.VisibleTo(c))
+            {
+                this.messages_results.Add(mm);
+                added = true;
+            }
+            else if (debug) Debug.LogError($"dropping nonvisible check {mm.Dump}");
+        }
+        foreach (var mm in m.messages_kojo_after)
         {
             if (mm.VisibleTo(c)) {
                 this.messages_kojo_after.Add(mm);
@@ -552,6 +716,7 @@ public class MessageCollect
         foreach (var m in messages_checks) lines.Add(m.Dump);
         foreach (var m in messages_before) lines.Add(m.Dump);
         foreach (var m in messages_kojo) lines.Add(m.Dump);
+        foreach (var m in messages_results) lines.Add(m.Dump);
         foreach (var m in messages_exp) lines.Add(m.Dump);
         foreach (var m in messages_kojo_after) lines.Add(m.Dump);
         foreach (var m in messages_after) lines.Add(m.Dump);
@@ -560,7 +725,7 @@ public class MessageCollect
 
     public void Merge(MessageCollect m, bool clear = true)
     {
-        if (accumulateExperience)
+        if (accumulateExperience || PresentationSuppressed)
         {
             exp.Accumulate(m.exp);
             messages_exp.AddRange(m.messages_exp);
@@ -584,6 +749,7 @@ public class MessageCollect
         if (m.messages_after != null && m.messages_after.Count > 0) messages_after.AddRange(m.messages_after);
 
         this.messages_kojo.AddRange(m.messages_kojo);
+        this.messages_results.AddRange(m.messages_results);
         this.messages_kojo_after.AddRange(m.messages_kojo_after);
 
         exp.Finalize(out var desc);

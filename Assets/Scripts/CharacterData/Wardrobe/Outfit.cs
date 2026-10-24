@@ -62,12 +62,7 @@ public class OutfitSet
     {
         get
         {
-            if (_cache_displayname == null)
-            {
-                var split = key.Split("|");
-
-                _cache_displayname = LocalizeDictionary.QueryThenParse(split.Last());
-            }
+            if (_cache_displayname == null) _cache_displayname = OutfitUtility.KeyDisplayName(key);
             return _cache_displayname;
         }
     }
@@ -247,6 +242,47 @@ public class OutfitVariant
     }
 }
 
+/// <summary> what a wardrobe key stands for (OutfitUtility.ParseKey) </summary>
+public enum OutfitKeyKind
+{
+    None,
+    /// <summary> character-own reserved key: #default, #home, #home_temp, #sleep, #sleep_temp </summary>
+    Reserved,
+    /// <summary> "factionID|keyTypeID" - OutfitUtility.MemberTypeKey </summary>
+    MemberType,
+    /// <summary> "factionID:activityID" - OutfitUtility.ActivityKey </summary>
+    Activity,
+    /// <summary> "keyTypeID" - OutfitUtility.GenericMemberTypeKey (template presets only) </summary>
+    Generic,
+    /// <summary> "@party:jobRef" - Manageable_Party.OutfitKey (the party's wardrobe, never the character's) </summary>
+    Party,
+}
+
+/// <summary>
+/// One outfit slot of a wardrobe as listed (Character_Wardrobe.GetEntries): the key, what it stands for, and its outfit
+/// (null = none set - the default clothes are worn for it).
+/// </summary>
+public class WardrobeEntry
+{
+    public readonly string key;
+    public readonly OutfitKeyKind kind;
+    /// <summary> MemberType / Activity keys: the faction the key belongs to, else "" </summary>
+    public readonly string factionID;
+    /// <summary> MemberType: the key type's ID; Activity: the activity ID; Reserved / Generic: the key itself </summary>
+    public readonly string id;
+    public readonly OutfitSet outfit;
+
+    public WardrobeEntry(string key, OutfitSet outfit)
+    {
+        this.key = key ?? "";
+        this.outfit = outfit;
+        kind = OutfitUtility.ParseKey(this.key, out factionID, out id);
+    }
+
+    [JsonIgnore] public bool HasOutfit { get { return outfit != null; } }
+    [JsonIgnore] public string DisplayName { get { return OutfitUtility.KeyDisplayName(key); } }
+}
+
 public static class OutfitUtility
 {
     public const string trait_BodyType = "trait_BodyType";
@@ -265,6 +301,50 @@ public static class OutfitUtility
     /// Resolving to nothing (IsEmpty) counts as the plain default clothes - no change trip for it.
     /// </summary>
     public const string Key_Default = "#default";
+
+    /// <summary> every reserved key, in wardrobe UI order </summary>
+    public static readonly string[] ReservedKeys = { Key_Default, Key_Home, Key_HomeTemp, Key_Sleep, Key_SleepTemp };
+
+    /// <summary>
+    /// What key stands for, split into its parts: factionID for membertype / activity keys (else ""), id = the key type
+    /// ID / activity ID (reserved / generic: the key itself, party: the job ref).
+    /// </summary>
+    public static OutfitKeyKind ParseKey(string key, out string factionID, out string id)
+    {
+        factionID = "";
+        id = key ?? "";
+        if (string.IsNullOrEmpty(key)) return OutfitKeyKind.None;
+        if (key.StartsWith("@party:"))
+        {
+            id = key.Substring("@party:".Length);
+            return OutfitKeyKind.Party;
+        }
+        if (key.StartsWith("#")) return Array.IndexOf(ReservedKeys, key) >= 0 ? OutfitKeyKind.Reserved : OutfitKeyKind.None;
+        int split = key.LastIndexOf('|');
+        if (split > 0)
+        {
+            factionID = key.Substring(0, split);
+            id = key.Substring(split + 1);
+            return OutfitKeyKind.MemberType;
+        }
+        split = key.LastIndexOf(':');
+        if (split > 0)
+        {
+            factionID = key.Substring(0, split);
+            id = key.Substring(split + 1);
+            return OutfitKeyKind.Activity;
+        }
+        return OutfitKeyKind.Generic;
+    }
+
+    /// <summary> display name of a wardrobe key: "faction - type / activity" for faction keys, else the localized key </summary>
+    public static string KeyDisplayName(string key)
+    {
+        var kind = ParseKey(key, out var factionID, out var id);
+        if (kind == OutfitKeyKind.MemberType || kind == OutfitKeyKind.Activity)
+            return $"{LocalizeDictionary.QueryThenParse(factionID)} - {LocalizeDictionary.QueryThenParse(id)}";
+        return LocalizeDictionary.QueryThenParse(id);
+    }
 
     /// <summary>
     /// Context tags outfit variants match against: today's holiday and season tags of the character's world - the world
@@ -297,7 +377,9 @@ public static class OutfitUtility
 
     /// <summary>
     /// outfit key of a membertype held in a faction / party: "factionID|keyTypeID" - MemberType.OutfitKeyType: the type
-    /// defining the outfit, else the direct parent (the shifts of one post share a key), else the type itself
+    /// defining the outfit, else the direct parent (the shifts of one post share a key), else the type itself.
+    /// <br/>Read from the data each time: data adding / removing a membertype outfit (an update, a mod) moves the key, and
+    /// an outfit stored under the old key no longer applies to that type (it stays stored; undoing the change restores it).
     /// </summary>
     public static string MemberTypeKey(string factionID, MemberType memberType)
     {

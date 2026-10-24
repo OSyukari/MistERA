@@ -1536,7 +1536,7 @@ public partial class scr_UpdateHandler : MonoBehaviour
         //Debug.Log($"ExecuteEventCallbacks count {eventCallbacks.Count}");
         bool log = scr_System_CentralControl.current.LogPrefs.DLog_Events;
         FlushCollectedLogs(true, true, false);
-        var loopCount = 100;
+        var loopCount = 300;
         while(loopCount > 0 && eventCallbacks.Count > 0)
         {
             var vv = eventCallbacks.Count > 0 ? eventCallbacks[0] : null;
@@ -1547,7 +1547,7 @@ public partial class scr_UpdateHandler : MonoBehaviour
             }
             loopCount--;
         }
-        if (loopCount < 1) Debug.LogError("Eventcallback stack exceed 100, forced exit");
+        if (loopCount < 1) Debug.LogError("Eventcallback stack exceed 300, forced exit");
 
         if (log) Debug.Log($"invoking Observer_PostUpdateTime_EventEnd, stillupdating? {this.EventHandler.Active}");
         Observer_PostUpdateTime_EventEnd?.Invoke(this.EventHandler.Active);

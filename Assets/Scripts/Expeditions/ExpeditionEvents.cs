@@ -69,7 +69,10 @@ public class ExpEvents
         public float weightMult = 1f;
     }
 
-    public int ApplyTimeWeight(int weight, int hour)
+    public int ApplyTimeWeight(int weight, int hour) { return ApplyTimeWeight(timeWeightMods, weight, hour); }
+
+    /// <summary> shared by ExpEvents and ExpResults timeWeightMods </summary>
+    public static int ApplyTimeWeight(List<TimeWeightModifier> timeWeightMods, int weight, int hour)
     {
         if (timeWeightMods == null || timeWeightMods.Count == 0) return weight;
         float add = 0, mult = 1;

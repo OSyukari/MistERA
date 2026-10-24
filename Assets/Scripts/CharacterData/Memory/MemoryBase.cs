@@ -237,6 +237,10 @@ public class Memory_Entry
     public bool softMerge = false;
     public int jobRefID = -1;
     public string entryDescription = "";
+    // Includes title-only overrides (replaceDescription=false); automatic titles must not take ownership back.
+    public bool explicitTitleOverride = false;
+    // Presentation only: null preserves the original interaction/supplemental narrative.
+    [JsonProperty] public string descriptionOverride = null;
 
     public Memory_Entry(Character_Trainable c, Job job, int roomRef, List<string> selfTags, MemInstance mem, string entryDescription = "", int duration = -1) : this()
     {
@@ -380,6 +384,15 @@ public class Memory_Entry
 
         this.jobRefID = !MergeWithAll && this.jobRefID != -1 ? this.jobRefID : other.jobRefID != -1 ? other.jobRefID : -1;
         this.entryDescription = this.entryDescription != "" ? this.entryDescription : other.entryDescription != "" ? other.entryDescription : "";
+        if (!this.explicitTitleOverride && (other.explicitTitleOverride
+            || (this.descriptionOverride == null && other.descriptionOverride != null)))
+        {
+            if (other.descriptionOverride != null) this.descriptionOverride = other.descriptionOverride;
+            this.entryDescription = other.entryDescription;
+            this.explicitTitleOverride = other.explicitTitleOverride;
+            this.disableRoomName = other.disableRoomName;
+            this.roomNameOverride = other.roomNameOverride;
+        }
 
         this.MergeWithAll = false;
 
@@ -631,6 +644,8 @@ public class Memory_Entry
         else if (this.MemInstanceDescriptions != null && this.MemInstanceDescriptions.Count > 0) body = MemInstanceDescriptions[0];
         else body = "Error no stuff";
 
+        if (withDescription && descriptionOverride != null) body += "\n" + descriptionOverride;
+
         if (withRoomName && !disableRoomName)
         {
             var roomname = roomNameOverride != "" ? roomNameOverride : this.roomRef == -1 ? "unknown" : scr_System_CampaignManager.current.Map.GetRoomByRef(roomRef).DisplayNameShort;
@@ -757,11 +772,15 @@ public class Memory_Entry
 
     public List<string> memInstanceDescription = new List<string>();
     private List<string> memInstanceDescriptionCache = null;
+    /// <summary> descriptionOverride (SetMemoryNameOverride) is added in front of the other lines, never replaces them </summary>
     [JsonIgnore] public List<string> MemInstanceDescriptions
     {
         get
         {
-            return memInstanceDescriptionCache;
+            if (descriptionOverride == null) return memInstanceDescriptionCache;
+            var lines = new List<string>() { descriptionOverride };
+            if (memInstanceDescriptionCache != null) lines.AddRange(memInstanceDescriptionCache);
+            return lines;
         }
     }
 
@@ -778,10 +797,14 @@ public class Memory_Entry
     public void Draw(scr_memoryBox box, bool shortenTime = false)
     {
         box.timeStamp.text = shortenTime ? FinalEndTime.ToString("MM/dd") : PrintShortTimeStartToEnd;
-        box.memText.SetText(ToString(true));
+        box.memText.SetText(ToString(descriptionOverride == null));
+        box.memText.SetExternalTooltip(GetDescription());
+    }
 
+    public string GetDescription()
+    {
         List<string> additional = new List<string>();
-        if (entryDescription.Length > 0) additional.Add(entryDescription);
+        if (descriptionOverride == null && entryDescription.Length > 0) additional.Add(entryDescription);
         if (!scr_System_CentralControl.current.isSafeMode && TagsCount > 0) additional.Add(PrintTags);
         additional.AddRange(MemInstanceDescriptions);
 
@@ -789,7 +812,7 @@ public class Memory_Entry
         else additional.Add($"Statmod: Check{cache_score.ToString("+0;-#")} Mood{moodSum} Stress{stressSum} Lust{lustSum}");
 
         if (scr_System_CampaignManager.current.DebugMode) additional.Add("Internal Duration " + Duration);
-        box.memText.SetExternalTooltip(String.Join("\n", additional));
+        return String.Join("\n", additional);
     }
 }
 

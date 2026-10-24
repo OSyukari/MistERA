@@ -367,6 +367,8 @@ public class Room_Instance: IDisposable, I_Disposable
         {
             case MessageCollect_Type.checks:
                 kols.AddMessage_Checks(kol, null); break;
+            case MessageCollect_Type.results:
+                kols.AddMessage_Results(kol, null); break;
             case MessageCollect_Type.before:
                 kols.AddMessage_Before(kol, null); break;
             case MessageCollect_Type.after:

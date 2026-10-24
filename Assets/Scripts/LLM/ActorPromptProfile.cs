@@ -13,6 +13,9 @@ using System.Collections.Generic;
 public class ActorPromptProfile
 {
     public string id = "";
+    /// <summary>Identity metadata: null inherits, explicit blank resets to the short-tag fallback.</summary>
+    [Newtonsoft.Json.JsonProperty(NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+    public string shortName = null;
     /// <summary> ids of ActorPromptRuleset (Index_BodyPartBase.PromptRulesets) applied before this layer's own content </summary>
     public List<string> inheritRulesets = new List<string>();
     /// <summary> always added </summary>
@@ -51,7 +54,7 @@ public class ActorPromptRule
     public List<string> excludeKeywords = new List<string>();
     /// <summary> all of these actor tags present </summary>
     public List<string> requireActorTags = new List<string>();
-    /// <summary> at least one of these actor tags present </summary>
+    /// <summary> at least one actor tag predicate matches; !tag matches when that tag is absent </summary>
     public List<string> requireAnyActorTags = new List<string>();
     /// <summary> none of these actor tags present </summary>
     public List<string> excludeActorTags = new List<string>();
@@ -68,6 +71,7 @@ public class ActorPromptRule
     /// <summary>
     /// body tags (penis, anus, clit...) the body has and shows - all of them. Same gate as organ promptTags: coverage
     /// below 2 counting every layer (Skin + Inner + Outer, so underwear hides), or Xray. Several parts with the tag = the most covered decides.
+    /// With ignoreClothing, only actual anatomy is required.
     /// </summary>
     public List<string> requireVisibleBodyTags = new List<string>();
     /// <summary> optional CharaReq the actor must pass (no job context). Only the fields written apply, see PromptCharaReq </summary>
@@ -81,26 +85,36 @@ public class ActorPromptRule
     /// <summary> add the hairstyle as currently seen (Character_Body.EffectiveHairstyle) </summary>
     public bool includeHairstyle = false;
 
-    public bool Matches(Character_Trainable c, HashSet<string> keywords, List<string> actorTags)
+    public bool Matches(Character_Trainable c, HashSet<string> keywords, List<string> actorTags, bool ignoreClothing = false, bool deferActorTags = false)
     {
         if (requireKeywords != null) foreach (var k in requireKeywords) if (!keywords.Contains(k)) return false;
         if (excludeKeywords != null) foreach (var k in excludeKeywords) if (keywords.Contains(k)) return false;
-        if (requireActorTags != null) foreach (var t in requireActorTags) if (!actorTags.Contains(t)) return false;
-        if (requireAnyActorTags != null && requireAnyActorTags.Count > 0 && !requireAnyActorTags.Exists(t => actorTags.Contains(t))) return false;
-        if (excludeActorTags != null) foreach (var t in excludeActorTags) if (actorTags.Contains(t)) return false;
-        if (requireChangedTraits != null) foreach (var g in requireChangedTraits) if (!ActorPromptProfileUtility.IsTraitChanged(c, g)) return false;
-        if (excludeChangedTraits != null) foreach (var g in excludeChangedTraits) if (ActorPromptProfileUtility.IsTraitChanged(c, g)) return false;
-        if (requireTraits != null) foreach (var t in requireTraits) if (!ActorPromptProfileUtility.HasTrait(c, t)) return false;
-        if (excludeTraits != null) foreach (var t in excludeTraits) if (ActorPromptProfileUtility.HasTrait(c, t)) return false;
+        if (!deferActorTags)
+        {
+            if (requireActorTags != null) foreach (var t in requireActorTags) if (!ActorPromptProfileUtility.MatchActorTag(actorTags, t)) return false;
+            if (requireAnyActorTags != null && requireAnyActorTags.Count > 0 && !requireAnyActorTags.Exists(t => ActorPromptProfileUtility.MatchActorTag(actorTags, t))) return false;
+            if (excludeActorTags != null) foreach (var t in excludeActorTags) if (ActorPromptProfileUtility.MatchActorTag(actorTags, t)) return false;
+        }
+        if (requireChangedTraits != null) foreach (var g in requireChangedTraits) if (!ActorPromptProfileUtility.IsTraitChanged(c, g, ignoreClothing)) return false;
+        if (excludeChangedTraits != null) foreach (var g in excludeChangedTraits) if (ActorPromptProfileUtility.IsTraitChanged(c, g, ignoreClothing)) return false;
+        if (requireTraits != null) foreach (var t in requireTraits) if (!ActorPromptProfileUtility.HasTrait(c, t, ignoreClothing)) return false;
+        if (excludeTraits != null) foreach (var t in excludeTraits) if (ActorPromptProfileUtility.HasTrait(c, t, ignoreClothing)) return false;
         if (requireBodyTags != null && requireBodyTags.Count > 0 && (c.Body == null || !c.Body.HasBodyTag(requireBodyTags))) return false;
         if (requireVisibleBodyTags != null && requireVisibleBodyTags.Count > 0)
         {
             if (c.Body == null) return false;
-            bool xray = scr_System_CampaignManager.current != null && scr_System_CampaignManager.current.XrayMode;
-            foreach (var t in requireVisibleBodyTags)
+            if (ignoreClothing)
             {
-                int score = c.Body.GetRevealingScoreByTag(t, BodyEquipLayer.None);
-                if (score < 0 || (score > 1 && !xray)) return false;   // -1 = no such part
+                if (!c.Body.HasBodyTag(requireVisibleBodyTags)) return false;
+            }
+            else
+            {
+                bool xray = scr_System_CampaignManager.current != null && scr_System_CampaignManager.current.XrayMode;
+                foreach (var t in requireVisibleBodyTags)
+                {
+                    int score = c.Body.GetRevealingScoreByTag(t, BodyEquipLayer.None);
+                    if (score < 0 || (score > 1 && !xray)) return false;   // -1 = no such part
+                }
             }
         }
         if (charaReq != null)
@@ -111,7 +125,7 @@ public class ActorPromptRule
         return true;
     }
 
-    public void Collect(Character_Trainable c, List<string> result)
+    public void Collect(Character_Trainable c, List<string> result, bool ignoreClothing = false)
     {
         if (prompts != null) result.AddRange(prompts);
         if (traitGroups != null)
@@ -119,7 +133,7 @@ public class ActorPromptRule
             foreach (var group in traitGroups)
             {
                 if (string.IsNullOrEmpty(group)) continue;
-                var trait = c.Body?.GetEffectiveBodyTrait(group) ?? c.Stats?.GetTraitByGroupID(group);
+                var trait = ActorPromptProfileUtility.GetPromptTrait(c, group, ignoreClothing);
                 if (trait == null) continue;
                 if (trait.promptTags != null) result.AddRange(trait.promptTags);
                 if (trait.promptTags_always != null) result.AddRange(trait.promptTags_always);
@@ -127,7 +141,7 @@ public class ActorPromptRule
         }
         if (includeHairstyle)
         {
-            var hairstyle = c.Body?.EffectiveHairstyle;
+            var hairstyle = ignoreClothing ? c.Body?.Hairstyle : c.Body?.EffectiveHairstyle;
             if (hairstyle != null && hairstyle.GetBase() != null) result.AddRange(hairstyle.GetPromptTokens());
         }
     }
@@ -148,38 +162,81 @@ public class PromptCharaReq : CharaReq
     }
 }
 
+[Serializable]
+public class ActorOptionalPromptRule
+{
+    public string id;
+    public List<string> promptGroups = new List<string>();
+    public List<string> prompts = new List<string>();
+    public List<string> requireActorTags = new List<string>();
+    public List<string> requireAnyActorTags = new List<string>();
+    public List<string> excludeActorTags = new List<string>();
+}
+
 public static class ActorPromptProfileUtility
 {
     public const string DefaultProfileID = "default";
+
+    internal static bool MatchActorTag(List<string> tags, string predicate)
+    {
+        return !string.IsNullOrEmpty(predicate) && (predicate[0] == '!'
+            ? predicate.Length > 1 && !tags.Contains(predicate.Substring(1)) : tags.Contains(predicate));
+    }
 
     /// <summary> default -> race -> body (parts + their internals) -> race template -> template, see ActorPromptProfile </summary>
     public static void Resolve(Character_Trainable c, List<string> prompts, List<ActorPromptRule> rules)
     {
         var index = CharaOrigins.Instance?.BodyPartIndex;
-        ApplyLayer(index?.GetPromptProfileByID(DefaultProfileID), index, prompts, rules);
-        ApplyLayer(c.Race?.promptProfile, index, prompts, rules);
-        ApplyBodyLayers(c, index, prompts, rules);
-        ApplyLayer(c.RaceTemplate?.promptProfile, index, prompts, rules);
-        ApplyLayer(c.Template?.promptProfile, index, prompts, rules);
+        foreach (var profile in EnumerateLayers(c, index)) ApplyLayer(profile, index, prompts, rules);
+    }
+
+    /// <summary>Last explicit non-null metadata wins; null or blank leaves fallback to the caller. Rulesets carry no names.</summary>
+    public static string ResolveShortName(Character_Trainable c)
+    {
+        if (c == null) return null;
+        string name = null;
+        foreach (var profile in EnumerateLayers(c, CharaOrigins.Instance?.BodyPartIndex))
+            if (profile?.shortName != null) name = profile.shortName;
+
+        // A different portrait template overrides identity last, never the actual body's prompt rules.
+        string portraitID = c.PortraitManager?.PortraitTemplateID;
+        if (!string.IsNullOrEmpty(portraitID) && portraitID != c.BaseID)
+        {
+            var portraitTemplate = scr_System_Serializer.current?.MasterList?.Character_Bases.GetByID(portraitID)
+                as Character_SerializableTrainable;
+            if (portraitTemplate?.Template?.promptProfile?.shortName != null)
+                name = portraitTemplate.Template.promptProfile.shortName;
+        }
+        return name;
+    }
+
+    static IEnumerable<ActorPromptProfile> EnumerateLayers(Character_Trainable c, Index_BodyPartBase index)
+    {
+        yield return index?.GetPromptProfileByID(DefaultProfileID);
+        if (c == null) yield break;
+        yield return c.Race?.promptProfile;
+        foreach (var profile in EnumerateBodyLayers(c)) yield return profile;
+        yield return c.RaceTemplate?.promptProfile;
+        yield return c.Template?.promptProfile;
     }
 
     /// <summary>
     /// profiles of the parts and organs the body has (BodyPart_Base / BodyInternal_Base.promptProfile), in body order:
     /// each part, then its internals. A base shared by several instances applies once.
     /// </summary>
-    static void ApplyBodyLayers(Character_Trainable c, Index_BodyPartBase index, List<string> prompts, List<ActorPromptRule> rules)
+    static IEnumerable<ActorPromptProfile> EnumerateBodyLayers(Character_Trainable c)
     {
-        if (c.Body?.Body == null) return;
+        if (c.Body?.Body == null) yield break;
         var applied = new HashSet<ActorPromptProfile>();
         foreach (var part in c.Body.Body)
         {
             var partProfile = part?.Base?.promptProfile;
-            if (partProfile != null && applied.Add(partProfile)) ApplyLayer(partProfile, index, prompts, rules);
+            if (partProfile != null && applied.Add(partProfile)) yield return partProfile;
             if (part?.internals == null) continue;
             foreach (var ins in part.internals)
             {
                 var insProfile = ins?.Base?.promptProfile;
-                if (insProfile != null && applied.Add(insProfile)) ApplyLayer(insProfile, index, prompts, rules);
+                if (insProfile != null && applied.Add(insProfile)) yield return insProfile;
             }
         }
     }
@@ -223,8 +280,9 @@ public static class ActorPromptProfileUtility
     /// <summary>
     /// profile prompts + every matching rule's output, appended to result. actionTags = the actor's current action tags
     /// (sex, unsafe, COM portrait tags...), checked by the rules like actor tags; none for a plain portrait.
+    /// ignoreClothing bypasses coverage and outfit appearance overrides, not actor state or CharaReq conditions.
     /// </summary>
-    public static void CollectPrompts(Character_Trainable c, HashSet<string> keywords, List<string> result, IEnumerable<string> actionTags = null, Dictionary<string, List<string>> promptGroups = null)
+    public static void CollectPrompts(Character_Trainable c, HashSet<string> keywords, List<string> result, IEnumerable<string> actionTags = null, Dictionary<string, List<string>> promptGroups = null, bool ignoreClothing = false, List<ActorOptionalPromptRule> optionalRules = null)
     {
         var prompts = new List<string>();
         var rules = new List<ActorPromptRule>();
@@ -237,13 +295,32 @@ public static class ActorPromptProfileUtility
         if (actionTags != null) actorTags.AddRange(actionTags);
         foreach (var rule in rules)
         {
-            if (!rule.Matches(c, keywords, actorTags)) continue;
+            bool hasTagConditions = (rule.requireActorTags != null && rule.requireActorTags.Count > 0)
+                || (rule.requireAnyActorTags != null && rule.requireAnyActorTags.Count > 0)
+                || (rule.excludeActorTags != null && rule.excludeActorTags.Count > 0);
+            if (optionalRules != null && ((rule.promptGroups != null && rule.promptGroups.Count > 0) || hasTagConditions))
+            {
+                // Resolve game-only checks now; actor/action tags are evaluated against the exported snapshot later.
+                if (!rule.Matches(c, keywords, actorTags, ignoreClothing, deferActorTags: true)) continue;
+                var candidate = new ActorOptionalPromptRule
+                {
+                    id = rule.id,
+                    promptGroups = new List<string>(rule.promptGroups ?? new List<string>()),
+                    requireActorTags = new List<string>(rule.requireActorTags ?? new List<string>()),
+                    requireAnyActorTags = new List<string>(rule.requireAnyActorTags ?? new List<string>()),
+                    excludeActorTags = new List<string>(rule.excludeActorTags ?? new List<string>()),
+                };
+                rule.Collect(c, candidate.prompts, ignoreClothing);
+                if (candidate.prompts.Count > 0) optionalRules.Add(candidate);
+                continue;
+            }
+            if (!rule.Matches(c, keywords, actorTags, ignoreClothing)) continue;
             if (promptGroups == null || rule.promptGroups == null || rule.promptGroups.Count == 0)
-                rule.Collect(c, result);
+                rule.Collect(c, result, ignoreClothing);
             else
             {
                 var output = new List<string>();
-                rule.Collect(c, output);
+                rule.Collect(c, output, ignoreClothing);
                 AddGroupedPrompts(output, rule.promptGroups, promptGroups);
             }
         }
@@ -261,16 +338,23 @@ public static class ActorPromptProfileUtility
         }
     }
 
+    /// <summary>Current body trait (not the template seed), optionally without outfit overrides; other groups use Stats.</summary>
+    internal static Traits GetPromptTrait(Character_Trainable c, string groupID, bool ignoreClothing)
+    {
+        return (ignoreClothing ? c.Body?.GetBodyTrait(groupID) : c.Body?.GetEffectiveBodyTrait(groupID))
+            ?? c.Stats?.GetTraitByGroupID(groupID);
+    }
+
     /// <summary>
-    /// The actor has traitID as currently seen: the trait as seen in its group (Character_Body.GetEffectiveBodyTrait,
-    /// outfit overrides count; non-body groups through Stats) is that trait.
+    /// The actor has traitID as currently seen in its group; ignoreClothing excludes outfit overrides.
+    /// Non-body groups are resolved through Stats.
     /// </summary>
-    public static bool HasTrait(Character_Trainable c, string traitID)
+    public static bool HasTrait(Character_Trainable c, string traitID, bool ignoreClothing = false)
     {
         if (c == null || string.IsNullOrEmpty(traitID)) return false;
         var t = BodyTraitUtility.Resolve(traitID);
         if (t?.Parent == null) return false;
-        var current = c.Body?.GetEffectiveBodyTrait(t.Parent.ID) ?? c.Stats?.GetTraitByGroupID(t.Parent.ID);
+        var current = GetPromptTrait(c, t.Parent.ID, ignoreClothing);
         return current != null && current.ID == traitID;
     }
 
@@ -279,10 +363,10 @@ public static class ActorPromptProfileUtility
     /// the template preset: the template's seed trait of that group, else the group default the body is filled with
     /// (BodyTraitUtility.GetDefaultValid, same as Character_Body.FillMissingBodyTraits). No current trait = unchanged.
     /// </summary>
-    public static bool IsTraitChanged(Character_Trainable c, string groupID)
+    public static bool IsTraitChanged(Character_Trainable c, string groupID, bool ignoreClothing = false)
     {
         if (c?.Body == null || string.IsNullOrEmpty(groupID)) return false;
-        var current = c.Body.GetEffectiveBodyTrait(groupID);
+        var current = ignoreClothing ? c.Body.GetBodyTrait(groupID) : c.Body.GetEffectiveBodyTrait(groupID);
         if (current == null) return false;
 
         Traits preset = null;

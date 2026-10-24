@@ -449,7 +449,8 @@
                 },
                 {
                     "trait_ID": "trait_Size_V_1",
-                    "promptTags":["pussy"],
+                    "_comment_prompt": "The vagina prompt profile owns pussy_visibility; emitting pussy here bypasses its sex/view condition.",
+                    "promptTags":[],
                     "trait_displayname": "has vagina",
                     "trait_score":0,
                     "trait_tooltip": "Has vagina and clitoris. Can engage in vagina or clitoris related activities.\nCan get pregnant via vagina related activities."

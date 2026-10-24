@@ -3,14 +3,14 @@
     "Dictionary": {
         "Entries": {
             "en-us": {
-                "exp_event_erav_gang_exception": "Exceptions in the Week",
-                "exp_event_erav_gang_exception_ongoing": "Into the top floor's loop, a few frames that don't quite fit.",
-                "exp_event_erav_gang_exception_result": "The loop goes on. But today, the loop holds exceptions.",
+                "exp_event_erav_gang_exception": "Interludes in the Week",
+                "exp_event_erav_gang_exception_ongoing": "On the booked-out floor, the usual routine occasionally takes a different turn.",
+                "exp_event_erav_gang_exception_result": "The routine goes on, but today brings a few interludes.",
                 "event_erav_gang_exception_01": "Deep in the night a green recruit, mid-act on top of her, suddenly stops and asks the question he shouldn't:\n\"...That supervisor of yours. Is he good to you?\"\nShe freezes, no answer ready. He doesn't wait for one - he starts moving again, grinding the question to nothing inside her with the rhythm.",
                 "event_erav_gang_exception_02": "Toward evening two of the guys nearly come to blows over who goes first. The card table's air freezes - until the wakagashira's palm cracks on the table:\n\"Fight like idiots. Mouth and down below, split the duty. Done.\"\nProblem solved. She is rearranged, opening her mouth to take on both jobs.",
                 "event_erav_gang_exception_03": "Packing up the last morning, one of the guys stuffs his unfinished rice ball into her bag, scratching his head.\n\"For the road. ...So, uh, next time the gang hands out a bonus, might be you again. So - see you then.\"\nShe carries her bag downstairs. At the stair's turn the whole floor's laughter rolls up from behind, mixed with somebody's catcall:\n\"Come again sometime-!\"",
                 "event_erav_gang_exception_err": "[ERROR] Scene targets missing (no party).",
-                "event_erav_gang_exception": "Exceptions in the Week",
+                "event_erav_gang_exception": "Interludes in the Week",
                 "event_erav_gang_exception_writer_opening": "Deep in the night a green recruit, mid-act on top of her, suddenly stops and asks the question he shouldn't:\n\"...That supervisor of yours. Is he good to you?\"\nShe freezes, no answer ready. He doesn't wait for one - he starts moving again, grinding the question to nothing inside her with the rhythm.",
                 "event_erav_gang_exception_writer_choose_full": "Continue the full sequence",
                 "event_erav_gang_exception_writer_choose_skip": "Skip this event",
@@ -19,7 +19,7 @@
                 "event_erav_gang_exception_writer_summary_failed": "The sequence could not be completed.",
                 "event_erav_gang_exception_writer_summary_skipped": "This event was skipped.",
                 "event_erav_gang_exception_writer_summary_error": "[ERROR] Scene targets missing (no party).",
-                "event_erav_gang_exception_writer_header": "Exceptions in the Week"
+                "event_erav_gang_exception_writer_header": "Interludes in the Week"
             }
         }
     }

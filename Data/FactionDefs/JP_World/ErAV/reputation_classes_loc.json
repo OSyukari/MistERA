@@ -1,0 +1,20 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for reputation_classes.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "fametype_notoriety": "Notoriety",
+                "rep_av_sales_title": "AV Sales",
+                "rep_av_sales_desc": "Sold $count$ copies",
+                "rep_leaked_sales_title": "Leaked Video Sales",
+                "rep_leaked_sales_desc": "Leaked video sold $count$ copies",
+                "rep_leaked_online_title": "Posted Online",
+                "rep_leaked_online_desc": "Photos from $activity$ were posted online",
+                "rep_notoriety_witnessed_title": "Seen by Acquaintances",
+                "rep_notoriety_witnessed_desc": "Seen by $witness$ during $activity$"
+            }
+        }
+    }
+}

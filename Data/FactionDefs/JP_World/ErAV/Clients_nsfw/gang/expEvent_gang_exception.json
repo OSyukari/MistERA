@@ -152,14 +152,14 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "exp_event_erav_gang_exception": "周里的例外时刻",
-                "exp_event_erav_gang_exception_ongoing": "包层的循环里，偶尔插进几个不样的画面。",
-                "exp_event_erav_gang_exception_result": "循环照旧。但今天，循环里多了几个例外。",
+                "exp_event_erav_gang_exception": "一周里的插曲",
+                "exp_event_erav_gang_exception_ongoing": "包下的楼层里，照例的日常偶尔也有些不同。",
+                "exp_event_erav_gang_exception_result": "日子照旧，但今天多了几段插曲。",
                 "event_erav_gang_exception_01": "夜里，有个刚入组的小弟在她身上时忽然停住，问了句不该问的：\n「……你那个监督，对你好吗？」\n她愣住，不知道怎么答。他没等答案，动起来，把这个问题随着节奏碾碎在了里面。",
                 "event_erav_gang_exception_02": "傍晚，两个小弟为先后吵了起来，差点动手。牌桌边的气氛僵住，最后是若头巴掌拍在桌上：\n「吵个屁。嘴和下边分开用，不就完了。」\n问题解决了。她被重新摆好，张嘴接下两份活。",
                 "event_erav_gang_exception_03": "临走前的早上收拾东西，有个小弟把没吃完的饭团塞进她包里，挠着头。\n「路上吃。……那个，下回组里再发犒劳，说不定还是你。到时候，嗯，再见。」\n她拎着包下楼。楼梯拐角，整层楼的哄笑声从背后传上来，混着谁的起哄：\n「下次再来啊——！」",
                 "event_erav_gang_exception_err": "【错误】场景所需的目标不存在（party 缺失）。",
-                "event_erav_gang_exception": "周里的例外时刻",
+                "event_erav_gang_exception": "一周里的插曲",
                 "event_erav_gang_exception_writer_opening": "夜里，有个刚入组的小弟在她身上时忽然停住，问了句不该问的：\n「……你那个监督，对你好吗？」\n她愣住，不知道怎么答。他没等答案，动起来，把这个问题随着节奏碾碎在了里面。",
                 "event_erav_gang_exception_writer_choose_full": "继续完整流程",
                 "event_erav_gang_exception_writer_choose_skip": "跳过本次事件",
@@ -168,7 +168,7 @@
                 "event_erav_gang_exception_writer_summary_failed": "本次流程未能完成。",
                 "event_erav_gang_exception_writer_summary_skipped": "已跳过本次事件。",
                 "event_erav_gang_exception_writer_summary_error": "【错误】场景所需的目标不存在（party 缺失）。",
-                "event_erav_gang_exception_writer_header": "周里的例外时刻"
+                "event_erav_gang_exception_writer_header": "一周里的插曲"
             }
         }
     }

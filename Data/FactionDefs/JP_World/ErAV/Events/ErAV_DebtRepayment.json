@@ -1,0 +1,245 @@
+{
+    "_doc": "ErAV debt repayment (Docs/Plan_ErAV_Quests.md §2.1). debtclass_erav_kanon's onPaidEventID (ErAV/campaign.json) fires erav_debt_paid_kick when the monthly cycle collects (Obligation_Debt.HandlePaymentEvent -> TradeManager.FireObligationEvent). Mirror of erav_ntr_punishment_kick: the payer firing (first entry, self = player) does ALL the bookkeeping on the spot - so the numbers are right even if the dialogue chain never runs - then starts the 'erav_debt_paid' chain delayed a few minutes so Kanon's comment doesn't land mid payment-resolve; the payee firing ('payee' label, self = Kiryu-gumi's manager) is a notice only. The reaction tier is classified BEFORE the counters change and handed to the chain event through the temporary erav_debt_paid_reaction variable. Every variable written here is registered in Plan_ErAV_Quests.md §1 - keep that table in sync.",
+    "Events": {
+        "list": [
+            {
+                "ID": "erav_debt_paid_kick",
+                "_comment": "Fired by FireObligationEvent on a successful cycle. Overriding onPaidEventID removed the generic OnDebtPaid event, so paid_notice re-prints its text (same keys). $amountValue$ is the bare charged count FireObligationEvent exposes next to $amount$ - the actual charge, clamped to the remaining principal on the final cycle.",
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] }
+                    ]
+                },
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment": "Classify Kanon's reaction from the PRE-update values: resumed after a failed month (2) > first payment with no history (1) > routine (3).",
+                        "options": [
+                            {
+                                "option": "reaction_resumed",
+                                "self_chara_conditions": [
+                                    { "requireKojoVariable": { "variableID": "erav_debt_last_result", "operand": "eq", "value": 2 } }
+                                ],
+                                "Results": [
+                                    { "Type": "SetSelfKojoVariable", "arguments": [ "self", "false", "erav_debt_paid_reaction", "2" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "paid_notice" ] }
+                                ]
+                            },
+                            {
+                                "option": "reaction_first",
+                                "self_chara_conditions": [
+                                    { "requireKojoVariable": { "variableID": "erav_debt_paid_count", "operand": "eq", "value": 0 } },
+                                    { "requireKojoVariable": { "variableID": "erav_debt_failed_count", "operand": "eq", "value": 0 } }
+                                ],
+                                "Results": [
+                                    { "Type": "SetSelfKojoVariable", "arguments": [ "self", "false", "erav_debt_paid_reaction", "1" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "paid_notice" ] }
+                                ]
+                            },
+                            {
+                                "option": "_fallback_reaction_routine",
+                                "Results": [
+                                    { "Type": "SetSelfKojoVariable", "arguments": [ "self", "false", "erav_debt_paid_reaction", "3" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "paid_notice" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "paid_notice",
+                        "line": "OnDebtPaid_paid",
+                        "tooltip": "target character: $target.name$",
+                        "Results": [
+                            { "Type": "ModSelfKojoVariable", "arguments": [ "self", "false", "erav_kiryu_paid_total", "$amountValue$" ] },
+                            { "Type": "ModSelfKojoVariable", "arguments": [ "self", "false", "erav_debt_paid_count", "1" ] },
+                            { "Type": "SetSelfKojoVariable", "arguments": [ "self", "false", "erav_debt_last_result", "1" ] },
+                            { "Type": "RemoveSelfKojoVariable", "arguments": [ "self", "false", "erav_debt_last_victim" ] },
+                            { "Type": "StartEventChain", "arguments": [ "erav_debt_paid", "erav_debt_paid_kanon", "3", "10" ] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "payee",
+                        "_comment": "Kiryu-gumi side firing - notice only. Must NOT touch variables or start the chain (self is the Kiryu-gumi manager here).",
+                        "line": "OnDebtPaid_paid_payee",
+                        "tooltip": "target character: $target.name$",
+                        "isLast": true
+                    }
+                ]
+            },
+            {
+                "ID": "erav_debt_paid_kanon",
+                "_comment": "Chain event (self = player). Framed as a message from Kanon so it reads right at midnight. kanon is scoped by base ID only - NO canMove/awake/same-room/isActiveFaction conditions: the chain fires right after the midnight settlement while she is most likely asleep. Counters were already updated by the kick, so the milestone block reads post-update values. Milestones are total-paid tiers only (3M/5M/10M); erav_kiryu_paid_tier records the highest announced tier and is the gate for future Kiryu-gumi services.",
+                "UISpec": {
+                    "displayMode": "AVG"
+                },
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "kanon" ],
+                        "baseScope": "BaseID_Unrestricted",
+                        "extraScopeArguments": [ "ErAV_Kanon" ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "erav_debt_paid_kanon_intro",
+                        "nextEntryLabel": "reaction"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "reaction",
+                        "options": [
+                            {
+                                "option": "reaction_first",
+                                "self_chara_conditions": [
+                                    { "requireKojoVariable": { "variableID": "erav_debt_paid_reaction", "operand": "eq", "value": 1 } }
+                                ],
+                                "UISpec": {
+                                    "portraitRefKey": "kanon",
+                                    "selfTags": [ "yakuza", "focused", "relaxed" ]
+                                },
+                                "line": "erav_debt_paid_kanon_first",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "milestone" ] }
+                                ]
+                            },
+                            {
+                                "option": "reaction_resumed",
+                                "self_chara_conditions": [
+                                    { "requireKojoVariable": { "variableID": "erav_debt_paid_reaction", "operand": "eq", "value": 2 } }
+                                ],
+                                "UISpec": {
+                                    "portraitRefKey": "kanon",
+                                    "selfTags": [ "yakuza", "focused", "serious" ]
+                                },
+                                "line": "erav_debt_paid_kanon_resumed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "milestone" ] }
+                                ]
+                            },
+                            {
+                                "option": "_fallback_reaction_routine",
+                                "UISpec": {
+                                    "portraitRefKey": "kanon",
+                                    "selfTags": [ "yakuza", "confident", "relaxed" ]
+                                },
+                                "line": "erav_debt_paid_kanon_routine",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "milestone" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "milestone",
+                        "_comment": "Highest tier first - crossing several tiers at once announces only the highest and records it.",
+                        "options": [
+                            {
+                                "option": "milestone_tier3",
+                                "self_chara_conditions": [
+                                    { "requireKojoVariable": { "variableID": "erav_kiryu_paid_total", "operand": "gte", "value": 10000000 } },
+                                    { "requireKojoVariable": { "variableID": "erav_kiryu_paid_tier", "operand": "lt", "value": 3 } }
+                                ],
+                                "UISpec": {
+                                    "portraitRefKey": "kanon",
+                                    "selfTags": [ "yakuza", "confident", "relaxed" ]
+                                },
+                                "line": "erav_debt_paid_kanon_milestone3",
+                                "Results": [
+                                    { "Type": "SetSelfKojoVariable", "arguments": [ "self", "false", "erav_kiryu_paid_tier", "3" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "end" ] }
+                                ]
+                            },
+                            {
+                                "option": "milestone_tier2",
+                                "self_chara_conditions": [
+                                    { "requireKojoVariable": { "variableID": "erav_kiryu_paid_total", "operand": "gte", "value": 5000000 } },
+                                    { "requireKojoVariable": { "variableID": "erav_kiryu_paid_tier", "operand": "lt", "value": 2 } }
+                                ],
+                                "UISpec": {
+                                    "portraitRefKey": "kanon",
+                                    "selfTags": [ "yakuza", "confident", "relaxed" ]
+                                },
+                                "line": "erav_debt_paid_kanon_milestone2",
+                                "Results": [
+                                    { "Type": "SetSelfKojoVariable", "arguments": [ "self", "false", "erav_kiryu_paid_tier", "2" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "end" ] }
+                                ]
+                            },
+                            {
+                                "option": "milestone_tier1",
+                                "self_chara_conditions": [
+                                    { "requireKojoVariable": { "variableID": "erav_kiryu_paid_total", "operand": "gte", "value": 3000000 } },
+                                    { "requireKojoVariable": { "variableID": "erav_kiryu_paid_tier", "operand": "lt", "value": 1 } }
+                                ],
+                                "UISpec": {
+                                    "portraitRefKey": "kanon",
+                                    "selfTags": [ "yakuza", "focused", "relaxed" ]
+                                },
+                                "line": "erav_debt_paid_kanon_milestone1",
+                                "Results": [
+                                    { "Type": "SetSelfKojoVariable", "arguments": [ "self", "false", "erav_kiryu_paid_tier", "1" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "end" ] }
+                                ]
+                            },
+                            {
+                                "option": "_fallback_no_milestone",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "end" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "end",
+                        "_comment": "Clears the temporary reaction tier and closes the chain explicitly (same convention as erav_ntr_punishment).",
+                        "options": [
+                            {
+                                "option": "_end",
+                                "Results": [
+                                    { "Type": "RemoveSelfKojoVariable", "arguments": [ "self", "false", "erav_debt_paid_reaction" ] },
+                                    { "Type": "EndEventChain", "arguments": [ "erav_debt_paid" ] },
+                                    { "Type": "EventEnd" }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "chains": [
+            {
+                "chainID": "erav_debt_paid",
+                "events": [ "erav_debt_paid_kanon" ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "erav_debt_paid_kick": "ErAV - 债务按时偿付",
+                "erav_debt_paid_kanon": "ErAV - 歌音的还款点评",
+
+                "erav_debt_paid_kanon_intro": "手机震了震。屏幕上是$kanon.name$发来的消息。",
+                "erav_debt_paid_kanon_first": "「这个月的利息，收到了。」\n「说实话，我没指望你头回就能凑齐。……看来没看错人。保持下去。」",
+                "erav_debt_paid_kanon_resumed": "「利息收到了。」\n「上个月的事，你心里有数。这个月能付上，就别再断了——我希望下次也能收到同样的数字。」",
+                "erav_debt_paid_kanon_routine": "「本月利息已入账。下个月照旧。」",
+                "erav_debt_paid_kanon_milestone1": "「顺带说句。算上这次，你交到桐生组手上的钱已经过了三百万。」\n「组里有人开始记住宫间这个名字了。是好事。」",
+                "erav_debt_paid_kanon_milestone2": "「你付给桐生组的钱，到今天已经过了五百万。」\n「能按时把钱送到的人，组里向来看得起。往后有些事，可以拿到台面上谈了。」",
+                "erav_debt_paid_kanon_milestone3": "「累计过了千万。」\n「到这个份上，你已经不只是欠债的人，而是桐生组的生意伙伴。有需要的话，来事务所找我。」"
+            }
+        }
+    }
+}

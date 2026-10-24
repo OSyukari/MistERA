@@ -30,10 +30,17 @@ public class Index_FeatureSet : I_IndexHasID, I_IndexMergeable
 public class FeatureSet
 {
     public List<string> requireKeywords = new List<string>();
+    /// <summary>Exploration-only encounters; keep this shipped field name for existing data.</summary>
     public List<string> featureEventIDs = new List<string>();
+    /// <summary>Encounters during ActiveHours, both on the expedition job and during off time.</summary>
+    public List<string> featureDayEventIDs = new List<string>();
+    /// <summary>Encounters outside ActiveHours, both on the expedition job and during off time.</summary>
+    public List<string> featureNightEventIDs = new List<string>();
     public List<string> DescriptionText = new List<string>();
 
     List<ExpEvents> _featureEvents = null;
+    List<ExpEvents> _featureDayEvents = null;
+    List<ExpEvents> _featureNightEvents = null;
 
     [JsonIgnore]
     public List<ExpEvents> FeatureEvents
@@ -41,14 +48,13 @@ public class FeatureSet
         {
             if (_featureEvents == null)
             {
-                _featureEvents = new List<ExpEvents>();
-                foreach (var i in this.featureEventIDs)
-                {
-                    var expev = Expeditions.ExplorationEvents.GetByID(i);
-                    if (expev == null) continue;
-                    _featureEvents.Add(expev);
-                }
+                _featureEvents = ExpeditionInstance.ResolveEvents(featureEventIDs, "feature exploration");
             }
             return _featureEvents;
         } }
+
+    [JsonIgnore] public List<ExpEvents> FeatureDayEvents
+        { get { return _featureDayEvents ??= ExpeditionInstance.ResolveEvents(featureDayEventIDs, "feature day"); } }
+    [JsonIgnore] public List<ExpEvents> FeatureNightEvents
+        { get { return _featureNightEvents ??= ExpeditionInstance.ResolveEvents(featureNightEventIDs, "feature night"); } }
 }

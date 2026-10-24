@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 public class scr_equip_wardrobe : MonoBehaviour
 {
+    /// <summary> the wardrobe key this box lists - set even when no outfit is (outfit null) </summary>
+    public string key = "";
+    /// <summary> the key's outfit, null = none set (the default clothes are worn for it) </summary>
     public OutfitSet outfit;
     public RectTransform selfRect;
 
@@ -26,11 +29,24 @@ public class scr_equip_wardrobe : MonoBehaviour
 
     bool canEdit = false;
 
-    public void InitializeData(Character_Trainable c, OutfitSet wd)
+    public void InitializeData(Character_Trainable c, WardrobeEntry entry)
     {
-        outfit = wd;
+        key = entry.key;
+        outfit = entry.outfit;
+        var wd = entry.outfit;
 
-        keywords.SetText($"Keys: {wd.DisplayName}");
+        keywords.SetText($"Keys: {entry.DisplayName}");
+
+        bgimage.color = scr_System_CentralControl.current.DisplaySetting.BackgroundColor_Transparent.Color;
+
+        if (wd == null)
+        {
+            // no outfit for this key yet: the default clothes are worn for it
+            overrides.SetText("no outfit - default clothes");
+            hairstyle.SetText("");
+            body.SetText("");
+            return;
+        }
 
         foreach(var i in wd.pieces)
         {
@@ -38,8 +54,6 @@ public class scr_equip_wardrobe : MonoBehaviour
             box.SelfRect.SetParent(equipRect, false);
             box.SetText(i.DisplayName);
         }
-
-        bgimage.color = scr_System_CentralControl.current.DisplaySetting.BackgroundColor_Transparent.Color;
 
         List<string> types = new List<string>();
         if (wd.overrideSkin) types.Add("overrideSkin");

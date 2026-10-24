@@ -75,14 +75,13 @@
                 "tooltip":"An {0}'s penis.",
                 "equipLayers":["Skin"],
                 "tags":["nsfw","penis","testicle","external"],
-                "promptGroups":["lower_front"],
                 "requestTraits":["trait_Size_P"],
                 "_comment_promptProfile": "shared by several species (horse, warg): the species penis tag by the race's actor tag (RaceType), only while the penis is visible",
                 "promptProfile": {
                     "rules": [
-                        { "id": "penis_species_horse", "promptGroups": ["lower_front"], "requireVisibleBodyTags": ["penis"], "requireActorTags": ["horse"], "prompts": ["horse penis", "animal penis"] },
-                        { "id": "penis_species_dog",   "promptGroups": ["lower_front"], "requireVisibleBodyTags": ["penis"], "requireActorTags": ["dog"],   "prompts": ["dog penis", "knotted penis", "animal penis"] },
-                        { "id": "penis_species_other", "promptGroups": ["lower_front"], "requireVisibleBodyTags": ["penis"], "excludeActorTags": ["horse", "dog"], "prompts": ["animal penis"] }
+                        { "id": "penis_species_horse", "requireVisibleBodyTags": ["penis"], "requireActorTags": ["horse"], "prompts": ["horse penis", "animal penis"] },
+                        { "id": "penis_species_dog",   "requireVisibleBodyTags": ["penis"], "requireActorTags": ["dog"],   "prompts": ["dog penis", "knotted penis", "animal penis"] },
+                        { "id": "penis_species_other", "requireVisibleBodyTags": ["penis"], "excludeActorTags": ["horse", "dog"], "prompts": ["animal penis"] }
                     ]
                 },
                 "sensitivityClassString":"C",

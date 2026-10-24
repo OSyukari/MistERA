@@ -1,0 +1,479 @@
+{
+    "_doc": {
+        "purpose": "Default male reactions to being undressed / redressed by someone else (Data/COM_Defs/COM_wardrobe.json). Same layout as personality_default/commands/com_wardrobe.json: <id>_Begin = accepted, <id> with requireEPFailure = refused, <id> otherwise = done; self is silent; redress and undress-all redirect to shared entries."
+    },
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "com_undress_outer_Begin",
+                    "variants": [
+                        {
+                            "requirement": { "requirePermission": true },
+                            "extraSelfPortraitTags": ["smile", "relaxed"],
+                            "useActiveTags": false,
+                            "responses": ["pb_com_undress_outer_Begin_A_1", "pb_com_undress_outer_Begin_A_2"]
+                        },
+                        {
+                            "requirement": { "requireSelfForced": true },
+                            "extraSelfPortraitTags": ["fear", "trembling"],
+                            "useActiveTags": false,
+                            "responses": ["pb_com_undress_outer_Begin_B_1", "pb_com_undress_outer_Begin_B_2"]
+                        },
+                        {
+                            "extraSelfPortraitTags": ["surprised", "troubled"],
+                            "useActiveTags": false,
+                            "responses": ["pb_com_undress_outer_Begin_C_1", "pb_com_undress_outer_Begin_C_2"]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "com_undress_outer",
+                    "variants": [
+                        {
+                            "requirement": { "requireEPFailure": true },
+                            "variants": [
+                                {
+                                    "requirement": { "requirePermission": true },
+                                    "extraSelfPortraitTags": ["troubled", "smile"],
+                                    "useActiveTags": false,
+                                    "responses": ["pb_com_undress_outer_F_1", "pb_com_undress_outer_F_2"]
+                                },
+                                {
+                                    "requirement": { "requireSelfAttitudeGTE": "Like" },
+                                    "extraSelfPortraitTags": ["troubled", "surprised"],
+                                    "useActiveTags": false,
+                                    "responses": ["pb_com_undress_outer_G_1", "pb_com_undress_outer_G_2"]
+                                }
+                            ],
+                            "extraSelfPortraitTags": ["angry", "glare"],
+                            "useActiveTags": false,
+                            "responses": ["pb_com_undress_outer_H_1", "pb_com_undress_outer_H_2"]
+                        },
+                        {
+                            "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] },
+                            "extraSelfPortraitTags": ["sleeping"],
+                            "useActiveTags": false,
+                            "responses": ["pb_com_undress_outer_D_1"]
+                        },
+                        {
+                            "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] },
+                            "extraSelfPortraitTags": ["doll", "empty", "silence", "idle"],
+                            "useActiveTags": false,
+                            "responses": ["pb_com_undress_outer_E_1"]
+                        },
+                        {
+                            "requirement": { "requirePermission": true },
+                            "extraSelfPortraitTags": ["relaxed", "smile"],
+                            "useActiveTags": false,
+                            "responses": ["pb_com_undress_outer_I_1", "pb_com_undress_outer_I_2"]
+                        },
+                        {
+                            "requirement": { "requireSelfForced": true },
+                            "extraSelfPortraitTags": ["fear", "silence"],
+                            "useActiveTags": false,
+                            "responses": ["pb_com_undress_outer_J_1", "pb_com_undress_outer_J_2"]
+                        },
+                        {
+                            "extraSelfPortraitTags": ["troubled", "doubt"],
+                            "useActiveTags": false,
+                            "responses": ["pb_com_undress_outer_K_1", "pb_com_undress_outer_K_2"]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "com_undress_inner_Begin",
+                    "tags": ["nsfw"],
+                    "variants": [
+                        {
+                            "requirement": { "requirePermission": true },
+                            "extraSelfPortraitTags": ["smug", "confident"],
+                            "useActiveTags": false,
+                            "responses": ["pb_com_undress_inner_Begin_A_1", "pb_com_undress_inner_Begin_A_2"]
+                        },
+                        {
+                            "requirement": { "requireSelfForced": true },
+                            "extraSelfPortraitTags": ["fear", "trembling"],
+                            "useActiveTags": false,
+                            "responses": ["pb_com_undress_inner_Begin_B_1", "pb_com_undress_inner_Begin_B_2"]
+                        },
+                        {
+                            "extraSelfPortraitTags": ["blush", "troubled"],
+                            "useActiveTags": false,
+                            "responses": ["pb_com_undress_inner_Begin_C_1", "pb_com_undress_inner_Begin_C_2"]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "com_undress_inner",
+                    "tags": ["nsfw"],
+                    "variants": [
+                        {
+                            "requirement": { "requireEPFailure": true },
+                            "variants": [
+                                {
+                                    "requirement": { "requirePermission": true },
+                                    "extraSelfPortraitTags": ["troubled", "smile"],
+                                    "useActiveTags": false,
+                                    "responses": ["pb_com_undress_inner_F_1", "pb_com_undress_inner_F_2"]
+                                },
+                                {
+                                    "requirement": { "requireSelfAttitudeGTE": "Like" },
+                                    "extraSelfPortraitTags": ["blush", "surprised"],
+                                    "useActiveTags": false,
+                                    "responses": ["pb_com_undress_inner_G_1", "pb_com_undress_inner_G_2"]
+                                }
+                            ],
+                            "extraSelfPortraitTags": ["angry", "disgust"],
+                            "useActiveTags": false,
+                            "responses": ["pb_com_undress_inner_H_1", "pb_com_undress_inner_H_2"]
+                        },
+                        {
+                            "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] },
+                            "extraSelfPortraitTags": ["sleeping"],
+                            "useActiveTags": false,
+                            "responses": ["pb_com_undress_inner_D_1"]
+                        },
+                        {
+                            "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] },
+                            "extraSelfPortraitTags": ["doll", "empty", "silence", "idle"],
+                            "useActiveTags": false,
+                            "responses": ["pb_com_undress_inner_E_1"]
+                        },
+                        {
+                            "requirement": { "requirePermission": true },
+                            "extraSelfPortraitTags": ["confident", "aroused"],
+                            "useActiveTags": false,
+                            "responses": ["pb_com_undress_inner_I_1", "pb_com_undress_inner_I_2"]
+                        },
+                        {
+                            "requirement": { "requireSelfForced": true },
+                            "extraSelfPortraitTags": ["fear", "sad"],
+                            "useActiveTags": false,
+                            "responses": ["pb_com_undress_inner_J_1", "pb_com_undress_inner_J_2"]
+                        },
+                        {
+                            "extraSelfPortraitTags": ["blush", "troubled"],
+                            "useActiveTags": false,
+                            "responses": ["pb_com_undress_inner_K_1", "pb_com_undress_inner_K_2"]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "com_undress_skin_Begin",
+                    "tags": ["nsfw"],
+                    "variants": [
+                        {
+                            "requirement": { "requirePermission": true },
+                            "extraSelfPortraitTags": ["aroused", "smug"],
+                            "useActiveTags": false,
+                            "responses": ["pb_com_undress_skin_Begin_A_1", "pb_com_undress_skin_Begin_A_2"]
+                        },
+                        {
+                            "requirement": { "requireSelfForced": true },
+                            "extraSelfPortraitTags": ["fear", "trembling", "tearful"],
+                            "useActiveTags": false,
+                            "responses": ["pb_com_undress_skin_Begin_B_1", "pb_com_undress_skin_Begin_B_2"]
+                        },
+                        {
+                            "extraSelfPortraitTags": ["blush", "troubled"],
+                            "useActiveTags": false,
+                            "responses": ["pb_com_undress_skin_Begin_C_1", "pb_com_undress_skin_Begin_C_2"]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "com_undress_skin",
+                    "tags": ["nsfw"],
+                    "variants": [
+                        {
+                            "requirement": { "requireEPFailure": true },
+                            "variants": [
+                                {
+                                    "requirement": { "requirePermission": true },
+                                    "extraSelfPortraitTags": ["troubled", "apology"],
+                                    "useActiveTags": false,
+                                    "responses": ["pb_com_undress_skin_F_1", "pb_com_undress_skin_F_2"]
+                                },
+                                {
+                                    "requirement": { "requireSelfAttitudeGTE": "Like" },
+                                    "extraSelfPortraitTags": ["blush", "angry"],
+                                    "useActiveTags": false,
+                                    "responses": ["pb_com_undress_skin_G_1", "pb_com_undress_skin_G_2"]
+                                }
+                            ],
+                            "extraSelfPortraitTags": ["angry", "glare", "disgust"],
+                            "useActiveTags": false,
+                            "responses": ["pb_com_undress_skin_H_1", "pb_com_undress_skin_H_2"]
+                        },
+                        {
+                            "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] },
+                            "extraSelfPortraitTags": ["sleeping"],
+                            "useActiveTags": false,
+                            "responses": ["pb_com_undress_skin_D_1"]
+                        },
+                        {
+                            "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] },
+                            "extraSelfPortraitTags": ["doll", "empty", "silence", "idle"],
+                            "useActiveTags": false,
+                            "responses": ["pb_com_undress_skin_E_1"]
+                        },
+                        {
+                            "requirement": { "requirePermission": true },
+                            "extraSelfPortraitTags": ["aroused", "confident"],
+                            "useActiveTags": false,
+                            "responses": ["pb_com_undress_skin_I_1", "pb_com_undress_skin_I_2"]
+                        },
+                        {
+                            "requirement": { "requireSelfForced": true },
+                            "extraSelfPortraitTags": ["fear", "tearful"],
+                            "useActiveTags": false,
+                            "responses": ["pb_com_undress_skin_J_1", "pb_com_undress_skin_J_2"]
+                        },
+                        {
+                            "extraSelfPortraitTags": ["blush", "troubled", "silence"],
+                            "useActiveTags": false,
+                            "responses": ["pb_com_undress_skin_K_1", "pb_com_undress_skin_K_2"]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": { "ID": "com_undress_all_Begin", "tags": ["nsfw"], "RedirectID": "com_undress_skin_Begin" }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": { "ID": "com_undress_all", "tags": ["nsfw"], "RedirectID": "com_undress_skin" }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "com_redress_Begin",
+                    "variants": [
+                        {
+                            "requirement": { "requirePermission": true },
+                            "extraSelfPortraitTags": ["smile", "relaxed"],
+                            "useActiveTags": false,
+                            "responses": ["pb_com_redress_Begin_A_1", "pb_com_redress_Begin_A_2"]
+                        },
+                        {
+                            "extraSelfPortraitTags": ["surprised", "troubled"],
+                            "useActiveTags": false,
+                            "responses": ["pb_com_redress_Begin_B_1", "pb_com_redress_Begin_B_2"]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "com_redress",
+                    "variants": [
+                        {
+                            "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] },
+                            "extraSelfPortraitTags": ["sleeping"],
+                            "useActiveTags": false,
+                            "responses": ["pb_com_redress_D_1"]
+                        },
+                        {
+                            "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] },
+                            "extraSelfPortraitTags": ["doll", "empty", "silence", "idle"],
+                            "useActiveTags": false,
+                            "responses": ["pb_com_redress_E_1"]
+                        },
+                        {
+                            "requirement": { "requirePermission": true },
+                            "extraSelfPortraitTags": ["smile", "relaxed"],
+                            "useActiveTags": false,
+                            "responses": ["pb_com_redress_I_1", "pb_com_redress_I_2"]
+                        },
+                        {
+                            "extraSelfPortraitTags": ["neutral", "sigh"],
+                            "useActiveTags": false,
+                            "responses": ["pb_com_redress_K_1", "pb_com_redress_K_2"]
+                        }
+                    ]
+                }
+            },
+            { "ID": "personality_base", "Entry": { "ID": "com_redress_outer_Begin", "RedirectID": "com_redress_Begin" } },
+            { "ID": "personality_base", "Entry": { "ID": "com_redress_outer", "RedirectID": "com_redress" } },
+            { "ID": "personality_base", "Entry": { "ID": "com_redress_inner_Begin", "RedirectID": "com_redress_Begin" } },
+            { "ID": "personality_base", "Entry": { "ID": "com_redress_inner", "RedirectID": "com_redress" } },
+            { "ID": "personality_base", "Entry": { "ID": "com_redress_skin_Begin", "RedirectID": "com_redress_Begin" } },
+            { "ID": "personality_base", "Entry": { "ID": "com_redress_skin", "RedirectID": "com_redress" } },
+            { "ID": "personality_base", "Entry": { "ID": "com_redress_all_Begin", "RedirectID": "com_redress_Begin" } },
+            { "ID": "personality_base", "Entry": { "ID": "com_redress_all", "RedirectID": "com_redress" } }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "pb_com_undress_outer_Begin_A_1": "$self$爽快地张开双臂：“好啊，正好有点热。”",
+                "pb_com_undress_outer_Begin_A_2": "$self$笑了笑，任由$target$帮自己脱下外套。",
+                "pb_com_undress_outer_Begin_B_1": "$self$咬紧牙关，一动不动地站着。",
+                "pb_com_undress_outer_Begin_B_2": "$self$攥紧拳头，却没有反抗。",
+                "pb_com_undress_outer_Begin_C_1": "“喂，你这是干什么？”$self$皱了皱眉，但还是没有拦着。",
+                "pb_com_undress_outer_Begin_C_2": "$self$愣了一下，有些摸不着头脑地配合着。",
+                "pb_com_undress_outer_D_1": "$self$睡得很沉，外套被脱下了也毫无察觉。",
+                "pb_com_undress_outer_E_1": "$self$凝固在原地，外套被脱下时一动不动。",
+                "pb_com_undress_outer_F_1": "“现在不行，等会儿吧。”$self$笑着挡开了$target$的手。",
+                "pb_com_undress_outer_F_2": "$self$摇摇头：“这里不太合适。”",
+                "pb_com_undress_outer_G_1": "“喂喂，突然干嘛啊！”$self$后退了一步。",
+                "pb_com_undress_outer_G_2": "$self$尴尬地挠了挠头：“这个……还是算了吧。”",
+                "pb_com_undress_outer_H_1": "“别碰我。”$self$冷冷地甩开了$target$的手。",
+                "pb_com_undress_outer_H_2": "$self$恶狠狠地瞪着$target$：“你想干什么？”",
+                "pb_com_undress_outer_I_1": "$self$活动了一下肩膀，轻松了不少。",
+                "pb_com_undress_outer_I_2": "“谢了。”$self$随手把外套搭在一边。",
+                "pb_com_undress_outer_J_1": "$self$阴沉着脸，一言不发。",
+                "pb_com_undress_outer_J_2": "$self$低着头，拳头攥得发白。",
+                "pb_com_undress_outer_K_1": "$self$有些不自在地整了整剩下的衣服。",
+                "pb_com_undress_outer_K_2": "“……只是外套而已。”$self$嘟囔着。",
+
+                "pb_com_undress_inner_Begin_A_1": "$self$挑了挑眉，主动解开了衣扣：“这么着急？”",
+                "pb_com_undress_inner_Begin_A_2": "$self$配合地抬起手臂，脸上带着一丝笑意。",
+                "pb_com_undress_inner_Begin_B_1": "$self$闭上眼睛，身体僵硬地任由衣服被扒下。",
+                "pb_com_undress_inner_Begin_B_2": "$self$的手抬起又放下，终究没有反抗。",
+                "pb_com_undress_inner_Begin_C_1": "“真、真要脱？”$self$的耳朵有些发红。",
+                "pb_com_undress_inner_Begin_C_2": "$self$别过脸去，任由$target$动手。",
+                "pb_com_undress_inner_D_1": "$self$睡得正香，衣服被脱下时只是含糊地嘟囔了一声。",
+                "pb_com_undress_inner_E_1": "$self$保持着静止前的表情，对衣服被脱下毫无知觉。",
+                "pb_com_undress_inner_F_1": "“这个……晚点再说吧。”$self$按住了衣角。",
+                "pb_com_undress_inner_F_2": "$self$苦笑着摇头：“现在真的不行。”",
+                "pb_com_undress_inner_G_1": "“你、你在想什么啊！”$self$涨红了脸。",
+                "pb_com_undress_inner_G_2": "$self$慌忙后退：“我们还没到那一步吧！”",
+                "pb_com_undress_inner_H_1": "“滚开！”$self$一把推开了$target$。",
+                "pb_com_undress_inner_H_2": "$self$厌恶地皱起眉头：“想都别想。”",
+                "pb_com_undress_inner_I_1": "赤裸着上身的$self$毫不在意地挺了挺胸。",
+                "pb_com_undress_inner_I_2": "“怎么样，还满意吗？”$self$笑着问道。",
+                "pb_com_undress_inner_J_1": "$self$紧咬着嘴唇，屈辱地别过脸去。",
+                "pb_com_undress_inner_J_2": "$self$垂着头，肩膀微微发抖。",
+                "pb_com_undress_inner_K_1": "$self$不自在地抱起双臂，避开了$target$的视线。",
+                "pb_com_undress_inner_K_2": "“别一直盯着看……”$self$扭过身去。",
+
+                "pb_com_undress_skin_Begin_A_1": "$self$呼吸变得粗重，没有丝毫抗拒。",
+                "pb_com_undress_skin_Begin_A_2": "“你可真主动啊。”$self$低声笑道。",
+                "pb_com_undress_skin_Begin_B_1": "$self$紧闭双眼，浑身止不住地发抖。",
+                "pb_com_undress_skin_Begin_B_2": "$self$死死咬着牙，屈辱地任人摆布。",
+                "pb_com_undress_skin_Begin_C_1": "$self$的脸涨得通红，双手不知道该往哪放。",
+                "pb_com_undress_skin_Begin_C_2": "“喂……”$self$小声嘀咕着，却没有阻止。",
+                "pb_com_undress_skin_D_1": "$self$毫无防备地熟睡着，连最后的贴身衣物也被褪了下来。",
+                "pb_com_undress_skin_E_1": "$self$一丝不挂地凝固在原地，对一切毫无知觉。",
+                "pb_com_undress_skin_F_1": "“抱歉……这个还是不行。”$self$按住了最后的遮挡。",
+                "pb_com_undress_skin_F_2": "$self$红着脸摇头：“再给我点时间。”",
+                "pb_com_undress_skin_G_1": "“够了够了！”$self$羞得面红耳赤。",
+                "pb_com_undress_skin_G_2": "$self$一把推开$target$：“这也太过分了！”",
+                "pb_com_undress_skin_H_1": "“你敢！”$self$的眼神充满了警惕与愤怒。",
+                "pb_com_undress_skin_H_2": "$self$狠狠地瞪着$target$，护住了身体。",
+                "pb_com_undress_skin_I_1": "一丝不挂的$self$毫不遮掩，目光灼灼地看着$target$。",
+                "pb_com_undress_skin_I_2": "“接下来呢？”$self$低声问道。",
+                "pb_com_undress_skin_J_1": "$self$用手遮挡着身体，屈辱得说不出话来。",
+                "pb_com_undress_skin_J_2": "$self$蜷起身子，眼眶通红。",
+                "pb_com_undress_skin_K_1": "$self$满脸通红地遮住下身，尴尬得说不出话。",
+                "pb_com_undress_skin_K_2": "“……全被看光了。”$self$捂住了脸。",
+
+                "pb_com_redress_Begin_A_1": "$self$笑着伸出手臂：“被人伺候的感觉还不错。”",
+                "pb_com_redress_Begin_A_2": "$self$配合地让$target$帮自己穿上衣服。",
+                "pb_com_redress_Begin_B_1": "$self$有些意外，但还是配合着穿上了衣服。",
+                "pb_com_redress_Begin_B_2": "“我自己来就行……”$self$嘴上这么说，却没有拒绝。",
+                "pb_com_redress_D_1": "$self$仍在熟睡，完全没发现自己被穿上了衣服。",
+                "pb_com_redress_E_1": "$self$凝固在原地，被穿好了衣服也毫无知觉。",
+                "pb_com_redress_I_1": "$self$整了整衣领，满意地点点头。",
+                "pb_com_redress_I_2": "“谢了。”$self$随口道谢。",
+                "pb_com_redress_K_1": "$self$松了口气，整理了一下衣服。",
+                "pb_com_redress_K_2": "“……谢了。”$self$别扭地说了一句。"
+            },
+            "en-us": {
+                "pb_com_undress_outer_Begin_A_1": "$self$ spreads his arms easily. \"Sure, it's a bit warm anyway.\"",
+                "pb_com_undress_outer_Begin_A_2": "$self$ grins and lets $target$ take off his jacket.",
+                "pb_com_undress_outer_Begin_B_1": "$self$ clenches his jaw and stands perfectly still.",
+                "pb_com_undress_outer_Begin_B_2": "$self$ balls his fists, but doesn't resist.",
+                "pb_com_undress_outer_Begin_C_1": "\"Hey, what are you doing?\" $self$ frowns, but doesn't stop it.",
+                "pb_com_undress_outer_Begin_C_2": "$self$ pauses, puzzled, but goes along with it.",
+                "pb_com_undress_outer_D_1": "$self$ sleeps soundly, not noticing his jacket coming off.",
+                "pb_com_undress_outer_E_1": "$self$ stays frozen in place as his jacket is taken off.",
+                "pb_com_undress_outer_F_1": "\"Not now, later.\" $self$ laughs, brushing $target$'s hand away.",
+                "pb_com_undress_outer_F_2": "$self$ shakes his head. \"This isn't the right place.\"",
+                "pb_com_undress_outer_G_1": "\"Whoa, what's this all of a sudden!\" $self$ takes a step back.",
+                "pb_com_undress_outer_G_2": "$self$ scratches his head awkwardly. \"Uh... let's not.\"",
+                "pb_com_undress_outer_H_1": "\"Don't touch me.\" $self$ coldly shakes off $target$'s hand.",
+                "pb_com_undress_outer_H_2": "$self$ glares at $target$. \"What do you think you're doing?\"",
+                "pb_com_undress_outer_I_1": "$self$ rolls his shoulders, looking more comfortable.",
+                "pb_com_undress_outer_I_2": "\"Thanks.\" $self$ tosses the jacket aside.",
+                "pb_com_undress_outer_J_1": "$self$'s face darkens, and he says nothing.",
+                "pb_com_undress_outer_J_2": "$self$ keeps his head down, fists clenched white.",
+                "pb_com_undress_outer_K_1": "$self$ awkwardly straightens what he's still wearing.",
+                "pb_com_undress_outer_K_2": "\"...It's just the jacket.\" $self$ mutters.",
+
+                "pb_com_undress_inner_Begin_A_1": "$self$ raises an eyebrow and starts on his buttons himself. \"In a hurry?\"",
+                "pb_com_undress_inner_Begin_A_2": "$self$ lifts his arms to help, a faint smile on his face.",
+                "pb_com_undress_inner_Begin_B_1": "$self$ shuts his eyes, stiff as his clothes are pulled off.",
+                "pb_com_undress_inner_Begin_B_2": "$self$'s hand rises, then falls - he doesn't resist.",
+                "pb_com_undress_inner_Begin_C_1": "\"W-we're really doing this?\" The tips of $self$'s ears go red.",
+                "pb_com_undress_inner_Begin_C_2": "$self$ looks away and lets $target$ do it.",
+                "pb_com_undress_inner_D_1": "$self$ sleeps on, only mumbling something as his clothes come off.",
+                "pb_com_undress_inner_E_1": "$self$ keeps the expression he had when time stopped, unaware of his clothes coming off.",
+                "pb_com_undress_inner_F_1": "\"This... later, okay?\" $self$ holds his hem down.",
+                "pb_com_undress_inner_F_2": "$self$ smiles wryly and shakes his head. \"Really not now.\"",
+                "pb_com_undress_inner_G_1": "\"Wh-what are you thinking!\" $self$ flushes red.",
+                "pb_com_undress_inner_G_2": "$self$ backs off in a hurry. \"We're not there yet!\"",
+                "pb_com_undress_inner_H_1": "\"Get away!\" $self$ shoves $target$ back.",
+                "pb_com_undress_inner_H_2": "$self$ frowns in disgust. \"Don't even think about it.\"",
+                "pb_com_undress_inner_I_1": "Bare-chested, $self$ puffs out his chest without a care.",
+                "pb_com_undress_inner_I_2": "\"Well? Satisfied?\" $self$ asks with a grin.",
+                "pb_com_undress_inner_J_1": "$self$ bites his lip and turns his face away in humiliation.",
+                "pb_com_undress_inner_J_2": "$self$ hangs his head, shoulders trembling slightly.",
+                "pb_com_undress_inner_K_1": "$self$ crosses his arms uncomfortably, avoiding $target$'s gaze.",
+                "pb_com_undress_inner_K_2": "\"Stop staring...\" $self$ turns away.",
+
+                "pb_com_undress_skin_Begin_A_1": "$self$'s breathing grows heavy, with no hint of resistance.",
+                "pb_com_undress_skin_Begin_A_2": "\"You're pretty forward.\" $self$ chuckles quietly.",
+                "pb_com_undress_skin_Begin_B_1": "$self$ shuts his eyes, trembling all over.",
+                "pb_com_undress_skin_Begin_B_2": "$self$ grits his teeth, humiliated, letting it happen.",
+                "pb_com_undress_skin_Begin_C_1": "$self$'s face burns red, his hands not knowing where to go.",
+                "pb_com_undress_skin_Begin_C_2": "\"Hey...\" $self$ mutters, but doesn't stop it.",
+                "pb_com_undress_skin_D_1": "$self$ sleeps defenselessly as even his underwear is slipped off.",
+                "pb_com_undress_skin_E_1": "$self$ stands frozen and completely naked, unaware of anything.",
+                "pb_com_undress_skin_F_1": "\"Sorry... not this one.\" $self$ holds his last layer in place.",
+                "pb_com_undress_skin_F_2": "$self$ shakes his head, blushing. \"Give me some time.\"",
+                "pb_com_undress_skin_G_1": "\"Enough, enough!\" $self$ is red to the ears.",
+                "pb_com_undress_skin_G_2": "$self$ shoves $target$ away. \"That's way too far!\"",
+                "pb_com_undress_skin_H_1": "\"Don't you dare!\" $self$'s eyes are full of wariness and anger.",
+                "pb_com_undress_skin_H_2": "$self$ glares hard at $target$, guarding himself.",
+                "pb_com_undress_skin_I_1": "Completely naked, $self$ doesn't bother covering up, eyes fixed hotly on $target$.",
+                "pb_com_undress_skin_I_2": "\"What's next?\" $self$ asks in a low voice.",
+                "pb_com_undress_skin_J_1": "$self$ covers himself with his hands, too humiliated to speak.",
+                "pb_com_undress_skin_J_2": "$self$ hunches over, eyes red.",
+                "pb_com_undress_skin_K_1": "$self$ covers himself, face bright red, too embarrassed to speak.",
+                "pb_com_undress_skin_K_2": "\"...You saw everything.\" $self$ covers his face.",
+
+                "pb_com_redress_Begin_A_1": "$self$ holds out his arms with a grin. \"Being waited on isn't bad.\"",
+                "pb_com_redress_Begin_A_2": "$self$ goes along and lets $target$ help him get dressed.",
+                "pb_com_redress_Begin_B_1": "$self$ looks a little surprised, but lets himself be dressed.",
+                "pb_com_redress_Begin_B_2": "\"I can do it myself...\" $self$ says, but doesn't refuse.",
+                "pb_com_redress_D_1": "$self$ is still fast asleep, unaware he's been dressed.",
+                "pb_com_redress_E_1": "$self$ stays frozen in place, unaware of being dressed.",
+                "pb_com_redress_I_1": "$self$ straightens his collar and nods, satisfied.",
+                "pb_com_redress_I_2": "\"Thanks.\" $self$ says casually.",
+                "pb_com_redress_K_1": "$self$ lets out a breath and straightens his clothes.",
+                "pb_com_redress_K_2": "\"...Thanks.\" $self$ mumbles awkwardly."
+            }
+        }
+    }
+}

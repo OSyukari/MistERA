@@ -421,6 +421,35 @@ public class MemoryManager
     {
         return entries.ContainsKey(time.Ticks) ? entries[time.Ticks] : null;
     }
+
+    /// <summary> stored key (ticks) of entry - its EndTime at insertion, not advanced by merges. -1 if not stored here </summary>
+    public long KeyOf(Memory_Entry entry)
+    {
+        if (entries == null || entry == null) return -1;
+        int index = entries.IndexOfValue(entry);
+        return index < 0 ? -1 : entries.Keys[index];
+    }
+
+    /// <summary>
+    /// Re-keys entry to the current time as the newest entry (StartTime kept, so body part experience ticks inside its span
+    /// still resolve through FindEntryByDateTimeTick) - additions of this tick then merge into it. Returns the new key; -1 if
+    /// entry isn't stored here or another entry already holds the current tick (entry left in place).
+    /// </summary>
+    public long MoveToNow(Memory_Entry entry)
+    {
+        long key = KeyOf(entry);
+        if (key < 0) return -1;
+        var now = scr_System_Time.current.getCurrentTime();
+        if (key == now.Ticks) return key;
+        if (entries.ContainsKey(now.Ticks)) return -1;
+        entries.Remove(key);
+        entry.EndTime = now;
+        entries.Add(now.Ticks, entry);
+        lastRef = long.MinValue;
+        entry.RefreshCache();
+        ClearCache();
+        return now.Ticks;
+    }
     /// <summary>
     /// Exact key first; falls back to the entry whose time span contains the tick - stored ticks
     /// (e.g. body part first/last experience) outlive their key once the entry is merged into another

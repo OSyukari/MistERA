@@ -104,8 +104,10 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler, IScrollHandler
         if (scr_UpdateHandler.current != null && scr_UpdateHandler.current.IsAgentRunning) return;
 
         if (animate) automaticMessages.Add(msg);
+        var cm = scr_System_CampaignManager.current;
+        if (cm.LogSection != 0) messageSections[msg] = new LogSectionStamp { section = cm.LogSection, isFlushStart = cm.LogSectionIsFlushStart };
         todo.Add(msg);
-        var immediate = automaticMessages.Contains(todo[0]) && !WaitingForInput;
+        var immediate = automaticMessages.Contains(todo[0]) && !WaitingForInput && CanAutoContinue(todo[0], true);
         UpdateAnimatingStatus();
         //Debug.Log($"onLogsAdd firstline? {firstLine} or animate? {animate} canAnimate? {canAnimate}");
         if (scr_System_CentralControl.current.LogPrefs.DLog_LogsMenu) Debug.Log($"OnLogsadd, waiting? {waiting} displayPortrait? {msg.DisplaPortrait} waitForPortrait? {msg.WaitForPortrait} portraitRef {(msg.Display.PortraitRef == null ? "null" : msg.Display.PortraitRef.Owner.CallName)} multiple? {msg.Display.MultipleChara.Count} animate? {animate} count? {todo.Count} firstline? {firstLine} immediate? {immediate}");
@@ -1071,6 +1073,23 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler, IScrollHandler
 
     List<MessageLog> todo;
     readonly HashSet<MessageLog> automaticMessages = new HashSet<MessageLog>();
+
+    /// <summary>
+    /// Section of a flushed update (scr_System_CampaignManager.LogSection - accept / result / after). Animated messages
+    /// only auto-print within the section of the message shown last; the first message of a later section waits for
+    /// a click. The first section of a flush may still print on arrival at the queue top.
+    /// </summary>
+    struct LogSectionStamp { public int section; public bool isFlushStart; }
+    readonly Dictionary<MessageLog, LogSectionStamp> messageSections = new Dictionary<MessageLog, LogSectionStamp>();
+    int lastShownSection = 0;
+
+    /// <summary> next may auto-print after the message shown last (unsectioned messages keep the plain animate rule) </summary>
+    bool CanAutoContinue(MessageLog next, bool arriving)
+    {
+        if (!messageSections.TryGetValue(next, out var stamp)) return true;
+        if (stamp.section == lastShownSection) return true;
+        return arriving && stamp.isFlushStart;
+    }
     MessageLog activePrompt;
     bool WaitingForInput => activePrompt is Message_Question question && !question.answered
         || activePrompt is Message_InputField input && !input.answered;
@@ -1211,6 +1230,8 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler, IScrollHandler
         //trackedLogs.Clear();
         todo.Clear();
         automaticMessages.Clear();
+        messageSections.Clear();
+        lastShownSection = 0;
         activePrompt = null;
         scr_System_CampaignManager.current.Logs.Clear();
     }
@@ -1329,10 +1350,12 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler, IScrollHandler
         {
             todo.RemoveAt(0);
             automaticMessages.Remove(current);
+            lastShownSection = messageSections.TryGetValue(current, out var shownStamp) ? shownStamp.section : 0;
+            messageSections.Remove(current);
 
-            // auto advance check
+            // auto advance check - animated messages only within the shown message's section
             var next = todo.Count > 0 ? todo[0] : null;
-            if (next != null && !WaitingForInput && (next.autoAnimate || automaticMessages.Contains(next)))
+            if (next != null && !WaitingForInput && (next.autoAnimate || (automaticMessages.Contains(next) && CanAutoContinue(next, false))))
             {
                 AnimateOneStep();
             }

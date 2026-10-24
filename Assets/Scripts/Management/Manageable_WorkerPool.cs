@@ -362,6 +362,8 @@ public static class FallbackWorkerManager
     static void SendHomeSafety(Manageable_WorkerPool pool, Character_Trainable w)
     {
         if (w.IsDormant) { pool.strayHours.Remove(w.RefID); return; }
+        // held by a party (e.g. an MIA party's hidden cast - event AddToPartyHidden): not a stray, the party returns them
+        if (w.FactionManager.CurrentParty != null || w.FactionManager.isPartyLocked) { pool.strayHours.Remove(w.RefID); return; }
         var room = scr_System_CampaignManager.current.Map.FindRoomByChara(w.RefID);
         if (room == pool.Room || w.CurrentJob != null) { pool.strayHours.Remove(w.RefID); return; }
 

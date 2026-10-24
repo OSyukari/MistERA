@@ -2212,6 +2212,62 @@ public class scr_panel_COMmanager : scr_Menu
         return true;
     }
 
+    /// <summary>
+    /// Package of a clothing button (COM_Wardrobe command of the layer / direction, whole layer or equipRef's item):
+    /// the player on chara, or the player alone on themselves. Runs in the player's sex job when chara is in it with
+    /// the player (allowedDuringSex), else in chara's interaction job / the player job. null = command missing from the data.
+    /// </summary>
+    ActionPackage_Wardrobe MakeWardrobePackage(Character_Trainable chara, bool isRedress, BodyEquipLayer layer, bool allLayers, int equipRef, int revealingFilter)
+    {
+        if (chara == null) return null;
+        var com = COM_Wardrobe.Find(isRedress, layer, allLayers);
+        if (com == null) return null;
+
+        var player = scr_System_CampaignManager.current.Player;
+        Job job;
+        if (chara.CurrentJob is Job_Sex_Group sexJob && sexJob.actorRefID.Contains(player.RefID) && sexJob.actorRefID.Contains(chara.RefID)) job = sexJob;
+        else if (chara == player) job = scr_System_CampaignManager.current.FindJobInstanceByID(scr_System_CampaignManager.current.jobRef_playerCOM);
+        else job = chara.InteractionJob;
+        if (job == null) return null;
+
+        var receivers = chara == player ? new List<int>() : new List<int>() { chara.RefID };
+        return new ActionPackage_Wardrobe(job, com, equipRef, revealingFilter, new List<int>() { player.RefID }, receivers, 0);
+    }
+
+    /// <summary> Validate(), with the acceptance / invalid-reason tooltip the command buttons show </summary>
+    static bool ValidateWardrobePackage(ActionPackage_Wardrobe ap, out string tooltip)
+    {
+        if (ap == null)
+        {
+            tooltip = LocalizeDictionary.QueryThenParse("ui_wardrobe_tooltip_noCommand");
+            return false;
+        }
+        if (!ap.Validate())
+        {
+            ap.tooltip.RemoveAll(x => string.IsNullOrEmpty(x));
+            tooltip = ap.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_comInvalid")).Replace("$tooltips$", String.Join("\n", ap.tooltip));
+            return false;
+        }
+        tooltip = ap.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip"));
+        return true;
+    }
+
+    /// <summary> Runs a clothing button's package like a command button (ButtonValidator_validateCOM.Execute) </summary>
+    void SubmitWardrobePackage(ActionPackage_Wardrobe ap, string label)
+    {
+        if (ap == null || ap.job == null) return;
+        scr_System_CentralControl.current.AutoSave();
+        scr_System_CampaignManager.current.LogPlayerPackage(ap.Copy());
+
+        // a sex job keeps its actors: the package runs inside it instead of moving them out
+        if (!(ap.job is Job_Sex_Group))
+        {
+            foreach (var actor in ap.actorRefs) scr_System_CampaignManager.current.FindInstanceByID(actor).ChangeCurrentJob(ap.job, ap.targetCOM.ID);
+        }
+        ap.job.AddPackage(new List<ActionPackage>() { ap }, true);
+        scr_System_CampaignManager.current.FreeUpdate(-1, label);
+    }
+
     public RectTransform prefab_Canvas_charaDetail;
     public class ButtonValidator_InspectChara : ButtonValidator, I_ButtonClickable
     {
@@ -3112,25 +3168,25 @@ public class scr_panel_COMmanager : scr_Menu
             this.noValidate = true;
         }
         Character_Trainable chara;
+        ActionPackage_Wardrobe package;
 
         public override bool IsButtonValid()
         {
+            package = null;
             if (!text.gameObject.activeInHierarchy) return false;
 
             //if (scr_System_CampaignManager.current.CurrentTargetRef < 0) return false;
             chara = ( isPlayer ? scr_System_CampaignManager.current.Player : scr_System_CampaignManager.current.CurrentTarget );
             if (chara == null) return false;
 
-            if (safeMode) return chara.NeedUndress(BodyEquipLayer.Skin, (Revealing)revealingScoreFilter);
-            else return chara.NeedUndress(BodyEquipLayer.None, (Revealing)revealingScoreFilter);
+            // the undress-all command: acceptance checked by the receiver, applied once the package executes
+            package = parent.MakeWardrobePackage(chara, false, BodyEquipLayer.None, true, -1, revealingScoreFilter);
+            return ValidateWardrobePackage(package, out tooltip);
         }
 
         public void OnClickButton()
         {
-            chara.Undress(BodyEquipLayer.None, (Revealing)revealingScoreFilter);
-            //Debug.Log("Chara [" + chara.FirstName + "] undress inventory [" + String.Join(" ", chara.inventory_ref) + "]");
-
-            scr_System_CampaignManager.current.ChangeCurrentTarget(scr_System_CampaignManager.current.CurrentTargetRef, true);
+            parent.SubmitWardrobePackage(package, text.Text.text);
         }
     }
 
@@ -3152,14 +3208,17 @@ public class scr_panel_COMmanager : scr_Menu
             this.noValidate = true;
         }
         Character_Trainable chara;
+        ActionPackage_Wardrobe package;
 
         public override bool IsButtonValid()
         {
+            package = null;
             if (!text.gameObject.activeInHierarchy) return false;
 
             chara = (isPlayer ? scr_System_CampaignManager.current.Player : scr_System_CampaignManager.current.CurrentTarget);
             if (chara == null) return false;
 
+            // outermost layer with something to take off; its command (acceptance by layer) runs as a package
             for (int i = (int)BodyEquipLayer.Outer; i > (int)BodyEquipLayer.None; i--)
             {
                 layer = (BodyEquipLayer)i;
@@ -3167,21 +3226,20 @@ public class scr_panel_COMmanager : scr_Menu
                 if (chara.NeedUndress((BodyEquipLayer)(i - 1), (Revealing)revealingScoreFilter))
                 {
                     this.text.SetText("%%comManager_com_undress_" + layer.ToString() + "%%");
-                    return true;
+                    package = parent.MakeWardrobePackage(chara, false, layer, false, -1, revealingScoreFilter);
+                    return ValidateWardrobePackage(package, out tooltip);
                 }
             }
 
             if (safeMode) this.text.SetText(" - ");
             else this.text.SetText("%%comManager_com_undress_" + layer.ToString() + "%%");
+            tooltip = LocalizeDictionary.QueryThenParse("ui_wardrobe_tooltip_nothingToUndress");
             return false;
         }
 
         public void OnClickButton()
         {
-            chara.Undress(layer, (Revealing)revealingScoreFilter);
-            //Debug.Log("Chara [" + chara.FirstName + "] undress inventory [" + String.Join(" ", chara.inventory_ref) + "]");
-
-            scr_System_CampaignManager.current.ChangeCurrentTarget(scr_System_CampaignManager.current.CurrentTargetRef, true);
+            parent.SubmitWardrobePackage(package, text.Text.text);
         }
     }
 
@@ -3202,9 +3260,11 @@ public class scr_panel_COMmanager : scr_Menu
             this.noValidate = true;
         }
         Character_Trainable chara;
+        ActionPackage_Wardrobe package;
 
         public override bool IsButtonValid()
         {
+            package = null;
             if (!text.gameObject.activeInHierarchy) return false;
 
             chara = (isPlayer ? scr_System_CampaignManager.current.Player : scr_System_CampaignManager.current.CurrentTarget);
@@ -3212,7 +3272,7 @@ public class scr_panel_COMmanager : scr_Menu
 
             if (chara.CurrentJob is Job_Sex_Group)
             {
-                this.tooltip = "cannot redress during sex";
+                this.tooltip = LocalizeDictionary.QueryThenParse("ui_wardrobe_tooltip_noRedressDuringSex");
                 return false;
             }
 
@@ -3223,20 +3283,19 @@ public class scr_panel_COMmanager : scr_Menu
                 if (chara.CanRedress(layer))
                 {
                     this.text.SetText("%%comManager_com_redress_" + layer.ToString() + "%%");
-                    return true;
+                    package = parent.MakeWardrobePackage(chara, true, layer, false, -1, revealingScoreFilter);
+                    return ValidateWardrobePackage(package, out tooltip);
                 }
             }
 
             this.text.SetText("%%comManager_com_redress_" + layer.ToString() + "%%");
+            tooltip = LocalizeDictionary.QueryThenParse("ui_wardrobe_tooltip_nothingToRedress");
             return false;
         }
 
         public void OnClickButton()
         {
-            chara.Redress(layer);
-            //Debug.Log("Chara [" + chara.FirstName + "] redress inventory [" + String.Join(" ", chara.inventory_ref) + "]");
-
-            scr_System_CampaignManager.current.ChangeCurrentTarget(scr_System_CampaignManager.current.CurrentTargetRef, true);
+            parent.SubmitWardrobePackage(package, text.Text.text);
         }
     }
 
@@ -3254,9 +3313,11 @@ public class scr_panel_COMmanager : scr_Menu
             this.noValidate = true;
         }
         Character_Trainable chara;
+        ActionPackage_Wardrobe package;
 
         public override bool IsButtonValid()
         {
+            package = null;
             if (!text.gameObject.activeInHierarchy) return false;
 
             chara = (isPlayer ? scr_System_CampaignManager.current.Player : scr_System_CampaignManager.current.CurrentTarget);
@@ -3265,26 +3326,18 @@ public class scr_panel_COMmanager : scr_Menu
 
             if (chara.CurrentJob is Job_Sex_Group)
             {
-                this.tooltip = "cannot redress during sex";
+                this.tooltip = LocalizeDictionary.QueryThenParse("ui_wardrobe_tooltip_noRedressDuringSex");
                 return false;
             }
 
-            // worn items stay in the inventory: valid while Redress would put something on
-            if (!chara.canRedress)
-            {
-                this.tooltip = "all clothes are dressed";
-                return false;
-            }
-            return true;
+            // worn items stay in the inventory: valid while Redress would put something on (checked by the package)
+            package = parent.MakeWardrobePackage(chara, true, BodyEquipLayer.None, true, -1, (int)Revealing.ShapeReveal);
+            return ValidateWardrobePackage(package, out tooltip);
         }
 
         public void OnClickButton()
         {
-
-            chara.Redress();
-            //Debug.Log("Chara [" + chara.FirstName + "] redress inventory [" + String.Join(" ", chara.inventory_ref) + "]");
-
-            scr_System_CampaignManager.current.ChangeCurrentTarget(scr_System_CampaignManager.current.CurrentTargetRef, true);
+            parent.SubmitWardrobePackage(package, text.Text.text);
         }
     }
 
@@ -3334,16 +3387,17 @@ public class scr_panel_COMmanager : scr_Menu
                 : equippedPart.GetRevealingScore(eq.equipLayer, eq.equipSlot);
             isVisible = scr_System_CampaignManager.current.DebugMode || coverScore <= 1;
             allowDuringSex = !(chara.CurrentJob is Job_Sex_Group) || (int)eq.revealing <= 0;
+            package = null;
 
             bool returnVal = true;
-            // always allow unequip
+            // unequip: the item layer's undress command (acceptance by layer)
             if (isEquipped) text.Toggle(true, true);
             else
             {   // only allow re-equip during sex if satisfy condition
                 if (allowDuringSex) text.Toggle(true, false);
                 else
                 {
-                    tooltip = "cannot be redressed during sex";
+                    tooltip = LocalizeDictionary.QueryThenParse("ui_wardrobe_tooltip_noRedressDuringSex");
                     returnVal = false;
                     text.Toggle(true, false);
                 }
@@ -3352,17 +3406,21 @@ public class scr_panel_COMmanager : scr_Menu
             if (!isVisible) text.gameObject.SetActive(false);
             else text.gameObject.SetActive(true);
 
+            if (returnVal && isVisible)
+            {
+                package = parent.MakeWardrobePackage(chara, !isEquipped, eq.equipLayer, false, equipRef, -1);
+                returnVal = ValidateWardrobePackage(package, out tooltip);
+            }
+
             return returnVal;
         }
 
-
+        ActionPackage_Wardrobe package;
 
 
         public void OnClickButton()
         {
-            if (chara.GetPartByEquipRef(equipRef) != null) chara.UnequipItem(equipRef, -1, true, true);
-            else chara.Reequip(item);
-            scr_System_CampaignManager.current.ChangeCurrentTarget(scr_System_CampaignManager.current.CurrentTargetRef, true);
+            parent.SubmitWardrobePackage(package, text.Text.text);
         }
     }
 

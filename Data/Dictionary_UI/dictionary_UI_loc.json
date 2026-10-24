@@ -8,6 +8,7 @@
     "Dictionary": {
         "Entries": {
             "en-us": {
+                "quest_append_chara_unresolved": "(character not found #$refID$)",
                 "obligation_activityfee_generic_name": "Activity fees",
                 "obligation_activityfee_entryName": "$activity$ fee",
                 "management_jobpost_description_desc": "Work Detail: $description$\nWork Hours: $hourCount$h $hourRange$\n$dayCount$: $days$\nHourly Pay: $payout$, Payment Cadence: $paymentCadence$\n$additionalDescription$",
@@ -304,6 +305,11 @@
                 "ui_videoEdit_actorsType_Main": "Main Cast",
                 "ui_videoEdit_actorsType_None": "Not Cast",
                 "ui_videoEdit_actorsType_Support": "Supporting Cast",
+                "ui_videoEdit_charaReq_main": "Main cast requirement not met:",
+                "ui_videoEdit_charaReq_supporting": "Supporting cast requirement not met:",
+                "ui_videoEdit_charaReq_excludedActor": "$name$ cannot appear in this type of recording",
+                "ui_videoEdit_charaReq_kojoVariable": "$name$ does not meet the casting condition",
+                "ui_videoEdit_charaReq_notSignedActress": "$name$ is not a signed actress",
 
                 "ui_worldmap_childWorldTooltip": "Contains: $list$",
                 "ui_worldmap_doorTooltip": "Estimated travel time: $time$ min",

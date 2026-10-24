@@ -65,7 +65,6 @@
                 "equipLayers":["Skin"],
                 "tags":["nsfw","penis","testicle","external"],
                 "promptTags":["animal penis"],
-                "promptGroups":["lower_front"],
                 "requestTraits":["trait_Size_P"],
                 "sensitivityClassString":"C",
                 "maxSensitivityStatString":"stats_derived_maxSensitivity_C",

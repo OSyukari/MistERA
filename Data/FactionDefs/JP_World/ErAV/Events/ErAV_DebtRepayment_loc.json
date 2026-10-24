@@ -1,0 +1,21 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for ErAV_DebtRepayment.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "erav_debt_paid_kick": "ErAV - Debt Paid On Time",
+                "erav_debt_paid_kanon": "ErAV - Kanon on the Repayment",
+
+                "erav_debt_paid_kanon_intro": "Your phone buzzes. A message from $kanon.name$.",
+                "erav_debt_paid_kanon_first": "\"This month's interest came in.\"\n\"Honestly, I didn't expect you to pull it together on the first try. ...Looks like I wasn't wrong about you. Keep it up.\"",
+                "erav_debt_paid_kanon_resumed": "\"Interest received.\"\n\"You know what last month cost. You paid this time — don't let it lapse again. I'd like to see the same figure next month.\"",
+                "erav_debt_paid_kanon_routine": "\"This month's interest is in. Same again next month.\"",
+                "erav_debt_paid_kanon_milestone1": "\"One more thing. Counting this one, what you've handed the Kiryu-gumi is past three million.\"\n\"People in the family are starting to remember the Miyama name. That's a good thing.\"",
+                "erav_debt_paid_kanon_milestone2": "\"As of today, what you've paid the Kiryu-gumi is past five million.\"\n\"The family respects people who deliver on time. Some matters can be talked about openly from here on.\"",
+                "erav_debt_paid_kanon_milestone3": "\"Past ten million in total.\"\n\"At this point you're not just someone in debt — you're a business partner of the Kiryu-gumi. If you need something, come see me at the office.\""
+            }
+        }
+    }
+}

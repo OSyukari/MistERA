@@ -87,14 +87,14 @@ public class COM_Sex : COM
 
     }
 
-    public override string PreEvaluate (Job sourceJob, List<Character_Trainable> doers, List<Character_Trainable> receivers)
+    public override string PreEvaluate (Job sourceJob, List<Character_Trainable> doers, List<Character_Trainable> receivers, ActionPackage p = null)
     {
         string tooltip = "";
         if (requirements.requirement.doerBodyTags.Count < 1) return "";
         if (requirements.requirement.receiverBodyTags.Count < 1) return "";
         if (!comTags.Contains("penetration")) return "";
 
-        int variant = GetValidVariant(sourceJob, doers, receivers);
+        int variant = GetValidVariant(sourceJob, doers, receivers, p: p);
 
         float doer_depth = -1f;
         float doer_size = -1f;

@@ -1510,12 +1510,21 @@ public static class LLMUtils
         return ActionScenePromptUtility.Short_Other;
     }
 
-    /// <summary>Basic appearance only: short tag, skin color, body shape, and always-visible organ prompts.
+    /// <summary>Resolved identity metadata, falling back to the body-based short tag only after all profile layers.</summary>
+    public static string GetShortName(Character_Trainable c, ICollection<string> actorTags = null)
+    {
+        string name = ActorPromptProfileUtility.ResolveShortName(c);
+        return string.IsNullOrWhiteSpace(name) ? GetShortTag(c, actorTags) : name;
+    }
+
+    /// <summary>Compact identity and appearance: classifier short tag first, distinct name, skin color, body shape, and always-visible organ prompts.
     /// Ordinary organ promptTags are excluded even in Xray mode. Order and duplicate tags are preserved.</summary>
     public static List<string> CollectShortPrompt(Character_Trainable c, ICollection<string> actorTags = null)
     {
         var list = new List<string> { GetShortTag(c, actorTags) };
         if (c == null) return list;
+        string name = GetShortName(c, actorTags);
+        if (!string.Equals(name, list[0], StringComparison.OrdinalIgnoreCase)) list.Add(name);
         foreach (var group in new[] { "trait_SkinColor", "trait_BodyType" })
         {
             var trait = c.Body?.GetEffectiveBodyTrait(group) ?? c.Stats?.GetTraitByGroupID(group);
@@ -1536,6 +1545,18 @@ public static class LLMUtils
         return list;
     }
 
+    /// <summary> Actor properties used by rule predicates, including effective body-type tags such as petite. </summary>
+    public static List<string> CollectActorPropertyTags(Character_Trainable c)
+    {
+        var tags = new List<string>();
+        if (c == null) return tags;
+        UtilityEX.GetActorTag(ref tags, c);
+        var bodyType = c.Body?.GetEffectiveBodyTrait("trait_BodyType") ?? c.Stats?.GetTraitByGroupID("trait_BodyType");
+        if (bodyType?.promptTags != null) tags.AddRange(bodyType.promptTags);
+        if (bodyType?.promptTags_always != null) tags.AddRange(bodyType.promptTags_always);
+        return tags.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+    }
+
     public static List<string> CollectActorTags(Character_Trainable c, bool isCombat = false)
     {
         return CollectActorTags(c, isCombat, out _);
@@ -1551,7 +1572,9 @@ public static class LLMUtils
     /// null = plain portrait, e.g. organ detail rules (testicles, clitoris, anus) then stay off </param>
     /// <param name="promptGroups"> optional grouped rule and visible organ output, withheld from the flat result;
     /// organ and requested promptTags_always remain flat. Null preserves portrait behavior. </param>
-    public static List<string> CollectActorTags(Character_Trainable c, bool isCombat, out HashSet<string> keywords, IEnumerable<string> actionTags = null, Dictionary<string, List<string>> promptGroups = null)
+    /// <param name="ignoreClothing"> collect existing anatomy without coverage, worn item prompts or outfit appearance
+    /// overrides. Does not change actor state or add a nude tag; grouped output is still deferred. </param>
+    public static List<string> CollectActorTags(Character_Trainable c, bool isCombat, out HashSet<string> keywords, IEnumerable<string> actionTags = null, Dictionary<string, List<string>> promptGroups = null, bool ignoreClothing = false, List<ActorOptionalPromptRule> optionalRules = null)
     {
         // order: profile prompts (character tag) -> profile rules (hair, eyes, body, halo...) -> worn items + organs
         // (part order, head to feet) -> weapons. The body walk runs first because the rules need its keywords.
@@ -1566,16 +1589,17 @@ public static class LLMUtils
             // of the flat EquippedItemRefs list, so gear hidden under opaque coverage does not
             // leak into the tags. Cover-only registrations (TryGetCover) are skipped - the
             // covering item is always equipped on its own slot too, so it is collected there.
-            bool xray = scr_System_CampaignManager.current.XrayMode;
-            bool debugMode = scr_System_CampaignManager.current.DebugMode;
+            bool xray = !ignoreClothing && scr_System_CampaignManager.current.XrayMode;
+            bool debugMode = !ignoreClothing && scr_System_CampaignManager.current.DebugMode;
             var layers = new[] { BodyEquipLayer.Skin, BodyEquipLayer.Inner, BodyEquipLayer.Outer };
 
             foreach (var part in c.Body.Body)
             {
                 foreach (var slot in part.availableSlots)
                 {
-                    int score = part.GetSlotRevealingScore(slot, BodyEquipLayer.Skin);
-                    if (score <= 1 || xray) keywords.Add(slot.ToString());
+                    int score = ignoreClothing ? 0 : part.GetSlotRevealingScore(slot, BodyEquipLayer.Skin);
+                    if (ignoreClothing || score <= 1 || xray) keywords.Add(slot.ToString());
+                    if (ignoreClothing) continue;
                     foreach (var layer in layers)
                     {
                         // skin-level gear is invisible under opaque coverage; inner/outer always drawn
@@ -1589,16 +1613,17 @@ public static class LLMUtils
                 foreach (var ins in part.internals)
                 {
                     if (ins.Base.promptTags_always != null) gear.AddRange(ins.Base.promptTags_always);
-                    AddRequestedOrganTags(c, ins.Base, gear, true);
+                    AddRequestedOrganTags(c, ins.Base, gear, true, ignoreClothing);
 
                     // organs lie under the Skin layer: underwear covers them too (None = Skin + Inner + Outer)
-                    if (ins.GetRevealingScore(BodyEquipLayer.None) > 1 && !xray) continue;
+                    if (!ignoreClothing && ins.GetRevealingScore(BodyEquipLayer.None) > 1 && !xray) continue;
                     bool grouped = promptGroups != null && ins.Base.promptGroups != null && ins.Base.promptGroups.Count > 0;
                     var organTags = grouped ? new List<string>() : gear;
                     if (ins.Base.promptTags != null) organTags.AddRange(ins.Base.promptTags);
-                    AddRequestedOrganTags(c, ins.Base, organTags, false);
+                    AddRequestedOrganTags(c, ins.Base, organTags, false, ignoreClothing);
                     if (grouped) ActorPromptProfileUtility.AddGroupedPrompts(organTags, ins.Base.promptGroups, promptGroups);
 
+                    if (ignoreClothing) continue;
                     foreach (var slot in ins.availableSlots)
                     {
                         foreach (var layer in layers)
@@ -1613,7 +1638,7 @@ public static class LLMUtils
         }
 
         // default / race / body part / race template / template prompts (+ their rulesets) and the rules on visible slots + actor state (hair, eyes, halo...), before the gear
-        ActorPromptProfileUtility.CollectPrompts(c, keywords, list, actionTags, promptGroups);
+        ActorPromptProfileUtility.CollectPrompts(c, keywords, list, actionTags, promptGroups, ignoreClothing, optionalRules);
         list.AddRange(gear);
 
         if (isCombat)
@@ -1639,14 +1664,14 @@ public static class LLMUtils
     /// prompt tags of an organ's requestTraits (the owner's current trait per group, outfit overrides apply) and
     /// requestSkills (the owner's current skill level): promptTags_always when always, else promptTags
     /// </summary>
-    static void AddRequestedOrganTags(Character_Trainable c, BodyInternal_Base b, List<string> list, bool always)
+    static void AddRequestedOrganTags(Character_Trainable c, BodyInternal_Base b, List<string> list, bool always, bool ignoreClothing = false)
     {
         if (b.requestTraits != null)
         {
             foreach (var group in b.requestTraits)
             {
                 if (string.IsNullOrEmpty(group)) continue;
-                var trait = c.Body?.GetEffectiveBodyTrait(group) ?? c.Stats?.GetTraitByGroupID(group);
+                var trait = ActorPromptProfileUtility.GetPromptTrait(c, group, ignoreClothing);
                 var tags = always ? trait?.promptTags_always : trait?.promptTags;
                 if (tags != null) list.AddRange(tags);
             }

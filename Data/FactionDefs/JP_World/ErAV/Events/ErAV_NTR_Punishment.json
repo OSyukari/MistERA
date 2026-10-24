@@ -1,5 +1,5 @@
 {
-    "_doc": "ErAV NTR punishment chain, Part 1 + Part 2 (Docs/Expeditions/Plan_NTR_Punishment_MIA.md). debtclass_erav_kanon's onFailedEventID (ErAV/campaign.json) fires erav_ntr_punishment_kick when the monthly cycle fails to collect (Obligation_Debt.HandlePaymentEvent -> TradeManager.FireObligationEvent). The kick restores the settlement-time failure notice and starts the 'erav_ntr_punishment' event chain (StartEventChain, delayed a few minutes - Data/RaceDefs/nsfw_Labor_Events.json's 'labor' chain is the reference) so the interactive selection event doesn't land in the middle of the payment-resolve update batch and interrupt other running events. Like Data/Events/Obligation_Debt.json, the payer firing starts at the first entry (self = player) and the payee firing starts at the 'payee' labeled entry (self = Kiryu-gumi's manager, notice only so the chain is only ever started on the player). The chain then starts erav_ntr_punishment_select on self = player. Candidates: female, non-player members of ErAV_miyama_Household / ErAV_KiryuGumi_Filmstudio, excluding anyone still held in a locked party (isPartyLocked false - a previous victim still MIA; canMove is NOT usable here, the event runs at midnight while most NPCs sleep). Selection uses Options.forEachTargetKey (one option per candidate, $name$ interpolated, picked character bound as Targets[victim]). The player option references a target key that is never populated, so isValid fails and it renders greyed-out with invalidTooltip (same authored-disabled pattern as Opt_ArrangeJoin_Recreation's leave option). After the farewell kojo (GetKojoEntry - Kojo/ErAV_NTR_Punishment.json), StartEvent hands the victim to erav_ntr_mia_arrival (Part 2, self = victim) with the player injected as 'supervisor'. Part 2: arrival copies self into Targets[victim] (CopyTargets), rolls the client category with unchanged weights, and uses CharaMIAWithFeatures on expedition_erav_ntr_mia_clients with one client_<category> feature and a per-instance progressBudget (2400 politician/producer, 5600 sm_master/household, 4000 sports/celeb/gang). The engine dispatches beginEventID to the category intro; external category arrival labels terminate silently. Safe mode retains plain CharaMIA on expedition_erav_ntr_mia and the generic intro. Both expeditions use selfReleaseEventID erav_ntr_mia_release once progress or DurationHour runs out (TeleportToFaction home, then ReleaseFromMIA) and returnEventID erav_ntr_mia_homecoming. Both terminal paths (departure / no_candidates) call EndEventChain explicitly (same convention as nsfw_Labor_Events).",
+    "_doc": "ErAV NTR punishment chain, Part 1 + Part 2 (Docs/Expeditions/Plan_NTR_Punishment_MIA.md). debtclass_erav_kanon's onFailedEventID (ErAV/campaign.json) fires erav_ntr_punishment_kick when the monthly cycle fails to collect (Obligation_Debt.HandlePaymentEvent -> TradeManager.FireObligationEvent). The kick restores the settlement-time failure notice and starts the 'erav_ntr_punishment' event chain (StartEventChain, delayed a few minutes - Data/RaceDefs/nsfw_Labor_Events.json's 'labor' chain is the reference) so the interactive selection event doesn't land in the middle of the payment-resolve update batch and interrupt other running events. Like Data/Events/Obligation_Debt.json, the payer firing starts at the first entry (self = player) and the payee firing starts at the 'payee' labeled entry (self = Kiryu-gumi's manager, notice only so the chain is only ever started on the player). The chain then starts erav_ntr_punishment_select on self = player. Candidates: female, non-player members of ErAV_miyama_Household / ErAV_KiryuGumi_Filmstudio, excluding anyone still held in a locked party (isPartyLocked false - a previous victim still MIA; canMove is NOT usable here, the event runs at midnight while most NPCs sleep). Selection uses Options.forEachTargetKey (one option per candidate, $name$ interpolated, picked character bound as Targets[victim]). The player option references a target key that is never populated, so isValid fails and it renders greyed-out with invalidTooltip (same authored-disabled pattern as Opt_ArrangeJoin_Recreation's leave option). After the farewell kojo (GetKojoEntry - Kojo/ErAV_NTR_Punishment.json), StartEvent hands the victim to erav_ntr_mia_arrival (Part 2, self = victim) with the player injected as 'supervisor'. Part 2: arrival copies self into Targets[victim] (CopyTargets) and currently rolls celeb only (the other six client categories are temporarily removed from the pool; their mia_/arrival_ branches and texts stay for restoration), and uses CharaMIAWithFeatures on expedition_erav_ntr_mia_clients with one client_<category> feature and a per-instance progressBudget (1680 politician/producer, 3920 sm_master/household, 2800 sports/celeb/gang). The engine dispatches beginEventID to the category intro; external category arrival labels terminate silently. Safe mode retains plain CharaMIA on expedition_erav_ntr_mia and the generic intro. Both expeditions use selfReleaseEventID erav_ntr_mia_release once progress or DurationHour runs out (TeleportToFaction home, then ReleaseFromMIA) and returnEventID erav_ntr_mia_homecoming. Both terminal paths (departure / no_candidates) call EndEventChain explicitly (same convention as nsfw_Labor_Events).",
 
     "Events": {
         "list": [
@@ -16,7 +16,11 @@
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "line": "erav_ntr_punishment_kick_failed",
                         "tooltip": "target character: $target.name$",
+                        "_comment_bookkeeping": "Repayment bookkeeping (Docs/Plan_ErAV_Quests.md §2.2), before the chain starts. The payee entry must not get these.",
                         "Results": [
+                            { "Type": "ModSelfKojoVariable", "arguments": [ "self", "false", "erav_debt_failed_count", "1" ] },
+                            { "Type": "SetSelfKojoVariable", "arguments": [ "self", "false", "erav_debt_last_result", "2" ] },
+                            { "Type": "RemoveSelfKojoVariable", "arguments": [ "self", "false", "erav_debt_last_victim" ] },
                             { "Type": "StartEventChain", "arguments": [ "erav_ntr_punishment", "erav_ntr_punishment_select", "3", "10" ] }
                         ],
                         "isLast": true
@@ -102,6 +106,7 @@
                                 "bindTargetKey": "victim",
                                 "_comment": "bindTargetKey binds the picked character as Targets[victim] before Results run, so the kojo is fetched here - BEFORE the farewell line displays (fetching in the line's own Results runs after display interpolation, leaving $kojo_farewell$ unresolved). Same fetch-then-jump convention as Opt_ArrangeJoin_Recreation's menu_check options.",
                                 "Results": [
+                                    { "Type": "SetSelfKojoVariable", "arguments": [ "self", "false", "erav_debt_last_victim", "$victim.refID$" ] },
                                     { "Type": "JumpToLabel", "arguments": [ "", "farewell_prior" ] }
                                 ]
                             },
@@ -145,12 +150,52 @@
                         "nextEntryLabel": "departure"
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "label": "departure",
-                        "_comment": "StartEvent: new event self = victim, current self (player) injected as 'supervisor'. Part 2 takes over from the arrival at the client's location. EndEventChain closes the chain explicitly (same convention as nsfw_Labor_Events) instead of waiting for TickEventChains' no-next-event auto cleanup.",
+                        "_comment": "Jump only (branch options run all their Results even after one fails, so the memory work lives in the two departure lines' Results, where a failed Result is just ignored). The chain runs at midnight, so the victim is almost always asleep -> departure_woken; already awake -> departure_awake.",
+                        "options": [
+                            {
+                                "option": "_asleep",
+                                "target_chara_conditions": {
+                                    "victim": [
+                                        { "parameters": [ "isSleeping" ] }
+                                    ]
+                                },
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "departure_woken" ] }
+                                ]
+                            },
+                            {
+                                "option": "_awake",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "departure_awake" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "departure_woken",
+                        "_comment": "Asleep: DisruptSleep wakes her before she is handed over (owed sleep -> sleep debt; she sleeps again once the arrival scene is over) and writes the wake-up's 'sleep end' memory at the current time; SetMemoryNameOverride renames that entry (the last one ending now) to the hand-over. StartEvent: new event self = victim, current self (player) injected as 'supervisor'. Part 2 takes over from the arrival at the client's location. EndEventChain closes the chain explicitly (same convention as nsfw_Labor_Events) instead of waiting for TickEventChains' no-next-event auto cleanup.",
                         "UISpec": { "portraitRefKey": "victim" },
                         "line": "erav_ntr_punishment_departure",
                         "Results": [
+                            { "Type": "DisruptSleep", "arguments": [ "victim" ] },
+                            { "Type": "SetMemoryNameOverride", "arguments": [ "victim", "erav_ntr_punishment_memory", "erav_ntr_punishment_memory_description", "false" ] },
+                            { "Type": "StartEvent", "arguments": [ "victim", "erav_ntr_mia_arrival", "", "supervisor" ] },
+                            { "Type": "EndEventChain", "arguments": [ "erav_ntr_punishment" ] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "departure_awake",
+                        "_comment": "Already awake: no wake-up memory exists, so LogMemoryEntry creates the hand-over memory (description = the memory text) and SetMemoryNameOverride gives that new entry (the last one ending now) its title - empty description, so the text isn't added twice. Then the same hand-off as departure_woken.",
+                        "UISpec": { "portraitRefKey": "victim" },
+                        "line": "erav_ntr_punishment_departure",
+                        "Results": [
+                            { "Type": "LogMemoryEntry", "arguments": [ "victim", "erav_ntr_punishment_memory_description" ] },
+                            { "Type": "SetMemoryNameOverride", "arguments": [ "victim", "erav_ntr_punishment_memory", "", "false" ] },
                             { "Type": "StartEvent", "arguments": [ "victim", "erav_ntr_mia_arrival", "", "supervisor" ] },
                             { "Type": "EndEventChain", "arguments": [ "erav_ntr_punishment" ] }
                         ],
@@ -177,7 +222,7 @@
             },
             {
                 "ID": "erav_ntr_mia_arrival",
-                "_comment": "Part 2/3 entry point. Self = victim, Targets[supervisor] = player (injected by Part 1's StartEvent). Setup branch copies self into Targets[victim] (CopyTargets - self is not a target key on its own) and rolls the client type once (RollWeighted into client_type). The pick branch only jumps: one option per type gated by AppendStringEquals -> mia_<type> (a branch option runs ALL its Results even after one fails, so no side effect may sit behind the gate). mia_<type> runs CharaMIAWithFeatures with the five base arguments on the common expedition_erav_ntr_mia_clients (Clients_nsfw/explorations.json), adding exactly one client_<type> instance feature and progressBudget=2400 for politician/producer, 5600 for sm_master/household, 4000 for sports/celeb/gang. The engine automatically dispatches beginEventID to the category intro after installing features and budget; arrival_<type> labels are silent terminators to avoid duplicate narration. If CharaMIAWithFeatures fails (e.g. safe mode skips the nsfw folder, or a def ID typo), its _fallback option jumps to mia_generic -> plain CharaMIA on the generic skeleton def expedition_erav_ntr_mia (EventIDs empty = countdown-only) -> arrival_generic. Clients are not held for the stay: each scene borrows them from the Kiryu-gumi fallback-worker pool (RequestFallbackWorker) and parks them again. MIA faction is a placeholder (ErAV_KiryuGumi_Office) until the dedicated MIA faction is decided.",
+                "_comment": "Part 2/3 entry point. Self = victim, Targets[supervisor] = player (injected by Part 1's StartEvent). Setup branch copies self into Targets[victim] (CopyTargets - self is not a target key on its own) and rolls the client type once (RollWeighted into client_type; currently celeb-only - the other categories are temporarily out of the pool, their branches kept for restoration). The pick branch only jumps: one option per type gated by AppendStringEquals -> mia_<type> (a branch option runs ALL its Results even after one fails, so no side effect may sit behind the gate). mia_<type> runs CharaMIAWithFeatures with the five base arguments on the common expedition_erav_ntr_mia_clients (Clients_nsfw/explorations.json), adding exactly one client_<type> instance feature and progressBudget=1680 for politician/producer, 3920 for sm_master/household, 2800 for sports/celeb/gang. The engine automatically dispatches beginEventID after installing features and budget; arrival_<type> labels are silent terminators to avoid duplicate narration. For celeb the begin handler's begin_celeb plays the arrival narration and continues (nextEventID) into the interactive intro event_erav_celeb_intro in the same self = player instance. After the intro, the stay proceeds through the celeb feature pool (major/minor exploration events) until selfReleaseEventID. If CharaMIAWithFeatures fails (e.g. safe mode skips the nsfw folder, or a def ID typo), its _fallback option jumps to mia_generic -> plain CharaMIA on the generic skeleton def expedition_erav_ntr_mia (EventIDs empty = countdown-only) -> arrival_generic. Clients are not held for the stay: each scene borrows them from the Kiryu-gumi fallback-worker pool (RequestFallbackWorker) and parks them again. MIA faction is a placeholder (ErAV_KiryuGumi_Office) until the dedicated MIA faction is decided.",
                 "SelfValidator": {
                     "chara_conditions": [
                         { "parameters": [ "exists" ] }
@@ -191,7 +236,7 @@
                                 "option": "_setup",
                                 "Results": [
                                     { "Type": "CopyTargets", "arguments": [ "self", "victim" ] },
-                                    { "Type": "RollWeighted", "arguments": [ "client_type", "politician", 40, "producer", 15, "sm_master", 15, "sports", 10, "celeb", 10, "household", 5, "gang", 5 ] },
+                                    { "Type": "RollWeighted", "arguments": [ "client_type", "celeb", 100 ] },
                                     { "Type": "JumpToLabel", "arguments": [ "", "pick" ] }
                                 ]
                             },
@@ -272,7 +317,7 @@
                             {
                                 "option": "_mia",
                                 "Results": [
-                                    { "Type": "CharaMIAWithFeatures", "arguments": [ "victim", "ErAV_KiryuGumi_Office", "expedition_erav_ntr_mia_clients", "erav_ntr_mia_message", "membertype_erav_kiryu_hostage_labour", "client_politician", "progressBudget=2400" ] },
+                                    { "Type": "CharaMIAWithFeatures", "arguments": [ "victim", "ErAV_KiryuGumi_Office", "expedition_erav_ntr_mia_clients", "erav_ntr_mia_message", "membertype_erav_kiryu_hostage_labour", "client_politician", "progressBudget=1680" ] },
                                     { "Type": "JumpToLabel", "arguments": [ "", "arrival_politician" ] }
                                 ]
                             },
@@ -292,7 +337,7 @@
                             {
                                 "option": "_mia",
                                 "Results": [
-                                    { "Type": "CharaMIAWithFeatures", "arguments": [ "victim", "ErAV_KiryuGumi_Office", "expedition_erav_ntr_mia_clients", "erav_ntr_mia_message", "membertype_erav_kiryu_hostage_labour", "client_producer", "progressBudget=2400" ] },
+                                    { "Type": "CharaMIAWithFeatures", "arguments": [ "victim", "ErAV_KiryuGumi_Office", "expedition_erav_ntr_mia_clients", "erav_ntr_mia_message", "membertype_erav_kiryu_hostage_labour", "client_producer", "progressBudget=1680" ] },
                                     { "Type": "JumpToLabel", "arguments": [ "", "arrival_producer" ] }
                                 ]
                             },
@@ -311,7 +356,7 @@
                             {
                                 "option": "_mia",
                                 "Results": [
-                                    { "Type": "CharaMIAWithFeatures", "arguments": [ "victim", "ErAV_KiryuGumi_Office", "expedition_erav_ntr_mia_clients", "erav_ntr_mia_message", "membertype_erav_kiryu_hostage_labour", "client_sm_master", "progressBudget=5600" ] },
+                                    { "Type": "CharaMIAWithFeatures", "arguments": [ "victim", "ErAV_KiryuGumi_Office", "expedition_erav_ntr_mia_clients", "erav_ntr_mia_message", "membertype_erav_kiryu_hostage_labour", "client_sm_master", "progressBudget=3920" ] },
                                     { "Type": "JumpToLabel", "arguments": [ "", "arrival_sm_master" ] }
                                 ]
                             },
@@ -330,7 +375,7 @@
                             {
                                 "option": "_mia",
                                 "Results": [
-                                    { "Type": "CharaMIAWithFeatures", "arguments": [ "victim", "ErAV_KiryuGumi_Office", "expedition_erav_ntr_mia_clients", "erav_ntr_mia_message", "membertype_erav_kiryu_hostage_labour", "client_sports", "progressBudget=4000" ] },
+                                    { "Type": "CharaMIAWithFeatures", "arguments": [ "victim", "ErAV_KiryuGumi_Office", "expedition_erav_ntr_mia_clients", "erav_ntr_mia_message", "membertype_erav_kiryu_hostage_labour", "client_sports", "progressBudget=2800" ] },
                                     { "Type": "JumpToLabel", "arguments": [ "", "arrival_sports" ] }
                                 ]
                             },
@@ -349,7 +394,7 @@
                             {
                                 "option": "_mia",
                                 "Results": [
-                                    { "Type": "CharaMIAWithFeatures", "arguments": [ "victim", "ErAV_KiryuGumi_Office", "expedition_erav_ntr_mia_clients", "erav_ntr_mia_message", "membertype_erav_kiryu_hostage_labour", "client_celeb", "progressBudget=4000" ] },
+                                    { "Type": "CharaMIAWithFeatures", "arguments": [ "victim", "ErAV_KiryuGumi_Office", "expedition_erav_ntr_mia_clients", "erav_ntr_mia_message", "membertype_erav_kiryu_hostage_labour", "client_celeb", "progressBudget=2800" ] },
                                     { "Type": "JumpToLabel", "arguments": [ "", "arrival_celeb" ] }
                                 ]
                             },
@@ -368,7 +413,7 @@
                             {
                                 "option": "_mia",
                                 "Results": [
-                                    { "Type": "CharaMIAWithFeatures", "arguments": [ "victim", "ErAV_KiryuGumi_Office", "expedition_erav_ntr_mia_clients", "erav_ntr_mia_message", "membertype_erav_kiryu_hostage_labour", "client_household", "progressBudget=5600" ] },
+                                    { "Type": "CharaMIAWithFeatures", "arguments": [ "victim", "ErAV_KiryuGumi_Office", "expedition_erav_ntr_mia_clients", "erav_ntr_mia_message", "membertype_erav_kiryu_hostage_labour", "client_household", "progressBudget=3920" ] },
                                     { "Type": "JumpToLabel", "arguments": [ "", "arrival_household" ] }
                                 ]
                             },
@@ -387,7 +432,7 @@
                             {
                                 "option": "_mia",
                                 "Results": [
-                                    { "Type": "CharaMIAWithFeatures", "arguments": [ "victim", "ErAV_KiryuGumi_Office", "expedition_erav_ntr_mia_clients", "erav_ntr_mia_message", "membertype_erav_kiryu_hostage_labour", "client_gang", "progressBudget=4000" ] },
+                                    { "Type": "CharaMIAWithFeatures", "arguments": [ "victim", "ErAV_KiryuGumi_Office", "expedition_erav_ntr_mia_clients", "erav_ntr_mia_message", "membertype_erav_kiryu_hostage_labour", "client_gang", "progressBudget=2800" ] },
                                     { "Type": "JumpToLabel", "arguments": [ "", "arrival_gang" ] }
                                 ]
                             },
@@ -446,6 +491,7 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "arrival_celeb",
+                        "_comment": "Silent like the others: the celeb arrival narration and the intro scene event_erav_celeb_intro are played by the engine's beginEventID (Clients_nsfw/explorations.json begin_celeb -> nextEventID), which runs with self = player and is always visible. A StartEvent here would have self = victim and only display while she is in the player's room (otherwise the intro question silently takes its default).",
                         "line": "",
                         "isLast": true
                     },
@@ -775,6 +821,8 @@
                 "erav_ntr_punishment_opt_player_invalid": "还没有把你自己交出去的办法。",
                 "erav_ntr_punishment_farewell": "$kojo_farewell$",
                 "erav_ntr_punishment_departure": "$victim.name$换好了衣服，在玄关站定。\n她回头看了你一眼——像是想说什么，最后只是轻轻点了点头。\n门开了，夜风灌进来。她跟着桐生组的人走进了夜色里。",
+                "erav_ntr_punishment_memory": "被交给了桐生组……",
+                "erav_ntr_punishment_memory_description": "深夜，事务所还不上桐生组的利息，$victim.name$被当作担保交了出去，跟着来人离开了家。",
                 "erav_ntr_punishment_nobody": "来人翻开名册又合上。门内站着一排人，却没有一个能写上去的名字。\n「……是吗。」\n他只留下一句话就离开了：「下个月，我们会再来。」",
                 "erav_ntr_punishment_payee": "$factionName$记录了$counterpartName$的一次违约。收账的事，组里自有安排。",
                 "erav_ntr_mia_arrival": "车停在一栋陌生的建筑前。\n$victim.name$被桐生组的人领了进去，身后的门无声地合上了。\n从今天起，她要在这里「抵账」。",
@@ -782,7 +830,7 @@
                 "erav_ntr_mia_arrival_producer": "事务所楼上的出租会议室里，补光灯已经架好了。\n自称社长的男人翻着$victim.name$的资料，抬头笑了笑，指指房间中央的空地。\n「最终面试」就从这里开始。",
                 "erav_ntr_mia_arrival_sm_master": "车开进郊外毫不起眼的宅邸。地下室的灯亮着，四壁挂着的皮具如同解剖图，按部位分类。\n穿开衫的老人推了推老花镜，指指墙上白板里那张排满的周间时间表。\n$victim.name$的这周，已经被买下了。",
                 "erav_ntr_mia_arrival_sports": "酒店的套房里聚满了高大的外国球员。领队翻着合同，朝$victim.name$抬了抬下巴。\n翻译转述了半句就停住了。从今晚起，她是这支球队的「随队女性」——训练、比赛、酒店，全程跟队。",
-                "erav_ntr_mia_arrival_celeb": "巡演团的经纪人拎来整杆挂满衣服的衣架，挑了最暴露的几件丢给她。\n「试穿。从今天起，你的身份是团里的『日本女朋友』。」\n$victim.name$还没来得及开口，行程表已经贴上了门——白天逛街，晚上夜店，全程被拍。",
+                "erav_ntr_mia_arrival_celeb": "深夜的车在酒店后门停下。开车的人摇下车窗，把房卡递出来。\n「顶层的贵客点名要导游。上去吧，别让人等。」\n手机随即震了两次，事务所的短信把话说得很直：这几天，她是那队外国明星的专属导游；客人要什么，她就得给什么；能抵掉的利息，按客人开心与否结算。\n$victim.name$低头看完短信，指节把房卡攥得发白。电梯门在她面前打开了。",
                 "erav_ntr_mia_arrival_household": "城西的大宅门前，灰布上衣的女管家递给她条围裙和手写的作息表。\n「在这栋房子里，你不用名字。大家叫你『小妹』。」\n$victim.name$低头看了看作息表——清晨五点半起床，休日：无。",
                 "erav_ntr_mia_arrival_gang": "旧旅馆的顶楼整层被包下了。走廊里烟味呛人，房间里七八个小弟围着矮桌打牌。\n带队的若头把$victim.name$的契约啪地拍在桌上：\n「哥几个，这周的犒劳品到了。」",
                 "erav_ntr_mia_arrival_failed": "【错误】$self.name$未能被带往桐生组（CharaMIA 失败，请检查 MIA faction / expedition / MemberType 设置）。",

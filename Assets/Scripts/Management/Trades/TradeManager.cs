@@ -398,6 +398,10 @@ public class TradeManager
         {
             if (!ev.AppendStrings.ContainsKey("amount")) ev.AppendStrings["amount"] = new List<string>();
             ev.AppendStrings["amount"].Add(amount.Print);
+            // Bare count alongside the display string, so event Results can consume the number itself
+            // (e.g. ModSelfKojoVariable ... $amountValue$ - see the ParseEventEntry fallback there).
+            if (!ev.AppendStrings.ContainsKey("amountValue")) ev.AppendStrings["amountValue"] = new List<string>();
+            ev.AppendStrings["amountValue"].Add(amount.itemCount.ToString());
         }
 
         if (available != null)

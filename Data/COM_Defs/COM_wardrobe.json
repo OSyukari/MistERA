@@ -1,0 +1,381 @@
+{
+    "_doc": {
+        "purpose": "Undress / redress commands of the COM manager's clothing buttons (scr_panel_COMmanager ButtonValidator_UndressLayers / RedressLayers / UndressAll / FixClothes / equipSingle). One command per layer and direction: the same command runs on a whole layer or on a single item (ActionPackage_Wardrobe holds the item, like ActionPackage_ItemUse). Code picks the command by isRedress / layer / allLayers (COM_Wardrobe.Find), never by ID - items of layer None use the Outer command.",
+        "acceptance": "AcceptanceCheck.permissionBonus: each entry adds its bonus when the receiver holds any of its permissions towards the doer (Follow, Intimacy_Low, Intimacy_Medium, Intimacy_High, Family), and minRate (%) floors the acceptance rate while held; not held = no bonus and the EP counts as without permission (kojo requirePermission). alwaysAccept skips the roll (redressing). Self (no receiver) is always accepted.",
+        "tags": "comTags wardrobe + undress/redress + undress_<layer>/redress_<layer>: kojo and onlookers' interrupt reactions can match them. Not tagged interaction/touch/action/player on purpose - these never enter Job_CharaCOM/Job_PlayerCOM allusableCOMs, only the clothing buttons build them. allowedDuringSex lets them run inside the player's sex job.",
+        "kojo": "Data/Personality/personality_default/commands/com_wardrobe.json, Data/Personality/personality_base/wardrobe.json"
+    },
+    "COMs": {
+        "list": [
+            {
+                "$type": "COM_Wardrobe, Assembly-CSharp",
+                "ID": "com_undress_outer",
+                "ActionPackageClass": "ActionPackage_Wardrobe",
+                "hidden": true,
+                "isRedress": false,
+                "layer": "Outer",
+                "displayName": "com_undress_outer_displayName",
+                "timeScale": 1,
+                "comTags": ["wardrobe", "undress", "undress_outer", "allowedDuringSex"],
+                "requirements": {
+                    "requirement": {
+                        "req_Receivers": { "requireConscious": false, "requireAction": false }
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "receiverCount": 0, "treatDoerAsReceiver": true } },
+                        "displayName": "com_undress_outer_displayName",
+                        "useBaseDescription": false,
+                        "description_begin": { "Entries":[{"texts":["com_undress_outer_begin_self"]}], "keepLooking": false },
+                        "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_undress_outer_onComplete_self"]}] }
+                    },
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "receiverCount": 1 } },
+                        "displayName": "com_undress_outer_displayName"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 18,
+                    "permissionBonus": [ { "permissions": ["Follow", "Intimacy_Low"], "bonus": 8, "minRate": 65 } ]
+                },
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "description_begin": { "Entries":[{"texts":["com_undress_outer_begin"]}], "keepLooking": false },
+                "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_undress_outer_onComplete"]}] }
+            },
+            {
+                "$type": "COM_Wardrobe, Assembly-CSharp",
+                "ID": "com_undress_inner",
+                "ActionPackageClass": "ActionPackage_Wardrobe",
+                "hidden": true,
+                "isRedress": false,
+                "layer": "Inner",
+                "displayName": "com_undress_inner_displayName",
+                "timeScale": 1,
+                "comTags": ["wardrobe", "undress", "undress_inner", "allowedDuringSex"],
+                "requirements": {
+                    "requirement": {
+                        "req_Receivers": { "requireConscious": false, "requireAction": false }
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "receiverCount": 0, "treatDoerAsReceiver": true } },
+                        "displayName": "com_undress_inner_displayName",
+                        "useBaseDescription": false,
+                        "description_begin": { "Entries":[{"texts":["com_undress_inner_begin_self"]}], "keepLooking": false },
+                        "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_undress_inner_onComplete_self"]}] }
+                    },
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "receiverCount": 1 } },
+                        "displayName": "com_undress_inner_displayName"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 22,
+                    "permissionBonus": [ { "permissions": ["Intimacy_Medium"], "bonus": 10, "minRate": 65 } ]
+                },
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "description_begin": { "Entries":[{"texts":["com_undress_inner_begin"]}], "keepLooking": false },
+                "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_undress_inner_onComplete"]}] }
+            },
+            {
+                "$type": "COM_Wardrobe, Assembly-CSharp",
+                "ID": "com_undress_skin",
+                "ActionPackageClass": "ActionPackage_Wardrobe",
+                "hidden": true,
+                "isRedress": false,
+                "layer": "Skin",
+                "displayName": "com_undress_skin_displayName",
+                "timeScale": 1,
+                "comTags": ["wardrobe", "undress", "undress_skin", "allowedDuringSex"],
+                "requirements": {
+                    "requirement": {
+                        "req_Receivers": { "requireConscious": false, "requireAction": false }
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "receiverCount": 0, "treatDoerAsReceiver": true } },
+                        "displayName": "com_undress_skin_displayName",
+                        "useBaseDescription": false,
+                        "description_begin": { "Entries":[{"texts":["com_undress_skin_begin_self"]}], "keepLooking": false },
+                        "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_undress_skin_onComplete_self"]}] }
+                    },
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "receiverCount": 1 } },
+                        "displayName": "com_undress_skin_displayName"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 26,
+                    "permissionBonus": [ { "permissions": ["Intimacy_High"], "bonus": 12, "minRate": 65 } ]
+                },
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "description_begin": { "Entries":[{"texts":["com_undress_skin_begin"]}], "keepLooking": false },
+                "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_undress_skin_onComplete"]}] }
+            },
+            {
+                "$type": "COM_Wardrobe, Assembly-CSharp",
+                "ID": "com_undress_all",
+                "ActionPackageClass": "ActionPackage_Wardrobe",
+                "_comment": "every layer at once - checked like the Skin layer",
+                "hidden": true,
+                "isRedress": false,
+                "allLayers": true,
+                "layer": "Skin",
+                "displayName": "com_undress_all_displayName",
+                "timeScale": 1,
+                "comTags": ["wardrobe", "undress", "undress_all", "undress_skin", "allowedDuringSex"],
+                "requirements": {
+                    "requirement": {
+                        "req_Receivers": { "requireConscious": false, "requireAction": false }
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "receiverCount": 0, "treatDoerAsReceiver": true } },
+                        "displayName": "com_undress_all_displayName",
+                        "useBaseDescription": false,
+                        "description_begin": { "Entries":[{"texts":["com_undress_all_begin_self"]}], "keepLooking": false },
+                        "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_undress_all_onComplete_self"]}] }
+                    },
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "receiverCount": 1 } },
+                        "displayName": "com_undress_all_displayName"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 26,
+                    "permissionBonus": [ { "permissions": ["Intimacy_High"], "bonus": 12, "minRate": 65 } ]
+                },
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "description_begin": { "Entries":[{"texts":["com_undress_all_begin"]}], "keepLooking": false },
+                "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_undress_all_onComplete"]}] }
+            },
+            {
+                "$type": "COM_Wardrobe, Assembly-CSharp",
+                "ID": "com_redress_outer",
+                "ActionPackageClass": "ActionPackage_Wardrobe",
+                "hidden": true,
+                "isRedress": true,
+                "layer": "Outer",
+                "displayName": "com_redress_outer_displayName",
+                "timeScale": 1,
+                "comTags": ["wardrobe", "redress", "redress_outer", "allowedDuringSex"],
+                "requirements": {
+                    "requirement": {
+                        "req_Receivers": { "requireConscious": false, "requireAction": false }
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "receiverCount": 0, "treatDoerAsReceiver": true } },
+                        "displayName": "com_redress_outer_displayName",
+                        "useBaseDescription": false,
+                        "description_begin": { "Entries":[{"texts":["com_redress_begin_self"]}], "keepLooking": false },
+                        "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_redress_onComplete_self"]}] }
+                    },
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "receiverCount": 1 } },
+                        "displayName": "com_redress_outer_displayName"
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 0, "alwaysAccept": true },
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "description_begin": { "Entries":[{"texts":["com_redress_begin"]}], "keepLooking": false },
+                "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_redress_onComplete"]}] }
+            },
+            {
+                "$type": "COM_Wardrobe, Assembly-CSharp",
+                "ID": "com_redress_inner",
+                "ActionPackageClass": "ActionPackage_Wardrobe",
+                "hidden": true,
+                "isRedress": true,
+                "layer": "Inner",
+                "displayName": "com_redress_inner_displayName",
+                "timeScale": 1,
+                "comTags": ["wardrobe", "redress", "redress_inner", "allowedDuringSex"],
+                "requirements": {
+                    "requirement": {
+                        "req_Receivers": { "requireConscious": false, "requireAction": false }
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "receiverCount": 0, "treatDoerAsReceiver": true } },
+                        "displayName": "com_redress_inner_displayName",
+                        "useBaseDescription": false,
+                        "description_begin": { "Entries":[{"texts":["com_redress_begin_self"]}], "keepLooking": false },
+                        "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_redress_onComplete_self"]}] }
+                    },
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "receiverCount": 1 } },
+                        "displayName": "com_redress_inner_displayName"
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 0, "alwaysAccept": true },
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "description_begin": { "Entries":[{"texts":["com_redress_begin"]}], "keepLooking": false },
+                "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_redress_onComplete"]}] }
+            },
+            {
+                "$type": "COM_Wardrobe, Assembly-CSharp",
+                "ID": "com_redress_skin",
+                "ActionPackageClass": "ActionPackage_Wardrobe",
+                "hidden": true,
+                "isRedress": true,
+                "layer": "Skin",
+                "displayName": "com_redress_skin_displayName",
+                "timeScale": 1,
+                "comTags": ["wardrobe", "redress", "redress_skin", "allowedDuringSex"],
+                "requirements": {
+                    "requirement": {
+                        "req_Receivers": { "requireConscious": false, "requireAction": false }
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "receiverCount": 0, "treatDoerAsReceiver": true } },
+                        "displayName": "com_redress_skin_displayName",
+                        "useBaseDescription": false,
+                        "description_begin": { "Entries":[{"texts":["com_redress_begin_self"]}], "keepLooking": false },
+                        "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_redress_onComplete_self"]}] }
+                    },
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "receiverCount": 1 } },
+                        "displayName": "com_redress_skin_displayName"
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 0, "alwaysAccept": true },
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "description_begin": { "Entries":[{"texts":["com_redress_begin"]}], "keepLooking": false },
+                "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_redress_onComplete"]}] }
+            },
+            {
+                "$type": "COM_Wardrobe, Assembly-CSharp",
+                "ID": "com_redress_all",
+                "ActionPackageClass": "ActionPackage_Wardrobe",
+                "hidden": true,
+                "isRedress": true,
+                "allLayers": true,
+                "layer": "Outer",
+                "displayName": "com_redress_all_displayName",
+                "timeScale": 1,
+                "comTags": ["wardrobe", "redress", "redress_all", "allowedDuringSex"],
+                "requirements": {
+                    "requirement": {
+                        "req_Receivers": { "requireConscious": false, "requireAction": false }
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "receiverCount": 0, "treatDoerAsReceiver": true } },
+                        "displayName": "com_redress_all_displayName",
+                        "useBaseDescription": false,
+                        "description_begin": { "Entries":[{"texts":["com_redress_all_begin_self"]}], "keepLooking": false },
+                        "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_redress_all_onComplete_self"]}] }
+                    },
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "receiverCount": 1 } },
+                        "displayName": "com_redress_all_displayName"
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 0, "alwaysAccept": true },
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "description_begin": { "Entries":[{"texts":["com_redress_all_begin"]}], "keepLooking": false },
+                "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_redress_all_onComplete"]}] }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_undress_outer_displayName": "脱下$item$",
+                "com_undress_inner_displayName": "脱下$item$",
+                "com_undress_skin_displayName": "脱下$item$",
+                "com_undress_all_displayName": "脱下全部",
+                "com_redress_outer_displayName": "穿上$item$",
+                "com_redress_inner_displayName": "穿上$item$",
+                "com_redress_skin_displayName": "穿上$item$",
+                "com_redress_all_displayName": "穿上全部",
+
+                "com_undress_outer_begin": "$doer.firstname$伸手去解$receiver.firstname$的$item$",
+                "com_undress_outer_onComplete": "$doer.firstname$脱下了$receiver.firstname$的$item$",
+                "com_undress_outer_begin_self": "$doer.firstname$开始脱$item$",
+                "com_undress_outer_onComplete_self": "$doer.firstname$脱下了$item$",
+                "com_undress_inner_begin": "$doer.firstname$伸手去脱$receiver.firstname$的$item$",
+                "com_undress_inner_onComplete": "$doer.firstname$脱下了$receiver.firstname$的$item$",
+                "com_undress_inner_begin_self": "$doer.firstname$开始脱$item$",
+                "com_undress_inner_onComplete_self": "$doer.firstname$脱下了$item$",
+                "com_undress_skin_begin": "$doer.firstname$把手伸向$receiver.firstname$贴身的$item$",
+                "com_undress_skin_onComplete": "$doer.firstname$褪下了$receiver.firstname$的$item$",
+                "com_undress_skin_begin_self": "$doer.firstname$开始褪下贴身的$item$",
+                "com_undress_skin_onComplete_self": "$doer.firstname$褪下了$item$",
+                "com_undress_all_begin": "$doer.firstname$开始一件件脱下$receiver.firstname$的衣服",
+                "com_undress_all_onComplete": "$doer.firstname$把$receiver.firstname$脱得一丝不挂",
+                "com_undress_all_begin_self": "$doer.firstname$开始脱下全身的衣服",
+                "com_undress_all_onComplete_self": "$doer.firstname$脱得一丝不挂",
+                "com_redress_begin": "$doer.firstname$拿起$item$，帮$receiver.firstname$穿上",
+                "com_redress_onComplete": "$doer.firstname$帮$receiver.firstname$穿好了$item$",
+                "com_redress_begin_self": "$doer.firstname$拿起$item$穿上",
+                "com_redress_onComplete_self": "$doer.firstname$穿好了$item$",
+                "com_redress_all_begin": "$doer.firstname$开始帮$receiver.firstname$把衣服穿回去",
+                "com_redress_all_onComplete": "$doer.firstname$帮$receiver.firstname$整理好了衣装",
+                "com_redress_all_begin_self": "$doer.firstname$开始把衣服穿回去",
+                "com_redress_all_onComplete_self": "$doer.firstname$整理好了衣装",
+
+                "ui_wardrobe_tooltip_noItem": "找不到该衣物",
+                "ui_wardrobe_tooltip_alreadyWorn": "已经穿着",
+                "ui_wardrobe_tooltip_notWorn": "没有穿着",
+                "ui_wardrobe_tooltip_nothingToRedress": "没有可以穿上的衣物",
+                "ui_wardrobe_tooltip_nothingToUndress": "没有可以脱下的衣物",
+                "ui_wardrobe_tooltip_noRedressDuringSex": "性行为中无法穿上",
+                "ui_wardrobe_tooltip_noCommand": "缺少对应的指令"
+            },
+            "en-us": {
+                "com_undress_outer_displayName": "Take off $item$",
+                "com_undress_inner_displayName": "Take off $item$",
+                "com_undress_skin_displayName": "Take off $item$",
+                "com_undress_all_displayName": "Take off everything",
+                "com_redress_outer_displayName": "Put on $item$",
+                "com_redress_inner_displayName": "Put on $item$",
+                "com_redress_skin_displayName": "Put on $item$",
+                "com_redress_all_displayName": "Put everything back on",
+
+                "com_undress_outer_begin": "$doer.firstname$ reaches for $receiver.firstname$'s $item$",
+                "com_undress_outer_onComplete": "$doer.firstname$ took off $receiver.firstname$'s $item$",
+                "com_undress_outer_begin_self": "$doer.firstname$ starts taking off the $item$",
+                "com_undress_outer_onComplete_self": "$doer.firstname$ took off the $item$",
+                "com_undress_inner_begin": "$doer.firstname$ starts pulling off $receiver.firstname$'s $item$",
+                "com_undress_inner_onComplete": "$doer.firstname$ took off $receiver.firstname$'s $item$",
+                "com_undress_inner_begin_self": "$doer.firstname$ starts taking off the $item$",
+                "com_undress_inner_onComplete_self": "$doer.firstname$ took off the $item$",
+                "com_undress_skin_begin": "$doer.firstname$ reaches for $receiver.firstname$'s $item$, right against the skin",
+                "com_undress_skin_onComplete": "$doer.firstname$ slipped off $receiver.firstname$'s $item$",
+                "com_undress_skin_begin_self": "$doer.firstname$ starts slipping off the $item$",
+                "com_undress_skin_onComplete_self": "$doer.firstname$ slipped off the $item$",
+                "com_undress_all_begin": "$doer.firstname$ starts stripping $receiver.firstname$ piece by piece",
+                "com_undress_all_onComplete": "$doer.firstname$ stripped $receiver.firstname$ completely naked",
+                "com_undress_all_begin_self": "$doer.firstname$ starts stripping off every piece of clothing",
+                "com_undress_all_onComplete_self": "$doer.firstname$ is now completely naked",
+                "com_redress_begin": "$doer.firstname$ picks up the $item$ and helps $receiver.firstname$ into it",
+                "com_redress_onComplete": "$doer.firstname$ finished dressing $receiver.firstname$ in the $item$",
+                "com_redress_begin_self": "$doer.firstname$ picks up the $item$ and puts it on",
+                "com_redress_onComplete_self": "$doer.firstname$ put on the $item$",
+                "com_redress_all_begin": "$doer.firstname$ starts helping $receiver.firstname$ get dressed again",
+                "com_redress_all_onComplete": "$doer.firstname$ finished getting $receiver.firstname$ properly dressed",
+                "com_redress_all_begin_self": "$doer.firstname$ starts getting dressed again",
+                "com_redress_all_onComplete_self": "$doer.firstname$ is properly dressed again",
+
+                "ui_wardrobe_tooltip_noItem": "Clothing not found",
+                "ui_wardrobe_tooltip_alreadyWorn": "Already worn",
+                "ui_wardrobe_tooltip_notWorn": "Not worn",
+                "ui_wardrobe_tooltip_nothingToRedress": "Nothing to put back on",
+                "ui_wardrobe_tooltip_nothingToUndress": "Nothing to take off",
+                "ui_wardrobe_tooltip_noRedressDuringSex": "Cannot be put back on during sex",
+                "ui_wardrobe_tooltip_noCommand": "Missing command"
+            }
+        }
+    }
+}

@@ -538,6 +538,28 @@ public class scr_System_CampaignManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Log section of the messages being added right now (0 = none): MessageCollect flushes an update in sections
+    /// (accept / result / after) and the logs panel only auto-advances animated messages within one section, so
+    /// each later section waits for a click. LogSectionIsFlushStart: the first section of its flush, which may
+    /// still print on arrival like any animated message.
+    /// </summary>
+    [JsonIgnore] public int LogSection { get; private set; } = 0;
+    [JsonIgnore] public bool LogSectionIsFlushStart { get; private set; } = false;
+    int logSectionCounter = 0;
+
+    public void BeginLogSection(bool isFlushStart)
+    {
+        LogSection = ++logSectionCounter;
+        LogSectionIsFlushStart = isFlushStart;
+    }
+
+    public void EndLogSections()
+    {
+        LogSection = 0;
+        LogSectionIsFlushStart = false;
+    }
+
+    /// <summary>
     /// Bypass room recording
     /// </summary>
     /// <param name="record"></param>
@@ -2599,6 +2621,9 @@ public class scr_System_CampaignManager : MonoBehaviour
     [NonSerialized] public int jobRef_followPlayerCOM = 1;
 
     Dictionary<int, Character_Trainable> Index_referenceID;
+
+    /// <summary> Snapshot of registered character IDs, including actors not located on the current map. </summary>
+    public int[] LoadedCharacterIDs => Index_referenceID == null ? Array.Empty<int>() : Index_referenceID.Keys.ToArray();
 
     /*
     List<Item_Instance> items;

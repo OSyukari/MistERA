@@ -296,7 +296,7 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
 
     public void RegisterOutfit(scr_equip_wardrobe outfit)
     {
-        outfit.btn_Edit.Initialize(this, new initScript_Equip.ButtonValidator_CanEditOutfit(this, outfit.btn_Edit, outfit.outfit));
+        outfit.btn_Edit.Initialize(this, new initScript_Equip.ButtonValidator_CanEditOutfit(this, outfit.btn_Edit, outfit.key));
         outfit.btn_Edit.optionID = AssertUniqueHash(outfit.GetHashCode());
 
         buttonsByID.Add(outfit.btn_Edit.optionID, outfit.btn_Edit);

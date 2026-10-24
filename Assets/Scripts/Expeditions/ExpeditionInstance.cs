@@ -187,6 +187,8 @@ public class ExpeditionInstance
         _features = null;
         _descriptionText = null;
         _explorationEvents = null;
+        _dayEvents = null;
+        _nightEvents = null;
         _allEvents = null;
     }
 
@@ -208,7 +210,7 @@ public class ExpeditionInstance
         } }
 
     List<ExpEvents> _allEvents = null;
-    /// <summary> every event of the def (exploration + day + night), e.g. for listing </summary>
+    /// <summary> Every definition and matching feature event (exploration + day + night), e.g. for listing. </summary>
     [JsonIgnore]
     public List<ExpEvents> AllEvents
     {
@@ -234,30 +236,54 @@ public class ExpeditionInstance
         {
             if (_explorationEvents == null)
             {
-                var strKeys = new List<string>(Base.EventIDs);
+                var strKeys = new List<string>(Base.EventIDs ?? new List<string>());
                 foreach (var feature in Features)
                 {
-                    strKeys.AddRange(feature.featureEventIDs);
+                    if (feature.featureEventIDs != null) strKeys.AddRange(feature.featureEventIDs);
                 }
-                _explorationEvents = ResolveEvents(strKeys);
+                _explorationEvents = ResolveEvents(strKeys, $"{baseID} exploration");
             }
             return _explorationEvents;
         }
     }
 
     List<ExpEvents> _dayEvents = null;
-    [JsonIgnore] public List<ExpEvents> DayEvents { get { return _dayEvents ??= ResolveEvents(Base.DayEventIDs); } }
+    [JsonIgnore] public List<ExpEvents> DayEvents
+    {
+        get
+        {
+            if (_dayEvents == null)
+            {
+                var ids = new List<string>(Base.DayEventIDs ?? new List<string>());
+                foreach (var feature in Features) if (feature.featureDayEventIDs != null) ids.AddRange(feature.featureDayEventIDs);
+                _dayEvents = ResolveEvents(ids, $"{baseID} day");
+            }
+            return _dayEvents;
+        }
+    }
     List<ExpEvents> _nightEvents = null;
-    [JsonIgnore] public List<ExpEvents> NightEvents { get { return _nightEvents ??= ResolveEvents(Base.NightEventIDs); } }
+    [JsonIgnore] public List<ExpEvents> NightEvents
+    {
+        get
+        {
+            if (_nightEvents == null)
+            {
+                var ids = new List<string>(Base.NightEventIDs ?? new List<string>());
+                foreach (var feature in Features) if (feature.featureNightEventIDs != null) ids.AddRange(feature.featureNightEventIDs);
+                _nightEvents = ResolveEvents(ids, $"{baseID} night");
+            }
+            return _nightEvents;
+        }
+    }
 
-    static List<ExpEvents> ResolveEvents(List<string> ids)
+    internal static List<ExpEvents> ResolveEvents(List<string> ids, string pool)
     {
         var results = new List<ExpEvents>();
         if (ids == null) return results;
         foreach (var i in ids.Distinct())
         {
             var ev = Expeditions.ExplorationEvents.GetByID(i);
-            if (ev == null) Debug.LogError($"ExpeditionInstance: exploration event [{i}] does not exist");
+            if (ev == null) Debug.LogError($"ExpeditionInstance: [{pool}] event [{i}] does not exist");
             else results.Add(ev);
         }
         return results;

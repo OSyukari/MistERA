@@ -862,6 +862,45 @@ public class Character_Body
         originalString = "experience_sex_strong_climax" + "||" + key + "||" + count;
     }
 
+    [JsonIgnore] public long ClimaxOccurrenceCount { get; private set; }
+    [JsonIgnore] MessageCollect eventActCollector;
+
+    /// <summary>Event AP boundary only. Does not touch stimulation, aftermath, or normal recovery.</summary>
+    public IDisposable BeginEventAct(MessageCollect collector)
+    {
+        return new EventActScope(this, collector);
+    }
+
+    sealed class EventActScope : IDisposable
+    {
+        Character_Body body;
+        readonly MessageCollect previous;
+
+        public EventActScope(Character_Body body, MessageCollect collector)
+        {
+            this.body = body;
+            previous = body.eventActCollector;
+            body.eventActCollector = collector;
+            body.ResetEventClimaxBlocker();
+        }
+
+        public void Dispose()
+        {
+            if (body == null) return;
+            body.ResetEventClimaxBlocker();
+            body.eventActCollector = previous;
+            body = null;
+        }
+    }
+
+    internal void ResetEventClimaxBlocker()
+    {
+        Climax = false;
+        Cum = false;
+        Stimulated = false;
+        Owner.Stats.Climaxing?.SeveritySet(0);
+    }
+
     public bool CheckClimax(MessageCollect message)
     {
         return CheckClimax(message, out _);
@@ -869,8 +908,21 @@ public class Character_Body
 
     public bool CheckClimax(MessageCollect message, out bool climaxOccurred)
     {
+        // Internal checks may supply the interaction job's collector rather than the event's.
+        message = eventActCollector ?? message;
+        var exp = new ExperienceLog();
+        try { return CheckClimaxCore(message, out climaxOccurred, exp); }
+        finally
+        {
+            // Mechanical grants can precede a failing memory/kojo/ejaculation effect. Keep those
+            // already-earned deltas in the event's partial summary, without replaying any grants.
+            if (eventActCollector != null) message.exp.Accumulate(exp);
+        }
+    }
+
+    bool CheckClimaxCore(MessageCollect message, out bool climaxOccurred, ExperienceLog exp)
+    {
         climaxOccurred = false;
-        ExperienceLog exp = new ExperienceLog();
         string climaxKeywords = "";
         string cumKeywords = "";
 
@@ -915,6 +967,7 @@ public class Character_Body
                     selfTag.Add(part.Sensitivity);
                     selfTag.Add("climax");
 
+                    if (!Climax) ClimaxOccurrenceCount++;
                     this.Climax = true;
                     // ADDLOG CLIMAX
                     float cumAmount = 0;
@@ -1202,6 +1255,7 @@ public class Character_Body
                 {
                     message.exp.Accumulate(exp);
                     message.exp.AddRelevantChara(actors);
+                    exp.Clear();
                 }
                 else
                 {

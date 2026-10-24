@@ -206,6 +206,30 @@ public static class QuestUtility
     }
 
     /// <summary>
+    /// Display text for a requireKojoVariables appendStringKey: the variable as a character name
+    /// (appendAsCharaName - the value is a RefID), as an item Print (appendAsItemID - the value is a bare
+    /// count), or the bare number. An unresolvable RefID shows a visible fallback and logs instead of
+    /// hiding the stage, so a broken reference gets noticed.
+    /// </summary>
+    static string FormatKojoAppend(RequireKojoVariable req, int value)
+    {
+        if (req.appendAsCharaName)
+        {
+            var c = scr_System_CampaignManager.current.FindInstanceByID(value);
+            if (c != null) return c.CallName;
+            Debug.LogWarning($"Quest appendAsCharaName: kojo variable {req.variableID} holds RefID {value}, no such character");
+            return LocalizeDictionary.QueryThenParse("quest_append_chara_unresolved").Replace("$refID$", value.ToString());
+        }
+        return FormatAsItem(req.appendAsItemID, value);
+    }
+
+    static string FormatAsItem(string itemID, int value)
+    {
+        if (string.IsNullOrEmpty(itemID)) return value.ToString();
+        return new ItemEntry(itemID, "", value, false).Print;
+    }
+
+    /// <summary>
     /// Resolves req.relationshipTargetKey ("self" or another bound refKey) against chara, then validates
     /// every requireKojoVariables entry against the resulting Character_Relationship. Any entry with
     /// appendStringKey set has its currently-scoped value stored into appendStrings regardless of whether
@@ -240,11 +264,13 @@ public static class QuestUtility
             {
                 if (!kojoReq.isValid) continue;
 
-                if (kojoReq.appendStringKey != "")
+                // An absent reference is not RefID 0; only format names for stored variables.
+                if (kojoReq.appendStringKey != "" && (!kojoReq.appendAsCharaName ||
+                    chara.Relationships.GetKojoVariableExist(kojoReq.isDailyVariable, rel, kojoReq.variableID)))
                 {
                     var value = chara.Relationships.GetKojoVariable(kojoReq.isDailyVariable, rel, kojoReq.variableID);
                     if (!appendStrings.ContainsKey(kojoReq.appendStringKey)) appendStrings.Add(kojoReq.appendStringKey, new List<string>());
-                    appendStrings[kojoReq.appendStringKey].Add(value.ToString());
+                    appendStrings[kojoReq.appendStringKey].Add(FormatKojoAppend(kojoReq, value));
                 }
 
                 if (!kojoReq.Validate(rel)) valid = false;
@@ -262,7 +288,7 @@ public static class QuestUtility
                 if (debtReq.appendStringKey != "")
                 {
                     if (!appendStrings.ContainsKey(debtReq.appendStringKey)) appendStrings.Add(debtReq.appendStringKey, new List<string>());
-                    appendStrings[debtReq.appendStringKey].Add(debtReq.CurrentAmount.ToString());
+                    appendStrings[debtReq.appendStringKey].Add(FormatAsItem(debtReq.appendAsItemID, debtReq.CurrentAmount));
                 }
 
                 if (!debtReq.Validate()) valid = false;

@@ -60,6 +60,8 @@
                         "refkeys": [
                             "victim"
                         ],
+                        "baseScope": "RefID_FromSelfKojoVariable",
+                        "extraScopeArguments": [ "erav_debt_last_victim" ],
                         "minTargetCount": 1,
                         "allowEventOnMinTargetCountMiss": true
                     }
@@ -142,17 +144,16 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "label": "debt_status_check",
-                        "_comment": "Block A - debt-cycle commentary. Only fires once at least one repayment cycle has passed (requireFactionDebt resolvedCount >= 1, in units of the debt's own cadence). Independent of, and always evaluated before, the job-offer block below.",
+                        "_comment": "Block A - debt-cycle commentary. Only fires once erav_debt_last_result exists, meaning a settlement has occurred. Independent of, and always evaluated before, the job-offer block below.",
                         "options": [
                             {
                                 "option": "debt_month_reached",
                                 "self_chara_conditions": [
                                     {
-                                        "requireFactionDebt": {
-                                            "borrowerFactionID": "ErAV_miyama_Household",
-                                            "lenderFactionID": "ErAV_KiryuGumi_Office",
-                                            "resolvedCount": 1,
-                                            "operand": "gte"
+                                        "requireKojoVariable": {
+                                            "variableID": "erav_debt_last_result",
+                                            "checkExistOnly": true,
+                                            "value": 1
                                         }
                                     }
                                 ],
@@ -171,7 +172,7 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "label": "debt_status_victim_check",
-                        "_comment": "Player failed to pay back this cycle -> a victim was taken as payment.",
+                        "_comment": "Check bound victim, unresolved victim reference, and failed payment without a victim before falling back to paid-cycle commentary.",
                         "options": [
                             {
                                 "option": "has_victim",
@@ -182,6 +183,46 @@
                                 },
                                 "Results": [
                                     { "Type": "JumpToLabel", "arguments": [ "", "debt_status_victim_identify" ] }
+                                ]
+                            },
+                            {
+                                "option": "victim_unresolved",
+                                "self_chara_conditions": [
+                                    {
+                                        "requireKojoVariable": {
+                                            "variableID": "erav_debt_last_victim",
+                                            "checkExistOnly": true,
+                                            "value": 1
+                                        }
+                                    }
+                                ],
+                                "UISpec": {
+                                    "portraitRefKey": "kanon",
+                                    "selfTags": [ "yakuza", "focused", "serious" ]
+                                },
+                                "line": "Kanon_Dialogue_inoffice_Debt_VictimUnresolved",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "job_offer_check" ] }
+                                ]
+                            },
+                            {
+                                "option": "failed_no_victim",
+                                "self_chara_conditions": [
+                                    {
+                                        "requireKojoVariable": {
+                                            "variableID": "erav_debt_last_result",
+                                            "operand": "eq",
+                                            "value": 2
+                                        }
+                                    }
+                                ],
+                                "UISpec": {
+                                    "portraitRefKey": "kanon",
+                                    "selfTags": [ "yakuza", "focused", "serious" ]
+                                },
+                                "line": "Kanon_Dialogue_inoffice_Debt_FailedNoVictim",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "job_offer_check" ] }
                                 ]
                             },
                             {
@@ -639,11 +680,13 @@
             "zh-cn": {
                 "Kanon_Dialogue_inoffice": "$kanon.name$靠在办公桌后面，听见有人进来，抬起头。\n「来了。坐。」",
 
-                "Kanon_Dialogue_inoffice_Debt_VictimKanon": "",
-                "Kanon_Dialogue_inoffice_Debt_VictimKanade": "",
-                "Kanon_Dialogue_inoffice_Debt_VictimOther": "",
-                "Kanon_Dialogue_inoffice_Debt_ProgressGood": "",
-                "Kanon_Dialogue_inoffice_Debt_OtherMeans": "",
+                "Kanon_Dialogue_inoffice_Debt_VictimKanon": "(placeholder victim line for $victim.name$)",
+                "Kanon_Dialogue_inoffice_Debt_VictimKanade": "(placeholder victim line for $victim.name$)",
+                "Kanon_Dialogue_inoffice_Debt_VictimOther": "(placeholder victim line for $victim.name$)",
+                "Kanon_Dialogue_inoffice_Debt_VictimUnresolved": "(placeholder: victim ref $self.erav_debt_last_victim$ could not be resolved)",
+                "Kanon_Dialogue_inoffice_Debt_FailedNoVictim": "(placeholder: payment failed, nobody was handed over)",
+                "Kanon_Dialogue_inoffice_Debt_ProgressGood": "（占位：缺少歌音人设；此处确认安排的工作已有还款进展，提醒按期付款。）",
+                "Kanon_Dialogue_inoffice_Debt_OtherMeans": "（占位：缺少歌音人设；此处确认通过其他收入付清本期款项，提醒后续仍须按期付款。）",
 
                 "Kanon_Dialogue_inoffice_firstMeeting_consequences": "",
                 "Kanon_Dialogue_inoffice_firstMeeting_punctual": "「倒是准时。看来你是把我的话放在心上了。」",

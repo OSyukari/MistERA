@@ -1,0 +1,534 @@
+{
+    "_doc": {
+        "purpose": "Reactions of the character being undressed / redressed by someone else (Data/COM_Defs/COM_wardrobe.json). <id>_Begin = accepted, <id> with requireEPFailure = refused, <id> otherwise = done. Self undress / redress is silent: kojo never fires on a self target. Redress is always accepted, so it has no refusal; every redress layer and undress-all redirect to a shared entry."
+    },
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_undress_outer_Begin",
+                    "variants": [
+                        {
+                            "requirement": { "requirePermission": true },
+                            "extraSelfPortraitTags": ["blush", "smile", "relaxed"],
+                            "useActiveTags": false,
+                            "_comment": "接受 被脱外衣 有允许",
+                            "responses": ["com_undress_outer_Begin_A_1", "com_undress_outer_Begin_A_2"]
+                        },
+                        {
+                            "requirement": { "requireSelfForced": true },
+                            "extraSelfPortraitTags": ["fear", "trembling"],
+                            "useActiveTags": false,
+                            "_comment": "接受 被脱外衣 被迫",
+                            "responses": ["com_undress_outer_Begin_B_1", "com_undress_outer_Begin_B_2"]
+                        },
+                        {
+                            "extraSelfPortraitTags": ["shy", "troubled", "surprised"],
+                            "useActiveTags": false,
+                            "_comment": "接受 被脱外衣 未允许",
+                            "responses": ["com_undress_outer_Begin_C_1", "com_undress_outer_Begin_C_2"]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_undress_outer",
+                    "variants": [
+                        {
+                            "requirement": { "requireEPFailure": true },
+                            "variants": [
+                                {
+                                    "requirement": { "requirePermission": true },
+                                    "extraSelfPortraitTags": ["troubled", "shy", "smile"],
+                                    "useActiveTags": false,
+                                    "_comment": "拒绝 被脱外衣 有允许",
+                                    "responses": ["com_undress_outer_F_1", "com_undress_outer_F_2"]
+                                },
+                                {
+                                    "requirement": { "requireSelfAttitudeGTE": "Like" },
+                                    "extraSelfPortraitTags": ["troubled", "surprised", "shy"],
+                                    "useActiveTags": false,
+                                    "_comment": "拒绝 被脱外衣 无允许 善意",
+                                    "responses": ["com_undress_outer_G_1", "com_undress_outer_G_2"]
+                                }
+                            ],
+                            "extraSelfPortraitTags": ["angry", "disgust", "glare"],
+                            "useActiveTags": false,
+                            "_comment": "拒绝 被脱外衣 无允许 敌意",
+                            "responses": ["com_undress_outer_H_1", "com_undress_outer_H_2"]
+                        },
+                        {
+                            "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] },
+                            "extraSelfPortraitTags": ["sleeping", "relaxed"],
+                            "useActiveTags": false,
+                            "_comment": "睡眠中 被脱外衣",
+                            "responses": ["com_undress_outer_D_1", "com_undress_outer_D_2"]
+                        },
+                        {
+                            "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] },
+                            "extraSelfPortraitTags": ["doll", "empty", "silence", "idle"],
+                            "useActiveTags": false,
+                            "_comment": "时停中 被脱外衣",
+                            "responses": ["com_undress_outer_E_1", "com_undress_outer_E_2"]
+                        },
+                        {
+                            "requirement": { "requirePermission": true },
+                            "extraSelfPortraitTags": ["blush", "relaxed", "smile"],
+                            "useActiveTags": false,
+                            "_comment": "完成 被脱外衣 有允许",
+                            "responses": ["com_undress_outer_I_1", "com_undress_outer_I_2"]
+                        },
+                        {
+                            "requirement": { "requireSelfForced": true },
+                            "extraSelfPortraitTags": ["fear", "tearful", "trembling"],
+                            "useActiveTags": false,
+                            "_comment": "完成 被脱外衣 被迫",
+                            "responses": ["com_undress_outer_J_1", "com_undress_outer_J_2"]
+                        },
+                        {
+                            "extraSelfPortraitTags": ["shy", "blush", "troubled"],
+                            "useActiveTags": false,
+                            "_comment": "完成 被脱外衣 未允许",
+                            "responses": ["com_undress_outer_K_1", "com_undress_outer_K_2"]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_undress_inner_Begin",
+                    "tags": ["nsfw"],
+                    "variants": [
+                        {
+                            "requirement": { "requirePermission": true },
+                            "extraSelfPortraitTags": ["blush", "shy", "affectionate"],
+                            "useActiveTags": false,
+                            "_comment": "接受 被脱衣物 有允许",
+                            "responses": ["com_undress_inner_Begin_A_1", "com_undress_inner_Begin_A_2"]
+                        },
+                        {
+                            "requirement": { "requireSelfForced": true },
+                            "extraSelfPortraitTags": ["fear", "trembling", "tearful"],
+                            "useActiveTags": false,
+                            "_comment": "接受 被脱衣物 被迫",
+                            "responses": ["com_undress_inner_Begin_B_1", "com_undress_inner_Begin_B_2"]
+                        },
+                        {
+                            "extraSelfPortraitTags": ["blush", "shy", "troubled"],
+                            "useActiveTags": false,
+                            "_comment": "接受 被脱衣物 未允许",
+                            "responses": ["com_undress_inner_Begin_C_1", "com_undress_inner_Begin_C_2"]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_undress_inner",
+                    "tags": ["nsfw"],
+                    "variants": [
+                        {
+                            "requirement": { "requireEPFailure": true },
+                            "variants": [
+                                {
+                                    "requirement": { "requirePermission": true },
+                                    "extraSelfPortraitTags": ["shy", "troubled", "blush"],
+                                    "useActiveTags": false,
+                                    "_comment": "拒绝 被脱衣物 有允许",
+                                    "responses": ["com_undress_inner_F_1", "com_undress_inner_F_2"]
+                                },
+                                {
+                                    "requirement": { "requireSelfAttitudeGTE": "Like" },
+                                    "extraSelfPortraitTags": ["surprised", "blush", "troubled"],
+                                    "useActiveTags": false,
+                                    "_comment": "拒绝 被脱衣物 无允许 善意",
+                                    "responses": ["com_undress_inner_G_1", "com_undress_inner_G_2"]
+                                }
+                            ],
+                            "extraSelfPortraitTags": ["angry", "disgust", "serious"],
+                            "useActiveTags": false,
+                            "_comment": "拒绝 被脱衣物 无允许 敌意",
+                            "responses": ["com_undress_inner_H_1", "com_undress_inner_H_2"]
+                        },
+                        {
+                            "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] },
+                            "extraSelfPortraitTags": ["sleeping"],
+                            "useActiveTags": false,
+                            "_comment": "睡眠中 被脱衣物",
+                            "responses": ["com_undress_inner_D_1", "com_undress_inner_D_2"]
+                        },
+                        {
+                            "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] },
+                            "extraSelfPortraitTags": ["doll", "empty", "silence", "idle"],
+                            "useActiveTags": false,
+                            "_comment": "时停中 被脱衣物",
+                            "responses": ["com_undress_inner_E_1", "com_undress_inner_E_2"]
+                        },
+                        {
+                            "requirement": { "requirePermission": true },
+                            "extraSelfPortraitTags": ["blush", "shy", "aroused"],
+                            "useActiveTags": false,
+                            "_comment": "完成 被脱衣物 有允许",
+                            "responses": ["com_undress_inner_I_1", "com_undress_inner_I_2"]
+                        },
+                        {
+                            "requirement": { "requireSelfForced": true },
+                            "extraSelfPortraitTags": ["fear", "tearful", "cry"],
+                            "useActiveTags": false,
+                            "_comment": "完成 被脱衣物 被迫",
+                            "responses": ["com_undress_inner_J_1", "com_undress_inner_J_2"]
+                        },
+                        {
+                            "extraSelfPortraitTags": ["blush", "troubled", "pouting"],
+                            "useActiveTags": false,
+                            "_comment": "完成 被脱衣物 未允许",
+                            "responses": ["com_undress_inner_K_1", "com_undress_inner_K_2"]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_undress_skin_Begin",
+                    "tags": ["nsfw"],
+                    "variants": [
+                        {
+                            "requirement": { "requirePermission": true },
+                            "extraSelfPortraitTags": ["blush", "aroused", "affectionate"],
+                            "useActiveTags": false,
+                            "_comment": "接受 被脱贴身衣物 有允许",
+                            "responses": ["com_undress_skin_Begin_A_1", "com_undress_skin_Begin_A_2"]
+                        },
+                        {
+                            "requirement": { "requireSelfForced": true },
+                            "extraSelfPortraitTags": ["fear", "tearful", "trembling"],
+                            "useActiveTags": false,
+                            "_comment": "接受 被脱贴身衣物 被迫",
+                            "responses": ["com_undress_skin_Begin_B_1", "com_undress_skin_Begin_B_2"]
+                        },
+                        {
+                            "extraSelfPortraitTags": ["blush", "shy", "trembling"],
+                            "useActiveTags": false,
+                            "_comment": "接受 被脱贴身衣物 未允许",
+                            "responses": ["com_undress_skin_Begin_C_1", "com_undress_skin_Begin_C_2"]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_undress_skin",
+                    "tags": ["nsfw"],
+                    "variants": [
+                        {
+                            "requirement": { "requireEPFailure": true },
+                            "variants": [
+                                {
+                                    "requirement": { "requirePermission": true },
+                                    "extraSelfPortraitTags": ["shy", "blush", "apology"],
+                                    "useActiveTags": false,
+                                    "_comment": "拒绝 被脱贴身衣物 有允许",
+                                    "responses": ["com_undress_skin_F_1", "com_undress_skin_F_2"]
+                                },
+                                {
+                                    "requirement": { "requireSelfAttitudeGTE": "Like" },
+                                    "extraSelfPortraitTags": ["surprised", "blush", "angry"],
+                                    "useActiveTags": false,
+                                    "_comment": "拒绝 被脱贴身衣物 无允许 善意",
+                                    "responses": ["com_undress_skin_G_1", "com_undress_skin_G_2"]
+                                }
+                            ],
+                            "extraSelfPortraitTags": ["angry", "disgust", "glare"],
+                            "useActiveTags": false,
+                            "_comment": "拒绝 被脱贴身衣物 无允许 敌意",
+                            "responses": ["com_undress_skin_H_1", "com_undress_skin_H_2"]
+                        },
+                        {
+                            "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] },
+                            "extraSelfPortraitTags": ["sleeping"],
+                            "useActiveTags": false,
+                            "_comment": "睡眠中 被脱贴身衣物",
+                            "responses": ["com_undress_skin_D_1", "com_undress_skin_D_2"]
+                        },
+                        {
+                            "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] },
+                            "extraSelfPortraitTags": ["doll", "empty", "silence", "idle"],
+                            "useActiveTags": false,
+                            "_comment": "时停中 被脱贴身衣物",
+                            "responses": ["com_undress_skin_E_1", "com_undress_skin_E_2"]
+                        },
+                        {
+                            "requirement": { "requirePermission": true },
+                            "extraSelfPortraitTags": ["blush", "aroused", "love"],
+                            "useActiveTags": false,
+                            "_comment": "完成 被脱贴身衣物 有允许",
+                            "responses": ["com_undress_skin_I_1", "com_undress_skin_I_2"]
+                        },
+                        {
+                            "requirement": { "requireSelfForced": true },
+                            "extraSelfPortraitTags": ["cry", "tearful", "fear"],
+                            "useActiveTags": false,
+                            "_comment": "完成 被脱贴身衣物 被迫",
+                            "responses": ["com_undress_skin_J_1", "com_undress_skin_J_2"]
+                        },
+                        {
+                            "extraSelfPortraitTags": ["blush", "shy", "trembling"],
+                            "useActiveTags": false,
+                            "_comment": "完成 被脱贴身衣物 未允许",
+                            "responses": ["com_undress_skin_K_1", "com_undress_skin_K_2"]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": { "ID": "com_undress_all_Begin", "tags": ["nsfw"], "RedirectID": "com_undress_skin_Begin" }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": { "ID": "com_undress_all", "tags": ["nsfw"], "RedirectID": "com_undress_skin" }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_redress_Begin",
+                    "variants": [
+                        {
+                            "requirement": { "requirePermission": true },
+                            "extraSelfPortraitTags": ["smile", "relaxed", "shy"],
+                            "useActiveTags": false,
+                            "_comment": "被穿衣 有允许",
+                            "responses": ["com_redress_Begin_A_1", "com_redress_Begin_A_2"]
+                        },
+                        {
+                            "extraSelfPortraitTags": ["surprised", "troubled", "shy"],
+                            "useActiveTags": false,
+                            "_comment": "被穿衣 未允许",
+                            "responses": ["com_redress_Begin_B_1", "com_redress_Begin_B_2"]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_redress",
+                    "variants": [
+                        {
+                            "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] },
+                            "extraSelfPortraitTags": ["sleeping", "relaxed"],
+                            "useActiveTags": false,
+                            "_comment": "睡眠中 被穿衣",
+                            "responses": ["com_redress_D_1", "com_redress_D_2"]
+                        },
+                        {
+                            "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] },
+                            "extraSelfPortraitTags": ["doll", "empty", "silence", "idle"],
+                            "useActiveTags": false,
+                            "_comment": "时停中 被穿衣",
+                            "responses": ["com_redress_E_1", "com_redress_E_2"]
+                        },
+                        {
+                            "requirement": { "requirePermission": true },
+                            "extraSelfPortraitTags": ["smile", "happy", "relaxed"],
+                            "useActiveTags": false,
+                            "_comment": "穿好 有允许",
+                            "responses": ["com_redress_I_1", "com_redress_I_2"]
+                        },
+                        {
+                            "extraSelfPortraitTags": ["neutral", "shy", "sigh"],
+                            "useActiveTags": false,
+                            "_comment": "穿好 未允许",
+                            "responses": ["com_redress_K_1", "com_redress_K_2"]
+                        }
+                    ]
+                }
+            },
+            { "ID": "personality_default", "Entry": { "ID": "com_redress_outer_Begin", "RedirectID": "com_redress_Begin" } },
+            { "ID": "personality_default", "Entry": { "ID": "com_redress_outer", "RedirectID": "com_redress" } },
+            { "ID": "personality_default", "Entry": { "ID": "com_redress_inner_Begin", "RedirectID": "com_redress_Begin" } },
+            { "ID": "personality_default", "Entry": { "ID": "com_redress_inner", "RedirectID": "com_redress" } },
+            { "ID": "personality_default", "Entry": { "ID": "com_redress_skin_Begin", "RedirectID": "com_redress_Begin" } },
+            { "ID": "personality_default", "Entry": { "ID": "com_redress_skin", "RedirectID": "com_redress" } },
+            { "ID": "personality_default", "Entry": { "ID": "com_redress_all_Begin", "RedirectID": "com_redress_Begin" } },
+            { "ID": "personality_default", "Entry": { "ID": "com_redress_all", "RedirectID": "com_redress" } }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_undress_outer_Begin_A_1": "$self$轻轻抬起手臂，配合着$target$的动作，嘴角带着一点笑意。",
+                "com_undress_outer_Begin_A_2": "“热了吗……还是想看我穿得少一点？”$self$小声说着，没有躲开。",
+                "com_undress_outer_Begin_B_1": "$self$僵在原地，咬着嘴唇任由$target$的手伸向自己的外衣。",
+                "com_undress_outer_Begin_B_2": "$self$的肩膀微微发抖，却不敢开口拒绝。",
+                "com_undress_outer_Begin_C_1": "“诶？等、等一下……”$self$有些慌乱，最后还是没有阻止。",
+                "com_undress_outer_Begin_C_2": "$self$别过脸去，犹豫了一下才松开了抓着外衣的手。",
+                "com_undress_outer_D_1": "$self$在睡梦中毫无察觉，只是翻了个身，外衣被轻轻褪了下来。",
+                "com_undress_outer_D_2": "$self$呼吸平稳，完全没有发现自己的外衣已经被脱掉了。",
+                "com_undress_outer_E_1": "$self$凝固在原地，外衣被脱下时连一根手指都没有动。",
+                "com_undress_outer_E_2": "时间静止中的$self$宛如人偶，任由$target$取走了外衣。",
+                "com_undress_outer_F_1": "“现在不行啦，待会儿好不好？”$self$笑着按住了$target$的手。",
+                "com_undress_outer_F_2": "$self$轻轻推开$target$：“这里不太方便……”",
+                "com_undress_outer_G_1": "“诶！？突然干什么啦！”$self$红着脸后退了一步。",
+                "com_undress_outer_G_2": "$self$慌忙抓紧了衣襟：“不、不行的！”",
+                "com_undress_outer_H_1": "“别碰我！”$self$一把拍开了$target$的手。",
+                "com_undress_outer_H_2": "$self$冷冷地瞪着$target$，把外衣裹得更紧了。",
+                "com_undress_outer_I_1": "$self$理了理头发，大方地让$target$接过脱下的外衣。",
+                "com_undress_outer_I_2": "“谢谢，帮我收好哦。”$self$笑着说。",
+                "com_undress_outer_J_1": "外衣被脱下后，$self$环抱着双臂，眼眶有些发红。",
+                "com_undress_outer_J_2": "$self$低着头，一言不发地站在那里。",
+                "com_undress_outer_K_1": "$self$不太自在地拉了拉剩下的衣服，脸上有些发烫。",
+                "com_undress_outer_K_2": "“……就只是外衣而已吧？”$self$小声嘀咕着。",
+
+                "com_undress_inner_Begin_A_1": "$self$红着脸，主动解开了衣服的扣子。",
+                "com_undress_inner_Begin_A_2": "“轻一点……”$self$低声说着，乖乖抬起了手臂。",
+                "com_undress_inner_Begin_B_1": "$self$紧闭双眼，身体僵硬地任由$target$剥下衣服。",
+                "com_undress_inner_Begin_B_2": "$self$的手指揪着衣角，最终还是无力地松开了。",
+                "com_undress_inner_Begin_C_1": "“真、真的要脱吗……？”$self$满脸通红，却没有逃开。",
+                "com_undress_inner_Begin_C_2": "$self$低着头，任由$target$的手碰到自己的衣服。",
+                "com_undress_inner_D_1": "$self$睡得正沉，对衣服被脱下毫无反应，只是轻轻哼了一声。",
+                "com_undress_inner_D_2": "$self$在睡梦中缩了缩身子，似乎觉得有点冷。",
+                "com_undress_inner_E_1": "$self$维持着静止前的表情，衣服被脱下也毫无知觉。",
+                "com_undress_inner_E_2": "$self$一动不动，任凭$target$摆布着自己的衣物。",
+                "com_undress_inner_F_1": "“这个……还是等晚上再说吧？”$self$害羞地按住了衣角。",
+                "com_undress_inner_F_2": "$self$红着脸摇摇头：“现在不行啦……”",
+                "com_undress_inner_G_1": "“你、你在想什么啊！”$self$满脸通红地护住了胸口。",
+                "com_undress_inner_G_2": "$self$慌张地后退：“我们还没到那种关系吧！？”",
+                "com_undress_inner_H_1": "“变态！”$self$狠狠地瞪了$target$一眼。",
+                "com_undress_inner_H_2": "$self$厌恶地甩开$target$的手：“想都别想。”",
+                "com_undress_inner_I_1": "只剩贴身衣物的$self$害羞地抱住自己，眼神却偷偷瞄着$target$。",
+                "com_undress_inner_I_2": "“……好看吗？”$self$小声问道。",
+                "com_undress_inner_J_1": "$self$用双手遮挡着身体，泪水在眼眶里打转。",
+                "com_undress_inner_J_2": "$self$蜷缩着身子，肩膀不住地颤抖。",
+                "com_undress_inner_K_1": "$self$红着脸遮住身体，不敢看$target$的眼睛。",
+                "com_undress_inner_K_2": "“别、别一直盯着看啦……”$self$扭过身去。",
+
+                "com_undress_skin_Begin_A_1": "$self$呼吸有些急促，轻轻点了点头，任由$target$褪去最后的遮挡。",
+                "com_undress_skin_Begin_A_2": "“……只给你看哦。”$self$红着脸低语。",
+                "com_undress_skin_Begin_B_1": "$self$咬紧牙关，泪水无声地滑落。",
+                "com_undress_skin_Begin_B_2": "$self$浑身发抖，徒劳地想要并拢双腿。",
+                "com_undress_skin_Begin_C_1": "$self$的脸红到了耳根，双手不知道该往哪里放。",
+                "com_undress_skin_Begin_C_2": "“呜……”$self$发出细小的声音，却没有阻止$target$。",
+                "com_undress_skin_D_1": "$self$毫无防备地睡着，连最后的贴身衣物也被褪了下来。",
+                "com_undress_skin_D_2": "$self$在睡梦中轻轻呢喃，对自己被剥光一无所知。",
+                "com_undress_skin_E_1": "$self$一丝不挂地凝固在原地，脸上仍是静止前的神情。",
+                "com_undress_skin_E_2": "毫无知觉的$self$任由$target$褪下了最后的贴身衣物。",
+                "com_undress_skin_F_1": "“对不起……这个真的还不行。”$self$紧紧按住了最后的遮挡。",
+                "com_undress_skin_F_2": "$self$红着脸摇头：“再、再给我一点时间……”",
+                "com_undress_skin_G_1": "“不行不行不行！”$self$羞得几乎要哭出来。",
+                "com_undress_skin_G_2": "$self$一把推开$target$：“你太过分了！”",
+                "com_undress_skin_H_1": "“你敢！”$self$的眼神里充满了愤怒与警惕。",
+                "com_undress_skin_H_2": "$self$狠狠地瞪着$target$，死死护住了身体。",
+                "com_undress_skin_I_1": "一丝不挂的$self$害羞地望着$target$，眼中带着期待。",
+                "com_undress_skin_I_2": "“……接下来，你想做什么？”$self$小声问道。",
+                "com_undress_skin_J_1": "$self$徒劳地用双手遮掩着赤裸的身体，抽泣个不停。",
+                "com_undress_skin_J_2": "$self$蜷缩成一团，低声呜咽着。",
+                "com_undress_skin_K_1": "$self$满脸通红地遮住身体，羞得说不出话来。",
+                "com_undress_skin_K_2": "“呜……全、全被看光了……”$self$捂住了脸。",
+
+                "com_redress_Begin_A_1": "$self$乖乖地伸出手臂，让$target$帮自己穿上衣服。",
+                "com_redress_Begin_A_2": "“嘿嘿，被照顾的感觉真不错。”$self$笑着说。",
+                "com_redress_Begin_B_1": "$self$有些意外，但还是配合着穿上了衣服。",
+                "com_redress_Begin_B_2": "“我、我自己来就好……”$self$嘴上这么说，却没有拒绝。",
+                "com_redress_D_1": "$self$仍在熟睡，完全没发现自己被穿上了衣服。",
+                "com_redress_D_2": "$self$在梦中翻了个身，衣服已被整理妥当。",
+                "com_redress_E_1": "$self$凝固在原地，被穿好了衣服也毫无知觉。",
+                "com_redress_E_2": "静止的$self$像人偶一样被$target$打扮整齐。",
+                "com_redress_I_1": "$self$低头看了看穿好的衣服，开心地笑了。",
+                "com_redress_I_2": "“谢谢你。”$self$轻声道谢。",
+                "com_redress_K_1": "$self$松了口气，整理了一下衣服。",
+                "com_redress_K_2": "“……谢、谢谢。”$self$别扭地道了声谢。"
+            },
+            "en-us": {
+                "com_undress_outer_Begin_A_1": "$self$ lifts her arms to help $target$, a small smile on her lips.",
+                "com_undress_outer_Begin_A_2": "\"Too warm? ...Or do you just want me in fewer clothes?\" $self$ murmurs, not pulling away.",
+                "com_undress_outer_Begin_B_1": "$self$ freezes, biting her lip as $target$'s hand reaches for her outerwear.",
+                "com_undress_outer_Begin_B_2": "$self$'s shoulders tremble, but she doesn't dare to refuse.",
+                "com_undress_outer_Begin_C_1": "\"Eh? W-wait...\" $self$ flusters, but in the end doesn't stop it.",
+                "com_undress_outer_Begin_C_2": "$self$ looks away, hesitating before she lets go of her outerwear.",
+                "com_undress_outer_D_1": "$self$ sleeps on, oblivious, only rolling over as her outerwear slips off.",
+                "com_undress_outer_D_2": "$self$ breathes steadily, unaware her outerwear is already gone.",
+                "com_undress_outer_E_1": "$self$ stays frozen in place, not a finger moving as her outerwear comes off.",
+                "com_undress_outer_E_2": "Like a doll in stopped time, $self$ lets $target$ take her outerwear.",
+                "com_undress_outer_F_1": "\"Not right now, okay? Later.\" $self$ laughs, catching $target$'s hand.",
+                "com_undress_outer_F_2": "$self$ gently pushes $target$ away. \"This isn't a good place...\"",
+                "com_undress_outer_G_1": "\"Huh!? What are you doing all of a sudden!\" $self$ steps back, red-faced.",
+                "com_undress_outer_G_2": "$self$ clutches her collar in a panic. \"N-no way!\"",
+                "com_undress_outer_H_1": "\"Don't touch me!\" $self$ slaps $target$'s hand away.",
+                "com_undress_outer_H_2": "$self$ glares coldly at $target$, pulling her outerwear tighter.",
+                "com_undress_outer_I_1": "$self$ fixes her hair and casually lets $target$ take the outerwear.",
+                "com_undress_outer_I_2": "\"Thanks, hold onto that for me.\" $self$ smiles.",
+                "com_undress_outer_J_1": "With her outerwear gone, $self$ hugs herself, eyes reddening.",
+                "com_undress_outer_J_2": "$self$ stands there with her head down, saying nothing.",
+                "com_undress_outer_K_1": "$self$ awkwardly tugs at what she's still wearing, her face warm.",
+                "com_undress_outer_K_2": "\"...It's just the outer layer, right?\" $self$ mutters.",
+
+                "com_undress_inner_Begin_A_1": "Blushing, $self$ undoes the buttons of her clothes herself.",
+                "com_undress_inner_Begin_A_2": "\"Gently...\" $self$ whispers, obediently raising her arms.",
+                "com_undress_inner_Begin_B_1": "$self$ squeezes her eyes shut, stiff as $target$ strips off her clothes.",
+                "com_undress_inner_Begin_B_2": "$self$'s fingers clutch the hem, then limply let go.",
+                "com_undress_inner_Begin_C_1": "\"Y-you really want to take it off...?\" $self$ is bright red, but doesn't run.",
+                "com_undress_inner_Begin_C_2": "$self$ lowers her head and lets $target$'s hands reach her clothes.",
+                "com_undress_inner_D_1": "$self$ sleeps deeply, only letting out a soft hum as her clothes come off.",
+                "com_undress_inner_D_2": "$self$ curls up in her sleep, as if feeling a little cold.",
+                "com_undress_inner_E_1": "$self$ keeps the expression she had when time stopped, unaware of her clothes coming off.",
+                "com_undress_inner_E_2": "$self$ stays perfectly still as $target$ handles her clothes.",
+                "com_undress_inner_F_1": "\"This... let's save it for tonight, okay?\" $self$ shyly holds her hem in place.",
+                "com_undress_inner_F_2": "$self$ shakes her head, blushing. \"Not right now...\"",
+                "com_undress_inner_G_1": "\"Wh-what are you thinking!\" $self$ covers her chest, face burning.",
+                "com_undress_inner_G_2": "$self$ backs away in a panic. \"We're not like that yet!?\"",
+                "com_undress_inner_H_1": "\"Pervert!\" $self$ shoots $target$ a furious look.",
+                "com_undress_inner_H_2": "$self$ shakes off $target$'s hand in disgust. \"Don't even think about it.\"",
+                "com_undress_inner_I_1": "Down to her underwear, $self$ shyly hugs herself, sneaking glances at $target$.",
+                "com_undress_inner_I_2": "\"...Do I look okay?\" $self$ asks quietly.",
+                "com_undress_inner_J_1": "$self$ covers herself with both hands, tears welling up.",
+                "com_undress_inner_J_2": "$self$ curls in on herself, shoulders trembling.",
+                "com_undress_inner_K_1": "$self$ covers herself, face red, unable to meet $target$'s eyes.",
+                "com_undress_inner_K_2": "\"D-don't keep staring...\" $self$ turns away.",
+
+                "com_undress_skin_Begin_A_1": "Breathing a little faster, $self$ nods and lets $target$ remove the last thing covering her.",
+                "com_undress_skin_Begin_A_2": "\"...Only you get to see this.\" $self$ whispers, blushing.",
+                "com_undress_skin_Begin_B_1": "$self$ grits her teeth as tears silently roll down.",
+                "com_undress_skin_Begin_B_2": "$self$ trembles all over, uselessly trying to keep her legs together.",
+                "com_undress_skin_Begin_C_1": "$self$ goes red to the tips of her ears, not knowing what to do with her hands.",
+                "com_undress_skin_Begin_C_2": "\"Nnh...\" $self$ makes a tiny sound, but doesn't stop $target$.",
+                "com_undress_skin_D_1": "$self$ sleeps defenselessly as even her underwear is slipped off.",
+                "com_undress_skin_D_2": "$self$ murmurs in her sleep, unaware she's been stripped bare.",
+                "com_undress_skin_E_1": "$self$ stands frozen and completely naked, still wearing the expression from before time stopped.",
+                "com_undress_skin_E_2": "Unaware, $self$ lets $target$ slip off the last of her underwear.",
+                "com_undress_skin_F_1": "\"Sorry... this one, not yet.\" $self$ holds her last layer firmly in place.",
+                "com_undress_skin_F_2": "$self$ shakes her head, blushing. \"G-give me a little more time...\"",
+                "com_undress_skin_G_1": "\"No no no no!\" $self$ is so embarrassed she's almost in tears.",
+                "com_undress_skin_G_2": "$self$ shoves $target$ away. \"That's going too far!\"",
+                "com_undress_skin_H_1": "\"Don't you dare!\" $self$'s eyes are full of anger and wariness.",
+                "com_undress_skin_H_2": "$self$ glares daggers at $target$, guarding her body with everything she has.",
+                "com_undress_skin_I_1": "Completely naked, $self$ looks shyly at $target$, eyes full of anticipation.",
+                "com_undress_skin_I_2": "\"...So, what do you want to do next?\" $self$ asks softly.",
+                "com_undress_skin_J_1": "$self$ hopelessly tries to cover her bare body with her hands, sobbing.",
+                "com_undress_skin_J_2": "$self$ curls into a ball, whimpering quietly.",
+                "com_undress_skin_K_1": "$self$ covers herself, face crimson, too embarrassed to speak.",
+                "com_undress_skin_K_2": "\"Uuu... y-you saw everything...\" $self$ hides her face.",
+
+                "com_redress_Begin_A_1": "$self$ obediently holds out her arms so $target$ can help her get dressed.",
+                "com_redress_Begin_A_2": "\"Hehe, being taken care of feels nice.\" $self$ smiles.",
+                "com_redress_Begin_B_1": "$self$ looks a little surprised, but goes along and lets herself be dressed.",
+                "com_redress_Begin_B_2": "\"I-I can do it myself...\" $self$ says, but doesn't refuse.",
+                "com_redress_D_1": "$self$ is still fast asleep, unaware she's been dressed.",
+                "com_redress_D_2": "$self$ rolls over in her dreams, her clothes already put back in order.",
+                "com_redress_E_1": "$self$ stays frozen in place, unaware of being dressed.",
+                "com_redress_E_2": "Motionless, $self$ is dressed up neatly by $target$ like a doll.",
+                "com_redress_I_1": "$self$ looks down at her clothes and smiles happily.",
+                "com_redress_I_2": "\"Thank you.\" $self$ says softly.",
+                "com_redress_K_1": "$self$ lets out a breath of relief and straightens her clothes.",
+                "com_redress_K_2": "\"...Th-thanks.\" $self$ mumbles awkwardly."
+            }
+        }
+    }
+}

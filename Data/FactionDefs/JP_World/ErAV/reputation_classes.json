@@ -1,0 +1,60 @@
+{
+    "_doc": "World reputation mod classes (Assets/Scripts/CharacterData/Reputation.cs). Each class is one merged, capped line per character per world: trackType = the score it adds to (display name fametype_<trackType>), titleKey = the line's name, descriptionKey = one change ($key$ from the caller's args, $amount$ = the change, $name$ = the character), modCap/modFloor = the line's value range (modCap < 0 = no cap), historySize = changes kept for the tooltip. Callers: event Result ModReputation [scopeKey, classID, amount, world, key=value...], Result_Character.reputation {classID, amount, args}, RecordingEvalDef.reputationClassID (AV sales, args: count). Scores have no consumer yet.",
+    "ReputationClasses": {
+        "list": [
+            {
+                "ID": "rep_av_sales",
+                "trackType": "av",
+                "titleKey": "rep_av_sales_title",
+                "descriptionKey": "rep_av_sales_desc",
+                "modCap": -1,
+                "modFloor": 0,
+                "historySize": 5
+            },
+            {
+                "ID": "rep_leaked_sales",
+                "trackType": "leaked",
+                "titleKey": "rep_leaked_sales_title",
+                "descriptionKey": "rep_leaked_sales_desc",
+                "modCap": -1,
+                "modFloor": 0,
+                "historySize": 5
+            },
+            {
+                "ID": "rep_leaked_online",
+                "_comment": "args: activity",
+                "trackType": "leaked",
+                "titleKey": "rep_leaked_online_title",
+                "descriptionKey": "rep_leaked_online_desc",
+                "modCap": 50,
+                "modFloor": 0,
+                "historySize": 5
+            },
+            {
+                "ID": "rep_notoriety_witnessed",
+                "_comment": "args: witness, activity",
+                "trackType": "notoriety",
+                "titleKey": "rep_notoriety_witnessed_title",
+                "descriptionKey": "rep_notoriety_witnessed_desc",
+                "modCap": 30,
+                "modFloor": 0,
+                "historySize": 5
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "fametype_notoriety": "恶名",
+                "rep_av_sales_title": "AV作品销量",
+                "rep_av_sales_desc": "作品售出$count$份",
+                "rep_leaked_sales_title": "流出作品销量",
+                "rep_leaked_sales_desc": "流出作品售出$count$份",
+                "rep_leaked_online_title": "被传上网",
+                "rep_leaked_online_desc": "$activity$时的照片被传上网",
+                "rep_notoriety_witnessed_title": "被熟人撞见",
+                "rep_notoriety_witnessed_desc": "$activity$时被$witness$撞见"
+            }
+        }
+    }
+}

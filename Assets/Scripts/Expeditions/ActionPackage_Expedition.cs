@@ -53,10 +53,20 @@ public class ActionPackage_Expedition : ActionPackage
             }
         }
         // time of day (ExpEvents.timeWeightMods), at the world hour the action is picked
-        return SourceEV.ApplyTimeWeight(weight, scr_System_Time.current.getCurrentTime().Hour);
+        weight = SourceEV.ApplyTimeWeight(weight, scr_System_Time.current.getCurrentTime().Hour);
+        // no result rollable now (result requirements / time weights / missing cast): never picked, whatever the keyword mods
+        if (weight >= 1 && !ExpeditionUtility.HasRollableResult(SourceEV, doer, p, false, tooltip))
+        {
+            noRollableResult = true;
+            return -1;
+        }
+        return weight;
     }
 
     public int weight = 0;
+    bool noRollableResult = false;
+    /// <summary> why the weight came out as it did (team requirement / no rollable result reasons) - debug only </summary>
+    [JsonIgnore] public List<string> WeightTooltip { get; protected set; }
 
     [JsonProperty] new protected bool toggleRepeat = false;
     [JsonIgnore] public override bool isTemporaryAP { get { return false; } }
@@ -91,6 +101,7 @@ public class ActionPackage_Expedition : ActionPackage
         actorRefs = null;
         doer_cache = null;
         this.weight = GetWeight(job.FactionOwner_Party, out var tooltip);
+        this.WeightTooltip = tooltip;
 
         if (false && SourceEV.eventID == "exp_event_caveGoblinCaptive")
         {
@@ -98,6 +109,7 @@ public class ActionPackage_Expedition : ActionPackage
         }
 
         if (JobExp != null && JobExp.Expedition != null && SourceEV != null) this.weight = JobExp.Expedition.GetWeightModifiers(SourceEV.tags, this.weight);
+        if (noRollableResult) this.weight = -1;
 
         this.duration = SourceEV.DurationMinutes;
 

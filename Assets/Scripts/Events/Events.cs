@@ -162,7 +162,22 @@ public enum TargetScope
     /// filtered by chara_conditions. Walks self's own relationship list only - pair with stopAtMaxTargetCount to stop
     /// early on a long list.
     /// </summary>
-    SelfRelationships
+    SelfRelationships,
+    /// <summary>
+    /// The character whose RefID is stored in self's own permanent kojo variable extraScopeArguments[0] (written via
+    /// SetSelfKojoVariable with a "$refkey.refID$" value - e.g. ErAV's erav_debt_last_victim), filtered by
+    /// chara_conditions. Variable absent = nothing bound (normal). Variable present but no such character = nothing
+    /// bound plus a warning, so the event's own fallback branch can handle the broken reference visibly.
+    /// </summary>
+    RefID_FromSelfKojoVariable,
+    /// <summary>
+    /// Members of the current (active or locked) party of the first character in Targets[extraScopeArguments[0]] - the
+    /// characters of that key excluded - optionally only those holding MemberType extraScopeArguments[1] there (or a
+    /// descendant of it), filtered by chara_conditions. E.g. ["party", "membertype_hidden"] = the hidden cast an intro
+    /// put into an MIA party (AddToPartyHidden). Exploration results with an event checking such a scope are not rolled
+    /// while it misses its minTargetCount (ExpeditionUtility.CheckCast).
+    /// </summary>
+    PartyMembersOfRef
 }
 
 public class EventScope_Target
@@ -391,6 +406,8 @@ public class Event : I_SerializationCallbackReceiver
         public bool isLast = false;
         public string nextEventID = "";
         public string nextEntryLabel = "";
+        /// <summary>Optional localized outcome summary for expedition logs; independent of the displayed scene line.</summary>
+        public string expeditionSummary = "";
 
         [JsonProperty("UISpec")] public UISpec UISpec = UISpec.Template();
 
@@ -569,6 +586,8 @@ public class Event : I_SerializationCallbackReceiver
             public List<string> arguments = new List<string>();
             /// <summary>LaunchJob only: typed job ("$type") copied for every launch - must implement I_EventLaunchedJob.</summary>
             public Job jobTemplate = null;
+            /// <summary>ApplyPartyOutfit only: the outfit (pieces by item baseID, variants allowed) set as the party outfit.</summary>
+            public OutfitSet outfit = null;
 
             public bool isValid()
             {
@@ -700,6 +719,9 @@ public class Event : I_SerializationCallbackReceiver
             /// If cannot find A and if self is player, will initiate trade using Player's homefaction
             /// </summary>
             FactionExchangeInventory,
+            /// <summary>[targetKey, optional prepareForEvent=false] Restore stat bars. Opt-in preparation also
+            /// disrupts sleep in the event output context and clears aftermath and transient climax blockers.
+            /// Only the explicitly resolved targets are changed; ordinary recovery keeps statuses intact.</summary>
             FullRecovery,
             FullHPRecovery,
             /// <summary>
@@ -720,12 +742,19 @@ public class Event : I_SerializationCallbackReceiver
             /// </summary>
             StartSexJobInParty,
             /// <summary>
-            /// [string doersKey, string receiverKey, string COMID, optional int executeCount (default 1)] <br/>
-            /// Executes a fresh valid AP executeCount times on exactly one receiver; stops on invalid AP.
+            /// [string doersKey, string receiverKey, string COMID, optional int repeatCount = 1, optional bool ignoreStatCost = false] <br/>
+            /// ignoreStatCost must be a valid bool string when supplied; invalid values fail before movement.
+            /// True bypasses only this package's stat-cost affordability and debit (including interaction energy).
+            /// Anatomy, clothing, readiness, other requirements, difficulty, resource/item costs, EXP, climax stamina
+            /// and mechanical aftermath remain active. No stat restoration or aftermath clearing, including coma.
+            /// Child/followup APs default to false unless explicitly opted in; shared COM definitions are unchanged.
+            /// Each key must resolve to exactly one non-null character, distinct from the other side.
+            /// Event-only restriction; player-facing group COMs are unchanged. Stops on invalid AP.
             /// Checks all participants for climax after each execution, but does not stop on climax or stagnation.
             /// Accumulates numeric EXP until a nonnumeric message triggers a flush; remaining output flushes on exit.
+            /// Inside BeginAPExperienceBatch, numeric output waits for an explicit FlushMessageExpAll or batch end; narration still flushes.
             /// Stores each side's key_climaxed as "true" or "false", as with ExecuteSexAPOnSingleCharaTillClimax.
-            /// True only when all requested executions completed. executeCount must be positive.
+            /// True only when all requested executions completed. repeatCount must be positive.
             /// </summary>
             ExecuteAPOnSingleChara,
             /// <summary>
@@ -1168,11 +1197,12 @@ public class Event : I_SerializationCallbackReceiver
             MoveToTargetRoom,
 
             /// <summary>
-            /// [string scopeKey] <br/>
+            /// [string scopeKey, optional bool discardOutput=false] <br/>
             /// Wakes every sleeping character resolved from scopeKey (TryResolveExecTargets - "self" works) the way a
             /// disturbed sleep ends: the sleep still owed becomes chara_status_sleep_deprived, so afterwards the sleep node
             /// puts them back to bed while it is still their sleep time (Character_Trainable.DisruptSleep). Unlike WakeUp
-            /// (self only, no sleep debt). True if every resolved character is awake afterwards.
+            /// (self only, no sleep debt). discardOutput isolates and discards only this wake's presentation, not mechanics.
+            /// True if every resolved character is awake afterwards.
             /// </summary>
             DisruptSleep,
 
@@ -1202,11 +1232,16 @@ public class Event : I_SerializationCallbackReceiver
             RequestFallbackWorkerFromLocalWorld,
 
             /// <summary>
-            /// [string doersKey, string receiverKey, string COMID, int maxIteration, string requireClimaxTargetKey] <br/>
-            /// Repeats a sex AP on one receiver until every required participant newly climaxes, the limit is reached,
+            /// [string doersKey, string receiverKey, string COMID, int maxIterations, string requiredClimaxKey, optional bool ignoreStatCost = false] <br/>
+            /// ignoreStatCost has the same package-only stat-cost semantics as ExecuteAPOnSingleChara;
+            /// malformed bools fail before movement. It does not restore stats, clear coma/aftermath, bypass readiness,
+            /// waive resource/item costs, suppress climax stamina effects, or propagate to child/followup APs.
+            /// Both actor keys must be distinct non-null singletons (unlike player-facing group COMs).
+            /// Repeats a sex AP until every required participant newly climaxes, the limit is reached,
             /// validation fails, or no unfinished target gains stimulation across five iterations. Required targets may
             /// contain multiple participants. Checks climax on all participants after each execution. Numeric EXP is
             /// accumulated; a nonnumeric message flushes it with the messages, and remaining output flushes on exit.
+            /// BeginAPExperienceBatch defers numeric output across APs without suppressing those messages or kojo.
             /// Stores AppendStrings[doersKey + "_climaxed"] and [receiverKey + "_climaxed"] as "true" when any actor
             /// in that scope newly climaxed during this call, otherwise "false". Reset even when validation fails.
             /// True only when every required participant climaxed during this call.
@@ -1214,10 +1249,22 @@ public class Event : I_SerializationCallbackReceiver
             ExecuteSexAPOnSingleCharaTillClimax,
 
             /// <summary>
-            /// [string targetRefKey, string titleID, string descriptionTextID, bool showRoomName] <br/>
+            /// [string targetRefKey, string titleID, string descriptionTextID, bool showRoomName,
+            /// optional bool createIfMissing = false, optional bool replaceDescription = false,
+            /// optional string descriptionSource = argument] <br/>
             /// Updates each target's stored memory whose EndTime exactly matches the current game time, including
             /// merged entries with older storage keys. Localizes/parses the title and supplemental description,
-            /// preserves existing interactions, and refreshes display caches. Does not create missing memories.
+            /// preserves existing interactions, tags and numerical modifiers, and refreshes display caches.
+            /// Four arguments append supplemental description and do not create missing memories, as before.
+            /// createIfMissing uses AddEntryMSG with the localized/parsed argument description and forbidMerge;
+            /// normal merge rules still apply, including unconditional same-EndTime merging.
+            /// replaceDescription sets a serialized presentation-only override, not the stored interaction prose: it
+            /// replaces an earlier override, and is shown in front of the entry's other description lines (added, never
+            /// hiding them - e.g. the expedition log lines mirrored into the memory).
+            /// descriptionSource accepts only argument or silentLines (case-sensitive); silentLines snapshots
+            /// owner.SilentSink.Lines already captured, excluding the executing Line, falling back to the argument
+            /// when absent/blank. Invalid optional bools/sources fail before side effects. Existing target
+            /// overrides survive cache refreshes and later merges without appending the merged display narrative.
             /// True if at least one matching entry was updated.
             /// </summary>
             SetMemoryNameOverride,
@@ -1233,7 +1280,93 @@ public class Event : I_SerializationCallbackReceiver
             /// <summary>PartyMIA with the CharaMIAWithFeatures argument contract and additive instance features.</summary>
             PartyMIAWithFeatures,
             /// <summary>PartyMIA with the CharaMIAWithReplacedFeatures argument contract and replaced instance features.</summary>
-            PartyMIAWithReplacedFeatures
+            PartyMIAWithReplacedFeatures,
+
+            /// <summary>
+            /// [string scopeKey, string partyRefKey] <br/>
+            /// Puts every resolved character into the current (MIA) party of the first character of partyRefKey as a hidden
+            /// member (MemberType membertype_hidden): moved into the party room, no job dispatch, not counted as an exploring
+            /// actor. Used by an intro to keep the clients it requested as the stay's cast - later events scope them with
+            /// TargetScope.PartyMembersOfRef. ReleaseFallbackWorker refuses them while they are in the party; pooled ones go
+            /// back to their pool when only hidden pool workers are left in the party (Manageable_Party.CleanupDetection).
+            /// True if anyone was added.
+            /// </summary>
+            AddToPartyHidden,
+
+            /// <summary>
+            /// [string scopeKey, string classID, float amount, optional string world, optional "key=value"...] <br/>
+            /// World reputation (ReputationUtility.Mod): adds amount (may be negative) to the line of ReputationModClass
+            /// classID of every resolved character, capped by the class, in world (worldID, "" = resolved from the event:
+            /// expedition party's owner, else self's / the first target's location). key=value pairs fill $key$ in the
+            /// class description; values and amount may be $tokens$ (ParseEventEntry). True if anything changed.
+            /// </summary>
+            ModReputation,
+
+            /// <summary>
+            /// [int amount] - the event's expedition (its party job) advances amount progress (negative = loses progress),
+            /// the same as Result_Faction ExpeditionProgressMod. False without an expedition.
+            /// </summary>
+            ModExpeditionProgress,
+
+            /// <summary>
+            /// [string scopeKey, string itemID, optional int count (default 1), optional string bodyTag] <br/>
+            /// Creates count of itemID and has every resolved character consume it at once (Character_Body.ConsumeIngestible
+            /// into bodyTag) - e.g. drinks forced on her or on a client. False if the item is not ingestible.
+            /// </summary>
+            IngestItem,
+
+            /// <summary>
+            /// [string scopeKey] + outfit <br/>
+            /// Sets the executor's outfit as the party outfit (Manageable_Party.SetOutfit) of every resolved character in
+            /// their current party and puts it on right away. Only that party's outfit changes - the character's own
+            /// wardrobe is untouched and it ends with the party. The previous party outfit is kept for RevertPartyOutfit.
+            /// </summary>
+            ApplyPartyOutfit,
+
+            /// <summary>
+            /// [string scopeKey] - puts back the party outfit every resolved character had before the last ApplyPartyOutfit
+            /// (one level) and wears it. False if there was none.
+            /// </summary>
+            RevertPartyOutfit,
+
+            /// <summary>
+            /// [hour or "from-to" range, ...] - true if the current world hour is listed (a range may wrap past midnight,
+            /// e.g. "22-2"). Branch check - put it first in an option, effects in the destination entry.
+            /// </summary>
+            HourIn,
+
+            /// <summary>
+            /// [string scopeKey, string dayKey, string affiliationKey, "label=memberTypeID|memberTypeID", ...] <br/>
+            /// For the first resolved character: walks her work memberships; the first whose MemberType matches a group
+            /// (MemberType.Matches - parents work) sets AppendStrings[affiliationKey] = that label, and its work module
+            /// decides the day: "holiday" (a day off in the faction's world calendar - WorkModuleInit.IsDayOff), else
+            /// "offday" (not one of its activeDays), else "workday". No matching membership: affiliation "none", day from
+            /// her world's calendar ("holiday") or Saturday/Sunday ("offday"), else "workday". AppendStrings[dayKey] = the
+            /// day. Branch with AppendStringEquals. Always true when the character resolves.
+            /// </summary>
+            ClassifyDay,
+
+            /// <summary>[] Begin a shared, nested result-output batch. Pair with EndEntryResultsSilent before completion.</summary>
+            BeginEntryResultsSilent,
+            /// <summary>
+            /// [eventID (empty = current event), nonempty entryLabel, optional branch option ID (the option field)].
+            /// Reuses only Line Results or an explicitly identified Branch option's Results, never its presentation,
+            /// selection conditions, callbacks, or control flow. Nested empty IDs refer to the referenced event.
+            /// Validates the complete reference tree before effects; ignores JumpToLabel. Maximum depth 32 / 10000 nodes.
+            /// Standalone calls create/end an implicit batch; explicit batches share one final attributed EXP summary.
+            /// All results run in order and failures accumulate as in option execution. Failure closes the batch.
+            /// </summary>
+            ExecuteEntryResultsSilent,
+            /// <summary>[] End one batch level; outermost end emits the single numeric EXP summary, with no grants.</summary>
+            EndEntryResultsSilent,
+
+            /// <summary>[] Begin a nested numeric-only AP output batch; narration and immediate grants are unchanged.
+            /// FlushMessageExpAll drains accumulated numeric output without ending the batch. Batch end, AP failure,
+            /// exception, termination or event transition flush any remainder.
+            /// False branch comparisons do not close the batch.</summary>
+            BeginAPExperienceBatch,
+            /// <summary>[] End one level; outermost end shows accumulated numeric deltas once, without granting again.</summary>
+            EndAPExperienceBatch
 
         }
     }

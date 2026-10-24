@@ -648,6 +648,9 @@ public static class FactionUtility
         nextFaction = null;
         travelMinutes = 0f;
 
+        // held in a locked (MIA) party: her own schedule never takes her out - she sandboxes the party room
+        if (c.FactionManager.isPartyLocked) return false;
+
         int nextHour = (currentHour + 1) % 24;
         int daysLookahead = (currentHour + 1) / 24;
         nextFaction = c.FactionManager.CurrentJobScheduleFaction(nextHour, daysLookahead);

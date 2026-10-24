@@ -99,7 +99,7 @@ public class COM_Requirements
             joinAlone = joinAlone || req.joinAlone;
         }
 
-        public bool Validate(ref List<string> _tooltip, Character_Trainable doerRefIDs, out bool hardlock, Requirement extraCondition = null, I_IsJobGiver jobFaction = null)
+        public bool Validate(ref List<string> _tooltip, Character_Trainable doerRefIDs, out bool hardlock, Requirement extraCondition = null, I_IsJobGiver jobFaction = null, ActionPackage p = null)
         {
             //int doercount = (extraCondition == null ? doerCount : (doerCount != -1 ? doerCount : extraCondition.doerCount));
             //int receivercount = (extraCondition == null ? receiverCount : (receiverCount != -1 ? receiverCount : extraCondition.receiverCount));
@@ -132,25 +132,25 @@ public class COM_Requirements
 
             // Debug.Log("Command (Variant) Requirement Validating [" + String.Join(",", doerRefIDs) + "] and [" + String.Join(",", receiverRefIDs) + "]");
 
-            if (!CharaReqUtility.Validate(req_Doers, ref _tooltip, doerRefIDs, out hardlock, jobFaction))
+            if (!CharaReqUtility.Validate(req_Doers, ref _tooltip, doerRefIDs, out hardlock, jobFaction, p))
             {
                 //if (logging) _tooltip.Add("doer failed doer req validation");
                 return false;
             }
-            if (treatDoerAsReceiver && !CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs, out hardlock, jobFaction))
+            if (treatDoerAsReceiver && !CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs, out hardlock, jobFaction, p))
             {
                 return false;
             }
             if (receiverCount == 0)
             {
-                return CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs, out hardlock, jobFaction);
+                return CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs, out hardlock, jobFaction, p);
             }
             else
             {
                 return true;
             }
         }
-        public bool Validate(ref List<string> _tooltip, List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs, out bool hardlock, Requirement extraCondition = null, int actorCountMult = 1, I_IsJobGiver jobFaction = null)
+        public bool Validate(ref List<string> _tooltip, List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs, out bool hardlock, Requirement extraCondition = null, int actorCountMult = 1, I_IsJobGiver jobFaction = null, ActionPackage p = null)
         {
             //int doercount = (extraCondition == null ? doerCount : (doerCount != -1 ? doerCount : extraCondition.doerCount));
             //int receivercount = (extraCondition == null ? receiverCount : (receiverCount != -1 ? receiverCount : extraCondition.receiverCount));
@@ -218,30 +218,30 @@ public class COM_Requirements
 
             //            Debug.Log("Command (Variant) Requirement Validating [" + String.Join(",", doerRefIDs) + "] and [" + String.Join(",", receiverRefIDs) + "]");
 
-            if (!CharaReqUtility.Validate(req_Doers, ref _tooltip, doerRefIDs, out hardlock, jobFaction))
+            if (!CharaReqUtility.Validate(req_Doers, ref _tooltip, doerRefIDs, out hardlock, jobFaction, p))
             {
                 //if (logging) _tooltip.Add("doer failed doer req validation");
                 return false;
             }
-            if (treatDoerAsReceiver && !CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs, out hardlock, jobFaction))
+            if (treatDoerAsReceiver && !CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs, out hardlock, jobFaction, p))
             {
                 //if (logging) _tooltip.Add("doer failed receiver req validation");
                 return false;
             }
-            if (receiverCount > 0 && treatReceiverAsDoer && !CharaReqUtility.Validate(req_Doers, ref _tooltip, receiverRefIDs, out hardlock, jobFaction))
+            if (receiverCount > 0 && treatReceiverAsDoer && !CharaReqUtility.Validate(req_Doers, ref _tooltip, receiverRefIDs, out hardlock, jobFaction, p))
             {
                // if (logging) _tooltip.Add("receiver failed doer req validation");
                 return false;
             }
             if (receiverCount == 0)
             {
-                bool value = CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs, out hardlock, jobFaction);
+                bool value = CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs, out hardlock, jobFaction, p);
                 //if (!value && logging) _tooltip.Add("doer failed receiver == 0 req validation");
                 return value;
             }
             else
             {
-                bool value = CharaReqUtility.Validate(req_Receivers, ref _tooltip, receiverRefIDs, out hardlock, jobFaction);
+                bool value = CharaReqUtility.Validate(req_Receivers, ref _tooltip, receiverRefIDs, out hardlock, jobFaction, p);
                 //if (!value && logging) _tooltip.Add("receiver failed receiver req validation");
                 return value;
             }

@@ -55,6 +55,13 @@ public class TryFindPartyExplorationJob : FindJobNode
                     return true;
                 }
             }
+            else if (party.Job != null && party.Job.isResting)
+            {
+                // party on break (also a scheduled MIA party - Expedition.followSchedule): the rest of the tree sandboxes
+                // the member inside the party room
+                if (s != null) s.Add($"party {party.FactionDisplayName} resting, off the exploration job ||");
+                return false;
+            }
             else if (c.FactionManager.isPartyLocked)
             {
                 Debug.LogError($"Error party locked and hasExpeditionSet[{party.hasExpeditionSet}] !isResting[{!party.Job.isResting}] !skipTryGetJob[{!party.skipTryGetJob(c)}]");

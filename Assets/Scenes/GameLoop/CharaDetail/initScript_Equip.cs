@@ -31,9 +31,10 @@ public class initScript_Equip: MonoBehaviour
         currentOutfit.SetText($"Current Outfit: {c.Wardrobe.ActiveOutfit?.DisplayName}");
 
         Utility.DestroyAllChildrenFrom(rect_wardrobes_outfits, 0);
-        foreach (var outfit in c.Wardrobe.Outfits)
+        // every key in effect, outfit or not (the reserved ones always) - an empty one can get an outfit set
+        foreach (var entry in c.Wardrobe.GetEntries())
         {
-            var box = UsePresetOutfitRect(outfit);
+            var box = UsePresetOutfitRect(entry.key);
             if (box != null)
             {
                 box.gameObject.SetActive(true);
@@ -44,18 +45,18 @@ public class initScript_Equip: MonoBehaviour
                 box.selfRect.SetParent(rect_wardrobes_outfits, false);
             }
 
-            box.InitializeData(c, outfit);
+            box.InitializeData(c, entry);
             parent.RegisterOutfit(box);
         }
     }
 
-    scr_equip_wardrobe UsePresetOutfitRect(OutfitSet o)
+    scr_equip_wardrobe UsePresetOutfitRect(string key)
     {
-        if (o.key == OutfitUtility.Key_Default) return Outfit_Default;
-        else if (o.key == OutfitUtility.Key_Home) return Outfit_Home;
-        else if (o.key == OutfitUtility.Key_HomeTemp) return Outfit_Home_Temp;
-        else if (o.key == OutfitUtility.Key_Sleep) return Outfit_Sleep;
-        else if (o.key == OutfitUtility.Key_SleepTemp) return Outfit_Sleep_Temp;
+        if (key == OutfitUtility.Key_Default) return Outfit_Default;
+        else if (key == OutfitUtility.Key_Home) return Outfit_Home;
+        else if (key == OutfitUtility.Key_HomeTemp) return Outfit_Home_Temp;
+        else if (key == OutfitUtility.Key_Sleep) return Outfit_Sleep;
+        else if (key == OutfitUtility.Key_SleepTemp) return Outfit_Sleep_Temp;
         else return null;
     }
 
@@ -64,12 +65,13 @@ public class initScript_Equip: MonoBehaviour
     {
         new scr_Menu_CharaDetail parent;
         scr_SelectableText text;
-        OutfitSet set;
-        public ButtonValidator_CanEditOutfit(scr_Menu_CharaDetail parent, scr_SelectableText text, OutfitSet set) : base(parent)
+        /// <summary> the wardrobe key to edit - its outfit may not exist yet </summary>
+        string key;
+        public ButtonValidator_CanEditOutfit(scr_Menu_CharaDetail parent, scr_SelectableText text, string key) : base(parent)
         {
             this.parent = parent;
             this.text = text;
-            this.set = set;
+            this.key = key ?? "";
         }
 
         bool? result = null;
@@ -81,13 +83,12 @@ public class initScript_Equip: MonoBehaviour
                 tooltip = "not player related cannot edit";
                 if (parent.chara != null && parent.chara.FactionManager != null)
                 {
-                    var split = set.key.Split("|");
+                    var kind = OutfitUtility.ParseKey(key, out var factionID, out var id);
 
                     var player = scr_System_CampaignManager.current.Player;
                     var fm = parent.chara.FactionManager;
 
-                    bool isHome = split.Length < 2;
-                    if (split.Length < 2 || (fm.Faction_Home != null && split[0] == fm.Faction_Home.ID) || (split[1] == "membertype_none"))
+                    if (kind != OutfitKeyKind.MemberType || (fm.Faction_Home != null && factionID == fm.Faction_Home.ID) || (id == "membertype_none"))
                     {
                         // not faction related outfit setting (could be activity outfit), allow edit if player is family member
                         // TODO in the future add a "change outfit permission"
@@ -100,19 +101,20 @@ public class initScript_Equip: MonoBehaviour
                         foreach(var w in fm.WorkFactions)
                         {
                             if (!w.isPlayerManagedFaction) continue;
-                            if (w.ID != split[0]) continue;
+                            if (w.ID != factionID) continue;
                             result = true;
                             tooltip = "workplace manager can edit uniform";
                         }
 
                         if (result.Value == false)
                         {
-                            tooltip = $"{LocalizeDictionary.QueryThenParse(split[0])} not player related cannot edit";
+                            tooltip = $"{LocalizeDictionary.QueryThenParse(factionID)} not player related cannot edit";
                         }
-                        else result = false;
                     }
                 }
             }
+            // blocked on purpose: workplace uniform editing is not implemented yet
+            result = false;
             return result.Value;
         }
 

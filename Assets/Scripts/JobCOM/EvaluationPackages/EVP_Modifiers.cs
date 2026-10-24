@@ -20,11 +20,11 @@ public partial class EvaluationPackage
                 if (rateValue == 100 || rateValue == 0) return rateValue;
                 else if (parent != null)
                 {
-                    return (int)Math.Clamp((20 + parent.bonus + bonus - (baseValue + DCMod + parent.DCMod)) * 5, 5, 95);
+                    return Math.Max(minRate, (int)Math.Clamp((20 + parent.bonus + bonus - (baseValue + DCMod + parent.DCMod)) * 5, 5, 95));
                 }
                 else
                 {
-                    return (int)Math.Clamp((20 + bonus - baseValue) * 5, 5, 95);
+                    return Math.Max(minRate, (int)Math.Clamp((20 + bonus - baseValue) * 5, 5, 95));
                     // _responseRate = (int)Math.Clamp((20 + bonus - baseValue) * 5, 5, 95);
                 }
             }
@@ -38,6 +38,8 @@ public partial class EvaluationPackage
         public bool initialized = false;
         public bool hasPermission = true;
         public int bonus = 0;
+        /// <summary> acceptance rate floor (%) from a held COM.PermissionBonus.minRate - roll outcomes 0/100 are not affected </summary>
+        public int minRate = 0;
         //public int bonusMod = 0;
         public int DCMod = 0;
         public int baseValue = 0;
@@ -73,6 +75,7 @@ public partial class EvaluationPackage
             newmod.initialized = initialized;
             newmod.hasPermission = hasPermission;
             newmod.bonus = bonus;
+            newmod.minRate = minRate;
             newmod.baseValue = baseValue;
             newmod.extraCOMTags = extraCOMTags;
             newmod.RecentRefusalPenalty = RecentRefusalPenalty;
@@ -179,6 +182,7 @@ public partial class EvaluationPackage
             {
                 this.parent.Calculate(rel);
                 hasPermission = parent.hasPermission;
+                minRate = parent.minRate;
                 bonus = 0;
                 rateValue = parent.rateValue;
                 RecentRefusalPenalty = parent.RecentRefusalPenalty;
@@ -193,6 +197,7 @@ public partial class EvaluationPackage
             var target = rel.Target;
 
             bonus = 0;
+            minRate = 0;
             hasPermission = true;
 
 
@@ -272,6 +277,28 @@ public partial class EvaluationPackage
                 else
                 {
                     hasPermission = true;
+                }
+
+                // command-defined permission bonuses (COM.Acceptance.permissionBonus)
+                if (targetCOM.AcceptanceCheck != null)
+                {
+                    foreach (var pb in targetCOM.AcceptanceCheck.permissionBonus)
+                    {
+                        if (pb == null || pb.permissions.Count < 1) continue;
+                        var held = pb.GetHeldPermission(rel);
+                        if (held != "")
+                        {
+                            AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse($"com_rel_tooltip_permission_{COM.PermissionBonus.TooltipSuffix(held)}")}]", pb.bonus);
+                            bonus += pb.bonus;
+                            minRate = Math.Max(minRate, pb.minRate);
+                        }
+                        else
+                        {
+                            // named after the last listed permission (eg. "contact not allowed" for [Follow, Intimacy_Low])
+                            AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse($"com_rel_tooltip_nopermission_{COM.PermissionBonus.TooltipSuffix(pb.permissions[pb.permissions.Count - 1])}")}]", 0);
+                            hasPermission = false;
+                        }
+                    }
                 }
             }
 
@@ -405,6 +432,10 @@ public partial class EvaluationPackage
                     AddModifier(self.RefID, "Debug Refusal", 0);
                     _responseRate = 0;
                 }
+                else if (targetCOM.AcceptanceCheck != null && targetCOM.AcceptanceCheck.alwaysAccept)
+                {
+                    _responseRate = 100;
+                }
                 else if (self.isTimeStopped)
                 {
                     //mod.Clear();
@@ -440,7 +471,7 @@ public partial class EvaluationPackage
                 else
                 {
                     int consciousPenalty = Math.Clamp((100 - (int)consciousness * 100) * 10, 0, 100);
-                    _responseRate = (int)Math.Clamp((20 + bonus - baseValue) * 5, 5, 95);
+                    _responseRate = Math.Max(minRate, (int)Math.Clamp((20 + bonus - baseValue) * 5, 5, 95));
                 }
                 rateValue = _responseRate;
             }

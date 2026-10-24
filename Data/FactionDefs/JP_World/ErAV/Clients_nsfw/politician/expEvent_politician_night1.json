@@ -296,8 +296,8 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "exp_event_erav_politician_night1": "初夜·陪睡",
-                "exp_event_erav_politician_night1_ongoing": "$names$的初夜，属于温泉旅馆别栋的寝室。",
+                "exp_event_erav_politician_night1": "第一晚·陪睡",
+                "exp_event_erav_politician_night1_ongoing": "第一晚，$names$在温泉旅馆别栋的寝室陪夜。",
                 "exp_event_erav_politician_night1_result": "$names$被议员唤进了别栋的寝室。",
                 "event_erav_politician_night1_01": "晚饭撤下之后，议员让$party.name$站到灯下，亲手把浴衣的带子缓缓解开，解到半途停下来端详片刻，再继续。\n「议员的工作，七成是应酬。应酬的秘诀，是身边永远要有件让人心平气和的东西。」\n折扇点了点自己的膝头。「陪睡，是字面意思。」",
                 "event_erav_politician_night1_02": "浴衣从肩头滑落。灯下的她无处可躲，只能任由那道目光慢慢丈量。",
@@ -306,7 +306,7 @@
                 "event_erav_politician_night1_05": "黎明前的房间里，只剩下她压抑着的轻喘。",
                 "event_erav_politician_night1_06": "天亮之前，他射在她体内，让她保持着姿势别动，自己接着睡了。\n她夹着满腹的滚烫，动也不敢动地躺到天亮。",
                 "event_erav_politician_night1_err": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。",
-                "event_erav_politician_night1": "初夜·陪睡",
+                "event_erav_politician_night1": "第一晚·陪睡",
                 "event_erav_politician_night1_writer_opening": "晚饭撤下之后，议员让$party.name$站到灯下，亲手把浴衣的带子缓缓解开，解到半途停下来端详片刻，再继续。\n「议员的工作，七成是应酬。应酬的秘诀，是身边永远要有件让人心平气和的东西。」\n折扇点了点自己的膝头。「陪睡，是字面意思。」\n浴衣从肩头滑落。灯下的她无处可躲，只能任由那道目光慢慢丈量。",
                 "event_erav_politician_night1_writer_choose_full": "继续完整流程",
                 "event_erav_politician_night1_writer_choose_first_only": "仅进行首个阶段",
@@ -320,7 +320,7 @@
                 "event_erav_politician_night1_writer_summary_failed": "本次流程未能完成。",
                 "event_erav_politician_night1_writer_summary_skipped": "已跳过本次事件。",
                 "event_erav_politician_night1_writer_summary_error": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。",
-                "event_erav_politician_night1_writer_header": "初夜·陪睡"
+                "event_erav_politician_night1_writer_header": "第一晚·陪睡"
             }
         }
     }

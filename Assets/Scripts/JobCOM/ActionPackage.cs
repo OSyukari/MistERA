@@ -42,6 +42,12 @@ public enum AP_Status
 /// </summary>
 public abstract class ActionPackage
 {
+    // Scoped to event execution; packages_previous must not retain the event owner.
+    [JsonIgnore] internal EventInstance SourceEvent;
+
+    // Explicit event package only; never inherited by child/copied APs or persisted.
+    [JsonIgnore] internal bool IgnoreStatCost = false;
+
     public AP_Status internalState = AP_Status.none;
     public bool timestopTick = false;
     string cache_refusedResponse = "";
@@ -1108,7 +1114,7 @@ public abstract class ActionPackage
     {
         //Debug.Log("ActionPackage Base Evaluate on "+DisplayName);
 
-        validVariant = targetCOM.GetValidVariant(ref this.tooltip, job, this.doer, this.receiver, false, this.job is Job_Furniture ? (int)(this.job as Job_Furniture).ParentInstance.FurnitureBase.furnitureSize : 1, this.Master);
+        validVariant = targetCOM.GetValidVariant(ref this.tooltip, job, this.doer, this.receiver, false, this.job is Job_Furniture ? (int)(this.job as Job_Furniture).ParentInstance.FurnitureBase.furnitureSize : 1, this.Master, this);
 
         if (validVariant >= 0)
         {
@@ -1725,7 +1731,9 @@ public abstract class ActionPackage
 
         //desc.message_excludeRelated = desc.message;
         //desc.LoadPortraits(this.actorRefs, true);
-        m.AddMessage_Checks(desc, logging ? RecordingRoom : null);
+        // results section: printed after this update's begin texts / kojo, so a package beginning and completing in
+        // the same update (1 minute) still reads acceptance -> begin -> result
+        m.AddMessage_Results(desc, logging ? RecordingRoom : null);
         if (!logging) packageStateChanged = true;
     }
 
@@ -2492,8 +2500,11 @@ public abstract class ActionPackage
 
             var user = scr_System_CampaignManager.current.FindInstanceByID(kv.Key);
             if (user == null) continue;
-            if ((req.cost_EN != 0 && user.Stats.Energy.Value < req.cost_EN) || (req.cost_ST != 0 && user.Stats.Stamina.Value < req.cost_ST)) continue;
-            CharaReqUtility.ApplyCost(req, user, null);
+            if (!IgnoreStatCost)
+            {
+                if ((req.cost_EN != 0 && user.Stats.Energy.Value < req.cost_EN) || (req.cost_ST != 0 && user.Stats.Stamina.Value < req.cost_ST)) continue;
+                CharaReqUtility.ApplyCost(req, user, null);
+            }
             paidAmounts.Add(kv.Value);
         }
 
@@ -3251,6 +3262,7 @@ public abstract class ActionPackage
         var copy = CopyPackage();
         if (copy != null && copy != this)
         {
+            copy.IgnoreStatCost = false;
             copy.roomRefOverride = roomRefOverride;
             copy._room = null;
         }

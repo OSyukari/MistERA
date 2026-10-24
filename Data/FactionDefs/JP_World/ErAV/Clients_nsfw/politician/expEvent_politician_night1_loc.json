@@ -4,7 +4,7 @@
         "Entries": {
             "en-us": {
                 "exp_event_erav_politician_night1": "First Night: Shared Bed",
-                "exp_event_erav_politician_night1_ongoing": "$names$'s first night belongs to the ryokan villa's bedroom.",
+                "exp_event_erav_politician_night1_ongoing": "On the first night, $names$ keeps the councillor company in the ryokan villa's bedroom.",
                 "exp_event_erav_politician_night1_result": "The councillor summons $names$ into the villa's bedroom.",
                 "event_erav_politician_night1_01": "After dinner is cleared away, the councillor has $party.name$ stand under the lamp and undoes her yukata's sash himself, slowly, pausing halfway to take in the view before continuing.\n\"A councillor's work is seven parts socializing. The secret of socializing is to always keep something soothing at your side.\"\nThe folding fan taps his own knee. \"Sharing a bed - literally.\"",
                 "event_erav_politician_night1_02": "The yukata slips from her shoulders. Caught in the lamplight, with nowhere to hide, she can only let that gaze measure her at its leisure.",

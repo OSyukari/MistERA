@@ -508,8 +508,8 @@ public partial class EvaluationPackage : I_ResultStorage
         }
         copy.Calculate(rel);
 
-
-        copy.bonus = 0;
+        // copy.bonus already holds Calculate's relationship/state bonus (obedience, mood, permissions...) - the extras
+        // below add onto it. (A child COM's copy has its own bonus zeroed by Calculate; the parent's is read via RateValue.)
 
         if (Package.targetCOM.TimeScale > Package.Duration + 1)
         {
@@ -577,12 +577,14 @@ public partial class EvaluationPackage : I_ResultStorage
             {
                 this.modifiers.MergeModifiers(m1);
                 responseRate = m1.RateValue;
+                responseRateFloor = m1.minRate;
                 RecentRefusalPenalty = m1.RecentRefusalPenalty;
             }
             else
             {
                 this.modifiers.MergeModifiers(m2);
                 responseRate = m2.RateValue;
+                responseRateFloor = m2.minRate;
                 RecentRefusalPenalty = m2.RecentRefusalPenalty;
             }
 
@@ -597,7 +599,20 @@ public partial class EvaluationPackage : I_ResultStorage
         else
         {
             responseRate = 100;
+            responseRateFloor = 0;
         }
+    }
+
+    /// <summary>
+    /// Acceptance floor (%) of the willingness picked for the request / response rate (Modifiers.minRate, from a held
+    /// COM.PermissionBonus.minRate). Re-applied at roll time after every other modifier (eg. the LLM roleplay one).
+    /// </summary>
+    int requestRateFloor = 0, responseRateFloor = 0;
+
+    /// <summary> rate with the floor applied last - 0/100 gates never move </summary>
+    static int ApplyRateFloor(int rate, int floor)
+    {
+        return rate <= 0 || rate >= 100 ? rate : Math.Max(rate, floor);
     }
 
     /// <summary>
@@ -623,11 +638,13 @@ public partial class EvaluationPackage : I_ResultStorage
             {
                 this.modifiers.MergeModifiers(m1);
                 requestRate = m1.RateValue;
+                requestRateFloor = m1.minRate;
                 RecentRefusalPenalty = m1.RecentRefusalPenalty;
             }
             else
             {
                 requestRate = 100;
+                requestRateFloor = 0;
                 RecentRefusalPenalty = 0;
             }
         }
@@ -635,12 +652,14 @@ public partial class EvaluationPackage : I_ResultStorage
         {
             this.modifiers.MergeModifiers(m1);
             requestRate = m1.RateValue;
+            requestRateFloor = m1.minRate;
             RecentRefusalPenalty = m1.RecentRefusalPenalty;
         }
         else
         {
             this.modifiers.MergeModifiers(m2);
             requestRate = m2.RateValue;
+            requestRateFloor = m2.minRate;
             RecentRefusalPenalty = m2.RecentRefusalPenalty;
         }
 
@@ -899,7 +918,7 @@ public partial class EvaluationPackage : I_ResultStorage
 
         // RoleplayModifier mode: the roleplay acceptance bonus, never moving a 0/100 gate. A self-acting
         // doer's automatic 100 is their own will, not a game gate.
-        int rate = LLMOutcomeRules.ApplyACModifier(requestRate, epjson, masterOrdered || requestRate <= 0);
+        int rate = ApplyRateFloor(LLMOutcomeRules.ApplyACModifier(requestRate, epjson, masterOrdered || requestRate <= 0), requestRateFloor);
         int reverseRate = 20 - (int)(rate / 5);
 
         if (rate <= 0) returnVal = false;
@@ -969,7 +988,7 @@ public partial class EvaluationPackage : I_ResultStorage
         else
         {
             // RoleplayModifier mode: the roleplay acceptance bonus, never moving a 0/100 gate
-            int rate = LLMOutcomeRules.ApplyACModifier(responseRate, epjson);
+            int rate = ApplyRateFloor(LLMOutcomeRules.ApplyACModifier(responseRate, epjson), responseRateFloor);
 
             if (scr_System_CampaignManager.current.DeterministicRolls) diceroll = rate >= scr_System_CampaignManager.current.DeterministicThreshold ? 20 : 1;
 

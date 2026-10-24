@@ -173,6 +173,40 @@ public class Expedition
         return ActiveHours == null || ActiveHours.Count == 0 || ActiveHours.Contains(hour);
     }
 
+    /// <summary>
+    /// Non-player (MIA) party only: the party keeps a daily schedule like a player party - it rests (members leave the
+    /// job for meals / sleep / the room's furniture) during mealHours, its sleep window and outside ActiveHours. Hours
+    /// come from ActiveHours / mealHours when set, else the owner (kidnapper) faction. False = members only leave the
+    /// job when exhausted (hazard MIA: they come back starving and sleep deprived).
+    /// </summary>
+    public bool followSchedule = false;
+    /// <summary> followSchedule only: meal hours (world time) of the party. Empty = the owner faction's mealHours. </summary>
+    public List<int> mealHours = new List<int>();
+    /// <summary>
+    /// Non-player (MIA) party only: furniture IDs added to the party room on top of its camp when the expedition starts,
+    /// removed again when the expedition is replaced or cleared (Job_Expedition.UndoExpeditionAdditions). Furniture
+    /// without commands is rejected.
+    /// </summary>
+    public List<string> campFurniture = new List<string>();
+    /// <summary>
+    /// Non-player (MIA) party only: items added to the party inventory when the expedition starts (e.g. one meal - a
+    /// non-player inventory hands out copies, so one is enough), removed again with campFurniture. Lootable meanwhile
+    /// (rescue FactionExchangeInventory). Use item IDs nothing else stocks, so the removal only takes these.
+    /// </summary>
+    public List<ItemEntry> provisions = new List<ItemEntry>();
+
+    [JsonIgnore] public bool HasActiveHours { get { return ActiveHours != null && ActiveHours.Count > 0; } }
+    [JsonIgnore] public bool HasMealHours { get { return mealHours != null && mealHours.Count > 0; } }
+
+    /// <summary> First hour of the ActiveHours block (the hour before it is inactive); -1 = no ActiveHours or no gap. </summary>
+    public int ActiveStartHour()
+    {
+        if (!HasActiveHours) return -1;
+        for (int h = 0; h < 24; h++)
+            if (ActiveHours.Contains(h) && !ActiveHours.Contains((h + 23) % 24)) return h;
+        return -1;
+    }
+
     public List<string> keywords = new List<string>();
     public List<string> FeatureKeywords = new List<string>();
 

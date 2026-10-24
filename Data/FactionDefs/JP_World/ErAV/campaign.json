@@ -151,7 +151,7 @@
             { "memberTypeA": "membertype_erav_miyama_household_actor", "memberTypeB": "membertype_family_leader", "relationshipID": "relationship_family_guardian" },
             { "memberTypeA": "membertype_erav_miyama_household_actor", "memberTypeB": "membertype_family_member", "relationshipID": "relationship_family" }
         ],
-            "clienteleDefs": [
+    "clienteleDefs": [
         {
             "_comment": "AV buyers - every evaluated recording (item_records + its evaluator tag, see ItemComponent_Records.GetTags). Segments split the audience by genre taste; a tape only sells to segments with affinity for its evaluator.",
             "ID": "salesclientele_av",
@@ -190,6 +190,8 @@
             {
                 "_comment": "Kanon/Kiryu-gumi joint-guarantor debt (Opening_ErAV) - flat Y450,000/month interest, compounds every month regardless of payment, principal payable at the player's own pace (no auto-charged installment). onFailedEventID overrides the generic OnDebtFailed notice: a failed monthly collection starts erav_ntr_punishment_kick, a silent event that only launches the 'erav_ntr_punishment' chain (delayed a few minutes) so the interactive selection event doesn't interrupt other events mid payment-resolve - see Data/FactionDefs/JP_World/ErAV/Events/ErAV_NTR_Punishment.json.",
                 "ID": "debtclass_erav_kanon",
+                "_comment_onPaid": "onPaidEventID overrides the generic OnDebtPaid: erav_debt_paid_kick re-prints its notice, does the repayment bookkeeping (Docs/Plan_ErAV_Quests.md) and starts Kanon's delayed comment chain - see Events/ErAV_DebtRepayment.json.",
+                "onPaidEventID": "erav_debt_paid_kick",
                 "onFailedEventID": "erav_ntr_punishment_kick",
                 "debtName": "debtname_erav_kanon",
                 "interestRatePercent": 0,

@@ -8,12 +8,13 @@ public static class CharaReqUtility
     /// <summary>
     /// jobFaction: the faction/party owning the job being validated (Job.FactionOwner). Only COM validation
     /// passes it; requireJobFaction and the JobFaction membertype scope fail without it.
+    /// p only exempts explicit event AP stat-cost affordability; all other requirements still apply.
     /// </summary>
-    public static bool Validate(CharaReq q, ref List<string> _tooltip, Character_Trainable c, out bool hardlock, I_IsJobGiver jobFaction = null)
+    public static bool Validate(CharaReq q, ref List<string> _tooltip, Character_Trainable c, out bool hardlock, I_IsJobGiver jobFaction = null, ActionPackage p = null)
     {
         bool logging = _tooltip != null && !scr_UpdateHandler.current.Updating;
         hardlock = false;
-        if (q.cost_EN != 0 && (c.Stats.Energy.Value - q.cost_EN) < 0)
+        if (p?.IgnoreStatCost != true && q.cost_EN != 0 && (c.Stats.Energy.Value - q.cost_EN) < 0)
         {
             if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_missingCost")
                                         .Replace("$name$", c.FirstName)
@@ -23,7 +24,7 @@ public static class CharaReqUtility
             return false;
         }
 
-        if (q.cost_ST != 0 && (c.Stats.Stamina.Value - q.cost_ST) < 0)
+        if (p?.IgnoreStatCost != true && q.cost_ST != 0 && (c.Stats.Stamina.Value - q.cost_ST) < 0)
         {
             if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_missingCost")
                                         .Replace("$name$", c.FirstName)
@@ -310,20 +311,20 @@ public static class CharaReqUtility
         return true;
     }
 
-    public static bool Validate(CharaReq q, ref List<string> _tooltip, List<Character_Trainable> cs, out bool hardlock, I_IsJobGiver jobFaction = null)
+    public static bool Validate(CharaReq q, ref List<string> _tooltip, List<Character_Trainable> cs, out bool hardlock, I_IsJobGiver jobFaction = null, ActionPackage p = null)
     {
         hardlock = false;
-        foreach (var c in cs) if (!Validate(q, ref _tooltip, c, out hardlock, jobFaction)) return false;
+        foreach (var c in cs) if (!Validate(q, ref _tooltip, c, out hardlock, jobFaction, p)) return false;
         return true;
     }
-    public static bool Validate(CharaReq q, ref List<string> _tooltip, List<int> actorRefIDs, out bool hardlock, I_IsJobGiver jobFaction = null)
+    public static bool Validate(CharaReq q, ref List<string> _tooltip, List<int> actorRefIDs, out bool hardlock, I_IsJobGiver jobFaction = null, ActionPackage p = null)
     {
         var list = new List<Character_Trainable>(actorRefIDs.Count);
         foreach (var i in actorRefIDs)
         {
             list.Add(scr_System_CampaignManager.current.FindInstanceByID(i));
         }
-        return Validate(q,ref _tooltip, list, out hardlock, jobFaction);
+        return Validate(q,ref _tooltip, list, out hardlock, jobFaction, p);
     }
 
     /// <summary>
@@ -373,7 +374,8 @@ public static class CharaReqUtility
     public static void ApplyCost(CharaReq q, EvaluationPackage m, Character_Trainable c, COM com, bool isDoer, MessageCollect msg)
     //public void ApplyCost(ActionPackage m, Character_Trainable c ,COM com)
     {
-        if (c == null) return;
+        // Only standard AP stat costs (including interaction energy); never undo mechanical aftermath.
+        if (c == null || m?.Package?.IgnoreStatCost == true) return;
 
         //Debug.Log("ApplyCOST for com " + m.targetCOM.DisplayName(m.VariantID) + " on chara " + c.FirstName);
         if (q != null && q.cost_EN != 0f)

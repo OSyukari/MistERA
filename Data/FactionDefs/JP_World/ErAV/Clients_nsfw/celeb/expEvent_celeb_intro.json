@@ -1,0 +1,1119 @@
+{
+    "_doc": "Celeb intro: stable singleton client/support_a/support_b loans; enemy is non-AP aggregate only. Preparation restores clients once, never the captive. Full action branches gate actual executor success before narrative; a numeric-only AP batch preserves narration and explicitly flushes EXP after each AP block before its jump. Skip reuses those same branch option Results in identical order, in one silent EXP batch, with a separate failure gate per node. Both routes retain the cast and resolve through completed once; failure redresses/releases partial loans and flushes remaining earned EXP once. Existing narrative/localization retained; no new scene prose.",
+    "Events": {
+        "list": [
+            {
+                "ID": "event_erav_celeb_intro",
+                "showEventHeader": "event_erav_celeb_intro_writer_header",
+                "SelfValidator": {
+                    "chara_conditions": [
+                        {
+                            "parameters": ["exists"]
+                        }
+                    ]
+                },
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "start",
+                        "options": [
+                            {
+                                "option": "_start",
+                                "Results": [
+                                    { "Type": "RequestFallbackWorker", "arguments": ["client", "ErAV_KiryuGumi_Office", "membertype_erav_client_celeb", "erav_client_celeb", "1", "true"] },
+                                    { "Type": "RequestFallbackWorker", "arguments": ["support_a", "ErAV_KiryuGumi_Office", "membertype_erav_client_celeb", "erav_client_celeb", "1", "true"] },
+                                    { "Type": "RequestFallbackWorker", "arguments": ["support_b", "ErAV_KiryuGumi_Office", "membertype_erav_client_celeb", "erav_client_celeb", "1", "true"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "prepare_cast"] }
+                                ],
+                                "target_chara_conditions": {
+                                    "party": [
+                                        {
+                                            "parameters": ["exists"]
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "option": "_error",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "prepare_cast",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "CopyTargets", "arguments": ["client", "enemy"] },
+                                    { "Type": "CopyTargets", "arguments": ["support_a", "enemy", "add"] },
+                                    { "Type": "CopyTargets", "arguments": ["support_b", "enemy", "add"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "restore_cast"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "restore_cast",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "FullRecovery", "arguments": ["enemy"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "move_cast"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "move_cast",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "MoveToTargetRoom", "arguments": ["enemy", "party"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "scene"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "scene",
+                        "UISpec": {
+                            "portraitRefKey": "party",
+                            "selfTags": ["serious"]
+                        },
+                        "line": "event_erav_celeb_intro_writer_opening",
+                        "nextEntryLabel": "scene_message"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "scene_message",
+                        "UISpec": {
+                            "portraitRefKey": "party",
+                            "selfTags": ["fear", "sad"]
+                        },
+                        "line": "event_erav_celeb_intro_writer_intro_01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "choice",
+                        "question": "event_erav_celeb_intro_writer_question",
+                        "options": [
+                            {
+                                "option": "event_erav_celeb_intro_writer_choose_full",
+                                "isDefaultAccept": true,
+                                "Results": [
+                                    { "Type": "BeginAPExperienceBatch" },
+                                    { "Type": "JumpToLabel", "arguments": ["", "full_intro_02"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "fast_forward",
+                        "line": "",
+                        "Results": [
+                            { "Type": "BeginEntryResultsSilent" }
+                        ],
+                        "nextEntryLabel": "skip_01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "skip_01",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteEntryResultsSilent", "arguments": ["", "full_intro_05_execute", "_execute"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "skip_02"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "skip_failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "skip_02",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteEntryResultsSilent", "arguments": ["", "p1_oral_01_execute", "_execute"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "skip_03"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "skip_failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "skip_03",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteEntryResultsSilent", "arguments": ["", "p1_oral_02_execute", "_execute"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "skip_04"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "skip_failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "skip_04",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteEntryResultsSilent", "arguments": ["", "p1_oral_03_execute", "_execute"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "skip_05"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "skip_failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "skip_05",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteEntryResultsSilent", "arguments": ["", "p2_02_execute", "_execute"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "skip_06"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "skip_failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "skip_06",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteEntryResultsSilent", "arguments": ["", "p2_03_execute", "_execute"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "skip_07"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "skip_failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "skip_07",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteEntryResultsSilent", "arguments": ["", "p2_04_execute", "_execute"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "skip_08"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "skip_failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "skip_08",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteEntryResultsSilent", "arguments": ["", "p2_lead_finish_execute", "_execute"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "skip_09"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "skip_failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "skip_09",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteEntryResultsSilent", "arguments": ["", "p2_support_a_01_execute", "_execute"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "skip_10"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "skip_failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "skip_10",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteEntryResultsSilent", "arguments": ["", "p2_support_a_02_execute", "_execute"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "skip_11"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "skip_failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "skip_11",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteEntryResultsSilent", "arguments": ["", "p2_support_a_03_execute", "_execute"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "skip_12"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "skip_failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "skip_12",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteEntryResultsSilent", "arguments": ["", "p2_support_a_finish_execute", "_execute"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "skip_13"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "skip_failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "skip_13",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteEntryResultsSilent", "arguments": ["", "p2_support_b_01_execute", "_execute"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "skip_14"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "skip_failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "skip_14",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteEntryResultsSilent", "arguments": ["", "p2_support_b_02_execute", "_execute"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "skip_15"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "skip_failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "skip_15",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteEntryResultsSilent", "arguments": ["", "p2_support_b_03_execute", "_execute"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "skip_16"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "skip_failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "skip_16",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteEntryResultsSilent", "arguments": ["", "p2_05_execute", "_execute"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "skip_finish"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "skip_failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "skip_finish",
+                        "line": "",
+                        "Results": [
+                            { "Type": "EndEntryResultsSilent" }
+                        ],
+                        "nextEntryLabel": "completed"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "skip_failed",
+                        "line": "",
+                        "Results": [
+                            { "Type": "EndEntryResultsSilent" }
+                        ],
+                        "nextEntryLabel": "error"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "full_intro_02",
+                        "UISpec": {
+                            "portraitRefKey": "client",
+                            "selfTags": ["happy"]
+                        },
+                        "line": "event_erav_celeb_intro_writer_intro_02",
+                        "nextEntryLabel": "full_intro_03"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "full_intro_03",
+                        "UISpec": {
+                            "portraitRefKey": "party",
+                            "selfTags": ["sad"],
+                            "targetTags": ["client"]
+                        },
+                        "line": "event_erav_celeb_intro_writer_intro_03",
+                        "nextEntryLabel": "full_intro_04"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "full_intro_04",
+                        "UISpec": {
+                            "portraitRefKey": "party",
+                            "selfTags": ["fear", "sad"],
+                            "targetTags": ["client"]
+                        },
+                        "line": "event_erav_celeb_intro_writer_intro_04",
+                        "nextEntryLabel": "full_intro_05_execute"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "full_intro_05_execute",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "Undress", "arguments": ["party", "None", "SeeThrough", "true"] },
+                                    { "Type": "Undress", "arguments": ["enemy", "None", "SeeThrough", "true"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "full_intro_05"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "full_intro_05",
+                        "UISpec": {
+                            "portraitRefKey": "party",
+                            "selfTags": ["fear", "sad"],
+                            "targetTags": ["client"]
+                        },
+                        "line": "event_erav_celeb_intro_writer_intro_05",
+                        "nextEntryLabel": "p1_oral_01_execute"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "p1_oral_01_execute",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["client", "party", "com_sex_oral_P_Force", "1"] },
+                                    { "Type": "FlushMessageExpAll" },
+                                    { "Type": "JumpToLabel", "arguments": ["", "p1_oral_01"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "p1_oral_01",
+                        "UISpec": {
+                            "portraitRefKey": "party",
+                            "selfTags": ["sex", "receiver", "oral_sex", "fear", "sad"],
+                            "targetTags": ["client"]
+                        },
+                        "line": "event_erav_celeb_intro_writer_p1_oral_01",
+                        "nextEntryLabel": "p1_oral_02_execute"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "p1_oral_02_execute",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["client", "party", "com_sex_oral_P_Force", "3"] },
+                                    { "Type": "FlushMessageExpAll" },
+                                    { "Type": "JumpToLabel", "arguments": ["", "p1_oral_02"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "p1_oral_02",
+                        "UISpec": {
+                            "portraitRefKey": "party",
+                            "selfTags": ["sex", "receiver", "oral_sex", "sad"],
+                            "targetTags": ["client"]
+                        },
+                        "line": "event_erav_celeb_intro_writer_p1_oral_02",
+                        "nextEntryLabel": "p1_oral_03_execute"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "p1_oral_03_execute",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteSexAPOnSingleCharaTillClimax", "arguments": ["client", "party", "com_sex_oral_P_Force", "100", "client"] },
+                                    { "Type": "FlushMessageExpAll" },
+                                    { "Type": "JumpToLabel", "arguments": ["", "p1_oral_03"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "p1_oral_03",
+                        "UISpec": {
+                            "portraitRefKey": "party",
+                            "selfTags": ["sex", "receiver", "oral_sex", "cum", "sad"],
+                            "targetTags": ["client"]
+                        },
+                        "line": "event_erav_celeb_intro_writer_p1_oral_03",
+                        "nextEntryLabel": "p1_outcome"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "p1_outcome",
+                        "options": [
+                            {
+                                "option": "_party_climaxed",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["party_climaxed", "true"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "p1_climaxed"] }
+                                ]
+                            },
+                            {
+                                "option": "_party_not_climaxed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "p1_after"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "p1_climaxed",
+                        "UISpec": {
+                            "portraitRefKey": "party",
+                            "selfTags": ["sex", "receiver", "oral_sex", "cum", "sad", "relaxed"],
+                            "targetTags": ["client"]
+                        },
+                        "line": "event_erav_celeb_intro_writer_p1_climaxed",
+                        "nextEntryLabel": "p1_after"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "p1_after",
+                        "UISpec": {
+                            "portraitRefKey": "party",
+                            "selfTags": ["sex", "cum", "sad"],
+                            "targetTags": ["client"]
+                        },
+                        "line": "event_erav_celeb_intro_writer_p1_after",
+                        "nextEntryLabel": "p2_01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "p2_01",
+                        "UISpec": {
+                            "portraitRefKey": "party",
+                            "selfTags": ["sex", "receiver", "doggy", "fear", "sad"],
+                            "targetTags": ["client"]
+                        },
+                        "line": "event_erav_celeb_intro_writer_p2_01",
+                        "nextEntryLabel": "p2_02_execute"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "p2_02_execute",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["client", "party", "com_sex_P_doggy", "1"] },
+                                    { "Type": "FlushMessageExpAll" },
+                                    { "Type": "JumpToLabel", "arguments": ["", "p2_02"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "p2_02",
+                        "UISpec": {
+                            "portraitRefKey": "party",
+                            "selfTags": ["sex", "receiver", "doggy", "fear", "sad"],
+                            "targetTags": ["client"]
+                        },
+                        "line": "event_erav_celeb_intro_writer_p2_02",
+                        "nextEntryLabel": "p2_03_execute"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "p2_03_execute",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["client", "party", "com_sex_P_doggy", "3"] },
+                                    { "Type": "FlushMessageExpAll" },
+                                    { "Type": "JumpToLabel", "arguments": ["", "p2_03"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "p2_03",
+                        "UISpec": {
+                            "portraitRefKey": "party",
+                            "selfTags": ["sex", "receiver", "doggy", "sad"],
+                            "targetTags": ["client"]
+                        },
+                        "line": "event_erav_celeb_intro_writer_p2_03",
+                        "nextEntryLabel": "p2_04_execute"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "p2_04_execute",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["client", "party", "com_sex_P_doggy", "5"] },
+                                    { "Type": "FlushMessageExpAll" },
+                                    { "Type": "JumpToLabel", "arguments": ["", "p2_04"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "p2_04",
+                        "UISpec": {
+                            "portraitRefKey": "party",
+                            "selfTags": ["sex", "receiver", "doggy", "sad", "relaxed"],
+                            "targetTags": ["client"]
+                        },
+                        "line": "event_erav_celeb_intro_writer_p2_04",
+                        "nextEntryLabel": "p2_lead_finish_execute"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "p2_lead_finish_execute",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteSexAPOnSingleCharaTillClimax", "arguments": ["client", "party", "com_sex_P_doggy", "100", "client"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "p2_lead_finish"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "p2_lead_finish",
+                        "line": "",
+                        "nextEntryLabel": "p2_support_a_01_execute"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "p2_support_a_01_execute",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["support_a", "party", "com_sex_P_doggy", "1"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "p2_support_a_01"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "p2_support_a_01",
+                        "line": "",
+                        "nextEntryLabel": "p2_support_a_02_execute"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "p2_support_a_02_execute",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["support_a", "party", "com_sex_P_doggy", "3"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "p2_support_a_02"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "p2_support_a_02",
+                        "line": "",
+                        "nextEntryLabel": "p2_support_a_03_execute"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "p2_support_a_03_execute",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["support_a", "party", "com_sex_P_doggy", "5"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "p2_support_a_03"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "p2_support_a_03",
+                        "line": "",
+                        "nextEntryLabel": "p2_support_a_finish_execute"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "p2_support_a_finish_execute",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteSexAPOnSingleCharaTillClimax", "arguments": ["support_a", "party", "com_sex_P_doggy", "100", "support_a"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "p2_support_a_finish"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "p2_support_a_finish",
+                        "line": "",
+                        "nextEntryLabel": "p2_support_b_01_execute"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "p2_support_b_01_execute",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["support_b", "party", "com_sex_P_doggy", "1"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "p2_support_b_01"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "p2_support_b_01",
+                        "line": "",
+                        "nextEntryLabel": "p2_support_b_02_execute"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "p2_support_b_02_execute",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["support_b", "party", "com_sex_P_doggy", "3"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "p2_support_b_02"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "p2_support_b_02",
+                        "line": "",
+                        "nextEntryLabel": "p2_support_b_03_execute"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "p2_support_b_03_execute",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["support_b", "party", "com_sex_P_doggy", "5"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "p2_support_b_03"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "p2_support_b_03",
+                        "line": "",
+                        "nextEntryLabel": "p2_05_execute"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "p2_05_execute",
+                        "options": [
+                            {
+                                "option": "_execute",
+                                "Results": [
+                                    { "Type": "ExecuteSexAPOnSingleCharaTillClimax", "arguments": ["support_b", "party", "com_sex_P_doggy", "100", "support_b"] },
+                                    { "Type": "FlushMessageExpAll" },
+                                    { "Type": "JumpToLabel", "arguments": ["", "p2_05"] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "p2_05",
+                        "UISpec": {
+                            "portraitRefKey": "party",
+                            "selfTags": ["sex", "receiver", "doggy", "cum", "sad", "relaxed"],
+                            "targetTags": ["client"]
+                        },
+                        "line": "event_erav_celeb_intro_writer_p2_05",
+                        "nextEntryLabel": "p2_outcome"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "p2_outcome",
+                        "options": [
+                            {
+                                "option": "_party_climaxed",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["party_climaxed", "true"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "p2_climaxed"] }
+                                ]
+                            },
+                            {
+                                "option": "_party_not_climaxed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "p2_after"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "p2_climaxed",
+                        "UISpec": {
+                            "portraitRefKey": "party",
+                            "selfTags": ["sex", "receiver", "doggy", "cum", "sad", "relaxed"],
+                            "targetTags": ["client"]
+                        },
+                        "line": "event_erav_celeb_intro_writer_p2_climaxed",
+                        "nextEntryLabel": "p2_after"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "p2_after",
+                        "UISpec": {
+                            "portraitRefKey": "party",
+                            "selfTags": ["sex", "cum", "sad"],
+                            "targetTags": ["client"]
+                        },
+                        "line": "event_erav_celeb_intro_writer_p2_after",
+                        "nextEntryLabel": "completed"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "completed",
+                        "line": "event_erav_celeb_intro_writer_summary_completed",
+                        "expeditionSummary": "event_erav_celeb_intro_log_completed",
+                        "Results": [
+                            { "Type": "EndAPExperienceBatch" },
+                            { "Type": "Redress", "arguments": ["party"] },
+                            { "Type": "Redress", "arguments": ["enemy"] },
+                            { "Type": "AddToPartyHidden", "arguments": ["enemy", "party"] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "error",
+                        "line": "event_erav_celeb_intro_writer_summary_error",
+                        "expeditionSummary": "event_erav_celeb_intro_log_error",
+                        "Results": [
+                            { "Type": "EndAPExperienceBatch" },
+                            { "Type": "FlushMessageExpAll" },
+                            { "Type": "Redress", "arguments": ["party"] },
+                            { "Type": "Redress", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "Redress", "arguments": ["support_a"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support_a"] },
+                            { "Type": "Redress", "arguments": ["support_b"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support_b"] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
+                        ],
+                        "isLast": true
+                    }
+                ],
+                "TargetValidators": [
+                    {
+                        "refKeys": ["victim_check"],
+                        "baseScope": "ScopeWithinRef",
+                        "extraScopeArguments": ["party"],
+                        "minTargetCount": 1,
+                        "maxTargetCount": 1
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "event_erav_celeb_intro_writer_header": "名人客户：接风宴",
+                "event_erav_celeb_intro_writer_opening": "客房电梯直达顶层。$party.name$握着门卡在套房门前站了片刻，门缝里透出酒气和笑声。今晚的客人已经在里面等酒了。",
+                "event_erav_celeb_intro_writer_intro_01": "手机在掌心震动，事务所发来的短信只有两行。\n「这几天，你就是他们的专属导游。他们要什么，你就给什么。利息能不能抵掉，看你伺候得开不开心。」\n她攥紧门卡，指节泛白，还是抬手刷开了房门。",
+                "event_erav_celeb_intro_writer_question": "今晚的安排就在门后。要怎么做？",
+                "event_erav_celeb_intro_writer_choose_full": "查看全程",
+                "event_erav_celeb_intro_writer_choose_skip": "跳过全程",
+                "event_erav_celeb_intro_writer_intro_02": "房门在身后合拢。宽敞的客厅里酒气扑面，矮桌上摆满酒瓶和下酒菜，三个白人男子陷在沙发里，坐姿松散，眼神毫不客气。\n领队的男人吹了声口哨，拍了拍身边的空位。\n「Hey, baby! Come here!」",
+                "event_erav_celeb_intro_writer_intro_03": "$party.name$在沙发前的地毯上跪坐下来，深深低头，用日语报上名字请多关照。\n听不懂的人互相使了使眼色，哄笑开来。领队伸手捏住她的下巴，把她的脸抬向自己。\n「You know why you're here, right?」\n她听不全，只能胡乱点头。「嗨…嗨…」",
+                "event_erav_celeb_intro_writer_intro_04": "「Good girl.」那只手从肩膀滑到背脊，像安抚宠物般来回抚弄。\n旁边的人抓住她的手腕，拉向自己的胯间。「Touch it.」\n她抽手的动作停在半途，视线慌张地瞟向房门。「No…I'm guide…」\n「Girlfriend, right?」另个人凑到耳边，手从袖口钻了进去。「Special girlfriend.」\n她挤出带着哭腔的几个音节。「Please…gentle…」",
+                "event_erav_celeb_intro_writer_intro_05": "「Sure, baby. We'll be gentle.」领队笑着扯开她颈间的丝巾，衬衫的扣子被逐颗解开，白色蕾丝内衣露出全貌。\n指头勾住罩杯边缘往下拽，柔软的乳头弹了出来，在冷气里挺立。她抬手要遮，手腕已经被反剪到身后。\n领队低头含住乳头，湿热的口腔裹住顶端。\n「呃…」闷哼从压紧的喉咙里漏出来。背脊绷直的反应只换来更响的哄笑。",
+                "event_erav_celeb_intro_writer_p1_oral_01": "领队起身褪下裤子，肉棒弹出来抵到她脸前，充血的龟头泛着深红。\n「Open your mouth.」\n$party.name$抖着张开嘴，舌尖刚探出来，顶上来的腰身就把龟头挤进了嘴里。",
+                "event_erav_celeb_intro_writer_p1_oral_02": "他的手指插进她的头发，腰开始前后抽动，每回都把肉棒送到喉咙深处。\n她只能拼命用鼻子换气，口水顺着嘴角淌下来，滴在膝头的地毯上。",
+                "event_erav_celeb_intro_writer_p1_oral_03": "抽动的节奏乱起来。他按住她的后脑整根没入，龟头抵在喉咙深处剧烈地跳动。\n滚烫的精液灌进食道。她的头被按住，只能逐口吞咽。",
+                "event_erav_celeb_intro_writer_p1_climaxed": "喉咙深处被灌满的同时，她自己的身体也绷直了。被当作玩具使用到底，压在舌根下的呜咽走了调，大腿内侧洇出濡湿的痕迹。",
+                "event_erav_celeb_intro_writer_p1_after": "「Good swallow.」抽出去的肉棒在她脸上拍了拍，示意她张嘴展示。她的嘴角挂着银丝，眼角的红还没有退。\n没等她咽下喘息，身体已经被按得趴伏到床上，腰从下面被架起。",
+                "event_erav_celeb_intro_writer_p2_01": "身后的人用膝盖分开她的腿，指头拨开私处的缝隙。那里早被先前的侍奉濡湿，指腹压下去就是黏腻的水声。\n「She's already wet!」哄笑从头顶罩下来。\n她的脸涨红，张了张嘴，辩解的话还没成形，冲击已经先到了。",
+                "event_erav_celeb_intro_writer_p2_02": "粗大的肉棒抵住湿透的缝隙，整根顶入到最深处才停住。\n「啊——」变调的叫声撞在墙壁上。",
+                "event_erav_celeb_intro_writer_p2_03": "撞击开始了。腰胯每回都把她整个人向前顶，沉闷的肉体拍击声在房间里连成串。她想并拢双腿，膝盖刚动了动就被钳住腰的手按回原位。\n她的指头抠紧床单，指甲折断也毫无察觉。",
+                "event_erav_celeb_intro_writer_p2_04": "换人的间隙，她被翻过身，又被摆回跪趴的姿势。有人在她的脸上蹭弄，有人接着从背后贯穿；围观的举着酒杯评点，杯沿相碰。\n到后来，她只剩压不成调的喘息，和随撞击前后摇晃的身体。",
+                "event_erav_celeb_intro_writer_p2_05": "最后的人咬着牙把腰抵到最深，滚烫的精液灌进最深处。\n她的脚趾蜷紧，整个人在撞击里剧烈地抖了起来。",
+                "event_erav_celeb_intro_writer_p2_climaxed": "被灌满的同时，她自己的身体也在痉挛。红肿的私处咬紧了还在跳动的肉棒，把最后几股白浊绞了进去。",
+                "event_erav_celeb_intro_writer_p2_after": "他抽身离去。白浊从红肿的私处淌下来，在床单上积成小小的水洼。",
+                "event_erav_celeb_intro_writer_summary_completed": "天亮前，套房才安静下来。酒瓶横倒在矮桌上，男人们的鼾声此起彼伏。\n$party.name$伏在床沿，衬衫少了两颗扣子，膝盖并拢，大腿内侧的白浊已经干涸成壳。\n她没有去碰落在门厅的链条钱包，只是把散乱的头发理到耳后，听着客厅里的动静。",
+                "event_erav_celeb_intro_writer_summary_error": "场景未能完成，已结束当前安排。",
+                "event_erav_celeb_intro_log_completed": "$party.name$完成了与明星客人的首次接待，随后留在套房担任随行陪同",
+                "event_erav_celeb_intro_log_error": "（$party.name$与外国客人的首次接待场景未能完整运行）"
+            }
+        }
+    }
+}

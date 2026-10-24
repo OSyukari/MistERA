@@ -222,15 +222,25 @@ public class StatusEx_Instance : I_CacheValues
         }
     }
 
-    [JsonIgnore] public float Severity
+    /// <summary>Computed value before display bounds, for mechanical progress comparisons.</summary>
+    [JsonIgnore] public float UnclampedSeverity
     {
         get
         {
             SyncCacheVersion();
             if (!_cached) ClearCache();
+            return storage.Value + DebugSeverityMod;
+        }
+    }
+
+    [JsonIgnore] public float Severity
+    {
+        get
+        {
+            var value = UnclampedSeverity;
             var first = BaseRef.variants[0];
             var last = BaseRef.variants[BaseRef.variants.Count - 1];
-            return Math.Clamp(storage.Value + DebugSeverityMod, first.threshold, last.threshold);
+            return Math.Clamp(value, first.threshold, last.threshold);
            // return Math.Max(first.threshold, Math.Min(last.threshold, storage.Value + DebugSeverityMod));
         }
     }

@@ -191,6 +191,13 @@ public class RequireKojoVariable
     /// append-string collector under this key (e.g. for quest stage display via $key$ substitution).
     /// </summary>
     public string appendStringKey = "";
+    /// <summary>Quest display only (read by QuestUtility.Validate, ignored elsewhere): appendStringKey gets the
+    /// CallName of the character whose RefID the variable holds, instead of the bare number. An unresolvable
+    /// RefID appends the quest_append_chara_unresolved fallback and logs, rather than hiding the stage.</summary>
+    public bool appendAsCharaName = false;
+    /// <summary>Quest display only (read by QuestUtility.Validate, ignored elsewhere): if set, the variable is a
+    /// bare count of this item (e.g. "currency_JPY") and appendStringKey gets that ItemEntry's Print.</summary>
+    public string appendAsItemID = "";
 
     [JsonIgnore] public bool isValid { get { return this.variableID != "" && (checkExistOnly || operand != LogicalOperand.none); } }
     public bool Validate(Character_Relationship rel)
@@ -245,6 +252,11 @@ public class RequireFactionDebt
     /// "did the last payment bounce" or "how many times has this loan gone unpaid").
     /// </summary>
     public FactionDebtField field = FactionDebtField.OwedAmount;
+
+    /// <summary>Quest display only (read by QuestUtility.Validate): if set, appendStringKey gets the current
+    /// number as a Print of this item (e.g. "currency_JPY" - 30M instead of 30000000) - same as
+    /// RequireKojoVariable.appendAsItemID.</summary>
+    public string appendAsItemID = "";
 
     [JsonIgnore] public bool isValid { get { return borrowerFactionID != "" && lenderFactionID != "" && (resolvedCount >= 0 || checkExistOnly || operand != LogicalOperand.none); } }
 

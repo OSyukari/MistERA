@@ -296,7 +296,7 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "exp_event_erav_sm_inspection": "初日·检查与开发",
+                "exp_event_erav_sm_inspection": "第一天·检查与开发",
                 "exp_event_erav_sm_inspection_ongoing": "$names$被带进地下调教室，开始「基础检查」。",
                 "exp_event_erav_sm_inspection_result": "$names$被固定在调教室的诊察台上。",
                 "event_erav_sm_inspection_01": "地下室的灯亮着。四壁挂着的皮鞭、缰绳和按尺寸码放的木制鞍具，让$party.name$在楼梯上就迈不开步。\n穿开衫的老人坐在灯下做他的木工，头也不抬。\n「来了。先把这个看了。」\n白板上用端正的字迹写着周间时间表：检查与开发、肛门日、拘束耐受、侍奉训练……「我买下了你七天。这百六十八个钟头，每格都排了内容。」",
@@ -306,7 +306,7 @@
                 "event_erav_sm_inspection_05": "检查台翻下来变成调教架。「今天的课目：开发。」\n他让她趴在架上，从后面进入，依旧像在记录什么。\n「反射收缩还在，是个好现象——玩具要是彻底没反应，反而没意思了。」",
                 "event_erav_sm_inspection_06": "检查结束时，天色已经暗了。她的「规格」被填进了记录本末页，后面还留着大段空白。\n「明天，肛门日。迟到的话——就用加时来补。」",
                 "event_erav_sm_inspection_err": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。",
-                "event_erav_sm_inspection": "初日·检查与开发",
+                "event_erav_sm_inspection": "第一天·检查与开发",
                 "event_erav_sm_inspection_writer_opening": "地下室的灯亮着。四壁挂着的皮鞭、缰绳和按尺寸码放的木制鞍具，让$party.name$在楼梯上就迈不开步。\n穿开衫的老人坐在灯下做他的木工，头也不抬。\n「来了。先把这个看了。」\n白板上用端正的字迹写着周间时间表：检查与开发、肛门日、拘束耐受、侍奉训练……「我买下了你七天。这百六十八个钟头，每格都排了内容。」\n她被固定在诊察台样的架子上——手脚四点拘束，腰垫高，腿分开固定在腿托上。\n老人换上橡胶手套，像老医生样不紧不慢。\n「玩具在被使用之前，要先弄清楚自己的规格。忍着点，会凉。」",
                 "event_erav_sm_inspection_writer_choose_full": "继续完整流程",
                 "event_erav_sm_inspection_writer_choose_first_only": "仅进行首个阶段",
@@ -320,7 +320,7 @@
                 "event_erav_sm_inspection_writer_summary_failed": "本次流程未能完成。",
                 "event_erav_sm_inspection_writer_summary_skipped": "已跳过本次事件。",
                 "event_erav_sm_inspection_writer_summary_error": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。",
-                "event_erav_sm_inspection_writer_header": "初日·检查与开发"
+                "event_erav_sm_inspection_writer_header": "第一天·检查与开发"
             }
         }
     }

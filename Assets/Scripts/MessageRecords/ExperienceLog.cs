@@ -23,8 +23,37 @@ public class ExperienceLog
 
     public List<int> relevantActorRefs = new List<int>();
 
+    [JsonIgnore] public ExperienceLog numericSink;
+    // Called after narration is rendered, but before numeric output and clearing.
+    [JsonIgnore] internal Action<ExperienceLog, DescriptionCollector> presentationObserver;
+
+    internal void CopyNumericTo(ExperienceLog destination)
+    {
+        destination.AddRelevantChara(relevantActorRefs);
+        foreach (var actor in ExpLog)
+            foreach (var entry in actor.Value) destination.AddExperience(actor.Key, entry.Key, entry.Value);
+        foreach (var actor in StatLog)
+            foreach (var entry in actor.Value) destination.AddStats(actor.Key, entry.Key, entry.Value);
+    }
+
+    /// <summary>Moves presentation deltas only; grants have already happened at their original call sites.</summary>
+    public void TransferNumericTo(ExperienceLog destination)
+    {
+        if (destination == null || destination == this) return;
+        destination.leftAlignOverride |= leftAlignOverride;
+        destination.AddRelevantChara(relevantActorRefs);
+        foreach (var actor in RightAlign) destination.RightAlign[actor.Key] = actor.Value;
+        foreach (var actor in ExpLog)
+            foreach (var entry in actor.Value) destination.AddExperience(actor.Key, entry.Key, entry.Value);
+        foreach (var actor in StatLog)
+            foreach (var entry in actor.Value) destination.AddStats(actor.Key, entry.Key, entry.Value);
+        ExpLog.Clear();
+        StatLog.Clear();
+    }
+
     public void Finalize(out DescriptionCollector desc, bool printMessage = true, bool printClimax = true, bool printStats = true)
     {
+        TransferNumericTo(numericSink);
         desc = new DescriptionCollector();
 
         if (printMessage)
@@ -43,6 +72,7 @@ public class ExperienceLog
                 desc.message += $"{(desc.message.Length > 0 ? "\n" : "")}{climax}";
             }
         }
+        presentationObserver?.Invoke(this, desc);
         if (printStats)
         {
             var stats = PrintContent_Stats();

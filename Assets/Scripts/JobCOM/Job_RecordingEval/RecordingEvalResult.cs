@@ -694,6 +694,139 @@ public class RecordingEvaluatorInstance
     /// </summary>
     public string ScoreDebug = "";
 
+    /// <summary>
+    /// Set by canvas_videoEdit only: enables the eval.charaReq_main / charaReq_supporting check. Off everywhere else
+    /// (e.g. KojoRecording.MainActorIDs) - the check gates creation only, saved recordings are assumed to have passed.
+    /// </summary>
+    public bool checkActorCharaReq = false;
+
+    /// <summary>
+    /// Studio owning the edit (canvas_videoEdit.factionOwner), passed to CharaReqUtility as jobFaction.
+    /// </summary>
+    public I_IsJobGiver jobFaction = null;
+
+    // refreshed every UpdateScore pass; charaReqTooltip holds the localized failure lines for the save/export buttons
+    public bool charaReqFailed = false;
+    public List<string> charaReqTooltip = new List<string>();
+
+    /// <summary>
+    /// Live character of a recorded actor: refID first (when it still points at the same baseID), else the first
+    /// instance with that baseID. null if the actor no longer exists.
+    /// </summary>
+    static Character_Trainable ResolveLive(ActorRecord a)
+    {
+        if (a == null) return null;
+        var cm = scr_System_CampaignManager.current;
+        if (a.refID >= 0)
+        {
+            var c = cm.FindInstanceByID(a.refID);
+            if (c != null && c.BaseID == a.baseID) return c;
+        }
+        return string.IsNullOrEmpty(a.baseID) ? null : cm.HasInstanceCharaWithBaseID(a.baseID);
+    }
+
+    /// <summary>
+    /// Every actor of g with a live character must pass q; actors without one are skipped. Checks all actors
+    /// (no early out) so tooltip lists every failure. null q or empty group passes.
+    /// </summary>
+    bool ValidateGroup(RecordingCharaReq q, ActorGroup g, List<string> tooltip, string groupName, System.Text.StringBuilder dbg)
+    {
+        if (q == null) return true;
+        bool pass = true;
+        foreach (var a in g.actors)
+        {
+            var c = ResolveLive(a);
+            if (c == null)
+            {
+                dbg.AppendLine($"charaReq({groupName}) {a.Name}: no live character, skipped");
+                continue;
+            }
+            if (!ValidateActor(q, c, tooltip))
+            {
+                pass = false;
+                dbg.AppendLine($"charaReq({groupName}) {a.Name}: failed");
+            }
+        }
+        return pass;
+    }
+
+    /// <summary>
+    /// playerExempt first, then the RecordingCharaReq-only checks (excludeActorBaseID,
+    /// requireKojoVariables_towardPlayer), then the shared CharaReqUtility checks.
+    /// </summary>
+    bool ValidateActor(RecordingCharaReq q, Character_Trainable c, List<string> tooltip)
+    {
+        var player = scr_System_CampaignManager.current.Player;
+        if (q.playerExempt && c == player) return true;
+
+        if (q.excludeActorBaseID.Contains(c.BaseID))
+        {
+            tooltip.Add(LocalizeDictionary.QueryThenParse("ui_videoEdit_charaReq_excludedActor").Replace("$name$", c.FirstName));
+            return false;
+        }
+
+        if (q.requireKojoVariables_towardPlayer.Count > 0)
+        {
+            // Peek, not Find - validation must not create a relationship as a side effect
+            var rel = c.Relationships.PeekRelationshipWith(player);
+            bool ok = rel != null;
+            if (ok)
+            {
+                foreach (var v in q.requireKojoVariables_towardPlayer)
+                {
+                    if (v != null && v.isValid && !v.Validate(rel)) 
+                    { 
+                        ok = false; 
+                        break; 
+                    }
+                }
+            }
+            if (ok)
+            {
+                var selfrel = c.Relationships.FindRelationshipWith(c.RefID);
+                foreach (var v in q.requireKojoVariables_towardSelf)
+                {
+                    if (v != null && v.isValid && !v.Validate(selfrel))
+                    {
+                        ok = false;
+                        break;
+                    }
+                }
+            }
+
+            if (!ok)
+            {
+                tooltip.Add(LocalizeDictionary.QueryThenParse(q.kojoVariableFailKey).Replace("$name$", c.FirstName));
+                return false;
+            }
+        }
+
+        return CharaReqUtility.Validate(q, ref tooltip, c, out _, jobFaction);
+    }
+
+    void ValidateActorCharaReq(System.Text.StringBuilder dbg)
+    {
+        charaReqFailed = false;
+        charaReqTooltip.Clear();
+        if (!checkActorCharaReq || eval == null) return;
+
+        var mainLines = new List<string>();
+        if (!ValidateGroup(eval.charaReq_main, actors_main, mainLines, "main", dbg))
+        {
+            charaReqFailed = true;
+            charaReqTooltip.Add(LocalizeDictionary.QueryThenParse("ui_videoEdit_charaReq_main"));
+            charaReqTooltip.AddRange(mainLines);
+        }
+
+        var supportingLines = new List<string>();
+        if (!ValidateGroup(eval.charaReq_supporting, actors_rivals, supportingLines, "supporting", dbg))
+        {
+            charaReqFailed = true;
+            charaReqTooltip.Add(LocalizeDictionary.QueryThenParse("ui_videoEdit_charaReq_supporting"));
+            charaReqTooltip.AddRange(supportingLines);
+        }
+    }
+
     // store score
     protected void UpdateScore()
     {
@@ -708,6 +841,8 @@ public class RecordingEvaluatorInstance
             scoreMult = 1f;
             scoreBase = 0f;
             disqualified = false;
+            charaReqFailed = false;
+            charaReqTooltip.Clear();
             effectiveMinutes = 0;
             lengthFactor = 1f;
             qualityScore = 0f;
@@ -764,11 +899,13 @@ public class RecordingEvaluatorInstance
         scoreMult = multProduct;
         scoreBase = multProduct != 0f ? totalScore / multProduct : totalScore;
         bool belowMinimum = eval.minimumScoreRequirement > 0f && totalScore < eval.minimumScoreRequirement;
-        disqualified = belowMinimum || mandatoryFailed;
+        ValidateActorCharaReq(dbg);
+        disqualified = belowMinimum || mandatoryFailed || charaReqFailed;
 
         dbg.AppendLine($"total = {totalScore:0.##}" + (eval.minimumScoreRequirement > 0f ? $" (min required {eval.minimumScoreRequirement:0.##})" : ""));
         if (belowMinimum) dbg.AppendLine("DISQUALIFIED - below minimumScoreRequirement");
         if (mandatoryFailed) dbg.AppendLine("DISQUALIFIED - mandatory goal not satisfied");
+        if (charaReqFailed) dbg.AppendLine("DISQUALIFIED - actor charaReq not met");
 
         UpdateQuality(dbg);
 

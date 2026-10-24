@@ -53,6 +53,19 @@ public class Result_Character
 
         public string useItemFromTargetInventory = "";
         public string ingestBodyTag = "";
+        /// <summary> creates ingestItemCount of this item and the character consumes it into ingestBodyTag - no inventory needed </summary>
+        public string ingestItemID = "";
+        public int ingestItemCount = 1;
+
+        /// <summary> world reputation change of the character (ReputationUtility), in the job owner's world </summary>
+        public ReputationEntry reputation = null;
+        public class ReputationEntry
+        {
+            public string classID = "";
+            public float amount = 0f;
+            /// <summary> fills $key$ in the class description </summary>
+            public Dictionary<string, string> args = new Dictionary<string, string>();
+        }
 
         public bool toggleTeamStatus = false;
 

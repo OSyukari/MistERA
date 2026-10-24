@@ -30,16 +30,29 @@
                                 {
                                     "borrowerFactionID":"ErAV_miyama_Household",
                                     "lenderFactionID":"ErAV_KiryuGumi_Office",
-                                    "checkExistOnly":true,
-                                    "value":1,
-                                    "appendStringKey":"debt_value"
+                                    "operand":"gte",
+                                    "value":0,
+                                    "appendStringKey":"debt_value",
+                                    "appendAsItemID":"currency_JPY"
+                                }
+                            ]
+                        },
+                        {
+                            "_comment":"value-only reads for the stage text (gte 0 always passes; an absent variable reads 0). Registry: Docs/Plan_ErAV_Quests.md §1. debt_pay_count = successful monthly payments (the old resolvedCount read was a placeholder).",
+                            "requireKojoVariables":[
+                                {
+                                    "variableID":"erav_debt_paid_count",
+                                    "isDailyVariable":false,
+                                    "operand":"gte",
+                                    "value":0,
+                                    "appendStringKey":"debt_pay_count"
                                 },
                                 {
-                                    "borrowerFactionID":"ErAV_miyama_Household",
-                                    "lenderFactionID":"ErAV_KiryuGumi_Office",
-                                    "resolvedCount":0,
+                                    "variableID":"erav_debt_failed_count",
+                                    "isDailyVariable":false,
                                     "operand":"gte",
-                                    "appendStringKey":"debt_pay_count"
+                                    "value":0,
+                                    "appendStringKey":"debt_fail_count"
                                 }
                             ]
                         }
@@ -58,6 +71,18 @@
                         "lenderFactionID":"ErAV_KiryuGumi_Office",
                         "operand":"gt",
                         "value":"0"
+                    }
+                ]
+            },
+            {
+                "requireKojoVariables":[
+                    {
+                        "variableID":"erav_kiryu_paid_total",
+                        "isDailyVariable":false,
+                        "operand":"gte",
+                        "value":0,
+                        "appendStringKey":"paid_total",
+                        "appendAsItemID":"currency_JPY"
                     }
                 ]
             }
@@ -275,7 +300,62 @@
                     }
                 ]
             }
-        }                            
+        },
+        {
+            "ID":"erav_debt_tracker_01_10_last_paid",
+            "_comment":"settlement info (01_1x range, kept apart from the 01_0x story progress): last monthly cycle collected. erav_debt_last_result absent = no cycle settled yet -> neither 01_10 nor 01_11 shows. Registry: Docs/Plan_ErAV_Quests.md §1.",
+            "chara_requirement":{
+                "hero":[
+                    {
+                        "requireKojoVariables":[
+                            {
+                                "variableID":"erav_debt_last_result",
+                                "isDailyVariable":false,
+                                "operand":"eq",
+                                "value":"1"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "ID":"erav_debt_tracker_01_11_last_failed",
+            "_comment":"settlement info: last monthly cycle failed to collect.",
+            "chara_requirement":{
+                "hero":[
+                    {
+                        "requireKojoVariables":[
+                            {
+                                "variableID":"erav_debt_last_result",
+                                "isDailyVariable":false,
+                                "operand":"eq",
+                                "value":"2"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "ID":"erav_debt_tracker_01_12_last_victim",
+            "chara_requirement":{
+                "hero":[
+                    {
+                        "requireKojoVariables":[
+                            {
+                                "variableID":"erav_debt_last_victim",
+                                "isDailyVariable":false,
+                                "checkExistOnly":true,
+                                "value":1,
+                                "appendStringKey":"last_victim_name",
+                                "appendAsCharaName":true
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
     ]
 },
 {
@@ -292,6 +372,18 @@
                         "value":"0"
                     }
                 ]
+            },
+            {
+                "requireKojoVariables":[
+                    {
+                        "variableID":"erav_kiryu_paid_total",
+                        "isDailyVariable":false,
+                        "operand":"gte",
+                        "value":0,
+                        "appendStringKey":"paid_total",
+                        "appendAsItemID":"currency_JPY"
+                    }
+                ]
             }
         ]
     }
@@ -306,7 +398,7 @@
         "Entries": {
             "zh-cn": {
 "erav_debt_tracker":"偿还欠债",
-"erav_debt_tracker_01":"想办法还上30M日元的欠债。剩余本金$debt_value$。偿款次数$debt_pay_count$",
+"erav_debt_tracker_01":"想办法还上30M日元的欠债。剩余本金$debt_value$。已向桐生组支付$paid_total$（按时$debt_pay_count$次／逾期$debt_fail_count$次）",
 "erav_debt_tracker_01_00":"拒绝了歌音的提案。得想别的办法还上这笔债。",
 "erav_debt_tracker_01_01":"放学后去%%ErAV_KiryuGumi_Office%%与歌音【交谈】",
 "erav_debt_tracker_01_01_late":"迟到了$late_count$天",
@@ -317,7 +409,10 @@
 "erav_debt_tracker_01_04_rented":"租下了%%ErAV_KiryuGumi_Filmstudio%%，成为了监督。可以找歌音【请求介绍AV演员】了",
 "erav_debt_tracker_01_05_kanade":"和奏谈谈拍片的事，说不定她愿意帮忙",
 "erav_debt_tracker_01_06_kanade_helping":"奏开始协助拍摄AV（宫间家）",
-"erav_debt_tracker_02":"已还请欠债。"
+"erav_debt_tracker_01_10_last_paid":"上月利息已按时付清",
+"erav_debt_tracker_01_11_last_failed":"上月未能付清利息",
+"erav_debt_tracker_01_12_last_victim":"$last_victim_name$代替你被交给了桐生组",
+"erav_debt_tracker_02":"已还清欠债。累计向桐生组支付$paid_total$。"
 
             }
         }

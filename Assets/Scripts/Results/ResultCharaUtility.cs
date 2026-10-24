@@ -87,6 +87,22 @@ public static class ResultCharaUtility
             if (instance != null && instance.GetComp_Ingestible() != null) c.Body.ConsumeIngestible(instance, r.ingestBodyTag);
             // Debug.Log("Applying COM Result, useItemFromTargetInventory[" + useItemFromTargetInventory + "], factionOwner?[" + (m.job.FactionOwner != null) + "] instance?[" + (instance != null) + "]");
         }
+        if (!string.IsNullOrEmpty(r.ingestItemID) && c.Body != null)
+        {
+            var ingested = WorldManager.Instantiate(r.ingestItemID, "", Mathf.Max(1, r.ingestItemCount));
+            if (ingested != null && ingested.GetComp_Ingestible() != null) c.Body.ConsumeIngestible(ingested, r.ingestBodyTag);
+            else Debug.LogError($"Result_Character ingestItemID [{r.ingestItemID}] is not an ingestible item");
+        }
+        if (r.reputation != null && !string.IsNullOrEmpty(r.reputation.classID) && r.reputation.amount != 0f)
+        {
+            var applied = ReputationUtility.Mod(c, r.reputation.classID, r.reputation.amount, ReputationUtility.ResolveWorldID(jobOwner), r.reputation.args);
+            if (tooltips != null && applied != 0f)
+            {
+                var cls = ReputationUtility.GetClass(r.reputation.classID);
+                var title = cls == null || string.IsNullOrEmpty(cls.titleKey) ? r.reputation.classID : LocalizeDictionary.QueryThenParse(cls.titleKey);
+                tooltips.Add($"{c.CallName} {title} {applied:+0.#;-0.#}");
+            }
+        }
         if (r.modifyStatusValue != null && r.modifyStatusValue.isValid)
         {
             r.modifyStatusValue.Execute(c, log);

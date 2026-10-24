@@ -366,8 +366,8 @@
         "Entries": {
             "zh-cn": {
                 "exp_event_erav_house_chores": "白天·清洁与少爷们",
-                "exp_event_erav_house_chores_ongoing": "$names$系着围裙，开始大宅的白天的清洁。",
-                "exp_event_erav_house_chores_result": "擦到半路，$names$被少爷们叫住了。",
+                "exp_event_erav_house_chores_ongoing": "$names$系着围裙，开始白天的大宅清扫。",
+                "exp_event_erav_house_chores_result": "地板擦到一半，$names$被少爷们叫住了。",
                 "event_erav_house_chores_01": "围裙之下什么都没穿——这是这家的规矩。\n弯腰擦地板的时候，路过的男性成员会顺手掀起裙摆，就像顺手扶正歪掉的花瓶。",
                 "event_erav_house_chores_02": "擦书房地板时，她被大少爷按着头伺候了他。做完了接着擦——擦到那片地板，得重新擦过。",
                 "event_erav_house_chores_03": "厨房的活做到半路，二少爷从背后顶了进来。手边的碗碟跟着晃，做完接着做。\n刚被灌满的腿间淌着东西，滴在刚擦干净的地板上——那片，又得重擦。",

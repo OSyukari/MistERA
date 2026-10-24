@@ -867,8 +867,9 @@ public class Character_Factions
 
         if (Owner != null) booking.ownerRef = Owner.RefID;
         Bookings.Add(booking);
-        // the booked activity becomes a wardrobe key an outfit can be set for
+        // the booked activity (and a membertype the visit acts under) become wardrobe keys an outfit can be set for
         // (resolved uncached - booking.GetActivity caches its first answer)
+        if (booking.MemberType != null) Owner?.Wardrobe?.RegisterMemberType(booking.Faction, booking.MemberType);
         Owner?.Wardrobe?.RegisterActivity(booking.Faction.FactionID, RecreationUtility.ResolveActivity(this, booking));
         if (refresh) RefreshSchedule();
         return true;
@@ -1126,6 +1127,8 @@ public class Character_Factions
     /// </summary>
     public void OnDayUpdate_Recreation()
     {
+        // a debug day skip plans only its last day - every earlier plan would just be cancelled / left behind
+        if (scr_System_Time.current.DebugSkipBeforeLastDay) return;
         RecreationUtility.DailyPlan(this);
     }
 
@@ -1135,6 +1138,7 @@ public class Character_Factions
     /// </summary>
     public void OnHourLate_Recreation()
     {
+        if (scr_System_Time.current.DebugSkipBeforeLastDay) return;
         RecreationUtility.LateHourConfirm(this);
     }
 
@@ -1144,6 +1148,8 @@ public class Character_Factions
     /// </summary>
     public void OnHourUpdate_Recreation()
     {
+        // a debug day skip never ticks jobs (no Job_Activity.LastUpdate) - an activity job made here would never end
+        if (scr_System_Time.current.DebugSkipBeforeLastDay) return;
         RecreationUtility.HourlyCheck(this);
     }
 

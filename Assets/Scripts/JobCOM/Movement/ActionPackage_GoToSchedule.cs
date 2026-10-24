@@ -247,7 +247,7 @@ public class ActionPackage_GoToSchedule : ActionPackage_PathTo
     /// </summary>
     protected override bool Evaluate()
     {
-        validVariant = targetCOM.GetValidVariant(ref this.tooltip, job, this.doer, this.receiver, false, 1, this.Master);
+        validVariant = targetCOM.GetValidVariant(ref this.tooltip, job, this.doer, this.receiver, false, 1, this.Master, this);
         if (validVariant < 0)
         {
             isValid = false;

@@ -56,6 +56,7 @@ public class MasterList
                 //list.Add(ExperienceInitializers);
                 list.Add(ErAV);
                 list.Add(Ranks);
+                list.Add(ReputationClasses);
             }
             return list;
         }
@@ -119,6 +120,8 @@ public class MasterList
     public Index_FeatureSet ExplorationFeatures = new Index_FeatureSet();
     public Index_ErAV ErAV = new Index_ErAV();
     public Index_RankTracks Ranks = new Index_RankTracks();
+    /// <summary> world reputation mod classes (Reputation.cs) </summary>
+    public Index_ReputationClasses ReputationClasses = new Index_ReputationClasses();
     public void MergeWith(MasterList list)
     {
         for (int i = 0; i < this.List.Count; i++)

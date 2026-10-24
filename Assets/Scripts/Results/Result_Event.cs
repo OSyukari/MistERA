@@ -61,6 +61,13 @@ public class Result_Event
         // "doer"/"receiver"/etc. would never resolve. Mirrors the same construct-then-populate-then-LoadNext
         // sequencing already used by EventUtility.StartEvent(Job_Expedition, SerializableEventPackage).
         var ev = new EventInstance(self, "", "", 100, false);
+        var parent = p.SourceEvent;
+        ev.LogMemoryResolver = parent?.LogMemoryResolver;
+        if (parent != null && parent.silent)
+        {
+            ev.silent = true;
+            ev.SilentSink = parent.SilentSink;
+        }
         ev.Targets.Add("doer", doerTargets);
         ev.Targets.Add("receiver", receiverTargets);
         ev.Targets.Add("actor", actorTargets);
@@ -90,6 +97,12 @@ public class Result_Event
         // now that every target list above is populated, actually load/validate the event — this is what
         // runs TargetValidators (EventUtility.FindTargets, e.g. ScopeWithinRef), so further filtering
         // (e.g. group scenes) can correctly read ev.Targets["doer"/"receiver"/etc.]
+        if (ev.silent)
+        {
+            ExpeditionSilentRunner.RunChild(parent, ev, finalID, eventLabel);
+            return;
+        }
+
         ev.LoadNext(finalID, eventLabel);
 
         scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);

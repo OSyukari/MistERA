@@ -1,5 +1,5 @@
 {
-    "_doc": "Single client-labour MIA expedition. MaxExplorationRate 4000 is the default, not a normalization: external arrival preserves the old 2400/4000/5600 budgets through the optional progressBudget=INTEGER argument to CharaMIAWithFeatures before begin/validation; DurationHour 168 remains the backstop. Base features are nsfw + erav_client_labour. Common atmosphere belongs to the erav_client_labour feature module. The seven client_<category> modules are independent content examples, not engine-required categories; the engine composes all modules whose requireKeywords are present. Current external arrival selects one client feature; no category is rolled or mutated here. The begin handler uses first-match briefing dispatch and a neutral fallback when none match. Existing modules supply all 53 retained encounter IDs and three atmosphere placeholders each. All majors weight 1/cooldown 24h; all minors weight 10/result-only with no executable scene. Existing external release/homecoming IDs and empty rescue settings retained. This nsfw directory remains skipped in safe mode; external generic fallback is not changed. Old seven category expedition definitions are replaced, not aliases; external arrival/save migration is owned outside this subtree.",
+    "_doc": "Single client-labour MIA expedition. MaxExplorationRate 2800 is the default, not a normalization: external arrival sets the per-category budgets 1680/2800/3920 (the old 2400/4000/5600 cut by 30% once the stay got a daily schedule - followSchedule) through the optional progressBudget=INTEGER argument to CharaMIAWithFeatures before begin/validation; DurationHour 168 remains the backstop. Base features are nsfw + erav_client_labour. Common atmosphere belongs to the erav_client_labour feature module. The seven client_<category> modules are independent content examples, not engine-required categories; the engine composes all modules whose requireKeywords are present. Current external arrival selects one client feature; no category is rolled or mutated here. The begin handler uses first-match briefing dispatch and a neutral fallback when none match. Category modules supply their own encounter IDs and three atmosphere placeholders each; encounters may also be shared between modules (escort/ - currently listed by client_celeb). Category-folder majors weight 1/cooldown 24h and minors weight 10/result-only; shared escort encounters set their own weights, time windows and cooldowns, and may use auto (silent) result events (see SYSTEM_CONTRACT.md). Existing external release/homecoming IDs and empty rescue settings retained. This nsfw directory remains skipped in safe mode; external generic fallback is not changed. Old seven category expedition definitions are replaced, not aliases; external arrival/save migration is owned outside this subtree.",
     "ExpeditionEntry": {
         "list": [
             {
@@ -9,16 +9,28 @@
                 "removeOnComplete": true,
                 "beginEventID": "event_erav_clients_begin",
                 "DurationHour": 168,
-                "MaxExplorationRate": 4000,
+                "MaxExplorationRate": 2800,
                 "rescueEventID": "",
                 "canExplore": false,
                 "selfReleaseEventID": "erav_ntr_mia_release",
                 "returnEventID": "erav_ntr_mia_homecoming",
                 "backgroundImagePath": "Media_UI_Scenario_Background/BG_Warehouse.jpg",
+                "_comment_schedule": "Shared daily schedule for every client (not the Kiryu office's hours): the party rests during mealHours, its sleep window (the members' sleep need, ending at the first ActiveHours hour) and outside ActiveHours - the captive leaves the job and sandboxes the party room (camp bed/meal + campFurniture). campFurniture and provisions are added when the stay starts and removed again when it ends; provisions stay lootable by a rescue meanwhile. One meal item is enough (a non-player inventory hands out copies).",
+                "followSchedule": true,
+                "ActiveHours": [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
+                "mealHours": [8, 13, 19],
+                "campFurniture": ["furniture_toilet_shower_set"],
+                "provisions": [
+                    {
+                        "itemID": "consumable_erav_mia_meal",
+                        "itemCount": 1
+                    }
+                ],
                 "EventRate": 0.1,
                 "EventIDs": [],
                 "keywords": [],
-                "FeatureKeywords": ["nsfw", "erav_client_labour"]
+                "FeatureKeywords": ["nsfw", "erav_client_labour"],
+                "offTimeEventRate": 0.01
             }
         ]
     },
@@ -27,134 +39,45 @@
             {
                 "requireKeywords": ["erav_client_labour"],
                 "featureEventIDs": [],
-                "DescriptionText": [
-                    "expedition_erav_ntr_mia_clients_desc_1",
-                    "expedition_erav_ntr_mia_clients_desc_2",
-                    "expedition_erav_ntr_mia_clients_desc_3"
-                ]
+                "DescriptionText": ["expedition_erav_ntr_mia_clients_desc_1", "expedition_erav_ntr_mia_clients_desc_2", "expedition_erav_ntr_mia_clients_desc_3"]
             },
             {
                 "requireKeywords": ["erav_client_labour", "client_politician"],
-                "featureEventIDs": [
-                    "exp_event_erav_politician_call_daughter",
-                    "exp_event_erav_politician_day_negotiation",
-                    "exp_event_erav_politician_night1",
-                    "exp_event_erav_politician_night2_gangbath",
-                    "exp_event_erav_politician_small_sake",
-                    "exp_event_erav_politician_small_bath",
-                    "exp_event_erav_politician_small_yukata",
-                    "exp_event_erav_politician_small_quickie"
-                ],
-                "DescriptionText": [
-                    "expedition_erav_ntr_mia_politician_desc_1",
-                    "expedition_erav_ntr_mia_politician_desc_2",
-                    "expedition_erav_ntr_mia_politician_desc_3"
-                ]
+                "featureEventIDs": ["exp_event_erav_politician_call_daughter", "exp_event_erav_politician_day_negotiation", "exp_event_erav_politician_night1", "exp_event_erav_politician_night2_gangbath", "exp_event_erav_politician_small_sake", "exp_event_erav_politician_small_bath", "exp_event_erav_politician_small_yukata", "exp_event_erav_politician_small_quickie"],
+                "DescriptionText": ["expedition_erav_ntr_mia_politician_desc_1", "expedition_erav_ntr_mia_politician_desc_2", "expedition_erav_ntr_mia_politician_desc_3"]
             },
             {
                 "requireKeywords": ["erav_client_labour", "client_producer"],
-                "featureEventIDs": [
-                    "exp_event_erav_producer_interview",
-                    "exp_event_erav_producer_small_photo",
-                    "exp_event_erav_producer_small_styling",
-                    "exp_event_erav_producer_small_schedule",
-                    "exp_event_erav_producer_small_quickie"
-                ],
-                "DescriptionText": [
-                    "expedition_erav_ntr_mia_producer_desc_1",
-                    "expedition_erav_ntr_mia_producer_desc_2",
-                    "expedition_erav_ntr_mia_producer_desc_3"
-                ]
+                "featureEventIDs": ["exp_event_erav_producer_interview", "exp_event_erav_producer_small_photo", "exp_event_erav_producer_small_styling", "exp_event_erav_producer_small_schedule", "exp_event_erav_producer_small_quickie"],
+                "DescriptionText": ["expedition_erav_ntr_mia_producer_desc_1", "expedition_erav_ntr_mia_producer_desc_2", "expedition_erav_ntr_mia_producer_desc_3"]
             },
             {
                 "requireKeywords": ["erav_client_labour", "client_sm_master"],
-                "featureEventIDs": [
-                    "exp_event_erav_sm_acceptance",
-                    "exp_event_erav_sm_anal",
-                    "exp_event_erav_sm_bondage",
-                    "exp_event_erav_sm_inspection",
-                    "exp_event_erav_sm_oral",
-                    "exp_event_erav_sm_review",
-                    "exp_event_erav_sm_small_schedule",
-                    "exp_event_erav_sm_small_display",
-                    "exp_event_erav_sm_small_toy",
-                    "exp_event_erav_sm_small_maintenance",
-                    "exp_event_erav_sm_small_check"
-                ],
-                "DescriptionText": [
-                    "expedition_erav_ntr_mia_sm_master_desc_1",
-                    "expedition_erav_ntr_mia_sm_master_desc_2",
-                    "expedition_erav_ntr_mia_sm_master_desc_3"
-                ]
+                "featureEventIDs": ["exp_event_erav_sm_acceptance", "exp_event_erav_sm_anal", "exp_event_erav_sm_bondage", "exp_event_erav_sm_inspection", "exp_event_erav_sm_oral", "exp_event_erav_sm_review", "exp_event_erav_sm_small_schedule", "exp_event_erav_sm_small_display", "exp_event_erav_sm_small_toy", "exp_event_erav_sm_small_maintenance", "exp_event_erav_sm_small_check"],
+                "DescriptionText": ["expedition_erav_ntr_mia_sm_master_desc_1", "expedition_erav_ntr_mia_sm_master_desc_2", "expedition_erav_ntr_mia_sm_master_desc_3"]
             },
             {
                 "requireKeywords": ["erav_client_labour", "client_sports"],
-                "featureEventIDs": [
-                    "exp_event_erav_sports_drugged",
-                    "exp_event_erav_sports_hotel",
-                    "exp_event_erav_sports_training",
-                    "exp_event_erav_sports_small_cheer",
-                    "exp_event_erav_sports_small_water",
-                    "exp_event_erav_sports_small_locker",
-                    "exp_event_erav_sports_small_suite"
-                ],
-                "DescriptionText": [
-                    "expedition_erav_ntr_mia_sports_desc_1",
-                    "expedition_erav_ntr_mia_sports_desc_2",
-                    "expedition_erav_ntr_mia_sports_desc_3"
-                ]
+                "featureEventIDs": ["exp_event_erav_sports_drugged", "exp_event_erav_sports_hotel", "exp_event_erav_sports_training", "exp_event_erav_sports_small_cheer", "exp_event_erav_sports_small_water", "exp_event_erav_sports_small_locker", "exp_event_erav_sports_small_suite"],
+                "DescriptionText": ["expedition_erav_ntr_mia_sports_desc_1", "expedition_erav_ntr_mia_sports_desc_2", "expedition_erav_ntr_mia_sports_desc_3"]
             },
             {
                 "requireKeywords": ["erav_client_labour", "client_celeb"],
-                "featureEventIDs": [
-                    "exp_event_erav_celeb_club",
-                    "exp_event_erav_celeb_drugged",
-                    "exp_event_erav_celeb_town",
-                    "exp_event_erav_celeb_small_fitting",
-                    "exp_event_erav_celeb_small_photo",
-                    "exp_event_erav_celeb_small_pose",
-                    "exp_event_erav_celeb_small_quickie"
-                ],
-                "DescriptionText": [
-                    "expedition_erav_ntr_mia_celeb_desc_1",
-                    "expedition_erav_ntr_mia_celeb_desc_2",
-                    "expedition_erav_ntr_mia_celeb_desc_3"
-                ]
+                "_comment": "shared escort encounters (escort/expEvent_escort_daily.json) - other client modules with public escort duty may list the same IDs",
+                "featureEventIDs": ["exp_event_erav_escort_shopping", "exp_event_erav_escort_sightseeing", "exp_event_erav_escort_meal", "exp_event_erav_escort_partyGames", "exp_event_erav_escort_nearMiss"],
+                "DescriptionText": ["expedition_erav_ntr_mia_celeb_desc_1", "expedition_erav_ntr_mia_celeb_desc_2", "expedition_erav_ntr_mia_celeb_desc_3"],
+                "featureDayEventIDs": [],
+                "featureNightEventIDs": ["exp_event_erav_escort_nightVisit"]
             },
             {
                 "requireKeywords": ["erav_client_labour", "client_household"],
-                "featureEventIDs": [
-                    "exp_event_erav_house_chores",
-                    "exp_event_erav_house_dog",
-                    "exp_event_erav_house_friends",
-                    "exp_event_erav_house_master",
-                    "exp_event_erav_house_small_apron",
-                    "exp_event_erav_house_small_son_call",
-                    "exp_event_erav_house_small_night_bath",
-                    "exp_event_erav_house_small_housekeeper"
-                ],
-                "DescriptionText": [
-                    "expedition_erav_ntr_mia_household_desc_1",
-                    "expedition_erav_ntr_mia_household_desc_2",
-                    "expedition_erav_ntr_mia_household_desc_3"
-                ]
+                "featureEventIDs": ["exp_event_erav_house_chores", "exp_event_erav_house_dog", "exp_event_erav_house_friends", "exp_event_erav_house_master", "exp_event_erav_house_small_apron", "exp_event_erav_house_small_son_call", "exp_event_erav_house_small_night_bath", "exp_event_erav_house_small_housekeeper"],
+                "DescriptionText": ["expedition_erav_ntr_mia_household_desc_1", "expedition_erav_ntr_mia_household_desc_2", "expedition_erav_ntr_mia_household_desc_3"]
             },
             {
                 "requireKeywords": ["erav_client_labour", "client_gang"],
-                "featureEventIDs": [
-                    "exp_event_erav_gang_daily",
-                    "exp_event_erav_gang_exception",
-                    "exp_event_erav_gang_small_errand",
-                    "exp_event_erav_gang_small_quickie",
-                    "exp_event_erav_gang_small_meal",
-                    "exp_event_erav_gang_small_bath",
-                    "exp_event_erav_gang_small_night"
-                ],
-                "DescriptionText": [
-                    "expedition_erav_ntr_mia_gang_desc_1",
-                    "expedition_erav_ntr_mia_gang_desc_2",
-                    "expedition_erav_ntr_mia_gang_desc_3"
-                ]
+                "featureEventIDs": ["exp_event_erav_gang_daily", "exp_event_erav_gang_exception", "exp_event_erav_gang_small_errand", "exp_event_erav_gang_small_quickie", "exp_event_erav_gang_small_meal", "exp_event_erav_gang_small_bath", "exp_event_erav_gang_small_night"],
+                "DescriptionText": ["expedition_erav_ntr_mia_gang_desc_1", "expedition_erav_ntr_mia_gang_desc_2", "expedition_erav_ntr_mia_gang_desc_3"]
             }
         ]
     },
@@ -162,7 +85,7 @@
         "list": [
             {
                 "ID": "event_erav_clients_begin",
-                "_comment": "Engine begin hook; not banked. Feature membership is injected before validation. Dispatch options contain comparison + jump ONLY because executor lists do not short-circuit. No random selection, actor loans, AP, or ResolveEvent callback. These are content-specific briefing examples, not an engine category requirement. First matching briefing wins if several client features are supplied; encounter modules still compose independently. No match uses the neutral fallback. Every briefing and fallback path terminates.",
+                "_comment": "Engine begin hook; not banked. Feature membership is injected before validation. Dispatch options contain comparison + jump ONLY because executor lists do not short-circuit. No random selection, actor loans, AP, or ResolveEvent callback in the briefings themselves - except begin_celeb, which continues (nextEventID) into the celeb intro scene, and that scene loans clients and runs AP. These are content-specific briefing examples, not an engine category requirement. First matching briefing wins if several client features are supplied; encounter modules still compose independently. No match uses the neutral fallback. Every briefing and fallback path terminates.",
                 "events": [
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
@@ -252,8 +175,10 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "begin_celeb",
+                        "_comment": "Celeb arrival narration, then continues into the interactive intro scene event_erav_celeb_intro (celeb/expEvent_celeb_intro.json) in this same instance: self = player (always visible, unlike an NPC-self StartEvent on the captive), Targets[party] = the captive, feature keywords kept. ErAV_NTR_Punishment's arrival_celeb stays a silent terminator.",
                         "line": "event_erav_clients_begin_celeb",
-                        "isLast": true
+                        "nextEventID": "event_erav_celeb_intro",
+                        "nextEntryLabel": "start"
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
@@ -277,19 +202,60 @@
             }
         ]
     },
+    "Items": {
+        "list": [
+            {
+                "id": "consumable_erav_mia_meal",
+                "displayName": "Boxed Meal",
+                "tooltip": "boxed meal",
+                "_comment": "Provision of expedition_erav_ntr_mia_clients only (Expedition.provisions) - keep it out of every other inventory, the stay's end removes this item ID from the MIA party. No ItemComponent_Degradable (the single copy must not spoil), no 'industrial' tag, do_not_sell - same as consumable_jp_hospital_meal.",
+                "Tags": ["food_meal", "consumable", "rarity_common", "do_not_sell"],
+                "value": 400,
+                "itemComps_Template": [
+                    {
+                        "compType": "ItemComponent_Ingestible",
+                        "comp_Ingestible": {
+                            "ingestMethod": [
+                                {
+                                    "bodyTags": "stomach",
+                                    "digestSpeed": -1,
+                                    "digestDelay": 30,
+                                    "digestDelayVariation": 10,
+                                    "amountMod": 8
+                                }
+                            ],
+                            "amount": 5,
+                            "OnUseEffects": [
+                                {
+                                    "effectID": "ModStatValuePercent",
+                                    "arguments": ["stats_derived_extended_energy", "0.3"]
+                                },
+                                {
+                                    "effectID": "ModStatValuePercent",
+                                    "arguments": ["stats_derived_extended_stamina", "0.2"]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        ]
+    },
     "Dictionary": {
         "Entries": {
             "zh-cn": {
+                "consumable_erav_mia_meal": "便当",
+                "consumable_erav_mia_meal_tooltip": "对方按时送来的便当",
                 "expedition_erav_ntr_mia_politician": "担保劳务·温泉商谈随行",
                 "expedition_erav_ntr_mia_politician_desc_1": "$names$在箱根的温泉旅馆，作为县议员的「随行秘书」陪同商谈。",
                 "expedition_erav_ntr_mia_producer": "担保劳务·最终面试",
                 "expedition_erav_ntr_mia_producer_desc_1": "$names$在艺能事务所社长的镜头前接受「最终面试」。",
                 "expedition_erav_ntr_mia_sm_master": "担保劳务·临时玩具",
                 "expedition_erav_ntr_mia_sm_master_desc_1": "$names$被借给郊外宅邸的收藏家，按时间表接受调教。",
-                "expedition_erav_ntr_mia_sports": "担保劳务·随队陪同",
+                "expedition_erav_ntr_mia_sports": "担保劳务·球队随行",
                 "expedition_erav_ntr_mia_sports_desc_1": "$names$作为随队女性陪同访日球队，训练、比赛、酒店全程跟队。",
-                "expedition_erav_ntr_mia_celeb": "担保劳务·随行陪同",
-                "expedition_erav_ntr_mia_celeb_desc_1": "她在交谈间仍会留意附近的镜头，像是在计算哪一种表情能留在公开记录里。",
+                "expedition_erav_ntr_mia_celeb": "担保劳务·随行导游",
+                "expedition_erav_ntr_mia_celeb_desc_1": "她在交谈间仍会留意附近的镜头，像是在盘算哪种表情能留在公开记录里。",
                 "expedition_erav_ntr_mia_household": "担保劳务·家用女仆",
                 "expedition_erav_ntr_mia_household_desc_1": "$names$住进城西大宅，做这户人家的「家政助手」。",
                 "expedition_erav_ntr_mia_gang": "担保劳务·犒劳",
@@ -305,7 +271,7 @@
                 "expedition_erav_ntr_mia_sm_master_desc_3": "$names$被借给郊外宅邸的收藏家，按时间表接受调教。",
                 "expedition_erav_ntr_mia_sports_desc_2": "$names$作为随队女性陪同访日球队，训练、比赛、酒店全程跟队。",
                 "expedition_erav_ntr_mia_sports_desc_3": "$names$作为随队女性陪同访日球队，训练、比赛、酒店全程跟队。",
-                "expedition_erav_ntr_mia_celeb_desc_2": "工作人员不断核对时间，她把私人间隙压缩到下一项公开安排之前。",
+                "expedition_erav_ntr_mia_celeb_desc_2": "工作人员不断核对时间，她把私人间隙压缩到后续公开安排之前。",
                 "expedition_erav_ntr_mia_celeb_desc_3": "她暂时离开镜头，却没有真正离开被注视的感觉。",
                 "expedition_erav_ntr_mia_household_desc_2": "$names$住进城西大宅，做这户人家的「家政助手」。",
                 "expedition_erav_ntr_mia_household_desc_3": "$names$住进城西大宅，做这户人家的「家政助手」。",
@@ -317,7 +283,7 @@
                 "event_erav_clients_begin_producer": "事务所楼上的出租会议室里，补光灯已经架好了。\n自称社长的男人翻着$party.name$的资料，抬头笑了笑，指指房间中央的空地。\n「最终面试」就从这里开始。",
                 "event_erav_clients_begin_sm_master": "车开进郊外毫不起眼的宅邸。地下室的灯亮着，四壁挂着的皮具如同解剖图，按部位分类。\n穿开衫的老人推了推老花镜，指指墙上白板里那张排满的周间时间表。\n$party.name$的这周，已经被买下了。",
                 "event_erav_clients_begin_sports": "酒店的套房里聚满了高大的外国球员。领队翻着合同，朝$party.name$抬了抬下巴。\n翻译转述了半句就停住了。从今晚起，她是这支球队的「随队女性」——训练、比赛、酒店，全程跟队。",
-                "event_erav_clients_begin_celeb": "这一趟安排已经被定为名人客户行程。公开期待、私人边界和不断变化的时间表，会在出发后分别出现；当前类别不会重新抽选。",
+                "event_erav_clients_begin_celeb": "深夜的车在酒店后门停下。开车的人摇下车窗，把房卡递出来。\n「顶层的贵客点名要导游。上去吧，别让人等。」\n手机随即震了两次，事务所的短信把话说得很直：这几天，她是那队外国明星的专属导游；客人要什么，她就得给什么；能抵掉的利息，按客人开心与否结算。\n$party.name$低头看完短信，指节把房卡攥得发白。电梯门在她面前打开了。",
                 "event_erav_clients_begin_household": "城西的大宅门前，灰布上衣的女管家递给她条围裙和手写的作息表。\n「在这栋房子里，你不用名字。大家叫你『小妹』。」\n$party.name$低头看了看作息表——清晨五点半起床，休日：无。",
                 "event_erav_clients_begin_gang": "旧旅馆的顶楼整层被包下了。走廊里烟味呛人，房间里七八个小弟围着矮桌打牌。\n带队的若头把$party.name$的契约啪地拍在桌上：\n「哥几个，这周的犒劳品到了。」",
                 "event_erav_clients_begin_fallback": "车停在一栋陌生的建筑前。\n$party.name$被桐生组的人领了进去，身后的门无声地合上了。\n从今天起，她要在这里「抵账」。"

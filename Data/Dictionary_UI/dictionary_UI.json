@@ -9,6 +9,7 @@
                 "ui_settings_requireRestart":"Some setting changes require game restart to take effect"
             },
             "zh-cn": {
+"quest_append_chara_unresolved": "（未找到角色 #$refID$）",
 "ui_eventHeader_location": "地点：$value$",
 "ui_eventHeader_actorNames": "在场人员：$value$",
 "ui_settings_requireRestart":"部分设定变更需要重启游戏才能生效",
@@ -948,6 +949,11 @@
 "ui_videoEdit_mandatoryGoalLine": "$name$ [$status$]",
 "ui_videoEdit_goalAchieved": "已达成",
 "ui_videoEdit_goalNotAchieved": "未达成",
+"ui_videoEdit_charaReq_main": "主演条件未满足：",
+"ui_videoEdit_charaReq_supporting": "配角条件未满足：",
+"ui_videoEdit_charaReq_excludedActor": "$name$ 不能出演此类作品",
+"ui_videoEdit_charaReq_kojoVariable": "$name$ 不满足出演条件",
+"ui_videoEdit_charaReq_notSignedActress": "$name$ 不是签约女优",
 "ui_videoEdit_goalProgress": "匹配次数 $count$（需要 $minCount$），占比 $ratio$（需要 $minRatio$）",
 
 "ui_diceroll_autosuccess":"必定接受",

@@ -167,13 +167,12 @@
                 "equipLayers":["Skin"],
                 "tags":["nsfw","penis","testicle","external"],
                 "promptTags":["penis"],
-                "promptGroups":["lower_front"],
                 "requestTraits":["trait_Size_P","trait_Sensitivity_C"],
                 "requestSkills":["skill_sensitivity_C"],
-                "_comment_promptProfile": "detail tags only while the action focuses on the lower body (a plain portrait has no action tags): they break the composition otherwise",
+                "_comment_promptProfile": "testicles share the penis organ and are prompted whenever the penis is visible",
                 "promptProfile": {
                     "rules": [
-                        { "id": "penis_detail", "promptGroups": ["lower_front"], "requireVisibleBodyTags": ["penis"], "requireAnyActorTags": ["spread_pussy", "sex", "unsafe"], "prompts": ["testicles"] }
+                        { "id": "penis_detail", "requireVisibleBodyTags": ["penis"], "prompts": ["testicles"] }
                     ]
                 },
                 "sensitivityClassString":"C",
@@ -220,7 +219,7 @@
                 "AvailableSlots":["Vagina"],
                 "equipLayers":["Skin"],
                 "tags":["nsfw","vagina","internal","arousalExpansion"],
-                "promptTags":["pussy"],
+                "promptTags":[],
                 "promptGroups":["lower_front", "lower_back"],
                 "requestTraits":["trait_Size_V","trait_Sensitivity_V"],
                 "requestSkills":["skill_sensitivity_V","skill_expansion_V"],
@@ -238,7 +237,7 @@
                 "_comment_promptProfile": "Image prompt layer of every body with this organ = female humanoids (BodyPart_Instance only adds it with HasFemaleParts). See Data/RaceDefs/PromptProfiles.json.",
                 "promptProfile": {
                     "rules": [
-                        { "_comment": "placeholder", "id": "generic_female_placeholder", "prompts": [] }
+                        { "id": "pussy_visibility", "requireVisibleBodyTags": ["vagina"], "requireAnyActorTags": ["!sex", "lower_front"], "prompts": ["pussy"] }
                     ]
                 },
                 "exposedKojoID":"Exposed_Vagina",
