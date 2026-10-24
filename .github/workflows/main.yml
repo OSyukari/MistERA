@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - '*'
+      - '!mods'   # rolling mod release tag (mods.yml), never a game build
 
 permissions:
   contents: write
@@ -17,7 +18,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Zip the build directory
-        run: 7z a "MistEra-${{ github.ref_name }}.7z" ${{ secrets.BUILD_DIR }} -p"${{ secrets.ZIP_PASSWORD }}"
+        # leaves out Save/ and Mods/ (except Mods/Assetpacks/Image_Generation_Config.json)
+        shell: pwsh
+        run: ./ci/zip_demo.ps1 "${{ secrets.BUILD_DIR }}" "MistEra-${{ github.ref_name }}.7z" "${{ secrets.ZIP_PASSWORD }}"
 
       - name: Create GitHub Release and upload artifact
         uses: softprops/action-gh-release@v2

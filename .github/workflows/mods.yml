@@ -1,0 +1,34 @@
+name: Publish Mods
+
+# Publishes packages from the Unity Mod Packager (MistEra_Mods folder on the self-hosted runner) to the rolling
+# "mods" release. Runs next to the game release on every tag, or by hand; does nothing when no package changed.
+# Plan: Docs/Mods/Plan_ModPackaging.md
+
+on:
+  push:
+    tags:
+      - '*'
+      - '!mods'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mods-publish
+  cancel-in-progress: false
+
+jobs:
+  publish_mods:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Publish changed packages
+        shell: pwsh
+        run: ./ci/publish_mods.ps1
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MODS_DIR: ${{ vars.MODS_DIR || 'E:\UnityProjects\MistEra_Mods' }}

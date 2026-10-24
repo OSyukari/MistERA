@@ -12,6 +12,7 @@
 !gitlab-ci.yml
 !README.md
 !CHANGELOG.md
+!ci/
 !ci/*
 
 
@@ -86,3 +87,8 @@ Mods/*
 !Mods/Assetpacks/
 Mods/Assetpacks/*
 !Mods/Assetpacks/Image_Generation_Config.json
+
+# CI workflows (re-included after the /* and *.yml rules above)
+!.github/
+!.github/workflows/
+!.github/workflows/*.yml

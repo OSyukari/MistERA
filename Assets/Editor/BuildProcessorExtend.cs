@@ -115,6 +115,9 @@ class BuildProcessorExtend : IPostprocessBuildWithReport, IPreprocessBuildWithRe
 
             CopyDataFrom($"{appPath}/Data/", $"{rootDir}/Data/", allExtensiosn, sfwKeywords);
             CopyDataFrom($"{appPath}/Presets/", $"{rootDir}/Presets/", allExtensiosn);
+
+            // asset pack portrait / image generation config; the asset packs themselves are distributed as mods
+            CopyDataTo($"{appPath}/Mods/Assetpacks/", $"{rootDir}/Mods/Assetpacks/", "Image_Generation_Config.json");
         }
 
         CopyDataFrom($"{Application.dataPath}/LLM/", $"{rootDir}/Mist Era_Data/LLM/", allExtensiosn);

@@ -2,6 +2,8 @@
 
 迷雾Era的试玩build。请直接去[Gitgud Release页](https://gitgud.io/OS74/mistera/-/releases/permalink/latest)或[Github Release页](https://github.com/OSyukari/MistERA/releases/latest)下载最新的Package（已经build好的压缩包）
 
+Mod与立绘包请去[Github Mods & Asset Packs页](https://github.com/OSyukari/MistERA/releases/tag/mods)下载：把需要的`.7z`放进游戏的`/Mods/`文件夹，右键“解压到当前文件夹”即可（密码`era`）。立绘包按角色拆分，只下载需要的角色即可。
+
 关于每版本实装的内容简介，请看[Gitgud changelog](https://gitgud.io/OS74/mistera/-/blob/master/CHANGELOG.md)或[Github changelog](https://github.com/lk-74/MistERA/blob/master/CHANGELOG.md)
 
 关于下版本将要实装的内容，请看[WIKI:预定实装机能](https://gitgud.io/OS74/mistera/-/wikis/release_plan)
@@ -26,6 +28,7 @@ Repo中只保存了代码和Json文件，并未包括dll等（会导致仓库容
 
 - /Mods/
     - Mods文件夹存储位置
+    - 请将Mod压缩包移至此处然后【解压到当前位置】
     
 - /Mods/Assetpacks/
     - 立绘包存储位置
