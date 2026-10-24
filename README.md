@@ -24,11 +24,12 @@ Repo中只保存了代码和Json文件，并未包括dll等（会导致仓库容
 - /Save/
     - 存档位置
 
-- /Mist Era_Data/UserPrefs.json
-    - 程序设定文件，会在首次运行时自动生成一份
+- /Mods/
+    - Mods文件夹存储位置
+    
+- /Mods/Assetpacks/
+    - 立绘包存储位置
 
 - %AppData%/LocalLow/Silent Forest/Mist Era
     - 玩家Logs保存位置（报错用）
-
-
-
+    - 游戏设置、LLM配置保存位置
