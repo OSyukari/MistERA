@@ -877,8 +877,13 @@ public class Manageable : I_Disposable, I_IsJobGiver
     /// <summary>Whether member is linked to target (as memberTypeID, or as anything when it is empty).</summary>
     public bool IsMemberLinked(Character_Trainable member, Character_Trainable target, string memberTypeID = "")
     {
-        return member != null && target != null && MemberLinkSets.TryGetValue(member.RefID, out var links)
-            && links.Exists(x => x.targetRef == target.RefID && (memberTypeID == "" || x.memberTypeID == memberTypeID));
+        if (member == null || target == null || !MemberLinkSets.TryGetValue(member.RefID, out var links)) return false;
+        for (int i = 0; i < links.Count; i++)
+        {
+            var link = links[i];
+            if (link.targetRef == target.RefID && (memberTypeID == "" || link.memberTypeID == memberTypeID)) return true;
+        }
+        return false;
     }
 
     /// <summary>
@@ -890,7 +895,13 @@ public class Manageable : I_Disposable, I_IsJobGiver
         var subjectType = GetMemberType(subject);
         var targetType = GetMemberType(target);
         if (subjectType == null || targetType == null) return true;
-        return !subjectType.cannotRequestLeaveMemberTypes.Exists(id => targetType.IsOrDescendsFrom(id));
+        var blocked = subjectType.cannotRequestLeaveMemberTypes;
+        if (blocked == null) return true;
+        for (int i = 0; i < blocked.Count; i++)
+        {
+            if (targetType.IsOrDescendsFrom(blocked[i])) return false;
+        }
+        return true;
     }
 
     /// <summary>Every member of this faction linked to target (as memberTypeID, or as anything when it is empty), e.g. a patient's visitors.</summary>
@@ -2012,6 +2023,11 @@ public class Manageable : I_Disposable, I_IsJobGiver
     public List<int> RoomOwners(int roomRef) {
         if (managedRoomRefs.ContainsKey(roomRef)) return managedRoomRefs[roomRef];
         return new List<int>(); }
+    /// <summary>RoomOwners(roomRef).Contains(charaRef) without the empty-list allocation for an unmanaged room.</summary>
+    public bool IsRoomOwner(int roomRef, int charaRef)
+    {
+        return managedRoomRefs.TryGetValue(roomRef, out var owners) && owners.Contains(charaRef);
+    }
 
     public void AddToFaction(Floor_Instance floor, bool addAllCharaToFaction = false, bool setRoomOwnership = false, bool isRenting = true, string landlordFactionID = "")
     {

@@ -49,7 +49,7 @@
         "list": [
             {
                 "ID": "event_eraas_dogBride",
-                "showEventHeader": "event_eraas_dogBride_header",
+                "showEventHeader": "ui_eventHeader",
                 "events": [
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
@@ -669,7 +669,7 @@
         "Entries": {
             "zh-cn": {
                 "membertype_eraas_survey_dog": "调查地野狗",
-                "event_eraas_dogBride_header": "[%%exp_event_eraas_dogBride%%] $currentTime$, $location$ $actorNames$",
+                "event_eraas_dogBride": "调查事件：狗的新娘",
                 "exp_event_eraas_dogBride": "调查事件：狗的新娘",
                 "exp_event_eraas_dogBride_ongoing": "$names$在都市境界线的废墟地带进行调查。",
                 "exp_event_eraas_dogBride_result": "$names$在废弃仓库附近，发现了一只慢吞吞走动的野狗。",

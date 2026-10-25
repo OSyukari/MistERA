@@ -178,15 +178,30 @@ public class Stat_Modifier
     float _valueFloat = 0f;
 
     /// <summary>
-    /// Mutates a script-owned numeric modifier without allocating. valueString is left stale by design.
+    /// Mutates a script-owned numeric modifier. valueString is kept in sync: saved modifiers (e.g. RelationshipManager.moodlets)
+    /// are read back through it on load. Hot (moodlets refresh every minute) - an unchanged value is a no-op and small whole
+    /// numbers reuse cached strings, so the common case allocates nothing.
     /// </summary>
     public void SetNumber(float value)
     {
+        if (init && valueType == Stat_Modifier_Type.number && _valueFloat == value) return;
         this.valueType = Stat_Modifier_Type.number;
         this._valueFloat = value;
-        this.valueString = value.ToString();
+        this.valueString = numberString(value);
         //Debug.Log($"SetNumber [{value}] [{valueString}]");
         this.init = true;
+    }
+
+    const int CachedNumberMin = -10, CachedNumberMax = 10;
+    static readonly string[] _cachedNumberStrings = new string[CachedNumberMax - CachedNumberMin + 1];
+    /// <summary>value.ToString(), cached for whole numbers in [CachedNumberMin, CachedNumberMax] (filled lazily, same formatting).</summary>
+    static string numberString(float value)
+    {
+        if (value < CachedNumberMin || value > CachedNumberMax) return value.ToString();
+        int whole = (int)value;
+        if (whole != value) return value.ToString();
+        int index = whole - CachedNumberMin;
+        return _cachedNumberStrings[index] ??= value.ToString();
     }
 
     /// <summary>

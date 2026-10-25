@@ -32,7 +32,7 @@
         "list": [
             {
                 "ID": "event_erav_sm_acceptance",
-                "showEventHeader": "event_erav_sm_acceptance_writer_header",
+                "showEventHeader": "ui_eventHeader",
                 "events": [
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
@@ -205,8 +205,7 @@
                 "event_erav_sm_acceptance_writer_summary_completed": "他在她的「玩具登录证」上盖了章——那张她入宅当天就被签好的卡片，印着她的规格数据和使用记录。\n「合格。手感、耐性、礼数，都在线。」\n「周后我还有个同行聚会，到时候再借你回。租金让桐生组转交。……回去吧。」\n回去的车上，她抱着登录证看了全程。规格、深度、耐受、敏感点排序——她身体的数据被印刷体排得整整齐齐，末页留着待填的空白：\n「下次使用预定：＿＿＿＿」",
                 "event_erav_sm_acceptance_writer_summary_failed": "本次流程未能完成。",
                 "event_erav_sm_acceptance_writer_summary_skipped": "已跳过本次事件。",
-                "event_erav_sm_acceptance_writer_summary_error": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。",
-                "event_erav_sm_acceptance_writer_header": "第七天·验收"
+                "event_erav_sm_acceptance_writer_summary_error": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。"
             }
         }
     }

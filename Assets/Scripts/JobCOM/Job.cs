@@ -726,6 +726,22 @@ public class Job : IDisposable, I_Disposable
         return;
     }
 
+    /// <summary>Any of the actor's APs (as GetActorAPs collects them) carries tag in its ActorTargetTags - non-allocating.</summary>
+    public bool ActorHasTargetTag(int refID, string tag)
+    {
+        return actorHasTargetTag(packages_current, refID, tag) || actorHasTargetTag(packages_previous, refID, tag) || actorHasTargetTag(packages_completed, refID, tag);
+    }
+    static bool actorHasTargetTag(List<ActionPackage> aps, int refID, string tag)
+    {
+        for (int i = 0; i < aps.Count; i++)
+        {
+            var ap = aps[i];
+            if (!ap.DoerRefs.Contains(refID) && !ap.ReceiverRefs.Contains(refID)) continue;
+            if (ap.ActorHasTargetTag(refID, tag)) return true;
+        }
+        return false;
+    }
+
     public void GetActorEPs(int refID, List<EvaluationPackage> packages)
     {
         foreach (var ap in this.packages_current)

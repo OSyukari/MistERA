@@ -93,6 +93,7 @@
         "list": [
             {
                 "ID": "exp_event_Utnapishtim_crumblingFloor_MIA",
+                "showEventHeader": "ui_eventHeader",
                 "events": [
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",

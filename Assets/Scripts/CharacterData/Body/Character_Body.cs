@@ -556,6 +556,7 @@ public class Character_Body
         //Debug.Log(sb);
 
         foreach (var i in body) i.ReEstablishParent(Owner);
+        ClearBodyCaches();
     }
 
     /// <summary>
@@ -746,18 +747,41 @@ public class Character_Body
 
     public bool HasBodyTag(List<string> list)
     {
-        foreach (string s in list)
+        for (int i = 0; i < list.Count; i++)
         {
-            if (Body.Exists(x => x.hasTag(s))) continue;
-            else return false;
+            if (!HasBodyTag(list[i])) return false;
         }
         return true;
     }
 
+    /// <summary>
+    /// HasBodyTag results per tag. Body tags only come from the parts' / internals' Base data, so a result holds until the
+    /// body's part list changes - call ClearBodyCaches whenever it does (AddMissing does). Not saved.
+    /// </summary>
+    [NonSerialized][JsonIgnore] Dictionary<string, bool> _bodyTagCache = null;
+
+    /// <summary>Wipe the caches derived from the part list (Internals, HasBodyTag). Call after anything adds / removes /
+    /// replaces body parts or their internals.</summary>
+    public void ClearBodyCaches()
+    {
+        internals = null;
+        _bodyTagCache?.Clear();
+    }
+
     public bool HasBodyTag(string s)
     {
-        if (Body.Exists(x => x.hasTag(s))) return true;
-        else return false;
+        if (s == null) return false;
+        if (_bodyTagCache == null) _bodyTagCache = new Dictionary<string, bool>();
+        else if (_bodyTagCache.TryGetValue(s, out bool cached)) return cached;
+
+        bool has = false;
+        var parts = Body;
+        for (int i = 0; i < parts.Count; i++)
+        {
+            if (parts[i].hasTag(s)) { has = true; break; }
+        }
+        _bodyTagCache[s] = has;
+        return has;
     }
 
     public void UndressAllBy(List<string> tags, BodyEquipLayer layer = BodyEquipLayer.Skin)

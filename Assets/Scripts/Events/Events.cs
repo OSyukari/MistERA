@@ -254,7 +254,8 @@ public class Event : I_SerializationCallbackReceiver
 {
     public string ID = "";
     /// <summary>
-    /// Optional localized header template key. Supports $eventID$, $currentTime$, $location$, and $actorNames$.
+    /// Optional inline header template or localization key. Supports $eventID$, $currentTime$, $location$, $actorNames$,
+    /// and event text variables such as $party.name$ and $party.room_name$.
     /// </summary>
     public string showEventHeader = "";
     public bool allowDuplicate = true;

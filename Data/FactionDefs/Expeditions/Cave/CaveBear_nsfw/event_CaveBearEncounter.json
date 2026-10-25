@@ -3,6 +3,7 @@
         "list": [
             {
                 "ID": "event_caveBearEncounter",
+                "showEventHeader": "ui_eventHeader",
 "TargetValidators":
 [
     {

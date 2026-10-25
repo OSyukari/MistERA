@@ -31,23 +31,38 @@ public class EventManager
 
         public bool hasCooldown(EventInstance ev)
         {
+            if (cooldowns.Count == 0) return false;
+            if (!ev.allowDuplicate) return true;
 
-            foreach(var cd in cooldowns)
+            bool restrictSelf = ev.CooldownRestrictSelf, restrictTarget = ev.CooldownRestrictTarget;
+            bool restrictAND = ev.CooldownRestrictAND && restrictSelf && restrictTarget;
+            int selfRef = ev.Self != null ? ev.Self.RefID : -1;
+            bool hasSelf = ev.Self != null;
+
+            for (int i = 0; i < cooldowns.Count; i++)
             {
-                if (!ev.allowDuplicate) return true;
+                var cd = cooldowns[i];
+                bool selfMatch = restrictSelf && hasSelf && cd.selfRef == selfRef;
+                // AND needs both - skip the target scan when self already failed
+                if (restrictAND && !selfMatch) continue;
+                if (!restrictAND && selfMatch) return true;
 
-                bool selfMatch = ev.CooldownRestrictSelf && ev.Self != null && cd.selfRef == ev.Self.RefID;
-                bool targetMatch = ev.CooldownRestrictTarget && ev.Targets.Any(trefs => trefs.Value.Any(target => cd.targetRef.Contains(target.RefID)));
+                if (restrictTarget && anyTargetIn(ev.Targets, cd.targetRef)) return true;
+            }
+            return false;
+        }
 
-                if (ev.CooldownRestrictAND && ev.CooldownRestrictSelf && ev.CooldownRestrictTarget)
+        /// <summary>Any chara in targets has its RefID in refs - non-allocating.</summary>
+        static bool anyTargetIn(Dictionary<string, List<Character_Trainable>> targets, List<int> refs)
+        {
+            if (refs.Count == 0) return false;
+            foreach (var tref in targets)
+            {
+                var list = tref.Value;
+                for (int i = 0; i < list.Count; i++)
                 {
-                    // both restrictions enabled: only block when this cooldown matches on both self and target
-                    if (selfMatch && targetMatch) return true;
-                }
-                else
-                {
-                    if (selfMatch) return true;
-                    if (targetMatch) return true;
+                    var target = list[i];
+                    if ((object)target != null && refs.Contains(target.RefID)) return true;
                 }
             }
             return false;
@@ -115,7 +130,13 @@ public class EventManager
     public bool hasCooldownWith(string eventID, Character_Trainable self, Character_Trainable target)
     {
         if (self == null || target == null || !eventCooldowns.TryGetValue(eventID, out var cd)) return false;
-        return cd.cooldowns.Exists(x => x.selfRef == self.RefID && x.targetRef.Contains(target.RefID));
+        int selfRef = self.RefID, targetRef = target.RefID;
+        var cooldowns = cd.cooldowns;
+        for (int i = 0; i < cooldowns.Count; i++)
+        {
+            if (cooldowns[i].selfRef == selfRef && cooldowns[i].targetRef.Contains(targetRef)) return true;
+        }
+        return false;
     }
 
     public bool hasCooldown(EventInstance ev)
@@ -164,7 +185,13 @@ public class EventManager
     public ActiveEventChain FindChain(string chainID, Character_Trainable self)
     {
         if (self == null) return null;
-        return activeChains.Find(x => x.chainID == chainID && x.selfRef == self.RefID);
+        int selfRef = self.RefID;
+        for (int i = 0; i < activeChains.Count; i++)
+        {
+            var ac = activeChains[i];
+            if (ac.chainID == chainID && ac.selfRef == selfRef) return ac;
+        }
+        return null;
     }
 
     public bool HasChain(string chainID, Character_Trainable self) { return FindChain(chainID, self) != null; }
@@ -217,7 +244,12 @@ public class EventManager
     public void EndChain(string chainID, Character_Trainable self)
     {
         if (self == null) return;
-        activeChains.RemoveAll(x => x.chainID == chainID && x.selfRef == self.RefID);
+        int selfRef = self.RefID;
+        for (int i = activeChains.Count - 1; i >= 0; i--)
+        {
+            var ac = activeChains[i];
+            if (ac.chainID == chainID && ac.selfRef == selfRef) activeChains.RemoveAt(i);
+        }
     }
 
     /// <summary>
@@ -354,17 +386,11 @@ public class EventManager
         {   // if has cooldowntime, then it must be in cooldowns
             if (hasCooldown(ev)) return true;
             // a manualCooldown event registers nothing on start, so only the in-flight instance stops a same-tick repeat
-            if (ev.ManualCooldown && activeEvents.Exists(evs => evs.ConflictWith(ev))) return true;
+            if (ev.ManualCooldown && conflictsWithActive(ev)) return true;
         }
         else
         {   // forbid repeat trigger
-            foreach (var evs in activeEvents)
-            {
-                if (evs.ConflictWith(ev))
-                {
-                    return true;
-                }
-            }
+            if (conflictsWithActive(ev)) return true;
         }
 
 
@@ -372,6 +398,15 @@ public class EventManager
         // executor, whether/when their cooldown actually gets registered (e.g. only on refusal) -
         // registering it here unconditionally on every start would defeat that.
         if (!ev.ManualCooldown) AddCooldown(ev);
+        return false;
+    }
+
+    bool conflictsWithActive(EventInstance ev)
+    {
+        for (int i = 0; i < activeEvents.Count; i++)
+        {
+            if (activeEvents[i].ConflictWith(ev)) return true;
+        }
         return false;
     }
 

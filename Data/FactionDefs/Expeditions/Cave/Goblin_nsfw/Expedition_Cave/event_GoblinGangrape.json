@@ -3,6 +3,7 @@
         "list": [
             {
                 "ID": "event_goblin_gangRape",
+                "showEventHeader": "ui_eventHeader",
                 "_comment": "this event can either branch into normal combat or players witness rape and leave.",
                 "events": [
                     {
@@ -211,6 +212,7 @@
             },
             {
                 "ID": "event_goblin_gangRape_rescue",
+                "showEventHeader": "ui_eventHeader",
                 "events": [
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",

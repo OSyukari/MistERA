@@ -49,6 +49,7 @@
         "list": [
             {
                 "ID": "expedition_Utnapishtim_wreck_rescue",
+                "showEventHeader": "ui_eventHeader",
                 "events": [
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",

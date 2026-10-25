@@ -32,7 +32,7 @@
         "list": [
             {
                 "ID": "event_erav_sm_bondage",
-                "showEventHeader": "event_erav_sm_bondage_writer_header",
+                "showEventHeader": "ui_eventHeader",
                 "events": [
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
@@ -180,8 +180,7 @@
                 "event_erav_sm_bondage_writer_summary_completed": "衣料被绳子替她褪开。缚到最后种的时候，她被折成两折吊在半空，姿势维持到双腿失去知觉才被放下来。\n血回流的瞬间，从脚尖到股间密密麻麻的针刺感让她满地蜷缩。他蹲下来，等她抽完这阵，才递上杯水。\n「血液不通会麻，麻过之后会痛，痛过之后会热。三个阶段都记住。玩具要了解自己的每种状态。」\n「……记住了？好。下个姿势。」\n收工时，老人在她的记录本上落了笔：耐受合格，血行恢复快。\n「明天，侍奉训练。嘴巴，是玩具的脸面。」",
                 "event_erav_sm_bondage_writer_summary_failed": "本次流程未能完成。",
                 "event_erav_sm_bondage_writer_summary_skipped": "已跳过本次事件。",
-                "event_erav_sm_bondage_writer_summary_error": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。",
-                "event_erav_sm_bondage_writer_header": "第三天·拘束耐受"
+                "event_erav_sm_bondage_writer_summary_error": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。"
             }
         }
     }

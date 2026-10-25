@@ -26,8 +26,7 @@
                 "event_erav_politician_night1_writer_summary_completed_first_only": "Only the first stage was completed.",
                 "event_erav_politician_night1_writer_summary_failed": "The sequence could not be completed.",
                 "event_erav_politician_night1_writer_summary_skipped": "This event was skipped.",
-                "event_erav_politician_night1_writer_summary_error": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi).",
-                "event_erav_politician_night1_writer_header": "First Night: Shared Bed"
+                "event_erav_politician_night1_writer_summary_error": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi)."
             }
         }
     }

@@ -10,6 +10,7 @@
             },
             "zh-cn": {
 "quest_append_chara_unresolved": "（未找到角色 #$refID$）",
+"ui_eventHeader": "[$eventID$] $currentTime$, $location$ $actorNames$",
 "ui_eventHeader_location": "地点：$value$",
 "ui_eventHeader_actorNames": "在场人员：$value$",
 "ui_settings_requireRestart":"部分设定变更需要重启游戏才能生效",
@@ -1114,6 +1115,7 @@
 
             },
             "en-us": {
+"ui_eventHeader": "[$eventID$] $currentTime$, $location$ $actorNames$",
 "ui_eventHeader_location": "Location: $value$",
 "ui_eventHeader_actorNames": "Present: $value$",
 

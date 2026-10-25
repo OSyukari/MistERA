@@ -400,7 +400,11 @@ public static class EventUtility
                 // [targetKey] - c = requester; true if c may ask anyone in targetKey to leave (RequestLeaveUtility.CanRequestLeave)
                 if (r.parameters.Count >= 2 && ev.Targets.TryGetValue(r.parameters[1], out var leaveTargets))
                 {
-                    return leaveTargets.Exists(x => RequestLeaveUtility.CanRequestLeave(c, x, out _));
+                    foreach (var leaveTarget in leaveTargets)
+                    {
+                        if (RequestLeaveUtility.CanRequestLeave(c, leaveTarget, out _)) return true;
+                    }
+                    return false;
                 }
                 else return false;
             case "canBeRequestedToLeave":

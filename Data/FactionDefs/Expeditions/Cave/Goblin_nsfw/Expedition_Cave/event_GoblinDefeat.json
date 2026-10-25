@@ -3,6 +3,7 @@
         "list": [
             {
                 "ID": "event_goblin_combatDefeat",
+                "showEventHeader": "ui_eventHeader",
                 "events": [
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",

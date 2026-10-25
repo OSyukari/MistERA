@@ -32,7 +32,7 @@
         "list": [
             {
                 "ID": "event_erav_house_dog",
-                "showEventHeader": "event_erav_house_dog_writer_header",
+                "showEventHeader": "ui_eventHeader",
                 "events": [
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
@@ -214,8 +214,7 @@
                 "event_erav_house_dog_writer_summary_completed": "完事后，女管家递来热毛巾，例行检查她的膝盖和大腿内侧，皱了皱眉。\n「内侧抓破了皮。上点药。……去把客厅的灯关了，老规矩。」\n餐厅那边传来碰杯声。二少爷在夸哈根今晚状态好。",
                 "event_erav_house_dog_writer_summary_failed": "本次流程未能完成。",
                 "event_erav_house_dog_writer_summary_skipped": "已跳过本次事件。",
-                "event_erav_house_dog_writer_summary_error": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。",
-                "event_erav_house_dog_writer_header": "家犬侍奉"
+                "event_erav_house_dog_writer_summary_error": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。"
             }
         }
     }

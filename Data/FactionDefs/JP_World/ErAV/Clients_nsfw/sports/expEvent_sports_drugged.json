@@ -32,7 +32,7 @@
         "list": [
             {
                 "ID": "event_erav_sports_drugged",
-                "showEventHeader": "event_erav_sports_drugged_writer_header",
+                "showEventHeader": "ui_eventHeader",
                 "events": [
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
@@ -313,8 +313,7 @@
                 "event_erav_sports_drugged_writer_summary_completed": "意识离场前的最后记忆：她自己的腰在动。没有人扶，没有人按——身体自己记住了节奏。\n次晨醒来，睡衣是干的，头发被梳顺了。大腿内侧的指印，替她拼回了昨夜。日程表翻到了新页，没有人提起。",
                 "event_erav_sports_drugged_writer_summary_failed": "本次流程未能完成。",
                 "event_erav_sports_drugged_writer_summary_skipped": "已跳过本次事件。",
-                "event_erav_sports_drugged_writer_summary_error": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。",
-                "event_erav_sports_drugged_writer_header": "下药的夜晚"
+                "event_erav_sports_drugged_writer_summary_error": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。"
             }
         }
     }

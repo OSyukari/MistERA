@@ -3,6 +3,7 @@
         "list": [
             {
                 "ID": "event_caveGoblinEncounter",
+                "showEventHeader": "ui_eventHeader",
                 "TargetValidators": [
                     {
                         "refkeys": [

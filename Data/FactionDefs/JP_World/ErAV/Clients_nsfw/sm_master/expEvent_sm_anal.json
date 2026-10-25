@@ -32,7 +32,7 @@
         "list": [
             {
                 "ID": "event_erav_sm_anal",
-                "showEventHeader": "event_erav_sm_anal_writer_header",
+                "showEventHeader": "ui_eventHeader",
                 "events": [
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
@@ -317,8 +317,7 @@
                 "event_erav_sm_anal_writer_summary_completed_first_only": "本次仅完成首个阶段。",
                 "event_erav_sm_anal_writer_summary_failed": "本次流程未能完成。",
                 "event_erav_sm_anal_writer_summary_skipped": "已跳过本次事件。",
-                "event_erav_sm_anal_writer_summary_error": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。",
-                "event_erav_sm_anal_writer_header": "第二天·肛门日"
+                "event_erav_sm_anal_writer_summary_error": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。"
             }
         }
     }

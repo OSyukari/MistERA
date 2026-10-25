@@ -85,24 +85,31 @@ public class EventInstance
         if (!this.allowDuplicate) return true;
 
         if (CooldownRestrictSelf && this.Self != null && this.Self == ev.Self) return true;
+        // any non-null target of ev is also a target here (no list building - hot via EventManager.CheckConflict)
         if (CooldownRestrictTarget)
         {
-            List<Character_Trainable> actors_self = new List<Character_Trainable>(), actors_ev = new List<Character_Trainable>();
-
-            foreach (var target in this.Targets) actors_self.AddRange(target.Value);
-            Utility.DistinctInPlace(actors_self);
-            actors_self.Remove(null);
-
-            foreach (var target in ev.Targets) actors_ev.AddRange(target.Value);
-            Utility.DistinctInPlace(actors_ev);
-            actors_ev.Remove(null);
-
-            if (actors_self.Count < 1 || actors_ev.Count < 1) return false;
-            else if (Utility.ListContainsLoose(actors_self, actors_ev)) return true;
+            foreach (var evTargets in ev.Targets)
+            {
+                var list = evTargets.Value;
+                for (int i = 0; i < list.Count; i++)
+                {
+                    var actor = list[i];
+                    if (actor != null && hasTarget(actor)) return true;
+                }
+            }
         }
 
         return false;
 
+    }
+
+    bool hasTarget(Character_Trainable actor)
+    {
+        foreach (var targets in this.Targets)
+        {
+            if (targets.Value.Contains(actor)) return true;
+        }
+        return false;
     }
 
     public bool overrideTargetGen = false;
@@ -238,6 +245,7 @@ public class EventInstance
                 text = LocalizeDictionary.QueryThenParse(field.Item3).Replace("$value$", text);
             header = header.Replace(field.Item2, text);
         }
+        header = UtilityEX.ParseEventEntry(this, header);
         if (string.IsNullOrWhiteSpace(header)) return;
 
         // Capture before Results can change context or clear this instance; mark at queue time to avoid repeats.

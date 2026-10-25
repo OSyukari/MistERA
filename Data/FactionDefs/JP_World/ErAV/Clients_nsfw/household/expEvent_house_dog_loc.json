@@ -19,8 +19,7 @@
                 "event_erav_house_dog_writer_summary_completed": "Afterward the housekeeper hands her a hot towel and runs the routine check over her knees and inner thighs, brow furrowed.\n\"Scraped the inside a little. Put salve on it. ...Now go turn off the living-room lights. As always.\"\nGlasses clink in the dining room. The second son is complimenting Hagen on his good form tonight.",
                 "event_erav_house_dog_writer_summary_failed": "The sequence could not be completed.",
                 "event_erav_house_dog_writer_summary_skipped": "This event was skipped.",
-                "event_erav_house_dog_writer_summary_error": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi).",
-                "event_erav_house_dog_writer_header": "Serving the Family Dog"
+                "event_erav_house_dog_writer_summary_error": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi)."
             }
         }
     }

@@ -4,7 +4,7 @@
         "list": [
             {
                 "ID": "event_erav_celeb_intro",
-                "showEventHeader": "event_erav_celeb_intro_writer_header",
+                "showEventHeader": "[$eventID$] $currentTime$, $party.room_name$ $party.name$",
                 "SelfValidator": {
                     "chara_conditions": [
                         {
@@ -1087,7 +1087,7 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "event_erav_celeb_intro_writer_header": "名人客户：接风宴",
+                "event_erav_celeb_intro": "名人客户：接风宴",
                 "event_erav_celeb_intro_writer_opening": "客房电梯直达顶层。$party.name$握着门卡在套房门前站了片刻，门缝里透出酒气和笑声。今晚的客人已经在里面等酒了。",
                 "event_erav_celeb_intro_writer_intro_01": "手机在掌心震动，事务所发来的短信只有两行。\n「这几天，你就是他们的专属导游。他们要什么，你就给什么。利息能不能抵掉，看你伺候得开不开心。」\n她攥紧门卡，指节泛白，还是抬手刷开了房门。",
                 "event_erav_celeb_intro_writer_question": "今晚的安排就在门后。要怎么做？",

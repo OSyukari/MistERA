@@ -19,8 +19,7 @@
                 "event_erav_sports_drugged_writer_summary_completed": "The last memory before her mind slips away: her own hips moving. Nobody holding, nobody pushing - her body had learned the rhythm on its own.\nShe wakes the next morning in dry pajamas, her hair combed smooth. The fingermarks inside her thighs piece the night back together. The schedule turns to a new page; nobody mentions it.",
                 "event_erav_sports_drugged_writer_summary_failed": "The sequence could not be completed.",
                 "event_erav_sports_drugged_writer_summary_skipped": "This event was skipped.",
-                "event_erav_sports_drugged_writer_summary_error": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi).",
-                "event_erav_sports_drugged_writer_header": "The Drugged Night"
+                "event_erav_sports_drugged_writer_summary_error": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi)."
             }
         }
     }

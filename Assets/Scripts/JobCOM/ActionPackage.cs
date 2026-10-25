@@ -3104,6 +3104,19 @@ public abstract class ActionPackage
         return list;
     }
 
+    /// <summary>ActorTargetTags(refID).Contains(tag) without building the list.</summary>
+    public bool ActorHasTargetTag(int refID, string tag)
+    {
+        var eps = this.ListEP;
+        for (int i = 0; i < eps.Count; i++)
+        {
+            var ep = eps[i];
+            if (ep.DoerRef == refID) { if (ep.DoerTargetTag.Contains(tag)) return true; }
+            else if (ep.ReceiverRef == refID) { if (ep.ReceiverTargetTag.Contains(tag)) return true; }
+        }
+        return false;
+    }
+
     public List<string> ActorSelfTags(int refID)
     {
         var list = new List<string>();

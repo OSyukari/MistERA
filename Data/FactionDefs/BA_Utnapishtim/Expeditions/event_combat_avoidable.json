@@ -3,6 +3,7 @@
         "list": [
             {
                 "ID": "exp_event_Utnapishtim_combat_avoidable",
+                "showEventHeader": "ui_eventHeader",
                 "SelfValidator": {
                     "chara_conditions": [
                         {
