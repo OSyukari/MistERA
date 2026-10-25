@@ -1173,6 +1173,9 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             case "ActionPackage_GoToSchedule":
                 returnValue = new ActionPackage_GoToSchedule(job, this, doers, receivers, masterRef);
                 break;
+            case "ActionPackage_Work":
+                returnValue = new ActionPackage_Work(job, this, doers, receivers, masterRef);
+                break;
             default:
                 break;
 

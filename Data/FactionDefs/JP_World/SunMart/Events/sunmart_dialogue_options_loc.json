@@ -1,0 +1,20 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for sunmart_dialogue_options.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "jp_convenience_store_Opt_Apply": "Apply for a Part-Time Job",
+                "jp_convenience_store_Opt_Apply_greeting": "\"Looking for part-time work here? It's 1,200 yen an hour, 1,500 on the night shift, paid daily.\"",
+                "jp_convenience_store_Opt_Apply_question": "\"Who would like the part-time job?\"",
+                "jp_convenience_store_Opt_Apply_done": "\"Great, we're counting on you. The shift can be changed later.\"\n(Shifts can be changed on the Jobs page of the Management screen.)",
+                "jp_convenience_store_Opt_Quit": "Quit a Job",
+                "jp_convenience_store_Opt_Quit_question": "\"Who is quitting?\"",
+                "jp_convenience_store_Opt_Quit_done": "\"I see... thanks for all the work.\"",
+                "jp_convenience_store_Opt_cancel": "Never mind",
+                "jp_convenience_store_Opt_cancelLine": "\"Let me know if you change your mind.\""
+            }
+        }
+    }
+}

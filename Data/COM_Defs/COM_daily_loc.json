@@ -23,7 +23,17 @@
                 "com_interaction_goto_schedule_type_Work": "Work",
                 "com_interaction_goto_schedule_type_Booking": "Appointment",
                 "com_interaction_goto_schedule_type_Party": "Party Gathering",
-                "com_interaction_goto_schedule_type_Home": "Home"
+                "com_interaction_goto_schedule_type_Home": "Home",
+                "com_interaction_work": "Player only. For your current work shift: go to a room with work equipment, or carry out one work command in the current room.",
+                "com_interaction_work_displayName": "Work",
+                "com_interaction_work_goto": "Go to $room$ ($post$)",
+                "com_interaction_work_work": "Work as $post$",
+                "com_interaction_work_noShift": "No work shift for the current hour",
+                "com_interaction_work_noCommand": "This post has no work command - being on site is enough",
+                "com_interaction_work_noFurniture": "No usable work equipment found",
+                "com_interaction_work_tooltip_shift": "Shift: $faction$ $post$ $hours$",
+                "com_interaction_work_tooltip_commands": "Work commands: $commands$",
+                "com_interaction_work_tooltip_room": "Workplace: $room$"
             }
         }
     }

@@ -113,7 +113,7 @@ public class tab_dialogue : MonoBehaviour
                     valid = false;
                     tooltip += $"\n{LocalizeDictionary.QueryThenParse("ui_com_disabled_autofailure_tooltip")}";
                 }
-                else if (scr_System_CampaignManager.current.DeterministicRolls && package_cache.RequestRate * package_cache.ResponseRate / 100 < 65)
+                else if (scr_System_CampaignManager.current.DeterministicRolls && package_cache.SuccessRate < scr_System_CampaignManager.current.DeterministicThreshold)
                 {
                     valid = false;
                     tooltip += $"\n{LocalizeDictionary.QueryThenParse("ui_com_disabled_autofailure_deterministicRolls_tooltip")}";

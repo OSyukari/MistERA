@@ -1,0 +1,203 @@
+{
+    "_doc": "Dialogue options offered by ON-SHIFT SunMart staff (target must be active at jp_convenience_store_SunMart AND carry the jp_convenience_store_hiring actor tag, which only comes from the hiring posts' Tags while that MemberType is their active one) - same pattern as the hospital / sports club dialogue options. Apply: done by the part-time post's joinHandler callback (JoinHandler_WorkPost; a parent post joins as its first shift, source = the hired character's permanent home) - offered to the player and followers. The shift is changed in the Management UI (the source faction's Jobs tab, external job tab). Quit: done by the held post's leaveHandler callback (LeaveHandler_WorkPost), for the player's own people holding a SunMart post. Template for new workplaces - see Docs/WorkFactions/Guide_WorkFaction.md.",
+    "Events": {
+        "list": [
+            {
+                "ID": "jp_convenience_store_Opt_Apply",
+                "_comment": "Part-time only (full-time posts are not offered to applicants). JoinActiveFaction asks the part-time post's joinHandler for one option per player/follower (disabled with a reason when already part of the store or held by a temporary home). Options found -> question (picking one hires them via its callback, then jumps to apply_done); none -> the handler's reason from $applyError$.",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Options",
+                "UISpec": { "displayMode": "AVG" },
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] },
+                        { "parameters": [ "isPlayer" ] }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "staff" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [
+                            { "parameters": [ "exists" ] },
+                            { "parameters": [ "excludePlayer" ] },
+                            { "parameters": [ "isConscious" ] },
+                            { "parameters": [ "isActiveFaction", "jp_convenience_store_SunMart" ] },
+                            { "parameters": [ "hasActorTag", "jp_convenience_store_hiring" ] }
+                        ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_convenience_store_Opt_Apply_greeting",
+                        "Results": [
+                            { "Type": "JoinActiveFaction", "arguments": [ "applyOptions", "selfAndFollowers", "staff", "membertype_jp_convenience_store_parttime", "applyError" ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_has_options",
+                                "Results": [
+                                    { "Type": "ExistStoredOptions", "arguments": [ "applyOptions" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "apply_ask" ] }
+                                ]
+                            },
+                            {
+                                "option": "_no_options",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "apply_error" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "apply_error",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "$applyError$",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "apply_ask",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "question": "jp_convenience_store_Opt_Apply_question",
+                        "loadOptionsKey": "applyOptions",
+                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "apply_done" ] } ],
+                        "options": [
+                            {
+                                "option": "jp_convenience_store_Opt_cancel",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "apply_cancel" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "apply_done",
+                        "_comment": "Reached by picking a loaded option (the question's loadOptionsResults jump here).",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_convenience_store_Opt_Apply_done"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "_comment": "What the picked option's join callback changed (AppendFactionChange: who is now what).",
+                        "line": "$factionChangeString$",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "apply_cancel",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_convenience_store_Opt_cancelLine",
+                        "isLast": true
+                    }
+                ]
+            },
+            {
+                "ID": "jp_convenience_store_Opt_Quit",
+                "_comment": "Shown when a SunMart worker (any post - root type, descendants match) shares the player's permanent home faction (the player or one of the player's own people). LeaveActiveFaction asks the held post's leaveHandler for one option per such worker; picking one removes their work faction.",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Options",
+                "UISpec": { "displayMode": "AVG", "infoDisplay": "Hide" },
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] },
+                        { "parameters": [ "isPlayer" ] }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "staff" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [
+                            { "parameters": [ "exists" ] },
+                            { "parameters": [ "excludePlayer" ] },
+                            { "parameters": [ "isConscious" ] },
+                            { "parameters": [ "isActiveFaction", "jp_convenience_store_SunMart" ] },
+                            { "parameters": [ "hasActorTag", "jp_convenience_store_hiring" ] }
+                        ],
+                        "minTargetCount": 1
+                    },
+                    {
+                        "refkeys": [ "leavers" ],
+                        "baseScope": "FactionMembersWithMemberType",
+                        "extraScopeArguments": [ "jp_convenience_store_SunMart", "membertype_jp_convenience_store_clerk" ],
+                        "chara_conditions": [
+                            { "parameters": [ "exists" ] },
+                            { "parameters": [ "sharesHomeFaction" ] }
+                        ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_build_options",
+                                "Results": [
+                                    { "Type": "LeaveActiveFaction", "arguments": [ "quitOptions", "leavers", "staff", "membertype_jp_convenience_store_clerk" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "quit_ask" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "quit_ask",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "question": "jp_convenience_store_Opt_Quit_question",
+                        "loadOptionsKey": "quitOptions",
+                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "quit_done" ] } ],
+                        "options": [
+                            {
+                                "option": "jp_convenience_store_Opt_cancel",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "quit_abort" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "quit_done",
+                        "_comment": "Reached by picking a loaded option (the question's loadOptionsResults jump here).",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_convenience_store_Opt_Quit_done"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "_comment": "Who left (AppendFactionLeave from the leave callback).",
+                        "line": "$factionChangeString$",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "quit_abort",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_convenience_store_Opt_cancelLine",
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "jp_convenience_store_Opt_Apply": "应聘兼职",
+                "jp_convenience_store_Opt_Apply_greeting": "「想在这里做兼职吗？时薪一千二，深夜班一千五，按天结算。」",
+                "jp_convenience_store_Opt_Apply_question": "「请问是哪一位要应聘兼职？」",
+                "jp_convenience_store_Opt_Apply_done": "「好，之后就拜托了。班次可以之后再调整。」\n（可以在管理界面的职务页调整班次。）",
+                "jp_convenience_store_Opt_Quit": "办理辞职",
+                "jp_convenience_store_Opt_Quit_question": "「请问是哪一位要辞职？」",
+                "jp_convenience_store_Opt_Quit_done": "「这样啊……辛苦了。」",
+                "jp_convenience_store_Opt_cancel": "算了",
+                "jp_convenience_store_Opt_cancelLine": "「有需要再跟我说。」"
+            }
+        }
+    }
+}

@@ -47,10 +47,13 @@ public class scr_ScheduleBox : MonoBehaviour, IPointerEnterHandler, IPointerDown
             if (parent != null && parent.currentChara != null) c = parent.currentChara;
             else
             {
+                this.c = null;
                 SetBoxText("-", null);
                 return;
             }
         }
+        // cache the character this box was drawn for - the pointer handlers act on it
+        this.c = c;
 
         int currentHour = scr_System_Time.current.getCurrentTime().Hour;
 
@@ -61,6 +64,11 @@ public class scr_ScheduleBox : MonoBehaviour, IPointerEnterHandler, IPointerDown
 
        // comName = c.FactionManager.GetUiSchedule(0, index).Name; // today's slot from the calendar-anchored 48h registry, not the rolling window
         faction = c.CurrentJobScheduleFaction(index); // get job faction at hour[index]
+
+        // an hour of the held MemberType's own shift is named after the post (e.g. 夜班兼职B), not its jobPostID text
+        var heldType = faction != null ? faction.GetMemberType(c) : null;
+        if (heldType != null && heldType.workModule != null && ReferenceEquals(schedule, heldType.workModule.CachedSchedule))
+            comName = heldType.DisplayName;
 
         // a recreation booking drives this hour (live, or already elapsed today) - unless a party gathering does
         var booking = FactionUtility.TryGetPartyGatheringOverride(c, index, out _) ? null : c.FactionManager.GetUiBooking(index);
@@ -121,6 +129,8 @@ public class scr_ScheduleBox : MonoBehaviour, IPointerEnterHandler, IPointerDown
             this.text.color = faction == parent.CurrentFaction ? baseColor : disableColor;
         }
 
+        // the player's own hours come from their job posts - never painted (scr_Canvas_Management.IsPlayerOwnHoursLocked)
+        if (c.RefID == 0) canOverride = false;
     }
 
     /// <summary>Box text, through the hoverable (so tooltip shows on hover) when there is one; tooltip null = none.</summary>

@@ -69,9 +69,10 @@
                 "isPurgedOnPartyCleanup": false,
                 "isDisplayableInFactionUI": true,
                 "participatesInCombat": true,
+                "_comment_joinHandler": "optionTextKey names the candidate ($name$) - at the staff dialogue (Events/sunmart_dialogue_options.json) the options list the player and followers; $memberType$ = the post asked for.",
                 "joinHandler": {
                     "$type": "JoinHandler_WorkPost, Assembly-CSharp",
-                    "optionTextKey": "work_post_joinOption",
+                    "optionTextKey": "jp_convenience_store_joinOption",
                     "bindTargetKey": "worker"
                 },
                 "leaveHandler": {
@@ -101,6 +102,8 @@
                             {
                                 "ID":"membertype_jp_convenience_store_manager",
                                 "socialStandingKey":"membertype_jp_convenience_store_manager",
+                                "_comment_Tags": "jp_convenience_store_hiring: actor tag while on shift - the player can apply for / quit a store job by talking to them (Events/sunmart_dialogue_options.json). An own Tags list replaces the inherited one, so the parent's memberType_work_fullTime is repeated here.",
+                                "Tags":["memberType_work_fullTime", "jp_convenience_store_hiring"],
                                 "workModule": {
                                     "jobPostID":"jp_convenience_store_manager",
                                     "workCommands":["jp_convenience_store_frontDesk"],
@@ -116,6 +119,7 @@
                                 "ID":"membertype_jp_convenience_store_assistant_manager",
                                 "_comment":"14-22: overlaps the manager Wed-Fri for the handover, covers the evening rush and closing.",
                                 "socialStandingKey":"membertype_jp_convenience_store_assistant_manager",
+                                "Tags":["memberType_work_fullTime", "jp_convenience_store_hiring"],
                                 "workModule": {
                                     "jobPostID":"jp_convenience_store_assistant_manager",
                                     "workCommands":["jp_convenience_store_frontDesk"],
@@ -131,6 +135,8 @@
                                 "ID":"membertype_jp_convenience_store_npc_day",
                                 "_comment":"NPC-only 12h day post, every day, always covered by a fallback worker. Directly under the root (no part-time/full-time tag) and in neither assignableMemberTypes nor joinableMemberTypes, so it can't be joined or assigned.",
                                 "socialStandingKey":"membertype_jp_convenience_store_npc_day",
+                                "_comment_Tags": "The always-staffed fallback posts also take applications, so someone on duty can always hire.",
+                                "Tags":["memberType_work_fullTime", "jp_convenience_store_hiring"],
                                 "workModule": {
                                     "jobPostID":"jp_convenience_store_npc_day",
                                     "workCommands":["jp_convenience_store_frontDesk"],
@@ -146,6 +152,7 @@
                                 "ID":"membertype_jp_convenience_store_npc_night",
                                 "_comment":"NPC-only 12h night post (20-08, counts for the day it starts), every day, always covered by a fallback worker. Not joinable or assignable, like the day post. Night pay 1500/h.",
                                 "socialStandingKey":"membertype_jp_convenience_store_npc_night",
+                                "Tags":["memberType_work_fullTime", "jp_convenience_store_hiring"],
                                 "workModule": {
                                     "jobPostID":"jp_convenience_store_npc_night",
                                     "workCommands":["jp_convenience_store_frontDesk"],
@@ -382,7 +389,7 @@
                     "Entries":[
                         {
                             "keepLooking":true,
-                            "texts":[ "$receiver.firstname$结束了工作" ]
+                            "texts":[ "$doer.firstname$结束了工作" ]
                         }
                     ]
                 },
@@ -675,6 +682,7 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
+                "jp_convenience_store_joinOption":"让$name$担任$memberType$",
                 "membertype_jp_convenience_store_clerk":"店员",
                 "membertype_jp_convenience_store_fulltime":"全职店员",
                 "membertype_jp_convenience_store_manager":"店长",

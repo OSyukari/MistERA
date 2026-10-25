@@ -180,6 +180,32 @@
             "DifficultyCheck":{ "baseD20Check": -1 }
         },
         {
+            "ID":"com_interaction_work",
+            "ActionPackageClass":"ActionPackage_Work",
+            "displayName":"com_interaction_work_displayName",
+            "_comment":"Player-only contextual Work button (Docs/PlayerSchedule/Plan_PlayerSchedule.md). ActionPackage_Work resolves the current work shift: no shift / no command / no furniture -> invalid; no work furniture in the current room -> 'go to' (PathTo trip, renamed _goto); otherwise 'work as' (_work) - the click launches one valid scheduled work command on that furniture instead. The tooltip lists every work command of the shift. timeScale is unused.",
+            "timeScale":1,
+            "comTags": [
+                "action",
+                "player"
+            ],
+            "requirements":{
+                "requirement":{
+                    "forbidTeammateJoin":true,
+                    "joinAlone":true,
+                    "req_Doers":{ "allowNPC":false, "requireMovement":true }
+                }
+            },
+            "variants":[
+                {
+                    "requirements":{ "requirement":{ "doerCount":1 } },
+                    "displayName":"com_interaction_work_displayName"
+                }
+            ],
+            "AcceptanceCheck":{ "baseAcceptanceValue":0 },
+            "DifficultyCheck":{ "baseD20Check": -1 }
+        },
+        {
             "ID":"com_interaction_talk",
             "ActionPackageClass":"ActionPackage_Talk",
             "displayName":"com_interaction_talk_displayName_1",
@@ -414,6 +440,16 @@
                 "com_interaction_goto_schedule_type_Booking": "预约",
                 "com_interaction_goto_schedule_type_Party": "队伍集合",
                 "com_interaction_goto_schedule_type_Home": "家",
+                "com_interaction_work": "玩家限定。根据当前时段的工作班次，前往有工作设施的房间，或在当前房间执行一次工作指令",
+                "com_interaction_work_displayName": "工作",
+                "com_interaction_work_goto": "前往$room$（$post$）",
+                "com_interaction_work_work": "以$post$身份工作",
+                "com_interaction_work_noShift": "当前时段没有工作班次",
+                "com_interaction_work_noCommand": "这个职务没有需要执行的工作指令，在岗即可",
+                "com_interaction_work_noFurniture": "找不到可以使用的工作设施",
+                "com_interaction_work_tooltip_shift": "班次：$faction$ $post$ $hours$",
+                "com_interaction_work_tooltip_commands": "工作指令：$commands$",
+                "com_interaction_work_tooltip_room": "工作地点：$room$",
                 "com_interaction_partyInvite_begin_1": "$receiver.firstname$加入了$doer.firstname$",
                 "com_interaction_partyInvite_ongoing_1": "$receiver.firstname$正准备跟上$doer.firstname$",
                 "comManager_com_follow_stop_begin_1": "$receiver.firstname$离开了$doer.firstname$",

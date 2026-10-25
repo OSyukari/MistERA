@@ -321,6 +321,21 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
     public I_ScheduleOption CurrentScheduleOption { get { return currentScheduleOption; } }
 
+    string tooltip_playerOwnHours = null;
+    /// <summary>
+    /// True while the player is the selected character: their own hours come from the job posts they hold, so the
+    /// tools editing the current faction's hours / status for them (single commands, Sandbox, use-default, job posts)
+    /// are shown invalid with this tooltip - only the external job tab (button_ExternalMemberType) acts for the player.
+    /// </summary>
+    public bool IsPlayerOwnHoursLocked(out string tooltip)
+    {
+        tooltip = "";
+        if (currentChara == null || currentChara.RefID != 0) return false;
+        if (tooltip_playerOwnHours == null) tooltip_playerOwnHours = LocalizeDictionary.QueryThenParse("ui_management_jobs_schedule_tooltip_playerOwnHours");
+        tooltip = tooltip_playerOwnHours;
+        return true;
+    }
+
     /// <summary>
     /// The action a click/drag gesture on the 24-hour grid resolves to - decided once by
     /// scr_ScheduleBox.OnPointerDown and replayed unchanged as the pointer drags over further boxes,
@@ -859,7 +874,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         Image background;
         bool isActive = false;
 
-        string notmanager, canteditmanager, canteditplayer;
+        string notmanager, canteditmanager;
         public button_EditSchedule(scr_Canvas_Management parent, scr_SelectableText button, RectTransform scheduleRect, Image scheduleRectBG, List<RectTransform> comRects) : base(parent)
         {
             this.parent = parent;
@@ -872,9 +887,12 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
             notmanager = LocalizeDictionary.QueryThenParse("ui_management_jobs_schedule_tooltip_notmanager");
             canteditmanager = LocalizeDictionary.QueryThenParse("ui_management_jobs_schedule_tooltip_canteditmanager");
-            canteditplayer = LocalizeDictionary.QueryThenParse("ui_management_jobs_schedule_tooltip_canteditplayer");
         }
 
+        /// <summary>
+        /// The player may open their own schedule (to switch / pause / resume their job posts on the external job tab -
+        /// see IsPlayerOwnHoursLocked for what stays locked); other managers stay locked.
+        /// </summary>
         public override bool IsButtonValid()
         {
             tooltip = "";
@@ -886,8 +904,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             }
             else if (parent.currentChara.RefID == 0)
             {
-                tooltip = canteditplayer;
-                return false;
+                return true;
             }
             else if (parent.currentFaction.isCharaManager(parent.currentChara))
             {
@@ -963,7 +980,13 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                 .Replace("$workdays$", parent.CurrentFaction.GetWorkDaysPerWeekString(parent.currentChara))
                 .Replace("$workhours$", parent.CurrentFaction.GetWorkHoursPerDayString(parent.currentChara));
 
-            if (!canUseDefault)
+            if (parent.IsPlayerOwnHoursLocked(out var lockedTooltip))
+            {
+                button.Toggle(true, false);
+                tooltip = lockedTooltip;
+                return false;
+            }
+            else if (!canUseDefault)
             {
                 button.Toggle(true, false);
                 tooltip = tooltip_none;
@@ -1060,9 +1083,17 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                 || !parent.currentChara.FactionManager.GetUseCustomOverride(parent.CurrentFaction);
 
             bool canUseDefault = parent.CurrentFaction.GetMemberType(parent.currentChara).workModule != null
-                && parent.CurrentFaction.GetMemberType(parent.currentChara).workModule.activeHours.Count > 0; 
+                && parent.CurrentFaction.GetMemberType(parent.currentChara).workModule.activeHours.Count > 0;
 
-            if (canUseDefault && usingDefault)
+            if (parent.IsPlayerOwnHoursLocked(out var lockedTooltip))
+            {
+                if (parent.CurrentScheduleOption == option) parent.currentScheduleOption = null;
+                button.Toggle(true, false);
+                tooltip = lockedTooltip;
+                description.text = parent.CurrentFaction.GetJobCOMAlertInfo(com, true);
+                return false;
+            }
+            else if (canUseDefault && usingDefault)
             {
                 if (parent.CurrentScheduleOption == option) parent.currentScheduleOption = null;
                 button.Toggle(true, false);
@@ -1107,7 +1138,14 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             bool canUseDefault = parent.CurrentFaction.GetMemberType(parent.currentChara).workModule != null
                 && parent.CurrentFaction.GetMemberType(parent.currentChara).workModule.activeHours.Count > 0;
 
-            if (!canUseDefault)
+            if (parent.IsPlayerOwnHoursLocked(out var lockedTooltip))
+            {
+                if (parent.CurrentScheduleOption == option) parent.currentScheduleOption = null;
+                button.Toggle(true, false);
+                tooltip = lockedTooltip;
+                return false;
+            }
+            else if (!canUseDefault)
             {
                 button.Toggle(true, false);
                 tooltip = "no default assignment available";
@@ -1176,6 +1214,14 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             var chara = parent.currentChara;
             var currentStatus = memberTypeOwnerFaction.GetMemberType(chara);
 
+            if (parent.IsPlayerOwnHoursLocked(out var lockedTooltip))
+            {
+                isCurrent = true; // a click does nothing
+                tooltip = lockedTooltip;
+                button.Toggle(true, currentStatus == this.targetMemberType);
+                return false;
+            }
+
             if (currentStatus == this.targetMemberType)
             {
                 // the held post: shown selected, clicking it does nothing (leaving a job is dialogue-event only)
@@ -1237,7 +1283,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
         public void NotifyPointerEnter()
         {
-            parent.CurrentHighlightHours = this.targetMemberType.workModule.activeHours;
+            parent.CurrentHighlightHours = GetTodayShiftHours(this.targetMemberType, memberTypeOwnerFaction, parent.currentChara);
             parent.ValidateAll();
         }
         public void NotifyPointerExit()
@@ -1245,6 +1291,19 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             parent.CurrentHighlightHours = null;
             parent.ValidateAll();
         }
+    }
+
+    /// <summary>
+    /// The hours the 24h grid (today) should highlight for memberType's shift: its activeHours that actually work today -
+    /// day of the week and days off (WorkModuleInit.IsActiveAt, overnight hours checked against the day they started),
+    /// with faction's holiday calendar for chara. Null without a workModule.
+    /// </summary>
+    static List<int> GetTodayShiftHours(MemberType memberType, Manageable faction, Character_Trainable chara)
+    {
+        var module = memberType?.workModule;
+        if (module == null) return null;
+        var calendar = faction != null && chara != null ? faction.HolidayCalendarFor(chara) : null;
+        return module.activeHours.FindAll(h => module.IsActiveAt(h, 0, calendar));
     }
 
     /// <summary>A MemberType's shift as job post description text (commands, hours, payout, days); "error" without a workModule.</summary>
@@ -1274,7 +1333,8 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
     /// <summary>
     /// External job tab: one of the posts (the held MemberType or one of its siblings) at a work faction the character
-    /// already belongs to. Never joins or leaves - joining/quitting is dialogue-event only. Clicking a sibling switches
+    /// already belongs to. Never joins or leaves - joining/quitting is dialogue-event only. Usable only from the faction
+    /// the job was arranged from (Character_Factions.GetWorkFactionSourceOrDefault); elsewhere shown invalid with that source. Clicking a sibling switches
     /// the character's MemberType there (salary source kept) and resumes attending; clicking the held, attended type
     /// pauses it (Character_Factions.SetWorkPaused) - still a member, paying fees, but its shift no longer schedules them.
     /// </summary>
@@ -1316,6 +1376,16 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
             bool held = workFaction.GetMemberType(chara) == targetMemberType;
             bool paused = chara.FactionManager.IsWorkPaused(workFaction);
+
+            // only the faction this job was arranged from (its source - salary / fee payer) may change its shift
+            var source = chara.FactionManager.GetWorkFactionSourceOrDefault(workFaction.ID);
+            if (source != parent.CurrentFaction)
+            {
+                tooltip += LocalizeDictionary.QueryThenParse("ui_management_jobs_schedule_tooltip_otherSource")
+                    .Replace("$source$", source != null ? source.FactionDisplayName : "-");
+                button.Toggle(true, held && !paused);
+                return false;
+            }
 
             if (held && !paused)
             {
@@ -1377,7 +1447,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
         public void NotifyPointerEnter()
         {
-            parent.CurrentHighlightHours = targetMemberType?.workModule?.activeHours;
+            parent.CurrentHighlightHours = GetTodayShiftHours(targetMemberType, workFaction, parent.currentChara);
             parent.ValidateAll();
         }
         public void NotifyPointerExit()

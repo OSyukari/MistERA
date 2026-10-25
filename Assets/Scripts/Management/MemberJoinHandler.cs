@@ -340,7 +340,7 @@ public class JoinHandler_HospitalPatient : MemberJoinHandler
             {
                 memberTypeID = type.ID,
                 links = hospital.GetMemberLinks(c),
-                // read before the temp home is set: the default falls back to HomeFactions[0], which the hospital is about to become
+                // read before the temp home is set and while the hospital is still a work faction (the untracked default is then the permanent home)
                 sourceFactionID = c.FactionManager.GetWorkFactionSourceOrDefault(hospital.ID)?.ID ?? "",
             });
         c.FactionManager.RemoveWorkFaction(hospital.ID);
@@ -481,7 +481,7 @@ public class JoinHandler_TempHomeWithRoom : MemberJoinHandler
 
 /// <summary>
 /// Generic work post (e.g. a store clerk's shifts): one option per candidate, joining the faction as a work faction with
-/// this MemberType - the same as assigning the post in the Management UI. Usually set on a parent post, so it is
+/// this MemberType (source = the candidate's permanent home) - the same as assigning the post in the Management UI. Usually set on a parent post, so it is
 /// inherited by the shifts and joining the parent joins its first shift (shift changes are the player's job, in the UI).
 /// Disabled (with reason): already part of the faction in any role, or held by a temporary home (hospital, kidnapping...).
 /// Hours clashing with another job are allowed. Nobody is moved.
@@ -510,9 +510,14 @@ public class JoinHandler_WorkPost : MemberJoinHandler
         return "";
     }
 
+    /// <summary>
+    /// The post is registered with c's permanent home as its source (salary / fee payer, and the faction whose Management UI
+    /// may change its shift - scr_Canvas_Management.button_ExternalMemberType), so a temporary home (hospital, party...)
+    /// set now or later never takes it over.
+    /// </summary>
     void Join(EventInstance ev, Manageable faction, MemberType type, Character_Trainable c)
     {
-        c.FactionManager.AddWorkFaction(faction.ID, type, true, null);
+        c.FactionManager.AddWorkFaction(faction.ID, type, true, c.FactionManager.Faction_Home);
         AppendFactionChange(ev, c, faction, false);
     }
 }

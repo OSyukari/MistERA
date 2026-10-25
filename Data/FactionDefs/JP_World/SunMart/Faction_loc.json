@@ -5,6 +5,7 @@
     "Dictionary": {
         "Entries": {
             "en-us": {
+                "jp_convenience_store_joinOption": "$name$ as $memberType$",
                 "membertype_jp_convenience_store_clerk": "Store Clerk",
                 "membertype_jp_convenience_store_fulltime": "Full-time Clerk",
                 "membertype_jp_convenience_store_manager": "Store Manager",

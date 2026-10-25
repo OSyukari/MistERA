@@ -200,6 +200,8 @@
             {
                 "ID": "membertype_jp_high_school_board",
                 "socialStandingKey": "membertype_jp_high_school_board",
+                "_comment_Tags": "jp_high_school_hiring: actor tag while on shift - the player can enroll / withdraw by talking to them (Events/high_school_dialogue_options.json).",
+                "Tags": ["jp_high_school_hiring"],
                 "isMember": true,
                 "isPrisoner": false,
                 "isManager": true,
@@ -227,6 +229,7 @@
             {
                 "ID": "membertype_jp_high_school_teacher",
                 "socialStandingKey": "membertype_jp_high_school_teacher",
+                "Tags": ["jp_high_school_hiring"],
                 "isMember": true,
                 "isPrisoner": false,
                 "isManager": false,
@@ -270,9 +273,10 @@
                 "socialStandingKey": "membertype_jp_high_school_student",
                 "_comment_Tags": "Full-time enrollment (arrange-a-school: Opt_ArrangeJoin_StudentFullTime).",
                 "Tags": ["memberType_student_fullTime"],
+                "_comment_joinHandler": "optionTextKey names the candidate ($name$) - at the staff dialogue (Events/high_school_dialogue_options.json) the options list the player and followers.",
                 "joinHandler": {
                     "$type": "JoinHandler_WorkPost, Assembly-CSharp",
-                    "optionTextKey": "work_post_joinOption",
+                    "optionTextKey": "jp_high_school_student_joinOption",
                     "bindTargetKey": "worker"
                 },
                 "leaveHandler": {
@@ -547,6 +551,7 @@
                 "membertype_jp_high_school_board":"学校董事会成员",
                 "membertype_jp_high_school_teacher":"教师",
                 "membertype_jp_high_school_student":"学生",
+                "jp_high_school_student_joinOption":"为$name$办理入学",
                 "jp_high_school_student_lesson_displayName":"上课",
                 "jp_high_school_teachers_lesson_displayName":"授课",
                 "jp_high_school_student_class":"上学",

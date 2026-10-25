@@ -489,9 +489,10 @@ public class MemberType
     /// Optional tags of this member status (e.g. "prisoner", "clergy"). Merged into the actor's tag set
     /// (Utility.GetActorTag) when this is the character's current MemberType in their active faction or
     /// active party, and matched by the join-by-tag search (FactionJoinUtility.BuildReachableJoinOptionsByTag,
-    /// e.g. "memberType_hospital_patient"). Empty by default.
+    /// e.g. "memberType_hospital_patient"). Inherited from the parent when unset (null until ApplyHierarchy, which
+    /// leaves it empty if no ancestor defines it) - must not be initialized here, or children never inherit.
     /// </summary>
-    public List<string> Tags = new List<string>();
+    public List<string> Tags = null;
 
     /// <summary>
     /// Additional PersonalityAcceptanceMods contributed by this member status, checked and applied

@@ -211,6 +211,8 @@
                 "ui_management_expeditionConfig_prioritizeResting_tooltip": "If enabled, team members will prioritize resting until fully recovered when HP is not full.\nIf disabled, members will prioritize exploration until ST/EN is below 50%, they become dazed, or HP is less than 1.\nIf a character is already judged (by this setting) to need rest during the muster phase, they won't respond to the muster.\nThe team will cancel the muster after 1 hour and try again tomorrow.",
                 "ui_management_jobs_schedule_tooltip_canteditmanager": "The target is also a manager; their schedule cannot be edited",
                 "ui_management_jobs_schedule_tooltip_canteditplayer": "The player's schedule cannot be edited",
+                "ui_management_jobs_schedule_tooltip_otherSource": "This job was arranged by $source$; its shift can only be changed from $source$'s management screen\n",
+                "ui_management_jobs_schedule_tooltip_playerOwnHours": "Your own hours come from the posts you hold and can't be set one by one.\nSwitch, pause or resume a shift on the External Jobposts tab.",
                 "ui_management_jobs_schedule_tooltip_notmanager": "Lacks management authority over faction $name$",
                 "ui_management_production_activateTitle": "Order Status",
                 "ui_management_production_addSales": "<link=ui_management_production_addSales_tooltip>Add Retail Sales Order</link>",

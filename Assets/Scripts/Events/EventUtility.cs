@@ -3609,6 +3609,8 @@ public static class EventUtility
                 string joinErrorKey;
                 if (exec.Type == Event.EventEntry.ExecutionType.LeaveActiveFaction) joinOptions.AddRange(joinFaction.BuildLeaveOptions(joinType, joinCandidates, out joinErrorKey));
                 else joinOptions.AddRange(joinFaction.BuildJoinOptions(joinType, joinCandidates, out joinErrorKey));
+                // handler texts may name the post (e.g. work_post_joinOption) - the type asked for, as FactionJoinUtility does
+                foreach (var op in joinOptions) if (op != null && op.option != null) op.option = op.option.Replace("$memberType$", joinType.DisplayName);
                 if (joinOptions.Count == 0 && exec.arguments.Count >= 5 && exec.arguments[4] != "" && !string.IsNullOrEmpty(joinErrorKey))
                     owner.AppendStrings[exec.arguments[4]] = new List<string>() { LocalizeDictionary.QueryThenParse(joinErrorKey) };
                 return true;

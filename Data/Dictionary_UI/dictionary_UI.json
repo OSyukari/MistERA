@@ -648,6 +648,8 @@
 "ui_management_jobs_schedule_tooltip_notmanager": "缺乏阵营 $name$ 的管理权限",
 "ui_management_jobs_schedule_tooltip_canteditmanager": "对象同为管理者，无法编辑日程",
 "ui_management_jobs_schedule_tooltip_canteditplayer": "无法编辑玩家的日程",
+"ui_management_jobs_schedule_tooltip_otherSource": "这份工作由 $source$ 安排，只能在 $source$ 的管理界面中调整班次\n",
+"ui_management_jobs_schedule_tooltip_playerOwnHours": "玩家自己的时段由所任职务决定，无法逐一设置。\n请在「外派工作岗位」页切换、暂停或恢复班次。",
 
 "ui_management_mealprep_title": "准备$faction$的食材中……",
 "ui_management_mealprep_additive_title": "添加剂：$name$，当前持有 $count$，可适用的食品数 $food$",

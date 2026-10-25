@@ -1,0 +1,203 @@
+{
+    "_doc": "Dialogue options offered by ON-SHIFT high school staff (target must be active at jp_high_school AND carry the jp_high_school_hiring actor tag, which only comes from the teacher / board MemberTypes' Tags while that MemberType is their active one) - same pattern as the hospital / sports club dialogue options. Enroll: done by the student MemberType's joinHandler callback (JoinHandler_WorkPost; source = the student's permanent home, who pays the tuition) - offered to the player and followers. Withdraw: done by its leaveHandler callback (LeaveHandler_WorkPost), for the player's own people enrolled here. See Docs/WorkFactions/Guide_WorkFaction.md.",
+    "Events": {
+        "list": [
+            {
+                "ID": "jp_high_school_Opt_Enroll",
+                "_comment": "JoinActiveFaction asks the student MemberType's joinHandler for one option per player/follower (disabled with a reason when already part of the school or held by a temporary home). Options found -> question (picking one enrolls them via its callback, then jumps to enroll_done); none -> the handler's reason from $enrollError$.",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Options",
+                "UISpec": { "displayMode": "AVG" },
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] },
+                        { "parameters": [ "isPlayer" ] }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "staff" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [
+                            { "parameters": [ "exists" ] },
+                            { "parameters": [ "excludePlayer" ] },
+                            { "parameters": [ "isConscious" ] },
+                            { "parameters": [ "isActiveFaction", "jp_high_school" ] },
+                            { "parameters": [ "hasActorTag", "jp_high_school_hiring" ] }
+                        ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_high_school_Opt_Enroll_greeting",
+                        "Results": [
+                            { "Type": "JoinActiveFaction", "arguments": [ "enrollOptions", "selfAndFollowers", "staff", "membertype_jp_high_school_student", "enrollError" ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_has_options",
+                                "Results": [
+                                    { "Type": "ExistStoredOptions", "arguments": [ "enrollOptions" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "enroll_ask" ] }
+                                ]
+                            },
+                            {
+                                "option": "_no_options",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "enroll_error" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "enroll_error",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "$enrollError$",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "enroll_ask",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "question": "jp_high_school_Opt_Enroll_question",
+                        "loadOptionsKey": "enrollOptions",
+                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "enroll_done" ] } ],
+                        "options": [
+                            {
+                                "option": "jp_high_school_Opt_cancel",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "enroll_cancel" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "enroll_done",
+                        "_comment": "Reached by picking a loaded option (the question's loadOptionsResults jump here).",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_high_school_Opt_Enroll_done"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "_comment": "What the picked option's join callback changed (AppendFactionChange: who is now what).",
+                        "line": "$factionChangeString$",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "enroll_cancel",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_high_school_Opt_cancelLine",
+                        "isLast": true
+                    }
+                ]
+            },
+            {
+                "ID": "jp_high_school_Opt_Withdraw",
+                "_comment": "Shown when a student here shares the player's permanent home faction (the player or one of the player's own people). LeaveActiveFaction asks the student MemberType's leaveHandler for one option per such student; picking one removes their work faction.",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Options",
+                "UISpec": { "displayMode": "AVG", "infoDisplay": "Hide" },
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] },
+                        { "parameters": [ "isPlayer" ] }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "staff" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [
+                            { "parameters": [ "exists" ] },
+                            { "parameters": [ "excludePlayer" ] },
+                            { "parameters": [ "isConscious" ] },
+                            { "parameters": [ "isActiveFaction", "jp_high_school" ] },
+                            { "parameters": [ "hasActorTag", "jp_high_school_hiring" ] }
+                        ],
+                        "minTargetCount": 1
+                    },
+                    {
+                        "refkeys": [ "leavers" ],
+                        "baseScope": "FactionMembersWithMemberType",
+                        "extraScopeArguments": [ "jp_high_school", "membertype_jp_high_school_student" ],
+                        "chara_conditions": [
+                            { "parameters": [ "exists" ] },
+                            { "parameters": [ "sharesHomeFaction" ] }
+                        ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_build_options",
+                                "Results": [
+                                    { "Type": "LeaveActiveFaction", "arguments": [ "withdrawOptions", "leavers", "staff", "membertype_jp_high_school_student" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "withdraw_ask" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "withdraw_ask",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "question": "jp_high_school_Opt_Withdraw_question",
+                        "loadOptionsKey": "withdrawOptions",
+                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "withdraw_done" ] } ],
+                        "options": [
+                            {
+                                "option": "jp_high_school_Opt_cancel",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "withdraw_abort" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "withdraw_done",
+                        "_comment": "Reached by picking a loaded option (the question's loadOptionsResults jump here).",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_high_school_Opt_Withdraw_done"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "_comment": "Who left (AppendFactionLeave from the leave callback).",
+                        "line": "$factionChangeString$",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "withdraw_abort",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_high_school_Opt_cancelLine",
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "jp_high_school_Opt_Enroll": "办理入学",
+                "jp_high_school_Opt_Enroll_greeting": "「想要入学吗？学费每月三万五千日元，工作日八点到十七点上课。」",
+                "jp_high_school_Opt_Enroll_question": "「请问是哪一位要入学？」",
+                "jp_high_school_Opt_Enroll_done": "「手续办好了。从下个上学日开始，记得准时到校。」",
+                "jp_high_school_Opt_Withdraw": "办理退学",
+                "jp_high_school_Opt_Withdraw_question": "「请问是哪一位要退学？」",
+                "jp_high_school_Opt_Withdraw_done": "「……我知道了。退学手续已经办好了。」",
+                "jp_high_school_Opt_cancel": "算了",
+                "jp_high_school_Opt_cancelLine": "「有什么事随时来找老师。」"
+            }
+        }
+    }
+}

@@ -475,13 +475,18 @@ public class Character_Factions
     /// <summary>
     /// The faction that should be treated as the source for workFactionID's obligations (salary,
     /// membership fees, etc.): the explicitly tracked dispatcher (GetWorkFactionSource) if any, otherwise
-    /// HomeFactions[0]. Every work faction assignment resolves to *some* source through this fallback, so
-    /// every caller that needs "who does this job's obligations belong to" should go through here rather
-    /// than re-deriving the HomeFactions[0] fallback itself.
+    /// - for one of this character's work factions (a job with no tracked source: old saves, a SetWorkFaction
+    /// without dispatcher...) the permanent home (Faction_Home), so a temporary home (hospital, party) never takes
+    /// a job over; for anything else (recreation venues, memberships) HomeFactions[0], the priority home.
+    /// Every assignment resolves to *some* source through this fallback, so every caller that needs "who does
+    /// this job's obligations belong to" should go through here rather than re-deriving the fallback itself.
     /// </summary>
     public Manageable GetWorkFactionSourceOrDefault(string workFactionID)
     {
-        return GetWorkFactionSource(workFactionID) ?? (HomeFactions.Count > 0 ? HomeFactions[0] : null);
+        var source = GetWorkFactionSource(workFactionID);
+        if (source != null) return source;
+        if (Faction_Home != null && FactionIDs_Work.Contains(workFactionID)) return Faction_Home;
+        return HomeFactions.Count > 0 ? HomeFactions[0] : null;
     }
 
     public void PrioritizeWorkFaction(string factionID)

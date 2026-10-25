@@ -1,0 +1,20 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for high_school_dialogue_options.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "jp_high_school_Opt_Enroll": "Enroll",
+                "jp_high_school_Opt_Enroll_greeting": "\"Thinking of enrolling? Tuition is 35,000 yen a month, with classes from 8 to 17 on weekdays.\"",
+                "jp_high_school_Opt_Enroll_question": "\"Who would like to enroll?\"",
+                "jp_high_school_Opt_Enroll_done": "\"You're enrolled. Be on time from the next school day.\"",
+                "jp_high_school_Opt_Withdraw": "Withdraw",
+                "jp_high_school_Opt_Withdraw_question": "\"Who is withdrawing?\"",
+                "jp_high_school_Opt_Withdraw_done": "\"...I understand. Your withdrawal has been processed.\"",
+                "jp_high_school_Opt_cancel": "Never mind",
+                "jp_high_school_Opt_cancelLine": "\"Come see me any time.\""
+            }
+        }
+    }
+}

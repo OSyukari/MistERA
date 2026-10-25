@@ -25,6 +25,7 @@
                 "jp_high_school_teachers_lesson_displayName": "Teach Class",
                 "membertype_jp_high_school_board": "School Board Member",
                 "membertype_jp_high_school_student": "Student",
+                "jp_high_school_student_joinOption": "Enroll $name$",
                 "membertype_jp_high_school_teacher": "Teacher",
                 "school_frontGate": "XX Private High School"
             }

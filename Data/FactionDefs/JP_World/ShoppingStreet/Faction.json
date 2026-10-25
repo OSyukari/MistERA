@@ -302,7 +302,7 @@
                     "Entries":[
                         {
                             "keepLooking":true,
-                            "texts":[ "$receiver.firstname$结束了工作" ]
+                            "texts":[ "$doer.firstname$结束了工作" ]
                         }
                     ]
                 },

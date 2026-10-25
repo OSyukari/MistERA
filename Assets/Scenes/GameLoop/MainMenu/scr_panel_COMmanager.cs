@@ -1553,7 +1553,7 @@ public class scr_panel_COMmanager : scr_Menu
                     tooltip += $"\n{LocalizeDictionary.QueryThenParse("ui_com_disabled_autofailure_tooltip")}";
                     return false;
                 }
-                else if (scr_System_CampaignManager.current.DeterministicRolls && package.RequestRate * package.ResponseRate / 100 < 65)
+                else if (scr_System_CampaignManager.current.DeterministicRolls && package.SuccessRate < scr_System_CampaignManager.current.DeterministicThreshold)
                 {
                     tooltip += $"\n{LocalizeDictionary.QueryThenParse("ui_com_disabled_autofailure_deterministicRolls_tooltip")}";
                     return false;
@@ -1955,7 +1955,7 @@ public class scr_panel_COMmanager : scr_Menu
                     tooltip += $"\n{LocalizeDictionary.QueryThenParse("ui_com_disabled_autofailure_tooltip")}";
                     return false;
                 }
-                else if (scr_System_CampaignManager.current.DeterministicRolls && package.RequestRate * package.ResponseRate / 100 < 65)
+                else if (scr_System_CampaignManager.current.DeterministicRolls && package.SuccessRate < scr_System_CampaignManager.current.DeterministicThreshold)
                 {
                     tooltip += $"\n{LocalizeDictionary.QueryThenParse("ui_com_disabled_autofailure_deterministicRolls_tooltip")}";
                     return false;
@@ -1999,23 +1999,38 @@ public class scr_panel_COMmanager : scr_Menu
             else
             {
                 var ppp = package.Copy();
+                // a package launching another one on another job (e.g. ActionPackage_Work starting a work command on its furniture)
+                Job launchJob = null;
+                if (ppp is I_RedirectedLaunch redirect && redirect.TryGetLaunch(out launchJob, out var launchPackage))
+                {
+                    if (launchJob == null || launchPackage == null) return;
+                    ppp = launchPackage;
+                }
                 var ops = ppp.LaunchOptions();
                 if (ops != null && ops.Count > 0)
                 {
                    // Debug.LogError($"loading options {ops.Count}");
-                    parent.LoadCOMOptionsPanel(ppp, ops, new Action(() => Execute(ppp)));
+                    parent.LoadCOMOptionsPanel(ppp, ops, new Action(() => Execute(ppp, launchJob)));
                 }
-                else Execute(ppp);
+                else Execute(ppp, launchJob);
             }
         }
 
-        void Execute(ActionPackage ppp)
+        /// <summary>Adds ppp to launchJob (a redirected launch - see I_RedirectedLaunch), else to this button's job.</summary>
+        void Execute(ActionPackage ppp, Job launchJob = null)
         {
+            var job = launchJob ?? this.job;
             parent.childCOMPanel.Active = false;
             parent.COMOptionsPanel.Active = false;
             scr_System_CentralControl.current.AutoSave();
 
-            if (!package.isTemporaryAP)
+            if (launchJob != null)
+            {
+                // a redirected launch records the package actually launched (e.g. the work command ActionPackage_Work
+                // picked, on its furniture) - not the launcher - so the recent commands replay it directly
+                if (!ppp.isTemporaryAP) scr_System_CampaignManager.current.LogPlayerPackage(ppp.Copy());
+            }
+            else if (!package.isTemporaryAP)
             {
                 scr_System_CampaignManager.current.LogPlayerPackage(package.Copy());
             }
@@ -2706,7 +2721,7 @@ public class scr_panel_COMmanager : scr_Menu
                 tooltip += $"\n{LocalizeDictionary.QueryThenParse("ui_com_disabled_autofailure_tooltip")}";
                 return false;
             }
-            else if (scr_System_CampaignManager.current.DeterministicRolls && ap.RequestRate * ap.ResponseRate / 100 < 65)
+            else if (scr_System_CampaignManager.current.DeterministicRolls && ap.SuccessRate < scr_System_CampaignManager.current.DeterministicThreshold)
             {
                 tooltip += $"\n{LocalizeDictionary.QueryThenParse("ui_com_disabled_autofailure_deterministicRolls_tooltip")}";
                 return false;

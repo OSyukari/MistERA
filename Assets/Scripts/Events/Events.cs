@@ -932,7 +932,8 @@ public class Event : I_SerializationCallbackReceiver
             /// the characters resolved from candidatesKey (TryResolveExecTargets: "self", "selfAndFollowers" or a target key).
             /// The ready-made options are stored in EventInstance.StoredOptions[storeKey] (loaded by a question's
             /// loadOptionsKey). If none are returned and the handler gave a reason, its localized text is stored in
-            /// AppendStrings[errorStringKey] (shown via $errorStringKey$). Always returns true.
+            /// AppendStrings[errorStringKey] (shown via $errorStringKey$). "$memberType$" in an option's text becomes
+            /// memberTypeID's display name. Always returns true.
             /// </summary>
             JoinActiveFaction,
 
