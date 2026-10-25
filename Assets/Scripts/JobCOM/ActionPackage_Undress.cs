@@ -156,6 +156,6 @@ public class ActionPackage_Undress : ActionPackage
     [JsonProperty] protected BodyEquipLayer targetLayer = BodyEquipLayer.None;
     [JsonProperty] protected Revealing includeRating = Revealing.Erotic;
     [JsonIgnore] public override List<int> actorRefs { get { return new List<int>() { doerRef }; } }
-    [JsonIgnore] public override string DisplayName { get { return "|" + Doer.FirstName + " is undressing |"; } }
+    [JsonIgnore] public override string DisplayName { get { return LocalizeDictionary.QueryThenParse("ActionPackage_Undress_displayName"); } }
 
 }

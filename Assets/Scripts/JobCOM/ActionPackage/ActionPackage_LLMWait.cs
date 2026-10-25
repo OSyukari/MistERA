@@ -20,5 +20,5 @@ public class ActionPackage_LLMWait : ActionPackage_Wait
     public ActionPackage_LLMWait() : base() { }
     public ActionPackage_LLMWait(Job job, int doerRef, int time) : base(job, doerRef, time) { }
 
-    [JsonIgnore] public override string DisplayName { get { return $"LLM plan pin, paused? {paused}"; } }
+    [JsonIgnore] public override string DisplayName { get { return LocalizeDictionary.QueryThenParse("ActionPackage_LLMWait_displayName"); } }
 }

@@ -25,7 +25,7 @@ public class ActionPackage_Wait : ActionPackage
         this.duration = time;
     }
 
-    [JsonIgnore] public override string DisplayName { get { return $"waiting, paused? {paused}"; } }
+    [JsonIgnore] public override string DisplayName { get { return LocalizeDictionary.QueryThenParse("ActionPackage_Wait_displayName"); } }
 
     [JsonIgnore] public override List<int> actorRefs { get { return new List<int>() { doerRef }; } }
     [JsonIgnore] public override List<int> DoerRefs { get { return new List<int>() { doerRef }; } }

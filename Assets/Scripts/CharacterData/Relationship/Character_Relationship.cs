@@ -732,9 +732,10 @@ public class Character_Relationship
             return _trustCap_tooltip;
         } }
     string _trustCap_tooltip = "";
+    const int TrustCap_Base = 25;
     protected void UpdateTrustCap()
     {
-        _trustCap = 25;
+        _trustCap = TrustCap_Base;
         _trustCap_tooltip = LocalizeDictionary.QueryThenParse("relationship_trust_cap_uiDisplay").Replace("$value$", $"{_trustCap}");
 
         if (Relationship_Bio != null)
@@ -1264,21 +1265,77 @@ public class Character_Relationship
     /// already-existing (e.g. empty placeholder) relationship object without clobbering an
     /// already-set relationship type or touching accumulated relationshipScores/attitude state.
     /// </summary>
-    public void ApplyPresetIfUnset(RelationshipManager.presetRelationship template)
+    /// <returns>true if any slot was filled in</returns>
+    public bool ApplyPresetIfUnset(RelationshipManager.presetRelationship template)
     {
-        if (template == null) return;
+        if (template == null) return false;
+        bool applied = false;
         if (relationshipTypeID_Bio == "" && template.initialBiologicalRelationship != "")
         {
             relationshipTypeID_Bio = template.initialBiologicalRelationship;
             isA_Bio = template.initialBiologicalRelationship_isA;
             _Relationship_Bio = null;
+            applied = true;
         }
         if (relationshipTypeID_Personal == "" && template.initialPersonalRelationship != "")
         {
             relationshipTypeID_Personal = template.initialPersonalRelationship;
             isA_Personal = template.initialPersonalRelationship_isA;
             _Relationship_Personal = null;
+            applied = true;
         }
+        if (applied) OnRelationshioChange();
+        return applied;
+    }
+
+    /// <summary>
+    /// Raises the stored scores so this relationship's preset Bio/Personal types actually qualify, as if the
+    /// relationship had formed naturally - otherwise e.g. a preset BFF starting at 0 fails its
+    /// MaintenanceRequirements on the first interaction and breaks. Thresholds are read from the types'
+    /// own Requirements + MaintenanceRequirements, so relations.json changes apply without data edits.
+    /// A type's own RelationshipMod doesn't count toward qualifying for it (natural formation qualifies
+    /// before that bonus applies), so BFF starts at stored 75/75 rather than 40/55; Bio's bonus does count
+    /// toward the Personal type. Social-faction bonuses are left out - factions may not be assigned yet
+    /// at creation, and reading Relationship_Social_Keys here would cache them early. Only ever raises.
+    /// </summary>
+    public void InitializeScoresFromTypes()
+    {
+        var types = scr_System_Serializer.current.MasterList.RelationshipTypes;
+        var bio = relationshipTypeID_Bio == "" ? null : types.GetByID(relationshipTypeID_Bio);
+        var personal = relationshipTypeID_Personal == "" ? null : types.GetByID(relationshipTypeID_Personal);
+        if (bio == null && personal == null) return;
+
+        var scores = (float[])relationshipScores.Clone();
+        var bonus = new float[scores.Length];
+        if (bio != null)
+        {
+            bio.RaiseInitialScores(scores, bonus, isA_Bio);
+            for (int i = 0; i < bonus.Length; i++) bonus[i] = bio.GetRelModForStat(isA_Bio, (RelationshipScoreType)i);
+        }
+        if (personal != null) personal.RaiseInitialScores(scores, bonus, isA_Personal);
+
+        // ModRelationValue clamps Trust to TrustCap on any gain, so starting above the cap would get pulled down
+        int trustCap = TrustCap_Base
+            + (bio == null ? 0 : bio.GetTrustCapIncrease(!isA_Bio))
+            + (personal == null ? 0 : personal.GetTrustCapIncrease(!isA_Personal));
+        int t = (int)RelationshipScoreType.Trust;
+        if (scores[t] > trustCap)
+        {
+            scores[t] = Math.Max(relationshipScores[t], trustCap);
+
+            // Solving left the Personal type's own bonus out, but the real checks count it (e.g. servant's
+            // uncapped +50 Trust) - only warn if the clamped Trust still fails once that bonus is included.
+            var fullBonus = (float[])bonus.Clone();
+            if (personal != null) for (int i = 0; i < fullBonus.Length; i++) fullBonus[i] += personal.GetRelModForStat(isA_Personal, (RelationshipScoreType)i);
+            var check = (float[])scores.Clone();
+            if (bio != null) bio.RaiseInitialScores(check, fullBonus, isA_Bio);
+            if (personal != null) personal.RaiseInitialScores(check, fullBonus, isA_Personal);
+            if (check[t] > scores[t]) Debug.LogWarning($"{Owner.FirstName} -> {targetBaseID} preset relationship needs stored Trust {check[t]} but trust cap is {trustCap}, it will fail its requirements");
+        }
+
+        relationshipScores = scores;
+        _debugScoreTooltip.Clear();
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Relationships) Debug.Log($"{Owner.FirstName} -> {targetBaseID} preset relationship scores initialized {Debug_RelationshipScores}");
     }
 
     public void ModRelationValue(RelationshipScoreType type, float value, bool silent = true)

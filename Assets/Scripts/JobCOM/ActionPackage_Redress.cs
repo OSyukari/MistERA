@@ -113,6 +113,6 @@ public class ActionPackage_Redress : ActionPackage
 
 
     [JsonIgnore] public override List<int> actorRefs { get { return new List<int>() { doerRef }; } }
-    [JsonIgnore] public override string DisplayName { get { return "|" + Doer.FirstName + " is redressing |"; } }
+    [JsonIgnore] public override string DisplayName { get { return LocalizeDictionary.QueryThenParse("ActionPackage_Redress_displayName"); } }
 
 }

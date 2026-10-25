@@ -1,0 +1,87 @@
+{
+    "_doc": "口上loose entry文件（Character_Personalities.looselist），供事件 Opt_ArrangeJoin_HospitalPatient（Data/Events/OnDialogue_Options/Opt_ArrangeJoin.json，事件ID Opt_ArrangeJoin_HospitalPatient）通过 GetKojoEntry 执行器检索。\n\n== 口上通用生成规范（LLM生成时必读，各条目_comment只写该条目的特有语境） ==\n1. 口上只负责NPC的台词本身：每条response必须且只能是一句被引号包裹的说话内容，禁止任何旁白、动作描写、心理描写、场景描写（不要写括号叙述、不要写($self$)之类的前缀、不要写'看起来很开心'式的总结）。\n2. 不要在台词里自我介绍或点名说话者（说话者身份由系统头像与对齐负责）。$self$/$target$占位符仅用于台词内自然地称呼对方，且整句可以完全不使用占位符。\n3. 台词长度1~2句自然口语，符合说话者对玩家（上级/雇主，关系随意但非恋人）的日常语气，全年龄（SFW），不涉及性内容。\n4. personality_default为默认女性口上（说话者是女性NPC），personality_base为默认男性口上（说话者是男性NPC），语气风格应区分。\n5. 该场景为玩家作为派系领袖，与自己派系的NPC（patient）面对面谈话，话题是安排NPC去可到达的医院住院（需要卧床休养或手术的情况），或为住院中的NPC办理出院。NPC此时处于正常可行动状态（住院期间的虚弱状态由别处表现，口上无需表现病痛）。注意：正式的出院公告由独立的医院事件发出，本事件的口上只是NPC本人对谈话的反应。\n6. 每个条目请生成多条可选response（建议3条以上），语义相同方向但措辞各异，供运行时随机抽取。",
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "Opt_ArrangeJoin_HospitalPatient_start",
+                    "_comment": "触发时机：事件Opt_ArrangeJoin_HospitalPatient一开始，玩家向'目前没有住院'的NPC提出'安排住院'话题时（事件按NPC当前是否住院分别检索本条目与_start_hospitalized）。场景：玩家问NPC要不要去住院。NPC尚未得知具体结果，只是被征询意见。内容要求：对'被安排住院'话题的通用反应，可以表示愿意、务实、犹豫或让玩家决定，男性语气应相对收敛直接。说话者：男性NPC（当前未住院），听者：玩家。",
+                    "variants": [
+                        {
+                            "responses": [
+                                "\"住院？行，既然你这么安排。\"",
+                                "\"医院啊……确实该去看看了。\"",
+                                "\"要住院就住吧，身体要紧。\""
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "Opt_ArrangeJoin_HospitalPatient_start_hospitalized",
+                    "_comment": "触发时机：事件Opt_ArrangeJoin_HospitalPatient一开始，玩家向'正在住院'的NPC提出话题时（接下来是出院的询问；事件按NPC当前是否住院分别检索本条目与_start）。场景：NPC已经是住院病人，玩家再次谈起住院安排。内容要求：对'又在谈起住院的事'的反应，可表达疑惑、猜到要出院或转院、或表示恢复情况等，男性语气应相对收敛直接。说话者：男性NPC（当前住院中），听者：玩家。",
+                    "variants": [
+                        {
+                            "responses": [
+                                "\"嗯？是要办出院吗？\"",
+                                "\"住院的事怎么了？医生又说什么了？\"",
+                                "\"我这恢复得差不多了吧。\""
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "Opt_ArrangeJoin_HospitalPatient_admitted",
+                    "_comment": "触发时机：事件Opt_ArrangeJoin_HospitalPatient中，玩家为NPC选定了医院并成功办妥住院手续之后（含离开玩家队伍、家人登记探视等后续）。场景：NPC得知自己即将住院休养。内容要求：对住院成功的反应，可表达接受、安心、简单感谢等，男性语气应相对收敛直接，不涉及具体医院名。说话者：男性NPC，听者：玩家。",
+                    "variants": [
+                        {
+                            "responses": [
+                                "\"办好了？行，我这就去办入院。\"",
+                                "\"嗯，那就安心住一段时间。多谢了。\"",
+                                "\"既然安排了，就好好养。\""
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "Opt_ArrangeJoin_HospitalPatient_discharged",
+                    "_comment": "触发时机：事件Opt_ArrangeJoin_HospitalPatient中，玩家为NPC成功办理出院之后（之后通常会接着询问要不要去别处住院；正式的出院公告由独立的医院事件发出）。场景：NPC得知自己出院了。内容要求：对出院成功的反应，可表达轻松、务实、简单感谢等，男性语气应相对收敛直接。说话者：男性NPC，听者：玩家。",
+                    "variants": [
+                        {
+                            "responses": [
+                                "\"出院了啊。总算不用躺着了。\"",
+                                "\"嗯，出院手续办好了。多谢。\"",
+                                "\"在医院也住够了吧，接下来听你安排。\""
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "Opt_ArrangeJoin_HospitalPatient_bye",
+                    "_comment": "触发时机：事件Opt_ArrangeJoin_HospitalPatient中，玩家取消对话（不用了/算了，或出院后没有可去的医院）时，作为 closing line 显示。场景：本次谈话结束，什么都没办或办完了，NPC向玩家道别。内容要求：简短的告别语，不涉及住院话题的结果，不要开启新话题，男性语气应相对收敛直接。说话者：男性NPC，听者：玩家。",
+                    "variants": [
+                        {
+                            "responses": [
+                                "\"嗯，那就这样。我先去忙了。\"",
+                                "\"好，有需要再找我。\"",
+                                "\"行，那就先这样。\""
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}

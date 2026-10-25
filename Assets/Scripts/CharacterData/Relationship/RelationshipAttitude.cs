@@ -105,6 +105,23 @@ public class RelationshipRequirement
         {
             return Utility.CompareValue(GetScore(rel, requireScoreID, isRawScore), operand, value);
         }
+
+        /// <summary>Raises stored so stored+bonus meets a gte/gt/eq threshold. Upper bounds (lt/lte/neq) are never solved for.</summary>
+        public bool RaiseToSatisfy(float[] stored, float[] bonus)
+        {
+            int idx = ScoreIndex(requireScoreID, stored);
+            if (!isActive || idx < 0) return false;
+
+            float min;
+            if (operand == LogicalOperand.gte || operand == LogicalOperand.eq) min = value;
+            else if (operand == LogicalOperand.gt) min = value + 1;
+            else return false;
+
+            float needed = min - bonus[idx];
+            if (stored[idx] >= needed) return false;
+            stored[idx] = needed;
+            return true;
+        }
     }
     public class RelationshipScoreCompare
     {
@@ -128,6 +145,38 @@ public class RelationshipRequirement
 
             return Utility.CompareValue(value1, operand, value2);
         }
+
+        /// <summary>
+        /// If (stored+bonus) fails this comparison, raises one side to satisfy it - the left score for gt/gte/eq,
+        /// the compared score for lt/lte. Never lowers a score.
+        /// </summary>
+        public bool RaiseToSatisfy(float[] stored, float[] bonus)
+        {
+            int a = ScoreIndex(requireScoreID, stored), b = ScoreIndex(compareScoreID, stored);
+            if (!isActive || a < 0 || b < 0) return false;
+
+            float valueA = stored[a] + bonus[a], valueB = (stored[b] + bonus[b]) * compareScoreMult;
+            if (Utility.CompareValue(valueA, operand, valueB)) return false;
+
+            switch (operand)
+            {
+                case LogicalOperand.gte:
+                case LogicalOperand.eq:
+                    if (valueA > valueB) return false;
+                    stored[a] = valueB - bonus[a];
+                    return true;
+                case LogicalOperand.gt:
+                    stored[a] = valueB - bonus[a] + 1;
+                    return true;
+                case LogicalOperand.lte:
+                case LogicalOperand.lt:
+                    if (compareScoreMult <= 0) return false;
+                    stored[b] = valueA / compareScoreMult - bonus[b] + (operand == LogicalOperand.lt ? 1 : 0);
+                    return true;
+                default:
+                    return false;
+            }
+        }
         public string Tooltip(bool isBase)
         {
             return $"{LocalizeDictionary.QueryThenParse(($"relationship_{requireScoreID}{(isBase ? "_base" : "_final")}").ToLower())}{Utility.LogicOperandToString(operand)}{LocalizeDictionary.QueryThenParse(($"relationship_{compareScoreID}{(isBase ? "_base" : "_final")}").ToLower())}*{compareScoreMult.ToString("F1")}";
@@ -144,6 +193,47 @@ public class RelationshipRequirement
         else if (requireScoreID == "Badwill") return isRawscore ? rel.Badwill_Raw : rel.Badwill;
         else if (requireScoreID == "Desire") return isRawscore ? rel.Desire_Raw : rel.Desire;
         else return 0f;
+    }
+
+    /// <summary>RelationshipScoreType index of requireScoreID (same IDs GetScore accepts), or -1.</summary>
+    protected static int ScoreIndex(string requireScoreID, float[] scores)
+    {
+        if (!Enum.TryParse<RelationshipScoreType>(requireScoreID, out var type) || type == RelationshipScoreType.None) return -1;
+        return (int)type < scores.Length ? (int)type : -1;
+    }
+
+    /// <summary>One raise pass over this requirement's score thresholds and comparisons; true if any score changed.</summary>
+    bool RaisePass(float[] stored, float[] bonus)
+    {
+        bool changed = false;
+        foreach (var i in requireScore) changed |= i.RaiseToSatisfy(stored, bonus);
+        foreach (var i in requireRawScore) changed |= i.RaiseToSatisfy(stored, bonus);
+        foreach (var i in requireScoreCompare) changed |= i.RaiseToSatisfy(stored, bonus);
+        foreach (var i in requireRawScoreCompare) changed |= i.RaiseToSatisfy(stored, bonus);
+        return changed;
+    }
+
+    /// <summary>
+    /// Raises stored (indexed by RelationshipScoreType) until stored+bonus satisfies every given requirement's
+    /// score thresholds and comparisons at once - solved together (e.g. entry + maintenance) so a raise for one
+    /// can't leave another failing. Used to give preset relationships starting scores that qualify for their type
+    /// (Character_Relationship.InitializeScoresFromTypes). Final-score requirements are solved as raw (multiplier 1);
+    /// Mood/Lust/Stress are momentary state rather than scores, so they're ignored. Never lowers a score. Null entries are skipped.
+    /// </summary>
+    public static void RaiseToSatisfy(float[] stored, float[] bonus, params RelationshipRequirement[] requirements)
+    {
+        bool changed = true;
+        for (int pass = 0; pass < 6 && changed; pass++)
+        {
+            changed = false;
+            foreach (var r in requirements) if (r != null) changed |= r.RaisePass(stored, bonus);
+        }
+        if (changed)
+        {
+            var tooltips = new List<string>();
+            foreach (var r in requirements) if (r != null) tooltips.Add(r.Tooltip);
+            Debug.LogWarning($"RelationshipRequirement.RaiseToSatisfy did not settle ({String.Join(" / ", tooltips)}) - check for conflicting requirements");
+        }
     }
 
 

@@ -4,6 +4,10 @@
             "zh-cn": {
                 "comDescription_remainingtime": ", 剩余$minute$分钟",
                 "ActionPackage_ProductionOrder_displayName": "制造$orderName$",
+                "ActionPackage_Undress_displayName": "脱衣服",
+                "ActionPackage_Redress_displayName": "穿衣服",
+                "ActionPackage_Wait_displayName": "等待",
+                "ActionPackage_LLMWait_displayName": "等待行动计划",
                 "ActionPackage_ProductionOrder_join": "帮$target$$apName$",
                 "ActionPackage_ProductionOrder_joinEX": "协助$apName$$target$",
                 "ActionPackage_join": "与$target$$apName$",
@@ -33,6 +37,10 @@
             "en-us": {
                 "comDescription_remainingtime": ", remaining $minute$ minutes",
                 "ActionPackage_ProductionOrder_displayName": "Craft $orderName$",
+                "ActionPackage_Undress_displayName": "Undress",
+                "ActionPackage_Redress_displayName": "Redress",
+                "ActionPackage_Wait_displayName": "Wait",
+                "ActionPackage_LLMWait_displayName": "Wait for action plan",
                 "ActionPackage_ProductionOrder_join": "Help $target$ $apName$",
                 "ActionPackage_join": "$apName$ with $target$",
                 "ActionPackage_ProductionOrder_joinEX": "Help $apName$ $target$",

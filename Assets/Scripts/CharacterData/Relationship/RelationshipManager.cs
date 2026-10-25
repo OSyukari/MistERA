@@ -1049,6 +1049,9 @@ public class RelationshipManager
             }
         }
 
+        // after the generic merge, so preset scores are solved against whatever it merged in
+        if (template != null) returnValue.InitializeScoresFromTypes();
+
         // Communicate a genuine preset to the other party's own RelationshipManager too, so both sides
         // agree without needing the pairing separately authored on each character's own
         // Template.initialRelationship (previously: if only one side defined it, that side alone
@@ -1101,13 +1104,14 @@ public class RelationshipManager
 
         if (relationships.TryGetValue(other.RefID, out var existing))
         {
-            existing.ApplyPresetIfUnset(flipped);
+            if (existing.ApplyPresetIfUnset(flipped)) existing.InitializeScoresFromTypes();
         }
         else
         {
             relationships.Add(other.RefID, new Character_Relationship(this, other, flipped));
             var created = relationships[other.RefID];
             if (relationships_generic.TryGetValue(created.TargetBaseID, out var generic)) created.MergeWith(generic);
+            created.InitializeScoresFromTypes();
         }
     }
 

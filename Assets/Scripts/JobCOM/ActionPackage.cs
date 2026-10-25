@@ -3237,7 +3237,7 @@ public abstract class ActionPackage
                 });
             else scr_UpdateHandler.current.EventHandler.StartEvent(refuseEV, false);
 
-            Debug.LogError($"SendRefuseEvent called injection haslist? {eventCollector != null} result {(eventCollector == null? "null": eventCollector.Count)}");
+            Debug.Log($"SendRefuseEvent called injection haslist? {eventCollector != null} result {(eventCollector == null? "null": eventCollector.Count)}");
 
 
         }

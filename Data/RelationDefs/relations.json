@@ -20,7 +20,7 @@
                     "hasGenderVariant":true,
                     "RelationshipMod":[100,100,0,100,100]
                 },
-                "_comment":"trust|fear|good|bad|lust"
+                "_comment":"RelationshipMod order: trust|goodwill|desire|badwill|fear"
             },
             {
                 "$type":"RelationshipType_Inequal, Assembly-CSharp",
@@ -499,7 +499,7 @@
                 "allowNaturalProposition":false,
                 "allowPlayerProposition":false,
                 "RelationshipMod":[10,0,15,0,0],
-                "_comment2":"trust|fear|good|bad|lust"
+                "_comment2":"RelationshipMod order: trust|goodwill|desire|badwill|fear"
             }
         ]
     },

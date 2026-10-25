@@ -1592,7 +1592,7 @@ public partial class EvaluationPackage : I_ResultStorage
             if (Receiver != null && !refusalCausedByDoer) s = s.Replace("$self$", Receiver.FirstName);
             else s = s.Replace("$self$", Doer.FirstName);
 
-            if (this.Package.targetCOM != null && this.Package.COMVariantID >= 0) s = s.Replace("$comdesc$", this.Package.targetCOM.DisplayName(this.Package.COMVariantID));
+            if (this.Package.targetCOM != null && this.Package.COMVariantID >= 0) s = s.Replace("$comdesc$", this.Package.DisplayName);
             else
             {
                 Debug.LogError($"error targetcom null? {this.Package.targetCOM == null} variantID < 0 {this.Package.COMVariantID}");

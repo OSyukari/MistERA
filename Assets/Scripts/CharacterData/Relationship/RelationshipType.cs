@@ -179,6 +179,16 @@ public class RelationshipType
         return  this.allowNaturalProposition;
     }
 
+    /// <summary>
+    /// Raises stored (indexed by RelationshipScoreType) so stored+bonus meets both Requirements (entry) and
+    /// MaintenanceRequirements, solved together since either can be the stricter one per score - see
+    /// Character_Relationship.InitializeScoresFromTypes. isA follows GetRelModForStat (isA = A_to_B side).
+    /// </summary>
+    public virtual void RaiseInitialScores(float[] stored, float[] bonus, bool isA)
+    {
+        RelationshipRequirement.RaiseToSatisfy(stored, bonus, Requirements, MaintenanceRequirements);
+    }
+
     public virtual int GetRelModForStat(bool isA, RelationshipScoreType type)
     {
         int score = (RelationshipMod == null || RelationshipMod.Length < (int)type) ? 0 : RelationshipMod[(int)type];
@@ -310,6 +320,11 @@ public class RelationshipType_Inequal : RelationshipType
         if (isA && relationship_A_to_B != null) return relationship_A_to_B.GetRelModForStat(isA, type);
         else if (!isA && relationship_B_to_A != null) return relationship_B_to_A.GetRelModForStat(isA, type);
         else return 0;
+    }
+    public override void RaiseInitialScores(float[] stored, float[] bonus, bool isA)
+    {
+        if (isA && relationship_A_to_B != null) relationship_A_to_B.RaiseInitialScores(stored, bonus, isA);
+        else if (!isA && relationship_B_to_A != null) relationship_B_to_A.RaiseInitialScores(stored, bonus, isA);
     }
     public override bool isValid(Character_Relationship rel, bool validateB = false)
     {

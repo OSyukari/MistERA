@@ -89,12 +89,11 @@
           "trait_Size_B_A", "trait_Size_P_none", "trait_Size_V_1", "trait_Size_A_1"
       ],
       "traits_body": [
-          "trait_SkinColor_pale", "trait_HairColor_white", "trait_HairColorPattern_two_tone", "trait_HairColorSecondary_black", "trait_EyeColor_red"
+          "trait_BodyType_slim", "trait_SkinColor_pale", "trait_HairColor_white", "trait_HairColorPattern_two_tone", "trait_HairColorSecondary_black", "trait_EyeColor_red"
       ],
       "Height":157,
       "Weight":52,
       "traits":[
-        "trait_BodyType_slim",
         "trait_SelfEsteem_low",
         "trait_MemoryCapacity_high",
         "trait_MemoryRetention_high",
