@@ -2,6 +2,9 @@
 {
     "baseID": "Campaign1_Char_Yuuka",
     "Portrait":{
+        "useGlobalHandler": [
+            { "path": "ba_yuuka/yuuka" }
+        ],
         "portraitPriorityList":[
             {
                 "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",

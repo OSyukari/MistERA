@@ -2,6 +2,9 @@
           {
     "baseID": "Campaign1_Char_Kayoko",
     "Portrait":{
+        "useGlobalHandler": [
+            { "path": "ba_kayoko/kayoko" }
+        ],
         "portraitPriorityList":[
 {
     "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",

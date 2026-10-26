@@ -2,6 +2,9 @@
 {
     "baseID": "Campaign1_Char_Rin",
     "Portrait":{
+        "useGlobalHandler": [
+            { "path": "ba_rin/rin" }
+        ],
         "portraitPriorityList":[
 {
     "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",

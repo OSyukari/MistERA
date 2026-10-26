@@ -3,7 +3,8 @@
     "Portrait":{
         "useGlobalHandler": [
             { "path": "ako/ako_dress", "selfKeys": ["dress"] },
-            { "path": "ako/ako" }
+            { "path": "ako/ako" },
+            { "path": "ba_ako/ako" }
         ],
         "portraitPriorityList":[
             {

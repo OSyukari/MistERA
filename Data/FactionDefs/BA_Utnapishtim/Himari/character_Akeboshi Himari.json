@@ -1,6 +1,9 @@
 {
     "baseID": "Campaign1_Char_Himari",
     "Portrait":{
+        "useGlobalHandler": [
+            { "path": "ba_himari/himari" }
+        ],
         "portraitPriorityList":[
             {
                 "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",

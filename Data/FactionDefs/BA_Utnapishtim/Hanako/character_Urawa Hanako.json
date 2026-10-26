@@ -2,6 +2,9 @@
 {
   "baseID": "Campaign1_Char_Hanako",
   "Portrait":{
+        "useGlobalHandler": [
+            { "path": "ba_hanako/hanako" }
+        ],
       "portraitPriorityList":[
       {
         "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",

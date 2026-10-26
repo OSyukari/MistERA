@@ -2,6 +2,9 @@
 {
     "baseID": "Campaign1_Char_Ayane",
     "Portrait":{
+        "useGlobalHandler": [
+            { "path": "ba_ayane/ayane" }
+        ],
         "portraitPriorityList":[
 {
     "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
