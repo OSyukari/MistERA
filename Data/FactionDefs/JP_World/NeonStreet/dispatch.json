@@ -1,0 +1,30 @@
+{
+    "_comment": "E2/E5 deferred: rooms + manager/reception, driver and voluntary worker standby posts only. NO dispatch job, client generator, booking/dispatch/ring offer or intimacy permission. Kiryu ownership uses verified ErAV_Kanon (office leader); parent must add existing-character membership as membertype_neon_kiryu_owner, since managerBaseIDs only promotes an already-managed character.",
+    "MapPlans": {
+        "factionInit": [{ "ID": "jp_neon_dispatch", "initializeFaction": "jp_neon_dispatch", "floors": [{ "ID": "floor_jp_neon_dispatch", "nameOverwrite": "jp_neon_dispatch" }], "isRentingFloor": true, "floorListHostFactionID": "jp_neon_street", "floorDoors": [{ "sourceFloor": "floor_jp_neon_dispatch", "sourceExit": "street", "targetFaction": "jp_neon_street", "targetFloor": "floor_jp_neon_street", "targetExit": "to_jp_neon_dispatch", "cost": 1 }], "setPrivateRoomOwner": false, "landlordFactionID": "ErAV_KiryuGumi_Office", "mainExit": { "roomID": "dispatch_reception", "exitCost": 1 }, "managerBaseIDs": ["ErAV_Kanon"], "memberTypeOverrideBaseIDs": { "ErAV_Kanon": "membertype_neon_kiryu_owner" }, "assignableMemberTypes": ["membertype_neon_dispatch_worker"], "joinableMemberTypes": ["membertype_neon_dispatch_worker"], "fallbackWorkers": [
+            { "memberTypeID": "membertype_neon_dispatch_manager", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" },
+            { "memberTypeID": "membertype_neon_dispatch_driver", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" },
+            { "memberTypeID": "membertype_neon_dispatch_worker_evening", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" },
+            { "memberTypeID": "membertype_neon_dispatch_worker_night", "headcount": 2, "maxFallback": 2, "templateID": "jp_store_clerk" }
+        ] }],
+        "floorPlans": [{
+            "ID": "floor_jp_neon_dispatch", "imagePath": "BGAssets/Generated/office_interior_03.webp", "isFloorPlan": false,
+            "floorWidth": 400, "floorHeight": 400, "resize": 1, "mapExit": "dispatch_reception",
+            "exits": [{ "ID": "street", "connectedRoom": "dispatch_reception", "hideOnMap": true }],
+            "wholeBuildingRent": { "maintenanceFee": { "itemID": "currency_JPY", "itemCount": 20000 }, "rentFee": { "itemID": "currency_JPY", "itemCount": 160000 }, "cadence": "Monthly" },
+            "rooms": [
+                { "ID": "dispatch_reception", "displayName": "dispatch_reception", "hideOnMap": true, "connects": [], "furnitureIDs": ["furniture_neon_counter"], "roomImagePath": "BGAssets/Generated/office_interior_03.webp" },
+                { "ID": "dispatch_waiting_room", "displayName": "dispatch_waiting_room", "hideOnMap": true, "connects": [{ "ID": "dispatch_reception", "cost": 1 }], "furnitureIDs": ["furniture_sofa_3"], "roomImagePath": "BGAssets/Generated/office_lounge_03.webp" }
+            ]
+        }],
+        "memberTypes": [
+            { "ID": "membertype_neon_dispatch_reception", "socialStandingKey": "membertype_neon_dispatch_reception", "isMember": true, "childMemberTypes": [{ "ID": "membertype_neon_dispatch_manager", "socialStandingKey": "membertype_neon_dispatch_manager", "isManager": true, "Tags": ["jp_neon_dispatch_hiring"], "workModule": { "jobPostID": "membertype_neon_dispatch_manager", "workCommands": ["jp_neon_counter_duty"], "activeHours": [18,19,20,21,22,23,0,1,2,3,4], "activeDays": [], "hourlyPayout": [{ "itemID": "currency_JPY", "itemCount": 2000 }], "paymentCadence": "Daily" } }] },
+            { "ID": "membertype_neon_dispatch_driver", "socialStandingKey": "membertype_neon_dispatch_driver", "isMember": true, "workModule": { "jobPostID": "membertype_neon_dispatch_driver", "workCommands": [], "activeHours": [18,19,20,21,22,23,0,1,2,3,4], "activeDays": [], "hourlyPayout": [{ "itemID": "currency_JPY", "itemCount": 1600 }], "paymentCadence": "Daily" } },
+            { "ID": "membertype_neon_dispatch_worker", "socialStandingKey": "membertype_neon_dispatch_worker", "isMember": true, "Tags": ["memberType_work_partTime"], "joinHandler": { "$type": "JoinHandler_AdultWorkPost, Assembly-CSharp", "optionTextKey": "neon_adult_join_option", "bindTargetKey": "worker" }, "leaveHandler": { "$type": "LeaveHandler_WorkPost, Assembly-CSharp", "optionTextKey": "work_post_leaveOption", "bindTargetKey": "worker" }, "childMemberTypes": [
+                { "ID": "membertype_neon_dispatch_worker_evening", "socialStandingKey": "neon_evening_shift", "workModule": { "jobPostID": "neon_dispatch_worker_evening", "workCommands": [], "activeHours": [18,19,20,21], "activeDays": [], "hourlyPayout": [{ "itemID": "currency_JPY", "itemCount": 1800 }], "paymentCadence": "Daily" } },
+                { "ID": "membertype_neon_dispatch_worker_night", "socialStandingKey": "neon_night_shift", "workModule": { "jobPostID": "neon_dispatch_worker_night", "workCommands": [], "activeHours": [22,23,0,1,2,3,4], "activeDays": [], "hourlyPayout": [{ "itemID": "currency_JPY", "itemCount": 2250 }], "paymentCadence": "Daily" } }
+            ] }
+        ]
+    },
+    "Dictionary": { "Entries": { "zh-cn": { "jp_neon_dispatch": "桐生组派遣事务所", "membertype_neon_dispatch_reception": "派遣事务所前台", "membertype_neon_dispatch_manager": "派遣事务所经理 18-05", "membertype_neon_dispatch_driver": "司机待岗 18-05", "membertype_neon_dispatch_worker": "派遣员工待岗（派遣暂未开放）", "neon_dispatch_worker_evening": "派遣员工待岗 18-22", "neon_dispatch_worker_night": "派遣员工待岗 22-05" } } }
+}

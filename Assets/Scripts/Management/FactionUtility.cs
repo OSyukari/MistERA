@@ -361,7 +361,9 @@ public static class FactionUtility
                    // if (post.ParentRoom.RefID == prisonRefID) Debug.LogError($"Error {c.CallName} jail job ValidateActor Fail on {post.DisplayName} {String.Join("|", post.allusableCOMStrings)}");
                     continue;
                 }
-                else if (post.ParentRoom.isRoomPrivate && managedRoomRefs.TryGetValue(post.ParentRoom.RefID, out var owners) && owners.Count > 0 && !owners.Contains(c.RefID) && charaRoom != post.ParentRoom)
+                // someone else's private room - unless c is a guest of the room visit held there right now (RecreationUtility.IsActivityGuestIn - user-approved exception)
+                else if (post.ParentRoom.isRoomPrivate && managedRoomRefs.TryGetValue(post.ParentRoom.RefID, out var owners) && owners.Count > 0 && !owners.Contains(c.RefID) && charaRoom != post.ParentRoom
+                    && !RecreationUtility.IsActivityGuestIn(c, post.ParentRoom))
                 {
                     //if (post.ParentRoom.RefID == prisonRefID) Debug.LogError("Error jail job isRoomPrivate Fail");
                     continue;

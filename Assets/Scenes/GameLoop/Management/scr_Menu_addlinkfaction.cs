@@ -123,19 +123,6 @@ public class scr_Menu_addlinkfaction : scr_Menu, IPointerClickHandler
         ValidateAll();
     }
 
-    protected override void OnDestroy()
-    {
-        base.OnDestroy();
-        /*
-        while (list_Jobs.transform.childCount > 0)
-        {
-            DestroyImmediate(list_Jobs.transform.GetChild(0).gameObject);
-        }*/
-        //Debug.LogError("CANVAS MANAGEMENT ONDESTROY");
-        scr_System_CampaignManager.current.NotifyUpdate();
-
-    }
-
     public void OnPointerClick(PointerEventData eventData)
     {
         // if click outside box

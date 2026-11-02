@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Newtonsoft.Json;
 
 public enum RecreationGroupStatus { Open, Cancelled, Ended }
@@ -88,6 +87,45 @@ public class RecreationGroup : I_ActivityBooking
     public int lastUpdatedAbsHour = -1;
     /// <summary>Valid at the latest self-update (kept as it was at T+1 from then on).</summary>
     public bool valid = false;
+    [JsonIgnore] internal int setupDepth;
+
+    /// <summary>
+    /// Confirmed or cancelled itself after its invitees answered (RecreationUtility.ResolveSession - the hour's late
+    /// pass LatePass_Resolve, or the player's answer) and announced it. True by default so a session of an older save
+    /// never announces again; RecreationGroupRegistry.Add sets it false for a new one.
+    /// </summary>
+    public bool resolved = true;
+    /// <summary>The resolve point was reached while the player's invitation was unanswered: their answer resolves it.</summary>
+    [JsonIgnore] internal bool resolveDue;
+    /// <summary>The first HoursLateCycle whose resolve pass may resolve it - one registered after an hour's passes began waits for the next hour's answers.</summary>
+    [JsonIgnore] internal int readyCycle;
+    /// <summary>Its end has been processed (RecreationGroupRegistry.Conclude) - kept in the registry until the next day for the report only.</summary>
+    [JsonIgnore] internal bool concluded;
+    [JsonIgnore] RecreationGroupRegistry latePassRegistry;
+
+    /// <summary>Listens to the hour's late passes until resolved (each session updates itself - no registry loop).</summary>
+    internal void SubscribeLatePass(RecreationGroupRegistry registry)
+    {
+        if (resolved || latePassRegistry != null || scr_System_Time.current == null) return;
+        latePassRegistry = registry;
+        readyCycle = scr_System_Time.current.HoursLateCycle + 1;
+        scr_System_Time.current.Observer_globalTime_HoursLate += OnLatePass;
+    }
+
+    internal void UnsubscribeLatePass()
+    {
+        if (latePassRegistry == null) return;
+        latePassRegistry = null;
+        if (scr_System_Time.current != null) scr_System_Time.current.Observer_globalTime_HoursLate -= OnLatePass;
+    }
+
+    void OnLatePass(int pass)
+    {
+        // a session of a campaign no longer loaded lets go
+        if (scr_System_CampaignManager.current == null || scr_System_CampaignManager.current.RecreationGroups != latePassRegistry) { UnsubscribeLatePass(); return; }
+        if (pass != RecreationUtility.LatePass_Resolve || scr_System_Time.current.HoursLateCycle < readyCycle) return;
+        RecreationUtility.ResolveSession(this);
+    }
 
     public List<RecreationGroupMember> members = new List<RecreationGroupMember>();
     public List<RecreationSessionExtension> extensions = new List<RecreationSessionExtension>();
@@ -97,6 +135,10 @@ public class RecreationGroup : I_ActivityBooking
     /// re-links the job; the job holds this session's identity back (RecreationActivityKey - sessions have no UID).
     /// </summary>
     public int activityJobRef = -1;
+    /// <summary>The media item (base ID) reserved for this session (RecreationActivity.requireMedia - taken from the host's booking), "" = none.</summary>
+    public string mediaItemID = "";
+    /// <summary>Creation order among facility / media visits (RecreationGroupRegistry.NextCreationSerial, set when registered); 0 = older save.</summary>
+    public int createdSerial = 0;
     /// <summary>The coordinating Job_Activity, or null (no ref yet, or the job is gone).</summary>
     [JsonIgnore] public Job ActivityJob
     {
@@ -123,13 +165,17 @@ public class RecreationGroup : I_ActivityBooking
     /// <summary>Attending members (of roleID only, when given) - see RecreationGroupMember.IsAttending.</summary>
     public int AttendingCount(string roleID = null)
     {
-        return members.Count(m => m.IsAttending && (roleID == null || m.roleID == roleID));
+        int count = 0;
+        foreach (var m in members) if (m.IsAttending && (roleID == null || m.roleID == roleID)) count++;
+        return count;
     }
 
     /// <summary>Members of roleID who count against its maxParticipants: not having said no or given up.</summary>
     public int ActiveCount(string roleID)
     {
-        return members.Count(m => m.roleID == roleID && (m.state == RecreationMemberState.Invited || m.state == RecreationMemberState.Attending));
+        int count = 0;
+        foreach (var m in members) if (m.roleID == roleID && (m.state == RecreationMemberState.Invited || m.state == RecreationMemberState.Attending)) count++;
+        return count;
     }
 
     /// <summary>The attending members' characters, except exceptRef.</summary>
@@ -159,11 +205,19 @@ public class RecreationGroup : I_ActivityBooking
 /// <summary>
 /// Campaign-wide list of recreation sessions (scr_System_CampaignManager.RecreationGroups) - the only saved copy of a
 /// session. Also keeps, at runtime, each faction's / world's list of the Faction / World sessions posted to it
-/// (PostedTo, with a serial per list so its members notice new posts by pull). Ended sessions are dropped (Prune).
+/// (PostedTo, with a serial per list so its members notice new posts by pull). Ended sessions are concluded and dropped
+/// the next day (Prune).
 /// </summary>
 public class RecreationGroupRegistry
 {
     [JsonProperty] List<RecreationGroup> sessions = new List<RecreationGroup>();
+
+    /// <summary>
+    /// Creation order of facility / media visits (RecreationBooking / RecreationGroup.createdSerial): when furniture
+    /// shrinks a pool, the visits made first keep their place (RecreationUtility.CheckFacilityChanges).
+    /// </summary>
+    [JsonProperty] int creationSerial = 0;
+    public int NextCreationSerial() { return ++creationSerial; }
 
     class PostedList
     {
@@ -172,23 +226,25 @@ public class RecreationGroupRegistry
     }
     [JsonIgnore] readonly Dictionary<string, PostedList> posted = new Dictionary<string, PostedList>();
 
+    /// <summary>Every registered session - concluded ones (ended today) included: skip RecreationGroup.concluded for live ones.</summary>
     [JsonIgnore] public IReadOnlyList<RecreationGroup> All { get { return Sessions; } }
     List<RecreationGroup> Sessions { get { if (sessions == null) sessions = new List<RecreationGroup>(); return sessions; } }
 
     /// <summary>
-    /// Registers session (dropping ended ones first) and, for Faction / World visibility, posts it to its scope's list.
-    /// A new session counts as self-updated in the hour it is posted: its members answer in this hour's second pass
-    /// (RecreationUtility.LateHourConfirm), so a member ticking after the post must not validate - and, from T-1, cancel -
-    /// it before anyone could answer. Its first self-update is next hour.
+    /// Registers and indexes a new session without publishing it. The setup caller publishes only after its
+    /// members/invitations are complete; the invitees answer in the hour's late passes, after which the session resolves
+    /// itself (RecreationGroup.SubscribeLatePass - unresolved until then).
     /// </summary>
     public void Add(RecreationGroup session)
     {
-        if (session == null) return;
-        if (session.lastUpdatedAbsHour < 0 && scr_System_Time.current != null)
-            session.lastUpdatedAbsHour = RecreationBooking.AbsoluteHour(scr_System_Time.current.getAbsoluteDay(), scr_System_Time.current.getCurrentTime().Hour);
+        if (session == null || Sessions.Contains(session)) return;
         Prune();
+        if (session.createdSerial == 0) session.createdSerial = NextCreationSerial();
         Sessions.Add(session);
         Post(session);
+        session.resolved = false;
+        session.SubscribeLatePass(this);
+        RecreationUtility.TrackActivitySession(session);
     }
 
     void Post(RecreationGroup session)
@@ -214,43 +270,80 @@ public class RecreationGroupRegistry
         return !string.IsNullOrEmpty(factionID) && posted.TryGetValue(factionID, out var list) ? list.serial : 0;
     }
 
-    [JsonIgnore] int lastPrunedAbs = -1;
     /// <summary>
-    /// Prune, at most once per game hour - run lazily by whichever character's hourly recreation check comes first
-    /// (RecreationUtility.HourlyCheck - never a central loop), so ended sessions go even when no new one is added.
-    /// </summary>
-    public void PruneHourly()
-    {
-        int nowAbs = RecreationBooking.AbsoluteHour(scr_System_Time.current.getAbsoluteDay(), scr_System_Time.current.getCurrentTime().Hour);
-        if (lastPrunedAbs == nowAbs) return;
-        lastPrunedAbs = nowAbs;
-        Prune();
-    }
-
-    /// <summary>
-    /// Drops sessions that have ended (AbsEnd passed): marked Ended, unhooked from the characters holding them
-    /// (RecreationUtility.UnhookSession) and from their scope's list. A cancelled session stays until its end, so its
-    /// members' bookings can still find it (also across a save) and drop themselves.
+    /// Concludes sessions that have ended (AbsEnd passed - Conclude) and drops those that ended before today began: an
+    /// ended session stays until the next day, like Character_Factions' past-booking record, so today's concluded
+    /// activities can still be shown with their participants (RecreationUtility.GetFactionActivities). A cancelled
+    /// session stays until its end, so its members' bookings can still find it (also across a save) and drop themselves.
     /// </summary>
     public void Prune()
     {
         int nowAbs = RecreationBooking.AbsoluteHour(scr_System_Time.current.getAbsoluteDay(), scr_System_Time.current.getCurrentTime().Hour);
-        foreach (var s in Sessions.Where(s => s == null || s.AbsEnd <= nowAbs).ToList())
-        {
-            Sessions.Remove(s);
-            if (s == null) continue;
-            if (s.IsOpen) s.status = RecreationGroupStatus.Ended;
-            if (!string.IsNullOrEmpty(s.scopeFactionID) && posted.TryGetValue(s.scopeFactionID, out var list)) list.sessions.Remove(s);
-            RecreationUtility.UnhookSession(s);
-        }
+        int todayStart = RecreationBooking.AbsoluteHour(scr_System_Time.current.getAbsoluteDay(), 0);
+        List<RecreationGroup> ended = null;
+        foreach (var s in Sessions)
+            if (s != null && !s.concluded && s.AbsEnd <= nowAbs) (ended ?? (ended = new List<RecreationGroup>())).Add(s);
+        if (ended != null) foreach (var s in ended) Conclude(s);
+        for (int i = Sessions.Count - 1; i >= 0; i--)
+            if (Sessions[i] == null || (Sessions[i].concluded && Sessions[i].AbsEnd < todayStart)) Sessions.RemoveAt(i);
     }
 
-    /// <summary>After a save is loaded (characters exist): prunes, re-posts the Faction / World sessions, and relinks members (RecreationUtility.RelinkAfterLoad).</summary>
+    /// <summary>Venue expiry concludes just this occurrence, without scanning the campaign registry.</summary>
+    public void Prune(RecreationGroup session)
+    {
+        if (session == null || session.concluded || session.AbsEnd > RecreationBooking.AbsoluteHour(scr_System_Time.current.getAbsoluteDay(), scr_System_Time.current.getCurrentTime().Hour)
+            || !Sessions.Contains(session)) return;
+        Conclude(session);
+    }
+
+    /// <summary>An ended session: marked Ended, taken off its scope's list, the venue index and the late passes, unhooked from the characters holding it (RecreationUtility.UnhookSession) - kept in the list (Prune drops it the next day).</summary>
+    void Conclude(RecreationGroup session)
+    {
+        session.concluded = true;
+        if (session.IsOpen) session.status = RecreationGroupStatus.Ended;
+        session.UnsubscribeLatePass();
+        if (!string.IsNullOrEmpty(session.scopeFactionID) && posted.TryGetValue(session.scopeFactionID, out var list) && list.sessions.Remove(session)) list.serial++;
+        RecreationUtility.ForgetActivitySession(session);
+        RecreationUtility.UnhookSession(session);
+    }
+
+    /// <summary>Reused snapshot for OnHourUpdate (a session's check may add or conclude sessions).</summary>
+    [JsonIgnore] readonly List<RecreationGroup> hourlyBuffer = new List<RecreationGroup>();
+
+    /// <summary>
+    /// Hourly (scr_System_CampaignManager's hour observer): concludes / drops ended sessions (Prune), then each live
+    /// session checks itself (RecreationUtility.HourlySessionCheck) - a loop over the activities, never the characters.
+    /// </summary>
+    public void OnHourUpdate()
+    {
+        if (scr_System_Time.current == null || scr_System_Time.current.DebugSkipBeforeLastDay) return;
+        Prune();
+        hourlyBuffer.Clear();
+        foreach (var s in Sessions) if (s != null && !s.concluded && s.IsOpen) hourlyBuffer.Add(s);
+        try { for (int i = 0; i < hourlyBuffer.Count; i++) RecreationUtility.HourlySessionCheck(hourlyBuffer[i]); }
+        finally { hourlyBuffer.Clear(); }
+    }
+
+    /// <summary>
+    /// After a save is loaded (characters exist): concludes what ended meanwhile, re-posts the Faction / World sessions,
+    /// relinks members (RecreationUtility.RelinkAfterLoad - a concluded session only its members' past bookings), and
+    /// lets the unresolved ones listen to the late passes again.
+    /// </summary>
     public void OnAfterLoad()
     {
         posted.Clear();
         Prune();
-        foreach (var s in Sessions) Post(s);
-        foreach (var s in Sessions) RecreationUtility.RelinkAfterLoad(s);
+        foreach (var s in Sessions) if (!s.concluded) Post(s);
+        foreach (var s in Sessions)
+        {
+            if (s.concluded) RecreationUtility.RelinkPastBookings(s);
+            else RecreationUtility.RelinkAfterLoad(s);
+        }
+        foreach (var s in Sessions)
+        {
+            if (s.concluded) continue;
+            RecreationUtility.TrackActivitySession(s);
+            s.SubscribeLatePass(this);
+        }
     }
 }

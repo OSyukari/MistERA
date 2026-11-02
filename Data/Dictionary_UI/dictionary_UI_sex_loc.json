@@ -6,6 +6,10 @@
         "Entries": {
             "en-us": {
 
+                "ui_entry_memory_description_creampie_condom": "$target$ came in a condom with you $elem1$ times, total volume $elem2$ml||1||$amount$",
+                "ui_entry_memory_description_cumOnto_condom": "Came in a condom with $target$ $elem1$ times, total volume $elem2$ml||1||$amount$",
+                "ui_entry_memory_description_cum_condom": "Came in a condom $elem1$ times, total volume $elem2$ml||1||$amount$",
+
                 "bodyPart_internal_expVirginLoss_unaware_sleep": "Lost $partname$ virginity during $command$ with $target$ while sleeping",
                 "bodyPart_internal_expVirginLoss_unaware_timestop": "Lost $partname$ virginity during $command$ with $target$ while time was stopped",
                 "bodyPart_internal_unaware_marker": " (unaware)",
@@ -32,6 +36,7 @@
                 "item_cum_print_amount": "$item$ $count$ml",
                 "Item_Instance_Cum_nameOverwrite": "$name$'s Semen",
                 "Item_Instance_Cum_fertChance_perHour": "Conception chance per hour $chance$%",
+                "Item_Instance_secretion_sourceRace": "Source race: $race$",
 
                 "OvumState_First_trimester": "First Trimester",
                 "OvumState_Second_trimester": "Second Trimester",

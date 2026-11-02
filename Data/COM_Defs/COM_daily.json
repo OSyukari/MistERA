@@ -124,6 +124,7 @@
             "requirements":{
                 "requirement":{
                     "treatReceiverAsDoer":true ,
+                    "joinAlone":true,
                     "req_Doers":{ "allowNPC":false, "requireConscious":false, "requireAction":false }
                 }
             },
@@ -167,6 +168,7 @@
             "requirements":{
                 "requirement":{
                     "forbidTeammateJoin":true,
+                    "joinAlone":true,
                     "req_Doers":{ "allowNPC":false, "requireMovement":true }
                 }
             },

@@ -9,6 +9,7 @@
                 "tooltip":"An {0}'s leg.",
                 "AvailableSlots":["Leg"],
                 "tags":["leg","claw"],
+                "traceSlots":["Leg"],
                 "sortOrder":2,
                 "NaturalWeapon":{
                     "Mass":10,
@@ -29,6 +30,7 @@
                 "tooltip":"An {0}'s leg.",
                 "AvailableSlots":["Leg"],
                 "tags":["leg"],
+                "traceSlots":["Leg"],
                 "sortOrder":3,
                 "NaturalDefense":
                 {
@@ -41,6 +43,13 @@
         [
             {
                 "id": "mouth_beast_base",
+                "_comment":"Provisional lubrication tuning, not final physiology: liquid bonus max 25, half amount 5 ml of all liquid in this organ.",
+                "lubricationStatID":"o_lubrication",
+                "liquidLubricationBonusMax":25.0,
+                "liquidLubricationHalfAmountMl":5.0,
+                "_comment_traces":"Body traces (Data/RaceDefs/TraceDefs.json): beast saliva and teeth marks. Traces on the mouth land on the head.",
+                "canLeaveTraces":true,
+                "leaveTraceIDs":["trace_saliva_beast","trace_teethmark"],
                 "deflateEventID": "deflate_mouth",
                 "displayName":"%%bodyPart_internal_mouth%%",
                 "tooltip":"An {0}'s mouth.",
@@ -73,9 +82,14 @@
                 "id": "penis_beast_base",
                 "displayName":"%%bodyPart_internal_penis%%",
                 "tooltip":"An {0}'s penis.",
+                "AvailableSlots":["Penis"],
                 "equipLayers":["Skin"],
                 "tags":["nsfw","penis","testicle","external"],
                 "requestTraits":["trait_Size_P"],
+                "traceSlots":["Penis"],
+                "canLeaveTraces":true,
+                "leaveTraceIDs":["trace_precum","trace_fur"],
+                "wornContainerCumTraceRatio":0.1,
                 "_comment_promptProfile": "shared by several species (horse, warg): the species penis tag by the race's actor tag (RaceType), only while the penis is visible",
                 "promptProfile": {
                     "rules": [
@@ -106,12 +120,21 @@
             },
             {
                 "id": "anus_beast_base",
+                "_comment":"Provisional lubrication tuning, not final physiology: liquid bonus max 100, half amount 5 ml of all liquid in this organ.",
+                "lubricationStatID":"a_lubrication",
+                "liquidLubricationBonusMax":100.0,
+                "liquidLubricationHalfAmountMl":5.0,
+                "_comment_lubricationDC":"Provisional: sex DC modifier while penetrated = trunc(clamp(EffectiveLubrication * 0.1 - 4, -4, 2)); dry -4, ~40 = 0, 60+ = +2.",
+                "lubricationDCScale":0.1, "lubricationDCOffset":-4.0, "lubricationDCMin":-4, "lubricationDCMax":2,
                 "deflateEventID": "deflate_anus",
                 "displayName":"%%bodyPart_internal_anus%%",
                 "tooltip":"An {0}'s anus.",
                 "AvailableSlots":["Anus"],
                 "equipLayers":["Skin"],
                 "tags":["nsfw","anus","internal","arousalExpansion"],
+                "canLeaveTraces":true,
+                "leaveTraceIDs":["trace_fur"],
+                "penetratorCumTraceRatio":0.05,
                 "tag_directionIn":"guts",
                 "tag_directionOut":"ext",
                 "sensitivityClassString":"A",

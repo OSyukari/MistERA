@@ -21,6 +21,13 @@ public enum RecreationOfferMode { Fixed, Flexible }
 public class RecreationOfferDef
 {
     public string ID = "";
+    public string typeID = "";
+    public bool allowMultipleInstances = true;
+    public bool mergeWithSame = false;
+    public List<string> conflictsWith = new List<string>();
+    public List<string> replaceCommandTags = new List<string>();
+    public List<string> replaceCommands = new List<string>();
+    public List<string> activityCommands = new List<string>();
     public RecreationOfferMode mode = RecreationOfferMode.Fixed;
     /// <summary>Venue: any faction with a MainExit (the booking's travel target).</summary>
     public string factionID = "";
@@ -43,6 +50,15 @@ public class RecreationOfferDef
     public ItemEntry entranceFee = null;
     /// <summary>See RecreationActivity.gatherRoomID - where Job_Activity gathers this offer's participants ("" = the venue's MainExit).</summary>
     public string gatherRoomID = "";
+    /// <summary>See RecreationActivity.facility.</summary>
+    public RecreationFacility facility = null;
+    /// <summary>See RecreationActivity.eligibility (checked with requireActorTags / excludeActorTags - OfferAllows).</summary>
+    public Event.EventScope_Self eligibility = null;
+    public string reserveFurnitureTag = "";
+    /// <summary>Maximum attendees in this activity; 0 = no activity-level limit.</summary>
+    public int reserveCapacity = 0;
+    /// <summary>Fixed 22:00-08:00 private stay; assigns this temporary-home type on launch.</summary>
+    public string overnightGuestMemberTypeID = "";
     /// <summary>See RecreationActivity.launchEventID - the offer's begin event, fired when Job_Activity launches it ("" = silent launch).</summary>
     public string launchEventID = "";
     /// <summary>See RecreationActivity.gatherFailedEventID - fired when the gathering fails at T+30 and for each latecomer after ("" = the generic Recreation_GatherFailed_Stay).</summary>
@@ -69,13 +85,19 @@ public class RecreationOfferDef
     /// <summary>Visits to this offer can't be cancelled by the player's request (RecreationBooking.forbidCancel).</summary>
     public bool forbidCancel = false;
 
+    /// <summary>Allows extra participants to walk in, independently of invitation visibility. Conservative default: false.</summary>
+    public bool allowWalkIn = false;
+
+    /// <summary>Reserved for future activity-level trust payouts, not the generic 0.1 interaction reward. Conservative default: false.</summary>
+    public bool trustRewardEligible = false;
+
     /// <summary>
     /// Fixed: the session's roles and how participants may extend the invitation (its visibility is always World).
     /// Flexible: whether a visit becomes a session (Private / Friends only) and who comes. Null = RecreationInviteSpec.Default.
     /// </summary>
     public RecreationInviteSpec invite = null;
 
-    /// <summary>Flexible only: visit length range in hours (clamped to 2-4, like RecreationActivity's). workModule.activeHours / activeDays = when a visit may be.</summary>
+    /// <summary>Flexible only: visit length range in hours (clamped to 1-4, like RecreationActivity's). workModule.activeHours / activeDays = when a visit may be.</summary>
     public int minHours = 2;
     public int maxHours = 2;
     /// <summary>Flexible only: soft weekly target (see RecreationActivity.weeklyTarget). Its weight is `weight`, its cooldown minDaysBetween.</summary>
@@ -100,6 +122,13 @@ public class RecreationOfferDef
                 _activity = new RecreationActivity()
                 {
                     ID = ID,
+                    typeID = typeID,
+                    allowMultipleInstances = allowMultipleInstances,
+                    mergeWithSame = mergeWithSame,
+                    conflictsWith = conflictsWith,
+                    replaceCommandTags = replaceCommandTags,
+                    replaceCommands = replaceCommands,
+                    activityCommands = activityCommands,
                     workModule = workModule,
                     minHours = minHours,
                     maxHours = maxHours,
@@ -108,9 +137,16 @@ public class RecreationOfferDef
                     baseWeight = weight,
                     daysInAdvance = daysInAdvance,
                     forbidCancel = forbidCancel,
+                    allowWalkIn = allowWalkIn,
+                    trustRewardEligible = trustRewardEligible,
                     invite = invite,
                     entranceFee = entranceFee,
                     gatherRoomID = gatherRoomID,
+                    facility = facility,
+                    eligibility = eligibility,
+                    reserveFurnitureTag = reserveFurnitureTag,
+                    reserveCapacity = reserveCapacity,
+                    overnightGuestMemberTypeID = overnightGuestMemberTypeID,
                     launchEventID = launchEventID,
                     gatherFailedEventID = gatherFailedEventID,
                     behaviorOverrides = behaviorOverrides,
@@ -258,12 +294,14 @@ public class RecreationBoard
 
     /// <summary>
     /// Posts fixed offer defID on absolute day `day` unless already posted there, with its hostless World session
-    /// (RecreationUtility.PostOfferSession). False if the def is unknown or Flexible (flexible offers are never posted).
+    /// (RecreationUtility.PostOfferSession). Flexible offers and private overnight stays are never World posts.
     /// </summary>
     public bool Post(string defID, int day, int startHour = -1, int hours = -1)
     {
         var def = FindDef(defID);
         if (def == null) return false;
+        // A stay is a private per-booking room, never a shared hostless World crowd.
+        if (!string.IsNullOrEmpty(def.overnightGuestMemberTypeID)) return false;
         if (def.mode != RecreationOfferMode.Fixed)
         {
             UnityEngine.Debug.LogError($"RecreationBoard.Post: offer [{defID}] is {def.mode} - only fixed offers are posted");

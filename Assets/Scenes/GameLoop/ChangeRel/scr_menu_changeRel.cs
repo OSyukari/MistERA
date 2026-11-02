@@ -132,12 +132,6 @@ public class scr_menu_changeRel : scr_Menu, IPointerClickHandler
         }
         ValidateAll();
     }
-    protected override void OnDestroy()
-    {
-        scr_System_CampaignManager.current.RegisterSceneUnloadActionCallback(() => { scr_System_CampaignManager.current.NotifyUpdate(); });
-        base.OnDestroy();
-    }
-
     class button_tab_changerel : ButtonValidator, I_ButtonClickable
     {
         new scr_menu_changeRel parent;

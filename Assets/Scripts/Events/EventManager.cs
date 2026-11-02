@@ -401,6 +401,22 @@ public class EventManager
         return false;
     }
 
+    /// <summary>
+    /// Read-only mirror of CheckConflict for menu validators (tab_dialogue.Button_PermissionEvent): same cooldown /
+    /// already-running rules, but never registers a cooldown. reasonKey = localization key of the refusal, "" when startable.
+    /// </summary>
+    public bool CanStart(EventInstance ev, out string reasonKey)
+    {
+        reasonKey = "";
+        if (ev.EventCooldown > 0)
+        {
+            if (hasCooldown(ev)) reasonKey = "ui_eventDiag_cooldown";
+            else if (ev.ManualCooldown && conflictsWithActive(ev)) reasonKey = "ui_eventDiag_running";
+        }
+        else if (conflictsWithActive(ev)) reasonKey = "ui_eventDiag_running";
+        return reasonKey == "";
+    }
+
     bool conflictsWithActive(EventInstance ev)
     {
         for (int i = 0; i < activeEvents.Count; i++)

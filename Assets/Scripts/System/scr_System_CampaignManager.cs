@@ -30,6 +30,7 @@ public class scr_System_CampaignManager_Serializable
     public List<int> temporaryJobs;
     public RecreationBoard RecreationBoard;
     public RecreationGroupRegistry RecreationGroups;
+    public PermissionGrantDatabase PermissionGrants;
     // LogsManager? dont need serializing, logs are throwaway lines anyway
 }
 
@@ -80,6 +81,13 @@ public class scr_System_CampaignManager : MonoBehaviour
 
         scr_System_SceneManager.current.Observer_OnPageUnload += OnSceneUnload;
         scr_System_Time.current.Observer_globalTime_Day += HolidaySeasonSystem.OnDayUpdate;
+        scr_System_Time.current.Observer_globalTime_Hours += OnHourUpdate_Recreation;
+    }
+
+    /// <summary>Every recreation session checks itself once an hour (RecreationGroupRegistry.OnHourUpdate - the registry holds every live session).</summary>
+    void OnHourUpdate_Recreation(TimeSpan t)
+    {
+        RecreationGroups?.OnHourUpdate();
     }
 
     protected void OnSceneUnload()
@@ -279,6 +287,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         obj.LLMResponseStorage = this.LLMResponseStorage;
         obj.RecreationBoard = this.RecreationBoard;
         obj.RecreationGroups = this.RecreationGroups;
+        obj.PermissionGrants = this.PermissionGrants.CreateSnapshot();
 
         return obj;
     }
@@ -323,6 +332,7 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     public void LoadSerializable(scr_System_CampaignManager_Serializable obj)
     {
+        ActivityLifecycleLoading = true;
         Observer_GameReload?.Invoke(true);
 
         foreach (var i in Index_ItemReferenceID.Values) i.DisposeInternal();
@@ -338,6 +348,7 @@ public class scr_System_CampaignManager : MonoBehaviour
 
         foreach (var i in Index_JobReferenceID.Values) i.DisposeInternal();
         Index_JobReferenceID.Clear();
+        warnedDuplicateSexJobRooms.Clear();
 
         foreach (var i in Index_referenceID.Values) i.DisposeInternal();
         Index_referenceID.Clear();
@@ -365,6 +376,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         HolidaySeasonSystem.Reset();   // trackers are runtime-only; the next day update/query rebuilds them silently
         this.recreationBoard = obj.RecreationBoard;
         this.recreationGroups = obj.RecreationGroups;
+        this.permissionGrants = obj.PermissionGrants?.CreateSnapshot() ?? new PermissionGrantDatabase();
 
         //this.jobs = obj.Jobs;
         //index_JobReferenceIDCache = null;
@@ -382,14 +394,31 @@ public class scr_System_CampaignManager : MonoBehaviour
         organizations = obj.Factions;
         Index_ItemReferenceID = obj.Items;
         Index_referenceID = obj.Characters;
+        // Room reconciliation can evacuate to this saved orphan room, not the previous campaign's instance.
+        debugRoomRef = obj.debugRoomRef;
+        debugRoom = map.GetRoomByRef(debugRoomRef);
+        // RefIDs are recycled; stale grants must not reach actors generated during load reconciliation.
+        int removedPermissionGrants = PermissionGrants.RemoveMissingCharacters(new HashSet<int>(Index_referenceID.Keys));
+        if (removedPermissionGrants > 0)
+            Debug.Log($"Permissions: removed {removedPermissionGrants} grants with missing characters on load");
         foreach (var i in Index_JobReferenceID) i.Value.OnAfterDeserialize();
         foreach (var i in Index_ItemReferenceID) i.Value.OnAfterDeserialize();
         // factions require job to already exist
         // also requires Items to exist cuz inventory refresh
-        foreach (var i in Factions) i.OnAfterDeserialize();
+        foreach (var i in Factions.ToList()) i.OnAfterDeserialize();
 
-        // apply room additions/removals detected by the SerializationRebuilt(false) pass above, now
-        // that Factions/Jobs/Items/Characters are the real (save-restored) data
+        // Existing tenants can now have authored floors of their own. Create those destinations
+        // before obsolete host rooms evacuate, without replaying faction/NPC/inventory initialization.
+        foreach (var world in GetLoadedWorldPlans())
+            foreach (var entry in world.initializeFactions)
+            {
+                var faction = FindFactionByID(entry.Key);
+                if (faction != null)
+                    FactionFloorMigration.Reconcile(faction, scr_System_Serializer.current.GetByNameOrID_MapPlan(entry.Value));
+            }
+
+        // Prepare all replacement rooms, reconcile explicit tenants and authored exits, then evacuate
+        // obsolete rooms. All registries and faction hooks must be live before this ordered pass.
         map.ApplyPendingRoomChanges();
 
         // saves made before furniture_marker_wait existed (or before a MainExit room changed)
@@ -433,13 +462,18 @@ public class scr_System_CampaignManager : MonoBehaviour
         this.debugRoomRef = obj.debugRoomRef;
         this.LLMResponseStorage = obj.LLMResponseStorage;
 
-        currentRoomRef = obj.CurrentRoomRef;
+        currentRoomRef = map.FindRoomByChara(0)?.RefID ?? obj.CurrentRoomRef;
         currentTarget = 0;
         viewMode = ViewMode.View_Room;
 
         // recreation sessions relink their members' bookings / inboxes before each character drops what found no session
         RecreationGroups.OnAfterLoad();
         foreach (var i in Index_referenceID) i.Value.PostReloadUpdate();
+        ActivityLifecycleLoading = false;
+        RecreationUtility.RebuildActivityLifecycle(Index_referenceID.Values);
+        // after source relinking: migrate legacy activity furniture locks, then rebuild room activity lists
+        foreach (var id in temporaryJobs)
+            if (FindJobInstanceByID(id, false) is Job_Activity activity) activity.RestoreActivityRoomContext();
 
         var ri = CurrentRoom;
         if (!ri.RoomChara.Contains(Player))
@@ -461,6 +495,13 @@ public class scr_System_CampaignManager : MonoBehaviour
 
         ClearLogs(false,true);
        // StartCoroutine(CachePortraitCoroutine());
+
+        // Diagnose legacy duplicates only after jobs and the current map have been rebuilt.
+        foreach (var job in Index_JobReferenceID.Values)
+        {
+            if (job is Job_Sex_Group sexJob && !sexJob.IsEnded)
+                FindSexJobInRoom(sexJob.ParentRoom);
+        }
 
         NotifyUpdate();
     }
@@ -1268,6 +1309,13 @@ public class scr_System_CampaignManager : MonoBehaviour
     public void Register(ActionPackage p, bool avoidConflict = false, bool ignoreConflict = false)
     {
         if (p == null) Debug.LogError("campaignmanager registerAP null");
+        if (p != null && p.IsSexSceneEntry && !p.PrepareSexSceneEntry(out var entryReason))
+        {
+            p.FailureReason = LocalizeDictionary.QueryThenParse(entryReason);
+            p.executeSuccessful = false;
+            p.DisablePackage();
+            return;
+        }
         if (!registeredPackagesByRoom.ContainsKey(p.RoomKey)) registeredPackagesByRoom.Add(p.RoomKey, new List<ActionPackage>() { p });
         else
         {
@@ -1324,6 +1372,7 @@ public class scr_System_CampaignManager : MonoBehaviour
                 var resume = true;
                 foreach (var actor in p.Actors)
                 {
+                    if (actor.CurrentJob is Job_Sex_Group scene && p.PreservesSexScene(scene)) continue;
                     if (actor.CurrentJob != null && actor.CurrentJob != p.job && !actor.CurrentJob.CanBeInterrupted)
                     {
                         resume = false;
@@ -1866,8 +1915,65 @@ public class scr_System_CampaignManager : MonoBehaviour
         Debug.Log($"Job {j.RefID} purged, removed AP {jj}");
 #endif
     }
+    [NonSerialized, JsonIgnore] private HashSet<int> warnedDuplicateSexJobRooms = new HashSet<int>();
+
+    /// <summary>Returns the lowest-RefID registered, unended sex job in this live map room, including legacy duplicates.</summary>
+    public Job_Sex_Group FindSexJobInRoom(Room_Instance room)
+    {
+        if (room == null || map == null || !ReferenceEquals(map.GetRoomByRef(room.RefID), room)) return null;
+
+        Job_Sex_Group first = null;
+        foreach (var job in Index_JobReferenceID.Values.OrderBy(x => x.RefID))
+        {
+            if (!(job is Job_Sex_Group sexJob) || sexJob.IsEnded || sexJob.ParentRoom?.RefID != room.RefID) continue;
+            if (first == null) first = sexJob;
+            else if (!ReferenceEquals(first, sexJob) && warnedDuplicateSexJobRooms.Add(room.RefID))
+                Debug.LogWarning($"Multiple unended sex jobs registered in room {room.RefID}; using first job {first.RefID}, leaving legacy jobs unchanged.");
+        }
+        return first;
+    }
+
+    /// <summary>Returns the lowest-RefID registered, unended sex job containing the actor, regardless of CurrentJob.</summary>
+    public Job_Sex_Group FindSexJobForActor(int actorRefID)
+    {
+        foreach (var job in Index_JobReferenceID.Values.OrderBy(x => x.RefID))
+        {
+            if (job is Job_Sex_Group sexJob && !sexJob.IsEnded && sexJob.actorRefID.Contains(actorRefID))
+                return sexJob;
+        }
+        return null;
+    }
+
+    /// <summary>Checks new-scene entry only. Join/event callers must resolve and reuse an existing job separately.</summary>
+    public bool CanStartSexJob(Room_Instance room, out string reason)
+    {
+        if (room == null || map == null || !ReferenceEquals(map.GetRoomByRef(room.RefID), room))
+        {
+            reason = "ui_sexEntry_invalidRoom";
+            return false;
+        }
+        if (FindSexJobInRoom(room) != null)
+        {
+            reason = "ui_sexEntry_roomOccupied";
+            return false;
+        }
+        reason = "";
+        return true;
+    }
+
     public int Register(Job j, int forceRefID = -1)
     {
+        if (j is Job_Sex_Group candidate)
+        {
+            var room = candidate.ParentRoom;
+            if (room == null || map == null || !ReferenceEquals(map.GetRoomByRef(room.RefID), room)) return -1;
+            // Check every entry: a legacy duplicate may follow the candidate itself in the index.
+            foreach (var registered in Index_JobReferenceID.Values)
+            {
+                if (registered is Job_Sex_Group occupied && !ReferenceEquals(occupied, candidate)
+                    && !occupied.IsEnded && occupied.ParentRoom?.RefID == room.RefID) return -1;
+            }
+        }
 
         if (forceRefID > -1 && !Index_JobReferenceID.ContainsKey(forceRefID))
         {
@@ -2316,6 +2422,7 @@ public class scr_System_CampaignManager : MonoBehaviour
 
         this.CurrentCampaignID = camp.ID;
         this.recreationBoard = null;
+        this.permissionGrants = new PermissionGrantDatabase();
 
         map = new Map_Instance();
 
@@ -2812,9 +2919,9 @@ public class scr_System_CampaignManager : MonoBehaviour
         }
     }
 
-    public void UnregisterRoom(int refID)
+    public void UnregisterRoom(int refID, bool rebuildPath = true)
     {
-        var room = this.Map.UnregisterRoom(refID);
+        var room = this.Map.UnregisterRoom(refID, rebuildPath);
         if (room == null) return;
         if (room != null && this.registeredPackagesByRoom.TryGetValue(refID, out var packages))
         {
@@ -2833,6 +2940,8 @@ public class scr_System_CampaignManager : MonoBehaviour
         var room = Map.FindRoomByChara(c.RefID);
         if (room != null) room.RemoveChara(c);
         this.Index_referenceID.Remove(c.RefID);
+        RecreationUtility.ForgetActivityCharacter(c.FactionManager);
+        PermissionGrants.RemoveCharacter(c.RefID);
         // first, notify everyone that this should be purged
         foreach (var chara in this.Index_referenceID.Values)
         {
@@ -3165,11 +3274,16 @@ public class scr_System_CampaignManager : MonoBehaviour
     }
 
     RecreationGroupRegistry recreationGroups = null;
+    [JsonIgnore] public bool ActivityLifecycleLoading { get; private set; }
     /// <summary>Recreation sessions (shared multi-character activities) of this campaign (saved with it) - see RecreationGroup.</summary>
     public RecreationGroupRegistry RecreationGroups
     {
         get { if (recreationGroups == null) recreationGroups = new RecreationGroupRegistry(); return recreationGroups; }
     }
+
+    private PermissionGrantDatabase permissionGrants = new PermissionGrantDatabase();
+    /// <summary>Explicit pair grants saved with this campaign, not shared relationship definitions.</summary>
+    public PermissionGrantDatabase PermissionGrants { get { return permissionGrants; } }
 
     public List<WorldPlan> GetLoadedWorldPlans()
     {
@@ -3223,7 +3337,7 @@ public class scr_System_CampaignManager : MonoBehaviour
             i.promptTags = p.promptTags;
             i.promptTags_overrideBase = p.promptTags_baseOverride;
             i.promptTags_slots = p.promptTags_slots;
-            if (i.GetComp_Equippable() != null) c.EquipItem(i.RefID, false);
+            if (i.Comp_Equippable != null) c.EquipItem(i.RefID, false);
             c.Inventory.AddItem(i);
         }
         foreach (presetInventory p in c.Template.overrideInventory)
@@ -3234,7 +3348,7 @@ public class scr_System_CampaignManager : MonoBehaviour
             i.promptTags = p.promptTags;
             i.promptTags_overrideBase = p.promptTags_baseOverride;
             i.promptTags_slots = p.promptTags_slots;
-            if (i.GetComp_Equippable() != null) c.EquipItem(i.RefID, false);
+            if (i.Comp_Equippable != null) c.EquipItem(i.RefID, false);
             c.Inventory.AddItem(i);
         }
 
@@ -3301,6 +3415,8 @@ public class scr_System_CampaignManager : MonoBehaviour
             if (scr_System_CentralControl.current.LogPrefs.DLog_Inventory) Debug.Log($"Item {i.DisplayName} unregistered " + i.RefID);
             Index_ItemReferenceID.Remove(i.RefID);
             deletedRefIDs.Add(i.UnregisterItem());
+            // items held inside it (a filled condom's semen) go with it
+            i.Comp_Contents?.UnregisterContents();
         }
     }
 
@@ -3422,7 +3538,8 @@ public static class WorldManager
     /// <summary>
     /// Instantiates every faction listed in a WorldPlan that isn't already present in the current campaign's faction registry
     /// (fresh campaign start: nothing exists yet, so everything gets instantiated; save-load reconciliation: only newly-added
-    /// factions get instantiated), then auto-connects all factions in the world to each other.
+    /// factions get instantiated). Existing factions receive only missing authored floors, without
+    /// replaying their initialization. Then auto-connects all factions in the world to each other.
     /// </summary>
     public static Dictionary<int, Floor_Instance> InstantiateWorld(WorldPlan world, bool isPlayerInitWorld = false)
     {
@@ -3448,6 +3565,10 @@ public static class WorldManager
                     allFloors[kvpF.Key] = kvpF.Value;
                 }
                 existing = scr_System_CampaignManager.current.FindFactionByID(kvp.Key);
+            }
+            else
+            {
+                FactionFloorMigration.Reconcile(existing, scr_System_Serializer.current.GetByNameOrID_MapPlan(kvp.Value));
             }
             if (existing != null) factionsInWorld.Add(existing);
         }
@@ -3598,15 +3719,17 @@ public static class WorldManager
                 org.EnsureMainExitWaitMarker();
             }
 
+            // blank / own-template faction IDs resolve to the instantiated faction ID (a factionOverride instance must
+            // not match the template's first instance - Map_Instance.ResolveFloorDoorExit)
             foreach (var fd in map.floorDoors)
             {
                 scr_System_CampaignManager.current.Map.RegisterFactionFloorDoor(new FloorDoor
                 {
                     cost = fd.cost,
-                    sourceFaction = string.IsNullOrEmpty(fd.sourceFaction) ? map.ID : fd.sourceFaction,
+                    sourceFaction = string.IsNullOrEmpty(fd.sourceFaction) || fd.sourceFaction == map.ID ? targetFaction : fd.sourceFaction,
                     sourceFloor = fd.sourceFloor,
                     sourceExit = fd.sourceExit,
-                    targetFaction = fd.targetFaction,
+                    targetFaction = string.IsNullOrEmpty(fd.targetFaction) || fd.targetFaction == map.ID ? targetFaction : fd.targetFaction,
                     targetFloor = fd.targetFloor,
                     targetExit = fd.targetExit
                 });

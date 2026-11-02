@@ -1,0 +1,21 @@
+{
+    "_comment":"Riverside launch pattern: test explicit player join before late arrival. Fees are charged only by Job_Activity.Launch. No additional payments, forced movement or invented companion outcomes. NPC scheduled work finds cinema seats in either screen after gathering in the lobby.",
+    "Events":{"list":[{
+        "ID":"Mall_Cinema_Begin",
+        "events":[
+            {"$type":"Event+EventEntry+EventEntry_Branch, Assembly-CSharp","options":[
+                {"option":"player joins","Results":[{"Type":"ExistAppendStrings","arguments":["isJoin"]},{"Type":"JumpToLabel","arguments":["","join"]}]},
+                {"option":"late arrival","Results":[{"Type":"ExistAppendStrings","arguments":["isLate"]},{"Type":"JumpToLabel","arguments":["","late"]}]},
+                {"option":"show begins","Results":[{"Type":"JumpToLabel","arguments":["","begin"]}]}
+            ]},
+            {"$type":"Event+EventEntry+EventEntry_Line, Assembly-CSharp","label":"begin","line":"Mall_Cinema_Begin_initial","isLast":true},
+            {"$type":"Event+EventEntry+EventEntry_Line, Assembly-CSharp","label":"join","line":"Mall_Cinema_Begin_join","isLast":true},
+            {"$type":"Event+EventEntry+EventEntry_Line, Assembly-CSharp","label":"late","line":"Mall_Cinema_Begin_late","isLast":true}
+        ]
+    }]},
+    "Dictionary":{"Entries":{"zh-cn":{
+        "Mall_Cinema_Begin_initial":"大厅广播响起，提醒本场观众入场。检票口后是通往两个影厅的走廊，银幕前的灯光正渐渐暗下去。",
+        "Mall_Cinema_Begin_join":"$joining.name$赶上了这一场放映。检票口旁的指示灯仍亮着，进影厅后便可以找座位看电影。",
+        "Mall_Cinema_Begin_late":"$joining.name$到达时，电影已经开始。隔着影厅门能听见压低的对白声，入场时得放轻脚步。"
+    }}}
+}

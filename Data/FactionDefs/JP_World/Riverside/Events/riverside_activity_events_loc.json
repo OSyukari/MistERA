@@ -6,8 +6,14 @@
         "Entries": {
             "en-us": {
                 "Riverside_Fireworks_Begin_EV01": "The embankment is packed. With a shrill whistle the first firework streaks into the night sky - the fireworks festival has begun!",
+                "Riverside_Fireworks_Begin_join": "$joining.name$ found a spot on the riverbank with a clear view of the sky. Another burst of fireworks spread overhead, drawing cheers from the crowd.",
+                "Riverside_Fireworks_Begin_late": "By the time $joining.name$ reached the riverbank, the display was well under way. In the lull before the next volley, a viewing spot finally opened up.",
                 "Riverside_Stroll_Begin_EV01": "$waited.name$ set off slowly along the riverside promenade.",
-                "Riverside_Stroll_Begin_late": "$late.name$ arrived a little late, but still managed to join the riverside stroll."
+                "Riverside_Stroll_Begin_late": "$late.name$ arrived a little late, but still managed to join the riverside stroll.",
+                "Riverside_Stroll_Begin_join": "$joining.name$ stepped onto the promenade and caught up with the walkers.",
+                "Riverside_Stroll_Begin_shared_initial": "$attendees.name$ walked side by side along the river, chatting about little things along the way. By the bend, nobody had to make an effort to match anyone else's pace.",
+                "Riverside_Stroll_Begin_shared_arrival": "$companions.name$ slowed down to walk the next stretch of riverbank with $joining.name$. The conversation picked up again, and their footsteps gradually fell into step.",
+                "Riverside_Stroll_Begin_finish": "A breeze brushed the promenade as the walk continued."
             }
         }
     }

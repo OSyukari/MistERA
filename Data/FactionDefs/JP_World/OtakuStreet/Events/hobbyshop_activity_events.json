@@ -1,0 +1,38 @@
+{
+    "_comment": "Mounted proposal scene; isJoin must be checked before isLate. Only actual launch attendees or newcomer/local companions receive shared outcomes; expected invitees are never recipients. Tuning comments retained in hobbyshop.json.",
+    "Events": { "list": [{
+        "ID": "Otaku_Boardgames_Begin",
+        "events": [
+            { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [
+                { "option": "explicit join", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isJoin"] }, { "Type": "JumpToLabel", "arguments": ["", "join"] }] },
+                { "option": "late arrival", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isLate"] }, { "Type": "JumpToLabel", "arguments": ["", "late"] }] },
+                { "option": "initial launch", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "initial"] }] }
+            ] },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "initial", "line": "otaku_boardgames_initial", "nextEntryLabel": "initial_guard" },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "join", "line": "otaku_boardgames_join", "nextEntryLabel": "arrival_guard" },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "line": "otaku_boardgames_late", "nextEntryLabel": "arrival_guard" },
+            { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "initial_guard", "options": [
+                { "option": "eligible shared tutorial", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["activityTrustEligible"] }, { "Type": "ExistAppendStrings", "arguments": ["hasSharedAttendees"] }, { "Type": "JumpToLabel", "arguments": ["", "initial_reward"] }] },
+                { "option": "neutral finish", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "finish"] }] }
+            ] },
+            { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "arrival_guard", "options": [
+                { "option": "eligible shared tutorial", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["activityTrustEligible"] }, { "Type": "ExistAppendStrings", "arguments": ["hasCompanions"] }, { "Type": "JumpToLabel", "arguments": ["", "arrival_reward"] }] },
+                { "option": "neutral finish", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "finish"] }] }
+            ] },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "initial_reward", "line": "otaku_boardgames_shared_initial", "nextEntryLabel": "finish", "Results": [
+                { "Type": "IncreaseRelationship", "arguments": ["attendees", "attendees", "Trust", "1"] },
+                { "Type": "IncreaseRelationship", "arguments": ["attendees", "attendees", "Goodwill", "2"] }
+            ] },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "arrival_reward", "line": "otaku_boardgames_shared_arrival", "nextEntryLabel": "finish", "Results": [
+                { "Type": "IncreaseRelationship", "arguments": ["joining", "companions", "Trust", "1"] },
+                { "Type": "IncreaseRelationship", "arguments": ["companions", "joining", "Trust", "1"] },
+                { "Type": "IncreaseRelationship", "arguments": ["joining", "companions", "Goodwill", "2"] },
+                { "Type": "IncreaseRelationship", "arguments": ["companions", "joining", "Goodwill", "2"] }
+            ] },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "finish", "line": "otaku_boardgames_finish", "isLast": true, "Results": [{ "Type": "FlushMessageExpAll", "arguments": ["false"] }] }
+        ]
+    }] },
+    "Dictionary": { "Entries": { "zh-cn": {
+        "otaku_boardgames_initial": "桌上摆着一盒桌游，规则册摊在旁边。", "otaku_boardgames_join": "$joining.name$在桌游桌旁落座，翻开了规则册。", "otaku_boardgames_late": "$joining.name$晚些来到桌游桌旁，先看了看桌上的摆放。", "otaku_boardgames_shared_initial": "$attendees.name$照着规则册试走了几个步骤，不明白的地方就停下来一起核对。轮到谁便由谁决定，其他人也不抢着代走；这段练习不计输赢。", "otaku_boardgames_shared_arrival": "$companions.name$给$joining.name$说明了眼前的局面，留出一个练习回合。大家依次试走，有疑问就一起查规则，没有人催着落子，也不把这轮算作胜负。", "otaku_boardgames_finish": "规则册仍摊在桌边，预留的桌游时段还没有结束。"
+    } } }
+}

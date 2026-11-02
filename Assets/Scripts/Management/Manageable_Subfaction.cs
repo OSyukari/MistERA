@@ -22,7 +22,7 @@ public class Manageable_Subfaction : Manageable
         get
         {
             if (this.Parent != null) return this.Parent.MainExit;
-            else return null;
+            else return base.MainExit;
         }
     }
     /// <summary>
@@ -43,7 +43,7 @@ public class Manageable_Subfaction : Manageable
         get
         {
             if (this.Parent != null) return this.Parent.ConnectedFactions;
-            else return new List<Manageable>();
+            else return base.ConnectedFactions;
         }
     }
     [JsonIgnore]
@@ -60,6 +60,11 @@ public class Manageable_Subfaction : Manageable
     {
         get
         {
+            // Keep the saved object (members, inventory and jobs), but stop inheriting the
+            // old host once the authored faction has become an independent location.
+            var plan = string.IsNullOrEmpty(mapPlanID) ? null
+                : scr_System_Serializer.current.GetByNameOrID_MapPlan(mapPlanID);
+            if (plan != null && plan.floors.Count > 0) return null;
             if (_parent == null && parentID != "")
             {
                 _parent = scr_System_CampaignManager.current.FindFactionByID(parentID);

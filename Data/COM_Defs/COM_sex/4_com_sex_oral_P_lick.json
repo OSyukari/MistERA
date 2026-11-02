@@ -1,0 +1,135 @@
+{
+    "_doc": "Licking a penis (Docs/Interactions/Step06FPermissionsImplementationPlan.md, P5b 2e): com_sex_oral_P without the 'penetration' tag, so a worn filled condom does not have to come off first (EvaluationPackage.TakeOffFilledBeforePenetration). No force / over-penetration variants and no swallow result. Kojo: personality_default/commands/com_sex_oral_P_lick.json (a text-only variant for the target tag condom_filled).",
+    "COMs":
+    {
+        "list":
+        [
+            {
+                "parentCOMID":"com_sex_service_base",
+                "ID":"com_sex_oral_P_lick",
+                "_comment_traces":"Body traces: saliva on the penis, aroused receiver's precum into the mouth, pubes on the doer's face (low chance).",
+                "traceKeywords":["lick","wet","oral"],
+                "ActionPackageClass":"ActionPackage_Sex",
+                "categoryTags":["com_category_service"],
+                "displayName":"com_sex_oral_P_lick_displayName_1",
+                "timeScale":3,
+                "comTags":["sex","service", "position_face", "position_inequal"],
+                "portraitTags":["blowjob"],
+                "requirements":{
+                    "requirement":{
+                        "req_Doers":{
+                            "BodyTags":["mouth"],
+                            "minRevealingScore":1,
+                            "cost_ST": 1
+                        },
+                        "req_Receivers":{
+                            "BodyTags":["penis"],
+                            "minRevealingScore":1,
+                            "requireConscious":false,
+                            "requireAction": false
+                        }
+                    }
+                },
+                "AcceptanceCheck":{ "baseAcceptanceValue":25,
+                    "SkillBonus_Doer":["skill_sensitivity_M"] },
+                "DifficultyCheck":{ "baseD20Check":8,
+                    "SkillBonus_Doer":["skill_sensitivity_M"] },
+                "variants":[
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":1,
+                                "receiverCount":1
+                            }
+                        },
+                        "displayName":"com_sex_oral_P_lick_displayName_1"
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":1,
+                                "receiverCount":99
+                            }
+                        },
+                        "displayName":"com_sex_oral_P_lick_displayName_2"
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":99,
+                                "receiverCount":1
+                            }
+                        },
+                        "displayName":"com_sex_oral_P_lick_displayName_3"
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":99,
+                                "receiverCount":99
+                            }
+                        },
+                        "displayName":"com_sex_oral_P_lick_displayName_4"
+                    }
+                ],
+                "description_ongoing":{
+                    "Entries":
+                    [
+                        {
+                            "keepLooking":true,
+                            "texts": [ "com_sex_oral_P_lick_description_ongoing_1" ]
+                        }
+                    ]
+                },
+                "description_remove":{
+                    "Entries":[
+                        {
+                            "_comment":"",
+                            "keepLooking":true,
+                            "texts":[ "com_sex_oral_P_lick_description_remove_1" ]
+                        }
+                    ]
+                },
+                "description_after":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
+                            "texts":[ "com_sex_oral_P_lick_description_after_1" ]
+                        }
+                    ]
+                },
+                "description_begin":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "texts": ["com_sex_oral_P_lick_description_begin_1"]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "com_sex_oral_P_lick":"%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_oral_P_lick_displayName_1": "舔肉棒",
+                "com_sex_oral_P_lick_displayName_2": "交替舔肉棒",
+                "com_sex_oral_P_lick_displayName_3": "轮流舔肉棒",
+                "com_sex_oral_P_lick_displayName_4": "同时舔肉棒",
+
+                "com_sex_oral_P_lick_description_begin_1":"$doer.firstname$凑近$receiver.firstname$的胯下，伸出舌头舔上了肉棒",
+                "com_sex_oral_P_lick_description_after_1":"$receiver.firstname$的肉棒在$doer.firstname$舌尖的舔弄下射出了精液",
+                "com_sex_oral_P_lick_description_remove_1":"$doer.firstname$的舌头离开了$receiver.firstname$的肉棒",
+                "com_sex_oral_P_lick_description_ongoing_1":"$doer.firstname$正用舌头来回舔着$receiver.firstname$的肉棒"
+            }
+        }
+    }
+}

@@ -1,27 +1,28 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 /// <summary>
 /// Recreation booking logic. Stateless: the bookings, attendance and plan progress live on Character_Factions, which
-/// calls in through its two entry points - OnDayUpdate_Recreation (DailyPlan, day update stage 3) and
-/// OnHourUpdate_Recreation (HourlyCheck, after the hourly UpdateSchedule).
+/// calls through DailyPlan (day update stage 3) and explicit activity-change reconciliation.
 /// <br/>DailyPlan books a character's flexible visits for tomorrow - the activities of their recreation memberships
 /// (MemberType.recreation - RecreationSpec.activities, one activity per visit) and flexible offers (RecreationOfferDef,
 /// Flexible) - into the free time around work and sleep, as RecreationBookings. A visit whose spec has a visibility is
-/// hosted as a shared session instead; fixed offers are sessions posted by the board. Sessions are ranked and confirmed
-/// in each character's second pass of the hour (LateHourConfirm - RecreationUtility_Groups.cs).
+/// hosted as a shared session instead; fixed offers are sessions posted by the board. Sessions are answered in the
+/// hour's late passes and then resolve themselves (RecreationUtility_Groups.cs). Every activity announces itself
+/// (AnnounceSolo / AnnounceSession) - no per-character booking notices.
 /// The first run for a character also fills the rest of today.
-/// <br/>Shape of a day's plan: one chain of flexible visits (2-4h each, MaxDailyHours in total with the day's other
+/// <br/>Shape of a day's plan: one chain of flexible visits (1-4h each, MaxDailyHours in total with the day's other
 /// bookings) placed as near as fits to an anchor - after the day's last shift (work ->
 /// recreation -> sleep) most often, before a shift otherwise - or a random afternoon/evening start on a day off. Visits
 /// at the same venue run back to back; anything at another place (another venue, another faction's shift) is kept
-/// TravelBufferHours away for the trip. The chain may eat into the start or end of a night (predicted with
-/// Character_Factions.PredictSleep - bookings take those hours, the night measures shorter), but never splits it and
-/// always leaves Character_Factions.MinSleepHoursWithBookings.
-/// <br/>Once planned, a booking stays as it is unless something breaks it (HourlyCheck) - then TryReschedule re-packs
-/// that day's movable bookings around the new situation, nearest the original time.
+/// TravelBufferHours away for the trip. A visit the character plans for themselves never takes a predicted night
+/// (Character_Factions.PredictSleep); only a fixed-time one (a fixed offer, an event booking) or an invitation they
+/// accept may - they give up the sleep and wake up in time for it (WakeForSessions).
+/// <br/>Once planned, a booking stays as it is unless an external change breaks it: a session or event booking taking
+/// its time re-packs that day's movable bookings (TryReschedule); a work / home schedule claiming it, lost access or a
+/// lost facility cancel it (re-validation on those changes - nothing is polled).
 /// <br/>Not planned for: the player character, fallback workers, temporary/dormant actors, characters without a home,
 /// held by a party lock, or whose priority home forbids work.
 /// <br/>Shared (multi-character) activities - sessions: posting, ranking, confirming, extending invitations - are in RecreationUtility_Groups.cs.
@@ -29,7 +30,8 @@ using UnityEngine;
 public static partial class RecreationUtility
 {
     public const int MaxDailyHours = 8;
-    public const int MinSegmentHours = 2;
+    /// <summary>Shortest visit (RecreationActivity.MinHours clamp). 1 since 2026-10-31 (the 1-h checkup); activities default to minHours 2.</summary>
+    public const int MinSegmentHours = 1;
     public const int MaxSegmentHours = 4;
     /// <summary>Chance a character books nothing at all for a day.</summary>
     public const double SkipDayChance = 0;
@@ -39,12 +41,6 @@ public static partial class RecreationUtility
     public const int AttendanceMemoryDays = 14;
     /// <summary>World-map travel minutes at which a venue's weight halves (1 / (1 + minutes / this)).</summary>
     const float TravelHalfWeightMinutes = 30f;
-    /// <summary>
-    /// Minutes of sleep left below which a character asleep at the start of a booked hour counts as waking into it rather
-    /// than sleeping through it - a night cut short by a booking ends exactly on the hour, and the sleeping status's own
-    /// tick may run just after the hourly check.
-    /// </summary>
-    const int BookingSleepGraceMinutes = 10;
 
     /// <summary>
     /// Free hours kept between a visit and anything next to it at another place - a work/home schedule hour of another
@@ -53,34 +49,32 @@ public static partial class RecreationUtility
     /// </summary>
     public const int TravelBufferHours = 1;
 
+    /// <summary>
+    /// Getting-up minutes (dressing etc.) kept before a visit after a night's sleep, on top of the trip from home to the
+    /// venue: a visit may not start within DayContext.WakeUpBufferHours (travel + this, rounded up to whole hours) after a
+    /// predicted night's sleep ends - nor at the end of a night it shortens.
+    /// </summary>
+    public const int WakeUpPrepMinutes = 30;
+
+    /// <summary>
+    /// Awake hours needed before a visit at venueID when getting up at from: the world-map trip between them
+    /// (TravelMinutes) plus WakeUpPrepMinutes, rounded up to whole hours - at least 1.
+    /// </summary>
+    public static int WakeUpBufferHours(Manageable from, string venueID)
+    {
+        var venue = string.IsNullOrEmpty(venueID) ? null : scr_System_CampaignManager.current.FindFactionByID(venueID);
+        return Math.Max(1, (int)Math.Ceiling((TravelMinutes(from, venue) + WakeUpPrepMinutes) / 60f));
+    }
+
     /// <summary>Absolute-hour interval [start, end); venue = the booking's faction ID where it is one (null otherwise - counts as elsewhere).</summary>
     public struct Span
     {
         public int start, end;
         public string venue;
-        public Span(int start, int end, string venue = null) { this.start = start; this.end = end; this.venue = venue; }
+        public bool sleeping;
+        public Span(int start, int end, string venue = null, bool sleeping = false) { this.start = start; this.end = end; this.venue = venue; this.sleeping = sleeping; }
         public int Length { get { return end - start; } }
         public bool Contains(int t) { return t >= start && t < end; }
-    }
-
-    /// <summary>
-    /// The night [start, end) minus the hours covered by bookings is one unbroken run of at least floor hours - a
-    /// booking may eat the start or end of a night, never split it or leave less than the floor.
-    /// </summary>
-    public static bool NightKeepsSleep(int start, int end, IEnumerable<Span> bookings, int floor)
-    {
-        var list = bookings as IList<Span> ?? bookings.ToList();
-        int first = -1, last = -1, count = 0;
-        for (int t = start; t < end; t++)
-        {
-            bool covered = false;
-            foreach (var b in list) if (b.Contains(t)) { covered = true; break; }
-            if (covered) continue;
-            if (first < 0) first = t;
-            last = t;
-            count++;
-        }
-        return count >= floor && last - first + 1 == count;
     }
 
     static int NowAbs()
@@ -88,105 +82,139 @@ public static partial class RecreationUtility
         return RecreationBooking.AbsoluteHour(scr_System_Time.current.getAbsoluteDay(), scr_System_Time.current.getCurrentTime().Hour);
     }
 
+    /// <summary>Stable in-place insertion sort (small lists) - the order LINQ OrderBy gave, without its allocations.</summary>
+    static void SortStable<T>(List<T> list, Comparison<T> compare)
+    {
+        for (int i = 1; i < list.Count; i++)
+        {
+            var item = list[i];
+            int j = i - 1;
+            while (j >= 0 && compare(list[j], item) > 0) { list[j + 1] = list[j]; j--; }
+            list[j + 1] = item;
+        }
+    }
+
     // ---------------- change notices ---------------- //
 
-    /// <summary>Data event started on a character whose bookings changed - its line shows $bookingText$.</summary>
-    public const string Event_BookingChanged = "Recreation_BookingChanged";
+    /// <summary>Data event an activity announces itself with (confirmed / rescheduled / cancelled) - its line shows $activityText$.</summary>
+    public const string Event_ActivityNotice = "Recreation_ActivityNotice";
 
     /// <summary>Why a booking was cancelled - picks the reason text (ui_recreation_cancel_* keys).</summary>
-    public enum CancelReason { None, Slept, WorkForbidden, LostAccess, NoTime, Displaced, MembershipChanged, ByEvent, ByRequest, GroupCancelled, GroupFailed, NoShow }
+    public enum CancelReason { None, Slept, WorkForbidden, LostAccess, NoTime, Displaced, MembershipChanged, ByEvent, ByRequest, GroupCancelled, GroupFailed, NoShow, FacilityRemoved }
+
+    /// <summary>What an activity announces about itself.</summary>
+    public enum ActivityNoticeKind { Confirmed, Rescheduled, Cancelled }
 
     /// <summary>
-    /// One pass's booking changes of one character, announced together (per pass, not per booking) by EndNotice: one
-    /// Event_BookingChanged on the character + one misc entry in each home faction's daily report.
+    /// Announcement scope of the call in progress (BeginAnnounceScope ... EndAnnounceScope, nested): displayOverride =
+    /// what is announced inside is forced on screen (an event's displayOverride, the midnight planning of the player's
+    /// household); quiet = no solo activity announces itself (the caller shows the change itself - the cancel-booking
+    /// dialogue; a session the change cancels still announces).
     /// </summary>
-    class Notice
+    static int announceForcedDepth, announceQuietDepth;
+
+    static void BeginAnnounceScope(bool displayOverride, bool quiet = false)
     {
-        public List<RecreationBooking> booked = new List<RecreationBooking>();
-        public List<KeyValuePair<RecreationBooking, RecreationBooking>> moved = new List<KeyValuePair<RecreationBooking, RecreationBooking>>();
-        public List<KeyValuePair<RecreationBooking, CancelReason>> cancelled = new List<KeyValuePair<RecreationBooking, CancelReason>>();
-        public int depth = 0;
-        public bool IsEmpty { get { return booked.Count == 0 && moved.Count == 0 && cancelled.Count == 0; } }
+        if (displayOverride) announceForcedDepth++;
+        if (quiet) announceQuietDepth++;
+    }
+
+    static void EndAnnounceScope(bool displayOverride, bool quiet = false)
+    {
+        if (displayOverride && announceForcedDepth > 0) announceForcedDepth--;
+        if (quiet && announceQuietDepth > 0) announceQuietDepth--;
+    }
+
+    /// <summary>Reused participant buffer for a solo announcement (an announcement never re-enters another).</summary>
+    static readonly List<Character_Trainable> soloParticipants = new List<Character_Trainable>(1);
+
+    /// <summary>
+    /// A solo activity (a booking without a session) announces itself: booked (it needs no confirmation), moved (from =
+    /// its old time) or cancelled (reason). Its owner is the participant.
+    /// </summary>
+    static void AnnounceSolo(RecreationBooking b, ActivityNoticeKind kind, CancelReason reason = CancelReason.None, RecreationBooking from = null)
+    {
+        if (b == null || b.Session != null || b.isSessionBooking || announceQuietDepth > 0) return;
+        var owner = b.Owner;
+        if (owner == null) return;
+        soloParticipants.Clear();
+        soloParticipants.Add(owner);
+        try
+        {
+            string line = kind == ActivityNoticeKind.Rescheduled && from != null
+                ? LocalizeDictionary.QueryThenParse("ui_recreation_notice_movedLine").Replace("$from$", DescribeBooking(from)).Replace("$to$", DescribeTime(b))
+                : DescribeBooking(b);
+            Announce(kind, line, reason, soloParticipants, false);
+        }
+        finally { soloParticipants.Clear(); }
+    }
+
+    /// <summary>A session announces itself once resolved (ResolveSession - confirmed) or when cancelled (CancelSession) - participants = who attends / was coming.</summary>
+    static void AnnounceSession(RecreationGroup g, ActivityNoticeKind kind, CancelReason reason, List<Character_Trainable> participants)
+    {
+        if (g == null) return;
+        // the night's sessions resolve at midnight: forced on screen for the player's household, as the night's solo bookings are
+        bool midnight = scr_System_Time.current.getCurrentTime().Hour == 0;
+        Announce(kind, DescribeSessionLine(g), reason, participants, midnight);
     }
 
     /// <summary>
-    /// Open notice per character, collecting the changes of the call in progress (BeginNotice ... EndNotice; nested calls
-    /// join the outer one). A change recorded with none open is announced on its own right away (no forced display).
+    /// Starts Event_ActivityNotice: "[header] activity @ venue, time (reason)" + "participants: A, B". Self = the first
+    /// participant who is the player or visible to them; forced on screen (displayOverride) inside a forcing scope, or
+    /// householdForced with a participant of the player's household - then self is the first participant. Nothing when
+    /// no participant qualifies.
     /// </summary>
-    static readonly Dictionary<Character_Factions, Notice> openNotices = new Dictionary<Character_Factions, Notice>();
-
-    static void BeginNotice(Character_Factions f)
+    static void Announce(ActivityNoticeKind kind, string line, CancelReason reason, List<Character_Trainable> participants, bool householdForced)
     {
-        if (f == null) return;
-        if (!openNotices.TryGetValue(f, out var n)) openNotices[f] = n = new Notice();
-        n.depth++;
+        if (participants == null || participants.Count == 0 || scr_UpdateHandler.current == null) return;
+        var campaign = scr_System_CampaignManager.current;
+        Character_Trainable self = null;
+        bool forced = announceForcedDepth > 0;
+        for (int i = 0; i < participants.Count; i++)
+        {
+            var c = participants[i];
+            if (c == null) continue;
+            if (self == null && (c == campaign.Player || campaign.isCharaVisibleToPlayer(c.RefID))) self = c;
+            if (householdForced && !forced && FactionUtility.IsPlayerHousehold(c)) forced = true;
+        }
+        if (forced && self == null)
+            for (int i = 0; i < participants.Count && self == null; i++) self = participants[i];
+        if (self == null) return;
+
+        string header = LocalizeDictionary.QueryThenParse(kind == ActivityNoticeKind.Confirmed ? "ui_recreation_notice_booked"
+            : kind == ActivityNoticeKind.Rescheduled ? "ui_recreation_notice_moved" : "ui_recreation_notice_cancelled");
+        var names = new List<string>(participants.Count);
+        for (int i = 0; i < participants.Count; i++) if (participants[i] != null) names.Add(participants[i].FullName);
+        string text = header + line + (kind == ActivityNoticeKind.Cancelled ? DescribeReason(reason) : "") + "\n"
+            + LocalizeDictionary.QueryThenParse("ui_recreation_notice_participants")
+                .Replace("$names$", string.Join(LocalizeDictionary.QueryThenParse("event_heldMembership_separator"), names));
+
+        var ev = new EventInstance(self, Event_ActivityNotice, "");
+        ev.AppendStrings["activityText"] = new List<string>() { text };
+        ev.displayOverride = forced;
+        scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
     }
 
-    /// <summary>Closes f's notice; the outermost close announces it (displayOverride / quiet: see AnnounceNotice).</summary>
-    static void EndNotice(Character_Factions f, bool displayOverride, bool quiet = false)
-    {
-        if (f == null || !openNotices.TryGetValue(f, out var n)) return;
-        if (--n.depth > 0) return;
-        openNotices.Remove(f);
-        AnnounceNotice(f, n, displayOverride, quiet);
-    }
-
-    static void Record(Character_Factions f, Action<Notice> add)
-    {
-        if (f == null) return;
-        if (openNotices.TryGetValue(f, out var n)) { add(n); return; }
-        var single = new Notice();
-        add(single);
-        AnnounceNotice(f, single, false);
-    }
-
-    static void RecordBooked(Character_Factions f, RecreationBooking b) { if (b != null) Record(f, n => n.booked.Add(b)); }
-    static void RecordMoved(Character_Factions f, RecreationBooking from, RecreationBooking to) { Record(f, n => n.moved.Add(new KeyValuePair<RecreationBooking, RecreationBooking>(from, to))); }
-
-    /// <summary>A booking was cancelled before it ended (Character_Factions.NotifyBookingCancelled) - into the open notice, or announced on its own.</summary>
-    public static void RecordCancelled(Character_Factions f, RecreationBooking b, CancelReason reason)
+    /// <summary>
+    /// A booking was cancelled before it ended (Character_Factions.NotifyBookingCancelled): a solo one announces itself;
+    /// a session booking is only that member's answer (the session announces itself if it is cancelled).
+    /// </summary>
+    public static void OnBookingCancelled(Character_Factions f, RecreationBooking b, CancelReason reason)
     {
         if (b == null) return;
         // a booking that may not be cancelled on request should not be cancelled by these either - content to fix
         if (b.forbidCancel && (reason == CancelReason.WorkForbidden || reason == CancelReason.ByEvent || reason == CancelReason.Displaced))
             Debug.LogError($"forbidCancel recreation booking of {f?.Owner?.FullName} cancelled ({reason}): {b.sourceKey} @ {b.factionID} day {b.day} {b.startHour:00}:00+{b.hours}h");
-        Record(f, n => n.cancelled.Add(new KeyValuePair<RecreationBooking, CancelReason>(b, reason)));
+        AnnounceSolo(b, ActivityNoticeKind.Cancelled, reason);
     }
 
-    /// <summary>
-    /// Starts Event_BookingChanged on the character with the change list as $bookingText$ (displayOverride: forced on
-    /// screen; otherwise shown only when the player can see the character - EventInstance.isVisible), and adds the
-    /// same list as a misc entry to each of their home factions' daily report. quiet: daily report only, no event (the
-    /// caller shows the change itself, e.g. the cancel-booking dialogue).
-    /// </summary>
-    static void AnnounceNotice(Character_Factions f, Notice n, bool displayOverride, bool quiet = false)
+    /// <summary>"activity @ venue, when HH:00-HH:00" of session g.</summary>
+    static string DescribeSessionLine(RecreationGroup g)
     {
-        var c = f?.Owner;
-        if (c == null || n == null || n.IsEmpty) return;
-
-        var lines = new List<string>();
-        void Section(string headerKey, IEnumerable<string> entries)
-        {
-            var list = entries.ToList();
-            if (list.Count == 0) return;
-            lines.Add(LocalizeDictionary.QueryThenParse(headerKey));
-            lines.AddRange(list);
-        }
-        // each section in time order (bookings are recorded in planning order: offers first, then the chain)
-        Section("ui_recreation_notice_booked", n.booked.OrderBy(b => b.AbsStart).Select(b => DescribeBooking(b, c)));
-        Section("ui_recreation_notice_moved", n.moved.OrderBy(kv => kv.Value.AbsStart).Select(kv => LocalizeDictionary.QueryThenParse("ui_recreation_notice_movedLine")
-            .Replace("$from$", DescribeBooking(kv.Key)).Replace("$to$", DescribeTime(kv.Value))));
-        Section("ui_recreation_notice_cancelled", n.cancelled.OrderBy(kv => kv.Key.AbsStart).Select(kv => DescribeBooking(kv.Key, c) + DescribeReason(kv.Value)));
-
-        string titleKey = n.moved.Count == 0 && n.cancelled.Count == 0 ? "ui_recreation_notice_title_booked" : "ui_recreation_notice_title_changed";
-        string title = LocalizeDictionary.QueryThenParse(titleKey).Replace("$name$", c.FullName);
-        foreach (var home in f.HomeFactions) home?.DailyReport.AddMiscRecord(title, lines);
-        if (quiet) return;
-
-        var ev = new EventInstance(c, Event_BookingChanged, "");
-        ev.AppendStrings["bookingText"] = new List<string>() { string.Join("\n", lines) };
-        ev.displayOverride = displayOverride;
-        scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
+        var venue = scr_System_CampaignManager.current.FindFactionByID(g.factionID);
+        return LocalizeDictionary.QueryThenParse("ui_recreation_notice_line")
+            .Replace("$activity$", g.DisplayName).Replace("$venue$", venue != null ? venue.FactionDisplayName : g.factionID)
+            .Replace("$time$", DescribeTime(g.day, g.startHour, g.AbsEnd));
     }
 
     /// <summary>"activity @ venue, when HH:00-HH:00" - for a session booking with owner given, followed by who else is coming (DescribeCompany).</summary>
@@ -208,24 +236,33 @@ public static partial class RecreationUtility
     /// <summary>DescribeTime for a visit starting at startHour of absolute day `day`, ending at absolute hour absEnd - bookings and sessions alike (I_ActivityBooking.Tooltip).</summary>
     public static string DescribeTime(int day, int startHour, int absEnd)
     {
-        int today = scr_System_Time.current.getAbsoluteDay();
-        string when;
-        switch (day - today)
-        {
-            case -1: when = LocalizeDictionary.QueryThenParse("ui_recreation_day_yesterday"); break;
-            case 0: when = LocalizeDictionary.QueryThenParse("ui_recreation_day_today"); break;
-            case 1: when = LocalizeDictionary.QueryThenParse("ui_recreation_day_tomorrow"); break;
-            case 2: when = LocalizeDictionary.QueryThenParse("ui_recreation_day_dayAfter"); break;
-            default:
-                var date = scr_System_Time.current.getStartTime().Date.AddDays(day);
-                when = LocalizeDictionary.QueryThenParse("ui_recreation_day_date").Replace("$month$", date.Month.ToString()).Replace("$day$", date.Day.ToString());
-                break;
-        }
         int endHour = absEnd % 24;
         string end = $"{endHour:00}:00";
         if (absEnd / 24 != day) end = LocalizeDictionary.QueryThenParse("ui_recreation_day_nextDay") + end;
         return LocalizeDictionary.QueryThenParse("ui_recreation_notice_time")
-            .Replace("$when$", when).Replace("$start$", $"{startHour:00}:00").Replace("$end$", end);
+            .Replace("$when$", DescribeDay(day)).Replace("$start$", $"{startHour:00}:00").Replace("$end$", end);
+    }
+
+    /// <summary>"今天 19:00" - the start of a visit at absolute hour absStart, relative to today (the management report's activity list).</summary>
+    public static string DescribeStart(int absStart)
+    {
+        return LocalizeDictionary.QueryThenParse("ui_recreation_notice_start")
+            .Replace("$when$", DescribeDay(absStart / 24)).Replace("$start$", $"{absStart % 24:00}:00");
+    }
+
+    /// <summary>"昨天" / "今天" / "明天" / "后天" / "M月D日" for absolute day `day`.</summary>
+    static string DescribeDay(int day)
+    {
+        switch (day - scr_System_Time.current.getAbsoluteDay())
+        {
+            case -1: return LocalizeDictionary.QueryThenParse("ui_recreation_day_yesterday");
+            case 0: return LocalizeDictionary.QueryThenParse("ui_recreation_day_today");
+            case 1: return LocalizeDictionary.QueryThenParse("ui_recreation_day_tomorrow");
+            case 2: return LocalizeDictionary.QueryThenParse("ui_recreation_day_dayAfter");
+            default:
+                var date = scr_System_Time.current.getStartTime().Date.AddDays(day);
+                return LocalizeDictionary.QueryThenParse("ui_recreation_day_date").Replace("$month$", date.Month.ToString()).Replace("$day$", date.Day.ToString());
+        }
     }
 
     static string DescribeReason(CancelReason reason)
@@ -241,20 +278,21 @@ public static partial class RecreationUtility
     /// (fixed offers, each its daysInAdvance ahead - whichever character plans first), f's session bookings synced, then
     /// f's flexible visits planned - booked solo or posted as sessions f hosts (AddPlannedBookings): a day not planned
     /// yet (tomorrow; today too on the first run) with every activity its daysInAdvance allows, and today - already
-    /// planned last night - once more with the same-day-only ones (daysInAdvance 0). Sessions are ranked / confirmed in
-    /// the hour's second pass, after the day update (LateHourConfirm).
+    /// planned last night - once more with the same-day-only ones (daysInAdvance 0). The sessions posted here are
+    /// answered in the hour's late passes (OnLatePass) and resolve themselves after (ResolveSession).
     /// </summary>
     public static void DailyPlan(Character_Factions f)
     {
         if (f == null || scr_System_CampaignManager.current == null || scr_System_Time.current == null) return;
-        // the night's new reservations are announced together, on screen for the player's own household
-        BeginNotice(f);
+        // the night's solo activities announce themselves on screen for the player's own household
+        bool household = FactionUtility.IsPlayerHousehold(f.Owner);
+        BeginAnnounceScope(household);
         try
         {
             f.ClearInviteMemory();
             int today = scr_System_Time.current.getAbsoluteDay();
             scr_System_CampaignManager.current.RecreationBoard.PostCalendar();
-            bool added = SyncSessionBookings(f);
+            bool added = false;
             if (ShouldPlan(f))
             {
                 for (int day = today; day <= today + 1; day++)
@@ -266,27 +304,7 @@ public static partial class RecreationUtility
             }
             if (added) f.RefreshSchedule();
         }
-        finally
-        {
-            EndNotice(f, FactionUtility.IsPlayerHousehold(f.Owner));
-        }
-    }
-
-    /// <summary>
-    /// Character_Factions.OnHourLate_Recreation (second pass of the hour - scr_System_Time.Observer_globalTime_HoursLate):
-    /// steps 2-3 (SessionPass), once every character has had its hourly tick and, at midnight, its day update - so a
-    /// session posted in either (DailyPlan, RefillSlot, an event) is ranked and confirmed by everyone it reaches within
-    /// the hour it was posted (a confirmed member booking is in effect at once - RefreshValidity). NPCs that plan only.
-    /// At midnight it is announced like the night's reservations (on screen for the player's own household).
-    /// </summary>
-    public static void LateHourConfirm(Character_Factions f)
-    {
-        if (f == null || scr_System_CampaignManager.current == null || scr_System_Time.current == null) return;
-        if (!ShouldPlan(f)) return;
-        bool midnight = scr_System_Time.current.getCurrentTime().Hour == 0;
-        BeginNotice(f);
-        try { SessionPass(f); }
-        finally { EndNotice(f, midnight && FactionUtility.IsPlayerHousehold(f.Owner)); }
+        finally { EndAnnounceScope(household); }
     }
 
     static bool ShouldPlan(Character_Factions f)
@@ -298,108 +316,91 @@ public static partial class RecreationUtility
         return f.HomeFactions[0].AllowWorkFaction(c);
     }
 
-    // ---------------- hourly ---------------- //
+    // Booking re-validation is change-driven, never polled: the character's own faction / forbid-work changes
+    // (RevalidateBookings), its schedule rebuilds (CancelClaimedBookings), and the venue's member / MemberType / furniture
+    // changes (RevalidateVenueActivities). Venue due processing owns coordinator creation.
 
     /// <summary>
-    /// Character_Factions.OnHourUpdate_Recreation (hourly tick, after UpdateSchedule) - every booking of f not yet ended:
-    /// <br/>- under way: sleeping through the hour, or needing to sleep (forced sleep - scheduled sleep never applies
-    ///   during a booked hour, the booking takes it) cancels it for good;
-    /// <br/>- cancelled: the priority home now forbids work, or a planned visit's access is gone (LostAccess);
-    /// <br/>- re-planned on its day (TryReschedule, cancelled if nothing fits): a booking not yet started whose hours a
-    ///   work/home schedule now claims, or one eating the planned night (Character_Factions.TryGetPlannedSleep) so that
-    ///   less than MinSleepHoursWithBookings remain or the rest is split in two - the unlocked, not started booking
-    ///   eating most of it goes first, until the night fits;
-    /// <br/>- otherwise, under way with the character at the booked faction: attendance recorded (RecordAttendance) and,
-    ///   for a session booking, the member marked arrived.
-    /// <br/>Then the visit under way gets its Job_Activity if it has none yet (EnsureActivityJobs).
-    /// <br/>First, every session f holds checks itself (UpdateSession - once per hour, whoever asks first) and f's session
-    /// bookings follow (SyncSessionBookings). Re-ranking / confirming (SessionPass) is not done here but in the hour's
-    /// second pass (LateHourConfirm), once every character has ticked.
+    /// f's factions or forbid-work state changed (Character_Factions.UpdateFactionPriorityList, Manageable.SetAllowWork):
+    /// every booking not ended is cancelled when the priority home now forbids work (WorkForbidden) or its access is gone
+    /// (LostAccess). The rare change re-validates; nothing checks hourly.
     /// </summary>
-    public static void HourlyCheck(Character_Factions f)
+    public static void RevalidateBookings(Character_Factions f)
     {
         var c = f?.Owner;
-        if (c == null) return;
-        // daytime changes: announced without forced display (shown only when the player can see the character)
-        BeginNotice(f);
-        try { HourlyCheckInner(f, c); }
-        finally { EndNotice(f, false); }
-    }
-
-    static void HourlyCheckInner(Character_Factions f, Character_Trainable c)
-    {
-        // the hour that just ended, before anything below changes the bookings
-        BillVisitHour(f, c);
-        // ended sessions leave the registry (and their members' inboxes / rankings) - once an hour, whoever comes first
-        Sessions.PruneHourly();
-        // sessions first: each checks itself (lazily, once an hour), then f's bookings of them follow (RecreationUtility_Groups)
-        foreach (var g in TouchedSessions(f)) UpdateSession(g);
-        if (SyncSessionBookings(f)) f.RefreshSchedule();
-        CheckBookings(f, c);
-        EnsureActivityJobs(f, c);
-        // steps 2-3 (re-rank / confirm) run in the hour's second pass, once everyone has ticked - LateHourConfirm
-    }
-
-    /// <summary>
-    /// HourlyCheck, after the bookings were checked: the visit driving f this hour (GetEffectiveBooking - the same
-    /// visits the pull coordinates: own workCommands, TryFindScheduledJobNode.TryActivityJob) gets its Job_Activity if it
-    /// has none yet - so the job exists from T+0 even while every NPC participant is still on the way (the player can
-    /// already wait for it in the gather room). Every participant's own tick asks (the player's too); Create returns the
-    /// existing job to whoever comes second. No instance (an unlinked session booking) = no job.
-    /// </summary>
-    static void EnsureActivityJobs(Character_Factions f, Character_Trainable c)
-    {
-        var b = f.GetEffectiveBooking();
-        if (b == null || b.workModule?.workCommands == null || b.workModule.workCommands.Count == 0) return;
-        int nowAbs = NowAbs();
-        if (b.AbsStart > nowAbs || b.AbsEnd <= nowAbs) return;
-        var key = ActivityKeyFor(f, b);
-        if (key == null || Job_Activity.FindFor(key) != null) return;
-        Job_Activity.Create(key, c);
-    }
-
-    /// <summary>HourlyCheck's per-booking part: sleeping through / forbidden / lost access / claimed by a schedule / breaking sleep - see HourlyCheck.</summary>
-    static void CheckBookings(Character_Factions f, Character_Trainable c)
-    {
-        if (f.RecreationBookings.Count == 0) return;
-        int today = scr_System_Time.current.getAbsoluteDay();
+        if (c == null || f.RecreationBookings.Count == 0 || scr_System_Time.current == null) return;
         int nowAbs = NowAbs();
         var priorityHome = f.HomeFactions.Count > 0 ? f.HomeFactions[0] : null;
         bool workForbidden = priorityHome != null && !priorityHome.AllowWorkFaction(c);
-
-        var unfixable = new List<KeyValuePair<RecreationBooking, CancelReason>>();
-        var movable = new List<RecreationBooking>();
-        foreach (var b in f.RecreationBookings.ToList())
+        bool changed = false;
+        var snapshot = RentBookingList(f.RecreationBookings);
+        try
         {
-            if (b == null || b.AbsEnd <= nowAbs) continue;
-            bool started = b.AbsStart <= nowAbs;
-            if (started && (IsSleepingThroughHour(c) || c.shouldSleep))
+            foreach (var b in snapshot)
             {
-                f.CancelBooking(b, true, CancelReason.Slept);
-                continue;
-            }
-            if (workForbidden) unfixable.Add(new KeyValuePair<RecreationBooking, CancelReason>(b, CancelReason.WorkForbidden));
-            else if (LostAccess(f, b)) unfixable.Add(new KeyValuePair<RecreationBooking, CancelReason>(b, CancelReason.LostAccess));
-            else if (!started && ClaimedByOwnSchedule(f, b, today)) movable.Add(b);
-            else if (started && (I_IsJobGiver)b.Faction == f.CurrentLocaleFaction)
-            {
-                f.RecordAttendance(b.sourceKey, b.day);
-                MarkArrived(b, c);
+                if (b == null || b.AbsEnd <= nowAbs || !f.HasBooking(b)) continue;
+                CancelReason reason;
+                if (workForbidden) reason = CancelReason.WorkForbidden;
+                else if (LostAccess(f, b)) reason = CancelReason.LostAccess;
+                else continue;
+                f.CancelBooking(b, false, reason);
+                changed = true;
             }
         }
-        foreach (var b in BookingsBreakingSleep(f, nowAbs)) if (!unfixable.Exists(kv => kv.Key == b) && !movable.Contains(b)) movable.Add(b);
-
-        foreach (var kv in unfixable) f.CancelBooking(kv.Key, true, kv.Value);
-        // a re-plan moves the day's other bookings too - skip any already handled that way
-        foreach (var b in movable) if (f.RecreationBookings.Contains(b)) TryReschedule(f, b);
+        finally { ReturnBookingList(snapshot); }
+        if (changed) f.RefreshSchedule();
     }
 
-    static bool IsSleepingThroughHour(Character_Trainable c)
+    /// <summary>CancelClaimedBookings in progress: its own schedule refresh does not re-enter it.</summary>
+    static bool cancellingClaimed;
+
+    /// <summary>
+    /// Character_Factions.UpdateSchedule (a full rebuild - its work / home schedule may have changed): a booking not
+    /// started whose hours a work / home schedule now claims is cancelled (NoTime) - not moved; the planner books again
+    /// on its next day update.
+    /// </summary>
+    public static void CancelClaimedBookings(Character_Factions f)
     {
-        if (!c.isSleeping) return false;
-        var sleeping = c.Stats.GetStatusByStringMatch(StatsUtility.Status_Sleeping);
-        return sleeping == null || sleeping.duration < 0 || sleeping.duration > BookingSleepGraceMinutes;
+        if (cancellingClaimed || f?.Owner == null || f.RecreationBookings.Count == 0 || scr_System_Time.current == null) return;
+        int today = scr_System_Time.current.getAbsoluteDay();
+        int nowAbs = NowAbs();
+        bool changed = false;
+        cancellingClaimed = true;
+        var snapshot = RentBookingList(f.RecreationBookings);
+        try
+        {
+            foreach (var b in snapshot)
+            {
+                if (b == null || b.AbsStart <= nowAbs || !f.HasBooking(b) || !ClaimedByOwnSchedule(f, b, today)) continue;
+                f.CancelBooking(b, false, CancelReason.NoTime);
+                changed = true;
+            }
+            if (changed) f.RefreshSchedule();
+        }
+        finally
+        {
+            ReturnBookingList(snapshot);
+            cancellingClaimed = false;
+        }
     }
+
+    /// <summary>Reusable booking lists for the reconciliation passes (a pool, so a nested pass gets its own).</summary>
+    static readonly Stack<List<RecreationBooking>> bookingListPool = new Stack<List<RecreationBooking>>();
+
+    /// <summary>A cleared pooled list - with copyFrom's items when given (a mutation-safe snapshot). Give it back with ReturnBookingList.</summary>
+    static List<RecreationBooking> RentBookingList(IReadOnlyList<RecreationBooking> copyFrom = null)
+    {
+        var list = bookingListPool.Count > 0 ? bookingListPool.Pop() : new List<RecreationBooking>();
+        if (copyFrom != null) for (int i = 0; i < copyFrom.Count; i++) list.Add(copyFrom[i]);
+        return list;
+    }
+
+    static void ReturnBookingList(List<RecreationBooking> list)
+    {
+        list.Clear();
+        bookingListPool.Push(list);
+    }
+
 
     /// <summary>
     /// A planned (Membership-source) visit whose access is gone: a membership visit (no memberTypeID) whose membership is
@@ -410,8 +411,41 @@ public static partial class RecreationUtility
     {
         if (b.source != RecreationBookingSource.Membership) return false;
         if (b.Faction == null) return true;
-        if (string.IsNullOrEmpty(b.memberTypeID)) return !f.RecreationFactions.Contains(b.Faction);
+        if (string.IsNullOrEmpty(b.memberTypeID))
+        {
+            if (f.RecreationFactions.Contains(b.Faction)) return false;
+            // a house / provided activity (no membership): access = the venue still offers it, and for the one who booked
+            // it it is still their home; an invitee from outside the home (a hired maid, a friend - user 2026-11-01) is
+            // only never searched for it (ActivitySources), not excluded
+            bool invitee = b.isSessionBooking && b.roleID != HostRoleID;
+            if (!invitee && !f.HomeFactions.Contains(b.Faction)) return true;
+            return OfferedHouseActivity(b.Faction, b.activityID) == null;
+        }
         return !OwnFactionOffers(f, b.Faction, b.memberTypeID);
+    }
+
+    /// <summary>
+    /// The house activity activityID faction still offers its home members: in its HouseActivities (shared + its own), or
+    /// provided by one of its members' types (a family doctor still assigned). Null when none.
+    /// </summary>
+    static RecreationActivity OfferedHouseActivity(Manageable faction, string activityID)
+    {
+        if (faction == null || string.IsNullOrEmpty(activityID)) return null;
+        return faction.HouseActivities?.GetActivity(activityID) ?? ProvidedActivitiesAt(faction)?.GetActivity(activityID);
+    }
+
+    /// <summary>
+    /// Booking b of f is a house / provided activity (no membership or offered type behind it): a Membership booking (the
+    /// planner's) or Event booking (template house:...) with no memberTypeID whose activity the venue's houseActivities /
+    /// members' types give. It acts under f's own MemberType.
+    /// </summary>
+    static bool IsHouseBooking(Character_Factions f, RecreationBooking b)
+    {
+        if (b == null || f == null || !string.IsNullOrEmpty(b.memberTypeID)) return false;
+        if (b.source != RecreationBookingSource.Membership && b.source != RecreationBookingSource.Event) return false;
+        if (string.IsNullOrEmpty(b.activityID)) return false;
+        if (f.RecreationFactions.Contains(b.Faction)) return false;
+        return HouseActivity(b.factionID, b.activityID) != null;
     }
 
     /// <summary>Any booked hour a work/home schedule claims (bookings never compete with those - see Character_Factions.CurrentJobScheduleFaction).</summary>
@@ -423,31 +457,14 @@ public static partial class RecreationUtility
         return false;
     }
 
-    /// <summary>The bookings to drop so the planned night keeps at least MinSleepHoursWithBookings in one piece (see HourlyCheck).</summary>
-    static List<RecreationBooking> BookingsBreakingSleep(Character_Factions f, int nowAbs)
-    {
-        var result = new List<RecreationBooking>();
-        if (!f.TryGetPlannedSleep(out int start, out int end) || end <= nowAbs) return result;
-
-        var eating = f.RecreationBookings.Where(b => b != null && b.AbsEnd > nowAbs && b.Overlaps(start, end)).ToList();
-        while (!NightKeepsSleep(start, end, eating.Select(b => new Span(b.AbsStart, b.AbsEnd)), f.MinSleepHoursWithBookings))
-        {
-            var drop = eating.Where(b => !b.locked && b.AbsStart > nowAbs)
-                .OrderByDescending(b => Math.Min(b.AbsEnd, end) - Math.Max(b.AbsStart, start)).FirstOrDefault();
-            if (drop == null) break;
-            result.Add(drop);
-            eating.Remove(drop);
-        }
-        return result;
-    }
-
     // ---------------- the visit's activity, and its money ---------------- //
 
     /// <summary>
     /// The activity booking b is a visit of (template data, looked up live - see RecreationBooking.GetActivity): an
     /// offer's (its sourceKey names an offer def - RecreationOfferDef.AsActivity), else activityID within the MemberType f
-    /// acts under for b (ActingTypeID: b's memberTypeID, else f's membership at the venue). Null when it is neither (an
-    /// event booking without a template, or templated on a MemberType's own workModule).
+    /// acts under for b (ActingTypeID: b's memberTypeID, else f's membership at the venue), else the venue's house
+    /// activity of that ID (MapPlan.houseActivities). Null when it is none of these (an event booking without a template,
+    /// or templated on a MemberType's own workModule).
     /// </summary>
     public static RecreationActivity ResolveActivity(Character_Factions f, RecreationBooking b)
     {
@@ -455,7 +472,51 @@ public static partial class RecreationUtility
         var def = RecreationBoard.FindDef(b.sourceKey);
         if (def != null) return def.AsActivity;
         if (string.IsNullOrEmpty(b.activityID) || f == null) return null;
-        return FactionUtility.TryGetMemberType(ActingTypeID(f, b), out var type) ? type?.recreation?.GetActivity(b.activityID) : null;
+        var activity = FactionUtility.TryGetMemberType(ActingTypeID(f, b), out var type) ? type?.recreation?.GetActivity(b.activityID) : null;
+        return activity ?? HouseActivity(b.factionID, b.activityID);
+    }
+
+    /// <summary>Length (hours) used for a planned expedition whose duration can't be computed (Manageable_Party.FinalDuration 999).</summary>
+    const int UnknownExpeditionHours = 24;
+
+    /// <summary>
+    /// The departure windows of the party expedition f's character has planned (user 2026-10-30): their party
+    /// (Character_Factions.CurrentParty) has an expedition set and active but not yet under way (Job_Expedition
+    /// inactive / queued / gathering). It departs at its start hour (Job_Expedition.startHour, else the party's
+    /// FinalStartHour) - retried daily - and lasts the party's FinalDuration: the window of every start from today on
+    /// that is still ahead (or gathering right now) - today's and tomorrow's, as far as the planner looks. Venue = the
+    /// party's ID (another place - the travel buffer applies).
+    /// </summary>
+    static List<Span> PlannedExpeditionWindows(Character_Factions f, int nowAbs)
+    {
+        var result = new List<Span>();
+        var party = f?.CurrentParty;
+        var job = party?.Job;
+        if (party == null || job == null || !party.isPlayerFaction || job.Expedition == null || !job.ExpeditionActive) return result;
+        if (job.status == Job_Expedition.ExpeditionStatus.active || job.status == Job_Expedition.ExpeditionStatus.resting
+            || job.status == Job_Expedition.ExpeditionStatus.returning) return result;
+        int startHour = job.startHour >= 0 ? job.startHour : party.FinalStartHour;
+        int length = party.FinalDuration;
+        if (length <= 0 || length >= 999) length = UnknownExpeditionHours;
+        int today = scr_System_Time.current.getAbsoluteDay();
+        for (int d = today; d <= today + 1; d++)
+        {
+            int s = RecreationBooking.AbsoluteHour(d, startHour);
+            bool gatheringNow = job.status == Job_Expedition.ExpeditionStatus.gathering && s <= nowAbs && nowAbs < s + length;
+            if (s >= nowAbs || gatheringNow) result.Add(new Span(s, s + length, party.ID));
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// The house activity activityID of faction factionID (MapPlan.houseActivities), else the provided activity of that ID
+    /// (MemberType.providedActivities - RecreationUtility.ProvidedActivity), or null.
+    /// </summary>
+    public static RecreationActivity HouseActivity(string factionID, string activityID)
+    {
+        if (string.IsNullOrEmpty(factionID) || string.IsNullOrEmpty(activityID)) return null;
+        return scr_System_CampaignManager.current?.FindFactionByID(factionID)?.HouseActivities?.GetActivity(activityID)
+            ?? ProvidedActivity(activityID);
     }
 
     /// <summary>
@@ -483,7 +544,7 @@ public static partial class RecreationUtility
     }
 
     /// <summary>
-    /// HourlyCheck, first: bills the hour that just ended once (RecreationBooking.lastBilledAbs) if a visit drove it
+    /// Financial accounting: bills the hour that just ended once (RecreationBooking.lastBilledAbs) if a visit drove it
     /// (Character_Factions.GetBookingInEffectAtAbs - its booking may be over by now) and c is still at its venue (arrived
     /// during the hour, not yet left) - the attended-hour rule a shift's wage follows (Manageable.OnHourUpdate): the
     /// visit's activity (ResolveActivity) workModule.hourlyPayout - the venue owes c's payer a wage
@@ -493,8 +554,14 @@ public static partial class RecreationUtility
     /// which never gets a Job_Activity.
     /// <br/>Payer = Character_Factions.GetWorkFactionSourceOrDefault (the priority home - like a recreation membership's fee).
     /// </summary>
-    static void BillVisitHour(Character_Factions f, Character_Trainable c)
+    public static void BillVisitHour(Character_Factions f)
     {
+        if (f?.Owner != null) BillVisitHour(f, f.Owner);
+    }
+
+    public static void BillVisitHour(Character_Factions f, Character_Trainable c)
+    {
+        if (f == null || c == null || scr_System_Time.current == null) return;
         int hourAbs = NowAbs() - 1;
         var b = f.GetBookingInEffectAtAbs(hourAbs);
         if (b == null || b.lastBilledAbs >= hourAbs) return;
@@ -504,7 +571,8 @@ public static partial class RecreationUtility
 
         var activity = b.GetActivity(f);
         // a booking without commands of its own never gets a Job_Activity (TryFindScheduledJobNode) - its fee is charged here, on the first attended hour
-        if (b.workModule?.workCommands == null || b.workModule.workCommands.Count == 0) ChargeEntranceFee(c, venue, activity, b);
+        if (string.IsNullOrEmpty(activity?.reserveFurnitureTag) && !IsOvernight(activity)
+            && (b.workModule?.workCommands == null || b.workModule.workCommands.Count == 0)) ChargeEntranceFee(c, venue, activity, b);
 
         var module = activity?.workModule;
         bool hasPayout = module?.hourlyPayout != null && module.hourlyPayout.Exists(i => i != null && i.itemCount > 0);
@@ -528,7 +596,7 @@ public static partial class RecreationUtility
     /// Obligation_ActivityFee): no new visits of venue's activities or offers are booked until it is paid - visits
     /// already booked go ahead (the membership-fee rule, Character_Trainable.CanWorkFor).
     /// </summary>
-    static bool HasUnpaidActivityFee(Character_Factions f, Manageable venue)
+    public static bool HasUnpaidActivityFee(Character_Factions f, Manageable venue)
     {
         if (venue == null) return false;
         var payer = f.GetWorkFactionSourceOrDefault(venue.ID);
@@ -536,6 +604,296 @@ public static partial class RecreationUtility
         foreach (var o in payer.TradeManager.Obligations)
             if (o is Obligation_ActivityFee fee && fee.targetFactionID == venue.ID && fee.IsSuspended) return true;
         return false;
+    }
+
+    // ---------------- occurrence placement policy ---------------- //
+
+    sealed class PlannedActivityRoom { public Room_Instance room; }
+    static readonly ConditionalWeakTable<I_ActivityBooking, PlannedActivityRoom> plannedActivityRooms = new ConditionalWeakTable<I_ActivityBooking, PlannedActivityRoom>();
+
+    public static string ActivityTypeID(RecreationActivity activity)
+    {
+        return activity?.TypeID ?? "";
+    }
+
+    /// <summary>Definition conflicts are symmetric, independent of localized names and cooldown keys.</summary>
+    public static bool ActivitiesConflict(RecreationActivity a, RecreationActivity b)
+    {
+        if (a == null || b == null) return false;
+        string left = ActivityTypeID(a), right = ActivityTypeID(b);
+        return (!string.IsNullOrEmpty(right) && a.conflictsWith?.Contains(right) == true)
+            || (!string.IsNullOrEmpty(left) && b.conflictsWith?.Contains(left) == true)
+            || (!string.IsNullOrEmpty(left) && left == right && (!a.allowMultipleInstances || !b.allowMultipleInstances));
+    }
+
+    /// <summary>Definition policy only. Runtime merging must also check the source overload for content, time, room and scope.</summary>
+    public static bool CanMergeActivities(RecreationActivity a, RecreationActivity b)
+    {
+        if (a == null || b == null || !a.mergeWithSame || !b.mergeWithSame || IsOvernight(a) || IsOvernight(b)) return false;
+        string type = ActivityTypeID(a);
+        if (string.IsNullOrEmpty(type) || type != ActivityTypeID(b) || a.launchEventID != b.launchEventID) return false;
+        if (a.conflictsWith?.Contains(type) == true || b.conflictsWith?.Contains(type) == true) return false;
+        if ((a.facility?.hostPrivateRoom == true) != (b.facility?.hostPrivateRoom == true)) return false;
+        return (a.requireMedia == null) == (b.requireMedia == null)
+            && (a.requireMedia == null || (a.requireMedia.mediaTag == b.requireMedia.mediaTag
+                && a.requireMedia.sessionCommandID == b.requireMedia.sessionCommandID));
+    }
+
+    /// <summary>Captured content compatibility; this never queries current inventory.</summary>
+    public static bool CanMergeActivities(RecreationActivity a, RecreationActivity b, string mediaA, string mediaB)
+    {
+        return CanMergeActivities(a, b) && (a.requireMedia == null || (!string.IsNullOrEmpty(mediaA) && mediaA == mediaB));
+    }
+
+    static I_ActivityBooking OccurrenceSource(I_ActivityBooking source)
+    {
+        return source is RecreationBooking b && b.Session != null ? (I_ActivityBooking)b.Session : source;
+    }
+
+    static RecreationActivity OccurrenceActivity(I_ActivityBooking source)
+    {
+        return source is RecreationGroup g ? ResolveActivity(g) : (source as RecreationBooking)?.GetActivity((source as RecreationBooking)?.Owner?.FactionManager);
+    }
+
+    static int OccurrenceStart(I_ActivityBooking source) => source is RecreationGroup g ? g.AbsStart : ((RecreationBooking)source).AbsStart;
+    static int OccurrenceEnd(I_ActivityBooking source) => source is RecreationGroup g ? g.AbsEnd : ((RecreationBooking)source).AbsEnd;
+    static string OccurrenceVenue(I_ActivityBooking source) => source is RecreationGroup g ? g.factionID : ((RecreationBooking)source).factionID;
+    static string OccurrenceMedia(I_ActivityBooking source) => source is RecreationGroup g ? g.mediaItemID : MediaItemOf((RecreationBooking)source);
+    static Character_Trainable OccurrenceHost(I_ActivityBooking source) => source is RecreationGroup g ? g.Host : ((RecreationBooking)source).Owner;
+
+    static bool MergeScopeAllows(RecreationActivity activity, Character_Trainable visitor, I_ActivityBooking source)
+    {
+        if (!(source is RecreationGroup g)) return activity?.invite?.IsMandatory != true
+            && OccurrenceActivity(source)?.invite?.IsMandatory != true;
+        var spec = ResolveSpec(g.specRef);
+        if (spec.InviteeValidators?.Exists(v => v != null && v.required) == true) return false;
+        if (visitor?.FactionManager == null) return false;
+        var member = g.FindMember(visitor.RefID);
+        if (member?.state == RecreationMemberState.Refused) return false;
+        if (member != null) return true;
+        return (g.visibility == RecreationVisibility.Faction || g.visibility == RecreationVisibility.World)
+            && SeesList(visitor.FactionManager, g.scopeFactionID)
+            && PickScopeRole(g, spec, visitor) != null;
+    }
+
+    public static bool CanMergeActivities(I_ActivityBooking left, I_ActivityBooking right)
+    {
+        left = OccurrenceSource(left);
+        right = OccurrenceSource(right);
+        if (left == null || right == null) return false;
+        if (ReferenceEquals(left, right)) return true;
+        if (OccurrenceVenue(left) != OccurrenceVenue(right) || OccurrenceStart(left) >= OccurrenceEnd(right)
+            || OccurrenceStart(right) >= OccurrenceEnd(left)) return false;
+        if (!CanMergeActivities(OccurrenceActivity(left), OccurrenceActivity(right), OccurrenceMedia(left), OccurrenceMedia(right))) return false;
+        if (OccurrenceActivity(left)?.requireMedia != null
+            && (OccurrenceStart(left) != OccurrenceStart(right) || OccurrenceEnd(left) != OccurrenceEnd(right))) return false;
+        if (!MergeScopesCompatible(left, right)) return false;
+        var venue = scr_System_CampaignManager.current?.FindFactionByID(OccurrenceVenue(left));
+        var room = venue == null ? null : GetPlannedActivityRoom(left);
+        return room != null && room == GetPlannedActivityRoom(right);
+    }
+
+    static bool MergeScopesCompatible(I_ActivityBooking left, I_ActivityBooking right)
+    {
+        if (left is RecreationGroup a && right is RecreationGroup b)
+        {
+            // Separate private invitations and required-role dependencies must never leak across sources.
+            if (a.visibility != b.visibility || a.scopeFactionID != b.scopeFactionID
+                || a.visibility == RecreationVisibility.Private || a.visibility == RecreationVisibility.Friends
+                || ResolveSpec(a.specRef).IsMandatory || ResolveSpec(b.specRef).IsMandatory
+                || ResolveSpec(a.specRef).InviteeValidators?.Exists(v => v != null && v.required) == true
+                || ResolveSpec(b.specRef).InviteeValidators?.Exists(v => v != null && v.required) == true) return false;
+            return true;
+        }
+        return MergeScopeAllows(OccurrenceActivity(left), OccurrenceHost(left), right)
+            && MergeScopeAllows(OccurrenceActivity(right), OccurrenceHost(right), left);
+    }
+
+    static List<I_ActivityBooking> PlacementOccurrences(Manageable venue)
+    {
+        var result = new List<I_ActivityBooking>();
+        var state = Lifecycle;
+        if (state == null || !state.venues.TryGetValue(venue.ID, out var indexed)) return result;
+        foreach (var occurrence in indexed.occurrences)
+        {
+            var g = occurrence.session;
+            var b = occurrence.booking;
+            if (g != null && g.IsOpen && g.AbsEnd > NowAbs()) result.Add(g);
+            else if (b != null && !b.isSessionBooking && b.AbsEnd > NowAbs()
+                && b.Owner?.FactionManager.HasBooking(b) == true) result.Add(b);
+        }
+        result.Sort((a, b) => OccurrenceStart(a).CompareTo(OccurrenceStart(b)));
+        return result;
+    }
+
+    static List<Room_Instance> ActivityRooms(Manageable venue, RecreationActivity activity, Character_Trainable host)
+    {
+        if (activity?.facility != null) return FacilityRooms(venue, activity, host);
+        if (!string.IsNullOrEmpty(activity?.reserveFurnitureTag))
+        {
+            var reservationRooms = new List<Room_Instance>();
+            foreach (var j in ReservationFurniture(venue, activity))
+                if (j.ParentRoom != null && !reservationRooms.Contains(j.ParentRoom)) reservationRooms.Add(j.ParentRoom);
+            return reservationRooms;
+        }
+        var executionRooms = new List<Room_Instance>();
+        if (activity?.workModule?.workCommands != null)
+            foreach (var candidate in venue.ManagedRooms.Values)
+            {
+                if (candidate == null || candidate.isRoomPrison || (candidate.isRoomPrivate
+                    && (host == null || venue.GetOwnedRooms(host)?.Contains(candidate.RefID) != true))) continue;
+                if (RoomOffersAnyCommand(candidate, activity.workModule.workCommands)) executionRooms.Add(candidate);
+            }
+        if (executionRooms.Count > 0) return executionRooms;
+        var room = Job_Activity.ResolveGatherRoom(venue, activity);
+        return room == null ? new List<Room_Instance>() : new List<Room_Instance>() { room };
+    }
+
+    static bool RoomOffersAnyCommand(Room_Instance room, List<string> commands)
+    {
+        foreach (var furniture in room.Furnitures)
+        {
+            var job = furniture?.JobGiver;
+            if (job == null) continue;
+            foreach (var command in commands)
+                if (job.allusableCOM_Contains(command)) return true;
+        }
+        return false;
+    }
+
+    static void RememberActivityRoom(I_ActivityBooking source, Room_Instance room)
+    {
+        if (source != null) plannedActivityRooms.GetValue(OccurrenceSource(source), _ => new PlannedActivityRoom()).room = room;
+    }
+
+    /// <summary>Logical execution room selected at planning; gathering can remain at a different entrance room.</summary>
+    public static Room_Instance GetPlannedActivityRoom(I_ActivityBooking source)
+    {
+        source = OccurrenceSource(source);
+        if (source == null) return null;
+        var job = source is RecreationGroup g ? g.ActivityJob : ((RecreationBooking)source).ActivityJob;
+        var activity = OccurrenceActivity(source);
+        var venue = scr_System_CampaignManager.current?.FindFactionByID(OccurrenceVenue(source));
+        if (venue == null) return null;
+        var rooms = ActivityRooms(venue, activity, OccurrenceHost(source));
+        if (job?.ParentRoom != null && rooms.Contains(job.ParentRoom)) return job.ParentRoom;
+        if (plannedActivityRooms.TryGetValue(source, out var selected) && rooms.Contains(selected.room)) return selected.room;
+        foreach (var room in rooms)
+        {
+            bool blocked = false;
+            foreach (var other in PlacementOccurrences(venue))
+            {
+                if (ReferenceEquals(source, other) || OccurrenceStart(source) >= OccurrenceEnd(other) || OccurrenceStart(other) >= OccurrenceEnd(source)) continue;
+                if (plannedActivityRooms.TryGetValue(other, out var assigned) && assigned.room == room
+                    && ActivitiesConflict(activity, OccurrenceActivity(other))
+                    && !(CanMergeActivities(activity, OccurrenceActivity(other), OccurrenceMedia(source), OccurrenceMedia(other))
+                        && (activity.requireMedia == null || (OccurrenceStart(source) == OccurrenceStart(other) && OccurrenceEnd(source) == OccurrenceEnd(other)))
+                        && MergeScopesCompatible(source, other))) { blocked = true; break; }
+            }
+            if (blocked) continue;
+            RememberActivityRoom(source, room);
+            return room;
+        }
+        return null;
+    }
+
+    public static bool CanPlaceActivity(RecreationActivity activity, Manageable venue, int start, int end,
+        Character_Trainable host = null, RecreationGroup exceptSession = null, RecreationBooking exceptBooking = null)
+    {
+        return CanPlaceActivity(activity, venue, start, end, host, exceptSession, exceptBooking,
+            exceptSession?.mediaItemID ?? exceptBooking?.mediaItemID);
+    }
+
+    static bool CanPlaceActivity(RecreationActivity activity, Manageable venue, int start, int end,
+        Character_Trainable host, RecreationGroup exceptSession, RecreationBooking exceptBooking, string mediaItemID)
+    {
+        return TrySelectActivityRoom(activity, venue, start, end, host, exceptSession, exceptBooking, mediaItemID, out _);
+    }
+
+    public static bool TrySelectActivityRoom(RecreationActivity activity, Manageable venue, int start, int end,
+        Character_Trainable host, RecreationGroup exceptSession, RecreationBooking exceptBooking, string mediaItemID, out Room_Instance room)
+    {
+        room = null;
+        if (venue == null || end <= start) return false;
+        var occurrences = PlacementOccurrences(venue);
+        foreach (var source in occurrences) GetPlannedActivityRoom(source);
+        var rooms = ActivityRooms(venue, activity, host);
+        // No activity definition means an ordinary event visit, not an execution policy to enforce.
+        if (activity == null) { room = rooms.Count > 0 ? rooms[0] : null; return true; }
+        for (int pass = 0; pass < 2; pass++)
+        foreach (var candidateRoom in rooms)
+        {
+            bool blocked = false, merge = exceptSession != null && candidateRoom == GetPlannedActivityRoom(exceptSession);
+            foreach (var source in occurrences)
+            {
+                if (ReferenceEquals(source, exceptSession) || ReferenceEquals(source, exceptBooking)
+                    || OccurrenceEnd(source) <= start || OccurrenceStart(source) >= end
+                    || GetPlannedActivityRoom(source) != candidateRoom) continue;
+                var other = OccurrenceActivity(source);
+                bool compatible = CanMergeActivities(activity, other, mediaItemID ?? "", OccurrenceMedia(source))
+                    && (activity.requireMedia == null || (start == OccurrenceStart(source) && end == OccurrenceEnd(source)))
+                    && MergeScopeAllows(activity, host, source)
+                    && (exceptSession == null || MergeScopesCompatible(exceptSession, source));
+                if (compatible) merge = true;
+                else if (ActivitiesConflict(activity, other)) { blocked = true; break; }
+            }
+            if (!blocked && (pass != 0 || merge)) { room = candidateRoom; return true; }
+        }
+        return false;
+    }
+
+    static I_ActivityBooking FindCompatibleOccurrence(Character_Factions f, RecreationBooking booking)
+    {
+        var activity = booking.GetActivity(f);
+        if (activity?.mergeWithSame != true || booking.Faction == null) return null;
+        foreach (var source in PlacementOccurrences(booking.Faction))
+        {
+            if (ReferenceEquals(source, booking) || OccurrenceEnd(source) <= booking.AbsStart || OccurrenceStart(source) >= booking.AbsEnd) continue;
+            if (!CanMergeActivities(activity, OccurrenceActivity(source), booking.mediaItemID, OccurrenceMedia(source))
+                || !MergeScopeAllows(activity, f.Owner, source)) continue;
+            if (activity.requireMedia != null && (booking.AbsStart != OccurrenceStart(source) || booking.AbsEnd != OccurrenceEnd(source))) continue;
+            if (source is RecreationGroup g && (booking.AbsStart < g.AbsStart || booking.AbsEnd > g.AbsEnd
+                || !BookingCheck.For(g).Passes(f.Owner, out _))) continue;
+            var session = source as RecreationGroup;
+            if (TrySelectActivityRoom(activity, booking.Faction, booking.AbsStart, booking.AbsEnd, session?.Host ?? f.Owner,
+                session, booking, booking.mediaItemID, out var room) && room == GetPlannedActivityRoom(source)) return source;
+        }
+        return null;
+    }
+
+    /// <summary>AddPlannedBookings hook: consumes an eligible shared occurrence without changing the visitor's booked hours.</summary>
+    public static bool TryJoinPlannedBooking(Character_Factions f, RecreationBooking booking)
+    {
+        if (f?.Owner == null || booking == null || booking.isSessionBooking) return false;
+        if (!(FindCompatibleOccurrence(f, booking) is RecreationGroup g)) return false;
+        var member = g.FindMember(f.Owner.RefID);
+        string role = member?.roleID ?? PickScopeRole(g, ResolveSpec(g.specRef), f.Owner);
+        if (role == null || !f.Owner.AcceptSession(g, MakeContext(g, f.Owner))) return false;
+        booking.Session = g;
+        booking.isSessionBooking = true;
+        booking.roleID = role;
+        if (!f.AddBooking(booking, false))
+        {
+            booking.Session = null;
+            booking.isSessionBooking = false;
+            booking.roleID = "";
+            return false;
+        }
+        if (member == null)
+        {
+            member = new RecreationGroupMember() { charaRef = f.Owner.RefID, roleID = role, origin = RecreationMemberOrigin.Scope };
+            g.members.Add(member);
+        }
+        member.considered = true;
+        member.state = RecreationMemberState.Attending;
+        member.reason = member.failedCheck = "";
+        f.PushSession(g);
+        // joining a session: it announces itself and wakes its members as it confirms (ResolveSession) - an already
+        // confirmed one wakes this joiner now
+        if (g.resolved && g.valid) WakeForSessions(f.Owner);
+        RefreshValidity(g);
+        NotifyActivityChanged(g);
+        return true;
     }
 
     // ---------------- one day ---------------- //
@@ -551,6 +909,11 @@ public static partial class RecreationUtility
         public float weight;
         /// <summary>Membership (an activity) or Offer (a flexible offer - sourceKey = its ID).</summary>
         public RecreationBookingSource source = RecreationBookingSource.Membership;
+        /// <summary>The media item picked for a media activity (RecreationActivity.requireMedia), "" = none.</summary>
+        public string mediaItemID = "";
+        /// <summary>A length the visit must have (a media item's runtime in whole hours), 0 = the activity's own range.</summary>
+        public int fixedHours = 0;
+        public I_ActivityBooking existingSource;
     }
 
     /// <summary>
@@ -561,7 +924,9 @@ public static partial class RecreationUtility
     {
         public Character_Trainable c;
         public Character_Factions f;
-        public int today, day, dayStart, dayEnd, nowAbs, sleepFloor;
+        public int today, day, dayStart, dayEnd, nowAbs;
+        /// <summary>Nights are no limit (an invitee may give up sleep for an invitation - HasTimeFor); otherwise no visit takes a predicted night.</summary>
+        public readonly bool ignoreSleep;
         public List<Span> nights = new List<Span>();
         public List<Span> fixedBookings = new List<Span>();
         public int bookedToday;
@@ -570,23 +935,30 @@ public static partial class RecreationUtility
         readonly Manageable home;
         /// <summary>Venue faction ID -> the venue (null if not found) when it can feed c (Manageable.CanOfferMealTo), else null.</summary>
         readonly Dictionary<string, Manageable> mealVenues = new Dictionary<string, Manageable>();
+        /// <summary>Venue faction ID -> the venue (null if not found), for VenueOpen.</summary>
+        readonly Dictionary<string, Manageable> venues = new Dictionary<string, Manageable>();
+        /// <summary>Venue faction ID -> WakeUpBufferHours for it.</summary>
+        readonly Dictionary<string, int> wakeUpBuffers = new Dictionary<string, int>();
         /// <summary>CanHost results of this day's planning, per spec and BookingCheck.Key (mandatory specs only).</summary>
         public readonly Dictionary<(RecreationInviteSpec, string), bool> canHost = new Dictionary<(RecreationInviteSpec, string), bool>();
 
         /// <param name="keepBooking">Which of f's bookings count as taken (null = all) - HasTimeFor leaves out the ones an invitation would clash with.</param>
-        public DayContext(Character_Factions f, int day, Func<RecreationBooking, bool> keepBooking = null)
+        /// <param name="ignoreSleep">See DayContext.ignoreSleep.</param>
+        public DayContext(Character_Factions f, int day, Func<RecreationBooking, bool> keepBooking = null, bool ignoreSleep = false)
         {
             this.f = f;
             c = f.Owner;
             today = scr_System_Time.current.getAbsoluteDay();
             this.day = day;
+            this.ignoreSleep = ignoreSleep;
             dayStart = RecreationBooking.AbsoluteHour(day, 0);
             dayEnd = dayStart + 24;
             nowAbs = NowAbs();
-            sleepFloor = f.MinSleepHoursWithBookings;
             home = f.HomeFactions.Count > 0 ? f.HomeFactions[0] : null;
 
-            foreach (var b in f.RecreationBookings) if (keepBooking == null || keepBooking(b)) AddFixed(b);
+            var bookings = f.RecreationBookings;
+            for (int i = 0; i < bookings.Count; i++) if (keepBooking == null || keepBooking(bookings[i])) AddFixed(bookings[i]);
+            blocked.AddRange(PlannedExpeditionWindows(f, nowAbs));
 
             // the real night in progress / next, then predictions for the night ending this morning and the one starting
             // this evening, each anchored at the midday before it (as the hourly recompute would see it then - an
@@ -596,12 +968,20 @@ public static partial class RecreationUtility
             AddPredictedNight(day, 12);
         }
 
+        /// <summary>
+        /// Hours no visit may cover, apart from bookings: a planned party expedition's departure window
+        /// (PlannedExpeditionWindows) - like a booking at another venue (travel buffer around it), but not counted against
+        /// the daily cap or the night (the expedition decides its own rest).
+        /// </summary>
+        public List<Span> blocked = new List<Span>();
+
         /// <summary>b's hours are taken from now on (an existing booking, or an offer just picked for this day) - also counted against the daily cap on its day.</summary>
         public void AddFixed(RecreationBooking b)
         {
             if (b == null) return;
-            fixedBookings.Add(new Span(b.AbsStart, b.AbsEnd, b.factionID));
-            if (b.day == day) bookedToday += b.hours;
+            bool stay = IsOvernight(b.GetActivity(f));
+            fixedBookings.Add(new Span(b.AbsStart, b.AbsEnd, b.factionID, stay));
+            if (b.day == day && !stay) bookedToday += b.hours;
         }
 
         void AddPredictedNight(int anchorDay, int anchorHour)
@@ -631,7 +1011,7 @@ public static partial class RecreationUtility
         /// <summary>
         /// A visit at venue (faction ID) may take hour of day `hour`: it isn't one of the home's meal hours, or the venue is
         /// the home itself, or the venue can feed c then - it has a meal spot for c (Manageable.CanOfferMealTo) and `hour`
-        /// is one of its own meal hours (meals are only served there in them - TryFindMealNode, COM_TakeMeal).
+        /// is one of its own meal hours (meals are only served there in them - TryFindMealNode, com_furniture_getmeal's requireFaction.requireMealHour).
         /// </summary>
         public bool MealAllows(int hour, string venue)
         {
@@ -646,26 +1026,60 @@ public static partial class RecreationUtility
             return v != null && v.isMealHourAt(hour);
         }
 
+        /// <summary>The venue (faction ID) is open at hour of day `hour`: within its active hours (Manageable.IsActiveHour - always, for one without them or not found).</summary>
+        public bool VenueOpen(int hour, string venue)
+        {
+            if (venue == null) return true;
+            if (!venues.TryGetValue(venue, out var v))
+            {
+                v = scr_System_CampaignManager.current.FindFactionByID(venue);
+                venues[venue] = v;
+            }
+            return v == null || v.IsActiveHour(hour);
+        }
+
+        /// <summary>
+        /// Awake hours kept before a visit at venue (faction ID) after a night's sleep: the world-map trip from the priority
+        /// home (where the night is slept) to the venue plus WakeUpPrepMinutes, rounded up to whole hours - 1 for a venue
+        /// with no world-map trip (the home itself, same place, or no route found).
+        /// </summary>
+        public int WakeUpBufferHours(string venue)
+        {
+            string key = venue ?? "";
+            if (wakeUpBuffers.TryGetValue(key, out int hours)) return hours;
+            hours = RecreationUtility.WakeUpBufferHours(home, venue);
+            wakeUpBuffers[key] = hours;
+            return hours;
+        }
+
         /// <summary>
         /// Whether [s, e) at venue (faction ID) can be booked for activity (null = no hour limit, e.g. an offer) next to the
-        /// chain's own spans: starts on this day and after now, free of schedules and other bookings, allowed hours, daily
+        /// chain's own spans: starts on this day and after now, free of schedules and other bookings, allowed hours, the
+        /// venue open (VenueOpen), daily
         /// cap, home meal hours only where the venue feeds c (MealAllows), TravelBufferHours free to anything nearby at
-        /// another place, and every night keeps its sleep.
+        /// another place, and - unless ignoreSleep - WakeUpBufferHours awake after a night and no predicted night taken.
         /// </summary>
-        public bool CanPlace(int s, int e, RecreationActivity activity, List<Span> chain, string venue)
+        public bool CanPlace(int s, int e, RecreationActivity activity, List<Span> chain, string venue,
+            RecreationGroup exceptSession = null, RecreationBooking exceptBooking = null, string mediaItemID = null)
         {
             if (e <= s || s < dayStart || s >= dayEnd || s <= nowAbs) return false;
+            bool stay = IsOvernight(activity);
+            var venueFaction = scr_System_CampaignManager.current.FindFactionByID(venue);
+            if (!HasReservationSpace(venueFaction, activity, s, e, exceptSession, exceptBooking)) return false;
+            if (!CanPlaceActivity(activity, venueFaction, s, e, exceptSession?.Host ?? c, exceptSession, exceptBooking, mediaItemID)) return false;
             int chainHours = 0;
             foreach (var span in chain) chainHours += span.Length;
-            if (bookedToday + chainHours + (e - s) > MaxDailyHours) return false;
+            if (!stay && bookedToday + chainHours + (e - s) > MaxDailyHours) return false;
 
             for (int t = s; t < e; t++)
             {
                 if (Occupied(t)) return false;
                 if (activity != null && !activity.AllowsHour(((t % 24) + 24) % 24)) return false;
-                if (!MealAllows(((t % 24) + 24) % 24, venue)) return false;
+                if (!stay && !VenueOpen(((t % 24) + 24) % 24, venue)) return false;
+                if (!stay && !MealAllows(((t % 24) + 24) % 24, venue)) return false;
                 foreach (var span in fixedBookings) if (span.Contains(t)) return false;
                 foreach (var span in chain) if (span.Contains(t)) return false;
+                foreach (var span in blocked) if (span.Contains(t)) return false;
             }
 
             // travel: a schedule hour of another faction, or a booking elsewhere, may not touch the visit
@@ -680,13 +1094,16 @@ public static partial class RecreationUtility
                 && ((span.end <= s && span.end > s - TravelBufferHours) || (span.start >= e && span.start < e + TravelBufferHours));
             foreach (var span in fixedBookings) if (TooClose(span)) return false;
             foreach (var span in chain) if (TooClose(span)) return false;
+            foreach (var span in blocked) if (TooClose(span)) return false;
 
-            if (nights.Count > 0)
+            if (!stay && !ignoreSleep && nights.Count > 0)
             {
-                var all = new List<Span>(fixedBookings);
-                all.AddRange(chain);
-                all.Add(new Span(s, e));
-                foreach (var n in nights) if (!NightKeepsSleep(n.start, n.end, all, sleepFloor)) return false;
+                // WakeUpBufferHours: none of the hours just before the visit may be sleep (a night ending at s would have
+                // c start it straight out of bed)
+                int wakeUpBuffer = WakeUpBufferHours(venue);
+                foreach (var n in nights) if (n.start < s && s <= n.end + wakeUpBuffer - 1) return false;
+                // a visit planned by c themselves never takes their sleep
+                foreach (var n in nights) if (n.start < e && s < n.end) return false;
             }
             return true;
         }
@@ -694,8 +1111,8 @@ public static partial class RecreationUtility
 
     /// <summary>
     /// Plans f's flexible visits on absolute day `day`: one chain from the first anchor it fits at, placed around f's
-    /// existing bookings; each is then booked solo or hosted as a session (AddPlannedBookings). Fixed offers are sessions
-    /// f ranks in the hour's second pass (LateHourConfirm), moving these visits if needed. True if anything was booked (the caller refreshes
+    /// existing bookings; each then joins an existing session, books solo or hosts a session (AddPlannedBookings). Fixed
+    /// offers are ranked on committed changes, moving these visits if needed. True if anything was booked (the caller refreshes
     /// the schedule once).
     /// </summary>
     /// <param name="maxAdvance">Only activities whose daysInAdvance is at most this (0 = the same-day-only ones, for a day already planned).</param>
@@ -743,24 +1160,23 @@ public static partial class RecreationUtility
             if (source.spec.activities == null) continue;
             foreach (var activity in source.spec.activities)
             {
-                if (activity == null || string.IsNullOrEmpty(activity.ID) || activity.daysInAdvance > maxAdvance) continue;
-                string key = source.faction.ID + ":" + activity.ID;
+                if (activity == null || IsOvernight(activity) || string.IsNullOrEmpty(activity.ID) || activity.daysInAdvance > maxAdvance) continue;
+                string key = ActivitySourceKey(source.faction, activity);
                 if (!ActivityAllows(ctx.f, ctx.day, key, activity, source.faction)) continue;
-                // a mandatory session needs its required people (CanHost)
-                if (!CanHost(ctx, activity.invite, BookingCheck.ForActivity(source.faction.ID, activity.ID, ctx.day))) continue;
                 float weight = activity.baseWeight * WeeklyFactor(ctx, key, activity) * TravelFactor(home, source.faction) * PersonalityFactor(ctx.c, source.faction, activity);
                 if (weight <= 0f) continue;
-                result.Add(new Candidate() { faction = source.faction, activity = activity, sourceKey = key, memberTypeID = source.memberTypeID, weight = weight });
+                var cand = new Candidate() { faction = source.faction, activity = activity, sourceKey = key, memberTypeID = source.memberTypeID, weight = weight };
+                result.Add(cand);
             }
         }
 
         foreach (var def in FlexibleOffers())
         {
             var activity = def.AsActivity;
+            if (IsOvernight(activity)) continue;
             if (activity.daysInAdvance > maxAdvance) continue;
             var venue = scr_System_CampaignManager.current.FindFactionByID(def.factionID);
             if (!OfferAllows(ctx.f, ctx.day, def) || !activity.AllowsDay(ctx.day - ctx.today, venue)) continue;
-            if (!CanHost(ctx, def.invite, BookingCheck.ForOffer(def, ctx.day))) continue;
             float weight = activity.baseWeight * WeeklyFactor(ctx, def.ID, activity) * TravelFactor(home, venue) * PersonalityFactor(ctx.c, venue, activity);
             if (weight <= 0f) continue;
             result.Add(new Candidate() { faction = venue, activity = activity, sourceKey = def.ID, memberTypeID = def.memberTypeID, weight = weight, source = RecreationBookingSource.Offer });
@@ -794,7 +1210,9 @@ public static partial class RecreationUtility
     /// <summary>faction is still one of f's own factions (OwnFactions) and still offers recreation MemberType memberTypeID.</summary>
     static bool OwnFactionOffers(Character_Factions f, Manageable faction, string memberTypeID)
     {
-        if (faction == null || string.IsNullOrEmpty(memberTypeID) || !OwnFactions(f).Contains(faction)) return false;
+        if (faction == null || string.IsNullOrEmpty(memberTypeID)) return false;
+        // OwnFactions(f) contains faction: the priority home or a work faction
+        if (!(f.HomeFactions.Count > 0 && f.HomeFactions[0] == faction) && !f.WorkFactions.Contains(faction)) return false;
         return faction.GetOfferedRecreationTypes().Exists(t => t.ID == memberTypeID);
     }
 
@@ -802,7 +1220,8 @@ public static partial class RecreationUtility
     static HashSet<int> VisitDays(Character_Factions f, string key)
     {
         var days = new HashSet<int>(f.GetAttendedDays(key));
-        foreach (var b in f.RecreationBookings) if (b != null && b.sourceKey == key) days.Add(b.day);
+        var bookings = f.RecreationBookings;
+        for (int i = 0; i < bookings.Count; i++) if (bookings[i] != null && bookings[i].sourceKey == key) days.Add(bookings[i].day);
         return days;
     }
 
@@ -827,8 +1246,9 @@ public static partial class RecreationUtility
 
     /// <summary>
     /// Where f may book activities (the scopes CollectCandidates searches): f's recreation memberships, then the recreation
-    /// types f's own factions offer (OwnFactions). A faction whose fee f hasn't paid gives none (CanWorkFor), nor one
-    /// with an unpaid visit bill (HasUnpaidActivityFee).
+    /// types f's own factions offer (OwnFactions), then the house activities of each of f's home factions (permanent and
+    /// temporary - MapPlan.houseActivities; acting under f's own MemberType there, memberTypeID ""). A faction whose fee f
+    /// hasn't paid gives none (CanWorkFor), nor one with an unpaid visit bill (HasUnpaidActivityFee).
     /// </summary>
     static IEnumerable<ActivitySource> ActivitySources(Character_Factions f)
     {
@@ -845,6 +1265,15 @@ public static partial class RecreationUtility
             foreach (var type in faction.GetOfferedRecreationTypes())
                 if (type?.recreation != null) yield return new ActivitySource() { faction = faction, spec = type.recreation, memberTypeID = type.ID };
         }
+        foreach (var faction in f.HomeFactions)
+        {
+            if (faction == null || !c.CanWorkFor(faction) || HasUnpaidActivityFee(f, faction)) continue;
+            var spec = faction.HouseActivities;
+            if (spec != null) yield return new ActivitySource() { faction = faction, spec = spec, memberTypeID = "" };
+            // what the home's members' types provide (a family doctor's checkup) - the provider is the activity's required invite role
+            var provided = ProvidedActivitiesAt(faction);
+            if (provided != null) yield return new ActivitySource() { faction = faction, spec = provided, memberTypeID = "" };
+        }
     }
 
     /// <summary>
@@ -855,8 +1284,20 @@ public static partial class RecreationUtility
     static bool ActivityAllows(Character_Factions f, int day, string key, RecreationActivity activity, Manageable venue, RecreationGroup except = null)
     {
         int ahead = day - scr_System_Time.current.getAbsoluteDay();
-        return activity.AllowsDay(ahead, venue) && activity.AllowsAdvance(ahead) && CooldownAllows(f, day, key, activity.minDaysBetween)
-            && !HasPendingReservation(f, key, except);
+        // the provider of a provided activity (a family doctor) serves many - their clients' cooldown / one-at-a-time rules don't bind them
+        bool provider = ProvidesActivity(f.Owner, activity);
+        return activity.AllowsDay(ahead, venue) && activity.AllowsAdvance(ahead) && (provider || CooldownAllows(f, day, key, activity.minDaysBetween))
+            && IsEligible(f.Owner, activity) && FacilityAvailable(venue, activity)
+            && (provider || !HasPendingReservation(f, key, except))
+            && (except == null || ReservationRefusal(f, PreviewBooking(except)) == "");
+    }
+
+    /// <summary>c passes activity's eligibility (its chara_conditions, c as self); no eligibility = anyone.</summary>
+    public static bool IsEligible(Character_Trainable c, RecreationActivity activity)
+    {
+        if (c == null) return false;
+        if (activity?.eligibility == null) return true;
+        return EventUtility.isCharaValid(activity.eligibility, ConditionContext(c), c);
     }
 
     /// <summary>
@@ -871,7 +1312,8 @@ public static partial class RecreationUtility
         if (HasPendingReservation(f, def.ID, except)) return false;
         var venue = scr_System_CampaignManager.current.FindFactionByID(def.factionID);
         if (venue == null || HasUnpaidActivityFee(f, venue)) return false;
-        return def.IsEligible(f.Owner);
+        if (!IsEligible(f.Owner, def.AsActivity) || !FacilityAvailable(venue, def.AsActivity)) return false;
+        return def.IsEligible(f.Owner) && (except == null || ReservationRefusal(f, PreviewBooking(except)) == "");
     }
 
     /// <summary>
@@ -882,10 +1324,18 @@ public static partial class RecreationUtility
     static bool HasPendingReservation(Character_Factions f, string key, RecreationGroup except)
     {
         int nowAbs = NowAbs();
-        foreach (var b in f.RecreationBookings)
+        var bookings = f.RecreationBookings;
+        for (int i = 0; i < bookings.Count; i++)
+        {
+            var b = bookings[i];
             if (b != null && b.sourceKey == key && b.AbsEnd > nowAbs && (except == null || b.Session != except)) return true;
-        foreach (var g in f.SessionInbox)
+        }
+        var inbox = f.SessionInbox;
+        for (int i = 0; i < inbox.Count; i++)
+        {
+            var g = inbox[i];
             if (g != null && g != except && g.IsOpen && g.AbsEnd > nowAbs && g.sourceKey == key && g.hostRef == f.Owner.RefID) return true;
+        }
         return false;
     }
 
@@ -893,7 +1343,8 @@ public static partial class RecreationUtility
     static float WeeklyFactor(DayContext ctx, string key, RecreationActivity activity)
     {
         if (activity.weeklyTarget <= 0) return 1f;
-        int count = VisitDays(ctx.f, key).Count(d => d >= ctx.day - 6 && d < ctx.day);
+        int count = 0;
+        foreach (int d in VisitDays(ctx.f, key)) if (d >= ctx.day - 6 && d < ctx.day) count++;
         if (count < activity.weeklyTarget) return 1f + 0.5f * (activity.weeklyTarget - count);
         return Mathf.Pow(0.3f, count - activity.weeklyTarget + 1);
     }
@@ -920,6 +1371,29 @@ public static partial class RecreationUtility
             travelCache[key] = factor;
         }
         return factor;
+    }
+
+    /// <summary>from root|to root -> TravelMinutes, for absolute day travelMinutesCacheDay only (rebuilt each day).</summary>
+    static readonly Dictionary<string, float> travelMinutesCache = new Dictionary<string, float>();
+    static int travelMinutesCacheDay = int.MinValue;
+
+    /// <summary>World-map travel minutes between the two factions' roots - 0 for the same place, a missing one, or no route.</summary>
+    public static float TravelMinutes(Manageable from, Manageable to)
+    {
+        var a = from?.FactionOwnerRoot;
+        var b = to?.FactionOwnerRoot;
+        if (a == null || b == null || a == b) return 0f;
+
+        int today = scr_System_Time.current.getAbsoluteDay();
+        if (travelMinutesCacheDay != today) { travelMinutesCache.Clear(); travelMinutesCacheDay = today; }
+
+        string key = a.ID + "|" + b.ID;
+        if (!travelMinutesCache.TryGetValue(key, out float minutes))
+        {
+            if (!scr_System_CampaignManager.current.Map.TryGetWorldMapTravelMinutes(a, b, out minutes, out _)) minutes = 0f;
+            travelMinutesCache[key] = minutes;
+        }
+        return minutes;
     }
 
     /// <summary>Hook for personality-driven taste (traits, interests...). Neutral for now.</summary>
@@ -981,23 +1455,65 @@ public static partial class RecreationUtility
         var pool = new List<Candidate>(candidates);
         var chain = new List<Span>();
         int chainStart = anchor, chainEnd = anchor;
+        var weights = new List<float>(pool.Count);
+
+        bool Place(Candidate candidate, bool existingOnly, out Span span)
+        {
+            return chain.Count == 0
+                ? PlaceNear(ctx, candidate, chain, anchor, forward, existingOnly, out span)
+                : TryExtend(ctx, candidate, chain, chainStart, chainEnd, forward, existingOnly, out span);
+        }
 
         while (pool.Count > 0)
         {
             if (chain.Count > 0 && !Utility.RandomChance(ExtendChainChance)) break;
-            int pick = WeightedIndex(pool.Select(x => x.weight).ToList());
+            weights.Clear();
+            foreach (var x in pool) weights.Add(x.weight);
+            int pick = WeightedIndex(weights);
             var cand = pool[pick];
             pool.RemoveAt(pick);
 
-            Span span;
-            bool placed = chain.Count == 0
-                ? PlaceNear(ctx, cand, chain, anchor, forward, out span)
-                : TryExtend(ctx, cand, chain, chainStart, chainEnd, forward, out span);
+            Span span = default;
+            bool placed = false;
+            foreach (var source in PlacementOccurrences(cand.faction))
+            {
+                if (!CanMergeActivities(cand.activity, OccurrenceActivity(source)) || !MergeScopeAllows(cand.activity, ctx.c, source)) continue;
+                string media = OccurrenceMedia(source);
+                if (cand.activity.requireMedia != null && !MediaMatches(media, cand.activity.requireMedia)) continue;
+                cand.existingSource = source;
+                cand.mediaItemID = media ?? "";
+                cand.fixedHours = cand.activity.requireMedia == null ? 0 : MediaHours(media);
+                if (Place(cand, true, out span)) { placed = true; break; }
+            }
+            if (!placed)
+            {
+                cand.existingSource = null;
+                cand.mediaItemID = "";
+                cand.fixedHours = 0;
+                // Only creating a new occurrence needs a host's own room, required invitees and inventory detection.
+                if (cand.activity.facility?.hostPrivateRoom == true && FacilityRooms(cand.faction, cand.activity, ctx.c).Count == 0) continue;
+                var check = cand.source == RecreationBookingSource.Offer
+                    ? BookingCheck.ForOffer(RecreationBoard.FindDef(cand.sourceKey), ctx.day)
+                    : BookingCheck.ForActivity(cand.faction.ID, cand.activity.ID, ctx.day);
+                if (!CanHost(ctx, cand.activity.invite, check)) continue;
+                if (cand.activity.requireMedia != null)
+                {
+                    cand.mediaItemID = PickMedia(cand.faction, cand.activity);
+                    if (string.IsNullOrEmpty(cand.mediaItemID)) continue;
+                    cand.fixedHours = MediaHours(cand.mediaItemID);
+                }
+                placed = Place(cand, false, out span);
+            }
             if (!placed) continue;
             var booking = RecreationBooking.Create(span.start / 24, span.start % 24, span.Length, cand.faction.ID, cand.activity.workModule,
                 cand.source, cand.sourceKey, cand.memberTypeID, activityID: cand.source == RecreationBookingSource.Membership ? cand.activity.ID : "",
                 forbidCancel: cand.activity.forbidCancel, flexible: true);
             if (booking == null) continue;
+            booking.mediaItemID = cand.mediaItemID ?? "";
+            var existingSession = cand.existingSource as RecreationGroup;
+            if (!TrySelectActivityRoom(cand.activity, cand.faction, span.start, span.end, existingSession?.Host ?? ctx.c, existingSession, booking,
+                booking.mediaItemID, out var room)) continue;
+            RememberActivityRoom(booking, room);
 
             result.Add(booking);
             chainStart = chain.Count == 0 ? span.start : Math.Min(chainStart, span.start);
@@ -1005,6 +1521,13 @@ public static partial class RecreationUtility
             chain.Add(span);
         }
         return result;
+    }
+
+    /// <summary>The candidate's lengths to try: its fixed length (a media runtime) only, else the activity's (LengthsToTry(activity)).</summary>
+    static List<int> LengthsToTry(Candidate cand)
+    {
+        if (cand.fixedHours > 0) return new List<int>() { cand.fixedHours };
+        return LengthsToTry(cand.activity);
     }
 
     /// <summary>The activity's lengths to try: a random one in its range first, then the rest longest first.</summary>
@@ -1022,9 +1545,9 @@ public static partial class RecreationUtility
     /// from the anchor's schedule side first (later for forward, earlier otherwise), so a shift's end/start that is
     /// already past or needs the travel hour still finds the nearest free slot. Whole day searched.
     /// </summary>
-    static bool PlaceNear(DayContext ctx, Candidate cand, List<Span> chain, int anchor, bool forward, out Span span)
+    static bool PlaceNear(DayContext ctx, Candidate cand, List<Span> chain, int anchor, bool forward, bool existingOnly, out Span span)
     {
-        var lengths = LengthsToTry(cand.activity);
+        var lengths = LengthsToTry(cand);
         for (int n = 0; n < 24; n++)
         {
             foreach (int offset in n == 0 ? new[] { 0 } : (forward ? new[] { n, -n } : new[] { -n, n }))
@@ -1033,7 +1556,7 @@ public static partial class RecreationUtility
                 foreach (int l in lengths)
                 {
                     span = forward ? new Span(pivot, pivot + l, cand.faction.ID) : new Span(pivot - l, pivot, cand.faction.ID);
-                    if (ctx.CanPlace(span.start, span.end, cand.activity, chain, cand.faction.ID)) return true;
+                    if (CandidateFits(ctx, cand, chain, span, existingOnly)) return true;
                 }
             }
         }
@@ -1045,9 +1568,9 @@ public static partial class RecreationUtility
     /// A further visit at an end of the chain [chainStart, chainEnd): its preferred side (forward = after) first, then the
     /// other; right against it, or TravelBufferHours off when the neighbouring visit is at another venue.
     /// </summary>
-    static bool TryExtend(DayContext ctx, Candidate cand, List<Span> chain, int chainStart, int chainEnd, bool forward, out Span span)
+    static bool TryExtend(DayContext ctx, Candidate cand, List<Span> chain, int chainStart, int chainEnd, bool forward, bool existingOnly, out Span span)
     {
-        var lengths = LengthsToTry(cand.activity);
+        var lengths = LengthsToTry(cand);
         foreach (bool side in new[] { forward, !forward })
         {
             foreach (int l in lengths)
@@ -1055,12 +1578,27 @@ public static partial class RecreationUtility
                 foreach (int gap in new[] { 0, TravelBufferHours })
                 {
                     span = side ? new Span(chainEnd + gap, chainEnd + gap + l, cand.faction.ID) : new Span(chainStart - gap - l, chainStart - gap, cand.faction.ID);
-                    if (ctx.CanPlace(span.start, span.end, cand.activity, chain, cand.faction.ID)) return true;
+                    if (CandidateFits(ctx, cand, chain, span, existingOnly)) return true;
                 }
             }
         }
         span = default;
         return false;
+    }
+
+    static bool CandidateFits(DayContext ctx, Candidate candidate, List<Span> chain, Span span, bool existingOnly)
+    {
+        var source = existingOnly ? candidate.existingSource : null;
+        var session = source as RecreationGroup;
+        if (existingOnly)
+        {
+            if (source == null || OccurrenceEnd(source) <= span.start || OccurrenceStart(source) >= span.end) return false;
+            if (candidate.activity.requireMedia != null && (span.start != OccurrenceStart(source) || span.end != OccurrenceEnd(source))) return false;
+            if (session != null && (span.start < session.AbsStart || span.end > session.AbsEnd
+                || !BookingCheck.For(session).Passes(ctx.c, out _))) return false;
+        }
+        return ctx.CanPlace(span.start, span.end, candidate.activity, chain, candidate.faction.ID,
+            exceptSession: session, mediaItemID: candidate.mediaItemID);
     }
 
     static int WeightedIndex(List<float> weights)
@@ -1081,7 +1619,7 @@ public static partial class RecreationUtility
 
     /// <summary>
     /// broken can no longer happen as planned (a schedule now claims its hours, or it eats too much of a night - see
-    /// HourlyCheck - or a session needs its time). Re-packs that day's movable bookings (flexible visits not frozen yet -
+    /// triggered reconciliation - or a session needs its time). Re-packs that day's movable bookings (flexible visits not frozen yet -
     /// IsMovableVisit - broken among them) as one chain (TravelBufferHours apart where the venue changes) at the start
     /// nearest their original one, keeping as many as fit in their original order; those that no longer fit are
     /// cancelled. A frozen, locked, event or session booking is never moved - it is just cancelled. unplacedReason = what
@@ -1103,9 +1641,13 @@ public static partial class RecreationUtility
             return;
         }
 
-        var group = f.RecreationBookings.Where(b => Movable(b) && b.day == broken.day).OrderBy(b => b.AbsStart).ToList();
+        var group = new List<RecreationBooking>();
+        var bookings = f.RecreationBookings;
+        for (int i = 0; i < bookings.Count; i++) if (Movable(bookings[i]) && bookings[i].day == broken.day) group.Add(bookings[i]);
+        SortStable(group, (a, b) => a.AbsStart.CompareTo(b.AbsStart));
         if (!group.Contains(broken)) group.Add(broken);
-        int origin = group.Min(b => b.AbsStart);
+        int origin = int.MaxValue;
+        foreach (var b in group) origin = Math.Min(origin, b.AbsStart);
         foreach (var b in group) f.RemoveBooking(b);
 
         var ctx = new DayContext(f, broken.day);
@@ -1128,10 +1670,11 @@ public static partial class RecreationUtility
                 var moved = old.AbsStart == kv.Value ? old : RecreationBooking.Create(kv.Value / 24, kv.Value % 24, old.hours, old.factionID, old.workModule,
                     old.source, old.sourceKey, old.memberTypeID, old.locked, old.onCancelledEventID, old.overrideWork, old.activityID, old.forbidCancel, old.sourceEventID,
                     flexible: old.flexible);
+                if (moved != null) moved.mediaItemID = old.mediaItemID;
                 if (moved != null && f.AddBooking(moved, false))
                 {
                     kept.Add(old);
-                    if (moved != old) RecordMoved(f, old, moved);
+                    if (moved != old) AnnounceSolo(moved, ActivityNoticeKind.Rescheduled, from: old);
                 }
             }
         }
@@ -1154,7 +1697,7 @@ public static partial class RecreationUtility
             var activity = ActivityOf(ctx.c, b);
             int start = -1;
             foreach (int gap in chain.Count == 0 ? new[] { 0 } : new[] { 0, TravelBufferHours })
-                if (ctx.CanPlace(cursor + gap, cursor + gap + b.hours, activity, chain, b.factionID)) { start = cursor + gap; break; }
+                if (ctx.CanPlace(cursor + gap, cursor + gap + b.hours, activity, chain, b.factionID, mediaItemID: MediaItemOf(b))) { start = cursor + gap; break; }
             if (start < 0) continue;
             placed.Add(new KeyValuePair<RecreationBooking, int>(b, start));
             chain.Add(new Span(start, start + b.hours, b.factionID));
@@ -1167,7 +1710,7 @@ public static partial class RecreationUtility
 
     /// <summary>
     /// AddRecreationOffer: posts fixed offer def defID on day today + dayOffset (optionally at another start/length) - its
-    /// hostless World session goes on the venue's world list, and each character there ranks it in the hour's second pass (LateHourConfirm).
+    /// hostless World session goes on the venue's world list and committed changes trigger eligible characters' ranking.
     /// False if the def is unknown or flexible.
     /// </summary>
     public static bool PostOffer(string defID, int dayOffset, int startHour = -1, int hours = -1)
@@ -1190,7 +1733,7 @@ public static partial class RecreationUtility
         if (f == null) return result;
 
         int nowAbs = NowAbs();
-        foreach (var b in f.RecreationBookings.ToList())
+        foreach (var b in new List<RecreationBooking>(f.RecreationBookings))
             if (b != null && !b.locked && b.source != RecreationBookingSource.Event && !b.isSessionBooking && b.AbsStart > nowAbs) f.RemoveBooking(b);
         f.LastRecreationPlanDay = scr_System_Time.current.getAbsoluteDay() - 1;
 
@@ -1204,25 +1747,29 @@ public static partial class RecreationUtility
             {
                 var dayCtx = new DayContext(f, day);
                 var cands = dayCtx.dayEnd <= dayCtx.nowAbs + 1 ? new List<Candidate>() : CollectCandidates(dayCtx);
-                result.Add($"day {day}{(day == today ? " (today)" : "")}: " + (cands.Count == 0 ? "none"
-                    : string.Join(", ", cands.Select(x => $"{x.sourceKey} (advance {x.activity.daysInAdvance})"))));
+                var candNames = new List<string>();
+                foreach (var x in cands) candNames.Add($"{x.sourceKey} (advance {x.activity.daysInAdvance})");
+                result.Add($"day {day}{(day == today ? " (today)" : "")}: " + (cands.Count == 0 ? "none" : string.Join(", ", candNames)));
             }
         }
         DailyPlan(f);
         f.RefreshSchedule();
-        if (ShouldPlan(f))
+        if (ShouldPlan(f)) SessionPass(f);
+
+        string Members(RecreationGroup g)
         {
-            BeginNotice(f);
-            try { SessionPass(f); }
-            finally { EndNotice(f, false); }
+            var parts = new List<string>();
+            foreach (var m in g.members)
+                parts.Add($"{m.roleID}:{m.Chara?.FullName ?? m.charaRef.ToString()}:{m.origin}:{m.state}{(string.IsNullOrEmpty(m.reason) ? "" : "(" + m.reason + ")")}"
+                    + $"{(string.IsNullOrEmpty(m.failedCheck) ? "" : "!" + m.failedCheck)}{(m.arrived ? "+" : "")}");
+            return string.Join(", ", parts);
         }
 
-        string Members(RecreationGroup g) => string.Join(", ", g.members.Select(m =>
-            $"{m.roleID}:{m.Chara?.FullName ?? m.charaRef.ToString()}:{m.origin}:{m.state}{(string.IsNullOrEmpty(m.reason) ? "" : "(" + m.reason + ")")}"
-            + $"{(string.IsNullOrEmpty(m.failedCheck) ? "" : "!" + m.failedCheck)}{(m.arrived ? "+" : "")}"));
-
         result.Add("-- bookings --");
-        foreach (var b in f.RecreationBookings.Where(x => x != null).OrderBy(x => x.AbsStart))
+        var sorted = new List<RecreationBooking>();
+        foreach (var x in f.RecreationBookings) if (x != null) sorted.Add(x);
+        SortStable(sorted, (x, y) => x.AbsStart.CompareTo(y.AbsStart));
+        foreach (var b in sorted)
         {
             string line = $"{DescribeBooking(b)} [{b.source} {b.sourceKey}{(b.locked ? " locked" : "")}{(b.flexible ? " flexible" : "")}]";
             var g = b.Session;
@@ -1235,9 +1782,15 @@ public static partial class RecreationUtility
         foreach (var g in f.SessionRanking)
         {
             string line = $"{g.Label}: " + Members(g);
-            var ext = g.extensions.Where(e => e.extenderRef == c.RefID).ToList();
-            if (ext.Count > 0) line += " | extended: " + string.Join("; ", ext.Select(e => $"{e.roleID}{(e.inviteRequired ? " required" : "")} -> "
-                + string.Join(",", e.picks.Select(r => scr_System_CampaignManager.current.FindInstanceByID(r)?.FullName ?? r.ToString()))));
+            var ext = new List<string>();
+            foreach (var e in g.extensions)
+            {
+                if (e.extenderRef != c.RefID) continue;
+                var picks = new List<string>();
+                foreach (var r in e.picks) picks.Add(scr_System_CampaignManager.current.FindInstanceByID(r)?.FullName ?? r.ToString());
+                ext.Add($"{e.roleID}{(e.inviteRequired ? " required" : "")} -> " + string.Join(",", picks));
+            }
+            if (ext.Count > 0) line += " | extended: " + string.Join("; ", ext);
             result.Add(line);
         }
         return result;
@@ -1272,6 +1825,13 @@ public static partial class RecreationUtility
             if (!c.CanWorkFor(faction)) continue;
             foreach (var type in faction.GetOfferedRecreationTypes()) AddAll(faction, type, "offered by own faction");
         }
+        foreach (var faction in f.HomeFactions)
+        {
+            if (faction?.HouseActivities?.activities == null || !c.CanWorkFor(faction)) continue;
+            foreach (var activity in faction.HouseActivities.activities)
+                if (activity != null && !string.IsNullOrEmpty(activity.ID))
+                    result.Add($"house:{activity.ID} @ {faction.ID} (home activity{(IsEligible(c, activity) ? "" : ", not eligible")}{(FacilityAvailable(faction, activity) ? "" : ", no facility")})");
+        }
 
         var seen = new HashSet<string>();
         foreach (var world in scr_System_CampaignManager.current.GetLoadedWorldPlans())
@@ -1298,22 +1858,33 @@ public static partial class RecreationUtility
     /// set when the template's own forbidCancel is). sourceEventID: the calling event (shown as who arranged it). Unless
     /// solo, when the template's invite spec (an offer def's / activity's) has a visibility, c hosts the booking as a
     /// session at its own time, already attending (TryHostSession - no AcceptHosting: the event decided; inviteChance
-    /// still rolled for an optional spec); a session that is cancelled leaves the booking going on alone. The change is
-    /// announced like any other (AnnounceNotice), displayOverride = the calling event's own.
+    /// still rolled for an optional spec); a session that is cancelled leaves the booking going on alone. The activity
+    /// announces itself (AnnounceSolo, or the session as it resolves), displayOverride = the calling event's own. startHour NextHourStart
+    /// (event argument "next") = the next full hour. The session's invitees answer at once (ConfirmInvitedNow), before
+    /// publishing the coherent occurrence. notify:false defers publication to a caller-owned batch. invitee: invited into the first
+    /// role they qualify for instead of that role's search (e.g. the doctor the player made the appointment with).
     /// </summary>
+    /// <summary>SetEventBooking startHour: the next full hour (event argument "next").</summary>
+    public const int NextHourStart = -2;
+
     public static bool SetEventBooking(Character_Trainable c, string factionID, int dayOffset, int startHour, int hours,
         string templateID, bool wakeForIt, bool overrideWork, string onCancelledEventID, bool displayOverride = false,
-        bool forbidCancel = false, string sourceEventID = "", bool solo = false)
+        bool forbidCancel = false, string sourceEventID = "", bool solo = false, bool hostAsPlayer = false, Character_Trainable invitee = null, bool notify = true)
     {
         var f = c?.FactionManager;
         if (f == null) return false;
-        BeginNotice(f);
-        try { return SetEventBookingInner(c, f, factionID, dayOffset, startHour, hours, templateID, wakeForIt, overrideWork, onCancelledEventID, forbidCancel, sourceEventID, solo); }
-        finally { EndNotice(f, displayOverride); }
+        BeginAnnounceScope(displayOverride);
+        try
+        {
+            return SetEventBookingInner(c, f, factionID, dayOffset, startHour, hours, templateID, wakeForIt, overrideWork,
+                onCancelledEventID, forbidCancel, sourceEventID, solo, hostAsPlayer, invitee, notify);
+        }
+        finally { EndAnnounceScope(displayOverride); }
     }
 
     static bool SetEventBookingInner(Character_Trainable c, Character_Factions f, string factionID, int dayOffset, int startHour, int hours,
-        string templateID, bool wakeForIt, bool overrideWork, string onCancelledEventID, bool forbidCancel, string sourceEventID, bool solo)
+        string templateID, bool wakeForIt, bool overrideWork, string onCancelledEventID, bool forbidCancel, string sourceEventID, bool solo, bool hostAsPlayer,
+        Character_Trainable invitee, bool notify = true)
     {
         if (factionID == "@home") factionID = f.HomeFactions.Count > 0 && f.HomeFactions[0] != null ? f.HomeFactions[0].ID : "";
         if (scr_System_CampaignManager.current.FindFactionByID(factionID) == null) return false;
@@ -1321,8 +1892,20 @@ public static partial class RecreationUtility
         MapPlan.WorkModuleInit module = null;
         string memberTypeID = "";
         string activityID = "";
+        string sourceKey = string.IsNullOrEmpty(templateID) ? factionID : templateID;
         var def = RecreationBoard.FindDef(templateID);
         if (def != null) { module = def.workModule; memberTypeID = def.memberTypeID; forbidCancel |= def.forbidCancel; }
+        else if (templateID != null && templateID.StartsWith("house:"))
+        {
+            // "house:<activityID>" - a house activity of the venue (MapPlan.houseActivities) or a provided one
+            // (MemberType.providedActivities): acting under the booker's own type there, its cooldown key shared with the planner's
+            var house = HouseActivity(factionID, templateID.Substring(6));
+            if (house == null) return false;
+            module = house.workModule;
+            activityID = house.ID;
+            forbidCancel |= house.forbidCancel;
+            sourceKey = ActivitySourceKey(scr_System_CampaignManager.current.FindFactionByID(factionID), house);
+        }
         else if (!string.IsNullOrEmpty(templateID))
         {
             int split = templateID.IndexOf(':');
@@ -1330,7 +1913,7 @@ public static partial class RecreationUtility
             if (FactionUtility.TryGetMemberType(typeID, out var type) && type != null)
             {
                 var activities = type.recreation?.activities;
-                var activity = split < 0 ? activities?.FirstOrDefault(a => a != null) : type.recreation?.GetActivity(templateID.Substring(split + 1));
+                var activity = split < 0 ? activities?.Find(a => a != null) : type.recreation?.GetActivity(templateID.Substring(split + 1));
                 module = activity != null ? activity.workModule : type.workModule;
                 activityID = activity != null ? activity.ID : "";
                 memberTypeID = type.ID;
@@ -1338,14 +1921,33 @@ public static partial class RecreationUtility
             }
         }
 
-        if (startHour < 0) { startHour = scr_System_Time.current.getCurrentTime().Hour; dayOffset = 0; }
+        if (startHour == NextHourStart)
+        {
+            // the next full hour - tomorrow 0:00 after 23:xx
+            startHour = scr_System_Time.current.getCurrentTime().Hour + 1;
+            dayOffset = startHour >= 24 ? 1 : 0;
+            startHour %= 24;
+        }
+        else if (startHour < 0) { startHour = scr_System_Time.current.getCurrentTime().Hour; dayOffset = 0; }
         int day = scr_System_Time.current.getAbsoluteDay() + dayOffset;
         var booking = RecreationBooking.Create(day, startHour, hours, factionID, module, RecreationBookingSource.Event,
-            string.IsNullOrEmpty(templateID) ? factionID : templateID, memberTypeID, true, onCancelledEventID, overrideWork, activityID,
+            sourceKey, memberTypeID, true, onCancelledEventID, overrideWork, activityID,
             forbidCancel, sourceEventID);
         if (booking == null) return false;
+        if (def != null && def.factionID != factionID) return false;
+        var bookedActivity = booking.GetActivity(f);
+        if (bookedActivity?.requireMedia != null)
+        {
+            booking.mediaItemID = PickMedia(booking.Faction, bookedActivity);
+            if (string.IsNullOrEmpty(booking.mediaItemID)) return false;
+        }
+        if (!TrySelectActivityRoom(bookedActivity, booking.Faction, booking.AbsStart, booking.AbsEnd, c,
+            null, booking, booking.mediaItemID, out var plannedRoom)) return false;
+        if (ReservationRefusal(f, booking) != "") return false;
 
-        var inTheWay = f.RecreationBookings.Where(b => b != null && b.Overlaps(booking.AbsStart, booking.AbsEnd)).ToList();
+        var inTheWay = new List<RecreationBooking>();
+        var bookings = f.RecreationBookings;
+        for (int i = 0; i < bookings.Count; i++) if (bookings[i] != null && bookings[i].Overlaps(booking.AbsStart, booking.AbsEnd)) inTheWay.Add(bookings[i]);
         if (inTheWay.Exists(b => b.locked)) return false;
         foreach (var b in inTheWay) f.RemoveBooking(b);
         if (!f.AddBooking(booking, false))
@@ -1353,18 +1955,23 @@ public static partial class RecreationUtility
             foreach (var b in inTheWay) f.AddBooking(b, false);   // put back as it was
             return false;
         }
-        RecordBooked(f, booking);
+        RememberActivityRoom(booking, plannedRoom);
         foreach (var b in inTheWay) TryReschedule(f, b, CancelReason.Displaced);
         if (wakeForIt) CutSleepFor(c, booking);
-        // the player never hosts (not in scope yet) - their event bookings stay solo
-        if (!solo && c != Player)
+        // the player never hosts (not in scope yet) - their event bookings stay solo; except with hostAsPlayer (the
+        // "host" flag - e.g. an appointment the player makes with a family doctor: the activity's invite roles find the provider)
+        if (!solo && (c != Player || hostAsPlayer))
         {
             var spec = ResolveSpec(SpecRefFor(f, booking));
             var vis = EffectiveVisibility(spec, booking);
-            if (vis != RecreationVisibility.None && !spec.solo && (spec.IsMandatory || Utility.RandomChance(spec.inviteChance)))
-                TryHostSession(f, booking, spec, vis, true);
+            if (vis != RecreationVisibility.None && !spec.solo && (spec.IsMandatory || Utility.RandomChance(spec.inviteChance))
+                && TryHostSession(f, booking, spec, vis, true, invitee) && booking.Session != null)
+                ConfirmInvitedNow(booking.Session);
         }
+        // not hosted: a solo activity, complete once booked (a hosted one announces itself as it resolves)
+        if (booking.Session == null) AnnounceSolo(booking, ActivityNoticeKind.Confirmed);
         f.RefreshSchedule();
+        if (booking.Session != null) NotifyActivityChanged(booking.Session);
         return true;
     }
 
@@ -1383,18 +1990,75 @@ public static partial class RecreationUtility
         sleeping.duration = untilStart;
     }
 
+    // ---------------- waking for sessions ---------------- //
+
+    /// <summary>How far ahead (minutes) a session booking can make a sleep end early - beyond any realistic wake-up buffer.</summary>
+    const int SessionWakeLookaheadMinutes = 24 * 60;
+
+    /// <summary>
+    /// Minutes from now until c has to be up for their next session booking not yet started - of a session confirmed to
+    /// take place and that c attends (IsSessionBookingLive): its start minus WakeUpBufferHours for the trip from where c
+    /// is now (else their priority home). 0 or less = already within that window. int.MaxValue when there is none within
+    /// SessionWakeLookaheadMinutes.
+    /// </summary>
+    public static int MinutesUntilSessionWake(Character_Trainable c)
+    {
+        var f = c?.FactionManager;
+        if (f == null || f.RecreationBookings.Count == 0) return int.MaxValue;
+
+        int nowMinutes = NowAbs() * 60 + scr_System_Time.current.getCurrentTime().Minute;
+        Manageable from = null;
+        int result = int.MaxValue;
+        var bookings = f.RecreationBookings;
+        for (int i = 0; i < bookings.Count; i++)
+        {
+            var b = bookings[i];
+            if (b == null || !b.isSessionBooking || !IsSessionBookingLive(b, c)) continue;
+            int untilStart = b.AbsStart * 60 - nowMinutes;
+            if (untilStart <= 0 || untilStart > SessionWakeLookaheadMinutes) continue;
+            if (from == null)
+            {
+                var locale = f.CurrentLocaleFaction;
+                from = (locale == null ? null : scr_System_CampaignManager.current.FindFactionByID(locale.FactionID))
+                    ?? (f.HomeFactions.Count > 0 ? f.HomeFactions[0] : null);
+            }
+            result = Math.Min(result, untilStart - WakeUpBufferHours(from, b.factionID) * 60);
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// A session c attends was confirmed (ResolveSession, or c joined one already confirmed): a sleep running past MinutesUntilSessionWake now ends there (at
+    /// least a minute from now) - the cut counted as missed sleep, as CutSleepFor. A sleep started later is capped the
+    /// same way by Character_Trainable.Sleep.
+    /// </summary>
+    static void WakeForSessions(Character_Trainable c)
+    {
+        if (!c.isSleeping) return;
+        var sleeping = c.Stats.GetStatusByStringMatch(StatsUtility.Status_Sleeping);
+        if (sleeping == null || sleeping.duration < 0) return;   // no running timer to cut
+
+        int wake = MinutesUntilSessionWake(c);
+        if (wake == int.MaxValue) return;
+        wake = Math.Max(1, wake);
+        if (wake >= sleeping.duration) return;
+
+        c.ScheduledSleepMissingMinutes += sleeping.duration - wake;
+        sleeping.duration = wake;
+    }
+
     /// <summary>
     /// CancelRecreationBooking: cancels c's bookings (each firing its onCancelledEventID) at factionID ("" = anywhere):
     /// when "now" = the one under way, "today" = those under way or starting today, "all" (default) = every one not ended.
-    /// Returns how many were cancelled. Announced like any other change (AnnounceNotice), displayOverride = the calling event's own.
+    /// Returns how many were cancelled. Each cancelled activity announces itself, displayOverride = the calling event's own.
     /// </summary>
     public static int CancelBookings(Character_Trainable c, string factionID, string when, bool displayOverride = false)
     {
         var f = c?.FactionManager;
         if (f == null) return 0;
-        BeginNotice(f);
+        BeginAnnounceScope(displayOverride);
         try { return CancelBookingsInner(f, factionID, when); }
-        finally { EndNotice(f, displayOverride); }
+        finally { EndAnnounceScope(displayOverride); }
     }
 
     static int CancelBookingsInner(Character_Factions f, string factionID, string when)
@@ -1404,7 +2068,7 @@ public static partial class RecreationUtility
         int nowAbs = RecreationBooking.AbsoluteHour(today, hour);
 
         int count = 0;
-        foreach (var b in f.RecreationBookings.ToList())
+        foreach (var b in new List<RecreationBooking>(f.RecreationBookings))
         {
             if (b == null || b.AbsEnd <= nowAbs) continue;
             if (!string.IsNullOrEmpty(factionID) && b.factionID != factionID) continue;
@@ -1426,7 +2090,11 @@ public static partial class RecreationUtility
         var f = c?.FactionManager;
         if (f == null) return new List<RecreationBooking>();
         int nowAbs = NowAbs();
-        return f.RecreationBookings.Where(b => b != null && b.AbsEnd > nowAbs).OrderBy(b => b.AbsStart).ToList();
+        var result = new List<RecreationBooking>();
+        var bookings = f.RecreationBookings;
+        for (int i = 0; i < bookings.Count; i++) if (bookings[i] != null && bookings[i].AbsEnd > nowAbs) result.Add(bookings[i]);
+        SortStable(result, (a, b) => a.AbsStart.CompareTo(b.AbsStart));
+        return result;
     }
 
     /// <summary>c's booking not ended yet that starts at absolute hour absStart (bookings never overlap, so the start identifies one), or null.</summary>
@@ -1441,6 +2109,66 @@ public static partial class RecreationUtility
     /// Picking one only remembers it - ev.Parameters[selectedParamKey] = its AbsStart - for the event's accept check and
     /// CancelSelectedBooking.
     /// </summary>
+    /// <summary>
+    /// ListAppointmentSlots: one option per start hour, from the next full hour to the end of tomorrow, at which c can
+    /// book templateID ("house:&lt;activityID&gt;" - a house / provided activity) at factionID ("@home" = c's priority home)
+    /// for `hours` hours together with provider (IsAppointmentSlotFree). Option text = the time ("今天 14:00-16:00");
+    /// picking one sets Parameters[selectedParamKey] = its absolute start hour (SetRecreationBooking start
+    /// "param:&lt;key&gt;"). Only free slots are listed (user 2026-10-31).
+    /// </summary>
+    public static List<Event.EventEntry.Options> BuildAppointmentSlotOptions(Character_Trainable c, Character_Trainable provider,
+        string factionID, string templateID, int hours, string selectedParamKey)
+    {
+        var result = new List<Event.EventEntry.Options>();
+        var f = c?.FactionManager;
+        if (f == null || provider?.FactionManager == null || hours < 1) return result;
+        if (factionID == "@home") factionID = f.HomeFactions.Count > 0 && f.HomeFactions[0] != null ? f.HomeFactions[0].ID : "";
+        if (templateID == null || !templateID.StartsWith("house:")) return result;
+        var activity = HouseActivity(factionID, templateID.Substring(6));
+        if (activity == null) return result;
+
+        int lastEnd = (scr_System_Time.current.getAbsoluteDay() + 2) * 24;   // the end of tomorrow
+        for (int start = NowAbs() + 1; start + hours <= lastEnd; start++)
+        {
+            if (!IsAppointmentSlotFree(f, provider.FactionManager, factionID, activity, start, hours)) continue;
+            int absStart = start;
+            result.Add(new Event.EventEntry.Options()
+            {
+                option = DescribeTime(start / 24, start % 24, start + hours),
+                onSelect = ev => ev.Parameters[selectedParamKey] = absStart,
+            });
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// Side-effect-free: whether a SetRecreationBooking of activity at [absStart, absStart + hours) by f would go
+    /// through and provider (pf) would confirm it - the checks SetEventBookingInner / ConfirmInvitedNow (TryConfirm)
+    /// make: inside the activity's activeHours; the venue's facility / reservation space (ReservationRefusal); neither
+    /// of them has a booking in the way that would not just move (only IsMovableVisit ones do - the player's own
+    /// appointments and invitations stay); the provider has the time (HasTimeFor - work, sleep, daily cap).
+    /// </summary>
+    static bool IsAppointmentSlotFree(Character_Factions f, Character_Factions pf, string factionID, RecreationActivity activity, int absStart, int hours)
+    {
+        var active = activity.workModule?.activeHours;
+        if (active != null && active.Count > 0)
+            for (int h = absStart; h < absStart + hours; h++) if (!active.Contains(h % 24)) return false;
+
+        var venue = scr_System_CampaignManager.current.FindFactionByID(factionID);
+        string sourceKey = ActivitySourceKey(venue, activity);
+        var booking = RecreationBooking.Create(absStart / 24, absStart % 24, hours, factionID, activity.workModule, RecreationBookingSource.Event,
+            sourceKey, "", true, "", false, activity.ID);
+        if (booking == null || ReservationRefusal(f, booking) != "") return false;
+        int nowAbs = NowAbs();
+        foreach (var b in FindBookingConflicts(f, booking)) if (!IsMovableVisit(b, nowAbs)) return false;
+
+        var providerBooking = RecreationBooking.Create(absStart / 24, absStart % 24, hours, factionID, activity.workModule, RecreationBookingSource.Event,
+            sourceKey, "", false, "", false, activity.ID);
+        if (providerBooking == null) return false;
+        foreach (var b in FindBookingConflicts(pf, providerBooking)) if (!IsMovableVisit(b, nowAbs)) return false;
+        return HasTimeFor(pf, providerBooking);
+    }
+
     public static List<Event.EventEntry.Options> BuildCancelOptions(Character_Trainable c, string selectedParamKey)
     {
         var result = new List<Event.EventEntry.Options>();
@@ -1494,19 +2222,18 @@ public static partial class RecreationUtility
 
     /// <summary>
     /// CancelSelectedBooking: cancels c's booking b at the player's request (CancelReason.ByRequest; onCancelledEventID
-    /// fires as for any cancellation). Announced quietly - the home factions' daily report only, no Event_BookingChanged:
-    /// the dialogue shows text ("booking line (reason)") itself. False, nothing done, for a forbidCancel booking or one
-    /// already ended / gone.
+    /// fires as for any cancellation). Not announced (quiet scope): the dialogue shows text ("booking line (reason)")
+    /// itself. False, nothing done, for a forbidCancel booking or one already ended / gone.
     /// </summary>
     public static bool CancelByRequest(Character_Trainable c, RecreationBooking b, out string text)
     {
         text = "";
         var f = c?.FactionManager;
-        if (f == null || b == null || b.forbidCancel || b.AbsEnd <= NowAbs() || !f.RecreationBookings.Contains(b)) return false;
+        if (f == null || b == null || b.forbidCancel || b.AbsEnd <= NowAbs() || !f.HasBooking(b)) return false;
         text = DescribeBooking(b) + DescribeReason(CancelReason.ByRequest);
-        BeginNotice(f);
+        BeginAnnounceScope(false, true);
         try { f.CancelBooking(b, true, CancelReason.ByRequest); }
-        finally { EndNotice(f, false, true); }
+        finally { EndAnnounceScope(false, true); }
         return true;
     }
 }

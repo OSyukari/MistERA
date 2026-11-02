@@ -43,6 +43,8 @@ public class scr_panel_COMmanager : scr_Menu
     
 
     List<int> trackedJobRefs = new List<int>();
+    /// <summary>The phase each tracked Job_Activity's entry button was made for: wait and late join are separate buttons.</summary>
+    readonly Dictionary<int, ActivityPhase> trackedActivityPhases = new Dictionary<int, ActivityPhase>();
 
     public void notifyActorsChange()
     {
@@ -758,6 +760,21 @@ public class scr_panel_COMmanager : scr_Menu
     {
         // if current thing not active then skip
 
+        var campaign = scr_System_CampaignManager.current;
+        var roomSexJob = campaign.FindSexJobInRoom(campaign.Map.FindRoomByChara(campaign.Player.RefID));
+        var playerSexJob = roomSexJob != null && roomSexJob.actorRefID.Contains(campaign.Player.RefID) ? roomSexJob : null;
+        if (currentSexJob != playerSexJob)
+        {
+            currentSexJob = playerSexJob;
+            SexComDoers.Clear();
+            SexComReceivers.Clear();
+            if (currentSexJob != null)
+            {
+                if (currentSexJob.actorRefID.Count > 0) SexComDoers.Add(currentSexJob.actorRefID[0]);
+                if (currentSexJob.actorRefID.Count > 1) SexComReceivers.Add(currentSexJob.actorRefID[1]);
+            }
+        }
+
         foreach(var kvpair in furnitureRectList)
         {
             Job_Furniture jf = (scr_System_CampaignManager.current.FindJobInstanceByID(kvpair.Key) as Job_Furniture);
@@ -771,11 +788,12 @@ public class scr_panel_COMmanager : scr_Menu
         string s3 = "Tracking player interactionjob " + scr_System_CampaignManager.current.jobRef_playerCOM;
         /**/
         var curr = scr_System_CampaignManager.current.Player.CurrentJob;
-        if (curr != null && !curr.CanBeInterrupted)
+        if (curr != null && !curr.CanBeInterrupted && (!(curr is Job_Sex_Group) || curr == currentSexJob))
         {
             s3 += "\nTracking player current job " + scr_System_CampaignManager.current.Player.CurrentJob.RefID;
             tempList.Add(scr_System_CampaignManager.current.Player.CurrentJob.RefID);
         }
+        if (currentSexJob != null && !tempList.Contains(currentSexJob.RefID)) tempList.Add(currentSexJob.RefID);
 
         // jobs offering the player to join one of their packages without the player being their actor
         // (e.g. a C-section waiting for the player patient) - their joinable APs are shown below
@@ -799,6 +817,7 @@ public class scr_panel_COMmanager : scr_Menu
         //Debug.Log("UPDATEJOBCOM currentRoom ["+ scr_System_CampaignManager.current.CurrentRoom .DisplayName+ "] isJobsnull? ["+(scr_System_CampaignManager.current.CurrentRoom.Jobs == null) +"]");
         foreach (var job in scr_System_CampaignManager.current.CurrentRoom.Jobs)
         {
+            if (job is Job_Sex_Group && job != currentSexJob) continue;
             //Debug.LogError("UPDATEJOBCOM JOB " + job.DisplayName);
             tempList.Add(job.RefID);
             s3 += "\nTracking Roomjobref " + job.RefID;
@@ -810,6 +829,14 @@ public class scr_panel_COMmanager : scr_Menu
         {
 
             Job j = scr_System_CampaignManager.current.FindJobInstanceByID(jobRef);
+
+            // an activity whose phase changed since its button was made (gathering -> launched): rebuild its one entry button
+            if (j is Job_Activity phased && trackedJobRefs.Contains(jobRef)
+                && trackedActivityPhases.TryGetValue(jobRef, out var madePhase) && madePhase != phased.Phase)
+            {
+                DestroyCOMButton(jobRef);
+                trackedJobRefs.Remove(jobRef);
+            }
 
             if (!trackedJobRefs.Contains(jobRef) && scr_System_CampaignManager.current.FindJobInstanceByID(jobRef) != null)
             {
@@ -848,16 +875,26 @@ public class scr_panel_COMmanager : scr_Menu
                 }
                 else if (j is Job_Activity jActivity)
                 {
-                    // a recreation activity in the player's room (tracked while Job_Activity.OffersJoinTo): the player's own
-                    // "wait for the activity" command (valid while gathering) and "join the activity" (valid once launched -
-                    // a late join). Each validates by the job's phase (ActionPackage_ActivityWait), so the one for the other
-                    // phase hides - except the wait button where the player may not join at all (Private scope, disabled via
-                    // targetActorRef): kept visible, it only tells the player an activity is going on.
+                    // Gathering stays at the meeting room; launched joins use local attendees and an authored event.
+                    // one entry button per activity: wait while gathering, the late join once launched
                     var player = scr_System_CampaignManager.current.Player;
-                    var waitAP = jActivity.MakePlayerWaitPackage(player);
-                    if (waitAP != null && waitAP.targetCOM != null) MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, j, waitAP.targetCOM, true, jActivity.PlayerMayJoin, waitAP);
-                    var joinAP = jActivity.MakePlayerJoinPackage(player);
-                    if (joinAP != null && joinAP.targetCOM != null) MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, j, joinAP.targetCOM, true, true, joinAP);
+                    trackedActivityPhases[jobRef] = jActivity.Phase;
+                    if (jActivity.Phase == ActivityPhase.Gathering)
+                    {
+                        var waitAP = jActivity.MakePlayerWaitPackage(player);
+                        if (waitAP != null && waitAP.targetCOM != null) MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, j, waitAP.targetCOM, true, jActivity.PlayerMayJoin, waitAP);
+                    }
+                    else if (jActivity.Phase == ActivityPhase.Launched)
+                    {
+                        var joinAP = jActivity.MakePlayerJoinPackage(player);
+                        if (joinAP != null && joinAP.targetCOM != null) MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, j, joinAP.targetCOM, true, true, joinAP);
+                    }
+                }
+                else if (j is Job_MediaSession jMedia)
+                {
+                    // a running movie / game session in this room: the player's own button - watch / play to the end
+                    var sessionAP = jMedia.MakePlayerSessionPackage(scr_System_CampaignManager.current.Player);
+                    if (sessionAP != null && sessionAP.targetCOM != null) MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, j, sessionAP.targetCOM, true, true, sessionAP);
                 }
                 else if (j is Job_PlayerCOM)
                 {
@@ -887,7 +924,6 @@ public class scr_panel_COMmanager : scr_Menu
 
                     Job_Sex_Group jdebug = j as Job_Sex_Group;
                     Debug.Log("Making Sex Job " + jdebug.RefID+" registeredactors "+String.Join("|", jdebug.actorRefID));
-                    currentSexJob = jdebug;
                     foreach (COM c in jdebug.allusableCOMs)
                     {
                         if (c.hidden) continue;
@@ -896,12 +932,6 @@ public class scr_panel_COMmanager : scr_Menu
                         var getrect = GetGrid(c.CategoryLabel);
                         MakeCOMButton(getrect, buttonPrefab_COM, jdebug, c);
                     }
-
-                    SexComDoers.Clear();
-                    SexComReceivers.Clear();
-
-                    if (currentSexJob.actorRefID.Count > 0) SexComDoers.Add(currentSexJob.actorRefID[0]);
-                    if (currentSexJob.actorRefID.Count > 1) SexComReceivers.Add(currentSexJob.actorRefID[1]);
 
                 }
                 else if (j is Job_Furniture)
@@ -982,6 +1012,7 @@ public class scr_panel_COMmanager : scr_Menu
             if (!tempList.Contains(trackedJobRefs[i]))
             {
                 DestroyCOMButton(trackedJobRefs[i]);
+                trackedActivityPhases.Remove(trackedJobRefs[i]);
                 if (furnitureRectList.ContainsKey(trackedJobRefs[i])) DestroyCOMBox(trackedJobRefs[i]);
 
                 foreach (KeyValuePair<string, Dictionary<int, bool>> kvp in forbidCOMRepeatList)
@@ -1176,7 +1207,7 @@ public class scr_panel_COMmanager : scr_Menu
             index = 9;
             return false;
         }
-        if ((com.comTags.Contains("touch") || com.comTags.Contains("massage") || com.comTags.Contains("service")) && scr_System_CampaignManager.current.displaySex && !com.comTags.Contains("sex"))
+        if ((com.comTags.Contains("touch") || com.comTags.Contains("massage") || com.comTags.Contains("service")) && scr_System_CampaignManager.current.displaySex && !com.AllowDuringSex)
         {
             index = 10;
             return false;
@@ -1711,7 +1742,20 @@ public class scr_panel_COMmanager : scr_Menu
             // if (com == null) return null;
 
             var injectAP = innerAP;
-            if (innerAP != null)
+            if (innerAP is ActionPackage_ActivityWait && innerAP.job is Job_Activity activity)
+            {
+                // The same tracked visit can move between rooms without recreating its button.
+                var player = scr_System_CampaignManager.current.Player;
+                injectAP = innerAP.targetCOM.ID == Job_Activity.JoinCOMID
+                    ? activity.MakePlayerJoinPackage(player)
+                    : activity.MakePlayerWaitPackage(player);
+            }
+            else if (innerAP is ActionPackage_MediaSession && innerAP.job is Job_MediaSession mediaSession)
+            {
+                // fresh each click: its length is the rest of the session at that moment
+                injectAP = mediaSession.MakePlayerSessionPackage(scr_System_CampaignManager.current.Player);
+            }
+            else if (innerAP != null)
             {
                 injectAP = innerAP.Copy();
             }
@@ -1787,6 +1831,25 @@ public class scr_panel_COMmanager : scr_Menu
                 return false;
             }
 
+            if (package.IsSexSceneEntry)
+            {
+                var campaign = scr_System_CampaignManager.current;
+                var player = campaign.Player;
+                var target = campaign.CurrentTarget;
+                var room = campaign.Map.FindRoomByChara(player.RefID);
+                bool occupied = campaign.FindSexJobInRoom(room) != null;
+                var receivers = new List<int>();
+                if (target != null && target.RefID != player.RefID) receivers.Add(target.RefID);
+                // Only free-room starts retain the legacy party defaults; joins always use the selected pair.
+                if (!occupied && !com.requirements.requirement.joinAlone
+                    && !com.requirements.requirement.forbidTeammateJoin)
+                    receivers.AddRange(campaign.PlayerPartyMembers);
+                if (!occupied && com.requirements.requirement.joinAlone) receivers.Clear();
+                receivers = receivers.Where(actor => actor != player.RefID).Distinct().ToList();
+                package.ResetRequest(new List<int> { player.RefID }, receivers, player.RefID);
+                package.SetRoom(room);
+            }
+
             if (scr_System_CampaignManager.current.DebugMode) tooltip = $"parentJob {this.job.DisplayName} refID {this.job.RefID}{(this.jobRefID != this.job.RefID ? " -> "+this.jobRefID : "")}\ntags: {String.Join(" ", package.ComTags)}{(package.targetCOM == null?"\n":$"\ncommand AC {package.targetCOM.baseAcceptanceValue}\n")}";
             else tooltip = "";
 
@@ -1799,7 +1862,7 @@ public class scr_panel_COMmanager : scr_Menu
                 display = false;
                 tooltip += "command has GenerateCOM but no currently generated children";
             }
-            else if (com.GenerateCOM != null && !job.AnyComPassesFactionOrInventoryCheck(com.childCOMs, package))
+            else if ((com.GenerateCOM != null || com is COM_ItemFolder) && !job.AnyComPassesFactionOrInventoryCheck(com.childCOMs, package))
             {
                 // Children exist structurally, but none currently pass faction/inventory check (e.g. no
                 // item in a reachable faction right now) - invalid, but respects this COM's own
@@ -1823,7 +1886,7 @@ public class scr_panel_COMmanager : scr_Menu
                 }
                 else
                 {
-                    if (package is ActionPackage_Sex)
+                    if (!package.IsSexSceneEntry && package is ActionPackage_Sex)
                     {
                         //Debug.Log("package apsex");
                         if (scr_System_CampaignManager.current.displaySex) package.ResetRequest(parent.SexComDoers, parent.SexComReceivers, 0);// (package as ActionPackage_Sex).ReInitializeCOM(job, com, parent.SexComDoers, parent.SexComReceivers, 0, false);
@@ -1832,7 +1895,7 @@ public class scr_panel_COMmanager : scr_Menu
                             package.ResetRequest(new List<int>() { scr_System_CampaignManager.current.Player.RefID }, scr_System_CampaignManager.current.CurrentTargetRef > 0 ? new List<int>() { job.targetActorRef } : new List<int>() { }, 0);
                         }
                     }
-                    else if (parent.TryOverrideForActiveSex(package, scr_System_CampaignManager.current.FindInstanceByID(job.targetActorRef)))
+                    else if (!package.IsSexSceneEntry && parent.TryOverrideForActiveSex(package, scr_System_CampaignManager.current.FindInstanceByID(job.targetActorRef)))
                     {
                         // Generator folder buttons keep their own jobRefID pointed at the original
                         // Job_CharaCOM regardless - OnClickButton() passes this.job into
@@ -1842,7 +1905,7 @@ public class scr_panel_COMmanager : scr_Menu
                         // the package to the sex job instead of the original Job_CharaCOM.
                         if (com.childCOMs.Count < 1) ChangeValidatorOverrideReference(parent.currentSexJob, parent.currentSexJob.RefID);
                     }
-                    else
+                    else if (!package.IsSexSceneEntry)
                     {
                         // Resync package.job with the button's own (possibly just-fallen-back) job -
                         // ReEstablishParent is cheap/idempotent, and without this a package that was
@@ -1888,6 +1951,13 @@ public class scr_panel_COMmanager : scr_Menu
                         returnVal = false;
                         package.tooltip.RemoveAll(x => x == "" || x.Length < 1);
                         tooltip += package.GetTooltips( LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_comInvalid")).Replace("$tooltips$", String.Join("\n", package.tooltip));
+                    }
+                    else if (com.GenerateAP != null && allowChildPanel && !HasValidGeneratedPackage())
+                    {
+                        // GenerateAP folder (e.g. getmeal) that is valid itself (its own requirements - meal hour - passed above)
+                        // but none of whose packages would be valid in the child panel - each package's own reason shows there
+                        returnVal = false;
+                        tooltip += package.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_comInvalid")).Replace("$tooltips$", LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_noValidChild"));
                     }/*
                     else if (job is Job_Furniture && job.ExecutingPackages.FindAll(x=>!x.isTemporaryAP).Count >= 0)
                     {
@@ -1919,6 +1989,23 @@ public class scr_panel_COMmanager : scr_Menu
                     }
 
                     if (job.targetActorRef != scr_System_CampaignManager.current.CurrentTargetRef) returnVal = false;
+                }
+            }
+
+            if (package.IsSexSceneEntry)
+            {
+                var campaign = scr_System_CampaignManager.current;
+                var room = campaign.Map.FindRoomByChara(campaign.Player.RefID);
+                bool occupied = campaign.FindSexJobInRoom(room) != null;
+                tooltip += "\n" + LocalizeDictionary.QueryThenParse(occupied || package.JoinsExistingSexScene
+                    ? "ui_sexEntry_joinTooltip" : "ui_sexEntry_startTooltip");
+                if (!COM.TryResolveSexSceneEntry(room,
+                    package.DoerRefs.Select(actor => campaign.FindInstanceByID(actor)).ToList(),
+                    package.ReceiverRefs.Select(actor => campaign.FindInstanceByID(actor)).ToList(),
+                    occupied || package.JoinsExistingSexScene, out _, out _, out var reason))
+                {
+                    returnVal = false;
+                    tooltip += "\n" + LocalizeDictionary.QueryThenParse(reason);
                 }
             }
 
@@ -1982,6 +2069,20 @@ public class scr_panel_COMmanager : scr_Menu
             }
         }
 
+        /// <summary>
+        /// Whether a GenerateAP folder would show at least one valid package in its child panel - built the same way
+        /// LoadChildCOMPanel builds them (the player as doer, this folder's receivers re-injected).
+        /// </summary>
+        bool HasValidGeneratedPackage()
+        {
+            foreach (var ap in job.MakePackages(scr_System_CampaignManager.current.Player, false, true, true, com))
+            {
+                if (package.ReceiverRefs.Count > 0) ap.ResetRequest(new List<int>(ap.DoerRefs), new List<int>(package.ReceiverRefs), 0);
+                if (ap.Validate()) return true;
+            }
+            return false;
+        }
+
         public override void Destroy()
         {
             this.text = null;
@@ -1991,6 +2092,7 @@ public class scr_panel_COMmanager : scr_Menu
         public void OnClickButton()
         {
 
+            if (package.IsSexSceneEntry && !IsButtonValid()) return;
             if (allowChildPanel && package.targetCOM != null && (package.targetCOM.childCOMs.Count > 0 || package.targetCOM.GenerateAP != null))
             {
                 // create panel
@@ -2006,7 +2108,8 @@ public class scr_panel_COMmanager : scr_Menu
                     if (launchJob == null || launchPackage == null) return;
                     ppp = launchPackage;
                 }
-                var ops = ppp.LaunchOptions();
+                // Entry must not offer callbacks that stop an incumbent's ongoing actions.
+                var ops = ppp.IsSexSceneEntry ? null : ppp.LaunchOptions();
                 if (ops != null && ops.Count > 0)
                 {
                    // Debug.LogError($"loading options {ops.Count}");
@@ -2020,11 +2123,42 @@ public class scr_panel_COMmanager : scr_Menu
         void Execute(ActionPackage ppp, Job launchJob = null)
         {
             var job = launchJob ?? this.job;
+            bool keepsSexMembership = false;
+            // ActionPackage_Sex too: non-sex-tagged acts opted in to scenes (condom commands)
+            if ((ppp is ActionPackage_Interaction || ppp is ActionPackage_Sex) && !ppp.IsSexSceneEntry && ppp.targetCOM.comTags.Contains("allowedDuringSex"))
+            {
+                var scene = scr_System_CampaignManager.current.FindSexJobInRoom(ppp.PackageRoom);
+                if (scene != null && ppp.actorRefs.Count > 0 && ppp.actorRefs.All(scene.actorRefID.Contains))
+                {
+                    job = scene;
+                    ppp.ReEstablishParent(scene);
+                    if (!ppp.Validate()) { tooltip = String.Join("\n", ppp.tooltip); return; }
+                    keepsSexMembership = true;
+                }
+            }
+            if (ppp.IsSexSceneEntry)
+            {
+                var campaign = scr_System_CampaignManager.current;
+                job = (ppp.ReceiverRefs.Count == 0 ? campaign.Player : campaign.CurrentTarget ?? campaign.Player).InteractionJob;
+                if (job == null) return;
+                ppp.ReEstablishParent(job);
+                if (!ppp.Validate())
+                {
+                    tooltip = String.Join("\n", ppp.tooltip);
+                    return;
+                }
+                if (!ppp.PrepareSexSceneEntry(out var reason))
+                {
+                    tooltip = LocalizeDictionary.QueryThenParse(reason);
+                    return;
+                }
+                ppp.LaunchOptionsChecked = true;
+            }
             parent.childCOMPanel.Active = false;
             parent.COMOptionsPanel.Active = false;
             scr_System_CentralControl.current.AutoSave();
 
-            if (launchJob != null)
+            if (launchJob != null || ppp.IsSexSceneEntry || keepsSexMembership)
             {
                 // a redirected launch records the package actually launched (e.g. the work command ActionPackage_Work
                 // picked, on its furniture) - not the launcher - so the recent commands replay it directly
@@ -2037,9 +2171,12 @@ public class scr_panel_COMmanager : scr_Menu
 
             //Debug.Log("Adding package to job [" + job.GetJobDescription(0) + "] with actors [" + String.Join(" ", package.actorRefs)+"], doers["+ String.Join(" ", package.DoerRefs)+"] receivers["+ String.Join(" ", package.ReceiverRefs) + "]");
             //scr_System_CampaignManager.current.Player.ChangeCurrentJob(job);
-            foreach (var actor in ppp.actorRefs)
+            if (!ppp.IsSexSceneEntry && !keepsSexMembership)
             {
-                scr_System_CampaignManager.current.FindInstanceByID(actor).ChangeCurrentJob(job, ppp.targetCOM.ID);
+                foreach (var actor in ppp.actorRefs)
+                {
+                    scr_System_CampaignManager.current.FindInstanceByID(actor).ChangeCurrentJob(job, ppp.targetCOM.ID);
+                }
             }
 
             job.AddPackage(new List<ActionPackage>() { ppp }, true);
@@ -2217,7 +2354,7 @@ public class scr_panel_COMmanager : scr_Menu
     /// </summary>
     private bool TryOverrideForActiveSex(ActionPackage ap, Character_Trainable relevantTarget)
     {
-        if (currentSexJob == null || ap == null || !ap.ComTags.Contains("allowedDuringSex")) return false;
+        if (currentSexJob == null || ap == null || ap.IsSexSceneEntry || !ap.ComTags.Contains("allowedDuringSex")) return false;
         var player = scr_System_CampaignManager.current.Player;
         if (player.CurrentJob != currentSexJob) return false;
         if (!currentSexJob.actorRefID.Contains(player.RefID)) return false;
@@ -2359,11 +2496,11 @@ public class scr_panel_COMmanager : scr_Menu
 
             
             int charaRefID = scr_System_CampaignManager.current.CurrentTargetRef;
-            int jobRef = scr_System_CampaignManager.current.FindInstanceByID(0).CurrentJobRefID;
-            Job job = scr_System_CampaignManager.current.FindJobInstanceByID(jobRef);
+            var campaign = scr_System_CampaignManager.current;
+            var job = campaign.FindSexJobInRoom(campaign.Map.FindRoomByChara(campaign.Player.RefID));
 
             // current job is not sex
-            if ((job as Job_Sex_Group) == null)
+            if (job == null || !job.actorRefID.Contains(campaign.Player.RefID))
             {
                 if (scr_System_Time.current.TimeStop)
                 {
@@ -2404,18 +2541,38 @@ public class scr_panel_COMmanager : scr_Menu
 
             var txt = this.text.Text.text;
 
-            Job job = scr_System_CampaignManager.current.FindJobInstanceByID(scr_System_CampaignManager.current.FindInstanceByID(0).CurrentJobRefID);
+            var campaign = scr_System_CampaignManager.current;
+            var room = campaign.Map.FindRoomByChara(campaign.Player.RefID);
+            if (room == null)
+            {
+                tooltip = LocalizeDictionary.QueryThenParse("ui_sexEntry_invalidRoom");
+                return;
+            }
+            var job = campaign.FindSexJobInRoom(room);
 
-            if ((job as Job_Sex_Group) == null)
+            if (job == null || !job.actorRefID.Contains(campaign.Player.RefID))
             {
                 endString_saved = endString;
-                scr_System_CampaignManager.current.Register(new Job_Sex_Group(scr_System_CampaignManager.current.CharaRefInCurrentRoom, scr_System_CampaignManager.current.CurrentRoom));
+                var actors = campaign.CharaRefsInRoom(room.RefID);
+                if (job != null)
+                {
+                    job.AddAuthoredParticipants(new List<int>(), actors);
+                }
+                else
+                {
+                    if (!campaign.CanStartSexJob(room, out var reason))
+                    {
+                        tooltip = LocalizeDictionary.QueryThenParse(reason);
+                        return;
+                    }
+                    if (campaign.Register(new Job_Sex_Group(actors, room)) < 0) return;
+                }
             }
             else
             {
 
                 parent.currentSexJob = null;
-                (job as Job_Sex_Group).EndJob();
+                job.EndJob();
             }
 
             scr_System_CampaignManager.current.FreeUpdate(-1, txt);
@@ -2694,6 +2851,9 @@ public class scr_panel_COMmanager : scr_Menu
                 return false;
             }
 
+            if (ap.IsSexSceneEntry)
+                tooltip += "\n" + LocalizeDictionary.QueryThenParse(ap.JoinsExistingSexScene
+                    ? "ui_sexEntry_joinTooltip" : "ui_sexEntry_startTooltip");
             if (!ap.Validate())
             {
                 returnVal = false;
@@ -2744,14 +2904,39 @@ public class scr_panel_COMmanager : scr_Menu
 
         public void OnClickButton()
         {
+            if (ap != null && ap.IsSexSceneEntry && !IsButtonValid()) return;
             parent.childCOMPanel.Active = false;
 
             scr_System_CentralControl.current.AutoSave();
             var ppp = ap.Copy();
+
+            if (ppp.IsSexSceneEntry)
+            {
+                if (!ppp.Validate()) { tooltip = String.Join("\n", ppp.tooltip); return; }
+                if (!ppp.PrepareSexSceneEntry(out var reason))
+                {
+                    tooltip = LocalizeDictionary.QueryThenParse(reason);
+                    return;
+                }
+                ppp.LaunchOptionsChecked = true;
+            }
             
             //Debug.Log("Adding package to job [" + job.GetJobDescription(0) + "] with actors [" + String.Join(" ", package.actorRefs)+"], doers["+ String.Join(" ", package.DoerRefs)+"] receivers["+ String.Join(" ", package.ReceiverRefs) + "]");
             //scr_System_CampaignManager.current.Player.ChangeCurrentJob(job);
-            foreach (var actor in ppp.actorRefs)
+            bool keepsSexMembership = false;
+            // ActionPackage_Sex too: non-sex-tagged acts opted in to scenes (condom commands)
+            if ((ppp is ActionPackage_Interaction || ppp is ActionPackage_Sex) && !ppp.IsSexSceneEntry && ppp.targetCOM.comTags.Contains("allowedDuringSex"))
+            {
+                var scene = scr_System_CampaignManager.current.FindSexJobInRoom(ppp.PackageRoom);
+                if (scene != null && ppp.actorRefs.Count > 0 && ppp.actorRefs.All(scene.actorRefID.Contains))
+                {
+                    job = scene;
+                    ppp.ReEstablishParent(scene);
+                    if (!ppp.Validate()) { tooltip = String.Join("\n", ppp.tooltip); return; }
+                    keepsSexMembership = true;
+                }
+            }
+            if (!ppp.IsSexSceneEntry && !keepsSexMembership) foreach (var actor in ppp.actorRefs)
             {
                 scr_System_CampaignManager.current.FindInstanceByID(actor).ChangeCurrentJob(job, ppp.targetCOM.ID);
             }
@@ -3374,7 +3559,7 @@ public class scr_panel_COMmanager : scr_Menu
             this.equipRef = equipRef;
             this.text = text;
             item = chara != null && chara.Body != null ? chara.Body.ResolveEquip(equipRef) : null;
-            if (item != null) eq = item.GetComp_Equippable();
+            if (item != null) eq = item.Comp_Equippable;
 
             text.isButtonToggle = true;
             text.useDisabledColorWhenUntoggled = true;

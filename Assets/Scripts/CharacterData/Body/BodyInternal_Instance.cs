@@ -16,9 +16,36 @@ public enum Ranking
     S
 }
 
-public class BodyInternal_Instance
+public class BodyInternal_Instance : I_TraceHolder
 {
     public BodyInternal_Womb womb = null;
+
+    //---- traces (Docs/Body/Plan_BodyTraces.md) ----
+    [JsonProperty] List<TraceInstance> traces = null;
+    public bool ShouldSerializetraces() { return traces != null && traces.Count > 0; }
+    [JsonIgnore] public List<TraceInstance> Traces { get { if (traces == null) traces = new List<TraceInstance>(); return traces; } }
+    [JsonIgnore] public bool HasTraces { get { return traces != null && traces.Count > 0; } }
+    static readonly List<BodyPartEquipSlot> noSlots = new List<BodyPartEquipSlot>();
+    [JsonIgnore] public List<BodyPartEquipSlot> TraceSlots { get { return Base?.traceSlots ?? noSlots; } }
+    [JsonIgnore] public bool AllowTraces { get { return TraceSlots.Count > 0; } }
+    [JsonIgnore] public bool CanLeaveTraces { get { return Base != null && Base.canLeaveTraces; } }
+    [JsonIgnore] public List<string> LeaveTraceIDs { get { return Base?.leaveTraceIDs; } }
+    [JsonIgnore] public I_TraceHolder ParentHolder { get { return Parent; } }
+    [JsonIgnore] public List<BodyPartEquipSlot> OwnSlots { get { return Base?.AvailableSlots ?? noSlots; } }
+    [JsonIgnore] public List<BodyPartEquipSlot> UnderSlots { get { return Base?.coverSlots ?? noSlots; } }
+    [JsonIgnore] public string TraceHolderID { get { return baseID; } }
+    /// <summary> an organ's own slots sit under its parent's coverSlots: the organ's coverage decides </summary>
+    public bool IsSlotVisible(BodyPartEquipSlot slot) { return GetRevealingScore(BodyEquipLayer.None) < 2; }
+
+    /// <summary> this organ's traces (visibleOnly: while it is uncovered) </summary>
+    public void GetTraces(List<(I_TraceHolder holder, TraceInstance trace)> result, bool visibleOnly = false)
+    {
+        if (!HasTraces) return;
+        foreach (var t in traces)
+        {
+            if (!visibleOnly || IsSlotVisible(t.slot)) result.Add((this, t));
+        }
+    }
 
     [JsonProperty] protected long firstExperience = 0, lastExperience = 0;
     [JsonProperty] protected string firstExpDesc = "", lastExpDesc = "";
@@ -128,8 +155,10 @@ public class BodyInternal_Instance
                 foreach (BodyPartEquipSlot slot in this.availableSlots)
                 {
                     var equip = this.GetEquip(layer, slot);
-                    var comp = equip == -1 ? null : Owner?.Body?.ResolveEquip(equip)?.GetComp_Equippable();
-                    if (comp != null && comp.revealing >= revealingScoreFilter)
+                    var comp = equip == -1 ? null : Owner?.Body?.ResolveEquip(equip)?.Comp_Equippable;
+                    // items worn on the organ that cover nothing (condom, piercings) are not undressed - like other
+                    // non-covering clothing; a condom comes off through its own command
+                    if (comp != null && comp.revealing >= revealingScoreFilter && comp.coverSlot.Count > 0)
                     {
                         UnequipItem(equip);
                     }
@@ -352,7 +381,7 @@ public class BodyInternal_Instance
         List<Item_Instance> delete = new List<Item_Instance>();
         foreach (var content in Contains)
         {
-            var comp = content.GetComp_Ingestible();
+            var comp = content.Comp_Ingestible;
             var methods = comp == null ? new List<ItemComponentTemplate_Ingestible.Ingestible_IngestMethod>() : comp.ingestMethod.FindAll(x => this.hasTag(x.bodyTags));
 
             if (methods.Count > 0)
@@ -468,6 +497,7 @@ public class BodyInternal_Instance
         this.ownerRefID = c.Owner.RefID;
 
         this.Parent = c;
+        if (HasTraces) TraceUtility.FixSlots(this);
 
         if (this.womb != null)
         {
@@ -622,6 +652,68 @@ public class BodyInternal_Instance
 
     [JsonIgnore] public bool needLubrication { get { return Base.needLubrication; } }
 
+    /// <summary>Owner-derived lubrication points; missing or ineligible definitions contribute zero.</summary>
+    [JsonIgnore] public float DerivedLubrication
+    {
+        get
+        {
+            var definition = Base;
+            if (definition == null || string.IsNullOrWhiteSpace(definition.lubricationStatID)) return 0;
+            var stat = Owner?.Stats?.GetDerivedStat(definition.lubricationStatID);
+            if (stat == null) return 0;
+            float value = stat.FinalValue();
+            return float.IsNaN(value) || float.IsInfinity(value) ? 0 : Math.Max(0, value);
+        }
+    }
+
+    /// <summary>Lubrication points from all liquid currently in this organ, measured in ml.</summary>
+    [JsonIgnore] public float ContainedLiquidLubricationBonus
+    {
+        get
+        {
+            var definition = Base;
+            if (definition == null) return 0;
+            float maximum = definition.liquidLubricationBonusMax;
+            float halfAmount = definition.liquidLubricationHalfAmountMl;
+            if (maximum <= 0 || float.IsNaN(maximum) || float.IsInfinity(maximum)
+                || halfAmount <= 0 || float.IsNaN(halfAmount) || float.IsInfinity(halfAmount)) return 0;
+            float amount = CurrentlyContainedLiquid;
+            if (amount <= 0 || float.IsNaN(amount) || float.IsInfinity(amount)) return 0;
+            float bonus = (float)(maximum / (1.0 + (double)halfAmount / amount));
+            return float.IsNaN(bonus) || float.IsInfinity(bonus) ? 0 : Math.Max(0, bonus);
+        }
+    }
+
+    /// <summary>Body-local lubrication points, evaluated live without storing liquid or queuing changes.</summary>
+    [JsonIgnore] public float EffectiveLubrication
+    {
+        get
+        {
+            return (float)Math.Min(float.MaxValue, (double)DerivedLubrication + ContainedLiquidLubricationBonus);
+        }
+    }
+
+    /// <summary>
+    /// Signed sex-DC modifier while this organ is penetrated, from EffectiveLubrication and its definition's lubricationDC
+    /// curve. False when the organ needs no lubrication or has no authored curve.
+    /// </summary>
+    public bool TryGetLubricationDCModifier(out int value)
+    {
+        value = 0;
+        if (!needLubrication) return false;
+        var def = Base;
+        if (def.lubricationDCMin > def.lubricationDCMax || (def.lubricationDCScale == 0 && def.lubricationDCOffset == 0)
+            || float.IsNaN(def.lubricationDCScale) || float.IsInfinity(def.lubricationDCScale)
+            || float.IsNaN(def.lubricationDCOffset) || float.IsInfinity(def.lubricationDCOffset)) return false;
+        float lubrication = EffectiveLubrication;
+        if (float.IsNaN(lubrication) || float.IsInfinity(lubrication)) return false;
+        value = (int)Math.Truncate(Math.Clamp((double)lubrication * def.lubricationDCScale + def.lubricationDCOffset, def.lubricationDCMin, def.lubricationDCMax));
+        return true;
+    }
+
+    /// <summary> Lubricated enough that penetration takes no lubrication penalty (or needs no lubrication). </summary>
+    [JsonIgnore] public bool IsSufficientlyLubricated { get { return !TryGetLubricationDCModifier(out int value) || value >= 0; } }
+
 
     protected SkillInstance _sensitivitySkill = null;
     [JsonIgnore] public SkillInstance SensitivitySkill
@@ -730,11 +822,14 @@ public class BodyInternal_Instance
         {
             if (Size == 0) return 0;
 
-            float mod = Owner.Stats.SexStimulation.Severity * 0.02f;
-            if (needLubrication && Owner.Stats.Lubrication.Severity <= 66) mod *= (0.015f * Owner.Stats.Lubrication.Severity);
+            float mod = (Owner?.Stats?.SexStimulation?.Severity ?? 0) * 0.02f;
+            if (needLubrication)
+            {
+                float lubrication = EffectiveLubrication;
+                if (lubrication <= 66) mod *= (0.015f * lubrication);
+            }
 
             return MaxSize * mod + Size * (1 - mod);
-            //float modifier = 1 + Math.Max(needLubrication && ?  (needLubrication ? (Owner.Stats.Lubrication.Severity - 30) * 0.01f : 0f);
            // if (hasTag("arousalExpansion")) modifier += Math.Max(0, Math.Max(Owner.Stats.Lust != null ? Owner.Stats.Lust.Severity : 0, Owner.Stats.Stress != null ? Owner.Stats.Stress.Severity : 0) * 0.2f);
 
         }
@@ -850,7 +945,7 @@ public class BodyInternal_Instance
     public bool ContainsCum { get
         {
             if (this.Contains == null) return false;
-            foreach (var i in this.Contains) if (i is Item_Instance_Cum && i.GetComp_Ingestible().amount > 0) return true;
+            foreach (var i in this.Contains) if (i is Item_Instance_Cum && i.Comp_Ingestible.amount > 0) return true;
             return false;
         } }
 
@@ -909,7 +1004,7 @@ public class BodyInternal_Instance
             if (!this.canContain || !isVisiblyExpanded) return false;
             foreach (var item in Contains)
             {
-                var ing = item.GetComp_Ingestible();
+                var ing = item.Comp_Ingestible;
                 if (ing != null && ing.CanBeExpelled) return true;
             }
             return false;
@@ -923,7 +1018,7 @@ public class BodyInternal_Instance
             if (!this.canContain) return false;
             foreach (var item in Contains)
             {
-                var ing = item.GetComp_Ingestible();
+                var ing = item.Comp_Ingestible;
                 if (ing != null && ing.CanBeExpelled) return true;
             }
             return false;
@@ -947,7 +1042,7 @@ public class BodyInternal_Instance
         float expellableTotal = 0f, nonExpellableTotal = 0f;
         for (int i = 0; i < contents.Count; i++)
         {
-            var ing = contents[i].GetComp_Ingestible();
+            var ing = contents[i].Comp_Ingestible;
             if (ing == null) continue;
             if (ing.CanBeExpelled) expellableTotal += ing.amount;
             else nonExpellableTotal += ing.amount;
@@ -961,7 +1056,7 @@ public class BodyInternal_Instance
         for (int i = 0; i < contents.Count; i++)
         {
             var item = contents[i];
-            var ing = item.GetComp_Ingestible();
+            var ing = item.Comp_Ingestible;
             if (ing == null || !ing.CanBeExpelled) continue;
 
             float newAmount = ing.amount * ratio;
@@ -998,8 +1093,9 @@ public class BodyInternal_Instance
         }
 
         var instance = WorldManager.Instantiate(source.BaseID, source.nameOverwrite, 1);
-        var ing = instance?.GetComp_Ingestible();
+        var ing = instance?.Comp_Ingestible;
         if (ing == null) return null;
+        instance.extraTooltip = source.extraTooltip;
         ing.amount = amount;
         return instance;
     }
@@ -1031,7 +1127,7 @@ public class BodyInternal_Instance
         get
         {
             float sum = 0;
-            foreach (var i in Contains) sum += i.GetComp_Ingestible().amount;
+            foreach (var i in Contains) sum += i.Comp_Ingestible.amount;
             return sum;
         }
     }
@@ -1076,7 +1172,14 @@ public class BodyInternal_Instance
         get
         {
             float sum = 0;
-            foreach (var i in Contains) if (i.GetComp_Ingestible() != null && i.GetComp_Ingestible().isLiquid) sum += i.GetComp_Ingestible().amount;
+            foreach (var i in Contains)
+            {
+                var ingestible = i?.Comp_Ingestible;
+                if (ingestible == null || !ingestible.isLiquid) continue;
+                float amount = ingestible.amount;
+                if (amount <= 0 || float.IsNaN(amount) || float.IsInfinity(amount)) continue;
+                sum = amount > float.MaxValue - sum ? float.MaxValue : sum + amount;
+            }
             return sum;
         }
     }
@@ -1153,7 +1256,7 @@ public class BodyInternal_Instance
     public bool Ingest_(Item_Instance item, ExperienceLog m = null, bool forceFill = false, List<BodyInternal_Instance> fillHistory = null)
     {
         if (!this.canContain) return false;
-        var comp = item.GetComp_Ingestible();
+        var comp = item.Comp_Ingestible;
 
         bool isCum = item is Item_Instance_Cum;
         if (isCum)
@@ -1216,7 +1319,7 @@ public class BodyInternal_Instance
                     else
                     {
                         Item_Instance newitem = WorldManager.Instantiate(item.BaseID, item.nameOverwrite, item.Count);
-                        newitem.GetComp_Ingestible().amount = newcap;
+                        newitem.Comp_Ingestible.amount = newcap;
                         IngestInternal(newitem, m);
                     }
                     comp.amount -= newcap;
@@ -1233,13 +1336,13 @@ public class BodyInternal_Instance
                 {
                     var cum = item as Item_Instance_Cum;
                     Item_Instance_Cum newitem = WorldManager.Instantiate(cum.Owner, cum.nameOverwrite);
-                    newitem.GetComp_Ingestible().amount = newcap;
+                    newitem.Comp_Ingestible.amount = newcap;
                     IngestInternal(newitem, m);
                 }
                 else
                 {
                     Item_Instance newitem = WorldManager.Instantiate(item.BaseID, item.nameOverwrite, item.Count);
-                    newitem.GetComp_Ingestible().amount = newcap;
+                    newitem.Comp_Ingestible.amount = newcap;
                     IngestInternal(newitem, m);
                 }
                 comp.amount -= newcap;
@@ -1258,7 +1361,7 @@ public class BodyInternal_Instance
     public bool Ingest(Item_Instance item, ExperienceLog m = null, bool forceFill = false, List<BodyInternal_Instance> fillHistory = null, bool ignoreClimaxAppend = false, ISet<string> forbiddenExperienceIDs = null)
     {
         if (!this.canContain) return false;
-        var comp = item.GetComp_Ingestible();
+        var comp = item.Comp_Ingestible;
 
         bool isCum = item is Item_Instance_Cum;
         if (isCum)
@@ -1376,7 +1479,7 @@ public class BodyInternal_Instance
         if (!this.canContain) return;
         if (!fillHistory.Contains(this)) fillHistory.Add(this);
 
-        var comp = item.GetComp_Ingestible();
+        var comp = item.Comp_Ingestible;
         if (RemainingMaxCapacity >= comp.amount)
         {
             IngestInternal(item, m);
@@ -1392,7 +1495,7 @@ public class BodyInternal_Instance
 
     protected void IngestInternal(Item_Instance i, ExperienceLog m = null)
     {
-        var comp = i.GetComp_Ingestible();
+        var comp = i.Comp_Ingestible;
 
         if (comp != null && m != null && i is Item_Instance_Cum)
         {
@@ -1452,7 +1555,7 @@ public class BodyInternal_Instance
             {
                 if (kvpair.canMergeComp(i))
                 {
-                    kvpair.GetComp_Ingestible().MergeLiquid(comp);
+                    kvpair.Comp_Ingestible.MergeLiquid(comp);
                     scr_System_CampaignManager.current.Unregister(i);
                     return;
                 }
@@ -1466,7 +1569,7 @@ public class BodyInternal_Instance
                 if (kvpair.BaseID == i.BaseID && kvpair.DisplayName == i.DisplayName)
                 {
                     //consumed = true;
-                    kvpair.GetComp_Ingestible().amount += comp.amount;
+                    kvpair.Comp_Ingestible.amount += comp.amount;
                     scr_System_CampaignManager.current.Unregister(i);
                     return;
                 }
@@ -1603,8 +1706,9 @@ public class BodyInternal_Instance
     /// <returns></returns>
     public bool EquipItem(Item_Instance item, ref List<BodyPartEquipSlot> slots, bool forceEquip = false)
     {
-        var comp = item.GetComp_Equippable();
+        var comp = item.Comp_Equippable;
         bool equipped = false;
+        EnsureSlotKeys();
 
         for (int i = slots.Count - 1; i >= 0; i--)
         {
@@ -1637,14 +1741,30 @@ public class BodyInternal_Instance
     }
 
     /// <summary>
+    /// Adds the equip keys (layer||slot) the organ's definition lists but this instance's saved table lacks - slots
+    /// added to a definition later (e.g. Penis) then work on existing characters without re-initializing the organ.
+    /// </summary>
+    void EnsureSlotKeys()
+    {
+        if (contentsIndex == null || Base == null || equipLayers == null || availableSlots == null) return;
+        foreach (BodyEquipLayer layer in equipLayers)
+            foreach (BodyPartEquipSlot slot in availableSlots)
+            {
+                var key = layer.ToString() + "||" + slot.ToString();
+                if (!contentsIndex.ContainsKey(key)) contentsIndex.Add(key, -1);
+            }
+    }
+
+    /// <summary>
     /// Mirrors EquipItem(item) without changing anything: true if this organ would take the item;
     /// replaces = that would displace another item.
     /// </summary>
     public bool PreviewEquip(Item_Instance item, out bool replaces)
     {
         replaces = false;
-        var comp = item.GetComp_Equippable();
+        var comp = item.Comp_Equippable;
         if (comp == null || contentsIndex == null) return false;
+        EnsureSlotKeys();
         bool equipped = false, unequip = false, displaces = false;
         foreach (var slot in comp.equipSlot)
         {
@@ -1671,9 +1791,10 @@ public class BodyInternal_Instance
 
     public bool EquipItem(Item_Instance item, bool forceEquip = false)
     {
-        var comp = item.GetComp_Equippable();
+        var comp = item.Comp_Equippable;
         bool equipped = false;
         bool unequip = false;
+        EnsureSlotKeys();
 
         foreach(var slot in comp.equipSlot)
         {
@@ -1736,7 +1857,8 @@ public class BodyInternal_Instance
 
                 Owner.UnequipItem(returnval);
             }
-
+            // organ slots feed the body's EquippedItemRefs cache
+            Owner?.Body?.ClearEquipCaches();
         }
         return returnval;
     }
@@ -1826,6 +1948,4 @@ public class Sexperience
 
 // global sexp : best sex, worst sex, most sex, 
 // global sexp based on whole sex session
-
-
 

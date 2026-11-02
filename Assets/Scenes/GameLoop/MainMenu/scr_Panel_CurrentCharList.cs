@@ -6,8 +6,25 @@ using System;
 
 public class scr_Panel_CurrentCharList : scr_Menu
 { 
+    private scr_System_CampaignManager campaignManager;
+    private scr_UpdateHandler updateHandler;
+
     protected override void OnDestroy()
     {
+        if (!ReferenceEquals(campaignManager, null))
+        {
+            campaignManager.Observer_CurrentTarget -= ReadCurrentChar;
+            campaignManager.Observer_CurrentRoom -= OnRoomChange;
+            campaignManager.Observer_playerParty -= OnPlayerPartyChange;
+            campaignManager.Observer_PlayerJob -= OnPlayerJobChange;
+            campaignManager.Observer_UpdateNotice -= OnUpdateNotice;
+            campaignManager = null;
+        }
+        if (!ReferenceEquals(updateHandler, null))
+        {
+            updateHandler.Observer_PostUpdateTime_3 -= OnPostUpdateTime3;
+            updateHandler = null;
+        }
         base.OnDestroy();
 
     }
@@ -15,13 +32,15 @@ public class scr_Panel_CurrentCharList : scr_Menu
     protected override void Awake()
     {
         base.Awake();
-        scr_System_CampaignManager.current.Observer_CurrentTarget += ReadCurrentChar;
-        scr_System_CampaignManager.current.Observer_CurrentRoom += OnRoomChange;
-        scr_System_CampaignManager.current.Observer_playerParty += OnPlayerPartyChange;
-        scr_System_CampaignManager.current.Observer_PlayerJob += OnPlayerJobChange;
+        campaignManager = scr_System_CampaignManager.current;
+        campaignManager.Observer_CurrentTarget += ReadCurrentChar;
+        campaignManager.Observer_CurrentRoom += OnRoomChange;
+        campaignManager.Observer_playerParty += OnPlayerPartyChange;
+        campaignManager.Observer_PlayerJob += OnPlayerJobChange;
 
-        scr_UpdateHandler.current.Observer_PostUpdateTime_3 += OnPostUpdateTime3;
-        scr_System_CampaignManager.current.Observer_UpdateNotice += OnUpdateNotice;
+        updateHandler = scr_UpdateHandler.current;
+        updateHandler.Observer_PostUpdateTime_3 += OnPostUpdateTime3;
+        campaignManager.Observer_UpdateNotice += OnUpdateNotice;
 
         
     }

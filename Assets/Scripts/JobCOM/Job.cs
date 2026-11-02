@@ -435,7 +435,7 @@ public class Job : IDisposable, I_Disposable
             // ExistPlayerPackage keeps finding and treating as "player still has a pending package".
             packages_current[i].DisablePackage();
             scr_System_CampaignManager.current.Unregister(packages_current[i]);
-            packages_current.RemoveAt(i);
+            RemovePackageAt_Current(i);
         }
         for (int i = packages_previous.Count - 1; i >= 0; i--)
         {
@@ -450,7 +450,7 @@ public class Job : IDisposable, I_Disposable
                 else p.PackageRepeat = false;
                 scr_System_CampaignManager.current.Unregister(p);
 
-                packages_previous.RemoveAt(i);
+                RemovePackageAt_Previous(i);
                 packages_completed.Add(p);
                 // -> if a package has run to completion, we need to keep it for a last update cycle.
             }
@@ -534,11 +534,6 @@ public class Job : IDisposable, I_Disposable
                     continue;
                 }
 
-                if (com is COM_TakeMeal && (FactionOwner == null || !FactionOwner.isMealHour))
-                {
-                    if (debug != null) debug.Add($"{com.ID} skipped by not meeting meal hour req");
-                    continue;
-                }
                 results.Add(com);
             }
 
@@ -650,29 +645,9 @@ public class Job : IDisposable, I_Disposable
 
     public void GetActorAPTags(int refID, List<string> ownerTags, List<ActionPackage> packages = null)
     {
-        List<string> list = new List<string>();
-        foreach (var ap in this.packages_current)
-        {
-            if (ap.actorRefs == null || !ap.actorRefs.Contains(refID)) continue;
-            if(packages != null) packages.Add(ap);
-            foreach (var ep in ap.ListEP) list.AddRange(ep.GetActorEPTags(refID));
-        }
-        foreach (var ap in this.packages_previous)
-        {
-            if (ap.actorRefs == null || !ap.actorRefs.Contains(refID)) continue;
-            if (packages != null) packages.Add(ap);
-            foreach (var ep in ap.ListEP) list.AddRange(ep.GetActorEPTags(refID));
-        }
-        foreach (var ap in this.packages_completed)
-        {
-            if (ap.actorRefs == null || !ap.actorRefs.Contains(refID)) continue;
-            if (packages != null) packages.Add(ap);
-            foreach (var ep in ap.ListEP) list.AddRange(ep.GetActorEPTags(refID));
-        }
-        list = list.Distinct().ToList();
-        ownerTags.AddRange(list);
-
-        return;
+        var cache = GetActorAPTagCache(refID, false);
+        if (packages != null) packages.AddRange(cache.Packages);
+        ownerTags.AddRange(cache.Tags);
     }
 
     /// <summary>
@@ -681,29 +656,164 @@ public class Job : IDisposable, I_Disposable
     /// </summary>
     public void GetActorAPTargetTags(int refID, List<string> targetTags, List<ActionPackage> packages = null)
     {
-        List<string> list = new List<string>();
-        foreach (var ap in this.packages_current)
-        {
-            if (ap.actorRefs == null || !ap.actorRefs.Contains(refID)) continue;
-            if (packages != null) packages.Add(ap);
-            foreach (var ep in ap.ListEP) list.AddRange(ep.GetActorEPTargetTags(refID));
-        }
-        foreach (var ap in this.packages_previous)
-        {
-            if (ap.actorRefs == null || !ap.actorRefs.Contains(refID)) continue;
-            if (packages != null) packages.Add(ap);
-            foreach (var ep in ap.ListEP) list.AddRange(ep.GetActorEPTargetTags(refID));
-        }
-        foreach (var ap in this.packages_completed)
-        {
-            if (ap.actorRefs == null || !ap.actorRefs.Contains(refID)) continue;
-            if (packages != null) packages.Add(ap);
-            foreach (var ep in ap.ListEP) list.AddRange(ep.GetActorEPTargetTags(refID));
-        }
-        list = list.Distinct().ToList();
-        targetTags.AddRange(list);
+        var cache = GetActorAPTagCache(refID, true);
+        if (packages != null) packages.AddRange(cache.Packages);
+        targetTags.AddRange(cache.Tags);
+    }
 
-        return;
+    [NonSerialized, JsonIgnore] private List<ActorAPTagCache> actorAPTagCaches;
+
+    private struct APTagSnapshot
+    {
+        public ActionPackage Package;
+        public bool Participates;
+        public int EPCount;
+    }
+
+    private struct EPTagSnapshot
+    {
+        public EvaluationPackage Package;
+        public int Doer, Receiver, TagCount;
+        public ulong Revision;
+        public List<string> Tags;
+    }
+
+    private sealed class ActorAPTagCache
+    {
+        public int ActorRef;
+        public bool Partner, Valid;
+        public int CurrentCount, PreviousCount, CompletedCount;
+        public readonly List<string> Tags = new List<string>(16);
+        public readonly List<ActionPackage> Packages = new List<ActionPackage>(4);
+        public readonly List<APTagSnapshot> APs = new List<APTagSnapshot>(4);
+        public readonly List<EPTagSnapshot> EPs = new List<EPTagSnapshot>(4);
+        public readonly List<string> SourceTags = new List<string>(16);
+
+        public void Clear()
+        {
+            Valid = false;
+            Tags.Clear();
+            Packages.Clear();
+            APs.Clear();
+            EPs.Clear();
+            SourceTags.Clear();
+        }
+    }
+
+    private ActorAPTagCache GetActorAPTagCache(int refID, bool partner)
+    {
+        if (actorAPTagCaches == null) actorAPTagCaches = new List<ActorAPTagCache>(4);
+        ActorAPTagCache cache = null;
+        for (int i = 0; i < actorAPTagCaches.Count; i++)
+        {
+            var candidate = actorAPTagCaches[i];
+            if (candidate.ActorRef == refID && candidate.Partner == partner) { cache = candidate; break; }
+        }
+        if (cache == null)
+        {
+            cache = new ActorAPTagCache { ActorRef = refID, Partner = partner };
+            actorAPTagCaches.Add(cache);
+        }
+
+        int apIndex = 0, epIndex = 0, tagIndex = 0;
+        if (cache.Valid && cache.CurrentCount == packages_current.Count
+            && cache.PreviousCount == packages_previous.Count && cache.CompletedCount == packages_completed.Count
+            && ValidateActorAPTagCache(cache, packages_current, ref apIndex, ref epIndex, ref tagIndex)
+            && ValidateActorAPTagCache(cache, packages_previous, ref apIndex, ref epIndex, ref tagIndex)
+            && ValidateActorAPTagCache(cache, packages_completed, ref apIndex, ref epIndex, ref tagIndex)) return cache;
+
+        cache.Clear();
+        cache.CurrentCount = packages_current.Count;
+        cache.PreviousCount = packages_previous.Count;
+        cache.CompletedCount = packages_completed.Count;
+        BuildActorAPTagCache(cache, packages_current);
+        BuildActorAPTagCache(cache, packages_previous);
+        BuildActorAPTagCache(cache, packages_completed);
+        cache.Valid = true;
+        return cache;
+    }
+
+    private static bool ActorParticipatesInAP(ActionPackage ap, int refID)
+    {
+        // These overrides construct singleton lists; their exact source is the first doer, or -1.
+        if (ap is ActionPackage_Undress || ap is ActionPackage_Redress
+            || ap is ActionPackage_PathTo || ap is ActionPackage_TeleportTo)
+        {
+            var doers = ap.DoerRefs;
+            return (doers != null && doers.Count > 0 ? doers[0] : -1) == refID;
+        }
+        var actors = ap.actorRefs;
+        return actors != null && actors.Contains(refID);
+    }
+
+    private static bool ValidateActorAPTagCache(ActorAPTagCache cache, List<ActionPackage> source,
+        ref int apIndex, ref int epIndex, ref int tagIndex)
+    {
+        for (int i = 0; i < source.Count; i++)
+        {
+            var ap = source[i];
+            var snapshot = cache.APs[apIndex++];
+            if (!ReferenceEquals(snapshot.Package, ap)) return false;
+            // Wait's protected doerRef is constructor-only (also in LLMWait). Load repair clears caches.
+            bool participates = ap is ActionPackage_Wait ? snapshot.Participates : ActorParticipatesInAP(ap, cache.ActorRef);
+            if (participates != snapshot.Participates) return false;
+            if (!participates) continue;
+            var eps = ap.ListEP;
+            if (eps.Count != snapshot.EPCount) return false;
+            for (int j = 0; j < eps.Count; j++)
+            {
+                var ep = eps[j];
+                var previous = cache.EPs[epIndex++];
+                if (!ReferenceEquals(ep, previous.Package) || ep.DoerRef != previous.Doer
+                    || ep.ReceiverRef != previous.Receiver || ep.TagCacheRevision != previous.Revision) return false;
+                var tags = ep.GetCachedActorEPTags(cache.ActorRef, cache.Partner);
+                if (!ReferenceEquals(tags, previous.Tags) || (tags == null ? 0 : tags.Count) != previous.TagCount) return false;
+                for (int k = 0; k < previous.TagCount; k++)
+                    if (tags[k] != cache.SourceTags[tagIndex++]) return false;
+            }
+        }
+        return true;
+    }
+
+    private static void BuildActorAPTagCache(ActorAPTagCache cache, List<ActionPackage> source)
+    {
+        for (int i = 0; i < source.Count; i++)
+        {
+            var ap = source[i];
+            bool participates = ActorParticipatesInAP(ap, cache.ActorRef);
+            cache.APs.Add(new APTagSnapshot { Package = ap, Participates = participates,
+                EPCount = participates ? ap.ListEP.Count : 0 });
+            if (!participates) continue;
+            cache.Packages.Add(ap);
+            var eps = ap.ListEP;
+            for (int j = 0; j < eps.Count; j++)
+            {
+                var ep = eps[j];
+                List<string> tags = null;
+                if (ep.DoerRef == cache.ActorRef || ep.ReceiverRef == cache.ActorRef)
+                    tags = cache.Partner ? ep.GetActorEPTargetTags(cache.ActorRef) : ep.GetActorEPTags(cache.ActorRef);
+                cache.EPs.Add(new EPTagSnapshot { Package = ep, Doer = ep.DoerRef, Receiver = ep.ReceiverRef,
+                    Revision = ep.TagCacheRevision, Tags = tags, TagCount = tags == null ? 0 : tags.Count });
+                if (tags == null) continue;
+                for (int k = 0; k < tags.Count; k++)
+                {
+                    var tag = tags[k];
+                    cache.SourceTags.Add(tag);
+                    if (!cache.Tags.Contains(tag)) cache.Tags.Add(tag);
+                }
+            }
+        }
+    }
+
+    private void ClearActorAPTagCaches(bool prune = false)
+    {
+        if (actorAPTagCaches == null) return;
+        for (int i = actorAPTagCaches.Count - 1; i >= 0; i--)
+        {
+            var cache = actorAPTagCaches[i];
+            cache.Clear();
+            if (!prune || !actorRefIDStorage.ContainsKey(cache.ActorRef)) actorAPTagCaches.RemoveAt(i);
+        }
     }
 
     public void GetActorAPs(int refID, List<ActionPackage> packages)
@@ -807,13 +917,17 @@ public class Job : IDisposable, I_Disposable
     public List<ActionPackage> JoinablePackages(int actorRef)
     {
         var returnVal = new List<ActionPackage>();
+        var furniture = this as Job_Furniture;
+        var actor = furniture == null ? null : scr_System_CampaignManager.current.FindInstanceByID(actorRef);
         foreach(var ap in ExecutingPackages)
         {
             if(ap.Duration < 2) continue;
             if(ap.actorRefs.Contains(actorRef)) continue;
             if(!ap.AllowJoining) continue;
+            if (furniture != null && !furniture.AllowsActivityCommand(actor, ap.targetCOM)) continue;
             returnVal.Add(ap);
         }
+        // These are existing-package joins only. Activity entry offers start their own coordinator package.
         return returnVal;
     }
 
@@ -833,12 +947,12 @@ public class Job : IDisposable, I_Disposable
 
     public virtual void RemovePackage(ActionPackage ap, bool logRemove = false)
     {
-        bool removedFromPrevious = this.packages_previous.Remove(ap);
+        bool removedFromPrevious = RemovePackage_Previous(ap);
         if (removedFromPrevious && ap.Duration > 0)
         {
             ap.NotifyInterrupted();
         }
-        bool removedFromCurrent = this.packages_current.Remove(ap);
+        bool removedFromCurrent = RemovePackage_Current(ap);
 
         // Same leak as elsewhere: a package pulled out of job tracking here (rather than completing
         // naturally) must be disabled and unregistered, or it lingers in the campaign manager's room
@@ -852,8 +966,9 @@ public class Job : IDisposable, I_Disposable
 
     public virtual void Clear()
     {
-        this.packages_previous.Clear();
-        this.packages_current.Clear();
+        ClearActorAPTagCaches();
+        ClearPackages_Previous();
+        ClearPackages_Current();
         this.actorJobComplete.Clear();
         this.actorRemove.Clear();
         this.actorJoinTime.Clear();
@@ -863,13 +978,63 @@ public class Job : IDisposable, I_Disposable
         this.m.Clear();
     }
     [JsonIgnore] public List<ActionPackage> CurrentPackages { get { return packages_current; } }
+
+    #region package list edits
+    // packages_current / packages_previous must only change through these: each one drops the ActivePackages cache.
+    // Raw list edits only - no DisablePackage/Unregister (RemovePackage does that on top).
+    [JsonIgnore] List<ActionPackage> _activePackagesCache = null;
+    protected void InvalidateActivePackages() { _activePackagesCache = null; }
+
+    protected void AddPackage_Current(ActionPackage ap) { packages_current.Add(ap); _activePackagesCache = null; }
+    protected void AddPackage_Previous(ActionPackage ap) { packages_previous.Add(ap); _activePackagesCache = null; }
+    protected void RemovePackageAt_Current(int index) { packages_current.RemoveAt(index); _activePackagesCache = null; }
+    protected void RemovePackageAt_Previous(int index) { packages_previous.RemoveAt(index); _activePackagesCache = null; }
+    /// <summary> raw removal from packages_current only (no disable/unregister) - see RemovePackage for the full removal </summary>
+    public bool RemovePackage_Current(ActionPackage ap)
+    {
+        if (!packages_current.Remove(ap)) return false;
+        _activePackagesCache = null;
+        return true;
+    }
+    protected bool RemovePackage_Previous(ActionPackage ap)
+    {
+        if (!packages_previous.Remove(ap)) return false;
+        _activePackagesCache = null;
+        return true;
+    }
+    /// <summary> moves packages_current[index] to the end of packages_previous </summary>
+    protected void MovePackageToPrevious(int currentIndex)
+    {
+        packages_previous.Add(packages_current[currentIndex]);
+        packages_current.RemoveAt(currentIndex);
+        _activePackagesCache = null;
+    }
+    protected void SwapPackages_Current(int a, int b)
+    {
+        if (a == b) return;
+        var temp = packages_current[a];
+        packages_current[a] = packages_current[b];
+        packages_current[b] = temp;
+        _activePackagesCache = null;
+    }
+    protected void ClearPackages_Current() { if (packages_current.Count < 1) return; packages_current.Clear(); _activePackagesCache = null; }
+    protected void ClearPackages_Previous() { if (packages_previous.Count < 1) return; packages_previous.Clear(); _activePackagesCache = null; }
+
+    /// <summary>
+    /// DO NOT MUTATE THIS!!!
+    /// packages_current + packages_previous, cached until one of the package list edits above runs - read only, never mutate it.
+    /// Invalidation drops the list instead of refilling it, so a caller still holding/iterating the old result keeps its snapshot.
+    /// </summary>
     [JsonIgnore] public List<ActionPackage> ActivePackages { get
         {
-            List<ActionPackage> ap = new List<ActionPackage>();
-            ap.AddRange(packages_current);
-            ap.AddRange(packages_previous);
-            return ap;
+            if (_activePackagesCache != null) return _activePackagesCache;
+            var cache = new List<ActionPackage>(packages_current.Count + packages_previous.Count);
+            cache.AddRange(packages_current);
+            cache.AddRange(packages_previous);
+            _activePackagesCache = cache;
+            return cache;
         } }
+    #endregion
 
     /// <summary>
     /// Gather Start COM message
@@ -888,15 +1053,15 @@ public class Job : IDisposable, I_Disposable
             var p = packages_current[i];
             if (p.Duration < 0)
             {
-                packages_current.RemoveAt(i);
+                RemovePackageAt_Current(i);
                 continue;
             }
             p.SetActive(current);
             scr_System_CampaignManager.current.Register(p);
-            packages_previous.Add(p);
+            AddPackage_Previous(p);
         }
 
-        packages_current.Clear();
+        ClearPackages_Current();
 
         ReregisterPackages(true);   // retry register previously paused packages
 
@@ -1067,7 +1232,7 @@ public class Job : IDisposable, I_Disposable
                 {
                     if (scr_System_CentralControl.current.LogPrefs.DLog_AP) Debug.Log("readding package " + p.DisplayName);
                     p.Repeat();
-                    packages_current.Add(p);
+                    AddPackage_Current(p);
                 }
                 else
                 {
@@ -1077,7 +1242,7 @@ public class Job : IDisposable, I_Disposable
                     if (!p.isTemporaryAP) actorJobComplete.AddRange(p.actorRefs);
                     
                 }
-                packages_previous.RemoveAt(i);
+                RemovePackageAt_Previous(i);
                 packages_completed.Add(p);
                 // success remove
             }
@@ -1101,6 +1266,8 @@ public class Job : IDisposable, I_Disposable
 
         m.Clear();
 
+        // Drop obsolete package references, retaining storage only for the job's current actors.
+        ClearActorAPTagCaches(true);
     }
 
     public List<int> actorJobComplete = new List<int>();
@@ -1139,11 +1306,11 @@ public class Job : IDisposable, I_Disposable
                     // registry with a frozen positive Duration.
                     p2.DisablePackage();
                     scr_System_CampaignManager.current.Unregister(p2);
-                    packages_current.RemoveAt(ii);
+                    RemovePackageAt_Current(ii);
                 }
             }
             ActionPackage ap = p1.Copy();
-            packages_current.Add(ap);
+            AddPackage_Current(ap);
             if (isPlayerCOM) scr_System_CampaignManager.current.SetDisplayCOM(ap, scr_System_CampaignManager.displayAP_Reason.isPlayerCOM);
             foreach(int actorref in packages[i].actorRefs) AddActor(actorref);
         }
@@ -1151,7 +1318,7 @@ public class Job : IDisposable, I_Disposable
 
     public void InjectPackageAndExecute(ActionPackage ap, MessageCollect m, bool addActor = false)
     {
-        this.packages_previous.Add(ap);
+        AddPackage_Previous(ap);
         var currentTime = scr_System_Time.current.getCurrentTime();
         ap.SetActive(currentTime);
         if (addActor) foreach (int actorref in ap.actorRefs) AddActor(actorref);
@@ -1174,7 +1341,7 @@ public class Job : IDisposable, I_Disposable
     //skipExistingActors: don't re-AddActor actors already in the job (Job_Sex.AddActor would reset its ongoing packages)
     public void InjectPackage(ActionPackage ap, bool skipExistingActors = false)
     {
-        this.packages_previous.Add(ap);
+        AddPackage_Previous(ap);
         foreach (int actorref in ap.actorRefs)
         {
             if (skipExistingActors && actorRefID.Contains(actorref)) continue;
@@ -1231,7 +1398,7 @@ public class Job : IDisposable, I_Disposable
                 if (package.Validate())
                 {
                     scr_System_CampaignManager.current.Register(package, avoidConflict);
-                    if (!package.isPaused)
+                    if (!package.isPaused && !package.IsSexSceneEntry)
                     {
                         foreach (var actor in package.Actors) actor.ChangeCurrentJob(this);
                     }
@@ -1252,7 +1419,7 @@ public class Job : IDisposable, I_Disposable
                 package.NotifyInterrupted();
                 package.DisablePackage();
                 scr_System_CampaignManager.current.Unregister(package);
-                packages_previous.RemoveAt(i);
+                RemovePackageAt_Previous(i);
                 this.actorJobComplete.AddRange(package.actorRefs);
             }
         }
@@ -1264,11 +1431,13 @@ public class Job : IDisposable, I_Disposable
 
     public void Dispose()
     {
+        ClearActorAPTagCaches();
         Debug.Log("Job Instance " + RefID + " disposed");
     }
 
     public virtual void DisposeInternal()
     {
+        ClearActorAPTagCaches();
         //this.FactionOwner = null;
         this.allusableCOMs_cache = null;
     }
@@ -1278,6 +1447,7 @@ public class Job : IDisposable, I_Disposable
     /// </summary>
     public virtual void OnAfterDeserialize()
     {
+        ClearActorAPTagCaches();
         //Debug.Log("JobInstance " + RefID + " onAfterDeserealize");
         
         foreach (ActionPackage p in this.packages_previous)

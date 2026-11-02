@@ -141,9 +141,84 @@
                     "description_begin":{ "Entries":[{"texts":["com_interaction_initiateSex_description_begin_8"]}] },
                     "description_ongoing":{ "Entries":[{"texts":["com_interaction_initiateSex_description_ongoing_8"]}] },
                     "description_onComplete":{ "Entries":[{"texts":["com_interaction_initiateSex_description_onComplete_8"]}] }
+                },
+                {
+                    "joinsExistingSexScene":true,
+                    "requirements":{
+                        "requirement":{
+                            "doerCount":1, "receiverCount":1,
+                            "forbidTeammateJoin":true,
+                            "req_Receivers":{ "requireMovement":true, "requireUnrestrained":true }
+                        }
+                    },
+                    "displayName":"com_interaction_initiateSex_displayName_join",
+                    "description_doer_1_n":"com_interaction_initiateSex_request_join_doer",
+                    "description_receiver_n_1":"com_interaction_initiateSex_request_join_receiver",
+                    "useBaseDescription":false,
+                    "description_begin":{ "Entries":[{"texts":["com_interaction_initiateSex_description_begin_join"]}] },
+                    "description_ongoing":{ "Entries":[{"texts":["com_interaction_initiateSex_description_begin_join"]}] },
+                    "description_onComplete":{ "Entries":[{"texts":["com_interaction_initiateSex_description_onComplete_join"]}] },
+                    "description_remove":{ "Entries":[{"texts":["com_interaction_initiateSex_description_remove_join"]}] }
+                },
+                {
+                    "joinsExistingSexScene":true,
+                    "requirements":{
+                        "requirement":{
+                            "doerCount":1, "receiverCount":1,
+                            "forbidTeammateJoin":true
+                        }
+                    },
+                    "displayName":"com_interaction_initiateSex_displayName_join_2",
+                    "description_doer_1_n":"comDescription_1_n_doer_passive",
+                    "description_receiver_n_1":"comDescription_n_1_receiver_passive",
+                    "useBaseDescription":false,
+                    "description_begin":{ "Entries":[{"texts":["com_interaction_initiateSex_description_begin_join_2"]}] },
+                    "description_ongoing":{ "Entries":[{"texts":["com_interaction_initiateSex_description_ongoing_join_2"]}] },
+                    "description_onComplete":{ "Entries":[{"texts":["com_interaction_initiateSex_description_onComplete_join_2"]}] }
+                },
+                {
+                    "joinsExistingSexScene":true,
+                    "requirements":{
+                        "requirement":{
+                            "doerCount":1, "receiverCount":1,
+                            "forbidTeammateJoin":true,
+                            "req_Receivers":{ "requireAction": false }
+                        }
+                    },
+                    "displayName":"com_interaction_initiateSex_displayName_join_3",
+                    "useBaseDescription":false,
+                    "description_begin":{ "Entries":[{"texts":["com_interaction_initiateSex_description_begin_join_3"]}] },
+                    "description_ongoing":{ "Entries":[{"texts":["com_interaction_initiateSex_description_ongoing_join_3"]}] },
+                    "description_onComplete":{ "Entries":[{"texts":["com_interaction_initiateSex_description_onComplete_join_3"]}] }
+                },
+                {
+                    "joinsExistingSexScene":true,
+                    "requirements":{
+                        "requirement":{
+                            "doerCount":1, "receiverCount":1,
+                            "forbidTeammateJoin":true,
+                            "req_Receivers":{ "requireConscious":false, "requireAction": false }
+                        }
+                    },
+                    "displayName":"com_interaction_initiateSex_displayName_join_4",
+                    "useBaseDescription":false,
+                    "description_begin":{ "Entries":[{"texts":["com_interaction_initiateSex_description_begin_join_4"]}] },
+                    "description_ongoing":{ "Entries":[{"texts":["com_interaction_initiateSex_description_ongoing_join_4"]}] },
+                    "description_onComplete":{ "Entries":[{"texts":["com_interaction_initiateSex_description_onComplete_join_4"]}] }
                 }
             ],
-            "AcceptanceCheck":{ "baseAcceptanceValue":25 },
+            "_comment_actModifiers":"Provisional, untested new D20 bonuses. Relationships belong to the act owner toward the actual partner, not the master. Parent EP gates ordinary conscious, unrestrained, non-threat actual pairs; special, forced and group contexts stay unchanged.",
+            "AcceptanceCheck":{
+                "baseAcceptanceValue":25,
+                "actModifiers":{
+                    "enabled":true, "totalMin":0, "totalMax":8,
+                    "terms":[
+                        {"source":"PartnerGoodwill", "appliesTo":"BothDeciders", "scale":0.04, "offset":0, "min":0, "max":3},
+                        {"source":"PartnerTrust", "appliesTo":"BothDeciders", "scale":0.04, "offset":0, "min":0, "max":3},
+                        {"source":"PartnerDesire", "appliesTo":"BothDeciders", "scale":0.04, "offset":0, "min":0, "max":4}
+                    ]
+                }
+            },
             "DifficultyCheck":{ "baseD20Check":0 },
 
             "description_ongoing":{ "Entries":[{"texts":["com_interaction_initiateSex_description_ongoing_1"]}], "keepLooking":false },
@@ -274,6 +349,24 @@
                 "com_interaction_initiateSex_displayName_6": "轮奸",
                 "com_interaction_initiateSex_displayName_7": "时停轮奸",
                 "com_interaction_initiateSex_displayName_8": "睡眠轮奸",
+                "com_interaction_initiateSex_displayName_join": "加入当前性交",
+                "com_interaction_initiateSex_request_join_doer": "向$receivers$提出加入当前性交的请求",
+                "com_interaction_initiateSex_request_join_receiver": "收到$doers$提出的加入当前性交的请求",
+                "com_interaction_initiateSex_description_begin_join": "$doer.firstname$向$receiver.firstname$提出加入当前性交的请求",
+                "com_interaction_initiateSex_description_onComplete_join": "$doer.firstname$与$receiver.firstname$的加入请求已处理完毕",
+                "com_interaction_initiateSex_description_remove_join": "$doer.firstname$与$receiver.firstname$的加入请求已结束",
+                "com_interaction_initiateSex_displayName_join_2": "强行拉入当前性交",
+                "com_interaction_initiateSex_displayName_join_3": "时停拉入当前性交",
+                "com_interaction_initiateSex_displayName_join_4": "睡眠拉入当前性交",
+                "com_interaction_initiateSex_description_begin_join_2": "$doer.firstname$不顾$receiver.firstname$的挣扎，强行将其拉入了当前的性交",
+                "com_interaction_initiateSex_description_ongoing_join_2": "$doer.firstname$正在强行将$receiver.firstname$拉入当前的性交",
+                "com_interaction_initiateSex_description_onComplete_join_2": "$doer.firstname$强行将$receiver.firstname$拉入了当前的性交",
+                "com_interaction_initiateSex_description_begin_join_3": "$doer.firstname$停下了时间，将定住不动的$receiver.firstname$拉入了当前的性交",
+                "com_interaction_initiateSex_description_ongoing_join_3": "$doer.firstname$正在时间停止中将$receiver.firstname$拉入当前的性交",
+                "com_interaction_initiateSex_description_onComplete_join_3": "$doer.firstname$趁着时间停止将$receiver.firstname$拉入了当前的性交",
+                "com_interaction_initiateSex_description_begin_join_4": "$doer.firstname$将熟睡中的$receiver.firstname$拉入了当前的性交",
+                "com_interaction_initiateSex_description_ongoing_join_4": "$doer.firstname$正在将熟睡中的$receiver.firstname$拉入当前的性交",
+                "com_interaction_initiateSex_description_onComplete_join_4": "$doer.firstname$将熟睡中的$receiver.firstname$拉入了当前的性交",
 
 
                 "com_interaction_endOngoingSex": "结束性交",
@@ -345,6 +438,24 @@
                 "com_interaction_initiateSex_displayName_6": "Gangbang",
                 "com_interaction_initiateSex_displayName_7": "Time Stop Gangbang",
                 "com_interaction_initiateSex_displayName_8": "Sleep Gangbang",
+                "com_interaction_initiateSex_displayName_join": "Join Current Sex Scene",
+                "com_interaction_initiateSex_request_join_doer": "Ask $receivers$ about joining the current sex scene",
+                "com_interaction_initiateSex_request_join_receiver": "Receive $doers$' request to join the current sex scene",
+                "com_interaction_initiateSex_description_begin_join": "$doer.firstname$ asks $receiver.firstname$ about joining the current sex scene",
+                "com_interaction_initiateSex_description_onComplete_join": "$doer.firstname$ and $receiver.firstname$'s join request has been processed",
+                "com_interaction_initiateSex_description_remove_join": "$doer.firstname$ and $receiver.firstname$'s join request has ended",
+                "com_interaction_initiateSex_displayName_join_2": "Force Into Current Sex Scene",
+                "com_interaction_initiateSex_displayName_join_3": "Time Stop Into Current Sex Scene",
+                "com_interaction_initiateSex_displayName_join_4": "Sleep Into Current Sex Scene",
+                "com_interaction_initiateSex_description_begin_join_2": "$doer.firstname$ drags $receiver.firstname$ into the current sex scene, ignoring their struggles",
+                "com_interaction_initiateSex_description_ongoing_join_2": "$doer.firstname$ is forcing $receiver.firstname$ into the current sex scene",
+                "com_interaction_initiateSex_description_onComplete_join_2": "$doer.firstname$ forced $receiver.firstname$ into the current sex scene",
+                "com_interaction_initiateSex_description_begin_join_3": "$doer.firstname$ stops time and pulls the frozen $receiver.firstname$ into the current sex scene",
+                "com_interaction_initiateSex_description_ongoing_join_3": "$doer.firstname$ is pulling the time-stopped $receiver.firstname$ into the current sex scene",
+                "com_interaction_initiateSex_description_onComplete_join_3": "$doer.firstname$ pulled $receiver.firstname$ into the current sex scene while time stood still",
+                "com_interaction_initiateSex_description_begin_join_4": "$doer.firstname$ pulls the sleeping $receiver.firstname$ into the current sex scene",
+                "com_interaction_initiateSex_description_ongoing_join_4": "$doer.firstname$ is pulling the sleeping $receiver.firstname$ into the current sex scene",
+                "com_interaction_initiateSex_description_onComplete_join_4": "$doer.firstname$ pulled $receiver.firstname$ into the current sex scene in their sleep",
                 "com_interaction_endOngoingSex": "End Sex",
                 "com_interaction_endOngoingSex_displayName_0": "End Masturbation",
                 "com_interaction_endOngoingSex_displayName_1": "End Sex",

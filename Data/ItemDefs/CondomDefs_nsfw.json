@@ -1,0 +1,60 @@
+{
+    "_doc": "Condoms (Docs/Interactions/Step06FPermissionsImplementationPlan.md, P5b). condom: one-time-use wearable on the Penis slot (ItemComponentTemplate_Equippable.singleUse) - put on by the condom commands, which move it from an accessible inventory into the wearer's own inventory and really equip it. It covers nothing, so undress leaves it on. Semen shot while worn goes into the condom (ItemComponent_Contents), not the partner; it stays on. Taking it off destroys it and drops its used version on the room floor (SingleUseEquipUtility.ConsumeTakenOff): condom_filled with the semen moved over (comp_Contents.filledItemID) when it holds any, else condom_used. Only an empty worn condom stops permission_sex_unprotected from applying. No 'consumable' tag on purpose (item-generated commands key on it), so shops do not stock it yet.",
+    "Items": {
+        "list": [
+            {
+                "id": "condom",
+                "Tags": ["condom", "industrial", "nsfw"],
+                "value": 100,
+                "itemComps_Template": [
+                    {
+                        "compType": "ItemComponent_Equippable",
+                        "comp_Equippable": {
+                            "equipSlot": ["Penis"],
+                            "equipLayer": "Skin",
+                            "revealing": "Erotic",
+                            "promptTags": ["condom"],
+                            "singleUse": true,
+                            "usedItemID": "condom_used"
+                        }
+                    },
+                    {
+                        "compType": "ItemComponent_Contents",
+                        "comp_Contents": {
+                            "filledItemID": "condom_filled"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "condom_used",
+                "Tags": ["trash", "condom_used", "nsfw"],
+                "cleanlinessMod": -1
+            },
+            {
+                "id": "condom_filled",
+                "Tags": ["trash", "condom_filled", "nsfw"],
+                "cleanlinessMod": -1,
+                "itemComps_Template": [
+                    {
+                        "compType": "ItemComponent_Contents",
+                        "comp_Contents": {}
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "condom": "避孕套",
+                "condom_tooltip": "一次性的避孕套，戴在阴茎上。取下后即作废。",
+                "condom_used": "用过的避孕套",
+                "condom_used_tooltip": "已经用过的避孕套。",
+                "condom_filled": "装满精液的避孕套",
+                "condom_filled_tooltip": "射在里面的精液还留在套中。",
+                "ItemComponent_Contents_tooltip": "内含：\n$items$"
+            }
+        }
+    }
+}

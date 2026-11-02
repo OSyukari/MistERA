@@ -19,6 +19,20 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
     /// </summary>
     public List<RecreationOfferDef> recreationOffers = new List<RecreationOfferDef>();
 
+    /// <summary>
+    /// House activities every home faction offers its own home members (Manageable.HouseActivities - not a subfaction or
+    /// worker pool), on top of its own MapPlan.houseActivities (same ID: the faction's own wins). Bound to furniture by
+    /// their facility, so a home only offers the ones its furniture allows (FacilityAvailable). Template data, never saved.
+    /// Data/Recreation/HouseActivities.json.
+    /// </summary>
+    public List<RecreationActivity> sharedHouseActivities = new List<RecreationActivity>();
+
+    /// <summary>
+    /// MemberType IDs every faction offers in the management job-post tab (Manageable.AssignableMemberTypes - not a
+    /// subfaction or worker pool), after its own MapPlan.assignableMemberTypes - e.g. the family doctor.
+    /// </summary>
+    public List<string> sharedAssignableMemberTypes = new List<string>();
+
     // MemberType.GetRelationshipWithType will consult this list and lazily build its cache
     // though, we do need to make sure the game does not store membertype inside save file, and always have the game use pointer to this object's stored membertypes
     // also, if there is no memberrelationship applicable, then we store null value so that we dont do the same query next time
@@ -231,8 +245,41 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
         if (l.clienteleDefs != null) this.clienteleDefs.AddRange(l.clienteleDefs);
         if (l.debtClasses != null) this.debtClasses.AddRange(l.debtClasses);
         if (l.recreationOffers != null) this.recreationOffers.AddRange(l.recreationOffers);
+        if (l.sharedHouseActivities != null) this.sharedHouseActivities.AddRange(l.sharedHouseActivities);
+        if (l.sharedAssignableMemberTypes != null) this.sharedAssignableMemberTypes.AddRange(l.sharedAssignableMemberTypes);
         if (l.memberRelations != null) this.memberRelations.AddRange(l.memberRelations);
+        houseActivityCache.Clear();
     }
+
+    /// <summary>
+    /// The house activities a faction built from plan offers (Manageable.HouseActivities): sharedHouseActivities, a
+    /// same-ID entry of plan.houseActivities replacing the shared one, then plan's own others. plan null = the shared
+    /// ones only. Built once per plan and cached (template data); null when there are none.
+    /// </summary>
+    public RecreationSpec GetHouseActivities(MapPlan plan)
+    {
+        string key = plan?.ID ?? "";
+        if (houseActivityCache.TryGetValue(key, out var cached)) return cached;
+        RecreationSpec spec = null;
+        var own = plan?.houseActivities?.activities;
+        foreach (var a in sharedHouseActivities)
+        {
+            if (a == null || string.IsNullOrEmpty(a.ID)) continue;
+            if (spec == null) spec = new RecreationSpec();
+            if (spec.GetActivity(a.ID) != null) { Debug.LogError($"Shared house activity ID [{a.ID}] is used twice - IDs must be unique"); continue; }
+            spec.activities.Add(plan?.houseActivities?.GetActivity(a.ID) ?? a);
+        }
+        if (own != null)
+            foreach (var a in own)
+            {
+                if (a == null || string.IsNullOrEmpty(a.ID)) continue;
+                if (spec == null) spec = new RecreationSpec();
+                if (spec.GetActivity(a.ID) == null) spec.activities.Add(a);
+            }
+        houseActivityCache[key] = spec;
+        return spec;
+    }
+    [JsonIgnore] readonly Dictionary<string, RecreationSpec> houseActivityCache = new Dictionary<string, RecreationSpec>();
     public void OnAfterDeserialize()
     {
         foreach (var i in floorPlans) i.OnAfterDeserialize();
@@ -266,11 +313,26 @@ public class MapPlan
     public Map_MainExit mainExit = null;
 
     /// <summary>
-    /// Cross-faction door connections declared by this factionInit. Resolved into
-    /// Map_Instance.factionFloorDoorConnections at instantiation time (WorldManager.Instantiate) - see Door.cs.
-    /// sourceFaction may be left blank; it defaults to this MapPlan's own ID.
+    /// Cross-faction door connections declared by this factionInit, exit to exit (exits may be hidden, see
+    /// Floor_Base.FloorPlan_Exit.hideOnMap). Resolved into Map_Instance.factionFloorDoorConnections at instantiation
+    /// time (WorldManager.Instantiate) - see Door.cs. A blank faction (or this MapPlan's own ID) means the instantiated faction.
     /// </summary>
     public List<FloorDoor> floorDoors = new List<FloorDoor>();
+
+    /// <summary>Floor-list UI grouping only; never determines ownership, connectivity, or world travel.</summary>
+    public string floorListHostFactionID = "";
+
+    /// <summary>
+    /// Residential district: the homes it may generate (ResidenceUtility.CreateResidence / AssignResidence result). Read
+    /// from this template when needed, never saved. Null = not a district.
+    /// </summary>
+    public ResidentialSpec residential = null;
+
+    /// <summary>
+    /// A private (isPublic false) faction whose floor buttons are still drawn - visible but locked, e.g. generated homes
+    /// (their rooms stay closed without access, Room_Instance.CanBeAccessedBy). Read from the template by the floor list.
+    /// </summary>
+    public bool showLockedFloors = false;
 
     public bool setPrivateRoomOwner = false;
 
@@ -336,8 +398,8 @@ public class MapPlan
 
     /// <summary>
     /// IDs of MemberType entries (from Index_MapPlan.memberTypes) this faction offers as player-
-    /// assignable shift statuses in the Management UI (a parent ID stands for all its child posts) - see Manageable.AssignableMemberTypes, which
-    /// resolves these and filters to non-manager types carrying a paid workModule.
+    /// assignable statuses in the Management UI's job-post tab (a parent ID stands for all its child posts) - see
+    /// Manageable.AssignableMemberTypes. Who may be moved to which: MemberType.SwapRefusal + assignRequirements.
     /// </summary>
     public List<string> assignableMemberTypes = new List<string>();
 
@@ -347,6 +409,16 @@ public class MapPlan
     /// saved. The MemberType's joinHandler still decides who is admitted.
     /// </summary>
     public List<string> joinableMemberTypes = new List<string>();
+
+    /// <summary>
+    /// Activities this faction offers its own home members (permanent and temporary home) without any membership -
+    /// e.g. training at the home's shooting range. Booked by the daily planner like a membership's activities
+    /// (RecreationUtility.ActivitySources), acting under the member's normal MemberType; key = faction ID + ":" +
+    /// activity ID. Who may take part is up to each activity's eligibility. Read from this template, never saved.
+    /// Only this faction's own additions / overrides: every home faction also offers Index_MapPlan.sharedHouseActivities
+    /// (an entry here with a shared ID replaces it) - Manageable.HouseActivities merges them.
+    /// </summary>
+    public RecreationSpec houseActivities = null;
 
     /// <summary>
     /// Per-shift staffing targets for this (non-player) faction, one entry per shift MemberType. Each hour

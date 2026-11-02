@@ -1,0 +1,46 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for 7_com_condom.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "com_condom_self": "Put On Condom",
+                "com_condom_onTarget_hand": "Put a Condom on Them",
+                "com_condom_onTarget_mouth": "Put a Condom on Them by Mouth",
+                "com_condom_byTarget_hand": "Have Them Put a Condom on You",
+                "com_condom_byTarget_mouth": "Have Them Put a Condom on You by Mouth",
+                "com_condom_remove_self": "Take Off Condom",
+                "com_condom_remove_onTarget": "Take Their Condom Off",
+                "com_condom_remove_byTarget": "Have Them Take Your Condom Off",
+                "com_condom_self_begin": "$doer.firstname$ picks up a condom, preparing to put it on.",
+                "com_condom_self_success": "$doer.firstname$ puts on the condom securely.",
+                "com_condom_self_failure": "$doer.firstname$ fails to put on a condom.",
+                "com_condom_onTarget_hand_begin": "$doer.firstname$ picks up a condom, preparing to put it on $receiver.firstname$.",
+                "com_condom_onTarget_hand_success": "$doer.firstname$ puts the condom on $receiver.firstname$ securely by hand.",
+                "com_condom_onTarget_hand_failure": "$doer.firstname$ fails to put a condom on $receiver.firstname$ by hand.",
+                "com_condom_onTarget_mouth_begin": "$doer.firstname$ holds a condom between their lips and tries to roll it onto $receiver.firstname$.",
+                "com_condom_onTarget_mouth_success": "$doer.firstname$ puts the condom on $receiver.firstname$ securely by mouth.",
+                "com_condom_onTarget_mouth_failure": "$doer.firstname$ fails to put a condom on $receiver.firstname$ by mouth. The condom remains unused.",
+                "com_condom_byTarget_hand_begin": "$doer.firstname$ hands $receiver.firstname$ a condom to put on them.",
+                "com_condom_byTarget_hand_success": "$receiver.firstname$ puts the condom on $doer.firstname$ securely by hand.",
+                "com_condom_byTarget_hand_failure": "$receiver.firstname$ fails to put a condom on $doer.firstname$ by hand.",
+                "com_condom_byTarget_mouth_begin": "$doer.firstname$ hands $receiver.firstname$ a condom to put on them by mouth.",
+                "com_condom_byTarget_mouth_success": "$receiver.firstname$ puts the condom on $doer.firstname$ securely by mouth.",
+                "com_condom_byTarget_mouth_failure": "$receiver.firstname$ fails to put a condom on $doer.firstname$ by mouth. The condom remains unused.",
+                "com_condom_remove_self_begin": "$doer.firstname$ reaches to take off their condom.",
+                "com_condom_remove_self_success": "$doer.firstname$ takes off their condom.",
+                "com_condom_remove_self_failure": "$doer.firstname$ fails to take off their condom.",
+                "com_condom_remove_onTarget_begin": "$doer.firstname$ reaches to take $receiver.firstname$'s condom off.",
+                "com_condom_remove_onTarget_success": "$doer.firstname$ takes $receiver.firstname$'s condom off.",
+                "com_condom_remove_onTarget_failure": "$doer.firstname$ fails to take $receiver.firstname$'s condom off.",
+                "com_condom_remove_byTarget_begin": "$doer.firstname$ asks $receiver.firstname$ to take their condom off.",
+                "com_condom_remove_byTarget_success": "$receiver.firstname$ takes $doer.firstname$'s condom off.",
+                "com_condom_remove_byTarget_failure": "$receiver.firstname$ fails to take $doer.firstname$'s condom off.",
+                "ui_singleUse_notWorn": "$name$ is not wearing one",
+                "ui_singleUse_alreadyWorn": "$name$ is already wearing one",
+                "ui_singleUse_discardFilled": "$name$ took off the used $item$"
+            }
+        }
+    }
+}

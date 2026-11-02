@@ -87,6 +87,16 @@ public class scr_SpineLoader : MonoBehaviour
     /// <param name="idleAnimName"></param>
     public IEnumerator SetBase(PortraitManager.CharaPortrait_Spine manager, List<string> materialTexturePath, string atlasJSON_path, string skeletonJSON_path, bool straightAlpha, string idleAnimName, string addonAnimName, bool lowPriority = false)
     {
+        // TEMP debug: draw-side handler/data identity vs precache, and draw timing
+        bool tempDebug = scr_System_CentralControl.current.LogPrefs.DLog_Portrait_Spine;
+        float tempStart = Time.realtimeSinceStartup;
+        int tempStartFrame = Time.frameCount;
+        if (tempDebug)
+        {
+            bool inCentral = scr_System_CentralControl.current.TryGetSpineCache(skeletonJSON_path, out var tempCached);
+            Debug.Log($"[SpineTEMP] SetBase start owner [{manager.Owner?.Owner?.CallName}] handler #{manager.GetHashCode()} data #{manager.dataHolder?.GetHashCode()} initialized {manager.dataHolder?.initialized} dataSkel==skel {manager.dataHolder?.skeletonPath == skeletonJSON_path} central {inCentral} central #{tempCached?.GetHashCode()} loaderData #{tiny?.dataPointer?.GetHashCode()} anim [{idleAnimName}|{addonAnimName}] box [{gameObject.name}] frame {tempStartFrame}");
+        }
+
         var version = "";
         if (manager.dataHolder != null && manager.dataHolder.skeletonTA != null && manager.dataHolder.skeletonPath == skeletonJSON_path)
         {
@@ -138,6 +148,20 @@ public class scr_SpineLoader : MonoBehaviour
         yield return animator.Initialize(manager, tiny, materialTexturePath, atlasJSON_path, skeletonJSON_path, straightAlpha, idleAnimName, addonAnimName, lowPriority);
         // yield return spineLoader.Initialize(materialTexturePath, atlasJSON_path, skeletonJSON_path, straightAlpha, idleAnimName, addonAnimName);
         HideAnimator(version);
+        // TEMP debug
+        if (tempDebug) Debug.Log($"[SpineTEMP] SetBase end owner [{manager.Owner?.Owner?.CallName}] handler #{manager.GetHashCode()} data #{manager.dataHolder?.GetHashCode()} took {(Time.realtimeSinceStartup - tempStart) * 1000f:F1}ms over {Time.frameCount - tempStartFrame} frames box [{gameObject.name}]");
+        if (tempDebug && isActiveAndEnabled) StartCoroutine(TempFrameProbe(manager.Owner?.Owner?.CallName));
+    }
+
+    // TEMP debug: frame times right after a spine draw (first render cost: GPU upload / shader compile)
+    IEnumerator TempFrameProbe(string owner)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            float start = Time.realtimeSinceStartup;
+            yield return null;
+            Debug.Log($"[SpineTEMP] post-draw frame {i + 1} owner [{owner}] took {(Time.realtimeSinceStartup - start) * 1000f:F1}ms frame {Time.frameCount}");
+        }
     }
 
     SpineLoaderTiny_40 loader40 = new SpineLoaderTiny_40();

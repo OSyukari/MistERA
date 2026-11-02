@@ -290,7 +290,7 @@
                     "bed",
                     "rest_required"
                 ],
-                "_comments": "Bed rest compelled by an abnormal condition (labor, post-birth / post-op recovery). Only valid while the doer requireBedRest. Pure time advance, no stat results. Natural birth only happens while the mother is executing a rest_required or rest COM (ReproductionUtility.CanBirthNow). Tags match beds' comTags [furniture, bed]; other furniture lists it by comID.",
+                "_comments": "Bed rest compelled by an abnormal condition (labor, post-birth / post-op recovery). Only valid while the doer requireBedRest. Pure time advance, no stat results. Natural birth only happens while the mother is executing a rest_required or rest COM (ReproductionUtility.CanBirthNow). Tags match beds' comTags [furniture, bed]; non-tag beds (hospital, netcafe) list it by comID. Beds only - never add it to tables/sofas.",
                 "requirements": {
                     "requirement": {
                         "treatReceiverAsDoer": true,
@@ -837,6 +837,15 @@
                                 "type": "statMod_EN",
                                 "value": "10"
                             }
+                        },
+                        {
+                            "_comment": "washes body traces off (Docs/Body/Plan_BodyTraces.md), whether or not the deflate event runs",
+                            "entry_conditions": {
+                                "applyToDoer": true
+                            },
+                            "entry_results": {
+                                "type": "washTraces"
+                            }
                         }
                     ],
                     "result_event": { "id_overwrite": "com_furniture_takeShower_deflate", "requireSuccess": true }
@@ -1036,82 +1045,22 @@
                 "comTags": [
                     "furniture",
                     "social",
-                    "food_getmeal"
+                    "food_getmeal",
+                    "food_meal",
+                    "consume_copy"
                 ],
-                "GenerateCOM":
-                {
-                    "itemTag":"food_meal",
-                    "targetCOMClass":{
-                        "$type": "COM_TakeMeal, Assembly-CSharp",
-                        "ID": "com_furniture_getmeal",
-                        "ActionPackageClass": "ActionPackage_Interaction",
-                        "COMRepeat": false,
-                        "HideWhenInvalid": true,
-                        "displayName": "com_furniture_getmeal_displayName",
-                        "timeScale": 30,
-                        "comTags": [
-                            "furniture",
-                            "social",
-                            "food_meal"
-                        ],
-                        "requirements": {
-                            "requirement": {
-                                "treatReceiverAsDoer": true
-                            }
-                        },
-                        "variants": [
-                            {
-                                "requirements": {
-                                    "requirement": {
-                                        "doerCount": 1
-                                    }
-                                },
-                                "displayName": "com_furniture_getmeal_displayName_1"
-                            },
-                            {
-                                "requirements": {
-                                    "requirement": {
-                                        "doerCount": 2
-                                    }
-                                },
-                                "displayName": "com_furniture_getmeal_displayName_2"
-                            }
-                        ],
-                        "results_EP": {
-                            "results_character": [
-                                {
-                                    "entry_conditions": {
-                                        "applyToDoer": true
-                                    },
-                                    "entry_results": {
-                                        "type": "statMod_ST",
-                                        "value": "20"
-                                    }
-                                },
-                                {
-                                    "entry_conditions": {
-                                        "applyToDoer": true
-                                    },
-                                    "entry_results": {
-                                        "type": "statMod_EN",
-                                        "value": "30"
-                                    }
-                                }
-                            ]
-                        },
-                        "AcceptanceCheck": {
-                            "baseAcceptanceValue": 10
-                        },
-                        "DifficultyCheck": { "baseD20Check": 0 },
-                        "description_begin":{ "Entries":[{"texts":["com_furniture_getmeal_begin_1","com_furniture_getmeal_begin_2","com_furniture_getmeal_begin_3"]}], "keepLooking":false },
-                        "description_ongoing":{ "Entries":[{"texts":["com_furniture_getmeal_ongoing_1"]}], "keepLooking":false },
-                        "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_getmeal_onComplete_1"]}] }
+                "GenerateAP": {
+                    "itemTag": "food_meal",
+                    "targetAPClass":{
+                        "$type": "ActionPackage_ItemConsume, Assembly-CSharp"
                     }
-
                 },
                 "requirements": {
                     "requirement": {
                         "treatReceiverAsDoer": true
+                    },
+                    "requireFaction": {
+                        "requireMealHour": true
                     }
                 },
                 "variants": [
@@ -1234,8 +1183,190 @@
                             "texts": ["com_furniture_prison_begin_1"]
                         }
                     ]
-                    
+
                 }
+            },
+            {
+                "_comment": "Revived from the stripped placeholder com_job_training_shooting (do_not_use, COM_job.json) as a location-agnostic recreation command (Docs/Utnapishtim_Activities/Plan_UtnapishtimActivities.md §6): any furniture giving comTags [furniture, training_shooting] offers it (furniture_shooting_range_spot), usable in normal sandbox anywhere; the house activity 'shooting_training' finds its lanes by this tag (RecreationFacility.comTag). Solo or pair. No experience yet: experience_combat has no ExperienceClass entry (ExperienceDefs/Experiences.json).",
+                "ID": "com_furniture_training_shooting",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_furniture_training_shooting_displayName_1",
+                "timeScale": 30,
+                "comTags": [
+                    "furniture",
+                    "recreation",
+                    "training_shooting"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer":true
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "req_Doers": {
+                                    "cost_ST": 20,
+                                    "cost_EN": 10
+                                }
+                            }
+                        },
+                        "displayName": "com_furniture_training_shooting_displayName_1"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 2,
+                                "req_Doers": {
+                                    "cost_ST": 10,
+                                    "cost_EN": 5
+                                }
+                            }
+                        },
+                        "displayName": "com_furniture_training_shooting_displayName_2"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 10
+                },
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "description_begin":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "texts": ["com_furniture_training_shooting_begin_1","com_furniture_training_shooting_begin_2","com_furniture_training_shooting_begin_3"]
+                        }
+                    ]
+                },
+                "description_ongoing":{ "Entries":[{"texts":["com_furniture_training_shooting_description_ongoing_1"]}], "keepLooking":false },
+                "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_training_shooting_description_onComplete_1"]}] }
+            },
+            {
+                "_comment": "Revived from the stripped placeholder com_job_training_melee (see com_furniture_training_shooting): given by comTags [furniture, training_melee] (furniture_arena_spot). doerCount 1 = solo practice, 2 = sparring with a partner. No experience yet (experience_combat has no ExperienceClass entry).",
+                "ID": "com_furniture_training_melee",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_furniture_training_melee_displayName_1",
+                "timeScale": 30,
+                "comTags": [
+                    "furniture",
+                    "recreation",
+                    "training_melee"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer":true
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "req_Doers": {
+                                    "cost_ST": 15,
+                                    "cost_EN": 10
+                                }
+                            }
+                        },
+                        "displayName": "com_furniture_training_melee_displayName_1"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 2,
+                                "req_Doers": {
+                                    "cost_ST": 10,
+                                    "cost_EN": 5
+                                }
+                            }
+                        },
+                        "displayName": "com_furniture_training_melee_displayName_2"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 10
+                },
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "description_begin":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "texts": ["com_furniture_training_melee_begin_1","com_furniture_training_melee_begin_2"]
+                        }
+                    ]
+                },
+                "description_ongoing":{ "Entries":[{"texts":["com_furniture_training_melee_description_ongoing_1"]}], "keepLooking":false },
+                "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_training_melee_description_onComplete_1"]}] }
+            },
+            {
+                "_comment": "Music practice on any furniture giving comTags [furniture, music_practice] (furniture_stage) - solo or a band, usable in normal sandbox anywhere; the house activity 'music_practice' holds the stage's whole room (RecreationFacility reserve Room). No experience yet (experience_perform has no ExperienceClass entry).",
+                "ID": "com_furniture_music_practice",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_furniture_music_practice_displayName_1",
+                "timeScale": 30,
+                "comTags": [
+                    "furniture",
+                    "recreation",
+                    "music_practice"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer": true,
+                        "req_Doers": { "cost_EN": 5 }
+                    }
+                },
+                "results_EP": {
+                    "results_character": [
+                        { "entry_conditions": { "applyToDoer": true }, "entry_results": { "type": "statMod_ST", "value": "5" } }
+                    ]
+                },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1 } },
+                        "displayName": "com_furniture_music_practice_displayName_1"
+                    },
+                    {
+                        "requirements": { "requirement": { "doerCount": 99 } },
+                        "displayName": "com_furniture_music_practice_displayName_2"
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 },
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "description_begin": { "Entries":[ { "keepLooking":true, "texts": ["com_furniture_music_practice_begin_1","com_furniture_music_practice_begin_2"] } ] },
+                "description_ongoing":{ "Entries":[{"texts":["com_furniture_music_practice_description_ongoing_1"]}], "keepLooking":false },
+                "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_music_practice_description_onComplete_1"]}] }
+            },
+            {
+                "_comment": "A physical checkup: the doer examines the receiver, on any furniture giving comTags [furniture, medical_checkup] (furniture_hospital_bed). No effect of its own. Sandbox only - the checkup activity's Job_Checkup runs its own job command (checkup_examination, COM_Defs/COM_Recreation/checkup.json - like jp_hospital_csection_operation). Not a recreation command.",
+                "ID": "com_furniture_medical_checkup",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_furniture_medical_checkup_displayName",
+                "timeScale": 20,
+                "comTags": [
+                    "furniture",
+                    "medical_checkup"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "doerCount": 1,
+                        "receiverCount": 1,
+                        "req_Receivers": { "requireConscious": false }
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "receiverCount": 1 } },
+                        "displayName": "com_furniture_medical_checkup_displayName"
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 15 },
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "description_begin": { "Entries":[ { "keepLooking":true, "texts": ["com_furniture_medical_checkup_begin_1"] } ] },
+                "description_ongoing":{ "Entries":[{"texts":["com_furniture_medical_checkup_ongoing_1"]}], "keepLooking":false }
             }
         ]
     },
@@ -1348,8 +1479,6 @@
                 "com_furniture_getmeal_begin_2": "$doer.firstname$将$name$移到面前，开始了进食。",
                 "com_furniture_getmeal_ongoing_1": "$doer.firstname$正在吃饭",
 
-                "com_furniture_getmeal_displayName_1": "吃$name$",
-                "com_furniture_getmeal_displayName_2": "一起吃$name$",
 
                 "com_furniture_takingBreak_description_onComplete_1": "$doer.firstname$休息完毕——$result$",
                 "com_furniture_takingLongBreak_description_onComplete_1": "$doer.firstname$长休完毕——$result$",
@@ -1365,7 +1494,31 @@
 
                 "com_furniture_takeShower_description_onComplete_1": "$doer.firstname$洗完了澡",
                 "com_furniture_restroom_fix_onComplete_1": "$doer.firstname$整理好了衣物",
-                "com_furniture_getmeal_onComplete_1": "$doer.firstname$吃完了饭"
+                "com_furniture_getmeal_onComplete_1": "$doer.firstname$吃完了饭",
+
+                "com_furniture_training_shooting_displayName_1": "射击训练",
+                "com_furniture_training_shooting_displayName_2": "一起射击训练",
+                "com_furniture_training_shooting_begin_1": "$doer.firstname$站到射击位置，戴上耳罩，举起手中的武器，开始了今天的训练",
+                "com_furniture_training_shooting_begin_2": "$doer.firstname$调整呼吸，瞄准靶心，扣动扳机，开始了精准射击的练习",
+                "com_furniture_training_shooting_begin_3": "$doer.firstname$在射击场上，反复练习着各种射击姿势，提高自己的射击水平",
+                "com_furniture_training_shooting_description_ongoing_1": "$doer.firstname$正在训练射击",
+                "com_furniture_training_shooting_description_onComplete_1": "$doer.firstname$完成了射击训练",
+                "com_furniture_training_melee_displayName_1": "格斗训练",
+                "com_furniture_training_melee_displayName_2": "一起格斗训练",
+                "com_furniture_training_melee_begin_1": "$doer.firstname$站在训练场中央，深吸一口气，摆出格斗姿势，开始了今天的近身格斗训练",
+                "com_furniture_training_melee_begin_2": "$doer.firstname$反复练习着各种进攻和防御的动作，提升自己的格斗能力",
+                "com_furniture_training_melee_description_ongoing_1": "$doer.firstname$正在格斗训练",
+                "com_furniture_training_melee_description_onComplete_1": "$doer.firstname$完成了格斗训练",
+                "com_furniture_music_practice_displayName_1": "音乐练习",
+                "com_furniture_music_practice_displayName_2": "乐队合奏练习",
+                "com_furniture_music_practice_begin_1": "$doer.firstname$调好乐器，开始了今天的练习",
+                "com_furniture_music_practice_begin_2": "$doer.firstname$对着乐谱，一遍遍练习着不熟练的段落",
+                "com_furniture_music_practice_description_ongoing_1": "$doer.firstname$正在练习演奏",
+                "com_furniture_music_practice_description_onComplete_1": "$doer.firstname$结束了这一轮练习",
+                "com_furniture_medical_checkup_displayName": "体检",
+                "com_furniture_medical_checkup_begin_1": "$doer.firstname$让$receiver.firstname$在检查床上躺好，开始了体检",
+                "com_furniture_medical_checkup_ongoing_1": "$doer.firstname$正在为$receiver.firstname$做体检",
+                "com_furniture_medical_checkup": "为目标做一次体检。需要检查床。"
 
             },
             "en-us":
@@ -1421,8 +1574,6 @@
                 "com_furniture_getmeal_displayName": "Get meal",
                 "com_furniture_getmeal_begin_1": "$doer.firstname$ sat down at the table, picked up a portion of $name$ and began to eat.",
                 "com_furniture_getmeal_begin_2": "$doer.firstname$ brought the $name$ closer and began eating.",
-                "com_furniture_getmeal_displayName_1": "Eat $name$",
-                "com_furniture_getmeal_displayName_2": "Eat $name$",
 
     "com_furniture_sleep_description_begin_1": "$doer.firstname$ starts sleeping",
     "com_furniture_sleep_description_ongoing_1": "$doer.firstname$ is sleeping",

@@ -133,7 +133,7 @@ public class ActionPackage_Wardrobe : ActionPackage_Interaction
         if (equipRef != -1)
         {
             var item = chara.Body.ResolveEquip(equipRef);
-            if (item == null || item.GetComp_Equippable() == null)
+            if (item == null || item.Comp_Equippable == null)
             {
                 reason = "ui_wardrobe_tooltip_noItem";
                 return false;

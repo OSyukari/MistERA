@@ -1,5 +1,5 @@
 {
-    "_doc": "Begin events of the riverside activities (RecreationActivity.launchEventID), fired by Job_Activity when it launches the activity, and again for each latecomer who joins (isLate) - no trigger of their own. SELF ONLY DECIDES VISIBILITY (the player when involved) - use the targets: participants / mandatory / optional / host / one key per invite role (e.g. companion) / waited (there at the launch) / late (the launch: still missing; a late fire: the latecomer) / player. AppendStrings: isLate, hasWaited / hasLate, activityRunning, activityName, instanceKey.",
+    "_doc": "Activity launchEventID scenes, reused on explicit player join (isJoin present) and NPC arrival (isLate present). Test isJoin first. Initial attendees are actually present launch participants, not expected guests. On join/late, joining is the newcomer singleton, companions are locally present already-arrived others, and participants is their union. SELF only decides visibility. activityTrustEligible is present only when true. Initial shared outcomes require both activityTrustEligible and hasSharedAttendees (present only for at least two real attendees); arrival shared outcomes require both activityTrustEligible and hasCompanions (present only for at least one local nonjoining companion). Check both presence flags in a Branch before jumping to a separate narrative/reward node. Either flag missing goes to finish without shared text or reward Results. Initial Trust uses attendees->attendees once per directed nonself pair; arrivals use joining->companions and companions->joining only. Never reward stale player/late/expected targets or invitation acceptance.",
     "Events": {
         "list": [
             {
@@ -7,25 +7,63 @@
                 "_comment": "recreation_offer_jp_riverside_fireworks - a hostless World session: no mandatory participants, so it launches at T+5 with whoever has gathered on the embankment.",
                 "events": [
                     {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            { "option": "the player joins", "Results": [ { "Type": "ExistAppendStrings", "arguments": ["isJoin"] }, { "Type": "JumpToLabel", "arguments": ["", "join"] } ] },
+                            { "option": "a latecomer arrives", "Results": [ { "Type": "ExistAppendStrings", "arguments": ["isLate"] }, { "Type": "JumpToLabel", "arguments": ["", "late"] } ] },
+                            { "option": "the festival begins", "Results": [ { "Type": "JumpToLabel", "arguments": ["", "begin"] } ] }
+                        ]
+                    },
+                    {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "begin",
                         "line": "Riverside_Fireworks_Begin_EV01",
                         "isLast": true
-                    }
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "join", "line": "Riverside_Fireworks_Begin_join", "isLast": true },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "line": "Riverside_Fireworks_Begin_late", "isLast": true }
                 ]
             },
             {
                 "ID": "Riverside_Stroll_Begin",
-                "_comment": "recreation_offer_jp_riverside_stroll - Private: a solo stroll, or with the housemate (role companion) who accepted; launches once everyone attending is at the promenade (at T+30 with whoever is there - nobody is mandatory). Fired again for a latecomer (isLate, late = the latecomer). Uses the targets, never self.",
+                "_comment": "recreation_offer_jp_riverside_stroll: mutually exclusive initial / explicit join / late arrival scenes. Only the guarded shared-walk outcome grants mutual BASE +1 Trust. Ineligible entry, fewer than two initial attendees, or an arrival without local companions goes straight to the neutral ending without shared text or reward Results. No invitation or elapsed-time reward.",
                 "events": [
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "options": [
+                            { "option": "the player joins", "Results": [ { "Type": "ExistAppendStrings", "arguments": ["isJoin"] }, { "Type": "JumpToLabel", "arguments": ["", "join"] } ] },
                             { "option": "a latecomer joins", "Results": [ { "Type": "ExistAppendStrings", "arguments": ["isLate"] }, { "Type": "JumpToLabel", "arguments": ["", "late"] } ] },
                             { "option": "the stroll begins", "Results": [ { "Type": "JumpToLabel", "arguments": ["", "begin"] } ] }
                         ]
                     },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "begin", "isLast": true, "line": "Riverside_Stroll_Begin_EV01" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "isLast": true, "line": "Riverside_Stroll_Begin_late" }
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "begin", "line": "Riverside_Stroll_Begin_EV01", "nextEntryLabel": "initial_guard" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "join", "line": "Riverside_Stroll_Begin_join", "nextEntryLabel": "arrival_guard" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "line": "Riverside_Stroll_Begin_late", "nextEntryLabel": "arrival_guard" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "initial_guard",
+                        "options": [
+                            { "option": "shared walk outcome", "Results": [ { "Type": "ExistAppendStrings", "arguments": ["activityTrustEligible"] }, { "Type": "ExistAppendStrings", "arguments": ["hasSharedAttendees"] }, { "Type": "JumpToLabel", "arguments": ["", "initial_reward"] } ] },
+                            { "option": "continue without reward", "Results": [ { "Type": "JumpToLabel", "arguments": ["", "finish"] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "arrival_guard",
+                        "options": [
+                            { "option": "shared walk outcome", "Results": [ { "Type": "ExistAppendStrings", "arguments": ["activityTrustEligible"] }, { "Type": "ExistAppendStrings", "arguments": ["hasCompanions"] }, { "Type": "JumpToLabel", "arguments": ["", "arrival_reward"] } ] },
+                            { "option": "continue without reward", "Results": [ { "Type": "JumpToLabel", "arguments": ["", "finish"] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "initial_reward", "line": "Riverside_Stroll_Begin_shared_initial",
+                        "nextEntryLabel": "finish",
+                        "Results": [ { "Type": "IncreaseRelationship", "arguments": ["attendees", "attendees", "Trust", "1"] } ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "arrival_reward", "line": "Riverside_Stroll_Begin_shared_arrival",
+                        "nextEntryLabel": "finish",
+                        "Results": [ { "Type": "IncreaseRelationship", "arguments": ["joining", "companions", "Trust", "1"] }, { "Type": "IncreaseRelationship", "arguments": ["companions", "joining", "Trust", "1"] } ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "finish", "line": "Riverside_Stroll_Begin_finish", "isLast": true, "Results": [ { "Type": "FlushMessageExpAll", "arguments": ["false"] } ] }
                 ]
             }
         ]
@@ -34,8 +72,14 @@
         "Entries": {
             "zh-cn": {
                 "Riverside_Fireworks_Begin_EV01": "河岸上人头攒动。随着一声尖啸，第一发烟火冲上夜空，烟火大会开始了！",
+                "Riverside_Fireworks_Begin_join": "$joining.name$在河岸上找了个能看见夜空的位置。又一簇烟火在头顶散开，喝彩声从人群里传来。",
+                "Riverside_Fireworks_Begin_late": "$joining.name$赶到河岸时，烟火已经放了一阵。趁着下一轮升空前的间隙，终于找到了看烟火的位置。",
                 "Riverside_Stroll_Begin_EV01": "$waited.name$沿着河畔步道慢慢走了起来。",
-                "Riverside_Stroll_Begin_late": "$late.name$来晚了一些，不过还是赶上了，加入了河边的散步。"
+                "Riverside_Stroll_Begin_late": "$late.name$来晚了一些，不过还是赶上了，加入了河边的散步。",
+                "Riverside_Stroll_Begin_join": "$joining.name$走上河畔步道，跟上了正在散步的队伍。",
+                "Riverside_Stroll_Begin_shared_initial": "$attendees.name$并肩走过一段河岸，边走边聊起沿途的小事。走到转弯处，大家已不必刻意放慢或加快脚步。",
+                "Riverside_Stroll_Begin_shared_arrival": "$companions.name$放慢脚步，和$joining.name$一起走过前面那段河岸。接上了方才的话题，脚步也渐渐合到了一处。",
+                "Riverside_Stroll_Begin_finish": "河风拂过步道，散步还在继续。"
             }
         }
     }

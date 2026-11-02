@@ -1,0 +1,108 @@
+{
+  "_comment": "Mounted proposal scenes. isJoin before isLate; presence guards contain comparisons and jumps only. Rewards live on separate nodes and target real attendees, never expected guests. A one-minute arrival is not a completed two-hour visit. No acceptance/end-of-visit reward or time/check executors.",
+  "Events": { "list": [
+    {
+      "ID": "Greenside_ParkStroll_Begin",
+      "events": [
+        { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [
+          { "option": "explicit join", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isJoin"] }, { "Type": "JumpToLabel", "arguments": ["", "join"] }] },
+          { "option": "late arrival", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isLate"] }, { "Type": "JumpToLabel", "arguments": ["", "late"] }] },
+          { "option": "initial launch", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "initial"] }] }
+        ] },
+        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "initial", "line": "Greenside_Stroll_initial", "nextEntryLabel": "initial_guard" },
+        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "join", "line": "Greenside_Stroll_join", "nextEntryLabel": "arrival_guard" },
+        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "line": "Greenside_Stroll_late", "nextEntryLabel": "arrival_guard" },
+        { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "initial_guard", "options": [
+          { "option": "eligible shared moment", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["activityTrustEligible"] }, { "Type": "ExistAppendStrings", "arguments": ["hasSharedAttendees"] }, { "Type": "JumpToLabel", "arguments": ["", "initial_reward"] }] },
+          { "option": "neutral continuation", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "finish"] }] }
+        ] },
+        { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "arrival_guard", "options": [
+          { "option": "eligible shared moment", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["activityTrustEligible"] }, { "Type": "ExistAppendStrings", "arguments": ["hasCompanions"] }, { "Type": "JumpToLabel", "arguments": ["", "arrival_reward"] }] },
+          { "option": "neutral continuation", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "finish"] }] }
+        ] },
+        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "initial_reward", "line": "Greenside_Stroll_shared_initial", "nextEntryLabel": "finish", "Results": [
+          { "Type": "IncreaseRelationship", "arguments": ["attendees", "attendees", "Trust", "1"] }, { "Type": "IncreaseRelationship", "arguments": ["attendees", "attendees", "Goodwill", "1"] }
+        ] },
+        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "arrival_reward", "line": "Greenside_Stroll_shared_arrival", "nextEntryLabel": "finish", "Results": [
+          { "Type": "IncreaseRelationship", "arguments": ["joining", "companions", "Trust", "1"] }, { "Type": "IncreaseRelationship", "arguments": ["companions", "joining", "Trust", "1"] },
+          { "Type": "IncreaseRelationship", "arguments": ["joining", "companions", "Goodwill", "1"] }, { "Type": "IncreaseRelationship", "arguments": ["companions", "joining", "Goodwill", "1"] }
+        ] },
+        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "finish", "line": "Greenside_Stroll_finish", "isLast": true, "Results": [{ "Type": "FlushMessageExpAll", "arguments": ["false"] }] }
+      ]
+    },
+    {
+      "ID": "Greenside_CommunityCleanup_Begin",
+      "_comment": "Only the small shared bagging task is narrated as finished; the full cleanup area and booked duration are not completed by entry.",
+      "events": [
+        { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [
+          { "option": "explicit join", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isJoin"] }, { "Type": "JumpToLabel", "arguments": ["", "join"] }] },
+          { "option": "late arrival", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isLate"] }, { "Type": "JumpToLabel", "arguments": ["", "late"] }] },
+          { "option": "initial launch", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "initial"] }] }
+        ] },
+        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "initial", "line": "Greenside_Cleanup_initial", "nextEntryLabel": "initial_guard" },
+        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "join", "line": "Greenside_Cleanup_join", "nextEntryLabel": "arrival_guard" },
+        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "line": "Greenside_Cleanup_late", "nextEntryLabel": "arrival_guard" },
+        { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "initial_guard", "options": [
+          { "option": "eligible small shared task", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["activityTrustEligible"] }, { "Type": "ExistAppendStrings", "arguments": ["hasSharedAttendees"] }, { "Type": "JumpToLabel", "arguments": ["", "initial_reward"] }] },
+          { "option": "neutral continuation", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "finish"] }] }
+        ] },
+        { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "arrival_guard", "options": [
+          { "option": "eligible small shared task", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["activityTrustEligible"] }, { "Type": "ExistAppendStrings", "arguments": ["hasCompanions"] }, { "Type": "JumpToLabel", "arguments": ["", "arrival_reward"] }] },
+          { "option": "neutral continuation", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "finish"] }] }
+        ] },
+        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "initial_reward", "line": "Greenside_Cleanup_shared_initial", "nextEntryLabel": "finish", "Results": [
+          { "Type": "IncreaseRelationship", "arguments": ["attendees", "attendees", "Trust", "1"] }, { "Type": "IncreaseRelationship", "arguments": ["attendees", "attendees", "Goodwill", "1"] }
+        ] },
+        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "arrival_reward", "line": "Greenside_Cleanup_shared_arrival", "nextEntryLabel": "finish", "Results": [
+          { "Type": "IncreaseRelationship", "arguments": ["joining", "companions", "Trust", "1"] }, { "Type": "IncreaseRelationship", "arguments": ["companions", "joining", "Trust", "1"] },
+          { "Type": "IncreaseRelationship", "arguments": ["joining", "companions", "Goodwill", "1"] }, { "Type": "IncreaseRelationship", "arguments": ["companions", "joining", "Goodwill", "1"] }
+        ] },
+        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "finish", "line": "Greenside_Cleanup_finish", "isLast": true, "Results": [{ "Type": "FlushMessageExpAll", "arguments": ["false"] }] }
+      ]
+    },
+    {
+      "ID": "Greenside_Picnic_Begin", "events": [
+        { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [
+          { "option": "explicit join", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isJoin"] }, { "Type": "JumpToLabel", "arguments": ["", "join"] }] },
+          { "option": "late arrival", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isLate"] }, { "Type": "JumpToLabel", "arguments": ["", "late"] }] },
+          { "option": "initial launch", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "initial"] }] }
+        ] },
+        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "initial", "line": "Greenside_Picnic_initial", "isLast": true },
+        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "join", "line": "Greenside_Picnic_join", "isLast": true },
+        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "line": "Greenside_Picnic_late", "isLast": true }
+      ]
+    },
+    {
+      "ID": "Greenside_Playground_Begin", "events": [
+        { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [
+          { "option": "explicit join", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isJoin"] }, { "Type": "JumpToLabel", "arguments": ["", "join"] }] },
+          { "option": "late arrival", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isLate"] }, { "Type": "JumpToLabel", "arguments": ["", "late"] }] },
+          { "option": "initial launch", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "initial"] }] }
+        ] },
+        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "initial", "line": "Greenside_Playground_initial", "isLast": true },
+        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "join", "line": "Greenside_Playground_join", "isLast": true },
+        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "line": "Greenside_Playground_late", "isLast": true }
+      ]
+    }
+  ] },
+  "Dictionary": { "Entries": { "zh-cn": {
+    "Greenside_Stroll_initial": "公园步道从路牌下分成两岔，一边通向草坪，一边伸进树荫。散步从这里开始。",
+    "Greenside_Stroll_join": "$joining.name$走到公园的岔路口，在路牌旁认了认方向。",
+    "Greenside_Stroll_late": "$joining.name$稍晚到了步道入口，先看了一眼岔路口的指示牌。",
+    "Greenside_Stroll_shared_initial": "$attendees.name$在岔路口商量了一下，选了树荫下的小路。走到长椅旁，又有人提议停一停，看看草地上蹦跳的鸟。话题从鸟认不认得常来的人，慢慢转到了各自常走的路。",
+    "Greenside_Stroll_shared_arrival": "$companions.name$在路牌旁停下，给$joining.name$指了指前面的两条路。大家选了树荫更密的那条；经过长椅时，又应了歇一歇的提议，接着聊起沿路看到的小事。",
+    "Greenside_Stroll_finish": "树叶轻轻作响，步道向公园深处延伸。",
+    "Greenside_Cleanup_initial": "公园集合点旁放着清扫用具，告示上标出了今天的清扫区域。",
+    "Greenside_Cleanup_join": "$joining.name$来到集合点，查看了清扫区域的告示。",
+    "Greenside_Cleanup_late": "$joining.name$晚些赶到清扫区域，在路边放下随身物品。",
+    "Greenside_Cleanup_shared_initial": "$attendees.name$先分好手边的小事：有人撑开袋口，有人把长椅旁几片散落的纸屑拢进去。最后一片也装好后，大家收拢袋口，把这处小地方留得整洁了些。",
+    "Greenside_Cleanup_shared_arrival": "$companions.name$和$joining.name$分了分手边的活，一边撑住袋口，一边捡起脚边几片纸屑。把这几片装好、收拢袋口后，这一小项便做完了；整个区域还得继续清理。",
+    "Greenside_Cleanup_finish": "清扫用具仍在手边，预留的志愿活动时段还没有结束。",
+    "Greenside_Picnic_initial": "草坪边的野餐桌空着，树荫刚好落在桌角。野餐时段开始了；食物仍需自行准备。",
+    "Greenside_Picnic_join": "$joining.name$来到草坪边，放下随身物品，找了个舒适的位置。",
+    "Greenside_Picnic_late": "$joining.name$晚些到了草坪，沿着野餐桌边找到了落脚处。",
+    "Greenside_Playground_initial": "秋千轻轻晃着，游乐区里留着足够的活动空间。",
+    "Greenside_Playground_join": "$joining.name$走进游乐区，看了看秋千和攀爬架。",
+    "Greenside_Playground_late": "$joining.name$晚些来到游乐区，在秋千旁停下脚步。"
+  } } }
+}

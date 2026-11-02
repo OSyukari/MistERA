@@ -44,6 +44,30 @@
                         "Results": [ { "Type": "CancelRecreationBooking", "arguments": ["waited", "", "now"] } ]
                     }
                 ]
+            },
+            {
+                "ID": "Recreation_MediaSession_Begin",
+                "_comment": "Generic begin event of a media activity (RecreationActivity.requireMedia - a movie / game session): fired by Job_Activity at the launch, it starts the session (LaunchJob Job_MediaSession, participants = those in the room - its instanceKey AppendString links the job to the activity; the job then runs for the item's runtime and fires the item's own start / end events). A late arrival's fire (isLate) only notes them joining - never a second LaunchJob (the job refuses one anyway). AppendStrings used: activityName, mediaName.",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            { "option": "a latecomer", "Results": [ { "Type": "ExistAppendStrings", "arguments": ["isLate"] }, { "Type": "JumpToLabel", "arguments": ["", "late"] } ] },
+                            { "option": "start", "Results": [ { "Type": "JumpToLabel", "arguments": ["", "start"] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "start", "isLast": true, "line": "Recreation_MediaSession_Begin_start",
+                        "Results": [
+                            {
+                                "Type": "LaunchJob",
+                                "arguments": [ "participants=participating" ],
+                                "jobTemplate": { "$type": "Job_MediaSession, Assembly-CSharp" }
+                            }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "isLast": true, "line": "Recreation_MediaSession_Begin_late" }
+                ]
             }
         ]
     },
@@ -54,7 +78,9 @@
                 "Recreation_GatherFailed_Stay_waited": "$waited.name$等了半个小时，$late.name$还是没有来，$activityName$只好取消了。",
                 "Recreation_GatherFailed_Stay_late": "$late.name$赶到时，$activityName$早已取消了。",
                 "Recreation_GatherFailed_Leave_waited": "$waited.name$等了半个小时，$late.name$还是没有来，只好先离开了。",
-                "Recreation_GatherFailed_Leave_late": "$late.name$赶到时已经太晚了，$activityName$早已取消，等待的人也都离开了。"
+                "Recreation_GatherFailed_Leave_late": "$late.name$赶到时已经太晚了，$activityName$早已取消，等待的人也都离开了。",
+                "Recreation_MediaSession_Begin_start": "$participating.name$聚到一起，$activityName$开始了：$mediaName$。",
+                "Recreation_MediaSession_Begin_late": "$joining.name$悄悄加入了正在进行的$activityName$。"
             }
         }
     }

@@ -71,7 +71,7 @@ public class RecreationBooking : I_ActivityBooking
     /// <summary>
     /// The player may not ask the character to cancel it (Opt_CancelBooking - listed, drawn disabled). From the
     /// activity / offer def it was planned from, or for an event booking its own flag OR its template's. Other
-    /// cancellations still happen; those that should not (RecreationUtility.RecordCancelled) are logged as errors.
+    /// cancellations still happen; those that should not (RecreationUtility.OnBookingCancelled) are logged as errors.
     /// </summary>
     public bool forbidCancel = false;
     /// <summary>Event bookings: the event that made it (SetRecreationBooking) - shown as who arranged it.</summary>
@@ -108,6 +108,17 @@ public class RecreationBooking : I_ActivityBooking
     public int lastBilledAbs = -1;
     /// <summary>This visit's activity entranceFee has been charged (once per visit - RecreationUtility.ChargeEntranceFee, at the activity's launch / a late join / the plain-sandbox fallback).</summary>
     public bool entranceFeeCharged = false;
+
+    /// <summary>
+    /// The media item (base ID) reserved for this solo visit (RecreationActivity.requireMedia), "" = none. A session
+    /// booking uses its Session's (RecreationGroup.mediaItemID) - see RecreationUtility.MediaItemOf.
+    /// </summary>
+    public string mediaItemID = "";
+
+    /// <summary>Creation order among facility / media visits (RecreationGroupRegistry.NextCreationSerial - set by AddBooking); 0 = older save.</summary>
+    public int createdSerial = 0;
+    /// <summary>The venue's Manageable.facilitySerial this visit was last checked against (RecreationUtility.FacilityLostFor).</summary>
+    public int facilitySerialSeen = 0;
 
     [JsonIgnore] RecreationActivity _activity = null;
     /// <summary>
@@ -206,6 +217,9 @@ public class RecreationBooking : I_ActivityBooking
             lastBilledAbs = lastBilledAbs,
             entranceFeeCharged = entranceFeeCharged,
             activityJobRef = activityJobRef,
+            mediaItemID = mediaItemID,
+            createdSerial = createdSerial,
+            facilitySerialSeen = facilitySerialSeen,
         };
     }
 

@@ -25,7 +25,9 @@ public enum BodyPartEquipSlot
     Urethra,
     Anus,
     // External, added later: appended so existing int values stay stable
-    Shoulder, Thigh
+    Shoulder, Thigh,
+    // Internal, added later (condoms): appended so existing int values stay stable
+    Penis
 }
 
 public enum Revealing

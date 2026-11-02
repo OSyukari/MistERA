@@ -1,0 +1,179 @@
+{
+    "_doc": "Residential district home floor: 2LDK apartment unit. Copy of CoffinAL/House/2ldk.json (floor_2ldk_2floor_1, left unchanged - existing households stay as they are) with its own room ID prefix res_apt_2ldk_ and every room requireFactionMembership, so a generated home is visible but locked (ResidenceUtility.HasRoomAccess: residents, visit passes, bookings there, the player's followers). It is linked to its district by a runtime RoomDoor (ResidenceUtility.CreateResidence) from the district's attach room to res_apt_2ldk_frontDoor (the home template's mainExit), so it needs no floor exits. 2 single-bed rooms, no double bed: the leader just takes a private room. Same image and room art as the original.",
+    "MapPlans": {
+        "floorPlans": [
+            {
+                "ID": "floor_res_apt_2ldk",
+                "displayName": "floor_res_apt_2ldk",
+                "imagePath": "CoffinAL/House/2ldk.jpg",
+                "floorWidth": 1082,
+                "floorHeight": 992,
+                "AnchorType": "TopLeft",
+                "mapExit": "res_apt_2ldk_frontDoor",
+                "_comment_wholeBuildingRent": "mid-tier 2LDK apartment lease, charged monthly (charged to the residents' home faction while isRentingFloor)",
+                "wholeBuildingRent": {
+                    "maintenanceFee": { "itemID": "currency_JPY", "itemCount": 10000 },
+                    "rentFee": { "itemID": "currency_JPY", "itemCount": 90000 },
+                    "cadence": "Monthly"
+                },
+                "rooms": [
+                    {
+                        "ID": "res_apt_2ldk_kitchen",
+                        "displayName": "map_kitchen",
+                        "requireFactionMembership": true,
+                        "offsetX": 815,
+                        "offsetY": 510,
+                        "connects": [],
+                        "furnitureIDs": [
+                            "furniture_stove",
+                            "furniture_round_table_4",
+                            "furniture_marker_getmeal"
+                        ],
+                        "roomImagePath": "BGAssets/House_Jitaku/bgi-jk105饭厅d.png",
+                        "roomImagePath_Night": "BGAssets/House_Jitaku/bgi-jk105饭厅b.png",
+                        "roomImagePath_Inactive": "BGAssets/House_Jitaku/bgi-jk105饭厅d.png",
+                        "roomImagePath_Inactive_Night": "BGAssets/House_Jitaku/bgi-jk105饭厅c.png"
+                    },
+                    {
+                        "ID": "res_apt_2ldk_living",
+                        "displayName": "map_livingroom",
+                        "requireFactionMembership": true,
+                        "offsetX": 743,
+                        "offsetY": 752,
+                        "connects": [
+                            { "ID": "res_apt_2ldk_kitchen", "cost": 1.0 }
+                        ],
+                        "furnitureIDs": [
+                            "furniture_sofa_3",
+                            "furniture_TV_flatscreen",
+                            "furniture_cafe_table_2"
+                        ],
+                        "roomImagePath": "BGAssets/House_Jitaku/bgi-jk104客厅d.png",
+                        "roomImagePath_Night": "BGAssets/House_Jitaku/bgi-jk104客厅b.png",
+                        "roomImagePath_Inactive": "BGAssets/House_Jitaku/bgi-jk104客厅d.png",
+                        "roomImagePath_Inactive_Night": "BGAssets/House_Jitaku/bgi-jk104客厅c.png",
+                        "activityState": "DayOnly"
+                    },
+                    {
+                        "ID": "res_apt_2ldk_laundry",
+                        "displayName": "map_laundry",
+                        "requireFactionMembership": true,
+                        "offsetX": 224,
+                        "offsetY": 646,
+                        "connects": [
+                            { "ID": "res_apt_2ldk_hallway", "cost": 1.0 }
+                        ],
+                        "roomImagePath": "BGAssets/House_Jitaku/bgi-jk108脱衣所d.png",
+                        "roomImagePath_Night": "BGAssets/House_Jitaku/bgi-jk108脱衣所b.png"
+                    },
+                    {
+                        "ID": "res_apt_2ldk_bath",
+                        "displayName": "map_bath",
+                        "requireFactionMembership": true,
+                        "offsetX": 192,
+                        "offsetY": 797,
+                        "connects": [
+                            { "ID": "res_apt_2ldk_laundry", "cost": 1.0 }
+                        ],
+                        "furnitureIDs": [
+                            "furniture_bathtub",
+                            "furniture_shower"
+                        ],
+                        "roomImagePath": "BGAssets/House_Jitaku/bgi-jk120浴室d.png",
+                        "roomImagePath_Night": "BGAssets/House_Jitaku/bgi-jk120浴室b.png"
+                    },
+                    {
+                        "ID": "res_apt_2ldk_toilet",
+                        "displayName": "map_toilet",
+                        "requireFactionMembership": true,
+                        "offsetX": 264,
+                        "offsetY": 474,
+                        "connects": [
+                            { "ID": "res_apt_2ldk_hallway", "cost": 1.0 }
+                        ],
+                        "furnitureIDs": [
+                            "furniture_bathroom_set"
+                        ],
+                        "roomImagePath": "BGAssets/House_Jitaku/bgi-jk107トイレd.png",
+                        "roomImagePath_Night": "BGAssets/House_Jitaku/bgi-jk107トイレb.png"
+                    },
+                    {
+                        "ID": "res_apt_2ldk_room_1",
+                        "displayName": "map_singleRoom",
+                        "requireFactionMembership": true,
+                        "offsetX": 188,
+                        "offsetY": 264,
+                        "connects": [
+                            { "ID": "res_apt_2ldk_hallway", "cost": 1.0 }
+                        ],
+                        "furnitureIDs": [
+                            "furniture_bed_single",
+                            "furniture_table_1_chair_1",
+                            "furniture_bookshelves",
+                            "furniture_computer_terminal"
+                        ],
+                        "roomImagePath": "BGAssets/House_Jitaku/bgi-jk112自室d.png",
+                        "roomImagePath_Night": "BGAssets/House_Jitaku/bgi-jk112自室b.png",
+                        "roomImagePath_Inactive": "BGAssets/House_Jitaku/bgi-jk112自室d.png",
+                        "roomImagePath_Inactive_Night": "BGAssets/House_Jitaku/bgi-jk112自室c.png"
+                    },
+                    {
+                        "ID": "res_apt_2ldk_frontDoor",
+                        "displayName": "map_frontdoor",
+                        "requireFactionMembership": true,
+                        "offsetX": 291,
+                        "offsetY": 935,
+                        "connects": [
+                            { "ID": "res_apt_2ldk_hallway", "cost": 1.0 }
+                        ]
+                    },
+                    {
+                        "ID": "res_apt_2ldk_hallway",
+                        "displayName": "map_hallway",
+                        "requireFactionMembership": true,
+                        "offsetX": 383,
+                        "offsetY": 725,
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
+                        "roomImagePath_Inactive_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg",
+                        "connects": [
+                            { "ID": "res_apt_2ldk_kitchen", "cost": 2 }
+                        ]
+                    },
+                    {
+                        "ID": "res_apt_2ldk_room_2",
+                        "displayName": "map_singleRoom",
+                        "requireFactionMembership": true,
+                        "offsetX": 873,
+                        "offsetY": 237,
+                        "connects": [
+                            { "ID": "res_apt_2ldk_kitchen", "cost": 1.0 }
+                        ],
+                        "furnitureIDs": [
+                            "furniture_bed_single",
+                            "furniture_table_1_chair_1",
+                            "furniture_bookshelves"
+                        ],
+                        "roomImagePath": "BGAssets/House_Jitaku/bgi-jk114妹の部屋d.png",
+                        "roomImagePath_Night": "BGAssets/House_Jitaku/bgi-jk114妹の部屋b.png",
+                        "roomImagePath_Inactive": "BGAssets/House_Jitaku/bgi-jk114妹の部屋d.png",
+                        "roomImagePath_Inactive_Night": "BGAssets/House_Jitaku/bgi-jk114妹の部屋c.png"
+                    },
+                    {
+                        "ID": "res_apt_2ldk_balcony",
+                        "displayName": "map_balcony",
+                        "requireFactionMembership": true,
+                        "offsetX": 821,
+                        "offsetY": 927,
+                        "connects": [
+                            { "ID": "res_apt_2ldk_living", "cost": 1.0 }
+                        ],
+                        "roomImagePath": "BGAssets/House_Jitaku/bgi-jk118トイレd.png"
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": { "Entries": { "zh-cn": {
+        "floor_res_apt_2ldk": "2LDK公寓"
+    } } }
+}

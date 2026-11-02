@@ -1,0 +1,33 @@
+{
+    "_comment": "WP3 host. Initialize host AND all six tenant IDs in the world; only the host needs a world door (640,160), exit otaku_street_entrance. Replaces maid-cafe/arcade placeholder doors. World integration belongs to the parent.",
+    "_comment_art": "PLACEHOLDER: shared shopping_mall_01.webp for directory and room backgrounds until district art is supplied.",
+    "MapPlans": {
+        "factionInit": [
+            { "ID": "jp_otaku_street", "isRentingFloor": false, "setPrivateRoomOwner": false, "mainExit": { "roomID": "otaku_street_entrance", "exitCost": 5 }, "floors": [{ "ID": "floor_jp_otaku_street", "nameOverwrite": "jp_otaku_street" }], "managerBaseIDs": [""] }
+        ],
+        "floorPlans": [{
+            "ID": "floor_jp_otaku_street", "imagePath": "BGAssets/Generated/shopping_mall_01.webp", "isFloorPlan": false, "floorWidth": 400, "floorHeight": 400, "resize": 1, "mapExit": "otaku_street_entrance",
+            "_comment_exits": "Hidden sockets, one per venue floor door (venue factionInit floorDoors -> exit to_<venueID>). Docs/Locations/Plan_HiddenExitSockets.md.",
+            "exits": [
+                { "ID": "to_jp_arcade", "connectedRoom": "otaku_street_entrance", "hideOnMap": true },
+                { "ID": "to_jp_otaku_cosplaystudio", "connectedRoom": "otaku_street_entrance", "hideOnMap": true },
+                { "ID": "to_jp_otaku_hobbyshop", "connectedRoom": "otaku_street_entrance", "hideOnMap": true },
+                { "ID": "to_jp_maid_cafe", "connectedRoom": "otaku_street_entrance", "hideOnMap": true },
+                { "ID": "to_jp_otaku_mangashop", "connectedRoom": "otaku_street_entrance", "hideOnMap": true },
+                { "ID": "to_jp_otaku_netcafe", "connectedRoom": "otaku_street_entrance", "hideOnMap": true }
+            ],
+            "rooms": [
+                { "ID": "otaku_street_entrance", "displayName": "otaku_street_entrance", "hideOnMap": true, "connects": [], "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp" },
+                { "ID": "otaku_restroom", "displayName": "otaku_restroom", "hideOnMap": true, "furnitureIDs": ["furniture_bathroom_set", "furniture_bathroom_set"], "connects": [{ "ID": "otaku_street_entrance", "cost": 1 }], "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp" }
+            ]
+        }]
+    },
+    "Dictionary": { "Entries": { "zh-cn": {
+        "jp_otaku_street": "御宅街", "otaku_street_entrance": "御宅街入口", "otaku_hall_south": "御宅街南段", "otaku_hall_north": "御宅街北段", "otaku_restroom": "御宅街公共卫生间", "maidcafe_changing": "咖啡厅更衣卫生间", "cosplay_changing": "摄影棚更衣卫生间",
+        "maidcafe_hall": "女仆咖啡厅·客席", "maidcafe_kitchen": "女仆咖啡厅·厨房", "arcade_floor": "游戏中心",
+        "mangashop_floor": "漫画同人书店", "mangashop_r18": "帘后成人书区", "hobbyshop_floor": "模型卡牌店", "hobby_tables": "桌游区", "cosplay_rental": "服装租赁处", "studio_room": "摄影棚",
+        "netcafe_frontdesk": "漫画网咖·前台", "netcafe_reading": "开放阅览席", "netcafe_drinkbar": "自助饮料吧", "netcafe_shower": "网咖淋浴间",
+        "netcafe_booth_1": "单人平垫包间1", "netcafe_booth_2": "单人平垫包间2", "netcafe_booth_3": "单人躺椅包间3", "netcafe_booth_4": "单人躺椅包间4", "netcafe_booth_5": "单人平垫包间5", "netcafe_booth_6": "单人平垫包间6", "netcafe_pair_1": "双人包间1", "netcafe_pair_2": "双人包间2",
+        "otaku_joinOption": "让$name$担任$memberType$"
+    } } }
+}

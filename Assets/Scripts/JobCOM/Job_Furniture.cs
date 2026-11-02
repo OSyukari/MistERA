@@ -179,7 +179,12 @@ public class Job_Furniture : Job
     [JsonIgnore] public int ReservedByJobRef { get { return reservedByJobRef; } }
 
     /// <summary>Reserves this furniture for job (must implement I_FurnitureReserver).</summary>
-    public void ReserveFor(Job job) { reservedByJobRef = job == null ? -1 : job.RefID; }
+    public void ReserveFor(Job job)
+    {
+        // Activities use room context; medical and other concrete reservations retain their semantics.
+        if (!(job is I_FurnitureReserver)) return;
+        reservedByJobRef = job == null ? -1 : job.RefID;
+    }
 
     public void ReleaseReservation(Job job)
     {
@@ -192,7 +197,9 @@ public class Job_Furniture : Job
         get
         {
             if (reservedByJobRef < 0) return false;
-            if (scr_System_CampaignManager.current.FindJobInstanceByID(reservedByJobRef) is I_FurnitureReserver) return true;
+            var holder = scr_System_CampaignManager.current.FindJobInstanceByID(reservedByJobRef);
+            // a legacy activity lock (never an I_FurnitureReserver now) is dropped like a stale one
+            if (holder is I_FurnitureReserver) return true;
             reservedByJobRef = -1;
             return false;
         }
@@ -205,7 +212,8 @@ public class Job_Furniture : Job
     public bool IsReservedAgainst(Character_Trainable c)
     {
         if (reservedByJobRef < 0 || c == null) return false;
-        var reserver = scr_System_CampaignManager.current.FindJobInstanceByID(reservedByJobRef) as I_FurnitureReserver;
+        var holder = scr_System_CampaignManager.current.FindJobInstanceByID(reservedByJobRef);
+        var reserver = holder as I_FurnitureReserver;
         if (reserver == null)
         {
             reservedByJobRef = -1;
@@ -221,13 +229,31 @@ public class Job_Furniture : Job
         //bool validNonJob = true;
         if (IsReservedAgainst(c)) return false;
         if (com != null && !this.ValidCOMs.Contains(com)) return false;
-        if (com != null) return com.GetValidVariant(c, false, this) >= 0;
+        // a GenerateAP command (e.g. getmeal) is only worth heading to when it has an item to make a package from
+        if (com != null) return AllowsActivityCommand(c, com) && com.HasGenerateAPItems(this) && com.GetValidVariant(c, false, this) >= 0;
         foreach (COM com2 in this.ValidCOMs)
         {
-            if (com2.GetValidVariant(c, false, this) >= 0) return true;//validJob = false;
+            if (AllowsActivityCommand(c, com2) && com2.HasGenerateAPItems(this) && com2.GetValidVariant(c, false, this) >= 0) return true;
         }
+        var room = ParentRoom;
+        if (room != null)
+            for (int i = 0; i < room.Activities.Count; i++)
+                if (room.Activities[i].HasRoomCommandOffers(this, c)) return true;
         //Debug.Log("JobFurniture ValidateActor 4");
         return false;
+    }
+
+    public bool AllowsActivityCommand(Character_Trainable actor, COM command)
+    {
+        return ParentRoom == null || ParentRoom.AllowsActivityCommand(this, command, actor);
+    }
+
+    public override List<ActionPackage> MakePackages(Character_Trainable c, bool allowParent, bool allowChild,
+        bool allowInvalid = false, COM filter = null, List<string> debug = null)
+    {
+        var results = base.MakePackages(c, allowParent, allowChild, allowInvalid, filter, debug);
+        if (!IsReservedAgainst(c)) ParentRoom?.AppendActivityOffers(this, c, results, allowInvalid, filter);
+        return results;
     }
 
     public List<ActionPackage> MakePackagesJoinable(Character_Trainable c)
@@ -236,6 +262,7 @@ public class Job_Furniture : Job
         bool debug = scr_System_CentralControl.current.LogPrefs.DLog_JoinAP;
         foreach(var pkg in this.ActivePackages)
         {
+            if (!AllowsActivityCommand(c, pkg.targetCOM)) continue;
             if (pkg.isTemporaryAP)
             {
                 //if (debug) Debug.LogError($"{c.FirstName} try join {pkg.DisplayName} fail, package is temporary");
@@ -319,6 +346,8 @@ public class Job_Furniture : Job
 
         foreach (var com in possibleCOMs)
         {
+            // Live actor policy must never be cached in ValidCOMs, even for allowInvalid/UI queries.
+            if (!AllowsActivityCommand(c, com)) continue;
 
             if (!allowInvalid)
             {
@@ -469,7 +498,7 @@ public class Job_Furniture : Job
                     join.Add(() => pl2.JoinAP(c, Memory_Response.None, true));
 
                     string desc = $"failed to join {pl2.DescriptionText()}";
-                    var mem = new MemInstance(pl2.actorRefs, pl2.ComTags, pl2.targetCOM.ID, pl2.COMVariantID, pl2.masterRef, false, Memory_Response.Refuse, Memory_Attitude.None, desc);
+                    var mem = new MemInstance(pl2.actorRefs, new List<string>(pl2.ComTags), pl2.targetCOM.ID, pl2.COMVariantID, pl2.masterRef, false, Memory_Response.Refuse, Memory_Attitude.None, desc);
 #if UNITY_EDITOR
                     addMems.Add(() => Debug.LogError($"OnRefuseJoin fired on {c.FirstName} for job {pl2.DescriptionText(scr_System_CampaignManager.current.Player.RefID)}"));
 #endif
@@ -513,7 +542,7 @@ public class Job_Furniture : Job
                 {
                     // failed to join npc package
                     string desc = $"failed to join {pl2.DescriptionText()}";
-                    var mem = new MemInstance(pl2.actorRefs, pl2.ComTags, pl2.targetCOM.ID, pl2.COMVariantID, pl2.masterRef, false, Memory_Response.Refuse, Memory_Attitude.None, desc);
+                    var mem = new MemInstance(pl2.actorRefs, new List<string>(pl2.ComTags), pl2.targetCOM.ID, pl2.COMVariantID, pl2.masterRef, false, Memory_Response.Refuse, Memory_Attitude.None, desc);
                     c.Memory.AddEntry(mem, new List<string>());
                     return false;
                 }
@@ -914,7 +943,7 @@ public class Job_Furniture : Job
                         // doesn't linger in the campaign manager's room registry with a frozen duration.
                         packages_current[ii].DisablePackage();
                         scr_System_CampaignManager.current.Unregister(packages_current[ii]);
-                        packages_current.RemoveAt(ii);
+                        RemovePackageAt_Current(ii);
                     }
                     else conflict = true;
                 }
@@ -922,7 +951,7 @@ public class Job_Furniture : Job
             if (isPlayerPackage || !conflict)
             {
                 ActionPackage ap = packages[i].Copy();
-                packages_current.Add(ap);
+                AddPackage_Current(ap);
                 if (isPlayerCOM) scr_System_CampaignManager.current.SetDisplayCOM(ap, scr_System_CampaignManager.displayAP_Reason.isPlayerCOM);
             }
         }

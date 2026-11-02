@@ -1,0 +1,264 @@
+{
+    "_comment": "SunMart fetch-options/handler-callback pattern. Candidates include player and followers; invalid applications remain disabled with handler reasons. Only on-shift hiring staff can process applications. NPC-only band/PA/clerk/manager posts are never offered. Adult roles are voluntary standby employment only, explicitly not a service booking.",
+    "Events": { "list": [
+        {
+            "ID": "Neon_Apply_KaraokeDesk", "trigger": "OnDialogue_Options", "allowDuplicate": false, "UISpec": { "displayMode": "AVG" },
+            "SelfValidator": { "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["isPlayer"] }] },
+            "TargetValidators": [{ "refkeys": ["staff"], "baseScope": "CurrentTarget", "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_karaoke"] }, { "parameters": ["hasActorTag", "jp_karaoke_hiring"] }], "minTargetCount": 1 }],
+            "events": [
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "neon_karaoke_hiring", "Results": [{ "Type": "JoinActiveFaction", "arguments": ["applyOptions", "selfAndFollowers", "staff", "membertype_neon_karaoke_desk", "applyError"] }] },
+                { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [{ "option": "options", "Results": [{ "Type": "ExistStoredOptions", "arguments": ["applyOptions"] }, { "Type": "JumpToLabel", "arguments": ["", "ask"] }] }, { "option": "none", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "error"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "error", "line": "$applyError$", "isLast": true },
+                { "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp", "label": "ask", "question": "neon_apply_question", "loadOptionsKey": "applyOptions", "loadOptionsResults": [{ "Type": "JumpToLabel", "arguments": ["", "done"] }], "options": [{ "option": "neon_staff_cancel", "isDefaultCancel": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "cancel"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "done", "line": "neon_apply_done" },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "$factionChangeString$", "isLast": true },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "cancel", "line": "neon_staff_cancel_line", "isLast": true }
+            ]
+        },
+        {
+            "ID": "Neon_Apply_KaraokeRoom", "trigger": "OnDialogue_Options", "allowDuplicate": false, "UISpec": { "displayMode": "AVG" },
+            "SelfValidator": { "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["isPlayer"] }] },
+            "TargetValidators": [{ "refkeys": ["staff"], "baseScope": "CurrentTarget", "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_karaoke"] }, { "parameters": ["hasActorTag", "jp_karaoke_hiring"] }], "minTargetCount": 1 }],
+            "events": [
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "neon_karaoke_hiring", "Results": [{ "Type": "JoinActiveFaction", "arguments": ["applyOptions", "selfAndFollowers", "staff", "membertype_neon_karaoke_roomstaff", "applyError"] }] },
+                { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [{ "option": "options", "Results": [{ "Type": "ExistStoredOptions", "arguments": ["applyOptions"] }, { "Type": "JumpToLabel", "arguments": ["", "ask"] }] }, { "option": "none", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "error"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "error", "line": "$applyError$", "isLast": true },
+                { "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp", "label": "ask", "question": "neon_apply_question", "loadOptionsKey": "applyOptions", "loadOptionsResults": [{ "Type": "JumpToLabel", "arguments": ["", "done"] }], "options": [{ "option": "neon_staff_cancel", "isDefaultCancel": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "cancel"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "done", "line": "neon_apply_done" },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "$factionChangeString$", "isLast": true },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "cancel", "line": "neon_staff_cancel_line", "isLast": true }
+            ]
+        },
+        {
+            "ID": "Neon_Apply_LiveStaff", "trigger": "OnDialogue_Options", "allowDuplicate": false, "UISpec": { "displayMode": "AVG" },
+            "SelfValidator": { "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["isPlayer"] }] },
+            "TargetValidators": [{ "refkeys": ["staff"], "baseScope": "CurrentTarget", "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_neon_livehouse"] }, { "parameters": ["hasActorTag", "jp_neon_livehouse_hiring"] }], "minTargetCount": 1 }],
+            "events": [
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "neon_live_hiring", "Results": [{ "Type": "JoinActiveFaction", "arguments": ["applyOptions", "selfAndFollowers", "staff", "membertype_neon_live_staff", "applyError"] }] },
+                { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [{ "option": "options", "Results": [{ "Type": "ExistStoredOptions", "arguments": ["applyOptions"] }, { "Type": "JumpToLabel", "arguments": ["", "ask"] }] }, { "option": "none", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "error"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "error", "line": "$applyError$", "isLast": true },
+                { "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp", "label": "ask", "question": "neon_apply_question", "loadOptionsKey": "applyOptions", "loadOptionsResults": [{ "Type": "JumpToLabel", "arguments": ["", "done"] }], "options": [{ "option": "neon_staff_cancel", "isDefaultCancel": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "cancel"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "done", "line": "neon_apply_done" },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "$factionChangeString$", "isLast": true },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "cancel", "line": "neon_staff_cancel_line", "isLast": true }
+            ]
+        },
+        {
+            "ID": "Neon_Apply_Massage", "trigger": "OnDialogue_Options", "allowDuplicate": false, "UISpec": { "displayMode": "AVG" },
+            "SelfValidator": { "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["isPlayer"] }] },
+            "TargetValidators": [{ "refkeys": ["staff"], "baseScope": "CurrentTarget", "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_neon_massage"] }, { "parameters": ["hasActorTag", "jp_neon_massage_hiring"] }], "minTargetCount": 1 }],
+            "events": [
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "neon_massage_hiring", "Results": [{ "Type": "JoinActiveFaction", "arguments": ["applyOptions", "selfAndFollowers", "staff", "membertype_neon_massage_worker", "applyError"] }] },
+                { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [{ "option": "options", "Results": [{ "Type": "ExistStoredOptions", "arguments": ["applyOptions"] }, { "Type": "JumpToLabel", "arguments": ["", "ask"] }] }, { "option": "none", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "error"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "error", "line": "$applyError$", "isLast": true },
+                { "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp", "label": "ask", "question": "neon_apply_question", "loadOptionsKey": "applyOptions", "loadOptionsResults": [{ "Type": "JumpToLabel", "arguments": ["", "done"] }], "options": [{ "option": "neon_staff_cancel", "isDefaultCancel": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "cancel"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "done", "line": "neon_apply_done" },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "$factionChangeString$", "isLast": true },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "cancel", "line": "neon_staff_cancel_line", "isLast": true }
+            ]
+        },
+        {
+            "ID": "Neon_Apply_Izakaya", "trigger": "OnDialogue_Options", "allowDuplicate": false, "UISpec": { "displayMode": "AVG" },
+            "SelfValidator": { "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["isPlayer"] }] },
+            "TargetValidators": [{ "refkeys": ["staff"], "baseScope": "CurrentTarget", "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_neon_izakaya"] }, { "parameters": ["hasActorTag", "jp_neon_izakaya_hiring"] }], "minTargetCount": 1 }],
+            "events": [
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "neon_izakaya_hiring", "Results": [{ "Type": "JoinActiveFaction", "arguments": ["applyOptions", "selfAndFollowers", "staff", "membertype_neon_izakaya_waiter", "applyError"] }] },
+                { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [{ "option": "options", "Results": [{ "Type": "ExistStoredOptions", "arguments": ["applyOptions"] }, { "Type": "JumpToLabel", "arguments": ["", "ask"] }] }, { "option": "none", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "error"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "error", "line": "$applyError$", "isLast": true },
+                { "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp", "label": "ask", "question": "neon_apply_question", "loadOptionsKey": "applyOptions", "loadOptionsResults": [{ "Type": "JumpToLabel", "arguments": ["", "done"] }], "options": [{ "option": "neon_staff_cancel", "isDefaultCancel": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "cancel"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "done", "line": "neon_apply_done" },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "$factionChangeString$", "isLast": true },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "cancel", "line": "neon_staff_cancel_line", "isLast": true }
+            ]
+        },
+        {
+            "ID": "Neon_Apply_Bartender", "trigger": "OnDialogue_Options", "allowDuplicate": false, "UISpec": { "displayMode": "AVG" },
+            "SelfValidator": { "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["isPlayer"] }] },
+            "TargetValidators": [{ "refkeys": ["staff"], "baseScope": "CurrentTarget", "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_bar"] }, { "parameters": ["hasActorTag", "jp_bar_hiring"] }], "minTargetCount": 1 }],
+            "events": [
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "neon_bartender_hiring", "Results": [{ "Type": "JoinActiveFaction", "arguments": ["applyOptions", "selfAndFollowers", "staff", "membertype_neon_bartender", "applyError"] }] },
+                { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [{ "option": "options", "Results": [{ "Type": "ExistStoredOptions", "arguments": ["applyOptions"] }, { "Type": "JumpToLabel", "arguments": ["", "ask"] }] }, { "option": "none", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "error"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "error", "line": "$applyError$", "isLast": true },
+                { "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp", "label": "ask", "question": "neon_apply_question", "loadOptionsKey": "applyOptions", "loadOptionsResults": [{ "Type": "JumpToLabel", "arguments": ["", "done"] }], "options": [{ "option": "neon_staff_cancel", "isDefaultCancel": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "cancel"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "done", "line": "neon_apply_done" },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "$factionChangeString$", "isLast": true },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "cancel", "line": "neon_staff_cancel_line", "isLast": true }
+            ]
+        },
+        {
+            "ID": "Neon_Apply_Hostess", "trigger": "OnDialogue_Options", "allowDuplicate": false, "UISpec": { "displayMode": "AVG" },
+            "SelfValidator": { "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["isPlayer"] }] },
+            "TargetValidators": [{ "refkeys": ["staff"], "baseScope": "CurrentTarget", "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_bar"] }, { "parameters": ["hasActorTag", "jp_bar_hiring"] }], "minTargetCount": 1 }],
+            "events": [
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "neon_adult_hiring", "Results": [{ "Type": "JoinActiveFaction", "arguments": ["applyOptions", "selfAndFollowers", "staff", "membertype_neon_hostess", "applyError"] }] },
+                { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [{ "option": "options", "Results": [{ "Type": "ExistStoredOptions", "arguments": ["applyOptions"] }, { "Type": "JumpToLabel", "arguments": ["", "ask"] }] }, { "option": "none", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "error"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "error", "line": "$applyError$", "isLast": true },
+                { "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp", "label": "ask", "question": "neon_adult_apply_question", "loadOptionsKey": "applyOptions", "loadOptionsResults": [{ "Type": "JumpToLabel", "arguments": ["", "done"] }], "options": [{ "option": "neon_staff_cancel", "isDefaultCancel": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "cancel"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "done", "line": "neon_adult_apply_done" },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "$factionChangeString$", "isLast": true },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "cancel", "line": "neon_staff_cancel_line", "isLast": true }
+            ]
+        },
+        {
+            "ID": "Neon_Apply_Soapland", "trigger": "OnDialogue_Options", "allowDuplicate": false, "UISpec": { "displayMode": "AVG" },
+            "SelfValidator": { "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["isPlayer"] }] },
+            "TargetValidators": [{ "refkeys": ["staff"], "baseScope": "CurrentTarget", "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_neon_soapland"] }, { "parameters": ["hasActorTag", "jp_neon_soapland_hiring"] }], "minTargetCount": 1 }],
+            "events": [
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "neon_adult_hiring", "Results": [{ "Type": "JoinActiveFaction", "arguments": ["applyOptions", "selfAndFollowers", "staff", "membertype_neon_soap_worker", "applyError"] }] },
+                { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [{ "option": "options", "Results": [{ "Type": "ExistStoredOptions", "arguments": ["applyOptions"] }, { "Type": "JumpToLabel", "arguments": ["", "ask"] }] }, { "option": "none", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "error"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "error", "line": "$applyError$", "isLast": true },
+                { "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp", "label": "ask", "question": "neon_adult_apply_question", "loadOptionsKey": "applyOptions", "loadOptionsResults": [{ "Type": "JumpToLabel", "arguments": ["", "done"] }], "options": [{ "option": "neon_staff_cancel", "isDefaultCancel": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "cancel"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "done", "line": "neon_adult_apply_done" },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "$factionChangeString$", "isLast": true },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "cancel", "line": "neon_staff_cancel_line", "isLast": true }
+            ]
+        },
+        {
+            "ID": "Neon_Apply_Dispatch", "trigger": "OnDialogue_Options", "allowDuplicate": false, "UISpec": { "displayMode": "AVG" },
+            "SelfValidator": { "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["isPlayer"] }] },
+            "TargetValidators": [{ "refkeys": ["staff"], "baseScope": "CurrentTarget", "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_neon_dispatch"] }, { "parameters": ["hasActorTag", "jp_neon_dispatch_hiring"] }], "minTargetCount": 1 }],
+            "events": [
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "neon_adult_hiring", "Results": [{ "Type": "JoinActiveFaction", "arguments": ["applyOptions", "selfAndFollowers", "staff", "membertype_neon_dispatch_worker", "applyError"] }] },
+                { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [{ "option": "options", "Results": [{ "Type": "ExistStoredOptions", "arguments": ["applyOptions"] }, { "Type": "JumpToLabel", "arguments": ["", "ask"] }] }, { "option": "none", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "error"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "error", "line": "$applyError$", "isLast": true },
+                { "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp", "label": "ask", "question": "neon_adult_apply_question", "loadOptionsKey": "applyOptions", "loadOptionsResults": [{ "Type": "JumpToLabel", "arguments": ["", "done"] }], "options": [{ "option": "neon_staff_cancel", "isDefaultCancel": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "cancel"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "done", "line": "neon_adult_apply_done" },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "$factionChangeString$", "isLast": true },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "cancel", "line": "neon_staff_cancel_line", "isLast": true }
+            ]
+        },
+        {
+            "ID": "Neon_Quit_Karaoke", "trigger": "OnDialogue_Options", "allowDuplicate": false, "UISpec": { "displayMode": "AVG", "infoDisplay": "Hide" },
+            "SelfValidator": { "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["isPlayer"] }] },
+            "TargetValidators": [
+                { "refkeys": ["staff"], "baseScope": "CurrentTarget", "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_karaoke"] }, { "parameters": ["hasActorTag", "jp_karaoke_hiring"] }], "minTargetCount": 1 },
+                { "refkeys": ["leavers"], "baseScope": "FactionMembersWithMemberType", "extraScopeArguments": ["jp_karaoke", "membertype_neon_karaoke"], "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["sharesHomeFaction"] }], "minTargetCount": 1 }
+            ],
+            "events": [
+                { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [{ "option": "build", "Results": [{ "Type": "LeaveActiveFaction", "arguments": ["quitOptions", "leavers", "staff", "membertype_neon_karaoke"] }, { "Type": "JumpToLabel", "arguments": ["", "ask"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp", "label": "ask", "question": "neon_quit_question", "loadOptionsKey": "quitOptions", "loadOptionsResults": [{ "Type": "JumpToLabel", "arguments": ["", "done"] }], "options": [{ "option": "neon_staff_cancel", "isDefaultCancel": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "cancel"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "done", "line": "neon_quit_done" },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "$factionChangeString$", "isLast": true },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "cancel", "line": "neon_staff_cancel_line", "isLast": true }
+            ]
+        },
+        {
+            "ID": "Neon_Quit_LiveStaff", "trigger": "OnDialogue_Options", "allowDuplicate": false, "UISpec": { "displayMode": "AVG", "infoDisplay": "Hide" },
+            "SelfValidator": { "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["isPlayer"] }] },
+            "TargetValidators": [
+                { "refkeys": ["staff"], "baseScope": "CurrentTarget", "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_neon_livehouse"] }, { "parameters": ["hasActorTag", "jp_neon_livehouse_hiring"] }], "minTargetCount": 1 },
+                { "refkeys": ["leavers"], "baseScope": "FactionMembersWithMemberType", "extraScopeArguments": ["jp_neon_livehouse", "membertype_neon_live_staff"], "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["sharesHomeFaction"] }], "minTargetCount": 1 }
+            ],
+            "events": [
+                { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [{ "option": "build", "Results": [{ "Type": "LeaveActiveFaction", "arguments": ["quitOptions", "leavers", "staff", "membertype_neon_live_staff"] }, { "Type": "JumpToLabel", "arguments": ["", "ask"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp", "label": "ask", "question": "neon_quit_question", "loadOptionsKey": "quitOptions", "loadOptionsResults": [{ "Type": "JumpToLabel", "arguments": ["", "done"] }], "options": [{ "option": "neon_staff_cancel", "isDefaultCancel": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "cancel"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "done", "line": "neon_quit_done" },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "$factionChangeString$", "isLast": true },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "cancel", "line": "neon_staff_cancel_line", "isLast": true }
+            ]
+        },
+        {
+            "ID": "Neon_Quit_Massage", "trigger": "OnDialogue_Options", "allowDuplicate": false, "UISpec": { "displayMode": "AVG", "infoDisplay": "Hide" },
+            "SelfValidator": { "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["isPlayer"] }] },
+            "TargetValidators": [
+                { "refkeys": ["staff"], "baseScope": "CurrentTarget", "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_neon_massage"] }, { "parameters": ["hasActorTag", "jp_neon_massage_hiring"] }], "minTargetCount": 1 },
+                { "refkeys": ["leavers"], "baseScope": "FactionMembersWithMemberType", "extraScopeArguments": ["jp_neon_massage", "membertype_neon_massage_worker"], "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["sharesHomeFaction"] }], "minTargetCount": 1 }
+            ],
+            "events": [
+                { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [{ "option": "build", "Results": [{ "Type": "LeaveActiveFaction", "arguments": ["quitOptions", "leavers", "staff", "membertype_neon_massage_worker"] }, { "Type": "JumpToLabel", "arguments": ["", "ask"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp", "label": "ask", "question": "neon_quit_question", "loadOptionsKey": "quitOptions", "loadOptionsResults": [{ "Type": "JumpToLabel", "arguments": ["", "done"] }], "options": [{ "option": "neon_staff_cancel", "isDefaultCancel": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "cancel"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "done", "line": "neon_quit_done" },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "$factionChangeString$", "isLast": true },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "cancel", "line": "neon_staff_cancel_line", "isLast": true }
+            ]
+        },
+        {
+            "ID": "Neon_Quit_Izakaya", "trigger": "OnDialogue_Options", "allowDuplicate": false, "UISpec": { "displayMode": "AVG", "infoDisplay": "Hide" },
+            "SelfValidator": { "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["isPlayer"] }] },
+            "TargetValidators": [
+                { "refkeys": ["staff"], "baseScope": "CurrentTarget", "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_neon_izakaya"] }, { "parameters": ["hasActorTag", "jp_neon_izakaya_hiring"] }], "minTargetCount": 1 },
+                { "refkeys": ["leavers"], "baseScope": "FactionMembersWithMemberType", "extraScopeArguments": ["jp_neon_izakaya", "membertype_neon_izakaya_waiter"], "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["sharesHomeFaction"] }], "minTargetCount": 1 }
+            ],
+            "events": [
+                { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [{ "option": "build", "Results": [{ "Type": "LeaveActiveFaction", "arguments": ["quitOptions", "leavers", "staff", "membertype_neon_izakaya_waiter"] }, { "Type": "JumpToLabel", "arguments": ["", "ask"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp", "label": "ask", "question": "neon_quit_question", "loadOptionsKey": "quitOptions", "loadOptionsResults": [{ "Type": "JumpToLabel", "arguments": ["", "done"] }], "options": [{ "option": "neon_staff_cancel", "isDefaultCancel": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "cancel"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "done", "line": "neon_quit_done" },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "$factionChangeString$", "isLast": true },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "cancel", "line": "neon_staff_cancel_line", "isLast": true }
+            ]
+        },
+        {
+            "ID": "Neon_Quit_Bartender", "trigger": "OnDialogue_Options", "allowDuplicate": false, "UISpec": { "displayMode": "AVG", "infoDisplay": "Hide" },
+            "SelfValidator": { "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["isPlayer"] }] },
+            "TargetValidators": [
+                { "refkeys": ["staff"], "baseScope": "CurrentTarget", "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_bar"] }, { "parameters": ["hasActorTag", "jp_bar_hiring"] }], "minTargetCount": 1 },
+                { "refkeys": ["leavers"], "baseScope": "FactionMembersWithMemberType", "extraScopeArguments": ["jp_bar", "membertype_neon_bartender"], "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["sharesHomeFaction"] }], "minTargetCount": 1 }
+            ],
+            "events": [
+                { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [{ "option": "build", "Results": [{ "Type": "LeaveActiveFaction", "arguments": ["quitOptions", "leavers", "staff", "membertype_neon_bartender"] }, { "Type": "JumpToLabel", "arguments": ["", "ask"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp", "label": "ask", "question": "neon_quit_question", "loadOptionsKey": "quitOptions", "loadOptionsResults": [{ "Type": "JumpToLabel", "arguments": ["", "done"] }], "options": [{ "option": "neon_staff_cancel", "isDefaultCancel": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "cancel"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "done", "line": "neon_quit_done" },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "$factionChangeString$", "isLast": true },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "cancel", "line": "neon_staff_cancel_line", "isLast": true }
+            ]
+        },
+        {
+            "ID": "Neon_Quit_Hostess", "trigger": "OnDialogue_Options", "allowDuplicate": false, "UISpec": { "displayMode": "AVG", "infoDisplay": "Hide" },
+            "SelfValidator": { "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["isPlayer"] }] },
+            "TargetValidators": [
+                { "refkeys": ["staff"], "baseScope": "CurrentTarget", "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_bar"] }, { "parameters": ["hasActorTag", "jp_bar_hiring"] }], "minTargetCount": 1 },
+                { "refkeys": ["leavers"], "baseScope": "FactionMembersWithMemberType", "extraScopeArguments": ["jp_bar", "membertype_neon_hostess"], "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["sharesHomeFaction"] }], "minTargetCount": 1 }
+            ],
+            "events": [
+                { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [{ "option": "build", "Results": [{ "Type": "LeaveActiveFaction", "arguments": ["quitOptions", "leavers", "staff", "membertype_neon_hostess"] }, { "Type": "JumpToLabel", "arguments": ["", "ask"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp", "label": "ask", "question": "neon_quit_question", "loadOptionsKey": "quitOptions", "loadOptionsResults": [{ "Type": "JumpToLabel", "arguments": ["", "done"] }], "options": [{ "option": "neon_staff_cancel", "isDefaultCancel": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "cancel"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "done", "line": "neon_quit_done" },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "$factionChangeString$", "isLast": true },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "cancel", "line": "neon_staff_cancel_line", "isLast": true }
+            ]
+        },
+        {
+            "ID": "Neon_Quit_Soapland", "trigger": "OnDialogue_Options", "allowDuplicate": false, "UISpec": { "displayMode": "AVG", "infoDisplay": "Hide" },
+            "SelfValidator": { "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["isPlayer"] }] },
+            "TargetValidators": [
+                { "refkeys": ["staff"], "baseScope": "CurrentTarget", "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_neon_soapland"] }, { "parameters": ["hasActorTag", "jp_neon_soapland_hiring"] }], "minTargetCount": 1 },
+                { "refkeys": ["leavers"], "baseScope": "FactionMembersWithMemberType", "extraScopeArguments": ["jp_neon_soapland", "membertype_neon_soap_worker"], "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["sharesHomeFaction"] }], "minTargetCount": 1 }
+            ],
+            "events": [
+                { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [{ "option": "build", "Results": [{ "Type": "LeaveActiveFaction", "arguments": ["quitOptions", "leavers", "staff", "membertype_neon_soap_worker"] }, { "Type": "JumpToLabel", "arguments": ["", "ask"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp", "label": "ask", "question": "neon_quit_question", "loadOptionsKey": "quitOptions", "loadOptionsResults": [{ "Type": "JumpToLabel", "arguments": ["", "done"] }], "options": [{ "option": "neon_staff_cancel", "isDefaultCancel": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "cancel"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "done", "line": "neon_quit_done" },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "$factionChangeString$", "isLast": true },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "cancel", "line": "neon_staff_cancel_line", "isLast": true }
+            ]
+        },
+        {
+            "ID": "Neon_Quit_Dispatch", "trigger": "OnDialogue_Options", "allowDuplicate": false, "UISpec": { "displayMode": "AVG", "infoDisplay": "Hide" },
+            "SelfValidator": { "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["isPlayer"] }] },
+            "TargetValidators": [
+                { "refkeys": ["staff"], "baseScope": "CurrentTarget", "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_neon_dispatch"] }, { "parameters": ["hasActorTag", "jp_neon_dispatch_hiring"] }], "minTargetCount": 1 },
+                { "refkeys": ["leavers"], "baseScope": "FactionMembersWithMemberType", "extraScopeArguments": ["jp_neon_dispatch", "membertype_neon_dispatch_worker"], "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["sharesHomeFaction"] }], "minTargetCount": 1 }
+            ],
+            "events": [
+                { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [{ "option": "build", "Results": [{ "Type": "LeaveActiveFaction", "arguments": ["quitOptions", "leavers", "staff", "membertype_neon_dispatch_worker"] }, { "Type": "JumpToLabel", "arguments": ["", "ask"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp", "label": "ask", "question": "neon_quit_question", "loadOptionsKey": "quitOptions", "loadOptionsResults": [{ "Type": "JumpToLabel", "arguments": ["", "done"] }], "options": [{ "option": "neon_staff_cancel", "isDefaultCancel": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "cancel"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "done", "line": "neon_quit_done" },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "$factionChangeString$", "isLast": true },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "cancel", "line": "neon_staff_cancel_line", "isLast": true }
+            ]
+        }
+    ] },
+    "Dictionary": { "Entries": { "zh-cn": {
+        "Neon_Apply_KaraokeDesk": "应聘卡拉OK前台", "Neon_Apply_KaraokeRoom": "应聘包厢整理", "Neon_Apply_LiveStaff": "应聘检票及吧台", "Neon_Apply_Massage": "应聘按摩师待岗", "Neon_Apply_Izakaya": "应聘居酒屋兼职", "Neon_Apply_Bartender": "应聘调酒师", "Neon_Apply_Hostess": "自愿应聘酒吧陪侍待岗", "Neon_Apply_Soapland": "自愿应聘浴场员工待岗", "Neon_Apply_Dispatch": "自愿应聘派遣员工待岗",
+        "Neon_Quit_Karaoke": "辞去卡拉OK职务", "Neon_Quit_LiveStaff": "辞去演出场职务", "Neon_Quit_Massage": "辞去按摩师职务", "Neon_Quit_Izakaya": "辞去居酒屋职务", "Neon_Quit_Bartender": "辞去调酒师职务", "Neon_Quit_Hostess": "辞去陪侍待岗职务", "Neon_Quit_Soapland": "辞去浴场职务", "Neon_Quit_Dispatch": "辞去派遣事务所职务",
+        "neon_karaoke_hiring": "「前台和包厢整理都招兼职。日班十二点到二十二点，时薪一千二；深夜班二十二点到次日五点，一千五，按天结算。」",
+        "neon_live_hiring": "「检票和吧台招兼职，十五点到二十四点，时薪一千三，按天结算。乐队不是招聘岗位。」",
+        "neon_massage_hiring": "「现在只登记按摩师待岗，不接顾客，也没有额外菜单。十二点到二十二点时薪一千五，深夜二十二点到次日两点一千八百七十五，按天结算。」",
+        "neon_izakaya_hiring": "「晚班十七点到二十二点，时薪一千二；深夜二十二点到次日一点，一千五，按天结算。」",
+        "neon_bartender_hiring": "「调酒师十九点到二十四点时薪一千四，二十二点到次日四点一千七百五，按天结算。」",
+        "neon_adult_hiring": "「这里只登记本人自愿选择的待岗职务，随时可以辞职。目前不安排接客、陪侍服务或外出派遣，也不按顾客结算。普通待岗时薪一千八，深夜二十二点起的班次两千二百五，按天结算。」",
+        "neon_apply_question": "「是哪一位来应聘？」", "neon_adult_apply_question": "「确认是本人自愿应聘待岗职务，再选择登记人。不愿意就取消。」",
+        "neon_apply_done": "「登记好了。之后可以调整班次。」\n（在永久家庭的管理界面职务页调整班次。）", "neon_adult_apply_done": "「已登记待岗职务，不代表同意任何服务。可以调整班次，也可以在这里辞职。」\n（在永久家庭的管理界面职务页调整班次。）",
+        "neon_quit_question": "「要为哪一位办理辞职？」", "neon_quit_done": "「辞职手续已经办好了。辛苦了。」", "neon_staff_cancel": "取消", "neon_staff_cancel_line": "「那就先不办理。」"
+    } } }
+}

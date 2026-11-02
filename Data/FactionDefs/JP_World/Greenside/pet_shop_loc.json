@@ -1,0 +1,10 @@
+{
+  "Dictionary": { "Entries": { "en-us": {
+    "recreation_offer_jp_petcafe_visit": "Pet Cafe Gathering", "jp_petcafe_visit": "Spend Time with Pets", "jp_petcafe_serve": "Pet Shop and Cafe Counter Duty", "jp_petcafe_care": "Care for the Cafe Animals", "jp_petcafe_care_station": "Animal Care Station", "jp_petcafe_cat_seating": "Cat Lounge Seating", "jp_petcafe_dog_seating": "Dog Playroom Seating",
+    "membertype_jp_petcafe_staff": "Pet Cafe Staff", "membertype_jp_petcafe_parttime": "Part-Time Pet Cafe Staff", "membertype_jp_petcafe_morning": "Pet Cafe Morning Shift (10-15)", "membertype_jp_petcafe_evening": "Pet Cafe Evening Shift (15-20)", "membertype_jp_petcafe_clerk_npc": "Duty Pet Shop Clerk (10-20)", "jp_petcafe_joinOption": "$name$ as $memberType$",
+    "jp_greenside_pet_brush": "Pet Brush", "jp_greenside_pet_brush_tip": "An everyday pet brush. Ordinary merchandise with no use effect yet.", "jp_greenside_pet_ball": "Pet Toy Ball", "jp_greenside_pet_ball_tip": "A small ball for pets. Ordinary merchandise with no use effect yet.",
+    "jp_petcafe_visit_begin": "$doer.firstname$ crouches beside the pet room seating.", "jp_petcafe_visit_ongoing": "$doer.firstname$ waits for the animals to approach and spends a while playing with them.", "jp_petcafe_visit_after": "$doer.firstname$ puts the toys away and gets up to wash hands.",
+    "jp_petserve_begin": "$doer.firstname$ takes a place behind the counter.", "jp_petserve_ongoing": "$doer.firstname$ arranges the shelves and welcomes customers.", "jp_petserve_after": "$doer.firstname$ wipes the counter and puts the supplies away.",
+    "jp_petcare_begin": "$doer.firstname$ takes out the animal care supplies.", "jp_petcare_ongoing": "$doer.firstname$ changes the drinking water, arranges cushions and cleans the animal area.", "jp_petcare_after": "$doer.firstname$ cleans the supplies and washes hands thoroughly."
+  } } }
+}

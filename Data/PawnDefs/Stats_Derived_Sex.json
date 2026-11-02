@@ -5,6 +5,45 @@
         "list":
         [
             {
+                "id": "v_lubrication", "tags":["nsfw"],
+                "displayName":"%%v_lubrication%%", "statKeyword":"physical", "tooltip":"%%v_lubrication_tooltip%%",
+                "_comment":"Provisional tuning, not final physiology: base 0, stimulation coefficient 1. Absent/null sexStimulationAddPerPoint means no channel; explicit 0 retains a channel that traits can enable with addMult on lubrication_stimulation.",
+                "sexStimulationAddPerPoint":1.0,
+                "valueBase":{ "baseValue_value":0.0, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":0.0, "valueCeiling":1000.0 }
+            },
+            {
+                "id": "a_lubrication", "tags":["nsfw"],
+                "displayName":"%%a_lubrication%%", "statKeyword":"physical", "tooltip":"%%a_lubrication_tooltip%%",
+                "_comment":"Provisional tuning, not final physiology: base 0, stimulation coefficient explicitly 0; retains the lubrication_stimulation channel for trait addMult modifiers.",
+                "sexStimulationAddPerPoint":0.0,
+                "valueBase":{ "baseValue_value":0.0, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":0.0, "valueCeiling":1000.0 }
+            },
+            {
+                "id": "o_lubrication", "tags":["nsfw"],
+                "displayName":"%%o_lubrication%%", "statKeyword":"physical", "tooltip":"%%o_lubrication_tooltip%%",
+                "_comment":"Provisional tuning, not final physiology: base 50, stimulation coefficient 0.25. Uses physical so android mouths do not require the lust keyword.",
+                "sexStimulationAddPerPoint":0.25,
+                "valueBase":{ "baseValue_value":50.0, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":0.0, "valueCeiling":1000.0 }
+            },
+            {
+                "id": "v_acceptance", "tags":["nsfw"], "noDisplay":true,
+                "displayName":"%%v_acceptance%%", "statKeyword":"physical", "tooltip":"",
+                "_comment":"Hidden signed acceptance bonus for commands tagged penetration whose orifice is vagina, read by the penetrated side. Set per level of chara_status_sex_stimulation_pos (arousal stands in for lubrication at the acceptance stage); conditional modifiers can be added later. Provisional tuning.",
+                "valueBase":{ "baseValue_value":0.0, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":-10.0, "valueCeiling":10.0 }
+            },
+            {
+                "id": "a_acceptance", "tags":["nsfw"], "noDisplay":true,
+                "displayName":"%%a_acceptance%%", "statKeyword":"physical", "tooltip":"",
+                "_comment":"As v_acceptance, for commands whose orifice is anus.",
+                "valueBase":{ "baseValue_value":0.0, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":-10.0, "valueCeiling":10.0 }
+            },
+            {
+                "id": "o_acceptance", "tags":["nsfw"], "noDisplay":true,
+                "displayName":"%%o_acceptance%%", "statKeyword":"physical", "tooltip":"",
+                "_comment":"As v_acceptance, for commands whose orifice is mouth.",
+                "valueBase":{ "baseValue_value":0.0, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":-10.0, "valueCeiling":10.0 }
+            },
+            {
                 "id": "stats_derived_maxSensitivity_C", "tags":["nsfw"],
                 "displayName":"C Sensitivity",  "statKeyword":"lust", "tooltip":"",
                 "valueBase":{ "baseValue_value":1.0, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":0.0, "valueCeiling":10.0 }

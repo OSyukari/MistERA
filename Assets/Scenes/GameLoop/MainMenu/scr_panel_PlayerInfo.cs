@@ -7,6 +7,9 @@ using System.Linq;
 
 public class scr_panel_PlayerInfo : MonoBehaviour
 {
+    private scr_System_CampaignManager campaignManager;
+    private scr_UpdateHandler updateHandler;
+
     public RectTransform parentBox;
 
     public scr_HoverableText hp, mp, st, en;
@@ -15,8 +18,10 @@ public class scr_panel_PlayerInfo : MonoBehaviour
     private void Start()
     {
         //update = 0.0f;
-        scr_System_CampaignManager.current.Observer_UpdateNotice += RefreshUpdateNotice;
-        scr_UpdateHandler.current.Observer_PostUpdateTime_3 += PostUpdate;
+        campaignManager = scr_System_CampaignManager.current;
+        campaignManager.Observer_UpdateNotice += RefreshUpdateNotice;
+        updateHandler = scr_UpdateHandler.current;
+        updateHandler.Observer_PostUpdateTime_3 += PostUpdate;
         //Refresh();
 
         while (StatusBox.transform.childCount > 0)
@@ -25,6 +30,20 @@ public class scr_panel_PlayerInfo : MonoBehaviour
         }
 
         Refresh();
+    }
+
+    private void OnDestroy()
+    {
+        if (!ReferenceEquals(campaignManager, null))
+        {
+            campaignManager.Observer_UpdateNotice -= RefreshUpdateNotice;
+            campaignManager = null;
+        }
+        if (!ReferenceEquals(updateHandler, null))
+        {
+            updateHandler.Observer_PostUpdateTime_3 -= PostUpdate;
+            updateHandler = null;
+        }
     }
 
     Character_Trainable Chara { get { 

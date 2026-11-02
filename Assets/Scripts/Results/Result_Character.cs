@@ -19,7 +19,9 @@ public enum CharaResultType
     statMod_ST, statMod_EN, statMod_HP, statMod_MP,
     redress, undress,
     /// <summary> put on the outfit the current schedule wants (Character_Wardrobe.ApplyWanted) </summary>
-    changeOutfit
+    changeOutfit,
+    /// <summary> wash body traces off (shower). tags: only body parts / organs with these tags, empty = all (Plan_BodyTraces.md) </summary>
+    washTraces,
 
 }
 
@@ -92,7 +94,12 @@ public class Result_Character
         public void Execute(Character_Trainable chara, ExperienceLog m = null)
         {
             chara.Stats.AddOrModStatus(statusID, value);
-            if (m != null) m.AddStats(chara.RefID, statusID, value);
+
+            if (m != null)
+            {
+                var ss = chara.Stats.GetStatusByStringMatch(statusID);
+                if (ss != null && (!ss.BaseRef.noDisplay || scr_System_CampaignManager.current.DebugMode )) m.AddStats(chara.RefID, statusID, value);
+            }
         }
         public string Print()
         {

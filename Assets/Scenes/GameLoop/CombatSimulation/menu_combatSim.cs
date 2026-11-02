@@ -174,13 +174,6 @@ public class menu_combatSim : scr_Menu, IPointerClickHandler
         }
         ValidateAll();
     }
-    protected override void OnDestroy()
-    {
-        base.OnDestroy();
-        scr_System_CampaignManager.current.NotifyUpdate();
-
-    }
-
     public class Button_StartCombat: ButtonValidator, I_ButtonClickable
     {
         new menu_combatSim parent;

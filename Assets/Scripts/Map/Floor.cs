@@ -54,11 +54,48 @@ public class Floor_Instance : IDisposable, I_Disposable
     [JsonProperty] public int refID = -1;
 
     [JsonProperty] private string nameOverwrite = "";
+    /// <summary>Renames this floor instance (a localization key or a literal name) - e.g. a generated home named after its household.</summary>
+    public void SetNameOverwrite(string name) { nameOverwrite = name ?? ""; }
     [JsonIgnore] public string displayName { get { if (nameOverwrite != "") return LocalizeDictionary.QueryThenParse(nameOverwrite);
             return this.FloorBase.displayName;
         } }
 
     Dictionary<string, int> roomReference;
+
+    /// <summary>
+    /// Exits added at runtime (sockets for generated links, e.g. ResidenceUtility.CreateResidence). Always hidden;
+    /// matched by ID like the floor plan's own exits. See Docs/Locations/Plan_HiddenExitSockets.md.
+    /// </summary>
+    [JsonProperty] List<Floor_Base.FloorPlan_Exit> runtimeExits = new List<Floor_Base.FloorPlan_Exit>();
+
+    /// <summary>The floor plan's exits followed by this instance's runtime exits.</summary>
+    [JsonIgnore] public IEnumerable<Floor_Base.FloorPlan_Exit> Exits
+    {
+        get
+        {
+            if (FloorBase != null && FloorBase.exits != null) foreach (var exit in FloorBase.exits) yield return exit;
+            if (runtimeExits != null) foreach (var exit in runtimeExits) yield return exit;
+        }
+    }
+
+    public Floor_Base.FloorPlan_Exit FindExit(string exitID)
+    {
+        if (string.IsNullOrEmpty(exitID)) return null;
+        foreach (var exit in Exits) if (exit.ID == exitID) return exit;
+        return null;
+    }
+
+    /// <summary>Adds a hidden runtime exit on room connectedRoom (Base ID). No-op when this floor already has an exit with that ID.</summary>
+    public Floor_Base.FloorPlan_Exit AddRuntimeExit(string exitID, string connectedRoom)
+    {
+        if (string.IsNullOrEmpty(exitID) || string.IsNullOrEmpty(connectedRoom)) return null;
+        var existing = FindExit(exitID);
+        if (existing != null) return existing;
+        if (runtimeExits == null) runtimeExits = new List<Floor_Base.FloorPlan_Exit>();
+        var exit = new Floor_Base.FloorPlan_Exit() { ID = exitID, connectedRoom = connectedRoom, hideOnMap = true };
+        runtimeExits.Add(exit);
+        return exit;
+    }
 
     [JsonProperty] public List<Room_Instance> rooms;
 
@@ -147,7 +184,7 @@ public class Floor_Instance : IDisposable, I_Disposable
     {
         if (!roomReference.ContainsKey(baseID) && rooms.Count > 0)
         {
-            var temp = rooms.Find(x=>x.Base.ID == baseID);
+            var temp = rooms.Find(x=>x.Base != null && x.Base.ID == baseID);
             if (temp != null) roomReference.Add(baseID, temp.RefID);
             else
             {
@@ -157,7 +194,7 @@ public class Floor_Instance : IDisposable, I_Disposable
             }
         }
 
-        return rooms.Find(x => x.RefID == roomReference[baseID]);
+        return roomReference.TryGetValue(baseID, out var roomRef) ? rooms.Find(x => x.RefID == roomRef) : null;
     }
 
     [JsonIgnore] public float ImageWidth { get { return FloorBase.floorWidth; } }
@@ -188,6 +225,47 @@ public class Floor_Instance : IDisposable, I_Disposable
     [JsonIgnore] private List<Room_Base> pendingRoomAdditions = new List<Room_Base>();
     [JsonIgnore] private List<Room_Instance> pendingRoomRemovals = new List<Room_Instance>();
 
+    public bool IsPendingRoomRemoval(Room_Instance room) => pendingRoomRemovals.Contains(room);
+
+    public Manageable FindPhysicalHost()
+    {
+        if (MapTemplate == null) return null;
+        Manageable host = null;
+        foreach (var faction in scr_System_CampaignManager.current.Factions)
+        {
+            if (string.IsNullOrEmpty(faction.mapPlanID) || !faction.ManagedFloors.Contains(this)) continue;
+            var plan = scr_System_Serializer.current.GetByNameOrID_MapPlan(faction.mapPlanID);
+            if (plan == null || plan.ID != MapTemplate.ID) continue;
+            if (host != null)
+            {
+                Debug.LogWarning($"Floor [{refID}] has ambiguous physical hosts; skipping room ownership reconciliation.");
+                return null;
+            }
+            host = faction;
+        }
+        return host;
+    }
+
+    public void PreparePendingRoomAdditions()
+    {
+        if (pendingRoomAdditions.Count == 0) return;
+        // Resolve while old rooms still identify the host, even when every old room will be removed.
+        var host = FindPhysicalHost();
+        foreach (var rb in pendingRoomAdditions)
+        {
+            var room = new Room_Instance(FloorBase, rb);
+            room.parentFloor = this;
+            scr_System_CampaignManager.current.Register(room);
+            rooms.Add(room);
+            roomReference[rb.ID] = room.RefID;
+            if (host == null)
+                Debug.LogWarning($"Floor [{refID}] new room [{rb.ID}] has no unambiguous physical host; ownership not assigned.");
+            else if (!string.IsNullOrEmpty(rb.subfactionOwnerOverwrite)) host.ReconcileRoomTenant(room);
+            else host.AddToFaction(room, isRenting: MapTemplate.isRentingFloor, landlordFactionID: MapTemplate.landlordFactionID);
+        }
+        pendingRoomAdditions.Clear();
+    }
+
     public void SerializationRebuilt(bool buildpath)
     {
         // PASS 1 (buildpath == false, scr_System_CampaignManager.LoadSerializable) runs before
@@ -203,7 +281,7 @@ public class Floor_Instance : IDisposable, I_Disposable
         // scr_System_CampaignManager.LoadSerializable calls ApplyPendingRoomChanges() once that data is
         // wired up, strictly before calling SerializationRebuilt(true) - so by PASS 2 the room list must
         // already be sound (checked below, not just assumed).
-        if (!buildpath && FloorBase != null)
+        if (!buildpath && MapTemplate != null && FloorBase != null)
         {
             pendingRoomRemovals = rooms.FindAll(x => x.Base == null);
             pendingRoomAdditions = FloorBase.rooms.FindAll(rb => rooms.Find(x => x.Base != null && x.Base.ID == rb.ID) == null);
@@ -225,9 +303,7 @@ public class Floor_Instance : IDisposable, I_Disposable
     }
 
     /// <summary>
-    /// Performs the room additions/removals detected by SerializationRebuilt(false). Must run after
-    /// Factions/Jobs/Items/Characters are restored (and their OnAfterDeserialize() hooks have run) but
-    /// before SerializationRebuilt(true) - see scr_System_CampaignManager.LoadSerializable.
+    /// Removes obsolete rooms only after Map_Instance has prepared all additions, tenants and exits.
     /// </summary>
     public void ApplyPendingRoomChanges()
     {
@@ -235,76 +311,21 @@ public class Floor_Instance : IDisposable, I_Disposable
         foreach (var ri in pendingRoomRemovals)
         {
             Manageable owner = ri.FactionOwner as Manageable;
-            Room_Instance destination;
-
-            if (owner == null)
-            {
-                // no faction to fall back on at all
-                destination = scr_System_CampaignManager.current.debugRoom;
-            }
-            else if (owner.MainExit == ri)
-            {
-                // the room being deleted IS the faction's current MainExit - see if the template still
-                // defines one (its roomID may have simply moved) before giving up.
-                var plan = scr_System_Serializer.current.GetByNameOrID_MapPlan(owner.mapPlanID);
-                if (plan != null && plan.mainExit != null) owner.SetMainExit(plan.mainExit);
-
-                destination = owner.MainExit;
-                if (destination == null || destination == ri)
-                {
-                    Debug.LogError("Floor [" + displayName + "] room [" + ri.RefID + "] was faction [" + owner.ID + "]'s MainExit, and the template no longer defines a resolvable replacement. Cannot safely relocate its occupants.");
-                    throw new Exception("Faction [" + owner.ID + "] has no resolvable MainExit after its MainExit room was removed from the floor template.");
-                }
-            }
-            else
-            {
-                // faction has a MainExit and it isn't the room being deleted; if the faction simply
-                // never had one configured, debugRoom is still the right fallback (unrelated to this removal).
-                destination = owner.MainExit;
-                if (destination == null) destination = scr_System_CampaignManager.current.debugRoom;
-            }
-
-            foreach (var chara in new List<Character_Trainable>(ri.RoomChara))
-                scr_System_CampaignManager.current.Map.MoveCharaTo(chara, destination, true);
+            var map = scr_System_CampaignManager.current.Map;
+            map.EvacuateRoomForRemoval(ri);
 
             // a subfactionOwnerOverwrite room (e.g. a mall shop) is also kept in its host's managedRoomRefs
             // (Manageable.AddToFaction) - drop it from the whole parent chain, not just the owning subfaction
-            var visited = new HashSet<Manageable>();
-            for (var m = owner; m != null && visited.Add(m); m = (m as Manageable_Subfaction)?.Parent)
-                m.RemoveManagedRoom(ri.RefID);
+            foreach (var faction in scr_System_CampaignManager.current.Factions)
+                faction.RemoveManagedRoom(ri.RefID);
             rooms.Remove(ri);
-            scr_System_CampaignManager.current.UnregisterRoom(ri.RefID);
+            foreach (var rb in new List<string>(roomReference.Keys))
+                if (roomReference[rb] == ri.RefID) roomReference.Remove(rb);
+            scr_System_CampaignManager.current.UnregisterRoom(ri.RefID, false);
 
-            Debug.Log("Floor [" + displayName + "] room [" + ri.RefID + "] (faction [" + (owner != null ? owner.ID : "none") + "]) removed from template, occupants moved to [" + destination.DisplayName + "]");
+            Debug.Log("Floor [" + displayName + "] room [" + ri.RefID + "] (faction [" + (owner != null ? owner.ID : "none") + "]) safely removed from template.");
         }
         pendingRoomRemovals.Clear();
-
-        // Rooms added to the template: instantiate them and attach each to whichever faction owns this
-        // floor's other rooms (unwrapping one Manageable_Subfaction.Parent hop if the sibling picked
-        // happens to be a tenant, so AddToFaction's own subfactionOwnerOverwrite redirect parents any
-        // brand-new tenant subfaction correctly).
-        Manageable defaultOwner = null;
-        foreach (var ri in rooms)
-        {
-            var o = ri.FactionOwner as Manageable;
-            var sub = o as Manageable_Subfaction;
-            var candidate = sub != null ? sub.Parent : o;
-            if (candidate != null) { defaultOwner = candidate; break; }
-        }
-
-        foreach (var rb in pendingRoomAdditions)
-        {
-            Room_Instance ri = new Room_Instance(FloorBase, rb);
-            ri.parentFloor = this;
-            scr_System_CampaignManager.current.Register(ri);
-            rooms.Add(ri);
-
-            if (defaultOwner != null) defaultOwner.AddToFaction(ri);
-
-            var faction = ri.FactionOwner as Manageable;
-            Debug.Log("Floor [" + displayName + "] room [" + rb.ID + "] added to template, attached to faction [" + (faction != null ? faction.ID : "none") + "].");
-        }
-        pendingRoomAdditions.Clear();
     }
 
     /// <summary>
@@ -318,6 +339,12 @@ public class Floor_Instance : IDisposable, I_Disposable
     private void BuildPath(Room_Instance mainExit = null)
     {
         graph = new AdjacencyGraph<int, TaggedEdge<int, Door_Instance>>();
+        foreach (var room in rooms)
+        {
+            graph.AddVertex(room.RefID);
+            room.connectedInFloor = false;
+            room.SameFloorGraphObserver = null;
+        }
 
 
         if (FloorBase != null)
@@ -367,14 +394,11 @@ public class Floor_Instance : IDisposable, I_Disposable
 
         // Verify if every room is connected. Unconnected room might need to be removed 
         foreach(var i in rooms){
+            i.SameFloorGraphObserver = RunDijkstraForFloor(i.RefID);
             if (!i.connectedInFloor && (i.FactionOwner == null || i.FactionOwner.MainExit != i))
             {
                 if (rooms.Count < 2) Debug.Log($"Room {refID} {i.DisplayName} in map {this.displayName} is orphaned after serialization, please handle.");
                 else Debug.LogError($"Room {refID} {i.DisplayName} in map {this.displayName} is orphaned after serialization, please handle.");
-            }
-            else
-            {
-                i.SameFloorGraphObserver = RunDijkstraForFloor(i.RefID);
             }
         }
     }

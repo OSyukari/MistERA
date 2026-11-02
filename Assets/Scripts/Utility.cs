@@ -670,6 +670,9 @@ public static class UtilityEX
 
     public static bool DetectConflict(ActionPackage a, ActionPackage b)
     {
+        // An invitation is not a body action and must not interrupt the destination scene before acceptance.
+        if ((a.job is Job_Sex_Group aScene && b.PreservesSexScene(aScene))
+            || (b.job is Job_Sex_Group bScene && a.PreservesSexScene(bScene))) return false;
         if (a is ActionPackage_Sex || b is ActionPackage_Sex)
         {
             if (a is ActionPackage_Sex) return DetectConflict2(a as ActionPackage_Sex,b);
@@ -862,7 +865,7 @@ public static class UtilityEX
             s = s.Replace("$comdesc$", ap.targetCOM == null ? "" : ap.targetCOM.DisplayName(ap.COMVariantID));
         }
 
-        s = s.Replace("$result$", LocalizeDictionary.QueryThenParse($"Memory_Response_{ap.injectResult}"));
+        if (s.Contains("$result$")) s = s.Replace("$result$", ap.GetResultText());
 
     }
 
@@ -909,7 +912,7 @@ public static class UtilityEX
 
         if (s.Contains("$comdesc$"))
         {
-            Debug.LogError("STRING REPLACE COMDESC [" + s + "] with [" + (evp.targetCOM == null ? "" : evp.targetCOM.DisplayName(evp.VariantID)) + "]");
+            //Debug.LogError("STRING REPLACE COMDESC [" + s + "] with [" + (evp.targetCOM == null ? "" : evp.targetCOM.DisplayName(evp.VariantID)) + "]");
             s = s.Replace("$comdesc$", evp.targetCOM == null ? "" : evp.targetCOM.DisplayName(evp.VariantID));
         }
 
@@ -1013,7 +1016,8 @@ public static class UtilityEX
             {
                 //
             }
-            else if (jobSex != null && jobSex.isRapist(a) != jobSex.isRapist(b))
+            else if (jobSex != null && ((jobSex.isRapist(a) && jobSex.isActorGettingRaped(b.RefID))
+                || (jobSex.isRapist(b) && jobSex.isActorGettingRaped(a.RefID))))
             {
                 doer_isr = jobSex.isRapist(a);
                 receiver_isr = jobSex.isRapist(b);
@@ -1152,58 +1156,8 @@ public static class UtilityEX
     public static void GetActorTag(ref List<string> tags, Character_Trainable c)
     {
         if (c == null) return;
-        var result = scr_System_CentralControl.current.GetGender(c);
-        foreach(var tag in result)
-        {
-            tags.Add(tag.ToString());
-        }
-        tags.AddRange(c.ActorKeywords);
-
-        var activeFaction = c.FactionManager.CurrentlyActiveFaction;
-        var activeParty = c.FactionManager.CurrentActiveParty;
-        if (activeParty != null)
-        {
-            tags.Add(activeParty.FactionID);
-            tags.AddRange(activeParty.factionTags);
-            tags.AddRange(activeParty.localeTags);
-            tags.AddRange(activeParty.GetMemberType(c).Tags);
-        }
-        else if (activeFaction != null)
-        {
-            tags.Add(activeFaction.FactionID);
-            tags.AddRange(activeFaction.factionTags);
-            tags.AddRange(activeFaction.localeTags);
-            tags.AddRange(c.FactionManager.GetScheduledMemberType(activeFaction).Tags);
-            // a recreation visit's activity tags (RecreationActivity.Tags) on top of the MemberType's
-            var activity = c.FactionManager.GetScheduledActivity(activeFaction);
-            if (activity?.Tags != null) tags.AddRange(activity.Tags);
-        }
-        else if (c.CurrentRoom != null && c.CurrentRoom.FactionOwner != null)
-        {
-            tags.Add(c.CurrentRoom.FactionOwner.FactionID);
-        }
-
-        if (scr_System_Time.current.TimeResume && !c.CanActInTimeStop) tags.Add("timeResume");
-        else if (c.isTimeStopped)
-        {
-            tags.Add("timestop");
-            // frozen actor: portrait expression keywords, so every kojo/portrait of a timestopped actor picks them up
-            tags.Add("timestopped");
-            tags.Add("doll");
-            tags.Add("empty");
-        }
-        if (c.isSleeping) {
-            tags.Add("sleeping");
-            tags.Add("unconscious");
-        }
-        else if (c.Stats.isConsciousnessUnconscious) tags.Add("unconscious");
-
-        // portrait keywords (GlobalPortraitTemplate): the player's images are the pov category, visible pregnancy picks _pregnant variants
-        if (scr_System_CampaignManager.current != null && scr_System_CampaignManager.current.Player == c) tags.Add("pov");
-        if (c.isVisiblyPregnant) tags.Add("pregnant");
-
+        c.AppendActorTags(tags);
         Utility.DistinctInPlace(tags);
-        //if (c.Climaxing) tags.Add("climax");  this will make it too easy to get climax exp
     }
 
     /// <summary>
@@ -1719,6 +1673,16 @@ public static class UtilityEX
                     c.FactionManager.SetTempHomeFaction(addTofaction.ID, FactionUtility.MemberType_Visitor);
                     parsedSuccessful = true;
                 }
+                break;
+            case "spawnResident":
+                // spawnResident <charaID[,charaID...]> <factionID> [homeTemplateID (district) | memberTypeID (other faction)]
+                // one character per listed ID (generator or base ID); a residential district gets one new household home
+                if (parsed.Count() >= 3)
+                {
+                    var residentIDs = parsed[1].Split(',').Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+                    parsedSuccessful = ResidenceUtility.SpawnResidents(residentIDs, parsed[2], parsed.Count() >= 4 ? parsed[3] : "");
+                }
+                else Debug.LogError("spawnResident <charaID[,charaID...]> <factionID> [homeTemplateID | memberTypeID]");
                 break;
             case "spawnCharaPrisoner":
                 if (parsed.Count() >= 2)

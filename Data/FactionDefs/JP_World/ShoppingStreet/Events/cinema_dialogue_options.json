@@ -1,0 +1,48 @@
+{
+    "_comment":"SunMart join/quit pattern. JoinActiveFaction builds options for the player and every follower; invalid candidates remain visible and disabled with the handler's reason. Only usher posts are offered, never the NPC ticket-clerk post.",
+    "Events":{"list":[
+        {
+            "ID":"jp_mall_cinema_Opt_Apply","allowDuplicate":false,"trigger":"OnDialogue_Options","UISpec":{"displayMode":"AVG"},
+            "SelfValidator":{"chara_conditions":[{"parameters":["exists"]},{"parameters":["isPlayer"]}]},
+            "TargetValidators":[{"refkeys":["staff"],"baseScope":"CurrentTarget","chara_conditions":[{"parameters":["exists"]},{"parameters":["excludePlayer"]},{"parameters":["isConscious"]},{"parameters":["isActiveFaction","jp_mall_cinema"]},{"parameters":["hasActorTag","jp_mall_cinema_hiring"]}],"minTargetCount":1}],
+            "events":[
+                {"$type":"Event+EventEntry+EventEntry_Line, Assembly-CSharp","UISpec":{"portraitRefKey":"staff","selfTags":["focused"]},"line":"jp_mall_cinema_Opt_Apply_greeting","Results":[{"Type":"JoinActiveFaction","arguments":["applyOptions","selfAndFollowers","staff","membertype_jp_mall_usher","applyError"]}]},
+                {"$type":"Event+EventEntry+EventEntry_Branch, Assembly-CSharp","options":[
+                    {"option":"_has_options","Results":[{"Type":"ExistStoredOptions","arguments":["applyOptions"]},{"Type":"JumpToLabel","arguments":["","apply_ask"]}]},
+                    {"option":"_no_options","Results":[{"Type":"JumpToLabel","arguments":["","apply_error"]}]}
+                ]},
+                {"$type":"Event+EventEntry+EventEntry_Line, Assembly-CSharp","label":"apply_error","line":"$applyError$","isLast":true},
+                {"$type":"Event+EventEntry+EventEntry_Question, Assembly-CSharp","label":"apply_ask","UISpec":{"portraitRefKey":"staff","selfTags":["focused"]},"question":"jp_mall_cinema_Opt_Apply_question","loadOptionsKey":"applyOptions","loadOptionsResults":[{"Type":"JumpToLabel","arguments":["","apply_done"]}],"options":[{"option":"jp_mall_cinema_Opt_cancel","isDefaultCancel":true,"Results":[{"Type":"JumpToLabel","arguments":["","apply_cancel"]}]}]},
+                {"$type":"Event+EventEntry+EventEntry_Line, Assembly-CSharp","label":"apply_done","UISpec":{"portraitRefKey":"staff","selfTags":["focused"]},"line":"jp_mall_cinema_Opt_Apply_done"},
+                {"$type":"Event+EventEntry+EventEntry_Line, Assembly-CSharp","line":"$factionChangeString$","isLast":true},
+                {"$type":"Event+EventEntry+EventEntry_Line, Assembly-CSharp","label":"apply_cancel","line":"jp_mall_cinema_Opt_cancelLine","isLast":true}
+            ]
+        },
+        {
+            "ID":"jp_mall_cinema_Opt_Quit","allowDuplicate":false,"trigger":"OnDialogue_Options","UISpec":{"displayMode":"AVG","infoDisplay":"Hide"},
+            "SelfValidator":{"chara_conditions":[{"parameters":["exists"]},{"parameters":["isPlayer"]}]},
+            "TargetValidators":[
+                {"refkeys":["staff"],"baseScope":"CurrentTarget","chara_conditions":[{"parameters":["exists"]},{"parameters":["excludePlayer"]},{"parameters":["isConscious"]},{"parameters":["isActiveFaction","jp_mall_cinema"]},{"parameters":["hasActorTag","jp_mall_cinema_hiring"]}],"minTargetCount":1},
+                {"refkeys":["leavers"],"baseScope":"FactionMembersWithMemberType","extraScopeArguments":["jp_mall_cinema","membertype_jp_mall_usher"],"chara_conditions":[{"parameters":["exists"]},{"parameters":["sharesHomeFaction"]}],"minTargetCount":1}
+            ],
+            "events":[
+                {"$type":"Event+EventEntry+EventEntry_Branch, Assembly-CSharp","options":[{"option":"_build_options","Results":[{"Type":"LeaveActiveFaction","arguments":["quitOptions","leavers","staff","membertype_jp_mall_usher"]},{"Type":"JumpToLabel","arguments":["","quit_ask"]}]}]},
+                {"$type":"Event+EventEntry+EventEntry_Question, Assembly-CSharp","label":"quit_ask","UISpec":{"portraitRefKey":"staff","selfTags":["focused"]},"question":"jp_mall_cinema_Opt_Quit_question","loadOptionsKey":"quitOptions","loadOptionsResults":[{"Type":"JumpToLabel","arguments":["","quit_done"]}],"options":[{"option":"jp_mall_cinema_Opt_cancel","isDefaultCancel":true,"Results":[{"Type":"JumpToLabel","arguments":["","quit_abort"]}]}]},
+                {"$type":"Event+EventEntry+EventEntry_Line, Assembly-CSharp","label":"quit_done","UISpec":{"portraitRefKey":"staff","selfTags":["focused"]},"line":"jp_mall_cinema_Opt_Quit_done"},
+                {"$type":"Event+EventEntry+EventEntry_Line, Assembly-CSharp","line":"$factionChangeString$","isLast":true},
+                {"$type":"Event+EventEntry+EventEntry_Line, Assembly-CSharp","label":"quit_abort","line":"jp_mall_cinema_Opt_cancelLine","isLast":true}
+            ]
+        }
+    ]},
+    "Dictionary":{"Entries":{"zh-cn":{
+        "jp_mall_cinema_Opt_Apply":"应聘影院引导员",
+        "jp_mall_cinema_Opt_Apply_greeting":"「引导员还在招人，主要做检票和入场引导。日班时薪一千二，晚班一千三，周五、六深夜班一千五，按天结算。」",
+        "jp_mall_cinema_Opt_Apply_question":"「是哪一位要应聘？」",
+        "jp_mall_cinema_Opt_Apply_done":"「登记好了，先安排日班。班次可以在管理界面的职务页调整，深夜班只在周五、周六开。」",
+        "jp_mall_cinema_Opt_Quit":"办理引导员辞职",
+        "jp_mall_cinema_Opt_Quit_question":"「是哪一位要辞职？」",
+        "jp_mall_cinema_Opt_Quit_done":"「手续办好了。谢谢这段时间的帮忙。」",
+        "jp_mall_cinema_Opt_cancel":"算了",
+        "jp_mall_cinema_Opt_cancelLine":"「有需要再来柜台找我。」"
+    }}}
+}

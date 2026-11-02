@@ -13,6 +13,7 @@ public class scr_Canvas_tooltipHandler : MonoBehaviour
 
     private RectTransform m_TextPopup_RectTransform;
     private TextMeshProUGUI m_TextPopup_TMPComponent;
+    private scr_UpdateHandler updateHandler;
 
 
 
@@ -35,7 +36,8 @@ public class scr_Canvas_tooltipHandler : MonoBehaviour
         m_TextPopup_TMPComponent.text = ""; // initialize to prevent null
 
         //scr_System_CampaignManager.current.Observer_UpdateNotice += UpdateNotice;
-        scr_UpdateHandler.current.Observer_PreUpdateTime += UpdateNotice;
+        updateHandler = scr_UpdateHandler.current;
+        updateHandler.Observer_PreUpdateTime += UpdateNotice;
     }
 
     private void UpdateNotice()
@@ -45,7 +47,11 @@ public class scr_Canvas_tooltipHandler : MonoBehaviour
 
     private void OnDestroy()
     {
-        scr_UpdateHandler.current.Observer_PreUpdateTime -= UpdateNotice;
+        if (!ReferenceEquals(updateHandler, null))
+        {
+            updateHandler.Observer_PreUpdateTime -= UpdateNotice;
+            updateHandler = null;
+        }
     }
     /*
     private float timer = 0.0f;

@@ -48,9 +48,18 @@ public class ActionPackage_ItemUse : ActionPackage
         {
             foreach (var actor in this.Actors)
             {
-                UseItem(executeSuccessful, actor, ItemInstance, m);
+                ApplyItem(actor, m);
             }
         }
+    }
+
+    /// <summary>
+    /// What one actor does with the package's item on execution - using it in place (UseItem) by default.
+    /// ActionPackage_ItemConsume overrides this to eat a taken/copied item instead.
+    /// </summary>
+    protected virtual void ApplyItem(Character_Trainable actor, MessageCollect m)
+    {
+        UseItem(executeSuccessful, actor, ItemInstance, m);
     }
 
     protected override bool PreEvaluate()

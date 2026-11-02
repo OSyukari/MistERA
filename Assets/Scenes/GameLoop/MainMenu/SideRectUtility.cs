@@ -163,7 +163,13 @@ public static class SideRectUtility
             .Replace("$bodyType$", chara.Wardrobe?.BodyType?.displayname)
             .Replace("$skinColor$", chara.Wardrobe?.SkinColor?.displayname);
 
+        // visible body traces per location (Docs/Body/Plan_BodyTraces.md), covered ones too in x-ray / debug mode
+        bool seeCovered = scr_System_CampaignManager.current.XrayMode || scr_System_CampaignManager.current.DebugMode;
+        var traceText = TraceUtility.BuildDescription(chara.Body, !seeCovered, out var traceTooltip);
+        if (!string.IsNullOrEmpty(traceText)) desctext += "\n" + traceText;
+
         description.SetText(desctext);
+        description.SetExternalTooltip(traceTooltip);
 
         foreach (BodyPart_Instance b in chara.Body.Body)
         {

@@ -41,6 +41,7 @@ public class Status_Instance
     public string onRemoveEventID = "";
 
     [JsonProperty] protected float severity;
+    [JsonIgnore] public float StoredSeverity { get { return severity; } }
 
     protected I_StatsManager owner = null;
     [JsonIgnore]
@@ -210,7 +211,8 @@ public class Status_Instance
 
         var initialS = this.SeverityIndex;
 
-        severity += f;
+        var previousSeverity = severity;
+        var target = severity + f;
 
         var min = BaseRef.variants[0].threshold;
         var max = BaseRef.variants[BaseRef.variants.Count - 1].threshold;
@@ -227,8 +229,11 @@ public class Status_Instance
 
         if (externalCap != -1) max = Math.Min(externalCap, max);
 
-        severity = Mathf.Max(severity, min);
+        severity = Mathf.Max(target, min);
         severity = Mathf.Min(severity, max);
+
+        var severityChanged = !severity.Equals(previousSeverity);
+        if (severityChanged) owner?.NotifyStatModsChanged();
 
         if (severity == max) maxed = true;
         else maxed = false;
@@ -242,8 +247,8 @@ public class Status_Instance
 
         if (this.SeverityIndex != initialS)
         {
-            // variant crossing swaps this status' stat_modifiers -> stale stat caches
-            owner?.NotifyStatModsChanged();
+            // Continuous changes already invalidated caches before dependency reads.
+            if (!severityChanged) owner?.NotifyStatModsChanged();
             return true;
         }
         return false;
@@ -252,6 +257,7 @@ public class Status_Instance
     public bool SeveritySet(float target)
     {
         var initialS = this.SeverityIndex;
+        var previousSeverity = severity;
 
         var min = BaseRef.variants[0].threshold;
         var max = BaseRef.variants[BaseRef.variants.Count - 1].threshold;
@@ -264,13 +270,16 @@ public class Status_Instance
 
         severity = Mathf.Clamp(target, min, max);
 
+        var severityChanged = !severity.Equals(previousSeverity);
+        if (severityChanged) owner?.NotifyStatModsChanged();
+
         if (severity == max) maxed = true;
         else maxed = false;
 
         _severityIndex = UpdateSeverity();
         if (this.SeverityIndex != initialS)
         {
-            owner?.NotifyStatModsChanged();
+            if (!severityChanged) owner?.NotifyStatModsChanged();
             return true;
         }
         return false;

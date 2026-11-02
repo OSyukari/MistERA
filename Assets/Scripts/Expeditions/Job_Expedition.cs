@@ -703,7 +703,7 @@ public class Job_Expedition : Job
                 var p = packages_previous[i];
                 if (p.isTemporaryAP) continue;
                 scr_System_CampaignManager.current.Unregister(p);
-                this.packages_previous.RemoveAt(i);
+                RemovePackageAt_Previous(i);
             }
 
             if (properExitRefs.Count > 0 || this.actorRefID.Count < 1)
@@ -1109,7 +1109,7 @@ public class Job_Expedition : Job
                 {
                     //Debug.Log($"EXPEDITION REMOVEACTOR disabling package {p.DisplayName}");
                 }
-                packages_previous.RemoveAt(index);
+                RemovePackageAt_Previous(index);
             }
         }
         for (int index = packages_current.Count - 1; index >= 0; index--)
@@ -1126,7 +1126,7 @@ public class Job_Expedition : Job
                 {
                     //Debug.Log($"EXPEDITION REMOVEACTOR disabling package {p.DisplayName}");
                 }
-                packages_current.RemoveAt(index);
+                RemovePackageAt_Current(index);
             }
         }
         base.RemoveActor(charaRef);

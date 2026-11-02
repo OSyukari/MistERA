@@ -1,0 +1,42 @@
+{
+    "_comment": "District host keeps neon_entrance; eleven independent tenant floors connect through their factionInit floorDoors (venue exit street <-> host hidden exit to_<venueID>, Docs/Locations/Plan_HiddenExitSockets.md). World wiring belongs to the parent agent: initialize host AND all eleven venue IDs; one door at (710,300), floorExitID neon_entrance; absorb jp_karaoke/jp_bar/jp_casino placeholder doors. All art below is PLACEHOLDER, reused existing Generated backgrounds.",
+    "MapPlans": {
+        "factionInit": [
+            { "ID": "jp_neon_street", "isRentingFloor": false, "setPrivateRoomOwner": false, "mainExit": { "roomID": "neon_entrance", "exitCost": 5 }, "floors": [{ "ID": "floor_jp_neon_street", "nameOverwrite": "jp_neon_street" }], "mealHours": [], "managerBaseIDs": [], "workModules": [] }
+        ],
+        "floorPlans": [
+            {
+                "ID": "floor_jp_neon_street", "imagePath": "BGAssets/Generated/shopping_district_03.webp", "isFloorPlan": false,
+                "mapExit": "neon_entrance",
+                "floorWidth": 400, "floorHeight": 400, "resize": 1,
+                "_comment_exits": "Hidden sockets, one per venue floor door (venue factionInit floorDoors -> exit to_<venueID>).",
+                "exits": [
+                    { "ID": "to_jp_neon_adultshop", "connectedRoom": "neon_entrance", "hideOnMap": true },
+                    { "ID": "to_jp_bar", "connectedRoom": "neon_entrance", "hideOnMap": true },
+                    { "ID": "to_jp_neon_bowling", "connectedRoom": "neon_entrance", "hideOnMap": true },
+                    { "ID": "to_jp_neon_dispatch", "connectedRoom": "neon_entrance", "hideOnMap": true },
+                    { "ID": "to_jp_neon_izakaya", "connectedRoom": "neon_entrance", "hideOnMap": true },
+                    { "ID": "to_jp_karaoke", "connectedRoom": "neon_entrance", "hideOnMap": true },
+                    { "ID": "to_jp_neon_livehouse", "connectedRoom": "neon_entrance", "hideOnMap": true },
+                    { "ID": "to_jp_neon_lovehotel", "connectedRoom": "neon_entrance", "hideOnMap": true },
+                    { "ID": "to_jp_neon_massage", "connectedRoom": "neon_entrance", "hideOnMap": true },
+                    { "ID": "to_jp_neon_pachinko", "connectedRoom": "neon_entrance", "hideOnMap": true },
+                    { "ID": "to_jp_neon_soapland", "connectedRoom": "neon_entrance", "hideOnMap": true }
+                ],
+                "rooms": [
+                    { "ID": "neon_entrance", "displayName": "neon_entrance", "hideOnMap": true, "connects": [], "roomImagePath": "BGAssets/Generated/shopping_district_03.webp" }
+                ]
+            }
+        ]
+    },
+    "Dictionary": { "Entries": { "zh-cn": {
+        "jp_neon_street": "霓虹街", "neon_entrance": "霓虹街入口", "neon_front": "霓虹街前街", "neon_alley": "霓虹街后巷",
+        "karaoke_entrance": "卡拉OK前台", "ktv_room_s1": "小包厢一", "ktv_room_s2": "小包厢二", "ktv_room_s3": "小包厢三", "ktv_room_l1": "聚会大包厢", "ktv_kitchen": "卡拉OK小厨房",
+        "live_entrance": "演出场检票口", "live_floor": "观众区", "live_stage": "舞台", "live_backstage": "后台", "live_bar": "演出场吧台",
+        "massage_reception": "按摩店前台", "massage_waiting": "按摩店等候室", "massage_room_1": "按摩室一", "massage_room_2": "按摩室二", "massage_room_3": "按摩室三",
+        "izakaya_counter": "居酒屋柜台", "izakaya_tatami": "居酒屋榻榻米座", "bowling_entrance": "保龄球馆前台", "bowling_lanes": "保龄球道",
+        "bar_entrance": "酒吧吧台", "bar_booths": "酒吧卡座", "bar_backroom": "酒吧休息室", "adultshop_floor": "成人用品卖场", "adultshop_fitting": "试衣间",
+        "hotel_front": "情侣旅馆自助前台", "hotel_room_1": "旅馆客房一", "hotel_room_2": "旅馆客房二", "hotel_room_3": "旅馆客房三", "hotel_room_4": "旅馆客房四",
+        "pachinko_entrance": "柏青哥柜台", "pachinko_floor": "柏青哥机台区", "soap_reception": "浴场前台", "soap_waiting": "浴场等候厅", "soap_room_1": "浴场单间一", "soap_room_2": "浴场单间二", "soap_room_3": "浴场单间三", "dispatch_reception": "派遣事务所前台", "dispatch_waiting_room": "派遣员工待机室"
+    } } }
+}

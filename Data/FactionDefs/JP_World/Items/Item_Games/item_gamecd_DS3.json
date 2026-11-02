@@ -17,6 +17,11 @@
                                 ],
                                 "knowledgeRatePerMin":0.035
                             }
+                        },
+                        {
+                            "_comment":"Media for a group gaming session (RecreationActivity.requireMedia mediaTag game): runtime = the session's length.",
+                            "compType":"ItemComponent_Media",
+                            "comp_Media":{ "runtimeMinutes":120, "mediaTags":["game"] }
                         }
                     ]
             }

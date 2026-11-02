@@ -23,6 +23,8 @@
             "exceptTags":["electronics"]
         }
     ],
+                "activeHoursStart":10,
+                "activeHoursEnd":21,
     "workModules": [],
     "managerBaseIDs": [
         ""

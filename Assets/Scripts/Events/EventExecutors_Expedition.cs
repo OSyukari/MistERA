@@ -74,7 +74,7 @@ public static class EventExecutors_Expedition
         {
             if (c == null || c.Body == null) continue;
             var item = WorldManager.Instantiate(args[1], "", count);
-            if (item == null || item.GetComp_Ingestible() == null)
+            if (item == null || item.Comp_Ingestible == null)
             {
                 Debug.LogError($"IngestItem: [{args[1]}] is not an ingestible item (event {owner.CurrentEventID})");
                 return false;

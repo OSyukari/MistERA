@@ -84,7 +84,7 @@ public class FactionInventory : Inventory
             if (source != null && this.FactionOwner != null && this.FactionOwner.Faction != null && this.FactionOwner.Faction.MealManager != null)
             {
                 var meal = this.FactionOwner.Faction.MealManager;
-                if (meal.CheckAdditives(source, results[0], results[0].GetComp_Ingestible()))
+                if (meal.CheckAdditives(source, results[0], results[0].Comp_Ingestible))
                 {
                     //
                 }
@@ -252,6 +252,7 @@ public class FactionInventory : Inventory
 
                 Contents.RemoveAt(j);
                 contentRefs.Remove(item.RefID);
+                OnContentsChanged();
                 foreach (string tag in item.Tags) if (tag != "" && tracker.ContainsKey(tag)) tracker[tag] -= item.Count;
                 scr_System_CampaignManager.current.Unregister(item);
 
@@ -380,10 +381,17 @@ public class CharacterInventory : Inventory
             {
                 contentRefs.Add(item.RefID);
                 contents_cache = null;
+                OnContentsChanged();
             }
             return true;
         }
         return base.AddItem(item);
+    }
+
+    /// <summary> owned clothes changed: the owner's redress candidates are stale </summary>
+    protected override void OnContentsChanged()
+    {
+        ownerCache?.ClearRedressCache();
     }
 
     /// <summary> losing a worn item also takes it off the owner (worn items stay in the inventory) </summary>
@@ -454,8 +462,12 @@ public class Inventory
         set
         {
             contents_cache = null;
+            OnContentsChanged();
         }
     }
+
+    /// <summary> the item list changed (added / removed - not a stack's count) </summary>
+    protected virtual void OnContentsChanged() { }
     public void Destroy()
     {
         foreach (var i in contentRefs)
@@ -490,6 +502,7 @@ public class Inventory
             added = true;
             this.contentRefs.Add(i.RefID);
             this.contents_cache = null;
+            OnContentsChanged();
         }
 
         return added;
@@ -602,6 +615,7 @@ public class Inventory
         {
             this.contents_cache = null;
             this.ContentRefs.Remove(item.RefID);
+            OnContentsChanged();
             //this.Contents.Remove(item);
         }
     }

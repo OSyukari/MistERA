@@ -266,11 +266,10 @@ public class MemoryManager
     /// <returns></returns>
     public List<Stat_Modifier> GetRecentMemoryStatMods(int overrideMemoryCount = -1)
     {
-
-        if (overrideMemoryCount == -1) overrideMemoryCount = Owner.Stats.MemoryEntryCount;
-
         if (recentMemoryCache == null)
         {
+            if (overrideMemoryCount == -1) overrideMemoryCount = Owner.Stats.MemoryEntryCount;
+
             rm_lust.Clear();
             rm_mood.Clear();
             rm_stress.Clear();
@@ -294,6 +293,18 @@ public class MemoryManager
         return recentMemoryCache;
     }
     List<Stat_Modifier> recentMemoryCache = null;
+
+    public const string MemoryStat_Stress = "chara_status_stress";
+    public const string MemoryStat_Mood = "chara_status_mood";
+    public const string MemoryStat_Lust = "chara_status_lust";
+
+    /// <summary>
+    /// Memory entries only produce moodlets for stress/mood/lust; any other stat can skip the memory lookup.
+    /// </summary>
+    public static bool IsMemoryStatID(string statID)
+    {
+        return statID == MemoryStat_Stress || statID == MemoryStat_Mood || statID == MemoryStat_Lust;
+    }
 
 
     public List<Memory_Entry> GetAllMemoryMatch(List<string> selfTags, List<string> targetTags, int minuteRollback)

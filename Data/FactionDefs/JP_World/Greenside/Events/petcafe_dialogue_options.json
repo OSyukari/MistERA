@@ -1,0 +1,43 @@
+{
+  "_comment": "SunMart pattern. The on-shift fallback clerk hires the player or followers into the part-time tree. Join/leave callbacks handle permanent-home source and disabled candidate reasons; no manual SetWorkFaction or invented wages. NPC fallback is outside the part-time sibling tree.",
+  "Events": { "list": [
+    {
+      "ID": "jp_petcafe_Opt_Apply", "allowDuplicate": false, "trigger": "OnDialogue_Options", "UISpec": { "displayMode": "AVG" },
+      "SelfValidator": { "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["isPlayer"] }] },
+      "TargetValidators": [{ "refkeys": ["staff"], "baseScope": "CurrentTarget", "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_pet_shop"] }, { "parameters": ["hasActorTag", "jp_petcafe_hiring"] }], "minTargetCount": 1 }],
+      "events": [
+        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "UISpec": { "portraitRefKey": "staff", "selfTags": ["focused"] }, "line": "jp_petcafe_Opt_Apply_greeting", "Results": [{ "Type": "JoinActiveFaction", "arguments": ["applyOptions", "selfAndFollowers", "staff", "membertype_jp_petcafe_parttime", "applyError"] }] },
+        { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [
+          { "option": "has options", "Results": [{ "Type": "ExistStoredOptions", "arguments": ["applyOptions"] }, { "Type": "JumpToLabel", "arguments": ["", "apply_ask"] }] },
+          { "option": "no options", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "apply_error"] }] }
+        ] },
+        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "apply_error", "line": "$applyError$", "isLast": true },
+        { "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp", "label": "apply_ask", "UISpec": { "portraitRefKey": "staff", "selfTags": ["focused"] }, "question": "jp_petcafe_Opt_Apply_question", "loadOptionsKey": "applyOptions", "loadOptionsResults": [{ "Type": "JumpToLabel", "arguments": ["", "apply_done"] }], "options": [{ "option": "jp_petcafe_Opt_cancel", "isDefaultCancel": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "apply_cancel"] }] }] },
+        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "apply_done", "UISpec": { "portraitRefKey": "staff", "selfTags": ["focused"] }, "line": "jp_petcafe_Opt_Apply_done" },
+        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "$factionChangeString$", "isLast": true },
+        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "apply_cancel", "line": "jp_petcafe_Opt_cancelLine", "isLast": true }
+      ]
+    },
+    {
+      "ID": "jp_petcafe_Opt_Quit", "allowDuplicate": false, "trigger": "OnDialogue_Options", "UISpec": { "displayMode": "AVG", "infoDisplay": "Hide" },
+      "SelfValidator": { "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["isPlayer"] }] },
+      "TargetValidators": [
+        { "refkeys": ["staff"], "baseScope": "CurrentTarget", "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_pet_shop"] }, { "parameters": ["hasActorTag", "jp_petcafe_hiring"] }], "minTargetCount": 1 },
+        { "refkeys": ["leavers"], "baseScope": "FactionMembersWithMemberType", "extraScopeArguments": ["jp_pet_shop", "membertype_jp_petcafe_staff"], "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["sharesHomeFaction"] }], "minTargetCount": 1 }
+      ],
+      "events": [
+        { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [{ "option": "build options", "Results": [{ "Type": "LeaveActiveFaction", "arguments": ["quitOptions", "leavers", "staff", "membertype_jp_petcafe_staff"] }, { "Type": "JumpToLabel", "arguments": ["", "quit_ask"] }] }] },
+        { "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp", "label": "quit_ask", "UISpec": { "portraitRefKey": "staff", "selfTags": ["focused"] }, "question": "jp_petcafe_Opt_Quit_question", "loadOptionsKey": "quitOptions", "loadOptionsResults": [{ "Type": "JumpToLabel", "arguments": ["", "quit_done"] }], "options": [{ "option": "jp_petcafe_Opt_cancel", "isDefaultCancel": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "quit_abort"] }] }] },
+        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "quit_done", "UISpec": { "portraitRefKey": "staff", "selfTags": ["focused"] }, "line": "jp_petcafe_Opt_Quit_done" },
+        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "$factionChangeString$", "isLast": true },
+        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "quit_abort", "line": "jp_petcafe_Opt_cancelLine", "isLast": true }
+      ]
+    }
+  ] },
+  "Dictionary": { "Entries": { "zh-cn": {
+    "jp_petcafe_Opt_Apply": "应聘宠物咖啡馆兼职", "jp_petcafe_Opt_Apply_greeting": "「工作是接待客人、整理用品，还有给动物换水和清洁活动室。时薪一千二，按天结算，十点到十五点或十五点到二十点。」",
+    "jp_petcafe_Opt_Apply_question": "「哪位想来帮忙？」", "jp_petcafe_Opt_Apply_done": "「登记好了。上班后先看清洁流程，动物不想接近时别追着它们。」\n（可以在所属家庭管理界面的职务页调整班次。）",
+    "jp_petcafe_Opt_Quit": "辞去宠物咖啡馆工作", "jp_petcafe_Opt_Quit_question": "「要给哪位办离职？」", "jp_petcafe_Opt_Quit_done": "「办好了。多谢这段时间照顾店里的小家伙们。」",
+    "jp_petcafe_Opt_cancel": "暂时不办理", "jp_petcafe_Opt_cancelLine": "「想好了再来柜台说一声。」"
+  } } }
+}

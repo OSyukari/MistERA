@@ -31,6 +31,9 @@
 "ui_entry_memory_description_creampie_nopermission": "被$target$无许可$cum_verb$了$elem1$次，共射出了$elem2$ml的精液||1||$amount$",
 "ui_entry_memory_description_cum": "射精了$elem1$次，共射出了$elem2$ml的精液||1||$amount$",
 "ui_entry_memory_description_cumOnto": "对$target$$cum_verb$了$elem1$次，共射出了$elem2$ml的精液||1||$amount$",
+"ui_entry_memory_description_creampie_condom": "被$target$隔着避孕套射精了$elem1$次，共射出了$elem2$ml的精液||1||$amount$",
+"ui_entry_memory_description_cumOnto_condom": "对$target$隔着避孕套射精了$elem1$次，共射出了$elem2$ml的精液||1||$amount$",
+"ui_entry_memory_description_cum_condom": "射在避孕套里$elem1$次，共射出了$elem2$ml的精液||1||$amount$",
 "ui_entry_memory_description_climax": "绝顶了$elem1$次||1",
 "ui_entry_memory_description_climax_keyworded": "$part$强绝顶$elem1$次||1",
 
@@ -110,6 +113,7 @@
 "item_cum_print_amount": "$item$ $count$ml",
 "Item_Instance_Cum_nameOverwrite":"$name$的精液",
 "Item_Instance_Cum_fertChance_perHour":"每小时受孕率 $chance$%",
+"Item_Instance_secretion_sourceRace":"来源种族：$race$",
 
 "CalcFertility_notSameRace":"种族有别",
 "CalcFertility_notSharingTag":"种族差别巨大",
@@ -268,6 +272,7 @@
 "equip_slot_Vagina": "阴道",
 "equip_slot_Womb": "子宫",
 "equip_slot_Anus": "肛门",
+"equip_slot_Penis": "阴茎",
 
 "bodyPart_internal_breasts": "胸",
 "bodyPart_internal_penis": "阴茎",
@@ -486,6 +491,7 @@
     "equip_slot_Vagina": "Vagina",
     "equip_slot_Womb": "Womb",
     "equip_slot_Anus": "Anus",
+    "equip_slot_Penis": "Penis",
 
     "bodyPart_internal_breasts": "Breasts",
     "bodyPart_internal_penis": "Penis",

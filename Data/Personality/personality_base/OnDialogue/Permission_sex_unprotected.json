@@ -1,0 +1,55 @@
+{
+    "_doc": "口上loose entry文件：许可「无保护性行为」（sex_unprotected，不采取避孕措施的性行为）的请求口上。条目含义与生成规范同 Permission_intimacy_low.json 的 _doc（Request / Granted / Refused，每条目一个variant、3条response，无通用兜底）。文件名含 sex，安全模式不加载。",
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "permission_sex_unprotected_Request",
+                    "_comment": "玩家想请求无保护性行为许可，刚开口。男性NPC察觉话题时的反应。",
+                    "variants": [ { "responses": [
+                        "\"不戴套？你想清楚了？\"",
+                        "\"直接来啊……你是这个意思吧。\"",
+                        "\"那种事可没法当玩笑说。\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "permission_sex_unprotected_Granted",
+                    "_comment": "答应给予无保护性行为许可。也会在性行为进行中被自动请求获准时说出，台词需两种场合都自然。男性说话者。",
+                    "variants": [ { "responses": [
+                        "\"……行，不戴就不戴。\"\n%%permission_sex_unprotected_consent%%",
+                        "\"好吧，就这样。\"\n%%permission_sex_unprotected_consent%%",
+                        "\"可以，我不在意。\"\n%%permission_sex_unprotected_consent%%"
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "permission_sex_unprotected_Refused",
+                    "_comment": "拒绝给予无保护性行为许可。男性NPC，干脆为主，不过度激烈。",
+                    "variants": [ { "responses": [
+                        "\"不行，没措施的话免谈。\"",
+                        "\"还是戴上吧。\"",
+                        "\"这个我不能答应。\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "permission_sex_unprotected_Demand",
+                    "_comment": "性行为进行中，对方想不戴套直接插入，而说话者未允许无保护性行为——拒绝继续并要求对方戴上避孕套（OnAPRefuse_Unprotected 的问题文本）。男性说话者（被插入一方），干脆为主。",
+                    "variants": [ { "responses": [
+                        "\"喂，先戴套。\"",
+                        "\"不戴的话就到此为止。\"",
+                        "\"直接来不行，戴上再说。\""
+                    ] } ]
+                }
+            }
+        ]
+    }
+}

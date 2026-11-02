@@ -16,6 +16,18 @@ public static class BodyTraitUtility
     public const string Group_Sensitivity_C = "trait_Sensitivity_C";
     public const string Group_Sensitivity_V = "trait_Sensitivity_V";
     public const string Group_Sensitivity_A = "trait_Sensitivity_A";
+    /// <summary> front + back pubic hair (fur for animals), entries described by tags pubes_none / pubes_sparse / pubes_dense (Plan_BodyTraces.md) </summary>
+    public const string Group_PubicHair = "trait_PubicHair";
+    public const string Tag_PubesNone = "pubes_none";
+    public const string Tag_PubesDense = "pubes_dense";
+
+    /// <summary> first entry of the group carrying the tag, null if none </summary>
+    static Traits FindEntryWithTag(scr_Traits_Group group, string tag)
+    {
+        if (group == null) return null;
+        foreach (var t in group.entries) if (t != null && t.tags != null && t.tags.Contains(tag)) return t;
+        return null;
+    }
 
     static Traits_Group_Index Index
     {
@@ -103,6 +115,9 @@ public static class BodyTraitUtility
                 return (app == Humanoid_GenderAppearance.Female || app == Humanoid_GenderAppearance.Ambiguous) ? group.getNeutralinGroup() : group.entries[0];
             case Group_Size_A:
                 return (app == Humanoid_GenderAppearance.Male || app == Humanoid_GenderAppearance.Female || app == Humanoid_GenderAppearance.Ambiguous) ? group.getNeutralinGroup() : group.entries[0];
+            case Group_PubicHair:
+                // female: shaved, everyone else natural
+                return FindEntryWithTag(group, app == Humanoid_GenderAppearance.Female ? Tag_PubesNone : Tag_PubesDense) ?? group.getNeutralinGroup();
             default:
                 return group.getNeutralinGroup();
         }
@@ -121,7 +136,10 @@ public static class BodyTraitUtility
     public static Traits GetDefaultValid(scr_Traits_Group group, Humanoid_GenderAppearance app, List<string> raceKeywords)
     {
         if (group == null || !group.IsValidFor(raceKeywords, app)) return null;
-        var t = GetDefault(group, app);
+        // animals always have fur
+        var t = group.ID == Group_PubicHair && raceKeywords != null && raceKeywords.Contains("animal")
+            ? (FindEntryWithTag(group, Tag_PubesDense) ?? GetDefault(group, app))
+            : GetDefault(group, app);
         if (t == null) return null;
         return group.GetNearestValid(group.entries.IndexOf(t), raceKeywords, app);
     }

@@ -10,7 +10,7 @@
                 "currency_pyroxene":"青辉石",
                 "currency_pyroxene_tooltip":"虽然可以用来抽卡，但由于该功能还未实装，因此没有什么意义\n（暂时也没有做抽卡功能的想法）",
                 "consumable_emergency_ration":"应急食粮",
-                "consumable_emergency_ration_tooltip":"虽然味道难以恭维，但至少能保存很久，不用担心会过期\n不可被生产，不能提供进餐指令",
+                "consumable_emergency_ration_tooltip":"虽然味道难以恭维，但至少能保存很久，不用担心会过期\n不可被生产",
 
                 "campaign_starfarers_guide": "%%campaign_starfarers%%剧本简介",
                 "campaign_starfarers_guide_content": "在此剧本中，玩家扮演的‘老师’作为阵营“%%Utnapishtim%%”的管理者，需要确保所有学生的身心维持健康。\n\n在此剧本中开放的功能：\n- %%helper_management_guide%%\n- %%helper_sandbox_guide%%\n- %%helper_relationships_guide%%\n- %%helper_combat_guide%%\n\nDEMO简介：\n由于大部分精力都用在做系统，导致上述机制虽然存在但是缺乏引导（因为还没开始做）\n我自认在机制和UI上都简化了许多，但若还是不够（解释不清楚/机制不够直觉/UI反常识）还请各位指出，毕竟一个人DEBUG是有极限的。\n之后的页面将会简单介绍一下各项机制，和如何测试这些机制",
@@ -50,7 +50,7 @@
 "currency_pyroxene": "Pyroxene",
 "currency_pyroxene_tooltip": "Although it can be used to pull, this item is useless because this functionality has not yet been implemented.\n(There are currently no plans to implement any gacha function)",
 "consumable_emergency_ration": "Emergency Ration",
-"consumable_emergency_ration_tooltip": "Although the taste is unpalatable, it can be stored for a long time without expiring.\nCount as meal item for the purpose of daily need, but cannot be manufactured, and cannot provide 'get meal' command",
+"consumable_emergency_ration_tooltip": "Although the taste is unpalatable, it can be stored for a long time without expiring.\nCount as meal item for the purpose of daily need, but cannot be manufactured",
 
 "campaign_starfarers_guide": "Introduction",
 "campaign_starfarers_guide_content": "In this scenario, player takes the role of 'Sensei', the manager of the faction '%%Utnapishtim%%', who is responsible for ensuring the physical and mental well-being of all students.\n\nFeatures available in this scenario:\n- %%helper_management_guide%%\n- %%helper_sandbox_guide%%\n- %%helper_relationships_guide%%\n- %%helper_combat_guide%%\n\nDEMO Introduction:\nSince most dev time are spent on developing game systems, these aforementioned gameplay systems exist but lack guidance (as it hasn't been implemented yet).\nI tried my best to simplify mechanics and optimize UI, but if it is still insufficient (such as unclear explanations / unintuitive mechanics / counter-intuitive UI), please point them out, as there are limits to debugging alone.\nThe following pages will briefly introduce various mechanics and how to experience / test them."

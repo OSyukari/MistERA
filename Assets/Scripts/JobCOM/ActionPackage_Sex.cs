@@ -19,6 +19,7 @@ public class ActionPackage_Sex : ActionPackage
 
     }
     [JsonProperty] protected bool is_Forced = false;
+    [JsonIgnore] public bool UsesForcedSexSelection { get { return is_Forced; } }
     public ActionPackage_Sex(Job job, COM targetCOM, List<int> doer, List<int> receiver, int masterRef, bool isforced = false)
     {
         this.is_Forced = isforced;
@@ -35,7 +36,7 @@ public class ActionPackage_Sex : ActionPackage
     {
 
         base.Repeat();
-        this.extraCOMTags.Remove("justWokenUp");
+        if (this.extraCOMTags.Remove("justWokenUp")) InvalidateComTags();
         this.isStrongPenetration = false;
         // reset 
     }
@@ -66,16 +67,19 @@ public class ActionPackage_Sex : ActionPackage
     {
         if (!base.PreEvaluate()) return false;
 
-        else if (targetCOM.comTags.Contains("overpenetration") && !(targetCOM as COM_Sex).ValidateActorLength(ref this.tooltip, DoerRefs, receiverRefs))
+        // not every sex-package command is a COM_Sex (e.g. COM_EquipSingleUseItem - condoms); the length check and
+        // penetration tooltip below only apply to COM_Sex
+        var targetscom = targetCOM as COM_Sex;
+        if (targetscom == null) return isValid;
+
+        if (targetCOM.comTags.Contains("overpenetration") && !targetscom.ValidateActorLength(ref this.tooltip, DoerRefs, receiverRefs))
         {
             isValid = false;
             return false;
         }
 
-        var targetscom = targetCOM as COM_Sex;
-        if (targetscom == null) Debug.LogError($"AP_SEX failed to cast targetCOM as valid COM");
-        tooltip.Add( (targetCOM as COM_Sex).PreEvaluate(job, doer, receiver, this));
-        
+        tooltip.Add(targetscom.PreEvaluate(job, doer, receiver, this));
+
         return isValid;
 
     }
@@ -89,8 +93,9 @@ public class ActionPackage_Sex : ActionPackage
         ActionPackage_Sex copy = new ActionPackage_Sex(job, targetCOM, DoerRefs, ReceiverRefs, masterRef);
         copy.SetVariantID(this.validVariant);
         //copy.isStrongPenetration = this.isStrongPenetration;
-        copy.toggleRepeat = this.toggleRepeat;
-        copy.LoggedBegin = this.LoggedBegin;
+        // repeat and LoggedBegin are never carried over: a copy (command button, recent-command log, replay) is decided
+        // when it is registered (Job_Sex_Group.AddPackage - a continuation of a still-repeating identical act, or a new
+        // act); until then it has the constructor's defaults (repeat inside a sex scene, begin not logged)
         copy.duration = this.duration;
         copy.is_Forced = this.is_Forced;
         //Debug.LogError($"copy sexAP, target togglerepeat? {copy.toggleRepeat}");
@@ -148,6 +153,21 @@ public class ActionPackage_Sex : ActionPackage
                 }
             }
         }
+    }
+
+    // Sex packages are never joined: each EP's acceptance, parts and per-pair DC are resolved for its own pair, and joining
+    // would need all of that recalculated. Join the scene (initiation's join variant) and start a new package instead.
+    // (The base canJoinAP already rejects; stated explicitly so a base change can't silently enable it.)
+    [JsonIgnore] public override bool AllowJoining { get { return false; } }
+    public override int canJoinAP(Character_Trainable c, out List<int> doers, out List<int> receivers, out List<string> tooltips)
+    {
+        base.canJoinAP(c, out doers, out receivers, out tooltips);
+        return -1;
+    }
+    public override int canJoinAP(List<Character_Trainable> cs, out List<int> doers, out List<int> receivers, out List<string> tooltips)
+    {
+        base.canJoinAP(cs, out doers, out receivers, out tooltips);
+        return -1;
     }
 
     protected override bool Request(bool rebuildPackage = true, Memory_Response forceAccept = Memory_Response.None)

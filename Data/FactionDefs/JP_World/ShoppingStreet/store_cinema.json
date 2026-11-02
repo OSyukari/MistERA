@@ -1,16 +1,17 @@
 {
+    "_comment_WP2": "PLACEHOLDER: generic movie programming and shared seating in both screens, no film-specific titles/art. Staff portraits/uniforms reuse jp_store_clerk. Existing mall clerk and empty ticket stock are preserved; admission is charged once by each activity's entranceFee.",
     "MapPlans": {
         "factionInit": [
 {
     "ID": "jp_mall_cinema",
-    "z_rotation": 0.0,
     "initializeFaction": "jp_mall_cinema",
     "setPrivateRoomOwner": true,
+    "isRentingFloor": false,
     "mainExit": {
-        "roomID": "cinema_room",
+        "roomID": "cinema_lobby",
         "exitCost": 5
     },
-    "floors": [],
+    "floors": [{ "ID": "floor_jp_cinema", "nameOverwrite": "jp_mall_cinema" }],
     "mealHours": [],
     "salesCurrency": "currency_JPY",
     "_comment_salesInventory": "intentionally empty for now - see Plan_ErAV_OpeningScene.md §10.3",
@@ -19,25 +20,204 @@
     "managerBaseIDs": [
         ""
     ],
-    "_comment_assignableMemberTypes": "Shared mall clerk shift - see _doc_staff. Not in joinableMemberTypes: NPC-only, the player can't join it.",
-    "assignableMemberTypes": [ "membertype_jp_mall_clerk" ],
-    "_comment_fallbackWorkers": "One fallback front desk clerk. Runs on mall hours for now (real cinemas run late shows).",
+                "activeHoursStart":10,
+                "activeHoursEnd":0,
+    "_comment_assignableMemberTypes": "Existing NPC mall clerk retained. Dedicated ticket staff extend coverage to closing; only usher shifts are player-joinable.",
+    "assignableMemberTypes": [ "membertype_jp_mall_clerk", "membertype_jp_mall_cinema_ticket", "membertype_jp_mall_usher" ],
+    "joinableMemberTypes": ["membertype_jp_mall_usher"],
+    "_comment_fallbackWorkers": "Existing clerk retained; hiring-tagged ticket staff cover 10-24 daily and 23-01 Fri/Sat. Late shifts count for their starting day.",
     "fallbackWorkers": [
-        { "memberTypeID": "membertype_jp_mall_clerk", "headcount": 1, "maxFallback": 0, "templateID": "jp_store_clerk" }
+        { "memberTypeID": "membertype_jp_mall_clerk", "headcount": 1, "maxFallback": 0, "templateID": "jp_store_clerk" },
+        { "memberTypeID": "membertype_jp_mall_cinema_ticket_day", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" },
+        { "memberTypeID": "membertype_jp_mall_cinema_ticket_late", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" },
+        { "memberTypeID": "membertype_jp_mall_usher_day", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" },
+        { "memberTypeID": "membertype_jp_mall_usher_evening", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" },
+        { "memberTypeID": "membertype_jp_mall_usher_late", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }
     ],
     "workHours": [],
-    "workAssignment": [],
-    "_comment_floors": "intentionally empty - this faction's room lives on the shared JP_ShoppingStreet floor (floor_jp_shopping_street), assigned via that room's factionOwnerOverwrite. See Manageable.AddToFaction(Floor_Instance,...)."
+    "workAssignment": []
 }
+        ],
+        "floorPlans": [
+            {
+                "ID": "floor_jp_cinema",
+                "_comment_art": "PLACEHOLDER: the cinema background and room images reuse BGAssets/Generated/shopping_mall_01.webp until dedicated cinema artwork is available. Like the hospital, this floor uses a background plus a room list and connects graph, not a coordinate-based floor plan.",
+                "imagePath": "BGAssets/Generated/shopping_mall_01.webp",
+                "isFloorPlan": false,
+                "floorWidth": 400,
+                "floorHeight": 400,
+                "resize": 1.0,
+                "mapExit": "cinema_lobby",
+                "rooms": [
+                    {
+                        "ID": "cinema_lobby",
+                        "displayName": "jp_mall_cinema_room",
+                        "hideOnMap": true,
+                        "furnitureIDs": ["furniture_marker_store_trade", "furniture_jp_mall_usher_station"],
+                        "connects": [],
+                        "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
+                    },
+                    {
+                        "ID": "cinema_screen_1",
+                        "displayName": "jp_mall_cinema_screen_1",
+                        "hideOnMap": true,
+                        "furnitureIDs": ["furniture_jp_mall_cinema_seats"],
+                        "connects": [{ "ID": "cinema_lobby", "cost": 1.0 }],
+                        "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
+                    },
+                    {
+                        "ID": "cinema_screen_2",
+                        "displayName": "jp_mall_cinema_screen_2",
+                        "hideOnMap": true,
+                        "furnitureIDs": ["furniture_jp_mall_cinema_seats"],
+                        "connects": [{ "ID": "cinema_lobby", "cost": 1.0 }],
+                        "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
+                    }
+                ]
+            }
+        ],
+        "memberTypes": [
+            {
+                "ID": "membertype_jp_mall_cinema_ticket",
+                "socialStandingKey": "membertype_jp_mall_cinema_ticket",
+                "isMember": true,
+                "Tags": ["jp_mall_cinema_hiring"],
+                "childMemberTypes": [
+                    { "ID": "membertype_jp_mall_cinema_ticket_day", "socialStandingKey": "jp_mall_cinema_ticket_day", "workModule": { "jobPostID": "jp_mall_cinema_ticket_day", "workCommands": ["jp_mall_cinema_ticket_duty"], "activeHours": [10,11,12,13,14,15,16,17,18,19,20,21,22,23], "activeDays": [], "hourlyPayout": [{"itemID":"currency_JPY","itemCount":1150}], "paymentCadence": "Daily" } },
+                    { "ID": "membertype_jp_mall_cinema_ticket_late", "socialStandingKey": "jp_mall_cinema_ticket_late", "workModule": { "jobPostID": "jp_mall_cinema_ticket_late", "workCommands": ["jp_mall_cinema_ticket_duty"], "activeHours": [23,0], "activeDays": [0,0,0,0,1,1,0], "hourlyPayout": [{"itemID":"currency_JPY","itemCount":1500}], "paymentCadence": "Daily" } }
+                ]
+            },
+            {
+                "ID": "membertype_jp_mall_usher",
+                "socialStandingKey": "membertype_jp_mall_usher",
+                "isMember": true,
+                "Tags": ["memberType_work_partTime"],
+                "joinHandler": { "$type": "JoinHandler_WorkPost, Assembly-CSharp", "optionTextKey": "jp_mall_cinema_joinOption", "bindTargetKey": "worker" },
+                "leaveHandler": { "$type": "LeaveHandler_WorkPost, Assembly-CSharp", "optionTextKey": "work_post_leaveOption", "bindTargetKey": "worker" },
+                "childMemberTypes": [
+                    { "ID": "membertype_jp_mall_usher_day", "socialStandingKey": "jp_mall_usher_day", "workModule": { "jobPostID": "jp_mall_usher_day", "workCommands": ["jp_mall_cinema_usher_duty"], "activeHours": [10,11,12,13,14,15,16], "activeDays": [], "hourlyPayout": [{"itemID":"currency_JPY","itemCount":1200}], "paymentCadence": "Daily", "holidayPayoutMultiplier": 1.2 } },
+                    { "ID": "membertype_jp_mall_usher_evening", "socialStandingKey": "jp_mall_usher_evening", "workModule": { "jobPostID": "jp_mall_usher_evening", "workCommands": ["jp_mall_cinema_usher_duty"], "activeHours": [17,18,19,20,21,22,23], "activeDays": [], "hourlyPayout": [{"itemID":"currency_JPY","itemCount":1300}], "paymentCadence": "Daily", "holidayPayoutMultiplier": 1.2 } },
+                    { "ID": "membertype_jp_mall_usher_late", "socialStandingKey": "jp_mall_usher_late", "workModule": { "jobPostID": "jp_mall_usher_late", "workCommands": ["jp_mall_cinema_usher_duty"], "activeHours": [23,0], "activeDays": [0,0,0,0,1,1,0], "hourlyPayout": [{"itemID":"currency_JPY","itemCount":1500}], "paymentCadence": "Daily", "holidayPayoutMultiplier": 1.2 } }
+                ]
+            }
+        ],
+        "recreationOffers": [
+            {
+                "ID": "jp_mall_cinema_show_13", "mode": "Fixed", "factionID": "jp_mall_cinema", "startHour": 13, "hours": 2, "weekdays": [1,1,1,1,1,1,1],
+                "typeID":"cinema_screening", "allowMultipleInstances":true, "mergeWithSame":false, "conflictsWith":[],
+                "replaceCommandTags":["jp_mall_cinema"], "replaceCommands":["jp_mall_cinema_watch"], "activityCommands":["jp_mall_cinema_watch"],
+                "workModule": {"jobPostID":"jp_mall_cinema_show_13","workCommands":["jp_mall_cinema_watch"]},
+                "entranceFee": {"itemID":"currency_JPY","itemCount":1800}, "gatherRoomID":"cinema_lobby", "launchEventID":"Mall_Cinema_Begin",
+                "allowWalkIn":true, "daysInAdvance":3, "participationChance":0.2,
+                "invite": {"visibility":"World","InviteeValidators":[{"refKeys":["companion"],"baseScope":"SelfRelationships","extraScopeArguments":["relationship_friend","relationship_bff","relationship_couple","relationship_marriage"],"maxTargetCount":3,"stopAtMaxTargetCount":true}]}
+            },
+            {
+                "ID": "jp_mall_cinema_show_16", "mode": "Fixed", "factionID": "jp_mall_cinema", "startHour": 16, "hours": 2, "weekdays": [1,1,1,1,1,1,1],
+                "typeID":"cinema_screening", "allowMultipleInstances":true, "mergeWithSame":false, "conflictsWith":[],
+                "replaceCommandTags":["jp_mall_cinema"], "replaceCommands":["jp_mall_cinema_watch"], "activityCommands":["jp_mall_cinema_watch"],
+                "workModule": {"jobPostID":"jp_mall_cinema_show_16","workCommands":["jp_mall_cinema_watch"]},
+                "entranceFee": {"itemID":"currency_JPY","itemCount":1800}, "gatherRoomID":"cinema_lobby", "launchEventID":"Mall_Cinema_Begin",
+                "allowWalkIn":true, "daysInAdvance":3, "participationChance":0.2,
+                "invite": {"visibility":"World","InviteeValidators":[{"refKeys":["companion"],"baseScope":"SelfRelationships","extraScopeArguments":["relationship_friend","relationship_bff","relationship_couple","relationship_marriage"],"maxTargetCount":3,"stopAtMaxTargetCount":true}]}
+            },
+            {
+                "ID": "jp_mall_cinema_show_19", "mode": "Fixed", "factionID": "jp_mall_cinema", "startHour": 19, "hours": 2, "weekdays": [1,1,1,1,1,1,1],
+                "typeID":"cinema_screening", "allowMultipleInstances":true, "mergeWithSame":false, "conflictsWith":[],
+                "replaceCommandTags":["jp_mall_cinema"], "replaceCommands":["jp_mall_cinema_watch"], "activityCommands":["jp_mall_cinema_watch"],
+                "workModule": {"jobPostID":"jp_mall_cinema_show_19","workCommands":["jp_mall_cinema_watch"]},
+                "entranceFee": {"itemID":"currency_JPY","itemCount":1800}, "gatherRoomID":"cinema_lobby", "launchEventID":"Mall_Cinema_Begin",
+                "allowWalkIn":true, "daysInAdvance":3, "participationChance":0.3,
+                "invite": {"visibility":"World","InviteeValidators":[{"refKeys":["companion"],"baseScope":"SelfRelationships","extraScopeArguments":["relationship_friend","relationship_bff","relationship_couple","relationship_marriage"],"maxTargetCount":3,"stopAtMaxTargetCount":true}]}
+            },
+            {
+                "ID": "jp_mall_cinema_show_21", "mode": "Fixed", "factionID": "jp_mall_cinema", "startHour": 21, "hours": 2, "weekdays": [1,1,1,1,1,1,1],
+                "typeID":"cinema_screening", "allowMultipleInstances":true, "mergeWithSame":false, "conflictsWith":[],
+                "replaceCommandTags":["jp_mall_cinema"], "replaceCommands":["jp_mall_cinema_watch"], "activityCommands":["jp_mall_cinema_watch"],
+                "workModule": {"jobPostID":"jp_mall_cinema_show_21","workCommands":["jp_mall_cinema_watch"]},
+                "entranceFee": {"itemID":"currency_JPY","itemCount":1800}, "gatherRoomID":"cinema_lobby", "launchEventID":"Mall_Cinema_Begin",
+                "allowWalkIn":true, "daysInAdvance":3, "participationChance":0.2,
+                "invite": {"visibility":"World","InviteeValidators":[{"refKeys":["companion"],"baseScope":"SelfRelationships","extraScopeArguments":["relationship_friend","relationship_bff","relationship_couple","relationship_marriage"],"maxTargetCount":3,"stopAtMaxTargetCount":true}]}
+            },
+            {
+                "ID": "jp_mall_cinema_show_late", "mode": "Fixed", "factionID": "jp_mall_cinema", "startHour": 23, "hours": 2, "weekdays": [0,0,0,0,1,1,0],
+                "typeID":"cinema_screening", "allowMultipleInstances":true, "mergeWithSame":false, "conflictsWith":[],
+                "replaceCommandTags":["jp_mall_cinema"], "replaceCommands":["jp_mall_cinema_watch"], "activityCommands":["jp_mall_cinema_watch"],
+                "workModule": {"jobPostID":"jp_mall_cinema_show_late","workCommands":["jp_mall_cinema_watch"]},
+                "entranceFee": {"itemID":"currency_JPY","itemCount":1300}, "gatherRoomID":"cinema_lobby", "launchEventID":"Mall_Cinema_Begin",
+                "allowWalkIn":true, "daysInAdvance":3, "participationChance":0.15,
+                "invite": {"visibility":"World","InviteeValidators":[{"refKeys":["companion"],"baseScope":"SelfRelationships","extraScopeArguments":["relationship_friend","relationship_bff","relationship_couple","relationship_marriage"],"maxTargetCount":3,"stopAtMaxTargetCount":true}]}
+            }
         ]
     },
+    "Furnitures": {"list":[
+        {"ID":"furniture_jp_mall_cinema_seats","displayName":"jp_mall_cinema_seats","recipe":[],"furnitureSize":0,"value":300000,"Tags":[],"givesJob":[{"comID":["jp_mall_cinema_watch"]}]},
+        {"ID":"furniture_jp_mall_usher_station","displayName":"jp_mall_usher_station","recipe":[],"furnitureSize":0,"value":10000,"Tags":[],"givesJob":[{"comID":["jp_mall_cinema_ticket_duty","jp_mall_cinema_usher_duty"]}]}
+    ]},
+    "COMs": {"list":[
+        {
+            "ID":"jp_mall_cinema_watch","ActionPackageClass":"ActionPackage_Interaction","displayName":"jp_mall_cinema_watch_name","HideWhenInvalid":false,"timeScale":60,
+            "comTags":["furniture","recreation","jp_mall_cinema"],
+            "requirements":{"requirement":{"treatReceiverAsDoer":true},"requireRoomExisting":{"requireActiveRecreationOffer":["jp_mall_cinema_show_13","jp_mall_cinema_show_16","jp_mall_cinema_show_19","jp_mall_cinema_show_21","jp_mall_cinema_show_late"]}},
+            "variants":[{"requirements":{"requirement":{"doerCount":1}},"displayName":"jp_mall_cinema_watch_name"},{"requirements":{"requirement":{"doerCount":99}},"displayName":"jp_mall_cinema_watch_group"}],
+            "AcceptanceCheck":{"baseAcceptanceValue":15},"DifficultyCheck":{"baseD20Check":0},
+            "description_begin":{"Entries":[{"texts":["jp_mall_cinema_watch_begin"]}]},
+            "description_ongoing":{"Entries":[{"texts":["jp_mall_cinema_watch_ongoing"]}]},
+            "description_remove":{"Entries":[{"texts":["jp_mall_cinema_watch_remove"]}]},
+            "description_after":{"Entries":[{"texts":["jp_mall_cinema_watch_after"]}]}
+        },
+        {
+            "ID":"jp_mall_cinema_ticket_duty","ActionPackageClass":"ActionPackage_Interaction","displayName":"jp_mall_cinema_ticket_duty","timeScale":30,"comTags":["job","furniture"],
+            "requirements":{"requirement":{"treatReceiverAsDoer":true,"req_Doers":{"requireJobFaction":"CurrentActive","requireMemberTypeScope":"JobFaction","requireMemberType":["membertype_jp_mall_cinema_ticket"]}}},
+            "variants":[{"requirements":{"requirement":{"doerCount":1,"req_Doers":{"cost_ST":3,"cost_EN":5}}},"displayName":"jp_mall_cinema_ticket_duty"}],
+            "AcceptanceCheck":{"baseAcceptanceValue":0},"DifficultyCheck":{"baseD20Check":0},
+            "description_begin":{"Entries":[{"texts":["jp_mall_cinema_ticket_begin"]}]},"description_ongoing":{"Entries":[{"texts":["jp_mall_cinema_ticket_ongoing"]}]},"description_after":{"Entries":[{"texts":["jp_mall_cinema_ticket_after"]}]}
+        },
+        {
+            "ID":"jp_mall_cinema_usher_duty","ActionPackageClass":"ActionPackage_Interaction","displayName":"jp_mall_cinema_usher_duty","timeScale":30,"comTags":["job","furniture"],
+            "requirements":{"requirement":{"treatReceiverAsDoer":true,"req_Doers":{"requireJobFaction":"CurrentActive","requireMemberTypeScope":"JobFaction","requireMemberType":["membertype_jp_mall_usher"]}}},
+            "variants":[{"requirements":{"requirement":{"doerCount":1,"req_Doers":{"cost_ST":5,"cost_EN":5}}},"displayName":"jp_mall_cinema_usher_duty"}],
+            "AcceptanceCheck":{"baseAcceptanceValue":0},"DifficultyCheck":{"baseD20Check":0},
+            "description_begin":{"Entries":[{"texts":["jp_mall_cinema_usher_begin"]}]},"description_ongoing":{"Entries":[{"texts":["jp_mall_cinema_usher_ongoing"]}]},"description_after":{"Entries":[{"texts":["jp_mall_cinema_usher_after"]}]}
+        }
+    ]},
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "jp_mall_cinema_room": "电影院（施工中）"
+                "jp_mall_cinema": "星幕电影院",
+                "jp_mall_cinema_room": "影院大厅",
+                "jp_mall_cinema_screen_1": "第一影厅",
+                "jp_mall_cinema_screen_2": "第二影厅",
+                "jp_mall_cinema_seats": "影院座椅",
+                "jp_mall_usher_station": "检票与引导岗",
+                "membertype_jp_mall_cinema_ticket": "影院售票员",
+                "jp_mall_cinema_ticket_day": "售票员 10—24时",
+                "jp_mall_cinema_ticket_late": "售票员 周五、六深夜23—01时",
+                "membertype_jp_mall_usher": "影院兼职引导员",
+                "jp_mall_usher_day": "引导员 日班10—17时",
+                "jp_mall_usher_evening": "引导员 晚班17—24时",
+                "jp_mall_usher_late": "引导员 周五、六深夜23—01时",
+                "jp_mall_cinema_joinOption": "让$name$担任$memberType$",
+                "jp_mall_cinema_show_13": "电影放映 13时场",
+                "jp_mall_cinema_show_16": "电影放映 16时场",
+                "jp_mall_cinema_show_19": "电影放映 19时场",
+                "jp_mall_cinema_show_21": "电影放映 21时场",
+                "jp_mall_cinema_show_late": "电影放映 周五、六23时深夜场",
+                "jp_mall_cinema_watch_name": "看电影",
+                "jp_mall_cinema_watch_group": "一起看电影",
+                "jp_mall_cinema_watch_begin": "$doer.firstname$在影厅坐下，望向渐渐亮起的银幕。",
+                "jp_mall_cinema_watch_ongoing": "$doer.firstname$正专心看电影。",
+                "jp_mall_cinema_watch_remove": "$doer.firstname$轻手轻脚地离开了座位。",
+                "jp_mall_cinema_watch_after": "$doer.firstname$从银幕上收回目光。",
+                "jp_mall_cinema_ticket_duty": "影院售票接待",
+                "jp_mall_cinema_ticket_begin": "$doer.firstname$开始接待购票的观众。",
+                "jp_mall_cinema_ticket_ongoing": "$doer.firstname$正在核对场次、出售电影票。",
+                "jp_mall_cinema_ticket_after": "$doer.firstname$完成了一轮售票接待。",
+                "jp_mall_cinema_usher_duty": "检票与观众引导",
+                "jp_mall_cinema_usher_begin": "$doer.firstname$站到检票口，引导观众入场。",
+                "jp_mall_cinema_usher_ongoing": "$doer.firstname$正在检票、指引影厅方向。",
+                "jp_mall_cinema_usher_after": "$doer.firstname$完成了这一轮检票引导。"
             },
             "en-us": {
-                "jp_mall_cinema_room": "Cinema"
             }
         }
     }

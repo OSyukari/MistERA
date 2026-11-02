@@ -1,0 +1,19 @@
+{
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "consumable_lube": "Lubricant",
+                "consumable_lube_tooltip": "A single dose of personal lubricant. Can be applied to the vagina or anus during sex; it stays inside and provides lubrication.",
+                "consumable_precum": "Precum",
+                "consumable_precum_tooltip": "Precum.",
+                "consumable_precum_nameOverwrite": "$name$'s Precum",
+                "consumable_lovejuice": "Love Juice",
+                "consumable_lovejuice_tooltip": "Love juice.",
+                "consumable_lovejuice_nameOverwrite": "$name$'s Love Juice",
+                "consumable_breastmilk": "Breast Milk",
+                "consumable_breastmilk_tooltip": "Breast milk.",
+                "consumable_breastmilk_nameOverwrite": "$name$'s Breast Milk"
+            }
+        }
+    }
+}

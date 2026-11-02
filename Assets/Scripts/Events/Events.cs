@@ -114,7 +114,13 @@ public enum EventTrigger
     /// <summary>
     /// Every day change on the player, before any day update runs (scr_System_Time.UpdateSingleDay).
     /// </summary>
-    OnDayChange
+    OnDayChange,
+    /// <summary>
+    /// Player-picked permission event of the dialogue menu (tab_dialogue.Button_PermissionEvent). Every event of this
+    /// trigger gets a button (text = event ID, tooltip = "eventID_tooltip"); invalid ones stay visible, disabled, with
+    /// their failed conditions appended to the tooltip (EventUtility.Diagnose).
+    /// </summary>
+    OnDialogue_Permissions
 }
 /// <summary>
 /// Ordered, 3 first are considered member of faction, and the rest is not (temp visitor / prisoner)
@@ -249,6 +255,19 @@ public class Event_CharaCondition
     /// requireConscious and requireAction to true - set them false to test a sleeping / unconscious character.
     /// </summary>
     public CharaReq charaReq = null;
+
+    /// <summary>
+    /// Optional requirement on event self's existing relationship toward the checked character. For invitation
+    /// candidates, self is the inviter. Uses PeekRelationshipWith (no creation), fails if either endpoint or the
+    /// stored relationship is missing, and combines with the other conditions. Does not imply current wakefulness.
+    /// </summary>
+    public RelationshipRequirement selfRelationshipRequirement = null;
+
+    /// <summary>
+    /// Optional localization key shown by EventUtility.Diagnose when this condition fails (e.g. on a disabled
+    /// OnDialogue_Permissions button). Supports $name$ (the checked character). Empty = generic description.
+    /// </summary>
+    public string invalidTooltip = "";
 }
 public class Event : I_SerializationCallbackReceiver
 {
@@ -1070,8 +1089,11 @@ public class Event : I_SerializationCallbackReceiver
             AddRecreationOffer,
 
             /// <summary>
-            /// [string scopeKey, string factionID, int dayOffset, int startHour (-1 = this hour), int hours,
-            /// optional string templateID, optional string flags, optional string onCancelledEventID] <br/>
+            /// [string scopeKey, string factionID, int dayOffset, int startHour (-1 = this hour, "next" = the next full hour,
+            /// "param:&lt;key&gt;" = the absolute start hour in Parameters[key] - dayOffset ignored), int hours,
+            /// optional string templateID, optional string flags, optional string onCancelledEventID, optional string inviteKey] <br/>
+            /// inviteKey: its first character is invited into the first session role they qualify for, instead of that
+            /// role's search (e.g. the doctor the player booked with). "host" flag: the player hosts the session too.
             /// Books a recreation visit for every resolved character (RecreationUtility.SetEventBooking): locked (never
             /// moved by the planner, only cancelled). templateID = an offer def ID or a MemberType ID, giving the visit's
             /// commands and the MemberType the character acts under there. flags: "|"-separated "wakeForIt" (a sleeping
@@ -1116,6 +1138,17 @@ public class Event : I_SerializationCallbackReceiver
             /// forbidCancel booking). AppendStrings[resultAppendKey] = the cancelled booking's line. True if cancelled.
             /// </summary>
             CancelSelectedBooking,
+
+            /// <summary>
+            /// [string storeKey, string bookerKey, string providerKey, string factionID, string templateID, int hours, string selectedParamKey] <br/>
+            /// For the first characters of bookerKey / providerKey: one option per start hour from the next full hour to the
+            /// end of tomorrow at which booker can book templateID ("house:&lt;activityID&gt;") at factionID ("@home") for
+            /// `hours` hours with the provider free too (RecreationUtility.BuildAppointmentSlotOptions - only free slots),
+            /// stored in EventInstance.StoredOptions[storeKey]. Picking one sets Parameters[selectedParamKey] = its absolute
+            /// start hour - book it with SetRecreationBooking start "param:&lt;selectedParamKey&gt;". Branch on
+            /// ExistStoredOptions. Always true.
+            /// </summary>
+            ListAppointmentSlots,
 
             /// <summary>
             /// [string sourceKey, string destKey, optional string mode ("replace" default | "add")] <br/>
@@ -1368,7 +1401,86 @@ public class Event : I_SerializationCallbackReceiver
             /// False branch comparisons do not close the batch.</summary>
             BeginAPExperienceBatch,
             /// <summary>[] End one level; outermost end shows accumulated numeric deltas once, without granting again.</summary>
-            EndAPExperienceBatch
+            EndAPExperienceBatch,
+
+            /// <summary>
+            /// [string fromKey, string toKey, RelationshipScoreType score, float amount] (exactly four arguments).<br/>
+            /// Resolves keys with TryResolveExecTargets (including "self"). Both lists must be non-null, nonempty,
+            /// and contain no null characters; keys must be nonempty, score defined and not None, and amount finite
+            /// and parsed with InvariantCulture. Invalid input returns false before any relationship mutation.
+            /// Applies from's score toward to once per distinct directed RefID pair in the cross product, skipping
+            /// self-pairs. Identical group keys therefore apply every distinct nonself directed pair once.
+            /// Uses IncreaseRelationshipWith: amount is a base delta, scaled by each source's normal status and
+            /// attitude rules, with normal caps, owner-status gates and maintenance callbacks (silent=false).
+            /// Logs into the event's pending message.exp; use the ordinary event EXP flush to display it.
+            /// Returns true for valid input even if no nonself pair exists or normal gates prevent a change.
+            /// No implicit reverse update: mutual effects require two authored calls with reversed keys.
+            /// </summary>
+            IncreaseRelationship,
+
+            /// <summary>
+            /// [string key, string operator, string value] (exactly three arguments).<br/>
+            /// Read-only comparison of the single string in AppendStrings[key] against value, both parsed as
+            /// finite doubles with InvariantCulture. Operators: eq, ne, gt, gte, lt, lte (case-sensitive).
+            /// Missing keys, null/non-scalar lists, invalid numbers or unsupported operators return false.
+            /// Use a guard Branch with a jump to a separate effect node: Results do not short-circuit.
+            /// </summary>
+            CompareAppendNumber,
+
+            /// <summary>
+            /// [string granterKey, string holderKey, string permissionID, optional string grantType ("Normal" | "Temporary")]<br/>
+            /// Keys resolve with TryResolveExecTargets ("self" included); applies granter → holder for every distinct
+            /// non-self directed pair of the cross product (PermissionService.TryGrant, source Event). Every pair is
+            /// checked before any write. Without the relationship prerequisites the grant becomes today's Temporary one.
+            /// True when every pair's grant was valid (already granted counts as valid).
+            /// </summary>
+            GrantPermission,
+            /// <summary>
+            /// [string granterKey, string holderKey, string permissionID]<br/>
+            /// Removes the explicit granter → holder grant record of every distinct non-self directed pair
+            /// (PermissionService.TryRevoke). Relationship / pride / service sources are untouched. Every pair is
+            /// checked before any write. True when every pair's revoke was valid (nothing to remove counts as valid).
+            /// </summary>
+            RevokePermission,
+
+            /// <summary>
+            /// [string targetKey, string districtID, string leaderMemberTypeID, string memberMemberTypeID, optional string templateID, optional string outKey]<br/>
+            /// Builds a new home in a residential district (ResidenceUtility.AssignResidence) for the existing characters
+            /// of targetKey (TryResolveExecTargets; first = leader): home faction, one private room each (leader: double
+            /// bed first), relationships seeded, new faction ID stored under AppendStrings[outKey]. Generates nobody.
+            /// False with nothing created when the district is full or no (given) template has a bedroom per character.
+            /// </summary>
+            AssignResidence,
+
+            /// <summary>
+            /// [string targetKey, string factionID or "$appendKey", string memberTypeID]<br/>
+            /// Adds the characters to an existing generated home (ID literal or read from AppendStrings[appendKey]) with a
+            /// free private room each. False with nothing changed when there aren't enough free private rooms.
+            /// </summary>
+            AssignResidenceExisting,
+
+            /// <summary>
+            /// [string targetKey, string factionID or "$appendKey", optional int hours]<br/>
+            /// Visit pass: the characters may enter the faction's member-only rooms for hours (omitted / below 1 =
+            /// permanent) - Character_Factions.GrantVisitPass.
+            /// </summary>
+            GrantVisitAccess,
+
+            /// <summary>
+            /// [string targetKey, string hotelFactionID, string memberTypeID, optional string roomIDPrefix]<br/>
+            /// Checks characters into a hotel like its front desk (ResidenceUtility.CheckIntoHotel): temporary home if they
+            /// have a home, else permanent home, plus a free private room. Already-guests and characters held by another
+            /// temporary home are skipped. False when nobody got a room.
+            /// </summary>
+            AssignHotelGuest,
+
+            /// <summary>
+            /// [string targetKey, string hotelFactionID]<br/>
+            /// Checks the characters out of the hotel (ResidenceUtility.CheckOutHotelGuest): a temporary-home guest's stay
+            /// ends (room released, back to their own home). A permanent resident is left there - only a new home moves
+            /// them. E.g. the guest post's membershipFee.onFailedEventID, with the guest under "target".
+            /// </summary>
+            CheckOutHotelGuest
 
         }
     }

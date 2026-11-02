@@ -17,6 +17,10 @@
                                 ],
                                 "knowledgeRatePerMin":0.035
                             }
+                        },
+                        {
+                            "compType":"ItemComponent_Media",
+                            "comp_Media":{ "runtimeMinutes":180, "mediaTags":["game"] }
                         }
                     ]
             }

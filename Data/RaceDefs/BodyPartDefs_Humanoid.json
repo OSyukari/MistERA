@@ -11,6 +11,7 @@
                 "childID":["torso_humanoid_base"],
                 "internalID":["mouth_humanoid_base"],
                 "tags":["head"],
+                "traceSlots":["Face"],
                 "sortOrder":0
             },
             {
@@ -22,6 +23,7 @@
                 "internalID":["stomach_humanoid_base","breasts_humanoid_base"],
                 "tags":["torso"],
                 "tagCoverSlots":{"torso":["Torso"]},
+                "traceSlots":["Neck","Torso"],
                 "sortOrder":1
             },
             {
@@ -31,6 +33,9 @@
                 "AvailableSlots":["Shoulder","Arm","Hand"],
                 "tags":["arm"],
                 "tagCoverSlots":{"arm":["Arm","Hand"]},
+                "traceSlots":["Shoulder","Arm","Hand"],
+                "canLeaveTraces":true,
+                "leaveTraceIDs":["trace_grabmark"],
                 "sortOrder":2
             },
             {
@@ -40,6 +45,9 @@
                 "AvailableSlots":["Shoulder","Arm","Hand"],
                 "tags":["arm"],
                 "tagCoverSlots":{"arm":["Arm","Hand"]},
+                "traceSlots":["Shoulder","Arm","Hand"],
+                "canLeaveTraces":true,
+                "leaveTraceIDs":["trace_grabmark"],
                 "sortOrder":3
             },
             {
@@ -50,6 +58,7 @@
                 "childID":["leg_humanoid_base_L","leg_humanoid_base_R"],
                 "internalID":["anus_humanoid_base","guts_humanoid_base","penis_humanoid_base","vagina_humanoid_base","womb_humanoid_base","clit_humanoid_base"],
                 "tags":["lower"],
+                "traceSlots":["Lower"],
                 "sortOrder":4
             },
             {
@@ -59,6 +68,7 @@
                 "AvailableSlots":["Thigh","Leg","Feet"],
                 "tags":["knee","leg","feet"],
                 "tagCoverSlots":{"knee":["Leg"],"leg":["Thigh","Leg"],"feet":["Feet"]},
+                "traceSlots":["Thigh","Leg","Feet"],
                 "sortOrder":5
             },
             {
@@ -68,6 +78,7 @@
                 "AvailableSlots":["Thigh","Leg","Feet"],
                 "tags":["knee","leg","feet"],
                 "tagCoverSlots":{"knee":["Leg"],"leg":["Thigh","Leg"],"feet":["Feet"]},
+                "traceSlots":["Thigh","Leg","Feet"],
                 "sortOrder":6
             }
         ],
@@ -75,6 +86,13 @@
         [
             {
                 "id": "mouth_humanoid_base",
+                "_comment":"Provisional lubrication tuning, not final physiology: liquid bonus max 25, half amount 5 ml of all liquid in this organ.",
+                "lubricationStatID":"o_lubrication",
+                "liquidLubricationBonusMax":25.0,
+                "liquidLubricationHalfAmountMl":5.0,
+                "_comment_traces":"Body traces (Data/RaceDefs/TraceDefs.json): saliva (into container organs, else surface; cap per target from trace_saliva) and teeth marks. Holds none itself: traces on the mouth land on the head.",
+                "canLeaveTraces":true,
+                "leaveTraceIDs":["trace_saliva","trace_teethmark"],
                 "deflateEventID": "deflate_mouth",
                 "displayName":"%%bodyPart_internal_mouth%%",
                 "tooltip":"An {0}'s mouth.",
@@ -153,6 +171,9 @@
                 "requestTraits":["trait_Size_B","trait_Sensitivity_B"],
                 "requestSkills":["skill_sensitivity_B"],
                 "coverSlots":["Torso"],
+                "traceSlots":["Nipples"],
+                "canLeaveTraces":true,
+                "leaveTraceIDs":["trace_milk"],
                 "sensitivityClassString":"B",
                 "maxSensitivityStatString":"stats_derived_maxSensitivity_B",
                 "sortOrder":2,
@@ -164,10 +185,16 @@
                 "id": "penis_humanoid_base",
                 "displayName":"%%bodyPart_internal_penis%%",
                 "tooltip":"An {0}'s penis.",
+                "AvailableSlots":["Penis"],
                 "equipLayers":["Skin"],
                 "tags":["nsfw","penis","testicle","external"],
                 "promptTags":["penis"],
-                "requestTraits":["trait_Size_P","trait_Sensitivity_C"],
+                "requestTraits":["trait_Size_P","trait_Sensitivity_C","trait_PubicHair"],
+                "traceSlots":["Penis"],
+                "canLeaveTraces":true,
+                "leaveTraceIDs":["trace_precum","trace_pubes"],
+                "_comment_cumTrace":"a load caught by a worn condom leaves 10% of it on the penis as trace_cum",
+                "wornContainerCumTraceRatio":0.1,
                 "requestSkills":["skill_sensitivity_C"],
                 "_comment_promptProfile": "testicles share the penis organ and are prompted whenever the penis is visible",
                 "promptProfile": {
@@ -198,6 +225,8 @@
                 "promptGroups":["lower_front"],
                 "requestTraits":["trait_Sensitivity_C"],
                 "requestSkills":["skill_sensitivity_C"],
+                "canLeaveTraces":true,
+                "leaveTraceIDs":["trace_lovejuice","trace_pubes"],
                 "_comment_promptProfile": "detail tag only while the action focuses on the lower body (a plain portrait has no action tags): it breaks the composition otherwise",
                 "promptProfile": {
                     "rules": [
@@ -213,6 +242,12 @@
             },
             {
                 "id": "vagina_humanoid_base",
+                "_comment_lubrication":"Provisional lubrication tuning, not final physiology: liquid bonus max 100, half amount 5 ml of all liquid in this organ.",
+                "lubricationStatID":"v_lubrication",
+                "liquidLubricationBonusMax":100.0,
+                "liquidLubricationHalfAmountMl":5.0,
+                "_comment_lubricationDC":"Provisional: sex DC modifier while penetrated = trunc(clamp(EffectiveLubrication * 0.1 - 4, -4, 2)); dry -4, ~40 = 0, 60+ = +2.",
+                "lubricationDCScale":0.1, "lubricationDCOffset":-4.0, "lubricationDCMin":-4, "lubricationDCMax":2,
                 "deflateEventID": "deflate_vagina",
                 "displayName":"%%bodyPart_internal_vagina%%",
                 "tooltip":"An {0}'s vagina.",
@@ -221,8 +256,12 @@
                 "tags":["nsfw","vagina","internal","arousalExpansion"],
                 "promptTags":[],
                 "promptGroups":["lower_front", "lower_back"],
-                "requestTraits":["trait_Size_V","trait_Sensitivity_V"],
+                "requestTraits":["trait_Size_V","trait_Sensitivity_V","trait_PubicHair"],
                 "requestSkills":["skill_sensitivity_V","skill_expansion_V"],
+                "canLeaveTraces":true,
+                "leaveTraceIDs":["trace_lovejuice","trace_pubes"],
+                "_comment_cumTrace":"a load shot in here leaves 5% of it on the penis as trace_cum",
+                "penetratorCumTraceRatio":0.05,
                 "tag_directionIn":"womb",
                 "tag_directionOut":"clit",
                 "sensitivityClassString":"V",
@@ -316,6 +355,12 @@
             },
             {
                 "id": "anus_humanoid_base",
+                "_comment":"Provisional lubrication tuning, not final physiology: liquid bonus max 100, half amount 5 ml of all liquid in this organ.",
+                "lubricationStatID":"a_lubrication",
+                "liquidLubricationBonusMax":100.0,
+                "liquidLubricationHalfAmountMl":5.0,
+                "_comment_lubricationDC":"Provisional: sex DC modifier while penetrated = trunc(clamp(EffectiveLubrication * 0.1 - 4, -4, 2)); dry -4, ~40 = 0, 60+ = +2.",
+                "lubricationDCScale":0.1, "lubricationDCOffset":-4.0, "lubricationDCMin":-4, "lubricationDCMax":2,
                 "deflateEventID": "deflate_anus",
                 "displayName":"%%bodyPart_internal_anus%%",
                 "tooltip":"An {0}'s anus.",
@@ -325,6 +370,10 @@
                 "promptGroups":["lower_back"],
                 "requestTraits":["trait_Size_A","trait_Sensitivity_A"],
                 "requestSkills":["skill_sensitivity_A","skill_expansion_A"],
+                "canLeaveTraces":true,
+                "leaveTraceIDs":["trace_pubes_anal"],
+                "_comment_cumTrace":"a load shot in here leaves 5% of it on the penis as trace_cum",
+                "penetratorCumTraceRatio":0.05,
                 "_comment_promptProfile": "detail tag only while the action focuses on the lower body (a plain portrait has no action tags): it breaks the composition otherwise",
                 "promptProfile": {
                     "rules": [

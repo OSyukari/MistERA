@@ -1,0 +1,10 @@
+{
+    "Dictionary": { "Entries": { "en-us": {
+        "jp_otaku_street": "Otaku Street", "otaku_street_entrance": "Otaku Street Entrance", "otaku_hall_south": "South Arcade", "otaku_hall_north": "North Arcade", "otaku_restroom": "Otaku Street Public Restroom", "maidcafe_changing": "Cafe Changing Room and Restroom", "cosplay_changing": "Studio Changing Room and Restroom",
+        "maidcafe_hall": "Maid Cafe Seating", "maidcafe_kitchen": "Maid Cafe Kitchen", "arcade_floor": "Game Center",
+        "mangashop_floor": "Manga and Doujin Shop", "mangashop_r18": "Curtained Adult Books Section", "hobbyshop_floor": "Hobby and Card Shop", "hobby_tables": "Game Tables", "cosplay_rental": "Costume Rental", "studio_room": "Photo Studio",
+        "netcafe_frontdesk": "Manga and Net Cafe Reception", "netcafe_reading": "Open Reading Seats", "netcafe_drinkbar": "Self-Service Drink Bar", "netcafe_shower": "Net Cafe Shower",
+        "netcafe_booth_1": "Single Mat Booth 1", "netcafe_booth_2": "Single Mat Booth 2", "netcafe_booth_3": "Single Recliner Booth 3", "netcafe_booth_4": "Single Recliner Booth 4", "netcafe_booth_5": "Single Mat Booth 5", "netcafe_booth_6": "Single Mat Booth 6", "netcafe_pair_1": "Pair Booth 1", "netcafe_pair_2": "Pair Booth 2",
+        "otaku_joinOption": "$name$ as $memberType$"
+    } } }
+}

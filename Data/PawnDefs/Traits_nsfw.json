@@ -19,7 +19,6 @@
                     "trait_tooltip": "sexually gratified by inflicting pain or/and humiliation."
                 }
             ],
-            "type": 5,
             "SortType":"Singular",
             "neutralID": "",
             "group_tooltip": ""
@@ -48,7 +47,6 @@
                     "trait_tooltip": "it'll take a while before you actually cum."
                 }
             ],
-            "type": 5,
             "SortType":"SortedList",
             "tags":["do_not_use"],
             "neutralID": "trait_CumSpeed_default",
@@ -85,13 +83,67 @@
                     "trait_tooltip": "does not feel sexual attraction from other people."
                 }
             ],
-            "type": 5,
             "SortType":"UnsortedList",
-            "neutralID": "trait_GenderPreference_dontcare",
+            "neutralID": "trait_GenderPreference_hetero",
             "group_tooltip": "Sexual attraction. Influences opinion and favorability towards other.\nSee the related configurations in [Edit Preference] to decide what factor in determining gender.\nDefault: only appearance decide a person's 'gender group'."
+        },
+        {
+            "displayName":"Sexual Interest",
+            "ID": "trait_SexualInterest",
+            "entries": [
+                {
+                    "trait_ID": "trait_SexualInterest_curious",
+                    "trait_displayname": "Curious",
+                    "trait_score":-1,
+                    "trait_tooltip": "Positive meaningful interactions with a compatible partner add 0.3 Desire, with no Lust threshold."
+                },
+                {
+                    "trait_ID": "trait_SexualInterest_normal",
+                    "trait_displayname": "Normal",
+                    "trait_score":0,
+                    "trait_tooltip": "Positive meaningful interactions with a compatible partner add 0.2 Desire at Lust level 1 or above."
+                },
+                {
+                    "trait_ID": "trait_SexualInterest_conservative",
+                    "trait_displayname": "Conservative",
+                    "trait_score":1,
+                    "trait_tooltip": "Positive meaningful interactions with a compatible partner add 0.1 Desire at Lust level 2 or above."
+                }
+            ],
+            "SortType":"SortedList",
+            "neutralID": "trait_SexualInterest_normal",
+            "group_tooltip": "How readily positive interactions develop sexual interest. These small Desire gains are additive and unscaled; they do not determine permission or acceptance."
         }
     ],
-    "traits_WIL_SEX": [],
+    "traits_WIL_SEX": [
+        {
+            "displayName":"Chastity",
+            "ID": "trait_Chastity",
+            "entries": [
+                {
+                    "trait_ID": "trait_Chastity_caring",
+                    "trait_displayname": "Caring",
+                    "trait_score":-1,
+                    "trait_tooltip": "Places greater importance on chastity when considering intimate permissions. Does not modify action acceptance."
+                },
+                {
+                    "trait_ID": "trait_Chastity_normal",
+                    "trait_displayname": "Normal",
+                    "trait_score":0,
+                    "trait_tooltip": "Places ordinary importance on chastity when considering intimate permissions. Does not modify action acceptance."
+                },
+                {
+                    "trait_ID": "trait_Chastity_indifferent",
+                    "trait_displayname": "Indifferent",
+                    "trait_score":1,
+                    "trait_tooltip": "Places little importance on chastity when considering intimate permissions. Does not modify action acceptance."
+                }
+            ],
+            "SortType":"SortedList",
+            "neutralID": "trait_Chastity_normal",
+            "group_tooltip": "Importance attached to chastity for intimate permission decisions, separate from sexual interest and action acceptance."
+        }
+    ],
     "traits_BODY_SEX": [
         {
             "displayName":"",
@@ -126,7 +178,6 @@
                     "stat_modifiers":[ { "statID":"stats_derived_maxSensitivity_B", "modKey":"finalMod", "type":"setMult", "valueType":"number", "valueString":"1.5" } ]
                 }
             ],
-            "type": 10,
             "SortType":"SortedList",
             "neutralID": "trait_Sensitivity_B_default",
             "group_tooltip": "Breast part sensitivity."
@@ -164,7 +215,6 @@
                     "stat_modifiers":[ { "statID":"stats_derived_maxSensitivity_M", "modKey":"finalMod", "type":"setMult", "valueType":"number", "valueString":"1.5" } ]
                 }
             ],
-            "type": 10,
             "SortType":"SortedList",
             "neutralID": "trait_Sensitivity_M_default",
             "group_tooltip": "Mouth part sensitivity."
@@ -202,7 +252,6 @@
                     "stat_modifiers":[ { "statID":"stats_derived_maxSensitivity_C", "modKey":"finalMod", "type":"setMult", "valueType":"number", "valueString":"1.5" } ]
                 }
             ],
-            "type": 10,
             "SortType":"SortedList",
             "neutralID": "trait_Sensitivity_C_default",
             "group_tooltip": "Clit/Penis part sensitivity. If a character has both vagina and penis, this applies to both."
@@ -240,7 +289,6 @@
                     "stat_modifiers":[ { "statID":"stats_derived_maxSensitivity_V", "modKey":"finalMod", "type":"setMult", "valueType":"number", "valueString":"1.5" } ]
                 }
             ],
-            "type": 10,
             "SortType":"SortedList",
             "neutralID": "trait_Sensitivity_V_default",
             "group_tooltip": "Vagina part sensitivity."
@@ -278,7 +326,6 @@
                     "stat_modifiers":[ { "statID":"stats_derived_maxSensitivity_A", "modKey":"finalMod", "type":"setMult", "valueType":"number", "valueString":"1.5" } ]
                 }
             ],
-            "type": 10,
             "SortType":"SortedList",
             "neutralID": "trait_Sensitivity_A_default",
             "group_tooltip": "Anal part sensitivity."
@@ -376,7 +423,6 @@
                     "trait_tooltip": "Has breast."
                 }
             ],
-            "type": 10,
             "allowPopulate":false,
             "SortType":"SortedList",
             "neutralID": "trait_Size_B_B",
@@ -430,7 +476,6 @@
                     "trait_tooltip": "Has penis."
                 }
             ],
-            "type": 10,
             "allowPopulate":false,
             "SortType":"SortedList",
             "neutralID": "trait_Size_P_average",
@@ -456,7 +501,6 @@
                     "trait_tooltip": "Has vagina and clitoris. Can engage in vagina or clitoris related activities.\nCan get pregnant via vagina related activities."
                 }
             ],
-            "type": 10,
             "allowPopulate":false,
             "SortType":"SortedList",
             "neutralID": "trait_Size_V_1",
@@ -480,11 +524,44 @@
                     "trait_tooltip": "Has anus. Can engage in anus related activites."
                 }
             ],
-            "type": 10,
             "allowPopulate":false,
             "SortType":"SortedList",
             "neutralID": "trait_Size_A_1",
             "group_tooltip": "has anus or not. "
+        },
+        {
+            "displayName":"",
+            "ID": "trait_PubicHair",
+            "_comment": "Front + back pubic hair (fur for animals). The tags describe how much: body traces read them (trace_pubes: pubes_dense / pubes_sparse, trace_pubes_anal: pubes_anal_some), and the default picks by tag (BodyTraitUtility: female pubes_none, others / animals pubes_dense). Requested by the penis / vagina organs, so the prompt tags show while the lower body is visible. Docs/Body/Plan_BodyTraces.md",
+            "isDisplayable":false,
+            "entries": [
+                {
+                    "trait_ID": "trait_PubicHair_none",
+                    "tags":["pubes_none"],
+                    "trait_displayname": "Shaved",
+                    "trait_score":0,
+                    "trait_tooltip": "No pubic hair."
+                },
+                {
+                    "trait_ID": "trait_PubicHair_trimmed",
+                    "tags":["pubes_sparse"],
+                    "promptTags":["trimmed pubic hair"],
+                    "trait_displayname": "Trimmed",
+                    "trait_score":0,
+                    "trait_tooltip": "Trimmed pubic hair, shaved at the back."
+                },
+                {
+                    "trait_ID": "trait_PubicHair_natural",
+                    "tags":["pubes_dense","pubes_anal_some"],
+                    "promptTags":["pubic hair"],
+                    "trait_displayname": "Natural",
+                    "trait_score":0,
+                    "trait_tooltip": "Natural pubic hair, some at the back too."
+                }
+            ],
+            "SortType":"SortedList",
+            "neutralID": "trait_PubicHair_natural",
+            "group_tooltip": "Pubic hair, front and back."
         }
     ]
     },
@@ -498,6 +575,33 @@
             },
             "zh-cn":
             {
+                "trait_GenderPreference":"性取向",
+                "trait_GenderPreference_tooltip":"决定角色是否会被同性或异性吸引。与可能被吸引的对象互动时，可能会增加欲望",
+                "trait_GenderPreference_dontcare":"双性恋",
+                "trait_GenderPreference_dontcare_tooltip":"没有性别限制",
+                "trait_GenderPreference_hetero":"异性恋",
+                "trait_GenderPreference_hetero_tooltip":"被异性吸引",
+                "trait_GenderPreference_homo":"同性恋",
+                "trait_GenderPreference_homo_tooltip":"被同性吸引",
+                "trait_GenderPreference_none":"无",
+                "trait_GenderPreference_none_tooltip":"不被他人吸引",
+
+                "trait_SexualInterest":"性兴趣",
+                "trait_SexualInterest_tooltip":"与感兴趣的对象进行了有合意且结果正面的社交互动后，是否会增加欲望。",
+                "trait_SexualInterest_curious":"好奇",
+                "trait_SexualInterest_curious_tooltip":"%%trait_SexualInterest_tooltip%%\n每次额外增加0.3欲望。",
+                "trait_SexualInterest_normal":"普通",
+                "trait_SexualInterest_normal_tooltip":"%%trait_SexualInterest_tooltip%%\n欲求>=1时，每次额外增加0.2欲望。",
+                "trait_SexualInterest_conservative":"保守",
+                "trait_SexualInterest_conservative_tooltip":"%%trait_SexualInterest_tooltip%%\n欲求>=2时，每次额外增加0.1欲望。",
+                "trait_Chastity":"在乎贞操",
+                "trait_Chastity_tooltip":"决定该角色有多容易给予肢体接触的合意",
+                "trait_Chastity_caring":"重视",
+                "trait_Chastity_caring_tooltip":"%%trait_Chastity_tooltip%%\n较为重视贞操，条件要求更高",
+                "trait_Chastity_normal":"普通",
+                "trait_Chastity_normal_tooltip":"%%trait_Chastity_tooltip%%\n一般程度，正常要求",
+                "trait_Chastity_indifferent":"不在乎",
+                "trait_Chastity_indifferent_tooltip":"%%trait_Chastity_tooltip%%\n不太在乎贞操，条件要求更低",
                 "trait_Singular_Masochist":"自虐狂",
                 "trait_Singular_Masochist_tooltip":"%%notimplemented%%",
                 "trait_Singular_Sadist":"施虐狂",
@@ -507,6 +611,15 @@
 
                 "traits_BODY":"身体特质",
                 "traits_BODY_SEX":"性身体特质",
+
+                "trait_PubicHair":"阴毛",
+                "trait_PubicHair_tooltip":"阴毛的多少，包括前面和后面。",
+                "trait_PubicHair_none":"无毛",
+                "trait_PubicHair_none_tooltip":"%%trait_PubicHair_tooltip%%\n剃得干干净净。",
+                "trait_PubicHair_trimmed":"修剪",
+                "trait_PubicHair_trimmed_tooltip":"%%trait_PubicHair_tooltip%%\n修剪过的阴毛，后面剃干净了。",
+                "trait_PubicHair_natural":"自然",
+                "trait_PubicHair_natural_tooltip":"%%trait_PubicHair_tooltip%%\n自然生长的阴毛，后面也有一些。",
 
                 "trait_Sensitivity_B":"B敏感度",
                 "trait_Sensitivity_B_tooltip":"胸部的感度，影响胸部相关行为的快感强度。",

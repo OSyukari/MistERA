@@ -6,7 +6,8 @@ public enum RequestLeaveReason
     None,
     /// <summary>Room has a gender preference, subject fits it and target is the opposite sex. Hard restriction, no exemptions.</summary>
     GenderedRoom,
-    /// <summary>Subject is doing a privacy-tagged action in a private room. Anyone but the room's other owners can be asked.</summary>
+    /// <summary>Subject is doing a privacy-tagged action (any room, e.g. a restroom). Anyone but the room's other owners can be asked;
+    /// in a gendered room only targets of the opposite sex (everyone who fits the room shares it).</summary>
     PrivateAction,
     /// <summary>Subject owns the private room. Only strangers (no bio/personal/social relationship) can be asked, whatever subject
     /// is doing; members linked to the subject (e.g. a patient's visitors) are welcome.</summary>
@@ -46,13 +47,16 @@ public static class RequestLeaveUtility
         if (conscious && room.GenderPreference != RoomGenderPreference.DontCare && !room.IsOppositeSex(subject) && room.IsOppositeSex(target))
             reason = RequestLeaveReason.GenderedRoom;
         // both private reasons exempt the room's other owners
-        else if (room.isRoomPrivate && !isRoomOwner(target, room))
+        else if (!isRoomOwner(target, room))
         {
-            // PrivateAction: subject is doing a privacy-tagged action, target can get away
-            if (target.canMove && IsDoingPrivacyAction(subject))
+            // PrivateAction: subject is doing a privacy-tagged action, target can get away. Any room - restrooms/showers have no
+            // bed, so they never count as isRoomPrivate. A gendered room is shared by everyone who fits it, so only an
+            // opposite-sex target can be asked
+            if (target.canMove && (room.GenderPreference == RoomGenderPreference.DontCare || room.IsOppositeSex(target))
+                && IsDoingPrivacyAction(subject))
                 reason = RequestLeaveReason.PrivateAction;
-            // PrivateRoom: subject owns the room, target is a stranger not linked to them
-            else if (conscious && isRoomOwner(subject, room) && !isLinkedTo(target, subject, room) && isStranger(subject, target))
+            // PrivateRoom: subject owns the private room, target is a stranger not linked to them
+            else if (conscious && room.isRoomPrivate && isRoomOwner(subject, room) && !isLinkedTo(target, subject, room) && isStranger(subject, target))
                 reason = RequestLeaveReason.PrivateRoom;
         }
         if (reason == RequestLeaveReason.None) return false;

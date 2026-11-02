@@ -1,5 +1,6 @@
 {
-    "_doc": "Host faction for the shopping mall's shared physical floor (floor_jp_shopping_street, see floor.json in this folder). Owns the floor and its entrance room; the 8 shop rooms on that same floor are reassigned to their own factions via each room's subfactionOwnerOverwrite.",
+    "_doc": "Host faction for Ekimae Mall's shared physical floor (floor_jp_shopping_street). Tenant rooms are reassigned through subfactionOwnerOverwrite; existing retail rooms remain in place.",
+    "_comment_WP2_art": "PLACEHOLDER: food court and single-room salon reuse BGAssets/Generated/shopping_mall_01.webp. The eight original shop positions and hallway connections are preserved: the food court replaces fast food, and the salon replaces the cinema. The multi-screen cinema owns a separate floor. mall_directory.jpg needs updated shop labels.",
     "_doc_staff": "Every shop shares one shift (membertype_jp_mall_clerk, below): MemberTypes are global and held per faction, so each shop's clerk holds it at that shop only. One all-day shift (10-22, every day) and one fallback front desk clerk per shop (fallbackWorkers) - not realistic shifts on purpose: the post isn't joinable by the player, and a single shift keeps it to 1 clerk per shop.",
 
     "MapPlans": {
@@ -90,31 +91,34 @@
                         "furnitureIDs":["furniture_marker_store_trade"],
                         "connects": [
                             { "ID": "hallway_3", "cost": 1.0 }],
+                        "activityState":"DayOnly",
                         "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
                     },
                     {
-                        "ID": "cinema_room",
-                        "displayName": "jp_mall_cinema_room",
+                        "ID": "salon_reception",
+                        "displayName": "jp_beauty_salon",
                         "offsetX": 940,
                         "offsetY": 286,
-                        "subfactionOwnerOverwrite": "jp_mall_cinema",
-                        "_comment_furnitureIDs": "ticket counter - gives the cinema's clerks their work station (jp_mall_frontDesk)",
-                        "furnitureIDs":["furniture_marker_store_trade"],
+                        "subfactionOwnerOverwrite": "jp_beauty_salon",
+                        "_comment_furnitureIDs": "Reception, styling seats and shampoo facilities share this single shop room.",
+                        "furnitureIDs":["furniture_marker_store_trade", "furniture_jp_mall_salon_chairs", "furniture_jp_mall_salon_shampoo"],
                         "connects": [
                             { "ID": "hallway_1", "cost": 1.0 },
                             { "ID": "hallway_2", "cost": 1.0 }                   ],
+                        "activityState":"DayOnly",
                         "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
                     },
                     {
                         "ID": "fastfood_counter",
-                        "displayName": "jp_mall_fastfood_room",
+                        "displayName": "jp_mall_foodcourt_room",
                         "offsetX": 594,
                         "offsetY": 354,
-                        "subfactionOwnerOverwrite": "jp_mall_fastfood",
+                        "subfactionOwnerOverwrite": "jp_mall_foodcourt",
                         "connects": [
                             { "ID": "hallway_1", "cost": 1.0 }
                         ],
-                        "furnitureIDs":["furniture_marker_store_trade"],
+                        "activityState":"DayOnly",
+                        "furnitureIDs":["furniture_marker_getmeal", "furniture_jp_mall_foodcourt_tables", "furniture_jp_mall_foodcourt_counter"],
                         "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
                     },
                     {
@@ -126,6 +130,7 @@
                         "connects": [
                             { "ID": "hallway_3", "cost": 1.0 }                     ],
                         "furnitureIDs":["furniture_marker_store_trade"],
+                        "activityState":"DayOnly",
                         "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
                     },
                     {
@@ -137,6 +142,7 @@
                         "connects": [
                             { "ID": "hallway_2", "cost": 1.0 }                     ],
                         "furnitureIDs":["furniture_marker_store_trade"],
+                        "activityState":"DayOnly",
                         "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
                     },
                     {
@@ -148,6 +154,7 @@
                         "connects": [
                             { "ID": "hallway_3", "cost": 1.0 }                     ],
                         "furnitureIDs":["furniture_marker_store_trade"],
+                        "activityState":"DayOnly",
                         "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
                     },
                     {
@@ -159,6 +166,7 @@
                         "connects": [
                             { "ID": "hallway_4", "cost": 1.0 }                     ],
                         "furnitureIDs":["furniture_marker_store_trade"],
+                        "activityState":"DayOnly",
                         "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
                     },
                     {
@@ -170,6 +178,7 @@
                         "connects": [
                             { "ID": "hallway_1", "cost": 1.0 }                    ],
                         "furnitureIDs":["furniture_marker_store_trade"],
+                        "activityState":"DayOnly",
                         "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
                     }
                 ]

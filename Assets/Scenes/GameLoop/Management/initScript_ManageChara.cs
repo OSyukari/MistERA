@@ -62,7 +62,7 @@ public class initScript_ManageChara : MonoBehaviour
 
         comp.Validate();
     }
-    public RectTransform list_factionWork, list_factionRecreation, list_assignCOM, list_CharaNeeds, list_activities;
+    public RectTransform list_factionWork, list_factionRecreation, list_assignCOM, list_assignMembertypes, list_CharaNeeds, list_activities;
 
     public TMP_Text chara_fullname, charaGender, charaGenderSeparator;
     public scr_HoverableText chara_Race, chara_RaceTemplate;

@@ -9,7 +9,31 @@
                 "com_furniture_changeOutfit_begin_1": "$doer.firstname$ starts changing their outfit",
                 "com_furniture_changeOutfit_ongoing_1": "$doer.firstname$ is changing their outfit",
                 "com_furniture_changeOutfit_onComplete_1": "$doer.firstname$ finished changing their outfit",
-                "com_furniture_changeOutfit": "Can be performed when the target's current schedule (faction post or activity) calls for a different outfit. Target will change into that outfit, or back into their default clothes, on command completion.\nNPC will look for a spot with a bathroom to change when needed."
+                "com_furniture_changeOutfit": "Can be performed when the target's current schedule (faction post or activity) calls for a different outfit. Target will change into that outfit, or back into their default clothes, on command completion.\nNPC will look for a spot with a bathroom to change when needed.",
+
+                "com_furniture_training_shooting_displayName_1": "Firearm training",
+                "com_furniture_training_shooting_displayName_2": "Firearm training together",
+                "com_furniture_training_shooting_begin_1": "$doer.firstname$ stood at the firing position, put on ear protection, raised the weapon in their hand, and began today's training.",
+                "com_furniture_training_shooting_begin_2": "$doer.firstname$ adjusted their breathing, aimed at the bullseye, pulled the trigger, and began practicing precision shooting.",
+                "com_furniture_training_shooting_begin_3": "$doer.firstname$ repeatedly practiced various shooting stances on the shooting range to improve their shooting skills.",
+                "com_furniture_training_shooting_description_ongoing_1": "$doer.firstname$ is training their shooting",
+                "com_furniture_training_shooting_description_onComplete_1": "$doer.firstname$ finished firearm training",
+                "com_furniture_training_melee_displayName_1": "CQC training",
+                "com_furniture_training_melee_displayName_2": "CQC sparring",
+                "com_furniture_training_melee_begin_1": "$doer.firstname$ stood in the center of the training ground, took a deep breath, adopted a fighting stance, and began today's close-quarters combat training.",
+                "com_furniture_training_melee_begin_2": "$doer.firstname$ repeatedly practiced various offensive and defensive movements to improve their fighting ability.",
+                "com_furniture_training_melee_description_ongoing_1": "$doer.firstname$ is training CQC",
+                "com_furniture_training_melee_description_onComplete_1": "$doer.firstname$ finished CQC training",
+                "com_furniture_music_practice_displayName_1": "Music practice",
+                "com_furniture_music_practice_displayName_2": "Band practice",
+                "com_furniture_music_practice_begin_1": "$doer.firstname$ tuned up and began today's practice",
+                "com_furniture_music_practice_begin_2": "$doer.firstname$ worked through the tricky passages of the score again and again",
+                "com_furniture_music_practice_description_ongoing_1": "$doer.firstname$ is practicing music",
+                "com_furniture_music_practice_description_onComplete_1": "$doer.firstname$ finished a round of practice",
+                "com_furniture_medical_checkup_displayName": "Physical checkup",
+                "com_furniture_medical_checkup_begin_1": "$doer.firstname$ had $receiver.firstname$ lie down on the examination bed and began the checkup",
+                "com_furniture_medical_checkup_ongoing_1": "$doer.firstname$ is giving $receiver.firstname$ a checkup",
+                "com_furniture_medical_checkup": "Give the target a physical checkup. Needs an examination bed."
             }
         }
     }

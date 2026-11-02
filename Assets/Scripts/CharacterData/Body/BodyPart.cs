@@ -16,6 +16,8 @@ public class Index_BodyPartBase : I_IndexHasID, I_IndexMergeable, I_RemoveElemBy
     public List<ActorPromptProfile> PromptProfiles = new List<ActorPromptProfile>();
     /// <summary> shared prompt rulesets by id, inherited through ActorPromptProfile.inheritRulesets </summary>
     public List<ActorPromptRuleset> PromptRulesets = new List<ActorPromptRuleset>();
+    /// <summary> body trace definitions by id, subclass by "$type" (Docs/Body/Plan_BodyTraces.md) </summary>
+    public List<TraceDefinition> Traces = new List<TraceDefinition>();
 
     public void MergeWith(I_IndexMergeable list)
     {
@@ -29,6 +31,7 @@ public class Index_BodyPartBase : I_IndexHasID, I_IndexMergeable, I_RemoveElemBy
             if (l.BodyPart_HairstyleSlotOptions != null) this.BodyPart_HairstyleSlotOptions.AddRange(l.BodyPart_HairstyleSlotOptions);
             if (l.PromptProfiles != null) this.PromptProfiles.AddRange(l.PromptProfiles);
             if (l.PromptRulesets != null) this.PromptRulesets.AddRange(l.PromptRulesets);
+            if (l.Traces != null) this.Traces.AddRange(l.Traces);
         }
     }
 
@@ -39,9 +42,22 @@ public class Index_BodyPartBase : I_IndexHasID, I_IndexMergeable, I_RemoveElemBy
     Dictionary<string, List<Hairstyle_SlotOption>> hairstyleOptionsByKeyword = new Dictionary<string, List<Hairstyle_SlotOption>>();
     Dictionary<string, ActorPromptProfile> ID_Dictionary5 = new Dictionary<string, ActorPromptProfile>();
     Dictionary<string, ActorPromptRuleset> ID_Dictionary6 = new Dictionary<string, ActorPromptRuleset>();
+    Dictionary<string, TraceDefinition> ID_Dictionary7 = new Dictionary<string, TraceDefinition>();
     public void RegisterAllID(List<string> messages)
     {
-        messages.Add("Index_BodyPartBase : registering ID with list length [" + BodyPart_Base.Count + "]+[" + BodyInternal_Base.Count + "]+[" + BodyPart_Hairstyles.Count + "]+[" + BodyPart_HairstyleSlotOptions.Count + "]+[" + PromptProfiles.Count + "]+[" + PromptRulesets.Count + "]");
+        messages.Add("Index_BodyPartBase : registering ID with list length [" + BodyPart_Base.Count + "]+[" + BodyInternal_Base.Count + "]+[" + BodyPart_Hairstyles.Count + "]+[" + BodyPart_HairstyleSlotOptions.Count + "]+[" + PromptProfiles.Count + "]+[" + PromptRulesets.Count + "]+[" + Traces.Count + "]");
+
+        ID_Dictionary7.Clear();
+        foreach (TraceDefinition o in this.Traces)
+        {
+            if (o == null) continue;
+            if (string.IsNullOrEmpty(o.ID))
+            {
+                Debug.LogError("Index_BodyPartBase trace definition has no id, skipped");
+                continue;
+            }
+            if (!ID_Dictionary7.TryAdd(o.ID, o)) Debug.LogError($"failed to add Index_BodyPartBase trace id [{o.ID}] due to duplicate");
+        }
 
         ID_Dictionary5.Clear();
         foreach (ActorPromptProfile o in this.PromptProfiles)
@@ -147,6 +163,7 @@ public class Index_BodyPartBase : I_IndexHasID, I_IndexMergeable, I_RemoveElemBy
     public Hairstyle_SlotOption GetHairstyleOptionByID(string id) { return ID_Dictionary4.ContainsKey(id) ? ID_Dictionary4[id] : null; }
     public ActorPromptProfile GetPromptProfileByID(string id) { return id != null && ID_Dictionary5.TryGetValue(id, out var p) ? p : null; }
     public ActorPromptRuleset GetPromptRulesetByID(string id) { return id != null && ID_Dictionary6.TryGetValue(id, out var r) ? r : null; }
+    public TraceDefinition GetTraceByID(string id) { return id != null && ID_Dictionary7.TryGetValue(id, out var t) ? t : null; }
     static readonly List<Hairstyle_SlotOption> emptyHairstyleOptions = new List<Hairstyle_SlotOption>();
     /// <summary> all options of a slot keyword. read only, don't modify the returned list </summary>
     public List<Hairstyle_SlotOption> GetHairstyleOptionsByKeyword(string keyword)
@@ -160,10 +177,12 @@ public class Index_BodyPartBase : I_IndexHasID, I_IndexMergeable, I_RemoveElemBy
         this.BodyInternal_Base.RemoveAll(x=>x.tags.Contains(tag));
         this.BodyPart_Hairstyles.RemoveAll(x => x.tags.Contains(tag));
         this.BodyPart_HairstyleSlotOptions.RemoveAll(x => x.tags.Contains(tag));
+        this.Traces.RemoveAll(x => x != null && x.tags.Contains(tag));
     }
 
     public void RemoveNSFW()
     {
+        this.Traces.RemoveAll(x => x != null && x.tags.Contains("nsfw"));
 
         foreach (var i in this.BodyPart_Base) 
         {
@@ -198,6 +217,14 @@ public class BodyPart_Base
 
     public int sortOrder = 99;
     public List<string> tags = new List<string>();
+
+    /// <summary> slots body traces can sit on (head: Face), empty = holds none (Docs/Body/Plan_BodyTraces.md) </summary>
+    public List<BodyPartEquipSlot> traceSlots = new List<BodyPartEquipSlot>();
+    /// <summary> leaves traces on what it touches; its organs without an own list use this one </summary>
+    public bool canLeaveTraces = false;
+    /// <summary> trace definition ids this part can leave </summary>
+    public List<string> leaveTraceIDs = new List<string>();
+
     /// <summary> part tag -> the slots whose coverage decides that tag's visibility (e.g. "feet" -> Feet). A tag not listed = all slots </summary>
     public Dictionary<string, List<BodyPartEquipSlot>> tagCoverSlots = new Dictionary<string, List<BodyPartEquipSlot>>();
     /// <summary> optional image prompt layer of every body that has this part, between race and race template (ActorPromptProfileUtility) </summary>

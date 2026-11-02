@@ -344,6 +344,17 @@ public class StatsManager : I_StatsManager
         foreach (var i in list_statsExtended) i.ReEstablishParent(chara.Stats);
         if (this._statusInstancesEx != null) foreach (var i in _statusInstancesEx) i.Value.ReEstablishParent(chara.Stats);
 
+        // Save migration: chara_status_sex_climax_count was renamed so the chara_status_sex_ prefix summation
+        // (chara_status_sex_stimulation_pos) no longer counts climaxes as stimulation. Only runs for saves holding the old ID.
+        // The old instance is never read: its definition is gone (Severity would dereference a null BaseRef), and nothing
+        // ever wrote a value to it, so the renamed status starts at 0.
+        if (this._statusInstances != null && _statusInstances.ContainsKey("chara_status_sex_climax_count"))
+        {
+            _statusInstances.Remove("chara_status_sex_climax_count");
+            ClearStatusInstanceCache();
+            if (!_statusInstances.ContainsKey("chara_status_climax_count")) AddStatus("chara_status_climax_count");
+        }
+
         // Save migration: status definitions can move between the Status and StatusEX lists
         // across versions (e.g. chara_status_pain), but instances are serialized per save.
         if (this._statusInstances != null)
@@ -545,7 +556,7 @@ public class StatsManager : I_StatsManager
 
             foreach (var equipRef in Owner.EquippedItemRefs)    // addstatmod equipment
             {
-                var comp = Owner.Body.ResolveEquip(equipRef)?.GetComp_Equippable();
+                var comp = Owner.Body.ResolveEquip(equipRef)?.Comp_Equippable;
                 if (comp != null && comp.statModifiers.Count > 0)
                 {
                     AddStatModifier(comp.statModifiers);
@@ -666,22 +677,6 @@ public class StatsManager : I_StatsManager
     private Status_Instance chara_status_sexual_W = null;
     [JsonIgnore] public Status_Instance Sex_W { get { if (chara_status_sexual_W == null) chara_status_sexual_W = GetStatusByStringMatch("chara_status_sex_W"); return chara_status_sexual_W; } }
 
-    protected StatusEx_Instance _lubrication = null;
-    [JsonIgnore] public StatusEx_Instance Lubrication
-    {
-        get
-        {
-            if (_lubrication == null) _lubrication = GetStatusEXByStringMatch("chara_status_sex_stimulation_pos");
-            return _lubrication;
-        }
-    }
-    [JsonIgnore] public bool isLubricated
-    {
-        get
-        {
-            return this.Lubrication != null && this.Lubrication.Severity >= 50;
-        }
-    }
     public void RestoreAll()
     {
         foreach (var ex in StatsExtended) if (ex != null) ex.RestoreMax();
@@ -698,9 +693,63 @@ public class StatsManager : I_StatsManager
     protected List<Stat_Modifier> modifiers_temporary = new List<Stat_Modifier>();
     [JsonIgnore] public List<Stat_Modifier> Modifiers_Temporary { get { return this.modifiers_temporary; } }
 
+    [JsonIgnore] private readonly Dictionary<string, (Stat_Modifier addBase, Stat_Modifier setMult)> _lubricationStimulationMods = new Dictionary<string, (Stat_Modifier addBase, Stat_Modifier setMult)>();
+
     public void GetModifiers(List<Stat_Modifier> results, Stats_Derived_Base obj, string statID, List<string> contexts = null, bool forbidStatus = false)
     {
+        if (!forbidStatus && obj.sexStimulationAddPerPoint.HasValue)
+        {
+            if (!_lubricationStimulationMods.TryGetValue(statID, out var pair))
+            {
+                pair = (
+                    new Stat_Modifier("lubrication_stimulation", 0f) { statID = statID, type = Stat_Modifier.StatMod_Type.addBase },
+                    new Stat_Modifier("lubrication_stimulation", 0f) { statID = statID, type = Stat_Modifier.StatMod_Type.setMult });
+                _lubricationStimulationMods.Add(statID, pair);
+            }
+
+            var stimulation = SexStimulation?.UnclampedSeverity ?? 0f;
+            if (float.IsNaN(stimulation) || float.IsInfinity(stimulation)) stimulation = 0f;
+            var coefficient = obj.sexStimulationAddPerPoint.Value;
+            if (float.IsNaN(coefficient) || float.IsInfinity(coefficient)) coefficient = 0f;
+            pair.addBase.SetNumber(Math.Max(0f, stimulation));
+            pair.setMult.SetNumber(coefficient);
+            var displayName = LocalizeDictionary.QueryThenParse("ui_lubrication_stimulation");
+            pair.addBase.DisplayName = displayName;
+            pair.setMult.DisplayName = displayName;
+            // Seed the block even at coefficient zero so ordinary trait modifiers can enable it.
+            results.Add(pair.addBase);
+            results.Add(pair.setMult);
+        }
         GetModifiers(results, statID, contexts, !forbidStatus, false);
+
+        // StatusEx levels can mod derived stats (eg. chara_status_sex_stimulation_pos -> v/a/o_acceptance). Only StatusEx
+        // whose definition targets this stat are evaluated, and only here (not the shared path a StatusEx itself uses).
+        if (!forbidStatus)
+        {
+            foreach (var statusEx in statusInstancesEx)
+            {
+                var variants = statusEx.BaseRef?.variants;
+                if (variants == null) continue;
+                // Avoid capturing predicates on this hot path; only evaluate statuses targeting this stat.
+                bool targetsStat = false;
+                for (int i = 0; i < variants.Count && !targetsStat; i++)
+                {
+                    var variantMods = variants[i].stat_modifiers;
+                    if (variantMods == null) continue;
+                    for (int j = 0; j < variantMods.Count; j++)
+                    {
+                        if (variantMods[j].statID != statID) continue;
+                        targetsStat = true;
+                        break;
+                    }
+                }
+                if (!targetsStat) continue;
+                foreach (var severityMod in statusEx.SeverityModifiers)
+                {
+                    if (severityMod.statID == statID) results.Add(severityMod);
+                }
+            }
+        }
     }
     public void GetModifiers(List<Stat_Modifier> results, Stats_Base obj, string statID, List<string> contexts = null)
     {
@@ -709,7 +758,7 @@ public class StatsManager : I_StatsManager
 
     public void GetModifiers(List<Stat_Modifier> results, StatusEx_Instance obj, string statID, List<string> contexts = null)
     {
-        GetModifiers(results, statID, contexts, true, true, obj.BaseRef.constant && obj.BaseRef.capModded && obj.BaseRef.noDisplay);
+        GetModifiers(results, statID, contexts, true, MemoryManager.IsMemoryStatID(statID), obj.BaseRef.constant && obj.BaseRef.capModded && obj.BaseRef.noDisplay);
     }
 
     /// <summary>
@@ -1062,7 +1111,7 @@ public class StatsManager : I_StatsManager
     {
         get
         {
-            if (_sexStimulation == null) _sexStimulation = GetStatusEXByStringMatch("chara_status_sex_stimulation");
+            if (_sexStimulation == null) _sexStimulation = FindStatusEXByExactID("chara_status_sex_stimulation");
             return _sexStimulation;
         }
     }
@@ -1199,14 +1248,21 @@ public class StatsManager : I_StatsManager
 
     public float GetStatusSeverityByStringMatch(string s)
     {
-        var candidates = FindStatusByID(s);
-        if (candidates.Count < 1) return -1;
-        else if (candidates.Count > 1)
+        Status_Instance first = null;
+        int count = 0;
+        foreach (var entry in _statusInstances)
         {
-            Debug.LogError($"Warning GetStatusSeverityByStringMatch {s} has found {candidates.Count} candidates, returning first");
+            if (!entry.Key.Contains(s)) continue;
+            if (count == 0) first = entry.Value;
+            count++;
+        }
+        if (count < 1) return -1;
+        else if (count > 1)
+        {
+            Debug.LogError($"Warning GetStatusSeverityByStringMatch {s} has found {count} candidates, returning first");
 
         }
-        return candidates[0].Severity;
+        return first.Severity;
     }
 
     public void RemoveStatusByStringMatch(string s)

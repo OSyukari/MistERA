@@ -151,7 +151,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         scr_roomBTN r2 = Instantiate(prefab);
         r2.SelfRect.SetParent(parent, false);
         /// ANCHOR CONVERSION ///
-        r2.SelfRect.anchoredPosition = ConvertOffset(ri.Base.offsetX, ri.Base.offsetY);
+        if (parent == picture.rectTransform) r2.SelfRect.anchoredPosition = ConvertOffset(ri.Base.offsetX, ri.Base.offsetY);
         /// ANCHOR CONVERSION ///
 
         r2.transform.rotation = Quaternion.identity;
@@ -246,7 +246,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
         // then, go through the list and build each faction
         foreach (var kvp in plan) if (kvp.Value == kvp.Key) BuildFaction(kvp.Key);
-        foreach (var kvp in plan)
+        foreach (var kvp in plan.OrderBy(p => p.Key.ID, StringComparer.Ordinal))
             if (kvp.Value != kvp.Key && factionBlocksByID.TryGetValue(kvp.Value.FactionOwnerRoot.ID, out var hostBlock))
                 AddFloorButtons(hostBlock, kvp.Key);
 
@@ -363,6 +363,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
     /// <summary>
     /// faction -> the faction whose block it should be drawn in (itself = standalone). Memoized into hosts so
+    /// explicitly grouped shop floors stay with their district even when both are initialized by the world.
     /// each faction is resolved once; visiting guards against a factionConnection cycle with no world-connected
     /// anchor in it. A subfaction (e.g. a mall shop tenant) always resolves to its Parent's host instead of
     /// falling into the "no anchor - stand alone" case below - its rooms are a per-room-owned subset of the
@@ -374,6 +375,21 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
     private Manageable ResolveHost(Manageable faction, Dictionary<Manageable, Manageable> hosts, HashSet<Manageable> visiting)
     {
         if (hosts.TryGetValue(faction, out var resolved)) return resolved;
+
+        var template = scr_System_Serializer.current.GetByNameOrID_MapPlan(faction.mapPlanID);
+        var hostID = template?.floorListHostFactionID;
+        if (!string.IsNullOrEmpty(hostID) && hostID != faction.ID && !visiting.Contains(faction))
+        {
+            var explicitHost = scr_System_CampaignManager.current.FindFactionByID(hostID);
+            if (explicitHost != null)
+            {
+                visiting.Add(faction);
+                var host = ResolveHost(explicitHost, hosts, visiting);
+                visiting.Remove(faction);
+                hosts[faction] = host;
+                return host;
+            }
+        }
 
         if (faction is Manageable_Subfaction sub && sub.Parent != null)
         {
@@ -430,8 +446,9 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
     {
         // a faction hidden from the world map is still tracked (discovered, host-resolved, contributes to
         // trackedWorld) but its own floors stay undrawn unless debug mode is on - matches the world-map door
-        // pin visibility rule (canvas_FloorDisplay.cs addWorldDoor).
-        if (faction is Manageable m && m.hiddenOnWorldMap && !scr_System_CampaignManager.current.DebugMode) return;
+        // pin visibility rule (canvas_FloorDisplay.cs addWorldDoor). A template with showLockedFloors (generated homes)
+        // is still drawn - visible but locked: its rooms refuse entry without access (Room_Instance.CanBeAccessedBy).
+        if (faction is Manageable m && m.hiddenOnWorldMap && !m.ShowLockedFloors && !scr_System_CampaignManager.current.DebugMode) return;
 
         foreach(var floor in faction.ManagedFloors)
         {
@@ -516,7 +533,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
             // room with Room_Base.hideOnMap
             if (!buttonsByID.ContainsKey((floor.GetHashCode() + ri.GetHashCode()) * 2 + 1))
             {
-                if (!ri.Base.hideOnMap) addBtn(prefab_roomButton, picture.rectTransform, ri, false, false, false);
+                if (isFloorPlan && !ri.Base.hideOnMap) addBtn(prefab_roomButton, picture.rectTransform, ri, false, false, false);
                 addBtn(prefab_roomButton, roomList, ri, true, true, true);
 
             }
@@ -525,13 +542,16 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
                 //Debug.Log("scr_Panel_Map OnEnable skipping redraw for room [" + ri.displayName + "]");
             }
 
-            if (scr_System_CampaignManager.current.Map.floorDoorQuickSearch.ContainsKey(ri.RefID))
+        }
+
+        // one exit button per visible exit whose door is connected; hidden exits draw nothing (their floors stay
+        // reachable through the floor list)
+        if (isFloorPlan)
+        {
+            foreach (var exit in floor.Exits)
             {
-                //Debug.Log("scr_Panel_Map searching room with floor exit found match ["+ri.displayName+"]");
-                int i = scr_System_CampaignManager.current.Map.floorDoorQuickSearch[ri.RefID];
-                Floor_Base.FloorPlan_Exit exit = floor.FloorBase.exits.Find(x => x.connectedRoom == ri.Base.ID);
-                var j = scr_System_CampaignManager.current.Map.GetFloorByRoomRefID(i);
-                if (exit == null || !exit.hideOnMap) addExit(prefab_roomButton, picture.rectTransform, exit, j);
+                if (exit.hideOnMap || !scr_System_CampaignManager.current.Map.TryGetExitDestination(floor, exit, out _, out var destinationFloor)) continue;
+                addExit(prefab_roomButton, picture.rectTransform, exit, destinationFloor);
             }
         }
 
@@ -546,14 +566,13 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
             /// ANCHOR CONVERSION ///
             // hideOnMap rooms/exits get no lookup entry, so DrawConnections leaves a gap in the path line there
             if (!ri.Base.hideOnMap) connectionPosLookup[ri.RefID] = ConvertOffset(ri.Base.offsetX, ri.Base.offsetY);
-
-            if (scr_System_CampaignManager.current.Map.floorDoorQuickSearch.ContainsKey(ri.RefID))
-            {
-                int connectedRef = scr_System_CampaignManager.current.Map.floorDoorQuickSearch[ri.RefID];
-                Floor_Base.FloorPlan_Exit exit = floor.FloorBase.exits.Find(x => x.connectedRoom == ri.Base.ID);
-                if (exit != null && !exit.hideOnMap) connectionPosLookup[connectedRef] = ConvertOffset(exit.offsetX, exit.offsetY);
-            }
             /// ANCHOR CONVERSION ///
+        }
+        // the room behind each visible exit is drawn at that exit
+        foreach (var exit in floor.Exits)
+        {
+            if (exit.hideOnMap || !scr_System_CampaignManager.current.Map.TryGetExitDestination(floor, exit, out var connectedRoom, out _)) continue;
+            connectionPosLookup[connectedRoom.RefID] = ConvertOffset(exit.offsetX, exit.offsetY);
         }
 
         connectionLines.SetSegments(connectionSegments);
@@ -590,7 +609,8 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
             return;
         }
 
-        if (floornew.rooms.Count == 1)
+        // A one-room district is still a navigation menu when it has doors to other floors.
+        if (floornew.rooms.Count == 1 && floornew.ConnectedDoors.Count == 0)
         {
             Room_Instance onlyRoom = floornew.rooms[0];
             bool alreadyThere = scr_System_CampaignManager.current.CurrentRoom == onlyRoom;
@@ -601,7 +621,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
                 MoveToRoom(onlyRoom);
                 return;
             }
-            else if (floornew.ConnectedDoors.Count < 1)// floornew.FloorBase == null || string.IsNullOrEmpty(floornew.FloorBase.imagePath))
+            else
             {
                 // already standing in this floor's only room and there's no image to show it with -
                 // jump to the parent world map instead, since there's nowhere useful to go from here locally
@@ -1058,6 +1078,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
         public override bool IsButtonValid()
         {
+            if (room == null) return false;
             if (scr_System_CampaignManager.current.CurrentRoom == room)
             {
                 this.text.Toggle(true, true);
@@ -1066,7 +1087,9 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
             else if (!room.CanBeAccessedBy(scr_System_CampaignManager.current.Player))
             {
                 this.text.Toggle(true, false);
-                this.tooltip = ttip.Replace("$time$", "-") + "\n" + LocalizeDictionary.QueryThenParse("ui_room_requireFactionMembership")
+                // a generated home's rooms need an invitation (visit pass, booking...), not a membership
+                string lockKey = ResidenceUtility.IsGeneratedHome(room.FactionOwner?.Faction) ? "ui_room_requireVisitAccess" : "ui_room_requireFactionMembership";
+                this.tooltip = ttip.Replace("$time$", "-") + "\n" + LocalizeDictionary.QueryThenParse(lockKey)
                     .Replace("$faction$", room.FactionOwner?.Faction?.FactionDisplayName ?? "-");
                 return false;
             }

@@ -1,0 +1,43 @@
+{
+    "_doc": "口上loose entry文件：许可「阴道性行为」（sex_vaginal，涉及阴道的性行为：插入、手指、口、置入物品）的请求口上。条目含义与生成规范同 Permission_intimacy_low.json 的 _doc（Request / Granted / Refused，每条目一个variant、3条response，无通用兜底）。文件名含 sex，安全模式不加载。",
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_vaginal_Request",
+                    "_comment": "玩家想请求阴道性行为许可，刚开口。女性NPC察觉话题时的反应，可害羞、紧张。",
+                    "variants": [ { "responses": [
+                        "\"那、那里……你是想说那件事吗？\"",
+                        "\"……你的意思，我明白了。\"",
+                        "\"你想要……我的那里吗？\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_vaginal_Granted",
+                    "_comment": "答应给予阴道性行为许可。也会在涉及阴道的指令进行中被自动请求获准时说出（正处于性行为中），台词需两种场合都自然。女性说话者。",
+                    "variants": [ { "responses": [
+                        "\"……嗯，可以的，进来吧。\"\n%%permission_sex_vaginal_consent%%",
+                        "\"既然是你……我愿意。\"\n%%permission_sex_vaginal_consent%%",
+                        "\"……温柔一点就好。\"\n%%permission_sex_vaginal_consent%%"
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_vaginal_Refused",
+                    "_comment": "拒绝给予阴道性行为许可。女性NPC，委婉为主，不过度激烈。",
+                    "variants": [ { "responses": [
+                        "\"那里还不行……对不起。\"",
+                        "\"我还没准备好让你那样做。\"",
+                        "\"不、不可以啦……\""
+                    ] } ]
+                }
+            }
+        ]
+    }
+}

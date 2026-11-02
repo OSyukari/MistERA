@@ -1,0 +1,5 @@
+{
+    "Dictionary": { "Entries": { "en-us": {
+        "otaku_boardgames_initial": "A board game sits on the table with its rulebook open beside it.", "otaku_boardgames_join": "$joining.name$ takes a seat at the game table and opens the rulebook.", "otaku_boardgames_late": "$joining.name$ reaches the game table a little later and looks over the layout.", "otaku_boardgames_shared_initial": "$attendees.name$ try a few practice moves, pausing to check unclear rules together. Each person makes their own decisions on their turn, without anyone taking over. This practice is not scored.", "otaku_boardgames_shared_arrival": "$companions.name$ explain the current layout to $joining.name$ and make room for a practice turn. They take turns and check questions together, without rushing anyone or counting a winner.", "otaku_boardgames_finish": "The rulebook remains open beside the board. The reserved game session is not over."
+    } } }
+}

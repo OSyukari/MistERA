@@ -31,7 +31,6 @@
                         ]
                     }
                 ],
-                "type": 0,
                 "SortType": "SortedList",
                 "neutralID": "trait_FatigueResistance_default",
                 "group_tooltip": "At what stamina percentage physical output starts degrading."
@@ -80,7 +79,6 @@
                         ]
                     }
                 ],
-                "type": 1,
                 "SortType": "SortedList",
                 "neutralID": "trait_PhysicalVitality_default",
                 "group_tooltip": "Innate physical constitution — modifies both Max HP and Max Stamina independent of CON score."
@@ -133,7 +131,6 @@
                         ]
                     }
                 ],
-                "type": 1,
                 "SortType": "SortedList",
                 "neutralID": "trait_SleepTiming_default",
                 "group_tooltip": "The character's natural circadian phase — how many hours earlier or later they prefer to sleep and wake relative to the default schedule."
@@ -190,7 +187,6 @@
                         ]
                     }
                 ],
-                "type": 2,
                 "SortType": "SortedList",
                 "neutralID": "trait_SelfEsteem_default",
                 "group_tooltip": "The character's sense of self-worth. Affects pride threshold and, at extremes, natural compliance."
@@ -247,7 +243,6 @@
                         ]
                     }
                 ],
-                "type": 2,
                 "SortType": "SortedList",
                 "neutralID": "trait_MemoryCapacity_default",
                 "group_tooltip": "Innate depth of the magical mind — affects both Max MP and active memory capacity."
@@ -291,7 +286,6 @@
                         ]
                     }
                 ],
-                "type": 2,
                 "SortType": "SortedList",
                 "neutralID": "trait_MemoryRetention_default",
                 "group_tooltip": "How long individual experiences persist in mood and stress calculations."
@@ -346,7 +340,6 @@
                         ]
                     }
                 ],
-                "type": 2,
                 "SortType": "SortedList",
                 "neutralID": "trait_CleanlinessTolerance_default",
                 "group_tooltip": "How strongly the character is internally driven to keep their environment clean."
@@ -383,7 +376,6 @@
                         ]
                     }
                 ],
-                "type": 3,
                 "SortType": "SortedList",
                 "neutralID": "trait_EnergyCapacity_default",
                 "group_tooltip": "Mental stamina ceiling — how much energy one can hold before mood suffers."
@@ -427,7 +419,6 @@
                         ]
                     }
                 ],
-                "type": 3,
                 "SortType": "SortedList",
                 "neutralID": "trait_MentalFortitude_default",
                 "group_tooltip": "Raw mental toughness — how hard external events land on the character's self-esteem, independent of their self-image."

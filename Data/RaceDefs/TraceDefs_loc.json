@@ -1,0 +1,49 @@
+{
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "trace_description_line": "$traces$ on the $location$",
+                "trace_description_separator": ", ",
+                "trace_description_count": "$name$ x$count$",
+                "trace_description_tooltip_part": "[$location$]",
+                "trace_description_tooltip_part_indexed": "[$location$ $index$]",
+                "trace_description_tooltip_line": "$name$: $tooltip$",
+                "bodyPart_trace_slot_Face": "face",
+                "bodyPart_trace_slot_Neck": "neck",
+                "bodyPart_trace_slot_Torso": "chest",
+                "bodyPart_trace_slot_Shoulder": "shoulder",
+                "bodyPart_trace_slot_Arm": "arm",
+                "bodyPart_trace_slot_Hand": "hand",
+                "bodyPart_trace_slot_Lower": "lower belly",
+                "bodyPart_trace_slot_Thigh": "thigh",
+                "bodyPart_trace_slot_Leg": "leg",
+                "bodyPart_trace_slot_Feet": "feet",
+                "bodyPart_trace_slot_Nipples": "breasts",
+                "bodyPart_trace_slot_Penis": "penis",
+                "trace_source_unknown": "unknown",
+                "trace_saliva": "$name$'s Saliva",
+                "trace_saliva_tooltip": "Saliva of a $race$.",
+                "trace_teethmark": "Teeth Mark",
+                "trace_teethmark_tooltip": "Left by $name$ ($race$).",
+                "trace_grabmark": "Grab Mark",
+                "trace_grabmark_tooltip": "Red marks from the tight grip of $name$ ($race$).",
+                "trace_precum": "$name$'s Precum",
+                "trace_precum_tooltip": "Precum of a $race$.",
+                "trace_lovejuice": "$name$'s Love Juice",
+                "trace_lovejuice_tooltip": "Love juice of a $race$.",
+                "trace_milk": "$name$'s Breast Milk",
+                "trace_milk_tooltip": "Breast milk of a $race$.",
+                "trace_pubes": "$name$'s Pubic Hair",
+                "trace_pubes_tooltip": "Pubic hair of a $race$.",
+                "trace_pubes_anal": "$name$'s Anal Hair",
+                "trace_pubes_anal_tooltip": "Anal hair of a $race$.",
+                "trace_fur": "$name$'s Fur",
+                "trace_fur_tooltip": "Fur of a $race$.",
+                "trace_cum": "$name$'s Semen",
+                "trace_cum_tooltip": "Semen of a $race$.",
+                "trace_cum_dried": "$name$'s Dried Semen",
+                "trace_cum_dried_tooltip": "Dried semen of a $race$. Only washing gets it off."
+            }
+        }
+    }
+}

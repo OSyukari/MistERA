@@ -1,0 +1,21 @@
+{
+    "_comment":"Riverside launch/join/late pattern. Neutral arrival text works with solo or grouped attendance; no shared Trust reward is claimed. The activity's once-only entrance fee covers the meal, never charged here.",
+    "Events":{"list":[{
+        "ID":"Mall_Foodcourt_Begin",
+        "events":[
+            {"$type":"Event+EventEntry+EventEntry_Branch, Assembly-CSharp","options":[
+                {"option":"player joins","Results":[{"Type":"ExistAppendStrings","arguments":["isJoin"]},{"Type":"JumpToLabel","arguments":["","join"]}]},
+                {"option":"late arrival","Results":[{"Type":"ExistAppendStrings","arguments":["isLate"]},{"Type":"JumpToLabel","arguments":["","late"]}]},
+                {"option":"meal begins","Results":[{"Type":"JumpToLabel","arguments":["","begin"]}]}
+            ]},
+            {"$type":"Event+EventEntry+EventEntry_Line, Assembly-CSharp","label":"begin","line":"Mall_Foodcourt_Begin_initial","isLast":true},
+            {"$type":"Event+EventEntry+EventEntry_Line, Assembly-CSharp","label":"join","line":"Mall_Foodcourt_Begin_join","isLast":true},
+            {"$type":"Event+EventEntry+EventEntry_Line, Assembly-CSharp","label":"late","line":"Mall_Foodcourt_Begin_late","isLast":true}
+        ]
+    }]},
+    "Dictionary":{"Entries":{"zh-cn":{
+        "Mall_Foodcourt_Begin_initial":"美食广场飘着热饭与汤的香气。柜台已经备好套餐，可以找张餐桌坐下，慢慢吃顿饭。",
+        "Mall_Foodcourt_Begin_join":"$joining.name$走进美食广场，沿着取餐柜台寻找空位。套餐的热气混着餐区的谈笑声迎面而来。",
+        "Mall_Foodcourt_Begin_late":"$joining.name$晚了一些才到美食广场。取餐柜台仍亮着灯，现在入座还来得及好好吃顿饭。"
+    }}}
+}

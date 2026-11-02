@@ -18,10 +18,23 @@ public class Requirement_Faction
     public string jobKeyword = "";
     public string inventoryItemBaseID = "";
     public bool requireCanPrepMeal = false;
-    public bool Validate(I_IsJobGiver m, out string tooltip)
+    /// <summary>
+    /// Only valid during one of the faction's meal hours (I_IsJobGiver.isMealHour) - e.g. com_furniture_getmeal.
+    /// Like requireCanPrepMeal it is not part of isValid, so it invalidates the command (shown with this tooltip) instead
+    /// of the hasFactionReq pre-filters dropping it from lists. ignoreMealHour skips it (ahead-of-time checks -
+    /// ActionPackage.ignoreMealHour).
+    /// </summary>
+    public bool requireMealHour = false;
+    public bool Validate(I_IsJobGiver m, out string tooltip, bool ignoreMealHour = false)
     {
         tooltip = "";
         var mm = m as Manageable;
+        if (requireMealHour && !ignoreMealHour && (m == null || !m.isMealHour))
+        {
+            tooltip = LocalizeDictionary.QueryThenParse("ui_RequireFactionExisting_requireMealHour")
+                    .Replace("$faction$", m == null ? "-" : m.FactionDisplayName);
+            return false;
+        }
         if (jobKeyword != "" && (m == null || mm == null || !mm.ExistOngoingProductionOrder(jobKeyword)))
         {
             tooltip = LocalizeDictionary.QueryThenParse("ui_RequireFactionExisting_jobKeyword")

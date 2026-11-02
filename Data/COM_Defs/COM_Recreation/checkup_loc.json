@@ -1,0 +1,16 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for checkup.json (Job_Checkup's command). Holds en-us entries."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "checkup_examination_displayName": "Physical checkup",
+                "checkup_examination_prep_begin_1": "$doer.firstname$ readies the examination bed for a checkup",
+                "checkup_examination_prep_ongoing_1": "$doer.firstname$ is preparing a checkup by the examination bed",
+                "checkup_examination_begin_1": "$doer.firstname$ had $receiver.firstname$ lie down on the examination bed and began the checkup",
+                "checkup_examination_ongoing_1": "$doer.firstname$ is giving $receiver.firstname$ a checkup"
+            }
+        }
+    }
+}

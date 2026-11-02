@@ -1,0 +1,43 @@
+{
+    "_doc": "口上loose entry文件：许可「被旁观的性行为」（sex_observed，房间里有未参与者在场时发生性行为）的请求口上。条目含义与生成规范同 Permission_intimacy_low.json 的 _doc（Request / Granted / Refused，每条目一个variant、3条response，无通用兜底）。文件名含 sex，安全模式不加载。",
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_observed_Request",
+                    "_comment": "玩家想请求被旁观的性行为许可，刚开口。女性NPC察觉话题时的反应，可害羞。",
+                    "variants": [ { "responses": [
+                        "\"被别人看着……？你是说那种事吗？\"",
+                        "\"诶，在有人的地方……？\"",
+                        "\"你、你想在别人面前……？\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_observed_Granted",
+                    "_comment": "答应给予被旁观的性行为许可。也会在有旁人在场的性行为中被自动请求获准时说出，台词需两种场合都自然。女性说话者。",
+                    "variants": [ { "responses": [
+                        "\"……好、好吧，被看着也……可以。\"\n%%permission_sex_observed_consent%%",
+                        "\"嗯……有人在也没关系了。\"\n%%permission_sex_observed_consent%%",
+                        "\"……真拿你没办法，我答应你。\"\n%%permission_sex_observed_consent%%"
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_observed_Refused",
+                    "_comment": "拒绝给予被旁观的性行为许可。女性NPC，可羞耻抗拒，不过度激烈。",
+                    "variants": [ { "responses": [
+                        "\"被人看着的话，绝对不行！\"",
+                        "\"那、那太羞耻了……不要。\"",
+                        "\"有别人在的时候不可以。\""
+                    ] } ]
+                }
+            }
+        ]
+    }
+}

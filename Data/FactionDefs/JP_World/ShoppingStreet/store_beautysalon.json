@@ -1,0 +1,45 @@
+{
+    "_comment": "Store-only beauty salon occupying one shop room on the mall floor, with reception, styling chairs and shampoo facilities together. No separate floor or world-map entrance. No service COM, no hairstyle mutation, no recreation booking and no E2 dependency. Stylist/assistant presence shifts run 10-20, closed Tuesday (Monday index 0). Posts are NPC-only and intentionally not remotely joinable. PLACEHOLDER staff portraits/uniforms reuse jp_store_clerk until dedicated salon staff art is supplied.",
+    "MapPlans": {
+        "factionInit":[{
+            "ID":"jp_beauty_salon","initializeFaction":"jp_beauty_salon","setPrivateRoomOwner":false,
+            "mainExit":{"roomID":"salon_reception","exitCost":5},"floors":[],"mealHours":[],
+            "salesCurrency":"currency_JPY","salesInventory":[{"matchByID":"consumable_jp_mall_salon_haircare"}],
+            "assignableMemberTypes":["membertype_jp_mall_salon_stylist","membertype_jp_mall_salon_assistant"],"joinableMemberTypes":[],
+            "fallbackWorkers":[
+                {"memberTypeID":"membertype_jp_mall_salon_stylist","headcount":1,"maxFallback":1,"templateID":"jp_store_clerk"},
+                {"memberTypeID":"membertype_jp_mall_salon_assistant","headcount":1,"maxFallback":1,"templateID":"jp_store_clerk"}
+            ],
+                "activeHoursStart":10,
+                "activeHoursEnd":19,
+            "managerBaseIDs":[""],"workModules":[],"workHours":[],"workAssignment":[]
+        }],
+        "memberTypes":[
+            {"ID":"membertype_jp_mall_salon_stylist","socialStandingKey":"membertype_jp_mall_salon_stylist","isMember":true,
+             "workModule":{"jobPostID":"jp_mall_salon_stylist_shift","workCommands":[],"activeHours":[10,11,12,13,14,15,16,17,18,19],"activeDays":[1,0,1,1,1,1,1],"hourlyPayout":[{"itemID":"currency_JPY","itemCount":1600}],"paymentCadence":"Daily"}},
+            {"ID":"membertype_jp_mall_salon_assistant","socialStandingKey":"membertype_jp_mall_salon_assistant","isMember":true,
+             "workModule":{"jobPostID":"jp_mall_salon_assistant_shift","workCommands":[],"activeHours":[10,11,12,13,14,15,16,17,18,19],"activeDays":[1,0,1,1,1,1,1],"hourlyPayout":[{"itemID":"currency_JPY","itemCount":1200}],"paymentCadence":"Daily"}}
+        ]
+    },
+    "Furnitures":{"list":[
+        {"ID":"furniture_jp_mall_salon_chairs","displayName":"jp_mall_salon_chairs_furniture","recipe":[],"furnitureSize":3,"value":180000,"Tags":[],"givesJob":[]},
+        {"ID":"furniture_jp_mall_salon_shampoo","displayName":"jp_mall_salon_shampoo_furniture","recipe":[],"furnitureSize":2,"value":200000,"Tags":["plumbing"],"givesJob":[]}
+    ]},
+    "Items":{"list":[{
+        "id":"consumable_jp_mall_salon_haircare","displayName":"jp_mall_salon_haircare","tooltip":"jp_mall_salon_haircare_tooltip","Tags":["salon_retail","industrial"],"value":1800,"itemComps_Template":[]
+    }]},
+    "Dictionary":{"Entries":{"zh-cn":{
+        "jp_beauty_salon":"琉璃美容院",
+        "jp_mall_salon_reception":"美容院接待区",
+        "jp_mall_salon_chairs":"美发座席区",
+        "jp_mall_salon_shampoo":"洗发区",
+        "jp_mall_salon_chairs_furniture":"美发椅与梳妆镜",
+        "jp_mall_salon_shampoo_furniture":"洗发台",
+        "membertype_jp_mall_salon_stylist":"美容院发型师",
+        "membertype_jp_mall_salon_assistant":"美容院助理",
+        "jp_mall_salon_stylist_shift":"发型师 10—20时（周二休息）",
+        "jp_mall_salon_assistant_shift":"助理 10—20时（周二休息）",
+        "jp_mall_salon_haircare":"沙龙护发套装",
+        "jp_mall_salon_haircare_tooltip":"可购买的护发用品。暂不提供美发服务或发型变更功能。"
+    }}}
+}

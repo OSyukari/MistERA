@@ -1,0 +1,18 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for CondomDefs_nsfw.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "condom": "Condom",
+                "condom_tooltip": "A single-use condom, worn on the penis. Spent once taken off.",
+                "condom_used": "Used Condom",
+                "condom_used_tooltip": "A condom that has already been used.",
+                "condom_filled": "Filled Condom",
+                "condom_filled_tooltip": "The semen is still held inside.",
+                "ItemComponent_Contents_tooltip": "Contains:\n$items$"
+            }
+        }
+    }
+}

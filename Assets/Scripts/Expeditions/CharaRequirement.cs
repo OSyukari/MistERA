@@ -24,6 +24,12 @@ public class CharaReq
     public BodyEquipLayer clothingRequirement = BodyEquipLayer.Outer;
     public List<string> requireUndressedTags = new List<string>();
     public List<string> BodyTags = new List<string>();
+    /// <summary>
+    /// Optional: the body part must also have one of these equip slots (a part / organ with a BodyTag and the slot, eg. arm
+    /// + Hand). minRevealingScore then checks those slots only, and body traces land on them (Docs/Body/Plan_BodyTraces.md).
+    /// Empty = tags only, as before.
+    /// </summary>
+    public List<BodyPartEquipSlot> requireSlots = new List<BodyPartEquipSlot>();
     public int minRevealingScore = -1;
 
     public int cost_EN = 0;
@@ -72,6 +78,11 @@ public class CharaReq
     [JsonConverter(typeof(StringOrListConverter))]
     public List<string> requireActorBaseID = new List<string>();
 
+    // race keyword requirement (Trait_Requirement.GetRaceKeywords: race RaceType + race template actorKeyword):
+    // requireRaceKeywords = has any of these, forbidRaceKeywords = has none of these. Empty = no check.
+    public List<string> requireRaceKeywords = new List<string>();
+    public List<string> forbidRaceKeywords = new List<string>();
+
     // job-faction requirement: the faction/party owning the validating job (e.g. the furniture's room owner)
     // must relate to the character as set here. Only checked where a job is available (COM validation);
     // fails when set but there is no owning job/faction.
@@ -92,7 +103,14 @@ public class CharaReq
         this.requireUndressedTags.AddRange(req.requireUndressedTags);
         this.requireAbsentJobwithCOMTag.AddRange(req.requireAbsentJobwithCOMTag);
         this.requireExistingJobwithCOMTag.AddRange(req.requireExistingJobwithCOMTag);
+        this.requireStatusValue.AddRange(req.requireStatusValue);
+        if (req.requireRaceKeywords != null) this.requireRaceKeywords.AddRange(req.requireRaceKeywords);
+        if (req.forbidRaceKeywords != null) this.forbidRaceKeywords.AddRange(req.forbidRaceKeywords);
+        this.requireRaceKeywords = this.requireRaceKeywords.Distinct().ToList();
+        this.forbidRaceKeywords = this.forbidRaceKeywords.Distinct().ToList();
         this.BodyTags = this.BodyTags.Distinct().ToList();
+        if (req.requireSlots != null) this.requireSlots.AddRange(req.requireSlots);
+        this.requireSlots = this.requireSlots.Distinct().ToList();
         this.requireUndressedTags = this.requireUndressedTags.Distinct().ToList();
         requireConscious = requireConscious && req.requireConscious;
         requireUnrestrained = requireUnrestrained || req.requireUnrestrained;

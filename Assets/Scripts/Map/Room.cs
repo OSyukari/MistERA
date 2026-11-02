@@ -13,6 +13,76 @@ using UnityEngine;
 
 public class Room_Instance: IDisposable, I_Disposable
 {
+    [JsonIgnore] private ActorTagContext actorTagContext;
+    [JsonIgnore] private I_IsJobGiver actorTagContextOwner;
+    [JsonIgnore] private string actorTagContextOwnerID;
+    [JsonIgnore] private bool actorTagContextValid;
+
+    internal ActorTagContext GetActorTagContext()
+    {
+        var owner = FactionOwner;
+        var ownerID = owner?.FactionID;
+        if (actorTagContext == null) actorTagContext = new ActorTagContext();
+        if (!actorTagContextValid || !ReferenceEquals(actorTagContextOwner, owner)
+            || actorTagContextOwnerID != ownerID)
+        {
+            actorTagContext.Tags.Clear();
+            if (owner != null) actorTagContext.Tags.Add(ownerID);
+            actorTagContextOwner = owner;
+            actorTagContextOwnerID = ownerID;
+            actorTagContextValid = true;
+            unchecked { actorTagContext.Revision++; }
+        }
+        return actorTagContext;
+    }
+
+    private void ResetActorTagContext()
+    {
+        actorTagContextValid = false;
+        actorTagContextOwner = null;
+        actorTagContextOwnerID = null;
+        if (actorTagContext != null)
+        {
+            actorTagContext.Tags.Clear();
+            unchecked { actorTagContext.Revision++; }
+        }
+    }
+
+    [JsonIgnore] readonly List<Job_Activity> activities = new List<Job_Activity>();
+    [JsonIgnore] public IReadOnlyList<Job_Activity> Activities { get { return activities; } }
+
+    public void RegisterActivity(Job_Activity activity)
+    {
+        if (activity != null && !activities.Contains(activity)) activities.Add(activity);
+    }
+
+    public void UnregisterActivity(Job_Activity activity)
+    {
+        activities.Remove(activity);
+    }
+
+    /// <summary>Concurrent contexts are alternatives, not cumulative membership requirements.</summary>
+    public bool AllowsActivityCommand(Job_Furniture furniture, COM command, Character_Trainable actor)
+    {
+        bool replaced = false;
+        for (int i = 0; i < activities.Count; i++)
+        {
+            var activity = activities[i];
+            if (!activity.ReplacesCommand(furniture, command)) continue;
+            replaced = true;
+            if (activity.AllowsParticipantCommand(actor, command)) return true;
+        }
+        return !replaced;
+    }
+
+    /// <summary>Reuse a result list across furniture to deduplicate coordinator-bound offers.</summary>
+    public void AppendActivityOffers(Job_Furniture furniture, Character_Trainable actor,
+        List<ActionPackage> results, bool allowInvalid = false, COM filter = null)
+    {
+        for (int i = 0; i < activities.Count; i++)
+            activities[i].AppendRoomCommandOffers(furniture, actor, results, allowInvalid, filter);
+    }
+
     [JsonProperty] protected List<int> roomCharaRefs = new List<int>();
     List<Character_Trainable> _roomChara = null;
     [JsonIgnore]
@@ -270,6 +340,7 @@ public class Room_Instance: IDisposable, I_Disposable
     }
     public void NotifyOwnershipChange(List<int> ownerRefs)
     {
+        actorTagContextValid = false;
         this.ownerNames = null;
         this._displayNameCache = "";
         this._displayNameShortCache = "";
@@ -536,7 +607,10 @@ public class Room_Instance: IDisposable, I_Disposable
             else
             {
                 Debug.LogError("Error setting FactionOwner");
+                return;
             }
+            factionOwner = value;
+            NotifyOwnershipChange(null);
         }
     }
 
@@ -559,7 +633,13 @@ public class Room_Instance: IDisposable, I_Disposable
     public void SetFaction(I_IsJobGiver org)
     {
         this.FactionOwner = org;
-        foreach (var furniture in this.Furnitures) if (furniture.JobGiver != null) furniture.JobGiver.FactionOwner = org;// SetOwner(org);
+        foreach (var furniture in this.Furnitures)
+        {
+            if (furniture.JobGiver == null) continue;
+            // Job's setter updates its saved refs but only clears its cached owner on null.
+            furniture.JobGiver.FactionOwner = null;
+            furniture.JobGiver.FactionOwner = org;
+        }
     }
 
     public FurnitureInstance AddFurniture(string s)
@@ -702,16 +782,19 @@ public class Room_Instance: IDisposable, I_Disposable
 
 
     /// <summary>
-    /// False only for a Room_Base.requireFactionMembership room whose owning faction c does not belong to
-    /// (home, temporary home, work or recreation). Unowned rooms and rooms without the flag are open to everyone.
+    /// False only for a locked room whose owning faction c has no access to. Locked = Room_Base.requireFactionMembership,
+    /// Room_Base.residentsOnly, or any room of a generated home (ResidenceUtility.IsGeneratedHome). Access = membership
+    /// (home, temporary home, work or recreation) or the residence rules of ResidenceUtility.HasRoomAccess (residents-only
+    /// rooms, visit passes, bookings there, the player's followers). Unowned rooms and unlocked rooms are open to everyone.
     /// </summary>
     public bool CanBeAccessedBy(Character_Trainable c)
     {
-        if (c == null || Base == null || !Base.requireFactionMembership) return true;
-        if (c == scr_System_CampaignManager.current.Player && scr_System_CampaignManager.current.DebugMode) return true;
+        if (c == null || Base == null) return true;
         var owner = FactionOwner?.Faction;
+        if (!Base.requireFactionMembership && !Base.residentsOnly && !ResidenceUtility.IsGeneratedHome(owner)) return true;
+        if (c == scr_System_CampaignManager.current.Player && scr_System_CampaignManager.current.DebugMode) return true;
         if (owner == null) return true;
-        return c.FactionManager.Factions.Contains(owner);
+        return ResidenceUtility.HasRoomAccess(this, owner, c);
     }
 
     bool _isRoomPrivate = false;
@@ -1036,11 +1119,13 @@ public class Room_Instance: IDisposable, I_Disposable
 
     public void Dispose()
     {
+        ResetActorTagContext();
         Debug.Log("Room " + refID + " disposed");
     }
 
     public void DisposeInternal()
     {
+        ResetActorTagContext();
         baseRoom = null;
         roomJobs.Clear();
         factionOwner = null;
@@ -1050,6 +1135,7 @@ public class Room_Instance: IDisposable, I_Disposable
 
     public void SerializationRebuilt()
     {
+        ResetActorTagContext();
         //Debug.LogError("Room SerializationRebuilt");
         foreach (var i in furnitures)
         {

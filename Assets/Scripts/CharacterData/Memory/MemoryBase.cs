@@ -462,7 +462,7 @@ public class Memory_Entry
         var stresslist = SplitScore((int)scoreMod_Stress, minStress, maxStress);
         for(int i = 0; i < stresslist.Count; i++)
         {
-            var moodlet = initMoodlet("chara_status_stress", i);
+            var moodlet = initMoodlet(MemoryManager.MemoryStat_Stress, i);
             moodlet.DisplayName = this.ToString(true, false);
             moodlet.SetValueTypeAndString(Stat_Modifier_Type.number, stresslist[i].ToString());
             Mod_Stress.Add(moodlet);
@@ -472,7 +472,7 @@ public class Memory_Entry
         var moodlist = SplitScore((int)scoreMod_Mood, minMood, maxMood);
         for (int i = 0; i < moodlist.Count; i++)
         {
-            var moodlet = initMoodlet("chara_status_mood", i);
+            var moodlet = initMoodlet(MemoryManager.MemoryStat_Mood, i);
             moodlet.DisplayName = this.ToString(true, false);
             moodlet.SetValueTypeAndString(Stat_Modifier_Type.number, moodlist[i].ToString());
             Mod_Mood.Add(moodlet);
@@ -482,7 +482,7 @@ public class Memory_Entry
         var lustlist = SplitScore((int)scoreMod_Lust, minLust, maxLust);
         for (int i = 0; i < lustlist.Count; i++)
         {
-            var moodlet = initMoodlet("chara_status_lust", i);
+            var moodlet = initMoodlet(MemoryManager.MemoryStat_Lust, i);
             moodlet.DisplayName = this.ToString(true, false);
             moodlet.SetValueTypeAndString(Stat_Modifier_Type.number, lustlist[i].ToString());
             Mod_Lust.Add(moodlet);

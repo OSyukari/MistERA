@@ -114,11 +114,11 @@ public class Item_Instance_Cum : Item_Instance
     public float CumAmount 
     {   get
         {
-            return GetComp_Ingestible().amount;
+            return Comp_Ingestible.amount;
         }
         set
         {
-            GetComp_Ingestible().amount = (float)value;
+            Comp_Ingestible.amount = (float)value;
         }
     }
 

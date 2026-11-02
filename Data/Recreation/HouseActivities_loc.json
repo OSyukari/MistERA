@@ -1,0 +1,20 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for HouseActivities.json (shared house activities, family doctor)."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "house_activity_shooting_training": "Shooting Training",
+                "house_activity_combat_training": "Combat Training",
+                "house_activity_movie_session": "Movie Session",
+                "house_activity_group_gaming": "Group Gaming",
+                "house_activity_music_practice": "Music Practice",
+                "house_activity_room_visit": "Room Visit",
+                "membertype_family_doctor": "Family Doctor",
+                "membertype_family_doctor_tooltip": "The home's family doctor. No fixed working hours, but other members can book a checkup with them.",
+                "activity_family_doctor_checkup": "Physical Checkup"
+            }
+        }
+    }
+}

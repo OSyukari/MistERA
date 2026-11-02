@@ -803,6 +803,123 @@
                     { "id": "random_angles", "view": "external", "prompts": ["{from side|from above}"] }
                 ]
             }
+        },
+        {
+            "id": "standing_groping",
+            "_comment": "non-sex unsafe touch COMs (massage tag: butt, thigh, abdomen, back...), doer = groper, receiver = victim. Before standing_intimate, which takes every other touch. Human groper stands behind and gropes the chest; an animal licks the victim's face / neck, the victim standing beside a large_animal and kneeling beside any other animal. An animal victim falls through to standing_intimate",
+            "actionTags": ["standing"],
+            "pairKind": "distinct",
+            "none": ["actReceiver:any:animal"],
+            "actions": [{ "id": "action", "all": ["touch", "massage"], "none": ["sex"], "anyOf": [{ "mainRole": "doer" }, { "mainRole": "receiver" }], "roles": { "doer": "actDoer", "receiver": "actReceiver" } }],
+            "prompts": [],
+            "options": {
+                "participants": [
+                    { "id": "human", "none": ["actDoer:any:animal"], "prompts": ["standing", "grabbing from behind", "groping", "grabbing another's breast", "$receiver.torso_front$"],
+                        "scenePrompts": ["$doer.shortPrompt$ $doer.be$ standing behind $receiver.shortPrompt$, groping $receiver.shortName$'s {chest|breasts} from behind."] },
+                    { "id": "bestiality", "all": ["actDoer:any:animal"], "prompts": ["$actDoer.animal$ licking $actReceiver.!animal$"], "anyOf": [
+                        { "all": ["actDoer:any:large_animal"], "prompts": ["standing"],
+                            "scenePrompts": ["$receiver.shortPrompt$ $receiver.be$ standing while $doer.shortPrompt$ $doer.be$ licking $receiver.shortName$'s {face|neck}."] },
+                        { "all": ["actDoer:any:!large_animal"], "prompts": ["kneeling"],
+                            "scenePrompts": ["$receiver.shortPrompt$ $receiver.be$ kneeling while $doer.shortPrompt$ $doer.be$ licking $receiver.shortName$'s {face|neck}."] }
+                    ] }
+                ],
+                "sizeDifference": [
+                    { "id": "extremeSmallSub", "all": ["actReceiver:any:petite", "actDoer:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actReceiver.petite$", "larger $actDoer.horse&!petite$"] },
+                    { "id": "extremeSmallDom", "all": ["actDoer:any:petite", "actReceiver:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actDoer.petite$", "larger $actReceiver.horse&!petite$"] },
+                    { "id": "smallSub", "prompts": ["size difference"], "anyOf": [{ "all": ["actReceiver:any:petite&!horse", "actDoer:any:!petite"], "prompts": ["smaller $actReceiver.petite&!horse$", "larger $actDoer.!petite$"] }, { "all": ["actReceiver:any:!petite&!horse", "actDoer:any:horse"], "prompts": ["smaller $actReceiver.!petite&!horse$", "larger $actDoer.horse$"] }] },
+                    { "id": "smallDom", "prompts": ["size difference"], "anyOf": [{ "all": ["actDoer:any:petite&!horse", "actReceiver:any:!petite"], "prompts": ["smaller $actDoer.petite&!horse$", "larger $actReceiver.!petite$"] }, { "all": ["actDoer:any:!petite&!horse", "actReceiver:any:horse"], "prompts": ["smaller $actDoer.!petite&!horse$", "larger $actReceiver.horse$"] }] },
+                    { "id": "none", "prompts": [] }
+                ],
+                "camera": [
+                    { "id": "pov", "all": ["pov_possible"], "view": "pov", "prompts": ["pov"] },
+                    { "id": "random_angles", "view": "external", "prompts": ["{from side|front view|cowboy shot}"] }
+                ]
+            }
+        },
+        {
+            "id": "standing_intimate",
+            "_comment": "non-sex touch COMs (hug, cheek, hair, head, massage touches): standing close, touching / hugging. Before standing_neutral. participants uses the animal actor tag directly, because the derived bestiality flag needs sex. With an animal it follows standing_neutral's left / right placement, the human stands beside a large_animal (RaceType tag, e.g. horse) and kneels beside any other animal; the sentence randomly picks petting OR nuzzling, never both. The pose is a tag (fixed by size); the action stays sentence-only, because tag and sentence inline choices roll independently and a tag could contradict the sentence",
+            "actionTags": ["standing"],
+            "pairKind": "distinct",
+            "actions": [{ "id": "action", "all": ["touch"], "none": ["sex"], "anyOf": [{ "mainRole": "doer" }, { "mainRole": "receiver" }], "roles": { "doer": "actDoer", "receiver": "actReceiver" } }],
+            "prompts": ["close together"],
+            "options": {
+                "participants": [
+                    { "id": "human", "none": ["actDoer:any:animal", "actReceiver:any:animal"], "prompts": ["standing", "{hug, embracing|hugging from behind|hand on another's cheek|headpat|holding hands|arm around waist|hand on another's shoulder|leaning on another}"],
+                        "scenePrompts": ["$doer.shortPrompt$ $doer.be$ standing close to $receiver.shortPrompt$, {hugging|gently touching|holding|leaning against} $receiver.shortName$."] },
+                    { "id": "bestiality", "any": ["actDoer:any:animal", "actReceiver:any:animal"], "prompts": [], "anyOf": [
+                        { "all": ["actDoer:any:large_animal", "actReceiver:any:!animal"], "prompts": ["standing"],
+                            "scenePrompts": ["{$receiver.shortPrompt$ on the left $receiver.be$ standing beside $doer.shortPrompt$ on the right|$receiver.shortPrompt$ on the right $receiver.be$ standing beside $doer.shortPrompt$ on the left}, {petting $doer.shortName$|while $doer.shortName$ $doer.be$ nuzzling $receiver.shortName$}."] },
+                        { "all": ["actDoer:any:animal&!large_animal", "actReceiver:any:!animal"], "prompts": ["kneeling"],
+                            "scenePrompts": ["{$receiver.shortPrompt$ on the left $receiver.be$ kneeling beside $doer.shortPrompt$ on the right|$receiver.shortPrompt$ on the right $receiver.be$ kneeling beside $doer.shortPrompt$ on the left}, {petting $doer.shortName$|while $doer.shortName$ $doer.be$ nuzzling $receiver.shortName$}."] },
+                        { "all": ["actReceiver:any:large_animal", "actDoer:any:!animal"], "prompts": ["standing"],
+                            "scenePrompts": ["{$doer.shortPrompt$ on the left $doer.be$ standing beside $receiver.shortPrompt$ on the right|$doer.shortPrompt$ on the right $doer.be$ standing beside $receiver.shortPrompt$ on the left}, {petting $receiver.shortName$|while $receiver.shortName$ $receiver.be$ nuzzling $doer.shortName$}."] },
+                        { "all": ["actReceiver:any:animal&!large_animal", "actDoer:any:!animal"], "prompts": ["kneeling"],
+                            "scenePrompts": ["{$doer.shortPrompt$ on the left $doer.be$ kneeling beside $receiver.shortPrompt$ on the right|$doer.shortPrompt$ on the right $doer.be$ kneeling beside $receiver.shortPrompt$ on the left}, {petting $receiver.shortName$|while $receiver.shortName$ $receiver.be$ nuzzling $doer.shortName$}."] },
+                        { "all": ["actDoer:any:animal", "actReceiver:any:animal"],
+                            "prompts": ["nuzzling"],
+                            "scenePrompts": ["{$doer.shortPrompt$ on the left beside $receiver.shortPrompt$ on the right, nuzzling each other.|$doer.shortPrompt$ on the right beside $receiver.shortPrompt$ on the left, nuzzling each other.}"] }
+                    ] }
+                ],
+                "sizeDifference": [
+                    { "id": "extremeSmallSub", "all": ["actReceiver:any:petite", "actDoer:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actReceiver.petite$", "larger $actDoer.horse&!petite$"] },
+                    { "id": "extremeSmallDom", "all": ["actDoer:any:petite", "actReceiver:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actDoer.petite$", "larger $actReceiver.horse&!petite$"] },
+                    { "id": "smallSub", "prompts": ["size difference"], "anyOf": [{ "all": ["actReceiver:any:petite&!horse", "actDoer:any:!petite"], "prompts": ["smaller $actReceiver.petite&!horse$", "larger $actDoer.!petite$"] }, { "all": ["actReceiver:any:!petite&!horse", "actDoer:any:horse"], "prompts": ["smaller $actReceiver.!petite&!horse$", "larger $actDoer.horse$"] }] },
+                    { "id": "smallDom", "prompts": ["size difference"], "anyOf": [{ "all": ["actDoer:any:petite&!horse", "actReceiver:any:!petite"], "prompts": ["smaller $actDoer.petite&!horse$", "larger $actReceiver.!petite$"] }, { "all": ["actDoer:any:!petite&!horse", "actReceiver:any:horse"], "prompts": ["smaller $actDoer.!petite&!horse$", "larger $actReceiver.horse$"] }] },
+                    { "id": "none", "prompts": [] }
+                ],
+                "camera": [
+                    { "id": "pov", "all": ["pov_possible"], "view": "pov", "prompts": ["pov"] },
+                    { "id": "random_angles", "view": "external", "prompts": ["{from side|front view|cowboy shot}"] }
+                ]
+            }
+        },
+        {
+            "id": "standing_neutral",
+            "_comment": "fallback for any other non-sex interaction with a partner (talk, wait, activity, meal...): side by side, random left / right placement. Only humans are described as standing (never 'standing together', which makes the animal stand too). Excludes sex, sex-side commands (allowedDuringSex: undress, ingest...) and seated / lying / private furniture",
+            "actionTags": ["standing"],
+            "pairKind": "distinct",
+            "actions": [{ "id": "action", "none": ["sex", "allowedDuringSex", "NonInteraction", "bed", "sleep", "rest", "rest_required", "shower", "bathroom", "privacy", "TV", "books"], "anyOf": [{ "mainRole": "doer" }, { "mainRole": "receiver" }], "roles": { "doer": "actDoer", "receiver": "actReceiver" } }],
+            "prompts": ["{side-by-side|looking at another|looking at viewer}"],
+            "options": {
+                "participants": [
+                    { "id": "human", "none": ["actDoer:any:animal", "actReceiver:any:animal"], "prompts": ["standing"],
+                        "scenePrompts": ["{$doer.shortPrompt$ on the left $doer.be$ standing beside $receiver.shortPrompt$ on the right.|$receiver.shortPrompt$ on the left $receiver.be$ standing beside $doer.shortPrompt$ on the right.}"] },
+                    { "id": "bestiality", "any": ["actDoer:any:animal", "actReceiver:any:animal"], "prompts": [], "anyOf": [
+                        { "all": ["actDoer:any:animal", "actReceiver:any:!animal"], "prompts": ["standing"],
+                            "scenePrompts": ["{$receiver.shortPrompt$ on the left $receiver.be$ standing beside $doer.shortPrompt$ on the right.|$receiver.shortPrompt$ on the right $receiver.be$ standing beside $doer.shortPrompt$ on the left.}"] },
+                        { "all": ["actReceiver:any:animal", "actDoer:any:!animal"], "prompts": ["standing"],
+                            "scenePrompts": ["{$doer.shortPrompt$ on the left $doer.be$ standing beside $receiver.shortPrompt$ on the right.|$doer.shortPrompt$ on the right $doer.be$ standing beside $receiver.shortPrompt$ on the left.}"] },
+                        { "all": ["actDoer:any:animal", "actReceiver:any:animal"], "prompts": [],
+                            "scenePrompts": ["{$doer.shortPrompt$ on the left beside $receiver.shortPrompt$ on the right.|$doer.shortPrompt$ on the right beside $receiver.shortPrompt$ on the left.}"] }
+                    ] }
+                ],
+                "sizeDifference": [
+                    { "id": "extremeSmallSub", "all": ["actReceiver:any:petite", "actDoer:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actReceiver.petite$", "larger $actDoer.horse&!petite$"] },
+                    { "id": "extremeSmallDom", "all": ["actDoer:any:petite", "actReceiver:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actDoer.petite$", "larger $actReceiver.horse&!petite$"] },
+                    { "id": "smallSub", "prompts": ["size difference"], "anyOf": [{ "all": ["actReceiver:any:petite&!horse", "actDoer:any:!petite"], "prompts": ["smaller $actReceiver.petite&!horse$", "larger $actDoer.!petite$"] }, { "all": ["actReceiver:any:!petite&!horse", "actDoer:any:horse"], "prompts": ["smaller $actReceiver.!petite&!horse$", "larger $actDoer.horse$"] }] },
+                    { "id": "smallDom", "prompts": ["size difference"], "anyOf": [{ "all": ["actDoer:any:petite&!horse", "actReceiver:any:!petite"], "prompts": ["smaller $actDoer.petite&!horse$", "larger $actReceiver.!petite$"] }, { "all": ["actDoer:any:!petite&!horse", "actReceiver:any:horse"], "prompts": ["smaller $actDoer.!petite&!horse$", "larger $actReceiver.horse$"] }] },
+                    { "id": "none", "prompts": [] }
+                ],
+                "camera": [
+                    { "id": "pov", "all": ["pov_possible"], "view": "pov", "prompts": ["pov"] },
+                    { "id": "random_angles", "view": "external", "prompts": ["{from side|front view|cowboy shot}"] }
+                ]
+            }
+        },
+        {
+            "id": "standing_neutral_solo",
+            "_comment": "standing_neutral for a self / solo interaction (wait, activity wait...): the actor standing alone",
+            "actionTags": ["standing"],
+            "actions": [{ "id": "action", "none": ["sex", "allowedDuringSex", "NonInteraction", "masturbate", "bed", "sleep", "rest", "rest_required", "shower", "bathroom", "privacy", "TV", "books"], "anyOf": [{ "mainRole": "self" }, { "mainRole": "solo" }], "roles": { "doer": "actDoer", "receiver": "actDoer" } }],
+            "scenePrompts": ["$actDoer.shortPrompt$ $actDoer.be$ standing alone."],
+            "prompts": ["standing", "{looking at viewer|looking away|arms at sides|hands on own hips|arms behind back}"],
+            "options": {
+                "camera": [
+                    { "id": "pov", "all": ["pov_possible"], "view": "pov", "prompts": ["pov"] },
+                    { "id": "random_angles", "view": "external", "prompts": ["{front view|from side|cowboy shot|full body}"] }
+                ]
+            }
         }
     ]
 }

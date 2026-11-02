@@ -141,42 +141,39 @@ public class scr_System_SceneManager : MonoBehaviour
 
     public Action Observer_OnPageUnload;
     /// <summary>
-    /// argument 1: specify unloading canvas with specified comp. if last canvas in list does not have this comp, function will end.
+    /// Closes the most recent canvas matching comp, or the top canvas when comp is null.
     /// </summary>
     /// <param name="comp"></param>
     public void UnloadLastCanvasFromScene(System.Type comp = null)
     {
-        //if (comp != null) Debug.Log("UnloadLastCanvasFromScene COMP TYPE IS " + comp);
-        if (comp != null)
+        int index = comp == null ? canvasList.Count - 1 :
+            canvasList.FindLastIndex(x => x != null && x.GetComponent(comp) != null);
+        if (index < 0)
         {
-            List<RectTransform> targets = canvasList.FindAll(x => x.GetComponent(comp) != null);
-            if (targets.Count > 0)
-            {
-                canvasList.Remove(targets[targets.Count - 1]);
-                Destroy(targets[targets.Count - 1].gameObject);
-                if (canvasList.Count > 0) canvasList[canvasList.Count - 1].GetComponent<scr_Menu>().ValidateAll();
-            }
-        }
-        else
-        {
-            //&& canvasList.Peek().GetComponent(comp) == null
-            if (canvasList.Count > 0)
-            {
-                RectTransform target = canvasList[canvasList.Count - 1];
-                canvasList.Remove(target);
-                Destroy(target.gameObject);
-                if (canvasList.Count > 0) canvasList[canvasList.Count - 1].GetComponent<scr_Menu>().ValidateAll();
-            }
-            else
-            {
-                // Do NOT fall back to Destroy(this.gameObject) here - this component lives on the
-                // shared System "Serializer" GameObject alongside CentralControl/Time/UpdateHandler,
-                // so that destroy nukes every core singleton (MissingReferenceException cascade).
-                // An empty canvas stack just means there is no overlay canvas to unload.
+            if (comp == null)
                 Debug.LogWarning("UnloadLastCanvasFromScene: canvas stack is empty, nothing to unload.");
-            }
+            return;
         }
+
+        RectTransform target = canvasList[index];
+        canvasList.RemoveAt(index);
+        if (target == null) return;
+
+        var menu = target.GetComponent<scr_Menu>();
+        Destroy(target.gameObject);
+        // Destroy is deferred. Normal-close callbacks must not run from OnDestroy during shutdown.
+        if (menu != null) menu.NotifyClosed();
         Observer_OnPageUnload?.Invoke();
+
+        var campaign = scr_System_CampaignManager.current;
+        if (campaign != null && campaign.Map != null && campaign.CurrentRoom != null)
+            campaign.NotifyUpdate();
+
+        if (canvasList.Count > 0 && canvasList[canvasList.Count - 1] != null)
+        {
+            var remainingMenu = canvasList[canvasList.Count - 1].GetComponent<scr_Menu>();
+            if (remainingMenu != null) remainingMenu.ValidateAll();
+        }
     }
 
     private IEnumerator LoadYourAsyncScene(string path)

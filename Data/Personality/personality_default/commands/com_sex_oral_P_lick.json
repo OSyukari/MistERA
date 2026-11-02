@@ -1,0 +1,74 @@
+{
+    "_doc": "Kojo of com_sex_oral_P_lick (Data/COM_Defs/COM_sex/4_com_sex_oral_P_lick.json). The first doer variant needs the target actor tag condom_filled (the partner wears a condom holding semen, UtilityEX.GetActorTag): text only, no mechanics.",
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_P_lick",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "extraSelfPortraitTags": ["sex", "receiver", "blowjob"],
+                            "useActiveTags": false,
+                            "_comment": "受方 被舔肉棒",
+                            "responses": ["com_sex_oral_P_lick_receiver_1"]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "targetTags": ["condom_filled"]
+                            },
+                            "extraSelfPortraitTags": ["sex", "doer", "blowjob", "blush"],
+                            "useActiveTags": false,
+                            "_comment": "攻方 舔戴着装满精液的避孕套的肉棒",
+                            "responses": [
+                                "com_sex_oral_P_lick_condomFilled_1",
+                                "com_sex_oral_P_lick_condomFilled_2",
+                                "com_sex_oral_P_lick_condomFilled_3"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requirePermission": true
+                            },
+                            "extraSelfPortraitTags": ["sex", "doer", "blowjob", "blush"],
+                            "useActiveTags": false,
+                            "_comment": "攻方 舔肉棒 有允许",
+                            "responses": [
+                                "com_sex_oral_P_lick_1",
+                                "com_sex_oral_P_lick_2"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "extraSelfPortraitTags": ["sex", "doer", "blowjob", "disgusted"],
+                            "useActiveTags": false,
+                            "_comment": "攻方 舔肉棒 无允许",
+                            "responses": [
+                                "com_sex_oral_P_lick_3"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_sex_oral_P_lick_receiver_1": "$self$被$target$的舌头舔得一阵发麻，忍不住挺了挺腰。",
+                "com_sex_oral_P_lick_condomFilled_1": "$self$隔着鼓胀的避孕套舔了舔，舌尖碰到了里面还温热的精液。\n\"……都射了这么多了，还想要吗？\"",
+                "com_sex_oral_P_lick_condomFilled_2": "$self$用指尖捏了捏套子前端那一团，红着脸把舌头贴了上去。\n\"满满的……全是你的味道。\"",
+                "com_sex_oral_P_lick_condomFilled_3": "$self$看着那只装满精液、还挂在肉棒上的避孕套，犹豫了一下，还是伸出舌头慢慢舔着。\n\"真是的……都不先摘下来。\"",
+                "com_sex_oral_P_lick_1": "$self$伸出舌头，从根部一路舔到顶端。\n\"这样舒服吗？\"",
+                "com_sex_oral_P_lick_2": "$self$一边抬眼观察$target$的反应，一边用舌尖细细地打着圈。\n\"嗯……这里比较敏感？\"",
+                "com_sex_oral_P_lick_3": "$self$皱着眉，勉强伸出舌头碰了碰。\n\"……只是舔一下而已。\""
+            }
+        }
+    }
+}

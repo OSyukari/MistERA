@@ -12,10 +12,14 @@
                 "jp_riverside_viewing_spot": "Viewing Spot",
 
                 "jp_riverside_relax_displayName": "Riverside Stroll",
+                "jp_riverside_relax_displayName_2": "Stroll Along the River Together",
                 "jp_riverside_watch_fireworks_displayName": "Watch the Fireworks",
+                "jp_riverside_watch_fireworks_displayName_2": "Watch the Fireworks Together",
 
                 "jp_riverside_fireworks": "Fireworks Festival",
-                "jp_riverside_stroll": "Riverside Stroll"
+                "jp_riverside_stroll": "Riverside Stroll",
+                "jp_riverside_fireworks_accept_reason": "In activity",
+                "jp_riverside_stroll_accept_reason": "In activity"
             }
         }
     }

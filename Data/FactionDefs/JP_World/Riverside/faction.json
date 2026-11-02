@@ -57,6 +57,8 @@
         "recreationOffers": [
             {
                 "ID": "recreation_offer_jp_riverside_fireworks",
+                "allowWalkIn": true,
+                "trustRewardEligible": false,
                 "factionID": "jp_tourist_riverside",
                 "startHour": 19,
                 "hours": 2,
@@ -64,6 +66,13 @@
                 "_comment_activity": "Job_Activity gathers on the embankment lawn and launches at T+5 (World session, no mandatory participants), firing Riverside_Fireworks_Begin (Events/riverside_activity_events.json).",
                 "gatherRoomID": "riverside_promenade",
                 "launchEventID": "Riverside_Fireworks_Begin",
+                "_comment_AcceptanceMods": "Applied while this visit is in effect (Character_Factions.CurrentActiveActivity): a visitor accepts being asked to watch the fireworks - the very thing they came for.",
+                "AcceptanceMods": [
+                    {
+                        "Requirement_ActionPackage": { "targetComID": "jp_riverside_watch_fireworks", "isDoer": true },
+                        "Result_EvaluationPackage": { "overrideResponse": "Accept", "overrideResponseExplanation": "jp_riverside_fireworks_accept_reason" }
+                    }
+                ],
                 "weight": 3.0,
                 "participationChance": 0.6,
                 "daysInAdvance": 3,
@@ -74,6 +83,8 @@
             {
                 "_comment": "Everyday riverside stroll - a flexible offer: never posted, every eligible character may plan it into free time like a membership activity (2h, not two days running). Placement weight = weight.",
                 "ID": "recreation_offer_jp_riverside_stroll",
+                "allowWalkIn": true,
+                "trustRewardEligible": true,
                 "mode": "Flexible",
                 "factionID": "jp_tourist_riverside",
                 "minHours": 2,
@@ -83,6 +94,13 @@
                 "_comment_activity": "Job_Activity gathers at the promenade and launches once everyone attending is there (Private), firing Riverside_Stroll_Begin.",
                 "gatherRoomID": "riverside_promenade",
                 "launchEventID": "Riverside_Stroll_Begin",
+                "_comment_AcceptanceMods": "Applied while this visit is in effect (Character_Factions.CurrentActiveActivity): a stroller accepts being asked to stroll - the very thing they came for. treatReceiverAsDoer evaluates the asked character as a doer, hence isDoer true.",
+                "AcceptanceMods": [
+                    {
+                        "Requirement_ActionPackage": { "targetComID": "jp_riverside_relax", "isDoer": true },
+                        "Result_EvaluationPackage": { "overrideResponse": "Accept", "overrideResponseExplanation": "jp_riverside_stroll_accept_reason" }
+                    }
+                ],
                 "weight": 1.0,
                 "minDaysBetween": 1,
                 "invite": {
@@ -153,6 +171,10 @@
                     {
                         "requirements": { "requirement": { "doerCount": 1 } },
                         "displayName": "jp_riverside_relax_displayName"
+                    },
+                    {
+                        "requirements": { "requirement": { "doerCount": 99 } },
+                        "displayName": "jp_riverside_relax_displayName_2"
                     }
                 ],
                 "AcceptanceCheck": { "baseAcceptanceValue": 10 },
@@ -177,6 +199,10 @@
                     {
                         "requirements": { "requirement": { "doerCount": 1 } },
                         "displayName": "jp_riverside_watch_fireworks_displayName"
+                    },
+                    {
+                        "requirements": { "requirement": { "doerCount": 99 } },
+                        "displayName": "jp_riverside_watch_fireworks_displayName_2"
                     }
                 ],
                 "AcceptanceCheck": { "baseAcceptanceValue": 15 },
@@ -198,11 +224,15 @@
                 "jp_riverside_viewing_spot": "观景处",
 
                 "jp_riverside_relax_displayName": "河边散步",
+                "jp_riverside_relax_displayName_2": "一起在河边散步",
                 "jp_riverside_watch_fireworks_displayName": "观赏烟火",
+                "jp_riverside_watch_fireworks_displayName_2": "一起观赏烟火",
                 "jp_riverside_watch_fireworks":"%%notimplemented%%",
 
                 "jp_riverside_fireworks": "烟火大会",
-                "jp_riverside_stroll": "河边散步"
+                "jp_riverside_stroll": "河边散步",
+                "jp_riverside_fireworks_accept_reason": "活动中",
+                "jp_riverside_stroll_accept_reason": "活动中"
             }
         }
     }

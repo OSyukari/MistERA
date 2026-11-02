@@ -70,6 +70,7 @@ public static class GeneratedPortraitRegistry
         versions.TryGetValue(templateID, out var version);
         versions[templateID] = version + 1;
         GlobalPortraitTemplate.AddImage(imagePath);
+        scr_System_CentralControl.current?.OnGlobalPortraitImageAdded();
         scr_System_CentralControl.current?.AddGeneratedPortraitHandlers(templateID);
     }
 }

@@ -175,7 +175,9 @@
                         "offsetY":-102.0,
                         "connects": 
                         [ { "ID":"lounge2_hallway3", "cost":1.0 }, { "ID":"lounge2_hallway4", "cost":1.0 } ],
-                        "furnitureIDs":["furniture_TV_flatscreen"],
+                        "_comment_furniture":"Multipurpose room: the stage (music practice - holds the whole room, one activity at a time) and seating (a 'rest' command - also makes its TV usable for movie / gaming sessions when the room is free).",
+                        "furnitureIDs":["furniture_TV_flatscreen","furniture_stage",
+                            "furniture_sofa_1","furniture_sofa_1","furniture_sofa_1","furniture_sofa_1"],
                         "roomImagePath":"Media_UI_Scenario_Background/BG_Auditorium.jpg",
                         "activityState":"DayOnly",
                         "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_Auditorium.jpg",

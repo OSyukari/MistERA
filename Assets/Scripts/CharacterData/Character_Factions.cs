@@ -833,6 +833,8 @@ public class Character_Factions
     [JsonProperty] List<RecreationBooking> recreationBookings = new List<RecreationBooking>();
     [JsonIgnore] public IReadOnlyList<RecreationBooking> RecreationBookings { get { return Bookings; } }
     List<RecreationBooking> Bookings { get { if (recreationBookings == null) recreationBookings = new List<RecreationBooking>(); return recreationBookings; } }
+    /// <summary>b is one of this character's live bookings (List.Contains - no LINQ over the read-only view).</summary>
+    public bool HasBooking(RecreationBooking b) { return b != null && recreationBookings != null && recreationBookings.Contains(b); }
 
     /// <summary>The booking covering hour (-1 = now) daysLookahead days from today, or null.</summary>
     public RecreationBooking GetBookingAt(int hour = -1, int daysLookahead = 0)
@@ -868,10 +870,15 @@ public class Character_Factions
     {
         if (booking == null || booking.hours < 1) return false;
         if (booking.Faction == null) return false;
+        if (RecreationUtility.ReservationRefusal(this, booking) != "") return false;
         foreach (var b in Bookings) if (b != null && b.Overlaps(booking.AbsStart, booking.AbsEnd)) return false;
 
         if (Owner != null) booking.ownerRef = Owner.RefID;
         Bookings.Add(booking);
+        RecreationUtility.TrackReservation(booking);
+        RecreationUtility.EnsureMedia(this, booking);
+        RecreationUtility.StampFacilityBooking(booking, this);
+        RecreationUtility.TrackActivityBooking(booking);
         // the booked activity (and a membertype the visit acts under) become wardrobe keys an outfit can be set for
         // (resolved uncached - booking.GetActivity caches its first answer)
         if (booking.MemberType != null) Owner?.Wardrobe?.RegisterMemberType(booking.Faction, booking.MemberType);
@@ -896,19 +903,23 @@ public class Character_Factions
     /// <summary>Takes booking off the list with no event and no refresh - for the planner moving it (RecreationUtility.TryReschedule).</summary>
     public bool RemoveBooking(RecreationBooking booking)
     {
-        return booking != null && Bookings.Remove(booking);
+        if (booking == null || !Bookings.Remove(booking)) return false;
+        RecreationUtility.ForgetReservation(booking);
+        RecreationUtility.ForgetActivityBooking(booking);
+        return true;
     }
 
     /// <summary>
-    /// A booking was cancelled before it ended: announces it (RecreationUtility.RecordCancelled - the change notice) and
-    /// starts its onCancelledEventID (if any) on this character. Nothing for a booking that had already ended.
+    /// A booking was cancelled before it ended: a solo activity announces it (RecreationUtility.OnBookingCancelled) and
+    /// its onCancelledEventID (if any) starts on this character. Nothing for a booking that had already ended.
     /// </summary>
     public void NotifyBookingCancelled(RecreationBooking booking, RecreationUtility.CancelReason reason = RecreationUtility.CancelReason.None)
     {
         if (booking == null || HasBookingEnded(booking)) return;
         // a session booking given up: this character's answer to the session changes (it re-validates on its next hourly update)
         RecreationUtility.OnSessionBookingCancelled(this, booking, reason);
-        RecreationUtility.RecordCancelled(this, booking, reason);
+        if (booking.Session != null) RecreationUtility.NotifyActivityChanged(booking.Session);
+        RecreationUtility.OnBookingCancelled(this, booking, reason);
         if (!string.IsNullOrEmpty(booking.onCancelledEventID))
             scr_UpdateHandler.current.EventHandler.StartEvent(Owner, booking.onCancelledEventID, "", false);
     }
@@ -951,7 +962,7 @@ public class Character_Factions
     [JsonIgnore] readonly Dictionary<string, int> seenListSerials = new Dictionary<string, int>();
     /// <summary>The kept preference order of the sessions this character accepted (RecreationUtility.RankSessions), best first.</summary>
     [JsonIgnore] public List<RecreationGroup> SessionRanking = new List<RecreationGroup>();
-    /// <summary>The schedule was rebuilt for a real change (UpdateSchedule with fullrebuild), or a save was loaded: the hour's next second pass (RecreationUtility.LateHourConfirm) re-runs ranking and confirming.</summary>
+    /// <summary>The schedule was rebuilt for a real change (UpdateSchedule with fullrebuild), or a save was loaded: the hour's next late pass (RecreationUtility.OnLatePass) re-runs ranking and confirming.</summary>
     [JsonIgnore] public bool RecreationDirty = false;
 
     [JsonIgnore] public IReadOnlyList<RecreationGroup> SessionInbox { get { return sessionInbox; } }
@@ -973,12 +984,14 @@ public class Character_Factions
     }
 
     /// <summary>Whether the inbox or any of listIDs' session lists changed since the last MarkSessionListsSeen.</summary>
-    public bool SessionListsChanged(IEnumerable<string> listIDs)
+    public bool SessionListsChanged(IReadOnlyList<string> listIDs)
     {
         if (seenInboxSerial != inboxSerial) return true;
         var registry = scr_System_CampaignManager.current.RecreationGroups;
-        foreach (var id in listIDs)
+        // indexed: foreach over the interface would box the list's enumerator
+        for (int i = 0; i < listIDs.Count; i++)
         {
+            string id = listIDs[i];
             int serial = registry.PostedSerial(id);
             if (serial == 0) continue;
             if (!seenListSerials.TryGetValue(id, out int seen) || seen != serial) return true;
@@ -986,11 +999,11 @@ public class Character_Factions
         return false;
     }
 
-    public void MarkSessionListsSeen(IEnumerable<string> listIDs)
+    public void MarkSessionListsSeen(IReadOnlyList<string> listIDs)
     {
         seenInboxSerial = inboxSerial;
         var registry = scr_System_CampaignManager.current.RecreationGroups;
-        foreach (var id in listIDs) seenListSerials[id] = registry.PostedSerial(id);
+        for (int i = 0; i < listIDs.Count; i++) seenListSerials[listIDs[i]] = registry.PostedSerial(listIDs[i]);
     }
 
     /// <summary>
@@ -1007,6 +1020,8 @@ public class Character_Factions
             if (recreationBookings != null) foreach (var b in recreationBookings) if (b != null && b.ownerRef < 0) b.ownerRef = Owner.RefID;
             if (pastRecreationBookings != null) foreach (var b in pastRecreationBookings) if (b != null && b.ownerRef < 0) b.ownerRef = Owner.RefID;
         }
+        // each character re-registers its own bookings with their venue's index - no central loop
+        if (recreationBookings != null) foreach (var b in recreationBookings) RecreationUtility.TrackActivityBooking(b);
         RecreationDirty = true;
     }
 
@@ -1056,7 +1071,12 @@ public class Character_Factions
     {
         PrunePastBookings();
         if (recreationBookings == null || recreationBookings.Count == 0) return;
-        foreach (var b in recreationBookings) if (b != null && HasBookingEnded(b)) RecordPastBooking(b);
+        foreach (var b in recreationBookings.ToList())
+        {
+            if (b == null || !HasBookingEnded(b)) continue;
+            RecordPastBooking(b);
+            RemoveBooking(b);
+        }
         recreationBookings.RemoveAll(b => b == null || HasBookingEnded(b));
     }
 
@@ -1067,6 +1087,12 @@ public class Character_Factions
     /// GetEffectiveBooking). Entries ending before today are dropped (PrunePastBookings).
     /// </summary>
     [JsonProperty] List<RecreationBooking> pastRecreationBookings = new List<RecreationBooking>();
+
+    /// <summary>The past-booking record (read only): today's ended visits - the management report's activity list, the session relink on load.</summary>
+    [JsonIgnore] public IReadOnlyList<RecreationBooking> PastRecreationBookings
+    {
+        get { if (pastRecreationBookings == null) pastRecreationBookings = new List<RecreationBooking>(); return pastRecreationBookings; }
+    }
 
     /// <summary>Keeps the part of booking that has already elapsed (if any) in the past-booking record.</summary>
     void RecordPastBooking(RecreationBooking booking)
@@ -1138,24 +1164,12 @@ public class Character_Factions
     }
 
     /// <summary>
-    /// Session confirm entry point - Character_Trainable's second pass of the hour (after every character's hourly tick
-    /// and, at midnight, the day update). The logic is RecreationUtility.LateHourConfirm.
-    /// </summary>
-    public void OnHourLate_Recreation()
-    {
-        if (scr_System_Time.current.DebugSkipBeforeLastDay) return;
-        RecreationUtility.LateHourConfirm(this);
-    }
-
-    /// <summary>
-    /// Hourly recreation booking check entry point - Character_Trainable's hourly tick, right after UpdateSchedule.
-    /// The logic is RecreationUtility.HourlyCheck.
+    /// Accrues the previous visit hour after UpdateSchedule; lifecycle work is venue/change driven.
     /// </summary>
     public void OnHourUpdate_Recreation()
     {
-        // a debug day skip never ticks jobs (no Job_Activity.LastUpdate) - an activity job made here would never end
         if (scr_System_Time.current.DebugSkipBeforeLastDay) return;
-        RecreationUtility.HourlyCheck(this);
+        RecreationUtility.AccrueVisitHour(this);
     }
 
     /// <summary>
@@ -1170,6 +1184,22 @@ public class Character_Factions
         var booking = GetEffectiveBooking();
         if (booking != null && booking.MemberType != null && (I_IsJobGiver)booking.Faction == faction) return booking.MemberType;
         return faction.GetMemberType(Owner);
+    }
+
+    internal ActorTagContext GetActorTagContext()
+    {
+        var party = CurrentActiveParty;
+        if (party != null) return party.GetActorTagContext(party.GetMemberType(Owner), null);
+
+        // Resolve the effective booking once for faction, member type, and activity.
+        var booking = GetEffectiveBooking();
+        var faction = booking != null ? booking.Faction : CurrentJobScheduleFaction(includeRecreation: false);
+        if (faction == null && HomeFactions.Count > 0) faction = HomeFactions[0];
+        if (faction == null) return Owner.CurrentRoom?.GetActorTagContext();
+
+        bool visiting = booking != null && booking.Faction == faction;
+        var member = visiting && booking.MemberType != null ? booking.MemberType : faction.GetMemberType(Owner);
+        return faction.GetActorTagContext(member, visiting ? booking.GetActivity(this) : null);
     }
 
     /// <summary>
@@ -1196,6 +1226,40 @@ public class Character_Factions
             var faction = CurrentlyActiveFaction;
             return faction != null ? GetScheduledActivity(faction) : null;
         }
+    }
+
+    /// <summary>
+    /// Visit passes (GrantVisitAccess result): factionID -> absolute expiry hour (CurrentAbsoluteHour), -1 = permanent.
+    /// A valid pass opens that faction's member-only rooms (ResidenceUtility.HasRoomAccess). Expired entries are dropped
+    /// when read.
+    /// </summary>
+    [JsonProperty] Dictionary<string, int> visitPasses = new Dictionary<string, int>();
+
+    /// <summary>Whole hours since the campaign start - the clock visit passes expire on.</summary>
+    static int CurrentAbsoluteHour { get { return (int)(scr_System_Time.current.getCurrentTime() - scr_System_Time.current.getStartTime()).TotalHours; } }
+
+    /// <summary>Lets this character into factionID's member-only rooms for hours (below 1 = permanent). A longer existing pass is kept.</summary>
+    public void GrantVisitPass(string factionID, int hours)
+    {
+        if (string.IsNullOrEmpty(factionID)) return;
+        if (visitPasses == null) visitPasses = new Dictionary<string, int>();
+        int expiry = hours < 1 ? -1 : CurrentAbsoluteHour + hours;
+        if (visitPasses.TryGetValue(factionID, out var current) && (current == -1 || (expiry != -1 && current >= expiry))) return;
+        visitPasses[factionID] = expiry;
+    }
+
+    public void RevokeVisitPass(string factionID)
+    {
+        visitPasses?.Remove(factionID);
+    }
+
+    /// <summary>Whether this character holds a valid visit pass for factionID (an expired one is dropped here).</summary>
+    public bool HasVisitPass(string factionID)
+    {
+        if (visitPasses == null || visitPasses.Count == 0 || !visitPasses.TryGetValue(factionID, out var expiry)) return false;
+        if (expiry == -1 || expiry > CurrentAbsoluteHour) return true;
+        visitPasses.Remove(factionID);
+        return false;
     }
 
     List<Manageable> _factions = null;
@@ -1263,6 +1327,8 @@ public class Character_Factions
         foreach (var v in Factions) v.TradeManager?.EnsureMembershipFeeObligationFor(Owner);
 
         this.Owner.NotifyFactionChange();
+        // a faction / home / MemberType change: this character's bookings re-validate (work forbidden, access lost)
+        RecreationUtility.RevalidateBookings(this);
 
         var s = new List<string>();
         UpdateSchedule(ref s);
@@ -1326,9 +1392,26 @@ public class Character_Factions
     {
         if (hour == -1) hour = scr_System_Time.current.getCurrentTime().Hour;
         var booking = GetBookingAt(hour, daysLookahead);
+        // A checked-in stay holds the room/time but must not replace ordinary home sleep.
+        if (RecreationUtility.OvernightCheckedIn(booking, Owner)) return null;
         // a session booking only while its session is open and valid and this character attends (otherwise it just holds the time)
         if (booking != null && booking.isSessionBooking && !RecreationUtility.IsSessionBookingLive(booking, Owner)) return null;
         return IsBookingInEffect(booking, hour, daysLookahead) ? booking : null;
+    }
+
+    /// <summary>
+    /// The booking that will drive the next full hour (GetEffectiveBooking) and starts then, with commands of its own
+    /// (a visit coordinated by a Job_Activity); else null. For early arrival (TryFindScheduledJobNode) - whether it can be
+    /// gone to yet is whether its venue has made the job (from T-60).
+    /// </summary>
+    public RecreationBooking GetUpcomingBooking()
+    {
+        var now = scr_System_Time.current.getCurrentTime();
+        int nextHour = now.Hour + 1;
+        var booking = GetEffectiveBooking(nextHour % 24, nextHour / 24);
+        if (booking == null || booking.workModule?.workCommands == null || booking.workModule.workCommands.Count == 0) return null;
+        int nextAbs = RecreationBooking.AbsoluteHour(scr_System_Time.current.getAbsoluteDay(), now.Hour) + 1;
+        return booking.AbsStart == nextAbs ? booking : null;
     }
 
     /// <summary>The GetEffectiveBooking rules for booking at hour: its faction exists, the priority home allows work, and no work schedule claims the hour unless overrideWork.</summary>
@@ -1506,7 +1589,7 @@ public class Character_Factions
     /// <summary>
     /// The sleep block the last RecomputePrivateSchedule placed, as absolute hours [start, end) (RecreationBooking.AbsoluteHour),
     /// whole even where privateSchedule's 24 slots could not hold it; -1 when none was placed. Kept while the recompute is
-    /// skipped (mid-sleep), so it stays the night in progress. Read by RecreationUtility.HourlyCheck (sleep floor / no split).
+    /// skipped (mid-sleep), so it stays the night in progress. Read by the recreation planner (RecreationUtility.DayContext - a self-planned visit never takes it).
     /// </summary>
     [JsonProperty] int plannedSleepStartAbs = -1;
     [JsonProperty] int plannedSleepEndAbs = -1;
@@ -1638,12 +1721,6 @@ public class Character_Factions
     }
 
     /// <summary>
-    /// Fewest sleep hours a night may keep once recreation bookings eat into it (half of SleepHours, rounded up) - see
-    /// RecreationUtility.HourlyCheck.
-    /// </summary>
-    [JsonIgnore] public int MinSleepHoursWithBookings { get { return (Owner.Stats.SleepHours + 1) / 2; } }
-
-    /// <summary>
     /// Wipe and rebuild personal sleep schedule.<br/>
     /// Use this whenever an external schedule modification has taken place<br/>
     /// To modify a given chara's schedule, it's preferable to use SetSchedule() as it calls every necessary update internally.<br/>
@@ -1657,7 +1734,7 @@ public class Character_Factions
     {
         int currentHour = scr_System_Time.current.getCurrentTime().Hour;
         PruneBookings();
-        // a real change (not the plain hourly recompute): the hour's next second pass (LateHourConfirm) re-ranks / re-confirms recreation sessions
+        // Plain hourly rolling-window updates do not publish activity changes.
         if (fullrebuild) RecreationDirty = true;
 
         if (privateSchedule.HasWorkHoursWithCOM(currentHour, "com_furniture_sleep"))
@@ -1679,6 +1756,8 @@ public class Character_Factions
             else pastSchedule.Get(currentHour).Set("");
         }
         else pastSchedule.CopyFrom(privateSchedule, currentHour);
+        // a rebuild may be a work / home schedule change: bookings whose hours it now claims are cancelled
+        if (fullrebuild) RecreationUtility.CancelClaimedBookings(this);
     }
 
     /// <summary>

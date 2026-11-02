@@ -1,0 +1,8 @@
+{
+    "_doc": "UI strings of the residential districts / hotel code (ResidenceUtility, canvas_FloorDisplay move-button tooltip).",
+    "Dictionary": { "Entries": { "zh-cn": {
+        "ui_residence_unitName": "$district$ $n$号室",
+        "ui_residence_familyName": "$name$家",
+        "ui_room_requireVisitAccess": "这是[$faction$]的住处，需要受到邀请才能进入"
+    } } }
+}

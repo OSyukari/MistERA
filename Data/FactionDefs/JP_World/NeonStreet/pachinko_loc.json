@@ -1,0 +1,3 @@
+{
+    "Dictionary": { "Entries": { "en-us": { "jp_neon_pachinko": "Neon Pachinko", "membertype_neon_pachinko": "Pachinko Staff", "neon_pachinko_clerk": "Pachinko Counter 10-23", "neon_pachinko_play": "Play Pachinko (Fixed Budget)", "neon_pachinko_machine": "Pachinko Machine", "neon_pachinko_begin": "$doer.firstname$ sits at a machine and adjusts the handle.", "neon_pachinko_ongoing": "$doer.firstname$ watches the steel balls bounce through the pins.", "neon_pachinko_end": "$doer.firstname$ releases the handle and steps away from the machine." } } }
+}

@@ -21,7 +21,7 @@ public class scr_addTrade : MonoBehaviour
             this.ownedCount.SetText($"{parentFaction.Inventory.GetItemCount(entry.itemID)}");
         }
         this.factionName.text = parentFaction == targetFaction ? " - " : faction.FactionDisplayName;
-        this.pricing.text = targetFaction.GetPricingLabel(entry, parentFaction != targetFaction);
+        this.pricing.text = faction.GetPricingLabel(entry, parentFaction != targetFaction);
     }
 
     protected Manageable faction;

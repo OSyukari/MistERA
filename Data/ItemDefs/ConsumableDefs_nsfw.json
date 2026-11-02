@@ -23,6 +23,136 @@
                     }
                 }
             ]
+        },
+        {
+            "id":"consumable_lube",
+            "_comment":"Personal lubricant, one use. consumable+industrial+rarity_common makes SunMart stock it. The generated com_furniture_ingestVagina/ingestAnus commands carry its tags, so 'lubricant' is how NPCs in sex scenes find them (Job_Sex_Group.TryNPCLube). Stays in the cavity as liquid, which 6B's local liquid bonus counts as lubrication (10 ml is about +67 with the current V/A curve). No stomach route, so no drink command. Provisional amounts.",
+            "Tags":["consumable","industrial","rarity_common","lubricant","nsfw"],
+            "value":300,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Ingestible",
+                    "comp_Ingestible":{
+                        "isLiquid":true,
+                        "canExpel":true,
+                        "ingestMethod":[
+                            {
+                                "bodyTags":"vagina",
+                                "digestSpeed": -0.05,
+                                "digestDelay":30,
+                                "digestDelayVariation":5,
+                                "amountMod": 0,
+                                "giveStatus":""
+                            },
+                            {
+                                "bodyTags":"anus",
+                                "digestSpeed": -0.05,
+                                "digestDelay":30,
+                                "digestDelayVariation":5,
+                                "amountMod": 0,
+                                "giveStatus":""
+                            }
+                        ],
+                        "amount":10
+                    }
+                }
+            ]
+        },
+        {
+            "id":"consumable_saliva",
+            "_comment":"Left in an organ container by the trace_saliva body trace (Data/RaceDefs/TraceDefs.json, Docs/Body/Plan_BodyTraces.md): the trace's liquidItemID; its containerCapRatio caps how much one target organ holds per source. Counts as liquid lubrication; dries faster than lube. Provisional amounts.",
+            "Tags":["trash"],
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Ingestible",
+                    "comp_Ingestible":{
+                        "isLiquid":true,
+                        "canExpel":true,
+                        "ingestMethod":[
+                            {
+                                "bodyTags":"internal",
+                                "digestSpeed": -0.05,
+                                "digestDelay":10,
+                                "digestDelayVariation":3,
+                                "amountMod": 0,
+                                "giveStatus":""
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"consumable_precum",
+            "_comment":"Left in an organ container (mouth, vagina, anus) by the trace_precum body trace while the penis owner is aroused (Data/RaceDefs/TraceDefs.json). Counts as liquid lubrication. Provisional amounts.",
+            "Tags":["trash"],
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Ingestible",
+                    "comp_Ingestible":{
+                        "isLiquid":true,
+                        "canExpel":true,
+                        "ingestMethod":[
+                            {
+                                "bodyTags":"internal",
+                                "digestSpeed": -0.05,
+                                "digestDelay":10,
+                                "digestDelayVariation":3,
+                                "amountMod": 0,
+                                "giveStatus":""
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"consumable_lovejuice",
+            "_comment":"Left in an organ container (mouth) by the trace_lovejuice body trace while the vagina / clit owner is aroused (Data/RaceDefs/TraceDefs.json). Provisional amounts.",
+            "Tags":["trash"],
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Ingestible",
+                    "comp_Ingestible":{
+                        "isLiquid":true,
+                        "canExpel":true,
+                        "ingestMethod":[
+                            {
+                                "bodyTags":"internal",
+                                "digestSpeed": -0.05,
+                                "digestDelay":10,
+                                "digestDelayVariation":3,
+                                "amountMod": 0,
+                                "giveStatus":""
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"consumable_breastmilk",
+            "_comment":"Left in an organ container (mouth) by the trace_milk body trace while the breast owner is aroused and pregnant (lactation not implemented yet) (Data/RaceDefs/TraceDefs.json). Provisional amounts.",
+            "Tags":["trash"],
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Ingestible",
+                    "comp_Ingestible":{
+                        "isLiquid":true,
+                        "canExpel":true,
+                        "ingestMethod":[
+                            {
+                                "bodyTags":"internal",
+                                "digestSpeed": -0.05,
+                                "digestDelay":10,
+                                "digestDelayVariation":3,
+                                "amountMod": 0,
+                                "giveStatus":""
+                            }
+                        ]
+                    }
+                }
+            ]
         }
     ]
     },
@@ -34,13 +164,30 @@
             {
                 "consumable_drug_rapedrug":"迷药",
                 "consumable_cum":"精液",
-                "consumable_cum_tooltip":"精液。"
+                "consumable_cum_tooltip":"精液。",
+                "consumable_lube":"润滑液",
+                "consumable_lube_tooltip":"一次用量的润滑液。可在性行为中涂抹于阴道或肛门，会留在体内提供润滑。",
+                "consumable_saliva":"唾液",
+                "consumable_saliva_tooltip":"唾液。",
+                "consumable_saliva_nameOverwrite":"$name$的唾液",
+                "consumable_precum":"前列腺液",
+                "consumable_precum_tooltip":"前列腺液。",
+                "consumable_precum_nameOverwrite":"$name$的前列腺液",
+                "consumable_lovejuice":"爱液",
+                "consumable_lovejuice_tooltip":"爱液。",
+                "consumable_lovejuice_nameOverwrite":"$name$的爱液",
+                "consumable_breastmilk":"母乳",
+                "consumable_breastmilk_tooltip":"母乳。",
+                "consumable_breastmilk_nameOverwrite":"$name$的母乳"
             },
             "en-us":
             {
                 "consumable_drug_rapedrug":"Aphrodisiac",
                 "consumable_cum":"Semen",
-                "consumable_cum_tooltip":"Semen."
+                "consumable_cum_tooltip":"Semen.",
+                "consumable_saliva":"Saliva",
+                "consumable_saliva_tooltip":"Saliva.",
+                "consumable_saliva_nameOverwrite":"$name$'s Saliva"
 
             }
         }

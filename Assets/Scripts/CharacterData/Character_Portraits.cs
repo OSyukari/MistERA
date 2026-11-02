@@ -165,6 +165,12 @@ public class PortraitManager
         set { useGlobalHandler = value is Newtonsoft.Json.Linq.JArray a ? a.ToObject<List<GlobalHandlerEntry>>() : null; }
     }
 
+    /// <summary>
+    /// Character template data only, never saved: every useGlobalHandler path resolved to no image (set for future assets), so its
+    /// handlers are not kept (scr_System_CentralControl.GetGlobalPortraitHandlers). Cleared when an image is added (OnGlobalPortraitImageAdded).
+    /// </summary>
+    [JsonIgnore, System.NonSerialized] public bool globalHandlerNoAssets = false;
+
     static readonly List<GlobalHandlerEntry> _noGlobalHandler = new List<GlobalHandlerEntry>();
 
     /// <summary>
@@ -321,7 +327,9 @@ public class PortraitManager
     public IEnumerator CacheInternal(Character_Trainable c)
     {
         _owner = c;
-        // Generated image handlers have no preload work. Do not enumerate/build them on save load.
+        // Generated image handlers have no preload work themselves, but building them is expensive (~250ms per useGlobalHandler entry,
+        // cached for the session): build this template's global/generated handler lists now so the first draw doesn't pay it.
+        scr_System_CentralControl.current?.GetGlobalPortraitHandlers(PortraitTemplateID);
         foreach (var i in portraitPriorityList)
         {
             i.Owner = this;
@@ -437,6 +445,14 @@ public class PortraitManager
     }
     List<string> newstr = new List<string>();
     protected void GetValidPortrait(List<string> keywords, List<string> keywords_target, out CharaPortrait handler, out string portrait, out string icon, scr_CharPortraitBox box = null)
+    {
+        // TEMP debug: handler selection timing
+        float tempStart = Time.realtimeSinceStartup;
+        GetValidPortraitInner(keywords, keywords_target, out handler, out portrait, out icon, box);
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Portrait_Spine) Debug.Log($"[SpineTEMP] GetValidPortrait owner [{Owner?.CallName}] took {(Time.realtimeSinceStartup - tempStart) * 1000f:F1}ms handler [{handler?.GetType().Name}] #{handler?.GetHashCode()} frame {Time.frameCount}");
+    }
+
+    protected void GetValidPortraitInner(List<string> keywords, List<string> keywords_target, out CharaPortrait handler, out string portrait, out string icon, scr_CharPortraitBox box = null)
     {
         handler = null;
         portrait = "";
@@ -1483,6 +1499,8 @@ public class PortraitManager
 
             if (dataHolder != null && dataHolder.initialized)
                 scr_System_CentralControl.current?.RegisterSpineCache(skeletonJSON_path, dataHolder);
+            // TEMP debug: precache outcome per handler
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Portrait_Spine) Debug.Log($"[SpineTEMP] PreCache {version} {(dataHolder != null && dataHolder.initialized ? "REGISTERED" : "FAILED (not initialized)")} skel [{skeletonJSON_path}] owner [{Owner?.Owner?.CallName}] handler #{GetHashCode()} data #{dataHolder?.GetHashCode()} frame {Time.frameCount}");
         }
 
         public override bool isValid() { return !Disable; }

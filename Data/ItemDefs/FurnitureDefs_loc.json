@@ -5,7 +5,8 @@
     "Dictionary": {
         "Entries": {
             "en-us": {
-                "furniture_marker_wait": "Waiting Marker"
+                "furniture_marker_wait": "Waiting Marker",
+                "furniture_stage": "Stage"
             }
         }
     }

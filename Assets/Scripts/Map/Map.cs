@@ -65,7 +65,22 @@ public class Map_Instance
         BuildPath();
     }
 
-    [JsonIgnore] public Dictionary<int, int> floorDoorQuickSearch = new Dictionary<int, int>();
+    /// <summary>Room RefID -> RefIDs of the rooms its floor exits lead to (a room may hold several exits).</summary>
+    [JsonIgnore] public Dictionary<int, List<int>> floorDoorQuickSearch = new Dictionary<int, List<int>>();
+
+    /// <summary>(floor RefID, exit ID) -> RefID of the room on the other side of that exit's door. Rebuilt by BuildPath.</summary>
+    [JsonIgnore] Dictionary<Tuple<int, string>, int> exitDestinations = new Dictionary<Tuple<int, string>, int>();
+
+    /// <summary>The room (and its floor) on the other side of exit's door on floor. False when the exit has no connected door.</summary>
+    public bool TryGetExitDestination(Floor_Instance floor, Floor_Base.FloorPlan_Exit exit, out Room_Instance destination, out Floor_Instance destinationFloor)
+    {
+        destination = null;
+        destinationFloor = null;
+        if (floor == null || exit == null || !exitDestinations.TryGetValue(Tuple.Create(floor.refID, exit.ID), out var roomRef)) return false;
+        destination = GetRoomByRef(roomRef);
+        destinationFloor = destination?.parentFloor;
+        return destination != null && destinationFloor != null;
+    }
 
     public Map_Instance()
     {
@@ -116,19 +131,12 @@ public class Map_Instance
 
         List<int> list = new List<int>();
 
-        foreach(KeyValuePair<int,int> kvp in floorDoorQuickSearch)
+        foreach(KeyValuePair<int, List<int>> kvp in floorDoorQuickSearch)
         {
             //s += " inspecting kvp ["+kvp.Key+"] ["+kvp.Value+"] ";
-            if (roomFloorRef[kvp.Key] == floorRefID && !list.Contains(roomFloorRef[kvp.Value]))
-            {
-               // s += "TRUE\n";
-                list.Add(roomFloorRef[kvp.Value]);
-            }
-            else
-            {
-               // s += "FALSE\n";
-            }
-        
+            if (roomFloorRef[kvp.Key] != floorRefID) continue;
+            foreach (var connected in kvp.Value)
+                if (!list.Contains(roomFloorRef[connected])) list.Add(roomFloorRef[connected]);
         }
         //Debug.Log(s + String.Join(" ", list));
         return list;
@@ -143,6 +151,50 @@ public class Map_Instance
     //Dictionary<int, ArrayAdjacencyGraph<int, TaggedEdge<int, Door_Instance>>> graphsImmutable = null;
 
     AdjacencyGraph<Floor_Instance, TaggedEdge<Floor_Instance, Door_Instance>> floorGraph = new AdjacencyGraph<Floor_Instance, TaggedEdge<Floor_Instance, Door_Instance>>();
+
+    /// <summary>FloorDoors already reported as unresolvable (both factions exist, exit/floor missing) - logged once.</summary>
+    static readonly HashSet<string> reportedUnresolvedFloorDoors = new HashSet<string>();
+
+    /// <summary>
+    /// One end of a FloorDoor: the floor instance and its free exit. factionID is matched as a faction ID first (that
+    /// faction's live floor with floor plan floorID - generated factions share a MapPlan, so only the ID tells them
+    /// apart), then as a MapPlan ID (legacy MapPlan.floorDoors data) on any floor instantiated from that plan. An exit
+    /// already taken by another door is skipped. Null when nothing matches.
+    /// </summary>
+    Floor_Base.FloorPlan_Exit ResolveFloorDoorExit(string factionID, string floorID, string exitID, Dictionary<int, MapPlan> mapTemplateInstances,
+        HashSet<Tuple<int, string>> usedExits, out Floor_Instance floor)
+    {
+        floor = null;
+        if (string.IsNullOrEmpty(factionID) || string.IsNullOrEmpty(floorID) || string.IsNullOrEmpty(exitID)) return null;
+        var faction = scr_System_CampaignManager.current.FindFactionByID(factionID);
+        if (faction != null)
+        {
+            foreach (var f in faction.ManagedFloors)
+            {
+                if (f == null || f.floorPlanID != floorID || !floors.TryGetValue(f.refID, out var live) || !ReferenceEquals(live, f)) continue;
+                var exit = f.FindExit(exitID);
+                if (exit == null || usedExits.Contains(Tuple.Create(f.refID, exitID))) continue;
+                floor = f;
+                return exit;
+            }
+        }
+        foreach (var f in floors.Values)
+        {
+            if (f.floorPlanID != floorID || !mapTemplateInstances.TryGetValue(f.mapTemplateInstanceID, out var plan) || plan == null || plan.ID != factionID) continue;
+            var exit = f.FindExit(exitID);
+            if (exit == null || usedExits.Contains(Tuple.Create(f.refID, exitID))) continue;
+            floor = f;
+            return exit;
+        }
+        return null;
+    }
+
+    static void AddFloorDoorQuickSearch(Dictionary<int, List<int>> quickSearch, int fromRoom, int toRoom)
+    {
+        if (!quickSearch.TryGetValue(fromRoom, out var list)) quickSearch[fromRoom] = list = new List<int>();
+        if (!list.Contains(toRoom)) list.Add(toRoom);
+    }
+
     /// <summary>
     /// Build path for all floors
     /// </summary>
@@ -150,37 +202,26 @@ public class Map_Instance
     {
         floorGraph.Clear();
         //graphs = new Dictionary<int, AdjacencyGraph<int, TaggedEdge<int, Door_Instance>>>();
-        floorDoorQuickSearch = new Dictionary<int, int>();
+        floorDoorQuickSearch = new Dictionary<int, List<int>>();
+        exitDestinations = new Dictionary<Tuple<int, string>, int>();
         FloorLayout = new Dictionary<Tuple<int, int>, Vector2>();
 
-        // floorBaseID, floorRefID, exits.ID, exits.connectedRoom
-        List<Tuple<int, string, int, Floor_Base.FloorPlan_Exit>> availableExits = new List<Tuple<int, string, int, Floor_Base.FloorPlan_Exit>>();
         Dictionary<int, MapPlan> mapTemplateInstances = new Dictionary<int, MapPlan>();
         foreach(KeyValuePair<int, Floor_Instance> kvp_fl in floors)
         {
+            kvp_fl.Value.ConnectedDoors.Clear();
+            floorGraph.AddVertex(kvp_fl.Value);
             if (!mapTemplateInstances.ContainsKey(kvp_fl.Value.mapTemplateInstanceID)) mapTemplateInstances.Add(kvp_fl.Value.mapTemplateInstanceID, kvp_fl.Value.MapTemplate);
             //if (!graphs.ContainsKey(kvp_fl.Value.mapTemplateInstanceID)) graphs.Add(kvp_fl.Value.mapTemplateInstanceID, new AdjacencyGraph<int, TaggedEdge<int, Door_Instance>>());
-
-            Floor_Base fb = kvp_fl.Value.FloorBase;
-
-            foreach (Floor_Base.FloorPlan_Exit exit in fb.exits)
-            {
-                //Debug.Log("availableExits add ["+fb.ID+ "] [" + kvp_fl.Key + "] [" + exit.ID + "] [" + exit.connectedRoom + "]");
-                availableExits.Add(new Tuple<int, string, int, Floor_Base.FloorPlan_Exit>(kvp_fl.Value.mapTemplateInstanceID, fb.ID, kvp_fl.Key, exit));
-            }
-
-            //graphs[kvp_fl.Value.mapTemplateInstanceID].AddVerticesAndEdgeRange(kvp_fl.Value.Graph.Edges);
-
         }
 
-        void ConnectFloorExits(Tuple<int, string, int, Floor_Base.FloorPlan_Exit> floorExit, Tuple<int, string, int, Floor_Base.FloorPlan_Exit> targetExit, float cost)
+        bool ConnectFloorExits(Floor_Instance floorA, Floor_Base.FloorPlan_Exit exitA, Floor_Instance floorB, Floor_Base.FloorPlan_Exit exitB, float cost)
         {
-            Door_Instance dinst = new Door_Instance(cost);
+            var roomA = floorA.FindRoom(exitA.connectedRoom);
+            var roomB = floorB.FindRoom(exitB.connectedRoom);
+            if (roomA == null || roomB == null) return false;
 
-            var floorA = FindFloorByRefID(floorExit.Item3);
-            var roomA = floorA.FindRoom(floorExit.Item4.connectedRoom);
-            var floorB = FindFloorByRefID(targetExit.Item3);
-            var roomB = floorB.FindRoom(targetExit.Item4.connectedRoom);
+            Door_Instance dinst = new Door_Instance(cost);
 
             floorGraph.AddVerticesAndEdge(new TaggedEdge<Floor_Instance, Door_Instance>(floorA, floorB, dinst));
             floorGraph.AddVerticesAndEdge(new TaggedEdge<Floor_Instance, Door_Instance>(floorB, floorA, dinst));
@@ -188,26 +229,42 @@ public class Map_Instance
             floorA.ConnectedDoors.Add(dinst, roomA);
             floorB.ConnectedDoors.Add(dinst, roomB);
 
-            floorDoorQuickSearch.Add(roomA.RefID, roomB.RefID);
-            floorDoorQuickSearch.Add(roomB.RefID, roomA.RefID);
+            AddFloorDoorQuickSearch(floorDoorQuickSearch, roomA.RefID, roomB.RefID);
+            AddFloorDoorQuickSearch(floorDoorQuickSearch, roomB.RefID, roomA.RefID);
+            exitDestinations[Tuple.Create(floorA.refID, exitA.ID)] = roomB.RefID;
+            exitDestinations[Tuple.Create(floorB.refID, exitB.ID)] = roomA.RefID;
 
-            FloorLayout.Add(new Tuple<int, int>(floorExit.Item3, targetExit.Item3), new Vector2(floorExit.Item4.offsetX, floorExit.Item4.offsetY));
-            FloorLayout.Add(new Tuple<int, int>(targetExit.Item3, floorExit.Item3), new Vector2(targetExit.Item4.offsetX, targetExit.Item4.offsetY));
+            // first door between two floors places the floor layout (several doors may join the same pair)
+            var layoutAB = new Tuple<int, int>(floorA.refID, floorB.refID);
+            var layoutBA = new Tuple<int, int>(floorB.refID, floorA.refID);
+            if (!FloorLayout.ContainsKey(layoutAB)) FloorLayout.Add(layoutAB, new Vector2(exitA.offsetX, exitA.offsetY));
+            if (!FloorLayout.ContainsKey(layoutBA)) FloorLayout.Add(layoutBA, new Vector2(exitB.offsetX, exitB.offsetY));
+            return true;
         }
 
-        // factionFloorDoorConnections covers both same-faction (source == target) and cross-faction door links,
-        // resolving each side by the owning faction's MapPlan.ID rather than by mapTemplateInstanceID - see Door.cs.
+        // factionFloorDoorConnections covers same-faction (source == target), cross-faction and runtime (generated
+        // residence) door links - each side resolved by faction ID, else MapPlan ID (ResolveFloorDoorExit). One exit takes one door.
+        var usedExits = new HashSet<Tuple<int, string>>();
         foreach (var fd in factionFloorDoorConnections)
         {
-            Tuple<int, string, int, Floor_Base.FloorPlan_Exit> floorExit = availableExits.Find(x => mapTemplateInstances.ContainsKey(x.Item1) && mapTemplateInstances[x.Item1].ID == fd.sourceFaction && x.Item2 == fd.sourceFloor && x.Item4.ID == fd.sourceExit);
-            Tuple<int, string, int, Floor_Base.FloorPlan_Exit> targetExit = availableExits.Find(x => mapTemplateInstances.ContainsKey(x.Item1) && mapTemplateInstances[x.Item1].ID == fd.targetFaction && x.Item2 == fd.targetFloor && x.Item4.ID == fd.targetExit);
+            var exitA = ResolveFloorDoorExit(fd.sourceFaction, fd.sourceFloor, fd.sourceExit, mapTemplateInstances, usedExits, out var floorA);
+            Floor_Instance floorB = null;
+            var exitB = exitA == null ? null : ResolveFloorDoorExit(fd.targetFaction, fd.targetFloor, fd.targetExit, mapTemplateInstances, usedExits, out floorB);
 
-            if (floorExit != null && targetExit != null)
+            if (exitA != null && exitB != null && !(floorA == floorB && exitA == exitB) && ConnectFloorExits(floorA, exitA, floorB, exitB, fd.cost))
             {
-                availableExits.Remove(floorExit);
-                availableExits.Remove(targetExit);
-                ConnectFloorExits(floorExit, targetExit, fd.cost);
+                usedExits.Add(Tuple.Create(floorA.refID, exitA.ID));
+                usedExits.Add(Tuple.Create(floorB.refID, exitB.ID));
+                continue;
             }
+
+            // a door whose factions both exist but doesn't connect is a data problem; one whose faction isn't
+            // instantiated yet is normal (either endpoint may be initialized last)
+            if (scr_System_CampaignManager.current.FindFactionByID(fd.sourceFaction) == null
+                || scr_System_CampaignManager.current.FindFactionByID(fd.targetFaction) == null) continue;
+            string key = $"{fd.sourceFaction}/{fd.sourceFloor}/{fd.sourceExit} -> {fd.targetFaction}/{fd.targetFloor}/{fd.targetExit}";
+            if (reportedUnresolvedFloorDoors.Add(key))
+                Debug.LogWarning($"BuildPath: floor door [{key}] not connected - floor, exit or exit room missing, or exit already used by another door");
         }
 
         // refresh each faction's cached Manageable.worldConnection/factionConnection trackers (UI-facing, not
@@ -231,6 +288,7 @@ public class Map_Instance
                 if (!target.factionConnection.Contains(source)) target.factionConnection.Add(source);
             }
         }
+
 
         //graphsImmutable = new Dictionary<int, ArrayAdjacencyGraph<int, TaggedEdge<int, Door_Instance>>>();
         //foreach (var kvp in graphs) graphsImmutable.Add(kvp.Key, kvp.Value.ToArrayAdjacencyGraph());
@@ -371,24 +429,22 @@ public class Map_Instance
     [JsonIgnore] protected Dictionary<int, int> roomFloorRef;
     [JsonIgnore] protected ReadOnlyDictionary<int, int> roomFloorRef_Immutable;
 
-    public Room_Instance UnregisterRoom(int refID)
+    public Room_Instance UnregisterRoom(int refID, bool rebuildPath = true)
     {
-        roomFloorRef.Remove(refID);
         Room_Instance room = null;
         if (Rooms.TryGetValue(refID, out room) || rooms_orphans.TryGetValue(refID, out room))
         {
-            foreach(var chara in room.RoomChara)
-            {
-                Debug.LogError("ERROR WIPING CHARA");
-            }
+            EvacuateRoomForRemoval(room);
             foreach (var job in room.Jobs) scr_System_CampaignManager.current.Unregister(job);
             room.Inventory.Destroy();
         }
         Rooms.Remove(refID);
         rooms_orphans.Remove(refID);
         roomFloorRef.Remove(refID);
-        charaRoomRef.Remove(refID); 
-        BuildPath();
+        foreach (var charaRef in charaRoomRef.Where(entry => entry.Value == refID).Select(entry => entry.Key).ToList())
+            charaRoomRef.Remove(charaRef);
+        foreach (var faction in scr_System_CampaignManager.current.Factions) faction.InvalidateMainExitCache();
+        if (rebuildPath) BuildPath();
         return room;
     }
 
@@ -920,6 +976,8 @@ public class Map_Instance
 
         var fromDoorFaction = ResolveDoorOwningFaction(fromFaction, new HashSet<Manageable>()) ?? fromFaction;
         var toDoorFaction = ResolveDoorOwningFaction(toFaction, new HashSet<Manageable>()) ?? toFaction;
+        // behind the same world door (street <-> its shop, district <-> its home): a same-map hop, never world travel
+        if (fromDoorFaction == toDoorFaction) return false;
         string fromDoorFactionID = fromDoorFaction.ID;
         string toDoorFactionID = toDoorFaction.ID;
 
@@ -1010,7 +1068,8 @@ public class Map_Instance
             path = null;
             return true;
         }
-        if (roomRef.SameFloorGraphObserver.TryGetPath(targetRoom.RefID, out path))
+        path = null;
+        if (roomRef.SameFloorGraphObserver != null && roomRef.SameFloorGraphObserver.TryGetPath(targetRoom.RefID, out path))
         {
             return true;
         }
@@ -1066,7 +1125,7 @@ public class Map_Instance
             path = temppath;
             return true;
         }
-        else if (roomRef.parentFloor.FloorsGraphObserver.TryGetPath(targetRoom.parentFloor, out var floorpath))
+        else if (roomRef.parentFloor != null && targetRoom.parentFloor != null && roomRef.parentFloor.FloorsGraphObserver != null && roomRef.parentFloor.FloorsGraphObserver.TryGetPath(targetRoom.parentFloor, out var floorpath))
         {
             var floorpathlist = floorpath.ToList();
             var roomPtr = roomRef;
@@ -1151,6 +1210,9 @@ public class Map_Instance
         }
         else if (fromFaction != toFaction)
         {
+            // floors linked by floor doors (street <-> shop, district <-> home): walk through the doors
+            if (AreFloorsDoorLinked(roomRef, targetRoom) && Findpath_BetweenFloors(roomRef, targetRoom, out path)) return true;
+            path = null;
             if (fromFaction.MainExit != null && toFaction.MainExit != null)
             {   // different faction pathfinding, no direct path require teleport
                 List<TaggedEdge<int, Door_Instance>> temppath = new List<TaggedEdge<int, Door_Instance>>();
@@ -1174,6 +1236,28 @@ public class Map_Instance
         }
         else return false;
         //else no path exist
+    }
+
+    /// <summary>
+    /// The floor a room paths from: its own, or for a floorless room (e.g. a worker pool room) its faction root's
+    /// MainExit floor - Findpath_BetweenFloors hops a floorless room to that exit first.
+    /// </summary>
+    static Floor_Instance PathingFloorOf(Room_Instance room)
+    {
+        if (room == null) return null;
+        if (room.parentFloor != null) return room.parentFloor;
+        return room.FactionOwner?.FactionOwnerRoot?.MainExit?.parentFloor;
+    }
+
+    /// <summary>True when both rooms' pathing floors are the same or joined in the floor graph (floor doors).</summary>
+    bool AreFloorsDoorLinked(Room_Instance a, Room_Instance b)
+    {
+        var floorA = PathingFloorOf(a);
+        var floorB = PathingFloorOf(b);
+        if (floorA == null || floorB == null) return false;
+        if (floorA == floorB) return true;
+        var observer = floorA.FloorsGraphObserver;
+        return observer != null && observer.TryGetPath(floorB, out _);
     }
 
     public SortedDictionary<int, Dictionary<int, IEnumerable<TaggedEdge<int, Door_Instance>>>> FilterValidPathsOptimized(Character_Trainable charaInstance, List<int> targetRooms, bool randInsteadofShortest = false)
@@ -1285,6 +1369,16 @@ public class Map_Instance
     }
 
     /// <summary>
+    /// Registers a door created at runtime (generated residences, ResidenceUtility) between real faction IDs - their
+    /// exits usually runtime ones (Floor_Instance.AddRuntimeExit) - and rebuilds pathing.
+    /// </summary>
+    public void RegisterRuntimeFloorDoor(FloorDoor door, bool rebuildPath = true)
+    {
+        RegisterFactionFloorDoor(door);
+        if (rebuildPath) BuildPath();
+    }
+
+    /// <summary>
     /// This list will be used when creating player move button and when update existing
     /// </summary>
     [JsonProperty] Dictionary<string, List<string>> factionGraphs = new Dictionary<string, List<string>>();
@@ -1304,7 +1398,7 @@ public class Map_Instance
         var selfFaction = scr_System_CampaignManager.current.FindFactionByID(factionID);
         if (selfFaction == null || selfFaction.MainExit == null)
         {
-            Debug.LogError($"Faction [{selfFaction.ID}] has no main exit");
+            Debug.LogError($"Faction [{factionID}] has no main exit");
             return list;
         }
 
@@ -1488,7 +1582,85 @@ public class Map_Instance
     /// </summary>
     public void ApplyPendingRoomChanges()
     {
-        foreach (var f in Floors) f.ApplyPendingRoomChanges();
+        var liveFloors = Floors;
+        foreach (var floor in liveFloors) floor.PreparePendingRoomAdditions();
+        foreach (var floor in liveFloors)
+        {
+            var host = floor.FindPhysicalHost();
+            if (host == null) continue;
+            foreach (var room in floor.rooms)
+                if (!floor.IsPendingRoomRemoval(room) && !string.IsNullOrEmpty(room.Base?.subfactionOwnerOverwrite))
+                    host.ReconcileRoomTenant(room);
+        }
+        // Tenant creation may have extended the faction registry. Restore authored exits only now,
+        // after every replacement room exists, and keep virtual MainExit/RallyRoom semantics intact.
+        foreach (var faction in scr_System_CampaignManager.current.Factions.ToList())
+        {
+            if (!string.IsNullOrEmpty(faction.mapPlanID))
+            {
+                var plan = scr_System_Serializer.current.GetByNameOrID_MapPlan(faction.mapPlanID);
+                if (plan?.mainExit != null && !string.IsNullOrEmpty(plan.mainExit.roomID)) faction.SetMainExit(plan.mainExit);
+            }
+            faction.InvalidateMainExitCache();
+        }
+        foreach (var floor in liveFloors) floor.ApplyPendingRoomChanges();
+        foreach (var faction in scr_System_CampaignManager.current.Factions) faction.InvalidateMainExitCache();
+    }
+
+    public bool IsValidRoomDestination(Room_Instance room)
+    {
+        return room != null && ReferenceEquals(GetRoomByRef(room.RefID), room)
+            && (room.parentFloor == null || !room.parentFloor.IsPendingRoomRemoval(room));
+    }
+
+    /// <summary>Never destroy an occupied room; check both saved occupancy indexes before removal.</summary>
+    public Room_Instance EvacuateRoomForRemoval(Room_Instance room)
+    {
+        var campaign = scr_System_CampaignManager.current;
+        var refs = new HashSet<int>(room.RoomCharaRefs);
+        foreach (var actor in room.RoomChara) if (actor != null) refs.Add(actor.RefID);
+        foreach (var entry in charaRoomRef) if (entry.Value == room.RefID) refs.Add(entry.Key);
+        var occupants = refs.Select(campaign.FindInstanceByID).Where(c => c != null
+            && (ReferenceEquals(FindRoomByChara(c.RefID), room) || !IsValidRoomDestination(FindRoomByChara(c.RefID)))).ToList();
+
+        Room_Instance destination = null;
+        if (occupants.Count > 0)
+        {
+            var owner = room.FactionOwner as Manageable;
+            var host = room.parentFloor?.FindPhysicalHost();
+            destination = owner?.RallyRoom;
+            if (destination == room || !IsValidRoomDestination(destination)) destination = owner?.MainExit;
+            if (destination == room || !IsValidRoomDestination(destination)) destination = host?.MainExit;
+            if (destination == room || !IsValidRoomDestination(destination))
+            {
+                var worlds = campaign.GetLoadedWorldPlans();
+                var world = worlds.Find(w => (owner != null && w.initializeFactions.ContainsKey(owner.ID))
+                    || (host != null && w.initializeFactions.ContainsKey(host.ID)));
+                if (world == null) world = worlds.FirstOrDefault();
+                destination = world == null ? null : campaign.FindOrAddWorldFaction(world.worldID)?.MainExit;
+            }
+            if (destination == room || !IsValidRoomDestination(destination)) destination = campaign.debugRoom;
+            if (destination == room || !IsValidRoomDestination(destination))
+                throw new InvalidOperationException($"Cannot remove occupied room [{room.RefID}]: no safe relocation destination exists.");
+
+            foreach (var actor in occupants)
+            {
+                MoveCharaTo(actor, destination, true);
+                if (!ReferenceEquals(FindRoomByChara(actor.RefID), destination) || !destination.RoomCharaRefs.Contains(actor.RefID))
+                    throw new InvalidOperationException($"Cannot remove room [{room.RefID}]: character [{actor.RefID}] was not safely relocated.");
+            }
+            Debug.Log($"Room [{room.RefID}] evacuated {occupants.Count} characters to [{destination.RefID}] before removal.");
+        }
+
+        // Remove stale/duplicate room-side entries only after every live occupant has a safe location.
+        foreach (var id in refs)
+            if (campaign.FindInstanceByID(id) == null && charaRoomRef.TryGetValue(id, out var oldRef) && oldRef == room.RefID)
+                charaRoomRef.Remove(id);
+        room.RoomCharaRefs.RemoveAll(id => campaign.FindInstanceByID(id) == null || !ReferenceEquals(FindRoomByChara(id), room));
+        room.RoomChara.RemoveAll(c => c == null || !ReferenceEquals(FindRoomByChara(c.RefID), room));
+        if (room.RoomCharaRefs.Count > 0 || charaRoomRef.Any(entry => entry.Value == room.RefID))
+            throw new InvalidOperationException($"Cannot remove room [{room.RefID}]: occupancy references remain.");
+        return destination;
     }
 }
 

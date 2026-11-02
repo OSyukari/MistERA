@@ -6,6 +6,8 @@
             {
                 "parentCOMID":"com_sex_service_base",
                 "ID":"com_sex_finger_P",
+                "_comment_traces":"Body traces: aroused receiver's precum on the doer's hand.",
+                "traceKeywords":["wet"],
                 "ActionPackageClass":"ActionPackage_Sex",
                 "displayName":"com_sex_finger_P_displayName_3",
                 "categoryTags":["com_category_service"],
@@ -16,6 +18,7 @@
                     "requirement":{
                         "req_Doers":{
                             "BodyTags":["arm"],
+                            "requireSlots":["Hand"],
                             "cost_ST": 1
                         },
                         "req_Receivers":{

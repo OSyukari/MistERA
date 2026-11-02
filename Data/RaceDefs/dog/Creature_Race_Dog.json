@@ -35,6 +35,7 @@
                 "childID":["body_beast_dog_base"],
                 "internalID":["mouth_beast_base"],
                 "tags":["head"],
+                "traceSlots":["Face"],
                 "sortOrder":0,
                 "NaturalDefense":
                 {
@@ -50,6 +51,7 @@
                 "childID":["frontleg_beast_base","frontleg_beast_base","hindleg_beast_base","hindleg_beast_base"],
                 "internalID":["stomach_beast_base","anus_beast_base","penis_beast_dog_base","guts_beast_base"],
                 "tags":["torso","lower"],
+                "traceSlots":["Neck","Torso"],
                 "sortOrder":1,
                 "NaturalDefense":
                 {
@@ -68,6 +70,10 @@
                 "tags":["nsfw","penis","testicle","external"],
                 "promptTags":["dog penis", "knotted penis", "animal penis"],
                 "requestTraits":["trait_Size_P"],
+                "traceSlots":["Penis"],
+                "canLeaveTraces":true,
+                "leaveTraceIDs":["trace_precum","trace_fur"],
+                "wornContainerCumTraceRatio":0.1,
                 "sensitivityClassString":"C",
                 "maxSensitivityStatString":"stats_derived_maxSensitivity_C",
                 "sortOrder":7,

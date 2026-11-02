@@ -1,0 +1,20 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for COM_ingestItem.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "com_useItem_displayName": "Use $name$",
+                "com_furniture_ingestStomach_self": "Take Orally",
+                "com_furniture_ingestStomach_onTarget": "Feed to Them",
+                "com_furniture_ingestStomach_begin_1": "$doer.firstname$ swallowed $name$",
+                "com_furniture_ingestStomach_ongoing_1": "$doer.firstname$ is taking medicine",
+                "com_furniture_ingestStomach_onComplete_1": "$doer.firstname$ took the medicine",
+                "com_furniture_ingestStomach_begin_administer": "$doer.firstname$ fed $name$ to $receiver.firstname$",
+                "com_furniture_ingestStomach_ongoing_administer": "$doer.firstname$ is administering medicine to $receiver.firstname$",
+                "com_furniture_ingestStomach_onComplete_administer": "$doer.firstname$ finished administering medicine to $receiver.firstname$"
+            }
+        }
+    }
+}

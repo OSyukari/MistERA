@@ -72,6 +72,8 @@
         "recreationOffers": [
             {
                 "ID": "recreation_offer_jp_shrine_hatsumode",
+                "allowWalkIn": true,
+                "trustRewardEligible": false,
                 "factionID": "jp_tourist_shrine",
                 "startHour": 10,
                 "hours": 2,

@@ -15,6 +15,12 @@
                     "position_equal"
                 ],
                 "portraitTags_Receiver": ["breasts"],
+                "_comment_traces": "Body traces (Data/RaceDefs/TraceDefs.json): normal licking leaves saliva on the breast; strong rounds by doer race: suck (humanoid, teeth mark 30%) / bite (others, teeth mark 100% + saliva). Milk (aroused + pregnant) into the doer's mouth on all of them. The suck / bite force variants (race-gated, so the right name shows) come first so a re-issued ongoing act picks them, like kiss; a re-issue only makes the running act strong, so the keywords come from traceKeywords_strongByRace, not the variant.",
+                "traceKeywords": ["lick"],
+                "traceKeywords_strongByRace": [
+                    { "requireRaceKeywords": ["humanrace", "android"], "keywords": ["suck"] },
+                    { "forbidRaceKeywords": ["humanrace", "android"], "keywords": ["bite", "lick"] }
+                ],
                 "requirements": {
                     "requirement": {
                         "req_Doers": {
@@ -47,6 +53,70 @@
                     ]
                 },
                 "variants": [
+                    {
+                        "requirements": {
+                            "requirement": { "doerCount": 1, "receiverCount": 1, "req_Doers": { "requireRaceKeywords": ["humanrace", "android"] } },
+                            "requireExisting": { "requireCOMID": "com_sex_oral_B" }
+                        },
+                        "displayName": "com_sex_oral_B_displayName_1_suck",
+                        "setForce": true
+                    },
+                    {
+                        "requirements": {
+                            "requirement": { "doerCount": 1, "receiverCount": 99, "req_Doers": { "requireRaceKeywords": ["humanrace", "android"] } },
+                            "requireExisting": { "requireCOMID": "com_sex_oral_B" }
+                        },
+                        "displayName": "com_sex_oral_B_displayName_2_suck",
+                        "setForce": true
+                    },
+                    {
+                        "requirements": {
+                            "requirement": { "doerCount": 99, "receiverCount": 1, "req_Doers": { "requireRaceKeywords": ["humanrace", "android"] } },
+                            "requireExisting": { "requireCOMID": "com_sex_oral_B" }
+                        },
+                        "displayName": "com_sex_oral_B_displayName_3_suck",
+                        "setForce": true
+                    },
+                    {
+                        "requirements": {
+                            "requirement": { "doerCount": 99, "receiverCount": 99, "req_Doers": { "requireRaceKeywords": ["humanrace", "android"] } },
+                            "requireExisting": { "requireCOMID": "com_sex_oral_B" }
+                        },
+                        "displayName": "com_sex_oral_B_displayName_4_suck",
+                        "setForce": true
+                    },
+                    {
+                        "requirements": {
+                            "requirement": { "doerCount": 1, "receiverCount": 1, "req_Doers": { "forbidRaceKeywords": ["humanrace", "android"] } },
+                            "requireExisting": { "requireCOMID": "com_sex_oral_B" }
+                        },
+                        "displayName": "com_sex_oral_B_displayName_1_bite",
+                        "setForce": true
+                    },
+                    {
+                        "requirements": {
+                            "requirement": { "doerCount": 1, "receiverCount": 99, "req_Doers": { "forbidRaceKeywords": ["humanrace", "android"] } },
+                            "requireExisting": { "requireCOMID": "com_sex_oral_B" }
+                        },
+                        "displayName": "com_sex_oral_B_displayName_2_bite",
+                        "setForce": true
+                    },
+                    {
+                        "requirements": {
+                            "requirement": { "doerCount": 99, "receiverCount": 1, "req_Doers": { "forbidRaceKeywords": ["humanrace", "android"] } },
+                            "requireExisting": { "requireCOMID": "com_sex_oral_B" }
+                        },
+                        "displayName": "com_sex_oral_B_displayName_3_bite",
+                        "setForce": true
+                    },
+                    {
+                        "requirements": {
+                            "requirement": { "doerCount": 99, "receiverCount": 99, "req_Doers": { "forbidRaceKeywords": ["humanrace", "android"] } },
+                            "requireExisting": { "requireCOMID": "com_sex_oral_B" }
+                        },
+                        "displayName": "com_sex_oral_B_displayName_4_bite",
+                        "setForce": true
+                    },
                     {
                         "requirements": {
                             "requirement": {
@@ -146,6 +216,14 @@
                 "com_sex_oral_B_displayName_2": "交替舔乳头",
                 "com_sex_oral_B_displayName_3": "轮流舔乳头",
                 "com_sex_oral_B_displayName_4": "同时舔乳头",
+                "com_sex_oral_B_displayName_1_suck": "吸吮乳头",
+                "com_sex_oral_B_displayName_2_suck": "交替吸吮乳头",
+                "com_sex_oral_B_displayName_3_suck": "轮流吸吮乳头",
+                "com_sex_oral_B_displayName_4_suck": "同时吸吮乳头",
+                "com_sex_oral_B_displayName_1_bite": "啃咬乳头",
+                "com_sex_oral_B_displayName_2_bite": "交替啃咬乳头",
+                "com_sex_oral_B_displayName_3_bite": "轮流啃咬乳头",
+                "com_sex_oral_B_displayName_4_bite": "同时啃咬乳头",
                 "com_sex_oral_B_description_begin_1": "$doer.firstname$将$receiver.firstname$的乳头含在了嘴里",
                 "com_sex_oral_B_description_after_1": "$doer.firstname$在口中感受着$receiver.firstname$乳头的突起",
                 "com_sex_oral_B_description_remove_1": "$doer.firstname$松开了含在嘴里的$receiver.firstname$的乳头",
@@ -157,6 +235,14 @@
                 "com_sex_oral_B_displayName_2": "Alt. Nipple Licking",
                 "com_sex_oral_B_displayName_3": "Alt. Nipple Licking",
                 "com_sex_oral_B_displayName_4": "Alt. Nipple Licking",
+                "com_sex_oral_B_displayName_1_suck": "Nipple Sucking",
+                "com_sex_oral_B_displayName_2_suck": "Alt. Nipple Sucking",
+                "com_sex_oral_B_displayName_3_suck": "Alt. Nipple Sucking",
+                "com_sex_oral_B_displayName_4_suck": "Alt. Nipple Sucking",
+                "com_sex_oral_B_displayName_1_bite": "Nipple Biting",
+                "com_sex_oral_B_displayName_2_bite": "Alt. Nipple Biting",
+                "com_sex_oral_B_displayName_3_bite": "Alt. Nipple Biting",
+                "com_sex_oral_B_displayName_4_bite": "Alt. Nipple Biting",
                 "com_sex_oral_B_description_begin_1": "$doer.firstname$ takes $receiver.firstname$'s nipple into their mouth.",
                 "com_sex_oral_B_description_after_1": "$doer.firstname$ feels the erection of $receiver.firstname$'s nipple inside their mouth.",
                 "com_sex_oral_B_description_remove_1": "$doer.firstname$ releases $receiver.firstname$'s nipple from their mouth.",

@@ -9,6 +9,8 @@ using System.Linq;
 
 public class scr_panel_TargetInfo : scr_Menu
 {
+    private scr_System_CampaignManager campaignManager;
+
     public RectTransform parentBox1, parentBox2, parentBox3;
 
     public scr_HoverableText hp, mp, st, en;
@@ -44,9 +46,22 @@ public class scr_panel_TargetInfo : scr_Menu
 
         self_canvasGroup.gameObject.SetActive(false);
 
-        scr_System_CampaignManager.current.Observer_CurrentTarget += ReadCurrentChar;
-        scr_System_CampaignManager.current.Observer_UpdateNotice += OnNotifyUpdate;
-        scr_System_CampaignManager.current.Observer_CurrentViewMode += OnViewChange;
+        campaignManager = scr_System_CampaignManager.current;
+        campaignManager.Observer_CurrentTarget += ReadCurrentChar;
+        campaignManager.Observer_UpdateNotice += OnNotifyUpdate;
+        campaignManager.Observer_CurrentViewMode += OnViewChange;
+    }
+
+    protected override void OnDestroy()
+    {
+        if (!ReferenceEquals(campaignManager, null))
+        {
+            campaignManager.Observer_CurrentTarget -= ReadCurrentChar;
+            campaignManager.Observer_UpdateNotice -= OnNotifyUpdate;
+            campaignManager.Observer_CurrentViewMode -= OnViewChange;
+            campaignManager = null;
+        }
+        base.OnDestroy();
     }
 
     private void OnViewChange(ViewMode v, bool b) { Refresh(); }

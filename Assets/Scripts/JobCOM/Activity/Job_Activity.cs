@@ -43,16 +43,16 @@ public enum ActivityParticipantState { Expected, Present, Launched, Late, Left, 
 /// <summary>
 /// The coordinating job of one booked recreation visit (Plan_ActivityJobs): the visit's instance - the session
 /// (RecreationGroup) of a shared visit, else the solo RecreationBooking itself, kept as a RecreationActivityKey -
-/// gets exactly one of these, created lazily at T+0 by whichever participant's pull asks first (Create; the pull is
+/// gets exactly one of these, created by its venue (Create; participants only look it up in
 /// TryFindScheduledJobNode's booked-visit branch). It gathers the participants (actors walking to the gather room and
 /// running the recreation_activity_wait COM there), launches by the visibility-dependent rule below, then dispatches
 /// them - the basic Dispatch being the workModule sandbox a booked visit runs today
 /// (TryFindScheduledActivityNode.RunVisit). Even a single-participant visit goes through the same flow.
 /// <br/>Outcome rule (LastUpdate, every tick; solo counts as Private). An attending player participant is waited for
 /// like anyone (a walk-in never is), but counts as present only after accepting through the wait button - never just by
-/// standing in the gather room; an outcome needs at least one NPC present (player-only activities are unsupported).
-/// <br/>Created at T+0 by the hourly check of any participant (RecreationUtility.EnsureActivityJobs - so it exists before
-/// anyone arrives, e.g. while the NPCs are still travelling), or by a participant's pull, whichever comes first.
+/// standing in the gather room; ordinary shared activities need an NPC present. A reserved private visit also supports the player's explicit solo wait.
+/// <br/>Created at T-60 by its venue (RecreationUtility.UpdateVenueActivities), independent of any participant; from
+/// then on participants in a free hour may gather early (TryFindScheduledJobNode.TryEarlyActivityJob) and the player may wait.
 /// <br/>- Before T+30: Private / Friends / solo launch once everyone attending is present; Faction / World never before
 ///   T+5, then once every mandatory participant is present (at T+5 when there is none - a hostless offer).
 /// <br/>- At T+30: launch with whoever is there if an NPC is present and no mandatory participant is missing; else the
@@ -72,7 +72,7 @@ public enum ActivityParticipantState { Expected, Present, Launched, Late, Left, 
 /// <br/>Ends when its instance is gone, cancelled or over (AbsEnd). Saved whole (players, participants, snapshot);
 /// custom per-activity jobs subclass this and override Dispatch (and the phase rooms) - later passes.
 /// </summary>
-public class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinableJob, I_TemporaryJob
+public partial class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinableJob, I_TemporaryJob
 {
     /// <summary>The COM waiting participants run in the gather room (Data/COM_Defs/COM_Recreation) - a real command, so the player has a package to join.</summary>
     public const string WaitCOMID = "recreation_activity_wait";
@@ -112,12 +112,31 @@ public class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinableJob, I
     [JsonIgnore] Manageable _venue = null;
     [JsonIgnore] EventInstance _launchEvent = null;
     [JsonIgnore] bool _subscribed = false;
+    [JsonIgnore] bool _handlingFailure = false;
 
     public Job_Activity() : base() { }
 
     // ---------------- basics ---------------- //
 
-    [JsonIgnore] public override string DisplayName { get { return $"|Activity {key} {phase}|"; } }
+    [JsonIgnore] string _displayName = null;
+    [JsonIgnore] ActivityPhase _displayNamePhase;
+    [JsonIgnore] (bool? isSession, int? day, int? startHour, string factionID, string sourceKey, int? hostRef, int? ownerRef, int? absStart) _displayNameKey;
+
+    [JsonIgnore] public override string DisplayName
+    {
+        get
+        {
+            // Compare key fields without formatting: the public key can also be changed in place.
+            var nameKey = (key?.isSession, key?.day, key?.startHour, key?.factionID, key?.sourceKey, key?.hostRef, key?.ownerRef, key?.absStart);
+            if (_displayName == null || _displayNamePhase != phase || _displayNameKey != nameKey)
+            {
+                _displayName = $"|Activity {key} {phase}|";
+                _displayNamePhase = phase;
+                _displayNameKey = nameKey;
+            }
+            return _displayName;
+        }
+    }
 
     /// <summary>Always interruptible: gathering (a restroom trip is fine - the pull brings them back), and once launched the actors left on it are only waiting to be dispatched or released.</summary>
     [JsonIgnore] public override bool CanBeInterrupted { get { return true; } }
@@ -147,7 +166,7 @@ public class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinableJob, I
         if (c == null || participants == null) return false;
         if (participants.Exists(p => p != null && p.charaRef == c.RefID)) return true;
         if (c.RefID != 0 || phase == ActivityPhase.Ended) return false;
-        return PlayerInGatherRoom;
+        return PlayerJoinRoom != null;
     }
 
     [JsonIgnore] bool PlayerInGatherRoom
@@ -172,20 +191,15 @@ public class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinableJob, I
     }
 
     /// <summary>
-    /// Whether the panel tracks this job for the player's buttons (MakePlayerWaitPackage / MakePlayerJoinPackage), only
-    /// while the player is in the gather room: gathering and not already waiting here; or with an outcome (launched /
-    /// failed) and the player has not had it yet - arriving late (Private scope only for its own participants).
-    /// Private scope keeps the gathering button visible but DISABLED (targetActorRef) - it only tells the player an
-    /// activity is going on.
+    /// Gathering is offered in the gather room. A launched visit is offered beside its actual local attendees,
+    /// once per player and visit. Admission is checked by the package and again when the event starts.
     /// </summary>
     public bool OffersJoinTo(Character_Trainable player)
     {
-        if (player == null || player.RefID != 0 || phase == ActivityPhase.Ended) return false;
-        // only in the gather room: a participant is tracked wherever they are (MatchTracker), and a package elsewhere
-        // could never start (same-room check) - the button would follow the player around, always invalid
-        if (!PlayerInGatherRoom) return false;
+        if (player == null || player.RefID != 0 || !GatherOpen || PlayerJoinRoom == null) return false;
         if (phase == ActivityPhase.Gathering) return !IsWaiting(player.RefID);
-        return PlayerMayJoin && IsLateArrival(FindParticipant(player.RefID));
+        var rec = FindParticipant(player.RefID);
+        return phase == ActivityPhase.Launched && (rec == null || (!rec.arrivedLate && !rec.waited));
     }
 
     /// <summary>With an outcome: c has not arrived yet and would be a late arrival (the pull walks them to the gather room).</summary>
@@ -205,13 +219,14 @@ public class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinableJob, I
     }
 
     /// <summary>
-    /// The player's own "join the activity" package (JoinCOMID - valid once there is an outcome, ActionPackage_ActivityWait):
-    /// the panel turns it into a command button; clicking it is the player's late arrival (AddActor -> ArriveLate).
+    /// The player's short entry package beside a launched activity's local attendees. Its PackageBegin invokes
+    /// JoinPlayer; generic actor registration never dispatches the event.
     /// </summary>
     public ActionPackage MakePlayerJoinPackage(Character_Trainable player)
     {
         if (player == null || JoinCOM == null) return null;
-        return JoinCOM.MakePackage(this, new List<int>() { player.RefID }, new List<int>(), player.RefID, ParentRoom);
+        var room = PlayerJoinRoom;
+        return room == null ? null : JoinCOM.MakePackage(this, new List<int>() { player.RefID }, new List<int>(), player.RefID, room);
     }
 
     /// <summary>charaRef holds one of this job's wait packages (not run out).</summary>
@@ -235,28 +250,153 @@ public class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinableJob, I
     /// <summary>Duration of a wait package started now: until T+30, the gathering's outcome - at least 1 minute.</summary>
     [JsonIgnore] public int WaitMinutesLeft { get { return Math.Max(1, GatherWaitMinutes - MinutesSinceStart); } }
 
-    /// <summary>A Private-scope activity (a solo visit counts as Private).</summary>
-    [JsonIgnore] bool PrivateScope
+    /// <summary>Current source liveness, not just the coordinator's last hourly/tick snapshot.</summary>
+    [JsonIgnore] bool VisitIsLive
     {
         get
         {
-            if (key == null || !key.isSession) return true;
-            if (_session == null && !TryGetInstance(out _, out _)) return true;
-            return _session == null || _session.visibility == RecreationVisibility.Private;
+            if (phase == ActivityPhase.Ended || scr_System_Time.current == null || !TryGetInstance(out var g, out var b)) return false;
+            int now = NowAbs();
+            if (g != null) return g.IsOpen && now >= g.AbsStart && now < g.AbsEnd;
+            return b != null && OwnerFactions?.RecreationBookings.Contains(b) == true && now >= b.AbsStart && now < b.AbsEnd;
         }
     }
 
     /// <summary>
-    /// Whether the player may join this activity: Friends / Faction / World are open to walk-ins (even without a
-    /// booking); Private (and a solo visit) only to one of its own participants (an invited member attending, the host).
+    /// The player may wait / join: the visit is live, or - gathering before T (the job exists from T-60, made by its
+    /// venue) - its instance is still open. The player's wait / join checks (and the gather room's command
+    /// substitution) use it; everything else keeps VisitIsLive.
     /// </summary>
+    [JsonIgnore] bool GatherOpen
+    {
+        get
+        {
+            if (setupPending) return false;
+            if (VisitIsLive) return true;
+            if (phase != ActivityPhase.Gathering || !TryGetInstance(out var g, out var b)) return false;
+            return g != null ? g.IsOpen : b != null && OwnerFactions?.RecreationBookings.Contains(b) == true;
+        }
+    }
+
+    bool IsConfirmedAttendee(Character_Trainable c)
+    {
+        if (c == null || !TryGetInstance(out var g, out var b)) return false;
+        var booking = BookingOf(c);
+        return booking != null && c.FactionManager.RecreationBookings.Contains(booking)
+            && (g != null ? g.FindMember(c.RefID)?.IsAttending == true : b.ownerRef == c.RefID);
+    }
+
+    /// <summary>Invitation scope does not grant walk-in access; confirmed bookings remain valid attendance.</summary>
     [JsonIgnore] public bool PlayerMayJoin
     {
-        get { return !PrivateScope || FindParticipant(0) != null; }
+        get { return IsConfirmedAttendee(scr_System_CampaignManager.current?.Player) || VisitActivity?.allowWalkIn == true; }
+    }
+
+    /// <summary>Only already-arrived, live attendees in this physical room, never absent invitees or the whole crowd.</summary>
+    List<Character_Trainable> LocalCompanions(Room_Instance room, int exceptRef)
+    {
+        var result = new List<Character_Trainable>();
+        if (room == null || room.FactionOwner?.Faction != Venue) return result;
+        foreach (var rec in participants)
+        {
+            if (rec == null || rec.charaRef == exceptRef
+                || (rec.state != ActivityParticipantState.Launched && rec.state != ActivityParticipantState.Late)) continue;
+            var c = scr_System_CampaignManager.current.FindInstanceByID(rec.charaRef);
+            if (c == null || !c.canAct || c.isSleeping) continue;
+            if (!rec.walkIn && !IsConfirmedAttendee(c)) continue;
+            if (scr_System_CampaignManager.current.GetCharaRoomInstance(c.RefID)?.RefID == room.RefID) result.Add(c);
+        }
+        return result;
+    }
+
+    [JsonIgnore] Room_Instance PlayerJoinRoom
+    {
+        get
+        {
+            var room = scr_System_CampaignManager.current?.GetCharaRoomInstance(0);
+            if (phase == ActivityPhase.Gathering) return PlayerInGatherRoom ? room : null;
+            return phase == ActivityPhase.Launched && LocalCompanions(room, 0).Count > 0 ? room : null;
+        }
+    }
+
+    /// <summary>Shared, side-effect-free admission check for UI and event execution. reason is a localization key.</summary>
+    public bool CanPlayerJoin(Character_Trainable player, Room_Instance room, bool joining, out string reason)
+    {
+        reason = "ui_activityJoin_ended";
+        if (!GatherOpen || (joining ? phase != ActivityPhase.Launched : phase != ActivityPhase.Gathering)) return false;
+        reason = "ui_activityJoin_ineligible";
+        if (player == null || player.RefID != 0 || !player.canAct || player.isSleeping) return false;
+        reason = "ui_activityJoin_closed";
+        if (!PlayerMayJoin) return false;
+        reason = "ui_activityJoin_wrongRoom";
+        if (room == null || scr_System_CampaignManager.current.GetCharaRoomInstance(0)?.RefID != room.RefID
+            || (!joining && room.RefID != gatherRoomRef)) return false;
+        reason = "ui_activityJoin_access";
+        if (Venue == null || room.FactionOwner?.Faction != Venue || !room.CanBeAccessedBy(player)) return false;
+        reason = "ui_activityJoin_suspended";
+        if (!player.CanWorkFor(Venue)
+            || (!IsConfirmedAttendee(player) && RecreationUtility.HasUnpaidActivityFee(player.FactionManager, Venue))) return false;
+        reason = "ui_activityJoin_ineligible";
+        var offer = RecreationBoard.FindDef(key.isSession ? _session.sourceKey : _solo.sourceKey);
+        if (offer != null && !offer.IsEligible(player)) return false;
+        reason = AdmissionRefusal(player);
+        if (reason != "") return false;
+        if (joining)
+        {
+            reason = "ui_activityJoin_busy";
+            var rec = FindParticipant(0);
+            if (rec != null && (rec.arrivedLate || rec.waited || rec.state == ActivityParticipantState.Released)) return false;
+            reason = "ui_activityJoin_noPartner";
+            if (LocalCompanions(room, 0).Count == 0) return false;
+        }
+        reason = "";
+        return true;
+    }
+
+    /// <summary>A short explicit join fires the activity's authored outcome; no timers or automatic reward settlement.</summary>
+    public bool JoinPlayer(Character_Trainable player, Room_Instance room)
+    {
+        if (!CanPlayerJoin(player, room, true, out _)) return false;
+        var companions = LocalCompanions(room, player.RefID);
+        var rec = RecordFor(player);
+        var oldState = rec.state;
+        bool confirmed = IsConfirmedAttendee(player);
+        rec.walkIn = !confirmed;
+        if (!confirmed) { rec.mandatory = false; rec.roleID = ""; }
+        // Set before StartEvent: events may execute immediately and re-enter through callbacks.
+        rec.arrivedLate = true;
+        rec.state = ActivityParticipantState.Late;
+        if (!CheckInOvernight(rec))
+        {
+            rec.arrivedLate = false;
+            rec.state = oldState;
+            return false;
+        }
+        var targets = new Dictionary<string, List<int>>()
+        {
+            ["joining"] = new List<int>() { player.RefID },
+            ["companions"] = companions.Select(c => c.RefID).ToList(),
+            ["participants"] = companions.Select(c => c.RefID).Concat(new[] { player.RefID }).ToList(),
+            ["player"] = new List<int>() { player.RefID },
+        };
+        var localRefs = new HashSet<int>(targets["participants"]);
+        foreach (var pair in BuildEventTargets(player))
+            if (!targets.ContainsKey(pair.Key)) targets[pair.Key] = pair.Value.Where(localRefs.Contains).ToList();
+        if (!string.IsNullOrEmpty(launchEventID) && FireOutcomeEvent(launchEventID, player, player, targets, isJoin: true) == null)
+        {
+            rec.arrivedLate = false;
+            rec.state = oldState;
+            CheckOutOvernight(player.RefID);
+            return false;
+        }
+        ChargeFee(rec);
+        AddToSnapshot("participants", player.RefID);
+        AddToSnapshot("optional", player.RefID);
+        return true;
     }
 
     /// <summary>
-    /// Private scope with no place for the player: every join button of this job renders INVALID (greyed) instead of
+    /// An activity closed to additional players: every join button renders INVALID (greyed) instead of
     /// disappearing, so the button still tells the player an activity is going on. -2 never equals a CurrentTargetRef,
     /// which is what the join-button validator compares this against (scr_panel_COMmanager).
     /// </summary>
@@ -266,23 +406,34 @@ public class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinableJob, I
     }
 
     /// <summary>
-    /// The player starting one of their commands (the panel's Execute -> ChangeCurrentJob -> AddActor). Gathering (wait):
-    /// a player without a record becomes an optional walk-in (mandatory if host). With an outcome (join): the player's
-    /// late arrival (ArriveLate - joins a launched activity, or is turned away from a failed one); they are then
-    /// released (hasActorCompletedJob). In Private scope only the activity's own participants get here (the buttons are
-    /// disabled for everyone else).
+    /// Gathering registers a waiting player; launched visits only register the actor. The short join package owns
+    /// event invocation, so ChangeCurrentJob and AddPackage cannot each fire it.
     /// </summary>
     public override void AddActor(int charaRef, string priorityCOMID = "", string priorityCOMTag = "")
     {
+        if (charaRef == 0)
+        {
+            var player = scr_System_CampaignManager.current.Player;
+            var room = scr_System_CampaignManager.current.GetCharaRoomInstance(0);
+            if (!CanPlayerJoin(player, room, phase == ActivityPhase.Launched, out _)) return;
+        }
         base.AddActor(charaRef, priorityCOMID, priorityCOMTag);
         if (charaRef != 0 || !PlayerMayJoin) return;
-        if (HasOutcome)
+        // Player arrival is committed by the join AP, not either of the two AddActor calls made by the UI.
+        if (HasOutcome) return;
+        if (phase != ActivityPhase.Gathering) return;
+        var existing = FindParticipant(0);
+        if (existing != null)
         {
-            var player = scr_System_CampaignManager.current.FindInstanceByID(0);
-            if (player != null) ArriveLate(player);
+            if (!existing.arrivedLate && !existing.waited)
+            {
+                // Cancellation updates the booking before SyncParticipants updates the cached participant state.
+                if (existing.state == ActivityParticipantState.Left) existing.state = ActivityParticipantState.Expected;
+                existing.walkIn = !IsConfirmedAttendee(scr_System_CampaignManager.current.Player);
+                if (existing.walkIn) { existing.mandatory = false; existing.roleID = ""; }
+            }
             return;
         }
-        if (phase != ActivityPhase.Gathering || FindParticipant(0) != null) return;
         bool host = key != null && key.isSession && _session != null && _session.hostRef == 0;
         participants.Add(new ActivityParticipant()
         {
@@ -380,6 +531,9 @@ public class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinableJob, I
     /// <summary>Minutes since T, the booked start hour (may be negative briefly if a pull raced the clock).</summary>
     [JsonIgnore] int MinutesSinceStart { get { return (int)(scr_System_Time.current.getCurrentTime() - StartDateTime).TotalMinutes; } }
 
+    /// <summary>T, the booked start, has been reached (the player's wait button reads "wait to begin" before it).</summary>
+    [JsonIgnore] public bool HasStarted { get { return MinutesSinceStart >= 0; } }
+
     /// <summary>Where the job stands - the pull hook (TryFindScheduledJobNode) reads this: Gathering joins, Launched dispatches or joins late.</summary>
     [JsonIgnore] public ActivityPhase Phase { get { return phase; } }
 
@@ -392,11 +546,14 @@ public class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinableJob, I
 
     /// <summary>
     /// Creates and registers the coordinating job of the instance instanceKey names, populated from its live attending
-    /// set - whichever participant's pull asks first creates it (never a central loop). Null when the instance cannot
-    /// be resolved (a null key is "no instance - don't create"), its venue or gather room is gone, or it already has a
-    /// job (that one is returned).
+    /// set. Only the venue creates it (RecreationUtility.UpdateVenueActivities, from T-60) - never a participant's pull.
+    /// The definition is read from the instance itself (its session, else the solo booking), not from whoever asks.
+    /// Null when the instance cannot be resolved (a null key is "no instance - don't create"), or its venue or gather
+    /// room is gone; an instance that already has a job returns that one. A structurally unavailable room / furniture /
+    /// media fails the gathering - no resource is acquired, so there is nothing to wait for. notify: after complete
+    /// setup, publish the change to the instance's affected parties (false for the venue's own batch, which queued them).
     /// </summary>
-    public static Job_Activity Create(RecreationActivityKey instanceKey, Character_Trainable firstAsker)
+    public static Job_Activity Create(RecreationActivityKey instanceKey, bool notify = true)
     {
         if (instanceKey == null) return null;
         if (!RecreationUtility.ResolveActivityInstance(instanceKey, out var g, out var b)) return null;
@@ -426,11 +583,15 @@ public class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinableJob, I
         job._venue = venue;
         job.FactionOwner = venue;
 
-        // gather room + begin event: the first asker's visit activity, read live (a booking-less asker falls back to the venue's MainExit and a silent launch)
-        var f = firstAsker?.FactionManager;
-        var booking = g != null ? f?.RecreationBookings.FirstOrDefault(x => x != null && x.isSessionBooking && x.Session == g) : b;
-        var activity = booking?.GetActivity(f);
+        // gather room + begin event: the occurrence's own activity, read live (none falls back to the venue's MainExit and a silent launch)
+        var activity = job.VisitActivity;
         var room = ResolveGatherRoom(venue, activity);
+        // a facility visit starts in the execution room its planning selected, when that still qualifies
+        if (activity?.facility != null)
+        {
+            var planned = RecreationUtility.GetPlannedActivityRoom(g != null ? (I_ActivityBooking)g : b);
+            if (planned != null && RecreationUtility.RoomQualifies(planned, activity.facility)) room = planned;
+        }
         if (room == null)
         {
             Debug.LogError($"Job_Activity.Create: no gather room for {instanceKey} at {venue.ID}");
@@ -443,7 +604,57 @@ public class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinableJob, I
 
         job.SyncParticipants();
         scr_System_CampaignManager.current.Register(job);   // Register links the instance (activityJobRef)
+        string setupFailure = job.TrySetup(activity);
+        if (setupFailure != null)
+        {
+            // a failed / incomplete setup publishes nothing itself (cancellations its failure makes notify on their own)
+            if (job.MinutesSinceStart < 0)
+            {
+                // before T: retried at the activity hour (RetryDueSetup) rather than failing the gathering early
+                job.setupPending = true;
+                job.UnregisterActivityRooms();
+                if (scr_System_CentralControl.current.LogPrefs.DLog_Jobs) Debug.Log($"{job.DisplayName} setup deferred to T ({setupFailure})");
+            }
+            else job.Fail(setupFailure);
+            return job;
+        }
+        job.RefreshActivityRooms();
+        if (notify) job.NotifyInstanceChanged();
         return job;
+    }
+
+    /// <summary>
+    /// Selects the room / furniture / media the occurrence uses (no resource is acquired). Null = complete, else the failure.
+    /// </summary>
+    string TrySetup(RecreationActivity activity)
+    {
+        return !ReserveFurniture(activity) ? "reserved furniture unavailable"
+            : !ReserveFacility(activity) ? "facility unavailable"
+            : !ReserveMedia(activity) ? "no media item available" : null;
+    }
+
+    /// <summary>
+    /// Setup failed before T: retried once at T (the venue's due transition, else this job's own tick). Until then
+    /// the job only tracks presence - no room context, no early attendance, no player wait.
+    /// </summary>
+    [JsonProperty] bool setupPending = false;
+    [JsonIgnore] public bool SetupPending { get { return setupPending; } }
+
+    /// <summary>The deferred setup at the activity hour: complete it (and publish), or fail the gathering now.</summary>
+    public void RetryDueSetup()
+    {
+        if (!setupPending || phase != ActivityPhase.Gathering || MinutesSinceStart < 0) return;
+        setupPending = false;
+        string failure = TrySetup(VisitActivity);
+        if (failure != null) { Fail(failure); return; }
+        RefreshActivityRooms();
+        NotifyInstanceChanged();
+    }
+
+    void NotifyInstanceChanged()
+    {
+        if (!TryGetInstance(out var g, out _)) return;
+        if (g != null) RecreationUtility.NotifyActivityChanged(g);
     }
 
     /// <summary>The instance's existing activity job (its activityJobRef), or null - the pull's first lookup.</summary>
@@ -465,10 +676,20 @@ public class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinableJob, I
         }
     }
 
-    /// <summary>activity's gather room at venue (its gatherRoomID among the venue's rooms, else the venue's MainExit) - also used by I_ActivityBooking.Tooltip (RecreationUtility.BuildActivityDetail).</summary>
+    /// <summary>
+    /// activity's gather room at venue: for a furniture-bound activity the first room its facility qualifies in
+    /// (RecreationUtility.FacilityRooms - the job may still pick another when it reserves a unit), else its gatherRoomID
+    /// among the venue's rooms, else the venue's MainExit - also used by I_ActivityBooking.Tooltip (RecreationUtility.BuildActivityDetail).
+    /// </summary>
     public static Room_Instance ResolveGatherRoom(Manageable venue, RecreationActivity activity)
     {
         if (venue == null) return null;
+        // (a room visit's room is the host's - only known to the job, ReserveFacility)
+        if (activity?.facility != null && !activity.facility.hostPrivateRoom)
+        {
+            var facilityRoom = RecreationUtility.FacilityRooms(venue, activity).FirstOrDefault();
+            if (facilityRoom != null) return facilityRoom;
+        }
         if (activity != null && !string.IsNullOrEmpty(activity.gatherRoomID))
         {
             foreach (var kvp in venue.ManagedRooms)
@@ -537,7 +758,12 @@ public class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinableJob, I
             var chara = scr_System_CampaignManager.current.FindInstanceByID(rec.charaRef);
             if (chara == null || !chara.canAct || chara.isSleeping) continue;
             var charaRoom = scr_System_CampaignManager.current.GetCharaRoomInstance(rec.charaRef);
-            if (charaRoom != null && charaRoom.RefID == room.RefID) rec.state = ActivityParticipantState.Present;
+            if (charaRoom != null && charaRoom.RefID == room.RefID)
+            {
+                rec.state = ActivityParticipantState.Present;
+                // arrived: the session's no-show check reads it
+                RecreationUtility.OnActivityArrived(chara, BookingOf(chara));
+            }
         }
     }
 
@@ -548,7 +774,7 @@ public class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinableJob, I
         if (rec != null) return rec;
         rec = new ActivityParticipant() { charaRef = c.RefID };
         var m = TryGetInstance(out var g, out _) && g != null ? g.FindMember(c.RefID) : null;
-        if (m != null)
+        if (m?.IsAttending == true)
         {
             rec.roleID = m.roleID;
             rec.mandatory = m.charaRef == g.hostRef || RecreationUtility.ResolveSpec(g.specRef).GetRole(m.roleID)?.required == true;
@@ -575,9 +801,17 @@ public class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinableJob, I
         if (rec.state == ActivityParticipantState.Launched || rec.state == ActivityParticipantState.Late) return true;
         if (!IsLateArrival(rec)) return false;
         rec.arrivedLate = true;
+        // late, but here: not a no-show
+        RecreationUtility.OnActivityArrived(c, BookingOf(c));
 
         if (phase == ActivityPhase.Launched)
         {
+            if (AdmissionRefusal(c) != "" || !CheckInOvernight(rec))
+            {
+                rec.state = ActivityParticipantState.Released;
+                BookingOf(c)?.Owner?.FactionManager.CancelBooking(BookingOf(c), true, RecreationUtility.CancelReason.GroupFailed);
+                return false;
+            }
             rec.state = ActivityParticipantState.Late;
             // late arrivals count as optional (Plan_ActivityJobs): participants + optional + their role key, when it exists
             if (targetSnapshot != null)
@@ -587,6 +821,7 @@ public class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinableJob, I
                 if (!string.IsNullOrEmpty(rec.roleID) && targetSnapshot.ContainsKey(rec.roleID)) AddToSnapshot(rec.roleID, c.RefID);
             }
             ChargeFee(rec);
+            RecreationUtility.OnActivityAttended(c, BookingOf(c));
             if (!string.IsNullOrEmpty(launchEventID)) FireOutcomeEvent(launchEventID, c, c);
             return true;
         }
@@ -615,27 +850,22 @@ public class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinableJob, I
     void ChargeFee(ActivityParticipant rec)
     {
         if (rec == null || rec.feeCharged) return;
-        rec.feeCharged = true;
         var c = scr_System_CampaignManager.current.FindInstanceByID(rec.charaRef);
         if (c == null) return;
         var booking = BookingOf(c);
         var activity = booking != null ? booking.GetActivity(c.FactionManager) : VisitActivity;
+        if (Venue == null) return;
+        rec.feeCharged = true;
         RecreationUtility.ChargeEntranceFee(c, Venue, activity, booking);
     }
 
-    /// <summary>The visit's activity read through the first participant holding a booking of it (template data, live) - for those without one (walk-ins).</summary>
+    /// <summary>Resolve policy from the instance itself, including solo visits and booking-less walk-ins.</summary>
     [JsonIgnore] RecreationActivity VisitActivity
     {
         get
         {
-            if (participants == null) return null;
-            foreach (var p in participants)
-            {
-                var chara = p == null ? null : scr_System_CampaignManager.current.FindInstanceByID(p.charaRef);
-                var activity = chara == null ? null : ActivityOf(chara);
-                if (activity != null) return activity;
-            }
-            return null;
+            if (!TryGetInstance(out var g, out var b)) return null;
+            return g != null ? RecreationUtility.ResolveActivity(g) : b?.GetActivity(OwnerFactions);
         }
     }
 
@@ -643,15 +873,18 @@ public class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinableJob, I
 
     /// <summary>
     /// The per-tick gather check (I_RequireSpecialTracker): presence, then the outcome rule (see the class doc). The
-    /// player is waited for like anyone else when they are an attending participant (Gates - a walk-in never is), but
-    /// an outcome needs at least one NPC participant present (player-only activities are not supported).
+    /// player is waited for like anyone else when they are an attending participant (Gates - a walk-in never is).
+    /// A reserved private visit may launch for the explicitly waiting player alone; ordinary crowds still need an NPC.
     /// </summary>
     void CheckGather()
     {
         SyncParticipants();
         UpdatePresence();
         int minutes = MinutesSinceStart;
-        bool npcPresent = participants.Exists(p => p != null && p.charaRef != 0 && p.state == ActivityParticipantState.Present);
+        // before T (made at T-60 - participants gather ahead of T): presence only, no launch / fail before T
+        if (minutes < 0) return;
+        bool privateUnit = !string.IsNullOrEmpty(VisitActivity?.reserveFurnitureTag);
+        bool npcPresent = participants.Exists(p => p != null && (p.charaRef != 0 || privateUnit) && p.state == ActivityParticipantState.Present);
         bool mandatoryMissing = participants.Exists(p => Gates(p) && p.mandatory && p.state == ActivityParticipantState.Expected);
 
         if (minutes >= GatherWaitMinutes)
@@ -695,6 +928,10 @@ public class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinableJob, I
     /// <summary>The launch: present participants become Launched (waited) and pay, the waits end, and the begin event (if any) starts.</summary>
     void Launch(string reason)
     {
+        var present = participants.Where(p => p.state == ActivityParticipantState.Present).ToList();
+        if (!CanLaunchReserved(present)) { Fail("reserved room admission failed"); return; }
+        foreach (var rec in present)
+            if (!CheckInOvernight(rec)) { Fail("overnight check-in failed"); return; }
         phase = ActivityPhase.Launched;
         foreach (var rec in participants)
         {
@@ -702,9 +939,14 @@ public class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinableJob, I
             rec.state = ActivityParticipantState.Launched;
             rec.waited = true;
             ChargeFee(rec);
+            // took part: the visit counts as attended (the planner's cooldowns / weekly targets)
+            var launched = scr_System_CampaignManager.current.FindInstanceByID(rec.charaRef);
+            RecreationUtility.OnActivityAttended(launched, BookingOf(launched));
         }
         EndWaiting();
         StartBeginEvent();
+        // gathering context leaves the gather room; execution rooms follow the dispatched participants (LastUpdate)
+        RefreshActivityRooms();
         if (scr_System_CentralControl.current.LogPrefs.DLog_Jobs) Debug.Log($"{DisplayName} launched ({reason})");
     }
 
@@ -716,17 +958,26 @@ public class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinableJob, I
     /// </summary>
     void Fail(string reason)
     {
-        phase = ActivityPhase.Failed;
-        foreach (var rec in participants)
+        if (_handlingFailure || phase == ActivityPhase.Ended) return;
+        _handlingFailure = true;
+        try
         {
-            if (rec.state != ActivityParticipantState.Present) continue;
-            rec.state = ActivityParticipantState.Released;
-            rec.waited = true;
+            phase = ActivityPhase.Failed;
+            ReleaseReservedResources();
+            ReleaseFacility();
+            foreach (var rec in participants)
+            {
+                if (rec.state != ActivityParticipantState.Present) continue;
+                rec.state = ActivityParticipantState.Released;
+                rec.waited = true;
+            }
+            EndWaiting();
+            foreach (var refID in actorRefID.ToList()) RemoveActor(refID);
+            FireOutcomeEvent(FailedEventID, null, OutcomeSelf());
+            if (!string.IsNullOrEmpty(VisitActivity?.reserveFurnitureTag)) CancelReservedVisit();
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Jobs) Debug.Log($"{DisplayName} gathering failed ({reason})");
         }
-        EndWaiting();
-        foreach (var refID in actorRefID.ToList()) RemoveActor(refID);
-        FireOutcomeEvent(FailedEventID, null, OutcomeSelf());
-        if (scr_System_CentralControl.current.LogPrefs.DLog_Jobs) Debug.Log($"{DisplayName} gathering failed ({reason})");
+        finally { _handlingFailure = false; }
     }
 
     // ---------------- outcome events ---------------- //
@@ -790,7 +1041,7 @@ public class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinableJob, I
     /// (forced on screen when it is the player) - the event's logic must use the targets. Null when there is no event /
     /// self, or it was rejected.
     /// </summary>
-    EventInstance FireOutcomeEvent(string eventID, Character_Trainable latecomer, Character_Trainable self, Dictionary<string, List<int>> targets = null, bool withInstanceKey = false)
+    EventInstance FireOutcomeEvent(string eventID, Character_Trainable latecomer, Character_Trainable self, Dictionary<string, List<int>> targets = null, bool withInstanceKey = false, bool isJoin = false)
     {
         if (string.IsNullOrEmpty(eventID) || self == null) return null;
         var ev = new EventInstance(self, eventID, "");
@@ -800,13 +1051,39 @@ public class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinableJob, I
             var list = kvp.Value.Select(r => scr_System_CampaignManager.current.FindInstanceByID(r)).Where(x => x != null).ToList();
             if (list.Count > 0) ev.Targets[kvp.Key] = list;
         }
+        if (!isJoin)
+        {
+            var room = latecomer == null ? ParentRoom : scr_System_CampaignManager.current.GetCharaRoomInstance(latecomer.RefID);
+            var present = LocalCompanions(room, latecomer?.RefID ?? -1);
+            if (latecomer == null)
+            {
+                if (present.Count > 0) ev.Targets["attendees"] = present;
+                if (present.Count >= 2) ev.AppendStrings["hasSharedAttendees"] = new List<string>() { "true" };
+                if (present.Count > 0) ev.Targets["participating"] = present.ToList();
+            }
+            else
+            {
+                ev.Targets["joining"] = new List<Character_Trainable>() { latecomer };
+                if (present.Count > 0) ev.Targets["companions"] = present;
+                ev.Targets["participating"] = present.Concat(new[] { latecomer }).ToList();
+            }
+        }
+        else ev.Targets["participating"] = ev.Targets["participants"].ToList();
+        if (ev.Targets.TryGetValue("companions", out var companions) && companions.Count > 0)
+            ev.AppendStrings["hasCompanions"] = new List<string>() { "true" };
+        if (isJoin) ev.AppendStrings["isJoin"] = new List<string>() { "true" };
+        if (phase == ActivityPhase.Launched && VisitActivity?.trustRewardEligible == true)
+            ev.AppendStrings["activityTrustEligible"] = new List<string>() { "true" };
         if (latecomer != null) ev.AppendStrings["isLate"] = new List<string>() { "true" };
         // presence flags of the waited / late targets, so the event can branch on them (ExistAppendStrings)
         if (ev.Targets.ContainsKey("waited")) ev.AppendStrings["hasWaited"] = new List<string>() { "true" };
         if (ev.Targets.ContainsKey("late")) ev.AppendStrings["hasLate"] = new List<string>() { "true" };
         ev.AppendStrings[phase == ActivityPhase.Failed ? "activityFailed" : "activityRunning"] = new List<string>() { "true" };
         ev.AppendStrings["activityName"] = new List<string>() { string.IsNullOrEmpty(activityNameKey) ? "" : LocalizeDictionary.QueryThenParse(activityNameKey) };
-        if (withInstanceKey) ev.AppendStrings["instanceKey"] = new List<string>() { key.Serialize() };
+        // a media visit's item ($mediaName$ - RecreationActivity.requireMedia)
+        if (!string.IsNullOrEmpty(mediaItemID))
+            ev.AppendStrings["mediaName"] = new List<string>() { Masterlist_Items.Instance?.Index.GetByID(mediaItemID)?.DisplayName ?? mediaItemID };
+        if (withInstanceKey || isJoin) ev.AppendStrings["instanceKey"] = new List<string>() { key.Serialize() };
         return scr_UpdateHandler.current.EventHandler.StartEvent(ev, false) ? ev : null;
     }
 
@@ -901,6 +1178,12 @@ public class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinableJob, I
     /// </summary>
     public virtual bool Dispatch(Character_Trainable c)
     {
+        // Once checked in, the ordinary home behavior (including sleep) owns this guest.
+        if (HasOvernightGuest(c)) return false;
+        if (!string.IsNullOrEmpty(VisitActivity?.reserveFurnitureTag)) return DispatchReserved(c);
+        if (UsesChildJob) return DispatchChild(c);
+        var fac = VisitActivity?.facility;
+        if (fac != null) return DispatchFacility(c, fac);
         var booking = BookingOf(c);
         var venue = booking?.Faction;
         if (c == null || venue == null) return false;
@@ -1006,6 +1289,8 @@ public class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinableJob, I
     {
         if (phase == ActivityPhase.Ended) return;
         phase = ActivityPhase.Ended;
+        ReleaseReservedResources();
+        ReleaseFacility();
         endedQuiet = false;
         foreach (var rec in participants) if (rec.state != ActivityParticipantState.Left) rec.state = ActivityParticipantState.Left;
         TakeSnapshot(targetSnapshot ?? injectedTargets ?? new Dictionary<string, List<int>>());   // closes a pending subscription too
@@ -1059,6 +1344,17 @@ public class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinableJob, I
             if (nowAbs >= b.AbsEnd) { EndJob("visit over"); return; }
         }
 
+        if (setupPending)
+        {
+            RetryDueSetup();   // the venue normally does this at T first
+            if (setupPending) { CheckGather(); return; }   // still before T: presence only
+            if (phase != ActivityPhase.Gathering) return;
+        }
+        SyncReservationParticipants();
+        if (phase == ActivityPhase.Ended) return;
+        CheckFacility();
         if (phase == ActivityPhase.Gathering) CheckGather();
+        // this coordinator's own room associations only: movement, breaks, child jobs and phase changes reconcile here
+        if (phase == ActivityPhase.Gathering || phase == ActivityPhase.Launched) RefreshActivityRooms();
     }
 }

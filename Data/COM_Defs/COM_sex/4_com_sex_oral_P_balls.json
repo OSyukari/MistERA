@@ -6,6 +6,8 @@
             {
                 "parentCOMID":"com_sex_service_base",
                 "ID":"com_sex_oral_P_balls",
+                "_comment_traces":"Body traces: saliva on the penis (testicles), pubes on the doer's face (low chance).",
+                "traceKeywords":["lick","oral"],
                 "ActionPackageClass":"ActionPackage_Sex",
                 "categoryTags":["com_category_service"],
                 "displayName":"com_sex_oral_P_balls_displayName_1",

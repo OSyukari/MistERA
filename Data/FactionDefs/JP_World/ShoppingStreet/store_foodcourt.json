@@ -1,0 +1,79 @@
+{
+    "_comment": "WP2 tenant replacing the fast-food placeholder in the existing fastfood_counter shop slot on floor_jp_shopping_street; no additional room or entrance. Also absorbs the jp_family_restaurant map placeholder. The 900 JPY activity fee includes the meal; launch events do not charge again. Meal inventory follows the hospital pattern. The tables give the standard com_furniture_getmeal (one command, one ActionPackage_ItemConsume per meal item in the venue's inventory - only consumable_jp_mall_foodcourt_meal here); the activity uses that command. No customer-service engine required.",
+    "_comment_staff_art": "PLACEHOLDER: waiter portraits/uniforms reuse the existing jp_store_clerk generator until dedicated food court staff art is available.",
+    "MapPlans": {
+        "factionInit": [{
+            "ID":"jp_mall_foodcourt", "initializeFaction":"jp_mall_foodcourt", "setPrivateRoomOwner":false,
+            "mainExit":{"roomID":"fastfood_counter","exitCost":5}, "floors":[],
+            "mealHours":[11,12,13,18,19,20],
+            "initializers":[{"initClass":"campaign_init_factionInventory","initArguments":["jp_mall_foodcourt","consumable_jp_mall_foodcourt_meal","","1"]}],
+            "salesCurrency":"currency_JPY", "salesInventory":[{"matchByID":"consumable_jp_mall_foodcourt_meal"}],
+            "assignableMemberTypes":["membertype_jp_mall_waiter"], "joinableMemberTypes":["membertype_jp_mall_waiter"],
+            "fallbackWorkers":[
+                {"memberTypeID":"membertype_jp_mall_waiter_day","headcount":1,"maxFallback":1,"templateID":"jp_store_clerk"},
+                {"memberTypeID":"membertype_jp_mall_waiter_evening","headcount":1,"maxFallback":1,"templateID":"jp_store_clerk"}
+            ],
+                "activeHoursStart":10,
+                "activeHoursEnd":21,
+            "managerBaseIDs":[""], "workModules":[], "workHours":[], "workAssignment":[]
+        }],
+        "memberTypes":[{
+            "ID":"membertype_jp_mall_waiter", "socialStandingKey":"membertype_jp_mall_waiter", "isMember":true,
+            "Tags":["memberType_work_partTime","jp_mall_foodcourt_hiring"],
+            "joinHandler":{"$type":"JoinHandler_WorkPost, Assembly-CSharp","optionTextKey":"jp_mall_foodcourt_joinOption","bindTargetKey":"worker"},
+            "leaveHandler":{"$type":"LeaveHandler_WorkPost, Assembly-CSharp","optionTextKey":"work_post_leaveOption","bindTargetKey":"worker"},
+            "childMemberTypes":[
+                {"ID":"membertype_jp_mall_waiter_day","socialStandingKey":"jp_mall_waiter_day","workModule":{"jobPostID":"jp_mall_waiter_day","workCommands":["jp_mall_foodcourt_waiter_duty"],"activeHours":[10,11,12,13,14,15],"activeDays":[],"hourlyPayout":[{"itemID":"currency_JPY","itemCount":1200}],"paymentCadence":"Daily","holidayPayoutMultiplier":1.2}},
+                {"ID":"membertype_jp_mall_waiter_evening","socialStandingKey":"jp_mall_waiter_evening","workModule":{"jobPostID":"jp_mall_waiter_evening","workCommands":["jp_mall_foodcourt_waiter_duty"],"activeHours":[16,17,18,19,20,21],"activeDays":[],"hourlyPayout":[{"itemID":"currency_JPY","itemCount":1200}],"paymentCadence":"Daily","holidayPayoutMultiplier":1.2}}
+            ]
+        }],
+        "recreationOffers":[{
+            "ID":"jp_mall_foodcourt_eat_together", "mode":"Flexible", "factionID":"jp_mall_foodcourt", "minHours":2,"maxHours":2,
+            "workModule":{"jobPostID":"jp_mall_foodcourt_eat_together","workCommands":["com_furniture_getmeal"],"activeHours":[11,12,13,18,19,20],"activeDays":[]},
+            "entranceFee":{"itemID":"currency_JPY","itemCount":900}, "gatherRoomID":"fastfood_counter", "launchEventID":"Mall_Foodcourt_Begin",
+            "weight":1.0,"participationChance":0.5,"minDaysBetween":1,"daysInAdvance":0,"allowWalkIn":true,
+            "invite":{"visibility":"Friends","inviteChance":1.0,"minParticipants":1},
+            "AcceptanceMods":[{"Requirement_ActionPackage":{"targetComID":"com_furniture_getmeal","isDoer":true},"Result_EvaluationPackage":{"overrideResponse":"Accept","overrideResponseExplanation":"jp_mall_foodcourt_activity_accept"}}]
+        }]
+    },
+    "Furnitures":{"list":[
+        {"ID":"furniture_jp_mall_foodcourt_tables","displayName":"jp_mall_foodcourt_tables","recipe":[],"furnitureSize":0,"value":100000,"Tags":[],"givesJob":[{"comID":["com_furniture_getmeal"]}]},
+        {"ID":"furniture_jp_mall_foodcourt_counter","displayName":"jp_mall_foodcourt_counter","recipe":[],"furnitureSize":0,"value":50000,"Tags":[],"givesJob":[{"comID":["jp_mall_foodcourt_waiter_duty"]},{"comTags":["furniture","retailTrade"]}]}
+    ]},
+    "COMs":{"list":[
+        {
+            "ID":"jp_mall_foodcourt_waiter_duty","ActionPackageClass":"ActionPackage_Interaction","displayName":"jp_mall_foodcourt_waiter_duty","timeScale":30,"comTags":["job","furniture"],
+            "requirements":{"requirement":{"treatReceiverAsDoer":true,"req_Doers":{"requireJobFaction":"CurrentActive","requireMemberTypeScope":"JobFaction","requireMemberType":["membertype_jp_mall_waiter"]}}},
+            "variants":[{"requirements":{"requirement":{"doerCount":1,"req_Doers":{"cost_ST":5,"cost_EN":5}}},"displayName":"jp_mall_foodcourt_waiter_duty"}],
+            "AcceptanceCheck":{"baseAcceptanceValue":0},"DifficultyCheck":{"baseD20Check":0},
+            "description_begin":{"Entries":[{"texts":["jp_mall_foodcourt_waiter_begin"]}]},"description_ongoing":{"Entries":[{"texts":["jp_mall_foodcourt_waiter_ongoing"]}]},"description_after":{"Entries":[{"texts":["jp_mall_foodcourt_waiter_after"]}]}
+        }
+    ]},
+    "Items":{"list":[{
+        "id":"consumable_jp_mall_foodcourt_meal","Tags":["food_meal","consumable","industrial"],"value":900,
+        "itemComps_Template":[{"compType":"ItemComponent_Ingestible","comp_Ingestible":{"ingestMethod":[{"bodyTags":"stomach","digestSpeed":-1,"digestDelay":30,"digestDelayVariation":10,"amountMod":8}],"amount":5,"OnUseEffects":[{"effectID":"ModStatValuePercent","arguments":["stats_derived_extended_energy","0.2"]},{"effectID":"ModStatValuePercent","arguments":["stats_derived_extended_stamina","0.1"]}]}}]
+    }]},
+    "Dictionary":{"Entries":{"zh-cn":{
+        "jp_mall_foodcourt":"站前商场美食广场",
+        "jp_mall_foodcourt_room":"美食广场",
+        "jp_mall_foodcourt_tables":"美食广场餐桌",
+        "jp_mall_foodcourt_counter":"餐饮服务柜台",
+        "membertype_jp_mall_waiter":"美食广场兼职服务员",
+        "jp_mall_waiter_day":"服务员 日班10—16时",
+        "jp_mall_waiter_evening":"服务员 晚班16—22时",
+        "jp_mall_foodcourt_joinOption":"让$name$担任$memberType$",
+        "jp_mall_foodcourt_eat_together":"一起外出吃饭（含套餐）",
+        "jp_mall_foodcourt_activity_accept":"正在参加聚餐",
+        "jp_mall_foodcourt_meal_name":"在美食广场用餐",
+        "jp_mall_foodcourt_meal_group":"一起在美食广场用餐",
+        "jp_mall_foodcourt_meal_begin":"$doer.firstname$端着套餐，在餐桌旁坐下。",
+        "jp_mall_foodcourt_meal_ongoing":"$doer.firstname$正在吃饭，周围满是餐具碰响与交谈声。",
+        "jp_mall_foodcourt_meal_after":"$doer.firstname$吃完饭，收好了餐盘。",
+        "jp_mall_foodcourt_waiter_duty":"餐饮柜台与餐区整理",
+        "jp_mall_foodcourt_waiter_begin":"$doer.firstname$到柜台接班，开始整理餐区。",
+        "jp_mall_foodcourt_waiter_ongoing":"$doer.firstname$正在收餐盘、擦桌面，照看取餐柜台。",
+        "jp_mall_foodcourt_waiter_after":"$doer.firstname$整理好这一批餐盘，完成了一轮工作。",
+        "consumable_jp_mall_foodcourt_meal":"美食广场套餐",
+        "consumable_jp_mall_foodcourt_meal_tooltip":"米饭、热菜与一碗汤。聚餐活动费用已含套餐。"
+    }}}
+}

@@ -1,0 +1,3 @@
+{
+    "Dictionary": { "Entries": { "en-us": { "jp_neon_dispatch": "Kiryu Dispatch Office", "membertype_neon_dispatch_reception": "Dispatch Office Reception", "membertype_neon_dispatch_manager": "Dispatch Office Manager 18-05", "membertype_neon_dispatch_driver": "Driver Standby 18-05", "membertype_neon_dispatch_worker": "Dispatch Worker Standby (Dispatch Unavailable)", "neon_dispatch_worker_evening": "Dispatch Standby 18-22", "neon_dispatch_worker_night": "Dispatch Standby 22-05" } } }
+}

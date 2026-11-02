@@ -1,0 +1,7 @@
+{
+    "Dictionary": { "Entries": { "en-us": {
+        "jp_neon_livehouse": "Neon Livehouse", "membertype_neon_live_staff": "Part-Time Livehouse Staff", "membertype_neon_live_counter": "Tickets and Bar 15-24", "membertype_neon_live_pa": "Sound Technician 15-24", "membertype_neon_band_performer": "Resident Band Fri/Sat 18-21", "neon_band_member_title": "Band Member", "neon_live_stage": "Stage Equipment", "neon_pa_desk": "Mixing Desk", "neon_live_audience": "Attend a Live Show", "jp_neon_band_perform": "Perform on Stage", "jp_neon_live_soundcheck": "Operate Sound Equipment",
+        "jp_neon_watch_live": "Watch the live performance from the audience floor during show hours.",
+        "neon_perform_begin": "$doer.firstname$ steps on stage and checks the instruments and microphone.", "neon_perform_ongoing": "$doer.firstname$ plays on stage, the rhythm carrying across the audience floor.", "neon_perform_end": "$doer.firstname$ lets the last note fade and adjusts the equipment.", "neon_pa_ongoing": "$doer.firstname$ checks the levels through headphones.", "neon_pa_end": "$doer.firstname$ notes the mixer settings.", "neon_watch_begin": "$doer.firstname$ finds a place on the audience floor.", "neon_watch_ongoing": "$doer.firstname$ nods along to the music on stage.", "neon_watch_end": "$doer.firstname$ applauds with the crowd."
+    } } }
+}

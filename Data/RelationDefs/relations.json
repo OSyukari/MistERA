@@ -278,24 +278,29 @@
         "list_personal":[
             {
                 "$type":"RelationshipType, Assembly-CSharp",
+                "_commentLastingEntry":"Friendship/romantic entries use lasting raw scores (stored + current relationship bonuses) and decider Mood >= 0, not mood/lust/stress/pride score multipliers. Sources: RelationshipAttitude.cs RelationshipRequirement.GetScore/Validate; Character_Relationship.cs *_Raw. Rival/Bully, biological/social roles, maintenance and natural reconsideration are separate policies.",
 
                 "ID":"relationship_friend",
-                "permission":{ "lead_follow":true, "intimacy_low":true },
+                "permission":{ "lead_follow":true },
                 "displayName":"relationship_friend_displayName",
-                "canUpgradeInto":["relationship_bff"],
+                "canUpgradeInto":["relationship_couple","relationship_bff"],
+                "_commentNaturalChange":"Provisional natural reconsideration policy: current Badwill attitude, pair-dominant Badwill and positive effective Badwill must agree. No causal attribution or new memory/state system; entry and maintenance thresholds are unchanged.",
+                "naturalChangeRequirement":{
+                    "attitudeKeywords":["Badwill"],
+                    "dominantScore":"Badwill",
+                    "requirements":{"requireScore":[{"requireScoreID":"Badwill","operand":"gt","value":0}]}
+                },
                 "RelationshipMod":[0,5,0,0,0],
-                "trustCapIncrease":25,
+                "trustCapIncrease":75,
                 "Requirements":
                 {
                     "requireRawScore":[
+                        {"requireScoreID":"Trust","operand":"gte","value":10},
                         {"requireScoreID":"Goodwill","operand":"gte","value":50}
                     ],
                     "requireRawScoreCompare":[
                         {"requireScoreID":"Goodwill","operand":"gt","compareScoreID":"Badwill","compareScoreMult":1.1}
                     ],
-                    "requireScore":[ 
-                        {"requireScoreID":"Trust","operand":"gte","value":10},
-                        {"requireScoreID":"Goodwill","operand":"gte","value":50}],
                     "requireMood":{"operand":"gte","value":0}
                 },
                 "MainEmotionKey":"Badwill", "tags":["Badwill"],
@@ -310,7 +315,13 @@
                 "$type":"RelationshipType, Assembly-CSharp",
 
                 "ID":"relationship_bff",
-                "permission":{ "lead_follow":true,  "intimacy_low":true },
+                "_commentNaturalChange":"Provisional natural reconsideration policy: current Badwill attitude, pair-dominant Badwill and positive effective Badwill must agree. No causal attribution or new memory/state system; entry and maintenance thresholds are unchanged.",
+                "naturalChangeRequirement":{
+                    "attitudeKeywords":["Badwill"],
+                    "dominantScore":"Badwill",
+                    "requirements":{"requireScore":[{"requireScoreID":"Badwill","operand":"gt","value":0}]}
+                },
+                "permission":{ "lead_follow":true },
                 "canUpgradeInto":["relationship_couple"],
                 "displayName":"relationship_bff_displayName",
                 "RelationshipMod":[35,20,0,0,0],
@@ -323,10 +334,6 @@
                     ],
                     "requireRawScoreCompare":[
                         {"requireScoreID":"Goodwill","operand":"gt","compareScoreID":"Badwill","compareScoreMult":1.1}
-                    ],
-                    "requireScore":[
-                        {"requireScoreID":"Trust","operand":"gte","value":75},
-                        {"requireScoreID":"Goodwill","operand":"gte","value":75}
                     ],
                     "requireMood":{"operand":"gte","value":0}
                 },
@@ -345,7 +352,13 @@
                 "$type":"RelationshipType, Assembly-CSharp",
 
                 "ID":"relationship_couple",
-                "permission":{ "intimacy_low":true, "intimacy_medium":true, "intimacy_high":true, "lead_follow":true, "formFamily":true },
+                "_commentNaturalChange":"Provisional natural reconsideration policy: current Badwill attitude, pair-dominant Badwill and positive effective Badwill must agree. No causal attribution or new memory/state system; entry and maintenance thresholds are unchanged.",
+                "naturalChangeRequirement":{
+                    "attitudeKeywords":["Badwill"],
+                    "dominantScore":"Badwill",
+                    "requirements":{"requireScore":[{"requireScoreID":"Badwill","operand":"gt","value":0}]}
+                },
+                "permission":{ "lead_follow":true, "formFamily":true },
                 "canUpgradeInto":["relationship_marriage"],
                 "displayName":"relationship_couple_displayName",
                 "hasGenderVariant":true,
@@ -355,19 +368,16 @@
                 "Requirements":
                 {
                     "requireRawScore":[
-                        {"requireScoreID":"Trust","operand":"gte","value":50},
-                        {"requireScoreID":"Desire","operand":"gte","value":100}
+                        {"requireScoreID":"Trust","operand":"gte","value":75},
+                        {"requireScoreID":"Desire","operand":"gte","value":100},
+                        {"requireScoreID":"Goodwill","operand":"gte","value":40}
                     ],
                     "requireRawScoreCompare":[
                         {"requireScoreID":"Desire","operand":"gt","compareScoreID":"Badwill","compareScoreMult":1.1}
                     ],
-                    "requireScore":[
-                        {"requireScoreID":"Trust","operand":"gte","value":75},
-                        {"requireScoreID":"Desire","operand":"gte","value":100},
-                        {"requireScoreID":"Goodwill","operand":"gte","value":40}],
                     "requireMood":{"operand":"gte","value":0}
                 },
-                "MainEmotionKey":"Badwill", "tags":["Badwill"],
+                "MainEmotionKey":"Badwill", "tags":["Badwill","sexual_partner"],
                 "MaintenanceRequirements":
                 {
                     "requireRawScore":[
@@ -384,7 +394,13 @@
                 "$type":"RelationshipType, Assembly-CSharp",
 
                 "ID":"relationship_marriage",
-                "permission":{ "intimacy_low":true, "intimacy_medium":true,  "intimacy_high":true, "lead_follow":true, "formFamily":true },
+                "_commentNaturalChange":"Provisional natural reconsideration policy: current Badwill attitude, pair-dominant Badwill and positive effective Badwill must agree. No causal attribution or new memory/state system; entry and maintenance thresholds are unchanged.",
+                "naturalChangeRequirement":{
+                    "attitudeKeywords":["Badwill"],
+                    "dominantScore":"Badwill",
+                    "requirements":{"requireScore":[{"requireScoreID":"Badwill","operand":"gt","value":0}]}
+                },
+                "permission":{ "lead_follow":true, "formFamily":true },
                 "displayName":"relationship_marriage_displayName",
                 "allowNaturalProposition":false,
                 "hasGenderVariant":true,
@@ -400,13 +416,9 @@
                     "requireRawScoreCompare":[
                         {"requireScoreID":"Goodwill","operand":"gt","compareScoreID":"Badwill","compareScoreMult":1.1}
                     ],
-                    "requireScore":[
-                        {"requireScoreID":"Trust","operand":"gte","value":150},
-                        {"requireScoreID":"Goodwill","operand":"gte","value":150}
-                    ],
-                    "requireMood":{"operand":"gte","value":2}
+                    "requireMood":{"operand":"gte","value":0}
                 },
-                "MainEmotionKey":"Badwill", "tags":["Badwill","unsafe"],
+                "MainEmotionKey":"Badwill", "tags":["Badwill","unsafe","sexual_partner"],
                 "MaintenanceRequirements":
                 {
                     "requireRawScore":[

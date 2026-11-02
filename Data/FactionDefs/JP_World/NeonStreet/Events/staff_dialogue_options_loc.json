@@ -1,0 +1,15 @@
+{
+    "Dictionary": { "Entries": { "en-us": {
+        "Neon_Apply_KaraokeDesk": "Apply for Karaoke Reception", "Neon_Apply_KaraokeRoom": "Apply as Room Attendant", "Neon_Apply_LiveStaff": "Apply for Tickets and Bar", "Neon_Apply_Massage": "Apply for Practitioner Standby", "Neon_Apply_Izakaya": "Apply for Izakaya Work", "Neon_Apply_Bartender": "Apply as Bartender", "Neon_Apply_Hostess": "Voluntarily Apply for Hostess Standby", "Neon_Apply_Soapland": "Voluntarily Apply for Soapland Standby", "Neon_Apply_Dispatch": "Voluntarily Apply for Dispatch Standby",
+        "Neon_Quit_Karaoke": "Quit Karaoke Work", "Neon_Quit_LiveStaff": "Quit Livehouse Work", "Neon_Quit_Massage": "Quit Practitioner Post", "Neon_Quit_Izakaya": "Quit Izakaya Work", "Neon_Quit_Bartender": "Quit Bartender Post", "Neon_Quit_Hostess": "Quit Hostess Standby", "Neon_Quit_Soapland": "Quit Soapland Post", "Neon_Quit_Dispatch": "Quit Dispatch Office Post",
+        "neon_karaoke_hiring": "\"We hire part-time receptionists and room attendants. Day shift is 12-22 at 1,200 yen an hour; late shift is 22-05 at 1,500. Paid daily.\"",
+        "neon_live_hiring": "\"Tickets and bar work runs 15-24 at 1,300 yen an hour, paid daily. We are not recruiting band members.\"",
+        "neon_massage_hiring": "\"We are only registering practitioners for standby. No customers or extra menu. The 12-22 shift pays 1,500 yen an hour; 22-02 pays 1,875, settled daily.\"",
+        "neon_izakaya_hiring": "\"Evening shift is 17-22 at 1,200 yen an hour. The 22-01 shift pays 1,500. Paid daily.\"",
+        "neon_bartender_hiring": "\"Bartenders earn 1,400 yen an hour on the 19-24 shift, or 1,750 on the 22-04 shift. Paid daily.\"",
+        "neon_adult_hiring": "\"These are voluntarily chosen standby posts, and workers may quit. There are currently no customers, hostess services or dispatches, and no per-client pay. Standby pays 1,800 yen an hour, or 2,250 on shifts starting at 22, settled daily.\"",
+        "neon_apply_question": "\"Who is applying?\"", "neon_adult_apply_question": "\"Select a candidate only if this is their voluntary application for standby. Otherwise, cancel.\"",
+        "neon_apply_done": "\"Registered. The shift can be changed later.\"\n(Change shifts in the permanent household's Management Jobs tab.)", "neon_adult_apply_done": "\"Registered for standby, not consent to any service. You may change shifts or quit here.\"\n(Change shifts in the permanent household's Management Jobs tab.)",
+        "neon_quit_question": "\"Who is leaving their post?\"", "neon_quit_done": "\"The resignation is processed. Thank you for your work.\"", "neon_staff_cancel": "Cancel", "neon_staff_cancel_line": "\"Then we will leave things as they are.\""
+    } } }
+}

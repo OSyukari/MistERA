@@ -6,11 +6,13 @@
             {
                 "parentCOMID":"com_sex_base",
                 "ID":"com_sex_P_cowgirl_A",
+                "_comment_traces":"Body traces: aroused precum into the anus, pubes on the lower body, anal pubes on the penis (natural only), chances.",
+                "traceKeywords":["insert"],
                 "ActionPackageClass":"ActionPackage_Sex",
                 "categoryTags":["com_category_a"],
                 "displayName":"com_sex_P_cowgirl_A_displayName_1",
                 "timeScale":3,
-                "comTags":["sex","penetration", "position_face", "position_equal"],
+                "comTags":["sex","penetration", "position_face", "position_equal","permission_anal"],
                 "portraitTags":["anal", "cowgirl"],
                 "requirements":{
                     "requirement":{

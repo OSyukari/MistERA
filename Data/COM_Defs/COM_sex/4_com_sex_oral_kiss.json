@@ -13,6 +13,8 @@
                 "comTags":["sex",
                     "service","position_face", "position_equal"],
                 "portraitTags":["kiss"],
+                "_comment_traces":"Body traces (Data/RaceDefs/TraceDefs.json): only the tongue (force, French kiss) variant: saliva into each other's mouth, 20% of it on each other's face.",
+                "traceKeywords_strong":["kiss"],
                 "requirements":{
                     "requirement":{
                         "req_Doers":{

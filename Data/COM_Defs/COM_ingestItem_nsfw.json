@@ -1,44 +1,33 @@
 {
+    "_doc": "Anal / vaginal routes of the item use commands (see COM_ingestItem.json, Docs/Interactions/Plan_UseItemFolders.md). Hidden generator templates, one command per consumable with the route, listed under that item's 使用 folder. _self = the doer on themselves (selfOnly, any target is ignored), _onTarget = the doer on the receiver.",
     "COMs": {
         "list": [
             {
-                "ID": "com_furniture_ingestAnus",
+                "ID": "com_furniture_ingestAnus_self",
                 "ActionPackageClass": "ActionPackage_Interaction",
-                "displayName": "com_furniture_ingestAnus_displayName",
-                "comTags": ["interaction", "ingestItem", "allowedDuringSex"],
-                "requirements": {
-                    "requirement": {
-                        "req_Receivers": { "requireConscious": false, "requireAction": false }
-                    }
-                },
+                "displayName": "com_furniture_ingestAnus_self",
+                "hidden": true,
                 "GenerateCOM": {
                     "itemTag": "consumable",
                     "targetCOMClass": {
                         "$type": "COM_IngestItem, Assembly-CSharp",
-                        "ID": "com_furniture_ingestAnus",
+                        "ID": "com_furniture_ingestAnus_self",
                         "ActionPackageClass": "ActionPackage_Interaction",
-                        "HideWhenInvalid": true,
-                        "displayName": "com_furniture_ingestAnus_displayName",
+                        "displayName": "com_furniture_ingestAnus_self",
+                        "itemFolder": "$itemID$",
+                        "selfOnly": true,
                         "ingestBodyTag": "anus",
                         "timeScale": 5,
-                        "comTags": ["interaction", "ingestItem", "allowedDuringSex"],
+                        "comTags": ["interaction", "ingestItem", "allowedDuringSex", "permission_anal"],
                         "requirements": {
                             "requirement": {
-                                "req_Receivers": { "requireConscious": false, "requireAction": false }
+                                "req_Receivers": { "BodyTags": ["anus"], "minRevealingScore": 1, "requireConscious": false, "requireAction": false }
                             }
                         },
                         "variants": [
                             {
                                 "requirements": { "requirement": { "doerCount": 1, "receiverCount": 0, "treatDoerAsReceiver": true } },
-                                "displayName": "com_furniture_ingestAnus_displayName_self"
-                            },
-                            {
-                                "requirements": { "requirement": { "doerCount": 1, "receiverCount": 1 } },
-                                "displayName": "com_furniture_ingestAnus_displayName_administer",
-                                "useBaseDescription": false,
-                                "description_begin": { "Entries":[{"texts":["com_furniture_ingestAnus_begin_administer"]}], "keepLooking": false },
-                                "description_ongoing": { "Entries":[{"texts":["com_furniture_ingestAnus_ongoing_administer"]}], "keepLooking": false },
-                                "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_furniture_ingestAnus_onComplete_administer"]}] }
+                                "displayName": "com_furniture_ingestAnus_self"
                             }
                         ],
                         "AcceptanceCheck": { "baseAcceptanceValue": 40 },
@@ -50,43 +39,66 @@
                 }
             },
             {
-                "ID": "com_furniture_ingestVagina",
+                "ID": "com_furniture_ingestAnus_onTarget",
                 "ActionPackageClass": "ActionPackage_Interaction",
-                "displayName": "com_furniture_ingestVagina_displayName",
-                "comTags": ["interaction", "ingestItem", "allowedDuringSex"],
-                "requirements": {
-                    "requirement": {
-                        "req_Receivers": { "requireConscious": false, "requireAction": false }
-                    }
-                },
+                "displayName": "com_furniture_ingestAnus_onTarget",
+                "hidden": true,
                 "GenerateCOM": {
                     "itemTag": "consumable",
                     "targetCOMClass": {
                         "$type": "COM_IngestItem, Assembly-CSharp",
-                        "ID": "com_furniture_ingestVagina",
+                        "ID": "com_furniture_ingestAnus_onTarget",
                         "ActionPackageClass": "ActionPackage_Interaction",
-                        "HideWhenInvalid": true,
-                        "displayName": "com_furniture_ingestVagina_displayName",
-                        "ingestBodyTag": "vagina",
+                        "displayName": "com_furniture_ingestAnus_onTarget",
+                        "itemFolder": "$itemID$",
+                        "ingestBodyTag": "anus",
                         "timeScale": 5,
-                        "comTags": ["interaction", "ingestItem", "allowedDuringSex"],
+                        "comTags": ["interaction", "ingestItem", "allowedDuringSex", "permission_anal"],
                         "requirements": {
                             "requirement": {
-                                "req_Receivers": { "requireConscious": false, "requireAction": false }
+                                "req_Receivers": { "BodyTags": ["anus"], "minRevealingScore": 1, "requireConscious": false, "requireAction": false }
+                            }
+                        },
+                        "variants": [
+                            {
+                                "requirements": { "requirement": { "doerCount": 1, "receiverCount": 1 } },
+                                "displayName": "com_furniture_ingestAnus_onTarget"
+                            }
+                        ],
+                        "AcceptanceCheck": { "baseAcceptanceValue": 40 },
+                        "DifficultyCheck": { "baseD20Check": 0 },
+                        "description_begin": { "Entries":[{"texts":["com_furniture_ingestAnus_begin_administer"]}], "keepLooking": false },
+                        "description_ongoing": { "Entries":[{"texts":["com_furniture_ingestAnus_ongoing_administer"]}], "keepLooking": false },
+                        "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_furniture_ingestAnus_onComplete_administer"]}] }
+                    }
+                }
+            },
+            {
+                "ID": "com_furniture_ingestVagina_self",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_furniture_ingestVagina_self",
+                "hidden": true,
+                "GenerateCOM": {
+                    "itemTag": "consumable",
+                    "targetCOMClass": {
+                        "$type": "COM_IngestItem, Assembly-CSharp",
+                        "ID": "com_furniture_ingestVagina_self",
+                        "ActionPackageClass": "ActionPackage_Interaction",
+                        "displayName": "com_furniture_ingestVagina_self",
+                        "itemFolder": "$itemID$",
+                        "selfOnly": true,
+                        "ingestBodyTag": "vagina",
+                        "timeScale": 5,
+                        "comTags": ["interaction", "ingestItem", "allowedDuringSex", "permission_vaginal"],
+                        "requirements": {
+                            "requirement": {
+                                "req_Receivers": { "BodyTags": ["vagina"], "minRevealingScore": 1, "requireConscious": false, "requireAction": false }
                             }
                         },
                         "variants": [
                             {
                                 "requirements": { "requirement": { "doerCount": 1, "receiverCount": 0, "treatDoerAsReceiver": true } },
-                                "displayName": "com_furniture_ingestVagina_displayName_self"
-                            },
-                            {
-                                "requirements": { "requirement": { "doerCount": 1, "receiverCount": 1 } },
-                                "displayName": "com_furniture_ingestVagina_displayName_administer",
-                                "useBaseDescription": false,
-                                "description_begin": { "Entries":[{"texts":["com_furniture_ingestVagina_begin_administer"]}], "keepLooking": false },
-                                "description_ongoing": { "Entries":[{"texts":["com_furniture_ingestVagina_ongoing_administer"]}], "keepLooking": false },
-                                "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_furniture_ingestVagina_onComplete_administer"]}] }
+                                "displayName": "com_furniture_ingestVagina_self"
                             }
                         ],
                         "AcceptanceCheck": { "baseAcceptanceValue": 40 },
@@ -96,15 +108,49 @@
                         "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_furniture_ingestVagina_onComplete_1"]}] }
                     }
                 }
+            },
+            {
+                "ID": "com_furniture_ingestVagina_onTarget",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_furniture_ingestVagina_onTarget",
+                "hidden": true,
+                "GenerateCOM": {
+                    "itemTag": "consumable",
+                    "targetCOMClass": {
+                        "$type": "COM_IngestItem, Assembly-CSharp",
+                        "ID": "com_furniture_ingestVagina_onTarget",
+                        "ActionPackageClass": "ActionPackage_Interaction",
+                        "displayName": "com_furniture_ingestVagina_onTarget",
+                        "itemFolder": "$itemID$",
+                        "ingestBodyTag": "vagina",
+                        "timeScale": 5,
+                        "comTags": ["interaction", "ingestItem", "allowedDuringSex", "permission_vaginal"],
+                        "requirements": {
+                            "requirement": {
+                                "req_Receivers": { "BodyTags": ["vagina"], "minRevealingScore": 1, "requireConscious": false, "requireAction": false }
+                            }
+                        },
+                        "variants": [
+                            {
+                                "requirements": { "requirement": { "doerCount": 1, "receiverCount": 1 } },
+                                "displayName": "com_furniture_ingestVagina_onTarget"
+                            }
+                        ],
+                        "AcceptanceCheck": { "baseAcceptanceValue": 40 },
+                        "DifficultyCheck": { "baseD20Check": 0 },
+                        "description_begin": { "Entries":[{"texts":["com_furniture_ingestVagina_begin_administer"]}], "keepLooking": false },
+                        "description_ongoing": { "Entries":[{"texts":["com_furniture_ingestVagina_ongoing_administer"]}], "keepLooking": false },
+                        "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_furniture_ingestVagina_onComplete_administer"]}] }
+                    }
+                }
             }
         ]
     },
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "com_furniture_ingestAnus_displayName": "肛塞给药",
-                "com_furniture_ingestAnus_displayName_self": "自行塞入$name$",
-                "com_furniture_ingestAnus_displayName_administer": "为其塞入$name$",
+                "com_furniture_ingestAnus_self": "自行塞入肛门",
+                "com_furniture_ingestAnus_onTarget": "塞入对方肛门",
                 "com_furniture_ingestAnus_begin_1": "$doer.firstname$将$name$塞入了肛门",
                 "com_furniture_ingestAnus_ongoing_1": "$doer.firstname$正在用药",
                 "com_furniture_ingestAnus_onComplete_1": "$doer.firstname$用药完毕",
@@ -112,36 +158,14 @@
                 "com_furniture_ingestAnus_ongoing_administer": "$doer.firstname$正在为$receiver.firstname$用药",
                 "com_furniture_ingestAnus_onComplete_administer": "$doer.firstname$为$receiver.firstname$用药完毕",
 
-                "com_furniture_ingestVagina_displayName": "阴道给药",
-                "com_furniture_ingestVagina_displayName_self": "自行塞入$name$",
-                "com_furniture_ingestVagina_displayName_administer": "为其塞入$name$",
+                "com_furniture_ingestVagina_self": "自行塞入阴道",
+                "com_furniture_ingestVagina_onTarget": "塞入对方阴道",
                 "com_furniture_ingestVagina_begin_1": "$doer.firstname$将$name$塞入了阴道",
                 "com_furniture_ingestVagina_ongoing_1": "$doer.firstname$正在用药",
                 "com_furniture_ingestVagina_onComplete_1": "$doer.firstname$用药完毕",
                 "com_furniture_ingestVagina_begin_administer": "$doer.firstname$将$name$塞入了$receiver.firstname$的阴道",
                 "com_furniture_ingestVagina_ongoing_administer": "$doer.firstname$正在为$receiver.firstname$用药",
                 "com_furniture_ingestVagina_onComplete_administer": "$doer.firstname$为$receiver.firstname$用药完毕"
-            },
-            "en-us": {
-                "com_furniture_ingestAnus_displayName": "Anal Medicine",
-                "com_furniture_ingestAnus_displayName_self": "Insert $name$ (self)",
-                "com_furniture_ingestAnus_displayName_administer": "Insert $name$ (administer)",
-                "com_furniture_ingestAnus_begin_1": "$doer.firstname$ inserted $name$ anally",
-                "com_furniture_ingestAnus_ongoing_1": "$doer.firstname$ is administering medicine",
-                "com_furniture_ingestAnus_onComplete_1": "$doer.firstname$ finished administering the medicine",
-                "com_furniture_ingestAnus_begin_administer": "$doer.firstname$ inserted $name$ into $receiver.firstname$'s anus",
-                "com_furniture_ingestAnus_ongoing_administer": "$doer.firstname$ is administering medicine to $receiver.firstname$",
-                "com_furniture_ingestAnus_onComplete_administer": "$doer.firstname$ finished administering medicine to $receiver.firstname$",
-
-                "com_furniture_ingestVagina_displayName": "Vaginal Medicine",
-                "com_furniture_ingestVagina_displayName_self": "Insert $name$ (self)",
-                "com_furniture_ingestVagina_displayName_administer": "Insert $name$ (administer)",
-                "com_furniture_ingestVagina_begin_1": "$doer.firstname$ inserted $name$ vaginally",
-                "com_furniture_ingestVagina_ongoing_1": "$doer.firstname$ is administering medicine",
-                "com_furniture_ingestVagina_onComplete_1": "$doer.firstname$ finished administering the medicine",
-                "com_furniture_ingestVagina_begin_administer": "$doer.firstname$ inserted $name$ into $receiver.firstname$'s vagina",
-                "com_furniture_ingestVagina_ongoing_administer": "$doer.firstname$ is administering medicine to $receiver.firstname$",
-                "com_furniture_ingestVagina_onComplete_administer": "$doer.firstname$ finished administering medicine to $receiver.firstname$"
             }
         }
     }

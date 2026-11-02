@@ -122,6 +122,7 @@ public class Character_Wardrobe
         var copy = source.Clone();
         copy.key = key;
         outfits.Add(copy);
+        InvalidateWanted();
     }
 
     // ---------------- keys / outfits ---------------- //
@@ -245,17 +246,24 @@ public class Character_Wardrobe
         outfits.Add(outfit.Clone());
         RegisterKey(outfit.key);
         if (outfit.key == activeKey) activeOutdated = true;
+        InvalidateWanted();
     }
 
     /// <summary> an outfit held elsewhere (a party's) was edited: if it is the worn one, change again to apply the edit </summary>
     public void NotifyOutfitEdited(string key)
     {
         if (!string.IsNullOrEmpty(key) && key == activeKey) activeOutdated = true;
+        // a party outfit's variants may have changed too
+        InvalidateWanted();
     }
 
     public void RemoveOutfit(string key)
     {
-        if (outfits.RemoveAll(x => x.key == key) > 0 && key == activeKey) activeOutdated = true;
+        if (outfits.RemoveAll(x => x.key == key) > 0)
+        {
+            if (key == activeKey) activeOutdated = true;
+            InvalidateWanted();
+        }
     }
 
     // ---------------- active outfit ---------------- //
@@ -375,12 +383,18 @@ public class Character_Wardrobe
         get
         {
             var list = new List<Item_Instance>(activePieces.Count);
-            foreach (var id in activePieces.Keys)
-            {
-                var item = GetVirtualItem(id);
-                if (item != null) list.Add(item);
-            }
+            GetActivePieceItems(list);
             return list;
+        }
+    }
+
+    /// <summary> ActivePieceItems into a caller's list (appended, not cleared) - no allocation </summary>
+    public void GetActivePieceItems(List<Item_Instance> into)
+    {
+        foreach (var id in activePieces.Keys)
+        {
+            var item = GetVirtualItem(id);
+            if (item != null) into.Add(item);
         }
     }
 
@@ -500,11 +514,11 @@ public class Character_Wardrobe
             // before departure - queued, gathering, gathering failed but still at the camp - keep what is worn
             var party = WardrobeParty;
             if (party != null && party.isPlayerFaction && party.Job != null && party.Job.status < Job_Expedition.ExpeditionStatus.active) return false;
-            var wanted = GetWantedOutfit(out bool keepCurrent, out bool canPutOnHere);
+            RefreshWanted();
             // the right outfit, but the worn clothes drifted from it (e.g. changed by hand), or the season / holiday
             // calls for other variants: put it on again - where it may be put on
-            if (keepCurrent) return canPutOnHere && (IsActiveOutfitDisturbed() || VariantsChanged(wanted));
-            if (EffectiveKey(wanted, ContextTags()) != activeKey) return true;
+            if (wantedKeepCurrent) return wantedCanPutOnHere && (IsActiveOutfitDisturbed() || wantedSignature != (activeVariantSignature ?? ""));
+            if (wantedEffectiveKey != activeKey) return true;
             return activeOutdated;
         }
     }
@@ -513,13 +527,75 @@ public class Character_Wardrobe
     public void ApplyWanted()
     {
         if (owner == null) return;
-        var wanted = GetWantedOutfit(out bool keepCurrent, out bool canPutOnHere);
-        if (keepCurrent && (!canPutOnHere || (!IsActiveOutfitDisturbed() && !VariantsChanged(wanted))))
+        // also called by results / events right after a context change, before the next job search notes it
+        InvalidateWanted();
+        RefreshWanted();
+        if (wantedKeepCurrent && (!wantedCanPutOnHere || (!IsActiveOutfitDisturbed() && wantedSignature == (activeVariantSignature ?? ""))))
         {
             owner.Redress();
             return;
         }
-        ApplyOutfit(wanted);
+        ApplyOutfit(wantedOutfit);
+    }
+
+    // ---------------- wanted outfit cache ---------------- //
+
+    // GetWantedOutfit and its variant resolve, kept until the schedule context (NoteScheduleContext) or the wardrobe
+    // (outfits edited / removed / seeded, ApplyOutfit) changes. Not saved.
+    [JsonIgnore] bool wantedValid = false;
+    [JsonIgnore] OutfitSet wantedOutfit = null;
+    [JsonIgnore] bool wantedKeepCurrent = false;
+    [JsonIgnore] bool wantedCanPutOnHere = false;
+    /// <summary> OutfitSet.Resolve signature of wantedOutfit for today's context tags </summary>
+    [JsonIgnore] string wantedSignature = "";
+    /// <summary> EffectiveKey of wantedOutfit </summary>
+    [JsonIgnore] string wantedEffectiveKey = "";
+
+    // the schedule context the cache was built for
+    [JsonIgnore] I_IsJobGiver lastJobFaction = null;
+    [JsonIgnore] I_IsJobGiver lastLocaleFaction = null;
+    [JsonIgnore] MemberType lastMemberType = null;
+    [JsonIgnore] RecreationActivity lastActivity = null;
+    [JsonIgnore] int lastDay = -1;
+
+    public void InvalidateWanted() { wantedValid = false; }
+
+    /// <summary>
+    /// Character_Trainable.TryGetJob, every job search: drops the wanted outfit when what it is chosen from changed -
+    /// the job / locale faction, the active membertype or activity, or the day (season / holiday variants).
+    /// </summary>
+    public void NoteScheduleContext(I_IsJobGiver jobFaction, I_IsJobGiver localeFaction)
+    {
+        var f = owner?.FactionManager;
+        if (f == null) return;
+        // same as CurrentActiveMemberType / CurrentActiveActivity, from the job faction already resolved by the caller
+        var party = jobFaction as Manageable_Party;
+        MemberType memberType = jobFaction == null ? null : party != null ? party.GetMemberType(owner) : f.GetScheduledMemberType(jobFaction);
+        RecreationActivity activity = jobFaction == null || party != null ? null : f.GetScheduledActivity(jobFaction);
+        int day = scr_System_Time.current != null ? scr_System_Time.current.getAbsoluteDay() : -1;
+        if (jobFaction == lastJobFaction && localeFaction == lastLocaleFaction && memberType == lastMemberType
+            && activity == lastActivity && day == lastDay) return;
+        lastJobFaction = jobFaction;
+        lastLocaleFaction = localeFaction;
+        lastMemberType = memberType;
+        lastActivity = activity;
+        lastDay = day;
+        wantedValid = false;
+    }
+
+    void RefreshWanted()
+    {
+        if (wantedValid) return;
+        wantedOutfit = GetWantedOutfit(out wantedKeepCurrent, out wantedCanPutOnHere);
+        wantedSignature = "";
+        wantedEffectiveKey = "";
+        if (wantedOutfit != null)
+        {
+            // one resolve for both the variant signature and EffectiveKey
+            var resolved = wantedOutfit.Resolve(ContextTags(), out wantedSignature);
+            wantedEffectiveKey = wantedOutfit.key == OutfitUtility.Key_Default && resolved.IsEmpty ? "" : wantedOutfit.key;
+        }
+        wantedValid = true;
     }
 
     /// <summary>
@@ -550,7 +626,7 @@ public class Character_Wardrobe
                 foreach (BodyPartEquipSlot slot in part.availableSlots)
                 {
                     if (!part.TryGetEquip(out var worn, layer, slot) || worn.RefID <= -2) continue;
-                    var comp = worn.GetComp_Equippable();
+                    var comp = worn.Comp_Equippable;
                     if (comp != null && !comp.lockable) return true;
                 }
             }
@@ -670,6 +746,10 @@ public class Character_Wardrobe
             }
         }
 
+        // active pieces / override layers changed - not all of it goes through an equip
+        owner.ClearRedressCache();
+        // activeKey / activeOutdated changed: keepCurrent
+        InvalidateWanted();
         owner.Redress();
         owner.PortraitManager.ClearHandlerCache();
     }

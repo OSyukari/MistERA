@@ -1,0 +1,25 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for OnActionRefuse_sex_Unprotected.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "event_OnAPRefuse_Unprotected_q_plain": "$evTarget.name$ won't $com_variant_name$ without protection and asks for a condom.",
+                "event_OnAPRefuse_Unprotected_q": "$kojo_demand$\n\n%%event_OnAPRefuse_Unprotected_q_plain%%",
+                "event_OnAPRefuse_Unprotected_op_wearSelf": "Put on a condom",
+                "event_OnAPRefuse_Unprotected_op_wearTarget": "Put a condom on $evTarget.name$",
+                "event_OnAPRefuse_Unprotected_op_targetHand": "Let $evTarget.name$ put it on by hand",
+                "event_OnAPRefuse_Unprotected_op_targetMouth": "Let $evTarget.name$ put it on with their mouth",
+                "event_OnAPRefuse_Unprotected_op_unavailable": "Not possible right now:",
+                "event_OnAPRefuse_Unprotected_op_ignore": "Ignore $evTarget.name$",
+                "event_OnAPRefuse_Unprotected_op_giveup": "Give up",
+                "event_OnAPRefuse_Unprotected_condom_self": "$self.name$ puts on a condom.",
+                "event_OnAPRefuse_Unprotected_condom_target": "$self.name$ puts a condom on $evTarget.name$.",
+                "event_OnAPRefuse_Unprotected_condom_partner": "$self.name$ hands the condom to $evTarget.name$.",
+                "event_OnAPRefuse_Unprotected_end": "$self.name$ gives up.",
+                "event_OnAPRefuse_Unprotected_push": "$self.name$ ignores $evTarget.name$'s request and keeps going."
+            }
+        }
+    }
+}

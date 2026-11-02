@@ -96,6 +96,78 @@ public abstract class BodyInternal_Womb
     protected int eggsAvailable => eggs.Count;  // Fertilize() reads this
     protected int fertilizedEggs = 0;       // eggs successfully fertilized
 
+    public Ovum GetOldestOvum()
+    {
+        Ovum oldest = null;
+        if (eggs == null) return null;
+        foreach (var egg in eggs)
+        {
+            if (egg != null && (oldest == null || egg.isOlderThan(oldest))) oldest = egg;
+        }
+        return oldest;
+    }
+
+    public Ovum FindOvum(OvumState state)
+    {
+        if (eggs == null) return null;
+        foreach (var egg in eggs)
+        {
+            if (egg != null && egg.State == state) return egg;
+        }
+        return null;
+    }
+
+    public void ClampRunningLabor()
+    {
+        if (eggs == null) return;
+        foreach (var egg in eggs)
+        {
+            if (egg == null) continue;
+            if (egg.State == OvumState.Final || egg.State == OvumState.Final_RequireHelp)
+                egg.totalLifespan = ReproductionUtility.ClampEarlyLabor(egg.totalLifespan);
+            else if (egg.State == OvumState.IntenseLabor && egg.intenseDuration > ReproductionUtility.ActiveLaborMax)
+                egg.intenseDuration = ReproductionUtility.ActiveLaborMax;
+        }
+    }
+
+    // Labor duration beyond this multiple of the race average is flagged unsafe.
+    const float LABOR_UNSAFE_MULTIPLIER = 4f;
+    // Foetus-to-canal size ratio beyond this value is structurally impossible.
+    const float PASSAGE_UNSAFE_RATIO = 3f;
+
+    public bool CanDeliverSafely(Ovum foetus, out int labor_duration, out float painLevel)
+    {
+        labor_duration = 0;
+        painLevel = 0f;
+
+        var foetusComp = foetus.foetusItem?.Comp_Ingestible;
+        if (foetusComp == null) return false;
+
+        var foetus_actualsize = foetusComp.amount / 1.5f;
+        var foetus_averagesize = default_foetus == null ? foetus_actualsize : default_foetus.size_end;
+        var averageLabor = default_foetus == null ? 1 : default_foetus.duration_labor;
+        var cervix_diameter = source.Size;
+        var mother_racial_average_diameter = default_foetus == null ? cervix_diameter : Mathf.Sqrt((float)(default_foetus.average_mother_HWMult)) * source.Base.sizeRatio;
+        if (mother_racial_average_diameter == 0) mother_racial_average_diameter = cervix_diameter;
+
+        // how large this foetus is relative to what the mother's race normally delivers
+        float size_ratio = foetus_actualsize / Mathf.Max(foetus_averagesize, 0.001f);
+        // how wide this mother's cervix is relative to her racial average
+        float canal_ratio = cervix_diameter / Mathf.Max(mother_racial_average_diameter, 0.001f);
+        float passage = size_ratio / Mathf.Max(canal_ratio, 0.001f);
+
+        // longer labor if foetus is larger than normal; shorter if canal is wider than average
+        float adjusted_labor = averageLabor * passage;
+        labor_duration = Mathf.Max(1, (int)adjusted_labor);
+
+        // pain: sqrt on size_ratio softens extreme-foetus cases; wider canal directly reduces pain
+        painLevel = Mathf.Clamp(Mathf.Sqrt(size_ratio) / Mathf.Max(canal_ratio, 0.001f) * 50f, 0f, 100f);
+
+        if (adjusted_labor > averageLabor * LABOR_UNSAFE_MULTIPLIER) return false;
+        if (passage > PASSAGE_UNSAFE_RATIO) return false;
+        return true;
+    }
+
     string notsamerace = "CalcFertility_notSameRace";
     public float CalcFertility(Item_Instance_Cum cum, out string calcResult, out string formula)
     {
@@ -243,7 +315,7 @@ public abstract class BodyInternal_Womb
             if (isPregnant)
             {
                 //
-                Ovum oldest = ReproductionUtility.GetOldestOvum(this);
+                Ovum oldest = GetOldestOvum();
                 if (oldest != null && oldest.State <= OvumState.Implanted) oldest = null;
                 bool multiplet = oldest == null ? false : eggs.FindAll(x => x.foetus != null && x.foetus.images_hash == oldest.foetus.images_hash).Count > 1;
                 var image = oldest == null ? "" : oldest.GetImage(multiplet);

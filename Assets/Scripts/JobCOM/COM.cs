@@ -48,7 +48,17 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
     public bool hidden = false;
 
     [JsonIgnore] public bool isHiddenChild = false;
-    [JsonIgnore] public bool isHiddenParent
+    /// <summary>
+    /// The doer acts on themselves only: receivers are never attached (ActionPackage.ResetRequest drops them), so the
+    /// command stays a self command whoever is targeted or selected in a scene.
+    /// </summary>
+    public bool selfOnly = false;
+    /// <summary>
+    /// Base item ID whose "use" folder (COM_ItemFolder, built in Index_COM.LateInitialize) this command is listed
+    /// under. Generated templates use "$itemID$".
+    /// </summary>
+    public string itemFolder = "";
+    [JsonIgnore] public virtual bool isHiddenParent
     {
         get
         {
@@ -113,10 +123,48 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         /// the EP as without permission (kojo requirePermission, attitude) and adds no bonus.
         /// </summary>
         public List<PermissionBonus> permissionBonus = new List<PermissionBonus>();
+        /// <summary>
+        /// Optional signed D20 acceptance modifiers, not eligibility gates. Null inherits the nearest parent block;
+        /// a disabled block or null/empty terms explicitly stops inheritance.
+        /// </summary>
+        public ActAcceptanceDefinition actModifiers = null;
+    }
+    public class ActAcceptanceDefinition
+    {
+        public bool enabled = true;
+        public List<ActAcceptanceTerm> terms = new List<ActAcceptanceTerm>();
+        /// <summary> Inclusive lower clamp for the summed signed D20 modifier. </summary>
+        public int totalMin = -10;
+        /// <summary> Inclusive upper clamp for the summed signed D20 modifier. </summary>
+        public int totalMax = 10;
+    }
+    public enum ActAcceptanceSource
+    {
+        PartnerTrust,
+        PartnerGoodwill,
+        PartnerDesire
+    }
+    public enum ActAcceptanceAppliesTo
+    {
+        BothDeciders
+    }
+    public class ActAcceptanceTerm
+    {
+        /// <summary> Source value in its native units, converted to signed D20 units by scale and offset. </summary>
+        public ActAcceptanceSource source;
+        public ActAcceptanceAppliesTo appliesTo = ActAcceptanceAppliesTo.BothDeciders;
+        /// <summary> Multiplier in D20 units per source unit; truncate source * scale + offset toward zero, then clamp. </summary>
+        public float scale = 1;
+        /// <summary> Signed D20 offset applied before truncation and the configured term clamp, not a gate. </summary>
+        public float offset = 0;
+        /// <summary> Inclusive lower clamp for this term's signed D20 modifier. </summary>
+        public int min = 0;
+        /// <summary> Inclusive upper clamp for this term's signed D20 modifier. </summary>
+        public int max = 0;
     }
     public class PermissionBonus
     {
-        /// <summary> any of: Follow, Intimacy_Low, Intimacy_Medium, Intimacy_High, Family </summary>
+        /// <summary> any of: Follow, Intimacy_Low, Intimacy_Medium, Intimacy_High (Family retired) </summary>
         public List<string> permissions = new List<string>();
         public int bonus = 0;
         /// <summary> acceptance rate (%) floor while a permission of the list is held, 0 = none </summary>
@@ -134,13 +182,12 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
                     case "Intimacy_Low": if (rel.HasPermission_Intimacy_Low()) return p; break;
                     case "Intimacy_Medium": if (rel.HasPermission_Intimacy_Medium()) return p; break;
                     case "Intimacy_High": if (rel.HasPermission_Intimacy_High()) return p; break;
-                    case "Family": if (rel.HasPermission_Family()) return p; break;
                 }
             }
             return "";
         }
 
-        /// <summary> com_rel_tooltip_(no)permission_ key suffix: follow / low / medium / high / family </summary>
+        /// <summary> com_rel_tooltip_(no)permission_ key suffix: follow / low / medium / high </summary>
         public static string TooltipSuffix(string permission)
         {
             return permission.ToLower().Replace("intimacy_", "");
@@ -211,6 +258,23 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
     }
 
     public Acceptance AcceptanceCheck = new Acceptance();
+    /// <summary>
+    /// Returns the nearest non-null act-modifier block, starting here, independently of Acceptance.useDefault.
+    /// Disabled or empty blocks stop inheritance and return null; parent cycles also terminate resolution.
+    /// </summary>
+    public ActAcceptanceDefinition GetActAcceptanceModifiers()
+    {
+        var visited = new HashSet<COM>();
+        for (var current = this; current != null && visited.Add(current); current = current.ParentCOM)
+        {
+            var definition = current.AcceptanceCheck?.actModifiers;
+            if (definition == null) continue;
+            if (!definition.enabled || definition.terms == null || definition.terms.Count == 0) return null;
+            return definition;
+        }
+        return null;
+    }
+
     public Difficulty DifficultyCheck = new Difficulty();
     [JsonIgnore] public int baseD20Check { get { return DifficultyCheck.baseD20Check; } }
     [JsonIgnore] public int baseAcceptanceValue { get { return AcceptanceCheck.baseAcceptanceValue; } }
@@ -235,6 +299,74 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         else if (role == "receiver") tags.AddRange(portraitTags_Receiver);
     }
     public List<string> conflictTags = new List<string>();
+
+    /// <summary>
+    /// Optional: the receiver organ this act uses is picked from these tags instead of the requirement's receiver BodyTags
+    /// (which still decide availability). _strong applies while the act runs strong (a re-issued force/"tongue" variant,
+    /// ActionPackage_Sex.isStrongPenetration). Eg. oral_V: clit, strong: vagina.
+    /// </summary>
+    public List<string> receiverActTags = new List<string>();
+    public List<string> receiverActTags_strong = new List<string>();
+    [JsonIgnore] public bool HasReceiverActTags { get { return receiverActTags.Count > 0 || receiverActTags_strong.Count > 0; } }
+    public List<string> GetReceiverActTags(bool strong)
+    {
+        if (strong && receiverActTags_strong.Count > 0) return receiverActTags_strong;
+        if (receiverActTags.Count > 0) return receiverActTags;
+        return requirements.requirement.receiverBodyTags;
+    }
+
+    /// <summary>
+    /// Body traces (Docs/Body/Plan_BodyTraces.md): keywords matched against TraceDefinition.leaveKeywords of the traces the
+    /// touching organs can leave on each other every round. _strong is used instead while the act runs strong (empty =
+    /// traceKeywords). traceKeywords_strongByRace: the first set whose race filter the doer passes replaces _strong - a
+    /// re-issued force variant never becomes the running act's variant (it only makes the round strong), so per-variant
+    /// keywords could not tell oral_B suck (humanoid) from bite (others) apart.
+    /// </summary>
+    public List<string> traceKeywords = new List<string>();
+    public List<string> traceKeywords_strong = new List<string>();
+    public List<COM_TraceKeywordSet> traceKeywords_strongByRace = new List<COM_TraceKeywordSet>();
+    public List<string> GetTraceKeywords(bool strong, Character_Trainable doer)
+    {
+        if (!strong) return traceKeywords;
+        if (traceKeywords_strongByRace != null && traceKeywords_strongByRace.Count > 0 && doer != null)
+        {
+            var raceKeywords = new List<string>();
+            Trait_Requirement.GetRaceKeywords(doer, raceKeywords);
+            foreach (var set in traceKeywords_strongByRace)
+            {
+                if (set != null && set.Matches(raceKeywords)) return set.keywords;
+            }
+        }
+        return traceKeywords_strong.Count > 0 ? traceKeywords_strong : traceKeywords;
+    }
+
+    public class COM_TraceKeywordSet
+    {
+        /// <summary> doer has any of these race keywords (empty = no check) </summary>
+        public List<string> requireRaceKeywords = new List<string>();
+        /// <summary> doer has none of these </summary>
+        public List<string> forbidRaceKeywords = new List<string>();
+        public List<string> keywords = new List<string>();
+
+        public bool Matches(List<string> raceKeywords)
+        {
+            if (requireRaceKeywords != null && requireRaceKeywords.Count > 0 && !requireRaceKeywords.Exists(raceKeywords.Contains)) return false;
+            if (forbidRaceKeywords != null && forbidRaceKeywords.Exists(raceKeywords.Contains)) return false;
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Optional: the doer organ is picked from these tags instead of the requirement's doer BodyTags (which still decide
+    /// availability). doerExtraActTags: one more doer organ per tag, used together with the primary one (breast_oral_P:
+    /// mouth + breast) - the doer side's stimulation is split among them.
+    /// </summary>
+    public List<string> doerActTags = new List<string>();
+    public List<string> doerExtraActTags = new List<string>();
+    public List<string> GetDoerActTags()
+    {
+        return doerActTags.Count > 0 ? doerActTags : requirements.requirement.doerBodyTags;
+    }
 
     [JsonIgnore] public bool isSexCOM { get { return comTags.Contains("sex"); } }
     [JsonIgnore] public bool isUnsafe { get { return comTags.Contains("unsafe"); } }
@@ -421,7 +553,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
     public bool ValidateJob(Job j, out string msg)
     {
         msg = "";
-        if (this.requirements.requireContaining != null && !requirements.requireContaining.Validate(j, out msg))
+        if (this.requirements.requireContaining != null && !requirements.requireContaining.Validate(j, out msg, buildTooltip: false))
         {
             msg = "require containing null";
             return false;
@@ -568,14 +700,85 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         return index;
     }
 
-    [JsonIgnore] public bool AllowDuringSex { get { return comTags.Contains("sex") || comTags.Contains("canbeignored") || comTags.Contains("initSex") || comTags.Contains("endSex") || comTags.Contains("allowedDuringSex"); } }
+    [JsonIgnore] public bool AllowDuringSex { get { return comTags.Contains("sex") || comTags.Contains("canbeignored") || comTags.Contains("endSex") || comTags.Contains("allowedDuringSex"); } }
+
+    /// <summary>Resolves entry policy only; the caller must pin and revalidate the returned scene before execution.</summary>
+    public static bool TryResolveSexSceneEntry(Room_Instance room, List<Character_Trainable> doers, List<Character_Trainable> receivers, bool joinsExisting, out Job_Sex_Group scene, out List<int> newcomers, out string reason)
+    {
+        scene = null;
+        newcomers = new List<int>();
+        reason = "";
+        var campaign = scr_System_CampaignManager.current;
+        if (room == null || campaign?.Map == null || !ReferenceEquals(campaign.Map.GetRoomByRef(room.RefID), room))
+        {
+            reason = "ui_sexEntry_invalidRoom";
+            return false;
+        }
+        if (!joinsExisting && !campaign.CanStartSexJob(room, out reason)) return false;
+        if (doers == null || receivers == null || doers.Count == 0
+            || doers.Concat(receivers).Any(actor => actor == null || !ReferenceEquals(campaign.FindInstanceByID(actor.RefID), actor)))
+        {
+            reason = "ui_sexEntry_missingParticipant";
+            return false;
+        }
+        var actors = doers.Concat(receivers).GroupBy(actor => actor.RefID).Select(group => group.First()).ToList();
+        if (joinsExisting && (doers.Count != 1 || receivers.Count != 1 || actors.Count != 2))
+        {
+            reason = "ui_sexEntry_pairRequired";
+            return false;
+        }
+        if (actors.Any(actor => !ReferenceEquals(campaign.Map.FindRoomByChara(actor.RefID), room)))
+        {
+            reason = "ui_sexEntry_wrongRoom";
+            return false;
+        }
+        if (!joinsExisting)
+        {
+            if (actors.Any(actor => campaign.FindSexJobForActor(actor.RefID) != null))
+            {
+                reason = "ui_sexEntry_participatingElsewhere";
+                return false;
+            }
+            newcomers.AddRange(actors.Select(actor => actor.RefID));
+            return true;
+        }
+
+        var existing = campaign.FindSexJobInRoom(room);
+        if (existing == null || existing.IsEnded || existing.RefID < 0
+            || !ReferenceEquals(campaign.FindJobInstanceByID(existing.RefID, false), existing)
+            || !ReferenceEquals(existing.ParentRoom, room))
+        {
+            reason = "ui_sexEntry_staleScene";
+            return false;
+        }
+        if (existing.actorRefID.Any(actorRef => campaign.FindInstanceByID(actorRef) == null))
+        {
+            reason = "ui_sexEntry_missingParticipant";
+            return false;
+        }
+        var incumbents = actors.Where(actor => existing.actorRefID.Contains(actor.RefID)).ToList();
+        if (incumbents.Count != 1)
+        {
+            reason = incumbents.Count == 2 ? "ui_sexEntry_alreadyParticipating" : "ui_sexEntry_noSelectedParticipant";
+            return false;
+        }
+        var outsider = actors.First(actor => actor.RefID != incumbents[0].RefID);
+        if (campaign.FindSexJobForActor(outsider.RefID) != null)
+        {
+            reason = "ui_sexEntry_participatingElsewhere";
+            return false;
+        }
+        scene = existing;
+        newcomers.Add(outsider.RefID);
+        return true;
+    }
 
     public int GetValidVariant(ref List<string> tooltip, Job sourceJob, List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs, bool excludeRequireExisting = false, int actorCountMult = 1, Character_Trainable master = null, ActionPackage p = null)
     {
         int index = -1;
         bool logging = tooltip != null && !scr_UpdateHandler.current.Updating;
         //if (receiverRefIDs == null || receiverRefIDs.Count < 1) receiverRefIDs = doerRefIDs;
-        if (this.requirements.requireFaction != null && !requirements.requireFaction.Validate(sourceJob.FactionOwner, out var tooltips))
+        if (this.requirements.requireFaction != null && !requirements.requireFaction.Validate(sourceJob?.FactionOwner, out var tooltips, p != null && p.ignoreMealHour))
         {
             if (logging) tooltip.Add(tooltips);
             return -1;
@@ -606,7 +809,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             }
             return -2;
         }
-        if (!AllowDuringSex)
+        if (!AllowDuringSex && !comTags.Contains("initSex"))
         {
             foreach (var receiver in receiverRefIDs)
             {
@@ -620,32 +823,6 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
                     tooltip.Add(LocalizeDictionary.QueryThenParse("ui_GetValidVariant_notAllowedDuringS"));
                     return -2;
                 }
-            }
-        }
-        if (comTags.Contains("initSex"))
-        {
-            Job existing = null;
-            bool existJoinable = false;
-            var targetlist = receiverRefIDs.Count > 0 ? receiverRefIDs : doerRefIDs;
-            foreach (var i in targetlist)
-            {
-                var targetJob = i.CurrentJob;
-                if (targetJob != null && targetJob is Job_Sex_Group)
-                {
-                    if (existing == null) existing = targetJob;
-                    else if (existing == targetJob) continue;
-                    else 
-                    {
-                        tooltip.Add(LocalizeDictionary.QueryThenParse("ui_GetValidVariant_initS_exist"));
-                        return -1;
-                    }
-                }
-                else existJoinable = true;
-            }
-            if (!existJoinable)
-            {
-                tooltip.Add(LocalizeDictionary.QueryThenParse("ui_GetValidVariant_initS_noJoinable"));
-                return -1;
             }
         }
         if (comTags.Contains("endSex"))
@@ -681,11 +858,26 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
 
         List<string> s = new List<string>();
         List<string> s2 = new List<string>();
+        bool isSexEntry = comTags.Contains("initSex");
+        var entryRoom = p != null ? p.PackageRoom : sourceJob?.ParentRoom;
+        string entryReason = "";
+        string joinFailure = "";
         for(int i = 0; i < variants.Count; i++)
         {
             var var = variants[i];
 
-            if (this.requirements.requireFaction != null && !requirements.requireFaction.Validate(sourceJob.FactionOwner, out var tooltips2))
+            if (isSexEntry && p != null && p.HasBoundSexSceneEntry && p.BoundSexSceneEntryVariant != i) continue;
+
+            // Unbound templates have no room yet; only bound actor lists enforce scene entry.
+            if (isSexEntry && p?.AuthoredSexSceneEntry != true && (entryRoom != null || p != null)
+                && !TryResolveSexSceneEntry(entryRoom, doerRefIDs, receiverRefIDs, var.joinsExistingSexScene, out _, out _, out var reason))
+            {
+                if (var.joinsExistingSexScene) joinFailure = LocalizeDictionary.QueryThenParse(reason);
+                else if (entryReason == "") entryReason = LocalizeDictionary.QueryThenParse(reason);
+                continue;
+            }
+
+            if (this.requirements.requireFaction != null && !requirements.requireFaction.Validate(sourceJob?.FactionOwner, out var tooltips2, p != null && p.ignoreMealHour))
             {
                 s2.Add($"{DisplayName(i)}: {tooltips2}");
                 continue;
@@ -704,6 +896,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             if (!ValidateCondition(s, doerRefIDs, receiverRefIDs, this, out hardlock, var, actorCountMult, jobFaction, p))
             {
                 s2.Add($"{DisplayName(i)}: {String.Join("|", s)}");
+                if (isSexEntry && var.joinsExistingSexScene) joinFailure = String.Join("|", s);
                 continue;
             }
             s.Clear();
@@ -717,7 +910,12 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             if (index > -1) return index;
         }
 
-        tooltip.AddRange(s2);
+        if (tooltip != null)
+        {
+            tooltip.AddRange(s2);
+            if (entryReason != "") tooltip.Add(entryReason);
+            if (joinFailure != "") tooltip.Add(joinFailure);
+        }
         return index;
     }
 
@@ -853,6 +1051,8 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         public string description_receiver_n_n = "";
         public string displayName = "";
 
+        public bool joinsExistingSexScene = false;
+
         // (-1) equals use Base.
         // (-2) equals dont use Base.
         // (0 or above equals get another)
@@ -863,6 +1063,9 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         public COM_Descriptions description_remove = new COM_Descriptions();
         public COM_Descriptions description_ongoing = new COM_Descriptions();
         public COM_Descriptions description_after = new COM_Descriptions();
+        // COM_EquipSingleUseItem selects these from the actual equipment result, not the stimulation DC.
+        public COM_Descriptions description_execution_success = new COM_Descriptions();
+        public COM_Descriptions description_execution_failure = new COM_Descriptions();
         public COM_Descriptions description_onComplete = new COM_Descriptions();
 
         public COM_Requirements requirements = new COM_Requirements();
@@ -1000,7 +1203,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             s.RemoveAll(x => x.Length < 1);
             if (s.Count < 1)
             {
-                s.Add($"({ap.targetCOM.DisplayName(ap.COMVariantID)}: {LocalizeDictionary.QueryThenParse($"Memory_Response_{( ap.injectResult != Memory_Response.None ? ap.injectResult : "Complete" )}") })");
+                s.Add($"({ap.targetCOM.DisplayName(ap.COMVariantID)}: {ap.GetResultText(null, true)})");
             }
             string s2 = String.Join("\n", s);
             return s2;
@@ -1170,6 +1373,9 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             case "ActionPackage_ActivityWait":
                 returnValue = new ActionPackage_ActivityWait(job, this, doers, receivers, masterRef);
                 break;
+            case "ActionPackage_MediaSession":
+                returnValue = new ActionPackage_MediaSession(job, this, doers, receivers, masterRef);
+                break;
             case "ActionPackage_GoToSchedule":
                 returnValue = new ActionPackage_GoToSchedule(job, this, doers, receivers, masterRef);
                 break;
@@ -1183,6 +1389,19 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         if (returnValue == null) Debug.LogError("Error making package for com " + ID);
         else if (room != null) returnValue.SetRoom(room);
         return returnValue;
+    }
+
+    /// <summary>
+    /// False only for a GenerateAP command with nothing to generate a package from - no item carrying
+    /// GenerateAP.itemTag in job.FactionOwner's inventory (the inventory MakePackages reads). Every package such a
+    /// command makes shares its requirements and differs only by item, so stock on hand is what "has a valid child" means
+    /// for sandbox searches (Job_Furniture.ValidateActor). Non-GenerateAP commands always pass.
+    /// </summary>
+    public bool HasGenerateAPItems(Job job)
+    {
+        if (this.GenerateAP == null || string.IsNullOrEmpty(this.GenerateAP.itemTag) || this.GenerateAP.targetAPClass == null) return true;
+        if (job == null || job.FactionOwner == null || job.FactionOwner.Inventory == null) return false;
+        return job.FactionOwner.Inventory.GetItemByTag(this.GenerateAP.itemTag).Count > 0;
     }
 
     public List<ActionPackage> MakePackages(Job job, List<int> doers, List<int> receivers, int masterRef)
@@ -1232,6 +1451,10 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
                     break;
                 case "ActionPackage_ActivityWait":
                     returnValue = new ActionPackage_ActivityWait(job, this, doers, receivers, masterRef);
+                    if (returnValue != null) returnValues.Add(returnValue);
+                    break;
+                case "ActionPackage_MediaSession":
+                    returnValue = new ActionPackage_MediaSession(job, this, doers, receivers, masterRef);
                     if (returnValue != null) returnValues.Add(returnValue);
                     break;
                 case "ActionPackage_GoToSchedule":

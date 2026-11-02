@@ -6,6 +6,8 @@
             {
                 "parentCOMID":"com_sex_service_base",
                 "ID":"com_sex_legs_P",
+                "_comment_traces":"Body traces: aroused receiver's precum on the doer's leg.",
+                "traceKeywords":["wet"],
                 "ActionPackageClass":"ActionPackage_Sex",
                 "categoryTags":["com_category_service"],
                 "displayName":"com_sex_legs_P_displayName_1",
@@ -16,6 +18,7 @@
                     "requirement":{
                         "req_Doers":{
                             "BodyTags":["feet"],
+                            "requireSlots":["Feet"],
                             "minRevealingScore":1,
                             "cost_ST": 1
                         },

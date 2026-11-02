@@ -252,13 +252,6 @@ public class menu_Trade : scr_Menu, IPointerClickHandler
         }
         ValidateAll();
     }
-    protected override void OnDestroy()
-    {
-        base.OnDestroy();
-        scr_System_CampaignManager.current.NotifyUpdate();
-
-    }
-
 
 
     public void RegisterBtn(scr_SelectableText button, ButtonValidator validator)

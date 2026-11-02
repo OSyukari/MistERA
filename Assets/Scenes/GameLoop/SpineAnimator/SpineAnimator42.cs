@@ -219,7 +219,12 @@ public class SpineAnimator42 : SpineAnimatorBase
 
     public override IEnumerator PreCacheData(PortraitManager.CharaPortrait_Spine manager, List<string> texturePath, string atlasPath, string skeletonPath, bool straightAlpha)
     {
-        if (loading) yield break;
+        if (loading)
+        {
+            // TEMP debug: precache skipped by the shared loading flag
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Portrait_Spine) Debug.Log($"[SpineTEMP] 42 PreCacheData skipped, loading flag set. skel [{skeletonPath}] owner [{manager.Owner?.Owner?.CallName}] frame {Time.frameCount}");
+            yield break;
+        }
         if (manager.dataHolder is SpineDataTiny_42 existing
             && existing.initialized
             && existing.atlasPath == atlasPath

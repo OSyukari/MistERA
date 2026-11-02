@@ -1,0 +1,55 @@
+{
+    "_doc": "口上loose entry文件：许可「无保护性行为」（sex_unprotected，不采取避孕措施的性行为）的请求口上。条目含义与生成规范同 Permission_intimacy_low.json 的 _doc（Request / Granted / Refused，每条目一个variant、3条response，无通用兜底）。文件名含 sex，安全模式不加载。",
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_unprotected_Request",
+                    "_comment": "玩家想请求无保护性行为许可，刚开口。女性NPC察觉话题时的反应。",
+                    "variants": [ { "responses": [
+                        "\"不戴……吗？你是想这样说吧。\"",
+                        "\"直接来的话……你是认真的？\"",
+                        "\"那个……不用套的意思吗？\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_unprotected_Granted",
+                    "_comment": "答应给予无保护性行为许可。也会在性行为进行中被自动请求获准时说出，台词需两种场合都自然。女性说话者。",
+                    "variants": [ { "responses": [
+                        "\"……好吧，不戴也可以。\"\n%%permission_sex_unprotected_consent%%",
+                        "\"嗯，就这样直接来吧。\"\n%%permission_sex_unprotected_consent%%",
+                        "\"……既然是你的话，没关系的。\"\n%%permission_sex_unprotected_consent%%"
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_unprotected_Refused",
+                    "_comment": "拒绝给予无保护性行为许可。女性NPC，可提及风险，不过度激烈。",
+                    "variants": [ { "responses": [
+                        "\"不戴的话不行……会有危险的。\"",
+                        "\"对不起，没有措施的话我不愿意。\"",
+                        "\"还是戴上吧，拜托了。\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_unprotected_Demand",
+                    "_comment": "性行为进行中，对方想不戴套直接插入，而说话者未允许无保护性行为——拒绝继续并要求对方戴上避孕套（OnAPRefuse_Unprotected 的问题文本）。女性说话者，可紧张、坚持。",
+                    "variants": [ { "responses": [
+                        "\"等、等一下！不戴套的话不行……\"",
+                        "\"先戴上套，不然我不要。\"",
+                        "\"直接进来不可以……请戴上吧。\""
+                    ] } ]
+                }
+            }
+        ]
+    }
+}

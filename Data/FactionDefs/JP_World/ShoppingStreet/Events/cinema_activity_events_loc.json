@@ -1,0 +1,7 @@
+{
+    "Dictionary":{"Entries":{"en-us":{
+        "Mall_Cinema_Begin_initial":"The lobby announcement calls this showing's audience inside. Beyond the ticket check, signs point to the two screens, where the lights are dimming.",
+        "Mall_Cinema_Begin_join":"$joining.name$ catches this showing. The signs beside the ticket check are still lit; seats for watching the movie await inside.",
+        "Mall_Cinema_Begin_late":"The movie has already started when $joining.name$ arrives. Muted dialogue comes through the screen doors. Best to step quietly inside."
+    }}}
+}

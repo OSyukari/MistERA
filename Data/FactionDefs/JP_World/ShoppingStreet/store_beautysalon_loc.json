@@ -1,0 +1,16 @@
+{
+    "Dictionary":{"Entries":{"en-us":{
+        "jp_beauty_salon":"Ruri Hair Salon",
+        "jp_mall_salon_reception":"Salon Reception",
+        "jp_mall_salon_chairs":"Styling Area",
+        "jp_mall_salon_shampoo":"Shampoo Room",
+        "jp_mall_salon_chairs_furniture":"Styling Chairs and Mirrors",
+        "jp_mall_salon_shampoo_furniture":"Shampoo Stations",
+        "membertype_jp_mall_salon_stylist":"Salon Stylist",
+        "membertype_jp_mall_salon_assistant":"Salon Assistant",
+        "jp_mall_salon_stylist_shift":"Stylist, 10:00-20:00 (Closed Tuesdays)",
+        "jp_mall_salon_assistant_shift":"Assistant, 10:00-20:00 (Closed Tuesdays)",
+        "jp_mall_salon_haircare":"Salon Haircare Set",
+        "jp_mall_salon_haircare_tooltip":"Retail haircare products. Hairdressing services and hairstyle changes are not available yet."
+    }}}
+}

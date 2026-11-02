@@ -57,7 +57,7 @@
             "furnitureSize":4,
             "value":50000,
             "Tags":["rarity_common"],
-            "givesJob": [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak","com_furniture_rest_required"] } ]
+            "givesJob": [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak"] } ]
         },
         {
             "ID":"furniture_sofa_1",
@@ -66,7 +66,7 @@
             "value":25000,
             "Tags":["rarity_common"],
             "givesJob":
-            [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak","com_furniture_rest_required"] } ]
+            [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak"] } ]
         },
         {
             "ID":"furniture_TV_flatscreen",
@@ -201,7 +201,7 @@
             "furnitureSize":1,
             "value":15000,
             "Tags":["rarity_common"],
-            "givesJob": [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak","com_furniture_rest_required"] } ]
+            "givesJob": [ { "comID":["com_furniture_takingBreak"] } ]
         },
         {
             "ID":"furniture_dining_table_10",
@@ -210,7 +210,7 @@
             "furnitureSize":10,
             "value":150000,
             "Tags":["rarity_common"],
-            "givesJob": [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak","com_furniture_rest_required"] } ]
+            "givesJob": [ { "comID":["com_furniture_takingBreak"] } ]
         },
         {
             "ID":"furniture_cafe_table_2",
@@ -219,7 +219,7 @@
             "furnitureSize":2,
             "value":20000,
             "Tags":["rarity_common"],
-            "givesJob": [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak","com_furniture_rest_required"] } ]
+            "givesJob": [ { "comID":["com_furniture_takingBreak"] } ]
         },
         {
             "ID":"furniture_round_table_4",
@@ -228,7 +228,7 @@
             "furnitureSize":4,
             "value":35000,
             "Tags":["rarity_common"],
-            "givesJob": [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak","com_furniture_rest_required"] } ]
+            "givesJob": [ { "comID":["com_furniture_takingBreak"] } ]
         },
         {
             "ID":"furniture_piano",
@@ -323,10 +323,12 @@
         {
             "ID":"furniture_hospital_bed",
             "displayName":"医疗床",
+            "_comment":"Offers com_furniture_medical_checkup (comTags medical_checkup) - what a physical checkup activity binds to (RecreationFacility comTag medical_checkup).",
             "recipe":[],
             "furnitureSize":1,
             "value":250000,
-            "Tags":["industrial","rarity_rare","electric"]
+            "Tags":["industrial","rarity_rare","electric"],
+            "givesJob": [ { "comTags":["furniture","medical_checkup"] } ]
         },
         {
             "ID":"furniture_shooting_range_spot",
@@ -346,6 +348,16 @@
             "Tags":["rarity_rare"],
             "givesJob": [ { "comID":["com_furniture_combat_sim"] },
                 { "comTags":["furniture","training_melee"] } ]
+        },
+        {
+            "ID":"furniture_stage",
+            "displayName":"舞台",
+            "_comment":"Multipurpose stage with a set of instruments - offers com_furniture_music_practice (solo or a band) anywhere it stands; the music_practice house activity holds its whole room (RecreationFacility reserve Room). furnitureSize 0 = no actor cap.",
+            "recipe":[],
+            "furnitureSize":0,
+            "value":300000,
+            "Tags":["rarity_rare"],
+            "givesJob": [ { "comTags":["furniture","music_practice"] } ]
         },
         {
             "ID":"furniture_camping_site",
@@ -408,7 +420,8 @@
 "furniture_cryopod":"冷冻休眠舱",
 "furniture_hospital_bed":"医疗床",
 "furniture_shooting_range_spot":"靶场射击点",
-"furniture_arena_spot":"擂台"
+"furniture_arena_spot":"擂台",
+"furniture_stage":"舞台"
             },
             "en-us":
             {

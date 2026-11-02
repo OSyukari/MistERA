@@ -1,0 +1,25 @@
+{
+    "_doc": { "purpose": "Localization companion for faction.json." },
+    "Dictionary": { "Entries": { "en-us": {
+        "jp_hotel_business": "Ekimae Business Hotel",
+        "hotel_lobby": "Hotel Lobby", "hotel_restaurant": "Hotel Restaurant", "hotel_staff_room": "Staff Room", "hotel_corridor_1": "1F Guest Corridor", "hotel_corridor_2": "2F Guest Corridor",
+        "hotel_room_s_101": "101 Single", "hotel_room_s_102": "102 Single", "hotel_room_s_103": "103 Single", "hotel_room_s_104": "104 Single",
+        "hotel_room_t_201": "201 Twin", "hotel_room_t_202": "202 Twin", "hotel_room_d_203": "203 Double", "hotel_room_d_204": "204 Double",
+        "furniture_jp_hotel_frontdesk_counter": "Hotel Front Desk", "furniture_jp_hotel_restaurant_counter": "Restaurant Counter", "furniture_jp_hotel_housekeeping_cart": "Housekeeping Cart",
+        "jp_hotel_frontdesk_duty_displayName": "Front Desk Duty", "jp_hotel_restaurant_service_displayName": "Restaurant Service", "jp_hotel_housekeeping_duty_displayName": "Housekeeping",
+        "membertype_jp_hotel_guest": "Guest", "membertype_jp_hotel_guest_single": "Guest (Single)", "membertype_jp_hotel_guest_twin": "Guest (Twin)", "membertype_jp_hotel_guest_double": "Guest (Double)",
+        "membertype_jp_hotel_staff": "Hotel Staff", "membertype_jp_hotel_fulltime": "Full-time Hotel Staff", "membertype_jp_hotel_parttime": "Part-time Hotel Staff",
+        "membertype_jp_hotel_frontdesk_day": "Day Front Desk", "membertype_jp_hotel_frontdesk_night": "Night Front Desk", "membertype_jp_hotel_housekeeping": "Housekeeper",
+        "membertype_jp_hotel_restaurant_breakfast": "Breakfast Staff", "membertype_jp_hotel_restaurant_dinner": "Dinner Staff",
+        "jp_hotel_frontdesk_day": "Front Desk, Day (Daily)", "jp_hotel_frontdesk_night": "Front Desk, Night (Daily)", "jp_hotel_housekeeping": "Housekeeping, Daytime (Daily)",
+        "jp_hotel_restaurant_breakfast": "Part-time, Restaurant Breakfast (Daily)", "jp_hotel_restaurant_dinner": "Part-time, Restaurant Dinner (Daily)",
+        "jp_hotel_joinOption": "$name$ as $memberType$",
+        "jp_hotel_checkin_option": "Check in $name$",
+        "jp_hotel_checkout_option": "Check out $name$",
+        "jp_hotel_fee_name": "Room charge",
+        "jp_hotel_err_full": "\"I'm terribly sorry, rooms of that type are fully booked tonight.\"",
+        "jp_hotel_err_alreadyGuest": "Already staying at this hotel",
+        "jp_hotel_err_tempHome": "Staying somewhere else (hospital, trip...), can't check in",
+        "jp_hotel_err_permanentResident": "A long-term resident who lives here can't check out at the front desk"
+    } } }
+}

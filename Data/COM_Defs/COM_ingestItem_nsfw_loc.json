@@ -1,0 +1,28 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for COM_ingestItem_nsfw.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "com_furniture_ingestAnus_self": "Insert Anally (Self)",
+                "com_furniture_ingestAnus_onTarget": "Insert into Their Anus",
+                "com_furniture_ingestAnus_begin_1": "$doer.firstname$ inserted $name$ anally",
+                "com_furniture_ingestAnus_ongoing_1": "$doer.firstname$ is administering medicine",
+                "com_furniture_ingestAnus_onComplete_1": "$doer.firstname$ finished administering the medicine",
+                "com_furniture_ingestAnus_begin_administer": "$doer.firstname$ inserted $name$ into $receiver.firstname$'s anus",
+                "com_furniture_ingestAnus_ongoing_administer": "$doer.firstname$ is administering medicine to $receiver.firstname$",
+                "com_furniture_ingestAnus_onComplete_administer": "$doer.firstname$ finished administering medicine to $receiver.firstname$",
+
+                "com_furniture_ingestVagina_self": "Insert Vaginally (Self)",
+                "com_furniture_ingestVagina_onTarget": "Insert into Their Vagina",
+                "com_furniture_ingestVagina_begin_1": "$doer.firstname$ inserted $name$ vaginally",
+                "com_furniture_ingestVagina_ongoing_1": "$doer.firstname$ is administering medicine",
+                "com_furniture_ingestVagina_onComplete_1": "$doer.firstname$ finished administering the medicine",
+                "com_furniture_ingestVagina_begin_administer": "$doer.firstname$ inserted $name$ into $receiver.firstname$'s vagina",
+                "com_furniture_ingestVagina_ongoing_administer": "$doer.firstname$ is administering medicine to $receiver.firstname$",
+                "com_furniture_ingestVagina_onComplete_administer": "$doer.firstname$ finished administering medicine to $receiver.firstname$"
+            }
+        }
+    }
+}

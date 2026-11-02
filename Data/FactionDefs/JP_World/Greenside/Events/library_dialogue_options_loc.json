@@ -1,0 +1,8 @@
+{
+  "Dictionary": { "Entries": { "en-us": {
+    "jp_greenside_library_Opt_Apply": "Apply for Library Part-Time Work", "jp_greenside_library_Opt_Apply_greeting": "\"Part-time duties are shelving books and helping readers. Pay is 1,200 yen an hour, settled daily. The shifts are nine to two and two to eight.\"",
+    "jp_greenside_library_Opt_Apply_question": "\"Who would like to apply?\"", "jp_greenside_library_Opt_Apply_done": "\"That's registered. Please learn the shelf classifications first, and keep your voice low while working.\"\n(Shifts can be changed in the source household's Management Jobs tab.)",
+    "jp_greenside_library_Opt_Quit": "Leave the Library Job", "jp_greenside_library_Opt_Quit_question": "\"Who would like to leave their post?\"", "jp_greenside_library_Opt_Quit_done": "\"That's registered. Thank you for your help. You're always welcome to come back and read.\"",
+    "jp_greenside_library_Opt_cancel": "Not Right Now", "jp_greenside_library_Opt_cancelLine": "\"Come back to the desk when you've decided.\""
+  } } }
+}

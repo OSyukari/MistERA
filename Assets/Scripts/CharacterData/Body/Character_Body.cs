@@ -117,6 +117,151 @@ public class Character_Body
     {
        // _cached_internals_description = false;
         foreach (BodyInternal_Instance i in Internals) i.UpdateTimeMinute(t);
+        TickTraces((int)t.TotalMinutes);
+    }
+
+    //---- traces (Docs/Body/Plan_BodyTraces.md) ----
+    // number of traces on the body, -1 = unknown (recounted on the next tick). Lets trace-free bodies skip the walk.
+    [JsonIgnore] int _traceCount = -1;
+    public void NotifyTracesChanged() { _traceCount = -1; }
+
+    int CountTraces()
+    {
+        int n = 0;
+        foreach (var part in Body)
+        {
+            if (part.HasTraces) n += part.Traces.Count;
+            foreach (var organ in part.internals) if (organ.HasTraces) n += organ.Traces.Count;
+        }
+        return n;
+    }
+
+    /// <summary> TotalMinutes, not Minutes: whole-hour spans (EndDormantState catch-up) must tick too </summary>
+    void TickTraces(int minutes)
+    {
+        if (minutes <= 0) return;
+        if (_traceCount < 0) _traceCount = CountTraces();
+        if (_traceCount == 0) return;
+        foreach (var part in Body)
+        {
+            if (part.HasTraces) TraceUtility.Tick(part, minutes);
+            foreach (var organ in part.internals) if (organ.HasTraces) TraceUtility.Tick(organ, minutes);
+        }
+    }
+
+    /// <summary>
+    /// The parts next to part in the part tree (BodyPart_Base.childID): the parts listing it as a child and its child parts.
+    /// Lower -> torso + both legs; torso -> head, lower, both arms.
+    /// </summary>
+    public List<BodyPart_Instance> GetConnectedParts(BodyPart_Instance part)
+    {
+        var result = new List<BodyPart_Instance>();
+        if (part == null || part.Base == null) return result;
+        foreach (var other in Body)
+        {
+            if (other == part || other.Base == null) continue;
+            bool isChild = part.Base.childID != null && part.Base.childID.Contains(other.Base.ID);
+            bool isParent = other.Base.childID != null && other.Base.childID.Contains(part.Base.ID);
+            if (isChild || isParent) result.Add(other);
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// CharaReq.requireSlots: the parts / organs carrying any of tags (empty = any) that have any of slots among their own
+    /// equip slots (part AvailableSlots: Hand, Feet...; organ AvailableSlots: Mouth, Nipples...).
+    /// </summary>
+    public List<I_TraceHolder> GetSlotHolders(List<string> tags, List<BodyPartEquipSlot> slots)
+    {
+        var result = new List<I_TraceHolder>();
+        if (slots == null || slots.Count < 1) return result;
+        bool anyTag = tags == null || tags.Count < 1;
+        foreach (var part in Body)
+        {
+            if (part.Base == null) continue;
+            if ((anyTag || Utility.ListContainsLoose(part.Base.tags, tags)) && part.availableSlots.Exists(slots.Contains)) result.Add(part);
+            foreach (var organ in part.internals)
+            {
+                if ((anyTag || organ.hasAnyTag(tags)) && organ.availableSlots.Exists(slots.Contains)) result.Add(organ);
+            }
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// minRevealingScore with CharaReq.requireSlots: per tag, the most covered of its slot-matched parts / organs (part: the
+    /// required slots' own coverage, organ: its coverage); a tag without a slot match keeps its whole-tag coverage
+    /// (GetRevealingScoreByTag), so a multi-tag requirement still checks its other parts.
+    /// </summary>
+    public int GetMaxRevealingScoreBySlots(List<string> tags, List<BodyPartEquipSlot> slots, BodyEquipLayer layer = BodyEquipLayer.Skin)
+    {
+        int score = 0;
+        var holders = GetSlotHolders(tags, slots);
+        var checkTags = tags != null && tags.Count > 0 ? tags : new List<string>() { null };
+        foreach (var tag in checkTags)
+        {
+            bool matched = false;
+            foreach (var h in holders)
+            {
+                // a part's own tags only (BodyPart_Instance.hasTag also answers for its organs)
+                if (tag != null && !(h is BodyPart_Instance p ? p.Base.tags.Contains(tag) : h.hasTag(tag))) continue;
+                matched = true;
+                if (h is BodyPart_Instance part)
+                {
+                    foreach (var slot in slots)
+                    {
+                        if (part.availableSlots.Contains(slot)) score = Math.Max(score, part.GetSlotRevealingScore(slot, layer));
+                    }
+                }
+                else if (h is BodyInternal_Instance organ) score = Math.Max(score, organ.GetRevealingScore(layer));
+            }
+            if (!matched && tag != null) score = Math.Max(score, GetRevealingScoreByTag(tag, layer));
+        }
+        return score;
+    }
+
+    /// <summary> every trace on the body, the part tree's order (each part, then its organs) </summary>
+    public List<(I_TraceHolder holder, TraceInstance trace)> GetTraces(bool visibleOnly = false)
+    {
+        var result = new List<(I_TraceHolder holder, TraceInstance trace)>();
+        foreach (var part in Body) part.GetTraces(result, visibleOnly);
+        return result;
+    }
+
+    /// <summary> any trace with this definition id or definition tag </summary>
+    public bool HasTrace(string idOrTag, bool visibleOnly = false)
+    {
+        if (string.IsNullOrEmpty(idOrTag)) return false;
+        foreach (var (holder, t) in GetTraces(visibleOnly))
+        {
+            if (t.traceID == idOrTag) return true;
+            var def = t.Base;
+            if (def != null && def.tags.Contains(idOrTag)) return true;
+        }
+        return false;
+    }
+
+    /// <summary> fix clothes: solid traces off </summary>
+    public bool BrushTraces(List<string> bodyTags = null) { return CleanTraces(TraceCleanAction.Brush, bodyTags); }
+    /// <summary> liquids -> dried marks, solid off </summary>
+    public bool WipeTraces(List<string> bodyTags = null) { return CleanTraces(TraceCleanAction.Wipe, bodyTags); }
+    /// <summary> shower: every temporary trace off </summary>
+    public bool WashTraces(List<string> bodyTags = null) { return CleanTraces(TraceCleanAction.Wash, bodyTags); }
+
+    /// <summary> bodyTags: only holders with any of these tags (a part's own tags or its organs'), null / empty = all </summary>
+    bool CleanTraces(TraceCleanAction action, List<string> bodyTags)
+    {
+        bool filter = bodyTags != null && bodyTags.Count > 0;
+        bool changed = false;
+        foreach (var part in Body)
+        {
+            if (part.HasTraces && (!filter || bodyTags.Exists(part.hasTag))) changed = TraceUtility.Clean(part, action) || changed;
+            foreach (var organ in part.internals)
+            {
+                if (organ.HasTraces && (!filter || bodyTags.Exists(organ.hasTag))) changed = TraceUtility.Clean(organ, action) || changed;
+            }
+        }
+        return changed;
     }
     public void UpdateTimeHour(TimeSpan t)
     {
@@ -587,7 +732,7 @@ public class Character_Body
     /// </summary>
     public bool CanEquipWithoutReplacing(Item_Instance item)
     {
-        if (item == null || item.GetComp_Equippable() == null) return false;
+        if (item == null || item.Comp_Equippable == null) return false;
         foreach (BodyPart_Instance part in Body)
         {
             if (part.PreviewEquip(item, out bool replaces)) return !replaces;
@@ -601,7 +746,7 @@ public class Character_Body
     /// </summary>
     public bool IsBlockedByOtherItem(Item_Instance item)
     {
-        if (item == null || item.GetComp_Equippable() == null) return false;
+        if (item == null || item.Comp_Equippable == null) return false;
         foreach (BodyPart_Instance part in Body)
         {
             if (part.PreviewEquip(item, out bool replaces)) return replaces;
@@ -614,7 +759,7 @@ public class Character_Body
         Item_Instance item = ResolveEquip(itemRefID);
         if (item == null) return false;
 
-        var comp = item.GetComp_Equippable();
+        var comp = item.Comp_Equippable;
         if (comp == null) return false;
         
         //Debug.Log($"Equipping {item.DisplayName} on {Owner.FirstName} with slots [{String.Join("|", comp.equipSlot)}]");
@@ -648,6 +793,8 @@ public class Character_Body
         
     }
 
+
+
     [JsonProperty] protected bool Climax = false;
     [JsonProperty] protected bool Cum = false;
     [JsonProperty] protected bool Stimulated = false;
@@ -658,24 +805,32 @@ public class Character_Body
         else if (femaleOnly) return Climax;
         else return Cum || Climax;
     }
-
+    public void ClearEquipCaches()
+    {
+        _equippedItemRefs = null;
+        Owner?.ClearRedressCache();
+    }
+    List<int> _equippedItemRefs = null;
     [JsonIgnore] public List<int> EquippedItemRefs
     {
         get
         {
-            //Debug.LogError("EQUIPPEDREFS INSIDE BODY");
-            List<int> items = new List<int>();
-            foreach(BodyPart_Instance i in this.Body)
+            if (_equippedItemRefs == null)
             {
-                items.AddRange(i.EquippedRefIDs);
+                // built locally: the first Body access can run AddMissing -> ClearBodyCaches, which nulls the field mid-build
+                var refs = new List<int>();
+                foreach (BodyPart_Instance i in this.Body)
+                {
+                    refs.AddRange(i.EquippedRefIDs);
+                }
+                //Debug.LogError("EQUIPPEDREFS after BODY");
+                foreach (BodyInternal_Instance i in this.Internals)
+                {
+                    refs.AddRange(i.EquippedRefIDs);
+                }
+                _equippedItemRefs = refs;
             }
-            //Debug.LogError("EQUIPPEDREFS after BODY");
-            foreach (BodyInternal_Instance i in this.Internals)
-            {
-                items.AddRange(i.EquippedRefIDs);
-            }
-            //Debug.LogError("EQUIPPEDREFS after internals");
-            return items;
+            return _equippedItemRefs;
         }
     }
 
@@ -686,7 +841,7 @@ public class Character_Body
     /// <param name="bodyTag"></param>
     public bool ConsumeIngestible(Item_Instance i, string bodyTag = "", bool forcefill = false)
     {
-        ItemComponent_Ingestible ingest = i.GetComp_Ingestible();
+        ItemComponent_Ingestible ingest = i.Comp_Ingestible;
         if (ingest == null) {
             Debug.LogError("ConsumeIngestible instance [" + i.DisplayName + "] has null ingest comp");
             return false;
@@ -727,7 +882,7 @@ public class Character_Body
 
     protected void IngestInternal(Item_Instance i, ExperienceLog m = null)
     {
-        var comp = i.GetComp_Ingestible();
+        var comp = i.Comp_Ingestible;
         if (comp != null)
         {
             string key = comp.isLiquid ? "ui_entry_memory_description_swallow" : "ui_entry_memory_description_eat";
@@ -766,7 +921,9 @@ public class Character_Body
     {
         internals = null;
         _bodyTagCache?.Clear();
+        ClearEquipCaches();
     }
+
 
     public bool HasBodyTag(string s)
     {
@@ -834,6 +991,17 @@ public class Character_Body
             }
         }
         return false;
+    }
+
+    /// <summary>The organ this item is equipped on (an organ slot such as Penis), or null.</summary>
+    public BodyInternal_Instance GetInternalByEquipRef(int itemRefID)
+    {
+        foreach (BodyPart_Instance part in Body)
+        {
+            var organ = part.GetInternalByEquipRef(itemRefID);
+            if (organ != null) return organ;
+        }
+        return null;
     }
 
     public bool UnequipItem(int itemRefID)
@@ -944,6 +1112,70 @@ public class Character_Body
         }
     }
 
+    /// <summary>
+    /// part just ejaculated: every ongoing act of the owner's job using it (an EP whose chosen doer / receiver organ it
+    /// is) stops repeating - its current round ends normally, then it is removed. Player acts included; replaying one
+    /// from the recent commands registers it as a new act (Job_Sex_Group.AddPackage). Other acts of the owner go on.
+    /// </summary>
+    void EndActsUsingOrgan(BodyInternal_Instance part)
+    {
+        var job = Owner?.CurrentJob;
+        if (job == null) return;
+        foreach (var ap in job.OngoingPackages)
+        {
+            if (ap == null || !ap.PackageRepeat || ap.ListEP == null) continue;
+            foreach (var ep in ap.ListEP)
+            {
+                if (ep == null || (ep.doerInternal != part && ep.receiverInternal != part)) continue;
+                ap.PackageRepeat = false;
+                break;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Semen shot into a condom worn on part: kept inside the condom (it stays on), never reaching the partner - no
+    /// container ingest, no partner experience or PermissionConsequences. Climax line "(避孕套 Xml)"; both sides remember
+    /// it as protected (the partner = an organ part last touched, if any).
+    /// </summary>
+    void DeliverIntoWornContainer(BodyInternal_Instance part, Item_Instance wornCondom, Item_Instance cum, float cumAmount, List<string> selfTag, ExperienceLog exp)
+    {
+        wornCondom?.Comp_Contents?.Add(cum);
+
+        exp.AppendClimaxMSG(Owner.RefID, LocalizeDictionary.QueryThenParse("experience_sex_cumtainer_single")
+            .Replace("$partname$", wornCondom.DisplayName)
+            .Replace("$amount$", cumAmount.ToString("N0")));
+        exp.PrependClimaxMSG(Owner.RefID, LocalizeDictionary.QueryThenParse("experience_sex_cumtainer_prepend"));
+
+        var partnerOrgans = part.LastInteactedRefs.FindAll(x => x != null && x.Owner != null && x.Owner != part.Owner);
+        var partnerOrgan = Utility.GetRandomElement(partnerOrgans);
+        if (partnerOrgan == null)
+        {
+            var desc = LocalizeDictionary.QueryThenParse("ui_entry_memory_description_cum_condom").Replace("$amount$", cumAmount.ToString("N0"));
+            var memSelf = new MemInstance(new List<int>() { part.Owner.RefID }, new List<string>() { "" }, "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.Like, desc);
+            part.Owner.Memory.AddEntry(memSelf, selfTag, -1, true);
+            return;
+        }
+
+        var partner = partnerOrgan.Owner;
+        List<string> partnerTags = new List<string>(partnerOrgan.Base.tags) { "condom" };
+        UtilityEX.GetActorTag(ref partnerTags, partner);
+
+        // ADDLOG PROTECTED CUM FOR PARTNER
+        var descPartner = LocalizeDictionary.QueryThenParse("ui_entry_memory_description_creampie_condom")
+            .Replace("$target$", part.Owner.FirstName)
+            .Replace("$amount$", cumAmount.ToString("N0"));
+        var memPartner = new MemInstance(new List<int>() { part.Owner.RefID }, selfTag, "", -1, -1, false, Memory_Response.Accept, Memory_Attitude.Like, descPartner);
+        partner.Memory.AddEntry(memPartner, partnerTags, -1, true);
+
+        // ADDLOG PROTECTED CUM FOR SHOOTER
+        var descShooter = LocalizeDictionary.QueryThenParse("ui_entry_memory_description_cumOnto_condom")
+            .Replace("$target$", partner.FirstName)
+            .Replace("$amount$", cumAmount.ToString("N0"));
+        var memShooter = new MemInstance(new List<int>() { partner.RefID }, partnerTags, "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.Like, descShooter);
+        part.Owner.Memory.AddEntry(memShooter, selfTag, -1, true);
+    }
+
     bool CheckClimaxCore(MessageCollect message, out bool climaxOccurred, ExperienceLog exp)
     {
         climaxOccurred = false;
@@ -991,7 +1223,11 @@ public class Character_Body
                     selfTag.Add(part.Sensitivity);
                     selfTag.Add("climax");
 
-                    if (!Climax) ClimaxOccurrenceCount++;
+                    if (!Climax)
+                    {
+                        ClimaxOccurrenceCount++;
+                        if (Owner.CurrentJob is Job_Sex_Group scene) scene.RecordSummaryClimax(Owner.RefID);
+                    }
                     this.Climax = true;
                     // ADDLOG CLIMAX
                     float cumAmount = 0;
@@ -1010,6 +1246,8 @@ public class Character_Body
                     if (cum != null)
                     {
                         this.Cum = true;
+                        // ejaculating ends the acts using this penis after their current round
+                        EndActsUsingOrgan(part);
 
                         // find valid container for cum
 
@@ -1024,8 +1262,23 @@ public class Character_Body
                         if (scr_System_CentralControl.current.DLOG_NSFW.log_Cum) Debug.Log($"[CumDebug] {Owner.FirstName} containers={possiblecontainers.Count} emptyContainers={possibleEmptyContainers.Count} selectedContainer={container?.Owner?.FirstName}.{container?.baseID ?? "NONE (cum on ground)"}");
 
 
-                        if (container != null)
+                        // source snapshot before the load can merge into other contents (Plan_BodyTraces.md 5.3)
+                        var cumTraceSource = TraceSource.FromCum(cum as Item_Instance_Cum);
+
+                        // a condom worn on this penis catches it (ItemComponent_Contents) and stays on
+                        var wornCondom = SingleUseEquipUtility.GetWornContainer(part);
+                        if (wornCondom != null)
+                        {
+                            DeliverIntoWornContainer(part, wornCondom, cum, cumAmount, selfTag, exp);
+                            // some stays on the penis (surface residue, the load itself is not reduced)
+                            if (part.Base.wornContainerCumTraceRatio > 0)
+                                TraceUtility.Land(part, null, TraceUtility.CumTraceID, cumAmount * part.Base.wornContainerCumTraceRatio, cumTraceSource);
+                        }
+                        else if (container != null)
                         {   // if valid bodyinternal container exist : Fucker != null && Fucker.canContain
+                            // shot into a vagina / anus: a bit stays on the penis (surface residue, the load itself is not reduced)
+                            if (container.Base.penetratorCumTraceRatio > 0)
+                                TraceUtility.Land(part, null, TraceUtility.CumTraceID, cumAmount * container.Base.penetratorCumTraceRatio, cumTraceSource);
                             // Share only across this ingest and its follow-up grant, never across actors or loads.
                             var forbiddenIngestExperienceIDs = new HashSet<string>();
                             if (!container.Ingest(cum, exp, true, forbiddenExperienceIDs: forbiddenIngestExperienceIDs))
@@ -1033,7 +1286,7 @@ public class Character_Body
                                 scr_System_CampaignManager.current.Map.FindRoomByChara(ownerRefID).AddItem(cum);
                                 // cum on ground, write message
                                 exp.AppendClimaxMSG(Owner.RefID, LocalizeDictionary.QueryThenParse("experience_sex_cumtainer_none")
-                                    .Replace("$amount$", $"{cum.GetComp_Ingestible().amount.ToString("N0")}"));
+                                    .Replace("$amount$", $"{cum.Comp_Ingestible.amount.ToString("N0")}"));
                             }
 
                             exp.PrependClimaxMSG(Owner.RefID, LocalizeDictionary.QueryThenParse("experience_sex_cumtainer_prepend"));
@@ -1041,14 +1294,6 @@ public class Character_Body
                             container.Parent.Owner.Body.NotifyInternalsContentChange();
                             string key = "ui_entry_memory_description_cum_";
                             // ADDLOG CUM FOR RECEIVER
-                            var rel = container.Owner.Relationships.FindRelationshipWith(part.Owner);
-
-                            var desc = LocalizeDictionary.QueryThenParse( rel.HasPermission_Family()? "ui_entry_memory_description_creampie" : "ui_entry_memory_description_creampie_nopermission");
-                            desc = desc.Replace("$target$", part.Owner.FirstName)
-                                        .Replace("$cum_verb$", LocalizeDictionary.QueryThenParse(key + container.Base.ID))
-                                        .Replace("$amount$", cumAmount.ToString("N0"));
-
-
                             List<string> containerTags = new List<string>(container.Base.tags) { };
                             containerTags.Add("cum");
                             UtilityEX.GetActorTag(ref containerTags, container.Owner);
@@ -1056,30 +1301,23 @@ public class Character_Body
 
                             UtilityEX.CheckExperienceGainNoStimulate(container.Owner, cumAmount, false, containerTags, new List<string>(), exp, forbiddenIngestExperienceIDs);
 
+                            // relationship cost of what the receiver gained here without permission (PermissionDefinition.consequences:
+                            // experience_sex_V_cum_total -> permission_sex_unprotected / _dangerday_creampie, _A_cum_total -> _sex_anal).
+                            // forbiddenIngestExperienceIDs holds every experience this ingest + gain just credited.
+                            bool withoutPermission = PermissionConsequences.Apply(container.Owner, part.Owner, forbiddenIngestExperienceIDs, cumAmount, containerTags, exp);
+
+                            var desc = LocalizeDictionary.QueryThenParse(withoutPermission ? "ui_entry_memory_description_creampie_nopermission" : "ui_entry_memory_description_creampie");
+                            desc = desc.Replace("$target$", part.Owner.FirstName)
+                                        .Replace("$cum_verb$", LocalizeDictionary.QueryThenParse(key + container.Base.ID))
+                                        .Replace("$amount$", cumAmount.ToString("N0"));
+
                             // ADDLOG CUM FOR SHOOTER
                             var desc2 = LocalizeDictionary.QueryThenParse( "ui_entry_memory_description_cumOnto");
                             desc2 = desc2.Replace("$target$", container.Owner.FirstName)
                                         .Replace("$cum_verb$", LocalizeDictionary.QueryThenParse(key + container.Base.ID))
                                         .Replace("$amount$", cumAmount.ToString("N0"));
 
-                            if (!rel.HasPermission_Family())
-                            {
-                                // trust penalty only applies to a creampie proper (the container is connected
-                                // to a womb) - mouth/anus/etc without family permission still cost Badwill/Fear
-                                if (container.womb != null)
-                                {
-                                    rel.ModRelationValue(RelationshipScoreType.Trust, -cumAmount, false);
-                                    exp.AddRelations(rel.Owner.RefID, rel.TargetID, RelationshipScoreType.Trust, (int)-cumAmount);
-                                }
-
-                                rel.ModRelationValue(RelationshipScoreType.Badwill, cumAmount, false);
-                                exp.AddRelations(rel.Owner.RefID, rel.TargetID, RelationshipScoreType.Badwill, (int)cumAmount);
-
-                                rel.ModRelationValue(RelationshipScoreType.Fear, cumAmount, false);
-                                exp.AddRelations(rel.Owner.RefID, rel.TargetID, RelationshipScoreType.Fear, (int)cumAmount);
-                            }
-
-                            var memInst2 = new MemInstance(new List<int>() { part.Owner.RefID }, selfTag, "", -1, -1, false, Memory_Response.Accept, rel.HasPermission_Family() ? Memory_Attitude.Like : Memory_Attitude.Hate, desc);
+                            var memInst2 = new MemInstance(new List<int>() { part.Owner.RefID }, selfTag, "", -1, -1, false, Memory_Response.Accept, withoutPermission ? Memory_Attitude.Hate : Memory_Attitude.Like, desc);
                             container.Owner.Memory.AddEntry(memInst2, containerTags, -1, true);
 
                             var memInst3 = new MemInstance(new List<int>() { container.Owner.RefID }, containerTags, "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.Like, desc2);

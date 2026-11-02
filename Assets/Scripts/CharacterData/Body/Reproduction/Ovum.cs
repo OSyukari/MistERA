@@ -189,7 +189,7 @@ public class Ovum
                 .Replace("$motherRace$", Owner == null ? "" : LocalizeDictionary.QueryThenParse(Owner.Race.ID))
                 .Replace("$father$", fatherName)
                 .Replace("$fatherRace$", LocalizeDictionary.QueryThenParse(fatherRaceID));
-            return $"{header}\nstate {this.State}\nlifespan {lifespan}\nsize {(foetusItem == null ? "0" : $"{foetusItem.GetComp_Ingestible().amount}")}\nmaxsize {(foetus == null ? "0" : $"{foetus.size_end}")}";
+            return $"{header}\nstate {this.State}\nlifespan {lifespan}\nsize {(foetusItem == null ? "0" : $"{foetusItem.Comp_Ingestible.amount}")}\nmaxsize {(foetus == null ? "0" : $"{foetus.size_end}")}";
         }
     }
 

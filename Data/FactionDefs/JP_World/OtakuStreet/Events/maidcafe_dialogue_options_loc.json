@@ -1,0 +1,6 @@
+{
+    "Dictionary": { "Entries": { "en-us": {
+        "jp_maid_cafe_Opt_Apply": "Apply for Part-Time Maid Work", "jp_maid_cafe_Opt_ApplyKitchen": "Apply for Part-Time Kitchen Work", "jp_maid_cafe_Opt_Quit": "Quit the Cafe Job",
+        "otaku_apply_greeting": "\"You can apply for part-time work here. The post description lists the shift and hourly pay.\"", "otaku_apply_question": "\"Who is applying?\"", "otaku_apply_done": "\"You're registered. Please come in for your shift.\"\n(Change shifts in your home faction's Management, Jobs, External Jobs tab.)", "otaku_quit_question": "\"Who is resigning?\"", "otaku_quit_done": "\"Your resignation is processed. Thank you for your work.\"", "otaku_staff_cancel": "Never Mind", "otaku_staff_cancelLine": "\"Come back when you need to.\""
+    } } }
+}

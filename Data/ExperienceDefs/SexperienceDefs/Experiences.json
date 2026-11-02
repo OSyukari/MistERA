@@ -13,8 +13,8 @@
     {  "ExperienceID":"experience_sex_service", "tags":["nsfw"], "applyToReceiver":false, "RequiredOwnerTags":["human"], "RequiredCOMTags":["unsafe","service","interaction"]  },
     {  "ExperienceID":"experience_sex_maso", "tags":["nsfw"], "ApplyToDoer":false, "RequiredOwnerTags":["human","pain"], "RequiredCOMTags":["unsafe"]  },
     {  "ExperienceID":"experience_sex_sado", "tags":["nsfw"], "applyToReceiver":false,"RequiredOwnerTags":["human"], "RequiredCOMTags":["unsafe","pain"] },
-    {  "ExperienceID":"experience_sex_raped", "tags":["nsfw"], "ApplyToDoer":false, "RequiredOwnerTags":["human","raped"], "RequiredCOMTags":["unsafe"]  },
-    {  "ExperienceID":"experience_sex_raped_climax", "tags":["nsfw"], "RequiredOwnerTags":["raped","climax"] },
+    {  "ExperienceID":"experience_sex_raped", "tags":["nsfw"], "ApplyToDoer":false, "RequiredOwnerTags":["human","raped"], "ExcludeOwnerTags":["unconscious"], "RequiredCOMTags":["unsafe"]  },
+    {  "ExperienceID":"experience_sex_raped_climax", "tags":["nsfw"], "RequiredOwnerTags":["raped","climax"] , "ExcludeOwnerTags":["unconscious"] },
     {  "ExperienceID":"experience_sex_necro", "tags":["nsfw"], "applyToReceiver":false, "RequiredOwnerTags":[], "RequiredCOMTags":["unsafe","corpse"] },
 
     {  "ExperienceID":"experience_sex_milking", "tags":["nsfw"], "ApplyToDoer":false, "RequiredOwnerTags":["human","female"], "RequiredCOMTags":["unsafe","milking"] },

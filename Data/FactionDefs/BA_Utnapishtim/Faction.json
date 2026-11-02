@@ -483,6 +483,11 @@
                     }
                 ],
                 "explorationKeywords":["Utnapishtim"],
+                "_comment_assignableMemberTypes": "What the player may assign in the management job-post tab (same kind of status only - MemberType.SwapRefusal - and each type's assignRequirements). Sensei / Rin (managers) match none of these. The family doctor is shared by every faction (Data/Recreation/HouseActivities.json sharedAssignableMemberTypes).",
+                "assignableMemberTypes": [
+                    "membertype_ba_student_gsc", "membertype_ba_student_abydos", "membertype_ba_student_gehenna",
+                    "membertype_ba_student_trinity", "membertype_ba_student_millenium"
+                ],
                 "salesInventory":[
                     { "matchByID":"consumable_10pulls_ticket", "itemCount":1 }
                  ],
@@ -495,9 +500,6 @@
 
                     { "charaBaseID":"Campaign1_Char_Hanako", "startHour":8,"endHour":11,"comID":"com_job_production_chemistry" },
                     { "charaBaseID":"Campaign1_Char_Hanako", "startHour":13,"endHour":18,"comID":"com_job_research_biochemistry" },
-
-                    { "charaBaseID":"Campaign1_Char_Kayoko", "startHour":8,"endHour":11,"comID":"com_job_training_shooting" },
-                    { "charaBaseID":"Campaign1_Char_Kayoko", "startHour":13,"endHour":18,"comID":"com_job_training_melee" },
 
                     { "charaBaseID":"Campaign1_Char_Yuuka", "startHour":8,"endHour":11,"comID":"com_job_research_physics" },
                     { "charaBaseID":"Campaign1_Char_Yuuka", "startHour":13,"endHour":18,"comID":"com_job_research_physics" },

@@ -9,7 +9,9 @@
                 "Recreation_GatherFailed_Stay_waited": "$waited.name$ waited half an hour, but $late.name$ never came - the $activityName$ is called off.",
                 "Recreation_GatherFailed_Stay_late": "By the time $late.name$ arrived, the $activityName$ had long been called off.",
                 "Recreation_GatherFailed_Leave_waited": "$waited.name$ waited half an hour, but $late.name$ never came, so they left.",
-                "Recreation_GatherFailed_Leave_late": "$late.name$ arrived far too late - the $activityName$ had been called off, and everyone who waited had already left."
+                "Recreation_GatherFailed_Leave_late": "$late.name$ arrived far too late - the $activityName$ had been called off, and everyone who waited had already left.",
+                "Recreation_MediaSession_Begin_start": "$participating.name$ gathered and the $activityName$ began: $mediaName$.",
+                "Recreation_MediaSession_Begin_late": "$joining.name$ quietly joined the $activityName$ already under way."
             }
         }
     }

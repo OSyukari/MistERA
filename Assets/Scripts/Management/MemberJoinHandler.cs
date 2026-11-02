@@ -570,3 +570,78 @@ public class LeaveHandler_Recreation : MemberLeaveHandler
         return BuildOptionPerHolder(faction, type, candidates);
     }
 }
+
+/// <summary>
+/// Hotel check-in (front desk). One option per candidate; disabled (with reason) when already part of the hotel
+/// (alreadyGuestErrorKey) or held by another temporary home while having a home (otherTempHomeErrorKey). No options at
+/// all (errorKey = fullErrorKey, "fully booked") when no free private room with roomIDPrefix is left. On select
+/// (ResidenceUtility.CheckIntoHotel, user rule): someone with a home gets the hotel as temporary home - they sleep in its
+/// room, their home stays - someone without becomes a permanent resident; then takes a free room. Billed through the
+/// MemberType's membershipFee. A guest keeps following the player unless leavePlayerParty. Nobody is moved.
+/// </summary>
+public class JoinHandler_HotelGuest : MemberJoinHandler
+{
+    public string roomIDPrefix = "";
+    public bool leavePlayerParty = false;
+    public string fullErrorKey = "";
+    public string alreadyGuestErrorKey = "";
+    public string otherTempHomeErrorKey = "work_post_err_tempHome";
+
+    public override List<Event.EventEntry.Options> BuildOptions(Manageable hotel, MemberType type, List<Character_Trainable> candidates, out string errorKey)
+    {
+        errorKey = "";
+        var result = new List<Event.EventEntry.Options>();
+        if (ResidenceUtility.CountFreePrivateRooms(hotel, roomIDPrefix) == 0)
+        {
+            errorKey = fullErrorKey;
+            return result;
+        }
+        foreach (var c in candidates)
+        {
+            if (c == null) continue;
+            string refusal = DebugForceJoin(c) ? "" : ResidenceUtility.GetHotelRefusal(hotel, c, alreadyGuestErrorKey, otherTempHomeErrorKey);
+            result.Add(MakeOption(c, ev => CheckIn(ev, hotel, type, c), refusal));
+        }
+        return result;
+    }
+
+    void CheckIn(EventInstance ev, Manageable hotel, MemberType type, Character_Trainable c)
+    {
+        var party = scr_System_CampaignManager.current.party;
+        bool leftParty = leavePlayerParty && c.RefID != 0 && party.MemberRefIDs.Contains(c.RefID);
+        if (ResidenceUtility.CheckIntoHotel(hotel, type, c, roomIDPrefix) == null)
+        {
+            Debug.LogWarning($"JoinHandler_HotelGuest: no free room left for {c.FullName}, check-in skipped");
+            return;
+        }
+        if (leftParty) party.RemoveFromParty(c);
+        AppendFactionChange(ev, c, hotel, leftParty);
+    }
+}
+
+/// <summary>
+/// Hotel check-out (front desk). One option per candidate holding this guest post; a temporary-home guest checks out
+/// (temp home cleared, room released - Manageable.RemoveFromFaction - back to their own home). A permanent resident is
+/// shown disabled (permanentResidentErrorKey): only events move them out, by setting a new home.
+/// </summary>
+public class LeaveHandler_HotelGuest : MemberLeaveHandler
+{
+    public string permanentResidentErrorKey = "";
+
+    public override List<Event.EventEntry.Options> BuildOptions(Manageable hotel, MemberType type, List<Character_Trainable> candidates, out string errorKey)
+    {
+        errorKey = "";
+        var result = new List<Event.EventEntry.Options>();
+        foreach (var c in candidates)
+        {
+            if (c == null || !hotel.isManagedChara(c.RefID) || hotel.GetMemberType(c) != type) continue;
+            bool temp = c.FactionManager.Faction_Home_Temporary == hotel;
+            result.Add(MakeOption(c, ev =>
+            {
+                string standing = hotel.GetCharaSocialStandingName(c);
+                if (ResidenceUtility.CheckOut(hotel, c)) AppendFactionLeave(ev, c, standing);
+            }, temp ? "" : permanentResidentErrorKey));
+        }
+        return result;
+    }
+}

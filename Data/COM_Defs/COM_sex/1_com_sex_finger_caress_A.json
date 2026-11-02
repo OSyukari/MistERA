@@ -16,6 +16,7 @@
                     "requirement":{
                         "req_Doers":{
                             "BodyTags":["arm"],
+                            "requireSlots":["Hand"],
                             "cost_ST": 1
                         },
                         "req_Receivers":{

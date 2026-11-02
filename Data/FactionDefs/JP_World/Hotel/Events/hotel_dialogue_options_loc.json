@@ -1,0 +1,30 @@
+{
+    "_doc": { "purpose": "Localization companion for hotel_dialogue_options.json." },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "jp_hotel_Opt_CheckIn": "Check In",
+                "jp_hotel_Opt_CheckIn_greeting": "\"Welcome. Which room type would you like? A single is 7,000 yen a night, a twin 11,000, a double 10,000, charged daily.\"",
+                "jp_hotel_Opt_CheckIn_single": "Single room",
+                "jp_hotel_Opt_CheckIn_twin": "Twin room",
+                "jp_hotel_Opt_CheckIn_double": "Double room",
+                "jp_hotel_Opt_CheckIn_question": "\"And who will be staying?\"",
+                "jp_hotel_Opt_CheckIn_done": "\"Here is your key card. Enjoy your stay.\"\n(The room charge is billed daily; a missed payment checks the guest out.)",
+                "jp_hotel_Opt_CheckOut": "Check Out",
+                "jp_hotel_Opt_CheckOut_question": "\"Who is checking out?\"",
+                "jp_hotel_Opt_CheckOut_done": "\"Thank you for staying with us. We hope to see you again.\"",
+                "jp_hotel_Opt_Apply": "Apply for a Part-Time Job",
+                "jp_hotel_Opt_Apply_greeting": "\"The restaurant is hiring part-timers for breakfast and dinner, 1,150 yen an hour, paid daily.\"",
+                "jp_hotel_Opt_Apply_question": "\"Who would like to apply?\"",
+                "jp_hotel_Opt_Apply_done": "\"Great, we're counting on you. The shift can be changed later.\"\n(Shifts can be changed on the Jobs page of the Management screen.)",
+                "jp_hotel_Opt_Quit": "Quit a Job",
+                "jp_hotel_Opt_Quit_question": "\"Who is quitting?\"",
+                "jp_hotel_Opt_Quit_done": "\"I see... thanks for all the work.\"",
+                "jp_hotel_Opt_cancel": "Never mind",
+                "jp_hotel_Opt_cancelLine": "\"Please let me know if you need anything.\"",
+                "Hotel_FeeFailed": "Hotel Room Charge Event - Unpaid",
+                "Hotel_FeeFailed_checkout": "$target.name$ was checked out because the room charge couldn't be paid."
+            }
+        }
+    }
+}

@@ -1,0 +1,3 @@
+{
+    "Dictionary": { "Entries": { "en-us": { "jp_neon_izakaya": "Lamplight Izakaya", "membertype_neon_izakaya": "Izakaya Staff", "membertype_neon_izakaya_waiter": "Part-Time Izakaya Waiter", "membertype_neon_izakaya_counter": "Izakaya Counter 17-01", "neon_evening_shift": "Evening Shift", "neon_izakaya_evening": "Izakaya Shift 17-22", "neon_izakaya_night": "Izakaya Shift 22-01", "neon_izakaya_drinks": "Izakaya Gathering", "neon_izakaya_table": "Tatami Dining Table", "neon_izakaya_begin": "$doer.firstname$ settles beside the low table.", "neon_izakaya_ongoing": "$doer.firstname$ takes a slow sip between small dishes and the chatter around the room.", "neon_izakaya_end": "$doer.firstname$ sets the glass back on the table." } } }
+}

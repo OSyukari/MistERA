@@ -18,7 +18,7 @@
         {
             "statusID":"chara_status_sex_stimulation",
             "displayName":"chara_status_sex_stimulation",
-            "constant":true, "stringFormat":"N0", "noDisplay":false, "DeferredTooltipStatusEXID":"chara_status_sex_stimulation_pos",
+            "constant":true, "stringFormat":"N0", "noDisplay":false,
             "variationMode": { "variationType":"summation", "stringData":"chara_status_sex" },
             "variants":[
                 { "displayName":"chara_status_sex_stimulation_climaxed", "threshold":-20 },
@@ -34,13 +34,29 @@
             "statusID":"chara_status_sex_stimulation_pos",
             "constant":true, "stringFormat":"N0", "noDisplay":true,
             "variationMode": { "variationType":"summation", "stringData":"chara_status_sex_" },
+            "_comment_acceptance":"Stimulation without the post-climax penalty (chara_status_sexual_climax_after is outside the chara_status_sex_ prefix). Each level sets the hidden v/a/o_acceptance derived stats read by penetration commands' acceptance (arousal stands in for lubrication there). Provisional tuning.",
             "variants":[
-                { "displayable":false,   "threshold":0 },
-                { "displayName":"chara_status_orificelubrication_verylow", "threshold":19 },
-                { "displayName":"chara_status_orificelubrication_low", "threshold":39 },
-                { "displayName":"chara_status_orificelubrication_medium", "threshold":59 },
-                { "displayName":"chara_status_orificelubrication_high", "threshold":79 },
-                { "displayName":"chara_status_orificelubrication_high", "threshold":1000 }
+                { "displayable":false,   "threshold":0, "stat_modifiers":[
+                    { "statID":"v_acceptance", "modKey":"chara_status_sex_stimulation_pos", "type":"setBase", "valueType":"number", "valueString":"-2" },
+                    { "statID":"a_acceptance", "modKey":"chara_status_sex_stimulation_pos", "type":"setBase", "valueType":"number", "valueString":"-2" },
+                    { "statID":"o_acceptance", "modKey":"chara_status_sex_stimulation_pos", "type":"setBase", "valueType":"number", "valueString":"-2" } ] },
+                { "displayName":"chara_status_sex_stimulation_pos_verylow", "threshold":19, "stat_modifiers":[
+                    { "statID":"v_acceptance", "modKey":"chara_status_sex_stimulation_pos", "type":"setBase", "valueType":"number", "valueString":"-2" },
+                    { "statID":"a_acceptance", "modKey":"chara_status_sex_stimulation_pos", "type":"setBase", "valueType":"number", "valueString":"-2" },
+                    { "statID":"o_acceptance", "modKey":"chara_status_sex_stimulation_pos", "type":"setBase", "valueType":"number", "valueString":"-2" } ] },
+                { "displayName":"chara_status_sex_stimulation_pos_low", "threshold":39, "stat_modifiers":[
+                    { "statID":"v_acceptance", "modKey":"chara_status_sex_stimulation_pos", "type":"setBase", "valueType":"number", "valueString":"-1" },
+                    { "statID":"a_acceptance", "modKey":"chara_status_sex_stimulation_pos", "type":"setBase", "valueType":"number", "valueString":"-1" },
+                    { "statID":"o_acceptance", "modKey":"chara_status_sex_stimulation_pos", "type":"setBase", "valueType":"number", "valueString":"-1" } ] },
+                { "displayName":"chara_status_sex_stimulation_pos_medium", "threshold":59 },
+                { "displayName":"chara_status_sex_stimulation_pos_high", "threshold":79, "stat_modifiers":[
+                    { "statID":"v_acceptance", "modKey":"chara_status_sex_stimulation_pos", "type":"setBase", "valueType":"number", "valueString":"1" },
+                    { "statID":"a_acceptance", "modKey":"chara_status_sex_stimulation_pos", "type":"setBase", "valueType":"number", "valueString":"1" },
+                    { "statID":"o_acceptance", "modKey":"chara_status_sex_stimulation_pos", "type":"setBase", "valueType":"number", "valueString":"1" } ] },
+                { "displayName":"chara_status_sex_stimulation_pos_high", "threshold":1000, "stat_modifiers":[
+                    { "statID":"v_acceptance", "modKey":"chara_status_sex_stimulation_pos", "type":"setBase", "valueType":"number", "valueString":"2" },
+                    { "statID":"a_acceptance", "modKey":"chara_status_sex_stimulation_pos", "type":"setBase", "valueType":"number", "valueString":"2" },
+                    { "statID":"o_acceptance", "modKey":"chara_status_sex_stimulation_pos", "type":"setBase", "valueType":"number", "valueString":"2" } ] }
             ]
         }
     ]
@@ -116,6 +132,8 @@
                 },
                 {
                     "threshold":50,
+                    "_comment_tags":"pain_fear (this variant and above): a failed sex DC turns the penetrated receiver's relationship decline into Fear instead of Badwill. Thresholds are inclusive upper bounds scaled by stats_derived_painSensitivity, so this variant starts above 30 x sensitivity (pain > 30 at the default 1.0).",
+                    "tags":["pain_fear"],
                     "stat_modifiers":[
                         {
                             "statID":"chara_status_mood",
@@ -129,6 +147,7 @@
                 },
                 {
                     "threshold":80,
+                    "tags":["pain_fear"],
                     "stat_modifiers":[
                         {
                             "statID":"chara_status_mood",
@@ -142,7 +161,7 @@
                 },
                 {
                     "threshold":115,
-                    "tags":["consciousness_reduced"],
+                    "tags":["consciousness_reduced", "pain_fear"],
                     "stat_modifiers":[
                         {
                             "statID":"chara_status_mood",
@@ -160,6 +179,7 @@
                 },
                 {
                     "threshold":155,
+                    "tags":["pain_fear"],
                     "stat_modifiers":[
                         {
                             "statID":"chara_status_mood",
@@ -173,6 +193,7 @@
                 },
                 {
                     "threshold":200,
+                    "tags":["pain_fear"],
                     "stat_modifiers":[
                         {
                             "statID":"chara_status_mood",
@@ -550,7 +571,8 @@
             ]
         },
         {
-            "statusID":"chara_status_sex_climax_count",
+            "statusID":"chara_status_climax_count",
+            "_comment_id":"Formerly chara_status_sex_climax_count: renamed out of the chara_status_sex_ prefix so chara_status_sex_stimulation_pos does not count climaxes as stimulation. Old saves migrate in StatsManager.ReEstablishParent.",
             "constant":true,
             "noDisplay":true,
             "variationMode": { 
@@ -577,15 +599,15 @@
                     "stat_modifiers":[
                         {
                             "statID":"chara_status_lust",
-                            "modKey":"chara_status_sex_climax_count", "type":"setBase", "valueType":"number", "valueString":"-1"
+                            "modKey":"chara_status_climax_count", "type":"setBase", "valueType":"number", "valueString":"-1"
                         },
                         {
                             "statID":"chara_status_stress",
-                            "modKey":"chara_status_sex_climax_count", "type":"setBase", "valueType":"number", "valueString":"1"
+                            "modKey":"chara_status_climax_count", "type":"setBase", "valueType":"number", "valueString":"1"
                         },
                         {
                             "statID":"chara_status_mood",
-                            "modKey":"chara_status_sex_climax_count", "type":"setBase", "valueType":"number", "valueString":"1"
+                            "modKey":"chara_status_climax_count", "type":"setBase", "valueType":"number", "valueString":"1"
                         }
                     ]
                 },
@@ -595,15 +617,15 @@
                     "stat_modifiers":[
                         {
                             "statID":"chara_status_lust",
-                            "modKey":"chara_status_sex_climax_count", "type":"setBase", "valueType":"number", "valueString":"-3"
+                            "modKey":"chara_status_climax_count", "type":"setBase", "valueType":"number", "valueString":"-3"
                         },
                         {
                             "statID":"chara_status_stress",
-                            "modKey":"chara_status_sex_climax_count", "type":"setBase", "valueType":"number", "valueString":"2"
+                            "modKey":"chara_status_climax_count", "type":"setBase", "valueType":"number", "valueString":"2"
                         },
                         {
                             "statID":"chara_status_mood",
-                            "modKey":"chara_status_sex_climax_count", "type":"setBase", "valueType":"number", "valueString":"1"
+                            "modKey":"chara_status_climax_count", "type":"setBase", "valueType":"number", "valueString":"1"
                         }
                     ]
                 },
@@ -613,15 +635,15 @@
                     "stat_modifiers":[
                         {
                             "statID":"chara_status_lust",
-                            "modKey":"chara_status_sex_climax_count", "type":"setBase", "valueType":"number", "valueString":"-3"
+                            "modKey":"chara_status_climax_count", "type":"setBase", "valueType":"number", "valueString":"-3"
                         },
                         {
                             "statID":"chara_status_stress",
-                            "modKey":"chara_status_sex_climax_count", "type":"setBase", "valueType":"number", "valueString":"2"
+                            "modKey":"chara_status_climax_count", "type":"setBase", "valueType":"number", "valueString":"2"
                         },
                         {
                             "statID":"chara_status_mood",
-                            "modKey":"chara_status_sex_climax_count", "type":"setBase", "valueType":"number", "valueString":"1"
+                            "modKey":"chara_status_climax_count", "type":"setBase", "valueType":"number", "valueString":"1"
                         }
                     ]
                 }
@@ -924,14 +946,18 @@
                 "chara_status_lust_high": "%%chara_status_lust%%：发情",
                 "chara_status_lust_tooltip": "影响角色的欲望获取量\n影响角色对肢体接触的接受度\n影响角色态度计算中的欲望数值\n影响角色在做爱时的扩张能力\n%%statsEX_capModded%%",
 
-                "chara_status_sex_stimulation_pos":"%%chara_status_orificelubrication%%",
+                "chara_status_sex_stimulation_pos":"正向快感合计",
+                "chara_status_sex_stimulation_pos_verylow":"%%chara_status_sex_stimulation_pos%%：微弱",
+                "chara_status_sex_stimulation_pos_low":"%%chara_status_sex_stimulation_pos%%：弱",
+                "chara_status_sex_stimulation_pos_medium":"%%chara_status_sex_stimulation_pos%%：中",
+                "chara_status_sex_stimulation_pos_high":"%%chara_status_sex_stimulation_pos%%：强",
                 "chara_status_orificelubrication":"润滑",
                 "chara_status_orificelubrication_none":"%%chara_status_orificelubrication%%：无",
                 "chara_status_orificelubrication_verylow":"%%chara_status_orificelubrication%%：微弱",
                 "chara_status_orificelubrication_low":"%%chara_status_orificelubrication%%：弱",
                 "chara_status_orificelubrication_medium":"%%chara_status_orificelubrication%%：中",
                 "chara_status_orificelubrication_high":"%%chara_status_orificelubrication%%：强",
-                "chara_status_orificelubrication_tooltip": "角色性器官润滑程度，该数值低于50时润滑不足\n可以通过快感提升，其他的提升手段暂未实装",
+                "chara_status_orificelubrication_tooltip": "旧版全局润滑代理已停用。请在身体界面查看各部位的当前润滑度及其派生数值和液体加成。",
 
                 "chara_status_climaxing":"绝顶中",
 
@@ -961,7 +987,7 @@
                 "chara_status_sexual_climax_after_medium":"连续高潮瘫软",
                 "chara_status_sexual_climax_after_low":"高潮后余韵",
 
-                "chara_status_sex_climax_count":"连续绝顶",
+                "chara_status_climax_count":"连续绝顶",
 
                 "chara_status_sex_W":"W快感",
                 "chara_status_sex_A":"A快感",
@@ -1010,14 +1036,18 @@
                 "chara_status_lust_low": "%%chara_status_lust%%: Unfulfilled",
                 "chara_status_lust_high": "%%chara_status_lust%%: In Heat",
                 
-                "chara_status_sex_stimulation_pos":"%%chara_status_orificelubrication%%",
+                "chara_status_sex_stimulation_pos":"Positive Stimulation Aggregate",
+                "chara_status_sex_stimulation_pos_verylow":"%%chara_status_sex_stimulation_pos%%: Minimal",
+                "chara_status_sex_stimulation_pos_low":"%%chara_status_sex_stimulation_pos%%: Low",
+                "chara_status_sex_stimulation_pos_medium":"%%chara_status_sex_stimulation_pos%%: Medium",
+                "chara_status_sex_stimulation_pos_high":"%%chara_status_sex_stimulation_pos%%: High",
                 "chara_status_orificelubrication":"Wetness",
                 "chara_status_orificelubrication_none":"%%chara_status_orificelubrication%%: Dry",
                 "chara_status_orificelubrication_verylow":"%%chara_status_orificelubrication%%: Moist",
                 "chara_status_orificelubrication_low":"%%chara_status_orificelubrication%%: Wet",
                 "chara_status_orificelubrication_medium":"%%chara_status_orificelubrication%%: Soaked",
                 "chara_status_orificelubrication_high":"%%chara_status_orificelubrication%%: Dripping",
-                "chara_status_orificelubrication_tooltip": "Genital lubrication level. Considered insufficient below 50.\nCan be increased by pleasure. Other methods not yet implemented.",
+                "chara_status_orificelubrication_tooltip": "The old global lubrication proxy is retired. Inspect each organ in the body UI for its current lubrication, derived value, and liquid bonus.",
 
                 "chara_status_climaxing":"Climaxing",
 
@@ -1047,7 +1077,7 @@
                 "chara_status_sexual_climax_after_medium":"Exhausted from Climax",
                 "chara_status_sexual_climax_after_low":"Afterglow",
 
-                "chara_status_sex_climax_count":"Consecutive Climax",
+                "chara_status_climax_count":"Consecutive Climax",
 
                 "chara_status_sex_W":"W Pleasure",
                 "chara_status_sex_A":"A Pleasure",

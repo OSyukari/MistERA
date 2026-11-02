@@ -96,21 +96,9 @@
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-                        "_comment": "npc handling, check auto push but default cancel",
+                        "_comment": "npc handling: push when SendRefuseEvent added callbacks (forced success rate >= 65 or a SoftEvent refusal), else default cancel. The callback option must come first - a branch runs the first option that executes.",
                         "label": "br_npc_ops",
                         "options": [
-                            {
-                                "option": "silent branch event, this shouldnt be displayed",
-                                "Results": [
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "br_end"
-                                        ]
-                                    }
-                                ]
-                            },
                             {
                                 "option": "branch where there is callbacks",
                                 "Results": [
@@ -125,6 +113,18 @@
                                         "arguments": [
                                             "",
                                             "br_push"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "silent branch event, this shouldnt be displayed",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "br_end"
                                         ]
                                     }
                                 ]

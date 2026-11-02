@@ -60,6 +60,10 @@ public class ItemComponentTemplate
 
     public ItemComponentTemplate_Recorder Comp_Recorder = null;
     public ItemComponentTemplate_Records Comp_Records = null;
+    // ItemComponent_Contents (condoms)
+    public ItemComponentTemplate_Contents comp_Contents = null;
+    // ItemComponent_Media (movie discs, games - media activities, Job_MediaSession)
+    public ItemComponentTemplate_Media comp_Media = null;
     public ItemComponent_Base Instantiate(Item_Base parent)
     {
         switch (compType)
@@ -84,6 +88,10 @@ public class ItemComponentTemplate
                 return new ItemComponent_Knowledges(parent);
             case "ItemComponent_Furniture":
                 return new ItemComponent_Furniture(parent);
+            case "ItemComponent_Contents":
+                return new ItemComponent_Contents(parent);
+            case "ItemComponent_Media":
+                return new ItemComponent_Media(parent);
             default:
                 return null;
 

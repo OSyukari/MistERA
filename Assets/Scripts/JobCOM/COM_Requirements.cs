@@ -675,15 +675,15 @@ public class COM_Requirements
         public List<string> allowPlanting = null;
         public bool requireCanMaintain = false;
 
-        public bool Validate(Job j, out string tooltip)
+        public bool Validate(Job j, out string tooltip, bool buildTooltip = true)
         {
             tooltip = "";
-            if (j is Job_Furniture) return Validate(j as Job_Furniture, out tooltip);
+            if (j is Job_Furniture) return Validate(j as Job_Furniture, out tooltip, buildTooltip);
             else return true;
 
         }
 
-        public bool Validate(Job_Furniture targetJob, out string tooltip)
+        public bool Validate(Job_Furniture targetJob, out string tooltip, bool buildTooltip = true)
         {
             tooltip = "";
             if (targetJob == null)
@@ -693,19 +693,19 @@ public class COM_Requirements
             }
             if (this.requireContentAbsent && !targetJob.CanContain)
             {
-                tooltip = LocalizeDictionary.QueryThenParse("ui_RequireContaining_requireContentAbsent")
+                if (buildTooltip) tooltip = LocalizeDictionary.QueryThenParse("ui_RequireContaining_requireContentAbsent")
                     .Replace("$contents$", targetJob.Container == null ? "-" : targetJob.Container.DisplayName);
                 return false;
             }
             if (this.requireContentExist && (targetJob.Container == null || !targetJob.Container.HasContent))
             {
-                tooltip = LocalizeDictionary.QueryThenParse("ui_RequireContaining_requireContentExist")
+                if (buildTooltip) tooltip = LocalizeDictionary.QueryThenParse("ui_RequireContaining_requireContentExist")
                     .Replace("$contents$", targetJob.Container == null ? "-" : targetJob.Container.DisplayName);
                 return false;
             }
             if (requireCanMaintain && (targetJob.Container == null || !targetJob.Container.RequireMaintenance))
             {
-                tooltip = LocalizeDictionary.QueryThenParse("ui_RequireContaining_requireCanMaintain")
+                if (buildTooltip) tooltip = LocalizeDictionary.QueryThenParse("ui_RequireContaining_requireCanMaintain")
                     .Replace("$contents$", targetJob.Container == null ? "-" : targetJob.Container.DisplayName);
                 return false;
             }

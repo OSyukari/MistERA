@@ -81,7 +81,6 @@
                     },
                     {
                         "ID":"medbay_med_exam_1",
-                        "displayName":"Examination Room 1",
                         "offsetX":-328.7,
                         "offsetY":-23,
                         "connects": 
@@ -92,7 +91,6 @@
                     },
                     {
                         "ID":"medbay_med_exam_2",
-                        "displayName":"Examination Room 2",
                         "offsetX":-328.7,
                         "offsetY":61.1,
                         "connects": 
@@ -270,8 +268,8 @@
             "zh-cn":
             {
 "medbay_pharmacy":"药房",
-"medbay_med_exam_1":"诊疗室",
-"medbay_med_exam_2":"诊疗室",
+"medbay_med_exam_1":"诊疗室A",
+"medbay_med_exam_2":"诊疗室B",
 "medbay_cryo":"冷冻休眠",
 "medbay_shooting_range":"靶场",
 "medbay_dojo_arena":"道场",

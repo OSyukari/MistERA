@@ -83,6 +83,7 @@ public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
         if (this.BaseID != item.BaseID) return false;
         if (this.Count == 0 || item.Count == 0) return false;
         if (this.nameOverwrite != item.nameOverwrite) return false;
+        if (this.extraTooltip != item.extraTooltip) return false;
 
         foreach(var comp in this.compInstances)
         {
@@ -105,6 +106,7 @@ public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
         if (this.isToken != item.isToken) return false;
         if (this.BaseID != item.BaseID) return false;
         if (this.nameOverwrite != item.nameOverwrite) return false;
+        if (this.extraTooltip != item.extraTooltip) return false;
 
         foreach (var comp in this.compInstances)
         {
@@ -135,7 +137,7 @@ public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
             }
             return LocalizeDictionary.QueryThenParse("Item_Instance_Tooltip")
                 .Replace("$tags$", $"[{String.Join("|", this.Tags)}]")
-                .Replace("$parent$", Parent.Tooltip)
+                .Replace("$parent$", extraTooltip == "" ? Parent.Tooltip : $"{Parent.Tooltip}\n{LocalizeDictionary.QueryThenParse(extraTooltip, extraTooltip)}")
                 .Replace("$comps$", compTooltips.Count > 0 ? $"\n\n"+String.Join("\n\n", compTooltips) : ""); } }
     [JsonIgnore] public bool Stackable { get { return Parent.Stackable && this.compInstances.Count < 1; } }
     [JsonIgnore] public int Cleanliness { get { return Parent.cleanlinessMod; } }
@@ -265,6 +267,10 @@ public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
     [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
     [DefaultValue("")]
     public string nameOverwrite = "";
+    /// <summary> per-instance line shown under the base tooltip (dictionary key or plain text, like nameOverwrite), eg. a secretion's source race </summary>
+    [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+    [DefaultValue("")]
+    public string extraTooltip = "";
     [JsonProperty] protected List<ItemComponent_Base> compInstances = new List<ItemComponent_Base>();
     protected List<ItemComponent_Base> compInstances_nonSerialized = new List<ItemComponent_Base>();
     [JsonIgnore] public List<ItemComponent_Base> Comps { get
@@ -316,9 +322,44 @@ public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
         _tagsCache = null;
     }
 
-    public ItemComponent_Ingestible GetComp_Ingestible() { return GetComp("ItemComponent_Ingestible") as ItemComponent_Ingestible; }
+    ItemComponent_Ingestible _ingestible = null;
+    public ItemComponent_Ingestible Comp_Ingestible
+    {
+        get
+        {
+            if (_ingestible == null)
+            {
+                _ingestible = GetComp("ItemComponent_Ingestible") as ItemComponent_Ingestible;
+            }
+            return _ingestible;
+        }
+    }
+    ItemComponent_Equippable _equippable = null;
+    public ItemComponent_Equippable Comp_Equippable
+    {
+        get
+        {
+            if (_equippable == null)
+            {
+                _equippable = GetComp("ItemComponent_Equippable") as ItemComponent_Equippable;
+            }
+            return _equippable;
+        }
+    }
 
-    public ItemComponent_Equippable GetComp_Equippable() { return GetComp("ItemComponent_Equippable") as ItemComponent_Equippable; }
+
+    ItemComponent_Contents _contents = null;
+    public ItemComponent_Contents Comp_Contents
+    {
+        get
+        {
+            if (_contents == null)
+            {
+                _contents = GetComp("ItemComponent_Contents") as ItemComponent_Contents;
+            }
+            return _contents;
+        }
+    }
 
     ItemComponent_Defense _defense = null;
     [JsonIgnore]

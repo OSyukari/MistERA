@@ -12,7 +12,6 @@
                     "trait_tooltip": "Use STR modifier when determining Melee skill's initial level and max-level.\nBy default, use CON when calculating Melee Skill."
                 }
             ],
-            "type": 0,
             "SortType":"Singular",
             "neutralID": "",
             "tags":["do_not_use"],
@@ -57,7 +56,6 @@
                     ]
                 }
             ],
-            "type": 0,
             "SortType":"SortedList",
             "neutralID": "trait_PainSensitivity_default",
             "group_tooltip": "How much does one respond to pain."
@@ -100,7 +98,6 @@
                     "trait_tooltip": "Carry weight +25%, related stat score +3 when determining equipment stat requirement (excluding weapon, round down, after multiplier)"
                 }
             ],
-            "type": 0,
             "SortType":"SortedList",
             "tags":["do_not_use"],
             "neutralID": "trait_CarryWeight_default",
@@ -119,7 +116,6 @@
                     "trait_tooltip": "Use CON modifier when calculating carry weight.\nBy default, use STR when calculating carry weight."
                 }
             ],
-            "type": 1,
             "SortType":"Singular",
             "tags":["do_not_use"],
             "neutralID": "",
@@ -152,7 +148,6 @@
                     ]
                 }
             ],
-            "type": 1,
             "SortType":"SortedList",
             "neutralID": "trait_SleepQuality_default",
             "group_tooltip": "How hard it is to wake one up from sleeping."
@@ -184,7 +179,6 @@
                     ]
                 }
             ],
-            "type": 1,
             "SortType":"SortedList",
             "neutralID": "trait_SleepLength_default",
             "group_tooltip": "How much sleep does one require compared to the average of one's race."
@@ -242,7 +236,6 @@
                     ]
                 }
             ],
-            "type": 1,
             "SortType":"SortedList",
             "neutralID": "trait_AlcoholTolerance_default",
             "group_tooltip": "How does one respond to alcohol."
@@ -271,7 +264,6 @@
                     "trait_tooltip": "recover much faster from disease. (+30%)"
                 }
             ],
-            "type": 1,
             "SortType":"SortedList",
             "tags":["do_not_use"],
             "neutralID": "trait_Immunity_default",
@@ -301,7 +293,6 @@
                     "trait_tooltip": "+50% to related stat modifier when calculating Melee Skill (round down)"
                 }
             ],
-            "type": 1,
             "SortType":"SortedList",
             "tags":["do_not_use"],
             "neutralID": "trait_MeleeCombat_default",
@@ -428,7 +419,6 @@
                     "trait_tooltip": ""
                 }
             ],
-            "type": 2,
             "SortType":"Singular",
             "tags":["do_not_use"],
             "neutralID": "",
@@ -464,7 +454,6 @@
                     "trait_tooltip": "stressed by new environment, feel comfortable with familiar people."
                 }
             ],
-            "type": 2,
             "SortType":"SortedList",
             "tags":["do_not_use"],
             "neutralID": "trait_SocialEncounter_default",
@@ -493,7 +482,6 @@
                     "trait_tooltip": "Seeing others in pain makes you painful."
                 }
             ],
-            "type": 2,
             "SortType":"UnsortedList",
             "tags":["do_not_use"],
             "neutralID": "trait_Empathy_selfcentered",
@@ -512,7 +500,6 @@
                     "trait_tooltip": ""
                 }
             ],
-            "type": 3,
             "SortType":"Singular",
             "tags":["do_not_use"],
             "neutralID": "",
@@ -542,7 +529,6 @@
                     "trait_tooltip": "more likely to express feeling, whether positive or negative, independent of one's capability at accurately expressing them."
                 }
             ],
-            "type": 3,
             "tags":["do_not_use"],
             "SortType":"SortedList",
             "neutralID": "trait_Expressiveness_default",
@@ -572,7 +558,6 @@
                     "trait_tooltip": "Cheerful event makes one forget about the bad, and negative event will bring out all the biles..."
                 }
             ],
-            "type": 3,
             "tags":["do_not_use"],
             "SortType":"SortedList",
             "neutralID": "trait_MoodStrength_default",

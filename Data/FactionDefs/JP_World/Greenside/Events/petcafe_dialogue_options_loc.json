@@ -1,0 +1,8 @@
+{
+  "Dictionary": { "Entries": { "en-us": {
+    "jp_petcafe_Opt_Apply": "Apply for Pet Cafe Part-Time Work", "jp_petcafe_Opt_Apply_greeting": "\"The work is welcoming customers, arranging supplies, changing the animals' water and cleaning their rooms. Pay is 1,200 yen an hour, settled daily. Shifts are ten to three or three to eight.\"",
+    "jp_petcafe_Opt_Apply_question": "\"Who would like to help out?\"", "jp_petcafe_Opt_Apply_done": "\"That's registered. Start by learning the cleaning routine, and don't chase animals that don't want to approach.\"\n(Shifts can be changed in the source household's Management Jobs tab.)",
+    "jp_petcafe_Opt_Quit": "Leave the Pet Cafe Job", "jp_petcafe_Opt_Quit_question": "\"Who would like to leave?\"", "jp_petcafe_Opt_Quit_done": "\"All sorted. Thanks for looking after the little ones here.\"",
+    "jp_petcafe_Opt_cancel": "Not Right Now", "jp_petcafe_Opt_cancelLine": "\"Come by the counter when you've decided.\""
+  } } }
+}

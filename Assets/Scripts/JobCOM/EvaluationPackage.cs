@@ -223,6 +223,9 @@ public partial class EvaluationPackage : I_ResultStorage
     {
         get
         {
+            // a player receiver is never refused on their behalf (RollResponse), so AP aggregation / UI gates must not
+            // disable the command on the player's own willingness (or a personality-forced refusal)
+            if (Receiver != null && Receiver.RefID == 0) return 100;
             if (forcedResponse_receiver >= Memory_Response.Accept) return 100;
             if (forcedResponse_receiver != Memory_Response.None) return 0;
             return responseRate;
@@ -274,12 +277,24 @@ public partial class EvaluationPackage : I_ResultStorage
     [JsonProperty] List<string> injectedCOMTags = new List<string>();
     [JsonProperty] List<string> injectedReceiverTags = new List<string>();
 
+    [JsonIgnore] internal ulong TagCacheRevision { get; private set; }
+
+    // Validation must not materialize a tag list (including the empty nonparticipant result).
+    internal List<string> GetCachedActorEPTags(int refID, bool partner)
+    {
+        if (DoerRef == refID) return partner ? _receiverTargetTag : _doerTargetTag;
+        if (ReceiverRef == refID) return partner ? _doerTargetTag : _receiverTargetTag;
+        return null;
+    }
+
     /// <summary>
     /// Must be called whenever extraDoerTags/extraCOMTags/extraReceiverTags/injectedDoerTags/injectedCOMTags/injectedReceiverTags change,
     /// so DoerSelfTag/ReceiverTargetTag/DoerTargetTag/ReceiverSelfTag recompute instead of returning stale cached data.
+    /// Returned lists are mutable, so job caches also compare their exact contents rather than relying on this revision alone.
     /// </summary>
     private void InvalidateTagCache()
     {
+        unchecked { TagCacheRevision++; }
         _doerSelfTag = null;
         _receiverTargetTag = null;
         _doerTargetTag = null;
@@ -382,6 +397,18 @@ public partial class EvaluationPackage : I_ResultStorage
         }
     }
 
+    /// <summary> This round runs strong: a re-issued force ("tongue") variant, or a force variant itself (Fuck_2's isForce). </summary>
+    [JsonIgnore]
+    bool IsStrongAct
+    {
+        get
+        {
+            var pp = pSex;
+            if (pp == null || pp.targetCOM == null) return false;
+            return pp.isStrongPenetration || (pp.COMVariantID >= 0 && pp.COMVariantID < pp.targetCOM.variants.Count && pp.targetCOM.variants[pp.COMVariantID].setForce);
+        }
+    }
+
     public Memory_Attitude GetActorAttitude(int actorRef)
     {
         if (Doer != null && Doer.RefID == actorRef) return DoerAttitude;
@@ -451,6 +478,7 @@ public partial class EvaluationPackage : I_ResultStorage
         }
 
         this.modifiers.Reset(null, reset);
+        missingPermissions.Clear();
         extraDoerTags = new List<string>();
         extraCOMTags = new List<string>();
         extraReceiverTags = new List<string>();
@@ -469,6 +497,110 @@ public partial class EvaluationPackage : I_ResultStorage
     public bool hasPermission = true;
     public int RecentRefusalPenalty = 0;
 
+    // Orifice body tag -> derived acceptance stat set by the penetrated side's current stimulation level.
+    static readonly (string bodyTag, string statID)[] PenetrationAcceptanceStats =
+    {
+        ("vagina", "v_acceptance"), ("anus", "a_acceptance"), ("mouth", "o_acceptance")
+    };
+
+    /// <summary>
+    /// For "penetration" commands, the orifice tag in the command's own body requirements names the penetrated side
+    /// and its acceptance stat - no body part selection needed. Returns false when the command has no such tag.
+    /// </summary>
+    bool TryGetPenetrationAcceptanceStat(out bool penetratedIsDoer, out string statID)
+    {
+        penetratedIsDoer = false;
+        statID = "";
+        if (targetCOM == null || !targetCOM.comTags.Contains("penetration")) return false;
+        var requirement = targetCOM.requirements?.requirement;
+        var variantRequirement = VariantID >= 0 && VariantID < targetCOM.variants.Count ? targetCOM.variants[VariantID].requirements?.requirement : null;
+        foreach (var (bodyTag, stat) in PenetrationAcceptanceStats)
+        {
+            if ((requirement?.req_Receivers?.BodyTags?.Contains(bodyTag) ?? false) || (variantRequirement?.req_Receivers?.BodyTags?.Contains(bodyTag) ?? false))
+            {
+                statID = stat;
+                return true;
+            }
+            if ((requirement?.req_Doers?.BodyTags?.Contains(bodyTag) ?? false) || (variantRequirement?.req_Doers?.BodyTags?.Contains(bodyTag) ?? false))
+            {
+                penetratedIsDoer = true;
+                statID = stat;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Arousal stands in for physical preparation at the acceptance stage: the penetrated side's own hidden
+    /// v/a/o_acceptance stat (set per chara_status_sex_stimulation_pos level). Applies in forced contexts too.
+    /// </summary>
+    void ApplyArousalAcceptance(Modifiers result, bool isDoer, Character_Trainable self)
+    {
+        if (self == null || result.RateValue <= 0 || result.RateValue >= 100) return;
+        if (!TryGetPenetrationAcceptanceStat(out var penetratedIsDoer, out var statID) || penetratedIsDoer != isDoer) return;
+        if (self != (isDoer ? Doer : Receiver) || !self.Stats.HasStat(statID)) return;
+        int value = (int)Math.Truncate(self.Stats.GetStatValue(statID));
+        if (value == 0) return;
+        result.bonus += value;
+        result.AddModifier(self.RefID, LocalizeDictionary.QueryThenParse("ui_actAcceptance_arousal"), value);
+    }
+
+    void ApplyActAcceptanceModifiers(Modifiers result, bool isDoer, Character_Trainable self, bool isThreat)
+    {
+        if (isThreat || result.RateValue <= 0 || result.RateValue >= 100 || Package == null
+            || Doer == null || Receiver == null || Doer == Receiver || Doer.RefID < 0 || Receiver.RefID < 0
+            || Package.DoerRefs.Count != 1 || Package.ReceiverRefs.Count != 1
+            || Package.DoerRefs[0] != Doer.RefID || Package.ReceiverRefs[0] != Receiver.RefID
+            || !Doer.canAct || !Receiver.canAct || Doer.isSleeping || Receiver.isSleeping
+            || Doer.isRestrained || Receiver.isRestrained || Package.isForced
+            || (Package is ActionPackage_Sex sex && (sex.UsesForcedSexSelection || sex.isStrongPenetration))
+            || DoerSelfTag.Contains("raped") || DoerSelfTag.Contains("rapist")
+            || ReceiverSelfTag.Contains("raped") || ReceiverSelfTag.Contains("rapist")
+            || VariantID < 0 || VariantID >= targetCOM.variants.Count || targetCOM.variants[VariantID].setForce) return;
+
+        var definition = targetCOM.GetActAcceptanceModifiers();
+        if (definition == null || definition.totalMin > definition.totalMax) return;
+        var partner = isDoer ? Receiver : Doer;
+        if (self != (isDoer ? Doer : Receiver)) return;
+
+        var relationship = self.Relationships.FindRelationshipWith(partner);
+        var rows = new List<KeyValuePair<string, int>>();
+        long sum = 0;
+        foreach (var term in definition.terms)
+        {
+            if (term == null || term.min > term.max || float.IsNaN(term.scale) || float.IsInfinity(term.scale)
+                || float.IsNaN(term.offset) || float.IsInfinity(term.offset)
+                || !Enum.IsDefined(typeof(COM.ActAcceptanceAppliesTo), term.appliesTo)) return;
+
+            float source;
+            switch (term.source)
+            {
+                case COM.ActAcceptanceSource.PartnerTrust: source = relationship?.Trust ?? 0; break;
+                case COM.ActAcceptanceSource.PartnerGoodwill: source = relationship?.Goodwill ?? 0; break;
+                case COM.ActAcceptanceSource.PartnerDesire: source = relationship?.Desire ?? 0; break;
+                default: return;
+            }
+            if (float.IsNaN(source) || float.IsInfinity(source)) return;
+            int contribution = (int)Math.Truncate(Math.Clamp((double)source * term.scale + term.offset, term.min, term.max));
+            sum += contribution;
+            if (sum < int.MinValue || sum > int.MaxValue) return;
+            var label = LocalizeDictionary.QueryThenParse("ui_actAcceptance_" + term.source)
+                + " [" + LocalizeDictionary.QueryThenParse("ui_actAcceptance_partner") + ": " + partner.FirstName
+                + "; " + source.ToString("0.##") + "]";
+            rows.Add(new KeyValuePair<string, int>(label, contribution));
+        }
+
+        if (rows.Count == 0) return;
+        int total = (int)Math.Clamp(sum, definition.totalMin, definition.totalMax);
+        long adjustment = (long)total - sum;
+        if (adjustment < int.MinValue || adjustment > int.MaxValue) return;
+        result.bonus += total;
+        foreach (var row in rows) result.AddModifier(self.RefID, row.Key, row.Value);
+        if (adjustment != 0)
+            result.AddModifier(self.RefID, LocalizeDictionary.QueryThenParse("ui_actAcceptance_cap"), (int)adjustment);
+    }
+
     /// <summary>
     /// Calculate the willingness for 'self' to do targetCOM under influence of 'target'.<br/>
     /// Target can be nulla
@@ -482,7 +614,8 @@ public partial class EvaluationPackage : I_ResultStorage
         isThreat = isThreat || ( Receiver == self && Package.isForced);
 
         Character_Relationship rel = self.Relationships.FindRelationshipWith(target);
-        Modifiers mod = rel != null ? rel.GetEPWillingness(this.targetCOM.ParentCOM != null ? this.targetCOM.ParentCOM : this.targetCOM, isDoer, isThreat) : new Modifiers(this.targetCOM.ParentCOM != null ? this.targetCOM.ParentCOM : this.targetCOM, isDoer, isThreat);
+        // Permission sources and expiry are live; never share an initialized parent modifier between evaluations.
+        Modifiers mod = new Modifiers(this.targetCOM.ParentCOM != null ? this.targetCOM.ParentCOM : this.targetCOM, isDoer, isThreat);
 
         if (rel == null)
         {
@@ -498,12 +631,13 @@ public partial class EvaluationPackage : I_ResultStorage
             mod.Calculate(rel);
             copy.parent = mod;
             copy.targetCOM = targetCOM;
+            copy.DCMod = 0;
             copy.Reset(null, false);
 
         }
         else
         {
-            copy = mod;
+            copy = mod.Copy();
             copy.Reset(extraCOMTags);
         }
         copy.Calculate(rel);
@@ -545,6 +679,12 @@ public partial class EvaluationPackage : I_ResultStorage
         {
             copy.bonus += self.Skills.GetRelevantSkills(isDoer ? DoerSelfTag : ReceiverSelfTag, isDoer ? ReceiverTargetTag : DoerTargetTag, copy, true);
         }
+
+        // permissions of the leaf command and actual pair (PermissionDefinition.rules), incl. the migrated legacy ones
+        ApplyPermissionRules(copy, isDoer, self, target);
+
+        ApplyActAcceptanceModifiers(copy, isDoer, self, isThreat);
+        ApplyArousalAcceptance(copy, isDoer, self);
 
         if (scr_System_CampaignManager.current.DebugMode && self.isImprisoned)
         {
@@ -702,8 +842,31 @@ public partial class EvaluationPackage : I_ResultStorage
     /// Cleared on Execute() so no need to store any of it. But the property must 
     /// </summary>
     //[JsonProperty] public ExperienceLog m = new ExperienceLog();
-    public void Execute(MessageCollect m, Memory_Response injectResult = Memory_Response.None)
+    public void Execute(MessageCollect m, Memory_Response injectResult = Memory_Response.None, bool pairDC = false)
     {
+        pairDCFailed = false;
+        // repeat rounds of an accepted action rebuild this EP without a request: accept it (as the shared DC result used to)
+        // so its parts get picked. Only for genuine repeats - an unasked EP of a first round stays unanswered.
+        // Evaluate first, as ActionPackage.Request does: an unevaluated EP has request rate 0, which fails the request
+        // before the receiver's response/attitude is rolled, leaving their attitude None for this round's DC and effects.
+        if (pairDC && response == Memory_Response.None && Package.repeated)
+        {
+            // a condom filled during the last round comes off before this one (EVP_ActOrgans)
+            TakeOffFilledBeforePenetration(m);
+            // the repeat keeps its forced Accept below; it only runs its own permission request (silent retry)
+            RequestMissingPermissions(injectResult);
+            Evaluate(true);
+            ApplyPersonalityMods();
+            TryRespond(false, Memory_Response.Accept);
+            // a request side that failed before the receiver roll (doer at a hard 0: time-stopped, climaxing, or unconscious
+            // where consciousness is required) still continues under the forced Accept - stopping it would cut the act every
+            // time the penetrator climaxes - so roll the receiver here, or their attitude stays None for this round
+            if (response >= Memory_Response.Accept && attitude_receiver == Memory_Attitude.None && Receiver != null && Receiver != Doer)
+            {
+                RollResponse(Memory_Response.Accept);
+                response = Memory_Response.Accept;
+            }
+        }
         if (response == Memory_Response.None && injectResult != Memory_Response.None)
         {
             TryRespond(false, injectResult);
@@ -714,6 +877,7 @@ public partial class EvaluationPackage : I_ResultStorage
         }
 
         firstExpRegistered.Clear();
+        EnsureReceiverActPart();
 
         //if (receiver == null || doer == receiver) receiver = doer;
         //_doerInternal = null; _receiverInternal = null;
@@ -727,6 +891,12 @@ public partial class EvaluationPackage : I_ResultStorage
         UtilityEX.GetJobInteractionTagsFrom(Doer, Receiver, targetCOM, this.job, ref extraDoerTags, ref extraCOMTags, ref extraReceiverTags);
         InvalidateTagCache();
 
+        // this pair's own DC, now that its parts and tags are set
+        if (pairDC && response >= Memory_Response.Accept)
+        {
+            response = Package.RollPairDC(this);
+            pairDCFailed = response == Memory_Response.Failure || response == Memory_Response.CriticalFailure;
+        }
 
         if (response == Memory_Response.None || response == Memory_Response.Refuse)
         {// doer unwilling
@@ -745,10 +915,17 @@ public partial class EvaluationPackage : I_ResultStorage
 
             RollResult();
 
+            if (jobSex != null && (Package is ActionPackage_Sex || targetCOM.comTags.Contains("touch")))
+                jobSex.RecordSummaryAct(DoerRef, Receiver == null ? DoerRef : ReceiverRef, targetCOM,
+                    isForced || Package.isForced || (pSex != null && pSex.UsesForcedSexSelection)
+                    || DoerSelfTag.Contains("raped") || ReceiverSelfTag.Contains("raped") || !hasPermission,
+                    Package is ActionPackage_Sex);
+
             if (Package is ActionPackage_Sex)
             {
                 //Debug.Log($"sexcom! {targetCOM.ID} is psex ? {(pSex == null ? "null" : "exist")} variantID {(pSex == null ? "null" : pSex.COMVariantID)}");
                 Fuck_2(m,null, Doer, targetCOM, Receiver == null ? Doer : Receiver, pSex.isStrongPenetration || pSex.targetCOM.variants[pSex.COMVariantID].setForce, response);
+                if (pairDCFailed) ApplyFailedPenetrationRelationship(m);
             }
             else
             {
@@ -824,10 +1001,13 @@ public partial class EvaluationPackage : I_ResultStorage
         if (response >= Memory_Response.Success) responseStep = response - Memory_Response.Failure;
         else if (response >= Memory_Response.CriticalFailure) responseStep = response - Memory_Response.Success;
         // increase initial attitude by steps in success
-        // For sex: on failure the doer (active partner) still gets full pleasure — only receiver takes the penalty
-        bool skipDoerPenalty = Package is ActionPackage_Sex && responseStep < 0;
+        // For sex: on failure the doer (active partner) is spared and only the receiver takes the penalty - unless the
+        // receiver is the penetrator (penetrated doer), whose climax is never penalized; the penetrated doer takes extra pain instead (Penetrate)
+        bool sexFailure = Package is ActionPackage_Sex && responseStep < 0;
+        bool skipDoerPenalty = sexFailure;
+        bool skipReceiverPenalty = sexFailure && TryGetPenetration(out var penetrator, out _) && penetrator.Owner == Receiver;
         if (!skipDoerPenalty && attitude_doer != Memory_Attitude.None) attitude_doer = (Memory_Attitude)Math.Max((int)Memory_Attitude.Hate, Math.Min((int)Memory_Attitude.Love, (int)attitude_doer + responseStep));
-        if (attitude_receiver != Memory_Attitude.None) attitude_receiver = (Memory_Attitude)Math.Max((int)Memory_Attitude.Hate, Math.Min((int)Memory_Attitude.Love, (int)attitude_receiver + responseStep));
+        if (!skipReceiverPenalty && attitude_receiver != Memory_Attitude.None) attitude_receiver = (Memory_Attitude)Math.Max((int)Memory_Attitude.Hate, Math.Min((int)Memory_Attitude.Love, (int)attitude_receiver + responseStep));
     }
 
     [JsonIgnore] public string Description_Begin { get {
@@ -977,13 +1157,22 @@ public partial class EvaluationPackage : I_ResultStorage
         // first find if doer is willing
         int diceroll = Dice(1, 21, 1);
 
-        if (Receiver == null || Receiver.RefID == 0)
+        if (Receiver == null)
         {
-            // display player option menu to decide accept or refuse
             returnVal = true;
             checkResults_receiver = "";
             checkResults_receiver_short = "";
             attitude_receiver = Memory_Attitude.None;
+        }
+        else if (Receiver.RefID == 0)
+        {
+            // the player is never refused on their behalf (a player option menu could decide later), but still has an
+            // attitude like any receiver (relationships, memory, pleasure/pain scaling, DC skills, failed-DC drop).
+            // The check text is debug-only: the UI shows the doer's check when the player is the receiver (ShowsReceiverCheck).
+            returnVal = true;
+            RollAttitude(ref attitudeRate_pos_receiver, ref attitudeRate_neg_receiver, ref attitude_receiver, false);
+            checkResults_receiver = $"{Receiver.FirstName}: {diceroll_autosuccess} ({attitude_receiver})";
+            checkResults_receiver_short = $"({Doer.FirstName} -> {Receiver.FirstName}) {targetCOM.DisplayName(VariantID)}: {diceroll_autosuccess}, {attitude_receiver}";
         }
         else
         {
@@ -1029,9 +1218,22 @@ public partial class EvaluationPackage : I_ResultStorage
         return returnVal;
     }
 
+    /// <summary>
+    /// Whether the receiver's acceptance check is the one shown (and its rate used). A player receiver is never refused on
+    /// their behalf, so the doer's check is shown instead; the player's automatic-success text remains for debugging.
+    /// </summary>
+    [JsonIgnore] bool ShowsReceiverCheck
+    {
+        get
+        {
+            return response > Memory_Response.None && Receiver != null && Receiver.RefID != 0
+                && checkResults_receiver != "" && checkResults_receiver_short != "";
+        }
+    }
+
     public int GetSuccessRate()
     {
-        bool hasReceiver = response > Memory_Response.None && checkResults_receiver != "" && checkResults_receiver_short != "";
+        bool hasReceiver = ShowsReceiverCheck;
         if (hasReceiver)
         {
             return responseRate;
@@ -1050,7 +1252,7 @@ public partial class EvaluationPackage : I_ResultStorage
             // response = Memory_Response.None;
             // result = "[" + doer.FirstName + "] is unwilling to do [" + targetCOM.displayName + "] on/with [" + receiver.FirstName + "]";
         }
-        bool hasReceiver = response > Memory_Response.None && checkResults_receiver != "" && checkResults_receiver_short != "";
+        bool hasReceiver = ShowsReceiverCheck;
 
         string ss = "";
 
@@ -1072,7 +1274,7 @@ public partial class EvaluationPackage : I_ResultStorage
 
     public string GetCheckResult(bool full = false)
     {
-        bool hasReceiver = response > Memory_Response.None && checkResults_receiver != "" && checkResults_receiver_short != "";
+        bool hasReceiver = ShowsReceiverCheck;
 
         string ss = "";
 
@@ -1132,6 +1334,7 @@ public partial class EvaluationPackage : I_ResultStorage
         /// Store all check-influencing factors by dictionary %query% string key
         /// </summary>
 
+        // AP requests refresh before ApplyPersonalityMods; do not erase those authored modifiers here.
         if (recalculateRate) Evaluate();
 
         refusalCausedByDoer = false;
@@ -1150,18 +1353,36 @@ public partial class EvaluationPackage : I_ResultStorage
            // else response = Memory_Response.Accept;
         }
 
-        if (forceSuccess != Memory_Response.None) response = forceSuccess;
+        // forceSuccess carries DC-grade results and event/debug forced acceptance (also past a hard 0), but an effective
+        // injected (LLM) refusal outranks forced acceptance, as in RollRequest/RollResponse and at execution
+        // (RollPairDC / the AP's injectResult) - otherwise the request stage reports accepted and execution then refuses
+        bool injectedRefusal = epjson != null && epjson.command_result != Memory_Response.None
+            && epjson.command_result < Memory_Response.Accept && !epjson.hardGateOverride;
+        // the rolls accepted despite an injected refusal - it was overruled without a hard-gate flag (a self-acting doer at
+        // 100% whose refusal no NPC receiver applied, or a player receiver, who is never refused on their behalf): flag it so
+        // every consumer treats it as overruled and the model is told (LLMOutcomeRules.GateOverrideNote)
+        if (injectedRefusal && response >= Memory_Response.Accept)
+        {
+            epjson.hardGateOverride = true;
+            injectedRefusal = false;
+        }
+        if (forceSuccess != Memory_Response.None && !(injectedRefusal && forceSuccess >= Memory_Response.Accept)) response = forceSuccess;
 
         if (targetCOM != null && response >= Memory_Response.Accept)
         {
-            if (doerInternal == null) doerInternal = Utility.GetRandomElement(Doer.Body.GetInternalsWithTags(targetCOM.requirements.requirement.doerBodyTags));
-            if (receiverInternal == null) receiverInternal = Utility.GetRandomElement((Receiver == null ? Doer : Receiver).Body.GetInternalsWithTags(targetCOM.requirements.requirement.receiverBodyTags));
+            // EVP_ActOrgans: prefers an organ wearing an empty condom, same rule the permission context predicted with
+            if (doerInternal == null) doerInternal = PickActOrgan(true);
+            if (receiverInternal == null) receiverInternal = PickActOrgan(false);
+            if (targetCOM.doerExtraActTags.Count > 0 && doerExtraInternals.Count < 1) PickExtraDoerOrgans();
         }
         else
         {
             //Debug.LogError("resetting internals");
             doerInternal = null;
             receiverInternal = null;
+            ClearExtraDoerOrgans();
+            tracePart_doer = "";
+            tracePart_receiver = "";
         }
 
 
@@ -1222,6 +1443,26 @@ public partial class EvaluationPackage : I_ResultStorage
             else attitudeRate_neg_receiver = Math.Clamp(attitudeRate_neg_receiver - value, 0, 100);
         }
         tooltip.Add($"{explanation}{value.ToString("+0;-#")}");
+    }
+
+    /// <summary>
+    /// Adds value D20 points to isDoer's side of the acceptance check (request rate for the doer, response rate for
+    /// the receiver; +1 = +5%, clamped 5-95 like Modifiers.RateValue) and lists it with the check's modifiers. A 0/100
+    /// gate never moves. Applied after Evaluate, which recalculates both rates and clears the modifiers - so a
+    /// re-applied mod never stacks.
+    /// </summary>
+    public void AddAcceptanceModifier(bool isDoer, string explanation, int value)
+    {
+        if (isDoer) requestRate = ShiftRate(requestRate, value);
+        else responseRate = ShiftRate(responseRate, value);
+
+        int refID = isDoer ? DoerRef : ReceiverRef;
+        modifiers.AddModifier(refID, explanation != "" ? LocalizeDictionary.QueryThenParse(explanation) : "", value);
+    }
+
+    static int ShiftRate(int rate, int value)
+    {
+        return rate <= 0 || rate >= 100 ? rate : Math.Clamp(rate + value * 5, 5, 95);
     }
 
     List<PersonalityAcceptanceMod> _doerAcceptanceMods = null;
@@ -1664,11 +1905,16 @@ public partial class EvaluationPackage : I_ResultStorage
             Utility.DistinctInPlace(injectedDoerTags);
 
             InvalidateTagCache();
+            stimulationBaseDoerTags = new List<string>(DoerSelfTag);
+            stimulationBaseReceiverTags = new List<string>(ReceiverSelfTag);
 
             if (Fuck_3(m, true, true, doer, doerInternal, receiverInternal, com, variantID, isForce, true)) { }
             else if (Fuck_3(m, true, false, receiver, receiverInternal, doerInternal, com, variantID, isForce, false)) { }
             else if (Fuck_3(m, false, true, doer, doerInternal, receiverInternal, com, variantID, isForce, true)) { }
             else Debug.LogError("com " + com.displayName + " not executed due to not finding required bodypart");
+
+            // body traces / liquids the touching organs leave on each other (Plan_BodyTraces.md), replaces strongLeavesSecretion
+            LeaveContactTraces(com, isForce);
         }
         else
         {
@@ -1686,7 +1932,7 @@ public partial class EvaluationPackage : I_ResultStorage
             if (_doerInternal == null && bodypart_doer != "" && targetCOM != null)
             {
                 var rand = Doer.Body.GetRandomPartWithBaseID(bodypart_doer);
-                _doerInternal = rand == null ? null : rand.GetRandInternalWithTagsLoose(targetCOM.requirements.requirement.doerBodyTags);
+                _doerInternal = rand == null ? null : rand.GetRandInternalWithTagsLoose(targetCOM.GetDoerActTags());
             }
             return _doerInternal;
         }
@@ -1705,7 +1951,7 @@ public partial class EvaluationPackage : I_ResultStorage
             if (_receiverInternal == null && bodypart_receiver != "" && targetCOM != null)
             {
                 var rand = (Receiver == null ? Doer : Receiver).Body.GetRandomPartWithBaseID(bodypart_receiver);
-                _receiverInternal = rand == null ? null : rand.GetRandInternalWithTagsLoose(targetCOM.requirements.requirement.receiverBodyTags);
+                _receiverInternal = rand == null ? null : rand.GetRandInternalWithTagsLoose(targetCOM.GetReceiverActTags(IsStrongAct));
             }
             return _receiverInternal;
         }
@@ -1714,6 +1960,88 @@ public partial class EvaluationPackage : I_ResultStorage
             _receiverInternal = value;
             bodypart_receiver = value == null ? "" : value.Parent.Base.ID;
         }
+    }
+
+    /// <summary>
+    /// A COM with per-mode receiver organs (COM.receiverActTags, eg. oral_V clit / strong vagina) re-picks the receiver organ
+    /// when the one picked earlier doesn't fit this round's mode (the act turned strong, or was restored from a save).
+    /// </summary>
+    void EnsureReceiverActPart()
+    {
+        if (targetCOM == null || !targetCOM.HasReceiverActTags || response < Memory_Response.Accept) return;
+        var tags = targetCOM.GetReceiverActTags(IsStrongAct);
+        var current = receiverInternal;
+        if (current != null && current.hasAnyTag(tags)) return;
+        var pick = Utility.GetRandomElement((Receiver == null ? Doer : Receiver).Body.GetInternalsWithTags(tags));
+        if (pick != null) receiverInternal = pick;
+    }
+
+    /// <summary> Set by Execute when this pair's own sex DC failed (ActionPackage.RollPairDC). </summary>
+    [JsonIgnore] bool pairDCFailed = false;
+
+    /// <summary>
+    /// Each side's self tags snapshotted by Fuck_2 before any organ is stimulated. Every organ stimulated by Penetrate
+    /// (penetrated organ, connected external part, deeper organ) starts its own tag list from this, so one organ's tags
+    /// (eg. vagina's chara_status_sex_V) can't leak into the next organ's experience (clit, womb).
+    /// </summary>
+    [JsonIgnore] List<string> stimulationBaseDoerTags = null, stimulationBaseReceiverTags = null;
+    List<string> OrganStimulationTags(bool receiverSide)
+    {
+        var baseline = receiverSide ? stimulationBaseReceiverTags : stimulationBaseDoerTags;
+        return new List<string>(baseline ?? (receiverSide ? ReceiverSelfTag : DoerSelfTag));
+    }
+    /// <summary> Still accumulates an organ's tags into the shared self tags, which memories/kojo built later this round read. </summary>
+    void MergeStimulationTags(bool receiverSide, List<string> tags)
+    {
+        var shared = receiverSide ? ReceiverSelfTag : DoerSelfTag;
+        foreach (var tag in tags) if (!shared.Contains(tag)) shared.Add(tag);
+    }
+
+    /// <summary>
+    /// The penetration the picked parts form, in Fuck_2's order: doer penetrating receiver first, else receiver penetrating doer.
+    /// </summary>
+    public bool TryGetPenetration(out BodyInternal_Instance penetrator, out BodyInternal_Instance penetrated)
+    {
+        penetrator = null;
+        penetrated = null;
+        var d = doerInternal;
+        var r = receiverInternal;
+        if (d == null || r == null) return false;
+        if (d.canFuck && r.canBePenetrated) { penetrator = d; penetrated = r; return true; }
+        if (r.canFuck && d.canBePenetrated) { penetrator = r; penetrated = d; return true; }
+        return false;
+    }
+
+    /// <summary>
+    /// Signed DC modifier from the penetrated organ's EffectiveLubrication, per its definition's lubricationDC fields.
+    /// False when the parts form no penetration, the organ needs no lubrication or has no authored curve.
+    /// </summary>
+    public bool TryGetLubricationDCMod(out int value, out BodyInternal_Instance penetrated)
+    {
+        value = 0;
+        if (!TryGetPenetration(out _, out penetrated)) return false;
+        return penetrated.TryGetLubricationDCModifier(out value);
+    }
+
+    /// <summary>
+    /// Failed pair DC on a penetration: the penetrated receiver's relationship toward the penetrator declines - Fear when
+    /// the act is non-consensual or their sex pain is already fear-level (pain_fear tag), else Badwill. A penetrated doer
+    /// only takes the extra pain (Penetrate).
+    /// </summary>
+    void ApplyFailedPenetrationRelationship(MessageCollect m)
+    {
+        if (!TryGetPenetration(out var penetrator, out var penetrated)) return;
+        var victim = penetrated.Owner;
+        var other = penetrator.Owner;
+        if (victim == null || other == null || victim == other || victim != Receiver || !victim.canAct) return;
+        var rel = victim.Relationships.FindRelationshipWith(other);
+        if (rel == null) return;
+        int amount = penetrated.Base.failedDCRelationshipDecline;
+        if (amount <= 0) return;
+        bool nonConsensual = Package.isForced || (Package is ActionPackage_Sex sex && sex.UsesForcedSexSelection)
+            || ReceiverSelfTag.Contains("raped") || !hasPermission || (targetCOM.isSexCOM && !rel.HasPermission_Intimacy_High());
+        bool fearPain = victim.Stats.FindStatusByExactID("chara_status_pain_sex")?.Tags?.Contains("pain_fear") ?? false;
+        ModRelationshipResult(m, rel, nonConsensual || fearPain ? RelationshipScoreType.Fear : RelationshipScoreType.Badwill, amount);
     }
 
     [JsonIgnore]
@@ -1761,7 +2089,10 @@ public partial class EvaluationPackage : I_ResultStorage
         // list to prevent infinite loop.
         List<BodyInternal_Instance> history = new List<BodyInternal_Instance>();
 
-        if (internal_fucker != null && internal_fucked != null && internal_fucker.canFuck && internal_fucked.canBePenetrated)
+        // only a command tagged "penetration" penetrates: the organs alone (any penis on a mouth / nipple) used to make
+        // licking balls, paizuri and the condom mouth command penetrate too - the rest only stimulate both organs
+        bool penetrates = com.comTags.Contains("penetration") || (com.ParentCOM != null && com.ParentCOM.comTags.Contains("penetration"));
+        if (penetrates && internal_fucker != null && internal_fucked != null && internal_fucker.canFuck && internal_fucked.canBePenetrated)
         {
             if (log) Debug.Log("Fuck_3 " + fuckerName + " fucking " + fuckedName);
             history.Add(internal_fucked);
@@ -1777,7 +2108,9 @@ public partial class EvaluationPackage : I_ResultStorage
             if (internal_fucked != null && internal_fucked.canBeStimulated) Stimulate(m,isReceiverFucked ? false : true, ref newlist1, targetCOM, VariantID, ref fuckedPleasure, internal_fucked, fucker, baseStrength, internal_fucker);
             else UtilityEX.CheckExperienceGainNoStimulate(Receiver, 1, false, ReceiverSelfTag, DoerTargetTag, m.exp);
 
-            if (internal_fucker != null && internal_fucker.canBeStimulated) Stimulate(m,isReceiverFucked ? true : false, ref newlist2, targetCOM, VariantID, ref fuckerPleasure, internal_fucker, internal_fucked.Owner, baseStrength, internal_fucked);
+            // no organ on the other side (a command without that side's BodyTags): the other actor is still the source
+            var fuckedOwner = internal_fucked != null ? internal_fucked.Owner : (isReceiverFucked ? (Receiver ?? Doer) : Doer);
+            if (internal_fucker != null && internal_fucker.canBeStimulated) Stimulate(m,isReceiverFucked ? true : false, ref newlist2, targetCOM, VariantID, ref fuckerPleasure, internal_fucker, fuckedOwner, baseStrength, internal_fucked);
             else UtilityEX.CheckExperienceGainNoStimulate(Doer, 1, true, DoerSelfTag, ReceiverTargetTag, m.exp);
         }
 
@@ -1814,8 +2147,8 @@ public partial class EvaluationPackage : I_ResultStorage
       "current[" + fucked.CurrentSize + " " + fucked.CurrentMaxSize + "] " +
       "depth[" + fucked.Rank_Depth + " " + fucked.Depth + "] current[" + fucked.CurrentDepth + "]\n";
         */
-        var fuckerTags = isReceiverFucked ? DoerSelfTag : ReceiverSelfTag;
-        var fuckedTags = isReceiverFucked ? ReceiverSelfTag : DoerSelfTag;
+        var fuckerTags = OrganStimulationTags(!isReceiverFucked);
+        var fuckedTags = OrganStimulationTags(isReceiverFucked);
         fuckedTags.AddRange(fucked.Base.tags);
         fuckedTags.Add("penetration");
 
@@ -1871,9 +2204,22 @@ public partial class EvaluationPackage : I_ResultStorage
             s.Add(fucked.DisplayName + " cannot be penetrated, skipping size check");
         }
 
+        float failedDCPain = 0;
+        if (pairDCFailed && fucked.canBePenetrated)
+        {
+            // failed pair DC: the penetrator still gains (reduced) pleasure so climax stays reachable;
+            // a penetrated doer gets extra pain once (a penetrated receiver's penalty is attitude + relationship instead).
+            // Kept out of fuckedPn so strong penetration's connected-part stimulation below doesn't apply it again.
+            fuckerPl *= Math.Max(0f, fucked.Base.failedDCPenetratorPleasureMult);
+            if (!isReceiverFucked && history.Count <= 1) failedDCPain = baseStrength * Math.Max(0f, fucked.Base.failedDCPenetratedDoerPainMult);
+            s.Add($"Failed DC: fucker pleasure x{fucked.Base.failedDCPenetratorPleasureMult}{(failedDCPain > 0 ? $", penetrated doer extra pain {failedDCPain}" : "")}");
+        }
+
 
         if (fucker.canBeStimulated) Stimulate(m,isReceiverFucked ? true : false, ref fuckerTags, targetCOM, VariantID, ref fuckerPleasure, fucker, fucked.Owner, fuckerPl, fucked, fuckerPn, expansion);
-        if (fucked.canBeStimulated) Stimulate(m,isReceiverFucked ? false : true, ref fuckedTags, targetCOM, VariantID, ref fuckedPleasure, fucked, fucker.Owner, fuckedPl, fucker, fuckedPn, expansion);
+        if (fucked.canBeStimulated) Stimulate(m,isReceiverFucked ? false : true, ref fuckedTags, targetCOM, VariantID, ref fuckedPleasure, fucked, fucker.Owner, fuckedPl, fucker, fuckedPn + failedDCPain, expansion);
+        MergeStimulationTags(!isReceiverFucked, fuckerTags);
+        MergeStimulationTags(isReceiverFucked, fuckedTags);
 
         // ????????????
         
@@ -1893,10 +2239,11 @@ public partial class EvaluationPackage : I_ResultStorage
                     if (directionOut.hasTag("external") && !directionOut.canBePenetrated && directionOut.canBeStimulated)
                     {
                         s.Add("Fucker stimulating external part [" + directionOut.DisplayName + "]");
-                        var fuckedTags2 = isReceiverFucked ? ReceiverSelfTag : DoerSelfTag;
-                        fuckedTags.AddRange(directionOut.Base.tags);
-                        fuckedTags.Add("penetration");
+                        var fuckedTags2 = OrganStimulationTags(isReceiverFucked);
+                        fuckedTags2.AddRange(directionOut.Base.tags);
+                        fuckedTags2.Add("penetration");
                         Stimulate(m,isReceiverFucked ? false : true, ref fuckedTags2, targetCOM, VariantID, ref fuckedPleasure, directionOut, fucker.Owner, fuckedPl, fucker, fuckedPn, expansion);
+                        MergeStimulationTags(isReceiverFucked, fuckedTags2);
                     }else if (directionOut.canBePenetrated && fucker.CurrentDepth - fuckerDepthReduction >= fucked.CurrentDepth)
                     {
                         s.Add("Fucker Depth [" + (fucker.CurrentDepth - fuckerDepthReduction) + "] bigger than 1.25 depth [" + fucked.CurrentDepth + "]");
@@ -1924,10 +2271,11 @@ public partial class EvaluationPackage : I_ResultStorage
                     if (directionIn.hasTag("external") && !directionIn.canBePenetrated && directionIn.canBeStimulated)
                     {
                         s.Add("Fucker stimulating external part [" + directionIn.DisplayName + "]");
-                        var fuckedTags2 = isReceiverFucked ? ReceiverSelfTag : DoerSelfTag;
-                        fuckedTags.AddRange(directionIn.Base.tags);
-                        fuckedTags.Add("penetration");
+                        var fuckedTags2 = OrganStimulationTags(isReceiverFucked);
+                        fuckedTags2.AddRange(directionIn.Base.tags);
+                        fuckedTags2.Add("penetration");
                         Stimulate(m,isReceiverFucked ? false : true, ref fuckedTags2, targetCOM, VariantID, ref fuckedPleasure, directionIn, fucker.Owner, fuckedPl, fucker, fuckedPn, expansion);
+                        MergeStimulationTags(isReceiverFucked, fuckedTags2);
                     }
                     else if (directionIn.canBePenetrated && fucker.CurrentDepth - fuckerDepthReduction >= fucked.CurrentDepth)
                     {
@@ -1995,6 +2343,24 @@ public partial class EvaluationPackage : I_ResultStorage
             return;
         }
 
+        // extra doer organs (COM.doerExtraActTags, eg. breast_oral_P mouth + breast): the doer organ's stimulation is split
+        // evenly among them, each organ applying its own sensitivity / experience to its share
+        if (body == doerInternal && doerExtraInternals.Count > 0)
+        {
+            double share = 1.0 / (1 + doerExtraInternals.Count);
+            pleasure *= share;
+            pain *= share;
+            expansion = (float)(expansion * share);
+            foreach (var extra in doerExtraInternals)
+            {
+                if (extra == null || extra == body || !extra.canBeStimulated) continue;
+                var extraTags = OrganStimulationTags(false);
+                extraTags.AddRange(extra.Base.tags);
+                Stimulate(m, isDoer, ref extraTags, com, variantID, ref pleasureTotal, extra, source, pleasure, sourceBody, pain, expansion);
+                MergeStimulationTags(false, extraTags);
+            }
+        }
+
         pain = Math.Clamp(pain, 0, 99);
         expansion = Math.Clamp(expansion, 0, 99);
 
@@ -2035,7 +2401,12 @@ public partial class EvaluationPackage : I_ResultStorage
                                 targetCOM.comTags, sourceBody == null ? null : sourceBody.Base.tags )
         { targetActorName = source.FirstName, targetPartID = sourceBody == null ? "" : sourceBody.baseID, comVariant = variantID });
 
+        var summaryStimulation = string.IsNullOrEmpty(body.Sensitivity) ? null : body.Owner.Stats.GetStatusByStringMatch(body.Sensitivity);
+        float summaryPleasureBefore = summaryStimulation?.StoredSeverity ?? 0;
+        float summaryPainBefore = body.Owner.Stats.GetStatusByStringMatch("chara_status_pain_sex")?.StoredSeverity ?? 0;
+        double summaryGrossPleasure = pleasure; // the organ then subtracts pain from it (non-maso: pleasure -= pain * 2)
         body.Stimulate(ref ownerTags, ref pleasureTotal,ref pleasure, ref pain);
+        double summaryPainDeduction = Math.Max(0, summaryGrossPleasure - pleasure);
 
         if (sourceBody != null) body.LogLastInteractedRef(sourceBody);
         else if (scr_System_CentralControl.current.DLOG_NSFW.log_Cum && body.canFuck) Debug.Log($"[EP.Stimulate] {body.Owner?.FirstName}.{body.baseID} stimulated with sourceBody=NULL (no LogLastInteractedRef), source={source?.FirstName}");
@@ -2082,6 +2453,20 @@ public partial class EvaluationPackage : I_ResultStorage
             var newTags2 = new List<string>(newTags);
             newTags2.Add("expansion");
             body.Owner.Skills.CheckExperienceGain(newTags2, isDoer ? ReceiverTargetTag : DoerTargetTag, expansion, isDoer, m.exp);
+        }
+        if (jobSex != null)
+        {
+            float summaryPleasureAfter = string.IsNullOrEmpty(body.Sensitivity) ? 0
+                : body.Owner.Stats.GetStatusByStringMatch(body.Sensitivity)?.StoredSeverity ?? 0;
+            float summaryPainAfter = body.Owner.Stats.GetStatusByStringMatch("chara_status_pain_sex")?.StoredSeverity ?? 0;
+            // record gained pleasure and what pain took from it separately, not their net. The status change is the applied
+            // net, so gained = change + deduction; a status that ignored the addition (eg. while climaxing) records nothing.
+            double summaryPleasureChange = summaryPleasureAfter - summaryPleasureBefore;
+            bool summaryPleasureApplied = summaryStimulation != null && (summaryPleasureChange != 0 || pleasure == 0);
+            jobSex.RecordSummaryEffect(body.Owner.RefID, source?.RefID ?? -1,
+                summaryPleasureApplied ? (float)Math.Max(0, summaryPleasureChange + summaryPainDeduction) : 0,
+                summaryPleasureApplied ? (float)summaryPainDeduction : 0,
+                Math.Max(0, Math.Abs(summaryPainAfter) - Math.Abs(summaryPainBefore)));
         }
     }
 

@@ -1,0 +1,70 @@
+{
+  "_comment_hours": "Public library 09-20 daily. NPC-only fallback librarian covers applications throughout opening hours; part-time siblings are 09-14 and 14-20. Public facility owns its floor, no commercial rent.",
+  "_comment_tuning": "Mounted library_study proposal: existing host-to-candidate raw Goodwill >=25 and Goodwill > Badwill * 1.1. No Friends label, Trust, mood or awake gate; optional companion, solo fallback. Candidate tuning, not an approved progression pace.",
+  "_comment_rewards": "Guarded shared entry exchange only: BASE +1 Trust and Goodwill, initial distinct directed attendee pairs or newcomer/local companions both directions. Not a completed study block, skill XP, research check, borrowing system, elapsed-time or acceptance payout. Activity owns duration; Events/library_activity_events.json retains the presence guards.",
+  "MapPlans": {
+    "factionInit": [{
+      "ID": "jp_greenside_library", "initializeFaction": "jp_greenside_library", "floors": [{ "ID": "floor_jp_greenside_library", "nameOverwrite": "jp_greenside_library" }], "floorListHostFactionID": "jp_greenside", "isRentingFloor": false, "setPrivateRoomOwner": false,
+      "floorDoors": [{ "sourceFloor": "floor_jp_greenside_library", "sourceExit": "street", "targetFaction": "jp_greenside", "targetFloor": "floor_jp_greenside", "targetExit": "to_jp_greenside_library", "cost": 1 }],
+      "mainExit": { "roomID": "library_lobby", "exitCost": 5 }, "managerBaseIDs": [""], "salesCurrency": "currency_JPY", "salesInventory": [],
+      "assignableMemberTypes": ["membertype_jp_greenside_librarian_parttime"], "joinableMemberTypes": ["membertype_jp_greenside_librarian_parttime"],
+      "fallbackWorkers": [{ "memberTypeID": "membertype_jp_greenside_librarian_npc", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }]
+    }],
+    "floorPlans": [{
+      "ID": "floor_jp_greenside_library", "imagePath": "BGAssets/Generated/office_old_01.webp",
+      "isFloorPlan": false, "floorWidth": 400, "floorHeight": 400, "resize": 1, "mapExit": "library_lobby",
+      "exits": [{ "ID": "street", "connectedRoom": "library_lobby", "hideOnMap": true }],
+      "rooms": [
+        { "ID": "library_lobby", "displayName": "library_lobby", "hideOnMap": true, "furnitureIDs": ["furniture_jp_greenside_library_desk"], "connects": [], "roomImagePath": "BGAssets/Generated/office_old_01.webp" },
+        { "ID": "library_quiet_study", "displayName": "library_quiet_study", "hideOnMap": true, "furnitureIDs": ["furniture_jp_greenside_study_table"], "connects": [{ "ID": "library_lobby", "cost": 1 }], "roomImagePath": "BGAssets/Generated/office_old_02.webp" }
+      ]
+    }],
+    "memberTypes": [{
+      "ID": "membertype_jp_greenside_librarian", "socialStandingKey": "membertype_jp_greenside_librarian", "isMember": true, "isDisplayableInFactionUI": true, "canBeTransferred": true,
+      "joinHandler": { "$type": "JoinHandler_WorkPost, Assembly-CSharp", "optionTextKey": "jp_greenside_library_joinOption", "bindTargetKey": "worker" },
+      "leaveHandler": { "$type": "LeaveHandler_WorkPost, Assembly-CSharp", "optionTextKey": "work_post_leaveOption", "bindTargetKey": "worker" },
+      "childMemberTypes": [
+        { "ID": "membertype_jp_greenside_librarian_parttime", "socialStandingKey": "membertype_jp_greenside_librarian_parttime", "Tags": ["memberType_work_partTime"], "childMemberTypes": [
+          { "ID": "membertype_jp_greenside_librarian_morning", "socialStandingKey": "membertype_jp_greenside_librarian_morning", "workModule": { "jobPostID": "membertype_jp_greenside_librarian_morning", "workCommands": ["jp_greenside_library_desk"], "activeHours": [9,10,11,12,13], "activeDays": [], "hourlyPayout": [{ "itemID": "currency_JPY", "itemCount": 1200 }], "paymentCadence": "Daily" } },
+          { "ID": "membertype_jp_greenside_librarian_evening", "socialStandingKey": "membertype_jp_greenside_librarian_evening", "workModule": { "jobPostID": "membertype_jp_greenside_librarian_evening", "workCommands": ["jp_greenside_library_desk"], "activeHours": [14,15,16,17,18,19], "activeDays": [], "hourlyPayout": [{ "itemID": "currency_JPY", "itemCount": 1200 }], "paymentCadence": "Daily" } }
+        ] },
+        { "ID": "membertype_jp_greenside_librarian_npc", "socialStandingKey": "membertype_jp_greenside_librarian_npc", "Tags": ["jp_greenside_library_hiring"], "workModule": { "jobPostID": "membertype_jp_greenside_librarian_npc", "workCommands": ["jp_greenside_library_desk"], "activeHours": [9,10,11,12,13,14,15,16,17,18,19], "activeDays": [], "hourlyPayout": [{ "itemID": "currency_JPY", "itemCount": 1250 }], "paymentCadence": "Daily" } }
+      ]
+    }],
+    "recreationOffers": [{
+      "ID": "recreation_offer_jp_library_study", "mode": "Flexible", "factionID": "jp_greenside_library",
+      "workModule": { "jobPostID": "recreation_offer_jp_library_study", "workCommands": ["jp_library_quiet_study"], "activeHours": [9,10,11,12,13,14,15,16,17,18,19], "activeDays": [] },
+      "minHours": 2, "maxHours": 2, "weeklyTarget": 2, "minDaysBetween": 1, "daysInAdvance": 1, "weight": 1, "participationChance": 1, "allowWalkIn": true, "trustRewardEligible": true,
+      "gatherRoomID": "library_quiet_study", "launchEventID": "Greenside_LibraryStudy_Begin",
+      "invite": { "visibility": "Private", "inviteChance": 0.3, "minParticipants": 1, "TargetValidators": [{
+        "refKeys": ["companion"], "baseScope": "SelfRelationships", "extraScopeArguments": [],
+        "chara_conditions": [{ "parameters": ["excludeSelf"] }, { "selfRelationshipRequirement": { "requireRawScore": [{ "requireScoreID": "Goodwill", "operand": "gte", "value": 25 }], "requireRawScoreCompare": [{ "requireScoreID": "Goodwill", "operand": "gt", "compareScoreID": "Badwill", "compareScoreMult": 1.1 }] } }],
+        "maxTargetCount": 1, "stopAtMaxTargetCount": true, "orderBy": "friendliness", "required": false, "maxParticipants": 1
+      }] }
+    }]
+  },
+  "Furnitures": { "list": [
+    { "ID": "furniture_jp_greenside_library_desk", "displayName": "jp_greenside_library_desk", "recipe": [], "furnitureSize": 4, "value": 30000, "givesJob": [{ "comID": ["jp_greenside_library_desk"] }] },
+    { "ID": "furniture_jp_greenside_study_table", "displayName": "jp_greenside_study_table", "recipe": [], "furnitureSize": 0, "value": 30000, "givesJob": [{ "comID": ["jp_library_quiet_study"] }] }
+  ] },
+  "COMs": { "list": [
+    {
+      "ID": "jp_library_quiet_study", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "jp_library_quiet_study", "timeScale": 30, "comTags": ["furniture", "recreation", "jp_greenside_library"],
+      "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "cost_EN": 2 } } },
+      "variants": [{ "displayName": "jp_library_quiet_study", "requirements": { "requirement": { "doerCount": 99 } } }], "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 0 },
+      "description_begin": { "Entries": [{ "texts": ["jp_library_study_begin"] }] }, "description_ongoing": { "Entries": [{ "texts": ["jp_library_study_ongoing"] }] }, "description_after": { "Entries": [{ "texts": ["jp_library_study_after"] }] }
+    },
+    {
+      "ID": "jp_greenside_library_desk", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "jp_greenside_library_desk", "timeScale": 30, "comTags": ["job", "furniture", "workModules"],
+      "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "CurrentActive", "requireMemberTypeScope": "JobFaction", "requireMemberType": ["membertype_jp_greenside_librarian"], "cost_ST": 2, "cost_EN": 4 } } },
+      "variants": [{ "displayName": "jp_greenside_library_desk", "requirements": { "requirement": { "doerCount": 1 } } }], "AcceptanceCheck": { "baseAcceptanceValue": 0 }, "DifficultyCheck": { "baseD20Check": 0 },
+      "description_begin": { "Entries": [{ "texts": ["jp_library_work_begin"] }] }, "description_ongoing": { "Entries": [{ "texts": ["jp_library_work_ongoing"] }] }, "description_after": { "Entries": [{ "texts": ["jp_library_work_after"] }] }
+    }
+  ] },
+  "Dictionary": { "Entries": { "zh-cn": {
+    "jp_greenside_library": "绿地区公共图书馆", "recreation_offer_jp_library_study": "图书馆自习", "jp_library_quiet_study": "安静自习", "jp_greenside_study_table": "自习桌椅", "jp_greenside_library_desk": "图书整理与接待",
+    "membertype_jp_greenside_librarian": "图书馆员", "membertype_jp_greenside_librarian_parttime": "兼职图书馆员", "membertype_jp_greenside_librarian_morning": "图书馆早班（09-14）", "membertype_jp_greenside_librarian_evening": "图书馆晚班（14-20）", "membertype_jp_greenside_librarian_npc": "值班图书馆员（09-20）", "jp_greenside_library_joinOption": "让$name$担任$memberType$",
+    "jp_library_study_begin": "$doer.firstname$摊开书本和笔记。", "jp_library_study_ongoing": "$doer.firstname$安静地读书，偶尔记下几行。", "jp_library_study_after": "$doer.firstname$夹好书签，收起笔记。",
+    "jp_library_work_begin": "$doer.firstname$来到图书馆服务台。", "jp_library_work_ongoing": "$doer.firstname$整理归还的书本，指引读者寻找书架。", "jp_library_work_after": "$doer.firstname$整理好服务台，结束这段工作。"
+  } } }
+}

@@ -149,7 +149,7 @@ public class FoetusTemplates
         }
 
         // rescale foetus
-        if (ovum.foetusItem?.GetComp_Ingestible() != null && ovum.State >= OvumState.Implanted)
+        if (ovum.foetusItem?.Comp_Ingestible != null && ovum.State >= OvumState.Implanted)
         {
             float size = size_implanted;
             float t;
@@ -175,7 +175,7 @@ public class FoetusTemplates
                     size = size_end;
                     break;
             }
-            ovum.foetusItem.GetComp_Ingestible().amount = size * 1.5f;
+            ovum.foetusItem.Comp_Ingestible.amount = size * 1.5f;
         }
     }
 
@@ -198,14 +198,14 @@ public class FoetusTemplates
 
             var foetusName = LocalizeDictionary.QueryThenParse("ovum_itemName").Replace("$race$", LocalizeDictionary.QueryThenParse(ovum.FoetusRaceID));
             var foetusObject = WorldManager.Instantiate("item_foetus", foetusName);
-            if (foetusObject == null || foetusObject.GetComp_Ingestible() == null)
+            if (foetusObject == null || foetusObject.Comp_Ingestible == null)
             {
                 ovum.State = OvumState.Aborted;
                 Debug.Log("father null abort");
             }
             else if (ovum.womb.source.Ingest(foetusObject, null, true))
             {
-                foetusObject.GetComp_Ingestible().amount = ovum.foetus.size_implanted * 1.5f;
+                foetusObject.Comp_Ingestible.amount = ovum.foetus.size_implanted * 1.5f;
                 //ovum.womb.source.Ingest(foetusObject);
                 ovum.State = OvumState.Implanted;
                 ovum.foetusItem = foetusObject;
@@ -236,7 +236,7 @@ public class FoetusTemplates
     {
         // every pregnancy enters normal early labor; whether it can be delivered naturally is decided when early
         // labor ends (Character_Trainable.TickLabor) - unsafe ones then wait for a C-section
-        bool safe = ReproductionUtility.CanDeliverSafely(ovum.womb, ovum, out var totalLifespan, out var painLevel);
+        bool safe = ovum.womb.CanDeliverSafely(ovum, out var totalLifespan, out var painLevel);
         ovum.State = OvumState.Final;
         ovum.lifespan = 0;
         ovum.totalLifespan = ReproductionUtility.ClampEarlyLabor(totalLifespan);

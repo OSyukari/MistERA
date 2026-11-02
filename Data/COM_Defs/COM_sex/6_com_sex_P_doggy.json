@@ -4,6 +4,8 @@
             {
                 "parentCOMID":"com_sex_base",
                 "ID": "com_sex_P_doggy",
+                "_comment_traces":"Body traces: aroused precum into the vagina, aroused love juice on the penis, pubes both ways (chance).",
+                "traceKeywords":["insert"],
                 "ActionPackageClass": "ActionPackage_Sex",
                 "categoryTags":["com_category_v"],
                 "displayName": "com_sex_P_doggy_displayName_1",
@@ -12,7 +14,8 @@
                     "sex",
                     "penetration",
                     "position_reverse",
-                    "position_equal"
+                    "position_equal",
+                    "permission_vaginal"
                 ],
                 "portraitTags": ["doggy"],
                 "requirements": {

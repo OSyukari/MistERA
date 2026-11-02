@@ -34,12 +34,50 @@
             "ErAV_Kiryu_Household":"ErAV_Kiryu_Household",
             "ErAV_KiryuGumi_Office":"ErAV_KiryuGumi_Office",
             "jp_shopping_street":"jp_shopping_street",
+            "jp_mall_clothing":"jp_mall_clothing",
+            "jp_mall_electronics":"jp_mall_electronics",
+            "jp_mall_furniture":"jp_mall_furniture",
+            "jp_mall_bookstore":"jp_mall_bookstore",
+            "jp_mall_hardware":"jp_mall_hardware",
+            "jp_mall_sportswear":"jp_mall_sportswear",
+            "jp_mall_foodcourt":"jp_mall_foodcourt",
+            "jp_mall_cinema":"jp_mall_cinema",
+            "jp_beauty_salon":"jp_beauty_salon",
+            "jp_greenside":"jp_greenside",
+            "jp_park":"jp_park",
+            "jp_greenside_library":"jp_greenside_library",
+            "jp_pet_shop":"jp_pet_shop",
+            "jp_greenside_sento":"jp_greenside_sento",
+            "jp_otaku_street":"jp_otaku_street",
+            "jp_maid_cafe":"jp_maid_cafe",
+            "jp_arcade":"jp_arcade",
+            "jp_otaku_mangashop":"jp_otaku_mangashop",
+            "jp_otaku_netcafe":"jp_otaku_netcafe",
+            "jp_otaku_hobbyshop":"jp_otaku_hobbyshop",
+            "jp_otaku_cosplaystudio":"jp_otaku_cosplaystudio",
+            "jp_neon_street":"jp_neon_street",
+            "jp_karaoke":"jp_karaoke",
+            "jp_neon_livehouse":"jp_neon_livehouse",
+            "jp_neon_massage":"jp_neon_massage",
+            "jp_neon_izakaya":"jp_neon_izakaya",
+            "jp_neon_bowling":"jp_neon_bowling",
+            "jp_bar":"jp_bar",
+            "jp_neon_adultshop":"jp_neon_adultshop",
+            "jp_neon_lovehotel":"jp_neon_lovehotel",
+            "jp_neon_pachinko":"jp_neon_pachinko",
+            "jp_neon_soapland":"jp_neon_soapland",
+            "jp_neon_dispatch":"jp_neon_dispatch",
             "jp_high_school":"jp_high_school",
             "CoffinAnL_Household":"CoffinAnL_Household",
             "jp_hospital":"jp_hospital",
             "jp_sports_center":"jp_sports_center",
             "jp_tourist_riverside":"jp_tourist_riverside",
-            "jp_tourist_shrine":"jp_tourist_shrine"
+            "jp_tourist_shrine":"jp_tourist_shrine",
+            "jp_res_aoba_mansion":"jp_res_aoba_mansion",
+            "jp_res_sakuragaoka":"jp_res_sakuragaoka",
+            "jp_res_tower_heights":"jp_res_tower_heights",
+            "jp_res_kotobuki_so":"jp_res_kotobuki_so",
+            "jp_hotel_business":"jp_hotel_business"
         },
         "doors":
         [
@@ -74,10 +112,9 @@
                 "floorExitID":"erav_kiryu_office_frontDoor"
             },
             {
-                "_comment":"placeholder - no factionInit yet",
                 "offset_x":440, "offset_y":150,
-                "factionID":"jp_park",
-                "floorExitID":"park_entrance"
+                "factionID":"jp_greenside",
+                "floorExitID":"greenside_entrance"
             },
             {
                 "_comment":"placeholder - no factionInit yet",
@@ -97,28 +134,14 @@
                 "floorExitID":"jp_shopping_street_entrance"
             },
             {
-                "_comment":"placeholder - no factionInit yet",
-                "offset_x":600, "offset_y":200,
-                "factionID":"jp_family_restaurant",
-                "floorExitID":"restaurant_1F_entrance"
+                "offset_x":710, "offset_y":300,
+                "factionID":"jp_neon_street",
+                "floorExitID":"neon_entrance"
             },
             {
-                "_comment":"placeholder - no factionInit yet",
-                "offset_x":560, "offset_y":310,
-                "factionID":"jp_karaoke",
-                "floorExitID":"karaoke_entrance"
-            },
-            {
-                "_comment":"placeholder - no factionInit yet",
-                "offset_x":640, "offset_y":200,
-                "factionID":"jp_maid_cafe",
-                "floorExitID":"maidcafe_entrance"
-            },
-            {
-                "_comment":"placeholder - no factionInit yet",
-                "offset_x":600, "offset_y":310,
-                "factionID":"jp_arcade",
-                "floorExitID":"arcade_entrance"
+                "offset_x":640, "offset_y":160,
+                "factionID":"jp_otaku_street",
+                "floorExitID":"otaku_street_entrance"
             },
             {
                 "offset_x":620, "offset_y":275,
@@ -127,26 +150,8 @@
             },
             {
                 "offset_x":540, "offset_y":275,
-                "factionID":"jp_beauty_salon",
-                "floorExitID":"beautysalon_entrance"
-            },
-            {
-                "_comment":"placeholder - no factionInit yet",
-                "offset_x":580, "offset_y":275,
-                "factionID":"jp_pet_shop",
-                "floorExitID":"petshop_entrance"
-            },
-            {
-                "_comment":"placeholder - no factionInit yet",
-                "offset_x":680, "offset_y":310,
-                "factionID":"jp_casino",
-                "floorExitID":"casino_entrance"
-            },
-            {
-                "_comment":"placeholder - no factionInit yet",
-                "offset_x":700, "offset_y":275,
-                "factionID":"jp_bar",
-                "floorExitID":"bar_entrance"
+                "factionID":"jp_mall_cinema",
+                "floorExitID":"cinema_lobby"
             },
             {
                 "_comment":"placeholder - no factionInit yet",
@@ -181,6 +186,35 @@
                 "offset_x":60, "offset_y":300,
                 "factionID":"jp_ranch",
                 "floorExitID":"ranch_entrance"
+            },
+            {
+                "_comment":"residential district (Residential/AobaMansion.json) - generated homes attach to its corridors, no doors of their own",
+                "offset_x":530, "offset_y":160,
+                "factionID":"jp_res_aoba_mansion",
+                "floorExitID":"aoba_entrance"
+            },
+            {
+                "_comment":"residential district (Residential/Sakuragaoka.json)",
+                "offset_x":390, "offset_y":200,
+                "factionID":"jp_res_sakuragaoka",
+                "floorExitID":"sakura_entrance"
+            },
+            {
+                "_comment":"residential district (Residential/TowerHeights.json)",
+                "offset_x":740, "offset_y":160,
+                "factionID":"jp_res_tower_heights",
+                "floorExitID":"tower_lobby"
+            },
+            {
+                "_comment":"residential district (Residential/KotobukiSo.json)",
+                "offset_x":450, "offset_y":290,
+                "factionID":"jp_res_kotobuki_so",
+                "floorExitID":"kotobuki_entrance"
+            },
+            {
+                "offset_x":725, "offset_y":225,
+                "factionID":"jp_hotel_business",
+                "floorExitID":"hotel_lobby"
             }
         ],
         "npcInit":
@@ -313,14 +347,9 @@
                 "jp_university": "大学",
                 "jp_shopping_street": "商店街",
                 "jp_family_restaurant": "家庭餐厅",
-                "jp_karaoke": "卡拉OK",
-                "jp_maid_cafe": "女仆咖啡厅",
-                "jp_arcade": "游戏中心",
                 "jp_sports_center": "体育中心",
-                "jp_beauty_salon": "美容院",
                 "jp_pet_shop": "宠物店",
                 "jp_casino": "赌场",
-                "jp_bar": "酒吧",
                 "jp_train_station": "车站",
                 "jp_tourist_riverside": "河畔",
                 "jp_tourist_shrine": "神社",
@@ -400,14 +429,9 @@
                 "jp_university": "University",
                 "jp_shopping_street": "Shopping Street",
                 "jp_family_restaurant": "Family Restaurant",
-                "jp_karaoke": "Karaoke",
-                "jp_maid_cafe": "Maid Cafe",
-                "jp_arcade": "Game Center",
                 "jp_sports_center": "Sports Club",
-                "jp_beauty_salon": "Beauty Salon",
                 "jp_pet_shop": "Pet Shop",
                 "jp_casino": "Casino",
-                "jp_bar": "Bar",
                 "jp_train_station": "Train Station",
                 "jp_tourist_riverside": "Riverside",
                 "jp_tourist_shrine": "Shrine",

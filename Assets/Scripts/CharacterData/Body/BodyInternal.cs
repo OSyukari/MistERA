@@ -72,6 +72,20 @@ public class BodyInternal_Base
     public string memory_ingest_liquid = "";
     public string memory_ingest_solid = "";
 
+    /// <summary>
+    /// slots body traces can sit on this organ (breast: Nipples), empty = traces landing here go to the parent part, on its
+    /// slot from coverSlots (mouth -> Face) (Docs/Body/Plan_BodyTraces.md)
+    /// </summary>
+    public List<BodyPartEquipSlot> traceSlots = new List<BodyPartEquipSlot>();
+    /// <summary> leaves traces on what it touches (mouth: saliva, teeth marks); false = uses the parent part's list </summary>
+    public bool canLeaveTraces = false;
+    /// <summary> trace definition ids this organ can leave </summary>
+    public List<string> leaveTraceIDs = new List<string>();
+    /// <summary> penis: part of a load caught by a worn condom that stays on the penis as a cum trace </summary>
+    public float wornContainerCumTraceRatio = 0;
+    /// <summary> container organ (vagina, anus): part of a load shot into it that stays on the penetrating penis as a cum trace </summary>
+    public float penetratorCumTraceRatio = 0;
+
     public string sensitivityClassString = "";
     public string traitClassString = "";
     public string maxSensitivityStatString = "";
@@ -80,6 +94,24 @@ public class BodyInternal_Base
     public string deflateEventID = "";
 
     public bool needLubrication = false;
+
+    public string lubricationStatID = "";
+    // Bonus is in lubrication points; the half-bonus liquid amount is in ml.
+    public float liquidLubricationBonusMax = 0;
+    public float liquidLubricationHalfAmountMl = 0;
+
+    // Sex DC modifier while this organ is penetrated (needLubrication only), in signed D20 points:
+    // trunc(clamp(EffectiveLubrication * scale + offset, min, max)).
+    public float lubricationDCScale = 0;
+    public float lubricationDCOffset = 0;
+    public int lubricationDCMin = 0;
+    public int lubricationDCMax = 0;
+    // Failed sex DC while this organ is penetrated: the penetrator's pleasure multiplier (never blocks climax),
+    // and extra pain (multiple of the act strength) when the penetrated side is the doer.
+    public float failedDCPenetratorPleasureMult = 0.5f;
+    public float failedDCPenetratedDoerPainMult = 0.5f;
+    // Failed sex DC: Fear/Badwill a penetrated receiver gains toward the penetrator.
+    public int failedDCRelationshipDecline = 1;
 
     public float sizeRatio = 0, stretch_ratio = 1, aroused_stretchMod = 0;
 

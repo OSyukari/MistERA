@@ -1,0 +1,42 @@
+{
+    "_comment": "District-local work stations. Counter duty handles tickets, stock and reception only; never a customer-targeting service COM. Deferred massage/hostess/soapland/dispatch workers have presence-only workModules.",
+    "Furnitures": { "list": [
+        { "ID": "furniture_neon_counter", "displayName": "neon_counter", "recipe": [], "furnitureSize": 0, "value": 50000, "Tags": [], "givesJob": [{ "comID": ["jp_neon_counter_duty"] }, { "comTags": ["furniture", "retailTrade"] }] },
+        { "ID": "furniture_neon_housekeeping", "displayName": "neon_housekeeping", "recipe": [], "furnitureSize": 0, "value": 10000, "Tags": [], "givesJob": [{ "comID": ["jp_neon_housekeeping"] }] },
+        { "ID": "furniture_neon_massage_table", "displayName": "neon_massage_table", "recipe": [], "furnitureSize": 1, "value": 70000, "Tags": ["booth_neon_massage"], "givesJob": [] },
+        { "ID": "furniture_neon_soap_bath", "displayName": "neon_soap_bath", "recipe": [], "furnitureSize": 2, "value": 150000, "Tags": ["booth_neon_soapland"], "givesJob": [] },
+        { "ID": "furniture_neon_hotel_panel", "displayName": "neon_hotel_panel", "recipe": [], "furnitureSize": 0, "value": 100000, "Tags": [], "givesJob": [] }
+    ] },
+    "COMs": { "list": [
+        {
+            "ID": "jp_neon_counter_duty", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "jp_neon_counter_duty", "timeScale": 30,
+            "comTags": ["job", "furniture", "workModules"],
+            "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "CurrentActive", "requireMemberTypeScope": "JobFaction", "requireMemberType": ["membertype_neon_karaoke", "membertype_neon_live_staff", "membertype_neon_massage_reception", "membertype_neon_izakaya", "membertype_neon_bowling", "membertype_neon_bar_staff", "membertype_neon_adultshop", "membertype_neon_pachinko", "membertype_neon_soap_reception", "membertype_neon_dispatch_reception"] } } },
+            "variants": [{ "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 2, "cost_EN": 3 } } }, "displayName": "jp_neon_counter_duty" }],
+            "AcceptanceCheck": { "baseAcceptanceValue": 0 }, "DifficultyCheck": { "baseD20Check": 0 },
+            "description_begin": { "Entries": [{ "keepLooking": true, "texts": ["neon_counter_begin"] }] },
+            "description_ongoing": { "Entries": [{ "keepLooking": true, "texts": ["neon_counter_ongoing"] }] },
+            "description_remove": { "Entries": [{ "keepLooking": true, "texts": ["neon_counter_end"] }] },
+            "description_after": { "Entries": [{ "keepLooking": true, "texts": ["neon_counter_end"] }] }
+        },
+        {
+            "ID": "jp_neon_housekeeping", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "jp_neon_housekeeping", "timeScale": 30,
+            "comTags": ["job", "furniture", "workModules"],
+            "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "CurrentActive", "requireMemberTypeScope": "JobFaction", "requireMemberType": ["membertype_neon_karaoke", "membertype_neon_hotel_cleaner"] } } },
+            "variants": [{ "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 3, "cost_EN": 2 } } }, "displayName": "jp_neon_housekeeping" }],
+            "AcceptanceCheck": { "baseAcceptanceValue": 0 }, "DifficultyCheck": { "baseD20Check": 0 },
+            "description_begin": { "Entries": [{ "keepLooking": true, "texts": ["neon_housekeeping_begin"] }] },
+            "description_ongoing": { "Entries": [{ "keepLooking": true, "texts": ["neon_housekeeping_ongoing"] }] },
+            "description_remove": { "Entries": [{ "keepLooking": true, "texts": ["neon_housekeeping_end"] }] },
+            "description_after": { "Entries": [{ "keepLooking": true, "texts": ["neon_housekeeping_end"] }] }
+        }
+    ] },
+    "Dictionary": { "Entries": { "zh-cn": {
+        "neon_counter": "店铺柜台", "neon_housekeeping": "清洁用品", "neon_massage_table": "按摩台（服务暂未开放）", "neon_soap_bath": "浴场浴台（服务暂未开放）", "neon_hotel_panel": "自助选房面板",
+        "jp_neon_counter_duty": "柜台值班", "jp_neon_housekeeping": "整理房间",
+        "neon_counter_begin": "$doer.firstname$接过柜台的值班簿。", "neon_counter_ongoing": "$doer.firstname$核对票据、整理货物，照看着柜台。", "neon_counter_end": "$doer.firstname$整理好柜台，结束了这段值班。",
+        "neon_housekeeping_begin": "$doer.firstname$拿起清洁用品。", "neon_housekeeping_ongoing": "$doer.firstname$擦拭桌面，补齐用品。", "neon_housekeeping_end": "$doer.firstname$收好了清洁用品。",
+        "neon_join_option": "让$name$应聘$memberType$", "neon_adult_join_option": "让$name$自愿应聘$memberType$",
+        "jp_neon_izakaya_drinks": "在居酒屋吃些小菜，喝饮料、闲聊。", "jp_neon_bowl": "在球道上练习保龄球。", "jp_neon_bar_drinks": "在酒吧与朋友小酌，不包含陪侍服务。", "jp_neon_adultshop_browse": "浏览服饰与用品，不会自动购买或同意服务。", "jp_neon_hotel_rest": "在预留的客房里短时休息，不包含过夜登记或服务。", "jp_neon_pachinko_play": "使用柏青哥机台娱乐。预约费用覆盖固定预算，不兑换奖金。"
+    } } }
+}

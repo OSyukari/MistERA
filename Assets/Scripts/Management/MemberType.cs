@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -443,6 +444,40 @@ public class MemberType
     public RecreationSpec recreation = null;
 
     /// <summary>
+    /// Activities a holder of this type runs FOR OTHERS where they hold it (e.g. a family doctor's checkup): the members of
+    /// that faction find them like house activities (RecreationUtility.ActivitySources), the holder taking part as the
+    /// activity's required provider (an invite role with the providesActivity condition). Activity IDs must be unique
+    /// among provided activities (RecreationUtility.ProvidedActivity looks them up by ID). Null = none.
+    /// </summary>
+    public List<RecreationActivity> providedActivities = null;
+
+    /// <summary>
+    /// What a character needs before the player may assign them this type in the management job-post tab
+    /// (MemberTypeAssignRequirements - furniture in the faction, chara conditions, a holder limit). Null = nothing beyond
+    /// the tab's swap rule.
+    /// </summary>
+    public MemberTypeAssignRequirements assignRequirements = null;
+
+    /// <summary>
+    /// "" when a member holding `held` may be moved to `target` in the management job-post tab (user rule 2026-10-30):
+    /// both must be the same kind of status - equal in isMember, isManager, isPrisoner, isHidden, skipsJobDispatch,
+    /// isPurgedOnPartyCleanup. Else the localized reason naming the flags that differ.
+    /// </summary>
+    public static string SwapRefusal(MemberType held, MemberType target)
+    {
+        if (held == null || target == null) return "-";
+        var differs = new List<string>();
+        if (held.isMember != target.isMember) differs.Add("isMember");
+        if (held.isManager != target.isManager) differs.Add("isManager");
+        if (held.isPrisoner != target.isPrisoner) differs.Add("isPrisoner");
+        if (held.isHidden != target.isHidden) differs.Add("isHidden");
+        if (held.skipsJobDispatch != target.skipsJobDispatch) differs.Add("skipsJobDispatch");
+        if (held.isPurgedOnPartyCleanup != target.isPurgedOnPartyCleanup) differs.Add("isPurgedOnPartyCleanup");
+        if (differs.Count == 0) return "";
+        return LocalizeDictionary.QueryThenParse("ui_assignMemberType_differentKind").Replace("$list$", string.Join(", ", differs));
+    }
+
+    /// <summary>
     /// If true (the default), the Schedule UI additionally lets the player control, per hour, whether
     /// a character holding this status is sandboxed (present) at this faction - see
     /// Manageable.HourlySchedule.Sandbox and Manageable.HasCustomOverride. Defaults on so every
@@ -584,4 +619,135 @@ public class MembershipFeeInit
     /// reads correctly everywhere instead of the generic wording. Empty (the default) keeps the generic
     /// "obligation_membershipfee_generic_name" wording.</summary>
     public string membershipFeeName = "";
+}
+
+/// <summary>
+/// See MemberType.assignRequirements: checked by the management job-post tab (scr_Canvas_Management.button_ScheduleMemberType)
+/// before the player may assign the type - shown disabled with the reason when unmet.
+/// </summary>
+public class MemberTypeAssignRequirements
+{
+    /// <summary>
+    /// Furniture that must stand in the faction's non-private, non-prison rooms: each entry must be matched by at least one
+    /// piece of furniture there (FurnitureRequirement - base ID / any tags / all tags / excluded tags).
+    /// </summary>
+    public List<FurnitureRequirement> requireFurnitures = new List<FurnitureRequirement>();
+    /// <summary>Skill levels the character must have (Character_Trainable.GetSkillLevel(skillID) >= minLevel).</summary>
+    public List<SkillRequirement> requireSkills = new List<SkillRequirement>();
+    /// <summary>Most characters holding this type in the faction at once (0 = no limit).</summary>
+    public int maxHolders = 0;
+
+    public class SkillRequirement
+    {
+        public string skillID = "";
+        public int minLevel = 1;
+    }
+
+    /// <summary>
+    /// One furniture requirement: a furniture definition matches when it passes every set criterion (an empty one is
+    /// ignored) - its ID is one of baseIDs; it has any of anyTags; it has all of allTags; it has none of excludeTags
+    /// (FurnitureBase.Tags).
+    /// </summary>
+    public class FurnitureRequirement
+    {
+        public List<string> baseIDs = new List<string>();
+        public List<string> anyTags = new List<string>();
+        public List<string> allTags = new List<string>();
+        public List<string> excludeTags = new List<string>();
+
+        public bool Matches(FurnitureBase f)
+        {
+            if (f == null) return false;
+            var tags = f.Tags ?? new List<string>();
+            if (baseIDs != null && baseIDs.Count > 0 && !baseIDs.Contains(f.ID)) return false;
+            if (anyTags != null && anyTags.Count > 0 && !anyTags.Exists(t => tags.Contains(t))) return false;
+            if (allTags != null && allTags.Count > 0 && !allTags.TrueForAll(t => tags.Contains(t))) return false;
+            if (excludeTags != null && excludeTags.Exists(t => tags.Contains(t))) return false;
+            return true;
+        }
+
+        /// <summary>Some matching furniture stands in one of faction's non-private, non-prison rooms.</summary>
+        public bool IsMetAt(Manageable faction)
+        {
+            if (faction == null) return false;
+            foreach (var room in faction.ManagedRooms.Values)
+            {
+                if (room == null || room.isRoomPrivate || room.isRoomPrison) continue;
+                foreach (var furniture in room.Furnitures)
+                    if (Matches(furniture?.FurnitureBase)) return true;
+            }
+            return false;
+        }
+
+        /// <summary>The set criteria, each stated exactly (base IDs by their furniture names, tags as written), separated.</summary>
+        public string DescribeCriteria()
+        {
+            var parts = new List<string>();
+            string sep = LocalizeDictionary.QueryThenParse("ui_assignMemberType_listSeparator");
+            if (baseIDs != null && baseIDs.Count > 0)
+                parts.Add(LocalizeDictionary.QueryThenParse("ui_assignMemberType_furniture_baseIDs").Replace("$list$", string.Join(sep, baseIDs.Select(id =>
+                {
+                    var f = scr_System_Serializer.current.GetByNameOrID_FurnitureBase(id);
+                    return f != null ? f.DisplayName : id;
+                }))));
+            if (anyTags != null && anyTags.Count > 0)
+                parts.Add(LocalizeDictionary.QueryThenParse("ui_assignMemberType_furniture_anyTags").Replace("$list$", string.Join(sep, anyTags)));
+            if (allTags != null && allTags.Count > 0)
+                parts.Add(LocalizeDictionary.QueryThenParse("ui_assignMemberType_furniture_allTags").Replace("$list$", string.Join(sep, allTags)));
+            if (excludeTags != null && excludeTags.Count > 0)
+                parts.Add(LocalizeDictionary.QueryThenParse("ui_assignMemberType_furniture_excludeTags").Replace("$list$", string.Join(sep, excludeTags)));
+            return string.Join(LocalizeDictionary.QueryThenParse("ui_assignMemberType_criteriaSeparator"), parts);
+        }
+
+        /// <summary>The display names of every furniture definition this requirement matches ("-" = none).</summary>
+        public string MatchingFurnitureNames()
+        {
+            var names = new List<string>();
+            foreach (var f in scr_System_Serializer.current.MasterList.Furnitures.list)
+                if (Matches(f) && !names.Contains(f.DisplayName)) names.Add(f.DisplayName);
+            return names.Count == 0 ? "-" : string.Join(LocalizeDictionary.QueryThenParse("ui_assignMemberType_listSeparator"), names);
+        }
+    }
+
+    /// <summary>
+    /// Whether c may be assigned this type at faction (holders other than c counted). tooltip = every requirement, one
+    /// line each, stating its exact condition (and the current value for skills / holders), under a heading - the unmet
+    /// ones wrapped in the error color (DisplaySetting.TextColor_conflict, as RankTrack does).
+    /// </summary>
+    public bool Check(Character_Trainable c, Manageable faction, MemberType type, out string tooltip)
+    {
+        var lines = new List<string>();
+        bool all = true;
+        void Line(bool ok, string text)
+        {
+            if (!ok) all = false;
+            lines.Add(ok ? text : Utility.WrapTextColor(text, scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color));
+        }
+
+        foreach (var req in requireFurnitures ?? new List<FurnitureRequirement>())
+        {
+            if (req == null) continue;
+            Line(req.IsMetAt(faction), LocalizeDictionary.QueryThenParse("ui_assignMemberType_reqFurniture")
+                .Replace("$criteria$", req.DescribeCriteria()).Replace("$furniture$", req.MatchingFurnitureNames()));
+        }
+        foreach (var req in requireSkills ?? new List<SkillRequirement>())
+        {
+            if (req == null || string.IsNullOrEmpty(req.skillID)) continue;
+            int level = c == null ? 0 : c.GetSkillLevel(req.skillID);
+            Line(c != null && level >= req.minLevel, LocalizeDictionary.QueryThenParse("ui_assignMemberType_reqSkill")
+                .Replace("$skill$", LocalizeDictionary.QueryThenParse(req.skillID))
+                .Replace("$min$", req.minLevel.ToString())
+                .Replace("$current$", c == null ? "-" : $"{level}"));
+        }
+        if (maxHolders > 0)
+        {
+            int holders = 0;
+            if (faction != null) foreach (var other in faction.ManagedChara) if (other != null && other != c && faction.GetMemberType(other) == type) holders++;
+            Line(holders < maxHolders, LocalizeDictionary.QueryThenParse("ui_assignMemberType_reqMaxHolders")
+                .Replace("$max$", maxHolders.ToString()).Replace("$current$", holders.ToString()));
+        }
+        if (c == null || faction == null) all = false;
+        tooltip = lines.Count == 0 ? "" : LocalizeDictionary.QueryThenParse("ui_assignMemberType_requires") + "\n" + string.Join("\n", lines);
+        return all;
+    }
 }

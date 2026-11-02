@@ -104,12 +104,6 @@ public class scr_Menu_AddSalesOrder : scr_Menu, IPointerClickHandler
         ValidateAll();
     }
 
-    protected override void OnDestroy()
-    {
-        base.OnDestroy();
-        scr_System_CampaignManager.current.NotifyUpdate();
-    }
-
     public void OnPointerClick(PointerEventData eventData)
     {
         // if click outside box

@@ -103,7 +103,8 @@ public static class LLMOutcomeRules
     public static string GateOverrideNote(ActionPackage ap)
     {
         if (ap == null || ap.epjson == null || !ap.epjson.Exists(x => x.hardGateOverride)) return null;
-        return ap.epjson[0].outcomeMode == LLMOutcomeMode.LLMVerdict
+        // an overridden forced result (any mode - GameRolls can force one too) is a ruling, not a modifier
+        return ap.epjson.Exists(x => x.hardGateOverride && x.command_result != Memory_Response.None)
             ? scr_UpdateHandler.AgentText("agent_note_gateOverride_verdict",
                 "Your ruling was overridden by the game: the acceptance rate was 0% or 100% (a hard game limit, e.g. the character is incapable of this action). Narrate the actual result reported here, not your ruling.")
             : scr_UpdateHandler.AgentText("agent_note_gateOverride_modifier",

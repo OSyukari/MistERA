@@ -1067,6 +1067,8 @@ public static class LLMUtils
 
         foreach (var ap in job.MakePackages(chara, doers, receivers, master, true, false, true))
         {
+            // structurally invalid: a generator whose children all went to item folders, the folder template, a folder without children
+            if (ap.targetCOM != null && !ap.targetCOM.isValid) continue;
             var app = validateAP(ap, showInvalidAP);
             if (app == null) continue;
 
@@ -1441,7 +1443,7 @@ public static class LLMUtils
     public static List<string> CollectItemTags(Item_Instance item, Character_Body body, bool xray = false)
     {
         var list = new List<string>();
-        var layer = item.GetComp_Equippable()?.equipLayer ?? BodyEquipLayer.Outer;
+        var layer = item.Comp_Equippable?.equipLayer ?? BodyEquipLayer.Outer;
 
         if (item.promptTags != null) list.AddRange(item.promptTags);
         AddSlotTags(list, item.promptTags_slots, body, layer, xray);

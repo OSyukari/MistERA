@@ -4,6 +4,7 @@
             "default": {
 "console_modstatderived_tooltip":"modstatderived [statbaseID] [value]",
 "console_spawnChara_tooltip":"spawnChara [str baseID]",
+"console_spawnResident_tooltip":"spawnResident [str charaID,charaID,...] [str factionID] [optional str homeTemplateID | memberTypeID]\nGenerates one character per listed ID (CharaTemplateGenerator or base character ID, comma-separated, no spaces) and gives them a home in factionID.\nResidential district (jp_res_aoba_mansion, jp_res_sakuragaoka, jp_res_tower_heights, jp_res_kotobuki_so): one new household home - first = family leader, others family members, a private room each, placed at the home's front door. Optional 3rd argument forces a home template.\nOther faction (e.g. jp_hotel_business): each becomes a permanent resident with a free private room; optional 3rd argument = member type (default membertype_family_member; a hotel guest type uses its room prefix).\nNothing is generated if the district is full, no template has a bedroom per character, or rooms are missing - the reason goes to the log.\ne.g. spawnResident jp_generic_adult_male,jp_generic_adult_female jp_res_aoba_mansion",
 "console_addItemToChara_tooltip":"addItem [int targetRef] [string itemBaseID] [int count]",
 "console_addItemToFaction_tooltip":"addItem [string factionID] [string itemBaseID] [int count]",
 "console_modkojovariable_tooltip":"modkojovariable [int fromTargetRef] [int toTargetRef] [string varname] [bool isdaily] [int value]",

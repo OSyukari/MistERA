@@ -1,0 +1,95 @@
+{
+    "_comment": "Launch callbacks reused for explicit joins and late arrivals. isJoin precedes isLate. Narrative only: fees, reservations and optional overnight lifecycle belong to Job_Activity, not event executors. No invitation-acceptance or generic visit Trust rewards.",
+    "Events": { "list": [
+        { "ID": "Otaku_MaidCafe_Begin", "events": [
+            { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [
+                { "option": "join", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isJoin"] }, { "Type": "JumpToLabel", "arguments": ["", "join"] }] },
+                { "option": "late", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isLate"] }, { "Type": "JumpToLabel", "arguments": ["", "late"] }] },
+                { "option": "initial", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "begin"] }] }
+            ] },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "begin", "line": "otaku_maid_begin", "isLast": true },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "join", "line": "otaku_maid_join", "isLast": true },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "line": "otaku_maid_late", "isLast": true }
+        ] },
+        { "ID": "Otaku_Arcade_Begin", "events": [
+            { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [
+                { "option": "join", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isJoin"] }, { "Type": "JumpToLabel", "arguments": ["", "join"] }] },
+                { "option": "late", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isLate"] }, { "Type": "JumpToLabel", "arguments": ["", "late"] }] },
+                { "option": "initial", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "begin"] }] }
+            ] },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "begin", "line": "otaku_arcade_begin", "isLast": true },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "join", "line": "otaku_arcade_join", "isLast": true },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "line": "otaku_arcade_late", "isLast": true }
+        ] },
+        { "ID": "Otaku_Manga_Begin", "events": [
+            { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [
+                { "option": "join", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isJoin"] }, { "Type": "JumpToLabel", "arguments": ["", "join"] }] },
+                { "option": "late", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isLate"] }, { "Type": "JumpToLabel", "arguments": ["", "late"] }] },
+                { "option": "initial", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "begin"] }] }
+            ] },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "begin", "line": "otaku_manga_begin", "isLast": true },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "join", "line": "otaku_manga_join", "isLast": true },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "line": "otaku_manga_late", "isLast": true }
+        ] },
+        { "ID": "Otaku_NetCafe_Read_Begin", "events": [
+            { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [
+                { "option": "join", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isJoin"] }, { "Type": "JumpToLabel", "arguments": ["", "join"] }] },
+                { "option": "late", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isLate"] }, { "Type": "JumpToLabel", "arguments": ["", "late"] }] },
+                { "option": "initial", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "begin"] }] }
+            ] },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "begin", "line": "otaku_net_read_begin", "isLast": true },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "join", "line": "otaku_net_read_join", "isLast": true },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "line": "otaku_net_read_late", "isLast": true }
+        ] },
+        { "ID": "Otaku_NetCafe_Single_Begin", "events": [
+            { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [
+                { "option": "join", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isJoin"] }, { "Type": "JumpToLabel", "arguments": ["", "join"] }] },
+                { "option": "late", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isLate"] }, { "Type": "JumpToLabel", "arguments": ["", "late"] }] },
+                { "option": "initial", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "begin"] }] }
+            ] },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "begin", "line": "otaku_net_single_begin", "isLast": true },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "join", "line": "otaku_net_single_join", "isLast": true },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "line": "otaku_net_single_late", "isLast": true }
+        ] },
+        { "ID": "Otaku_NetCafe_Pair_Begin", "events": [
+            { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [
+                { "option": "join", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isJoin"] }, { "Type": "JumpToLabel", "arguments": ["", "join"] }] },
+                { "option": "late", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isLate"] }, { "Type": "JumpToLabel", "arguments": ["", "late"] }] },
+                { "option": "initial", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "begin"] }] }
+            ] },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "begin", "line": "otaku_net_pair_begin", "isLast": true },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "join", "line": "otaku_net_pair_join", "isLast": true },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "line": "otaku_net_pair_late", "isLast": true }
+        ] },
+        { "ID": "Otaku_Cosplay_Begin", "events": [
+            { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [
+                { "option": "join", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isJoin"] }, { "Type": "JumpToLabel", "arguments": ["", "join"] }] },
+                { "option": "late", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isLate"] }, { "Type": "JumpToLabel", "arguments": ["", "late"] }] },
+                { "option": "initial", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "begin"] }] }
+            ] },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "begin", "line": "otaku_cosplay_begin", "isLast": true },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "join", "line": "otaku_cosplay_join", "isLast": true },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "line": "otaku_cosplay_late", "isLast": true }
+        ] },
+        { "ID": "Otaku_NetCafe_Overnight_Begin", "_comment": "Prepared narrative hook for parent-owned overnight activity support. This does NOT assign temp home, charge, reserve, wake or check out anyone.", "events": [
+            { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [
+                { "option": "join", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isJoin"] }, { "Type": "JumpToLabel", "arguments": ["", "join"] }] },
+                { "option": "late", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isLate"] }, { "Type": "JumpToLabel", "arguments": ["", "late"] }] },
+                { "option": "initial", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "begin"] }] }
+            ] },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "begin", "line": "otaku_net_overnight_begin", "isLast": true },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "join", "line": "otaku_net_overnight_join", "isLast": true },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "line": "otaku_net_overnight_late", "isLast": true }
+        ] }
+    ] },
+    "Dictionary": { "Entries": { "zh-cn": {
+        "otaku_maid_begin": "咖啡厅客席上摆着菜单，厨房那边传来餐具轻碰的声音。可以坐下来慢慢挑选。", "otaku_maid_join": "$joining.name$在咖啡厅找了张空椅坐下，翻开菜单。", "otaku_maid_late": "$joining.name$晚些来到咖啡厅，在客席旁放下随身物品。",
+        "otaku_arcade_begin": "机台灯光一排排亮着，音游节拍和赛车声混在一起。游戏时段开始了。", "otaku_arcade_join": "$joining.name$走进机台区，挑选想玩的游戏。", "otaku_arcade_late": "$joining.name$晚些赶到游戏中心，沿着亮着屏幕的机台看过去。",
+        "otaku_manga_begin": "新刊摆在入口展示台上，书架间还留着安静的通道；帘子后面是另设的成人书区。", "otaku_manga_join": "$joining.name$走到新刊台前，翻看试阅本。", "otaku_manga_late": "$joining.name$晚些来到书店，在门口确认了书架分类。",
+        "otaku_net_read_begin": "开放阅览席旁的书架分门别类排着漫画，饮料吧就在几步外。阅览时段开始了。", "otaku_net_read_join": "$joining.name$拿了本漫画，在开放席坐下。", "otaku_net_read_late": "$joining.name$晚些来到阅览区，轻轻拉开一张椅子。",
+        "otaku_net_single_begin": "预订的单人包间里放着电脑与阅读灯。关上门后，外面的脚步声轻了许多。", "otaku_net_single_join": "$joining.name$来到预订的单人包间，放下随身物品。", "otaku_net_single_late": "$joining.name$晚些来到预订包间，打开了阅读灯。",
+        "otaku_net_pair_begin": "双人包间的平垫上留着两个位置，电脑与漫画都在伸手可及的地方。包间时段开始了。", "otaku_net_pair_join": "$joining.name$在预订的双人包间里落座。", "otaku_net_pair_late": "$joining.name$晚些来到双人包间，在门边放下包。",
+        "otaku_cosplay_begin": "租赁时段包含一套冒险者服装。摄影棚的布景与定时相机已经备好，可以换装后自行拍摄。", "otaku_cosplay_join": "$joining.name$来到摄影棚，先确认了租赁服装与自拍设备的位置。", "otaku_cosplay_late": "$joining.name$晚些来到摄影棚，在布景旁整理服装。",
+        "otaku_net_overnight_begin": "过夜套餐到明早八点。包间内备有可休息的铺位，走廊尽头有淋浴间，可以按自己的习惯洗漱休息。", "otaku_net_overnight_join": "$joining.name$来到过夜包间，把随身物品放在铺位旁。", "otaku_net_overnight_late": "$joining.name$晚些来到过夜包间，把阅读灯调暗了些。"
+    } } }
+}

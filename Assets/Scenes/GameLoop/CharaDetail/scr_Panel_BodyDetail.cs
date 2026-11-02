@@ -55,11 +55,24 @@ public class scr_Panel_BodyDetail : MonoBehaviour
         if (instance.canFuck) sizestring += (sizestring.Length > 0 ? " " : "") + instance.Size.ToString("N1");
         else if (instance.canBeFucked) sizestring += (sizestring.Length > 0 ? " " : "") + instance.Rank_Size + "[" + (instance.Size != 0 ? instance.Size.ToString("N1") + "/" + instance.MaxSize.ToString("N1") : " - ") + "]";
 
+        var sizeTooltip = size?.tooltip ?? "";
+        if (!String.IsNullOrEmpty(instance.Base.lubricationStatID))
+        {
+            sizestring += (sizestring.Length > 0 ? " | " : "") + LocalizeDictionary.QueryThenParse("ui_bodyLubrication_value")
+                .Replace("$value$", instance.EffectiveLubrication.ToString("N1"));
+            var lubricationTooltip = LocalizeDictionary.QueryThenParse("ui_bodyLubrication_breakdown")
+                .Replace("$derived$", instance.DerivedLubrication.ToString("N1"))
+                .Replace("$liquid$", instance.ContainedLiquidLubricationBonus.ToString("N1"))
+                .Replace("$amount$", instance.CurrentlyContainedLiquid.ToString("N1"))
+                .Replace("$stat$", LocalizeDictionary.QueryThenParse(instance.Base.lubricationStatID));
+            sizeTooltip += (sizeTooltip.Length > 0 ? "\n\n" : "") + lubricationTooltip;
+        }
+
         if (sizestring.Length > 0) 
         {
             boxSize.gameObject.SetActive(true);
             boxSize.SetText($"Size: {sizestring}");
-            if (size != null) boxSize.SetExternalTooltip(size.tooltip);
+            boxSize.SetExternalTooltip(sizeTooltip);
         }
         else boxSize.gameObject.SetActive(false);
 
@@ -82,8 +95,8 @@ public class scr_Panel_BodyDetail : MonoBehaviour
 
             foreach (var i in instance.Contains)
             {
-                volumeTooltip.Add($"name [{i.DisplayName}] amount [{i.GetComp_Ingestible().amount.ToString("N1")}]");
-                totalVolume += i.GetComp_Ingestible().amount;
+                volumeTooltip.Add($"name [{i.DisplayName}] amount [{i.Comp_Ingestible.amount.ToString("N1")}]");
+                totalVolume += i.Comp_Ingestible.amount;
             }
 
 

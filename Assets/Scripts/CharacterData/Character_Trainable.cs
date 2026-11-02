@@ -291,7 +291,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
     public void InitializeWithRefID(int refID)
     {
-
+        actorTagCache = null;
         this.referenceID = refID;
 
         if (Template == null)
@@ -586,7 +586,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         {
             var scheduleRefreshMsg = new List<string>();
             FactionManager.UpdateSchedule(ref scheduleRefreshMsg, false);
-            // recreation bookings against the refreshed schedule / planned night / sleep state
+            // Financial accrual only; activity validity and confirmation are change/venue driven.
             FactionManager.OnHourUpdate_Recreation();
         }
 
@@ -654,11 +654,15 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
         // a baby that entered early labor during this tick (FoetusTemplates.AdvStage_End resets lifespan to 0; the
         // next tick adds 60) - once per mother, however many babies started together
-        foreach (var egg in ReproductionUtility.AllOvums(this))
+        foreach (var wb in wombs)
         {
-            if (egg.State != OvumState.Final || egg.lifespan != 0) continue;
-            NotifyLaborStart();
-            break;
+            if (wb == null || wb.eggs == null) continue;
+            foreach (var egg in wb.eggs)
+            {
+                if (egg == null || egg.State != OvumState.Final || egg.lifespan != 0) continue;
+                NotifyLaborStart();
+                return;
+            }
         }
     }
 
@@ -698,19 +702,28 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             // waiting for a C-section that can no longer come (no hospital available, none running): back to natural birth
             bool operating = scr_System_CampaignManager.current.GetSpecialTrackedJobs(this, j => j is Job_CSection).Count > 0;
             if (operating || ReproductionUtility.IsCSectionAvailable(this)) return;
-            foreach (var egg in ReproductionUtility.AllOvums(this))
+            foreach (var wb in wombs)
             {
-                if (egg.State == OvumState.Final_RequireHelp) egg.State = OvumState.Final;
+                if (wb == null || wb.eggs == null) continue;
+                foreach (var egg in wb.eggs)
+                {
+                    if (egg != null && egg.State == OvumState.Final_RequireHelp) egg.State = OvumState.Final;
+                }
             }
             ReproductionUtility.UpdateLaborStatus(this);
         }
 
         Ovum ready = null;
-        foreach (var egg in ReproductionUtility.AllOvums(this))
+        foreach (var wb in wombs)
         {
-            if (!egg.isEarlyLaborOver) continue;
-            ready = egg;
-            break;
+            if (wb == null || wb.eggs == null) continue;
+            foreach (var egg in wb.eggs)
+            {
+                if (egg == null || !egg.isEarlyLaborOver) continue;
+                ready = egg;
+                break;
+            }
+            if (ready != null) break;
         }
         if (ready == null) return;
 
@@ -729,19 +742,29 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     bool TrySendLaborToCSection()
     {
         bool unsafeLabor = false;
-        foreach (var egg in ReproductionUtility.AllOvums(this))
+        if (wombs == null) return false;
+        foreach (var wb in wombs)
         {
-            if (egg.State != OvumState.Final) continue;
-            if (ReproductionUtility.CanDeliverSafely(egg.womb, egg, out _, out _)) continue;
-            unsafeLabor = true;
-            break;
+            if (wb == null || wb.eggs == null) continue;
+            foreach (var egg in wb.eggs)
+            {
+                if (egg == null || egg.State != OvumState.Final) continue;
+                if (wb.CanDeliverSafely(egg, out _, out _)) continue;
+                unsafeLabor = true;
+                break;
+            }
+            if (unsafeLabor) break;
         }
         if (!unsafeLabor) return false;
         if (!ReproductionUtility.IsCSectionAvailable(this)) return false;
 
-        foreach (var egg in ReproductionUtility.AllOvums(this))
+        foreach (var wb in wombs)
         {
-            if (egg.State == OvumState.Final) egg.State = OvumState.Final_RequireHelp;
+            if (wb == null || wb.eggs == null) continue;
+            foreach (var egg in wb.eggs)
+            {
+                if (egg != null && egg.State == OvumState.Final) egg.State = OvumState.Final_RequireHelp;
+            }
         }
         EndIntenseLaborState();
         ReproductionUtility.SetLaborObstructed(this, true);
@@ -1058,8 +1081,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
         // add memory entry - two versions: labor still going (another baby in labor or waiting for a C-section; the
         // delivered babies are already out of the womb here), or this birth ended the labor
-        bool laborLeft = false;
-        foreach (var egg in ReproductionUtility.AllOvums(this)) if (ReproductionUtility.IsLaborState(egg.State)) { laborLeft = true; break; }
+        bool laborLeft = ReproductionUtility.IsCharaInLabor(this);
         var mem_desc = LocalizeDictionary.QueryThenParse(laborLeft ? "memory_entry_givebirth" : "memory_entry_givebirth_laborEnd")
             .Replace("$count$", $"{names.Count}");
         var memInst_2 = new MemInstance(new List<int>(), new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.Neutral, String.Join("\n", names));
@@ -1240,12 +1262,6 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         if (FactionManager != null) FactionManager.OnDayUpdate_Recreation();
     }
 
-    /// <summary>Second pass of the hour (scr_System_Time.Observer_globalTime_HoursLate - every character ticked / posted): recreation sessions ranked and confirmed.</summary>
-    private void Observer_GlobalHourLate()
-    {
-        if (FactionManager != null) FactionManager.OnHourLate_Recreation();
-    }
-
     
 
     public int GetStatusSeverity(string s)
@@ -1279,6 +1295,84 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             }
             return _actorKeywords;
         }
+    }
+
+    [NonSerialized, JsonIgnore] private ActorTagCache actorTagCache;
+
+    private sealed class ActorTagCache
+    {
+        internal readonly List<string> MinuteTags = new List<string>(16);
+        internal readonly List<string> Tags = new List<string>(16);
+        internal long Minute = long.MinValue;
+        internal int ContextOffset, ConsciousnessOffset;
+        internal ActorTagContext Context;
+        internal ulong ContextRevision;
+        internal byte Consciousness;
+        internal bool Valid;
+    }
+
+    internal void AppendActorTags(List<string> destination)
+    {
+        if (actorTagCache == null) actorTagCache = new ActorTagCache();
+        var cache = actorTagCache;
+        long minute = scr_System_Time.current.getCurrentTime().Ticks / TimeSpan.TicksPerMinute;
+        if (cache.Minute != minute)
+        {
+            var tags = cache.MinuteTags;
+            tags.Clear();
+            var genders = scr_System_CentralControl.current.GetGender(this);
+            for (int i = 0; i < genders.Count; i++) tags.Add(genders[i].ToString());
+            tags.AddRange(ActorKeywords);
+            cache.ContextOffset = tags.Count;
+
+            if (scr_System_Time.current.TimeResume && !CanActInTimeStop) tags.Add("timeResume");
+            else if (isTimeStopped)
+            {
+                tags.Add("timestop");
+                tags.Add("timestopped");
+                tags.Add("doll");
+                tags.Add("empty");
+            }
+            cache.ConsciousnessOffset = tags.Count;
+            if (scr_System_CampaignManager.current != null && scr_System_CampaignManager.current.Player == this) tags.Add("pov");
+            if (isVisiblyPregnant) tags.Add("pregnant");
+            if (ReproductionUtility.IsDangerDay(this)) tags.Add("dangerDay");
+            if (Body != null)
+            {
+                var internals = Body.Internals;
+                for (int i = 0; i < internals.Count; i++)
+                {
+                    if (!SingleUseEquipUtility.HasFilledWornContainer(internals[i])) continue;
+                    tags.Add("condom_filled");
+                    break;
+                }
+            }
+            cache.Minute = minute;
+            cache.Valid = false;
+        }
+
+        var context = FactionManager.GetActorTagContext();
+        byte consciousness = isSleeping ? (byte)2 : Stats.isConsciousnessUnconscious ? (byte)1 : (byte)0;
+        ulong revision = context == null ? 0 : context.Revision;
+        if (!cache.Valid || !ReferenceEquals(cache.Context, context) || cache.ContextRevision != revision
+            || cache.Consciousness != consciousness)
+        {
+            var tags = cache.Tags;
+            tags.Clear();
+            // Keep the original insertion order despite splitting slow state into one minute bucket.
+            for (int i = 0; i < cache.ContextOffset; i++) tags.Add(cache.MinuteTags[i]);
+            if (context != null) tags.AddRange(context.Tags);
+            for (int i = cache.ContextOffset; i < cache.ConsciousnessOffset; i++) tags.Add(cache.MinuteTags[i]);
+            if (consciousness == 2) tags.Add("sleeping");
+            if (consciousness != 0) tags.Add("unconscious");
+            for (int i = cache.ConsciousnessOffset; i < cache.MinuteTags.Count; i++) tags.Add(cache.MinuteTags[i]);
+            Utility.DistinctInPlace(tags);
+            cache.Context = context;
+            cache.ContextRevision = revision;
+            cache.Consciousness = consciousness;
+            cache.Valid = true;
+        }
+        destination.AddRange(cache.Tags);
     }
 
 
@@ -1581,7 +1675,13 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     /// </summary>
     public bool ShouldWorkFor(I_IsJobGiver faction)
     {
-        return ShouldWorkFor(faction, out _);
+        var employer = faction == null ? null : faction.Faction;
+        if (employer == null || employer.TradeManager == null) return true;
+        if (FactionManager == null || !FactionManager.WorkFactions.Contains(employer)) return true;
+        var obligations = employer.TradeManager.Obligations;
+        for (int i = 0; i < obligations.Count; i++)
+            if (obligations[i] is Obligation_Salary salary && salary.payeeRefID == RefID && salary.IsSuspended) return false;
+        return true;
     }
 
     public bool ShouldWorkFor(I_IsJobGiver faction, out string reason)
@@ -1606,7 +1706,18 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
     public bool CanWorkFor(I_IsJobGiver faction)
     {
-        return CanWorkFor(faction, out var stringss);
+        var provider = faction == null ? null : faction.Faction;
+        if (provider == null) return true;
+        if (FactionManager == null || (!FactionManager.WorkFactions.Contains(provider) && !FactionManager.RecreationFactions.Contains(provider))) return true;
+        var status = provider.GetMemberType(this);
+        if (status == null || status.membershipFee == null) return true;
+        var sourceFaction = FactionManager.GetWorkFactionSourceOrDefault(provider.ID);
+        if (sourceFaction == null || sourceFaction.TradeManager == null) return true;
+        var obligations = sourceFaction.TradeManager.Obligations;
+        for (int i = 0; i < obligations.Count; i++)
+            if (obligations[i] is Obligation_MembershipFee fee && fee.TargetFaction == provider
+                && fee.cadence == status.membershipFee.cadence && fee.IsSuspended) return false;
+        return true;
     }
 
     /// <summary>
@@ -1793,6 +1904,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     {
         I_IsJobGiver currentJobFaction = FactionManager.CurrentActiveParty != null ? FactionManager.CurrentActiveParty : FactionManager.CurrentlyActiveFaction;
         I_IsJobGiver currentLocaleFaction = FactionManager.CurrentActiveParty != null ? FactionManager.CurrentActiveParty : FactionManager.CurrentLocaleFaction;
+        // the wanted outfit is kept until this context changes
+        Wardrobe?.NoteScheduleContext(currentJobFaction, currentLocaleFaction);
 
         bool resetJob = true;
 
@@ -1815,7 +1928,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         bool log = s != null;
         bool debugLog = isRestrained;
 
-        string ss = FirstName + ": ";
+        string ss = log ? FirstName + ": " : string.Empty;
         string jobInternalStatus;
         if (interrupted)
         {
@@ -1912,8 +2025,6 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             return;
         }
 
-        List<string> factionstring = new List<string>();
-        foreach (var faction in FactionManager.Factions) factionstring.Add(faction.ID + (faction.isCharaManager(this) ? "*" : ""));
         //if (chara.CurrentJobRefID)
 
         //var jobpost = GetJobPost(currentHour);
@@ -1925,29 +2036,37 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         bool tryFinishJob = false;
         if (CurrentJob != null && !resetJob)
         {   // if current job is not pathing and less than 15 min then keep doing it
-            List<ActionPackage> p = CurrentJob.ActivePackages.FindAll(x => x.actorRefs.Contains(RefID));
-
-            bool allInterrupted = p.Count > 0;
+            var activePackages = CurrentJob.ActivePackages;
+            bool hasPackage = false;
+            bool hasPathing = false;
+            bool allInterrupted = true;
             int maxWait = 5;
             int maxInterruptWait = 0;
-            foreach (var pp in p)
+            foreach (var package in activePackages)
             {
-                allInterrupted = allInterrupted && pp.isPaused;
-                maxInterruptWait = Math.Max(maxInterruptWait, pp.pausedTick);
+                if (!package.actorRefs.Contains(RefID)) continue;
+                hasPackage = true;
+                allInterrupted = allInterrupted && package.isPaused;
+                maxInterruptWait = Math.Max(maxInterruptWait, package.pausedTick);
+                if (package is ActionPackage_PathTo) hasPathing = true;
             }
 
-            tryFinishJob = p.Count > 0 && (!allInterrupted || maxInterruptWait <= maxWait);
-            foreach (var package in p)
-            {
-                //if (package is ActionPackage_PathTo || (package.Duration > 10 && package.targetCOM.comTags.Contains("recreation"))) tryFinishJobUrgent = false;
-                if (package is ActionPackage_PathTo) tryFinishJob = false;
-            }
+            allInterrupted = hasPackage && allInterrupted;
+            tryFinishJob = hasPackage && !hasPathing && (!allInterrupted || maxInterruptWait <= maxWait);
 
             if (tryFinishJob)
             {   // current action would otherwise be left to finish uninterrupted - but as long as it isn't
                 // itself job-tagged (work always finishes first), break out early whenever it's time to
                 // start traveling for whatever's scheduled next hour, instead of coasting to completion.
-                bool currentIsJobAction = p.Exists(pp => pp.ComTags.Contains("job"));
+                bool currentIsJobAction = false;
+                foreach (var package in activePackages)
+                {
+                    if (package.actorRefs.Contains(RefID) && package.ComTags.Contains("job"))
+                    {
+                        currentIsJobAction = true;
+                        break;
+                    }
+                }
                 if (!currentIsJobAction && FactionUtility.ShouldTravelForNextHourSchedule(this, currentLocaleFaction, currentHour, out var nextFaction, out var travelMinutes))
                 {
                     tryFinishJob = false;
@@ -2349,7 +2468,9 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             {
                 var v = GetJobPost();
                 // if (RefID > 0) Debug.Log($"{FirstName} should sleep in schedule? {v != null && v.comIDs.Contains("com_furniture_sleep")}");
-                return v != null && v.comIDs.Contains("com_furniture_sleep");
+                if (v == null || !v.comIDs.Contains("com_furniture_sleep")) return false;
+                // the hours kept awake before an accepted recreation session (trip + getting up) are not slept in
+                return RecreationUtility.MinutesUntilSessionWake(this) > 0;
             }
             else return false;
         }
@@ -2375,8 +2496,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             // not UtilityEX.IsInLabor: it skips Final_RequireHelp, which made a mother waiting for a C-section stop
             // needing bed rest - lost her hospital admission option, and TickLabor flipped her labor between waiting and
             // natural every hour without ever progressing
-            if (!scr_System_CentralControl.current.isSafeMode)
-                foreach (var egg in ReproductionUtility.AllOvums(this)) if (ReproductionUtility.IsLaborState(egg.State)) return true;
+            if (!scr_System_CentralControl.current.isSafeMode && ReproductionUtility.IsCharaInLabor(this)) return true;
             if (Stats.hasStatusTag(StatsUtility.Stat_Tag_RequireBedRest)) return true;
             if (Stats.hasStatusEXTag(StatsUtility.Stat_Tag_RequireBedRest)) return true;
             return false;
@@ -2409,7 +2529,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             if (!canRedress) return false;
             foreach(var i in this.Inventory.Contents)
             {
-                var comp = i.GetComp_Equippable();
+                var comp = i.Comp_Equippable;
                 if (comp != null && comp.equipLayer <= lastKnownLayer) return true;
             }
             return false;
@@ -2429,12 +2549,15 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     }
     public int GetSkillLevel(string skillID)
     {
+        /*
         foreach(Skills s in this.Template.Skills)
         {
             if (s.ID == skillID) return s.GetSkillLevel();
-        }
+        }*/
 
-        return -1;
+        var sk = GetSkill(skillID);
+        if (sk == null) return 0;
+        return sk.GetSkillLevel;
     }
 
     [JsonProperty] private int interactionJobRef = -1;
@@ -2857,7 +2980,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                             }
                             if (ap.ListEP.Count < 1) Debug.LogError("Erorr ap ep null");
                         }
-                        ap.job.CurrentPackages.Remove(ap);
+                        ap.job.RemovePackage_Current(ap);
                     }
                     else
                     {
@@ -3106,6 +3229,10 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             sleepHour = windowMinutes > 0 ? Math.Min(personalNeedMinutes, windowMinutes) : personalNeedMinutes;
         }
 
+        // up in time for an accepted recreation session: its start minus the trip + getting-up time
+        int sessionWake = RecreationUtility.MinutesUntilSessionWake(this);
+        if (sessionWake != int.MaxValue) sleepHour = Math.Min(sleepHour, Math.Max(1, sessionWake));
+
         // Player only: while a forceSleep status (e.g. postpartum/post-op recovery) is active, sleep straight
         // through its remaining duration instead of being capped at the usual sleep need. NPCs don't need
         // this - their sleep node keeps re-sleeping them while shouldSleep stays true.
@@ -3149,10 +3276,12 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     /// <param name="RevealingFilter"></param>
     /// <param name="unequipArmor"></param>
     /// <param name="unequipLocked"></param>
-    public void UnequipItem(int itemRefID, int RevealingFilter = -1, bool unequipArmor = false, bool unequipLocked = false)
+    /// <param name="takenOffBySelf">singleUse items: the wearer takes it off (not someone else) - a player wearer may then
+    /// choose where a filled condom goes (SingleUseEquipUtility.ConsumeTakenOff)</param>
+    public void UnequipItem(int itemRefID, int RevealingFilter = -1, bool unequipArmor = false, bool unequipLocked = false, bool takenOffBySelf = true)
     {
         var instance = Body.ResolveEquip(itemRefID);
-        var comp = instance?.GetComp_Equippable();
+        var comp = instance?.Comp_Equippable;
         if (comp == null)
         {
             // dangling slot (item destroyed elsewhere): just clear it
@@ -3161,6 +3290,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         }
         if (((int)comp.revealing >= RevealingFilter || comp.equipLayer == BodyEquipLayer.Outer) && (comp.revealing < Revealing.Armored || unequipArmor ) && (!comp.lockable || unequipLocked))
         {
+            // the organ it was worn on, read before it comes off (a filled condom's discard options)
+            var wornOrgan = comp.singleUse ? Body.GetInternalByEquipRef(itemRefID) : null;
             // the item stays where it is owned (inventory / wardrobe); Redress puts it back on
             if (Body.UnequipItem(itemRefID))
             {
@@ -3168,6 +3299,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                 if (comp.statModifiers.Count > 0) this.Stats.RefreshAllStats(true);
                 Skills.RefreshAvailableSkillChecks();
                 this.PortraitManager.ClearHandlerCache();
+                // one-time use (condom): used up when it comes off - destroyed, its used variant left on the floor
+                if (comp.singleUse) SingleUseEquipUtility.ConsumeTakenOff(this, instance, comp, wornOrgan, takenOffBySelf);
             }
         }
     }
@@ -3206,7 +3339,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
         foreach(var i in Body.EquippedItemRefs)
         {
-            var comp = Body.ResolveEquip(i)?.GetComp_Equippable();
+            var comp = Body.ResolveEquip(i)?.Comp_Equippable;
             if (comp == null) continue;
             else if (comp.equipLayer <= includeLayer) continue;
             else if (comp.revealing < includeRating) continue;
@@ -3249,13 +3382,38 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             Redress(BodyEquipLayer.Inner);
             Redress(BodyEquipLayer.Outer);
             //Redress(BodyEquipLayer.Shell);
+            // fixing clothes brushes solid traces off (leaves, pubes...), Plan_BodyTraces.md
+            Body.BrushTraces();
         }
         else
         {
-            // fill empty slots only: one candidate never pushes another worn item off
-            foreach (var item in GetRedressCandidates(layer))
+            // walk a copy: Reequip drops the cache and anything it triggers (canRedress checks) may rebuild the cached
+            // list in place. Pooled buffer; a re-entrant Redress gets its own list.
+            var candidates = GetRedressCandidates(layer);
+            if (candidates.Count == 0) return;
+            bool pooled = !_redressBufferInUse;
+            List<Item_Instance> buffer;
+            if (pooled)
             {
-                if (Body.CanEquipWithoutReplacing(item)) Reequip(item, layer);
+                if (_redressBuffer == null) _redressBuffer = new List<Item_Instance>();
+                buffer = _redressBuffer;
+                _redressBufferInUse = true;
+            }
+            else buffer = new List<Item_Instance>(candidates.Count);
+            buffer.AddRange(candidates);
+            try
+            {
+                // fill empty slots only: one candidate never pushes another worn item off
+                for (int i = 0; i < buffer.Count; i++)
+                {
+                    var item = buffer[i];
+                    if (Body.CanEquipWithoutReplacing(item)) Reequip(item, layer);
+                }
+            }
+            finally
+            {
+                buffer.Clear();
+                if (pooled) _redressBufferInUse = false;
             }
         }
     }
@@ -3263,56 +3421,117 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     /// <summary>
     /// What the character should be wearing but isn't, for one layer (None = all): the active outfit's unworn pieces,
     /// then every unworn clothing item of the inventory (the default outfit) except on layers the active outfit overrides.
+    /// Cached per layer - the returned list is shared, read it only and don't keep it.
     /// </summary>
     public List<Item_Instance> GetRedressCandidates(BodyEquipLayer layer)
     {
-        var result = new List<Item_Instance>();
-        if (Body == null) return result;
-        var worn = new HashSet<int>(Body.EquippedItemRefs);
-        var added = new HashSet<int>();
+        if (Body == null) return _emptyRedressCandidates;
+        int index = (int)layer;
+        if (index < 0 || index >= RedressLayerCount) return _emptyRedressCandidates;
+        if (_redressCandidates == null)
+        {
+            _redressCandidates = new List<Item_Instance>[RedressLayerCount];
+            _redressValid = new bool[RedressLayerCount];
+        }
+        var result = _redressCandidates[index];
+        if (result == null) _redressCandidates[index] = result = new List<Item_Instance>();
+        if (!_redressValid[index])
+        {
+            BuildRedressCandidates(layer, result);
+            _redressValid[index] = true;
+        }
+        return result;
+    }
+
+    const int RedressLayerCount = (int)BodyEquipLayer.Outer + 1;
+    static readonly List<Item_Instance> _emptyRedressCandidates = new List<Item_Instance>();
+
+    /// <summary>
+    /// GetRedressCandidates results per layer (index = (int)BodyEquipLayer). Lists are reused: invalidation only flags
+    /// them, the next read refills in place. Invalidated whenever anything is equipped / unequipped or the body's parts
+    /// change (Character_Body.ClearEquipCaches), and when the taken-off list changes. Not saved.
+    /// </summary>
+    [System.NonSerialized][JsonIgnore] List<Item_Instance>[] _redressCandidates = null;
+    [System.NonSerialized][JsonIgnore] bool[] _redressValid = null;
+    // build scratch, reused
+    [System.NonSerialized][JsonIgnore] HashSet<int> _redressWorn = null;
+    [System.NonSerialized][JsonIgnore] HashSet<int> _redressAdded = null;
+    [System.NonSerialized][JsonIgnore] List<Item_Instance> _redressPieces = null;
+    // Redress iteration copy, reused
+    [System.NonSerialized][JsonIgnore] List<Item_Instance> _redressBuffer = null;
+    [System.NonSerialized][JsonIgnore] bool _redressBufferInUse = false;
+
+    public void ClearRedressCache()
+    {
+        if (_redressValid == null) return;
+        for (int i = 0; i < _redressValid.Length; i++) _redressValid[i] = false;
+    }
+
+    void BuildRedressCandidates(BodyEquipLayer layer, List<Item_Instance> result)
+    {
+        result.Clear();
+        if (_redressWorn == null) _redressWorn = new HashSet<int>();
+        if (_redressAdded == null) _redressAdded = new HashSet<int>();
+        var worn = _redressWorn;
+        var added = _redressAdded;
+        worn.Clear();
+        added.Clear();
+        var equipped = Body.EquippedItemRefs;
+        for (int i = 0; i < equipped.Count; i++) worn.Add(equipped[i]);
 
         // what was taken off comes back first, latest first: a spare item of the same slot never takes its place
         // (e.g. com_furniture_restroom undressing "lower", or the default clothes an outfit change took off)
-        for (int i = takenOffRefs.Count - 1; i >= 0; i--)
+        if (takenOffRefs != null)
         {
-            int id = takenOffRefs[i];
-            if (worn.Contains(id) || added.Contains(id)) continue;
-            Item_Instance item;
-            if (id <= -2) item = Wardrobe != null && Wardrobe.IsActivePiece(id) ? Wardrobe.GetVirtualItem(id) : null;
-            else
+            for (int i = takenOffRefs.Count - 1; i >= 0; i--)
             {
-                item = scr_System_CampaignManager.current.FindItemInstanceByID(id);
-                if (item != null && !Inventory.Contains(item)) item = null;
+                int id = takenOffRefs[i];
+                if (worn.Contains(id) || added.Contains(id)) continue;
+                Item_Instance item;
+                if (id <= -2) item = Wardrobe != null && Wardrobe.IsActivePiece(id) ? Wardrobe.GetVirtualItem(id) : null;
+                else
+                {
+                    item = scr_System_CampaignManager.current.FindItemInstanceByID(id);
+                    if (item != null && !Inventory.Contains(item)) item = null;
+                }
+                if (!IsRedressCandidate(item, layer, id <= -2)) continue;
+                result.Add(item);
+                added.Add(id);
             }
-            if (!IsRedressCandidate(item, layer, id <= -2)) continue;
-            result.Add(item);
-            added.Add(id);
         }
 
         if (Wardrobe != null)
         {
-            foreach (var piece in Wardrobe.ActivePieceItems)
+            if (_redressPieces == null) _redressPieces = new List<Item_Instance>();
+            var pieces = _redressPieces;
+            Wardrobe.GetActivePieceItems(pieces);
+            for (int i = 0; i < pieces.Count; i++)
             {
+                var piece = pieces[i];
                 if (worn.Contains(piece.RefID) || added.Contains(piece.RefID)) continue;
                 if (!IsRedressCandidate(piece, layer, true)) continue;
                 result.Add(piece);
                 added.Add(piece.RefID);
             }
+            pieces.Clear();
         }
-        foreach (var item in Inventory.Contents)
+        var contents = Inventory.Contents;
+        for (int i = 0; i < contents.Count; i++)
         {
+            var item = contents[i];
             if (item == null || worn.Contains(item.RefID) || added.Contains(item.RefID)) continue;
             if (!IsRedressCandidate(item, layer, false)) continue;
             result.Add(item);
             added.Add(item.RefID);
         }
-        return result;
+        worn.Clear();
+        added.Clear();
     }
 
     /// <summary> equippable, of the layer (None = any), and - for an inventory item - not on a layer the active outfit overrides </summary>
     bool IsRedressCandidate(Item_Instance item, BodyEquipLayer layer, bool isOutfitPiece)
     {
-        var comp = item?.GetComp_Equippable();
+        var comp = item?.Comp_Equippable;
         if (comp == null || (layer != BodyEquipLayer.None && comp.equipLayer != layer)) return false;
         if (!isOutfitPiece && Wardrobe != null && Wardrobe.OverridesLayer(comp.equipLayer)) return false;
         // a resting party puts some layers away until the rest is over (OutfitSet.restKeepLayers)
@@ -3331,23 +3550,25 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         if (takenOffRefs == null) takenOffRefs = new List<int>();
         takenOffRefs.Remove(id);
         takenOffRefs.Add(id);
+        ClearRedressCache();
     }
 
     void NotePutOn(int id)
     {
-        takenOffRefs?.Remove(id);
+        if (takenOffRefs != null && takenOffRefs.Remove(id)) ClearRedressCache();
     }
 
     /// <summary> drop taken-off entries that are no longer owned (outfit pieces of an outfit taken off, items gone from the inventory) </summary>
     public void PruneTakenOff()
     {
         if (takenOffRefs == null) { takenOffRefs = new List<int>(); return; }
-        takenOffRefs.RemoveAll(id =>
+        int removed = takenOffRefs.RemoveAll(id =>
         {
             if (id <= -2) return Wardrobe == null || !Wardrobe.IsActivePiece(id);
             var item = scr_System_CampaignManager.current.FindItemInstanceByID(id);
             return item == null || !Inventory.Contains(item);
         });
+        if (removed > 0) ClearRedressCache();
     }
 
     /// <summary>
@@ -3360,7 +3581,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         bool owned = Inventory.Contains(item) || (Wardrobe != null && Wardrobe.IsActivePiece(item.RefID));
         if (!owned) return;
 
-        ItemComponent_Equippable comp = item.GetComp_Equippable();
+        ItemComponent_Equippable comp = item.Comp_Equippable;
         if (comp != null && (layerFilter == BodyEquipLayer.None || comp.equipLayer == layerFilter))
         {
             if (Body.EquipItem(item.RefID, comp.equipCount, true))
@@ -3383,7 +3604,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         NotePutOn(item.RefID);  // gone: nothing to put back
         if (Body == null || !Body.IsEquipped(item.RefID)) return;
         if (!Body.UnequipItem(item.RefID)) return;
-        var comp = item.GetComp_Equippable();
+        var comp = item.Comp_Equippable;
         if (comp != null && comp.statModifiers.Count > 0) this.Stats.RefreshAllStats(true);
         Skills.RefreshAvailableSkillChecks();
         this.PortraitManager.ClearHandlerCache();
@@ -3414,6 +3635,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     /// </summary>
     public void DisposeInternal()
     {
+        actorTagCache = null;
         Deleted = true;
         RemoveObservers();
         if (PortraitManager != null) PortraitManager.ClearInternal();
@@ -3429,6 +3651,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
     public void OnAfterDeserialize()
     {
+        actorTagCache = null;
         string s = "Loaded Chara " + FullName + "\n";
         if (this.factionManager != null) FactionManager.ReEstablishParentData(this);
         if (this.Inventory != null) Inventory.ReEstablishParent(this);
@@ -3479,10 +3702,16 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         if (this.RefID == -1) return;
 
         scr_System_Time.current.Observer_globalTime_Hours += Observer_GlobalHour;
+        scr_System_Time.current.Observer_globalTime_HoursLate += Observer_GlobalHourLate;
         scr_System_Time.current.Observer_globalTime_Day += Observer_GlobalDay;
         scr_System_Time.current.Observer_globalTime_Day += Observer_GlobalDay_0;
         scr_System_Time.current.Observer_globalTime_Day += Observer_GlobalDay_3;
-        scr_System_Time.current.Observer_globalTime_HoursLate += Observer_GlobalHourLate;
+    }
+
+    /// <summary>The hour's second update, per pass: this character answers the recreation sessions sent to it (RecreationUtility.OnLatePass).</summary>
+    protected void Observer_GlobalHourLate(int pass)
+    {
+        RecreationUtility.OnLatePass(FactionManager, pass);
     }
 
     /// <summary>Per-minute ticks - dropped while dormant, caught up in one go by EndDormantState.</summary>
@@ -3515,10 +3744,10 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         if (this.RefID == -1) return;
 
         scr_System_Time.current.Observer_globalTime_Hours -= Observer_GlobalHour;
+        scr_System_Time.current.Observer_globalTime_HoursLate -= Observer_GlobalHourLate;
         scr_System_Time.current.Observer_globalTime_Day -= Observer_GlobalDay;
         scr_System_Time.current.Observer_globalTime_Day -= Observer_GlobalDay_0;
         scr_System_Time.current.Observer_globalTime_Day -= Observer_GlobalDay_3;
-        scr_System_Time.current.Observer_globalTime_HoursLate -= Observer_GlobalHourLate;
     }
 
     protected void RemoveObservers_Minute()
@@ -3589,7 +3818,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             for (int i = 0; i < expelledItems.Count; i++)
             {
                 var expelled = expelledItems[i];
-                var ing = expelled.GetComp_Ingestible();
+                var ing = expelled.Comp_Ingestible;
                 if (ing != null) partDeflatedAmount += ing.amount;
                 itemTexts.Add(expelled.Print());
 

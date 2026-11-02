@@ -1,0 +1,3 @@
+{
+    "Dictionary": { "Entries": { "en-us": { "jp_neon_lovehotel": "Neon Love Hotel", "membertype_neon_hotel_cleaner": "Hotel Housekeeper", "neon_hotel_cleaner_day": "Hotel Housekeeping 08-20", "neon_hotel_cleaner_night": "Hotel Housekeeping 20-08", "neon_hotel_rest": "Love Hotel Short Rest", "neon_hotel_bed": "Love Hotel Double Bed", "neon_hotel_begin": "$doer.firstname$ puts down their belongings and settles into the room.", "neon_hotel_ongoing": "$doer.firstname$ rests in the quiet guest room.", "neon_hotel_end": "$doer.firstname$ gets up and stretches their shoulders." } } }
+}

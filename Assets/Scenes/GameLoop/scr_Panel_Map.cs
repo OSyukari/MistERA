@@ -132,7 +132,7 @@ public class scr_Panel_Map : scr_Menu, IPointerClickHandler
 
             foreach (int i in scr_System_CampaignManager.current.Map.GetConnectedFloorRefs(floor.refID))
             {
-                Vector2 childOffset = scr_System_CampaignManager.current.Map.FloorLayout[new System.Tuple<int, int>(floor.refID, i)];
+                scr_System_CampaignManager.current.Map.FloorLayout.TryGetValue(new System.Tuple<int, int>(floor.refID, i), out Vector2 childOffset);
                 MakeButton(scr_System_CampaignManager.current.Map.FindFloorByRefID(i), r2, childOffset/2.5f);
             }
 

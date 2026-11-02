@@ -320,7 +320,7 @@ public class CombatStatManager : I_StatsManager
 
     public void GetModifiers(List<Stat_Modifier> results, StatusEx_Instance obj, string statID, List<string> contexts = null)
     {
-        GetModifiers(results, statID, contexts, true, true);
+        GetModifiers(results, statID, contexts, true, MemoryManager.IsMemoryStatID(statID));
     }
 
     protected List<Stat_Modifier> modifiers_combat = new List<Stat_Modifier>();

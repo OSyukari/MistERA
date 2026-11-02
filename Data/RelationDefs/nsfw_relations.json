@@ -67,24 +67,28 @@
                 "$type":"RelationshipType, Assembly-CSharp",
 
                 "ID":"relationship_fwb",
+                "_commentLastingEntry":"Like relations.json friendship/romantic entries: lasting raw scores include current relationship bonuses (RelationshipAttitude.cs GetScore; Character_Relationship.cs *_Raw), with decider Mood >= 0 instead of a current Lust gate. Intimacy consent is separate; hostile relationships, social roles, maintenance and natural reconsideration stay unchanged.",
+                "_commentNaturalChange":"Provisional natural reconsideration policy: current Badwill attitude, pair-dominant Badwill and positive effective Badwill must agree. No causal attribution or new memory/state system; entry and maintenance thresholds are unchanged.",
+                "naturalChangeRequirement":{
+                    "attitudeKeywords":["Badwill"],
+                    "dominantScore":"Badwill",
+                    "requirements":{"requireScore":[{"requireScoreID":"Badwill","operand":"gt","value":0}]}
+                },
                 "displayName":"relationship_fwb_displayName",
                 "trustCapIncrease":25,
                 "RelationshipMod":[0,5,15,0,0],
                 "Requirements":
                 {
                     "requireRawScore":[
+                        {"requireScoreID":"Trust","operand":"gte","value":15},
                         {"requireScoreID":"Desire","operand":"gte","value":150}
                     ],
                     "requireRawScoreCompare":[
                         {"requireScoreID":"Desire","operand":"gt","compareScoreID":"Badwill","compareScoreMult":1.1}
                     ],
-                    "requireScore":[
-                        {"requireScoreID":"Trust","operand":"gte","value":15},
-                        {"requireScoreID":"Desire","operand":"gte","value":150}],
-                    "requireLust":{"operand":"gte","value":1}
+                    "requireMood":{"operand":"gte","value":0}
                 },
-                "MainEmotionKey":"Badwill", "tags":["Badwill"],
-                "permission":{ "intimacy_low":true, "intimacy_medium":true, "intimacy_high":true },
+                "MainEmotionKey":"Badwill", "tags":["Badwill","sexual_partner"],
                 "MaintenanceRequirements":
                 {
                     "requireRawScore":[

@@ -1,0 +1,38 @@
+{
+    "_comment_integration": "Mid-tier apartment district (Docs/Locations/Plan_ResidentialDistricts.md 2.1). One world door at (530,160), floorExitID aoba_entrance, listed in world.json initializeFactions. Homes are not authored here: AssignResidence / console spawnResident build them on demand (ResidenceUtility.CreateResidence) on the least used block (corridor) that has a fitting template, linking the home's front door to that corridor. Only the 2LDK unit exists yet; add 3LDK/4LDK entries to the blocks once their floor plans and art exist.",
+    "_comment_art": "PLACEHOLDER: imagePath/roomImagePath reuse existing BGAssets/Generated art; replace with dedicated art later. Background-image floor with hidden rooms, no room coordinates (district cluster pattern).",
+    "MapPlans": {
+        "factionInit": [{
+            "ID": "jp_res_aoba_mansion", "isPublic": true, "isRentingFloor": false, "setPrivateRoomOwner": false,
+            "mainExit": { "roomID": "aoba_entrance", "exitCost": 5 },
+            "floors": [{ "ID": "floor_jp_res_aoba_mansion", "nameOverwrite": "jp_res_aoba_mansion" }],
+            "_comment_residential": "Each block = one corridor homes attach to, with its own templates; a block with none uses fallbackTemplateID, which is also used on any open block when no listed template has enough bedrooms. 3F is meant for the larger units (3LDK/4LDK) once they exist - until then it falls back to the 2LDK.",
+            "residential": {
+                "maxResidences": 30,
+                "fallbackTemplateID": "jp_home_tpl_apt_2ldk",
+                "blocks": [
+                    { "roomID": "aoba_corridor_1", "maxResidences": 10, "templates": [ { "templateID": "jp_home_tpl_apt_2ldk", "weight": 1 } ] },
+                    { "roomID": "aoba_corridor_2", "maxResidences": 10, "templates": [ { "templateID": "jp_home_tpl_apt_2ldk", "weight": 1 } ] },
+                    { "roomID": "aoba_corridor_3", "maxResidences": 10, "templates": [] }
+                ]
+            },
+            "managerBaseIDs": [""], "salesInventory": [], "workModules": [], "workHours": [], "workAssignment": []
+        }],
+        "floorPlans": [{
+            "ID": "floor_jp_res_aoba_mansion", "imagePath": "BGAssets/Generated/house_2story_05.webp",
+            "isFloorPlan": false, "floorWidth": 400, "floorHeight": 400, "resize": 1, "mapExit": "aoba_entrance",
+            "rooms": [
+                { "ID": "aoba_entrance", "displayName": "aoba_entrance", "hideOnMap": true, "connects": [], "roomImagePath": "BGAssets/Generated/house_hallway_01.webp" },
+                { "ID": "aoba_mailboxes", "displayName": "aoba_mailboxes", "hideOnMap": true, "connects": [{ "ID": "aoba_entrance", "cost": 1 }], "roomImagePath": "BGAssets/Generated/office_hallway_01.webp" },
+                { "ID": "aoba_bicycle_parking", "displayName": "aoba_bicycle_parking", "hideOnMap": true, "connects": [{ "ID": "aoba_entrance", "cost": 1 }], "roomImagePath": "BGAssets/Generated/house_balcony_01.webp" },
+                { "ID": "aoba_corridor_1", "displayName": "aoba_corridor_1", "hideOnMap": true, "connects": [{ "ID": "aoba_entrance", "cost": 1 }], "roomImagePath": "BGAssets/Generated/house_hallway_02.webp" },
+                { "ID": "aoba_corridor_2", "displayName": "aoba_corridor_2", "hideOnMap": true, "connects": [{ "ID": "aoba_corridor_1", "cost": 2 }], "roomImagePath": "BGAssets/Generated/house_hallway_03.webp" },
+                { "ID": "aoba_corridor_3", "displayName": "aoba_corridor_3", "hideOnMap": true, "connects": [{ "ID": "aoba_corridor_2", "cost": 2 }], "roomImagePath": "BGAssets/Generated/house_hallway_04.webp" }
+            ]
+        }]
+    },
+    "Dictionary": { "Entries": { "zh-cn": {
+        "jp_res_aoba_mansion": "青叶公寓", "aoba_entrance": "公寓入口大厅", "aoba_mailboxes": "信箱区", "aoba_bicycle_parking": "自行车停车场",
+        "aoba_corridor_1": "1楼走廊", "aoba_corridor_2": "2楼走廊", "aoba_corridor_3": "3楼走廊"
+    } } }
+}

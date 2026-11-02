@@ -1,0 +1,3 @@
+{
+    "Dictionary": { "Entries": { "en-us": { "jp_neon_bowling": "Neon Bowling", "membertype_neon_bowling": "Bowling Staff", "neon_bowling_day": "Bowling Reception 12-22", "neon_bowling_night": "Bowling Reception 22-02", "neon_bowling_game": "Play Bowling", "neon_bowling_lane": "Bowling Lane", "neon_bowling_begin": "$doer.firstname$ picks a ball that sits comfortably in hand.", "neon_bowling_ongoing": "$doer.firstname$ sends the ball down the lane and waits for the clatter of pins.", "neon_bowling_end": "$doer.firstname$ returns the ball and glances at the score screen." } } }
+}

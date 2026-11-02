@@ -108,13 +108,19 @@ public class Job_CharaCOM : Job
                 ActionPackage newP = new ActionPackage_Interaction(this, desiredCOM, new List<int>() { c.RefID }, new List<int>() { Owner.RefID }, -1);
                 if (!newP.Validate())
                 {
-                    ss += "cannot pass package validation, releasing";
+                    ss += "cannot pass package validation, releasing: " + newP.FailureReason + " " + String.Join("; ", newP.tooltip);
                     //Debug.Log("Package did not pass validation, releasing actor [" + c.FirstName + "]");
                     actorRefID.Remove(c.RefID);
                     return false;
                 }
                 else
                 {
+                    if (newP.IsSexSceneEntry && !newP.PrepareSexSceneEntry(out var reason))
+                    {
+                        ss += "cannot prepare sex scene entry, releasing: " + LocalizeDictionary.QueryThenParse(reason);
+                        actorRefID.Remove(c.RefID);
+                        return false;
+                    }
                     AddPackage(new List<ActionPackage>() { newP });
                     //validJobCOMs.Remove(jobCOM);
                     ss += "adding package " + newP.DisplayName;

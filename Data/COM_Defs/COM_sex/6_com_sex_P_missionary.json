@@ -4,6 +4,8 @@
             {
                 "parentCOMID":"com_sex_base",
                 "ID": "com_sex_P_missionary",
+                "_comment_traces":"Body traces: aroused precum into the vagina, aroused love juice on the penis, pubes both ways (chance).",
+                "traceKeywords":["insert"],
                 "categoryTags":["com_category_v"],
                 "ActionPackageClass": "ActionPackage_Sex",
                 "displayName": "com_sex_P_missionary_displayName_1",
@@ -12,7 +14,8 @@
                     "sex",
                     "penetration",
                     "position_face",
-                    "position_equal","missionary"
+                    "position_equal","missionary",
+                    "permission_vaginal"
                 ],
                 "portraitTags": ["missionary"],
                 "requirements": {
@@ -34,9 +37,18 @@
                         }
                     }
                 },
+                "_comment_actModifiers":"Provisional, untested new D20 bonuses. Relationships belong to the act owner toward the actual partner, not the master. Parent EP gates ordinary conscious, unrestrained, non-threat actual pairs; special, forced and group contexts stay unchanged. Arousal (v_acceptance, via the penetration tag) and lubrication (DC, via the penetrated organ) are general rules, not authored here. clone_noSex descendants inherit through the existing cloning pipeline; GenerateCOM flags are unchanged.",
                 "AcceptanceCheck": {
                     "baseAcceptanceValue": 30,
-                    "SkillBonus_Receiver":["skill_sensitivity_V"]
+                    "SkillBonus_Receiver":["skill_sensitivity_V"],
+                    "actModifiers":{
+                        "enabled":true, "totalMin":0, "totalMax":10,
+                        "terms":[
+                            {"source":"PartnerTrust", "appliesTo":"BothDeciders", "scale":0.04, "offset":0, "min":0, "max":3},
+                            {"source":"PartnerDesire", "appliesTo":"BothDeciders", "scale":0.04, "offset":0, "min":0, "max":4},
+                            {"source":"PartnerGoodwill", "appliesTo":"BothDeciders", "scale":0.02, "offset":0, "min":0, "max":2}
+                        ]
+                    }
                 },
                 "DifficultyCheck": {
                     "baseD20Check": 10,

@@ -1,0 +1,292 @@
+{
+    "_doc": "House activities every home faction offers its own home members (permanent and temporary home - guests yes, prisoners no: each activity's eligibility), and the family doctor every faction may assign. Not for subfactions / worker pools (Manageable.OffersSharedHouseContent). Each activity is bound to furniture by the command it offers (facility.comTag - never a room ID: the player may move furniture), so a home only offers what its furniture allows (RecreationUtility.FacilityAvailable); the room is chosen when the activity's job is created. Only home members search for these (RecreationUtility.ActivitySources); anyone else may still be invited (BookingCheck.Passes). A faction's own MapPlan.houseActivities entry with the same ID replaces the shared one. Plan: Docs/Utnapishtim_Activities/Plan_UtnapishtimActivities.md. en-us: HouseActivities_loc.json.",
+    "MapPlans": {
+        "sharedHouseActivities": [
+            {
+                "ID": "shooting_training",
+                "typeID": "shooting_training", "allowMultipleInstances": true, "mergeWithSame": true,
+                "conflictsWith": [], "replaceCommandTags": ["training_shooting"],
+                "replaceCommands": [], "activityCommands": ["com_furniture_training_shooting"],
+                "_comment": "Training visits may share an execution in a qualifying range room; private invitations remain independent.",
+                "workModule": {
+                    "jobPostID": "house_activity_shooting_training",
+                    "workCommands": ["com_furniture_training_shooting"],
+                    "activeHours": [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+                },
+                "facility": { "comTag": "training_shooting", "reserve": "None", "unitCapacity": 2, "dispatchInRoom": true },
+                "eligibility": { "chara_conditions": [ { "parameters": [ "isPrisonerAtHome", "false" ] } ] },
+                "allowWalkIn": true,
+                "minHours": 2, "maxHours": 2,
+                "minDaysBetween": 1,
+                "weeklyTarget": 2,
+                "baseWeight": 1.0,
+                "invite": {
+                    "_comment": "May bring one housemate along (40%), optional - goes alone otherwise.",
+                    "visibility": "Private",
+                    "inviteChance": 0.4,
+                    "minParticipants": 1,
+                    "TargetValidators": [
+                        {
+                            "refKeys": [ "partner" ],
+                            "baseScope": "FactionMembers",
+                            "extraScopeArguments": [ "@selfHomeFaction" ],
+                            "chara_conditions": [ { "parameters": [ "excludeSelf" ] } ],
+                            "maxTargetCount": 1,
+                            "stopAtMaxTargetCount": true
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "combat_training",
+                "typeID": "combat_training", "allowMultipleInstances": true, "mergeWithSame": true,
+                "conflictsWith": [], "replaceCommandTags": ["training_melee"],
+                "replaceCommands": [], "activityCommands": ["com_furniture_training_melee"],
+                "_comment": "Combat practice shares qualifying arena rooms without holding furniture; private sparring invitations remain independent.",
+                "workModule": {
+                    "jobPostID": "house_activity_combat_training",
+                    "workCommands": ["com_furniture_training_melee"],
+                    "activeHours": [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+                },
+                "facility": { "comTag": "training_melee", "reserve": "None", "unitCapacity": 2, "dispatchInRoom": true },
+                "eligibility": { "chara_conditions": [ { "parameters": [ "isPrisonerAtHome", "false" ] } ] },
+                "allowWalkIn": true,
+                "minHours": 2, "maxHours": 2,
+                "minDaysBetween": 1,
+                "weeklyTarget": 2,
+                "baseWeight": 1.0,
+                "invite": {
+                    "visibility": "Private",
+                    "inviteChance": 1.0,
+                    "minParticipants": 1,
+                    "TargetValidators": [
+                        {
+                            "refKeys": [ "partner" ],
+                            "baseScope": "FactionMembers",
+                            "extraScopeArguments": [ "@selfHomeFaction" ],
+                            "chara_conditions": [ { "parameters": [ "excludeSelf" ] } ],
+                            "maxTargetCount": 1,
+                            "stopAtMaxTargetCount": true
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "movie_session",
+                "typeID": "movie_session", "allowMultipleInstances": false, "mergeWithSame": true,
+                "conflictsWith": ["group_gaming", "music_practice"], "replaceCommandTags": ["TV"],
+                "replaceCommands": ["com_furniture_watchVideo", "com_furniture_playVideoGames"], "activityCommands": ["com_media_watch"],
+                "_comment": "Selected movie data and runtime are retained when booked. A qualifying TV room with seating hosts one compatible movie execution, replacing ordinary TV viewing and gaming; furniture and inventory copies are not held. The movie comes from the home's own inventory (requireMedia).",
+                "workModule": {
+                    "jobPostID": "house_activity_movie_session",
+                    "workCommands": ["com_furniture_watchVideo"],
+                    "activeHours": [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+                },
+                "facility": { "comTag": "TV", "reserve": "None", "unitCapacity": 0, "requireInRoom": ["rest"], "dispatchInRoom": true },
+                "requireMedia": { "mediaTag": "movie", "sessionCommandID": "com_media_watch" },
+                "launchEventID": "Recreation_MediaSession_Begin",
+                "eligibility": { "chara_conditions": [ { "parameters": [ "isPrisonerAtHome", "false" ] } ] },
+                "allowWalkIn": true,
+                "minHours": 2, "maxHours": 3,
+                "minDaysBetween": 1,
+                "weeklyTarget": 2,
+                "baseWeight": 0.8,
+                "invite": {
+                    "visibility": "Friends",
+                    "inviteChance": 0.5,
+                    "minParticipants": 1
+                }
+            },
+            {
+                "ID": "group_gaming",
+                "typeID": "group_gaming", "allowMultipleInstances": false, "mergeWithSame": true,
+                "conflictsWith": ["movie_session", "music_practice"], "replaceCommandTags": ["TV"],
+                "replaceCommands": ["com_furniture_watchVideo", "com_furniture_playVideoGames"], "activityCommands": ["com_media_play"],
+                "_comment": "A game from the home's inventory (requireMedia - comp_Media tagged game; runtime = length) on a TV with seating, played together: always with 1-3 housemates (a required role - never solo; solo gaming stays plain sandbox). Same session flow as movie_session (Job_MediaSession, com_media_play). workCommands = fallback only.",
+                "workModule": {
+                    "jobPostID": "house_activity_group_gaming",
+                    "workCommands": ["com_furniture_playVideoGames"],
+                    "activeHours": [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+                },
+                "facility": { "comTag": "TV", "reserve": "None", "unitCapacity": 0, "requireInRoom": ["rest"], "dispatchInRoom": true },
+                "requireMedia": { "mediaTag": "game", "sessionCommandID": "com_media_play" },
+                "launchEventID": "Recreation_MediaSession_Begin",
+                "eligibility": { "chara_conditions": [ { "parameters": [ "isPrisonerAtHome", "false" ] } ] },
+                "allowWalkIn": true,
+                "minDaysBetween": 1,
+                "weeklyTarget": 1,
+                "baseWeight": 0.8,
+                "invite": {
+                    "visibility": "Private",
+                    "inviteChance": 1.0,
+                    "minParticipants": 2,
+                    "TargetValidators": [
+                        {
+                            "refKeys": [ "player2" ],
+                            "required": true,
+                            "baseScope": "FactionMembers",
+                            "extraScopeArguments": [ "@selfHomeFaction" ],
+                            "chara_conditions": [ { "parameters": [ "excludeSelf" ] } ],
+                            "maxTargetCount": 3,
+                            "stopAtMaxTargetCount": true
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "music_practice",
+                "typeID": "music_practice", "allowMultipleInstances": false, "mergeWithSame": false,
+                "conflictsWith": ["movie_session", "group_gaming"], "replaceCommandTags": ["music_practice"],
+                "replaceCommands": [], "activityCommands": ["com_furniture_music_practice"],
+                "_comment": "Stage practice conflicts with movie and gaming execution in the same room by activity policy, without exclusive furniture ownership. A piano is for performances, not this.",
+                "workModule": {
+                    "jobPostID": "house_activity_music_practice",
+                    "workCommands": ["com_furniture_music_practice"],
+                    "activeHours": [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+                },
+                "facility": { "comTag": "music_practice", "reserve": "None", "dispatchInRoom": true },
+                "eligibility": { "chara_conditions": [ { "parameters": [ "isPrisonerAtHome", "false" ] } ] },
+                "allowWalkIn": true,
+                "minHours": 2, "maxHours": 2,
+                "minDaysBetween": 1,
+                "weeklyTarget": 2,
+                "baseWeight": 0.8,
+                "invite": {
+                    "visibility": "Friends",
+                    "inviteChance": 0.5,
+                    "minParticipants": 1
+                }
+            }
+        ],
+        "_comment_disabled": "Disabled for now (user 2026-10-30): entries under _disabled_sharedHouseActivities are not read. Move room_visit into sharedHouseActivities to enable it - its code (facility hostPrivateRoom, guest access) stays in place.",
+        "_disabled_sharedHouseActivities": [
+            {
+                "ID": "room_visit",
+                "_comment": "The host invites 1-3 friends over to their own private room (facility hostPrivateRoom - only a room the host owns; nothing reserved): while it runs the guests may use the host's room furniture (RecreationUtility.IsActivityGuestIn - the one exception to the private-room rule). Guests do whatever the room offers (rest on the bed / at the table, TV and games when there are any) - kept in the room (dispatchInRoom). Needs at least one friend (a required role) - never alone. No overnight stay.",
+                "workModule": {
+                    "jobPostID": "house_activity_room_visit",
+                    "workCommands": ["com_furniture_takingBreak", "com_furniture_takingLongBreak", "com_furniture_watchVideo", "com_furniture_playVideoGames"],
+                    "activeHours": [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+                },
+                "facility": { "comTag": "rest", "reserve": "None", "hostPrivateRoom": true, "dispatchInRoom": true },
+                "eligibility": { "chara_conditions": [ { "parameters": [ "isPrisonerAtHome", "false" ] } ] },
+                "minHours": 2, "maxHours": 3,
+                "minDaysBetween": 2,
+                "weeklyTarget": 1,
+                "baseWeight": 0.6,
+                "invite": {
+                    "visibility": "Friends",
+                    "inviteChance": 1.0,
+                    "minParticipants": 2,
+                    "TargetValidators": [
+                        {
+                            "refKeys": [ "guest" ],
+                            "required": true,
+                            "baseScope": "SelfRelationships",
+                            "extraScopeArguments": [ "relationship_friend", "relationship_bff", "relationship_couple", "relationship_marriage", "relationship_fwb" ],
+                            "chara_conditions": [ { "parameters": [ "excludeSelf" ] } ],
+                            "maxTargetCount": 3,
+                            "stopAtMaxTargetCount": true
+                        }
+                    ]
+                }
+            }
+        ],
+
+        "_comment_sharedAssignableMemberTypes": "Listed in every faction's management job-post tab after its own assignableMemberTypes (Manageable.AssignableMemberTypes). Who may be moved to one: the same kind of status only (MemberType.SwapRefusal) and the type's assignRequirements.",
+        "sharedAssignableMemberTypes": [ "membertype_family_doctor" ],
+
+        "memberTypes": [
+            {
+                "_comment": "A home's family doctor - assigned by the player in the management job-post tab (sharedAssignableMemberTypes - every faction). Replaces the character's MemberType there (user 2026-11-01: accepted - e.g. Utnapishtim's student types and their relationship fallback are lost while doctor). Only assignable while the faction has an examination bed and a chemistry workbench in a non-private room and the character passes the placeholder check (skill_social >= 1); how hard that furniture is to get keeps it where it belongs. No schedule of its own - the doctor sandboxes like everyone; it PROVIDES the physical checkup the other members book on their own (providedActivities; the doctor is the activity's required 'provider' role). A clinic's doctor type would provide the same activity (same cooldownTag). legacyIDs: the former Utnapishtim-only type.",
+                "ID": "membertype_family_doctor",
+                "legacyIDs": [ "membertype_ba_family_doctor" ],
+                "displayNameKey": "membertype_family_doctor",
+                "socialStandingKey": "membertype_family_doctor",
+                "isMember": true,
+                "isPrisoner": false,
+                "isManager": false,
+                "isHidden": false,
+                "canBeTransferred": true,
+                "canBeLiberated": false,
+                "canBeRescued": false,
+                "skipsJobDispatch": false,
+                "isPurgedOnPartyCleanup": false,
+                "isDisplayableInFactionUI": true,
+                "participatesInCombat": true,
+                "assignRequirements": {
+                    "_comment": "Each requireFurnitures entry must be matched by some furniture in the faction's non-private rooms (any set criterion: baseIDs / anyTags / allTags / excludeTags). Skill: social >= 1 (placeholder check).",
+                    "requireFurnitures": [
+                        { "baseIDs": ["furniture_hospital_bed"] },
+                        { "baseIDs": ["furniture_workbench_chemistry"] }
+                    ],
+                    "requireSkills": [ { "skillID": "skill_social", "minLevel": 1 } ]
+                },
+                "providedActivities": [
+                    {
+                        "ID": "family_doctor_checkup",
+                        "_comment": "Booked by each member on their own (the planner): the member hosts a Private session, the doctor is its required provider (any member of their home whose type provides it - providesActivity). One examination bed per checkup (facility medical_checkup, Unit). Every 30 days at most, whoever provides it (cooldownTag medical_checkup). The begin event Checkup_Begin launches Job_Checkup (Data/Events/Recreation/checkup_events.json). workCommands = fallback only (a seat while waiting).",
+                        "cooldownTag": "medical_checkup",
+                        "workModule": {
+                            "jobPostID": "activity_family_doctor_checkup",
+                            "workCommands": ["com_furniture_takingBreak"],
+                            "activeHours": [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+                        },
+                        "facility": { "comTag": "medical_checkup", "reserve": "Unit", "unitCapacity": 2, "dispatchInRoom": true },
+                        "eligibility": { "chara_conditions": [ { "parameters": ["isPrisonerAtHome", "false"] } ] },
+                        "launchEventID": "Checkup_Begin",
+                        "AcceptanceMods": [
+                            {
+                                "_comment": "A booked checkup is never refused (user 2026-10-31: forced) - doctor and patient both, while this checkup booking is in effect (CurrentActiveActivity).",
+                                "Requirement_ActionPackage": { "targetComID": "checkup_examination", "isDoer": false },
+                                "Result_EvaluationPackage": { "overrideResponse": "Accept", "overrideResponseExplanation": "checkup_booked_accept_reason" }
+                            },
+                            {
+                                "Requirement_ActionPackage": { "targetComID": "checkup_examination", "isDoer": true },
+                                "Result_EvaluationPackage": { "overrideResponse": "Accept", "overrideResponseExplanation": "checkup_booked_accept_reason" }
+                            }
+                        ],
+                        "minHours": 1, "maxHours": 1,
+                        "minDaysBetween": 30,
+                        "baseWeight": 0.5,
+                        "invite": {
+                            "visibility": "Private",
+                            "inviteChance": 1.0,
+                            "minParticipants": 2,
+                            "TargetValidators": [
+                                {
+                                    "refKeys": [ "provider" ],
+                                    "required": true,
+                                    "baseScope": "FactionMembers",
+                                    "extraScopeArguments": [ "@selfHomeFaction" ],
+                                    "chara_conditions": [
+                                        { "parameters": [ "excludeSelf" ] },
+                                        { "parameters": [ "providesActivity", "family_doctor_checkup" ] }
+                                    ],
+                                    "maxTargetCount": 1,
+                                    "stopAtMaxTargetCount": true
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "house_activity_shooting_training": "射击训练",
+                "house_activity_combat_training": "格斗训练",
+                "house_activity_movie_session": "观影",
+                "house_activity_group_gaming": "一起打游戏",
+                "house_activity_music_practice": "音乐练习",
+                "house_activity_room_visit": "串门",
+                "membertype_family_doctor": "家庭医生",
+                "membertype_family_doctor_tooltip": "家里的家庭医生。没有固定的工作时间，但其他成员可以找其预约体检。",
+                "activity_family_doctor_checkup": "体检"
+            }
+        }
+    }
+}

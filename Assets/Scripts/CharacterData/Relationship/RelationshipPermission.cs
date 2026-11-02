@@ -11,6 +11,7 @@ public class RelationshipPermission
     public bool intimacy_medium = false;
     public bool intimacy_high = false;
     public bool lead_follow = false;
+    /// <summary>Obsolete: the Family permission is retired. Kept so existing relationship data still loads; nothing reads it.</summary>
     public bool formFamily = false;
 
 }

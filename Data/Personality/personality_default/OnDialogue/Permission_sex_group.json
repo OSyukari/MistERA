@@ -1,0 +1,43 @@
+{
+    "_doc": "口上loose entry文件：许可「多人性行为」（sex_group，在超过两人参与的场景中与对方发生性行为）的请求口上。条目含义与生成规范同 Permission_intimacy_low.json 的 _doc（Request / Granted / Refused，每条目一个variant、3条response，无通用兜底）。文件名含 sex，安全模式不加载。",
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_group_Request",
+                    "_comment": "玩家想请求多人性行为许可，刚开口。女性NPC察觉话题时的反应。",
+                    "variants": [ { "responses": [
+                        "\"不只我们两个……？你是这个意思吗？\"",
+                        "\"还有别人一起……？\"",
+                        "\"诶，你想让其他人也加入吗？\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_group_Granted",
+                    "_comment": "答应给予多人性行为许可。也会在多人场景中被自动请求获准时说出，台词需两种场合都自然。女性说话者。",
+                    "variants": [ { "responses": [
+                        "\"……嗯，大家一起的话，也可以。\"\n%%permission_sex_group_consent%%",
+                        "\"有别人在也没关系……我答应你。\"\n%%permission_sex_group_consent%%",
+                        "\"好吧……既然你想要的话。\"\n%%permission_sex_group_consent%%"
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_group_Refused",
+                    "_comment": "拒绝给予多人性行为许可。女性NPC，委婉为主。",
+                    "variants": [ { "responses": [
+                        "\"我只想和你两个人……\"",
+                        "\"别人也在的话，我不行。\"",
+                        "\"对不起，那种事我做不到。\""
+                    ] } ]
+                }
+            }
+        ]
+    }
+}

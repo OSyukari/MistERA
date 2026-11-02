@@ -1,0 +1,43 @@
+{
+    "_doc": "口上loose entry文件：许可「危险日生中出」（sex_dangerday_creampie，在自己的危险日——排卵期——不采取保护地插入并内射，有怀孕风险）的请求口上。条目含义与生成规范同 Permission_intimacy_low.json 的 _doc（Request / Granted / Refused，每条目一个variant、3条response，无通用兜底）。文件名含 sex，安全模式不加载。",
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_dangerday_creampie_Request",
+                    "_comment": "玩家想请求危险日生中出许可，刚开口。女性NPC察觉话题时的反应，意识到怀孕风险。说话者自己就是危险日的一方。",
+                    "variants": [ { "responses": [
+                        "\"今天……可是危险日哦，你知道的吧？\"",
+                        "\"这种日子还想直接来……你是认真的？\"",
+                        "\"在危险日那样做的话……会怀上的哦？\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_dangerday_creampie_Granted",
+                    "_comment": "答应给予危险日生中出许可，接受怀孕风险。也会在危险日的阴道插入中被自动请求获准时说出（正处于性行为中），台词需两种场合都自然。女性说话者。",
+                    "variants": [ { "responses": [
+                        "\"……就算怀上了也没关系，射在里面吧。\"\n%%permission_sex_dangerday_creampie_consent%%",
+                        "\"危险日也……好，我答应你。\"\n%%permission_sex_dangerday_creampie_consent%%",
+                        "\"……既然是你的话，我已经做好准备了。\"\n%%permission_sex_dangerday_creampie_consent%%"
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_dangerday_creampie_Refused",
+                    "_comment": "拒绝给予危险日生中出许可。女性NPC，可提及怀孕风险，不过度激烈。",
+                    "variants": [ { "responses": [
+                        "\"今天绝对不行，会怀孕的。\"",
+                        "\"危险日的话……还是不要射在里面。\"",
+                        "\"对不起，我还没准备好当妈妈。\""
+                    ] } ]
+                }
+            }
+        ]
+    }
+}

@@ -77,7 +77,7 @@ public class scr_panel_wombdata : MonoBehaviour
             float totalVolume = 0;
             foreach (var i in womb.source.Contains)
             {
-                totalVolume += i.GetComp_Ingestible().amount;
+                totalVolume += i.Comp_Ingestible.amount;
 
                 var box = Instantiate(prefab_itemInstance);
                 box.SelfRect.SetParent(itemGrid, false);

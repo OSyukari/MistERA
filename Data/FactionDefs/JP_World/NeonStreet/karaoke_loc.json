@@ -1,0 +1,9 @@
+{
+    "Dictionary": { "Entries": { "en-us": {
+        "jp_karaoke": "Neon Karaoke", "membertype_neon_karaoke": "Karaoke Staff", "membertype_neon_karaoke_desk": "Part-Time Karaoke Receptionist", "membertype_neon_karaoke_roomstaff": "Part-Time Room Attendant", "neon_day_shift": "Day Shift", "neon_night_shift": "Late Shift",
+        "membertype_neon_karaoke_desk_day": "Karaoke Reception 12-22", "membertype_neon_karaoke_desk_night": "Karaoke Reception 22-05", "membertype_neon_karaoke_room_day": "Room Attendant 12-22", "membertype_neon_karaoke_room_night": "Room Attendant 22-05",
+        "neon_karaoke_session": "Small-Room Karaoke", "neon_karaoke_party": "Karaoke Party with Friends", "neon_ktv_small": "Small-Room Karaoke Console", "neon_ktv_party": "Party-Room Karaoke Console",
+        "jp_neon_sing_small": "Choose songs and sing in a small karaoke room.", "jp_neon_sing_party": "Take turns singing in a party karaoke room.",
+        "neon_sing_begin": "$doer.firstname$ selects a song and picks up the microphone.", "neon_sing_ongoing": "$doer.firstname$ sings along with the lyrics on screen.", "neon_sing_end": "$doer.firstname$ puts down the microphone and browses the next page of songs."
+    } } }
+}

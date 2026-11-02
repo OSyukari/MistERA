@@ -1,24 +1,34 @@
 {
+    "_doc": "Item use commands (Docs/Interactions/Plan_UseItemFolders.md). com_useItem is the template of the per-item 使用 folders (COM_ItemFolder, built for every item a command names in itemFolder); it is never shown itself. The ingest generators below are hidden templates: each makes one command per consumable with this route, listed under that item's folder. One fixed targeting per command: _self = the doer takes it (selfOnly, any target is ignored), _onTarget = the doer gives it to the receiver.",
     "COMs": {
         "list": [
             {
-                "ID": "com_furniture_ingestStomach",
+                "$type": "COM_ItemFolder, Assembly-CSharp",
+                "ID": "com_useItem",
                 "ActionPackageClass": "ActionPackage_Interaction",
-                "displayName": "com_furniture_ingestStomach_displayName",
+                "displayName": "com_useItem_displayName",
+                "hidden": true,
                 "comTags": ["interaction", "ingestItem", "allowedDuringSex"],
                 "requirements": {
                     "requirement": {
                         "req_Receivers": { "requireConscious": false, "requireAction": false }
                     }
-                },
+                }
+            },
+            {
+                "ID": "com_furniture_ingestStomach_self",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_furniture_ingestStomach_self",
+                "hidden": true,
                 "GenerateCOM": {
                     "itemTag": "consumable",
                     "targetCOMClass": {
                         "$type": "COM_IngestItem, Assembly-CSharp",
-                        "ID": "com_furniture_ingestStomach",
+                        "ID": "com_furniture_ingestStomach_self",
                         "ActionPackageClass": "ActionPackage_Interaction",
-                        "HideWhenInvalid": true,
-                        "displayName": "com_furniture_ingestStomach_displayName",
+                        "displayName": "com_furniture_ingestStomach_self",
+                        "itemFolder": "$itemID$",
+                        "selfOnly": true,
                         "ingestBodyTag": "stomach",
                         "timeScale": 5,
                         "comTags": ["interaction", "ingestItem", "allowedDuringSex"],
@@ -30,15 +40,7 @@
                         "variants": [
                             {
                                 "requirements": { "requirement": { "doerCount": 1, "receiverCount": 0, "treatDoerAsReceiver": true } },
-                                "displayName": "com_furniture_ingestStomach_displayName_self"
-                            },
-                            {
-                                "requirements": { "requirement": { "doerCount": 1, "receiverCount": 1 } },
-                                "displayName": "com_furniture_ingestStomach_displayName_administer",
-                                "useBaseDescription": false,
-                                "description_begin": { "Entries":[{"texts":["com_furniture_ingestStomach_begin_administer"]}], "keepLooking": false },
-                                "description_ongoing": { "Entries":[{"texts":["com_furniture_ingestStomach_ongoing_administer"]}], "keepLooking": false },
-                                "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_furniture_ingestStomach_onComplete_administer"]}] }
+                                "displayName": "com_furniture_ingestStomach_self"
                             }
                         ],
                         "AcceptanceCheck": { "baseAcceptanceValue": 40 },
@@ -48,32 +50,56 @@
                         "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_furniture_ingestStomach_onComplete_1"]}] }
                     }
                 }
+            },
+            {
+                "ID": "com_furniture_ingestStomach_onTarget",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_furniture_ingestStomach_onTarget",
+                "hidden": true,
+                "GenerateCOM": {
+                    "itemTag": "consumable",
+                    "targetCOMClass": {
+                        "$type": "COM_IngestItem, Assembly-CSharp",
+                        "ID": "com_furniture_ingestStomach_onTarget",
+                        "ActionPackageClass": "ActionPackage_Interaction",
+                        "displayName": "com_furniture_ingestStomach_onTarget",
+                        "itemFolder": "$itemID$",
+                        "ingestBodyTag": "stomach",
+                        "timeScale": 5,
+                        "comTags": ["interaction", "ingestItem", "allowedDuringSex"],
+                        "requirements": {
+                            "requirement": {
+                                "req_Receivers": { "requireConscious": false, "requireAction": false }
+                            }
+                        },
+                        "variants": [
+                            {
+                                "requirements": { "requirement": { "doerCount": 1, "receiverCount": 1 } },
+                                "displayName": "com_furniture_ingestStomach_onTarget"
+                            }
+                        ],
+                        "AcceptanceCheck": { "baseAcceptanceValue": 40 },
+                        "DifficultyCheck": { "baseD20Check": 0 },
+                        "description_begin": { "Entries":[{"texts":["com_furniture_ingestStomach_begin_administer"]}], "keepLooking": false },
+                        "description_ongoing": { "Entries":[{"texts":["com_furniture_ingestStomach_ongoing_administer"]}], "keepLooking": false },
+                        "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_furniture_ingestStomach_onComplete_administer"]}] }
+                    }
+                }
             }
         ]
     },
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "com_furniture_ingestStomach_displayName": "服药",
-                "com_furniture_ingestStomach_displayName_self": "服用$name$",
-                "com_furniture_ingestStomach_displayName_administer": "喂服$name$",
+                "com_useItem_displayName": "使用$name$",
+                "com_furniture_ingestStomach_self": "服用",
+                "com_furniture_ingestStomach_onTarget": "喂对方服用",
                 "com_furniture_ingestStomach_begin_1": "$doer.firstname$吞下了$name$",
                 "com_furniture_ingestStomach_ongoing_1": "$doer.firstname$正在服药",
                 "com_furniture_ingestStomach_onComplete_1": "$doer.firstname$服下了药",
                 "com_furniture_ingestStomach_begin_administer": "$doer.firstname$给$receiver.firstname$喂下了$name$",
                 "com_furniture_ingestStomach_ongoing_administer": "$doer.firstname$正在给$receiver.firstname$喂药",
                 "com_furniture_ingestStomach_onComplete_administer": "$doer.firstname$给$receiver.firstname$喂药完毕"
-            },
-            "en-us": {
-                "com_furniture_ingestStomach_displayName": "Take Medicine",
-                "com_furniture_ingestStomach_displayName_self": "Take $name$",
-                "com_furniture_ingestStomach_displayName_administer": "Administer $name$",
-                "com_furniture_ingestStomach_begin_1": "$doer.firstname$ swallowed $name$",
-                "com_furniture_ingestStomach_ongoing_1": "$doer.firstname$ is taking medicine",
-                "com_furniture_ingestStomach_onComplete_1": "$doer.firstname$ took the medicine",
-                "com_furniture_ingestStomach_begin_administer": "$doer.firstname$ fed $name$ to $receiver.firstname$",
-                "com_furniture_ingestStomach_ongoing_administer": "$doer.firstname$ is administering medicine to $receiver.firstname$",
-                "com_furniture_ingestStomach_onComplete_administer": "$doer.firstname$ finished administering medicine to $receiver.firstname$"
             }
         }
     }

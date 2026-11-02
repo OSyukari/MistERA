@@ -1,0 +1,7 @@
+{
+    "Dictionary": { "Entries": { "en-us": {
+        "ui_residence_unitName": "$district$ #$n$",
+        "ui_residence_familyName": "$name$ Residence",
+        "ui_room_requireVisitAccess": "This is [$faction$]'s home - you need an invitation to go in"
+    } } }
+}

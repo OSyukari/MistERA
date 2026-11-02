@@ -103,7 +103,6 @@
                         "trait_tooltip": "A soft and plump body."
                     }
                 ],
-                "type": 8,
                 "SortType":"SortedList",
                 "neutralID": "trait_BodyType_slim",
                 "requireRaceKeyword_any": ["humanrace", "humanoid"],
@@ -149,7 +148,6 @@
                         "trait_tooltip": "Deep dark skin."
                     }
                 ],
-                "type": 8,
                 "SortType":"UnsortedList",
                 "neutralID": "trait_SkinColor_fair",
                 "requireRaceKeyword_any": ["humanrace", "humanoid"],
@@ -286,7 +284,6 @@
                         "trait_tooltip": "Light purple (lavender) hair."
                     }
                 ],
-                "type": 8,
                 "SortType":"UnsortedList",
                 "neutralID": "trait_HairColor_black",
                 "requireRaceKeyword_any": ["humanrace", "humanoid"],
@@ -301,7 +298,6 @@
                     { "trait_ID": "trait_HairColorPattern_two_tone", "promptTags":["two-tone hair"], "trait_displayname": "Two-Tone", "trait_score":0, "trait_tooltip": "Two distinct hair colors." },
                     { "trait_ID": "trait_HairColorPattern_gradient", "promptTags":["gradient hair"], "trait_displayname": "Gradient", "trait_score":0, "trait_tooltip": "Hair color fading into a second color." }
                 ],
-                "type": 8,
                 "SortType":"UnsortedList",
                 "neutralID": "trait_HairColorPattern_monotone",
                 "requireRaceKeyword_any": ["humanrace", "humanoid"],
@@ -331,7 +327,6 @@
                     { "trait_ID": "trait_HairColorSecondary_aqua", "promptTags":["aqua hair"], "trait_displayname": "Aqua", "trait_score":0, "trait_tooltip": "Aqua (cyan) hair." },
                     { "trait_ID": "trait_HairColorSecondary_light_purple", "promptTags":["light purple hair"], "trait_displayname": "Light Purple", "trait_score":0, "trait_tooltip": "Light purple (lavender) hair." }
                 ],
-                "type": 8,
                 "SortType":"UnsortedList",
                 "neutralID": "trait_HairColorSecondary_black",
                 "requireRaceKeyword_any": ["humanrace", "humanoid"],
@@ -447,7 +442,6 @@
                         "trait_tooltip": "Pale light blue eyes."
                     }
                 ],
-                "type": 8,
                 "SortType":"UnsortedList",
                 "neutralID": "trait_EyeColor_brown",
                 "requireRaceKeyword_any": ["humanrace", "humanoid"],

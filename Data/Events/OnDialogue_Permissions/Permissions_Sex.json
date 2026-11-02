@@ -1,0 +1,686 @@
+{
+    "_doc": {
+        "purpose": "OnDialogue_Permissions request events for the sex_* permissions; same flow as Permissions_Intimacy.json (see its _doc, which also holds the shared Permission_Request_* event text). Kojo: Permission_[id]_Request / _Granted / _Refused, one set per permission. Kept in a file named *Sex* so safe mode skips it."
+    },
+    "Events": {
+        "list": [
+            {
+                "ID": "permission_sex_anal",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Permissions",
+                "UISpec": { "displayMode": "AVG" },
+                "SelfValidator": { "chara_conditions": [ { "parameters": [ "exists" ] }, { "parameters": [ "isPlayer" ] } ] },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "person" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [ { "parameters": [ "exists" ] }, { "parameters": [ "excludePlayer" ] }, { "parameters": [ "canRequestPermission", "permission_sex_anal", "self" ] } ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "start",
+                        "options": [
+                            {
+                                "option": "_kojo",
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "person", "self", "permission_sex_anal_Request", "kojo_ask" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "ask" ] }
+                                ]
+                            },
+                            { "option": "_plain", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "ask_plain" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "ask",
+                        "UISpec": { "portraitRefKey": "person" },
+                        "question": "permission_sex_anal_question",
+                        "options": [
+                            { "option": "Permission_Request_confirm", "isDefaultAccept": true, "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "decide" ] } ] },
+                            { "option": "Permission_Request_cancel", "isDefaultCancel": true, "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "end" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "ask_plain",
+                        "UISpec": { "portraitRefKey": "person" },
+                        "question": "permission_sex_anal_question_plain",
+                        "options": [
+                            { "option": "Permission_Request_confirm", "isDefaultAccept": true, "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "decide" ] } ] },
+                            { "option": "Permission_Request_cancel", "isDefaultCancel": true, "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "end" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "decide",
+                        "options": [
+                            {
+                                "option": "_accept",
+                                "target_chara_conditions": { "person": [ { "parameters": [ "acceptsPermissionRequest", "permission_sex_anal", "self" ] } ] },
+                                "Results": [
+                                    { "Type": "GrantPermission", "arguments": [ "person", "self", "permission_sex_anal", "Request" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "accept_kojo" ] }
+                                ]
+                            },
+                            { "option": "_refuse", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "refuse_kojo" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "accept_kojo",
+                        "options": [
+                            {
+                                "option": "_kojo",
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "person", "self", "permission_sex_anal_Granted", "kojo_reply" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "accept_reply" ] }
+                                ]
+                            },
+                            { "option": "_plain", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "accept_status" ] } ] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "accept_reply", "UISpec": { "portraitRefKey": "person" }, "line": "Permission_Request_reply", "nextEntryLabel": "accept_status" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "accept_status",
+                        "options": [
+                            { "option": "_normal", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "granted" ] } ] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "granted", "UISpec": { "portraitRefKey": "person" }, "line": "permission_sex_anal_granted", "isLast": true },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "refuse_kojo",
+                        "options": [
+                            {
+                                "option": "_kojo",
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "person", "self", "permission_sex_anal_Refused", "kojo_reply" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "refuse_reply" ] }
+                                ]
+                            },
+                            { "option": "_plain", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "refused" ] } ] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "refuse_reply", "UISpec": { "portraitRefKey": "person" }, "line": "Permission_Request_reply", "nextEntryLabel": "refused" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "refused", "UISpec": { "portraitRefKey": "person" }, "line": "Permission_Request_refused", "isLast": true },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "end", "line": "", "isLast": true }
+                ]
+            },
+            {
+                "ID": "permission_sex_unprotected",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Permissions",
+                "UISpec": { "displayMode": "AVG" },
+                "SelfValidator": { "chara_conditions": [ { "parameters": [ "exists" ] }, { "parameters": [ "isPlayer" ] } ] },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "person" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [ { "parameters": [ "exists" ] }, { "parameters": [ "excludePlayer" ] }, { "parameters": [ "canRequestPermission", "permission_sex_unprotected", "self" ] } ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "start",
+                        "options": [
+                            {
+                                "option": "_kojo",
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "person", "self", "permission_sex_unprotected_Request", "kojo_ask" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "ask" ] }
+                                ]
+                            },
+                            { "option": "_plain", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "ask_plain" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "ask",
+                        "UISpec": { "portraitRefKey": "person" },
+                        "question": "permission_sex_unprotected_question",
+                        "options": [
+                            { "option": "Permission_Request_confirm", "isDefaultAccept": true, "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "decide" ] } ] },
+                            { "option": "Permission_Request_cancel", "isDefaultCancel": true, "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "end" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "ask_plain",
+                        "UISpec": { "portraitRefKey": "person" },
+                        "question": "permission_sex_unprotected_question_plain",
+                        "options": [
+                            { "option": "Permission_Request_confirm", "isDefaultAccept": true, "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "decide" ] } ] },
+                            { "option": "Permission_Request_cancel", "isDefaultCancel": true, "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "end" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "decide",
+                        "options": [
+                            {
+                                "option": "_accept",
+                                "target_chara_conditions": { "person": [ { "parameters": [ "acceptsPermissionRequest", "permission_sex_unprotected", "self" ] } ] },
+                                "Results": [
+                                    { "Type": "GrantPermission", "arguments": [ "person", "self", "permission_sex_unprotected", "Request" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "accept_kojo" ] }
+                                ]
+                            },
+                            { "option": "_refuse", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "refuse_kojo" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "accept_kojo",
+                        "options": [
+                            {
+                                "option": "_kojo",
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "person", "self", "permission_sex_unprotected_Granted", "kojo_reply" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "accept_reply" ] }
+                                ]
+                            },
+                            { "option": "_plain", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "accept_status" ] } ] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "accept_reply", "UISpec": { "portraitRefKey": "person" }, "line": "Permission_Request_reply", "nextEntryLabel": "accept_status" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "accept_status",
+                        "options": [
+                            { "option": "_normal", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "granted" ] } ] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "granted", "UISpec": { "portraitRefKey": "person" }, "line": "permission_sex_unprotected_granted", "isLast": true },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "refuse_kojo",
+                        "options": [
+                            {
+                                "option": "_kojo",
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "person", "self", "permission_sex_unprotected_Refused", "kojo_reply" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "refuse_reply" ] }
+                                ]
+                            },
+                            { "option": "_plain", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "refused" ] } ] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "refuse_reply", "UISpec": { "portraitRefKey": "person" }, "line": "Permission_Request_reply", "nextEntryLabel": "refused" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "refused", "UISpec": { "portraitRefKey": "person" }, "line": "Permission_Request_refused", "isLast": true },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "end", "line": "", "isLast": true }
+                ]
+            },
+            {
+                "ID": "permission_sex_group",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Permissions",
+                "UISpec": { "displayMode": "AVG" },
+                "SelfValidator": { "chara_conditions": [ { "parameters": [ "exists" ] }, { "parameters": [ "isPlayer" ] } ] },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "person" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [ { "parameters": [ "exists" ] }, { "parameters": [ "excludePlayer" ] }, { "parameters": [ "canRequestPermission", "permission_sex_group", "self" ] } ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "start",
+                        "options": [
+                            {
+                                "option": "_kojo",
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "person", "self", "permission_sex_group_Request", "kojo_ask" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "ask" ] }
+                                ]
+                            },
+                            { "option": "_plain", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "ask_plain" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "ask",
+                        "UISpec": { "portraitRefKey": "person" },
+                        "question": "permission_sex_group_question",
+                        "options": [
+                            { "option": "Permission_Request_confirm", "isDefaultAccept": true, "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "decide" ] } ] },
+                            { "option": "Permission_Request_cancel", "isDefaultCancel": true, "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "end" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "ask_plain",
+                        "UISpec": { "portraitRefKey": "person" },
+                        "question": "permission_sex_group_question_plain",
+                        "options": [
+                            { "option": "Permission_Request_confirm", "isDefaultAccept": true, "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "decide" ] } ] },
+                            { "option": "Permission_Request_cancel", "isDefaultCancel": true, "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "end" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "decide",
+                        "options": [
+                            {
+                                "option": "_accept",
+                                "target_chara_conditions": { "person": [ { "parameters": [ "acceptsPermissionRequest", "permission_sex_group", "self" ] } ] },
+                                "Results": [
+                                    { "Type": "GrantPermission", "arguments": [ "person", "self", "permission_sex_group", "Request" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "accept_kojo" ] }
+                                ]
+                            },
+                            { "option": "_refuse", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "refuse_kojo" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "accept_kojo",
+                        "options": [
+                            {
+                                "option": "_kojo",
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "person", "self", "permission_sex_group_Granted", "kojo_reply" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "accept_reply" ] }
+                                ]
+                            },
+                            { "option": "_plain", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "accept_status" ] } ] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "accept_reply", "UISpec": { "portraitRefKey": "person" }, "line": "Permission_Request_reply", "nextEntryLabel": "accept_status" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "accept_status",
+                        "options": [
+                            { "option": "_normal", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "granted" ] } ] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "granted", "UISpec": { "portraitRefKey": "person" }, "line": "permission_sex_group_granted", "isLast": true },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "refuse_kojo",
+                        "options": [
+                            {
+                                "option": "_kojo",
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "person", "self", "permission_sex_group_Refused", "kojo_reply" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "refuse_reply" ] }
+                                ]
+                            },
+                            { "option": "_plain", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "refused" ] } ] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "refuse_reply", "UISpec": { "portraitRefKey": "person" }, "line": "Permission_Request_reply", "nextEntryLabel": "refused" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "refused", "UISpec": { "portraitRefKey": "person" }, "line": "Permission_Request_refused", "isLast": true },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "end", "line": "", "isLast": true }
+                ]
+            },
+            {
+                "ID": "permission_sex_observed",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Permissions",
+                "UISpec": { "displayMode": "AVG" },
+                "SelfValidator": { "chara_conditions": [ { "parameters": [ "exists" ] }, { "parameters": [ "isPlayer" ] } ] },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "person" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [ { "parameters": [ "exists" ] }, { "parameters": [ "excludePlayer" ] }, { "parameters": [ "canRequestPermission", "permission_sex_observed", "self" ] } ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "start",
+                        "options": [
+                            {
+                                "option": "_kojo",
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "person", "self", "permission_sex_observed_Request", "kojo_ask" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "ask" ] }
+                                ]
+                            },
+                            { "option": "_plain", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "ask_plain" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "ask",
+                        "UISpec": { "portraitRefKey": "person" },
+                        "question": "permission_sex_observed_question",
+                        "options": [
+                            { "option": "Permission_Request_confirm", "isDefaultAccept": true, "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "decide" ] } ] },
+                            { "option": "Permission_Request_cancel", "isDefaultCancel": true, "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "end" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "ask_plain",
+                        "UISpec": { "portraitRefKey": "person" },
+                        "question": "permission_sex_observed_question_plain",
+                        "options": [
+                            { "option": "Permission_Request_confirm", "isDefaultAccept": true, "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "decide" ] } ] },
+                            { "option": "Permission_Request_cancel", "isDefaultCancel": true, "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "end" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "decide",
+                        "options": [
+                            {
+                                "option": "_accept",
+                                "target_chara_conditions": { "person": [ { "parameters": [ "acceptsPermissionRequest", "permission_sex_observed", "self" ] } ] },
+                                "Results": [
+                                    { "Type": "GrantPermission", "arguments": [ "person", "self", "permission_sex_observed", "Request" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "accept_kojo" ] }
+                                ]
+                            },
+                            { "option": "_refuse", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "refuse_kojo" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "accept_kojo",
+                        "options": [
+                            {
+                                "option": "_kojo",
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "person", "self", "permission_sex_observed_Granted", "kojo_reply" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "accept_reply" ] }
+                                ]
+                            },
+                            { "option": "_plain", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "accept_status" ] } ] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "accept_reply", "UISpec": { "portraitRefKey": "person" }, "line": "Permission_Request_reply", "nextEntryLabel": "accept_status" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "accept_status",
+                        "options": [
+                            { "option": "_normal", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "granted" ] } ] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "granted", "UISpec": { "portraitRefKey": "person" }, "line": "permission_sex_observed_granted", "isLast": true },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "refuse_kojo",
+                        "options": [
+                            {
+                                "option": "_kojo",
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "person", "self", "permission_sex_observed_Refused", "kojo_reply" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "refuse_reply" ] }
+                                ]
+                            },
+                            { "option": "_plain", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "refused" ] } ] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "refuse_reply", "UISpec": { "portraitRefKey": "person" }, "line": "Permission_Request_reply", "nextEntryLabel": "refused" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "refused", "UISpec": { "portraitRefKey": "person" }, "line": "Permission_Request_refused", "isLast": true },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "end", "line": "", "isLast": true }
+                ]
+            },
+            {
+                "ID": "permission_sex_vaginal",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Permissions",
+                "UISpec": { "displayMode": "AVG" },
+                "SelfValidator": { "chara_conditions": [ { "parameters": [ "exists" ] }, { "parameters": [ "isPlayer" ] } ] },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "person" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [ { "parameters": [ "exists" ] }, { "parameters": [ "excludePlayer" ] }, { "parameters": [ "canRequestPermission", "permission_sex_vaginal", "self" ] } ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "start",
+                        "options": [
+                            {
+                                "option": "_kojo",
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "person", "self", "permission_sex_vaginal_Request", "kojo_ask" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "ask" ] }
+                                ]
+                            },
+                            { "option": "_plain", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "ask_plain" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "ask",
+                        "UISpec": { "portraitRefKey": "person" },
+                        "question": "permission_sex_vaginal_question",
+                        "options": [
+                            { "option": "Permission_Request_confirm", "isDefaultAccept": true, "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "decide" ] } ] },
+                            { "option": "Permission_Request_cancel", "isDefaultCancel": true, "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "end" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "ask_plain",
+                        "UISpec": { "portraitRefKey": "person" },
+                        "question": "permission_sex_vaginal_question_plain",
+                        "options": [
+                            { "option": "Permission_Request_confirm", "isDefaultAccept": true, "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "decide" ] } ] },
+                            { "option": "Permission_Request_cancel", "isDefaultCancel": true, "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "end" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "decide",
+                        "options": [
+                            {
+                                "option": "_accept",
+                                "target_chara_conditions": { "person": [ { "parameters": [ "acceptsPermissionRequest", "permission_sex_vaginal", "self" ] } ] },
+                                "Results": [
+                                    { "Type": "GrantPermission", "arguments": [ "person", "self", "permission_sex_vaginal", "Request" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "accept_kojo" ] }
+                                ]
+                            },
+                            { "option": "_refuse", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "refuse_kojo" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "accept_kojo",
+                        "options": [
+                            {
+                                "option": "_kojo",
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "person", "self", "permission_sex_vaginal_Granted", "kojo_reply" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "accept_reply" ] }
+                                ]
+                            },
+                            { "option": "_plain", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "accept_status" ] } ] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "accept_reply", "UISpec": { "portraitRefKey": "person" }, "line": "Permission_Request_reply", "nextEntryLabel": "accept_status" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "accept_status",
+                        "options": [
+                            { "option": "_normal", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "granted" ] } ] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "granted", "UISpec": { "portraitRefKey": "person" }, "line": "permission_sex_vaginal_granted", "isLast": true },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "refuse_kojo",
+                        "options": [
+                            {
+                                "option": "_kojo",
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "person", "self", "permission_sex_vaginal_Refused", "kojo_reply" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "refuse_reply" ] }
+                                ]
+                            },
+                            { "option": "_plain", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "refused" ] } ] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "refuse_reply", "UISpec": { "portraitRefKey": "person" }, "line": "Permission_Request_reply", "nextEntryLabel": "refused" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "refused", "UISpec": { "portraitRefKey": "person" }, "line": "Permission_Request_refused", "isLast": true },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "end", "line": "", "isLast": true }
+                ]
+            },
+            {
+                "ID": "permission_sex_dangerday_creampie",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Permissions",
+                "UISpec": { "displayMode": "AVG" },
+                "SelfValidator": { "chara_conditions": [ { "parameters": [ "exists" ] }, { "parameters": [ "isPlayer" ] } ] },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "person" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [ { "parameters": [ "exists" ] }, { "parameters": [ "excludePlayer" ] }, { "parameters": [ "canRequestPermission", "permission_sex_dangerday_creampie", "self" ] } ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "start",
+                        "options": [
+                            {
+                                "option": "_kojo",
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "person", "self", "permission_sex_dangerday_creampie_Request", "kojo_ask" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "ask" ] }
+                                ]
+                            },
+                            { "option": "_plain", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "ask_plain" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "ask",
+                        "UISpec": { "portraitRefKey": "person" },
+                        "question": "permission_sex_dangerday_creampie_question",
+                        "options": [
+                            { "option": "Permission_Request_confirm", "isDefaultAccept": true, "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "decide" ] } ] },
+                            { "option": "Permission_Request_cancel", "isDefaultCancel": true, "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "end" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "ask_plain",
+                        "UISpec": { "portraitRefKey": "person" },
+                        "question": "permission_sex_dangerday_creampie_question_plain",
+                        "options": [
+                            { "option": "Permission_Request_confirm", "isDefaultAccept": true, "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "decide" ] } ] },
+                            { "option": "Permission_Request_cancel", "isDefaultCancel": true, "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "end" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "decide",
+                        "options": [
+                            {
+                                "option": "_accept",
+                                "target_chara_conditions": { "person": [ { "parameters": [ "acceptsPermissionRequest", "permission_sex_dangerday_creampie", "self" ] } ] },
+                                "Results": [
+                                    { "Type": "GrantPermission", "arguments": [ "person", "self", "permission_sex_dangerday_creampie", "Request" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "accept_kojo" ] }
+                                ]
+                            },
+                            { "option": "_refuse", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "refuse_kojo" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "accept_kojo",
+                        "options": [
+                            {
+                                "option": "_kojo",
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "person", "self", "permission_sex_dangerday_creampie_Granted", "kojo_reply" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "accept_reply" ] }
+                                ]
+                            },
+                            { "option": "_plain", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "accept_status" ] } ] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "accept_reply", "UISpec": { "portraitRefKey": "person" }, "line": "Permission_Request_reply", "nextEntryLabel": "accept_status" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "accept_status",
+                        "options": [
+                            { "option": "_normal", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "granted" ] } ] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "granted", "UISpec": { "portraitRefKey": "person" }, "line": "permission_sex_dangerday_creampie_granted", "isLast": true },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "refuse_kojo",
+                        "options": [
+                            {
+                                "option": "_kojo",
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "person", "self", "permission_sex_dangerday_creampie_Refused", "kojo_reply" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "refuse_reply" ] }
+                                ]
+                            },
+                            { "option": "_plain", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "refused" ] } ] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "refuse_reply", "UISpec": { "portraitRefKey": "person" }, "line": "Permission_Request_reply", "nextEntryLabel": "refused" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "refused", "UISpec": { "portraitRefKey": "person" }, "line": "Permission_Request_refused", "isLast": true },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "end", "line": "", "isLast": true }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "permission_sex_anal": "请求：%%permission_sex_anal_displayName%%",
+                "permission_sex_anal_question_plain": "要向$person.name$请求「%%permission_sex_anal_displayName%%」的许可吗？",
+                "permission_sex_anal_question": "$kojo_ask$\n\n%%permission_sex_anal_question_plain%%",
+                "permission_sex_anal_granted": "$person.name$允许了你：%%permission_sex_anal_displayName%%$permission_grant_type$。",
+                "permission_sex_anal_granted_temporary": "$person.name$允许了你：%%permission_sex_anal_displayName%%。由于双方关系不满足前提，该许可仅今天有效。",
+
+                "permission_sex_vaginal": "请求：%%permission_sex_vaginal_displayName%%",
+                "permission_sex_vaginal_question_plain": "要向$person.name$请求「%%permission_sex_vaginal_displayName%%」的许可吗？",
+                "permission_sex_vaginal_question": "$kojo_ask$\n\n%%permission_sex_vaginal_question_plain%%",
+                "permission_sex_vaginal_granted": "$person.name$允许了你：%%permission_sex_vaginal_displayName%%$permission_grant_type$。",
+                "permission_sex_vaginal_granted_temporary": "$person.name$允许了你：%%permission_sex_vaginal_displayName%%。由于双方关系不满足前提，该许可仅今天有效。",
+
+                "permission_sex_dangerday_creampie": "请求：%%permission_sex_dangerday_creampie_displayName%%",
+                "permission_sex_dangerday_creampie_question_plain": "要向$person.name$请求「%%permission_sex_dangerday_creampie_displayName%%」的许可吗？",
+                "permission_sex_dangerday_creampie_question": "$kojo_ask$\n\n%%permission_sex_dangerday_creampie_question_plain%%",
+                "permission_sex_dangerday_creampie_granted": "$person.name$允许了你：%%permission_sex_dangerday_creampie_displayName%%$permission_grant_type$。",
+                "permission_sex_dangerday_creampie_granted_temporary": "$person.name$允许了你：%%permission_sex_dangerday_creampie_displayName%%。由于双方关系不满足前提，该许可仅今天有效。",
+
+                "permission_sex_unprotected": "请求：%%permission_sex_unprotected_displayName%%",
+                "permission_sex_unprotected_question_plain": "要向$person.name$请求「%%permission_sex_unprotected_displayName%%」的许可吗？",
+                "permission_sex_unprotected_question": "$kojo_ask$\n\n%%permission_sex_unprotected_question_plain%%",
+                "permission_sex_unprotected_granted": "$person.name$允许了你：%%permission_sex_unprotected_displayName%%$permission_grant_type$。",
+                "permission_sex_unprotected_granted_temporary": "$person.name$允许了你：%%permission_sex_unprotected_displayName%%。由于双方关系不满足前提，该许可仅今天有效。",
+
+                "permission_sex_group": "请求：%%permission_sex_group_displayName%%",
+                "permission_sex_group_question_plain": "要向$person.name$请求「%%permission_sex_group_displayName%%」的许可吗？",
+                "permission_sex_group_question": "$kojo_ask$\n\n%%permission_sex_group_question_plain%%",
+                "permission_sex_group_granted": "$person.name$允许了你：%%permission_sex_group_displayName%%$permission_grant_type$。",
+                "permission_sex_group_granted_temporary": "$person.name$允许了你：%%permission_sex_group_displayName%%。由于双方关系不满足前提，该许可仅今天有效。",
+
+                "permission_sex_observed": "请求：%%permission_sex_observed_displayName%%",
+                "permission_sex_observed_question_plain": "要向$person.name$请求「%%permission_sex_observed_displayName%%」的许可吗？",
+                "permission_sex_observed_question": "$kojo_ask$\n\n%%permission_sex_observed_question_plain%%",
+                "permission_sex_observed_granted": "$person.name$允许了你：%%permission_sex_observed_displayName%%$permission_grant_type$。",
+                "permission_sex_observed_granted_temporary": "$person.name$允许了你：%%permission_sex_observed_displayName%%。由于双方关系不满足前提，该许可仅今天有效。"
+            }
+        }
+    }
+}

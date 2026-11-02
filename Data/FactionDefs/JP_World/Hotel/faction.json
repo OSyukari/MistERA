@@ -1,0 +1,309 @@
+{
+    "_doc": "Ekimae Business Hotel (Docs/Locations/Plan_ResidentialDistricts.md 3). Works like a home that anyone may check into by paying: a guest holds a child of membertype_jp_hotel_guest (one per room type, each with its own Daily membershipFee and room ID prefix) through JoinHandler_HotelGuest - a character with a home gets the hotel as TEMPORARY home (their home stays, they sleep in the owned hotel room since temp homes come first), one without a home becomes a PERMANENT resident (user rule, ResidenceUtility.CheckIntoHotel). NPCs are put here by the AssignHotelGuest event result with the same rule. Check-out = LeaveHandler_HotelGuest (temp-home guests only; a permanent resident leaves only when an event sets a new home) or automatically when the daily fee fails (Hotel_FeeFailed -> CheckOutHotelGuest). Guest rooms are private (bed) and members only (requireFactionMembership); lobby and restaurant are public. Meals: the restaurant's furniture_marker_getmeal at mealHours (non-player faction - one bento in stock is never used up, hospital pattern). World door (725,225), floorExitID hotel_lobby.",
+    "_comment_art": "PLACEHOLDER: imagePath/roomImagePath reuse existing BGAssets/Generated art; replace with dedicated art later. Background-image floor with hidden rooms, no room coordinates.",
+    "MapPlans": {
+        "factionInit": [
+            {
+                "ID": "jp_hotel_business",
+                "isPublic": true,
+                "setPrivateRoomOwner": false,
+                "isRentingFloor": false,
+                "_comment_isRentingFloor": "the hotel owns its building",
+                "mainExit": { "roomID": "hotel_lobby", "exitCost": 5 },
+                "floors": [ { "ID": "floor_jp_hotel_business", "nameOverwrite": "jp_hotel_business" } ],
+                "mealHours": [7, 12, 19],
+                "initializers": [
+                    { "initClass": "campaign_init_factionInventory", "initArguments": ["", "consumable_bento_box", "", "1"] }
+                ],
+                "activeHoursStart": 6,
+                "activeHoursEnd": 23,
+                "managerBaseIDs": [""],
+                "_comment_assignableMemberTypes": "Only the player-joinable restaurant part-time shifts (parent stands for its shifts).",
+                "assignableMemberTypes": [ "membertype_jp_hotel_parttime" ],
+                "joinableMemberTypes": [ "membertype_jp_hotel_parttime" ],
+                "_comment_fallbackWorkers": "Front desk is always staffed (day 08-20 + night 20-08 posts, NPC only) and so is housekeeping by day; the restaurant part-time shifts are left open for NPCs or the player. templateID = CharaTemplateGenerator from JP_World/Characters/templates.json.",
+                "fallbackWorkers": [
+                    { "memberTypeID": "membertype_jp_hotel_frontdesk_day", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" },
+                    { "memberTypeID": "membertype_jp_hotel_frontdesk_night", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" },
+                    { "memberTypeID": "membertype_jp_hotel_housekeeping", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }
+                ],
+                "salesInventory": [], "workModules": [], "workHours": [], "workAssignment": []
+            }
+        ],
+        "floorPlans": [
+            {
+                "ID": "floor_jp_hotel_business", "imagePath": "BGAssets/Generated/office_02.webp",
+                "isFloorPlan": false, "floorWidth": 400, "floorHeight": 400, "resize": 1, "mapExit": "hotel_lobby",
+                "_comment_rooms": "Guest room IDs carry the room-type prefix the guest posts claim rooms by (hotel_room_s_ single, hotel_room_t_ twin, hotel_room_d_ double). Every guest room has a bed (private room) and a bathroom.",
+                "rooms": [
+                    { "ID": "hotel_lobby", "displayName": "hotel_lobby", "hideOnMap": true, "connects": [],
+                      "furnitureIDs": ["furniture_jp_hotel_frontdesk_counter", "furniture_jp_hospital_waiting_bench"], "roomImagePath": "BGAssets/Generated/office_lounge_04.webp" },
+                    { "ID": "hotel_restaurant", "displayName": "hotel_restaurant", "hideOnMap": true, "connects": [{ "ID": "hotel_lobby", "cost": 1 }],
+                      "furnitureIDs": ["furniture_marker_getmeal", "furniture_round_table_4", "furniture_round_table_4", "furniture_jp_hotel_restaurant_counter"], "roomImagePath": "BGAssets/Generated/office_cafeteria_01.webp" },
+                    { "ID": "hotel_staff_room", "displayName": "hotel_staff_room", "hideOnMap": true, "requireFactionMembership": true, "connects": [{ "ID": "hotel_lobby", "cost": 1 }],
+                      "furnitureIDs": [], "roomImagePath": "BGAssets/Generated/office_03.webp" },
+                    { "ID": "hotel_corridor_1", "displayName": "hotel_corridor_1", "hideOnMap": true, "connects": [{ "ID": "hotel_lobby", "cost": 2 }],
+                      "furnitureIDs": ["furniture_jp_hotel_housekeeping_cart"], "roomImagePath": "BGAssets/Generated/office_hallway_01.webp" },
+                    { "ID": "hotel_corridor_2", "displayName": "hotel_corridor_2", "hideOnMap": true, "connects": [{ "ID": "hotel_corridor_1", "cost": 2 }],
+                      "furnitureIDs": ["furniture_jp_hotel_housekeeping_cart"], "roomImagePath": "BGAssets/Generated/office_hallway_02.webp" },
+                    { "ID": "hotel_room_s_101", "displayName": "hotel_room_s_101", "hideOnMap": true, "requireFactionMembership": true, "connects": [{ "ID": "hotel_corridor_1", "cost": 1 }],
+                      "furnitureIDs": ["furniture_bed_single", "furniture_bathroom_set", "furniture_shower"], "roomImagePath": "BGAssets/Generated/office_interior_02.webp" },
+                    { "ID": "hotel_room_s_102", "displayName": "hotel_room_s_102", "hideOnMap": true, "requireFactionMembership": true, "connects": [{ "ID": "hotel_corridor_1", "cost": 1 }],
+                      "furnitureIDs": ["furniture_bed_single", "furniture_bathroom_set", "furniture_shower"], "roomImagePath": "BGAssets/Generated/office_interior_02.webp" },
+                    { "ID": "hotel_room_s_103", "displayName": "hotel_room_s_103", "hideOnMap": true, "requireFactionMembership": true, "connects": [{ "ID": "hotel_corridor_1", "cost": 1 }],
+                      "furnitureIDs": ["furniture_bed_single", "furniture_bathroom_set", "furniture_shower"], "roomImagePath": "BGAssets/Generated/office_interior_02.webp" },
+                    { "ID": "hotel_room_s_104", "displayName": "hotel_room_s_104", "hideOnMap": true, "requireFactionMembership": true, "connects": [{ "ID": "hotel_corridor_1", "cost": 1 }],
+                      "furnitureIDs": ["furniture_bed_single", "furniture_bathroom_set", "furniture_shower"], "roomImagePath": "BGAssets/Generated/office_interior_02.webp" },
+                    { "ID": "hotel_room_t_201", "displayName": "hotel_room_t_201", "hideOnMap": true, "requireFactionMembership": true, "connects": [{ "ID": "hotel_corridor_2", "cost": 1 }],
+                      "furnitureIDs": ["furniture_bed_single", "furniture_bed_single", "furniture_bathroom_set", "furniture_shower"], "roomImagePath": "BGAssets/Generated/office_interior_03.webp" },
+                    { "ID": "hotel_room_t_202", "displayName": "hotel_room_t_202", "hideOnMap": true, "requireFactionMembership": true, "connects": [{ "ID": "hotel_corridor_2", "cost": 1 }],
+                      "furnitureIDs": ["furniture_bed_single", "furniture_bed_single", "furniture_bathroom_set", "furniture_shower"], "roomImagePath": "BGAssets/Generated/office_interior_03.webp" },
+                    { "ID": "hotel_room_d_203", "displayName": "hotel_room_d_203", "hideOnMap": true, "requireFactionMembership": true, "connects": [{ "ID": "hotel_corridor_2", "cost": 1 }],
+                      "furnitureIDs": ["furniture_bed_double", "furniture_bathroom_set", "furniture_shower"], "roomImagePath": "BGAssets/Generated/office_interior_04.webp" },
+                    { "ID": "hotel_room_d_204", "displayName": "hotel_room_d_204", "hideOnMap": true, "requireFactionMembership": true, "connects": [{ "ID": "hotel_corridor_2", "cost": 1 }],
+                      "furnitureIDs": ["furniture_bed_double", "furniture_bathroom_set", "furniture_shower"], "roomImagePath": "BGAssets/Generated/office_interior_04.webp" }
+                ]
+            }
+        ],
+        "memberTypes": [
+            {
+                "ID": "membertype_jp_hotel_guest",
+                "_comment": "Root of the guest posts (never held - JoinActiveFaction is always asked for a room-type child). Held as TEMP home by guests with a home, PERMANENT home by guests without one (JoinHandler_HotelGuest / AssignHotelGuest). Guests keep their work posts (no initiallyForbidWork). Each child has its own joinHandler (room prefix + fully-booked text) and fee; the leaveHandler is shared (inherited).",
+                "socialStandingKey": "membertype_jp_hotel_guest",
+                "Tags": ["jp_hotel_guest"],
+                "isMember": true, "isPrisoner": false, "isManager": false, "isHidden": false,
+                "canBeTransferred": true, "canBeLiberated": false, "canBeRescued": false,
+                "skipsJobDispatch": false, "isPurgedOnPartyCleanup": false, "isDisplayableInFactionUI": true, "participatesInCombat": false,
+                "leaveHandler": {
+                    "$type": "LeaveHandler_HotelGuest, Assembly-CSharp",
+                    "optionTextKey": "jp_hotel_checkout_option",
+                    "bindTargetKey": "guest",
+                    "permanentResidentErrorKey": "jp_hotel_err_permanentResident"
+                },
+                "childMemberTypes": [
+                    {
+                        "ID": "membertype_jp_hotel_guest_single",
+                        "socialStandingKey": "membertype_jp_hotel_guest_single",
+                        "_comment_membershipFee": "per night, billed daily to the guest's own home faction (a non-player payer never fails - TradeManager.TryChargeObligation); a failed payment checks the guest out (Hotel_FeeFailed)",
+                        "membershipFee": { "feeAmount": { "itemID": "currency_JPY", "itemCount": 7000 }, "cadence": "Daily", "membershipFeeName": "jp_hotel_fee_name", "onFailedEventID": "Hotel_FeeFailed" },
+                        "joinHandler": {
+                            "$type": "JoinHandler_HotelGuest, Assembly-CSharp",
+                            "optionTextKey": "jp_hotel_checkin_option", "bindTargetKey": "guest",
+                            "roomIDPrefix": "hotel_room_s_", "fullErrorKey": "jp_hotel_err_full",
+                            "alreadyGuestErrorKey": "jp_hotel_err_alreadyGuest", "otherTempHomeErrorKey": "jp_hotel_err_tempHome"
+                        }
+                    },
+                    {
+                        "ID": "membertype_jp_hotel_guest_twin",
+                        "socialStandingKey": "membertype_jp_hotel_guest_twin",
+                        "membershipFee": { "feeAmount": { "itemID": "currency_JPY", "itemCount": 11000 }, "cadence": "Daily", "membershipFeeName": "jp_hotel_fee_name", "onFailedEventID": "Hotel_FeeFailed" },
+                        "joinHandler": {
+                            "$type": "JoinHandler_HotelGuest, Assembly-CSharp",
+                            "optionTextKey": "jp_hotel_checkin_option", "bindTargetKey": "guest",
+                            "roomIDPrefix": "hotel_room_t_", "fullErrorKey": "jp_hotel_err_full",
+                            "alreadyGuestErrorKey": "jp_hotel_err_alreadyGuest", "otherTempHomeErrorKey": "jp_hotel_err_tempHome"
+                        }
+                    },
+                    {
+                        "ID": "membertype_jp_hotel_guest_double",
+                        "socialStandingKey": "membertype_jp_hotel_guest_double",
+                        "membershipFee": { "feeAmount": { "itemID": "currency_JPY", "itemCount": 10000 }, "cadence": "Daily", "membershipFeeName": "jp_hotel_fee_name", "onFailedEventID": "Hotel_FeeFailed" },
+                        "joinHandler": {
+                            "$type": "JoinHandler_HotelGuest, Assembly-CSharp",
+                            "optionTextKey": "jp_hotel_checkin_option", "bindTargetKey": "guest",
+                            "roomIDPrefix": "hotel_room_d_", "fullErrorKey": "jp_hotel_err_full",
+                            "alreadyGuestErrorKey": "jp_hotel_err_alreadyGuest", "otherTempHomeErrorKey": "jp_hotel_err_tempHome"
+                        }
+                    }
+                ]
+            },
+            {
+                "ID": "membertype_jp_hotel_staff",
+                "_comment": "Root of every hotel post (never held). Full-time NPC posts (front desk day/night, housekeeping) are fallback-staffed and neither assignable nor joinable; the restaurant part-time shifts are player-joinable (Events/hotel_dialogue_options.json). The front desk posts carry jp_hotel_hiring, so someone on duty can always check guests in and take job applications.",
+                "socialStandingKey": "membertype_jp_hotel_staff",
+                "isMember": true, "isPrisoner": false, "isManager": false, "isHidden": false,
+                "canBeTransferred": true, "canBeLiberated": false, "canBeRescued": false,
+                "skipsJobDispatch": false, "isPurgedOnPartyCleanup": false, "isDisplayableInFactionUI": true, "participatesInCombat": true,
+                "joinHandler": { "$type": "JoinHandler_WorkPost, Assembly-CSharp", "optionTextKey": "jp_hotel_joinOption", "bindTargetKey": "worker" },
+                "leaveHandler": { "$type": "LeaveHandler_WorkPost, Assembly-CSharp", "optionTextKey": "work_post_leaveOption", "bindTargetKey": "worker" },
+                "childMemberTypes": [
+                    {
+                        "ID": "membertype_jp_hotel_fulltime",
+                        "socialStandingKey": "membertype_jp_hotel_fulltime",
+                        "Tags": ["memberType_work_fullTime"],
+                        "childMemberTypes": [
+                            {
+                                "ID": "membertype_jp_hotel_frontdesk_day",
+                                "socialStandingKey": "membertype_jp_hotel_frontdesk_day",
+                                "Tags": ["memberType_work_fullTime", "jp_hotel_hiring"],
+                                "workModule": {
+                                    "jobPostID": "jp_hotel_frontdesk_day",
+                                    "workCommands": ["jp_hotel_frontdesk_duty"],
+                                    "activeHours": [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+                                    "activeDays": [],
+                                    "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1250 } ],
+                                    "paymentCadence": "Monthly",
+                                    "holidayPayoutMultiplier": 1.2
+                                }
+                            },
+                            {
+                                "ID": "membertype_jp_hotel_frontdesk_night",
+                                "socialStandingKey": "membertype_jp_hotel_frontdesk_night",
+                                "Tags": ["memberType_work_fullTime", "jp_hotel_hiring"],
+                                "workModule": {
+                                    "jobPostID": "jp_hotel_frontdesk_night",
+                                    "workCommands": ["jp_hotel_frontdesk_duty"],
+                                    "activeHours": [20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6, 7],
+                                    "activeDays": [],
+                                    "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1560 } ],
+                                    "paymentCadence": "Monthly",
+                                    "holidayPayoutMultiplier": 1.2
+                                }
+                            },
+                            {
+                                "ID": "membertype_jp_hotel_housekeeping",
+                                "socialStandingKey": "membertype_jp_hotel_housekeeping",
+                                "workModule": {
+                                    "jobPostID": "jp_hotel_housekeeping",
+                                    "workCommands": ["jp_hotel_housekeeping_duty"],
+                                    "activeHours": [9, 10, 11, 12, 13, 14, 15, 16],
+                                    "activeDays": [],
+                                    "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1150 } ],
+                                    "paymentCadence": "Monthly",
+                                    "holidayPayoutMultiplier": 1.2
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "ID": "membertype_jp_hotel_parttime",
+                        "_comment": "Restaurant part-time shifts (arrange-a-job: Opt_ArrangeJoin_WorkPartTime). Joining joins the breakfast shift.",
+                        "socialStandingKey": "membertype_jp_hotel_parttime",
+                        "Tags": ["memberType_work_partTime"],
+                        "childMemberTypes": [
+                            {
+                                "ID": "membertype_jp_hotel_restaurant_breakfast",
+                                "socialStandingKey": "membertype_jp_hotel_restaurant_breakfast",
+                                "workModule": {
+                                    "jobPostID": "jp_hotel_restaurant_breakfast",
+                                    "workCommands": ["jp_hotel_restaurant_service"],
+                                    "activeHours": [6, 7, 8, 9],
+                                    "activeDays": [],
+                                    "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1150 } ],
+                                    "paymentCadence": "Daily",
+                                    "holidayPayoutMultiplier": 1.2
+                                }
+                            },
+                            {
+                                "ID": "membertype_jp_hotel_restaurant_dinner",
+                                "socialStandingKey": "membertype_jp_hotel_restaurant_dinner",
+                                "workModule": {
+                                    "jobPostID": "jp_hotel_restaurant_dinner",
+                                    "workCommands": ["jp_hotel_restaurant_service"],
+                                    "activeHours": [17, 18, 19, 20, 21],
+                                    "activeDays": [],
+                                    "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1150 } ],
+                                    "paymentCadence": "Daily",
+                                    "holidayPayoutMultiplier": 1.2
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Furnitures": {
+        "list": [
+            { "ID": "furniture_jp_hotel_frontdesk_counter", "displayName": "furniture_jp_hotel_frontdesk_counter", "recipe": [], "furnitureSize": 2, "value": 60000, "Tags": [],
+              "givesJob": [ { "comID": ["jp_hotel_frontdesk_duty"] } ] },
+            { "ID": "furniture_jp_hotel_restaurant_counter", "displayName": "furniture_jp_hotel_restaurant_counter", "recipe": [], "furnitureSize": 2, "value": 60000, "Tags": [],
+              "givesJob": [ { "comID": ["jp_hotel_restaurant_service"] } ] },
+            { "ID": "furniture_jp_hotel_housekeeping_cart", "displayName": "furniture_jp_hotel_housekeeping_cart", "recipe": [], "furnitureSize": 1, "value": 20000, "Tags": [],
+              "givesJob": [ { "comID": ["jp_hotel_housekeeping_duty"] } ] }
+        ]
+    },
+    "COMs": {
+        "list": [
+            {
+                "ID": "jp_hotel_frontdesk_duty",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "jp_hotel_frontdesk_duty_displayName",
+                "timeScale": 60,
+                "comTags": ["job", "furniture", "jp_hotel", "jp_hotel_frontdesk"],
+                "requirements": { "requirement": { "treatReceiverAsDoer": true,
+                    "req_Doers": { "requireJobFaction": "CurrentActive", "requireMemberTypeScope": "JobFaction",
+                        "requireMemberType": ["membertype_jp_hotel_staff"] } } },
+                "variants": [
+                    { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 3, "cost_EN": 6 } } }, "displayName": "jp_hotel_frontdesk_duty_displayName" }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 0 },
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$在前台开始值班"] } ] },
+                "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正在前台接待住客"] } ] },
+                "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$离开了前台"] } ] },
+                "description_after": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$结束了前台的工作"] } ] }
+            },
+            {
+                "ID": "jp_hotel_restaurant_service",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "jp_hotel_restaurant_service_displayName",
+                "timeScale": 60,
+                "comTags": ["job", "furniture", "jp_hotel", "jp_hotel_restaurant"],
+                "requirements": { "requirement": { "treatReceiverAsDoer": true,
+                    "req_Doers": { "requireJobFaction": "CurrentActive", "requireMemberTypeScope": "JobFaction",
+                        "requireMemberType": ["membertype_jp_hotel_staff"] } } },
+                "variants": [
+                    { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 5, "cost_EN": 8 } } }, "displayName": "jp_hotel_restaurant_service_displayName" }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 0 },
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$开始在餐厅上菜"] } ] },
+                "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正在餐厅招待客人"] } ] },
+                "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$离开了餐厅柜台"] } ] },
+                "description_after": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$结束了餐厅的工作"] } ] }
+            },
+            {
+                "ID": "jp_hotel_housekeeping_duty",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "jp_hotel_housekeeping_duty_displayName",
+                "timeScale": 60,
+                "comTags": ["job", "furniture", "jp_hotel", "jp_hotel_housekeeping"],
+                "requirements": { "requirement": { "treatReceiverAsDoer": true,
+                    "req_Doers": { "requireJobFaction": "CurrentActive", "requireMemberTypeScope": "JobFaction",
+                        "requireMemberType": ["membertype_jp_hotel_staff"] } } },
+                "variants": [
+                    { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 8, "cost_EN": 8 } } }, "displayName": "jp_hotel_housekeeping_duty_displayName" }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 0 },
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$推着清洁车开始打扫客房"] } ] },
+                "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正在打扫客房"] } ] },
+                "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$停下了打扫"] } ] },
+                "description_after": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$打扫完了客房"] } ] }
+            }
+        ]
+    },
+    "Dictionary": { "Entries": { "zh-cn": {
+        "jp_hotel_business": "站前商务酒店",
+        "hotel_lobby": "酒店大堂", "hotel_restaurant": "酒店餐厅", "hotel_staff_room": "员工休息室", "hotel_corridor_1": "1楼客房走廊", "hotel_corridor_2": "2楼客房走廊",
+        "hotel_room_s_101": "101 单人房", "hotel_room_s_102": "102 单人房", "hotel_room_s_103": "103 单人房", "hotel_room_s_104": "104 单人房",
+        "hotel_room_t_201": "201 双床房", "hotel_room_t_202": "202 双床房", "hotel_room_d_203": "203 大床房", "hotel_room_d_204": "204 大床房",
+        "furniture_jp_hotel_frontdesk_counter": "酒店前台", "furniture_jp_hotel_restaurant_counter": "餐厅柜台", "furniture_jp_hotel_housekeeping_cart": "客房清洁车",
+        "jp_hotel_frontdesk_duty_displayName": "前台值班", "jp_hotel_restaurant_service_displayName": "餐厅服务", "jp_hotel_housekeeping_duty_displayName": "客房打扫",
+        "membertype_jp_hotel_guest": "住客", "membertype_jp_hotel_guest_single": "住客（单人房）", "membertype_jp_hotel_guest_twin": "住客（双床房）", "membertype_jp_hotel_guest_double": "住客（大床房）",
+        "membertype_jp_hotel_staff": "酒店员工", "membertype_jp_hotel_fulltime": "酒店正式员工", "membertype_jp_hotel_parttime": "酒店兼职",
+        "membertype_jp_hotel_frontdesk_day": "日班前台", "membertype_jp_hotel_frontdesk_night": "夜班前台", "membertype_jp_hotel_housekeeping": "客房清洁员",
+        "membertype_jp_hotel_restaurant_breakfast": "早餐兼职", "membertype_jp_hotel_restaurant_dinner": "晚餐兼职",
+        "jp_hotel_frontdesk_day": "前台 日班（每天）", "jp_hotel_frontdesk_night": "前台 夜班（每天）", "jp_hotel_housekeeping": "客房清洁 白天（每天）",
+        "jp_hotel_restaurant_breakfast": "兼职 餐厅早餐（每天）", "jp_hotel_restaurant_dinner": "兼职 餐厅晚餐（每天）",
+        "jp_hotel_joinOption": "让$name$担任$memberType$",
+        "jp_hotel_checkin_option": "让$name$入住",
+        "jp_hotel_checkout_option": "为$name$办理退房",
+        "jp_hotel_fee_name": "住宿费",
+        "jp_hotel_err_full": "「非常抱歉，这类房间今晚已经客满了。」",
+        "jp_hotel_err_alreadyGuest": "已经入住本酒店",
+        "jp_hotel_err_tempHome": "正住在别处（住院、外出等），无法入住",
+        "jp_hotel_err_permanentResident": "以本酒店为住所的长住客无法在前台退房"
+    } } }
+}

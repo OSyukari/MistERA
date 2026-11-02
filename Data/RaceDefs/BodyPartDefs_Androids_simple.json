@@ -11,6 +11,7 @@
                 "childID":["torso_android_base"],
                 "internalID":["mouth_android_base"],
                 "tags":["head"],
+                "traceSlots":["Face"],
                 "sortOrder":0
             },
             {
@@ -21,6 +22,7 @@
                 "childID":["lower_android_base", "arm_android_base_L", "arm_android_base_R"],
                 "internalID":[],
                 "tags":["torso"],
+                "traceSlots":["Neck","Torso"],
                 "sortOrder":1
             },
             {
@@ -30,6 +32,9 @@
                 "AvailableSlots":["Shoulder","Arm","Hand"],
                 "tags":["arm"],
                 "tagCoverSlots":{"arm":["Arm","Hand"]},
+                "traceSlots":["Shoulder","Arm","Hand"],
+                "canLeaveTraces":true,
+                "leaveTraceIDs":["trace_grabmark"],
                 "sortOrder":2
             },
             {
@@ -39,6 +44,9 @@
                 "AvailableSlots":["Shoulder","Arm","Hand"],
                 "tags":["arm"],
                 "tagCoverSlots":{"arm":["Arm","Hand"]},
+                "traceSlots":["Shoulder","Arm","Hand"],
+                "canLeaveTraces":true,
+                "leaveTraceIDs":["trace_grabmark"],
                 "sortOrder":3
             },
             {
@@ -49,6 +57,7 @@
                 "childID":["leg_android_base_L","leg_android_base_R"],
                 "internalID":[],
                 "tags":["lower"],
+                "traceSlots":["Lower"],
                 "sortOrder":4
             },
             {
@@ -57,6 +66,7 @@
                 "tooltip":"An {0}'s leg.",
                 "AvailableSlots":["Thigh","Leg","Feet"],
                 "tags":["leg","feet"],
+                "traceSlots":["Thigh","Leg","Feet"],
                 "sortOrder":5
             },
             {
@@ -65,6 +75,7 @@
                 "tooltip":"An {0}'s leg.",
                 "AvailableSlots":["Thigh","Leg","Feet"],
                 "tags":["leg","feet"],
+                "traceSlots":["Thigh","Leg","Feet"],
                 "sortOrder":6
             }
         ],
@@ -72,6 +83,13 @@
         [
             {
                 "id": "mouth_android_base",
+                "_comment":"Provisional lubrication tuning, not final physiology: liquid bonus max 25, half amount 5 ml of all liquid in this organ.",
+                "lubricationStatID":"o_lubrication",
+                "liquidLubricationBonusMax":25.0,
+                "liquidLubricationHalfAmountMl":5.0,
+                "_comment_traces":"Body traces (Data/RaceDefs/TraceDefs.json): saliva and teeth marks. Traces on the mouth land on the head.",
+                "canLeaveTraces":true,
+                "leaveTraceIDs":["trace_saliva","trace_teethmark"],
                 "deflateEventID": "deflate_mouth",
                 "displayName":"%%bodyPart_internal_mouth%%",
                 "tooltip":"An {0}'s mouth.",

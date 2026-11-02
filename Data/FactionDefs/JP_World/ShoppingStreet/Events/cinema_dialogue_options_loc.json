@@ -1,0 +1,13 @@
+{
+    "Dictionary":{"Entries":{"en-us":{
+        "jp_mall_cinema_Opt_Apply":"Apply as a Cinema Usher",
+        "jp_mall_cinema_Opt_Apply_greeting":"\"We need ushers to check tickets and direct patrons. Day shifts pay 1,200 yen an hour, evenings 1,300, and Friday/Saturday late shifts 1,500. Paid daily.\"",
+        "jp_mall_cinema_Opt_Apply_question":"\"Who would like to apply?\"",
+        "jp_mall_cinema_Opt_Apply_done":"\"You're registered for the day shift. You can change shifts in Management's Jobs tab. Late shifts run on Fridays and Saturdays only.\"",
+        "jp_mall_cinema_Opt_Quit":"Resign as an Usher",
+        "jp_mall_cinema_Opt_Quit_question":"\"Who would like to resign?\"",
+        "jp_mall_cinema_Opt_Quit_done":"\"The paperwork is complete. Thank you for your work here.\"",
+        "jp_mall_cinema_Opt_cancel":"Never Mind",
+        "jp_mall_cinema_Opt_cancelLine":"\"Come back to the counter if you need anything.\""
+    }}}
+}

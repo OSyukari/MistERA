@@ -214,7 +214,7 @@ public class scr_Traits_Group
     public string group_tooltip = "";
     public List<string> tags = new List<string>();
 
-    [JsonProperty]
+    [JsonIgnore]
     private Trait_Type type = Trait_Type.Untyped;
     [JsonIgnore] public Trait_Type Type { get { return type; } }
 
@@ -412,10 +412,18 @@ public class Traits_Group_Index : I_IndexHasID, I_NeedLateInitialize, I_IndexMer
     }
     public void LateInitialize()
     {
+        foreach (var group in traits_STR) group.ForceType(Trait_Type.Strength);
+        foreach (var group in traits_CON) group.ForceType(Trait_Type.Constitution);
+        foreach (var group in traits_PSY) group.ForceType(Trait_Type.Psyche);
+        foreach (var group in traits_WIL) group.ForceType(Trait_Type.Willpower);
+        if (traits_STR_SEX != null) foreach (var group in traits_STR_SEX) group.ForceType(Trait_Type.Sexual_Strength);
+        if (traits_CON_SEX != null) foreach (var group in traits_CON_SEX) group.ForceType(Trait_Type.Sexual_Constitution);
+        if (traits_PSY_SEX != null) foreach (var group in traits_PSY_SEX) group.ForceType(Trait_Type.Sexual_Psyche);
+        if (traits_WIL_SEX != null) foreach (var group in traits_WIL_SEX) group.ForceType(Trait_Type.Sexual_Willpower);
         if (traits_BODY != null) foreach (var group in traits_BODY) group.ForceType(Trait_Type.Body);
         if (traits_BODY_SEX != null) foreach (var group in traits_BODY_SEX) group.ForceType(Trait_Type.Body_Sex);
 
-        foreach (List<scr_Traits_Group> o in traitsall)
+        foreach (List<scr_Traits_Group> o in traits_All)
         {
             foreach (scr_Traits_Group s in o)
             {

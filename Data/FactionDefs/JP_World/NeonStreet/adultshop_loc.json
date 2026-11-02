@@ -1,0 +1,3 @@
+{
+    "Dictionary": { "Entries": { "en-us": { "jp_neon_adultshop": "Neon Adult Goods", "membertype_neon_adultshop": "Adult Goods Clerk", "neon_adultshop_day": "Adult Goods Counter 12-22", "neon_adultshop_night": "Adult Goods Counter 22-04", "neon_adultshop_browse": "Browse Adult Goods Together", "neon_adultshop_shelves": "Clothing and Accessories Shelves", "neon_adultshop_begin": "$doer.firstname$ stops beside the clothing shelves.", "neon_adultshop_ongoing": "$doer.firstname$ checks sizes and the information on the packaging.", "neon_adultshop_end": "$doer.firstname$ returns the samples to their places." } } }
+}

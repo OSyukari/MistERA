@@ -1,0 +1,24 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for checkup_events.json. Holds en-us entries."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "Checkup_Begin_start": "$provider.name$ readied the examination bed for $host.name$ - the checkup begins.",
+                "Checkup_Begin_late": "$joining.name$ arrived at the examination room.",
+                "Checkup_Result_line": "$doer.name$ finished examining $receiver.name$.",
+                "Checkup_Result_playerDoctor": "You finished examining $receiver.name$ and noted down every result.",
+                "Checkup_Result_playerPatient": "$doer.name$ closes the chart: \"That's the checkup done - you're in good shape.\"",
+                "Opt_MakeAppointment": "Book a checkup",
+                "Opt_MakeAppointment_question": "When would you like your checkup?",
+                "Opt_MakeAppointment_noSlots": "I'm afraid there's no time today or tomorrow... (neither of us is free, or no examination bed is available)",
+                "checkup_booked_accept_reason": "Booked checkup",
+                "Opt_MakeAppointment_cancel": "Never mind",
+                "Opt_MakeAppointment_booked": "All right - see you in the examination room.",
+                "Opt_MakeAppointment_failed": "That time won't work, I'm afraid... (a clash, or no examination bed free)",
+                "Opt_MakeAppointment_cancelled": "Come find me whenever you need."
+            }
+        }
+    }
+}

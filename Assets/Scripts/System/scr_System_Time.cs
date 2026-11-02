@@ -251,10 +251,15 @@ public class scr_System_Time : MonoBehaviour
     public event Action<int> Observer_globalTime_Day;
     /// <summary>
     /// Fired once per hour change, after Observer_globalTime_Hours and - at midnight - after the day update: every
-    /// character has had its hourly tick (and day update) by now. Second pass of the hour (recreation sessions confirmed
-    /// once every character posted - Character_Trainable.Observer_GlobalHourLate).
+    /// character has had its hourly tick (and day update) by now. Second update of the hour, invoked (pass) for pass 0 ..
+    /// HoursLatePasses - 1 - every listener sees a pass before any listener sees the next: recreation sessions posted in
+    /// the first update are answered (RecreationUtility.LatePass_Respond / _RespondExtended - Character_Trainable.Observer_GlobalHourLate)
+    /// and then resolve themselves (LatePass_Resolve - RecreationGroup).
     /// </summary>
-    public event Action Observer_globalTime_HoursLate;
+    public event Action<int> Observer_globalTime_HoursLate;
+    public const int HoursLatePasses = 3;
+    /// <summary>Counts the hours whose late passes have begun (incremented right before pass 0).</summary>
+    public int HoursLateCycle { get; private set; } = 0;
 
     /// <summary>
     /// Multi-pass daily payment resolution (Manageable.OnDayUpdate_PaymentResolve / TradeManager.ResolveDuePass)
@@ -381,7 +386,11 @@ public class scr_System_Time : MonoBehaviour
                 }
 
                 // after both: at midnight the late pass follows the day update too
-                if (hourChanged) Observer_globalTime_HoursLate?.Invoke();
+                if (hourChanged)
+                {
+                    HoursLateCycle++;
+                    for (int pass = 0; pass < HoursLatePasses; pass++) Observer_globalTime_HoursLate?.Invoke(pass);
+                }
             }
         }
     }

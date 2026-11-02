@@ -206,23 +206,41 @@ public class TryFindSexNode_Animal : FindJobNode
             possibletargets.AddRange(currentJobFaction.GetValidCharaCOMByTag(c, "initSex", ref ss));
             if (s != null) s.Add(ss);
 
-            if (possibletargets.Count > 0)
+            while (possibletargets.Count > 0)
             {
                 Job_CharaCOM interactionJob = Utility.GetRandomElement(possibletargets);
-                var existingJob = interactionJob == null ? null : interactionJob.Owner.CurrentJob;
-                if (existingJob != null && existingJob is Job_Sex_Group)
+                possibletargets.Remove(interactionJob);
+                if (interactionJob == null || interactionJob.Owner == null) continue;
+
+                const string initCOM = "com_interaction_initiateSex";
+                var com = interactionJob.allusableCOMs.Find(x => x.ID == initCOM);
+                if (com == null) continue;
+                if (scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID)?.RefID != interactionJob.ParentRoom?.RefID)
                 {
-                    var existingSex = existingJob as Job_Sex_Group;
-                    c.ChangeCurrentJob(existingSex);
-                    if (s != null) s.Add($"|joining existing Sexjob on {interactionJob.Owner.CallName}|");
-                    return true;
+                    // Admission binds after arrival; keep the interaction job's existing path-to-target stage.
+                    c.ChangeCurrentJob(interactionJob, initCOM);
+                    if (s != null) s.Add($"|travelling to initiate/join on {interactionJob.Owner.CallName}|");
+                    return c.CurrentJob == interactionJob;
                 }
-                else
+                ActionPackage candidate = new ActionPackage_Interaction(interactionJob, com,
+                    new List<int>() { c.RefID }, new List<int>() { interactionJob.Owner.RefID }, -1);
+                if (!candidate.Validate())
                 {
-                    c.ChangeCurrentJob(interactionJob, "com_interaction_initiateSex");
-                    if (s != null) s.Add($"|trying to initiate sex on {interactionJob.Owner.CallName} in room {interactionJob.ParentRoom.DisplayName}");
-                    return true;
+                    if (s != null) s.Add($"|cannot initiate sex on {interactionJob.Owner.CallName}: {candidate.FailureReason} {String.Join("; ", candidate.tooltip)}|");
+                    continue;
                 }
+                if (!candidate.PrepareSexSceneEntry(out var reason))
+                {
+                    if (s != null) s.Add($"|cannot initiate sex on {interactionJob.Owner.CallName}: {LocalizeDictionary.QueryThenParse(reason)}|");
+                    continue;
+                }
+
+                // Only the requester changes jobs; scene membership changes at package commit.
+                c.ChangeCurrentJob(interactionJob, initCOM);
+                if (s != null) s.Add(candidate.JoinsExistingSexScene
+                    ? $"|trying to join existing Sexjob on {interactionJob.Owner.CallName}|"
+                    : $"|trying to initiate sex on {interactionJob.Owner.CallName} in room {interactionJob.ParentRoom.DisplayName}|");
+                return c.CurrentJob == interactionJob;
             }
         }
         return false;
@@ -558,9 +576,14 @@ public class TryFindScheduledActivityNode : FindJobNode
         return RunVisit(c, currentJobFaction, resetJob, currentHour, Heuristic, filter, s);
     }
 
-    /// <summary>The sandbox described on the class, with heuristic / filter - shared with TryFindScheduledJobNode's booked-visit branch.</summary>
+    /// <summary>
+    /// The sandbox described on the class, with heuristic / filter - shared with TryFindScheduledJobNode's booked-visit
+    /// branch. restrictRoomList (optional): only furniture in these rooms (Job_Activity's facility room -
+    /// RecreationFacility.dispatchInRoom); null = anywhere at the venue.
+    /// </summary>
     public static bool RunVisit(Character_Trainable c, I_IsJobGiver currentJobFaction, bool resetJob, int currentHour,
-        Func<Job_Furniture, Character_Trainable, Dictionary<int, float>, float> heuristic, PathingRoomFilter filter, List<string> s)
+        Func<Job_Furniture, Character_Trainable, Dictionary<int, float>, float> heuristic, PathingRoomFilter filter, List<string> s,
+        List<int> restrictRoomList = null)
     {
         var jobpost = c.GetJobPost(currentHour);
         if (jobpost == null || jobpost.comIDs == null || jobpost.comIDs.Count == 0 || currentJobFaction == null) return false;
@@ -579,7 +602,7 @@ public class TryFindScheduledActivityNode : FindJobNode
 
         foreach (var comID in order)
         {
-            var possible = currentJobFaction.GetValidJobs_Heuristics(heuristic, 1, c, currentHour, filter, comIDOverride: comID, s: s);
+            var possible = currentJobFaction.GetValidJobs_Heuristics(heuristic, 1, c, currentHour, filter, comIDOverride: comID, s: s, restrictRoomList: restrictRoomList);
             if (possible == null || possible.Count == 0) continue;
 
             Job job = possible[0];
@@ -602,6 +625,9 @@ public class TryFindScheduledJobNode : FindJobNode
         if (booking != null && (I_IsJobGiver)booking.Faction == currentJobFaction
             && booking.workModule?.workCommands != null && booking.workModule.workCommands.Count > 0
             && TryActivityJob(c, currentJobFaction, resetJob, currentHour, booking, s))
+            return true;
+        // early arrival: a free hour, and a visit starting next hour, whose job its venue has made, where c is
+        if (booking == null && TryEarlyActivityJob(c, currentLocaleFaction, currentHour, s))
             return true;
 
         var jobpost = c.GetJobPost(currentHour);
@@ -662,10 +688,52 @@ public class TryFindScheduledJobNode : FindJobNode
     }
 
     /// <summary>
+    /// Early arrival (user 2026-10-31): in a free hour (no visit in effect, no schedule commands), c's visit starting at
+    /// the next full hour at the faction c is at (Character_Factions.GetUpcomingBooking) is gone to as soon as its venue
+    /// has made the Job_Activity (T-60 - FindEarlyActivityJob, never created here): c joins its gathering - before T it
+    /// only gathers. Not for reservation / overnight visits. False = the normal tree.
+    /// </summary>
+    static bool TryEarlyActivityJob(Character_Trainable c, I_IsJobGiver currentLocaleFaction, int currentHour, List<string> s)
+    {
+        var f = c.FactionManager;
+        if (f == null || currentLocaleFaction == null) return false;
+        // a schedule of its own this hour (work, sleep): never left early
+        var jobpost = c.GetJobPost(currentHour);
+        if (jobpost != null && jobpost.comIDs != null && jobpost.comIDs.Count > 0) return false;
+
+        var upcoming = f.GetUpcomingBooking();
+        if (upcoming == null || (I_IsJobGiver)upcoming.Faction != currentLocaleFaction) return false;
+        var job = FindEarlyActivityJob(f, upcoming);
+        if (job == null || job.Phase != ActivityPhase.Gathering) return false;
+        if (c.CurrentJob != job)
+        {
+            if (s != null) s.Add($"early for activity {job.DisplayName} - gathering in [{job.ParentRoom?.DisplayName}]");
+            c.ChangeCurrentJob(job);
+        }
+        return true;
+    }
+
+    /// <summary>
+    /// The existing Job_Activity of f's upcoming visit (Character_Factions.GetUpcomingBooking - it starts next hour),
+    /// made by its venue at T-60. Lookup only - never created here. Null for a
+    /// reservation / overnight visit (their admission does not support early attendance), or when there is none.
+    /// </summary>
+    public static Job_Activity FindEarlyActivityJob(Character_Factions f, RecreationBooking upcoming)
+    {
+        if (f == null || upcoming == null) return null;
+        var activity = upcoming.GetActivity(f);
+        // a reservation (hotel) visit is admitted at T, an overnight stay checks in on its own
+        if (activity == null || !string.IsNullOrEmpty(activity.reserveFurnitureTag) || RecreationUtility.IsOvernight(activity)) return null;
+        var job = Job_Activity.FindFor(RecreationUtility.ActivityKeyFor(f, upcoming));
+        // setup deferred to T: its gather room is not settled, so nobody goes early
+        return job == null || job.SetupPending ? null : job;
+    }
+
+    /// <summary>
     /// The booked-visit branch (Plan_ActivityJobs): every visit whose booking carries its own commands is coordinated
     /// by a Job_Activity. Resolves the visit's instance (its session, else the booking itself - a session booking with
-    /// no linked session has no instance): no job yet and the visit under way -> created lazily, by whoever asks first;
-    /// gathering -> join it (the job paths the participant to the gather room and waits; a released participant - a
+    /// no linked session has no instance): the job is the venue's (made at T-60) - none (yet) means a fee-free sandbox
+    /// until it exists, never one created here; gathering -> join it (the job paths the participant to the gather room and waits; a released participant - a
     /// restroom trip - comes back the same way). With an outcome (launched / failed - the job lives until the visit is
     /// over): a latecomer joins the job, which walks them to the gather room - arriving there is their late arrival
     /// (Job_Activity.ArriveLate); someone who took part in a launched activity is Dispatched without joining the job -
@@ -676,16 +744,18 @@ public class TryFindScheduledJobNode : FindJobNode
     static bool TryActivityJob(Character_Trainable c, I_IsJobGiver currentJobFaction, bool resetJob, int currentHour, RecreationBooking booking, List<string> s)
     {
         var key = RecreationUtility.ActivityKeyFor(c.FactionManager, booking);
+        if (key == null)
+        {
+            if (s != null) s.Add($"scheduled activity: no instance - plain sandbox");
+            return PlainSandbox(c, currentJobFaction, resetJob, currentHour, booking, s);
+        }
+        // coordinated visit: only the venue creates the job (from T-60) - never made here
         var job = Job_Activity.FindFor(key);
         if (job == null)
         {
-            int nowAbs = RecreationBooking.AbsoluteHour(scr_System_Time.current.getAbsoluteDay(), scr_System_Time.current.getCurrentTime().Hour);
-            if (key != null && booking.AbsStart <= nowAbs) job = Job_Activity.Create(key, c);
-            if (job == null)
-            {
-                if (s != null) s.Add($"scheduled activity: no instance / no job - plain sandbox");
-                return PlainSandbox(c, currentJobFaction, resetJob, currentHour, booking, s);
-            }
+            // no coordinator (not ready / not made): sandbox the venue without the fee - the coordinator charges it
+            if (s != null) s.Add($"scheduled activity: no coordinator yet - plain sandbox, no fee");
+            return PlainSandbox(c, currentJobFaction, resetJob, currentHour, booking, s, chargeFee: false);
         }
 
         // already this job's actor (gathering, or waiting to be dispatched) - keep at it

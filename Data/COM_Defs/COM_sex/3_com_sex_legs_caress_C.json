@@ -6,6 +6,8 @@
             {
                 "parentCOMID":"com_sex_service_base",
                 "ID":"com_sex_legs_caress_C",
+                "_comment_traces":"Body traces: aroused receiver's love juice on the doer's leg.",
+                "traceKeywords":["wet"],
                 "ActionPackageClass":"ActionPackage_Sex",
                 "displayName":"com_sex_legs_caress_C_displayName_1",
                 "categoryTags":["com_category_c","com_category_service"],
@@ -16,6 +18,7 @@
                     "requirement":{
                         "req_Doers":{
                             "BodyTags":["leg","knee"],
+                            "requireSlots":["Thigh"],
                             "minRevealingScore":1,
                             "cost_ST": 1
                         },

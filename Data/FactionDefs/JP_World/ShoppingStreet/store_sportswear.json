@@ -19,6 +19,8 @@
     "managerBaseIDs": [
         ""
     ],
+                "activeHoursStart":10,
+                "activeHoursEnd":21,
     "_comment_assignableMemberTypes": "Shared mall clerk shift - see _doc_staff. Not in joinableMemberTypes: NPC-only, the player can't join it.",
     "assignableMemberTypes": [ "membertype_jp_mall_clerk" ],
     "_comment_fallbackWorkers": "One fallback front desk clerk.",

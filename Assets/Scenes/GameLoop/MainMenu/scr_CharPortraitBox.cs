@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
+    private scr_System_CampaignManager campaignManager;
+
     public Image picture;
     public Image picture_landscape;
     public CanvasGroup picture_landscape_group;
@@ -60,19 +62,21 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
             _webpAnchorMax = WebpRect.anchorMax;
         }
 
+        if (isCurrentTargetBox || isCurrentTargetEXBox) campaignManager = scr_System_CampaignManager.current;
+
         if (isCurrentTargetBox)
         {
-            scr_System_CampaignManager.current.Observer_CurrentTarget += ReadCurrentChar;
-            scr_System_CampaignManager.current.Observer_LogsCharaChange += ReadCurrentLogImage;
-            scr_System_CampaignManager.current.Observer_CurrentViewMode += OnVMChange;
-            scr_System_CampaignManager.current.Observer_UpdateCurrentTargetAnchor += OnAnchorChange;
-            scr_System_CampaignManager.current.Observer_CurrentTargetClick += OnPointerClick;
+            campaignManager.Observer_CurrentTarget += ReadCurrentChar;
+            campaignManager.Observer_LogsCharaChange += ReadCurrentLogImage;
+            campaignManager.Observer_CurrentViewMode += OnVMChange;
+            campaignManager.Observer_UpdateCurrentTargetAnchor += OnAnchorChange;
+            campaignManager.Observer_CurrentTargetClick += OnPointerClick;
         }
         if (isCurrentTargetEXBox)
         {
-            scr_System_CampaignManager.current.Observer_CurrentTargetEX += ReadCurrentChar;
-            scr_System_CampaignManager.current.Observer_UpdateCurrentTargetAnchor += OnAnchorChange;
-            if(!isBannerBox) scr_System_CampaignManager.current.CurrentTargetEX_Box = this;
+            campaignManager.Observer_CurrentTargetEX += ReadCurrentChar;
+            campaignManager.Observer_UpdateCurrentTargetAnchor += OnAnchorChange;
+            if(!isBannerBox) campaignManager.CurrentTargetEX_Box = this;
         }
     }
 
@@ -431,9 +435,19 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
 
     void OnDestroy()
     {
-        //Debug.Log("scr_CharPortraitBox: OnDestroy Called!");
-        //Destroy(SpriteTexture);
-
+        if (!ReferenceEquals(campaignManager, null))
+        {
+            campaignManager.Observer_CurrentTarget -= ReadCurrentChar;
+            campaignManager.Observer_LogsCharaChange -= ReadCurrentLogImage;
+            campaignManager.Observer_CurrentViewMode -= OnVMChange;
+            campaignManager.Observer_CurrentTargetClick -= OnPointerClick;
+            campaignManager.Observer_CurrentTargetEX -= ReadCurrentChar;
+            // Both target roles can register the same anchor callback in Awake.
+            campaignManager.Observer_UpdateCurrentTargetAnchor -= OnAnchorChange;
+            campaignManager.Observer_UpdateCurrentTargetAnchor -= OnAnchorChange;
+            if (ReferenceEquals(campaignManager.CurrentTargetEX_Box, this)) campaignManager.CurrentTargetEX_Box = null;
+            campaignManager = null;
+        }
     }
 
     //public RectTransform prefab_Canvas_charaDetail;

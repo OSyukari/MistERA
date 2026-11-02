@@ -100,10 +100,7 @@
                 "isPurgedOnPartyCleanup": false,
                 "isDisplayableInFactionUI": true,
                 "participatesInCombat": true,
-                "workModule": {
-                    "activeHours":[10,11,12,13,14,15,16,17,18,19],
-                    "activeDays":[1,1,1,1,1,1,1]
-                },
+                "workmodule_comment":"deliberately left empty so player can customize the work hours.",
                 "Tags":[ ],
                 "AcceptanceMods": [
                     {

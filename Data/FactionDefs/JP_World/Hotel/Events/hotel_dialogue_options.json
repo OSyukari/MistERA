@@ -1,0 +1,437 @@
+{
+    "_doc": "Dialogue options offered by ON-SHIFT hotel front desk staff (target active at jp_hotel_business AND carrying the jp_hotel_hiring actor tag, which only the front desk posts' Tags give). Check-in / check-out follow the hospital admit / discharge pattern: JoinActiveFaction asks the picked room type's guest post (membertype_jp_hotel_guest_*) joinHandler (JoinHandler_HotelGuest) for one option per player/follower; LeaveActiveFaction asks the held guest post's leaveHandler (LeaveHandler_HotelGuest). Apply / quit copy SunMart (Guide_WorkFaction 3) for the restaurant part-time shifts. Also: Hotel_FeeFailed, the guest posts' membershipFee.onFailedEventID - checks that guest out.",
+    "Events": {
+        "list": [
+            {
+                "ID": "jp_hotel_Opt_CheckIn",
+                "_comment": "Pick a room type first; its JoinActiveFaction builds the options (one per player/follower, disabled with a reason when they can't check in; none when that room type is fully booked -> $checkinError$).",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Options",
+                "UISpec": { "displayMode": "AVG" },
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] },
+                        { "parameters": [ "isPlayer" ] }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "staff" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [
+                            { "parameters": [ "exists" ] },
+                            { "parameters": [ "excludePlayer" ] },
+                            { "parameters": [ "isConscious" ] },
+                            { "parameters": [ "isActiveFaction", "jp_hotel_business" ] },
+                            { "parameters": [ "hasActorTag", "jp_hotel_hiring" ] }
+                        ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "question": "jp_hotel_Opt_CheckIn_greeting",
+                        "options": [
+                            {
+                                "option": "jp_hotel_Opt_CheckIn_single",
+                                "Results": [
+                                    { "Type": "JoinActiveFaction", "arguments": [ "checkinOptions", "selfAndFollowers", "staff", "membertype_jp_hotel_guest_single", "checkinError" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "checkin_branch" ] }
+                                ]
+                            },
+                            {
+                                "option": "jp_hotel_Opt_CheckIn_twin",
+                                "Results": [
+                                    { "Type": "JoinActiveFaction", "arguments": [ "checkinOptions", "selfAndFollowers", "staff", "membertype_jp_hotel_guest_twin", "checkinError" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "checkin_branch" ] }
+                                ]
+                            },
+                            {
+                                "option": "jp_hotel_Opt_CheckIn_double",
+                                "Results": [
+                                    { "Type": "JoinActiveFaction", "arguments": [ "checkinOptions", "selfAndFollowers", "staff", "membertype_jp_hotel_guest_double", "checkinError" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "checkin_branch" ] }
+                                ]
+                            },
+                            {
+                                "option": "jp_hotel_Opt_cancel",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "checkin_cancel" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "checkin_branch",
+                        "options": [
+                            {
+                                "option": "_has_options",
+                                "Results": [
+                                    { "Type": "ExistStoredOptions", "arguments": [ "checkinOptions" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "checkin_ask" ] }
+                                ]
+                            },
+                            {
+                                "option": "_no_options",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "checkin_error" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "checkin_error",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "$checkinError$",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "checkin_ask",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "question": "jp_hotel_Opt_CheckIn_question",
+                        "loadOptionsKey": "checkinOptions",
+                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "checkin_done" ] } ],
+                        "options": [
+                            {
+                                "option": "jp_hotel_Opt_cancel",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "checkin_cancel" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "checkin_done",
+                        "_comment": "Reached by picking a loaded option (the question's loadOptionsResults jump here).",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_hotel_Opt_CheckIn_done"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "$factionChangeString$",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "checkin_cancel",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_hotel_Opt_cancelLine",
+                        "isLast": true
+                    }
+                ]
+            },
+            {
+                "ID": "jp_hotel_Opt_CheckOut",
+                "_comment": "Shown when a hotel guest (any room type - root type, descendants match) shares the player's permanent home faction (the player or one of the player's own people). LeaveActiveFaction asks the held guest post's leaveHandler for one option per such guest; a permanent resident is shown disabled.",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Options",
+                "UISpec": { "displayMode": "AVG", "infoDisplay": "Hide" },
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] },
+                        { "parameters": [ "isPlayer" ] }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "staff" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [
+                            { "parameters": [ "exists" ] },
+                            { "parameters": [ "excludePlayer" ] },
+                            { "parameters": [ "isConscious" ] },
+                            { "parameters": [ "isActiveFaction", "jp_hotel_business" ] },
+                            { "parameters": [ "hasActorTag", "jp_hotel_hiring" ] }
+                        ],
+                        "minTargetCount": 1
+                    },
+                    {
+                        "refkeys": [ "leavers" ],
+                        "baseScope": "FactionMembersWithMemberType",
+                        "extraScopeArguments": [ "jp_hotel_business", "membertype_jp_hotel_guest" ],
+                        "chara_conditions": [
+                            { "parameters": [ "exists" ] },
+                            { "parameters": [ "sharesHomeFaction" ] }
+                        ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_build_options",
+                                "Results": [
+                                    { "Type": "LeaveActiveFaction", "arguments": [ "checkoutOptions", "leavers", "staff", "membertype_jp_hotel_guest" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "checkout_ask" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "checkout_ask",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "question": "jp_hotel_Opt_CheckOut_question",
+                        "loadOptionsKey": "checkoutOptions",
+                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "checkout_done" ] } ],
+                        "options": [
+                            {
+                                "option": "jp_hotel_Opt_cancel",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "checkout_abort" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "checkout_done",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_hotel_Opt_CheckOut_done"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "$factionChangeString$",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "checkout_abort",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_hotel_Opt_cancelLine",
+                        "isLast": true
+                    }
+                ]
+            },
+            {
+                "ID": "jp_hotel_Opt_Apply",
+                "_comment": "Restaurant part-time only. JoinActiveFaction asks the part-time post's joinHandler (JoinHandler_WorkPost, inherited from the staff root) for one option per player/follower.",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Options",
+                "UISpec": { "displayMode": "AVG" },
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] },
+                        { "parameters": [ "isPlayer" ] }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "staff" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [
+                            { "parameters": [ "exists" ] },
+                            { "parameters": [ "excludePlayer" ] },
+                            { "parameters": [ "isConscious" ] },
+                            { "parameters": [ "isActiveFaction", "jp_hotel_business" ] },
+                            { "parameters": [ "hasActorTag", "jp_hotel_hiring" ] }
+                        ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_hotel_Opt_Apply_greeting",
+                        "Results": [
+                            { "Type": "JoinActiveFaction", "arguments": [ "applyOptions", "selfAndFollowers", "staff", "membertype_jp_hotel_parttime", "applyError" ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_has_options",
+                                "Results": [
+                                    { "Type": "ExistStoredOptions", "arguments": [ "applyOptions" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "apply_ask" ] }
+                                ]
+                            },
+                            {
+                                "option": "_no_options",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "apply_error" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "apply_error",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "$applyError$",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "apply_ask",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "question": "jp_hotel_Opt_Apply_question",
+                        "loadOptionsKey": "applyOptions",
+                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "apply_done" ] } ],
+                        "options": [
+                            {
+                                "option": "jp_hotel_Opt_cancel",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "apply_cancel" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "apply_done",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_hotel_Opt_Apply_done"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "$factionChangeString$",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "apply_cancel",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_hotel_Opt_cancelLine",
+                        "isLast": true
+                    }
+                ]
+            },
+            {
+                "ID": "jp_hotel_Opt_Quit",
+                "_comment": "Shown when a hotel worker (any post - root type, descendants match) shares the player's permanent home faction. LeaveActiveFaction asks the held post's leaveHandler (LeaveHandler_WorkPost) for one option per such worker.",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Options",
+                "UISpec": { "displayMode": "AVG", "infoDisplay": "Hide" },
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] },
+                        { "parameters": [ "isPlayer" ] }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "staff" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [
+                            { "parameters": [ "exists" ] },
+                            { "parameters": [ "excludePlayer" ] },
+                            { "parameters": [ "isConscious" ] },
+                            { "parameters": [ "isActiveFaction", "jp_hotel_business" ] },
+                            { "parameters": [ "hasActorTag", "jp_hotel_hiring" ] }
+                        ],
+                        "minTargetCount": 1
+                    },
+                    {
+                        "refkeys": [ "leavers" ],
+                        "baseScope": "FactionMembersWithMemberType",
+                        "extraScopeArguments": [ "jp_hotel_business", "membertype_jp_hotel_staff" ],
+                        "chara_conditions": [
+                            { "parameters": [ "exists" ] },
+                            { "parameters": [ "sharesHomeFaction" ] }
+                        ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_build_options",
+                                "Results": [
+                                    { "Type": "LeaveActiveFaction", "arguments": [ "quitOptions", "leavers", "staff", "membertype_jp_hotel_staff" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "quit_ask" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "quit_ask",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "question": "jp_hotel_Opt_Quit_question",
+                        "loadOptionsKey": "quitOptions",
+                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "quit_done" ] } ],
+                        "options": [
+                            {
+                                "option": "jp_hotel_Opt_cancel",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "quit_abort" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "quit_done",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_hotel_Opt_Quit_done"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "$factionChangeString$",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "quit_abort",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_hotel_Opt_cancelLine",
+                        "isLast": true
+                    }
+                ]
+            },
+            {
+                "ID": "Hotel_FeeFailed",
+                "_comment": "membershipFee.onFailedEventID of the guest posts: OnMembershipFeeFailed's text, then that guest (bound under \"target\" - Obligation_MembershipFee fires once per fee entry with its character) is checked out (CheckOutHotelGuest: temp-home guests only). Fires on both sides (payer label \"\", payee label \"payee\"); the second check-out is a no-op.",
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] }
+                    ]
+                },
+                "events": [
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "OnMembershipFeeFailed_failed", "nextEntryLabel": "checkout" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "payee", "line": "OnMembershipFeeFailed_failed_payee", "nextEntryLabel": "checkout" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "checkout",
+                        "line": "Hotel_FeeFailed_checkout",
+                        "isLast": true,
+                        "Results": [
+                            { "Type": "CheckOutHotelGuest", "arguments": [ "target", "jp_hotel_business" ] }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "jp_hotel_Opt_CheckIn": "办理入住",
+                "jp_hotel_Opt_CheckIn_greeting": "「欢迎光临。请问需要什么房型？单人房一晚七千，双床房一万一千，大床房一万，按天结算。」",
+                "jp_hotel_Opt_CheckIn_single": "单人房",
+                "jp_hotel_Opt_CheckIn_twin": "双床房",
+                "jp_hotel_Opt_CheckIn_double": "大床房",
+                "jp_hotel_Opt_CheckIn_question": "「请问是哪一位入住？」",
+                "jp_hotel_Opt_CheckIn_done": "「这是您的房卡。祝您住得愉快。」\n（住宿费每天结算；付不出时会被办理退房。）",
+                "jp_hotel_Opt_CheckOut": "办理退房",
+                "jp_hotel_Opt_CheckOut_question": "「请问是哪一位退房？」",
+                "jp_hotel_Opt_CheckOut_done": "「感谢您的入住，欢迎再次光临。」",
+                "jp_hotel_Opt_Apply": "应聘兼职",
+                "jp_hotel_Opt_Apply_greeting": "「餐厅在招早餐和晚餐的兼职，时薪一千一百五，按天结算。」",
+                "jp_hotel_Opt_Apply_question": "「请问是哪一位要应聘？」",
+                "jp_hotel_Opt_Apply_done": "「好，之后就拜托了。班次可以之后再调整。」\n（可以在管理界面的职务页调整班次。）",
+                "jp_hotel_Opt_Quit": "办理辞职",
+                "jp_hotel_Opt_Quit_question": "「请问是哪一位要辞职？」",
+                "jp_hotel_Opt_Quit_done": "「这样啊……辛苦了。」",
+                "jp_hotel_Opt_cancel": "算了",
+                "jp_hotel_Opt_cancelLine": "「有需要请随时告诉我。」",
+                "Hotel_FeeFailed": "酒店住宿费事件 - 未支付",
+                "Hotel_FeeFailed_checkout": "由于付不出住宿费，$target.name$被办理了退房。"
+            }
+        }
+    }
+}

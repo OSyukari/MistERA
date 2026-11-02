@@ -258,6 +258,199 @@ public static class EventUtility
         return true;
     }
 
+    /// <summary>
+    /// Read-only explanation of why ev cannot be built for self (OnDialogue_Permissions buttons): runs the same checks as
+    /// Validate on a throwaway instance, but every condition separately, adding one localized line per failure to reasons.
+    /// Never generates targets (generation is reported instead) and never registers cooldowns. Conditions that are random
+    /// by nature (randomChance, rollLaborBirth) still roll - do not use them on menu events. True when nothing failed.
+    /// Start limits (cooldown / already running) are EventManager.CanStart's job.
+    /// </summary>
+    public static bool Diagnose(Event ev, Character_Trainable self, List<string> reasons)
+    {
+        int before = reasons.Count;
+        if (ev == null)
+        {
+            reasons.Add(LocalizeDictionary.QueryThenParse("ui_eventDiag_invalidEvent"));
+            return false;
+        }
+        if (ev.events == null || ev.events.Count == 0) reasons.Add(LocalizeDictionary.QueryThenParse("ui_eventDiag_invalidEvent"));
+
+        var inst = new EventInstance(self, ev.ID, "", immediateInit: false, forbidGeneration: true);
+        inst.PrepareTargetValidation(ev);
+
+        foreach (var cond in ev.SelfValidator.chara_conditions)
+            if (!isValid(cond, inst, self)) reasons.Add(DescribeFailedCondition(cond, inst, self));
+        foreach (var cond in ev.SelfValidator.room_conditions)
+            if (!isValid(cond, self)) reasons.Add(LocalizeDictionary.QueryThenParse("ui_eventDiag_roomCondition")
+                .Replace("$condition$", String.Join(" ", cond.parameters)));
+
+        if (ev.TargetGeneration.Count > 0) reasons.Add(LocalizeDictionary.QueryThenParse("ui_eventDiag_generation"));
+
+        foreach (var scope in ev.TargetValidators)
+        {
+            int scopeBefore = reasons.Count;
+            if (scope.baseScope == TargetScope.CurrentTarget)
+            {
+                var target = scr_System_CampaignManager.current.CurrentTarget;
+                if (target == null) reasons.Add(LocalizeDictionary.QueryThenParse("ui_eventDiag_noCurrentTarget"));
+                else
+                {
+                    foreach (var cond in scope.chara_conditions)
+                        if (!isValid(cond, inst, target)) reasons.Add(DescribeFailedCondition(cond, inst, target));
+                }
+            }
+            // also binds the scope's keys, so later scopes' conditions see them as Validate would
+            if (!FindTargets(scope, inst, self, ref inst.Targets) && reasons.Count == scopeBefore)
+                reasons.Add(LocalizeDictionary.QueryThenParse("ui_eventDiag_noTarget").Replace("$keys$", String.Join(", ", scope.refKeys)));
+        }
+
+        return reasons.Count == before;
+    }
+
+    /// <summary>One line for a failed chara condition: its invalidTooltip, else a permission-specific or generic description.</summary>
+    static string DescribeFailedCondition(Event_CharaCondition cond, EventInstance ev, Character_Trainable c)
+    {
+        string name = c == null ? "-" : c.CallName;
+        if (!string.IsNullOrEmpty(cond.invalidTooltip))
+            return LocalizeDictionary.QueryThenParse(cond.invalidTooltip).Replace("$name$", name);
+
+        if (c != null && cond.parameters.Count > 0 && IsPermissionCondition(cond.parameters[0]))
+        {
+            var permissionReason = DescribeFailedPermissionCondition(cond, ev, c);
+            if (permissionReason != "") return permissionReason;
+        }
+
+        var parts = new List<string>();
+        if (cond.parameters.Count > 0) parts.Add(String.Join(" ", cond.parameters));
+        if (cond.charaReq != null) parts.Add("charaReq");
+        if (cond.selfRelationshipRequirement != null) parts.Add("selfRelationshipRequirement");
+        if (cond.requireKojoVariable != null) parts.Add($"requireKojoVariable {cond.requireKojoVariable.variableID}");
+        if (cond.requireFactionDebt != null) parts.Add("requireFactionDebt");
+        return LocalizeDictionary.QueryThenParse("ui_eventDiag_condition")
+            .Replace("$name$", name).Replace("$condition$", parts.Count > 0 ? String.Join(", ", parts) : "?");
+    }
+
+    static bool IsPermissionCondition(string parameter)
+    {
+        return parameter == "hasPermission" || parameter == "hasPermissionGrant" || parameter == "meetsPermissionRequirements"
+            || parameter == "acceptsPermissionRequest" || parameter == "canRequestPermission";
+    }
+
+    static bool TestPermissionCondition(string parameter, PermissionQueryResult q, DateTime now, Character_Trainable granter, Character_Trainable holder)
+    {
+        switch (parameter)
+        {
+            case "hasPermission": return q.HasPermission;
+            case "hasPermissionGrant": return q.Grants.Any(g => g.IsWithinLifetime(now));
+            case "meetsPermissionRequirements": return q.MeetsRelationshipRequirements;
+            case "acceptsPermissionRequest": return AcceptsPermissionRequest(q, granter, holder);
+            case "canRequestPermission": return PermissionService.CanRequest(granter, holder, q);
+            default: return false;
+        }
+    }
+
+    /// <summary>The same eligibility and deterministic decision as an automatic in-act request.</summary>
+    static bool AcceptsPermissionRequest(PermissionQueryResult q, Character_Trainable granter, Character_Trainable holder)
+    {
+        return PermissionService.AcceptsRequest(granter, holder, q);
+    }
+
+    /// <summary>
+    /// Resolves a permission condition [name, permissionID, holderKey, optional bool]: granter = the checked character,
+    /// holders = holderKey via TryResolveExecTargets. False on bad arguments, no holder, or any invalid pair (self-pair,
+    /// unknown permission) - so an expected "false" never passes on a broken pair.
+    /// </summary>
+    static bool TryQueryPermissionCondition(Event_CharaCondition r, EventInstance ev, Character_Trainable granter,
+        out List<Character_Trainable> holders, out List<PermissionQueryResult> results, out bool expected)
+    {
+        results = null;
+        holders = null;
+        expected = r.parameters.Count < 4 || !bool.TryParse(r.parameters[3], out var exp) || exp;
+        if (r.parameters.Count < 3 || granter == null || ev == null) return false;
+        if (!TryResolveExecTargets(ev, r.parameters[2], out holders) || holders == null || holders.Count == 0) return false;
+        results = new List<PermissionQueryResult>();
+        foreach (var holder in holders)
+        {
+            var q = PermissionService.Query(granter, holder, r.parameters[1]);
+            if (q.Error.Length != 0) return false;
+            results.Add(q);
+        }
+        return true;
+    }
+
+    static bool CheckPermissionCondition(Event_CharaCondition r, EventInstance ev, Character_Trainable granter)
+    {
+        if (!TryQueryPermissionCondition(r, ev, granter, out var holders, out var results, out var expected)) return false;
+        var now = scr_System_Time.current != null ? scr_System_Time.current.getCurrentTime() : default(DateTime);
+        for (int i = 0; i < results.Count; i++)
+            if (TestPermissionCondition(r.parameters[0], results[i], now, granter, holders[i]) != expected) return false;
+        return true;
+    }
+
+    /// <summary>Per failing holder: what the permission condition expected, with missing relationship tags or current sources.</summary>
+    static string DescribeFailedPermissionCondition(Event_CharaCondition cond, EventInstance ev, Character_Trainable granter)
+    {
+        if (!TryQueryPermissionCondition(cond, ev, granter, out var holders, out var results, out var expected)) return "";
+        var now = scr_System_Time.current != null ? scr_System_Time.current.getCurrentTime() : default(DateTime);
+        var parameter = cond.parameters[0];
+        var lines = new List<string>();
+        for (int i = 0; i < results.Count; i++)
+        {
+            var q = results[i];
+            if (TestPermissionCondition(parameter, q, now, granter, holders[i]) == expected) continue;
+
+            string key;
+            string requirements = "";
+            if (parameter == "hasPermission") key = expected
+                ? (q.MissingRelationshipTags.Count > 0 ? "ui_eventDiag_permissionMissing_tags" : "ui_eventDiag_permissionMissing")
+                : "ui_eventDiag_permissionPresent";
+            else if (parameter == "hasPermissionGrant") key = expected ? "ui_eventDiag_permissionNoGrant" : "ui_eventDiag_permissionHasGrant";
+            else if (parameter == "acceptsPermissionRequest" || parameter == "canRequestPermission")
+            {
+                // the first unmet part: not requestable, the relationship tags, then the request requirements
+                if (!expected) key = "ui_eventDiag_permissionWouldAccept";
+                else if (!q.Definition.requestable) key = "ui_eventDiag_permissionNotRequestable";
+                else if (!q.MeetsRelationshipRequirements) key = "ui_eventDiag_permissionMissingTags";
+                else
+                {
+                    key = "ui_eventDiag_permissionRequestUnmet";
+                    requirements = PermissionService.RequestTooltip(granter, holders[i], q);
+                }
+            }
+            else key = expected ? "ui_eventDiag_permissionMissingTags" : "ui_eventDiag_permissionMeetsTags";
+
+            lines.Add(LocalizeDictionary.QueryThenParse(key)
+                .Replace("$granter$", granter.CallName)
+                .Replace("$holder$", holders[i] == null ? "-" : holders[i].CallName)
+                .Replace("$permission$", LocalizeDictionary.QueryThenParse(q.Definition.displayName))
+                .Replace("$tags$", DescribeRelationshipTags(q.MissingRelationshipTags))
+                .Replace("$sources$", DescribePermissionSources(q))
+                .Replace("$requirements$", requirements));
+        }
+        return String.Join("\n", lines);
+    }
+
+    /// <summary>Localized "relationshipTag_[tag]" names, falling back to the raw tag.</summary>
+    public static string DescribeRelationshipTags(IReadOnlyList<string> tags)
+    {
+        return String.Join(", ", tags.Select(t => LocalizeDictionary.QueryThenParse("relationshipTag_" + t, t)));
+    }
+
+    /// <summary>Localized "ui_permissionSource_[flag]" per effective source, with the providing relationships' names.</summary>
+    public static string DescribePermissionSources(PermissionQueryResult q)
+    {
+        var parts = new List<string>();
+        foreach (PermissionEffectiveSource flag in Enum.GetValues(typeof(PermissionEffectiveSource)))
+        {
+            if (flag == PermissionEffectiveSource.None || (q.Sources & flag) == 0) continue;
+            var label = LocalizeDictionary.QueryThenParse("ui_permissionSource_" + flag);
+            var relationships = q.Relationships.Where(x => x.kind == flag).Select(x => x.relationship.DisplayName).Distinct().ToList();
+            if (relationships.Count > 0) label += $" ({String.Join(", ", relationships)})";
+            parts.Add(label);
+        }
+        return String.Join(", ", parts);
+    }
+
     public static bool isCharaValid(Event.EventScope_Self self, EventInstance ev, Character_Trainable c)
     {
         foreach (var cond in self.chara_conditions) if (!isValid(cond, ev, c)) return false;
@@ -298,6 +491,13 @@ public static class EventUtility
     /// <returns></returns>
     public static bool isValid(Event_CharaCondition r, EventInstance ev, Character_Trainable c)
     {
+        if (r.selfRelationshipRequirement != null)
+        {
+            if (ev?.Self == null || c == null) return false;
+            var relationship = ev.Self.Relationships.PeekRelationshipWith(c);
+            if (relationship == null || !r.selfRelationshipRequirement.Validate(relationship)) return false;
+        }
+
         if (r.requireFactionDebt != null && r.requireFactionDebt.isValid)
         {
             if (r.requireFactionDebt.appendStringKey != "")
@@ -607,6 +807,31 @@ public static class EventUtility
                 bool has = mtFaction != null && mtFaction.isManagedChara(c.RefID) && MemberType.Matches(mtFaction.GetMemberType(c), r.parameters[2]);
                 return has == expected;
             }
+            case "skillLevel":
+            {
+                // skillLevel [skillID] [operator] [value] -- current skill level (Character_Trainable.GetSkillLevel)
+                if (r.parameters.Count < 4 || !Enum.TryParse<LogicalOperand>(r.parameters[2], false, out var skillOp)
+                    || !float.TryParse(r.parameters[3], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var skillValue)) return false;
+                return Utility.CompareValue(c.GetSkillLevel(r.parameters[1]), skillOp, skillValue);
+            }
+            case "providesActivity":
+            {
+                // providesActivity [activityID] [optional true|false, default true] -- c's MemberType at one of their factions
+                // provides that activity to others (MemberType.providedActivities)
+                if (r.parameters.Count < 2) return false;
+                bool expected = r.parameters.Count < 3 || !bool.TryParse(r.parameters[2], out var exp) || exp;
+                bool provides = c.FactionManager != null && c.FactionManager.Factions.Exists(fa => fa != null
+                    && fa.GetMemberType(c)?.providedActivities?.Exists(a => a != null && a.ID == r.parameters[1]) == true);
+                return provides == expected;
+            }
+            case "isPrisonerAtHome":
+            {
+                // isPrisonerAtHome [optional true|false, default true] -- the character's MemberType at any of their home
+                // factions (permanent or temporary) is a prisoner type (MemberType.isPrisoner)
+                bool expected = r.parameters.Count < 2 || !bool.TryParse(r.parameters[1], out var exp) || exp;
+                bool prisoner = c.FactionManager != null && c.FactionManager.HomeFactions.Exists(h => h != null && h.GetMemberType(c)?.isPrisoner == true);
+                return prisoner == expected;
+            }
             case "isInLabor":
             {
                 // isInLabor [optional true|false, default true] -- early or intense labor (not waiting for a C-section)
@@ -660,8 +885,7 @@ public static class EventUtility
             {
                 // hasPendingBirth [optional true|false, default true] -- any baby in any labor stage (e.g. not the last of a multiple birth)
                 bool expected = r.parameters.Count < 2 || !bool.TryParse(r.parameters[1], out var exp) || exp;
-                bool pending = false;
-                foreach (var egg in ReproductionUtility.AllOvums(c)) if (ReproductionUtility.IsLaborState(egg.State)) { pending = true; break; }
+                bool pending = ReproductionUtility.IsCharaInLabor(c);
                 return pending == expected;
             }
             case "hasTempHomeFaction":
@@ -709,6 +933,21 @@ public static class EventUtility
                 if (r.parameters.Count < 4 || !int.TryParse(r.parameters[3], out var minItemCount)) return false;
                 var checkedFaction = scr_System_CampaignManager.current.FindFactionByID(r.parameters[1]);
                 return checkedFaction != null && checkedFaction.Inventory.GetItemCount(r.parameters[2]) >= minItemCount;
+            case "hasPermission":
+                // hasPermission [permissionID] [holderKey | "self"] [optional true|false, default true] -- c (granter) → every
+                // holder: effective from any source (PermissionService.Query). Read-only.
+            case "hasPermissionGrant":
+                // hasPermissionGrant [permissionID] [holderKey | "self"] [optional true|false, default true] -- c (granter) →
+                // every holder: an explicit grant record within its lifetime exists (a Normal one counts even while its
+                // relationship prerequisites are unmet). Relationship / pride / service sources do not count.
+            case "meetsPermissionRequirements":
+                // meetsPermissionRequirements [permissionID] [holderKey | "self"] [optional true|false, default true] -- c
+                // (granter) → every holder: the permission's required relationship tags are present.
+            case "acceptsPermissionRequest":
+            case "canRequestPermission":
+                // [condition, permissionID, holderKey | "self", optional bool]: shared request eligibility;
+                // acceptsPermissionRequest additionally checks the adjusted deterministic requirements.
+                return CheckPermissionCondition(r, ev, c);
             case "canDeflate":
             {
                 // canDeflate [optional bodypartTag] -- true if any matching body_internal part canDeflate
@@ -1227,6 +1466,15 @@ public static class EventUtility
     static void StoreKojoAppendStrings(EventInstance owner, string key, List<string> texts, string storeMode)
     {
         if (texts.Count < 1) return;
+        // tokens of AppendStrings already set when the kojo is fetched (e.g. GrantPermission's $permission_grant_type$
+        // in a consent line): ParseEventEntry replaces AppendStrings in insertion order, so a token the fetched text
+        // brings in after its own key was replaced would otherwise stay raw
+        for (int i = 0; i < texts.Count; i++)
+        {
+            if (string.IsNullOrEmpty(texts[i]) || texts[i].IndexOf('$') < 0) continue;
+            foreach (var kvp in owner.AppendStrings)
+                if (kvp.Key != key && kvp.Value.Count > 0) texts[i] = texts[i].Replace($"${kvp.Key}$", String.Join(",", kvp.Value));
+        }
         switch (storeMode)
         {
             case "append":
@@ -1258,6 +1506,42 @@ public static class EventUtility
             return true;
         }
         return owner.Targets.TryGetValue(key, out result);
+    }
+
+    /// <summary>
+    /// GrantPermission / RevokePermission [granterKey, holderKey, permissionID, ...]: every distinct non-self directed
+    /// granter → holder pair of the cross product. False (nothing to write) on empty keys, unresolved or null characters,
+    /// no pair at all, or any pair the permission service rejects (unknown permission, dead / unregistered character) -
+    /// checked for all pairs before the caller writes anything.
+    /// </summary>
+    static bool TryResolvePermissionPairs(EventInstance owner, Event.EventEntry.Executor exec,
+        out List<KeyValuePair<Character_Trainable, Character_Trainable>> pairs)
+    {
+        pairs = new List<KeyValuePair<Character_Trainable, Character_Trainable>>();
+        if (string.IsNullOrEmpty(exec.arguments[0]) || string.IsNullOrEmpty(exec.arguments[1]) || string.IsNullOrEmpty(exec.arguments[2])) return false;
+        if (!TryResolveExecTargets(owner, exec.arguments[0], out var granters)
+            || !TryResolveExecTargets(owner, exec.arguments[1], out var holders)
+            || granters == null || holders == null || granters.Count == 0 || holders.Count == 0
+            || granters.Any(c => c == null) || holders.Any(c => c == null))
+        {
+            Debug.LogWarning($"{exec.Type}: cannot resolve [{exec.arguments[0]}] → [{exec.arguments[1]}] (event {owner.CurrentEventID})");
+            return false;
+        }
+
+        foreach (var granter in granters.GroupBy(c => c.RefID).Select(g => g.First()))
+            foreach (var holder in holders.GroupBy(c => c.RefID).Select(g => g.First()))
+            {
+                if (granter.RefID == holder.RefID) continue;
+                var query = PermissionService.Query(granter, holder, exec.arguments[2]);
+                if (query.Error.Length != 0)
+                {
+                    Debug.LogWarning($"{exec.Type}: {granter.CallName} → {holder.CallName} [{exec.arguments[2]}] rejected: {query.Error} (event {owner.CurrentEventID})");
+                    pairs.Clear();
+                    return false;
+                }
+                pairs.Add(new KeyValuePair<Character_Trainable, Character_Trainable>(granter, holder));
+            }
+        return pairs.Count > 0;
     }
 
     /// <summary>
@@ -1623,6 +1907,7 @@ public static class EventUtility
         if (job == null) return Fail("missing interaction job");
         if (job.ParentRoom == null) return Fail("missing job room");
         if (com == null) return Fail("missing COM");
+        bool sceneEntry = com.comTags.Contains("initSex");
 
         var campaign = scr_System_CampaignManager.current;
         var collector = owner.EntryResultsSilentActive ? owner.message
@@ -1654,8 +1939,9 @@ public static class EventUtility
             if (owner.silent && owner.SilentFamily == null) owner.SilentFamily = new ExpeditionSilentRunner.ExecutionFamily();
             foreach (var doer in doers)
             {
-                doer.ChangeCurrentJob(job);
-                campaign.MoveCharacterTo(doer, job.ParentRoom);
+                if (!sceneEntry) doer.ChangeCurrentJob(job);
+                if (!sceneEntry || campaign.Map.FindRoomByChara(doer.RefID)?.RefID != job.ParentRoom.RefID)
+                    campaign.MoveCharacterTo(doer, job.ParentRoom);
             }
 
             for (int iteration = 0; iteration < maxIteration; iteration++)
@@ -1665,6 +1951,7 @@ public static class EventUtility
                 if (ap == null) return Fail("package null", untilClimax);
                 if (untilClimax && !(ap is ActionPackage_Sex)) return Fail($"package wrong type: {ap.GetType().Name}; expected ActionPackage_Sex", true);
                 ap.IgnoreStatCost = ignoreStatCost;
+                ap.AuthoredSexSceneEntry = sceneEntry;
                 if (!ap.Validate()) return Fail("validation failed: " + (ap.tooltip == null ? "<null tooltip>" : string.Join(" | ", ap.tooltip)), true);
 
                 var occurrences = participants.ToDictionary(c => c, c => c.Body.ClimaxOccurrenceCount);
@@ -1706,7 +1993,9 @@ public static class EventUtility
                 }
                 if (collector.exp.HasNonNumericMessages || collector.MessageCount > 0) Flush();
 
+                if (sceneEntry && !ap.executeSuccessful) return Fail("authored sex scene entry execution failed");
                 completedIterations++;
+                if (sceneEntry) return true;
                 if (untilClimax && required.All(completed.Contains)) return true;
                 if (untilClimax && (iteration + 1) % 5 == 0)
                 {
@@ -1724,7 +2013,11 @@ public static class EventUtility
             try { Flush(); }
             finally
             {
-                try { foreach (var doer in doers) doer.ChangeCurrentJob(previousJobs[doer]); }
+                try
+                {
+                    // Entry APs commit scene membership themselves; no interaction-job staging was done.
+                    if (!sceneEntry) foreach (var doer in doers) doer.ChangeCurrentJob(previousJobs[doer]);
+                }
                 finally { owner.SilentFamily = previousFamily; }
             }
         }
@@ -2453,8 +2746,19 @@ public static class EventUtility
             }
             case Event.EventEntry.ExecutionType.SetRecreationBooking:
             {
+                // start "next" = the next full hour (RecreationUtility.NextHourStart); "param:<key>" = the absolute start
+                // hour in Parameters[key] (a slot picked from ListAppointmentSlots - dayOffset ignored)
+                int bookStart = RecreationUtility.NextHourStart;
+                bool startFromParam = exec.arguments.Count >= 4 && exec.arguments[3].StartsWith("param:");
                 if (exec.arguments.Count < 5 || !int.TryParse(exec.arguments[2], out var bookDayOffset)
-                    || !int.TryParse(exec.arguments[3], out var bookStart) || !int.TryParse(exec.arguments[4], out var bookHours)) return false;
+                    || (!startFromParam && exec.arguments[3] != "next" && !int.TryParse(exec.arguments[3], out bookStart)) || !int.TryParse(exec.arguments[4], out var bookHours)) return false;
+                if (startFromParam)
+                {
+                    if (!owner.Parameters.TryGetValue(exec.arguments[3].Substring(6), out var absStartParam)) return false;
+                    int absStart = (int)absStartParam;
+                    bookDayOffset = absStart / 24 - scr_System_Time.current.getAbsoluteDay();
+                    bookStart = absStart % 24;
+                }
                 if (!TryResolveExecTargets(owner, exec.arguments[0], out var bookers))
                 {
                     Debug.LogError($"SetRecreationBooking missing target scopeKey {exec.arguments[0]}");
@@ -2463,13 +2767,19 @@ public static class EventUtility
                 string templateID = exec.arguments.Count >= 6 ? exec.arguments[5] : "";
                 var flags = exec.arguments.Count >= 7 ? exec.arguments[6].Split('|') : new string[0];
                 string onCancelled = exec.arguments.Count >= 8 ? exec.arguments[7] : "";
+                // inviteKey: its first character is invited into the first session role they qualify for (no search for it)
+                Character_Trainable bookInvitee = null;
+                if (exec.arguments.Count >= 9 && exec.arguments[8] != "" && TryResolveExecTargets(owner, exec.arguments[8], out var bookInvitees))
+                    bookInvitee = bookInvitees.Find(x => x != null);
                 bool anyBooked = false;
+                // Append-only argument: existing template/flags/event/invite positions stay unchanged.
+                bool notifyBooking = exec.arguments.Count < 10 || !bool.TryParse(exec.arguments[9], out var parsedNotify) || parsedNotify;
                 foreach (var c in bookers)
                 {
                     if (c == null) continue;
                     anyBooked |= RecreationUtility.SetEventBooking(c, exec.arguments[1], bookDayOffset, bookStart, bookHours, templateID,
                         flags.Contains("wakeForIt"), flags.Contains("overrideWork"), onCancelled, owner.displayOverride,
-                        flags.Contains("forbidCancel"), owner.CurrentEventID, flags.Contains("solo"));
+                        flags.Contains("forbidCancel"), owner.CurrentEventID, flags.Contains("solo"), flags.Contains("host"), bookInvitee, notify: notifyBooking);
                 }
                 return anyBooked;
             }
@@ -2511,6 +2821,22 @@ public static class EventUtility
                 var requested = RecreationUtility.FindPendingBooking(requestee, (int)requestedStart);
                 var requestRel = requested != null ? requestee.Relationships.FindRelationshipWith(asker) : null;
                 return requestRel != null && requestRel.AcceptBookingCancelRequest(requested);
+            }
+            case Event.EventEntry.ExecutionType.ListAppointmentSlots:
+            {
+                if (exec.arguments.Count < 7 || !int.TryParse(exec.arguments[5], out var slotHours)) return false;
+                var slotOptions = new List<Event.EventEntry.Options>();
+                owner.StoredOptions[exec.arguments[0]] = slotOptions;
+                if (!TryResolveExecTargets(owner, exec.arguments[1], out var slotBookers) || !TryResolveExecTargets(owner, exec.arguments[2], out var slotProviders))
+                {
+                    Debug.LogError($"ListAppointmentSlots missing target scopeKey {exec.arguments[1]} / {exec.arguments[2]}");
+                    return true;
+                }
+                var slotBooker = slotBookers.Find(x => x != null);
+                var slotProvider = slotProviders.Find(x => x != null);
+                if (slotBooker != null && slotProvider != null)
+                    slotOptions.AddRange(RecreationUtility.BuildAppointmentSlotOptions(slotBooker, slotProvider, exec.arguments[3], exec.arguments[4], slotHours, exec.arguments[6]));
+                return true;
             }
             case Event.EventEntry.ExecutionType.CancelSelectedBooking:
             {
@@ -2575,6 +2901,29 @@ public static class EventUtility
 
                 }
                 return false;
+            case Event.EventEntry.ExecutionType.IncreaseRelationship:
+            {
+                if (exec.arguments == null || exec.arguments.Count != 4
+                    || string.IsNullOrEmpty(exec.arguments[0]) || string.IsNullOrEmpty(exec.arguments[1])
+                    || !Enum.TryParse<RelationshipScoreType>(exec.arguments[2], out var score)
+                    || !Enum.IsDefined(typeof(RelationshipScoreType), score) || score == RelationshipScoreType.None
+                    || !float.TryParse(exec.arguments[3], System.Globalization.NumberStyles.Float,
+                        System.Globalization.CultureInfo.InvariantCulture, out var amount)
+                    || float.IsNaN(amount) || float.IsInfinity(amount)) return false;
+
+                if (!TryResolveExecTargets(owner, exec.arguments[0], out var fromTargets)
+                    || !TryResolveExecTargets(owner, exec.arguments[1], out var toTargets)
+                    || fromTargets == null || toTargets == null || fromTargets.Count == 0 || toTargets.Count == 0
+                    || fromTargets.Any(c => c == null) || toTargets.Any(c => c == null)) return false;
+
+                var sources = fromTargets.GroupBy(c => c.RefID).Select(g => g.First()).ToList();
+                var targets2 = toTargets.GroupBy(c => c.RefID).Select(g => g.First()).ToList();
+                foreach (var from in sources)
+                    foreach (var to in targets2)
+                        if (from.RefID != to.RefID)
+                            from.Relationships.IncreaseRelationshipWith(to.RefID, score, amount, owner.message.exp, silent: false);
+                return true;
+            }
             case Event.EventEntry.ExecutionType.InitializeRelationshipsBetween:
                 {
                     List<Character_Trainable> resolved = new List<Character_Trainable>();
@@ -2927,6 +3276,67 @@ public static class EventUtility
             case Event.EventEntry.ExecutionType.WakeUp:
                 owner.Self.WakeUp(true);
                 return true;
+            case Event.EventEntry.ExecutionType.GrantPermission:
+            {
+                if (exec.arguments == null || (exec.arguments.Count != 3 && exec.arguments.Count != 4)) return false;
+                PermissionGrantType? grantType = null;
+                // Request opts into the shared voluntary decision; ordinary Event grants remain explicit.
+                var source = exec.arguments.Count == 4 && exec.arguments[3] == "Request"
+                    ? PermissionGrantSource.Request : PermissionGrantSource.Event;
+                if (exec.arguments.Count == 4 && source != PermissionGrantSource.Request)
+                {
+                    if (!Enum.TryParse<PermissionGrantType>(exec.arguments[3], out var parsedType)
+                        || !Enum.IsDefined(typeof(PermissionGrantType), parsedType)) return false;
+                    grantType = parsedType;
+                }
+                if (!TryResolvePermissionPairs(owner, exec, out var pairs)) return false;
+                bool allValid = true;
+                bool anyTemporary = false;
+                foreach (var pair in pairs)
+                {
+                    var stored = PermissionService.ResolveGrantType(PermissionService.Query(pair.Key, pair.Value, exec.arguments[2]), source, grantType);
+                    anyTemporary |= stored == PermissionGrantType.Temporary;
+                    allValid = PermissionService.TryGrant(pair.Key, pair.Value, exec.arguments[2], source, out _, grantType) && allValid;
+                }
+                // $permission_grant_type$ of the [id]_Granted kojo's consent line fetched after this (StoreKojoAppendStrings)
+                owner.AppendStrings["permission_grant_type"] = new List<string>()
+                    { PermissionService.GrantTypeLabel(anyTemporary ? PermissionGrantType.Temporary : PermissionGrantType.Normal) };
+                return allValid;
+            }
+            case Event.EventEntry.ExecutionType.RevokePermission:
+            {
+                if (exec.arguments == null || exec.arguments.Count != 3) return false;
+                if (!TryResolvePermissionPairs(owner, exec, out var pairs)) return false;
+                bool allValid = true;
+                foreach (var pair in pairs)
+                    allValid = PermissionService.TryRevoke(pair.Key, pair.Value, exec.arguments[2], out _) && allValid;
+                return allValid;
+            }
+            case Event.EventEntry.ExecutionType.CompareAppendNumber:
+                {
+                    if (exec.arguments == null || exec.arguments.Count != 3
+                        || string.IsNullOrEmpty(exec.arguments[0])
+                        || owner.AppendStrings == null
+                        || !owner.AppendStrings.TryGetValue(exec.arguments[0], out var numberStrings)
+                        || numberStrings == null || numberStrings.Count != 1
+                        || !double.TryParse(numberStrings[0], System.Globalization.NumberStyles.Float,
+                            System.Globalization.CultureInfo.InvariantCulture, out var appendNumber)
+                        || double.IsNaN(appendNumber) || double.IsInfinity(appendNumber)
+                        || !double.TryParse(exec.arguments[2], System.Globalization.NumberStyles.Float,
+                            System.Globalization.CultureInfo.InvariantCulture, out var comparisonNumber)
+                        || double.IsNaN(comparisonNumber) || double.IsInfinity(comparisonNumber)) return false;
+
+                    switch (exec.arguments[1])
+                    {
+                        case "eq": return appendNumber == comparisonNumber;
+                        case "ne": return appendNumber != comparisonNumber;
+                        case "gt": return appendNumber > comparisonNumber;
+                        case "gte": return appendNumber >= comparisonNumber;
+                        case "lt": return appendNumber < comparisonNumber;
+                        case "lte": return appendNumber <= comparisonNumber;
+                        default: return false;
+                    }
+                }
             case Event.EventEntry.ExecutionType.ExistAppendStrings:
                 var appendStrID = exec.arguments.Count >= 1 ? exec.arguments[0] : "";
                 if (appendStrID == "")
@@ -3358,11 +3768,17 @@ public static class EventUtility
                     List<Character_Trainable> rapists = null, victims = null;
                     if (owner.Targets.TryGetValue(exec.arguments[1], out victims) && owner.Targets.TryGetValue(exec.arguments[2], out var locations) && int.TryParse(exec.arguments[3], out var duration))
                     {
-                        // now check
-
-
-
                         owner.Targets.TryGetValue(exec.arguments[0], out rapists);
+                        rapists = rapists ?? new List<Character_Trainable>();
+                        if (victims == null || victims.Count == 0 || victims.Any(c => c == null)
+                            || rapists.Any(c => c == null) || locations == null || locations.Count == 0
+                            || locations.Any(c => c == null))
+                        {
+                            Debug.LogWarning("StartSexJobInParty: missing participants or location actors.");
+                            return false;
+                        }
+                        victims = victims.Distinct().ToList();
+                        rapists = rapists.Distinct().ToList();
 
                         List<string> namesa = new List<string>(), namesb = new List<string>();
                         foreach (var i in victims) namesa.Add(i.CallName);
@@ -3370,10 +3786,14 @@ public static class EventUtility
                         if (scr_System_CentralControl.current.LogPrefs.DLog_Training) Debug.Log($"StartSexJobInParty between [{String.Join(" ",namesa)}] and [{String.Join(" ", namesb)}]");
 
                         var f = UtilityEX.GetActiveFactionFrom(locations) as Manageable_Party;
-                        if (f == null || f.Room == null)
+                        var campaign = scr_System_CampaignManager.current;
+                        var actualRoom = f?.Room;
+                        if (actualRoom == null || !ReferenceEquals(campaign.Map.GetRoomByRef(actualRoom.RefID), actualRoom))
                         {
+                            Debug.LogWarning("StartSexJobInParty: missing or invalid party room.");
                             return false;
                         }
+                        var j = campaign.FindSexJobInRoom(actualRoom);
                         foreach (var i in victims)
                         {
                             if (i.FactionManager.CurrentActiveParty != null ) i.FactionManager.CurrentActiveParty.NotifyCharaKidnapped(i, f, false);
@@ -3381,16 +3801,18 @@ public static class EventUtility
 
                         List<string> restrictTags = exec.arguments[4].Split("|", StringSplitOptions.RemoveEmptyEntries).ToList();
 
-                        foreach (var c in victims) scr_System_CampaignManager.current.MoveCharacterTo(c, f.Room);
-                        if (rapists != null)
+                        // Same-room movement can reset an incumbent's job and active packages.
+                        foreach (var c in victims.Concat(rapists).Distinct())
                         {
-                            foreach (var c in rapists) scr_System_CampaignManager.current.MoveCharacterTo(c, f.Room);
+                            if (campaign.Map.FindRoomByChara(c.RefID)?.RefID != actualRoom.RefID)
+                                campaign.MoveCharacterTo(c, actualRoom);
                         }
 
-                        Job_Sex_Group j = new Job_Sex_Group(rapists, victims, f.Room, true, restrictTags);
-                        j.restrictDuration = duration;
-                        j.onJobEndEventID = exec.arguments[5];
-                        j.onJobEndEventLabel = exec.arguments[6];
+                        // Movement/party notifications may end the previously resolved scene.
+                        if (j == null || j.IsEnded) j = campaign.FindSexJobInRoom(actualRoom);
+                        var rapistRefs = rapists.Select(c => c.RefID).ToList();
+                        var victimRefs = victims.Select(c => c.RefID).ToList();
+                        string description = "";
 
                         var lastMessage = exec.arguments[7] == "" ? "" : LocalizeDictionary.QueryThenParse(exec.arguments[7]);
                         if (lastMessage != "" && owner.AppendStrings.TryGetValue(lastMessage, out var values))
@@ -3400,10 +3822,36 @@ public static class EventUtility
                             {
                                 f.Job.AddResult(LocalizeDictionary.QueryThenParse(concat), new List<string>(), victims);
                             }
-                            j.jobDescriptionOverride = LocalizeDictionary.QueryThenParse(concat).Replace("$names$", "");
+                            description = LocalizeDictionary.QueryThenParse(concat).Replace("$names$", "");
                         }
 
-                        scr_System_CampaignManager.current.Register(j);
+                        if (j == null)
+                        {
+                            j = new Job_Sex_Group(rapists, victims, actualRoom, true, restrictTags);
+                            j.restrictDuration = duration;
+                            j.onJobEndEventID = exec.arguments[5];
+                            j.onJobEndEventLabel = exec.arguments[6];
+                            j.jobDescriptionOverride = description;
+                            if (campaign.Register(j) >= 0) return true;
+
+                            // A scene registered during setup wins; authored events join it instead.
+                            j = campaign.FindSexJobInRoom(actualRoom);
+                            if (j == null)
+                            {
+                                Debug.LogWarning("StartSexJobInParty: could not register a job in the party room.");
+                                return false;
+                            }
+                        }
+
+                        j.AddAuthoredParticipants(rapistRefs, victimRefs);
+                        if (j.restrictDuration >= 0 && duration >= 0)
+                            j.restrictDuration = Math.Max(j.restrictDuration, duration);
+                        if (string.IsNullOrEmpty(j.onJobEndEventID))
+                        {
+                            j.onJobEndEventID = exec.arguments[5];
+                            if (string.IsNullOrEmpty(j.onJobEndEventLabel)) j.onJobEndEventLabel = exec.arguments[6];
+                        }
+                        if (string.IsNullOrEmpty(j.jobDescriptionOverride)) j.jobDescriptionOverride = description;
                         return true;
                     }
                     else return false;
@@ -3997,6 +4445,16 @@ public static class EventUtility
                 return EventExecutors_Expedition.HourIn(exec.arguments);
             case Event.EventEntry.ExecutionType.ClassifyDay:
                 return EventExecutors_Expedition.ClassifyDay(owner, exec.arguments);
+            case Event.EventEntry.ExecutionType.AssignResidence:
+                return ResidenceUtility.AssignResidence(owner, exec.arguments);
+            case Event.EventEntry.ExecutionType.AssignResidenceExisting:
+                return ResidenceUtility.AssignResidenceExisting(owner, exec.arguments);
+            case Event.EventEntry.ExecutionType.GrantVisitAccess:
+                return ResidenceUtility.GrantVisitAccess(owner, exec.arguments);
+            case Event.EventEntry.ExecutionType.AssignHotelGuest:
+                return ResidenceUtility.AssignHotelGuest(owner, exec.arguments);
+            case Event.EventEntry.ExecutionType.CheckOutHotelGuest:
+                return ResidenceUtility.CheckOutHotelGuest(owner, exec.arguments);
             default: return true;
 
         }

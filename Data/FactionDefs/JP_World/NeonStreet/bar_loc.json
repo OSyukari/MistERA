@@ -1,0 +1,23 @@
+{
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "jp_bar": "Nightlight Bar",
+                "membertype_neon_bar_staff": "Bar Staff",
+                "membertype_neon_bartender": "Part-Time Bartender",
+                "membertype_neon_bar_manager": "Bar Manager 19-04",
+                "membertype_neon_hostess": "Hostess Standby (Service Unavailable)",
+                "neon_bartender_evening": "Bartender 19-24",
+                "neon_bartender_night": "Bartender 22-04",
+                "neon_hostess_evening": "Hostess Standby 19-24",
+                "neon_hostess_night": "Hostess Standby 22-04",
+                "neon_bar_drinks": "Drinks with Friends",
+                "neon_bar_counter": "Bar Seating",
+                "neon_bar_table": "Booth Table",
+                "neon_bar_begin": "$doer.firstname$ takes a seat as quiet music plays.",
+                "neon_bar_ongoing": "$doer.firstname$ rests with a drink and listens to the conversation nearby.",
+                "neon_bar_end": "$doer.firstname$ puts the glass down and leans back."
+            }
+        }
+    }
+}

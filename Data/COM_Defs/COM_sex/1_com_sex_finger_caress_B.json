@@ -6,6 +6,8 @@
             {
                 "parentCOMID":"com_sex_service_base",
                 "ID":"com_sex_finger_caress_B",
+                "_comment_traces":"Body traces (Data/RaceDefs/TraceDefs.json): strong (rough) groping may leave grab marks on the breast.",
+                "traceKeywords_strong":["grab"],
                 "ActionPackageClass":"ActionPackage_Sex",
                 "categoryTags":["com_category_b","com_category_service"],
                 "displayName":"com_sex_finger_caress_B_displayName_3",
@@ -16,6 +18,7 @@
                     "requirement":{
                         "req_Doers":{
                             "BodyTags":["arm"],
+                            "requireSlots":["Hand"],
                             "cost_ST": 1
                         },
                         "req_Receivers":{
@@ -26,7 +29,18 @@
                         }
                     }
                 },
-                "AcceptanceCheck":{ "baseAcceptanceValue":23 },
+                "_comment_actModifiers":"Provisional, untested new D20 bonuses. Relationships belong to the act owner toward the actual partner, not the master. Parent EP gates ordinary conscious, unrestrained, non-threat actual pairs; special, forced and group contexts stay unchanged. clone_noSex descendants inherit through the existing cloning pipeline; GenerateCOM flags are unchanged.",
+                "AcceptanceCheck":{
+                    "baseAcceptanceValue":23,
+                    "actModifiers":{
+                        "enabled":true, "totalMin":0, "totalMax":7,
+                        "terms":[
+                            {"source":"PartnerGoodwill", "appliesTo":"BothDeciders", "scale":0.02, "offset":0, "min":0, "max":2},
+                            {"source":"PartnerTrust", "appliesTo":"BothDeciders", "scale":0.03, "offset":0, "min":0, "max":3},
+                            {"source":"PartnerDesire", "appliesTo":"BothDeciders", "scale":0.04, "offset":0, "min":0, "max":4}
+                        ]
+                    }
+                },
                 "DifficultyCheck":{ "baseD20Check":10 },
                 "variants":[
                     {

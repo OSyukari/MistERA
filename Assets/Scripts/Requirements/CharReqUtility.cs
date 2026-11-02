@@ -42,7 +42,16 @@ public static class CharaReqUtility
             hardlock = true;
             return false;
         }
-        
+        bool slotReq = q.requireSlots != null && q.requireSlots.Count > 0;
+        if (slotReq && c.Body.GetSlotHolders(q.BodyTags, q.requireSlots).Count < 1)
+        {
+            if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_missingBodypart")
+                                        .Replace("$name$", c.FirstName)
+                                        .Replace("$bodytags$", String.Join(" ", q.BodyTags) + " (" + String.Join("/", q.requireSlots) + ")"));
+            hardlock = true;
+            return false;
+        }
+
         if (q.requireExtremeInflatedBodyTags.Count > 0)
         {
             var list = c.Body.GetInternalsWithTags(q.requireExtremeInflatedBodyTags);
@@ -92,7 +101,9 @@ public static class CharaReqUtility
 
         if (q.minRevealingScore != -1)
         {
-            var score = c.Body.GetMaxRevealingScoreByTags(q.BodyTags, BodyEquipLayer.None);
+            // requireSlots: only those slots' coverage (gloves block a [Hand] act, sleeves don't)
+            var score = slotReq ? c.Body.GetMaxRevealingScoreBySlots(q.BodyTags, q.requireSlots, BodyEquipLayer.None)
+                                : c.Body.GetMaxRevealingScoreByTags(q.BodyTags, BodyEquipLayer.None);
             if (score > q.minRevealingScore)
             {
                 if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_missingRevealing")
@@ -249,6 +260,25 @@ public static class CharaReqUtility
                                     .Replace("$baseID$", String.Join("/", q.requireActorBaseID)));
             }
             return false;
+        }
+        if ((q.requireRaceKeywords != null && q.requireRaceKeywords.Count > 0) || (q.forbidRaceKeywords != null && q.forbidRaceKeywords.Count > 0))
+        {
+            var raceKeywords = new List<string>();
+            Trait_Requirement.GetRaceKeywords(c, raceKeywords);
+            if (q.requireRaceKeywords != null && q.requireRaceKeywords.Count > 0 && !q.requireRaceKeywords.Exists(raceKeywords.Contains))
+            {
+                if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireRaceKeywords")
+                                    .Replace("$name$", c.FirstName)
+                                    .Replace("$race$", c.Race == null ? "-" : c.Race.DisplayName));
+                return false;
+            }
+            if (q.forbidRaceKeywords != null && q.forbidRaceKeywords.Exists(raceKeywords.Contains))
+            {
+                if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_forbidRaceKeywords")
+                                    .Replace("$name$", c.FirstName)
+                                    .Replace("$race$", c.Race == null ? "-" : c.Race.DisplayName));
+                return false;
+            }
         }
         if (q.requireCombat && !c.canFight)
         {

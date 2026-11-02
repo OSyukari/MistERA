@@ -70,14 +70,18 @@ public partial class EvaluationPackage
             newmod.isDoer = isDoer;
             newmod.isThreat = isThreat;
             newmod.rateValue = rateValue;
-            newmod.modifiers = new Dictionary<int, Dictionary<string, int>>(modifiers);
-            newmod.modifiers_parent = new Dictionary<int, Dictionary<string, int>>(modifiers_parent);
+            foreach (var entry in modifiers)
+                newmod.modifiers.Add(entry.Key, new Dictionary<string, int>(entry.Value));
+            foreach (var entry in modifiers_parent)
+                newmod.modifiers_parent.Add(entry.Key, new Dictionary<string, int>(entry.Value));
             newmod.initialized = initialized;
             newmod.hasPermission = hasPermission;
             newmod.bonus = bonus;
             newmod.minRate = minRate;
+            newmod.DCMod = DCMod;
             newmod.baseValue = baseValue;
-            newmod.extraCOMTags = extraCOMTags;
+            newmod.extraCOMTags = new List<string>(extraCOMTags);
+            newmod.injectedCOMTags = injectedCOMTags;
             newmod.RecentRefusalPenalty = RecentRefusalPenalty;
             newmod.attitudeRate_neg = attitudeRate_neg;
             newmod.attitudeRate_pos = attitudeRate_pos;
@@ -249,35 +253,8 @@ public partial class EvaluationPackage
             }
             else if (!self.Stats.isConsciousnessUnconscious)
             {
-                // check permissions
-                if (targetCOM.comTags.Contains("followRequest") && (rel == null || !rel.HasPermission_Follow()))
-                {
-                    AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("com_rel_tooltip_nopermission_follow")}]", -3);
-                    hasPermission = false;
-                    bonus -= 3;
-                }
-                else if (targetCOM.isSexCOM && (rel == null || !rel.HasPermission_Intimacy_High()))
-                {
-                    AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("com_rel_tooltip_nopermission_high")}]", -4);
-                    hasPermission = false;
-                    bonus -= 4;
-                }
-                else if (targetCOM.isUnsafe && (rel == null || !rel.HasPermission_Intimacy_Medium()))
-                {
-                    AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("com_rel_tooltip_nopermission_medium")}]", -3);
-                    hasPermission = false;
-                    bonus -= 3;
-                }
-                else if (targetCOM.isTouchCOM && (rel == null || !rel.HasPermission_Intimacy_Low()))
-                {
-                    AddModifier(self.RefID, $"[{LocalizeDictionary.QueryThenParse("com_rel_tooltip_nopermission_low")}]", -2);
-                    hasPermission = false;
-                    bonus -= 2;
-                }
-                else
-                {
-                    hasPermission = true;
-                }
+                // Missing-permission penalties (follow / intimacy tiers and the detailed sex_* ones) are matched on the
+                // leaf command and actual pair by PermissionDefinition.rules - EvaluationPackage.ApplyPermissionRules.
 
                 // command-defined permission bonuses (COM.Acceptance.permissionBonus)
                 if (targetCOM.AcceptanceCheck != null)

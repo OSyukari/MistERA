@@ -7,14 +7,110 @@ using System.ComponentModel;
 using System.Linq;
 using UnityEngine;
 
+internal sealed class ActorTagContext
+{
+    [JsonIgnore] internal readonly List<string> Tags = new List<string>(16);
+    [JsonIgnore] internal ulong Revision;
+}
 
+internal sealed class ActorTagContextCache
+{
+    [JsonIgnore] private readonly Dictionary<(MemberType, RecreationActivity), Entry> entries =
+        new Dictionary<(MemberType, RecreationActivity), Entry>();
+
+    internal ActorTagContext Get(MemberType memberType, RecreationActivity activity, string factionID,
+        List<string> factionTags, List<string> localeTags)
+    {
+        var key = (memberType, activity);
+        if (!entries.TryGetValue(key, out var entry))
+        {
+            // Keep hits stable even at the limit; only a new combination evicts old entries.
+            if (entries.Count >= 64) entries.Clear();
+            entry = new Entry();
+            entries.Add(key, entry);
+        }
+        return entry.Get(factionID, factionTags, localeTags, memberType?.Tags, activity?.Tags);
+    }
+
+    internal void Clear()
+    {
+        entries.Clear();
+    }
+
+    private sealed class Entry
+    {
+        [JsonIgnore] private readonly ActorTagContext context = new ActorTagContext();
+        [JsonIgnore] private int factionCount;
+        [JsonIgnore] private int localeCount;
+        [JsonIgnore] private int memberCount;
+        [JsonIgnore] private int activityCount;
+
+        internal ActorTagContext Get(string factionID, List<string> factionTags, List<string> localeTags,
+            List<string> memberTags, List<string> activityTags)
+        {
+            int offset = 1;
+            // The output doubles as an exact ordered snapshot, with source boundaries retained separately.
+            if (context.Revision != 0 && context.Tags[0] == factionID
+                && Matches(factionTags, factionCount, ref offset)
+                && Matches(localeTags, localeCount, ref offset)
+                && Matches(memberTags, memberCount, ref offset)
+                && Matches(activityTags, activityCount, ref offset)) return context;
+
+            context.Tags.Clear();
+            context.Tags.Add(factionID);
+            factionCount = Append(factionTags);
+            localeCount = Append(localeTags);
+            memberCount = Append(memberTags);
+            activityCount = Append(activityTags);
+            unchecked { context.Revision++; }
+            return context;
+        }
+
+        private bool Matches(List<string> source, int count, ref int offset)
+        {
+            if ((source == null ? -1 : source.Count) != count) return false;
+            for (int i = 0; i < count; i++)
+                if (source[i] != context.Tags[offset + i]) return false;
+            if (count > 0) offset += count;
+            return true;
+        }
+
+        private int Append(List<string> source)
+        {
+            if (source == null) return -1;
+            for (int i = 0; i < source.Count; i++) context.Tags.Add(source[i]);
+            return source.Count;
+        }
+    }
+}
 
 public class Manageable : I_Disposable, I_IsJobGiver
 {
     [JsonIgnore] public string FactionID { get { return this.ID; } }
 
+    [JsonIgnore] private ActorTagContextCache actorTagContexts;
+
+    internal ActorTagContext GetActorTagContext(MemberType memberType, RecreationActivity activity)
+    {
+        if (actorTagContexts == null) actorTagContexts = new ActorTagContextCache();
+        return actorTagContexts.Get(memberType, activity, FactionID, factionTags, localeTags);
+    }
+
     public bool hiddenOnWorldMap = false;
     public Dictionary<string, string> memberTypeOverride = new Dictionary<string, string>();
+
+    /// <summary>Residential district: its generated homes (ResidenceUtility.CreateResidence), never reused.</summary>
+    [JsonProperty] public List<ResidenceRecord> residences = new List<ResidenceRecord>();
+    /// <summary>Residential district: last home number handed out (home IDs are "(district)_res_(n)").</summary>
+    [JsonProperty] public int residenceCounter = 0;
+    /// <summary>Generated home: the district it was built in, "" otherwise - all its rooms are locked (Room_Instance.CanBeAccessedBy).</summary>
+    [JsonProperty] public string residentialDistrictID = "";
+
+    /// <summary>MapPlan.showLockedFloors of this faction's template: its floor buttons are drawn even while hiddenOnWorldMap.</summary>
+    [JsonIgnore] public bool ShowLockedFloors { get {
+            var plan = string.IsNullOrEmpty(mapPlanID) ? null : scr_System_Serializer.current.GetByNameOrID_MapPlan(mapPlanID);
+            return plan != null && plan.showLockedFloors;
+        } }
 
     [JsonIgnore] public virtual I_IsJobGiver getLocaleFaction { get { return this; } }
 
@@ -347,10 +443,10 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
     /// <summary>
     /// This faction has a meal spot c could eat at: a "food_meal" command posted in its rooms (what TryFindMealNode
-    /// searches - furniture giving food_meal generates one COM_TakeMeal per meal item) in a room c may enter
-    /// (Room_Instance.CanBeAccessedBy), whose meal package for c validates. The package is checked ahead of time
-    /// (ActionPackage.ignoreActorRoom - c need not be there) against the current state (stock, seats, c's stats);
-    /// the meal hour itself is not checked here.
+    /// searches - com_furniture_getmeal, one GenerateAP command making one ActionPackage_ItemConsume per meal item in
+    /// stock) in a room c may enter (Room_Instance.CanBeAccessedBy), with any meal package for c that validates. The
+    /// packages are checked ahead of time (ActionPackage.ignoreActorRoom - c need not be there) against the current state
+    /// (stock, seats, c's stats); the meal hour itself is not checked here (ActionPackage.ignoreMealHour).
     /// </summary>
     public bool CanOfferMealTo(Character_Trainable c)
     {
@@ -363,22 +459,26 @@ public class Manageable : I_Disposable, I_IsJobGiver
             {
                 if (post == null || post.ParentRoom == null) continue;
                 if (!post.ParentRoom.CanBeAccessedBy(c)) continue;
+                if (!com.HasGenerateAPItems(post)) continue;
 
-                var package = com.MakePackage(post, new List<int>() { c.RefID }, new List<int>(), -1);
-                if (package == null) continue;
-                package.ignoreActorRoom = true;
-                if (package.Validate()) return true;
+                foreach (var package in com.MakePackages(post, new List<int>() { c.RefID }, new List<int>(), -1))
+                {
+                    if (package == null) continue;
+                    package.ignoreActorRoom = true;
+                    package.ignoreMealHour = true;
+                    if (package.Validate()) return true;
+                }
             }
         }
         return false;
     }
 
-    public RelationshipType GetRelationshipBetween(int self, int target, out bool isA)
+    public RelationshipType GetRelationshipBetween(int self, int target, out bool isA, bool silent = false)
     {
         isA = false;
         if (!isManagedChara(self) || !isManagedChara(target))
         {
-            if (self == 0 || target == 0) Debug.Log($"GetRelationshipBetween {self} and {target}, one of them is unmanaged {isManagedChara(self)} {isManagedChara(target)}");
+            if (!silent && (self == 0 || target == 0)) Debug.Log($"GetRelationshipBetween {self} and {target}, one of them is unmanaged {isManagedChara(self)} {isManagedChara(target)}");
             if (this.ID == "AlwaysHostile")
             {
                 return Relationship_Enemy;
@@ -395,13 +495,13 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
         if (isPrisoner(self) && !isPrisoner(target))
         {
-            if (self == 0 || target == 0) Debug.Log($"GetRelationshipBetween {self} and {target}, self is prisoner");
+            if (!silent && (self == 0 || target == 0)) Debug.Log($"GetRelationshipBetween {self} and {target}, self is prisoner");
             return Relationship_Prisoner;
         }
         else if (isPrisoner(target) && !isPrisoner(self))
         {
             isA = true;
-            if (self == 0 || target == 0) Debug.Log($"GetRelationshipBetween {self} and {target}, target is prisoner");
+            if (!silent && (self == 0 || target == 0)) Debug.Log($"GetRelationshipBetween {self} and {target}, target is prisoner");
             return Relationship_Prisoner;
         }
         else if (ManagerRefs.Contains(self) && ManagerRefs.Contains(target)) return Relationship_Colleague;
@@ -443,12 +543,11 @@ public class Manageable : I_Disposable, I_IsJobGiver
     [JsonProperty] protected Map_MainExit mainExit = null;
     public void SetMainExit(Map_MainExit exit)
     {
-        // refresh map
-        int previousRef = MainExit == null ? -1 : MainExit.RefID;
-        mainExit = exit;
+        mainExit = exit == null ? null : new Map_MainExit { roomID = exit.roomID, exitCost = exit.exitCost };
         mainExit_cache = null;
-        int newRef = MainExit == null ? -1 : MainExit.RefID;
     }
+
+    public void InvalidateMainExitCache() => mainExit_cache = null;
 
     public const string MainExitWaitMarkerID = "furniture_marker_wait";
     /// <summary>
@@ -645,9 +744,62 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
     public void RemoveManagedRoom(int roomRefID)
     {
+        if (!managedRoomRefs.ContainsKey(roomRefID)) return;
+        var room = scr_System_CampaignManager.current.Map.GetRoomByRef(roomRefID);
+        if (room != null)
+            foreach (var job in room.Jobs)
+                if (job is Job_Furniture furnitureJob) RemoveJobPost(furnitureJob);
         managedRoomRefs.Remove(roomRefID);
         roomRefsCache = null;
         managedRoomOwnersRefs = null;
+        mainExit_cache = null;
+        if (room?.parentFloor != null && !ManagedFloors.Contains(room.parentFloor))
+        {
+            TradeManager.rentedFloors.Remove(room.parentFloor.refID);
+            TradeManager.unmaintainedFloorRefs.Remove(room.parentFloor.refID);
+        }
+    }
+
+    /// <summary>Reconcile only an explicit tenant on this physical host, without replaying faction initialization.</summary>
+    public void ReconcileRoomTenant(Room_Instance room)
+    {
+        var tenantID = room.Base?.subfactionOwnerOverwrite;
+        if (string.IsNullOrEmpty(tenantID)) return;
+        var campaign = scr_System_CampaignManager.current;
+        var target = campaign.FindFactionByID(tenantID);
+        if (target == null)
+        {
+            var template = scr_System_Serializer.current.GetByNameOrID_MapPlan(tenantID);
+            if (template == null || template.floors.Count != 0)
+            {
+                Debug.LogWarning($"Room [{room.RefID}] tenant [{tenantID}] cannot be reconciled: missing template or independent floors; ownership unchanged.");
+                return;
+            }
+            target = campaign.FindorAddSubfactionByID(tenantID, this);
+        }
+        if (target == null) return;
+
+        var retained = new HashSet<Manageable>();
+        for (Manageable host = this; host != null && retained.Add(host); host = (host as Manageable_Subfaction)?.Parent) { }
+        retained.Add(target);
+        // Preserve host/ancestor management, but remove the former tenant's exclusive refs and posts.
+        var visited = new HashSet<Manageable>();
+        for (var previous = room.FactionOwner as Manageable; previous != null && visited.Add(previous); previous = (previous as Manageable_Subfaction)?.Parent)
+            if (!retained.Contains(previous)) previous.RemoveManagedRoom(room.RefID);
+        foreach (var faction in retained)
+        {
+            if (!faction.managedRoomRefs.ContainsKey(room.RefID)) faction.managedRoomRefs.Add(room.RefID, new List<int>());
+            faction.roomRefsCache = null;
+            faction.managedRoomOwnersRefs = null;
+            faction.mainExit_cache = null;
+        }
+        if (room.FactionOwner == target)
+        {
+            room.SetFaction(target);
+            target.RefreshRoomJobs(room);
+            return;
+        }
+        target.AddToFaction(room, isRenting: target.GetTemplateIsRentingFloor(), landlordFactionID: target.GetTemplateLandlordFactionID());
     }
 
     public bool isVisitor(int charaRef)
@@ -940,6 +1092,8 @@ public class Manageable : I_Disposable, I_IsJobGiver
         bool changed = allow ? forbidWorkRefs.Remove(c.RefID) : forbidWorkRefs.Add(c.RefID);
         if (!changed) return;
 
+        // forbidding work cancels c's recreation bookings (WorkForbidden)
+        RecreationUtility.RevalidateBookings(c.FactionManager);
         var s = new List<string>();
         c.FactionManager.UpdateSchedule(ref s);
     }
@@ -1137,6 +1291,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
     protected void OnTimeUpdate(TimeSpan t, TimeSpan t_real)
     {
+        RecreationUtility.UpdateVenueActivities(this);
         // check daily reset
         DateTime currentTime = scr_System_Time.current.getCurrentTime();
         int currentHour = currentTime.Hour;
@@ -1435,6 +1590,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
     protected void InitScript()
     {
+        actorTagContexts?.Clear();
         jobInfo = LocalizeDictionary.QueryThenParse("ui_management_production_jobPostDesc");
         jobAssigned = LocalizeDictionary.QueryThenParse("ui_management_production_jobAssigned");
         jobReqByOrder = LocalizeDictionary.QueryThenParse("ui_management_production_jobReqByOrder");
@@ -2041,8 +2197,9 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
     public void AddToFaction(Room_Instance room, bool addAllCharaToFaction = false, bool setRoomOwnership = false, bool isRenting = true, string landlordFactionID = "")
     {
-        this.managedRoomRefs.Add(room.RefID, new List<int>());
+        if (!this.managedRoomRefs.ContainsKey(room.RefID)) this.managedRoomRefs.Add(room.RefID, new List<int>());
         this.roomRefsCache = null;
+        this.mainExit_cache = null;
 
         string overwriteID = room.Base != null ? room.Base.subfactionOwnerOverwrite : "";
         if (!string.IsNullOrEmpty(overwriteID) && overwriteID != this.ID)
@@ -2228,6 +2385,8 @@ public class Manageable : I_Disposable, I_IsJobGiver
         if (sendEvent && guestStatus.isPrisoner) FactionUtility.SendImprisonEvent(this, c);
         // set manager roles
         NotifyFactionMemberChange();
+        // a member / MemberType change: the visits held here re-validate (an offered type or house activity may be gone)
+        RecreationUtility.RevalidateVenueActivities(this);
     }
 
     /// <summary>
@@ -2309,6 +2468,8 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
         NotifyFactionMemberChange();
         leaveHandler?.OnMemberLeft(this, c, leftStanding, departedLinked);
+        // a member left: the visits held here re-validate (an offered type or house activity may be gone)
+        RecreationUtility.RevalidateVenueActivities(this);
     }
 
     public void RemoveSubfaction(Manageable_Party p)
@@ -2550,7 +2711,15 @@ public class Manageable : I_Disposable, I_IsJobGiver
     public void NotifyFurnitureChange(Room_Instance room)
     {
         RefreshRoomJobs(room);
+        facilitySerial++;
+        RecreationUtility.NotifyVenueActivitiesChanged(this);
     }
+
+    /// <summary>
+    /// Bumped on every furniture change in this faction's rooms (NotifyFurnitureChange - added, packed, moved). The visits
+    /// planned here re-validate right after (RecreationUtility.RevalidateVenueActivities - a solo one compares it, FacilityLostFor).
+    /// </summary>
+    [JsonProperty] public int facilitySerial = 0;
 
     protected void AddJobPost(COM com, Job_Furniture job)
     {
@@ -3816,6 +3985,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
     public void DisposeInternal()
     {
+        actorTagContexts?.Clear();
         scr_System_Time.current.Observer_globalTime -= OnTimeUpdate;
         scr_System_Time.current.Observer_globalTime_Day -= OnDayUpdate_0;
         scr_System_Time.current.Observer_globalTime_Day -= OnDayUpdate_1;
@@ -3879,10 +4049,9 @@ public class Manageable : I_Disposable, I_IsJobGiver
     public string mapPlanID = "";
 
     /// <summary>
-    /// This faction's own player-assignable shift statuses (see MapPlan.assignableMemberTypes),
-    /// filtered to non-manager member types that carry a paid workModule - these are what the
-    /// Management UI's schedule-assignment tab lets the player put a character into, replacing the
-    /// old raw JobPostsPresets assignment.
+    /// This faction's own player-assignable statuses (see MapPlan.assignableMemberTypes) - paid shift posts and
+    /// household roles alike (e.g. a family doctor): what the Management UI's job-post tab lists. Whether a character
+    /// may be moved to one is that tab's swap rule (MemberType.SwapRefusal) and the type's assignRequirements.
     /// </summary>
     [JsonIgnore]
     public List<MemberType> AssignableMemberTypes
@@ -3890,20 +4059,38 @@ public class Manageable : I_Disposable, I_IsJobGiver
         get
         {
             var list = new List<MemberType>();
-            var plan = scr_System_Serializer.current.MasterList.MapPlans.GetByID_MapPlan(mapPlanID);
-            if (plan == null) return list;
-            foreach (var id in plan.assignableMemberTypes)
-            {
-                if (!FactionUtility.TryGetMemberType(id, out var listed)) continue;
-                // a parent ID stands for every post under it (the shifts), in authored order
-                foreach (var type in listed.GetLeafDescendants())
-                {
-                    if (list.Contains(type)) continue;
-                    if (!type.isManager && type.workModule != null && type.workModule.hourlyPayout.Count > 0) list.Add(type);
-                }
-            }
+            var plans = scr_System_Serializer.current.MasterList.MapPlans;
+            var plan = plans.GetByID_MapPlan(mapPlanID);
+            if (plan != null) AddAssignable(list, plan.assignableMemberTypes);
+            // the types every faction offers (the family doctor) - not a subfaction's / worker pool's
+            if (OffersSharedHouseContent) AddAssignable(list, plans.sharedAssignableMemberTypes);
             return list;
         }
+    }
+
+    static void AddAssignable(List<MemberType> list, List<string> ids)
+    {
+        if (ids == null) return;
+        foreach (var id in ids)
+        {
+            if (!FactionUtility.TryGetMemberType(id, out var listed)) continue;
+            // a parent ID stands for every post under it (the shifts), in authored order
+            foreach (var type in listed.GetLeafDescendants())
+            {
+                // every listed type (user 2026-10-30 - not only paid shifts): who may move to which is the tab's swap
+                // rule (MemberType.SwapRefusal) and the type's assignRequirements
+                if (!list.Contains(type)) list.Add(type);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Whether this faction gets the content every faction shares (Index_MapPlan.sharedHouseActivities /
+    /// sharedAssignableMemberTypes): any faction but a subfaction or a worker pool (user 2026-11-01).
+    /// </summary>
+    [JsonIgnore] public bool OffersSharedHouseContent
+    {
+        get { return !(this is Manageable_Subfaction) && !(this is Manageable_WorkerPool); }
     }
 
     /// <summary>
@@ -3936,6 +4123,23 @@ public class Manageable : I_Disposable, I_IsJobGiver
             result.Add(type);
         }
         return result;
+    }
+
+    /// <summary>
+    /// The activities this faction offers its own home members, or null: the shared house activities
+    /// (Index_MapPlan.sharedHouseActivities - not for a subfaction / worker pool) merged with its own template's
+    /// MapPlan.houseActivities (cached per template - Index_MapPlan.GetHouseActivities). Which of them a home can hold
+    /// is up to its furniture (each activity's facility - RecreationUtility.FacilityAvailable).
+    /// </summary>
+    [JsonIgnore] public RecreationSpec HouseActivities
+    {
+        get
+        {
+            var plans = scr_System_Serializer.current.MasterList.MapPlans;
+            var plan = string.IsNullOrEmpty(mapPlanID) ? null : plans.GetByID_MapPlan(mapPlanID);
+            if (!OffersSharedHouseContent) return plan?.houseActivities;
+            return plans.GetHouseActivities(plan);
+        }
     }
 
     public void RefreshSalesInventory(MapPlan plan = null)

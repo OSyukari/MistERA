@@ -82,6 +82,11 @@ public abstract class ActionPackage
 
     public bool JoinAP(APJSON ep, out string error)
     {
+        if (!ValidateActivityCommandPolicy())
+        {
+            error = "Command is replaced by a room activity.";
+            return false;
+        }
         error = "";
         if (epjson.Contains(ep)) return true;
         if (this.targetCOMID != ep.CommandID)
@@ -399,6 +404,7 @@ public abstract class ActionPackage
     /// <returns></returns>
     public virtual bool JoinAP(Character_Trainable c, Memory_Response forceAccept = Memory_Response.None, bool silent = false)
     {
+        if (!ValidateActivityCommandPolicy(c)) return false;
         if (this.doer.Contains(c)) return true;
         else if (this.receiver.Contains(c)) return true;
 
@@ -460,6 +466,8 @@ public abstract class ActionPackage
 
     public virtual bool JoinAP(List<Character_Trainable> cs, Memory_Response forceAccept = Memory_Response.None, bool silent = false)
     {
+        if (!ValidateActivityCommandPolicy()) return false;
+        foreach (var c in cs) if (!ValidateActivityCommandPolicy(c)) return false;
         var variantID = canJoinAP(cs, out var doers1, out var receivers1, out var tooltipss);
         if (variantID >= 0)
         {
@@ -535,7 +543,6 @@ public abstract class ActionPackage
     /// Return COM name. For AP description, go for DescriptionText()
     /// </summary>
     [JsonIgnore] public virtual string DisplayName { get {
-            //if (targetCOM != null && targetCOM.comTags.Contains("food_meal")) Debug.LogError($"mealcom name {targetCOM.DisplayName(0)}, ismealcom ? {(targetCOM is COM_TakeMeal)}");
             return nameOverwrite != "" ? nameOverwrite : targetCOM != null ? (COMVariantID >= 0 ? targetCOM.DisplayName(COMVariantID) : targetCOM.DisplayName()):" - "; } }
 
     public string nameOverwrite = "";
@@ -582,6 +589,13 @@ public abstract class ActionPackage
     }
     public DateTime StartTime = DateTime.MinValue;
     protected int jobRefID = -1;
+    [JsonProperty] int activityExecutionRef = -1;
+    [JsonIgnore] public int ActivityExecutionRef { get { return job is Job_Activity activity ? activity.RefID : activityExecutionRef; } }
+
+    public void BindActivityExecution(Job_Activity activity)
+    {
+        activityExecutionRef = activity == null ? -1 : activity.RefID;
+    }
     protected Job job_cached = null;
     [JsonIgnore] public Job job { get {
             if (job_cached == null && jobRefID > -1) job_cached = scr_System_CampaignManager.current.FindJobInstanceByID(jobRefID);
@@ -602,10 +616,12 @@ public abstract class ActionPackage
     public void AddExtraCOMTags(List<string> extratags)
     {
         this.extraCOMTags.AddRange(extratags);
+        InvalidateComTags();
     }
     public void AddExtraCOMTag(string extratag)
     {
         this.extraCOMTags.Add(extratag);
+        InvalidateComTags();
     }
 
     [JsonIgnore] public bool isForced { get { return this.extraCOMTags.Contains("forced"); } }
@@ -636,6 +652,121 @@ public abstract class ActionPackage
     [JsonProperty] protected List<string> descriptions;
 
     protected COM.COM_Variant variant = null;
+    [JsonIgnore] public bool IsSexSceneEntry { get { return targetCOM != null && targetCOM.comTags.Contains("initSex"); } }
+    [JsonIgnore] public bool JoinsExistingSexScene
+    {
+        get { return IsSexSceneEntry && COMVariantID >= 0 && COMVariantID < targetCOM.variants.Count
+            && targetCOM.variants[COMVariantID].joinsExistingSexScene; }
+    }
+
+    /// <summary>Only explicit event execution opts into authoritative room reuse; ordinary requests remain variant-driven.</summary>
+    [JsonProperty] public bool AuthoredSexSceneEntry = false;
+    [JsonProperty] bool sexEntryBound = false;
+    [JsonProperty] int sexEntrySceneRef = -1;
+    [JsonProperty] int sexEntryRoomRef = -1;
+    [JsonProperty] int sexEntryVariant = -1;
+    [JsonProperty] List<int> sexEntryDoers = new List<int>();
+    [JsonProperty] List<int> sexEntryReceivers = new List<int>();
+    [JsonProperty] bool sexEntryCommitted = false;
+    [JsonIgnore] public bool HasBoundSexSceneEntry { get { return sexEntryBound; } }
+    [JsonIgnore] public int BoundSexSceneEntryVariant { get { return sexEntryVariant; } }
+
+    public bool PreservesSexScene(Job_Sex_Group scene)
+    {
+        return sexEntryBound && JoinsExistingSexScene && !sexEntryCommitted && scene != null && !scene.IsEnded
+            && scene.RefID == sexEntrySceneRef && scene.ParentRoom?.RefID == sexEntryRoomRef;
+    }
+
+    /// <summary>Bind after actor selection, then revalidate without silently switching scenes or variants.</summary>
+    public bool PrepareSexSceneEntry(out string reason)
+    {
+        reason = "";
+        if (!IsSexSceneEntry) return true;
+        reason = "ui_sexEntry_staleScene";
+        if (sexEntryCommitted || COMVariantID < 0 || COMVariantID >= targetCOM.variants.Count) return false;
+        var room = PackageRoom;
+        var manager = scr_System_CampaignManager.current;
+        if (sexEntryBound && (sexEntryRoomRef != room?.RefID || sexEntryVariant != COMVariantID
+            || !sexEntryDoers.SequenceEqual(DoerRefs.OrderBy(x => x))
+            || !sexEntryReceivers.SequenceEqual(ReceiverRefs.OrderBy(x => x)))) return false;
+
+        var currentRequirements = new List<string>();
+        if (targetCOM.GetValidVariant(ref currentRequirements, job, doer, receiver, false, 1, Master, this) != COMVariantID)
+        {
+            tooltip.AddRange(currentRequirements);
+            return false;
+        }
+
+        Job_Sex_Group scene;
+        if (AuthoredSexSceneEntry)
+        {
+            reason = "ui_sexEntry_invalidRoom";
+            if (room == null || manager?.Map == null || manager.Map.GetRoomByRef(room.RefID) != room) return false;
+            reason = "ui_sexEntry_missingParticipant";
+            if (doer.Count == 0 || doer.Concat(receiver).Any(c => c == null || manager.FindInstanceByID(c.RefID) != c)) return false;
+            reason = "ui_sexEntry_wrongRoom";
+            if (doer.Concat(receiver).Any(c => manager.Map.FindRoomByChara(c.RefID) != room)) return false;
+            scene = manager.FindSexJobInRoom(room);
+        }
+        else
+        {
+            if (!COM.TryResolveSexSceneEntry(room, doer, receiver, JoinsExistingSexScene, out scene, out _, out reason)) return false;
+            if (sexEntryBound && (scene?.RefID ?? -1) != sexEntrySceneRef)
+            {
+                reason = "ui_sexEntry_staleScene";
+                return false;
+            }
+        }
+        if (!sexEntryBound)
+        {
+            sexEntryBound = true;
+            sexEntryRoomRef = room.RefID;
+            sexEntrySceneRef = scene?.RefID ?? -1;
+            sexEntryVariant = COMVariantID;
+            sexEntryDoers = DoerRefs.OrderBy(x => x).ToList();
+            sexEntryReceivers = ReceiverRefs.OrderBy(x => x).ToList();
+        }
+        reason = "";
+        return true;
+    }
+
+    void AbortSexSceneEntry(string reason)
+    {
+        FailureReason = LocalizeDictionary.QueryThenParse(reason);
+        tooltip.Add(FailureReason);
+        executeSuccessful = false;
+        isValid = false;
+        DisablePackage();
+    }
+
+    bool CommitSexSceneEntry(out string reason)
+    {
+        if (!PrepareSexSceneEntry(out reason)) return false;
+        var manager = scr_System_CampaignManager.current;
+        var scene = AuthoredSexSceneEntry ? manager.FindSexJobInRoom(PackageRoom)
+            : sexEntrySceneRef >= 0 ? manager.FindJobInstanceByID(sexEntrySceneRef, false) as Job_Sex_Group : null;
+        if (scene != null)
+        {
+            if (AuthoredSexSceneEntry)
+                scene.AddAuthoredParticipants(null, actorRefs.Where(id => !scene.actorRefID.Contains(id)).ToList());
+            else if (!scene.TryJoinActors(actorRefs, out reason)) return false;
+        }
+        else
+        {
+            scene = new Job_Sex_Group(new List<int>(actorRefs), PackageRoom, true);
+            if (manager.Register(scene) < 0)
+            {
+                scene = AuthoredSexSceneEntry ? manager.FindSexJobInRoom(PackageRoom) : null;
+                if (scene == null) { reason = "ui_sexEntry_roomOccupied"; return false; }
+                scene.AddAuthoredParticipants(null, actorRefs.Where(id => !scene.actorRefID.Contains(id)).ToList());
+            }
+        }
+        sexEntryCommitted = true;
+        toggleRepeat = false;
+        reason = "";
+        return true;
+    }
+
     protected COM.COM_Variant Variant
     {
         get
@@ -732,6 +863,7 @@ public abstract class ActionPackage
     /// <param name="receiver"></param>
     public virtual void ReInitializeCOM(Job job, COM targetCOM, List<int> doer, List<int> receiver, int masterRef = -1, bool resetDuration = true)
     {
+        if (jobRefID != (job?.RefID ?? -1) || targetCOMID != (targetCOM?.ID ?? "")) activityExecutionRef = -1;
 
         if (tooltip == null) tooltip = new List<string>();
 
@@ -741,6 +873,8 @@ public abstract class ActionPackage
         this.job_cached = null;
         this.targetCOMCache = null;
         this.variant = null;
+        // set before ResetRequest: it reads targetCOM (selfOnly)
+        this.targetCOMID = targetCOM != null ? targetCOM.ID : "";
 
         ResetRequest(doer, receiver, masterRef);
         //if (targetCOM == null) return;
@@ -845,6 +979,12 @@ public abstract class ActionPackage
     /// </summary>
     public virtual bool Tick(List<int> actorList, int tickDuration = 1, MessageCollect m = null)
     {
+        if (IsSexSceneEntry && !sexEntryCommitted && !PrepareSexSceneEntry(out var entryReason))
+        {
+            AbortSexSceneEntry(entryReason);
+            Ticked = true;
+            return true;
+        }
         //Debug.Log("AP TICK for " + DisplayName);
         bool timeStop = DoerRefs.Count > 0;
         bool allUnconscious = true;
@@ -905,8 +1045,14 @@ public abstract class ActionPackage
                 else
                 {   // accept
                     LogAcceptanceCheck(m);
+                    // accepted while a SoftEvent permission is still missing: the granter's demand first, the act resumes from it
+                    if (TryStopForDemand())
+                    {
+                        Ticked = true;
+                        return true;
+                    }
                     internalState = AP_Status.accepted;
-                    if (receiver.Count > 0 && duration > 0)
+                    if (!IsSexSceneEntry && receiver.Count > 0 && duration > 0)
                     {
                         string s = "Package " + DisplayName + " accepted : ";
                         foreach (var rc in receiver)
@@ -947,21 +1093,38 @@ public abstract class ActionPackage
     public void SetIgnored()
     {
         this.extraCOMTags.Add("ignored");
+        InvalidateComTags();
         foreach (var i in this.ListEP) i.AddExtraCOMTags("ignored");
     }
 
     [JsonIgnore] public int Duration { get { return duration; } }
 
+    // ComTags cache: rebuilt lazily when extraCOMTags changed (InvalidateComTags) or targetCOM resolves to a different COM
+    // than the one the cache was built from (covers ReInitializeCOM, Talk fallback swap and the Undress/Redress overrides)
+    [JsonIgnore] List<string> _comTagsCache = null;
+    [JsonIgnore] COM _comTagsSource = null;
+    [JsonIgnore] bool _comTagsDirty = true;
+
+    /// <summary> Must be called whenever extraCOMTags is mutated directly. </summary>
+    protected void InvalidateComTags() { _comTagsDirty = true; }
+
+    /// <summary>
+    /// Cached, shared list - read only. Copy it before storing or mutating (e.g. new List&lt;string&gt;(ap.ComTags)).
+    /// </summary>
     [JsonIgnore] public virtual List<string> ComTags
     {
         get
         {
+            var com = targetCOM;
+            if (_comTagsCache == null) _comTagsCache = new List<string>();
+            else if (!_comTagsDirty && ReferenceEquals(com, _comTagsSource)) return _comTagsCache;
 
-            List<string> _comTags = new List<string>();
-            _comTags.AddRange(extraCOMTags);
-            if (targetCOM != null) _comTags.AddRange(targetCOM.comTags);
-            
-            return _comTags;
+            _comTagsCache.Clear();
+            _comTagsCache.AddRange(extraCOMTags);
+            if (com != null) _comTagsCache.AddRange(com.comTags);
+            _comTagsSource = com;
+            _comTagsDirty = false;
+            return _comTagsCache;
         }
     }
 
@@ -976,6 +1139,12 @@ public abstract class ActionPackage
     /// </summary>
     [JsonIgnore] public bool ignoreActorRoom = false;
 
+    /// <summary>
+    /// Opt-in for validating a package ahead of time for an hour other than now (e.g. Manageable.CanOfferMealTo, whose
+    /// callers check the venue's meal hour themselves): skips Requirement_Faction.requireMealHour. Never set on a package that runs.
+    /// </summary>
+    [JsonIgnore] public bool ignoreMealHour = false;
+
 
     /// <summary>
     /// Validation to check if COM can be applied
@@ -986,12 +1155,44 @@ public abstract class ActionPackage
     /// <returns></returns>
     public bool Validate()
     {
+        // Outside virtual PreEvaluate: specialized packages cannot accidentally bypass room substitution.
+        if (!ValidateActivityCommandPolicy())
+        {
+            tooltip.Add("Command is replaced by a room activity.");
+            isValid = false;
+            validVariant = -1;
+            return false;
+        }
         if (!PreEvaluate())
         {
             validVariant = -1;
             return false;
         }
         return Evaluate();
+    }
+
+    bool ValidateActivityCommandPolicy(Character_Trainable joining = null)
+    {
+        if (activityExecutionRef >= 0)
+        {
+            var execution = scr_System_CampaignManager.current.FindJobInstanceByID(activityExecutionRef, false) as Job_Activity;
+            if (execution == null || !execution.AppliesToRoom(PackageRoom)) return false;
+            if (joining != null && !execution.AllowsParticipantCommand(joining, targetCOM)) return false;
+            foreach (var actor in Actors)
+                if (!execution.AllowsParticipantCommand(actor, targetCOM)) return false;
+        }
+        if (job is Job_Activity activity && activity.IsRoomCommandOffer(targetCOM))
+        {
+            if (joining != null && !activity.ValidateRoomCommandOffer(targetCOM, joining, PackageRoom)) return false;
+            foreach (var actor in Actors)
+                if (!activity.ValidateRoomCommandOffer(targetCOM, actor, PackageRoom)) return false;
+            return true;
+        }
+        if (!(job is Job_Furniture furniture) || targetCOM == null) return true;
+        if (joining != null && !furniture.AllowsActivityCommand(joining, targetCOM)) return false;
+        foreach (var actor in Actors)
+            if (actor == null || !furniture.AllowsActivityCommand(actor, targetCOM)) return false;
+        return true;
     }
 
     protected virtual bool PreEvaluate()
@@ -1115,6 +1316,7 @@ public abstract class ActionPackage
         //Debug.Log("ActionPackage Base Evaluate on "+DisplayName);
 
         validVariant = targetCOM.GetValidVariant(ref this.tooltip, job, this.doer, this.receiver, false, this.job is Job_Furniture ? (int)(this.job as Job_Furniture).ParentInstance.FurnitureBase.furnitureSize : 1, this.Master, this);
+        variant = null;
 
         if (validVariant >= 0)
         {
@@ -1463,7 +1665,8 @@ public abstract class ActionPackage
         this.doer_cache = null;
 
         this.receiverRefs = new List<int>();
-        this.receiverRefs.AddRange(receiver);
+        // a self-only command ignores whoever is targeted / selected
+        if (targetCOM == null || !targetCOM.selfOnly) this.receiverRefs.AddRange(receiver);
         this.receiver_cache = null;
 
         this.master_cached = null;
@@ -1624,7 +1827,19 @@ public abstract class ActionPackage
     /// <returns></returns>
     protected virtual bool Request(bool rebuildPackage = true, Memory_Response forceAccept = Memory_Response.None)
     {
+        if (IsSexSceneEntry && !PrepareSexSceneEntry(out var entryReason))
+        {
+            AbortSexSceneEntry(entryReason);
+            requestAccepted = false;
+            return false;
+        }
         requested = true;
+        // resumed after its demand (TryStopForDemand): the accepted result is kept - no new roll, no permission requests
+        if (acceptOnNextRequest)
+        {
+            acceptOnNextRequest = false;
+            forceAccept = Memory_Response.Accept;
+        }
 
         if (rebuildPackage) RemakePackages();
         
@@ -1633,6 +1848,10 @@ public abstract class ActionPackage
 
         foreach(var ep in packages)
         {
+            // real round: a filled condom comes off before a penetration act (EVP_ActOrgans), then ask for missing
+            // requestable permissions before the acceptance evaluation sees them
+            ep.TakeOffFilledBeforePenetration(job?.m);
+            ep.RequestMissingPermissions(forceAccept);
             ep.Evaluate(true);
             ep.ApplyPersonalityMods();
             if (!returnVal) break;
@@ -1889,60 +2108,172 @@ public abstract class ActionPackage
                 success = false;
             }
 
-            bool doerCanRescue = false;
-            int doerAmount;
-            if (ep.Receiver == null || ep.Receiver == ep.Doer)
-            {
-                doerAmount = ep.Doer.Skills.GetRelevantSkills(null, tags, dcMods, out doerCanRescue);
-                bonus += doerAmount;
+            bonus += CollectPairMods(ep, tags, dcMods);
+        }
 
-            }
-            else
-            {
-                doerAmount = ep.Doer.Skills.GetRelevantSkills(ep.DoerSelfTag, ep.ReceiverTargetTag, dcMods, out doerCanRescue);
-                bonus += doerAmount;
-                if (ep.ReceiverAttitude > Memory_Attitude.Dislike) bonus += ep.Receiver.Skills.GetRelevantSkills(ep.ReceiverSelfTag, ep.DoerTargetTag, dcMods);
-            }
-            if (ep.Doer != null && doerCanRescue && doerAmount > 0)
-            {
-                if (!_rescueCandidates.TryGetValue(ep.Doer.RefID, out var existingAmount) || doerAmount > existingAmount) _rescueCandidates[ep.Doer.RefID] = doerAmount;
-            }
+        return success;
+    }
 
-            foreach (var i in targetCOM.AcceptanceCheck.SkillBonus_Doer)
+    /// <summary>
+    /// DC skill bonus contributed by one EP's actors: relevant (validUse) skills of doer and, unless they dislike it,
+    /// receiver, plus the command's explicit skill lists. Registers attitude-rescue candidates as a side effect.
+    /// </summary>
+    int CollectPairMods(EvaluationPackage ep, List<string> tags, EvaluationPackage.Modifiers dcMods)
+    {
+        int bonus = 0;
+        bool doerCanRescue = false;
+        int doerAmount;
+        if (ep.Receiver == null || ep.Receiver == ep.Doer)
+        {
+            doerAmount = ep.Doer.Skills.GetRelevantSkills(null, tags, dcMods, out doerCanRescue);
+            bonus += doerAmount;
+
+        }
+        else
+        {
+            doerAmount = ep.Doer.Skills.GetRelevantSkills(ep.DoerSelfTag, ep.ReceiverTargetTag, dcMods, out doerCanRescue);
+            bonus += doerAmount;
+            if (ep.ReceiverAttitude > Memory_Attitude.Dislike) bonus += ep.Receiver.Skills.GetRelevantSkills(ep.ReceiverSelfTag, ep.DoerTargetTag, dcMods);
+        }
+        if (ep.Doer != null && doerCanRescue && doerAmount > 0)
+        {
+            if (!_rescueCandidates.TryGetValue(ep.Doer.RefID, out var existingAmount) || doerAmount > existingAmount) _rescueCandidates[ep.Doer.RefID] = doerAmount;
+        }
+
+        foreach (var i in targetCOM.AcceptanceCheck.SkillBonus_Doer)
+        {
+            var j = ep.Doer.GetSkill(i);
+            if (j == null)
             {
-                var j = ep.Doer.GetSkill(i);
+                Debug.Log($"null skill check on {ep.Doer.FirstName} for skill {i}");
+                continue;
+            }
+            var k = j.GetSkillLevel;
+            if (k <= 0) continue;
+            bonus += k;
+            dcMods.AddModifier(ep.Doer.RefID, j.DisplayName, k);
+        }
+
+
+        if (ep.Receiver != null && ep.Receiver != ep.Doer)
+        {
+            foreach (var i in targetCOM.AcceptanceCheck.SkillBonus_Receiver)
+            {
+                var j = ep.Receiver.GetSkill(i);
                 if (j == null)
                 {
-                    Debug.Log($"null skill check on {ep.Doer.FirstName} for skill {i}");
+                    Debug.Log($"null skill check on {ep.Receiver.FirstName} for skill {i}");
                     continue;
                 }
                 var k = j.GetSkillLevel;
                 if (k <= 0) continue;
                 bonus += k;
-                dcMods.AddModifier(ep.Doer.RefID, j.DisplayName, k);
+                dcMods.AddModifier(ep.Receiver.RefID, j.DisplayName, k);
             }
-
-
-            if (ep.Receiver != null && ep.Receiver != ep.Doer)
-            {
-                foreach (var i in targetCOM.AcceptanceCheck.SkillBonus_Receiver)
-                {
-                    var j = ep.Receiver.GetSkill(i);
-                    if (j == null)
-                    {
-                        Debug.Log($"null skill check on {ep.Receiver.FirstName} for skill {i}");
-                        continue;
-                    }
-                    var k = j.GetSkillLevel;
-                    if (k <= 0) continue;
-                    bonus += k;
-                    dcMods.AddModifier(ep.Receiver.RefID, j.DisplayName, k);
-                }
-            }
-
         }
+        return bonus;
+    }
 
-        return success;
+    /// <summary>
+    /// Sex commands roll their DC once per 1:1 EP, inside EvaluationPackage.Execute once that pair's body parts are
+    /// picked, so each pair's own experience (skills) and the penetrated organ's lubrication count. Other commands keep
+    /// one shared group roll.
+    /// </summary>
+    [JsonIgnore] protected bool UsesPairDC { get { return this is ActionPackage_Sex && targetCOM != null && targetCOM.baseD20Check > 0; } }
+    readonly List<string> pairCheckResults = new List<string>(), pairCheckResultsShort = new List<string>(), pairCheckTooltips = new List<string>();
+
+    /// <summary> Resolves one EP's DC (UsesPairDC). An LLM-forced result on that EP replaces the roll. </summary>
+    public Memory_Response RollPairDC(EvaluationPackage ep)
+    {
+        var dcMods = new EvaluationPackage.Modifiers();
+        var tags = new List<string>(targetCOM.comTags);
+        tags.AddRange(ep.ExtraCOMTags);
+        if (this.actorRefs.Count > 1) ep.AddExtraCOMTags("interaction");
+        Utility.DistinctInPlace(tags);
+
+        int bonus = CollectPairMods(ep, tags, dcMods);
+        int baseDC = targetCOM.baseD20Check;
+        List<string> mods = dcMods.GetAllModifiers();
+        string pairName = PairName(ep);
+        string comName = targetCOM.DisplayName(COMVariantID);
+        Memory_Response result;
+
+        // injected refusals are settled at the request stage (TryRespond/RollRequest/RollResponse); one still present here
+        // was deliberately ignored there (eg. a self-acting doer at 100%), so only injected DC outcomes replace the roll
+        var forced = ep.epjson;
+        if (forced != null && forced.command_result >= Memory_Response.Accept)
+        {
+            result = forced.command_result;
+            bool judged = forced.outcomeMode == LLMOutcomeMode.LLMVerdict;
+            bool forcedWin = result >= Memory_Response.Success || result == Memory_Response.Accept;
+            string forcedKey = judged ? (forcedWin ? "ui_diceroll_judgedsuccess" : "ui_diceroll_judgedfailure") : (forcedWin ? "ui_diceroll_forcedsuccess" : "ui_diceroll_forcedfailure");
+            pairCheckResults.Add($"{comName} ({pairName}) D20{(mods.Count > 0 ? $" + {bonus}" : "")} >=? {baseDC} = {LocalizeDictionary.QueryThenParse(forcedKey)}, {LocalizeDictionary.QueryThenParse($"Memory_Response_{result}")}");
+        }
+        else
+        {
+            if (ep.TryGetLubricationDCMod(out int lubrication, out var penetrated) && lubrication != 0)
+            {
+                bonus += lubrication;
+                mods.Add($"{LocalizeDictionary.QueryThenParse("ui_diceroll_lubrication")} [{penetrated.Owner.FirstName} {penetrated.DisplayName}; {penetrated.EffectiveLubrication:0.#}]{lubrication.ToString("+0;-#")}");
+            }
+            int roleplayDC = forced != null && forced.outcomeMode == LLMOutcomeMode.RoleplayModifier ? forced.dc_modifier : 0;
+            if (roleplayDC != 0)
+            {
+                bonus += roleplayDC;
+                mods.Add(LocalizeDictionary.QueryThenParse("ui_diceroll_roleplayMod") + roleplayDC.ToString("+0;-#"));
+            }
+
+            int diceRoll = Dice(1, 21, 1);
+            if (diceRoll >= 20) result = Memory_Response.CriticalSuccess;
+            else if (diceRoll <= 1) result = Memory_Response.CriticalFailure;
+            else result = diceRoll + bonus >= baseDC ? Memory_Response.Success : Memory_Response.Failure;
+            pairCheckResults.Add($"{comName} ({pairName}) D20 = {diceRoll}{(mods.Count > 0 ? $" + {bonus}" : "")} = {diceRoll + bonus} {(result >= Memory_Response.Success ? ">=" : "<")} {baseDC}, {LocalizeDictionary.QueryThenParse($"Memory_Response_{result}")}");
+        }
+        pairCheckResultsShort.Add($"({comName} {pairName}): {LocalizeDictionary.QueryThenParse($"Memory_Response_{result}")}");
+        pairCheckTooltips.AddRange(mods);
+        return result;
+    }
+
+    string PairName(EvaluationPackage ep)
+    {
+        return ep.Receiver == null || ep.Receiver == ep.Doer ? ep.Doer.FirstName : $"{ep.Doer.FirstName} -> {ep.Receiver.FirstName}";
+    }
+
+    /// <summary>
+    /// The command's result(s): per-pair (sex) commands give every pair's own DC result with its pair label - only chara's
+    /// pair when chara is given and in one; other commands give the single shared result with an empty label.
+    /// </summary>
+    public List<(string pair, Memory_Response result)> GetResultsFor(Character_Trainable chara = null)
+    {
+        var results = new List<(string pair, Memory_Response result)>();
+        if (!UsesPairDC || packages == null || packages.Count < 1)
+        {
+            results.Add(("", injectResult));
+            return results;
+        }
+        var own = chara == null ? null : packages.Find(x => x.Doer == chara || x.Receiver == chara);
+        foreach (var ep in packages)
+        {
+            if (own != null && ep != own) continue;
+            results.Add((PairName(ep), ep.Response));
+        }
+        return results;
+    }
+
+    /// <summary>
+    /// Localized result text for summaries ($result$, completion line): a single result as before, several pairs as
+    /// "A -> B: result, C -> D: result". noneAsComplete shows an unset result as Complete.
+    /// </summary>
+    public string GetResultText(Character_Trainable chara = null, bool noneAsComplete = false)
+    {
+        var results = GetResultsFor(chara);
+        var parts = new List<string>();
+        foreach (var (pair, result) in results)
+        {
+            var text = LocalizeDictionary.QueryThenParse($"Memory_Response_{(noneAsComplete && result == Memory_Response.None ? "Complete" : result.ToString())}");
+            parts.Add(results.Count > 1 && pair != "" ? $"{pair}: {text}" : text);
+        }
+        return String.Join(", ", parts);
     }
 
     public Memory_Response injectResult = Memory_Response.None;
@@ -1960,6 +2291,15 @@ public abstract class ActionPackage
 
     protected virtual void Execution(MessageCollect m = null, List<Action> eventCollector = null)
     {
+        if (IsSexSceneEntry)
+        {
+            if (sexEntryCommitted) return;
+            if (!PrepareSexSceneEntry(out var preEntryReason))
+            {
+                AbortSexSceneEntry(preEntryReason);
+                return;
+            }
+        }
         _rescueCandidates.Clear();
         if (m == null) m = this.job.m;
         if (packages == null || packages.Count < 1)
@@ -1987,6 +2327,14 @@ public abstract class ActionPackage
                 checkResults_result = "";
                 checkResults_result_short = "";
             }
+            else if (UsesPairDC)
+            {
+                // rolled per pair in EvaluationPackage.Execute (RollPairDC); results are gathered after the loop below
+                injectResult = Memory_Response.None;
+                pairCheckResults.Clear();
+                pairCheckResultsShort.Clear();
+                pairCheckTooltips.Clear();
+            }
             else if (targetCOM.baseD20Check > 0)
             {
                 if (CollectMods(out var dcMods, out int bonus, out int baseDC))
@@ -1994,9 +2342,11 @@ public abstract class ActionPackage
                     List<string> mods = dcMods == null ? new List<string>() : dcMods.GetAllModifiers();
 
                     // one DC roll per AP: skip it only when every merged entry is forced (JoinAP never mixes
-                    // forced with None) - agent mode leaves command_result None to roll for real
-                    // (a forced Refuse that a 100% hard gate overrode into acceptance has no DC opinion - roll for real)
-                    if (epjson.Count > 0 && epjson.TrueForAll(x => x.command_result != Memory_Response.None && !(x.hardGateOverride && x.command_result < Memory_Response.Accept)))
+                    // forced with None) - agent mode leaves command_result None to roll for real.
+                    // Injected refusals are settled at the request stage (TryRespond/RollRequest/RollResponse); this block
+                    // only runs once every EP was accepted there, so a refusal still present was deliberately overruled
+                    // (a 100% hard gate, or a self-acting doer at 100%) and has no DC opinion - roll for real
+                    if (epjson.Count > 0 && epjson.TrueForAll(x => x.command_result >= Memory_Response.Accept))
                     {
                         // Accept carries no DC opinion, so a forced DC outcome wins; JoinAP guarantees at most one
                         // distinct DC outcome per AP. Otherwise every entry shares an acceptance class - use it as-is.
@@ -2039,9 +2389,12 @@ public abstract class ActionPackage
             }
         }
 
+        // a refused request (Tick still executes it) keeps the old no-DC path: Request stops at the first refusal, so later
+        // pairs were never asked and must stay refused rather than be auto-accepted as a repeat round
+        bool pairDC = UsesPairDC && requestAccepted;
         foreach (var ep in packages)
         {
-            ep.Execute(m, injectResult);
+            ep.Execute(m, injectResult, pairDC);
             bool executed = ep.Response >= Memory_Response.Accept;
             executeSuccessful = executed && executeSuccessful;
             if (ep.Actors.Count > 1)
@@ -2061,6 +2414,27 @@ public abstract class ActionPackage
             }
         }
 
+
+        if (pairDC)
+        {
+            checkResults_result = String.Join("\n", pairCheckResults);
+            checkResults_result_short = String.Join("\n", pairCheckResultsShort);
+            checkResults_tooltips = String.Join("\n", pairCheckTooltips);
+        }
+
+        // an injected (LLM) refusal persists in epjson, so a package refused by one would refuse again every repeat round
+        // (refusal events, memories, penalties each time) - e.g. after event/debug forced acceptance outranked it at Request.
+        // It is no longer a repeat candidate. A refusal a hard gate overrode (hardGateOverride) does not count.
+        if (packages.Exists(ep => ep.Response < Memory_Response.Accept && ep.epjson != null
+                && ep.epjson.command_result != Memory_Response.None && ep.epjson.command_result < Memory_Response.Accept
+                && !ep.epjson.hardGateOverride))
+            toggleRepeat = false;
+
+        if (executeSuccessful && IsSexSceneEntry && !CommitSexSceneEntry(out var entryReason))
+        {
+            AbortSexSceneEntry(entryReason);
+            return;
+        }
 
         LogResultCheck();
 
@@ -2196,36 +2570,7 @@ public abstract class ActionPackage
             }
             else if (targetCOM.comTags.Contains("initSex"))
             {
-                Job_Sex_Group existingJob = null;
-
-                // find existing job in room and merge into it
-                var allchara = scr_System_CampaignManager.current.CharaInCurrentRoom;
-
-                List<string> names = new List<string>();
-
-                foreach (var i in allchara)
-                {
-                    var targetJob = i.CurrentJob;
-                    names.Add(i.FirstName);
-                    if (targetJob == null) continue;
-                    if (targetJob is not Job_Sex_Group) continue;
-                    if (existingJob == null) existingJob = targetJob as Job_Sex_Group;
-                }
-                Debug.Log($"iniSex found existing [{existingJob != null}] among {String.Join("|", names)}");
-                if (existingJob == null)
-                {
-                    existingJob = new Job_Sex_Group(this.actorRefs, scr_System_CampaignManager.current.Map.GetRoomByRef(RoomKey), true);
-                    scr_System_CampaignManager.current.Register(existingJob);
-                }
-                else
-                {
-                    foreach (var actor in allchara)
-                    {
-                        if (!this.actorRefs.Contains(actor.RefID)) continue;
-                        if (actor.CurrentJob == existingJob) continue;
-                        actor.ChangeCurrentJob(existingJob);// existingJob.AddActor(actor);
-                    }
-                }
+                // Entry was committed before success-dependent AP events and relationship changes.
             }
             else if (targetCOM.comTags.Contains("initRecording"))
             {
@@ -2411,9 +2756,19 @@ public abstract class ActionPackage
                 foreach (var target in targets)
                 {
                     var instance = itemFaction.Inventory.RemoveItem(ingestCOM.InnerItem.ID, target);
-                    if (instance != null && instance.GetComp_Ingestible() != null) target.Body.ConsumeIngestible(instance, ingestCOM.ingestBodyTag, true);
+                    if (instance != null && instance.Comp_Ingestible != null) target.Body.ConsumeIngestible(instance, ingestCOM.ingestBodyTag, true);
                 }
             }
+        }
+        else if (targetCOM is COM_EquipSingleUseItem equipCOM)
+        {
+            // put on / take off a one-time-use wearable (condom) per accepted pair - the class gates dcGated commands
+            // on each pair's DC and only takes an item when one is put on
+            var itemFaction = equipCOM.ItemRequirement.ResolveFaction(this.job, this.doer, this.receiver, this.Master);
+            // Successful equip/removal completes this act; failed DC attempts keep their existing repeat setting.
+            if (equipCOM.ApplyExecution(this.ListEP, COMVariantID, itemFaction,
+                !m.accumulateExperience && !isTemporaryAP ? m : null, RecordingRoom))
+                PackageRepeat = false;
         }
         if (targetCOM != null && targetCOM.ExitJobOnExecution)
         {
@@ -2480,6 +2835,9 @@ public abstract class ActionPackage
     /// </summary>
     void TryRescueAttitude()
     {
+        // no skill rescue for sex: each pair's own DC outcome and attitude stand (rescue would also only run after the
+        // round's pleasure/pain/memories were applied)
+        if (this is ActionPackage_Sex) return;
         if (_rescueCandidates.Count < 1 || targetCOM == null || packages == null || packages.Count < 1) return;
 
         var worst = new Dictionary<int, Memory_Attitude>();
@@ -2548,7 +2906,7 @@ public abstract class ActionPackage
         {
             var goodwill = 0;
             var badwill = 0;
-            var trust = 0;
+            float trust = 0f;
             float desire = 0;
             var fear = 0;
             var relBA = B.Relationships.FindRelationshipWith(A);
@@ -2566,6 +2924,12 @@ public abstract class ActionPackage
             if (tags.Contains("job") && response > Memory_Response.Accept)
             {
                 trust = response >= Memory_Response.Success ? 1 : response < Memory_Response.Failure ? -1 : 0;
+            }
+            if (tags.Contains("interaction") && !tags.Contains("NonInteraction") && !tags.Contains("job")
+                && (b_attitude == Memory_Attitude.Like || b_attitude == Memory_Attitude.Love)
+                && response == Memory_Response.CriticalSuccess)
+            {
+                trust += 0.1f;
             }
             if (tags.Contains("touch"))
             {
@@ -2598,10 +2962,34 @@ public abstract class ActionPackage
                 B.Relationships.CheckPrideChange(bTags, bTags, 1, m.exp);
             }
 
+            float interactionDesire = 0f;
+            // The caller also visits incidental AP participants; only this EP's actual partner qualifies.
+            if (A != null && ((A == ep.Doer && B == ep.Receiver) || (A == ep.Receiver && B == ep.Doer))
+                && !A.Stats.isConsciousnessUnconscious && !A.isTimeStopped && !B.isTimeStopped
+                && tags.Contains("interaction") && !tags.Contains("NonInteraction")
+                && (b_attitude == Memory_Attitude.Like || b_attitude == Memory_Attitude.Love)
+                && (response == Memory_Response.Accept || response >= Memory_Response.Success)
+                && hasPermission && !isForced && !(this is ActionPackage_Sex sex && sex.UsesForcedSexSelection)
+                && !ep.DoerTargetTag.Contains("NonInteraction") && !ep.ReceiverTargetTag.Contains("NonInteraction")
+                && !ep.DoerTargetTag.Contains("forced") && !ep.ReceiverTargetTag.Contains("forced")
+                && !ep.DoerTargetTag.Contains("raped") && !ep.ReceiverTargetTag.Contains("raped")
+                && !ep.DoerTargetTag.Contains("rape") && !ep.ReceiverTargetTag.Contains("rape")
+                && !ep.DoerSelfTag.Contains("forced") && !ep.ReceiverSelfTag.Contains("forced")
+                && !ep.DoerSelfTag.Contains("raped") && !ep.ReceiverSelfTag.Contains("raped")
+                && !ep.DoerSelfTag.Contains("rape") && !ep.ReceiverSelfTag.Contains("rape")
+                && !ep.DoerSelfTag.Contains("rapist") && !ep.ReceiverSelfTag.Contains("rapist")
+                && canBeAttracted)
+            {
+                var lust = B.Stats.Lust == null ? 0 : B.Stats.Lust.Severity;
+                if (B.Stats.HasTrait("trait_SexualInterest_curious")) interactionDesire = 0.3f;
+                else if (B.Stats.HasTrait("trait_SexualInterest_conservative")) interactionDesire = lust >= 2 ? 0.1f : 0f;
+                else interactionDesire = lust >= 1 ? 0.2f : 0f; // Normal also covers existing characters without the new trait.
+            }
+
             if (trust != 0) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Trust, trust, m.exp, !job.CanBeInterrupted);
             if (goodwill != 0) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Goodwill, goodwill, m.exp, !job.CanBeInterrupted);
             if (badwill > 0 || (badwill < 0 && (B.Stats.Mood == null || B.Stats.Mood.Severity >= 2))) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Badwill, badwill, m.exp, false);
-            if (desire != 0) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Desire, desire, m.exp);
+            if (desire != 0 || interactionDesire != 0) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Desire, desire, m.exp, additiveUnscaledAmount: interactionDesire);
             if (fear != 0) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Fear, fear, m.exp);
         }
     }
@@ -3182,6 +3570,8 @@ public abstract class ActionPackage
         if (targetDoer != null && targetReceivers.Count > 0)
         {
 
+            // every refusal plays OnAPRefuse (a SoftEvent permission never refuses - its demand runs on an accepted act
+            // instead, TryStopForDemand)
             var refuseEV = new EventInstance(targetDoer, "OnAPRefuse", "");
             var appends = new List<string>();
            // var refuseInfo = new List<string>();
@@ -3260,10 +3650,238 @@ public abstract class ActionPackage
         }
     }
 
+    /// <summary>This act was resumed from its demand (TryStopForDemand): it is never stopped for one again.</summary>
+    [JsonProperty] public bool demandAnswered = false;
+    /// <summary>The next Request keeps the accepted result (forceAccept Accept: no new roll, no permission requests) -
+    /// set on the copy a demand resumes.</summary>
+    [JsonProperty] public bool acceptOnNextRequest = false;
+
+    /// <summary>
+    /// After acceptance, before the act begins (Tick): an accepted EP whose granter still misses a SoftEvent permission
+    /// with a demandEventID (e.g. permission_sex_unprotected), not pushed past in this scene, stops this act - it ends
+    /// without effects or refusal costs, and the demand plays (SendDemandEvent). Forced commands, event-run acts and acts
+    /// already resumed from a demand are never stopped.
+    /// </summary>
+    bool TryStopForDemand()
+    {
+        if (demandAnswered || isForced || SourceEvent != null || job == null || ListEP == null) return false;
+        MissingPermission demand = null;
+        EvaluationPackage demandEP = null;
+        foreach (var ep in ListEP)
+        {
+            if (ep == null || ep.Response < Memory_Response.Accept) continue;
+            foreach (var missing in ep.MissingPermissions)
+            {
+                if (missing.Definition.mode != PermissionMode.SoftEvent || string.IsNullOrEmpty(missing.Definition.demandEventID)) continue;
+                if (job is Job_Sex_Group scene && scene.HasPermissionPush(missing.Granter.RefID, missing.Holder.RefID, missing.Definition.ID)) continue;
+                demand = missing;
+                demandEP = ep;
+                break;
+            }
+            if (demand != null) break;
+        }
+        if (demand == null) return false;
+
+        duration = 0;
+        toggleRepeat = false;
+        internalState = AP_Status.refused;
+        SendDemandEvent(demand, demandEP);
+        return true;
+    }
+
+    /// <summary>StoredOptions key of the code-built condom answers of a demand event.</summary>
+    public const string DemandOptionsKey = "demandOptions";
+
+    /// <summary>
+    /// One way to answer a condom demand. immediate: the requester puts it on now with their hands (on themselves or on
+    /// the granter) and the act resumes; otherwise the granter puts it on the requester with the condom command (command
+    /// is injected with its acceptance kept), and the act does not resume by itself. command is null when it cannot be
+    /// done, with the command's own validation tooltip as reason.
+    /// </summary>
+    class CondomAnswer
+    {
+        public string textKey;
+        public string label;
+        public bool immediate;
+        public Character_Trainable wearer;
+        public ActionPackage command;
+        public string reason = "";
+    }
+
+    /// <summary>
+    /// The condom answers for this act: the wearer is the owner of the penis organ the demand's EP chose. Requester wears:
+    /// put it on yourself, or let the granter do it by hand / mouth. Granter wears: put it on them. Validated with the
+    /// condom commands themselves (arms / mouth, exposed penis, an accessible condom).
+    /// </summary>
+    List<CondomAnswer> BuildCondomAnswers(EvaluationPackage ep, Character_Trainable requester, Character_Trainable granter)
+    {
+        var answers = new List<CondomAnswer>();
+        var organ = ep.doerInternal != null && ep.doerInternal.hasTag("penis") ? ep.doerInternal
+            : ep.receiverInternal != null && ep.receiverInternal.hasTag("penis") ? ep.receiverInternal : null;
+        var wearer = organ?.Owner;
+        if (wearer == null) return answers;
+        var self = scr_System_Serializer.current.GetByNameOrID_COM("com_condom_self");
+        var hand = scr_System_Serializer.current.GetByNameOrID_COM("com_condom_onTarget_hand");
+        var mouth = scr_System_Serializer.current.GetByNameOrID_COM("com_condom_onTarget_mouth");
+        if (wearer == requester)
+        {
+            answers.Add(MakeCondomAnswer("event_OnAPRefuse_Unprotected_op_wearSelf", "br_condom_self", self, requester, null, true, wearer));
+            answers.Add(MakeCondomAnswer("event_OnAPRefuse_Unprotected_op_targetHand", "br_condom_partner", hand, granter, requester, false, wearer));
+            answers.Add(MakeCondomAnswer("event_OnAPRefuse_Unprotected_op_targetMouth", "br_condom_partner", mouth, granter, requester, false, wearer));
+        }
+        else if (wearer == granter)
+            answers.Add(MakeCondomAnswer("event_OnAPRefuse_Unprotected_op_wearTarget", "br_condom_target", hand, requester, granter, true, wearer));
+        return answers;
+    }
+
+    CondomAnswer MakeCondomAnswer(string textKey, string label, COM com, Character_Trainable doer, Character_Trainable receiver, bool immediate, Character_Trainable wearer)
+    {
+        var answer = new CondomAnswer { textKey = textKey, label = label, immediate = immediate, wearer = wearer };
+        if (com == null || doer == null) return answer;
+        var receivers = receiver == null ? new List<int>() : new List<int>() { receiver.RefID };
+        var ap = com.MakePackage(this.job, new List<int>() { doer.RefID }, receivers, doer.RefID);
+        if (ap == null || !ap.Validate())
+        {
+            if (ap != null) answer.reason = String.Join("\n", ap.tooltip.Where(x => !string.IsNullOrEmpty(x)));
+            return answer;
+        }
+        answer.command = ap;
+        return answer;
+    }
+
+    /// <summary>Puts the condom on now (immediate answer): taken from the accessible inventory the command found.</summary>
+    static bool ApplyCondomNow(CondomAnswer answer, Character_Trainable requester)
+    {
+        var equipCOM = answer.command?.targetCOM as COM_EquipSingleUseItem;
+        if (equipCOM == null) return false;
+        var source = equipCOM.ItemRequirement.ResolveFaction(answer.command.job, answer.command.doer, answer.command.receiver, answer.command.Master);
+        return SingleUseEquipUtility.TryEquipFrom(source, equipCOM.itemID, answer.wearer, answer.wearer == requester);
+    }
+
+    /// <summary>
+    /// The granter's demand (demand.Definition.demandEventID, e.g. OnAPRefuse_Unprotected): self = the holder
+    /// (requester), evTarget = the granter. Answers:<br/>
+    /// - a condom answer (BuildCondomAnswers): put on now and resume the act / the granter puts it on with the condom
+    ///   command (the act does not resume by itself);<br/>
+    /// - "apCallback" ignores the demand: records the scene push (no demand for this pair and permission again in this
+    ///   scene) and resumes the act;<br/>
+    /// - "failCallback" gives up.<br/>
+    /// A resumed act is a copy with its accepted result kept (acceptOnNextRequest) that is never stopped for a demand
+    /// again (demandAnswered). The player chooses in the event (StoredOptions[DemandOptionsKey] + the event's own options);
+    /// an NPC requester decides here - put it on now if possible, else ignore - and the event starts at that answer's line,
+    /// so the act resumes in this tick. Same message handling as SendRefuseEvent.
+    /// </summary>
+    void SendDemandEvent(MissingPermission demand, EvaluationPackage ep)
+    {
+        var requester = demand.Holder;
+        var granter = demand.Granter;
+        bool playerChooses = requester == scr_System_CampaignManager.current.Player;
+
+        MessageCollect mm = new MessageCollect();
+        this.job.CollectLogs(this, mm);
+        mm.Merge(this.job.m);
+        mm.exp.leftAlignOverride = mm.exp.isPlayerLog;
+        mm.exp.AddRelevantChara(job.actorRefID);
+        mm.exp.AddRelevantChara(job.actorJobComplete);
+        mm.exp.AddRelevantChara(job.actorRemove);
+        this.job.m.Clear();
+        this.LoggedBegin = true;
+
+        // the resumed act: same command, variant and actors, accepted result kept, never stopped for a demand again
+        ActionPackage resume = this.Copy();
+        resume.temporaryM = mm;
+        resume.ReInitializeCOM(this.job, this.targetCOM, this.DoerRefs, this.ReceiverRefs, this.masterRef, true);
+        resume.Reset(true);
+        resume.demandAnswered = true;
+        resume.acceptOnNextRequest = true;
+        bool canResume = resume.Validate();
+        var resumeJob = this.job;
+        int granterRef = granter.RefID, holderRef = requester.RefID;
+        string permissionID = demand.Definition.ID;
+        Action resumeAct = () => { if (canResume) resumeJob.InjectPackage(resume, true); };
+        Action recordPush = () => { if (resumeJob is Job_Sex_Group pushScene) pushScene.RecordPermissionPush(granterRef, holderRef, permissionID); };
+        Action continueUpdate = () => { if (playerChooses) scr_UpdateHandler.current.ToggleCallbackUpdate(); };
+
+        var answers = BuildCondomAnswers(ep, requester, granter);
+        string startLabel = "";
+        if (!playerChooses)
+        {
+            // NPC requester: put it on now if possible, else ignore the demand
+            var wear = answers.Find(x => x.immediate && x.command != null);
+            if (wear != null && ApplyCondomNow(wear, requester)) startLabel = wear.label;
+            else
+            {
+                recordPush();
+                startLabel = canResume ? "br_npc_push" : "br_end";
+            }
+            if (canResume) resumeAct();
+        }
+
+        var ev = new EventInstance(requester, demand.Definition.demandEventID, startLabel);
+        var callbacks = new List<Action>();
+        var failCallbacks = new List<Action>();
+        var eventStart = new List<Action>();
+        ev.FunctionCalls.Add("eventStart", eventStart);
+        ev.FunctionCalls.Add("apCallback", callbacks);
+        ev.FunctionCalls.Add("failCallback", failCallbacks);
+        ev.AppendStrings.Add("apTooltip", new List<string>());
+        ev.AppendStrings.Add("com_variant_name", new List<string>() { this.DisplayName });
+        ev.Targets.Add("evTarget", new List<Character_Trainable>() { granter });
+        eventStart.Add(() => scr_UpdateHandler.current.NotifyJobDescriptions(mm));
+        failCallbacks.Add(() => scr_UpdateHandler.current.NotifyJobDescriptions(mm));
+
+        if (playerChooses)
+        {
+            if (canResume)
+            {
+                callbacks.Add(recordPush);
+                callbacks.Add(resumeAct);
+                callbacks.Add(continueUpdate);
+            }   // else no callback: the ignore option has nothing to resume
+
+            var options = new List<Event.EventEntry.Options>();
+            foreach (var answer in answers)
+            {
+                var a = answer;
+                var option = new Event.EventEntry.Options()
+                {
+                    option = a.textKey,
+                    boundTarget = null,
+                    Results = new List<Event.EventEntry.Executor>()
+                    {
+                        new Event.EventEntry.Executor() { Type = Event.EventEntry.ExecutionType.JumpToLabel, arguments = new List<string>() { "", a.label } }
+                    }
+                };
+                if (a.command == null || (a.immediate && !canResume))
+                {
+                    option.disabledReasonKey = "event_OnAPRefuse_Unprotected_op_unavailable";
+                    option.tooltip = a.reason;
+                }
+                else if (a.immediate)
+                    option.onSelect = _ => { if (ApplyCondomNow(a, requester)) resumeAct(); continueUpdate(); };
+                else
+                    option.onSelect = _ =>
+                    {
+                        // the granter puts it on: the condom command with its acceptance kept; the act is asked again after
+                        a.command.acceptOnNextRequest = true;
+                        a.command.temporaryM = mm;
+                        resumeJob.InjectPackage(a.command, true);
+                        continueUpdate();
+                    };
+                options.Add(option);
+            }
+            ev.StoredOptions[DemandOptionsKey] = options;
+        }
+
+        if (!scr_UpdateHandler.current.EventHandler.StartEvent(ev, false))
+            Debug.LogWarning($"SendDemandEvent: [{demand.Definition.demandEventID}] for {DisplayName} did not start");
+    }
+
     public bool executeSuccessful = true;
     protected void SetVariantID(int id)
     {
         this.validVariant = id;
+        variant = null;
     }
 
     /// <summary>
@@ -3277,7 +3895,16 @@ public abstract class ActionPackage
         {
             copy.IgnoreStatCost = false;
             copy.roomRefOverride = roomRefOverride;
+            copy.activityExecutionRef = activityExecutionRef;
             copy._room = null;
+            copy.AuthoredSexSceneEntry = AuthoredSexSceneEntry;
+            copy.sexEntryBound = sexEntryBound;
+            copy.sexEntrySceneRef = sexEntrySceneRef;
+            copy.sexEntryRoomRef = sexEntryRoomRef;
+            copy.sexEntryVariant = sexEntryVariant;
+            copy.sexEntryDoers = new List<int>(sexEntryDoers);
+            copy.sexEntryReceivers = new List<int>(sexEntryReceivers);
+            copy.sexEntryCommitted = sexEntryCommitted;
         }
         return copy;
     }

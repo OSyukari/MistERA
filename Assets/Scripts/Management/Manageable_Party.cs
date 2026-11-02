@@ -31,6 +31,14 @@ public enum PartyAvailability
 
 public class Manageable_Party : I_IsJobGiver
 {
+    [JsonIgnore] private ActorTagContextCache actorTagContexts;
+
+    internal ActorTagContext GetActorTagContext(MemberType memberType, RecreationActivity activity)
+    {
+        if (actorTagContexts == null) actorTagContexts = new ActorTagContextCache();
+        return actorTagContexts.Get(memberType, null, FactionID, OwnerFaction?.factionTags, localeTags);
+    }
+
     [JsonIgnore]
     public string FactionID
     {
@@ -818,6 +826,7 @@ public class Manageable_Party : I_IsJobGiver
         if (delete)
         {
             DeletingBlocker = true;
+            actorTagContexts?.Clear();
             Debug.Log($"Cleanup: Removing Subfaction {this.FullFactionDisplayName}");
             for (int i = this.ManagedRefs.Count - 1; i >= 0; i--)
             {
@@ -1022,7 +1031,7 @@ public class Manageable_Party : I_IsJobGiver
         else return false;
     }
 
-    public RelationshipType GetRelationshipBetween(int self, int target, out bool isA)
+    public RelationshipType GetRelationshipBetween(int self, int target, out bool isA, bool silent = false)
     {
         isA = false;
         if (!ManagedRefs.Contains(self) || !ManagedRefs.Contains(target))
@@ -1054,7 +1063,7 @@ public class Manageable_Party : I_IsJobGiver
             isA = true;
             return FactionOwnerRoot.Relationship_Prisoner;
         }
-        else return FactionOwnerRoot.GetRelationshipBetween(self, target, out isA);
+        else return FactionOwnerRoot.GetRelationshipBetween(self, target, out isA, silent);
     }
 
     public bool isMember(Character_Trainable c)
@@ -1134,6 +1143,7 @@ public class Manageable_Party : I_IsJobGiver
 
     public void ReEstablishParent(Manageable FactionOwner)
     {
+        actorTagContexts?.Clear();
         this.OwnerFaction = FactionOwner;
         this.Inventory.ReEstablishParent(this);
         InternalUpdate();

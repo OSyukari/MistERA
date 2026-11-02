@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Newtonsoft.Json;
 
 /// <summary>
@@ -49,8 +48,12 @@ public class RecreationInviteSpec
     public RecreationInviteTarget GetRole(string roleID)
     {
         if (string.IsNullOrEmpty(roleID)) return null;
-        var role = TargetValidators?.Find(t => t != null && t.RoleID == roleID);
-        return role ?? InviteeValidators?.Find(t => t != null && t.RoleID == roleID);
+        // plain loops: a capturing Find lambda allocates a closure per call
+        if (TargetValidators != null)
+            foreach (var t in TargetValidators) if (t != null && t.RoleID == roleID) return t;
+        if (InviteeValidators != null)
+            foreach (var t in InviteeValidators) if (t != null && t.RoleID == roleID) return t;
+        return null;
     }
 
     /// <summary>
@@ -61,7 +64,9 @@ public class RecreationInviteSpec
     {
         get
         {
-            var list = (TargetValidators ?? new List<RecreationInviteTarget>()).Where(t => t != null && t.RoleID != "").ToList();
+            var list = new List<RecreationInviteTarget>();
+            if (TargetValidators != null)
+                foreach (var t in TargetValidators) if (t != null && t.RoleID != "") list.Add(t);
             if (list.Count == 0 && visibility == RecreationVisibility.Friends) list.Add(FriendsDefault);
             return list;
         }

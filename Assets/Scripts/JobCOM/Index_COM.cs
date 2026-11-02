@@ -41,8 +41,7 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
                 list[i] = JsonConvert.DeserializeObject<COM_Sex>(serializedParent, UtilityEX.SerializerSettings);
             }
             else if (list[i] is COM_Character_Insert || list[i] is COM_Character_Remove
-                //  || list[i] is COM_TakeMeal
-                // || list[i] is COM_FarmRecipe 
+                // || list[i] is COM_FarmRecipe
                 || list[i].ID.Contains("_noSex", StringComparison.InvariantCultureIgnoreCase))
             {
                 list.RemoveAt(i);
@@ -57,10 +56,6 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
     {
 
         var returnVal = ID_Dictionary.ContainsKey(ID) ? ID_Dictionary[ID] : null;
-        if (returnVal != null && returnVal.comTags.Contains("food_meal") && !(returnVal is COM_TakeMeal))
-        {
-            Debug.LogError($"getting mealcom {returnVal.ID} ismeal? {returnVal is COM_TakeMeal}");
-        }
         return returnVal;
     }
 
@@ -75,6 +70,55 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
             if (!ID_Dictionary.TryAdd(s.ID, s)) Debug.Log($"failed to add Index_COM id [{s.ID}] due to duplicate");
         }
 
+    }
+
+    /// <summary>Authored template every "use [item]" folder is copied from (COM_ItemFolder).</summary>
+    public const string ItemFolderTemplateID = "com_useItem";
+
+    /// <summary>
+    /// Every command naming an item in COM.itemFolder goes under that item's folder (template ID + "_" + item ID),
+    /// created from the template on first use; the NotifyChild pass after this fills the folders' childCOMs.
+    /// </summary>
+    void BuildItemFolders()
+    {
+        var members = new List<COM>();
+        foreach (var com in ID_Dictionary.Values)
+            if (!string.IsNullOrEmpty(com.itemFolder)) members.Add(com);
+        if (members.Count == 0) return;
+
+        var template = GetByID(ItemFolderTemplateID) as COM_ItemFolder;
+        if (template == null)
+        {
+            Debug.LogError($"Index_COM: item folder template [{ItemFolderTemplateID}] missing, {members.Count} commands stay without folder");
+            return;
+        }
+        var serializedTemplate = JsonConvert.SerializeObject(template, UtilityEX.SerializerSettings);
+
+        for (int i = 0; i < members.Count; i++)
+        {
+            var com = members[i];
+            var item = Masterlist_Items.GetByID(com.itemFolder);
+            if (item == null)
+            {
+                // e.g. the item was removed with NSFW content off while its commands stayed - nothing to use
+                Debug.Log($"Index_COM: {com.ID} itemFolder [{com.itemFolder}] is not an item, hiding the command");
+                com.hidden = true;
+                continue;
+            }
+            var folderID = ItemFolderTemplateID + "_" + item.ID;
+            var folder = GetByID(folderID);
+            if (folder == null)
+            {
+                var newFolder = JsonConvert.DeserializeObject<COM_ItemFolder>(serializedTemplate, UtilityEX.SerializerSettings);
+                newFolder.InitializeFolder(item);
+                newFolder.OnAfterDeserialize();
+                list_generated.Add(newFolder);
+                ID_Dictionary.Add(newFolder.ID, newFolder);
+                folder = newFolder;
+            }
+            com.ParentCOM = folder;
+            com.isHiddenChild = true;
+        }
     }
 
     public void LateInitialize()
@@ -115,21 +159,6 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
                     }
                 }
             }
-            /*if (com.ID == "com_furniture_getmeal")
-            {
-                foreach (Item_Base item in Masterlist_Items.Instance.Index.List)
-                {
-                    if (item.Tags.Contains("food_meal"))
-                    {
-                        var serializedParent = JsonConvert.SerializeObject(com, UtilityEX.SerializerSettings);
-                        COM_TakeMeal newCOM1 = JsonConvert.DeserializeObject<COM_TakeMeal>(serializedParent, UtilityEX.SerializerSettings);
-                        newCOM1.Initialize(com, item);
-
-                        if (newCOMs.Find(x => x.ID == newCOM1.ID) == null) newCOMs.Add(newCOM1);
-                        else Debug.LogError($"already contain mealcom with id {newCOM1.ID}");
-                    }
-                }
-            }*/
             else if (com.requirements.requireContaining != null && com.requirements.requireContaining.allowPlanting != null)
             {
                 // make restraint furniture stuff
@@ -219,6 +248,8 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
 
         Debug.Log($"COM late initialize Generated RecipeCOMs count {generatedCOMs.Count}, conflict count {conflictCOMs.Count}\n{String.Join(" | ", generatedCOMs)}\n{String.Join(" | ", conflictCOMs)}");
         //list.AddRange(newCOMs);
+
+        BuildItemFolders();
 
         foreach (var com in ID_Dictionary.Values)
         {

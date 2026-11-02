@@ -101,7 +101,7 @@ public class ExperienceLog
 
     protected SortedDictionary<int, bool> RightAlign = new SortedDictionary<int, bool>();
     protected SortedDictionary<int, Dictionary<string, double>> StatLog = new SortedDictionary<int, Dictionary<string, double>>();
-    protected SortedDictionary<int, Dictionary<string, int>> ExpLog = new SortedDictionary<int, Dictionary<string, int>>();
+    protected SortedDictionary<int, Dictionary<string, float>> ExpLog = new SortedDictionary<int, Dictionary<string, float>>();
     //protected SortedDictionary<int, Dictionary<int, int>> RelationLog = new SortedDictionary<int, Dictionary<int, int>>();
     protected SortedDictionary<int, List<string>> MessageLog = new SortedDictionary<int, List<string>>();
     protected SortedDictionary<int, string> climaxMessage = new SortedDictionary<int, string>();
@@ -162,11 +162,11 @@ public class ExperienceLog
         if (!this.RightAlign.ContainsKey(charaRef)) this.RightAlign.Add(charaRef, charaRef == 0 ? false : true);
     }
 
-    public void AddExperience(int charaRef, string expID, int count)
+    public void AddExperience(int charaRef, string expID, float count)
     {
         AddChara(charaRef);
         // Debug.Log("EVP Explog, adding experiences "+expID);
-        if (!this.ExpLog.ContainsKey(charaRef)) ExpLog.Add(charaRef, new Dictionary<string, int>());
+        if (!this.ExpLog.ContainsKey(charaRef)) ExpLog.Add(charaRef, new Dictionary<string, float>());
 
         if (ExpLog[charaRef].ContainsKey(expID)) ExpLog[charaRef][expID] += count;
         else ExpLog[charaRef].Add(expID, count);
@@ -178,7 +178,7 @@ public class ExperienceLog
     /// <param name="charaRef"></param>
     /// <param name="relID"></param>
     /// <param name="count"></param>
-    public void AddRelations(int sourceCharaRef, int targetCharaRef, RelationshipScoreType relID, int count)
+    public void AddRelations(int sourceCharaRef, int targetCharaRef, RelationshipScoreType relID, float count)
     {
         AddChara(sourceCharaRef);
         AddChara(targetCharaRef);
@@ -229,13 +229,13 @@ public class ExperienceLog
 
         if (!shorten)
         {
-            foreach (KeyValuePair<int, Dictionary<string, int>> kvp in log.ExpLog)
+            foreach (KeyValuePair<int, Dictionary<string, float>> kvp in log.ExpLog)
             {
                 if (!this.ExpLog.ContainsKey(kvp.Key)) ExpLog.Add(kvp.Key, kvp.Value);
                 else
                 {
 
-                    foreach (KeyValuePair<string, int> kkvp in kvp.Value)
+                    foreach (KeyValuePair<string, float> kkvp in kvp.Value)
                     {
                         if (!this.ExpLog[kvp.Key].ContainsKey(kkvp.Key)) this.ExpLog[kvp.Key].Add(kkvp.Key, kkvp.Value);
                         else this.ExpLog[kvp.Key][kkvp.Key] += kkvp.Value;
@@ -328,7 +328,8 @@ public class ExperienceLog
                     if (kvp.Value != 0)
                     {
                         hasvalue = true;
-                        s += "" + LocalizeDictionary.QueryThenParse(kvp.Key) + "" + kvp.Value.ToString("+0.#;-0.#") + " ";
+                        var format = kvp.Key.StartsWith("relationship_", StringComparison.Ordinal) ? "+0.##;-0.##" : "+0.#;-0.#";
+                        s += "" + LocalizeDictionary.QueryThenParse(kvp.Key) + "" + kvp.Value.ToString(format) + " ";
                     }
                 }
             }

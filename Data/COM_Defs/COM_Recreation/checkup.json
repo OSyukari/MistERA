@@ -1,0 +1,56 @@
+{
+    "_doc": "Job_Checkup's command (the checkup activity - Docs/Utnapishtim_Activities/Plan_UtnapishtimActivities.md, Data/Events/Recreation/checkup_events.json). Copied from jp_hospital_csection_operation (Job_CSection): not a furniture command (no 'furniture' tag) - never offered to the ordinary sandbox; the sandbox checkup on a hospital bed is com_furniture_medical_checkup.",
+    "COMs":
+    {
+        "list":
+        [
+            {
+                "ID": "checkup_examination",
+                "_comment": "The doctor as doer, the patient as receiver. Variant 0 = preparing (no receiver yet - a player patient joins it through the join button, alone: joinAlone), variant 1 = examining. doerCount/receiverCount are upper limits; they also make the package joinable (MaxActorCount). Its timeScale is the checkup length; Job_Checkup fires Checkup_Result when it is over. Acceptance: forced by the checkup activity's AcceptanceMods.",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "checkup_examination_displayName",
+                "timeScale": 20,
+                "comTags": [ "medical_checkup_job" ],
+                "requirements": {
+                    "requirement": {
+                        "joinAlone": true,
+                        "req_Receivers": { "requireConscious": false, "requireAction": false }
+                    }
+                },
+                "_comment_descriptions": "Each variant has its own begin/ongoing text (useBaseDescription false): the preparing one has no receiver, so it must not use the examining text's $receiver$.",
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "receiverCount": 0 } },
+                        "displayName": "checkup_examination_displayName",
+                        "useBaseDescription": false,
+                        "description_begin": { "Entries": [ { "keepLooking": true, "texts": [ "checkup_examination_prep_begin_1" ] } ] },
+                        "description_ongoing": { "Entries": [ { "texts": [ "checkup_examination_prep_ongoing_1" ] } ], "keepLooking": false }
+                    },
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "receiverCount": 1 } },
+                        "displayName": "checkup_examination_displayName",
+                        "useBaseDescription": false,
+                        "description_begin": { "Entries": [ { "keepLooking": true, "texts": [ "checkup_examination_begin_1" ] } ] },
+                        "description_ongoing": { "Entries": [ { "texts": [ "checkup_examination_ongoing_1" ] } ], "keepLooking": false }
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 0 },
+                "DifficultyCheck": { "baseD20Check": -1 }
+            }
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "checkup_examination_displayName": "体检",
+                "checkup_examination_prep_begin_1": "$doer.firstname$准备好了检查床，等着开始体检",
+                "checkup_examination_prep_ongoing_1": "$doer.firstname$在检查床旁准备体检",
+                "checkup_examination_begin_1": "$doer.firstname$让$receiver.firstname$在检查床上躺好，开始了体检",
+                "checkup_examination_ongoing_1": "$doer.firstname$正在为$receiver.firstname$做体检"
+            }
+        }
+    }
+}

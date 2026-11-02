@@ -1491,10 +1491,15 @@ public partial class scr_UpdateHandler : MonoBehaviour
             
 
         
+        // halted on a waiting event before any minute ticked (e.g. a dialogue event stopping on its first question):
+        // the resumed pass logs the real elapsed time, so a "0 minutes" line here would only queue up behind the question
+        bool skipElapsedLog = halted && loopCount == 0;
+
         ExecuteEventCallbacks(CallbackResumeUpdate);
         FlushCollectedLogs(true, oneLoop, true);
         //NotifyLogsSingleUpdate(CallbackResumeUpdate);
         scr_System_CampaignManager.current.NotifyEventEnd();
+        if (skipElapsedLog) yield break;
         var player = scr_System_CampaignManager.current.Player;
         var desc = new DescriptionCollector($"<color={Utility.HexCOLOR(scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color)}>{ElapsedTime.Replace("$count$", loopCount.ToString())}</color>", VisibilityLevel.Roomwide);
         desc.tooltip = scr_System_Time.current.getCurrentTime().ToString();
@@ -1521,7 +1526,7 @@ public partial class scr_UpdateHandler : MonoBehaviour
 
     public void AddEventCallback(Action e)
     {
-        eventCallbacks.Add(e);
+        lock (eventCallbacks) eventCallbacks.Add(e);
         //Debug.Log($"AddEventCallback count {eventCallbacks.Count}");
     }
     protected List<Action> eventCallbacks = new List<Action>();
@@ -1537,14 +1542,16 @@ public partial class scr_UpdateHandler : MonoBehaviour
         bool log = scr_System_CentralControl.current.LogPrefs.DLog_Events;
         FlushCollectedLogs(true, true, false);
         var loopCount = 300;
-        while(loopCount > 0 && eventCallbacks.Count > 0)
+        while(loopCount > 0)
         {
-            var vv = eventCallbacks.Count > 0 ? eventCallbacks[0] : null;
-            if (vv != null)
+            Action vv;
+            lock (eventCallbacks)
             {
-                vv.Invoke();
-                eventCallbacks.Remove(vv);
+                if (eventCallbacks.Count == 0) break;
+                vv = eventCallbacks[0];
+                eventCallbacks.RemoveAt(0);
             }
+            vv?.Invoke();
             loopCount--;
         }
         if (loopCount < 1) Debug.LogError("Eventcallback stack exceed 300, forced exit");

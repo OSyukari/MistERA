@@ -1,0 +1,13 @@
+{
+    "Dictionary":{"Entries":{"en-us":{
+        "jp_mall_foodcourt_Opt_Apply":"Apply as a Food Court Waiter",
+        "jp_mall_foodcourt_Opt_Apply_greeting":"\"We're hiring part-time waiters at 1,200 yen an hour, paid daily. The work is counter duty, collecting trays and tidying tables. Day and evening shifts are available.\"",
+        "jp_mall_foodcourt_Opt_Apply_question":"\"Who would like the job?\"",
+        "jp_mall_foodcourt_Opt_Apply_done":"\"You're registered for the 10:00-16:00 day shift. You can switch to evenings in Management's Jobs tab.\"",
+        "jp_mall_foodcourt_Opt_Quit":"Resign as a Waiter",
+        "jp_mall_foodcourt_Opt_Quit_question":"\"Who would like to resign?\"",
+        "jp_mall_foodcourt_Opt_Quit_done":"\"All taken care of. Thank you for your work.\"",
+        "jp_mall_foodcourt_Opt_cancel":"Never Mind",
+        "jp_mall_foodcourt_Opt_cancelLine":"\"Come back when you've decided.\""
+    }}}
+}

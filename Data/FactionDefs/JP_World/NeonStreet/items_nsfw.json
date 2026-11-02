@@ -1,0 +1,80 @@
+{
+    "_comment": "Local retail stock. Clothing uses the existing equippable/wardrobe system. The novelty vibrator is a retail prop ONLY: no toy-use mechanics are claimed or added in WP4/WP5.",
+    "Items": {
+        "list": [
+            {
+                "id": "clothing_neon_costume_dress",
+                "Tags": [
+                    "industrial",
+                    "nsfw"
+                ],
+                "value": 6500,
+                "promptTags": [
+                    "costume dress"
+                ],
+                "itemComps_Template": [
+                    {
+                        "compType": "ItemComponent_Equippable",
+                        "comp_Equippable": {
+                            "equipSlot": [
+                                "Torso",
+                                "Lower"
+                            ],
+                            "equipLayer": "Inner",
+                            "coverSlot": [
+                                "Torso",
+                                "Lower"
+                            ],
+                            "revealing": "ShapeReveal"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "clothing_neon_harness",
+                "Tags": [
+                    "industrial",
+                    "nsfw"
+                ],
+                "value": 4800,
+                "promptTags": [
+                    "leather harness"
+                ],
+                "itemComps_Template": [
+                    {
+                        "compType": "ItemComponent_Equippable",
+                        "comp_Equippable": {
+                            "equipSlot": [
+                                "Torso"
+                            ],
+                            "equipLayer": "Outer",
+                            "coverSlot": [],
+                            "revealing": "Erotic"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "item_neon_novelty_vibrator",
+                "Tags": [
+                    "industrial",
+                    "nsfw"
+                ],
+                "value": 3200,
+                "itemComps_Template": []
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "clothing_neon_costume_dress": "角色扮演连衣裙",
+                "clothing_neon_costume_dress_tooltip": "店售角色扮演服饰，可通过衣柜穿戴。",
+                "clothing_neon_harness": "皮革束带装",
+                "clothing_neon_harness_tooltip": "装饰性皮革束带，可通过衣柜穿戴，不附带拘束或权限效果。",
+                "item_neon_novelty_vibrator": "包装好的按摩棒",
+                "item_neon_novelty_vibrator_tooltip": "成人用品店的零售商品。目前仅为物品，尚无使用指令。"
+            }
+        }
+    }
+}

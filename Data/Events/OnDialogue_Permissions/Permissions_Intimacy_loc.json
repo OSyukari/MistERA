@@ -1,0 +1,33 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for Permissions_Intimacy.json (also holds the shared Permission_Request_* text)."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "Permission_Request_confirm": "Ask",
+                "Permission_Request_cancel": "Never mind",
+                "Permission_Request_reply": "$kojo_reply$",
+                "Permission_Request_refused": "$person.name$ did not agree to your request.",
+
+                "permission_intimacy_low": "Ask for: %%permission_intimacy_low_displayName%%",
+                "permission_intimacy_low_question_plain": "Ask $person.name$ for permission: \"%%permission_intimacy_low_displayName%%\"?",
+                "permission_intimacy_low_question": "$kojo_ask$\n\n%%permission_intimacy_low_question_plain%%",
+                "permission_intimacy_low_granted": "$person.name$ gave you permission: %%permission_intimacy_low_displayName%%$permission_grant_type$.",
+                "permission_intimacy_low_granted_temporary": "$person.name$ gave you permission: %%permission_intimacy_low_displayName%%. Your relationship does not meet its prerequisites, so it only lasts for today.",
+
+                "permission_intimacy_medium": "Ask for: %%permission_intimacy_medium_displayName%%",
+                "permission_intimacy_medium_question_plain": "Ask $person.name$ for permission: \"%%permission_intimacy_medium_displayName%%\"?",
+                "permission_intimacy_medium_question": "$kojo_ask$\n\n%%permission_intimacy_medium_question_plain%%",
+                "permission_intimacy_medium_granted": "$person.name$ gave you permission: %%permission_intimacy_medium_displayName%%$permission_grant_type$.",
+                "permission_intimacy_medium_granted_temporary": "$person.name$ gave you permission: %%permission_intimacy_medium_displayName%%. Your relationship does not meet its prerequisites, so it only lasts for today.",
+
+                "permission_intimacy_high": "Ask for: %%permission_intimacy_high_displayName%%",
+                "permission_intimacy_high_question_plain": "Ask $person.name$ for permission: \"%%permission_intimacy_high_displayName%%\"?",
+                "permission_intimacy_high_question": "$kojo_ask$\n\n%%permission_intimacy_high_question_plain%%",
+                "permission_intimacy_high_granted": "$person.name$ gave you permission: %%permission_intimacy_high_displayName%%$permission_grant_type$.",
+                "permission_intimacy_high_granted_temporary": "$person.name$ gave you permission: %%permission_intimacy_high_displayName%%. Your relationship does not meet its prerequisites, so it only lasts for today."
+            }
+        }
+    }
+}

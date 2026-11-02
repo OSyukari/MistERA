@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 /// <summary>
@@ -9,14 +8,18 @@ using UnityEngine;
 /// it solo (TryHostSession) - Private / Friends at the time most of the invitees are free, pushed to their inboxes;
 /// Faction / World at the host's own time, posted to the faction's / world's list. Fixed offers are hostless World
 /// sessions posted by the offer board (PostOfferSession). The host books nothing yet.
-/// <br/>Steps 2-3 (SessionPass - each character's second pass of the hour, LateHourConfirm, after every character's hourly tick and day update): collect every session visible to them (inbox, their
+/// <br/>Steps 2-3 (SessionPass - each character's answer in the hour's late passes, OnLatePass: LatePass_Respond, then
+/// LatePass_RespondExtended for extended invitations, after every character's hourly tick and day update): collect every session visible to them (inbox, their
 /// factions' and worlds' lists), ask AcceptSession the first time (no = Refused, final), rank (CompareBookingPreference,
 /// then a fixed order) and confirm in that order (TryConfirm: time, conflicts - a flexible visit in the way moves, a
 /// lower-ranked session gives way - extending the invitation, then the member booking). The ranking is kept and re-run
 /// when the character's schedule changes (Character_Factions.RecreationDirty) or new sessions become visible.
-/// <br/>Each session checks itself once an hour, run lazily by its members' own ticks (UpdateSession): attendance,
-/// required extended invitations, validity - cancelled if invalid at T-1, T or T+1. Members follow by pull
-/// (SyncSessionBookings); freed hours are refilled with flexible visits (RefillSlot).
+/// <br/>Step 4 (LatePass_Resolve): each unresolved session confirms or cancels itself and announces it (ResolveSession;
+/// a pending player invitation resolves it when answered; confirmed, it wakes its participants in time). From then on
+/// it checks itself hourly (RecreationGroupRegistry.OnHourUpdate -> HourlySessionCheck): attendance (arrival comes from
+/// its Job_Activity's gathering), required extended invitations, validity - cancelled if invalid at T-1, T or T+1. The
+/// session pushes its outcome: a cancellation purges every member's booking, a failed member's booking is cancelled by
+/// it (no refill).
 /// <br/>The player never ranks: they get the Recreation_Invite event whenever someone picks them as an invitee.
 /// </summary>
 public static partial class RecreationUtility
@@ -44,6 +47,12 @@ public static partial class RecreationUtility
     {
         if (string.IsNullOrEmpty(specRef)) return RecreationInviteSpec.Default;
         if (specRef.StartsWith("offer:")) return RecreationBoard.FindDef(specRef.Substring(6))?.invite ?? RecreationInviteSpec.Default;
+        if (specRef.StartsWith("house:"))
+        {
+            var rest = specRef.Substring(6);
+            int split = rest.LastIndexOf(':');
+            if (split > 0) return HouseActivity(rest.Substring(0, split), rest.Substring(split + 1))?.invite ?? RecreationInviteSpec.Default;
+        }
         if (specRef.StartsWith("type:"))
         {
             var rest = specRef.Substring(5);
@@ -54,12 +63,18 @@ public static partial class RecreationUtility
         return RecreationInviteSpec.Default;
     }
 
-    /// <summary>specRef of f's booking b: its offer def, or the activity of the MemberType it runs under ("" = the default spec).</summary>
+    /// <summary>
+    /// specRef of f's booking b: its offer def, the activity of the MemberType it runs under, else the venue's house
+    /// activity ("house:factionID:activityID"); "" = the default spec.
+    /// </summary>
     static string SpecRefFor(Character_Factions f, RecreationBooking b)
     {
         if (b.source == RecreationBookingSource.Offer || RecreationBoard.FindDef(b.sourceKey) != null) return "offer:" + b.sourceKey;
         if (string.IsNullOrEmpty(b.activityID)) return "";
         string typeID = ActingTypeID(f, b);
+        if (!string.IsNullOrEmpty(typeID) && FactionUtility.TryGetMemberType(typeID, out var type) && type?.recreation?.GetActivity(b.activityID) != null)
+            return "type:" + typeID + ":" + b.activityID;
+        if (HouseActivity(b.factionID, b.activityID) != null) return "house:" + b.factionID + ":" + b.activityID;
         return string.IsNullOrEmpty(typeID) ? "" : "type:" + typeID + ":" + b.activityID;
     }
 
@@ -148,7 +163,16 @@ public static partial class RecreationUtility
                         typeID = s.memberTypeID;
                         return true;
                     }
-                    return false;
+                    {
+                        // a house / provided activity seen from outside that home (a hired maid, a friend - user
+                        // 2026-11-01): only its home members search for it (ActivitySources), anyone may be invited to it
+                        var venue = scr_System_CampaignManager.current.FindFactionByID(factionID);
+                        if (venue == null || f.HomeFactions.Contains(venue)) return false;   // a home's own scope was read above
+                        var house = OfferedHouseActivity(venue, activityID);
+                        if (house == null || !ActivityAllows(f, day, sourceKey, house, venue, session)) return false;
+                        typeID = "";
+                        return true;
+                    }
                 case RecreationBookingSource.Offer:
                     return OfferAllows(f, day, RecreationBoard.FindDef(sourceKey), session);
                 default:
@@ -171,7 +195,9 @@ public static partial class RecreationUtility
         ok = spec.SelfValidator == null || EventUtility.isCharaValid(spec.SelfValidator, ConditionContext(host), host);
         if (ok && (spec.visibility == RecreationVisibility.Private || spec.visibility == RecreationVisibility.Friends))
         {
-            CollectTargets(spec.InviteValidators.Where(t => t.required), host, null, new HashSet<int>() { host.RefID }, check, out bool met);
+            var required = new List<RecreationInviteTarget>();
+            foreach (var t in spec.InviteValidators) if (t.required) required.Add(t);
+            CollectTargets(required, host, null, new HashSet<int>() { host.RefID }, check, out bool met);
             ok = met;
         }
         ctx.canHost[(spec, check.Key)] = ok;
@@ -184,8 +210,8 @@ public static partial class RecreationUtility
     /// unable to take bookings, or failing the booking's check (BookingCheck); a role's maxParticipants is respected.
     /// requiredMet: every required role found its RequiredCount.
     /// </summary>
-    static List<InviteTarget> CollectTargets(IEnumerable<RecreationInviteTarget> validators, Character_Trainable self, RecreationGroup session,
-        HashSet<int> taken, BookingCheck check, out bool requiredMet)
+    static List<InviteTarget> CollectTargets(List<RecreationInviteTarget> validators, Character_Trainable self, RecreationGroup session,
+        HashSet<int> taken, BookingCheck check, out bool requiredMet, Character_Trainable fixedInvitee = null)
     {
         requiredMet = true;
         var result = new List<InviteTarget>();
@@ -194,7 +220,16 @@ public static partial class RecreationUtility
         {
             if (v == null || v.RoleID == "") continue;
             int found = 0;
-            if (EventUtility.FindTargets(v, ev, self, ref ev.Targets) && ev.Targets.TryGetValue(v.RoleID, out var list))
+            // a named invitee (SetRecreationBooking inviteKey - e.g. the doctor the player booked with): the first role whose
+            // conditions they pass takes them, and only them - no search for that role
+            if (fixedInvitee != null && !taken.Contains(fixedInvitee.RefID) && PassesRole(v, ev, fixedInvitee)
+                && CanBeInvited(fixedInvitee, self, session, taken, check))
+            {
+                taken.Add(fixedInvitee.RefID);
+                result.Add(new InviteTarget() { chara = fixedInvitee, role = v });
+                found = 1;
+            }
+            else if (EventUtility.FindTargets(v, ev, self, ref ev.Targets) && ev.Targets.TryGetValue(v.RoleID, out var list))
             {
                 foreach (var c in list)
                 {
@@ -208,6 +243,14 @@ public static partial class RecreationUtility
             if (v.required && found < v.RequiredCount) requiredMet = false;
         }
         return result;
+    }
+
+    /// <summary>c passes role validator v's chara_conditions (ev = the inviter's ConditionContext) - as PickScopeRole.</summary>
+    static bool PassesRole(RecreationInviteTarget v, EventInstance ev, Character_Trainable c)
+    {
+        if (v.chara_conditions == null) return true;
+        foreach (var cond in v.chara_conditions) if (!EventUtility.isValid(cond, ev, c)) return false;
+        return true;
     }
 
     static bool CanBeInvited(Character_Trainable c, Character_Trainable inviter, RecreationGroup session, HashSet<int> taken, BookingCheck check)
@@ -267,13 +310,16 @@ public static partial class RecreationUtility
             var def = RecreationBoard.FindDef(b.sourceKey);
             return def != null && def.mode == RecreationOfferMode.Flexible ? def.AsActivity : null;
         }
-        return (b.MemberType ?? b.Faction?.GetMemberType(c))?.recreation?.GetActivity(b.activityID);
+        return (b.MemberType ?? b.Faction?.GetMemberType(c))?.recreation?.GetActivity(b.activityID) ?? HouseActivity(b.factionID, b.activityID);
     }
 
     /// <summary>The world (Manageable.ResolveWorldID - its world faction's ID) faction belongs to, "" if none.</summary>
     static string WorldIDOf(Manageable faction)
     {
-        return faction == null ? "" : Manageable.ResolveWorldID(faction);
+        if (faction == null) return "";
+        // ResolveWorldID's own first answer, without the visited set it allocates for the connection walk
+        if (faction.worldConnection != null && faction.worldConnection.Count > 0) return faction.worldConnection[0];
+        return Manageable.ResolveWorldID(faction);
     }
 
     // ---------------- step 1: hosting ---------------- //
@@ -296,7 +342,7 @@ public static partial class RecreationUtility
     }
 
     /// <summary>
-    /// Adds the bookings f's planning picked (PlanDay / RefillSlot): each is booked solo (AcceptBooking) or, when f hosts
+    /// Adds the bookings f's planning picked (PlanDay): each is booked solo (AcceptBooking) or, when f hosts
     /// it (DecideHosting), posted as a session instead (TryHostSession - after the solo ones, so its time is picked
     /// around them). A session that can't be posted falls back to the solo visit, unless its spec is mandatory. True if
     /// any solo booking was added (the caller refreshes the schedule).
@@ -308,6 +354,7 @@ public static partial class RecreationUtility
         foreach (var b in bookings)
         {
             if (b == null) continue;
+            if (TryJoinPlannedBooking(f, b)) { added = true; continue; }
             var spec = ResolveSpec(SpecRefFor(f, b));
             switch (DecideHosting(f, b, spec, out var vis))
             {
@@ -326,8 +373,10 @@ public static partial class RecreationUtility
 
     static bool AddSolo(Character_Factions f, RecreationBooking b)
     {
+        if (!CanPlaceActivity(b.GetActivity(f), b.Faction, b.AbsStart, b.AbsEnd, f.Owner, exceptBooking: b)) return false;
         if (!f.Owner.AcceptBooking(b, null) || !f.AddBooking(b, false)) return false;
-        RecordBooked(f, b);
+        // a solo activity needs no confirmation: complete once booked
+        AnnounceSolo(b, ActivityNoticeKind.Confirmed);
         return true;
     }
 
@@ -336,9 +385,11 @@ public static partial class RecreationUtility
     /// roles filled, at least one invitee) at the time most of them are free (PickSessionTime - unless hostBooked);
     /// Faction / World are posted to their scope at b's own time. AcceptHosting is asked (not for an event's booking -
     /// hostBooked: b is already f's booking, it becomes f's member booking and f attends). The host otherwise books
-    /// nothing yet: they rank their own session with everything else. False = not posted.
+    /// nothing yet: they rank their own session with everything else. fixedInvitee (Private / Friends): fills the first
+    /// role they qualify for instead of that role's search (CollectTargets). False = not posted.
     /// </summary>
-    static bool TryHostSession(Character_Factions f, RecreationBooking b, RecreationInviteSpec spec, RecreationVisibility vis, bool hostBooked)
+    static bool TryHostSession(Character_Factions f, RecreationBooking b, RecreationInviteSpec spec, RecreationVisibility vis, bool hostBooked,
+        Character_Trainable fixedInvitee = null)
     {
         var host = f.Owner;
         var g = new RecreationGroup()
@@ -351,19 +402,21 @@ public static partial class RecreationUtility
             source = b.source,
             sourceKey = b.sourceKey,
             activityID = b.activityID,
-            memberTypeID = ActingTypeID(f, b),
+            // a house activity has no type of its own: members act under their own MemberType (never the host's home type)
+            memberTypeID = IsHouseBooking(f, b) ? "" : ActingTypeID(f, b),
             workModule = b.workModule,
             forbidCancel = b.forbidCancel,
             sourceEventID = b.sourceEventID,
             specRef = SpecRefFor(f, b),
             minParticipants = Math.Max(1, spec.minParticipants),
             visibility = vis,
+            mediaItemID = b.mediaItemID ?? "",
         };
 
         var targets = new List<InviteTarget>();
         if (vis == RecreationVisibility.Private || vis == RecreationVisibility.Friends)
         {
-            targets = CollectTargets(spec.InviteValidators, host, g, new HashSet<int>() { host.RefID }, BookingCheck.For(b), out bool requiredMet);
+            targets = CollectTargets(spec.InviteValidators, host, g, new HashSet<int>() { host.RefID }, BookingCheck.For(b), out bool requiredMet, fixedInvitee);
             if (!requiredMet || targets.Count == 0) return false;
             if (!hostBooked)
             {
@@ -382,10 +435,13 @@ public static partial class RecreationUtility
         if (!hostBooked)
         {
             var ctx = new RecreationInviteContext() { session = g, roleID = HostRoleID, origin = RecreationMemberOrigin.Host };
-            ctx.invited.AddRange(targets.Select(t => t.chara));
+            foreach (var t in targets) ctx.invited.Add(t.chara);
             if (!host.AcceptHosting(g, ctx)) return false;
         }
 
+        if (!HasReservationSpace(b.Faction, b.GetActivity(f), g.AbsStart, g.AbsEnd, exceptBooking: hostBooked ? b : null)) return false;
+        if (!CanPlaceActivity(b.GetActivity(f), b.Faction, g.AbsStart, g.AbsEnd, host, g, b)) return false;
+        g.setupDepth++;
         Sessions.Add(g);
         g.members.Add(new RecreationGroupMember()
         {
@@ -400,10 +456,15 @@ public static partial class RecreationUtility
             b.isSessionBooking = true;
             b.Session = g;
             b.roleID = HostRoleID;
+            ForgetActivityBooking(b);
         }
         f.PushSession(g);
         foreach (var t in targets) InviteMember(g, t.chara, t.role.RoleID, RecreationMemberOrigin.Scope, -1);
-        if (hostBooked) RefreshValidity(g);
+        g.setupDepth--;
+        RememberActivityRoom(g, GetPlannedActivityRoom(g));
+        PublishSessionInvitations(g);
+        RefreshValidity(g);
+        NotifyActivityChanged(g);
         return true;
     }
 
@@ -420,21 +481,26 @@ public static partial class RecreationUtility
         var activity = ActivityOf(f.Owner, b);
         var hostCtx = new DayContext(f, b.day);
         int nowAbs = NowAbs();
-        var inviteeCtx = targets.Where(t => t.chara?.FactionManager != null)
-            .Select(t => new DayContext(t.chara.FactionManager, b.day, x => !IsMovableVisit(x, nowAbs))).ToList();
+        var inviteeCtx = new List<DayContext>();
+        foreach (var t in targets)
+            if (t.chara?.FactionManager != null) inviteeCtx.Add(new DayContext(t.chara.FactionManager, b.day, x => !IsMovableVisit(x, nowAbs)));
 
-        var lengths = activity != null ? LengthsToTry(activity) : new List<int>();
+        // a media visit keeps its length (its item's runtime)
+        var lengths = activity != null && activity.requireMedia == null ? LengthsToTry(activity) : new List<int>();
         lengths.Remove(b.hours);
         lengths.Insert(0, b.hours);
         var none = new List<Span>();
+        string media = MediaItemOf(b);
 
         int bestCount = 0, bestDist = int.MaxValue;
         for (int s = hostCtx.dayStart; s < hostCtx.dayEnd; s++)
         {
             foreach (int l in lengths)
             {
-                if (!hostCtx.CanPlace(s, s + l, activity, none, b.factionID)) continue;
-                int count = inviteeCtx.Count(ic => ic.CanPlace(s, s + l, null, none, b.factionID));
+                // (a media visit doesn't count its own reserved copy against the new time)
+                if (!hostCtx.CanPlace(s, s + l, activity, none, b.factionID, exceptBooking: media != "" ? b : null, mediaItemID: media)) continue;
+                int count = 0;
+                foreach (var ic in inviteeCtx) if (ic.CanPlace(s, s + l, null, none, b.factionID)) count++;
                 int dist = Math.Abs(s - b.AbsStart);
                 if (count > bestCount || (count == bestCount && count > 0 && dist < bestDist))
                 {
@@ -476,6 +542,7 @@ public static partial class RecreationUtility
     /// </summary>
     public static void PostOfferSession(RecreationOfferDef def, RecreationOffer offer)
     {
+        if (IsOvernight(def.AsActivity)) return;
         var venue = scr_System_CampaignManager.current.FindFactionByID(def.factionID);
         string world = WorldIDOf(venue);
         if (string.IsNullOrEmpty(world))
@@ -485,7 +552,7 @@ public static partial class RecreationUtility
         }
         if (offer.Hours < 1) return;
         var spec = def.invite ?? RecreationInviteSpec.Default;
-        Sessions.Add(new RecreationGroup()
+        var session = new RecreationGroup()
         {
             hostRef = -1,
             day = offer.day,
@@ -501,7 +568,10 @@ public static partial class RecreationUtility
             minParticipants = Math.Max(1, spec.minParticipants),
             visibility = RecreationVisibility.World,
             scopeFactionID = world,
-        });
+        };
+        if (!CanPlaceActivity(def.AsActivity, venue, session.AbsStart, session.AbsEnd, exceptSession: session)) return;
+        Sessions.Add(session);
+        NotifyActivityChanged(session);
     }
 
     /// <summary>Adds c to g (Invited) and pushes it to c's inbox; the player gets the invitation event right away.</summary>
@@ -510,7 +580,14 @@ public static partial class RecreationUtility
         var m = new RecreationGroupMember() { charaRef = c.RefID, roleID = roleID, origin = origin, extendedByRef = extendedByRef };
         g.members.Add(m);
         c.FactionManager.PushSession(g);
-        if (c == Player) StartInviteEvent(g, m, c);
+    }
+
+    static void PublishSessionInvitations(RecreationGroup g)
+    {
+        if (g.setupDepth > 0) return;
+        foreach (var member in g.members.ToArray())
+            if (!member.considered && member.state == RecreationMemberState.Invited && member.Chara == Player)
+                StartInviteEvent(g, member, Player);
     }
 
     // ---------------- steps 2-3: rank and confirm ---------------- //
@@ -519,34 +596,62 @@ public static partial class RecreationUtility
     static List<string> VisibleListIDs(Character_Factions f)
     {
         var ids = new List<string>();
-        void Add(Manageable faction)
-        {
-            if (faction == null) return;
-            if (!ids.Contains(faction.ID)) ids.Add(faction.ID);
-            string world = WorldIDOf(faction);
-            if (!string.IsNullOrEmpty(world) && !ids.Contains(world)) ids.Add(world);
-        }
-        foreach (var x in f.HomeFactions) Add(x);
-        foreach (var x in f.WorkFactions) Add(x);
-        foreach (var x in f.RecreationFactions) Add(x);
+        CollectVisibleListIDs(f, ids);
         return ids;
     }
 
+    /// <summary>VisibleListIDs into ids (appended, deduplicated) - for a caller with a reused list.</summary>
+    static void CollectVisibleListIDs(Character_Factions f, List<string> ids)
+    {
+        foreach (var x in f.HomeFactions) AddVisibleListID(ids, x);
+        foreach (var x in f.WorkFactions) AddVisibleListID(ids, x);
+        foreach (var x in f.RecreationFactions) AddVisibleListID(ids, x);
+    }
+
+    static void AddVisibleListID(List<string> ids, Manageable faction)
+    {
+        if (faction == null) return;
+        if (!ids.Contains(faction.ID)) ids.Add(faction.ID);
+        string world = WorldIDOf(faction);
+        if (!string.IsNullOrEmpty(world) && !ids.Contains(world)) ids.Add(world);
+    }
+
+    /// <summary>VisibleListIDs(f) contains listID - without building the list.</summary>
+    static bool SeesList(Character_Factions f, string listID)
+    {
+        if (string.IsNullOrEmpty(listID)) return false;
+        foreach (var x in f.HomeFactions) if (x != null && (x.ID == listID || WorldIDOf(x) == listID)) return true;
+        foreach (var x in f.WorkFactions) if (x != null && (x.ID == listID || WorldIDOf(x) == listID)) return true;
+        foreach (var x in f.RecreationFactions) if (x != null && (x.ID == listID || WorldIDOf(x) == listID)) return true;
+        return false;
+    }
+
+    static readonly Stack<List<string>> listIDPool = new Stack<List<string>>();
+
     /// <summary>
-    /// Steps 2-3 for f (LateHourConfirm - NPCs that plan only): when f's schedule changed (RecreationDirty) or new sessions
+    /// Steps 2-3 for a targeted refresh (NPCs that plan only): when f's schedule changed (RecreationDirty) or new sessions
     /// became visible, re-rank (RankSessions) and confirm in order (ConfirmSessions). True if a booking changed (the
     /// schedule is already refreshed).
     /// </summary>
     static bool SessionPass(Character_Factions f)
     {
-        var ids = VisibleListIDs(f);
-        if (!f.RecreationDirty && !f.SessionListsChanged(ids)) return false;
-        RankSessions(f, ids);
-        bool changed = ConfirmSessions(f);
-        f.MarkSessionListsSeen(ids);
-        if (changed) f.RefreshSchedule();
-        f.RecreationDirty = false;   // after our own refresh, which sets it
-        return changed;
+        var ids = listIDPool.Count > 0 ? listIDPool.Pop() : new List<string>();
+        try
+        {
+            CollectVisibleListIDs(f, ids);
+            if (!f.RecreationDirty && !f.SessionListsChanged(ids)) return false;
+            RankSessions(f, ids);
+            bool changed = ConfirmSessions(f);
+            f.MarkSessionListsSeen(ids);
+            if (changed) f.RefreshSchedule();
+            f.RecreationDirty = false;   // after our own refresh, which sets it
+            return changed;
+        }
+        finally
+        {
+            ids.Clear();
+            listIDPool.Push(ids);
+        }
     }
 
     /// <summary>
@@ -565,8 +670,14 @@ public static partial class RecreationUtility
         {
             if (g != null && g.IsOpen && g.AbsStart > nowAbs && !candidates.Contains(g)) candidates.Add(g);
         }
-        foreach (var g in f.SessionInbox.ToList()) Consider(g);
-        foreach (var id in listIDs) foreach (var g in Sessions.PostedTo(id)) Consider(g);
+        // Consider only reads: indexed, no snapshot (and no boxed enumerators)
+        var inbox = f.SessionInbox;
+        for (int i = 0; i < inbox.Count; i++) Consider(inbox[i]);
+        foreach (var id in listIDs)
+        {
+            var posted = Sessions.PostedTo(id);
+            for (int i = 0; i < posted.Count; i++) Consider(posted[i]);
+        }
 
         var ranking = new List<RecreationGroup>();
         foreach (var g in candidates)
@@ -593,6 +704,7 @@ public static partial class RecreationUtility
                     m.reason = "refused";
                     f.DropSession(g);
                     InviterOf(g, m)?.FactionManager?.AddInviteRefusal(c.RefID);
+                    NotifyActivityChanged(g);
                     continue;
                 }
             }
@@ -605,15 +717,18 @@ public static partial class RecreationUtility
     /// <summary>A Faction / World participant's role: the first of the spec's roles (with room left) whose chara_conditions c passes (host = self; hostless: c); GuestRoleID when the spec has none; null = not eligible.</summary>
     static string PickScopeRole(RecreationGroup g, RecreationInviteSpec spec, Character_Trainable c)
     {
-        var roles = (spec.TargetValidators ?? new List<RecreationInviteTarget>()).Where(v => v != null && v.RoleID != "").ToList();
-        if (roles.Count == 0) return GuestRoleID;
-        var ev = ConditionContext(g.Host ?? c);
-        foreach (var v in roles)
-        {
-            if (v.maxParticipants >= 0 && g.ActiveCount(v.RoleID) >= v.maxParticipants) continue;
-            if (v.chara_conditions == null || v.chara_conditions.All(cond => EventUtility.isValid(cond, ev, c))) return v.RoleID;
-        }
-        return null;
+        bool anyRole = false;
+        EventInstance ev = null;
+        if (spec.TargetValidators != null)
+            foreach (var v in spec.TargetValidators)
+            {
+                if (v == null || v.RoleID == "") continue;
+                anyRole = true;
+                if (v.maxParticipants >= 0 && g.ActiveCount(v.RoleID) >= v.maxParticipants) continue;
+                if (ev == null) ev = ConditionContext(g.Host ?? c);
+                if (PassesRole(v, ev, c)) return v.RoleID;
+            }
+        return anyRole ? null : GuestRoleID;
     }
 
     /// <summary>
@@ -659,16 +774,73 @@ public static partial class RecreationUtility
         return changed;
     }
 
+    /// <summary>
+    /// An event-hosted session (SetEventBookingInner): each NPC invitee answers now instead of in a later hour's pass
+    /// (RankSessions only sees sessions not yet started - a session for the next hour would be seen at its own start
+    /// and skipped). Their first look as in RankSessions (AcceptSession; no = Refused, as there), then TryConfirm -
+    /// ranked last (rank int.MaxValue: it never displaces another session of theirs). A booked invitee's schedule is
+    /// refreshed; the invitees an accepting one extended to answer in a second round. The player answers through their
+    /// invitation event as usual. Then the session resolves itself (ResolveSession - on the player's answer if they are
+    /// invited), instead of in the hour's late passes.
+    /// </summary>
+    static void ConfirmInvitedNow(RecreationGroup g)
+    {
+        if (g == null) return;
+        g.setupDepth++;
+        try
+        {
+        var invited = new List<RecreationGroupMember>();
+        // a second round answers the invitees an accepting member extended to (extensions are one step only)
+        for (int round = 0; round < 2; round++)
+        {
+            invited.Clear();
+            foreach (var m in g.members)
+            {
+                if (m == null || m.origin == RecreationMemberOrigin.Host || m.state != RecreationMemberState.Invited || m.considered) continue;
+                if (m.Chara == Player) continue;
+                invited.Add(m);
+            }
+            if (invited.Count == 0) break;
+            foreach (var m in invited)
+            {
+                var c = scr_System_CampaignManager.current.FindInstanceByID(m.charaRef);
+                var f = c?.FactionManager;
+                if (f == null || !g.IsOpen) continue;
+                m.considered = true;
+                if (!c.AcceptSession(g, MakeContext(g, c)))
+                {
+                    m.state = RecreationMemberState.Refused;
+                    m.reason = "refused";
+                    f.DropSession(g);
+                    InviterOf(g, m)?.FactionManager?.AddInviteRefusal(c.RefID);
+                    continue;
+                }
+                if (TryConfirm(f, g, m, int.MaxValue, false)) f.RefreshSchedule();
+            }
+        }
+        }
+        finally
+        {
+            g.setupDepth--;
+            PublishSessionInvitations(g);
+            // everyone asked has answered: the session resolves now (or on the player's answer, if they are invited)
+            ResolveSession(g);
+            RefreshValidity(g);
+            NotifyActivityChanged(g);
+        }
+    }
+
     /// <summary>f's member booking of session g, or null.</summary>
     static RecreationBooking FindSessionBooking(Character_Factions f, RecreationGroup g)
     {
-        foreach (var b in f.RecreationBookings) if (b != null && b.isSessionBooking && b.Session == g) return b;
+        var bookings = f.RecreationBookings;
+        for (int i = 0; i < bookings.Count; i++) if (bookings[i] != null && bookings[i].isSessionBooking && bookings[i].Session == g) return bookings[i];
         return null;
     }
 
     /// <summary>
     /// f takes part in g (member m, rankIndex in f's ranking): the booking check (MakeMemberBooking) and the time
-    /// (HasTimeFor - work, sleep floor, daily cap; not asked of the player), then each clashing booking
+    /// (HasTimeFor - work, daily cap, not sleep: an invitee may give up sleep; not asked of the player), then each clashing booking
     /// (FindBookingConflicts): a movable flexible visit moves unless f prefers it (CompareBookingPreference); a protected
     /// one (locked, forbidCancel, under way) wins; a session ranked lower gives way; anything else wins. Then the
     /// invitation is extended (PlanExtension - a failed inviteRequired one keeps f out) and the member booking added.
@@ -677,8 +849,29 @@ public static partial class RecreationUtility
     /// </summary>
     static bool TryConfirm(Character_Factions f, RecreationGroup g, RecreationGroupMember m, int rankIndex, bool forced)
     {
+        var previousState = m.state;
+        string previousReason = m.reason, previousFailure = m.failedCheck;
+        g.setupDepth++;
+        bool booked = false;
+        try { return booked = TryConfirmInner(f, g, m, rankIndex, forced); }
+        finally
+        {
+            g.setupDepth--;
+            PublishSessionInvitations(g);
+            if (booked || previousState != m.state || previousReason != m.reason || previousFailure != m.failedCheck)
+            {
+                RefreshValidity(g);
+                NotifyActivityChanged(g);
+            }
+        }
+    }
+
+    static bool TryConfirmInner(Character_Factions f, RecreationGroup g, RecreationGroupMember m, int rankIndex, bool forced)
+    {
         var c = f.Owner;
         int nowAbs = NowAbs();
+        string refusal = ReservationRefusal(f, PreviewBooking(g));
+        if (refusal != "") return Block(g, m, refusal);
         var booking = MakeMemberBooking(g, m);
         if (booking == null) return Block(g, m,"noAccess");
         if (!forced && !HasTimeFor(f, booking)) return Block(g, m,"noTime");
@@ -704,26 +897,23 @@ public static partial class RecreationUtility
         var extension = PlanExtension(f, g, m, out bool extensionOk);
         if (!extensionOk) return Block(g, m,"inviteFailed");
 
-        BeginNotice(f);
-        try
+        foreach (var b in giveUp) f.CancelBooking(b, false, CancelReason.Displaced);
+        foreach (var b in move) f.RemoveBooking(b);
+        if (!f.AddBooking(booking, false))
         {
-            foreach (var b in giveUp) f.CancelBooking(b, false, CancelReason.Displaced);
-            foreach (var b in move) f.RemoveBooking(b);
-            if (!f.AddBooking(booking, false))
-            {
-                foreach (var b in move) f.AddBooking(b, false);   // put back as it was
-                return Block(g, m,"conflict");
-            }
-            m.state = RecreationMemberState.Attending;
-            m.reason = "";
-            m.failedCheck = "";
-            RecordBooked(f, booking);
-            foreach (var b in move) TryReschedule(f, b, CancelReason.Displaced);
-            CommitExtension(g, c, extension);
-            RefreshValidity(g);
-            return true;
+            foreach (var b in move) f.AddBooking(b, false);   // put back as it was
+            return Block(g, m,"conflict");
         }
-        finally { EndNotice(f, false); }
+        // the answer: the session announces itself once it resolves (ResolveSession), not per member
+        m.state = RecreationMemberState.Attending;
+        m.reason = "";
+        m.failedCheck = "";
+        // joining one already confirmed: up in time for it (otherwise the session wakes its members as it confirms - ResolveSession)
+        if (g.resolved && g.valid) WakeForSessions(c);
+        foreach (var b in move) TryReschedule(f, b, CancelReason.Displaced);
+        CommitExtension(g, c, extension);
+        RefreshValidity(g);
+        return true;
     }
 
     /// <summary>m of g Blocked with reason - g's validity follows (m may have been attending: a re-confirm of an attending member whose booking went).</summary>
@@ -752,15 +942,16 @@ public static partial class RecreationUtility
 
     /// <summary>
     /// Whether f has the time for booking apart from other bookings (handled as conflicts): work/home schedules with the
-    /// travel buffer, sleep floor, daily cap (counting the bookings it doesn't conflict with) - DayContext.CanPlace. The
-    /// player always has (they decide themselves).
+    /// travel buffer, daily cap (counting the bookings it doesn't conflict with) - DayContext.CanPlace; sleep is no limit
+    /// (an invitee may give it up). The player always has (they decide themselves).
     /// </summary>
     static bool HasTimeFor(Character_Factions f, RecreationBooking booking)
     {
         if (f.Owner == Player) return true;
         var conflicts = FindBookingConflicts(f, booking);
-        var ctx = new DayContext(f, booking.day, b => !conflicts.Contains(b));
-        return ctx.CanPlace(booking.AbsStart, booking.AbsEnd, null, new List<Span>(), booking.factionID);
+        // an invitee may give up sleep for it (and is woken in time once it is confirmed - ResolveSession)
+        var ctx = new DayContext(f, booking.day, b => !conflicts.Contains(b), ignoreSleep: true);
+        return ctx.CanPlace(booking.AbsStart, booking.AbsEnd, booking.GetActivity(f), new List<Span>(), booking.factionID, booking.Session, booking, MediaItemOf(booking));
     }
 
     /// <summary>f's bookings not ended that clash with incoming: overlapping it, or at another venue within TravelBufferHours of it. Its own session's excluded.</summary>
@@ -768,8 +959,10 @@ public static partial class RecreationUtility
     {
         var result = new List<RecreationBooking>();
         int nowAbs = NowAbs();
-        foreach (var b in f.RecreationBookings)
+        var bookings = f.RecreationBookings;
+        for (int i = 0; i < bookings.Count; i++)
         {
+            var b = bookings[i];
             if (b == null || b == incoming || b.AbsEnd <= nowAbs) continue;
             if (b.Session != null && b.Session == incoming.Session) continue;
             bool overlap = b.Overlaps(incoming.AbsStart, incoming.AbsEnd);
@@ -877,13 +1070,15 @@ public static partial class RecreationUtility
     {
         foreach (var p in plans)
         {
+            var pickRefs = new List<int>(p.picks.Count);
+            foreach (var x in p.picks) pickRefs.Add(x.RefID);
             g.extensions.Add(new RecreationSessionExtension()
             {
                 extenderRef = extender.RefID,
                 roleID = p.validator.RoleID,
                 inviteRequired = p.validator.inviteRequired,
                 requiredCount = p.validator.RequiredCount,
-                picks = p.picks.Select(x => x.RefID).ToList(),
+                picks = pickRefs,
             });
             foreach (var t in p.picks)
                 if (g.FindMember(t.RefID) == null) InviteMember(g, t, p.validator.RoleID, RecreationMemberOrigin.Extension, extender.RefID);
@@ -893,19 +1088,152 @@ public static partial class RecreationUtility
     // ---------------- session self-update ---------------- //
 
     /// <summary>
-    /// g's hourly self-check (decision 5), once per hour whoever asks first (members' own ticks - never a central loop):
-    /// each attending member re-checked (CheckAttending), extenders whose inviteRequired picks no longer attend fail
-    /// (repeated until nothing changes), validity recomputed (kept as it was from T+2 on), and if still invalid at T-1,
-    /// T or T+1 the session is cancelled. Past its end it is Ended.
+    /// g's self-check (once resolved - before that it waits for its answers, ResolveSession): each attending member
+    /// re-checked (CheckAttending), extenders whose inviteRequired picks no longer attend fail (repeated until nothing
+    /// changes), validity recomputed (kept as it was from T+2 on), and if still invalid at T-1, T or T+1 the session is
+    /// cancelled. Past its end it is Ended.
     /// </summary>
     static void UpdateSession(RecreationGroup g)
     {
         int nowAbs = NowAbs();
-        if (g == null || g.lastUpdatedAbsHour == nowAbs) return;
+        if (g == null || !g.IsOpen || g.setupDepth > 0) return;
+        if (nowAbs >= g.AbsEnd) { Sessions.Prune(g); return; }
+        if (!g.resolved) return;
+        RefreshValidity(g);
         g.lastUpdatedAbsHour = nowAbs;
-        if (!g.IsOpen) return;
-        if (nowAbs >= g.AbsEnd) { g.status = RecreationGroupStatus.Ended; return; }
+    }
 
+    /// <summary>
+    /// RecreationGroupRegistry.OnHourUpdate, per live session: its self-check (UpdateSession), then - from T-1 on - each
+    /// attending member its check failed (no-show, gone, booking lost, required invitation failed) is dropped by the
+    /// session itself: Blocked, their booking cancelled (NoShow / GroupCancelled). No refill.
+    /// </summary>
+    public static void HourlySessionCheck(RecreationGroup g)
+    {
+        if (g == null || g.concluded || !g.IsOpen || g.setupDepth > 0) return;
+        UpdateSession(g);
+        if (!g.IsOpen || !g.resolved || NowAbs() < g.AbsStart - 1) return;
+        bool dropped = false;
+        // members are only ever appended: the count taken here covers everyone checked
+        for (int i = 0, n = g.members.Count; i < n && i < g.members.Count; i++)
+        {
+            var m = g.members[i];
+            if (m.state != RecreationMemberState.Attending || string.IsNullOrEmpty(m.failedCheck)) continue;
+            var reason = m.failedCheck == "noShow" ? CancelReason.NoShow : CancelReason.GroupCancelled;
+            // the answer first, so the booking's cancellation does not answer again (OnSessionBookingCancelled)
+            m.state = RecreationMemberState.Blocked;
+            m.reason = m.failedCheck;
+            m.failedCheck = "";
+            dropped = true;
+            var f = m.Chara?.FactionManager;
+            var b = f == null ? null : FindSessionBooking(f, g);
+            if (b != null) f.CancelBooking(b, true, reason);
+        }
+        if (dropped)
+        {
+            RefreshValidity(g);
+            NotifyActivityChanged(g);
+        }
+    }
+
+    // ---------------- two-step answers and resolution ---------------- //
+
+    /// <summary>Late pass (scr_System_Time.Observer_globalTime_HoursLate): every character answers the sessions sent out in the hour's first update.</summary>
+    public const int LatePass_Respond = 0;
+    /// <summary>Late pass: the invitees an accepting member extended the invitation to (in LatePass_Respond) answer.</summary>
+    public const int LatePass_RespondExtended = 1;
+    /// <summary>Late pass: each unresolved session confirms or cancels itself (RecreationGroup.OnLatePass -> ResolveSession).</summary>
+    public const int LatePass_Resolve = 2;
+
+    /// <summary>
+    /// Character_Trainable.Observer_GlobalHourLate: in the answer passes, f answers what is visible to them (SessionPass -
+    /// rank, then confirm in order; in LatePass_RespondExtended only when their inbox / lists changed, which an extension
+    /// does). NPCs that plan only; the player answers through the invitation event.
+    /// </summary>
+    public static void OnLatePass(Character_Factions f, int pass)
+    {
+        if (pass != LatePass_Respond && pass != LatePass_RespondExtended) return;
+        if (f?.Owner == null || scr_System_CampaignManager.current == null || scr_System_Time.current.DebugSkipBeforeLastDay || !ShouldPlan(f)) return;
+        SessionPass(f);
+    }
+
+    /// <summary>The player is invited to g and has not answered yet (their invitation event is still to run).</summary>
+    static bool PlayerAnswerPending(RecreationGroup g)
+    {
+        var player = Player;
+        if (player == null) return false;
+        var m = g.FindMember(player.RefID);
+        return m != null && m.state == RecreationMemberState.Invited && m.considered && m.origin != RecreationMemberOrigin.Host;
+    }
+
+    /// <summary>
+    /// g's invitees have answered (the resolve pass, or at once for an event-hosted session): it resolves - unless the
+    /// player's answer is still to come, then that answer resolves it (OnPlayerAnswered). A hostless offer always takes
+    /// place; any other is confirmed when valid (IsValid), else cancelled (GroupFailed). Announced either way; once
+    /// confirmed it tells each participant, who gets up in time for it if asleep (WakeForSessions).
+    /// </summary>
+    public static void ResolveSession(RecreationGroup g)
+    {
+        if (g == null || g.resolved || g.setupDepth > 0) return;
+        if (!g.IsOpen) { g.resolved = true; g.UnsubscribeLatePass(); return; }
+        if (PlayerAnswerPending(g)) { g.resolveDue = true; return; }
+        g.resolved = true;
+        g.resolveDue = false;
+        g.UnsubscribeLatePass();
+        int nowAbs = NowAbs();
+        ReconcileSessionAttendance(g, nowAbs);
+        g.valid = IsValid(g, ResolveSpec(g.specRef));
+        g.lastUpdatedAbsHour = nowAbs;
+        if (!g.valid) { CancelSession(g, CancelReason.GroupFailed); return; }
+        var participants = g.AttendingCharas();
+        AnnounceSession(g, ActivityNoticeKind.Confirmed, CancelReason.None, participants);
+        for (int i = 0; i < participants.Count; i++) WakeForSessions(participants[i]);
+        NotifyActivityChanged(g);
+    }
+
+    /// <summary>The player answered their invitation to g (or it could not be shown): a session waiting for that answer resolves now.</summary>
+    static void OnPlayerAnswered(RecreationGroup g)
+    {
+        if (g != null && g.resolveDue) ResolveSession(g);
+    }
+
+    /// <summary>
+    /// Load: a player invitation left unanswered is Declined (events are not saved), so the session does not wait for
+    /// it forever.
+    /// </summary>
+    static void DeclineLostPlayerInvite(RecreationGroup g)
+    {
+        if (g.resolved || Player == null) return;
+        var m = g.FindMember(Player.RefID);
+        if (m == null || m.state != RecreationMemberState.Invited || !m.considered || m.origin == RecreationMemberOrigin.Host) return;
+        m.state = RecreationMemberState.Declined;
+        m.reason = "lostOnLoad";
+    }
+
+    /// <summary>
+    /// RecreationGroupRegistry.OnAfterLoad, per concluded session (ended today, kept for the report): each attending
+    /// member's past booking of it finds it again by start hour + venue (Character_Factions.PastRecreationBookings).
+    /// </summary>
+    public static void RelinkPastBookings(RecreationGroup g)
+    {
+        foreach (var m in g.members)
+        {
+            if (m.state != RecreationMemberState.Attending) continue;
+            var past = m.Chara?.FactionManager?.PastRecreationBookings;
+            if (past == null) continue;
+            for (int i = 0; i < past.Count; i++)
+            {
+                var x = past[i];
+                if (x != null && x.isSessionBooking && x.Session == null && x.AbsStart == g.AbsStart && x.factionID == g.factionID) { x.Session = g; break; }
+            }
+        }
+    }
+
+    // Compare the final closure, not temporary resets of inviteFailed, so unchanged checks publish nothing.
+    static bool ReconcileSessionAttendance(RecreationGroup g, int nowAbs)
+    {
+        var previous = new string[g.members.Count];
+        for (int i = 0; i < g.members.Count; i++) previous[i] = g.members[i].failedCheck;
         foreach (var m in g.members) m.failedCheck = m.state == RecreationMemberState.Attending ? CheckAttending(g, m, nowAbs) : "";
 
         bool changed = true;
@@ -917,27 +1245,35 @@ public static partial class RecreationUtility
                 if (!ext.inviteRequired) continue;
                 var extender = g.FindMember(ext.extenderRef);
                 if (extender == null || !extender.IsAttending) continue;
-                int attending = ext.picks.Count(r => g.FindMember(r)?.IsAttending == true);
+                int attending = 0;
+                foreach (int r in ext.picks) if (g.FindMember(r)?.IsAttending == true) attending++;
                 if (attending >= ext.requiredCount) continue;
                 extender.failedCheck = "inviteFailed";
                 changed = true;
             }
         }
 
-        RefreshValidity(g);
+        for (int i = 0; i < g.members.Count; i++) if (previous[i] != g.members[i].failedCheck) return true;
+        return false;
     }
 
     /// <summary>
     /// g's validity recomputed now (kept as it was from T+2 on), and g cancelled if invalid at T-1, T or T+1 - run by
     /// UpdateSession and whenever g's attendance changes (a member confirms / stops attending), so a member booking
     /// drives its owner (IsSessionBookingLive) from the moment it is confirmed, not from the session's next self-update.
+    /// Nothing before g is resolved (ResolveSession decides first).
     /// </summary>
     static void RefreshValidity(RecreationGroup g)
     {
-        if (g == null || !g.IsOpen) return;
+        if (g == null || !g.IsOpen || g.setupDepth > 0 || !g.resolved) return;
         int nowAbs = NowAbs();
-        if (nowAbs <= g.AbsStart + 1) g.valid = IsValid(g, ResolveSpec(g.specRef));
-        if (!g.valid && nowAbs >= g.AbsStart - 1 && nowAbs <= g.AbsStart + 1) CancelSession(g, CancelReason.GroupCancelled);
+        bool changed = ReconcileSessionAttendance(g, nowAbs);
+        bool wasValid = g.valid;
+        bool deadlinePending = g.lastUpdatedAbsHour < g.AbsStart + 1;
+        if (nowAbs <= g.AbsStart + 1 || deadlinePending) g.valid = IsValid(g, ResolveSpec(g.specRef));
+        if (!g.valid && nowAbs >= g.AbsStart - 1 && (nowAbs <= g.AbsStart + 1 || deadlinePending))
+            CancelSession(g, CancelReason.GroupCancelled);
+        else if (changed || wasValid != g.valid) NotifyActivityChanged(g);
     }
 
     /// <summary>Why attending member m can't make it now ("" = fine): gone, no longer holding the booking, or not at the venue from the end of the first hour (no-show).</summary>
@@ -947,24 +1283,46 @@ public static partial class RecreationUtility
         if (c == null) return "gone";
         var b = FindSessionBooking(c.FactionManager, g);
         if (b == null) return "noBooking";
-        if (nowAbs >= g.AbsStart + 1 && !m.arrived && (I_IsJobGiver)b.Faction != c.FactionManager.CurrentLocaleFaction) return "noShow";
+        if (nowAbs >= b.AbsStart + 1 && !m.arrived && (I_IsJobGiver)b.Faction != c.FactionManager.CurrentLocaleFaction) return "noShow";
         return "";
     }
 
-    /// <summary>Valid: the host attends when the spec is mandatory, every required role has its RequiredCount attending, and attending reach minParticipants.</summary>
+    /// <summary>
+    /// Valid: a hostless offer always (it takes place regardless of who comes); otherwise the host attends when the spec
+    /// is mandatory, every required role has its RequiredCount attending, and attending reach minParticipants.
+    /// </summary>
     static bool IsValid(RecreationGroup g, RecreationInviteSpec spec)
     {
+        if (g.hostRef < 0) return true;
         if (spec.IsMandatory && g.hostRef >= 0 && g.FindMember(g.hostRef)?.IsAttending != true) return false;
         foreach (var role in spec.TargetValidators)
             if (role != null && role.required && g.AttendingCount(role.RoleID) < role.RequiredCount) return false;
         return g.AttendingCount() >= g.minParticipants;
     }
 
-    /// <summary>Cancels g for good; its members' bookings go in their own next update (SyncSessionBookings).</summary>
+    /// <summary>
+    /// Cancels g for good and announces it (to those who were coming), then tells every member holding its booking, who
+    /// purges it from their schedule (GroupCancelled - an event's host booking too). No refill.
+    /// </summary>
     static void CancelSession(RecreationGroup g, CancelReason reason)
     {
+        if (g == null || !g.IsOpen) return;
+        var coming = g.AttendingCharas();
         g.status = RecreationGroupStatus.Cancelled;
         g.cancelReason = reason;
+        g.resolved = true;
+        g.resolveDue = false;
+        g.UnsubscribeLatePass();
+        AnnounceSession(g, ActivityNoticeKind.Cancelled, reason, coming);
+        (g.ActivityJob as Job_Activity)?.CancelReservation();
+        // members are only ever appended: the count taken here covers everyone holding a booking now
+        for (int i = 0, n = g.members.Count; i < n && i < g.members.Count; i++)
+        {
+            var f = g.members[i].Chara?.FactionManager;
+            var b = f == null ? null : FindSessionBooking(f, g);
+            if (b != null) f.CancelBooking(b, true, CancelReason.GroupCancelled);
+        }
+        NotifyActivityChanged(g);
     }
 
     /// <summary>
@@ -1006,73 +1364,30 @@ public static partial class RecreationUtility
                 break;
         }
         RefreshValidity(g);
+        NotifyActivityChanged(g);
     }
 
     /// <summary>
-    /// Pull side (HourlyCheck / DailyPlan): f's session bookings against their sessions - a cancelled session, a member
-    /// who no longer attends, or one its self-update found unable to make it from T-1 on, drops the booking; the freed
-    /// hours are refilled with flexible visits (RefillSlot, NPCs that plan only). An event's host booking of a cancelled
-    /// session just goes on alone. True if any booking was removed (no schedule refresh).
+    /// Job_Activity's gathering: c reached the gather room of their visit b (Present, or a late arrival) - a session
+    /// member is marked arrived (the session's no-show check reads it - CheckAttending).
     /// </summary>
-    static bool SyncSessionBookings(Character_Factions f)
+    public static void OnActivityArrived(Character_Trainable c, RecreationBooking b)
     {
-        bool changed = false;
-        int nowAbs = NowAbs();
-        foreach (var b in f.RecreationBookings.ToList())
-        {
-            if (b == null || !b.isSessionBooking || b.Session == null) continue;
-            var g = b.Session;
-            var m = g.FindMember(f.Owner.RefID);
-            bool cancelled = g.status == RecreationGroupStatus.Cancelled;
-            bool left = m == null || m.state != RecreationMemberState.Attending;
-            bool failed = !left && !string.IsNullOrEmpty(m.failedCheck) && nowAbs >= g.AbsStart - 1;
-            if (!cancelled && !left && !failed) continue;
-
-            if (cancelled && b.source == RecreationBookingSource.Event && g.hostRef == f.Owner.RefID)
-            {
-                b.isSessionBooking = false;
-                b.Session = null;
-                continue;
-            }
-            var reason = CancelReason.GroupCancelled;
-            if (failed && !cancelled)
-            {
-                reason = m.failedCheck == "noShow" ? CancelReason.NoShow : CancelReason.GroupCancelled;
-                m.state = RecreationMemberState.Blocked;
-                m.reason = m.failedCheck;
-                m.failedCheck = "";
-            }
-            f.CancelBooking(b, false, reason);
-            changed = true;
-            if (b.AbsEnd > nowAbs && ShouldPlan(f)) RefillSlot(f, b.day, Math.Max(b.AbsStart, nowAbs + 1));
-        }
-        return changed;
+        var m = c == null ? null : b?.Session?.FindMember(c.RefID);
+        if (m == null || m.arrived) return;
+        m.arrived = true;
+        RefreshValidity(b.Session);
+        NotifyActivityChanged(b.Session);
     }
 
-    /// <summary>Every session f holds a reference to: inbox, ranking, member bookings.</summary>
-    static List<RecreationGroup> TouchedSessions(Character_Factions f)
+    /// <summary>
+    /// Job_Activity's launch: c took part in their visit b (launched with it, or joined late) - the visit counts as
+    /// attended (Character_Factions.RecordAttendance - the planner's cooldowns and weekly targets).
+    /// </summary>
+    public static void OnActivityAttended(Character_Trainable c, RecreationBooking b)
     {
-        var result = new List<RecreationGroup>(f.SessionInbox);
-        foreach (var g in f.SessionRanking) if (!result.Contains(g)) result.Add(g);
-        foreach (var b in f.RecreationBookings) if (b?.Session != null && !result.Contains(b.Session)) result.Add(b.Session);
-        return result;
-    }
-
-    /// <summary>HourlyCheck: c is at the venue during their session booking.</summary>
-    static void MarkArrived(RecreationBooking b, Character_Trainable c)
-    {
-        var m = b.Session?.FindMember(c.RefID);
-        if (m != null) m.arrived = true;
-    }
-
-    /// <summary>A free slot on `day` from anchor gets a membership chain (CollectCandidates), added like any planned booking.</summary>
-    static void RefillSlot(Character_Factions f, int day, int anchor)
-    {
-        var ctx = new DayContext(f, day);
-        if (ctx.dayEnd <= ctx.nowAbs + 1) return;
-        var candidates = CollectCandidates(ctx);
-        if (candidates.Count == 0) return;
-        AddPlannedBookings(f, PackChain(ctx, anchor, true, candidates));
+        if (c?.FactionManager == null || b == null) return;
+        c.FactionManager.RecordAttendance(b.sourceKey, b.day);
     }
 
     /// <summary>RecreationGroupRegistry.Prune: an ended session leaves every inbox / ranking holding it (its members).</summary>
@@ -1082,9 +1397,10 @@ public static partial class RecreationUtility
     }
 
     /// <summary>
-    /// RecreationGroupRegistry.OnAfterLoad, per session: back into its members' inboxes (not those who refused), and each
-    /// attending member's booking found again by the session's start hour + venue (bookings never overlap, so that is
-    /// one) - an attending member whose booking is gone is Declined.
+    /// RecreationGroupRegistry.OnAfterLoad, per session not concluded: back into its members' inboxes (not those who
+    /// refused), and each attending member's booking found again by the session's start hour + venue (bookings never
+    /// overlap, so that is one) - an attending member whose booking is gone is Declined, and so is an unanswered player
+    /// invitation of a session still unresolved (DeclineLostPlayerInvite).
     /// </summary>
     public static void RelinkAfterLoad(RecreationGroup g)
     {
@@ -1095,15 +1411,22 @@ public static partial class RecreationUtility
             var f = c.FactionManager;
             if (m.state != RecreationMemberState.Refused) f.PushSession(g);
             if (m.state != RecreationMemberState.Attending) continue;
-            var b = f.RecreationBookings.FirstOrDefault(x => x != null && x.isSessionBooking && x.Session == null && x.AbsStart == g.AbsStart && x.factionID == g.factionID);
+            RecreationBooking b = null;
+            var bookings = f.RecreationBookings;
+            for (int i = 0; i < bookings.Count; i++)
+            {
+                var x = bookings[i];
+                if (x != null && x.isSessionBooking && x.Session == null && x.AbsStart == g.AbsStart && x.factionID == g.factionID) { b = x; break; }
+            }
             if (b != null) b.Session = g;
             else
             {
                 m.state = RecreationMemberState.Declined;
                 m.reason = "lostOnLoad";
-                RefreshValidity(g);
             }
         }
+        DeclineLostPlayerInvite(g);
+        RefreshValidity(g);
     }
 
     // ---------------- activity jobs (Plan_ActivityJobs) ---------------- //
@@ -1155,8 +1478,10 @@ public static partial class RecreationUtility
         if (key == null || scr_System_CampaignManager.current == null) return false;
         if (key.isSession)
         {
-            foreach (var g in Sessions.All)
-                if (key.Matches(g)) { session = g; return true; }
+            var all = Sessions.All;
+            // a concluded session (kept until the next day for the report) is gone for its job
+            for (int i = 0; i < all.Count; i++)
+                if (!all[i].concluded && key.Matches(all[i])) { session = all[i]; return true; }
             return false;
         }
         var owner = scr_System_CampaignManager.current.FindInstanceByID(key.ownerRef);
@@ -1186,9 +1511,80 @@ public static partial class RecreationUtility
         var f = c?.FactionManager;
         if (f == null) return result;
         int nowAbs = NowAbs();
-        foreach (var b in f.RecreationBookings)
-            if (b != null && b.AbsEnd > nowAbs) result.Add(b);
-        return result.OrderBy(a => a.StartTime).ToList();
+        var bookings = f.RecreationBookings;
+        for (int i = 0; i < bookings.Count; i++)
+            if (bookings[i] != null && bookings[i].AbsEnd > nowAbs) result.Add(bookings[i]);
+        SortStable(result, (a, b) => a.StartTime.CompareTo(b.StartTime));
+        return result;
+    }
+
+    /// <summary>
+    /// The management report's activity list (initScript_ManagementOverview), sorted by start: every activity of m's
+    /// characters (ManagedChara) from the start of today on - live bookings and today's past-booking record, concluded
+    /// ones included; a session booking stands for its session, listed once however many of them take part (a session
+    /// cancelled before it started is left out) - and today's hostless fixed offers on m's world (fireworks, new year;
+    /// RecreationGroupRegistry keeps a concluded one until the next day). A flexible offer shows only through a member.
+    /// </summary>
+    public static List<I_ActivityBooking> GetFactionActivities(Manageable m)
+    {
+        var result = new List<I_ActivityBooking>();
+        if (m == null || scr_System_CampaignManager.current == null || scr_System_Time.current == null) return result;
+        int todayStart = RecreationBooking.AbsoluteHour(scr_System_Time.current.getAbsoluteDay(), 0);
+
+        void AddBooking(RecreationBooking b)
+        {
+            if (b == null || b.AbsEnd <= todayStart) return;
+            if (b.Session != null)
+            {
+                if (b.Session.status == RecreationGroupStatus.Cancelled && b.Session.AbsStart > NowAbs()) return;
+                if (!result.Contains(b.Session)) result.Add(b.Session);
+            }
+            else if (!result.Contains(b)) result.Add(b);
+        }
+
+        var characters = m.ManagedChara;
+        for (int i = 0; i < characters.Count; i++)
+        {
+            var f = characters[i]?.FactionManager;
+            if (f == null) continue;
+            var past = f.PastRecreationBookings;
+            for (int j = 0; j < past.Count; j++) AddBooking(past[j]);
+            var live = f.RecreationBookings;
+            for (int j = 0; j < live.Count; j++) AddBooking(live[j]);
+        }
+
+        string world = WorldIDOf(m);
+        if (!string.IsNullOrEmpty(world))
+        {
+            var all = Sessions.All;
+            for (int i = 0; i < all.Count; i++)
+            {
+                var g = all[i];
+                if (g == null || g.hostRef >= 0 || g.source != RecreationBookingSource.Offer || g.visibility != RecreationVisibility.World
+                    || g.scopeFactionID != world || g.status == RecreationGroupStatus.Cancelled) continue;
+                // happening today: overlapping [today 0:00, tomorrow 0:00)
+                if (g.AbsEnd <= todayStart || g.AbsStart >= todayStart + 24) continue;
+                if (!result.Contains(g)) result.Add(g);
+            }
+        }
+        SortStable(result, (a, b) => a.StartTime.CompareTo(b.StartTime));
+        return result;
+    }
+
+    /// <summary>An entry of GetFactionActivities: text = the activity's name and start ("today 19:00"), tooltip = its venue + its details (I_ActivityBooking.Tooltip).</summary>
+    public static void PrintFactionActivity(scr_HoverableText text, I_ActivityBooking activity)
+    {
+        if (text == null || activity == null) return;
+        int absStart; string factionID;
+        if (activity is RecreationGroup g) { absStart = g.AbsStart; factionID = g.factionID; }
+        else { var b = (RecreationBooking)activity; absStart = b.AbsStart; factionID = b.factionID; }
+        var venue = scr_System_CampaignManager.current.FindFactionByID(factionID);
+        string venueName = venue != null ? venue.FactionDisplayName : factionID;
+        string name = string.IsNullOrEmpty(activity.DisplayName) ? venueName : activity.DisplayName;
+        text.SetText(LocalizeDictionary.QueryThenParse("ui_management_overview_activity")
+            .Replace("$activity$", name).Replace("$start$", DescribeStart(absStart)));
+        text.SetExternalTooltip(LocalizeDictionary.QueryThenParse("ui_management_overview_activity_venue").Replace("$venue$", venueName)
+            + "\n" + activity.Tooltip);
     }
 
     /// <summary>The activity's display name: its workModule's jobPostID, localized ("" when none) - I_ActivityBooking.DisplayName.</summary>
@@ -1205,14 +1601,17 @@ public static partial class RecreationUtility
 
     /// <summary>
     /// The activity session g is a visit of (template data, looked up live): its offer's (sourceKey names an offer def),
-    /// else activityID within g's memberTypeID's recreation spec. Null when neither.
+    /// else activityID within g's memberTypeID's recreation spec, else the venue's house activity of that ID
+    /// (MapPlan.houseActivities). Null when none.
     /// </summary>
     public static RecreationActivity ResolveActivity(RecreationGroup g)
     {
         var def = RecreationBoard.FindDef(g.sourceKey);
         if (def != null) return def.AsActivity;
-        if (string.IsNullOrEmpty(g.activityID) || string.IsNullOrEmpty(g.memberTypeID)) return null;
-        return FactionUtility.TryGetMemberType(g.memberTypeID, out var type) ? type?.recreation?.GetActivity(g.activityID) : null;
+        if (string.IsNullOrEmpty(g.activityID)) return null;
+        var activity = !string.IsNullOrEmpty(g.memberTypeID) && FactionUtility.TryGetMemberType(g.memberTypeID, out var type)
+            ? type?.recreation?.GetActivity(g.activityID) : null;
+        return activity ?? HouseActivity(g.factionID, g.activityID);
     }
 
     /// <summary>
@@ -1226,7 +1625,16 @@ public static partial class RecreationUtility
     {
         var venue = scr_System_CampaignManager.current.FindFactionByID(factionID);
         var room = Job_Activity.ResolveGatherRoom(venue, activity);
-        var names = participants.Where(c => c != null).Select(c => c.FullName).ToList();
+        foreach (var participant in participants)
+        {
+            if (participant == null) continue;
+            RecreationBooking booking = null;
+            foreach (var b in participant.FactionManager.RecreationBookings)
+                if (b.factionID == factionID && b.day == day && b.startHour == startHour) { booking = b; break; }
+            if (booking?.ActivityJob is Job_Activity job && job.ParentRoom != null) { room = job.ParentRoom; break; }
+        }
+        var names = new List<string>();
+        foreach (var c in participants) if (c != null) names.Add(c.FullName);
         string s = LocalizeDictionary.QueryThenParse("ui_recreation_activity_detail")
             .Replace("$names$", names.Count > 0 ? string.Join(LocalizeDictionary.QueryThenParse("event_heldMembership_separator"), names) : LocalizeDictionary.QueryThenParse("ui_recreation_activity_noParticipants"))
             .Replace("$floor$", room?.parentFloor != null ? room.parentFloor.displayName : "")
@@ -1253,7 +1661,9 @@ public static partial class RecreationUtility
         var others = g.AttendingCharas(ownerRef);
         if (others.Count == 0) return "";
         const int shown = 3;
-        string names = string.Join(LocalizeDictionary.QueryThenParse("event_heldMembership_separator"), others.Take(shown).Select(c => c.FullName));
+        var shownNames = new List<string>(shown);
+        for (int i = 0; i < others.Count && i < shown; i++) shownNames.Add(others[i].FullName);
+        string names = string.Join(LocalizeDictionary.QueryThenParse("event_heldMembership_separator"), shownNames);
         if (others.Count > shown) names += LocalizeDictionary.QueryThenParse("ui_recreation_notice_withMore").Replace("$count$", (others.Count - shown).ToString());
         return LocalizeDictionary.QueryThenParse("ui_recreation_notice_with").Replace("$names$", names);
     }
@@ -1266,9 +1676,17 @@ public static partial class RecreationUtility
         lines.Add(DescribeBooking(booking));
         string sep = LocalizeDictionary.QueryThenParse("event_heldMembership_separator");
         var coming = g.AttendingCharas(m.charaRef);
-        if (coming.Count > 0) lines.Add(LocalizeDictionary.QueryThenParse("ui_recreation_invite_coming").Replace("$names$", string.Join(sep, coming.Select(c => c.FullName))));
-        var alsoInvited = g.members.Where(x => x.state == RecreationMemberState.Invited && x.charaRef != m.charaRef).Select(x => x.Chara).Where(c => c != null).ToList();
-        if (alsoInvited.Count > 0) lines.Add(LocalizeDictionary.QueryThenParse("ui_recreation_invite_alsoInvited").Replace("$names$", string.Join(sep, alsoInvited.Select(c => c.FullName))));
+        var names = new List<string>();
+        foreach (var c in coming) names.Add(c.FullName);
+        if (names.Count > 0) lines.Add(LocalizeDictionary.QueryThenParse("ui_recreation_invite_coming").Replace("$names$", string.Join(sep, names)));
+        names.Clear();
+        foreach (var x in g.members)
+        {
+            if (x.state != RecreationMemberState.Invited || x.charaRef == m.charaRef) continue;
+            var c = x.Chara;
+            if (c != null) names.Add(c.FullName);
+        }
+        if (names.Count > 0) lines.Add(LocalizeDictionary.QueryThenParse("ui_recreation_invite_alsoInvited").Replace("$names$", string.Join(sep, names)));
         string roleName = LocalizeDictionary.QueryThenParse("recreation_role_" + m.roleID, "");
         if (!string.IsNullOrEmpty(roleName)) lines.Add(LocalizeDictionary.QueryThenParse("ui_recreation_invite_role").Replace("$role$", roleName));
         if (ResolveSpec(g.specRef).GetRole(m.roleID)?.required == true) lines.Add(LocalizeDictionary.QueryThenParse("ui_recreation_invite_required"));
@@ -1279,7 +1697,8 @@ public static partial class RecreationUtility
     public static bool WouldBreakSession(RecreationBooking b, Character_Trainable c)
     {
         var g = b?.Session;
-        if (g == null || !g.IsOpen || !g.valid) return false;
+        // a hostless offer takes place regardless of who comes (IsValid)
+        if (g == null || !g.IsOpen || !g.valid || g.hostRef < 0) return false;
         var m = g.FindMember(c.RefID);
         if (m == null || !m.IsAttending) return false;
         var spec = ResolveSpec(g.specRef);
@@ -1318,6 +1737,9 @@ public static partial class RecreationUtility
         {
             m.state = RecreationMemberState.Declined;
             m.reason = "eventRejected";
+            RefreshValidity(g);
+            NotifyActivityChanged(g);
+            OnPlayerAnswered(g);
         }
     }
 
@@ -1331,11 +1753,13 @@ public static partial class RecreationUtility
         conflictText = "";
         var options = new List<Event.EventEntry.Options>();
         if (!g.IsOpen || m.state != RecreationMemberState.Invited) return options;
+        string refusal = ReservationRefusal(c.FactionManager, PreviewBooking(g));
         var booking = MakeMemberBooking(g, m);
-        if (booking == null) return options;
+        if (booking == null && refusal == "") return options;
+        if (booking == null) booking = PreviewBooking(g);
 
         int nowAbs = NowAbs();
-        bool blocked = false;
+        bool blocked = refusal != "";
         var lines = new List<string>();
         foreach (var b in FindBookingConflicts(c.FactionManager, booking))
         {
@@ -1351,7 +1775,7 @@ public static partial class RecreationUtility
         {
             option = LocalizeDictionary.QueryThenParse("ui_recreation_invite_accept"),
             onSelect = blocked ? null : (Action<EventInstance>)(ev => RespondAsPlayer(g, m, true)),
-            disabledReasonKey = blocked ? "ui_recreation_invite_conflict_blocked" : "",
+            disabledReasonKey = refusal != "" ? refusal : blocked ? "ui_recreation_invite_conflict_blocked" : "",
         });
         return options;
     }
@@ -1372,10 +1796,12 @@ public static partial class RecreationUtility
             m.reason = "declined";
             f.DropSession(g);
             InviterOf(g, m)?.FactionManager?.AddInviteRefusal(c.RefID);
+            RefreshValidity(g);
+            NotifyActivityChanged(g);
+            OnPlayerAnswered(g);
             return;
         }
-        BeginNotice(f);
-        try { if (TryConfirm(f, g, m, -1, true)) f.RefreshSchedule(); }
-        finally { EndNotice(f, false); }
+        if (TryConfirm(f, g, m, -1, true)) f.RefreshSchedule();
+        OnPlayerAnswered(g);
     }
 }

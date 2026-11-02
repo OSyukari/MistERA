@@ -135,6 +135,7 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
         "modstatderived",
         "resetAllActorJobs",
         "spawnChara",
+        "spawnResident",
         "addItemToChara",
         "addItemToFaction",
         "modkojovariable",

@@ -127,7 +127,7 @@ public class AdditiveEntry
         if (additives.Count > 0 && additives[0] != null && additives[0].InnerCount > 0)
         {
 
-            var selfComp = additives[0].GetComp_Ingestible();
+            var selfComp = additives[0].Comp_Ingestible;
             if (selfComp == null) return false;
 
             var targetIngest = new Dictionary<string, ItemComponentTemplate_Ingestible.Ingestible_IngestMethod>();

@@ -64,6 +64,9 @@ public static class ResultCharaUtility
                 if (c.Wardrobe != null) c.Wardrobe.ApplyWanted();
                 else c.Redress();
                 break;
+            case CharaResultType.washTraces:
+                if (c.Body != null) c.Body.WashTraces(r.tags);
+                break;
             case CharaResultType.undress:
                 if (r.tags.Count > 0)
                 {
@@ -84,13 +87,13 @@ public static class ResultCharaUtility
         {
             Item_Instance instance = null;
             if (jobOwner != null) instance = jobOwner.Inventory.RemoveItem(r.useItemFromTargetInventory, c);
-            if (instance != null && instance.GetComp_Ingestible() != null) c.Body.ConsumeIngestible(instance, r.ingestBodyTag);
+            if (instance != null && instance.Comp_Ingestible != null) c.Body.ConsumeIngestible(instance, r.ingestBodyTag);
             // Debug.Log("Applying COM Result, useItemFromTargetInventory[" + useItemFromTargetInventory + "], factionOwner?[" + (m.job.FactionOwner != null) + "] instance?[" + (instance != null) + "]");
         }
         if (!string.IsNullOrEmpty(r.ingestItemID) && c.Body != null)
         {
             var ingested = WorldManager.Instantiate(r.ingestItemID, "", Mathf.Max(1, r.ingestItemCount));
-            if (ingested != null && ingested.GetComp_Ingestible() != null) c.Body.ConsumeIngestible(ingested, r.ingestBodyTag);
+            if (ingested != null && ingested.Comp_Ingestible != null) c.Body.ConsumeIngestible(ingested, r.ingestBodyTag);
             else Debug.LogError($"Result_Character ingestItemID [{r.ingestItemID}] is not an ingestible item");
         }
         if (r.reputation != null && !string.IsNullOrEmpty(r.reputation.classID) && r.reputation.amount != 0f)

@@ -1,0 +1,56 @@
+{
+    "_doc": "Where the player discards a filled condom they took off themselves (SingleUseEquipUtility.DiscardFilled, Docs/Interactions/Step06FPermissionsImplementationPlan.md P5b). Code-launched, queued; self = the player. Code fills StoredOptions[discardOptions] with one option per body part of every character the condom's organ last touched (event_OnCondomDiscard_onPart), AppendStrings[item] = the condom's name, and FunctionCalls[discard] = move it from the player's inventory to the room floor. Picking a body part first pours half of each semen in the condom onto it as a trace_cum body trace (SingleUseEquipUtility.PourOntoPart, Docs/Body/Plan_BodyTraces.md 5.4), then drops the condom with the other half; parts that can't hold traces are listed disabled (event_OnCondomDiscard_noTrace). Without a partner, or for anyone else, code drops it on the floor without this event.",
+    "Events": {
+        "list": [
+            {
+                "ID": "OnCondomDiscard",
+                "SelfValidator": {
+                    "chara_conditions": [
+                        {
+                            "parameters": [
+                                "exists"
+                            ]
+                        }
+                    ]
+                },
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "br_choice",
+                        "question": "event_OnCondomDiscard_q",
+                        "loadOptionsKey": "discardOptions",
+                        "loadOptionsResults": [
+                            { "Type": "JumpToLabel", "arguments": [ "", "end" ] }
+                        ],
+                        "options": [
+                            {
+                                "option": "event_OnCondomDiscard_op_floor",
+                                "isDefaultCancel": true,
+                                "Results": [
+                                    { "Type": "ExecuteCallback", "arguments": [ "discard" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "end" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "end",
+                        "isLast": true,
+                        "line": ""
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "event_OnCondomDiscard_q": "要把$item$丢在哪里？",
+                "event_OnCondomDiscard_op_floor": "随手丢在地上",
+                "event_OnCondomDiscard_onPart": "丢在$name$的$part$上",
+                "event_OnCondomDiscard_noTrace": "这个部位留不住东西"
+            }
+        }
+    }
+}

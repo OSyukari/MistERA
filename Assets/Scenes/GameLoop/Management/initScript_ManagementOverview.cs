@@ -39,6 +39,9 @@ public class initScript_ManagementOverview : MonoBehaviour
     public RectTransform messageRect;
     public scr_HoverableText report_managementResult, report_tradeResults, report_productionResults, report_currentlyOutsideFaction;
     public scr_HoverableText prefab_miscMessageButton;
+    /// <summary>Rect_Activities: one entry per activity of the faction (RecreationUtility.GetFactionActivities - name + start, tooltip = venue and details).</summary>
+    public RectTransform activitiesRect;
+    public scr_HoverableText prefab_activityEntry;
 
     Manageable m;
     public void Initialize(Manageable m)
@@ -79,7 +82,7 @@ public class initScript_ManagementOverview : MonoBehaviour
         else report_obligations.SetText(report.msg_paymentSuccess);
         report_obligations.SetExternalTooltip(String.Join("\n\n", obligationReportBlocks));
 
-        Utility.DestroyAllChildrenFrom(messageRect);
+        Utility.DestroyAllChildrenFrom(messageRect, 1);
 
         foreach (var misc in report.miscMessages)
         {
@@ -91,6 +94,19 @@ public class initScript_ManagementOverview : MonoBehaviour
 
        // others.text = String.Join("\n", report.miscMessages);
         // -----------------end
+
+        // -----------------activities: queried live (the members' and today's world activities), not collected messages
+        if (activitiesRect != null && prefab_activityEntry != null)
+        {
+            Utility.DestroyAllChildrenFrom(activitiesRect);
+            var activities = RecreationUtility.GetFactionActivities(m);
+            for (int i = 0; i < activities.Count; i++)
+            {
+                var entry = Instantiate(prefab_activityEntry);
+                RecreationUtility.PrintFactionActivity(entry, activities[i]);
+                entry.SelfRect.SetParent(activitiesRect, false);
+            }
+        }
 
 
         List<string> floors = new List<string>();

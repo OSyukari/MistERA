@@ -1,0 +1,10 @@
+{
+  "Dictionary": { "Entries": { "en-us": {
+    "Greenside_Library_initial": "An occasional turning page breaks the quiet of the study room. There is space on the desks for books and notes.",
+    "Greenside_Library_join": "$joining.name$ eases out a chair in the study room and sets some books on the desk.",
+    "Greenside_Library_late": "$joining.name$ opens the study room door a little late, steps lightly and takes an empty seat.",
+    "Greenside_Library_shared_initial": "$attendees.name$ spread out their reading. At a pause between pages, someone quietly asks about a mark in the notes; another points out the relevant passage and borrows a sticky note to record the page number. A murmured thanks gives way to quiet again.",
+    "Greenside_Library_shared_arrival": "$joining.name$ waits until $companions.name$ set down their pens, then quietly asks about a detail in the material at hand. They lay the relevant pages together, compare a few lines of the text and note the page numbers before returning the desk to their books.",
+    "Greenside_Library_finish": "A page turns softly, and the study room settles back into quiet."
+  } } }
+}

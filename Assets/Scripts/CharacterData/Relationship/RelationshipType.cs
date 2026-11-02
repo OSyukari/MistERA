@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -7,6 +8,10 @@ public class RelationshipType
 {
 
     public bool hide_when_safe = false;
+
+    public List<string> tags = new List<string>();
+    public List<string> permissionIDs = new List<string>();
+    public List<string> voluntaryServiceCheckSkipPermissions = new List<string>();
 
     [JsonProperty]
     protected List<string> canUpgradeInto = new List<string>();
@@ -16,6 +21,38 @@ public class RelationshipType
     [JsonProperty]
     protected RelationshipPermission permission = new RelationshipPermission();
 
+    public NaturalChangeRequirement naturalChangeRequirement = null;
+
+    public virtual bool AllowsNaturalReconsideration(Character_Relationship rel, bool validateB = false)
+    {
+        var policy = naturalChangeRequirement;
+        if (policy == null) return true;
+        if (policy.attitudeKeywords == null || policy.attitudeKeywords.Count == 0 ||
+            !Enum.IsDefined(typeof(RelationshipScoreType), policy.dominantScore)) return false;
+        if (rel?.Owner?.Relationships == null) return false;
+        var attitude = rel.Owner.Relationships.GetCurrentAttitude();
+        if (attitude?.tags == null || !policy.attitudeKeywords.Any(keyword =>
+            !string.IsNullOrEmpty(keyword) && attitude.tags.Contains(keyword))) return false;
+        if (policy.dominantScore != RelationshipScoreType.None && rel.DominantScoreType != policy.dominantScore) return false;
+        return policy.requirements == null || policy.requirements.Validate(rel);
+    }
+
+    public virtual RelationshipType GetPermissionSide(bool isB) => this;
+
+    public bool GrantsPermission(string permissionID, bool isB)
+    {
+        if (GetPermissionSide(isB)?.permissionIDs?.Contains(permissionID) == true) return true;
+
+        switch (permissionID)
+        {
+            case "permission_follow": return HasPermission_Follow(isB);
+            case "permission_intimacy_low": return HasPermission_Intimacy_Low(isB);
+            case "permission_intimacy_medium": return HasPermission_Intimacy_Medium(isB);
+            case "permission_intimacy_high": return HasPermission_Intimacy_High(isB);
+            default: return false;
+        }
+    }
+
     public virtual bool HasPermission_Follow(bool isB)
     {
         return this.permission.lead_follow;
@@ -23,10 +60,6 @@ public class RelationshipType
     public virtual bool HasPermission_Intimacy_Low(bool isB)
     {
         return this.permission.intimacy_low;
-    }
-    public virtual bool HasPermission_Family(bool isB)
-    {
-        return this.permission.formFamily;
     }
     public virtual bool HasPermission_Intimacy_Medium(bool isB)
     {
@@ -44,18 +77,23 @@ public class RelationshipType
         if (_upgradableRelationships == null)
         {
             _upgradableRelationships = new List<RelationshipType>();
-            foreach (var i in canUpgradeInto) _upgradableRelationships.Add(scr_System_Serializer.current.MasterList.RelationshipTypes.GetByID(i));
+            if (canUpgradeInto != null)
+                foreach (var i in canUpgradeInto)
+                {
+                    if (string.IsNullOrEmpty(i) || i == ID) continue;
+                    var candidate = scr_System_Serializer.current.MasterList.RelationshipTypes.GetByID(i);
+                    if (candidate != null) _upgradableRelationships.Add(candidate);
+                }
         }
-        var reverse = sourceRel.Target.Relationships.FindRelationshipWith(sourceRel.Owner);
         foreach (var r in _upgradableRelationships)
         {
-            if (r.canPropose(false) && r.isValid(sourceRel, false) && r.CanMaintain(reverse, true))
+            if (CanUpgradeTo(sourceRel, r, true))
             {
                 rel = r;
                 isA = true;
                 return true;
             }
-            else if (!r.isEqualRelationship && r.canPropose(true) && r.isValid(sourceRel, true) && r.CanMaintain(reverse, false))
+            else if (CanUpgradeTo(sourceRel, r, false))
             {
                 rel = r;
                 isA = false;
@@ -64,6 +102,18 @@ public class RelationshipType
             else continue;
         }
         return false;
+    }
+
+    // Revalidate this authored edge and side without reselecting a queued proposal's candidate.
+    public bool CanUpgradeTo(Character_Relationship sourceRel, RelationshipType candidate, bool isA)
+    {
+        if (candidate == null || string.IsNullOrEmpty(candidate.ID) || candidate.ID == ID ||
+            canUpgradeInto == null || !canUpgradeInto.Contains(candidate.ID)) return false;
+        if (isA ? !(candidate.isEqualRelationship || candidate.requireTargetValidation(false)) : candidate.isEqualRelationship)
+            return false;
+        if (!candidate.canPropose(!isA) || !candidate.isValid(sourceRel, !isA)) return false;
+        var reverse = sourceRel.Target.Relationships.FindRelationshipWith(sourceRel.Owner);
+        return candidate.CanMaintain(reverse, isA);
     }
 
 
@@ -211,6 +261,9 @@ public class RelationshipType
 
 public class RelationshipType_Inequal : RelationshipType
 {
+    public override RelationshipType GetPermissionSide(bool isB)
+        => (isB ? relationship_B_to_A : relationship_A_to_B)?.GetPermissionSide(isB);
+
     public override bool HasPermission_Follow(bool isB)
     {
         if (isB && relationship_B_to_A != null) return relationship_B_to_A.HasPermission_Follow(isB);
@@ -224,12 +277,6 @@ public class RelationshipType_Inequal : RelationshipType
         return false;
     }
 
-    public override bool HasPermission_Family(bool isB)
-    {
-        if (isB && relationship_B_to_A != null) return relationship_B_to_A.HasPermission_Family(isB);
-        else if (!isB && relationship_A_to_B != null) return relationship_A_to_B.HasPermission_Family(isB);
-        return false;
-    }
     public override bool HasPermission_Intimacy_Medium(bool isB)
     {
         if (isB && relationship_B_to_A != null) return relationship_B_to_A.HasPermission_Intimacy_Medium(isB);
@@ -308,6 +355,12 @@ public class RelationshipType_Inequal : RelationshipType
         else if (!validateB && relationship_A_to_B != null) return relationship_A_to_B.CanMaintain(rel, validateB);
         return true;
     }
+    public override bool AllowsNaturalReconsideration(Character_Relationship rel, bool validateB = false)
+    {
+        if (validateB && relationship_B_to_A != null) return relationship_B_to_A.AllowsNaturalReconsideration(rel, validateB);
+        else if (!validateB && relationship_A_to_B != null) return relationship_A_to_B.AllowsNaturalReconsideration(rel, validateB);
+        return base.AllowsNaturalReconsideration(rel, validateB);
+    }
     public override string GetDisplayName(Character_Trainable c, bool isB)
     {
         if (isB && relationship_B_to_A != null) return relationship_B_to_A.GetDisplayName(c, isB);
@@ -339,6 +392,13 @@ public class RelationshipType_Inequal : RelationshipType
         else if (!validateB && relationship_A_to_B != null) return relationship_A_to_B.isValidLoose(rel, validateB);
         return true;
     }
+}
+
+public class NaturalChangeRequirement
+{
+    public List<string> attitudeKeywords = new List<string>();
+    public RelationshipScoreType dominantScore = RelationshipScoreType.None;
+    public RelationshipRequirement requirements = null;
 }
 
 public class Index_RelationshipTypes : I_IndexHasID, I_IndexMergeable

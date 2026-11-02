@@ -1,0 +1,16 @@
+{
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "SexScene_EndSummary_relieved": "For $self.name$, at least nothing further happened this time; there is finally room for the tension to ease.",
+                "SexScene_EndSummary_forcedAftermath": "The coercion $self.name$ experienced has stopped, but the distress it left is not simply erased.",
+                "SexScene_EndSummary_painful": "Lingering pain makes it difficult for $self.name$ to feel at ease.",
+                "SexScene_EndSummary_satisfied": "$self.name$'s body gradually settles in the afterglow, the earlier tension eased for now.",
+                "SexScene_EndSummary_contentNonpenetrative": "A little warmth lingers for $self.name$; for the moment, there is some ease.",
+                "SexScene_EndSummary_unsatisfied": "For $self.name$, the earlier anticipation remains unresolved, and the physical restlessness has not entirely faded.",
+                "SexScene_EndSummary_neutral": "For $self.name$, this interlude has come to a close for now.",
+                "SexScene_EndSummary_finish": "$self.name$'s participation this time has ended."
+            }
+        }
+    }
+}

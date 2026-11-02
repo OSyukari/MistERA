@@ -420,7 +420,7 @@ public static class OutfitUtility
             return false;
         }
         var probe = new Item_Instance(piece.baseID, piece.nameOverwrite);
-        if (probe.GetComp_Equippable() == null)
+        if (probe.Comp_Equippable == null)
         {
             reason = $"[{piece.baseID}] is not equippable";
             return false;
@@ -461,7 +461,7 @@ public static class OutfitUtility
                 foreach (BodyPartEquipSlot slot in part.availableSlots)
                 {
                     if (!part.TryGetEquip(out var item, layer, slot) || !seen.Add(item.RefID)) continue;
-                    var comp = item.GetComp_Equippable();
+                    var comp = item.Comp_Equippable;
                     if (comp == null || comp.lockable) continue;
                     var piece = new OutfitPiece(item.BaseID, item.nameOverwrite);
                     if (CanBePiece(piece, out _)) outfit.pieces.Add(piece);

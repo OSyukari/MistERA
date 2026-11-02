@@ -146,6 +146,7 @@ public class RelationshipManager
         foreach(var i in this.relationships.Values)
         {
             if (i.RelationshipCooldown > 0) i.RelationshipCooldown--;
+            if (i.RelationshipCooldown == 0) i.QueueRelationshipCheck();
         }
 
 
@@ -750,7 +751,7 @@ public class RelationshipManager
         foreach (var i in relationships) i.Value.PostReloadUpdate();
     }
 
-    public void IncreaseRelationshipWith(int targetRef, RelationshipScoreType relID, float amount, ExperienceLog exp = null, bool silent= true, bool ignoreOwnerStatus = false)
+    public void IncreaseRelationshipWith(int targetRef, RelationshipScoreType relID, float amount, ExperienceLog exp = null, bool silent= true, bool ignoreOwnerStatus = false, float additiveUnscaledAmount = 0f)
     {
         if (targetRef == ownerRef) return;
         if (!ignoreOwnerStatus)
@@ -793,17 +794,31 @@ public class RelationshipManager
                 break;
         }
 
-        if (amount == 0) return;
-
         // Character_Attitude score-gain amplification (symmetric, capped both directions) - e.g. an
         // Angry character's Badwill gains hit harder, a Happy character's Goodwill gains hit harder.
-        var currentAttitude = GetCurrentAttitude();
-        if (currentAttitude != null) amount = currentAttitude.ApplyAmplification(relID, amount);
+        if (amount != 0)
+        {
+            var currentAttitude = GetCurrentAttitude();
+            if (currentAttitude != null) amount = currentAttitude.ApplyAmplification(relID, amount);
+        }
+        // Resolve the legacy delta against the old state first; the small interaction bonus is never scaled.
+        amount += additiveUnscaledAmount;
         if (amount == 0) return;
 
+        float StoredValue() => relID switch
+        {
+            RelationshipScoreType.Trust => targetRel.Trust_Base,
+            RelationshipScoreType.Fear => targetRel.Fear_Base,
+            RelationshipScoreType.Goodwill => targetRel.Goodwill_Base,
+            RelationshipScoreType.Badwill => targetRel.Badwill_Base,
+            RelationshipScoreType.Desire => targetRel.Desire_Base,
+            _ => 0f
+        };
+        float before = StoredValue();
         targetRel.ModRelationValue(relID, amount, silent);
 
-        if (exp != null) exp.AddRelations(ownerRef, targetRef, relID, (int)amount);
+        float applied = StoredValue() - before;
+        if (exp != null && applied != 0) exp.AddRelations(ownerRef, targetRef, relID, applied);
 
         RegisterAttitudeDelta(relID, targetRel, amount);
     }
@@ -1001,6 +1016,26 @@ public class RelationshipManager
         return relationships.TryGetValue(c.RefID, out var rel) ? rel : null;
     }
 
+    // A missing pair is projected locally, without registration, name changes or reverse preset propagation.
+    internal Character_Relationship ReadPermissionRelationship(Character_Trainable target)
+    {
+        var existing = PeekRelationshipWith(target);
+        if (existing != null) return existing;
+        var template = Owner.Template?.initialRelationship?.Find(preset => preset.baseID == target.BaseID
+            || (target.RefID == 0 && preset.baseID == "PLAYER"));
+        var projected = new Character_Relationship(this, target, template);
+        if (relationships_generic.TryGetValue(projected.TargetBaseID, out var generic)) projected.MergeWith(generic);
+        else if (!string.IsNullOrEmpty(projected.TargetRaceID))
+            foreach (var candidate in relationships_generic.Values)
+                if (candidate.TargetRaceID == projected.TargetRaceID)
+                {
+                    projected.MergeWith(candidate);
+                    break;
+                }
+        if (template != null) projected.InitializeScoresFromTypes(silent: true);
+        return projected;
+    }
+
     public Character_Relationship FindRelationshipWith(int charaRef)
     {
         if (charaRef < 0) return null;
@@ -1194,25 +1229,33 @@ public class RelationshipManager
             rel = rel.Target.Relationships.FindRelationshipWith(rel.Owner);
         }
 
-        box.trustBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_trust")}: {rel.Trust_Base.ToString("N0")}{rel.Trust_Bonus.ToString("+0;-#")}", false, "relationship_trust_tooltip");
+        box.trustBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_trust")}: {rel.Trust_Base.ToString("0.##")}{rel.Trust_Bonus.ToString("+0;-#")}", false, "relationship_trust_tooltip");
         box.fearBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_fear")}: {rel.Fear_Base.ToString("N0")}{rel.Fear_Bonus.ToString("+0;-#")}", false, "relationship_fear_tooltip");
         box.goodwillBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_goodwill")}: {rel.Goodwill_Base.ToString("N0")}{rel.Goodwill_Bonus.ToString("+0;-#")}", false, "relationship_goodwill_tooltip");
         box.badwillBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_badwill")}: {rel.Badwill_Base.ToString("N0")}{rel.Badwill_Bonus.ToString("+0;-#")}", false, "relationship_badwill_tooltip");
 
         if (scr_System_CentralControl.current.isSafeMode) box.desireBox.gameObject.SetActive(false);
-        else box.desireBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_desire")}: {rel.Desire_Base.ToString("N1")}{rel.Desire_Bonus.ToString("+0;-#")}", false, "relationship_desire_tooltip");
+        else
+        {
+            box.desireBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_desire")}: {rel.Desire_Base.ToString("0.##")}{rel.Desire_Bonus.ToString("+0;-#")}", false, "relationship_desire_tooltip");
+            box.desireBox.SetExternalTooltip(rel.DesireProgressTooltip);
+        }
 
         //RelationshipManager.Draw_Obedience(rel, box.obedienceBox);
         //if (box.attitudeBox != null) RelationshipManager.Draw_Attitude(rel.Owner, rel, box.attitudeBox);
     }
     public static void DrawFinal(Character_Relationship rel, scr_box_relationship box)
     {
-        box.trustBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_trust_final")}: {rel.Trust.ToString("N0")}", false, "relationship_trust_tooltip");
+        box.trustBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_trust_final")}: {rel.Trust.ToString("0.##")}", false, "relationship_trust_tooltip");
         box.fearBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_fear_final")}: {rel.Fear.ToString("N0")}", false, "relationship_fear_tooltip");
         box.goodwillBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_goodwill_final")}: {rel.Goodwill.ToString("N0")}", false, "relationship_goodwill_tooltip");
         box.badwillBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_badwill_final")}: {rel.Badwill.ToString("N0")}", false, "relationship_badwill_tooltip");
         if (scr_System_CentralControl.current.isSafeMode) box.desireBox.gameObject.SetActive(false);
-        else box.desireBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_desire_final")}: {rel.Desire.ToString("N1")}", false, "relationship_desire_tooltip");
+        else
+        {
+            box.desireBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_desire_final")}: {rel.Desire.ToString("0.##")}", false, "relationship_desire_tooltip");
+            box.desireBox.SetExternalTooltip(rel.DesireProgressTooltip);
+        }
 
     }
 }

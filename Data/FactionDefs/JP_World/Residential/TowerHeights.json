@@ -1,0 +1,40 @@
+{
+    "_comment_integration": "Luxury tower apartments (Docs/Locations/Plan_ResidentialDistricts.md 2.1). One world door at (740,160), floorExitID tower_lobby, listed in world.json initializeFactions. Blocks: tower_residence_low / _mid / _high; all use the fallback template until the 3LDK / 4LDK / penthouse floor plans and art exist.",
+    "_comment_amenities": "residentsOnly rooms (Room_Base.residentsOnly) open only to residents of this district's homes, district members, visit-pass holders, bookings here and the player's followers (ResidenceUtility.HasRoomAccess). The gym has no workout furniture yet: the sports club's treadmills/benches are gated to sports-club membership through their COMs (requireJobFaction), so reusing them needs a check of those gates first - left for later.",
+    "_comment_art": "PLACEHOLDER: imagePath/roomImagePath reuse existing BGAssets/Generated art; replace with dedicated art later.",
+    "MapPlans": {
+        "factionInit": [{
+            "ID": "jp_res_tower_heights", "isPublic": true, "isRentingFloor": false, "setPrivateRoomOwner": false,
+            "mainExit": { "roomID": "tower_lobby", "exitCost": 5 },
+            "floors": [{ "ID": "floor_jp_res_tower_heights", "nameOverwrite": "jp_res_tower_heights" }],
+            "_comment_residential": "PLACEHOLDER fallback: the 2LDK apartment until the tower's own 3LDK/4LDK/penthouse templates exist - then list them per block (e.g. penthouse on tower_residence_high) and switch the fallback to the 3LDK.",
+            "residential": {
+                "maxResidences": 40,
+                "fallbackTemplateID": "jp_home_tpl_apt_2ldk",
+                "blocks": [
+                    { "roomID": "tower_residence_low", "maxResidences": 16, "templates": [] },
+                    { "roomID": "tower_residence_mid", "maxResidences": 16, "templates": [] },
+                    { "roomID": "tower_residence_high", "maxResidences": 8, "templates": [] }
+                ]
+            },
+            "managerBaseIDs": [""], "salesInventory": [], "workModules": [], "workHours": [], "workAssignment": []
+        }],
+        "floorPlans": [{
+            "ID": "floor_jp_res_tower_heights", "imagePath": "BGAssets/Generated/office_01.webp",
+            "isFloorPlan": false, "floorWidth": 400, "floorHeight": 400, "resize": 1, "mapExit": "tower_lobby",
+            "rooms": [
+                { "ID": "tower_lobby", "displayName": "tower_lobby", "hideOnMap": true, "connects": [], "roomImagePath": "BGAssets/Generated/office_lounge_01.webp" },
+                { "ID": "tower_concierge", "displayName": "tower_concierge", "hideOnMap": true, "connects": [{ "ID": "tower_lobby", "cost": 1 }], "roomImagePath": "BGAssets/Generated/office_lounge_02.webp" },
+                { "ID": "tower_gym", "displayName": "tower_gym", "hideOnMap": true, "residentsOnly": true, "connects": [{ "ID": "tower_lobby", "cost": 1 }], "roomImagePath": "BGAssets/Generated/office_interior_01.webp" },
+                { "ID": "tower_lounge", "displayName": "tower_lounge", "hideOnMap": true, "residentsOnly": true, "connects": [{ "ID": "tower_lobby", "cost": 1 }], "roomImagePath": "BGAssets/Generated/office_lounge_03.webp" },
+                { "ID": "tower_residence_low", "displayName": "tower_residence_low", "hideOnMap": true, "residentsOnly": true, "connects": [{ "ID": "tower_lobby", "cost": 2 }], "roomImagePath": "BGAssets/Generated/office_hallway_02.webp" },
+                { "ID": "tower_residence_mid", "displayName": "tower_residence_mid", "hideOnMap": true, "residentsOnly": true, "connects": [{ "ID": "tower_lobby", "cost": 3 }], "roomImagePath": "BGAssets/Generated/office_hallway_03.webp" },
+                { "ID": "tower_residence_high", "displayName": "tower_residence_high", "hideOnMap": true, "residentsOnly": true, "connects": [{ "ID": "tower_lobby", "cost": 4 }], "roomImagePath": "BGAssets/Generated/office_hallway_04.webp" }
+            ]
+        }]
+    },
+    "Dictionary": { "Entries": { "zh-cn": {
+        "jp_res_tower_heights": "站前塔楼公寓", "tower_lobby": "塔楼大堂", "tower_concierge": "礼宾服务台", "tower_gym": "住户健身房", "tower_lounge": "住户休息室",
+        "tower_residence_low": "低层住户走廊", "tower_residence_mid": "中层住户走廊", "tower_residence_high": "高层住户走廊"
+    } } }
+}

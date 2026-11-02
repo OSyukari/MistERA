@@ -1,8 +1,8 @@
 {
-    "_doc": "Large full-facility sports club (Japanese 'sports club' chain style). ONE faction owns every area, so one membership (one monthly fee) covers all activities and every member/staff 'belongs' to all the furniture (requireJobFaction Any). No floor plan: every room is hideOnMap with no offsetX/offsetY, so the building only exists as the room list + the connects graph below (abstract walking minutes as door cost, like the hospital). Layout: lobby with reception and a waiting bench (also the world-map exit, the only room open to the public); corridor 1 behind it, from which every other room is members/staff only (requireFactionMembership); the locker rooms off the corridor lead to the pool; the training gym and the studio behind it; the sauna/spa beside the pool; the machine room (pool filtration) behind the pool. Open 07:00-24:00, closed overnight.",
+    "_doc": "Large full-facility sports club (Japanese 'sports club' chain style). ONE faction owns every area, so one membership (one monthly fee) covers all activities and every member/staff 'belongs' to all the furniture (requireJobFaction Any). No floor plan: every room is hideOnMap with no offsetX/offsetY, so the building only exists as the room list + the connects graph below (abstract walking minutes as door cost, like the hospital). Layout: lobby with reception and a waiting bench (also the world-map exit, the only room open to the public); corridor 1 behind it, from which every other room is members/staff only (requireFactionMembership); the locker rooms off the corridor lead to the pool; the training gym and the studio behind it; the sauna/spa beside the pool; the machine room (pool filtration) behind the pool. Open 10:00-22:00 (activeHoursStart/End), closed overnight.",
     "_doc_membership": "membertype_jp_sports_center_member: one monthly fee, many bookable activities (MemberType.recreation.activities). RecreationUtility books one activity per visit (a day's chain may mix them); the booking copies the activity's workModule and the default behavior tree (TryFindScheduledJobNode's booked-visit branch) sandboxes by it like a shift - one random workCommand after another, across the club. Member commands are non-job (no 'job' tag), tagged 'recreation', and gated only by requireJobFaction Any (belongs to the club: members and staff alike). The club's own staff can also have visits booked here off shift without joining (Manageable.GetOfferedRecreationTypes).",
-    "_doc_staff": "Staff sandbox by workModule.workCommands like the hospital's (each finished command picks a new random one; each command is offered in one area only, so they drift around the club). Front desk: single workCommand, stays at reception (talking to an on-shift clerk offers membership sign-up / cancellation - Events/sports_club_dialogue_options.json). Trainer: gym instruction / studio class / pool lifeguard. Cleaner: behavior_job TryFindNurseJobNode - com_job_cleaning wherever there is trash first, then any jp_sports_center_cleaner duty. Maintenance: equipment inspection / pool water check / filtration service. Trainer / cleaner / maintenance: two shifts (early 07-16, late 15-24, 1h handover), teams A/B on the hospital's 14-day rota so every day is covered. Front desk: one all-day post (07-24, every day). Staff commands are job commands gated like the hospital's (requireJobFaction CurrentActive + the role's MemberType). Fallback workers only hold membertype_jp_sports_center_frontdesk_npc (one all-day reception post, not assignable/joinable); every other post is left open for other NPCs or the player.",
-    "_doc_pay": "Approximate 2025 Japanese part-time/contract hourly rates: front desk and cleaner 1150, trainer 1400, maintenance 1300 JPY. Late shift (15-24) rates average in the 25% legal late-night premium for 22:00-24:00 over the 9 hours: x (7 + 2 x 1.25) / 9 = x 1.056. The all-day front desk post (07-24) uses the late front desk rate, 1210.",
+    "_doc_staff": "Staff sandbox by workModule.workCommands like the hospital's (each finished command picks a new random one; each command is offered in one area only, so they drift around the club). Front desk: single workCommand, stays at reception (talking to an on-shift clerk offers membership sign-up / cancellation - Events/sports_club_dialogue_options.json). Trainer: gym instruction / studio class / pool lifeguard. Cleaner: behavior_job TryFindNurseJobNode - com_job_cleaning wherever there is trash first, then any jp_sports_center_cleaner duty. Maintenance: equipment inspection / pool water check / filtration service. Trainer / cleaner / maintenance: two shifts (early 10-17, late 15-22, 2h overlap at the evening peak), teams A/B on the hospital's 14-day rota so every day is covered. Front desk: one all-day post (10-22, every day). No shift runs outside the opening hours. Staff commands are job commands gated like the hospital's (requireJobFaction CurrentActive + the role's MemberType). Fallback workers only hold membertype_jp_sports_center_frontdesk_npc (one all-day reception post, not assignable/joinable); every other post is left open for other NPCs or the player.",
+    "_doc_pay": "Approximate 2025 Japanese part-time/contract hourly rates: front desk and cleaner 1150, trainer 1400, maintenance 1300 JPY. The club closes at 22:00, so no shift earns the legal late-night premium (22:00-05:00): early and late shifts, and the all-day front desk post, pay the same rate.",
 
     "MapPlans": {
         "factionInit": [
@@ -30,12 +30,15 @@
                 ],
                 "_comment_joinableMemberTypes": "The membership: joined at the front desk (sports_club_dialogue_options) or through Opt_ArrangeJoin_Recreation (tag memberType_recreation). Also what the club's own staff may book here off shift (Manageable.GetOfferedRecreationTypes).",
                 "joinableMemberTypes": [ "membertype_jp_sports_center_member" ],
-                "_comment_fallbackWorkers": "Only the NPC-only front desk post (07-24, every day) gets a fallback worker, so reception is always staffed with a single fallback worker. Every other post (front desk early/late, trainer, cleaner, maintenance) is left open for other NPCs or the player, with no fallback worker. templateID jp_store_clerk (JP_World/Characters/templates.json) until club staff portrait bases / uniforms exist.",
+                "_comment_fallbackWorkers": "Only the NPC-only front desk post (10-22, every day) gets a fallback worker, so reception is always staffed with a single fallback worker. Every other post (front desk early/late, trainer, cleaner, maintenance) is left open for other NPCs or the player, with no fallback worker. templateID jp_store_clerk (JP_World/Characters/templates.json) until club staff portrait bases / uniforms exist.",
                 "fallbackWorkers": [
                     { "memberTypeID": "membertype_jp_sports_center_frontdesk_npc", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }
                 ],
                 "workHours": [],
-                "workAssignment": []
+                "workAssignment": [],
+                "_comment_activeHours": "Open 10:00-22:00 (typical Japanese full-facility club: open 10:00, close 22:00-23:00, earlier on weekends). activeHoursEnd is the last open hour (21:00-22:00). Every staff shift and member activity stays inside these hours, and the recreation planner books no visit hour outside them (RecreationUtility DayContext.CanPlace).",
+                "activeHoursStart": 10,
+                "activeHoursEnd": 21
             }
         ],
         "floorPlans": [
@@ -187,16 +190,27 @@
                     "feeAmount": { "itemID": "currency_JPY", "itemCount": 13000 },
                     "cadence": "Monthly"
                 },
-                "_comment_recreation": "One activity per visit (RecreationActivity); its workModule drives the visit (the default behavior tree sandboxes its workCommands - TryFindScheduledJobNode's booked-visit branch). activeHours = when a visit may be booked (club open 07-24). No entranceFee: the monthly membershipFee covers every activity. An activity may also carry behaviorOverrides / Tags / AcceptanceMods of its own.",
+                "_comment_recreation": "One activity per visit (RecreationActivity); its workModule drives the visit (the default behavior tree sandboxes its workCommands - TryFindScheduledJobNode's booked-visit branch). activeHours = when a visit may be booked (club open 10-22 - the planner also keeps visits inside the club's activeHoursStart/End). No entranceFee: the monthly membershipFee covers every activity. An activity may also carry behaviorOverrides / Tags / AcceptanceMods of its own.",
                 "recreation": {
                     "activities": [
                         {
                             "ID": "gym",
+                            "typeID": "gym_training", "allowMultipleInstances": true, "mergeWithSame": true,
+                            "conflictsWith": [], "replaceCommandTags": [],
+                            "replaceCommands": ["jp_sports_center_cardio", "jp_sports_center_weights", "jp_sports_center_machine_workout", "jp_sports_center_gym_rest"],
+                            "activityCommands": ["jp_sports_center_cardio", "jp_sports_center_weights", "jp_sports_center_machine_workout", "jp_sports_center_gym_rest"],
                             "workModule": {
                                 "jobPostID": "jp_sports_center_activity_gym",
                                 "workCommands": ["jp_sports_center_cardio", "jp_sports_center_weights", "jp_sports_center_machine_workout", "jp_sports_center_gym_rest"],
-                                "activeHours": [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+                                "activeHours": [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
                             },
+                            "_comment_AcceptanceMods": "Applied while a visit of this activity is in effect (Character_Factions.CurrentActiveActivity): +5 D20 to accept being asked to do one of its own workCommands. treatReceiverAsDoer evaluates the asked character as a doer, hence isDoer true. Same for every activity below.",
+                            "AcceptanceMods": [
+                                { "Requirement_ActionPackage": { "targetComID": "jp_sports_center_cardio", "isDoer": true }, "Result_EvaluationPackage": { "acceptanceModifier": 5, "acceptanceModifierExplanation": "jp_sports_center_activity_accept_reason" } },
+                                { "Requirement_ActionPackage": { "targetComID": "jp_sports_center_weights", "isDoer": true }, "Result_EvaluationPackage": { "acceptanceModifier": 5, "acceptanceModifierExplanation": "jp_sports_center_activity_accept_reason" } },
+                                { "Requirement_ActionPackage": { "targetComID": "jp_sports_center_machine_workout", "isDoer": true }, "Result_EvaluationPackage": { "acceptanceModifier": 5, "acceptanceModifierExplanation": "jp_sports_center_activity_accept_reason" } },
+                                { "Requirement_ActionPackage": { "targetComID": "jp_sports_center_gym_rest", "isDoer": true }, "Result_EvaluationPackage": { "acceptanceModifier": 5, "acceptanceModifierExplanation": "jp_sports_center_activity_accept_reason" } }
+                            ],
                             "minHours": 2, "maxHours": 3,
                             "minDaysBetween": 1,
                             "weeklyTarget": 2,
@@ -206,11 +220,18 @@
                         },
                         {
                             "ID": "yoga",
+                            "typeID": "yoga_training", "allowMultipleInstances": true, "mergeWithSame": true,
+                            "conflictsWith": [], "replaceCommandTags": [],
+                            "replaceCommands": ["jp_sports_center_yoga", "jp_sports_center_stretch"], "activityCommands": ["jp_sports_center_yoga", "jp_sports_center_stretch"],
                             "workModule": {
                                 "jobPostID": "jp_sports_center_activity_yoga",
                                 "workCommands": ["jp_sports_center_yoga", "jp_sports_center_stretch"],
-                                "activeHours": [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+                                "activeHours": [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
                             },
+                            "AcceptanceMods": [
+                                { "Requirement_ActionPackage": { "targetComID": "jp_sports_center_yoga", "isDoer": true }, "Result_EvaluationPackage": { "acceptanceModifier": 5, "acceptanceModifierExplanation": "jp_sports_center_activity_accept_reason" } },
+                                { "Requirement_ActionPackage": { "targetComID": "jp_sports_center_stretch", "isDoer": true }, "Result_EvaluationPackage": { "acceptanceModifier": 5, "acceptanceModifierExplanation": "jp_sports_center_activity_accept_reason" } }
+                            ],
                             "minHours": 2, "maxHours": 2,
                             "minDaysBetween": 2,
                             "weeklyTarget": 1,
@@ -218,11 +239,20 @@
                         },
                         {
                             "ID": "swimming",
+                            "typeID": "swimming_training", "allowMultipleInstances": true, "mergeWithSame": true,
+                            "conflictsWith": [], "replaceCommandTags": [],
+                            "replaceCommands": ["jp_sports_center_swim_laps", "jp_sports_center_water_walk", "jp_sports_center_poolside_rest"],
+                            "activityCommands": ["jp_sports_center_swim_laps", "jp_sports_center_water_walk", "jp_sports_center_poolside_rest"],
                             "workModule": {
                                 "jobPostID": "jp_sports_center_activity_swimming",
                                 "workCommands": ["jp_sports_center_swim_laps", "jp_sports_center_water_walk", "jp_sports_center_poolside_rest"],
-                                "activeHours": [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+                                "activeHours": [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
                             },
+                            "AcceptanceMods": [
+                                { "Requirement_ActionPackage": { "targetComID": "jp_sports_center_swim_laps", "isDoer": true }, "Result_EvaluationPackage": { "acceptanceModifier": 5, "acceptanceModifierExplanation": "jp_sports_center_activity_accept_reason" } },
+                                { "Requirement_ActionPackage": { "targetComID": "jp_sports_center_water_walk", "isDoer": true }, "Result_EvaluationPackage": { "acceptanceModifier": 5, "acceptanceModifierExplanation": "jp_sports_center_activity_accept_reason" } },
+                                { "Requirement_ActionPackage": { "targetComID": "jp_sports_center_poolside_rest", "isDoer": true }, "Result_EvaluationPackage": { "acceptanceModifier": 5, "acceptanceModifierExplanation": "jp_sports_center_activity_accept_reason" } }
+                            ],
                             "minHours": 2, "maxHours": 3,
                             "minDaysBetween": 2,
                             "weeklyTarget": 1,
@@ -230,11 +260,18 @@
                         },
                         {
                             "ID": "sauna",
+                            "typeID": "sauna_visit", "allowMultipleInstances": true, "mergeWithSame": true,
+                            "conflictsWith": [], "replaceCommandTags": [],
+                            "replaceCommands": ["jp_sports_center_sauna", "jp_sports_center_cool_down"], "activityCommands": ["jp_sports_center_sauna", "jp_sports_center_cool_down"],
                             "workModule": {
                                 "jobPostID": "jp_sports_center_activity_sauna",
                                 "workCommands": ["jp_sports_center_sauna", "jp_sports_center_cool_down"],
-                                "activeHours": [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+                                "activeHours": [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
                             },
+                            "AcceptanceMods": [
+                                { "Requirement_ActionPackage": { "targetComID": "jp_sports_center_sauna", "isDoer": true }, "Result_EvaluationPackage": { "acceptanceModifier": 5, "acceptanceModifierExplanation": "jp_sports_center_activity_accept_reason" } },
+                                { "Requirement_ActionPackage": { "targetComID": "jp_sports_center_cool_down", "isDoer": true }, "Result_EvaluationPackage": { "acceptanceModifier": 5, "acceptanceModifierExplanation": "jp_sports_center_activity_accept_reason" } }
+                            ],
                             "minHours": 2, "maxHours": 2,
                             "minDaysBetween": 1,
                             "weeklyTarget": 1,
@@ -265,13 +302,13 @@
                 "childMemberTypes": [
                     {
                         "ID": "membertype_jp_sports_center_frontdesk_npc",
-                        "_comment": "NPC-only front desk post: one shift covering all opening hours (07-24) every day, always held by the club's one fallback worker. Under the front desk parent for its tags (sign-up dialogue) and the reception_duty requirement, but listed in neither assignableMemberTypes nor joinableMemberTypes, so it can't be assigned or joined. Pay = the late shift's rate (averages in the 22-24 premium).",
+                        "_comment": "NPC-only front desk post: one shift covering all opening hours (10-22) every day, always held by the club's one fallback worker. Under the front desk parent for its tags (sign-up dialogue) and the reception_duty requirement, but listed in neither assignableMemberTypes nor joinableMemberTypes, so it can't be assigned or joined.",
                         "workModule": {
                             "jobPostID": "jp_sports_center_frontdesk_npc",
                             "workCommands": ["jp_sports_center_reception_duty"],
-                            "activeHours": [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
+                            "activeHours": [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21],
                             "activeDays": [],
-                            "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1210 } ],
+                            "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1150 } ],
                             "paymentCadence": "Monthly",
                             "_comment_holiday": "Open every day - holiday shifts pay a 20% allowance.",
                             "holidayPayoutMultiplier": 1.2
@@ -287,14 +324,14 @@
                 "isMember": true, "isPrisoner": false, "isManager": false, "isHidden": false,
                 "canBeTransferred": true, "canBeLiberated": false, "canBeRescued": false,
                 "skipsJobDispatch": false, "isPurgedOnPartyCleanup": false, "isDisplayableInFactionUI": true, "participatesInCombat": true,
-                "_comment_rota": "Early 07-16 / late 15-24; team A works week A Mon Tue Fri Sat Sun + week B Wed Thu, team B the other days (the hospital's 14-day rota), so every day has an early and a late shift.",
+                "_comment_rota": "Early 10-17 / late 15-22 (inside the 10-22 opening hours); team A works week A Mon Tue Fri Sat Sun + week B Wed Thu, team B the other days (the hospital's 14-day rota), so every day has an early and a late shift.",
                 "childMemberTypes": [
                     {
                         "ID": "membertype_jp_sports_center_trainer_early_a",
                         "workModule": {
                             "jobPostID": "jp_sports_center_trainer_early",
                             "workCommands": ["jp_sports_center_gym_instruct", "jp_sports_center_lead_class", "jp_sports_center_lifeguard"],
-                            "activeHours": [7, 8, 9, 10, 11, 12, 13, 14, 15],
+                            "activeHours": [10, 11, 12, 13, 14, 15, 16],
                             "activeDays": [1, 1, 0, 0, 1, 1, 1,   0, 0, 1, 1, 0, 0, 0],
                             "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1400 } ],
                             "paymentCadence": "Monthly",
@@ -307,7 +344,7 @@
                         "workModule": {
                             "jobPostID": "jp_sports_center_trainer_early",
                             "workCommands": ["jp_sports_center_gym_instruct", "jp_sports_center_lead_class", "jp_sports_center_lifeguard"],
-                            "activeHours": [7, 8, 9, 10, 11, 12, 13, 14, 15],
+                            "activeHours": [10, 11, 12, 13, 14, 15, 16],
                             "activeDays": [0, 0, 1, 1, 0, 0, 0,   1, 1, 0, 0, 1, 1, 1],
                             "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1400 } ],
                             "paymentCadence": "Monthly",
@@ -320,9 +357,9 @@
                         "workModule": {
                             "jobPostID": "jp_sports_center_trainer_late",
                             "workCommands": ["jp_sports_center_gym_instruct", "jp_sports_center_lead_class", "jp_sports_center_lifeguard"],
-                            "activeHours": [15, 16, 17, 18, 19, 20, 21, 22, 23],
+                            "activeHours": [15, 16, 17, 18, 19, 20, 21],
                             "activeDays": [1, 1, 0, 0, 1, 1, 1,   0, 0, 1, 1, 0, 0, 0],
-                            "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1480 } ],
+                            "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1400 } ],
                             "paymentCadence": "Monthly",
                             "_comment_holiday": "Open every day - holiday shifts pay a 20% allowance.",
                             "holidayPayoutMultiplier": 1.2
@@ -333,9 +370,9 @@
                         "workModule": {
                             "jobPostID": "jp_sports_center_trainer_late",
                             "workCommands": ["jp_sports_center_gym_instruct", "jp_sports_center_lead_class", "jp_sports_center_lifeguard"],
-                            "activeHours": [15, 16, 17, 18, 19, 20, 21, 22, 23],
+                            "activeHours": [15, 16, 17, 18, 19, 20, 21],
                             "activeDays": [0, 0, 1, 1, 0, 0, 0,   1, 1, 0, 0, 1, 1, 1],
-                            "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1480 } ],
+                            "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1400 } ],
                             "paymentCadence": "Monthly",
                             "_comment_holiday": "Open every day - holiday shifts pay a 20% allowance.",
                             "holidayPayoutMultiplier": 1.2
@@ -368,14 +405,14 @@
                         }
                     }
                 },
-                "_comment_rota": "Early 07-16 / late 15-24; team A works week A Mon Tue Fri Sat Sun + week B Wed Thu, team B the other days (the hospital's 14-day rota), so every day has an early and a late shift.",
+                "_comment_rota": "Early 10-17 / late 15-22 (inside the 10-22 opening hours); team A works week A Mon Tue Fri Sat Sun + week B Wed Thu, team B the other days (the hospital's 14-day rota), so every day has an early and a late shift.",
                 "childMemberTypes": [
                     {
                         "ID": "membertype_jp_sports_center_cleaner_early_a",
                         "workModule": {
                             "jobPostID": "jp_sports_center_cleaner_early",
                             "workCommands": ["jp_sports_center_clean_lockers", "jp_sports_center_clean_equipment", "jp_sports_center_clean_pool_deck"],
-                            "activeHours": [7, 8, 9, 10, 11, 12, 13, 14, 15],
+                            "activeHours": [10, 11, 12, 13, 14, 15, 16],
                             "activeDays": [1, 1, 0, 0, 1, 1, 1,   0, 0, 1, 1, 0, 0, 0],
                             "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1150 } ],
                             "paymentCadence": "Monthly",
@@ -388,7 +425,7 @@
                         "workModule": {
                             "jobPostID": "jp_sports_center_cleaner_early",
                             "workCommands": ["jp_sports_center_clean_lockers", "jp_sports_center_clean_equipment", "jp_sports_center_clean_pool_deck"],
-                            "activeHours": [7, 8, 9, 10, 11, 12, 13, 14, 15],
+                            "activeHours": [10, 11, 12, 13, 14, 15, 16],
                             "activeDays": [0, 0, 1, 1, 0, 0, 0,   1, 1, 0, 0, 1, 1, 1],
                             "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1150 } ],
                             "paymentCadence": "Monthly",
@@ -401,9 +438,9 @@
                         "workModule": {
                             "jobPostID": "jp_sports_center_cleaner_late",
                             "workCommands": ["jp_sports_center_clean_lockers", "jp_sports_center_clean_equipment", "jp_sports_center_clean_pool_deck"],
-                            "activeHours": [15, 16, 17, 18, 19, 20, 21, 22, 23],
+                            "activeHours": [15, 16, 17, 18, 19, 20, 21],
                             "activeDays": [1, 1, 0, 0, 1, 1, 1,   0, 0, 1, 1, 0, 0, 0],
-                            "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1210 } ],
+                            "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1150 } ],
                             "paymentCadence": "Monthly",
                             "_comment_holiday": "Open every day - holiday shifts pay a 20% allowance.",
                             "holidayPayoutMultiplier": 1.2
@@ -414,9 +451,9 @@
                         "workModule": {
                             "jobPostID": "jp_sports_center_cleaner_late",
                             "workCommands": ["jp_sports_center_clean_lockers", "jp_sports_center_clean_equipment", "jp_sports_center_clean_pool_deck"],
-                            "activeHours": [15, 16, 17, 18, 19, 20, 21, 22, 23],
+                            "activeHours": [15, 16, 17, 18, 19, 20, 21],
                             "activeDays": [0, 0, 1, 1, 0, 0, 0,   1, 1, 0, 0, 1, 1, 1],
-                            "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1210 } ],
+                            "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1150 } ],
                             "paymentCadence": "Monthly",
                             "_comment_holiday": "Open every day - holiday shifts pay a 20% allowance.",
                             "holidayPayoutMultiplier": 1.2
@@ -432,14 +469,14 @@
                 "isMember": true, "isPrisoner": false, "isManager": false, "isHidden": false,
                 "canBeTransferred": true, "canBeLiberated": false, "canBeRescued": false,
                 "skipsJobDispatch": false, "isPurgedOnPartyCleanup": false, "isDisplayableInFactionUI": true, "participatesInCombat": true,
-                "_comment_rota": "Early 07-16 / late 15-24; team A works week A Mon Tue Fri Sat Sun + week B Wed Thu, team B the other days (the hospital's 14-day rota), so every day has an early and a late shift.",
+                "_comment_rota": "Early 10-17 / late 15-22 (inside the 10-22 opening hours); team A works week A Mon Tue Fri Sat Sun + week B Wed Thu, team B the other days (the hospital's 14-day rota), so every day has an early and a late shift.",
                 "childMemberTypes": [
                     {
                         "ID": "membertype_jp_sports_center_maintenance_early_a",
                         "workModule": {
                             "jobPostID": "jp_sports_center_maintenance_early",
                             "workCommands": ["jp_sports_center_inspect_equipment", "jp_sports_center_pool_water_check", "jp_sports_center_filtration_service"],
-                            "activeHours": [7, 8, 9, 10, 11, 12, 13, 14, 15],
+                            "activeHours": [10, 11, 12, 13, 14, 15, 16],
                             "activeDays": [1, 1, 0, 0, 1, 1, 1,   0, 0, 1, 1, 0, 0, 0],
                             "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1300 } ],
                             "paymentCadence": "Monthly",
@@ -452,7 +489,7 @@
                         "workModule": {
                             "jobPostID": "jp_sports_center_maintenance_early",
                             "workCommands": ["jp_sports_center_inspect_equipment", "jp_sports_center_pool_water_check", "jp_sports_center_filtration_service"],
-                            "activeHours": [7, 8, 9, 10, 11, 12, 13, 14, 15],
+                            "activeHours": [10, 11, 12, 13, 14, 15, 16],
                             "activeDays": [0, 0, 1, 1, 0, 0, 0,   1, 1, 0, 0, 1, 1, 1],
                             "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1300 } ],
                             "paymentCadence": "Monthly",
@@ -465,9 +502,9 @@
                         "workModule": {
                             "jobPostID": "jp_sports_center_maintenance_late",
                             "workCommands": ["jp_sports_center_inspect_equipment", "jp_sports_center_pool_water_check", "jp_sports_center_filtration_service"],
-                            "activeHours": [15, 16, 17, 18, 19, 20, 21, 22, 23],
+                            "activeHours": [15, 16, 17, 18, 19, 20, 21],
                             "activeDays": [1, 1, 0, 0, 1, 1, 1,   0, 0, 1, 1, 0, 0, 0],
-                            "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1370 } ],
+                            "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1300 } ],
                             "paymentCadence": "Monthly",
                             "_comment_holiday": "Open every day - holiday shifts pay a 20% allowance.",
                             "holidayPayoutMultiplier": 1.2
@@ -478,9 +515,9 @@
                         "workModule": {
                             "jobPostID": "jp_sports_center_maintenance_late",
                             "workCommands": ["jp_sports_center_inspect_equipment", "jp_sports_center_pool_water_check", "jp_sports_center_filtration_service"],
-                            "activeHours": [15, 16, 17, 18, 19, 20, 21, 22, 23],
+                            "activeHours": [15, 16, 17, 18, 19, 20, 21],
                             "activeDays": [0, 0, 1, 1, 0, 0, 0,   1, 1, 0, 0, 1, 1, 1],
-                            "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1370 } ],
+                            "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1300 } ],
                             "paymentCadence": "Monthly",
                             "_comment_holiday": "Open every day - holiday shifts pay a 20% allowance.",
                             "holidayPayoutMultiplier": 1.2
@@ -543,7 +580,8 @@
                 "timeScale": 45,
                 "comTags": ["furniture", "recreation", "jp_sports_center", "jp_sports_center_activity"],
                 "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "Any" } } },
-                "variants": [ { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 8, "cost_EN": 3 } } }, "displayName": "jp_sports_center_cardio_displayName" } ],
+                "variants": [ { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 8, "cost_EN": 3 } } }, "displayName": "jp_sports_center_cardio_displayName" },
+                              { "requirements": { "requirement": { "doerCount": 2, "req_Doers": { "cost_ST": 8, "cost_EN": 3 } } }, "displayName": "jp_sports_center_cardio_displayName_2" } ],
                 "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 0 },
                 "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$踏上跑步机开始慢跑"] } ] },
                 "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正在跑步机上挥汗如雨"] } ] },
@@ -555,7 +593,8 @@
                 "timeScale": 45,
                 "comTags": ["furniture", "recreation", "jp_sports_center", "jp_sports_center_activity"],
                 "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "Any" } } },
-                "variants": [ { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 10, "cost_EN": 3 } } }, "displayName": "jp_sports_center_weights_displayName" } ],
+                "variants": [ { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 10, "cost_EN": 3 } } }, "displayName": "jp_sports_center_weights_displayName" },
+                              { "requirements": { "requirement": { "doerCount": 2, "req_Doers": { "cost_ST": 10, "cost_EN": 3 } } }, "displayName": "jp_sports_center_weights_displayName_2" } ],
                 "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 0 },
                 "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$在哑铃架前开始力量训练"] } ] },
                 "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正在咬牙举着哑铃"] } ] },
@@ -567,7 +606,8 @@
                 "timeScale": 45,
                 "comTags": ["furniture", "recreation", "jp_sports_center", "jp_sports_center_activity"],
                 "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "Any" } } },
-                "variants": [ { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 8, "cost_EN": 3 } } }, "displayName": "jp_sports_center_machine_workout_displayName" } ],
+                "variants": [ { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 8, "cost_EN": 3 } } }, "displayName": "jp_sports_center_machine_workout_displayName" },
+                              { "requirements": { "requirement": { "doerCount": 2, "req_Doers": { "cost_ST": 8, "cost_EN": 3 } } }, "displayName": "jp_sports_center_machine_workout_displayName_2" } ],
                 "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 0 },
                 "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$调好器械的重量，开始训练"] } ] },
                 "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正在器械上一组一组地练着"] } ] },
@@ -581,7 +621,8 @@
                 "comTags": ["furniture", "jp_sports_center", "jp_sports_center_activity"],
                 "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "Any" } } },
                 "results_EP": { "results_character": [ { "entry_conditions": { "applyToDoer": true }, "entry_results": { "type": "statMod_ST", "value": "4" } } ] },
-                "variants": [ { "requirements": { "requirement": { "doerCount": 1 } }, "displayName": "jp_sports_center_gym_rest_displayName" } ],
+                "variants": [ { "requirements": { "requirement": { "doerCount": 1 } }, "displayName": "jp_sports_center_gym_rest_displayName" },
+                              { "requirements": { "requirement": { "doerCount": 2 } }, "displayName": "jp_sports_center_gym_rest_displayName_2" } ],
                 "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 0 },
                 "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$坐下来喝了口水"] } ] },
                 "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正在调整呼吸"] } ] },
@@ -593,7 +634,8 @@
                 "timeScale": 60,
                 "comTags": ["furniture", "recreation", "jp_sports_center", "jp_sports_center_activity"],
                 "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "Any" } } },
-                "variants": [ { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 4, "cost_EN": 2 } } }, "displayName": "jp_sports_center_yoga_displayName" } ],
+                "variants": [ { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 4, "cost_EN": 2 } } }, "displayName": "jp_sports_center_yoga_displayName" },
+                              { "requirements": { "requirement": { "doerCount": 2, "req_Doers": { "cost_ST": 4, "cost_EN": 2 } } }, "displayName": "jp_sports_center_yoga_displayName_2" } ],
                 "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 0 },
                 "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$铺好瑜伽垫，开始做瑜伽"] } ] },
                 "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正保持着瑜伽体式慢慢呼吸"] } ] },
@@ -605,7 +647,8 @@
                 "timeScale": 30,
                 "comTags": ["furniture", "recreation", "jp_sports_center", "jp_sports_center_activity"],
                 "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "Any" } } },
-                "variants": [ { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 2, "cost_EN": 2 } } }, "displayName": "jp_sports_center_stretch_displayName" } ],
+                "variants": [ { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 2, "cost_EN": 2 } } }, "displayName": "jp_sports_center_stretch_displayName" },
+                              { "requirements": { "requirement": { "doerCount": 2, "req_Doers": { "cost_ST": 2, "cost_EN": 2 } } }, "displayName": "jp_sports_center_stretch_displayName_2" } ],
                 "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 0 },
                 "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$在垫子上开始拉伸"] } ] },
                 "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正在垫子上舒展身体"] } ] },
@@ -617,7 +660,8 @@
                 "timeScale": 45,
                 "comTags": ["furniture", "recreation", "jp_sports_center", "jp_sports_center_activity"],
                 "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "Any" } } },
-                "variants": [ { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 10, "cost_EN": 3 } } }, "displayName": "jp_sports_center_swim_laps_displayName" } ],
+                "variants": [ { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 10, "cost_EN": 3 } } }, "displayName": "jp_sports_center_swim_laps_displayName" },
+                              { "requirements": { "requirement": { "doerCount": 2, "req_Doers": { "cost_ST": 10, "cost_EN": 3 } } }, "displayName": "jp_sports_center_swim_laps_displayName_2" } ],
                 "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 0 },
                 "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$滑进泳道开始游泳"] } ] },
                 "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正在泳道里一圈一圈地游着"] } ] },
@@ -629,7 +673,8 @@
                 "timeScale": 30,
                 "comTags": ["furniture", "recreation", "jp_sports_center", "jp_sports_center_activity"],
                 "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "Any" } } },
-                "variants": [ { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 4, "cost_EN": 2 } } }, "displayName": "jp_sports_center_water_walk_displayName" } ],
+                "variants": [ { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 4, "cost_EN": 2 } } }, "displayName": "jp_sports_center_water_walk_displayName" },
+                              { "requirements": { "requirement": { "doerCount": 2, "req_Doers": { "cost_ST": 4, "cost_EN": 2 } } }, "displayName": "jp_sports_center_water_walk_displayName_2" } ],
                 "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 0 },
                 "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$下到泳池里开始水中步行"] } ] },
                 "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正在水里慢慢地走着"] } ] },
@@ -642,7 +687,8 @@
                 "comTags": ["furniture", "jp_sports_center", "jp_sports_center_activity"],
                 "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "Any" } } },
                 "results_EP": { "results_character": [ { "entry_conditions": { "applyToDoer": true }, "entry_results": { "type": "statMod_ST", "value": "4" } } ] },
-                "variants": [ { "requirements": { "requirement": { "doerCount": 1 } }, "displayName": "jp_sports_center_poolside_rest_displayName" } ],
+                "variants": [ { "requirements": { "requirement": { "doerCount": 1 } }, "displayName": "jp_sports_center_poolside_rest_displayName" },
+                              { "requirements": { "requirement": { "doerCount": 2 } }, "displayName": "jp_sports_center_poolside_rest_displayName_2" } ],
                 "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 0 },
                 "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$在池边长椅上坐下歇口气"] } ] },
                 "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正裹着毛巾在池边休息"] } ] },
@@ -654,7 +700,8 @@
                 "timeScale": 20,
                 "comTags": ["furniture", "recreation", "jp_sports_center", "jp_sports_center_activity"],
                 "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "Any" } } },
-                "variants": [ { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 2, "cost_EN": 2 } } }, "displayName": "jp_sports_center_sauna_displayName" } ],
+                "variants": [ { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 2, "cost_EN": 2 } } }, "displayName": "jp_sports_center_sauna_displayName" },
+                              { "requirements": { "requirement": { "doerCount": 2, "req_Doers": { "cost_ST": 2, "cost_EN": 2 } } }, "displayName": "jp_sports_center_sauna_displayName_2" } ],
                 "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 0 },
                 "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$走进了桑拿房"] } ] },
                 "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正在桑拿房里蒸得满身是汗"] } ] },
@@ -667,7 +714,8 @@
                 "comTags": ["furniture", "recreation", "jp_sports_center", "jp_sports_center_activity"],
                 "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "Any" } } },
                 "results_EP": { "results_character": [ { "entry_conditions": { "applyToDoer": true }, "entry_results": { "type": "statMod_ST", "value": "6" } } ] },
-                "variants": [ { "requirements": { "requirement": { "doerCount": 1 } }, "displayName": "jp_sports_center_cool_down_displayName" } ],
+                "variants": [ { "requirements": { "requirement": { "doerCount": 1 } }, "displayName": "jp_sports_center_cool_down_displayName" },
+                              { "requirements": { "requirement": { "doerCount": 2 } }, "displayName": "jp_sports_center_cool_down_displayName_2" } ],
                 "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 0 },
                 "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$泡进了冷水池"] } ] },
                 "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正在冷水池和躺椅之间来回放松"] } ] },
@@ -847,6 +895,17 @@
                 "jp_sports_center_poolside_rest_displayName": "池边休息",
                 "jp_sports_center_sauna_displayName": "桑拿",
                 "jp_sports_center_cool_down_displayName": "冷水浴·放松",
+                "jp_sports_center_cardio_displayName_2": "一起有氧训练",
+                "jp_sports_center_weights_displayName_2": "一起力量训练",
+                "jp_sports_center_machine_workout_displayName_2": "一起器械训练",
+                "jp_sports_center_gym_rest_displayName_2": "一起组间休息",
+                "jp_sports_center_yoga_displayName_2": "一起做瑜伽",
+                "jp_sports_center_stretch_displayName_2": "一起拉伸",
+                "jp_sports_center_swim_laps_displayName_2": "一起游泳",
+                "jp_sports_center_water_walk_displayName_2": "一起水中步行",
+                "jp_sports_center_poolside_rest_displayName_2": "一起池边休息",
+                "jp_sports_center_sauna_displayName_2": "一起蒸桑拿",
+                "jp_sports_center_cool_down_displayName_2": "一起冷水浴·放松",
                 "jp_sports_center_reception_duty_displayName": "前台接待",
                 "jp_sports_center_gym_instruct_displayName": "器械区指导",
                 "jp_sports_center_lead_class_displayName": "带课",
@@ -869,6 +928,7 @@
                 "jp_sports_center_activity_yoga": "瑜伽课",
                 "jp_sports_center_activity_swimming": "游泳",
                 "jp_sports_center_activity_sauna": "桑拿",
+                "jp_sports_center_activity_accept_reason": "活动中",
                 "jp_sports_center_frontdesk_npc": "前台（全天）",
                 "jp_sports_center_trainer_early": "教练（早班）",
                 "jp_sports_center_trainer_late": "教练（晚班）",

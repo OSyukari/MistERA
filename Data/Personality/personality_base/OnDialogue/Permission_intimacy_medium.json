@@ -1,0 +1,43 @@
+{
+    "_doc": "口上loose entry文件：许可「中度亲密」（intimacy_medium，亲吻、爱抚等更亲密的接触，也包括发起亲密场景）的请求口上。条目含义与生成规范同 Permission_intimacy_low.json 的 _doc（Request / Granted / Refused，每条目一个variant、3条response，无通用兜底）。台词保持含蓄，不出现露骨描写。",
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "permission_intimacy_medium_Request",
+                    "_comment": "玩家想请求中度亲密许可，刚开口、尚未说明。男性NPC对此的反应，可带察觉。",
+                    "variants": [ { "responses": [
+                        "\"……你想说的不会是那种事吧？\"",
+                        "\"看你这表情，我大概知道了。\"",
+                        "\"想更进一步？先说清楚。\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "permission_intimacy_medium_Granted",
+                    "_comment": "答应给予中度亲密许可（菜单请求获准，或亲密指令进行中被自动请求获准）。男性说话者。",
+                    "variants": [ { "responses": [
+                        "\"……好，我答应你。\"\n%%permission_intimacy_medium_consent%%",
+                        "\"可以，我也不是不愿意。\"\n%%permission_intimacy_medium_consent%%",
+                        "\"行，就照你说的。\"\n%%permission_intimacy_medium_consent%%"
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "permission_intimacy_medium_Refused",
+                    "_comment": "拒绝给予中度亲密许可。男性NPC，委婉为主。",
+                    "variants": [ { "responses": [
+                        "\"抱歉，我还没想好。\"",
+                        "\"这个……还是等以后吧。\"",
+                        "\"现在不行，别勉强。\""
+                    ] } ]
+                }
+            }
+        ]
+    }
+}

@@ -146,9 +146,16 @@ public abstract class scr_Menu : MonoBehaviour
 
 
 
+    public void NotifyClosed()
+    {
+        var onExit = onSelfExit;
+        onSelfExit = null;
+        onExit?.Invoke();
+    }
+
     protected virtual void OnDestroy()
     {
-        if (onSelfExit != null) onSelfExit();
+        onSelfExit = null;
         Destroy(tooltip);
     }
     public scr_SelectableText GetButtonByID(int id)

@@ -6,9 +6,50 @@ using Newtonsoft.Json;
 using System.Linq;
 
 
-public class BodyPart_Instance : I_CombatItem
+public class BodyPart_Instance : I_CombatItem, I_TraceHolder
 {
     [JsonProperty] protected string baseID = "";
+
+    //---- traces (Docs/Body/Plan_BodyTraces.md) ----
+    [JsonProperty] List<TraceInstance> traces = null;
+    public bool ShouldSerializetraces() { return traces != null && traces.Count > 0; }
+    [JsonIgnore] public List<TraceInstance> Traces { get { if (traces == null) traces = new List<TraceInstance>(); return traces; } }
+    [JsonIgnore] public bool HasTraces { get { return traces != null && traces.Count > 0; } }
+    static readonly List<BodyPartEquipSlot> noSlots = new List<BodyPartEquipSlot>();
+    [JsonIgnore] public List<BodyPartEquipSlot> TraceSlots { get { return Base?.traceSlots ?? noSlots; } }
+    [JsonIgnore] public bool AllowTraces { get { return TraceSlots.Count > 0; } }
+    [JsonIgnore] public bool CanLeaveTraces { get { return Base != null && Base.canLeaveTraces; } }
+    [JsonIgnore] public List<string> LeaveTraceIDs { get { return Base?.leaveTraceIDs; } }
+    [JsonIgnore] public I_TraceHolder ParentHolder { get { return null; } }
+    [JsonIgnore] public List<BodyPartEquipSlot> OwnSlots { get { return Base?.AvailableSlots ?? noSlots; } }
+    [JsonIgnore] public List<BodyPartEquipSlot> UnderSlots { get { return noSlots; } }
+    [JsonIgnore] public string TraceHolderID { get { return baseID; } }
+
+    /// <summary> the slot's own coverage; a slot the part doesn't have (old trace) = visible while any slot is uncovered </summary>
+    public bool IsSlotVisible(BodyPartEquipSlot slot)
+    {
+        if (Base == null) return false;
+        if (availableSlots.Contains(slot)) return GetSlotRevealingScore(slot, BodyEquipLayer.None) < 2;
+        if (availableSlots.Count < 1) return true;
+        foreach (var s in availableSlots)
+        {
+            if (GetSlotRevealingScore(s, BodyEquipLayer.None) < 2) return true;
+        }
+        return false;
+    }
+
+    /// <summary> this part's traces and its organs' (a part's description asks its internals). visibleOnly: per slot coverage </summary>
+    public void GetTraces(List<(I_TraceHolder holder, TraceInstance trace)> result, bool visibleOnly = false)
+    {
+        if (HasTraces)
+        {
+            foreach (var t in traces)
+            {
+                if (!visibleOnly || IsSlotVisible(t.slot)) result.Add((this, t));
+            }
+        }
+        foreach (var organ in internals) organ.GetTraces(result, visibleOnly);
+    }
 
     private BodyPart_Base basePointer = null;
     [JsonIgnore] public BodyPart_Base Base
@@ -64,6 +105,7 @@ public class BodyPart_Instance : I_CombatItem
 
         foreach (var i in internals) i.ReEstablishParent(this);
         EnsureSlotIndexes();
+        if (HasTraces) TraceUtility.FixSlots(this);
     }
 
     /// <summary>
@@ -204,15 +246,22 @@ public class BodyPart_Instance : I_CombatItem
     {
         return Utility.GetRandomElement(internals.FindAll(x => Utility.ListContainsLoose(x.Base.tags, tags)));
     }
+
+    List<int> _equippedRefIDs = null;
+
     [JsonIgnore] public List<int> EquippedRefIDs { get
         {
-            var v = contentsIndex.Values.ToList();
-            v.RemoveAll(x => x == -1);
-            v = v.Distinct().ToList();
-            return v;
+            if (_equippedRefIDs == null)
+            {
+                _equippedRefIDs = contentsIndex.Values.ToList();
+                _equippedRefIDs.RemoveAll(x => x == -1);
+                Utility.DistinctInPlace(_equippedRefIDs);
+
+            }
+            return _equippedRefIDs;
         } }
 
-    List<Item_Instance> _equippedItems;
+    List<Item_Instance> _equippedItems = null;
     [JsonIgnore] 
     public List<Item_Instance> EquippedItems { get
         {
@@ -306,7 +355,7 @@ public class BodyPart_Instance : I_CombatItem
     /// <returns></returns>
     public bool EquipItem(Item_Instance item, ref List<BodyPartEquipSlot> slots, bool forceEquip = false)
     {
-        var comp = item.GetComp_Equippable();
+        var comp = item.Comp_Equippable;
         bool equipped = false;
        // Debug.Log($"Equipping {String.Join(" ", slots)} + {comp.equipLayer} on {this.DisplayName}, allIndex [{String.Join(",", contentsIndex.Keys)}]");
 
@@ -358,7 +407,7 @@ public class BodyPart_Instance : I_CombatItem
     /// <returns></returns>
     public bool EquipItem(Item_Instance item, bool forceEquip = false)
     {
-        var comp = item.GetComp_Equippable();
+        var comp = item.Comp_Equippable;
         bool equipped = false;
         bool unequip = false;
         // Debug.Log($"Equipping {String.Join(" ", slots)} + {comp.equipLayer} on {this.DisplayName}, allIndex [{String.Join(",", contentsIndex.Keys)}]");
@@ -427,7 +476,7 @@ public class BodyPart_Instance : I_CombatItem
     public bool PreviewEquip(Item_Instance item, out bool replaces)
     {
         replaces = false;
-        var comp = item.GetComp_Equippable();
+        var comp = item.Comp_Equippable;
         if (comp == null) return false;
         bool equipped = false, unequip = false, displaces = false;
         foreach (var slot in comp.equipSlot)
@@ -473,7 +522,9 @@ public class BodyPart_Instance : I_CombatItem
     protected void ClearEquipCache()
     {
         _equippedItems = null;
+        _equippedRefIDs = null;
         _combatActions = null;
+        this.Owner.Body.ClearEquipCaches();
     }
 
     public bool UnequipItem(int itemRefID)
@@ -525,7 +576,7 @@ public class BodyPart_Instance : I_CombatItem
                 foreach (BodyPartEquipSlot slot in this.availableSlots)
                 {
                     var equip = this.GetEquip(layer, slot);
-                    var comp = ResolveEquip(equip)?.GetComp_Equippable();
+                    var comp = ResolveEquip(equip)?.Comp_Equippable;
                     if (comp != null && comp.revealing >= revealingScoreFilter)
                     {
                         Owner.UnequipItem(equip);
@@ -543,7 +594,7 @@ public class BodyPart_Instance : I_CombatItem
             if (layer <= layerFilter && layerFilter != BodyEquipLayer.None) continue;
             foreach (BodyPartEquipSlot slot in this.availableSlots)
             {
-                var comp = ResolveEquip(this.GetEquip(layer, slot))?.GetComp_Equippable();
+                var comp = ResolveEquip(this.GetEquip(layer, slot))?.Comp_Equippable;
                 if (comp != null && (int)comp.revealing >= revealingScoreFilter) return true;
             }
         }
@@ -645,12 +696,12 @@ public class BodyPart_Instance : I_CombatItem
         string Tuple = layer.ToString() + "||" + slot.ToString();
         if (contentsIndex.TryGetValue(Tuple, out var content) && content != -1)
         {
-            var comp = ResolveEquip(content)?.GetComp_Equippable();
+            var comp = ResolveEquip(content)?.Comp_Equippable;
             if (comp != null) score += (int)comp.revealing;
         }
         if (coversIndex.TryGetValue(Tuple, out var cover) && cover != -1)
         {
-            var comp = ResolveEquip(cover)?.GetComp_Equippable();
+            var comp = ResolveEquip(cover)?.Comp_Equippable;
             if (comp != null) score += (int)comp.revealing;
         }
         return score;

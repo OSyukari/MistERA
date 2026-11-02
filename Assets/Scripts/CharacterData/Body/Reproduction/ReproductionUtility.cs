@@ -15,30 +15,14 @@ public static class ReproductionUtility
     public static string stat_fertility_mult = "stats_derived_fertilityMultiplier";
 
 
-    public static Ovum GetOldestOvum(BodyInternal_Womb w)
-    {
-        Ovum oldest = null;
-        if (w.eggs == null || w.eggs.Count < 1) return oldest;
-        foreach (var egg in w.eggs)
-        {
-            if (oldest == null) oldest = egg;
-            else if (egg.isOlderThan(oldest)) oldest = egg;
-        }
-        return oldest;
-    }
     public static Ovum GetOldestOvum(Character_Trainable c)
     {
         Ovum oldest = null;
-        Ovum newer = null;
-        if (c.wombs == null || c.wombs.Count < 1) return oldest;
+        if (c == null || c.wombs == null) return oldest;
         foreach (var w in c.wombs)
         {
-            if (oldest == null) oldest = GetOldestOvum(w);
-            else
-            {
-                newer = GetOldestOvum(w);
-                if (newer.isOlderThan(oldest)) oldest = newer;
-            }
+            var newer = w?.GetOldestOvum();
+            if (newer != null && (oldest == null || newer.isOlderThan(oldest))) oldest = newer;
         }
         return oldest;
     }
@@ -76,13 +60,8 @@ public static class ReproductionUtility
     /// <summary>Applies the limits to labors already running (e.g. from older saves, or set before the limits existed).</summary>
     public static void ClampRunningLabor(Character_Trainable c)
     {
-        foreach (var egg in AllOvums(c))
-        {
-            if (egg.State == OvumState.Final || egg.State == OvumState.Final_RequireHelp)
-                egg.totalLifespan = ClampEarlyLabor(egg.totalLifespan);
-            else if (egg.State == OvumState.IntenseLabor && egg.intenseDuration > ActiveLaborMax)
-                egg.intenseDuration = ActiveLaborMax;
-        }
+        if (c == null || c.wombs == null) return;
+        foreach (var w in c.wombs) w?.ClampRunningLabor();
     }
 
     /// <summary>Early labor progress: severity = % of early labor elapsed (0-100), duration = minutes left (-1 once it has run its length).</summary>
@@ -99,19 +78,23 @@ public static class ReproductionUtility
     {
         if (c == null) return;
         bool anyLabor = false;
-        foreach (var egg in AllOvums(c)) if (IsLaborState(egg.State)) { anyLabor = true; break; }
+        anyLabor = IsCharaInLabor(c);
         if (!IsInIntenseLabor(c) && c.Stats.FindStatusByExactID(status_labor_intense) != null) c.Stats.RemoveStatusByExactID(status_labor_intense);
         if (!anyLabor) SetLaborObstructed(c, false);
 
         Ovum most = null;
         float best = -1f;
-        if (!IsInIntenseLabor(c))
+        if (!IsInIntenseLabor(c) && c.wombs != null)
         {
-            foreach (var egg in AllOvums(c))
+            foreach (var w in c.wombs)
             {
-                if (egg.State != OvumState.Final) continue;
-                float ratio = egg.totalLifespan <= 0 ? 1f : (float)egg.lifespan / egg.totalLifespan;
-                if (ratio > best) { best = ratio; most = egg; }
+                if (w == null || w.eggs == null) continue;
+                foreach (var egg in w.eggs)
+                {
+                    if (egg == null || egg.State != OvumState.Final) continue;
+                    float ratio = egg.totalLifespan <= 0 ? 1f : (float)egg.lifespan / egg.totalLifespan;
+                    if (ratio > best) { best = ratio; most = egg; }
+                }
             }
         }
         if (most == null)
@@ -162,19 +145,36 @@ public static class ReproductionUtility
         return s == OvumState.Final || s == OvumState.Final_RequireHelp || s == OvumState.IntenseLabor;
     }
 
-    public static IEnumerable<Ovum> AllOvums(Character_Trainable c)
+    public static bool IsCharaInLabor(Character_Trainable c)
     {
-        if (c == null || c.wombs == null) yield break;
+        if (c == null || c.wombs == null) return false;
         foreach (var w in c.wombs)
         {
             if (w == null || w.eggs == null) continue;
-            foreach (var egg in w.eggs) if (egg != null) yield return egg;
+            foreach (var egg in w.eggs) if (egg != null && IsLaborState(egg.State)) return true;
         }
+        return false;
+    }
+
+    /// <summary>
+    /// 危险日 (danger day): the character can conceive right now - the cycle is in its ovulation phase (menstrual
+    /// Ovulation, or estrus), or a released, unfertilized egg (OvumState.Default) is waiting in a womb.
+    /// </summary>
+    public static bool IsDangerDay(Character_Trainable c)
+    {
+        if (c == null) return false;
+        if (c.ReproCycle != null && c.ReproCycle.CanOvulate) return true;
+        return FindOvum(c, OvumState.Default) != null;
     }
 
     public static Ovum FindOvum(Character_Trainable c, OvumState state)
     {
-        foreach (var egg in AllOvums(c)) if (egg.State == state) return egg;
+        if (c == null || c.wombs == null) return null;
+        foreach(var wb in c.wombs)
+        {
+            var egg = wb?.FindOvum(state);
+            if (egg != null) return egg;
+        }
         return null;
     }
 
@@ -252,7 +252,7 @@ public static class ReproductionUtility
     public static bool CanBirthNow(Character_Trainable c)
     {
         if (c == null) return false;
-        if (c.isSleeping) return false;
+        //if (c.isSleeping) return false; sleeping is unconscious
         if (c.Stats.isConsciousnessUnconscious) return false;
         if (c.CurrentJob == null) return false;
         return c.CurrentJob.hasActivePackgeWithTag(c.RefID, restRequiredTag) || c.CurrentJob.hasActivePackgeWithTag(c.RefID, restTag);
@@ -289,44 +289,6 @@ public static class ReproductionUtility
     };
 
     public static Dictionary<EstrusStatus, string> EstrusStatus_Override = new Dictionary<EstrusStatus, string>();
-
-    // Labor duration beyond this multiple of the race average is flagged unsafe.
-    const float LABOR_UNSAFE_MULTIPLIER = 4f;
-    // Foetus-to-canal size ratio beyond this value is structurally impossible.
-    const float PASSAGE_UNSAFE_RATIO = 3f;
-
-    public static bool CanDeliverSafely(BodyInternal_Womb instance, Ovum foetus, out int labor_duration, out float painLevel)
-    {
-        labor_duration = 0;
-        painLevel = 0f;
-
-        var foetusComp = foetus.foetusItem?.GetComp_Ingestible();
-        if (foetusComp == null) return false;
-
-        var foetus_actualsize = foetusComp.amount / 1.5f;
-        var foetus_averagesize = instance.default_foetus == null ? foetus_actualsize : instance.default_foetus.size_end;
-        var averageLabor = instance.default_foetus == null ? 1 : instance.default_foetus.duration_labor;
-        var cervix_diameter = instance.source.Size;
-        var mother_racial_average_diameter = instance.default_foetus == null ? cervix_diameter : Mathf.Sqrt((float)(instance.default_foetus.average_mother_HWMult)) * instance.source.Base.sizeRatio;
-        if (mother_racial_average_diameter == 0) mother_racial_average_diameter = cervix_diameter;
-
-        // how large this foetus is relative to what the mother's race normally delivers
-        float size_ratio  = foetus_actualsize / Mathf.Max(foetus_averagesize, 0.001f);
-        // how wide this mother's cervix is relative to her racial average
-        float canal_ratio = cervix_diameter   / Mathf.Max(mother_racial_average_diameter, 0.001f);
-        float passage     = size_ratio        / Mathf.Max(canal_ratio, 0.001f);
-
-        // longer labor if foetus is larger than normal; shorter if canal is wider than average
-        float adjusted_labor = averageLabor * passage;
-        labor_duration = Mathf.Max(1, (int)adjusted_labor);
-
-        // pain: sqrt on size_ratio softens extreme-foetus cases; wider canal directly reduces pain
-        painLevel = Mathf.Clamp(Mathf.Sqrt(size_ratio) / Mathf.Max(canal_ratio, 0.001f) * 50f, 0f, 100f);
-
-        if (adjusted_labor > averageLabor * LABOR_UNSAFE_MULTIPLIER) return false;
-        if (passage > PASSAGE_UNSAFE_RATIO) return false;
-        return true;
-    }
 
     // Exponential steepness: keeps per-hour chance below ~4 % for the first 30 % of labor,
     // then surges — ~51 % at t=0.9, guaranteed at t>=1.

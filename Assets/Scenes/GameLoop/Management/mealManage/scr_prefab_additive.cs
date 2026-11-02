@@ -36,7 +36,7 @@ public class scr_prefab_additive : MonoBehaviour
             if (!food.isFoodConsumable) continue;
             if (food.Count < 1) continue;
             if (food.markForDelete) continue;
-            var ingest = food.GetComp_Ingestible();
+            var ingest = food.Comp_Ingestible;
             if (ingest.canMixWith(itemcomp_ingest))
             {
                 validFoods.Add(food.Print());

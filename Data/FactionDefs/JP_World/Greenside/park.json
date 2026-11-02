@@ -1,0 +1,124 @@
+{
+  "_comment_hours": "Paths remain accessible 24h. Planned activities are daytime only; maintenance is 08-18. No hard closure code.",
+  "_comment_tuning": "Mounted park_stroll/community_cleanup proposals: host-to-candidate existing raw Goodwill >=25/15 respectively, Goodwill > Badwill * 1.1; no Friends label, Trust, mood or wakefulness gate. Optional companions may decline and leave a solo booking. These are candidate tuning values, not an approved progression pace.",
+  "_comment_rewards": "Entry vignettes only: guarded BASE +1 Trust and Goodwill per distinct directed nonself attendee pair; arrivals only newcomer/local companions in both directions. No acceptance, duration, completion, wages or cleanup-area payout. Existing activity owns time; no fake checks. Events in Events/park_activity_events.json.",
+  "_comment_picnic": "Picnic is a relaxation activity. The lawn also exposes existing meal commands; no free meal or inventory is fabricated. Bring food/use existing meal mechanics. Seasonal hanami is a later hook, not a calendar restriction on ordinary picnics.",
+  "MapPlans": {
+    "factionInit": [{
+      "ID": "jp_park", "initializeFaction": "jp_park", "floors": [{ "ID": "floor_jp_park", "nameOverwrite": "jp_park" }], "floorListHostFactionID": "jp_greenside", "isRentingFloor": false, "setPrivateRoomOwner": false,
+      "floorDoors": [{ "sourceFloor": "floor_jp_park", "sourceExit": "street", "targetFaction": "jp_greenside", "targetFloor": "floor_jp_greenside", "targetExit": "to_jp_park", "cost": 1 }],
+      "mainExit": { "roomID": "park_entrance", "exitCost": 5 }, "managerBaseIDs": [""], "salesCurrency": "currency_JPY", "salesInventory": [],
+      "assignableMemberTypes": [], "joinableMemberTypes": [],
+      "fallbackWorkers": [{ "memberTypeID": "membertype_jp_park_maintenance", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }]
+    }],
+    "floorPlans": [{
+      "ID": "floor_jp_park", "imagePath": "BGAssets/Generated/school_exterior_01.webp",
+      "isFloorPlan": false, "floorWidth": 400, "floorHeight": 400, "resize": 1, "mapExit": "park_entrance",
+      "exits": [{ "ID": "street", "connectedRoom": "park_entrance", "hideOnMap": true }],
+      "rooms": [
+        { "ID": "park_entrance", "displayName": "park_entrance", "hideOnMap": true, "furnitureIDs": ["furniture_jp_park_cleanup", "furniture_jp_park_maintenance"], "connects": [], "roomImagePath": "BGAssets/Generated/school_exterior_01.webp" },
+        { "ID": "park_path", "displayName": "park_path", "hideOnMap": true, "furnitureIDs": ["furniture_jp_park_path"], "connects": [{ "ID": "park_entrance", "cost": 1 }], "roomImagePath": "BGAssets/Generated/school_exterior_01.webp" },
+        { "ID": "park_lawn", "displayName": "park_lawn", "hideOnMap": true, "furnitureIDs": ["furniture_jp_park_picnic", "furniture_marker_getmeal"], "connects": [{ "ID": "park_path", "cost": 1 }], "roomImagePath": "BGAssets/Generated/school_exterior_01.webp" },
+        { "ID": "park_play_area", "displayName": "park_play_area", "hideOnMap": true, "furnitureIDs": ["furniture_jp_park_playground"], "connects": [{ "ID": "park_path", "cost": 1 }], "roomImagePath": "BGAssets/Generated/school_exterior_01.webp" },
+        { "ID": "park_pond", "displayName": "park_pond", "hideOnMap": true, "furnitureIDs": ["furniture_jp_park_path"], "connects": [{ "ID": "park_path", "cost": 1 }], "roomImagePath": "BGAssets/Generated/school_exterior_01.webp" },
+        { "ID": "park_restroom", "displayName": "park_restroom", "hideOnMap": true, "furnitureIDs": ["furniture_bathroom_set", "furniture_bathroom_set"], "connects": [{ "ID": "park_entrance", "cost": 1 }], "roomImagePath": "BGAssets/Generated/public_restroom_17.webp" }
+      ]
+    }],
+    "memberTypes": [{
+      "ID": "membertype_jp_park_maintenance", "socialStandingKey": "membertype_jp_park_maintenance", "isMember": true, "isDisplayableInFactionUI": true,
+      "workModule": { "jobPostID": "membertype_jp_park_maintenance", "workCommands": ["jp_park_maintenance"], "activeHours": [8,9,10,11,12,13,14,15,16,17], "activeDays": [], "hourlyPayout": [{ "itemID": "currency_JPY", "itemCount": 1150 }], "paymentCadence": "Daily" }
+    }],
+    "recreationOffers": [
+      {
+        "ID": "recreation_offer_jp_park_stroll", "mode": "Flexible", "factionID": "jp_park",
+        "workModule": { "jobPostID": "recreation_offer_jp_park_stroll", "workCommands": ["jp_park_stroll"], "activeHours": [8,9,10,11,12,13,14,15,16,17,18,19], "activeDays": [] },
+        "minHours": 2, "maxHours": 2, "weeklyTarget": 2, "minDaysBetween": 1, "daysInAdvance": 1, "weight": 1, "participationChance": 1, "allowWalkIn": true, "trustRewardEligible": true,
+        "gatherRoomID": "park_path", "launchEventID": "Greenside_ParkStroll_Begin",
+        "invite": { "visibility": "Private", "inviteChance": 0.3, "minParticipants": 1, "TargetValidators": [{
+          "refKeys": ["companion"], "baseScope": "SelfRelationships", "extraScopeArguments": [],
+          "chara_conditions": [{ "parameters": ["excludeSelf"] }, { "selfRelationshipRequirement": { "requireRawScore": [{ "requireScoreID": "Goodwill", "operand": "gte", "value": 25 }], "requireRawScoreCompare": [{ "requireScoreID": "Goodwill", "operand": "gt", "compareScoreID": "Badwill", "compareScoreMult": 1.1 }] } }],
+          "maxTargetCount": 1, "stopAtMaxTargetCount": true, "orderBy": "friendliness", "required": false, "maxParticipants": 1
+        }] }
+      },
+      {
+        "ID": "recreation_offer_jp_community_cleanup", "mode": "Flexible", "factionID": "jp_park",
+        "workModule": { "jobPostID": "recreation_offer_jp_community_cleanup", "workCommands": ["jp_community_cleanup_help"], "activeHours": [8,9,10,11,12,13,14,15,16,17], "activeDays": [] },
+        "minHours": 2, "maxHours": 2, "weeklyTarget": 1, "minDaysBetween": 1, "daysInAdvance": 1, "weight": 1, "participationChance": 1, "allowWalkIn": true, "trustRewardEligible": true,
+        "gatherRoomID": "park_entrance", "launchEventID": "Greenside_CommunityCleanup_Begin",
+        "invite": { "visibility": "Private", "inviteChance": 0.3, "minParticipants": 1, "TargetValidators": [{
+          "refKeys": ["companion"], "baseScope": "SelfRelationships", "extraScopeArguments": [],
+          "chara_conditions": [{ "parameters": ["excludeSelf"] }, { "selfRelationshipRequirement": { "requireRawScore": [{ "requireScoreID": "Goodwill", "operand": "gte", "value": 15 }], "requireRawScoreCompare": [{ "requireScoreID": "Goodwill", "operand": "gt", "compareScoreID": "Badwill", "compareScoreMult": 1.1 }] } }],
+          "maxTargetCount": 3, "stopAtMaxTargetCount": true, "orderBy": "friendliness", "required": false, "maxParticipants": 3
+        }] }
+      },
+      {
+        "ID": "recreation_offer_jp_park_picnic", "mode": "Flexible", "factionID": "jp_park",
+        "workModule": { "jobPostID": "recreation_offer_jp_park_picnic", "workCommands": ["jp_park_picnic"], "activeHours": [11,12,13,17,18,19], "activeDays": [] },
+        "minHours": 2, "maxHours": 2, "weeklyTarget": 1, "minDaysBetween": 1, "daysInAdvance": 1, "allowWalkIn": true, "trustRewardEligible": false,
+        "gatherRoomID": "park_lawn", "launchEventID": "Greenside_Picnic_Begin",
+        "invite": { "visibility": "Private", "inviteChance": 0.6, "minParticipants": 1, "TargetValidators": [{ "refKeys": ["companion"], "baseScope": "SelfRelationships", "chara_conditions": [{ "parameters": ["excludeSelf"] }, { "selfRelationshipRequirement": { "requireRawScore": [{ "requireScoreID": "Goodwill", "operand": "gte", "value": 25 }], "requireRawScoreCompare": [{ "requireScoreID": "Goodwill", "operand": "gt", "compareScoreID": "Badwill", "compareScoreMult": 1.1 }] } }], "maxTargetCount": 3, "maxParticipants": 3, "required": false, "stopAtMaxTargetCount": true, "orderBy": "friendliness" }] }
+      },
+      {
+        "ID": "recreation_offer_jp_park_playground", "mode": "Flexible", "factionID": "jp_park",
+        "workModule": { "jobPostID": "recreation_offer_jp_park_playground", "workCommands": ["jp_park_playground"], "activeHours": [8,9,10,11,12,13,14,15,16,17], "activeDays": [] },
+        "minHours": 2, "maxHours": 2, "weeklyTarget": 1, "minDaysBetween": 1, "daysInAdvance": 1, "allowWalkIn": true, "trustRewardEligible": false,
+        "gatherRoomID": "park_play_area", "launchEventID": "Greenside_Playground_Begin",
+        "invite": { "visibility": "Private", "inviteChance": 0.5, "minParticipants": 1, "TargetValidators": [{ "refKeys": ["companion"], "baseScope": "SelfRelationships", "chara_conditions": [{ "parameters": ["excludeSelf"] }], "maxTargetCount": 3, "maxParticipants": 3, "required": false, "stopAtMaxTargetCount": true, "orderBy": "friendliness" }] }
+      }
+    ]
+  },
+  "Furnitures": { "list": [
+    { "ID": "furniture_jp_park_path", "displayName": "jp_park_path_marker", "recipe": [], "furnitureSize": 0, "value": 0, "givesJob": [{ "comID": ["jp_park_stroll"] }] },
+    { "ID": "furniture_jp_park_cleanup", "displayName": "jp_park_cleanup_tools", "recipe": [], "furnitureSize": 0, "value": 2000, "givesJob": [{ "comID": ["jp_community_cleanup_help"] }] },
+    { "ID": "furniture_jp_park_maintenance", "displayName": "jp_park_maintenance_tools", "recipe": [], "furnitureSize": 2, "value": 10000, "givesJob": [{ "comID": ["jp_park_maintenance"] }] },
+    { "ID": "furniture_jp_park_picnic", "displayName": "jp_park_picnic_table", "recipe": [], "furnitureSize": 0, "value": 15000, "givesJob": [{ "comID": ["jp_park_picnic"] }] },
+    { "ID": "furniture_jp_park_playground", "displayName": "jp_park_play_equipment", "recipe": [], "furnitureSize": 0, "value": 100000, "givesJob": [{ "comID": ["jp_park_playground"] }] }
+  ] },
+  "COMs": { "list": [
+    {
+      "ID": "jp_park_stroll", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "jp_park_stroll", "timeScale": 30, "comTags": ["furniture", "recreation", "jp_park"],
+      "requirements": { "requirement": { "treatReceiverAsDoer": true } },
+      "variants": [{ "displayName": "jp_park_stroll", "requirements": { "requirement": { "doerCount": 99 } } }],
+      "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 0 },
+      "results_EP": { "results_character": [{ "entry_conditions": { "applyToDoer": true }, "entry_results": { "type": "statMod_ST", "value": "2" } }] },
+      "description_begin": { "Entries": [{ "texts": ["jp_park_stroll_begin"] }] }, "description_ongoing": { "Entries": [{ "texts": ["jp_park_stroll_ongoing"] }] }, "description_after": { "Entries": [{ "texts": ["jp_park_stroll_after"] }] }
+    },
+    {
+      "ID": "jp_community_cleanup_help", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "jp_community_cleanup_help", "timeScale": 30, "comTags": ["furniture", "recreation", "jp_park"],
+      "_comment": "Voluntary activity, deliberately NOT a job tag/post. No salary or full-area completion reward.",
+      "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "cost_ST": 3, "cost_EN": 2 } } },
+      "variants": [{ "displayName": "jp_community_cleanup_help", "requirements": { "requirement": { "doerCount": 99 } } }],
+      "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 0 },
+      "description_begin": { "Entries": [{ "texts": ["jp_cleanup_begin"] }] }, "description_ongoing": { "Entries": [{ "texts": ["jp_cleanup_ongoing"] }] }, "description_after": { "Entries": [{ "texts": ["jp_cleanup_after"] }] }
+    },
+    {
+      "ID": "jp_park_picnic", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "jp_park_picnic", "timeScale": 30, "comTags": ["furniture", "recreation", "jp_park"],
+      "requirements": { "requirement": { "treatReceiverAsDoer": true } }, "variants": [{ "displayName": "jp_park_picnic", "requirements": { "requirement": { "doerCount": 99 } } }],
+      "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 0 },
+      "results_EP": { "results_character": [{ "entry_conditions": { "applyToDoer": true }, "entry_results": { "type": "statMod_ST", "value": "3" } }] },
+      "description_begin": { "Entries": [{ "texts": ["jp_picnic_begin"] }] }, "description_ongoing": { "Entries": [{ "texts": ["jp_picnic_ongoing"] }] }, "description_after": { "Entries": [{ "texts": ["jp_picnic_after"] }] }
+    },
+    {
+      "ID": "jp_park_playground", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "jp_park_playground", "timeScale": 30, "comTags": ["furniture", "recreation", "jp_park"],
+      "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "cost_ST": 2 } } }, "variants": [{ "displayName": "jp_park_playground", "requirements": { "requirement": { "doerCount": 99 } } }],
+      "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 0 },
+      "description_begin": { "Entries": [{ "texts": ["jp_playground_begin"] }] }, "description_ongoing": { "Entries": [{ "texts": ["jp_playground_ongoing"] }] }, "description_after": { "Entries": [{ "texts": ["jp_playground_after"] }] }
+    },
+    {
+      "ID": "jp_park_maintenance", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "jp_park_maintenance", "timeScale": 30, "comTags": ["job", "furniture", "workModules"],
+      "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "CurrentActive", "requireMemberTypeScope": "JobFaction", "requireMemberType": ["membertype_jp_park_maintenance"], "cost_ST": 4, "cost_EN": 3 } } },
+      "variants": [{ "displayName": "jp_park_maintenance", "requirements": { "requirement": { "doerCount": 1 } } }], "AcceptanceCheck": { "baseAcceptanceValue": 0 }, "DifficultyCheck": { "baseD20Check": 0 },
+      "description_begin": { "Entries": [{ "texts": ["jp_maintenance_begin"] }] }, "description_ongoing": { "Entries": [{ "texts": ["jp_maintenance_ongoing"] }] }, "description_after": { "Entries": [{ "texts": ["jp_maintenance_after"] }] }
+    }
+  ] },
+  "Dictionary": { "Entries": { "zh-cn": {
+    "recreation_offer_jp_park_stroll": "公园散步", "recreation_offer_jp_community_cleanup": "社区自愿清扫", "recreation_offer_jp_park_picnic": "草坪野餐", "recreation_offer_jp_park_playground": "游乐区活动",
+    "membertype_jp_park_maintenance": "公园维护员（08-18）", "jp_park_path_marker": "步道与长椅", "jp_park_cleanup_tools": "志愿清扫用具", "jp_park_maintenance_tools": "维护工具柜", "jp_park_picnic_table": "野餐桌", "jp_park_play_equipment": "秋千与游乐设施",
+    "jp_park_stroll": "公园散步", "jp_community_cleanup_help": "志愿清扫", "jp_park_picnic": "在草坪上歇息野餐", "jp_park_playground": "在游乐区玩耍", "jp_park_maintenance": "维护公园",
+    "jp_park_stroll_begin": "$doer.firstname$沿着林荫步道慢慢走了起来。", "jp_park_stroll_ongoing": "$doer.firstname$走过树荫，在长椅旁停了停。", "jp_park_stroll_after": "$doer.firstname$结束了这段散步。",
+    "jp_cleanup_begin": "$doer.firstname$拿起清扫用具，准备清理路边。", "jp_cleanup_ongoing": "$doer.firstname$把路边的纸屑拢进垃圾袋。", "jp_cleanup_after": "$doer.firstname$收好手边的清扫用具。",
+    "jp_picnic_begin": "$doer.firstname$在野餐桌旁安顿下来。", "jp_picnic_ongoing": "$doer.firstname$坐在草坪旁，享受片刻清闲。", "jp_picnic_after": "$doer.firstname$收拾好野餐桌边的随身物品。",
+    "jp_playground_begin": "$doer.firstname$走到秋千旁。", "jp_playground_ongoing": "$doer.firstname$在游乐设施间活动，偶尔停下来歇口气。", "jp_playground_after": "$doer.firstname$离开了游乐区。",
+    "jp_maintenance_begin": "$doer.firstname$取出维护工具。", "jp_maintenance_ongoing": "$doer.firstname$检查步道、清扫落叶。", "jp_maintenance_after": "$doer.firstname$把维护工具放回柜中。"
+  } } }
+}

@@ -6,16 +6,19 @@
             {
                 "parentCOMID":"com_sex_service_base",
                 "ID":"com_sex_finger_insert_V",
+                "_comment_traces":"Body traces: aroused receiver's love juice on the doer's hand.",
+                "traceKeywords":["wet"],
                 "ActionPackageClass":"ActionPackage_Sex",
                 "displayName":"com_sex_finger_insert_V_displayName_3",
                 "categoryTags":["com_category_v","com_category_service"],
                 "timeScale":3,
-                "comTags":["sex","service"],
+                "comTags":["sex","service","permission_vaginal"],
                 "portraitTags_Receiver":["fingering", "spread_pussy"],
                 "requirements":{
                     "requirement":{
                         "req_Doers":{
                             "BodyTags":["arm"],
+                            "requireSlots":["Hand"],
                             "cost_ST": 1
                         },
                         "req_Receivers":{

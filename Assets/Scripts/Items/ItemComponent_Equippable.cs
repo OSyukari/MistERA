@@ -15,6 +15,14 @@ public class ItemComponentTemplate_Equippable : I_ItemComponentTemplate_Comp
 
     public List<string> promptTags = new List<string>();
 
+    /// <summary>
+    /// One-time use (condoms): taking it off destroys the instance and leaves usedItemID on the wearer's room floor
+    /// instead of keeping it (SingleUseEquipUtility).
+    /// </summary>
+    public bool singleUse = false;
+    /// <summary>singleUse only: item base ID dropped on the floor when taken off ("" = nothing).</summary>
+    public string usedItemID = "";
+
     [System.Serializable]
     public class PartialUndress
     {
@@ -86,6 +94,8 @@ public class ItemComponent_Equippable : ItemComponent_Base
     [JsonIgnore] public List<Stat_Modifier> statModifiers { get { return CompTemplate.comp_Equippable.stat_modifiers; } }
 
     [JsonIgnore] public bool lockable { get { return CompTemplate.comp_Equippable.lockable; } }
+    [JsonIgnore] public bool singleUse { get { return CompTemplate.comp_Equippable.singleUse; } }
+    [JsonIgnore] public string usedItemID { get { return CompTemplate.comp_Equippable.usedItemID; } }
 
     [JsonIgnore] public List<string> promptTags { get { return CompTemplate.comp_Equippable.promptTags; } }
 

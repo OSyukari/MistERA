@@ -594,6 +594,15 @@ public class TradeManager
 
             GetOrCreateMembershipFeeObligation(workFaction, status.membershipFee.cadence);
         }
+
+        // a fee-charging temporary home (e.g. a hotel stay) is billed to the permanent home; a faction held as the
+        // permanent home itself (e.g. a homeless hotel resident) is never billed
+        var tempHome = c.FactionManager.Faction_Home_Temporary;
+        if (tempHome != null && tempHome != owner && c.FactionManager.Faction_Home == owner)
+        {
+            var tempStatus = tempHome.GetMemberType(c);
+            if (tempStatus?.membershipFee != null) GetOrCreateMembershipFeeObligation(tempHome, tempStatus.membershipFee.cadence);
+        }
     }
 
     /// <summary>

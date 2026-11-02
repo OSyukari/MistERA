@@ -1,0 +1,294 @@
+{
+    "_doc": "Condom commands (Docs/Interactions/Step06FPermissionsImplementationPlan.md, P5b; split per Docs/Interactions/Plan_UseItemFolders.md) - COM_EquipSingleUseItem, one fixed targeting each, all listed under the condom's 使用 folder (itemFolder). self: the doer on themselves, receivers ignored (selfOnly); onTarget: the doer on the receiver; byTarget: the receiver on the doer (wearerIsDoer), so the receiver's acceptance and skill decide. No 'sex' tag: allowedDuringSex makes them usable inside sex scenes and outside (e.g. a pre-sex intimate scene). service + unsafe like the hand / oral acts they mirror (ActionPackage_Sex: rolled and stimulating); permission_intimacy_high asks for the high intimacy tier explicitly on the two-person commands. remove commands take a worn condom off (used condom on the floor); the others put one on from an accessible inventory (same per-actor search as requireInventory). The self commands have no DC (baseD20Check 0); the mouth commands have a higher DC; a failed DC still stimulates but equips and uses up nothing.",
+    "COMs": {
+        "list": [
+            {
+                "$type": "COM_EquipSingleUseItem, Assembly-CSharp",
+                "ID": "com_condom_self",
+                "ActionPackageClass": "ActionPackage_Sex",
+                "displayName": "com_condom_self",
+                "categoryTags": ["com_category_service"],
+                "timeScale": 3,
+                "comTags": ["unsafe", "service", "allowedDuringSex", "condom"],
+                "itemID": "condom",
+                "itemFolder": "condom",
+                "selfOnly": true,
+                "requirements": {
+                    "requirement": {
+                        "req_Doers": { "BodyTags": ["arm"] },
+                        "req_Receivers": { "BodyTags": ["penis"], "minRevealingScore": 1, "requireConscious": false, "requireAction": false }
+                    }
+                },
+                "AcceptanceCheck": { "baseAcceptanceValue": 25, "SkillBonus_Doer": ["skill_sexSkill_service"] },
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "receiverCount": 0, "treatDoerAsReceiver": true } },
+                        "displayName": "com_condom_self",
+                        "useBaseDescription": false,
+                        "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["com_condom_self_begin"] } ] },
+                        "description_execution_success": { "Entries": [ { "texts": ["com_condom_self_success"] } ] },
+                        "description_execution_failure": { "Entries": [ { "texts": ["com_condom_self_failure"] } ] }
+                    }
+                ]
+            },
+            {
+                "$type": "COM_EquipSingleUseItem, Assembly-CSharp",
+                "ID": "com_condom_onTarget_hand",
+                "ActionPackageClass": "ActionPackage_Sex",
+                "displayName": "com_condom_onTarget_hand",
+                "categoryTags": ["com_category_service"],
+                "timeScale": 3,
+                "comTags": ["unsafe", "service", "permission_intimacy_high", "allowedDuringSex", "condom"],
+                "portraitTags_Doer": ["handjob"],
+                "itemID": "condom",
+                "itemFolder": "condom",
+                "requirements": {
+                    "requirement": {
+                        "req_Doers": { "BodyTags": ["arm"] },
+                        "req_Receivers": { "BodyTags": ["penis"], "minRevealingScore": 1, "requireConscious": false, "requireAction": false }
+                    }
+                },
+                "AcceptanceCheck": { "baseAcceptanceValue": 25, "SkillBonus_Doer": ["skill_sexSkill_service"] },
+                "DifficultyCheck": { "baseD20Check": 10 },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "receiverCount": 1 } },
+                        "displayName": "com_condom_onTarget_hand",
+                        "useBaseDescription": false,
+                        "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["com_condom_onTarget_hand_begin"] } ] },
+                        "description_execution_success": { "Entries": [ { "texts": ["com_condom_onTarget_hand_success"] } ] },
+                        "description_execution_failure": { "Entries": [ { "texts": ["com_condom_onTarget_hand_failure"] } ] }
+                    }
+                ]
+            },
+            {
+                "$type": "COM_EquipSingleUseItem, Assembly-CSharp",
+                "ID": "com_condom_onTarget_mouth",
+                "ActionPackageClass": "ActionPackage_Sex",
+                "displayName": "com_condom_onTarget_mouth",
+                "categoryTags": ["com_category_service"],
+                "timeScale": 3,
+                "comTags": ["unsafe", "service", "permission_intimacy_high", "allowedDuringSex", "condom", "position_face", "position_inequal"],
+                "itemID": "condom",
+                "itemFolder": "condom",
+                "dcGated": true,
+                "requirements": {
+                    "requirement": {
+                        "req_Doers": { "BodyTags": ["mouth"] },
+                        "req_Receivers": { "BodyTags": ["penis"], "minRevealingScore": 1, "requireConscious": false, "requireAction": false }
+                    }
+                },
+                "AcceptanceCheck": { "baseAcceptanceValue": 27, "SkillBonus_Doer": ["skill_sexSkill_service"] },
+                "DifficultyCheck": { "baseD20Check": 15 },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "receiverCount": 1 } },
+                        "displayName": "com_condom_onTarget_mouth",
+                        "useBaseDescription": false,
+                        "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["com_condom_onTarget_mouth_begin"] } ] },
+                        "description_execution_success": { "Entries": [ { "texts": ["com_condom_onTarget_mouth_success"] } ] },
+                        "description_execution_failure": { "Entries": [ { "texts": ["com_condom_onTarget_mouth_failure"] } ] }
+                    }
+                ]
+            },
+            {
+                "$type": "COM_EquipSingleUseItem, Assembly-CSharp",
+                "ID": "com_condom_byTarget_hand",
+                "ActionPackageClass": "ActionPackage_Sex",
+                "displayName": "com_condom_byTarget_hand",
+                "categoryTags": ["com_category_service"],
+                "timeScale": 3,
+                "comTags": ["unsafe", "service", "permission_intimacy_high", "allowedDuringSex", "condom"],
+                "portraitTags_Receiver": ["handjob"],
+                "itemID": "condom",
+                "itemFolder": "condom",
+                "wearerIsDoer": true,
+                "requirements": {
+                    "requirement": {
+                        "req_Doers": { "BodyTags": ["penis"], "minRevealingScore": 1 },
+                        "req_Receivers": { "BodyTags": ["arm"] }
+                    }
+                },
+                "AcceptanceCheck": { "baseAcceptanceValue": 25, "SkillBonus_Receiver": ["skill_sexSkill_service"] },
+                "DifficultyCheck": { "baseD20Check": 10 },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "receiverCount": 1 } },
+                        "displayName": "com_condom_byTarget_hand",
+                        "useBaseDescription": false,
+                        "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["com_condom_byTarget_hand_begin"] } ] },
+                        "description_execution_success": { "Entries": [ { "texts": ["com_condom_byTarget_hand_success"] } ] },
+                        "description_execution_failure": { "Entries": [ { "texts": ["com_condom_byTarget_hand_failure"] } ] }
+                    }
+                ]
+            },
+            {
+                "$type": "COM_EquipSingleUseItem, Assembly-CSharp",
+                "ID": "com_condom_byTarget_mouth",
+                "ActionPackageClass": "ActionPackage_Sex",
+                "displayName": "com_condom_byTarget_mouth",
+                "categoryTags": ["com_category_service"],
+                "timeScale": 3,
+                "comTags": ["unsafe", "service", "permission_intimacy_high", "allowedDuringSex", "condom", "position_face", "position_inequal"],
+                "itemID": "condom",
+                "itemFolder": "condom",
+                "wearerIsDoer": true,
+                "dcGated": true,
+                "requirements": {
+                    "requirement": {
+                        "req_Doers": { "BodyTags": ["penis"], "minRevealingScore": 1 },
+                        "req_Receivers": { "BodyTags": ["mouth"] }
+                    }
+                },
+                "AcceptanceCheck": { "baseAcceptanceValue": 27, "SkillBonus_Receiver": ["skill_sexSkill_service"] },
+                "DifficultyCheck": { "baseD20Check": 15 },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "receiverCount": 1 } },
+                        "displayName": "com_condom_byTarget_mouth",
+                        "useBaseDescription": false,
+                        "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["com_condom_byTarget_mouth_begin"] } ] },
+                        "description_execution_success": { "Entries": [ { "texts": ["com_condom_byTarget_mouth_success"] } ] },
+                        "description_execution_failure": { "Entries": [ { "texts": ["com_condom_byTarget_mouth_failure"] } ] }
+                    }
+                ]
+            },
+            {
+                "$type": "COM_EquipSingleUseItem, Assembly-CSharp",
+                "ID": "com_condom_remove_self",
+                "ActionPackageClass": "ActionPackage_Sex",
+                "displayName": "com_condom_remove_self",
+                "categoryTags": ["com_category_service"],
+                "timeScale": 3,
+                "comTags": ["unsafe", "service", "allowedDuringSex", "condom"],
+                "itemID": "condom",
+                "itemFolder": "condom",
+                "selfOnly": true,
+                "remove": true,
+                "requirements": {
+                    "requirement": {
+                        "req_Doers": { "BodyTags": ["arm"] },
+                        "req_Receivers": { "BodyTags": ["penis"], "requireConscious": false, "requireAction": false }
+                    }
+                },
+                "AcceptanceCheck": { "baseAcceptanceValue": 25, "SkillBonus_Doer": ["skill_sexSkill_service"] },
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "receiverCount": 0, "treatDoerAsReceiver": true } },
+                        "displayName": "com_condom_remove_self",
+                        "useBaseDescription": false,
+                        "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["com_condom_remove_self_begin"] } ] },
+                        "description_execution_success": { "Entries": [ { "texts": ["com_condom_remove_self_success"] } ] },
+                        "description_execution_failure": { "Entries": [ { "texts": ["com_condom_remove_self_failure"] } ] }
+                    }
+                ]
+            },
+            {
+                "$type": "COM_EquipSingleUseItem, Assembly-CSharp",
+                "ID": "com_condom_remove_onTarget",
+                "ActionPackageClass": "ActionPackage_Sex",
+                "displayName": "com_condom_remove_onTarget",
+                "categoryTags": ["com_category_service"],
+                "timeScale": 3,
+                "comTags": ["unsafe", "service", "permission_intimacy_high", "allowedDuringSex", "condom"],
+                "portraitTags_Doer": ["handjob"],
+                "itemID": "condom",
+                "itemFolder": "condom",
+                "remove": true,
+                "requirements": {
+                    "requirement": {
+                        "req_Doers": { "BodyTags": ["arm"] },
+                        "req_Receivers": { "BodyTags": ["penis"], "requireConscious": false, "requireAction": false }
+                    }
+                },
+                "AcceptanceCheck": { "baseAcceptanceValue": 25, "SkillBonus_Doer": ["skill_sexSkill_service"] },
+                "DifficultyCheck": { "baseD20Check": 10 },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "receiverCount": 1 } },
+                        "displayName": "com_condom_remove_onTarget",
+                        "useBaseDescription": false,
+                        "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["com_condom_remove_onTarget_begin"] } ] },
+                        "description_execution_success": { "Entries": [ { "texts": ["com_condom_remove_onTarget_success"] } ] },
+                        "description_execution_failure": { "Entries": [ { "texts": ["com_condom_remove_onTarget_failure"] } ] }
+                    }
+                ]
+            },
+            {
+                "$type": "COM_EquipSingleUseItem, Assembly-CSharp",
+                "ID": "com_condom_remove_byTarget",
+                "ActionPackageClass": "ActionPackage_Sex",
+                "displayName": "com_condom_remove_byTarget",
+                "categoryTags": ["com_category_service"],
+                "timeScale": 3,
+                "comTags": ["unsafe", "service", "permission_intimacy_high", "allowedDuringSex", "condom"],
+                "portraitTags_Receiver": ["handjob"],
+                "itemID": "condom",
+                "itemFolder": "condom",
+                "wearerIsDoer": true,
+                "remove": true,
+                "requirements": {
+                    "requirement": {
+                        "req_Doers": { "BodyTags": ["penis"] },
+                        "req_Receivers": { "BodyTags": ["arm"] }
+                    }
+                },
+                "AcceptanceCheck": { "baseAcceptanceValue": 25, "SkillBonus_Receiver": ["skill_sexSkill_service"] },
+                "DifficultyCheck": { "baseD20Check": 10 },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "receiverCount": 1 } },
+                        "displayName": "com_condom_remove_byTarget",
+                        "useBaseDescription": false,
+                        "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["com_condom_remove_byTarget_begin"] } ] },
+                        "description_execution_success": { "Entries": [ { "texts": ["com_condom_remove_byTarget_success"] } ] },
+                        "description_execution_failure": { "Entries": [ { "texts": ["com_condom_remove_byTarget_failure"] } ] }
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_condom_self": "戴上避孕套",
+                "com_condom_onTarget_hand": "为对方戴上避孕套",
+                "com_condom_onTarget_mouth": "用嘴为对方戴上避孕套",
+                "com_condom_byTarget_hand": "让对方为自己戴上避孕套",
+                "com_condom_byTarget_mouth": "让对方用嘴为自己戴上避孕套",
+                "com_condom_remove_self": "取下避孕套",
+                "com_condom_remove_onTarget": "为对方取下避孕套",
+                "com_condom_remove_byTarget": "让对方为自己取下避孕套",
+                "com_condom_self_begin": "$doer.firstname$拿起避孕套，准备给自己戴上。",
+                "com_condom_self_success": "$doer.firstname$给自己戴好了避孕套。",
+                "com_condom_self_failure": "$doer.firstname$没能给自己戴上避孕套。",
+                "com_condom_onTarget_hand_begin": "$doer.firstname$拿起避孕套，准备帮$receiver.firstname$戴上。",
+                "com_condom_onTarget_hand_success": "$doer.firstname$用手帮$receiver.firstname$戴好了避孕套。",
+                "com_condom_onTarget_hand_failure": "$doer.firstname$没能用手帮$receiver.firstname$戴上避孕套。",
+                "com_condom_onTarget_mouth_begin": "$doer.firstname$含住避孕套，试着用嘴为$receiver.firstname$戴上。",
+                "com_condom_onTarget_mouth_success": "$doer.firstname$用嘴帮$receiver.firstname$戴好了避孕套。",
+                "com_condom_onTarget_mouth_failure": "$doer.firstname$没能用嘴帮$receiver.firstname$戴上避孕套。避孕套还没有用掉。",
+                "com_condom_byTarget_hand_begin": "$doer.firstname$把避孕套递给$receiver.firstname$，让对方帮自己戴上。",
+                "com_condom_byTarget_hand_success": "$receiver.firstname$用手帮$doer.firstname$戴好了避孕套。",
+                "com_condom_byTarget_hand_failure": "$receiver.firstname$没能用手帮$doer.firstname$戴上避孕套。",
+                "com_condom_byTarget_mouth_begin": "$doer.firstname$把避孕套递给$receiver.firstname$，让对方用嘴帮自己戴上。",
+                "com_condom_byTarget_mouth_success": "$receiver.firstname$用嘴帮$doer.firstname$戴好了避孕套。",
+                "com_condom_byTarget_mouth_failure": "$receiver.firstname$没能用嘴帮$doer.firstname$戴上避孕套。避孕套还没有用掉。",
+                "com_condom_remove_self_begin": "$doer.firstname$伸手去取自己的避孕套。",
+                "com_condom_remove_self_success": "$doer.firstname$取下了自己的避孕套。",
+                "com_condom_remove_self_failure": "$doer.firstname$没能取下自己的避孕套。",
+                "com_condom_remove_onTarget_begin": "$doer.firstname$伸手去取$receiver.firstname$的避孕套。",
+                "com_condom_remove_onTarget_success": "$doer.firstname$帮$receiver.firstname$取下了避孕套。",
+                "com_condom_remove_onTarget_failure": "$doer.firstname$没能帮$receiver.firstname$取下避孕套。",
+                "com_condom_remove_byTarget_begin": "$doer.firstname$让$receiver.firstname$帮自己取下避孕套。",
+                "com_condom_remove_byTarget_success": "$receiver.firstname$帮$doer.firstname$取下了避孕套。",
+                "com_condom_remove_byTarget_failure": "$receiver.firstname$没能帮$doer.firstname$取下避孕套。",
+                "ui_singleUse_notWorn": "$name$没有戴着",
+                "ui_singleUse_alreadyWorn": "$name$已经戴着了",
+                "ui_singleUse_discardFilled": "$name$取下了用过的$item$"
+            }
+        }
+    }
+}

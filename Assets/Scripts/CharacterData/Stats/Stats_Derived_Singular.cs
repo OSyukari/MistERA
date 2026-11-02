@@ -40,6 +40,7 @@ public class Stats_Derived_Base
     [JsonProperty] public bool noDisplay = false;
     [JsonProperty] protected string statKeyword = "";
     public Stats_Derived_Base_ValueSetting valueBase = null;
+    public float? sexStimulationAddPerPoint = null;
     public List<Stat_Modifier> valueCalculations = new List<Stat_Modifier>();
     [JsonProperty] protected string displayName = "";
     [JsonProperty] protected string tooltip = "";
@@ -151,19 +152,12 @@ public class Stats_Derived_Instance : I_StatsDisplayable, I_CacheValues
 
     public float FinalValue(List<string> contextKeys = null)
     {
-        SyncCacheVersion();
-        var key = GetContextID(contextKeys);
-        if (!_cache_values.ContainsKey(key)) GetFinalValue(contextKeys);
-        if (_cache_values[key] == -1)
-        {
-            // Debug.LogError($"maybe error, finalvalue is -1 on {parentString}, \nstats: {_cache_string[key]}");
-        }
-        return _cache_values[key] + debugValue;
+        return FinalValue(contextKeys, false);
     }
     public float FinalValue(List<string> contextKeys, bool forbidStatus)
     {
         SyncCacheVersion();
-        var key = GetContextID(contextKeys);
+        var key = (GetContextID(contextKeys), forbidStatus);
         if (!_cache_values.ContainsKey(key)) GetFinalValue(contextKeys, forbidStatus);
         if (_cache_values[key] == -1)
         {
@@ -179,7 +173,7 @@ public class Stats_Derived_Instance : I_StatsDisplayable, I_CacheValues
         debugValue += i;
     }
 
-    Dictionary<string, float> _cache_values = new Dictionary<string, float>();
+    Dictionary<(string context, bool forbidStatus), float> _cache_values = new Dictionary<(string context, bool forbidStatus), float>();
     Dictionary<string, string> _cache_string = new Dictionary<string, string>();
 
     readonly List<string> _ctxScratch = new List<string>();
@@ -196,7 +190,7 @@ public class Stats_Derived_Instance : I_StatsDisplayable, I_CacheValues
 
     protected void GetFinalValue(List<string> contextKeys, bool forbidStatus = false)
     {
-        var key = GetContextID(contextKeys);
+        var key = (GetContextID(contextKeys), forbidStatus);
         _cache_values[key] = ComputeValue(contextKeys, forbidStatus);
     }
 

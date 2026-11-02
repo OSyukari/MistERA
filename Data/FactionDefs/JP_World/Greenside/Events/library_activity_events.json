@@ -1,0 +1,39 @@
+{
+  "_comment": "Mounted library_study proposal. Shared entry help is not a completed study block or skill check. Guards are separate from narrative/reward nodes; actual initial attendees only, or newcomer/local companions both directions. No invitation or completion payout.",
+  "Events": { "list": [{
+    "ID": "Greenside_LibraryStudy_Begin", "events": [
+      { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [
+        { "option": "explicit join", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isJoin"] }, { "Type": "JumpToLabel", "arguments": ["", "join"] }] },
+        { "option": "late arrival", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isLate"] }, { "Type": "JumpToLabel", "arguments": ["", "late"] }] },
+        { "option": "initial launch", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "initial"] }] }
+      ] },
+      { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "initial", "line": "Greenside_Library_initial", "nextEntryLabel": "initial_guard" },
+      { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "join", "line": "Greenside_Library_join", "nextEntryLabel": "arrival_guard" },
+      { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "line": "Greenside_Library_late", "nextEntryLabel": "arrival_guard" },
+      { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "initial_guard", "options": [
+        { "option": "eligible shared moment", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["activityTrustEligible"] }, { "Type": "ExistAppendStrings", "arguments": ["hasSharedAttendees"] }, { "Type": "JumpToLabel", "arguments": ["", "initial_reward"] }] },
+        { "option": "neutral continuation", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "finish"] }] }
+      ] },
+      { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "arrival_guard", "options": [
+        { "option": "eligible shared moment", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["activityTrustEligible"] }, { "Type": "ExistAppendStrings", "arguments": ["hasCompanions"] }, { "Type": "JumpToLabel", "arguments": ["", "arrival_reward"] }] },
+        { "option": "neutral continuation", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "finish"] }] }
+      ] },
+      { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "initial_reward", "line": "Greenside_Library_shared_initial", "nextEntryLabel": "finish", "Results": [
+        { "Type": "IncreaseRelationship", "arguments": ["attendees", "attendees", "Trust", "1"] }, { "Type": "IncreaseRelationship", "arguments": ["attendees", "attendees", "Goodwill", "1"] }
+      ] },
+      { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "arrival_reward", "line": "Greenside_Library_shared_arrival", "nextEntryLabel": "finish", "Results": [
+        { "Type": "IncreaseRelationship", "arguments": ["joining", "companions", "Trust", "1"] }, { "Type": "IncreaseRelationship", "arguments": ["companions", "joining", "Trust", "1"] },
+        { "Type": "IncreaseRelationship", "arguments": ["joining", "companions", "Goodwill", "1"] }, { "Type": "IncreaseRelationship", "arguments": ["companions", "joining", "Goodwill", "1"] }
+      ] },
+      { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "finish", "line": "Greenside_Library_finish", "isLast": true, "Results": [{ "Type": "FlushMessageExpAll", "arguments": ["false"] }] }
+    ]
+  }] },
+  "Dictionary": { "Entries": { "zh-cn": {
+    "Greenside_Library_initial": "安静自习室里，翻页声偶尔响起。桌面留出了摊开书本和笔记的地方。",
+    "Greenside_Library_join": "$joining.name$轻轻拉开自习室的椅子，把书本放在桌上。",
+    "Greenside_Library_late": "$joining.name$稍晚推开自习室的门，放轻脚步，在空位上坐下。",
+    "Greenside_Library_shared_initial": "$attendees.name$各自摊开要看的东西。趁翻到下一页的空当，有人压低声音问起笔记里的一处标记；另一人把相关段落指给对方看，又借来便签记下页码。小声道谢后，桌边重新安静下来。",
+    "Greenside_Library_shared_arrival": "$joining.name$等到$companions.name$暂时放下笔，才小声问起手边资料的一处疑问。大家把相关页摊在一起，指着原文对照了几句，再各自记下页码，把桌面让回给书本。",
+    "Greenside_Library_finish": "纸页轻轻翻过，自习室恢复了安静。"
+  } } }
+}

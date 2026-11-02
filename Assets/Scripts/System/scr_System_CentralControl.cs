@@ -726,28 +726,65 @@ public class scr_System_CentralControl : MonoBehaviour
             || string.IsNullOrEmpty(scr_System_Serializer.current?.GlobalPortraitTemplateJson)) return emptyGlobalPortraitHandlers;
         if (!globalPortraitHandlers.TryGetValue(templateID, out var lists))
         {
+            float tempStart = Time.realtimeSinceStartup; // TEMP debug
             lists = new[] { new List<PortraitManager.CharaPortrait>(), new List<PortraitManager.CharaPortrait>() };
-            var entries = scr_System_Serializer.current.MasterList.Character_Bases.GetByID(templateID)?.Portrait?.useGlobalHandler;
-            if (entries != null)
-                foreach (var entry in entries)
-                {
-                    if (entry == null || string.IsNullOrEmpty(entry.path)) continue;
-                    foreach (var handler in GlobalPortraitTemplate.GetHandlers(entry.path))
-                    {
-                        var copy = handler.Copy();
-                        if (copy == null) continue;
-                        copy.isGenerated = true;
-                        if (entry.selfKeys != null && entry.selfKeys.Count > 0)
-                            copy.RequireSelfContextKeys = copy.RequireSelfContextKeys.Concat(entry.selfKeys).Distinct().ToList();
-                        lists[0].Add(copy);
-                    }
-                }
+            var template = scr_System_Serializer.current.MasterList.Character_Bases.GetByID(templateID)?.Portrait;
+            var entries = template?.useGlobalHandler;
+            FillGlobalPortraitHandlers(template, lists[0]);
             // Variants are shared with the folder cache, which receives new image paths in place.
             if (GeneratedPortraitRegistry.TryGetVersion(templateID, out _))
                 lists[1].AddRange(GlobalPortraitTemplate.GetHandlers($"{ComfyUISceneImage.OutputFolderName}/{templateID}"));
             globalPortraitHandlers.Add(templateID, lists);
+            // TEMP debug: first-time per-template build cost
+            if (LogPrefs.DLog_Portrait_Spine) Debug.Log($"[SpineTEMP] GlobalPortraitHandlers build [{templateID}] took {(Time.realtimeSinceStartup - tempStart) * 1000f:F1}ms global {lists[0].Count} generated {lists[1].Count} useGlobalHandler {(entries == null ? 0 : entries.Count)} frame {Time.frameCount}");
         }
         return generatedAssets ? (GeneratedPortraitRegistry.Enabled ? lists[1] : emptyGlobalPortraitHandlers) : lists[0];
+    }
+
+    /// <summary>
+    /// Copies of every useGlobalHandler entry's handlers, in entry order. No image resolved on any path: nothing is kept and
+    /// template.globalHandlerNoAssets is set until an image is added (OnGlobalPortraitImageAdded).
+    /// </summary>
+    void FillGlobalPortraitHandlers(PortraitManager template, List<PortraitManager.CharaPortrait> list)
+    {
+        var entries = template?.useGlobalHandler;
+        if (entries == null) return;
+        foreach (var entry in entries)
+        {
+            if (entry == null || string.IsNullOrEmpty(entry.path)) continue;
+            foreach (var handler in GlobalPortraitTemplate.GetHandlers(entry.path))
+            {
+                var copy = handler.Copy();
+                if (copy == null) continue;
+                copy.isGenerated = true;
+                if (entry.selfKeys != null && entry.selfKeys.Count > 0)
+                    copy.RequireSelfContextKeys = copy.RequireSelfContextKeys.Concat(entry.selfKeys).Distinct().ToList();
+                list.Add(copy);
+            }
+        }
+
+        foreach (var handler in list)
+            foreach (var variant in handler.Variants)
+                if (variant.ImagePaths.Count > 0) { template.globalHandlerNoAssets = false; return; }
+        list.Clear();
+        template.globalHandlerNoAssets = true;
+    }
+
+    /// <summary>
+    /// Asset-added notification (GeneratedPortraitRegistry.Add, after GlobalPortraitTemplate.AddImage): refill, in place, the lists of
+    /// templates flagged globalHandlerNoAssets (folder cache hit, no rebuild of the template). Unflagged templates already got the image.
+    /// </summary>
+    public void OnGlobalPortraitImageAdded()
+    {
+        var bases = scr_System_Serializer.current?.MasterList?.Character_Bases;
+        if (bases == null) return;
+        foreach (var pair in globalPortraitHandlers)
+        {
+            var template = bases.GetByID(pair.Key)?.Portrait;
+            if (template == null || !template.globalHandlerNoAssets) continue;
+            pair.Value[0].Clear();
+            FillGlobalPortraitHandlers(template, pair.Value[0]);
+        }
     }
 
     public void AddGeneratedPortraitHandlers(string templateID)

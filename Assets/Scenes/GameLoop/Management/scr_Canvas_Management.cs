@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -575,19 +576,6 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         CalculateProductionWarning();
         base.ValidateAll();
         RefreshCurrentChara();
-    }
-
-    protected override void OnDestroy()
-    {
-        base.OnDestroy();
-        /*
-        while (list_Jobs.transform.childCount > 0)
-        {
-            DestroyImmediate(list_Jobs.transform.GetChild(0).gameObject);
-        }*/
-        //Debug.LogError("CANVAS MANAGEMENT ONDESTROY");
-        scr_System_CampaignManager.current.NotifyUpdate();
-
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -1175,8 +1163,10 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     /// Manageable.GetMemberTypeSchedule) and aren't stored per-character. Not an I_ScheduleOption pick:
     /// this replaces the character's whole status in memberTypeOwnerFaction outright, with its own
     /// hour-range conflict checking, rather than acting on a single clicked hour.
-    /// <br/> Every assignable post is shown, but only a sibling of the character's held type (another shift
-    /// of the same post) can be picked - joining a job is dialogue-event only.
+    /// <br/> Every assignable post is shown; a member may be moved to any post of the same kind of status
+    /// (MemberType.SwapRefusal) whose assignRequirements they meet - the tab is manager-only. A character not
+    /// holding a type here can't be assigned (joining is dialogue-event only). At the character's home the home
+    /// status is replaced (Manageable.AddToFaction), at a workplace the work post (AddWorkFaction).
     /// </summary>
     public class button_ScheduleMemberType : ButtonValidator, I_ButtonClickable, I_ScheduleHoverNotifiable
     {
@@ -1232,18 +1222,28 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
             isCurrent = false;
 
-            // every post is listed, but only a sibling of the held type (another shift of the same post) can be swapped to
-            if (currentStatus == null || !currentStatus.GetSiblings().Contains(this.targetMemberType))
+            // every post is listed; the tab is manager-only, so any member may move to any post they qualify for (user
+            // 2026-10-30, replaces "siblings of the held post only"): same kind of status (MemberType.SwapRefusal - the
+            // lock flags) and the post's own requirements (MemberType.assignRequirements)
+            string refusal = currentStatus == null ? LocalizeDictionary.QueryThenParse("ui_assignMemberType_notMember")
+                : MemberType.SwapRefusal(currentStatus, this.targetMemberType);
+            // the post's requirements: always all listed in the tooltip, unmet ones in the error color
+            string requirements = "";
+            bool requirementsMet = targetMemberType.assignRequirements == null
+                || targetMemberType.assignRequirements.Check(chara, memberTypeOwnerFaction, targetMemberType, out requirements);
+            if (refusal != "" || !requirementsMet)
             {
-                tooltip += "can only swap between posts of the member's current job\n";
+                if (refusal != "") tooltip += refusal + "\n";
+                if (requirements != "") tooltip += requirements + "\n";
                 button.Toggle(true, false);
                 return false;
             }
+            if (requirements != "") tooltip += requirements + "\n";
 
             var returnVal = true;
             bool ttip_overwrite_home = false;
 
-            foreach (var hour in targetMemberType.workModule.activeHours)
+            foreach (var hour in targetMemberType.workModule?.activeHours ?? new List<int>())
             {
                 var f = chara.CurrentJobScheduleFaction(hour);
                 if (f == null || f == memberTypeOwnerFaction)
@@ -1276,8 +1276,11 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             // pattern - assigning a role registers memberTypeOwnerFaction as a work faction;
             // unassigning removes chara from it entirely rather than just reverting status.
             if (isCurrent) return;
-            // only a sibling swap gets here: chara already holds a post in memberTypeOwnerFaction - no sourceFaction, so the salary source is kept
-            chara.FactionManager.AddWorkFaction(memberTypeOwnerFaction.ID, targetMemberType, false);
+            // chara already holds a type in memberTypeOwnerFaction (IsButtonValid): at their home, the home status is
+            // replaced in place (AddToFaction changes a member's status); at a workplace - no sourceFaction, so the
+            // salary source is kept
+            if (chara.FactionManager.HomeFactions.Contains(memberTypeOwnerFaction)) memberTypeOwnerFaction.AddToFaction(chara, targetMemberType, false);
+            else chara.FactionManager.AddWorkFaction(memberTypeOwnerFaction.ID, targetMemberType, false);
             parent.NotifyScheduleChanged();
         }
 
@@ -1306,10 +1309,21 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         return module.activeHours.FindAll(h => module.IsActiveAt(h, 0, calendar));
     }
 
-    /// <summary>A MemberType's shift as job post description text (commands, hours, payout, days); "error" without a workModule.</summary>
+    /// <summary>
+    /// A MemberType's shift as job post description text (commands, hours, payout, days); a type without a workModule
+    /// (e.g. a household role like family doctor) shows its tooltip and what it provides (providedActivities) instead.
+    /// </summary>
     static string BuildMemberTypeDescription(MemberType memberType)
     {
-        if (memberType == null || memberType.workModule == null) return "error";
+        if (memberType == null) return "error";
+        if (memberType.workModule == null)
+        {
+            var lines = new List<string>() { LocalizeDictionary.QueryThenParse(memberType.ID + "_tooltip", "") };
+            if (memberType.providedActivities != null && memberType.providedActivities.Count > 0)
+                lines.Add(LocalizeDictionary.QueryThenParse("ui_assignMemberType_provides").Replace("$list$",
+                    String.Join(", ", memberType.providedActivities.Where(a => a != null).Select(a => LocalizeDictionary.QueryThenParse(a.workModule?.jobPostID ?? a.ID)))));
+            return String.Join("\n", lines.Where(l => !string.IsNullOrEmpty(l)));
+        }
 
         var strs = new List<string>();
         // reuse JobPostPreset's display formatting (workCommands/activeHours/PrintPayout)
@@ -1640,10 +1654,17 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         jobPost,
         externalJob
     }
-    List<int> tempListHash = new List<int>();
+    Dictionary<JobAssignmentTab, List<int>> scheduleButtonHashes = new Dictionary<JobAssignmentTab, List<int>>();
 
     public void OnChildActive(JobAssignmentTab tabID, RectTransform rectTransform)
     {
+        if (tabID != JobAssignmentTab.externalJob) ClearScheduleList(rectTransform);
+        if (!scheduleButtonHashes.TryGetValue(tabID, out var tempListHash))
+        {
+            tempListHash = new List<int>();
+            scheduleButtonHashes.Add(tabID, tempListHash);
+        }
+
         switch(tabID)
         {
             case JobAssignmentTab.singleCOM:
@@ -1771,6 +1792,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         if (externalJobBuiltForChara == currentChara && externalJobBuiltForFaction == currentFaction) return;
 
         ClearExternalJobButtons();
+        ClearScheduleList(externalJobRect);
         externalJobBuiltForChara = currentChara;
         externalJobBuiltForFaction = currentFaction;
         if (currentChara == null) return;
@@ -1802,45 +1824,42 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
     void ClearExternalJobButtons()
     {
-        foreach (var hash in externalJobHashes)
+        UnregisterScheduleButtons(externalJobHashes);
+    }
+
+    void UnregisterScheduleButtons(List<int> hashes)
+    {
+        foreach (var hash in hashes)
         {
-            // the tab's own OnDisable may already have destroyed the button objects
+            buttonsByID.Remove(hash);
             if (validatorsByID.TryGetValue(hash, out var validator))
             {
                 validatorsByID.Remove(hash);
                 if (validator != null) validator.Destroy();
             }
-            if (buttonsByID.TryGetValue(hash, out var text))
-            {
-                buttonsByID.Remove(hash);
-                if (text != null)
-                {
-                    text.gameObject.SetActive(false);
-                    Destroy(text.gameObject);
-                }
-            }
         }
-        externalJobHashes.Clear();
+        hashes.Clear();
+    }
+
+    void ClearScheduleList(RectTransform rect)
+    {
+        if (rect == null) return;
+        // Destroy is deferred, so bound traversal and hide old rows before repopulating.
+        for (int i = rect.childCount - 1; i >= 0; i--)
+        {
+            var child = rect.GetChild(i).gameObject;
+            child.SetActive(false);
+            Destroy(child);
+        }
     }
 
     public void OnChildDisable(JobAssignmentTab tabID, RectTransform rect)
     {
-        foreach(var hash in tempListHash)
+        // OnDisable also runs during shutdown; only release this tab's registrations here.
+        if (scheduleButtonHashes.TryGetValue(tabID, out var hashes))
         {
-            scr_SelectableText text = buttonsByID[hash];
-            buttonsByID.Remove(hash);
-            ButtonValidator validator = validatorsByID[hash];
-            validatorsByID.Remove(hash);
-
-            if(validator != null) validator.Destroy();
-            if (text != null)
-            {
-                text.gameObject.SetActive(false);
-                Destroy(text.gameObject);
-            }
+            UnregisterScheduleButtons(hashes);
         }
-
-        tempListHash.Clear();
 
         if (tabID == JobAssignmentTab.externalJob)
         {

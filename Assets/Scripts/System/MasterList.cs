@@ -57,6 +57,7 @@ public class MasterList
                 list.Add(ErAV);
                 list.Add(Ranks);
                 list.Add(ReputationClasses);
+                list.Add(PermissionDefinitions);
             }
             return list;
         }
@@ -122,6 +123,7 @@ public class MasterList
     public Index_RankTracks Ranks = new Index_RankTracks();
     /// <summary> world reputation mod classes (Reputation.cs) </summary>
     public Index_ReputationClasses ReputationClasses = new Index_ReputationClasses();
+    public Index_PermissionDefinitions PermissionDefinitions = new Index_PermissionDefinitions();
     public void MergeWith(MasterList list)
     {
         for (int i = 0; i < this.List.Count; i++)

@@ -35,6 +35,21 @@ public class RecreationActivity
     /// <summary>Unique within the membership; with the faction ID it keys the activity's cooldown / weekly target (faction ID + ":" + this).</summary>
     public string ID = "";
 
+    /// <summary>Stable conflict/merge identity; empty uses ID, never a localized name or cooldown tag.</summary>
+    public string typeID = "";
+    public bool allowMultipleInstances = true;
+    public bool mergeWithSame = false;
+    /// <summary>Other type IDs forbidden in the same execution room; either side's declaration counts.</summary>
+    public List<string> conflictsWith = new List<string>();
+    /// <summary>Covered furniture command tags. Empty infers the facility's comTag.</summary>
+    public List<string> replaceCommandTags = new List<string>();
+    /// <summary>Covered command IDs (including variants). Empty infers workModule.workCommands.</summary>
+    public List<string> replaceCommands = new List<string>();
+    /// <summary>Enrolled execution commands on furniture/the linked child job. Empty keeps workCommands; entry always uses wait/join.</summary>
+    public List<string> activityCommands = new List<string>();
+
+    public string TypeID { get { return string.IsNullOrEmpty(typeID) ? ID : typeID; } }
+
     /// <summary>
     /// Template of every visit's work module: jobPostID (the activity's name) / workCommands / peakHours are copied into
     /// each booking. activeHours here = the hours of day a visit may cover (empty = any hour); activeDays = the days it may
@@ -58,6 +73,39 @@ public class RecreationActivity
     /// venue's MainExit room.
     /// </summary>
     public string gatherRoomID = "";
+    /// <summary>
+    /// Furniture the activity is bound to (RecreationFacility - found by the command it offers, never by room ID), or
+    /// null. Its room becomes the gather room, chosen when the activity's job is created (late binding - the player may
+    /// move furniture). Not used together with reserveFurnitureTag.
+    /// </summary>
+    public RecreationFacility facility = null;
+
+    /// <summary>
+    /// Who may take part (chara_conditions, self = the booker / invitee / joiner), checked with the planner's activity
+    /// rules (RecreationUtility.ActivityAllows) - so it gates booking, invitations and joining alike. Null = anyone.
+    /// </summary>
+    public Event.EventScope_Self eligibility = null;
+
+    /// <summary>
+    /// A media item (ItemComponent_Media - a movie, a game) from the venue's (the home's) inventory the visit is held
+    /// around, or null. One is reserved when the visit is booked (RecreationBooking / RecreationGroup.mediaItemID), its
+    /// runtime sets the booking's length (whole hours, not clamped to minHours-maxHours), and the begin event's LaunchJob
+    /// runs it as a Job_MediaSession (fixed length; participants repeat a short silent command, may break and rejoin).
+    /// </summary>
+    public RecreationMediaRequirement requireMedia = null;
+
+    /// <summary>
+    /// Shared cooldown / pending-reservation key ("" = faction ID + ":" + ID): activities with the same tag count as one -
+    /// e.g. "medical_checkup", so a character gets one checkup per minDaysBetween whoever provides it (a family doctor at
+    /// home, a clinic later). Also the booking's sourceKey.
+    /// </summary>
+    public string cooldownTag = "";
+
+    /// <summary>One tagged furniture unit per visit/session; its room overrides gatherRoomID.</summary>
+    public string reserveFurnitureTag = "";
+    public int reserveCapacity = 0;
+    /// <summary>Non-empty enables a fixed 22:00-08:00 temporary-home stay in the reserved private room.</summary>
+    public string overnightGuestMemberTypeID = "";
 
     /// <summary>
     /// Event fired when Job_Activity launches this activity (the begin event - the official "activity begins"; the job
@@ -106,7 +154,7 @@ public class RecreationActivity
         return behaviorOverrides.TryGetValue(behaviorOverrideID, out var node) ? node : null;
     }
 
-    /// <summary>Visit length range in hours, clamped to RecreationUtility.MinSegmentHours-MaxSegmentHours (2-4).</summary>
+    /// <summary>Visit length range in hours, clamped to RecreationUtility.MinSegmentHours-MaxSegmentHours (1-4; default 2-3).</summary>
     public int minHours = 2;
     public int maxHours = 3;
 
@@ -132,6 +180,12 @@ public class RecreationActivity
     /// <summary>Visits of this activity can't be cancelled by the player's request (RecreationBooking.forbidCancel).</summary>
     public bool forbidCancel = false;
 
+    /// <summary>Allows extra participants to walk in, independently of invitation visibility. Conservative default: false.</summary>
+    public bool allowWalkIn = false;
+
+    /// <summary>Reserved for future activity-level trust payouts, not the generic 0.1 interaction reward. Conservative default: false.</summary>
+    public bool trustRewardEligible = false;
+
     /// <summary>Who a character booking a visit invites along (null = RecreationInviteSpec.Default; solo = nobody).</summary>
     public RecreationInviteSpec invite = null;
 
@@ -152,4 +206,52 @@ public class RecreationActivity
 
     public int MinHours { get { return System.Math.Max(RecreationUtility.MinSegmentHours, System.Math.Min(minHours, RecreationUtility.MaxSegmentHours)); } }
     public int MaxHours { get { return System.Math.Max(MinHours, System.Math.Min(maxHours, RecreationUtility.MaxSegmentHours)); } }
+}
+
+/// <summary>RecreationActivity.requireMedia: which media item the visit needs (ItemComponent_Media) and what its participants do during it.</summary>
+public class RecreationMediaRequirement
+{
+    /// <summary>The item's comp_Media.mediaTags must contain this (e.g. "movie", "game"). "" = any media.</summary>
+    public string mediaTag = "";
+    /// <summary>The short repeating command of the session (e.g. com_media_watch) - an item's own comp_Media.sessionCommandID wins.</summary>
+    public string sessionCommandID = "";
+}
+
+/// <summary>
+/// Legacy (RecreationFacility.reserve): still parsed from authored data, but imposes no exclusivity - activities never
+/// hold furniture or rooms. Concurrency is RecreationActivity policy (allowMultipleInstances / conflictsWith / mergeWithSame).
+/// </summary>
+public enum FacilityReserve
+{
+    None,
+    Unit,
+    Room,
+}
+
+/// <summary>
+/// RecreationActivity.facility: the furniture an activity needs, matched by the command it offers
+/// (Job.HasAvailableCOMwithCOMTags) - so any furniture doing the job qualifies, wherever it stands. Rooms qualify by
+/// their furniture; the room is chosen when the activity's job is created (RecreationUtility.FacilityRooms /
+/// Job_Activity.ReserveFacility), never stored on a booking.
+/// </summary>
+public class RecreationFacility
+{
+    /// <summary>The pool: furniture at the venue offering a command with this comTag (e.g. training_shooting).</summary>
+    public string comTag = "";
+    public FacilityReserve reserve = FacilityReserve.None;
+    /// <summary>Unit: attendees per unit (0 = no limit).</summary>
+    public int unitCapacity = 0;
+    /// <summary>The chosen room must hold at least this many units.</summary>
+    public int minUnits = 1;
+    /// <summary>Other command tags some furniture in the same room must offer (e.g. "rest" - somewhere to sit).</summary>
+    public List<string> requireInRoom = new List<string>();
+    /// <summary>Private rooms (Room_Instance.isRoomPrivate) qualify too. Default false: no movie night in someone's bedroom.</summary>
+    public bool allowPrivateRooms = false;
+    /// <summary>
+    /// A room visit: only a private room the host owns at the venue qualifies (the host = the session's host / the solo
+    /// visit's owner), and while the visit runs its participants may use that room's furniture (RecreationUtility.IsActivityGuestIn).
+    /// </summary>
+    public bool hostPrivateRoom = false;
+    /// <summary>Participants are dispatched only within the facility room (TryFindScheduledActivityNode.RunVisit's restrictRoomList).</summary>
+    public bool dispatchInRoom = true;
 }

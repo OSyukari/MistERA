@@ -4,23 +4,28 @@
 [
     {
         "id":"item_videocd_pmmm_rebellion",
+        "_comment_comp_Media":"Media for a movie session (RecreationActivity.requireMedia mediaTag movie - e.g. Utnapishtim movie_session): runtime = the session's length (booking rounded up to whole hours). startEventID / endEventID optional (none = nothing).",
         "Tags":["furniture_watchVideo","moviecd","rarity_common"],
-        "value":5800
+        "value":5800,
+        "itemComps_Template":[ { "compType":"ItemComponent_Media", "comp_Media":{ "runtimeMinutes":116, "mediaTags":["movie"] } } ]
     },
     {
         "id":"item_videocd_bd_am",
         "Tags":["furniture_watchVideo","moviecd","rarity_common"],
-        "value":6600
+        "value":6600,
+        "itemComps_Template":[ { "compType":"ItemComponent_Media", "comp_Media":{ "runtimeMinutes":100, "mediaTags":["movie"] } } ]
     },
     {
         "id":"item_videocd_bd2049",
         "Tags":["furniture_watchVideo","moviecd","rarity_common"],
-        "value":4180
+        "value":4180,
+        "itemComps_Template":[ { "compType":"ItemComponent_Media", "comp_Media":{ "runtimeMinutes":164, "mediaTags":["movie"] } } ]
     },
     {
         "id":"item_videocd_wuwa3dot1",
         "Tags":["furniture_watchVideo","moviecd","rarity_common"],
-        "value":4200
+        "value":4200,
+        "itemComps_Template":[ { "compType":"ItemComponent_Media", "comp_Media":{ "runtimeMinutes":60, "mediaTags":["movie"] } } ]
     },
     {
         "id":"item_paperbooks_kvngt_5",

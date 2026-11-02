@@ -5,7 +5,33 @@
     },
     "Dictionary": {
         "Entries": {
+            "zh-cn": {
+                "v_lubrication": "阴道润滑度",
+                "v_lubrication_tooltip": "阴道的派生润滑度；部位内液体的润滑加成另行计算。数值为暂定调参，并非最终生理设定。",
+                "a_lubrication": "肛门润滑度",
+                "a_lubrication_tooltip": "肛门的派生润滑度；默认快感系数为0，特性可启用该加成通道。部位内液体的润滑加成另行计算。数值为暂定调参，并非最终生理设定。",
+                "o_lubrication": "口腔润滑度",
+                "o_lubrication_tooltip": "口腔的派生润滑度；部位内液体的润滑加成另行计算。数值为暂定调参，并非最终生理设定。",
+                "v_acceptance": "阴道插入意愿",
+                "a_acceptance": "肛门插入意愿",
+                "o_acceptance": "口腔插入意愿",
+                "ui_lubrication_stimulation": "快感润滑加成",
+                "ui_bodyLubrication_value": "润滑度：$value$",
+                "ui_bodyLubrication_breakdown": "派生润滑度：$derived$（$stat$）\n液体润滑加成：$liquid$\n部位内全部液体：$amount$ ml\n液体加成按部位内全部液体的毫升数计算，不按容量占比计算；不是永久加成。"
+            },
             "en-us": {
+                "v_lubrication": "Vaginal Lubrication",
+                "v_acceptance": "Vaginal Penetration Willingness",
+                "a_acceptance": "Anal Penetration Willingness",
+                "o_acceptance": "Oral Penetration Willingness",
+                "v_lubrication_tooltip": "Derived vaginal lubrication; the organ's liquid lubrication bonus is calculated separately. Values are provisional tuning, not final physiology.",
+                "a_lubrication": "Anal Lubrication",
+                "a_lubrication_tooltip": "Derived anal lubrication; the default stimulation coefficient is 0, but traits can enable this modifier channel. The organ's liquid lubrication bonus is calculated separately. Values are provisional tuning, not final physiology.",
+                "o_lubrication": "Oral Lubrication",
+                "o_lubrication_tooltip": "Derived oral lubrication; the organ's liquid lubrication bonus is calculated separately. Values are provisional tuning, not final physiology.",
+                "ui_lubrication_stimulation": "Stimulation Lubrication Bonus",
+                "ui_bodyLubrication_value": "Lubrication: $value$",
+                "ui_bodyLubrication_breakdown": "Derived lubrication: $derived$ ($stat$)\nLiquid lubrication bonus: $liquid$\nAll liquid in this organ: $amount$ ml\nThe liquid bonus uses all liquid in this organ, measured in ml, not a fraction of capacity; it is not a permanent bonus.",
                 "stats_derived_extended_stamina_tooltip": "Consumed when performing physical labor\nMaximum is %%stats_base_Constitution%%*10 + other modifiers\nRecovers via sleep or rest\nWhen Stamina is too low, character enters a fatigued state - see the %%chara_status_fatigue%% status for details",
 
                 "stats_derived_cleaningThreshold": "Cleaning Threshold",

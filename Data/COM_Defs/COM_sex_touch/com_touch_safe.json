@@ -27,7 +27,7 @@
             "ActionPackageClass":"ActionPackage_Interaction",
             "displayName":"com_touch_hug_displayName",
             "timeScale":2,
-            "comTags":["touch", "safe"],
+            "comTags":["touch", "safe","allowedDuringSex"],
             "requirements":{
                 "requirement":{
                     "doerCount":1,
@@ -48,7 +48,17 @@
                     }
                 ]
             },
-            "AcceptanceCheck":{ "baseAcceptanceValue":16 },
+            "_comment_actModifiers":"Provisional, untested new D20 bonuses. Relationships belong to the act owner toward the actual partner, not the master. Parent EP gates ordinary conscious, unrestrained, non-threat actual pairs; special, forced and group contexts stay unchanged.",
+            "AcceptanceCheck":{
+                "baseAcceptanceValue":16,
+                "actModifiers":{
+                    "enabled":true, "totalMin":0, "totalMax":6,
+                    "terms":[
+                        {"source":"PartnerGoodwill", "appliesTo":"BothDeciders", "scale":0.05, "offset":0, "min":0, "max":4},
+                        {"source":"PartnerTrust", "appliesTo":"BothDeciders", "scale":0.04, "offset":0, "min":0, "max":3}
+                    ]
+                }
+            },
             "DifficultyCheck":{ "baseD20Check":11 }
         },
         {

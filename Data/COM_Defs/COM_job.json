@@ -477,124 +477,6 @@
                 "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_job_research_biochemistry_description_onComplete_1"]}] }
             },
             {
-                "ID": "com_job_training_shooting",
-                "ActionPackageClass": "ActionPackage_Interaction",
-                "displayName": "com_job_training_shooting_displayName_1",
-                "timeScale": 30,
-                "comTags": [
-                    "job",
-                    "furniture",
-                    "training_shooting",
-                    "do_not_use"
-                ],
-                "requirements": {
-                    "requirement": {
-                        "treatReceiverAsDoer":true
-                    }
-                },
-                "variants": [
-                    {
-                        "requirements": {
-                            "requirement": {
-                                "doerCount": 1,
-                                "req_Doers": {
-                                    "cost_ST": 20,
-                                    "cost_EN": 10
-                                }
-                            }
-                        },
-                        "displayName": "com_job_training_shooting_displayName_1"
-                    },
-                    {
-                        "requirements": {
-                            "requirement": {
-                                "doerCount": 2,
-                                "req_Doers": {
-                                    "cost_ST": 10,
-                                    "cost_EN": 5
-                                }
-                            }
-                        },
-                        "displayName": "com_job_training_shooting_displayName_2"
-                    }
-                ],
-                "AcceptanceCheck": {
-                    "baseAcceptanceValue": 10
-                },
-                "DifficultyCheck": { "baseD20Check": 0 },
-                "description_begin":
-                {
-                    "Entries":[ 
-                        {
-                            "keepLooking":true,
-                            "texts": ["com_job_training_shooting_begin_1","com_job_training_shooting_begin_2","com_job_training_shooting_begin_3"]
-                        }
-                    ]
-                    
-                },
-                "description_ongoing":{ "Entries":[{"texts":["com_job_training_shooting_description_ongoing_1"]}], "keepLooking":false },
-                "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_job_training_shooting_description_onComplete_1"]}] }
-            },
-            {
-                "ID": "com_job_training_melee",
-                "ActionPackageClass": "ActionPackage_Interaction",
-                "displayName": "com_job_training_melee_displayName_1",
-                "timeScale": 30,
-                "comTags": [
-                    "job",
-                    "furniture",
-                    "training_melee",
-                    "do_not_use"
-                ],
-                "requirements": {
-                    "requirement": {
-                        "treatReceiverAsDoer":true
-                    }
-                },
-                "variants": [
-                    {
-                        "requirements": {
-                            "requirement": {
-                                "doerCount": 1,
-                                "req_Doers": {
-                                    "cost_ST": 15,
-                                    "cost_EN": 10
-                                }
-                            }
-                        },
-                        "displayName": "com_job_training_melee_displayName_1"
-                    },
-                    {
-                        "requirements": {
-                            "requirement": {
-                                "doerCount": 2,
-                                "req_Doers": {
-                                    "cost_ST": 10,
-                                    "cost_EN": 5
-                                }
-                            }
-                        },
-                        "displayName": "com_job_training_melee_displayName_2"
-                    }
-                ],
-                "AcceptanceCheck": {
-                    "baseAcceptanceValue": 10
-                },
-                "DifficultyCheck": { "baseD20Check": 0 },
-                "description_begin":
-                {
-                    "Entries":[ 
-                        {
-                            "keepLooking":true,
-                            "texts": ["com_job_training_melee_begin_1","com_job_training_melee_begin_2"]
-                        }
-                    ]
-                    
-                },
-                "description_ongoing":{ "Entries":[{"texts":["com_job_training_melee_description_ongoing_1"]}], "keepLooking":false },
-                "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_job_training_melee_description_onComplete_1"]}] }
-            },
-            {
                 "ID": "com_job_farm_maintain",
                 "COMRepeat": true,
                 "ActionPackageClass": "ActionPackage_Interaction",
@@ -1083,15 +965,6 @@
 "com_job_research_biochemistry_displayName": "研究：生化",
 "com_job_research_biochemistry_displayName_1": "研究生化",
 "com_job_research_biochemistry_displayName_2": "一起研究生化",
-"com_job_training_shooting_displayName_1": "射击训练",
-"com_job_training_shooting_displayName_2": "一起射击训练",
-"com_job_training_shooting_begin_1": "$doer.firstname$站到射击位置，戴上耳罩，举起手中的武器，开始了今天的训练",
-"com_job_training_shooting_begin_2": "$doer.firstname$调整呼吸，瞄准靶心，扣动扳机，开始了精准射击的练习",
-"com_job_training_shooting_begin_3": "$doer.firstname$在射击场上，反复练习着各种射击姿势，提高自己的射击水平",
-"com_job_training_melee_displayName_1": "格斗训练",
-"com_job_training_melee_displayName_2": "一起格斗训练",
-"com_job_training_melee_begin_1": "$doer.firstname$站在训练场中央，深吸一口气，摆出格斗姿势，开始了今天的近身格斗训练",
-"com_job_training_melee_begin_2": "$doer.firstname$反复练习着各种进攻和防御的动作，提升自己的格斗能力",
 
 "com_job_farm_maintain":"每天一次，打理种植于此的作物。该指令与种植不同，可以由NPC来负责每日维护",
 "com_job_farm_maintain_displayName_1": "打理农场",
@@ -1121,11 +994,6 @@
 "com_job_research_physics_description_onComplete_1": "$doer.firstname$完成了物理研究",
 "com_job_research_biochemistry_description_ongoing_1": "$doer.firstname$正在研究生物化学",
 "com_job_research_biochemistry_description_onComplete_1": "$doer.firstname$完成了生化研究",
-
-"com_job_training_shooting_description_ongoing_1": "$doer.firstname$正在训练射击",
-"com_job_training_shooting_description_onComplete_1": "$doer.firstname$完成了射击训练",
-"com_job_training_melee_description_ongoing_1": "$doer.firstname$正在格斗训练",
-"com_job_training_melee_description_onComplete_1": "$doer.firstname$完成了格斗训练",
 
 "com_job_farm_maintain_description_onComplete_1": "$doer.firstname$打理好了农场——$result$",
 "com_job_farm_cultivate_crop_description_onComplete_1": "$doer.firstname$完成了作物种植——$result$",
@@ -1188,15 +1056,6 @@
 "com_job_research_biochemistry_displayName": "Research biochemistry",
 "com_job_research_biochemistry_displayName_1": "Research biochemistry",
 "com_job_research_biochemistry_displayName_2": "Research biochemistry",
-"com_job_training_shooting_displayName_1": "Firearm training",
-"com_job_training_shooting_displayName_2": "Firearm training",
-"com_job_training_shooting_begin_1": "$doer.firstname$ stood at the firing position, put on ear protection, raised the weapon in their hand, and began today's training.",
-"com_job_training_shooting_begin_2": "$doer.firstname$ adjusted their breathing, aimed at the bullseye, pulled the trigger, and began practicing precision shooting.",
-"com_job_training_shooting_begin_3": "$doer.firstname$ repeatedly practiced various shooting stances on the shooting range to improve their shooting skills.",
-"com_job_training_melee_displayName_1": "CQC training",
-"com_job_training_melee_displayName_2": "CQC training",
-"com_job_training_melee_begin_1": "$doer.firstname$ stood in the center of the training ground, took a deep breath, adopted a fighting stance, and began today's close-quarters combat training.",
-"com_job_training_melee_begin_2": "$doer.firstname$ repeatedly practiced various offensive and defensive movements to improve their fighting ability.",
 "com_job_farm_maintain_displayName_1": "Maintain farm",
 "com_job_farm_maintain_displayName_2": "Maintain farm",
 "com_job_farm_maintain_begin_1": "$doer.firstname$ picked up the water bucket and carefully watered the crops in the field, ensuring they could grow strong and healthy.",
@@ -1228,11 +1087,6 @@
 "com_job_research_physics_description_onComplete_1": "$doer.firstname$ finished studying physics",
 "com_job_research_biochemistry_description_ongoing_1": "$doer.firstname$ is researching biochemistry",
 "com_job_research_biochemistry_description_onComplete_1": "$doer.firstname$ finished researching biochemistry",
-
-"com_job_training_shooting_description_ongoing_1": "$doer.firstname$ is training their shooting",
-"com_job_training_shooting_description_onComplete_1": "$doer.firstname$ finished firearm training",
-"com_job_training_melee_description_ongoing_1": "$doer.firstname$ is training CQC",
-"com_job_training_melee_description_onComplete_1": "$doer.firstname$ finished CQC training",
 
 "com_job_farm_maintain_description_onComplete_1": "$doer.firstname$ finished maintaining the farm — $result$",
 "com_job_farm_cultivate_crop_description_onComplete_1": "$doer.firstname$ finished planting crops — $result$",

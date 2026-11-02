@@ -1,0 +1,15 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for OnCondomDiscard_sex.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "event_OnCondomDiscard_q": "Where to throw the $item$?",
+                "event_OnCondomDiscard_op_floor": "Just drop it on the floor",
+                "event_OnCondomDiscard_onPart": "Drop it on $name$'s $part$",
+                "event_OnCondomDiscard_noTrace": "Nothing can stay on this part"
+            }
+        }
+    }
+}

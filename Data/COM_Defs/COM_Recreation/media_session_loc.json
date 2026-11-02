@@ -1,0 +1,17 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for media_session.json (Job_MediaSession's session commands). Holds en-us entries."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "com_media_watch_displayName": "Watch together",
+                "com_media_play_displayName": "Play together",
+                "com_media_watch_displayName_item": "Watch $name$ together",
+                "com_media_play_displayName_item": "Play $name$ together",
+                "com_media_watch": "While a movie session is running, watch together in its room. Each one lasts a short while - leave midway and come back any time.",
+                "com_media_play": "While a gaming session is running, play together in its room. Each one lasts a short while - leave midway and come back any time."
+            }
+        }
+    }
+}

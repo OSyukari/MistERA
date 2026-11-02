@@ -1,13 +1,13 @@
 {
-    "_doc": "Fired from code (RecreationUtility.AnnounceNotice), no trigger. Self = the character whose recreation bookings changed; $bookingText$ = the change list (booked / rescheduled / cancelled, one line each), already built and localized by code. One notice per character per pass (the midnight planning, an hourly check, an event Result). Midnight new reservations are forced on screen for the player's household (FactionUtility.IsPlayerHousehold); daytime changes only show when the player can see the character; event-Result changes inherit the calling event's displayOverride. The same list goes into the home factions' daily report (misc entry).",
+    "_doc": "Fired from code (RecreationUtility.Announce), no trigger. An activity announces itself - a solo booking when it is booked / moved / cancelled, a session once it resolves (confirmed or cancelled, after its invitees answered in the hour's late passes) and when it is cancelled later. Self = the first participant who is the player or visible to the player; $activityText$ = the header, the activity line (activity @ venue, time, cancel reason) and the participants, already built and localized by code. Forced on screen inside an event Result with displayOverride, in the midnight planning of the player's household, and for a session resolved at midnight with a household participant. See Docs/Recreation/Plan_ActivityAnnouncements.md.",
     "Events": {
         "list": [
             {
-                "ID": "Recreation_BookingChanged",
+                "ID": "Recreation_ActivityNotice",
                 "events": [
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "line": "Recreation_BookingChanged_EV01",
+                        "line": "Recreation_ActivityNotice_EV01",
                         "isLast": true
                     }
                 ]
@@ -17,7 +17,7 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "Recreation_BookingChanged_EV01": "$self.name$的活动安排：\n$bookingText$"
+                "Recreation_ActivityNotice_EV01": "$activityText$"
             }
         }
     }

@@ -1,0 +1,34 @@
+{
+    "Events": { "list": [
+        {
+            "ID": "jp_otaku_netcafe_Opt_Apply", "trigger": "OnDialogue_Options", "allowDuplicate": false, "UISpec": { "displayMode": "AVG" },
+            "SelfValidator": { "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["isPlayer"] }] },
+            "TargetValidators": [{ "refkeys": ["staff"], "baseScope": "CurrentTarget", "minTargetCount": 1, "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_otaku_netcafe"] }, { "parameters": ["hasActorTag", "jp_otaku_netcafe_hiring"] }] }],
+            "events": [
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "otaku_apply_greeting", "Results": [{ "Type": "JoinActiveFaction", "arguments": ["applyOptions", "selfAndFollowers", "staff", "membertype_otaku_netcafe_parttime", "applyError"] }] },
+                { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [{ "option": "options", "Results": [{ "Type": "ExistStoredOptions", "arguments": ["applyOptions"] }, { "Type": "JumpToLabel", "arguments": ["", "ask"] }] }, { "option": "error", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "error"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "error", "line": "$applyError$", "isLast": true },
+                { "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp", "label": "ask", "question": "otaku_apply_question", "loadOptionsKey": "applyOptions", "loadOptionsResults": [{ "Type": "JumpToLabel", "arguments": ["", "done"] }], "options": [{ "option": "otaku_staff_cancel", "isDefaultCancel": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "cancel"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "done", "line": "otaku_apply_done" },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "$factionChangeString$", "isLast": true },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "cancel", "line": "otaku_staff_cancelLine", "isLast": true }
+            ]
+        },
+        {
+            "ID": "jp_otaku_netcafe_Opt_Quit", "trigger": "OnDialogue_Options", "allowDuplicate": false, "UISpec": { "displayMode": "AVG", "infoDisplay": "Hide" },
+            "SelfValidator": { "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["isPlayer"] }] },
+            "TargetValidators": [
+                { "refkeys": ["staff"], "baseScope": "CurrentTarget", "minTargetCount": 1, "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_otaku_netcafe"] }, { "parameters": ["hasActorTag", "jp_otaku_netcafe_hiring"] }] },
+                { "refkeys": ["leavers"], "baseScope": "FactionMembersWithMemberType", "extraScopeArguments": ["jp_otaku_netcafe", "membertype_otaku_netcafe_staff"], "minTargetCount": 1, "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["sharesHomeFaction"] }] }
+            ],
+            "events": [
+                { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [{ "option": "build", "Results": [{ "Type": "LeaveActiveFaction", "arguments": ["quitOptions", "leavers", "staff", "membertype_otaku_netcafe_staff"] }, { "Type": "JumpToLabel", "arguments": ["", "ask"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp", "label": "ask", "question": "otaku_quit_question", "loadOptionsKey": "quitOptions", "loadOptionsResults": [{ "Type": "JumpToLabel", "arguments": ["", "done"] }], "options": [{ "option": "otaku_staff_cancel", "isDefaultCancel": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "cancel"] }] }] },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "done", "line": "otaku_quit_done" },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "$factionChangeString$", "isLast": true },
+                { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "cancel", "line": "otaku_staff_cancelLine", "isLast": true }
+            ]
+        }
+    ] },
+    "Dictionary": { "Entries": { "zh-cn": { "jp_otaku_netcafe_Opt_Apply": "应聘网咖兼职（日班／夜班）", "jp_otaku_netcafe_Opt_Quit": "辞去网咖工作" } } }
+}

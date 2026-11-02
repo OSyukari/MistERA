@@ -22,6 +22,11 @@ public class Room_Base
     /// Only restricts rooms as a destination; a path may still pass through.
     /// </summary>
     public bool requireFactionMembership = false;
+    /// <summary>
+    /// Residential district amenity (gym, lounge, residents' corridors): like requireFactionMembership, but residents of
+    /// the district's generated homes may enter too (ResidenceUtility.HasRoomAccess / IsResidentOf).
+    /// </summary>
+    public bool residentsOnly = false;
     public List<Door_Base> connects = new List<Door_Base>();
     public List<string> furnitureIDs = new List<string>();
     public bool noCleaning = false;

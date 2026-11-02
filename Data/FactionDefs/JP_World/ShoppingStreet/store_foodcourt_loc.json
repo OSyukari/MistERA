@@ -1,0 +1,25 @@
+{
+    "Dictionary":{"Entries":{"en-us":{
+        "jp_mall_foodcourt":"Ekimae Mall Food Court",
+        "jp_mall_foodcourt_room":"Food Court",
+        "jp_mall_foodcourt_tables":"Food Court Tables",
+        "jp_mall_foodcourt_counter":"Food Service Counter",
+        "membertype_jp_mall_waiter":"Part-time Food Court Waiter",
+        "jp_mall_waiter_day":"Waiter, 10:00-16:00",
+        "jp_mall_waiter_evening":"Waiter, 16:00-22:00",
+        "jp_mall_foodcourt_joinOption":"$name$ as $memberType$",
+        "jp_mall_foodcourt_eat_together":"Eat Out Together (Meal Included)",
+        "jp_mall_foodcourt_activity_accept":"Attending a shared meal",
+        "jp_mall_foodcourt_meal_name":"Eat at the Food Court",
+        "jp_mall_foodcourt_meal_group":"Eat at the Food Court Together",
+        "jp_mall_foodcourt_meal_begin":"$doer.firstname$ brings a meal tray to the table and sits down.",
+        "jp_mall_foodcourt_meal_ongoing":"$doer.firstname$ eats amid the clatter of dishes and nearby conversation.",
+        "jp_mall_foodcourt_meal_after":"$doer.firstname$ finishes eating and clears the tray.",
+        "jp_mall_foodcourt_waiter_duty":"Counter Duty and Dining Area Cleanup",
+        "jp_mall_foodcourt_waiter_begin":"$doer.firstname$ takes over the counter and begins tidying the dining area.",
+        "jp_mall_foodcourt_waiter_ongoing":"$doer.firstname$ collects trays, wipes tables and tends the pickup counter.",
+        "jp_mall_foodcourt_waiter_after":"$doer.firstname$ puts away the trays, finishing a round of work.",
+        "consumable_jp_mall_foodcourt_meal":"Food Court Set Meal",
+        "consumable_jp_mall_foodcourt_meal_tooltip":"Rice, a hot main dish and soup. Included in the shared dining activity fee."
+    }}}
+}

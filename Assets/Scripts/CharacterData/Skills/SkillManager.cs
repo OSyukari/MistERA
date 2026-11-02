@@ -11,8 +11,9 @@ using static scr_panel_COMmanager;
 public class SkillManager
 {
 
-    [JsonProperty] protected Dictionary<string, int> experienceLogs = new Dictionary<string, int>();
-    protected Dictionary<string, int> experienceLogs_currentRound = new Dictionary<string, int>();
+    // float so fractional gains (eg. per-organ pain amounts) accumulate instead of being truncated per grant; old int saves load as-is
+    [JsonProperty] protected Dictionary<string, float> experienceLogs = new Dictionary<string, float>();
+    protected Dictionary<string, float> experienceLogs_currentRound = new Dictionary<string, float>();
     public List<string> ExperiencesToString(bool nsfw = false)
     {
         var newDict = experienceLogs.Concat(debug_experienceLogs).GroupBy(p => p.Key).ToDictionary(g => g.Key, g => (g.Count() > 1 ? g.First().Value + g.Last().Value : g.Last().Value));
@@ -25,7 +26,7 @@ public class SkillManager
             //var baseSkill = null;// scr_System_Serializer.current.GetByNameOrID_ExperienceBase(i.Key);
             // string append = baseSkill == null ? "" : baseSkill.DisplayAmountString;
 
-            list.Add(LocalizeDictionary.QueryThenParse(i.Key) + ": " + i.Value);// + append);
+            list.Add(LocalizeDictionary.QueryThenParse(i.Key) + ": " + i.Value.ToString("0.#"));// + append);
         }
         return list;
     }
@@ -65,15 +66,19 @@ public class SkillManager
         experienceLogs_currentRound.Clear();
     }
 
-    [JsonIgnore] public Dictionary<string, int> debug_experienceLogs = new Dictionary<string, int>();
+    [JsonIgnore] public Dictionary<string, float> debug_experienceLogs = new Dictionary<string, float>();
 
+    /// <summary> Whole experience (truncated) - what conditions, skill requirements and events compare against. </summary>
     public int GetExperienceLevel(string expID)
     {
-        if (!this.experienceLogs.ContainsKey(expID))
-        {
-            return 0 + (debug_experienceLogs.ContainsKey(expID) ? debug_experienceLogs[expID] : 0);
-        }
-        return this.experienceLogs[expID] + (debug_experienceLogs.ContainsKey(expID) ? debug_experienceLogs[expID] : 0);
+        return (int)GetExperience(expID);
+    }
+
+    /// <summary> Exact accumulated experience, including fractional gains. </summary>
+    public float GetExperience(string expID)
+    {
+        this.experienceLogs.TryGetValue(expID, out var value);
+        return value + (debug_experienceLogs.ContainsKey(expID) ? debug_experienceLogs[expID] : 0);
     }
 
     public void CheckExperienceGain(List<string> ownerTags, List<string> comTags, float amount, bool isDoer, ExperienceLog m = null, ISet<string> forbiddenExperienceIDs = null)
@@ -134,8 +139,8 @@ public class SkillManager
         if (!experienceLogs_currentRound.ContainsKey(i.ExperienceID)) experienceLogs_currentRound.Add(i.ExperienceID, 0);
         if (i.CountTotal)
         {
-            experienceLogs_currentRound[i.ExperienceID] += (int)amount;
-            if (m != null) m.AddExperience(Owner.RefID, i.ExperienceID, (int)amount);
+            experienceLogs_currentRound[i.ExperienceID] += amount;
+            if (m != null) m.AddExperience(Owner.RefID, i.ExperienceID, amount);
             //return (int)amount;
            // else Owner.InteractionJob.m.exp.AddExperience(Owner.RefID, i.ExperienceID, (int)amount);
             //scr_UpdateHandler.current.AddExperience(Owner.RefID, i.ExperienceID, (int)amount);

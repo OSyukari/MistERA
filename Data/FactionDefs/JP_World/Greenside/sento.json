@@ -1,0 +1,62 @@
+{
+  "_comment_hours": "Sento 15-24 daily, soft opening hours via attendant shift and offer. No midnight hour 24 entry.",
+  "_comment_bathing": "Group gathers in neutral reception, then uses baths in gender-marked rooms. Markers are the engine's social room preference, NOT a hard lock. No custom reservation, nudity enforcement or gender exclusion invented. Existing shower furniture supports ordinary hygiene; the soak COM restores stamina only. Booking fee is charged by Job_Activity, never by the launch event/COM.",
+  "MapPlans": {
+    "factionInit": [{
+      "ID": "jp_greenside_sento", "initializeFaction": "jp_greenside_sento", "floors": [{ "ID": "floor_jp_greenside_sento", "nameOverwrite": "jp_greenside_sento" }], "floorListHostFactionID": "jp_greenside", "isRentingFloor": true, "landlordFactionID": "jp_greenside", "setPrivateRoomOwner": false,
+      "floorDoors": [{ "sourceFloor": "floor_jp_greenside_sento", "sourceExit": "street", "targetFaction": "jp_greenside", "targetFloor": "floor_jp_greenside", "targetExit": "to_jp_greenside_sento", "cost": 1 }],
+      "mainExit": { "roomID": "sento_entrance", "exitCost": 5 }, "managerBaseIDs": [""], "salesCurrency": "currency_JPY", "salesInventory": [], "assignableMemberTypes": [], "joinableMemberTypes": [],
+      "fallbackWorkers": [{ "memberTypeID": "membertype_jp_greenside_sento_attendant", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }]
+    }],
+    "floorPlans": [{
+      "ID": "floor_jp_greenside_sento", "imagePath": "BGAssets/Generated/office_lounge_03.webp",
+      "isFloorPlan": false, "floorWidth": 400, "floorHeight": 400, "resize": 1, "mapExit": "sento_entrance",
+      "exits": [{ "ID": "street", "connectedRoom": "sento_entrance", "hideOnMap": true }],
+      "_comment_wholeBuildingRent": "Original monthly commercial tenant costs, charged once for this independent floor rather than per room; landlord remains jp_greenside.",
+      "wholeBuildingRent": { "maintenanceFee": { "itemID": "currency_JPY", "itemCount": 10000 }, "rentFee": { "itemID": "currency_JPY", "itemCount": 80000 }, "cadence": "Monthly" },
+      "rooms": [
+        { "ID": "sento_entrance", "displayName": "sento_entrance", "hideOnMap": true, "furnitureIDs": ["furniture_jp_greenside_sento_counter"], "connects": [], "roomImagePath": "BGAssets/Generated/office_lounge_03.webp" },
+        { "ID": "sento_changing_male", "displayName": "sento_changing_male", "hideOnMap": true, "furnitureIDs": ["furniture_marker_gender_male", "furniture_bathroom_set"], "connects": [{ "ID": "sento_entrance", "cost": 1 }], "roomImagePath": "BGAssets/Generated/public_restroom_17.webp" },
+        { "ID": "sento_changing_female", "displayName": "sento_changing_female", "hideOnMap": true, "furnitureIDs": ["furniture_marker_gender_female", "furniture_bathroom_set"], "connects": [{ "ID": "sento_entrance", "cost": 1 }], "roomImagePath": "BGAssets/Generated/public_restroom_17.webp" },
+        { "ID": "sento_bath_male", "displayName": "sento_bath_male", "hideOnMap": true, "furnitureIDs": ["furniture_marker_gender_male", "furniture_shower", "furniture_jp_greenside_sento_bath"], "connects": [{ "ID": "sento_changing_male", "cost": 1 }], "roomImagePath": "BGAssets/Generated/public_restroom_17.webp" },
+        { "ID": "sento_bath_female", "displayName": "sento_bath_female", "hideOnMap": true, "furnitureIDs": ["furniture_marker_gender_female", "furniture_shower", "furniture_jp_greenside_sento_bath"], "connects": [{ "ID": "sento_changing_female", "cost": 1 }], "roomImagePath": "BGAssets/Generated/public_restroom_17.webp" }
+      ]
+    }],
+    "memberTypes": [{
+      "ID": "membertype_jp_greenside_sento_attendant", "socialStandingKey": "membertype_jp_greenside_sento_attendant", "isMember": true, "isDisplayableInFactionUI": true,
+      "workModule": { "jobPostID": "membertype_jp_greenside_sento_attendant", "workCommands": ["jp_greenside_sento_attend"], "activeHours": [15,16,17,18,19,20,21,22,23], "activeDays": [], "hourlyPayout": [{ "itemID": "currency_JPY", "itemCount": 1200 }], "paymentCadence": "Daily" }
+    }],
+    "recreationOffers": [{
+      "ID": "recreation_offer_jp_greenside_sento", "mode": "Flexible", "factionID": "jp_greenside_sento",
+      "workModule": { "jobPostID": "recreation_offer_jp_greenside_sento", "workCommands": ["jp_greenside_sento_soak"], "activeHours": [15,16,17,18,19,20,21,22,23], "activeDays": [] },
+      "entranceFee": { "itemID": "currency_JPY", "itemCount": 550 }, "minHours": 2, "maxHours": 2, "weeklyTarget": 1, "minDaysBetween": 1, "daysInAdvance": 1, "allowWalkIn": true, "trustRewardEligible": false,
+      "gatherRoomID": "sento_entrance", "launchEventID": "Greenside_Sento_Begin",
+      "invite": { "visibility": "Private", "inviteChance": 0.5, "minParticipants": 1, "TargetValidators": [{ "refKeys": ["companion"], "baseScope": "SelfRelationships", "chara_conditions": [{ "parameters": ["excludeSelf"] }, { "selfRelationshipRequirement": { "requireRawScore": [{ "requireScoreID": "Goodwill", "operand": "gte", "value": 25 }], "requireRawScoreCompare": [{ "requireScoreID": "Goodwill", "operand": "gt", "compareScoreID": "Badwill", "compareScoreMult": 1.1 }] } }], "maxTargetCount": 3, "maxParticipants": 3, "required": false, "stopAtMaxTargetCount": true, "orderBy": "friendliness" }] }
+    }]
+  },
+  "Furnitures": { "list": [
+    { "ID": "furniture_jp_greenside_sento_counter", "displayName": "jp_greenside_sento_counter", "recipe": [], "furnitureSize": 2, "value": 20000, "givesJob": [{ "comID": ["jp_greenside_sento_attend"] }] },
+    { "ID": "furniture_jp_greenside_sento_bath", "displayName": "jp_greenside_sento_bath", "recipe": [], "furnitureSize": 0, "value": 200000, "Tags": ["plumbing"], "givesJob": [{ "comID": ["jp_greenside_sento_soak"] }] }
+  ] },
+  "COMs": { "list": [
+    {
+      "ID": "jp_greenside_sento_soak", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "jp_greenside_sento_soak", "timeScale": 30, "comTags": ["furniture", "recreation", "jp_greenside_sento"],
+      "_comment_gate": "No requireActiveRecreationOffer: that API sees posted Fixed offers only, never Flexible bookings. Organized visits pay the booking fee; manual furniture use is not separately charged. Activity dispatch currently does not opt into respectRoomGender, so gender markers remain social metadata, not enforced routing.",
+      "requirements": { "requirement": { "treatReceiverAsDoer": true } },
+      "variants": [{ "displayName": "jp_greenside_sento_soak", "requirements": { "requirement": { "doerCount": 99 } } }], "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 0 },
+      "results_EP": { "results_character": [{ "entry_conditions": { "applyToDoer": true }, "entry_results": { "type": "statMod_ST", "value": "4" } }] },
+      "description_begin": { "Entries": [{ "texts": ["jp_sento_soak_begin"] }] }, "description_ongoing": { "Entries": [{ "texts": ["jp_sento_soak_ongoing"] }] }, "description_after": { "Entries": [{ "texts": ["jp_sento_soak_after"] }] }
+    },
+    {
+      "ID": "jp_greenside_sento_attend", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "jp_greenside_sento_attend", "timeScale": 30, "comTags": ["job", "furniture", "workModules"],
+      "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "CurrentActive", "requireMemberTypeScope": "JobFaction", "requireMemberType": ["membertype_jp_greenside_sento_attendant"], "cost_ST": 3, "cost_EN": 3 } } },
+      "variants": [{ "displayName": "jp_greenside_sento_attend", "requirements": { "requirement": { "doerCount": 1 } } }], "AcceptanceCheck": { "baseAcceptanceValue": 0 }, "DifficultyCheck": { "baseD20Check": 0 },
+      "description_begin": { "Entries": [{ "texts": ["jp_sento_work_begin"] }] }, "description_ongoing": { "Entries": [{ "texts": ["jp_sento_work_ongoing"] }] }, "description_after": { "Entries": [{ "texts": ["jp_sento_work_after"] }] }
+    }
+  ] },
+  "Dictionary": { "Entries": { "zh-cn": {
+    "jp_greenside_sento": "绿地区钱汤", "recreation_offer_jp_greenside_sento": "结伴去钱汤", "membertype_jp_greenside_sento_attendant": "钱汤值班员（15-24）", "jp_greenside_sento_counter": "钱汤柜台", "jp_greenside_sento_bath": "公共浴池", "jp_greenside_sento_soak": "泡澡放松", "jp_greenside_sento_attend": "钱汤接待与维护",
+    "jp_sento_soak_begin": "$doer.firstname$缓缓坐进温热的池水。", "jp_sento_soak_ongoing": "$doer.firstname$靠着池边，让肩背慢慢放松下来。", "jp_sento_soak_after": "$doer.firstname$离开浴池，在池边稍作休息。",
+    "jp_sento_work_begin": "$doer.firstname$来到钱汤柜台值班。", "jp_sento_work_ongoing": "$doer.firstname$整理毛巾、接待来客，检查清洁用品。", "jp_sento_work_after": "$doer.firstname$整理好值班柜台。"
+  } } }
+}

@@ -1,0 +1,106 @@
+{
+    "_doc": "Session commands of Job_MediaSession (a group movie / game session - RecreationActivity.requireMedia, Docs/Utnapishtim_Activities/Plan_UtnapishtimActivities.md). The job builds one in its room for each participant, in a package of their own, and issues it again each time it finishes - short, so anyone can break for a need and rejoin. Silent: no begin / ongoing / remove / after lines, so a session of several hours doesn't flood the log (the session's own start / end events tell the story). Not furniture commands (no 'furniture' tag) - never offered by furniture to the ordinary sandbox. joinAlone: the player joining one drags no target or teammates along.",
+    "COMs":
+    {
+        "list":
+        [
+            {
+                "ID":"com_media_watch",
+                "_comment_GenerateCOM":"One child per watchable item (com_media_watch_<itemID>, \"Watch <title> together\") - Job_MediaSession runs its item's child, so the log / memory name the movie. The child also needs the item in the session faction's inventory.",
+                "ActionPackageClass":"ActionPackage_MediaSession",
+                "displayName":"com_media_watch_displayName",
+                "timeScale":15,
+                "comTags":["recreation","media_session"],
+                "requirements": { "requirement": { "treatReceiverAsDoer": true, "joinAlone": true } },
+                "GenerateCOM": {
+                    "itemTag": "furniture_watchVideo",
+                    "targetCOMClass": {
+                        "$type": "COM_UseItemCOM, Assembly-CSharp",
+                        "ID": "com_media_watch",
+                        "ActionPackageClass": "ActionPackage_MediaSession",
+                        "displayName": "com_media_watch_displayName_item",
+                        "timeScale": 15,
+                        "comTags": ["recreation","media_session"],
+                        "requirements": { "requirement": { "treatReceiverAsDoer": true, "joinAlone": true } },
+                        "results_EP": {
+                            "results_character": [
+                                { "entry_conditions": { "applyToDoer": true }, "entry_results": { "type": "statMod_ST", "value": "3" } }
+                            ]
+                        },
+                        "variants": [
+                            { "requirements": { "requirement": { "doerCount": 1 } }, "displayName":"com_media_watch_displayName_item" }
+                        ],
+                        "AcceptanceCheck": { "baseAcceptanceValue": 10 },
+                        "DifficultyCheck": { "baseD20Check": 0 }
+                    }
+                },
+                "results_EP": {
+                    "results_character": [
+                        { "entry_conditions": { "applyToDoer": true }, "entry_results": { "type": "statMod_ST", "value": "3" } }
+                    ]
+                },
+                "variants": [
+                    { "requirements": { "requirement": { "doerCount": 1 } }, "displayName":"com_media_watch_displayName" }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 },
+                "DifficultyCheck": { "baseD20Check": 0 }
+            },
+            {
+                "ID":"com_media_play",
+                "_comment_GenerateCOM":"One child per playable item (com_media_play_<itemID>, \"Play <title> together\") - see com_media_watch.",
+                "ActionPackageClass":"ActionPackage_MediaSession",
+                "displayName":"com_media_play_displayName",
+                "timeScale":15,
+                "comTags":["recreation","media_session"],
+                "requirements": { "requirement": { "treatReceiverAsDoer": true, "joinAlone": true, "req_Doers": { "cost_EN": 1 } } },
+                "GenerateCOM": {
+                    "itemTag": "furniture_playVideoGames",
+                    "targetCOMClass": {
+                        "$type": "COM_UseItemCOM, Assembly-CSharp",
+                        "ID": "com_media_play",
+                        "ActionPackageClass": "ActionPackage_MediaSession",
+                        "displayName": "com_media_play_displayName_item",
+                        "timeScale": 15,
+                        "comTags": ["recreation","media_session"],
+                        "requirements": { "requirement": { "treatReceiverAsDoer": true, "joinAlone": true, "req_Doers": { "cost_EN": 1 } } },
+                        "results_EP": {
+                            "results_character": [
+                                { "entry_conditions": { "applyToDoer": true }, "entry_results": { "type": "statMod_ST", "value": "3" } }
+                            ]
+                        },
+                        "variants": [
+                            { "requirements": { "requirement": { "doerCount": 1 } }, "displayName":"com_media_play_displayName_item" }
+                        ],
+                        "AcceptanceCheck": { "baseAcceptanceValue": 10 },
+                        "DifficultyCheck": { "baseD20Check": 0 }
+                    }
+                },
+                "results_EP": {
+                    "results_character": [
+                        { "entry_conditions": { "applyToDoer": true }, "entry_results": { "type": "statMod_ST", "value": "3" } }
+                    ]
+                },
+                "variants": [
+                    { "requirements": { "requirement": { "doerCount": 1 } }, "displayName":"com_media_play_displayName" }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 },
+                "DifficultyCheck": { "baseD20Check": 0 }
+            }
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "com_media_watch_displayName":"一起观看",
+                "com_media_play_displayName":"一起游玩",
+                "com_media_watch_displayName_item":"一起观看$name$",
+                "com_media_play_displayName_item":"一起玩$name$",
+                "com_media_watch":"媒体活动（观影）进行中时，在活动房间里一起观看。每次持续一小段时间，可以中途离开、随时回来。",
+                "com_media_play":"媒体活动（游戏）进行中时，在活动房间里一起游玩。每次持续一小段时间，可以中途离开、随时回来。"
+            }
+        }
+    }
+}

@@ -1,0 +1,158 @@
+{
+    "_doc": "Physical checkups - a provided activity (MemberType.providedActivities, e.g. membertype_family_doctor's family_doctor_checkup - Data/Recreation/HouseActivities.json, assignable in every faction; Docs/Utnapishtim_Activities/Plan_UtnapishtimActivities.md §4.6-4.7). Shared, not tied to one faction: a clinic's doctor type providing the same activity uses the same events. Checkup_Begin is the activity's begin event (fired by Job_Activity at the launch - SELF ONLY DECIDES VISIBILITY; targets participants / host (the patient, who booked) / provider (the invite role) / participating ...): it launches Job_Checkup (LaunchJob, roles provider / patient). Job_Checkup (modelled on Job_CSection): its command checkup_examination (COM_Defs/COM_Recreation/checkup.json, like jp_hospital_csection_operation): an NPC patient is its receiver from the start; a player patient joins the doctor's preparing package through the join button to begin it, and is waited for until the booking ends. It fires Checkup_Result when the checkup has concluded (targets doer = provider, receiver = patient). Acceptance is forced by the activity's AcceptanceMods (membertype_family_doctor's family_doctor_checkup). Opt_MakeAppointment: the player asks a provider for a checkup (SetRecreationBooking with the 'host' flag - the activity's provider role invites a doctor of the player's home).",
+    "Events": {
+        "list": [
+            {
+                "ID": "Checkup_Begin",
+                "_comment": "A late arrival's fire (isLate) only notes them; the start launches Job_Checkup (it refuses a second one anyway).",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            { "option": "a latecomer", "Results": [ { "Type": "ExistAppendStrings", "arguments": ["isLate"] }, { "Type": "JumpToLabel", "arguments": ["", "late"] } ] },
+                            { "option": "start", "Results": [ { "Type": "JumpToLabel", "arguments": ["", "start"] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "start", "isLast": true, "line": "Checkup_Begin_start",
+                        "Results": [
+                            {
+                                "Type": "LaunchJob",
+                                "arguments": [ "provider=provider", "patient=host" ],
+                                "jobTemplate": { "$type": "Job_Checkup, Assembly-CSharp", "checkupCommandID": "checkup_examination", "resultEventID": "Checkup_Result", "maxDurationMinutes": 60 }
+                            }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "isLast": true, "line": "Checkup_Begin_late" }
+                ]
+            },
+            {
+                "ID": "Checkup_Result",
+                "_comment": "The checkup_examination command has concluded - fired by Job_Checkup (FireResult) when its length has passed; targets doer / provider (the doctor), receiver / patient. Branches on the player being the doctor or the patient, else an NPC pair; one concluding line each for now (user 2026-10-31: to be expanded).",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "player doctor",
+                                "target_chara_conditions": { "doer": [ { "parameters": [ "exists" ] }, { "parameters": [ "isPlayer" ] } ] },
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "player_doctor" ] } ]
+                            },
+                            {
+                                "option": "player patient",
+                                "target_chara_conditions": { "receiver": [ { "parameters": [ "exists" ] }, { "parameters": [ "isPlayer" ] } ] },
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "player_patient" ] } ]
+                            },
+                            { "option": "npc pair", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "npc" ] } ] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "player_doctor", "isLast": true, "line": "Checkup_Result_playerDoctor" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "player_patient", "isLast": true, "line": "Checkup_Result_playerPatient" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "npc", "isLast": true, "line": "Checkup_Result_line" }
+                ]
+            },
+            {
+                "ID": "Opt_MakeAppointment",
+                "_comment": "The player asks a character whose MemberType provides family_doctor_checkup (providesActivity) for a checkup: every 1-hour slot (the activity's length - the checkup itself takes 20 min) from the next full hour to the end of tomorrow that is free for both (ListAppointmentSlots), booked with start 'param:selectedSlot'; the doctor answers at once (RecreationUtility.ConfirmInvitedNow). The booking is the player's (SetRecreationBooking [self, @home, ...] with template house:family_doctor_checkup and the 'host' flag) - the doctor talked to is invited as the provider (inviteKey 'doctor'; the role's own search only if they no longer qualify). A failed booking (time taken, cooldown, no examination bed) says so.",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Options",
+                "UISpec": { "displayMode": "AVG" },
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] },
+                        { "parameters": [ "isPlayer" ] }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "doctor" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [
+                            { "parameters": [ "exists" ] },
+                            { "parameters": [ "excludePlayer" ] },
+                            { "parameters": [ "isConscious" ] },
+                            { "parameters": [ "providesActivity", "family_doctor_checkup" ] }
+                        ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment": "Every 1-hour slot from the next full hour to the end of tomorrow that is free for both the player and this doctor (ListAppointmentSlots - activeHours, exam bed free, no booking of either in the way, the doctor's work / sleep). None -> say so.",
+                        "options": [
+                            {
+                                "option": "_has_slots",
+                                "Results": [
+                                    { "Type": "ListAppointmentSlots", "arguments": [ "slotOptions", "self", "doctor", "@home", "house:family_doctor_checkup", "1", "selectedSlot" ] },
+                                    { "Type": "ExistStoredOptions", "arguments": [ "slotOptions" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "ask" ] }
+                                ]
+                            },
+                            { "option": "_no_slots", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "noSlots" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "ask",
+                        "_comment": "Picking a slot only remembers it (Parameters.selectedSlot = its absolute start hour), then (loadOptionsResults) books it.",
+                        "UISpec": { "portraitRefKey": "doctor", "selfTags": [ "focused" ] },
+                        "question": "Opt_MakeAppointment_question",
+                        "loadOptionsKey": "slotOptions",
+                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "book" ] } ],
+                        "options": [
+                            { "option": "Opt_MakeAppointment_cancel", "isDefaultCancel": true, "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "cancelled" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "book",
+                        "options": [
+                            { "option": "booked", "Results": [ { "Type": "SetRecreationBooking", "arguments": [ "self", "@home", "0", "param:selectedSlot", "1", "house:family_doctor_checkup", "host", "", "doctor" ] }, { "Type": "JumpToLabel", "arguments": [ "", "booked" ] } ] },
+                            { "option": "failed", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "failed" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "noSlots", "isLast": true,
+                        "UISpec": { "portraitRefKey": "doctor", "selfTags": [ "focused" ] },
+                        "line": "Opt_MakeAppointment_noSlots"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "booked", "isLast": true,
+                        "UISpec": { "portraitRefKey": "doctor", "selfTags": [ "focused" ] },
+                        "line": "Opt_MakeAppointment_booked"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "failed", "isLast": true,
+                        "UISpec": { "portraitRefKey": "doctor", "selfTags": [ "focused" ] },
+                        "line": "Opt_MakeAppointment_failed"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "cancelled", "isLast": true,
+                        "UISpec": { "portraitRefKey": "doctor", "selfTags": [ "focused" ] },
+                        "line": "Opt_MakeAppointment_cancelled"
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "Checkup_Begin_start": "$provider.name$为$host.name$准备好了检查床，体检开始了。",
+                "Checkup_Begin_late": "$joining.name$赶到了诊疗室。",
+                "Checkup_Result_line": "$doer.name$为$receiver.name$做完了体检。",
+                "Checkup_Result_playerDoctor": "你为$receiver.name$做完了体检，把各项结果仔细记了下来。",
+                "Checkup_Result_playerPatient": "$doer.name$合上病历：「体检做完了，身体状况不错。」",
+                "Opt_MakeAppointment": "预约体检",
+                "Opt_MakeAppointment_question": "想什么时候做体检？",
+                "Opt_MakeAppointment_noSlots": "今明两天恐怕都排不开了……（双方都没有空闲的时间，或没有可用的检查床）",
+                "checkup_booked_accept_reason": "预约的体检",
+                "Opt_MakeAppointment_cancel": "还是算了",
+                "Opt_MakeAppointment_booked": "好的，到时候在诊疗室见。",
+                "Opt_MakeAppointment_failed": "这个时间恐怕不行……（时间冲突，或没有可用的检查床）",
+                "Opt_MakeAppointment_cancelled": "有需要随时找我。"
+            }
+        }
+    }
+}

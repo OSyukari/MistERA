@@ -10,9 +10,14 @@
                 "categoryTags":["com_category_v","com_category_service"],
                 "displayName":"com_sex_oral_V_displayName_1",
                 "timeScale":3,
-                "comTags":["sex","service", "position_face", "position_inequal"],
+                "comTags":["sex","service", "position_face", "position_inequal","permission_vaginal"],
                 "portraitTags":["cunnilingus"],
                 "portraitTags_Receiver":["spread_pussy"],
+                "_comment_strong":"Normal: always the clit. Tongue (force) variant: always the vagina.",
+                "receiverActTags":["clit"],
+                "receiverActTags_strong":["vagina"],
+                "_comment_traces":"Body traces (Data/RaceDefs/TraceDefs.json): normal (clit) leaves none; tongue (strong, vagina) leaves saliva into the vagina, aroused receiver's love juice into the mouth, pubes on the doer's face (low chance).",
+                "traceKeywords_strong":["lick","wet","oral"],
                 "requirements":{
                     "requirement":{
                         "req_Doers":{
@@ -33,6 +38,50 @@
                 "DifficultyCheck":{ "baseD20Check":5,
                     "SkillBonus_Receiver":["skill_sensitivity_V","skill_sensitivity_C"] },
                 "variants":[
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":1,
+                                "receiverCount":1
+                            },
+                            "requireExisting":{ "requireCOMID":"com_sex_oral_V"  }
+                        },
+                        "displayName":"com_sex_oral_V_displayName_1_force",
+                        "setForce":true
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":1,
+                                "receiverCount":99
+                            },
+                            "requireExisting":{ "requireCOMID":"com_sex_oral_V"  }
+                        },
+                        "displayName":"com_sex_oral_V_displayName_2_force",
+                        "setForce":true
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":99,
+                                "receiverCount":1
+                            },
+                            "requireExisting":{ "requireCOMID":"com_sex_oral_V"  }
+                        },
+                        "displayName":"com_sex_oral_V_displayName_3_force",
+                        "setForce":true
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":99,
+                                "receiverCount":99
+                            },
+                            "requireExisting":{ "requireCOMID":"com_sex_oral_V"  }
+                        },
+                        "displayName":"com_sex_oral_V_displayName_4_force",
+                        "setForce":true
+                    },
                     {
                         "requirements":{
                             "requirement":{
@@ -123,6 +172,10 @@
                 "com_sex_oral_V_displayName_2": "交替舔阴",
                 "com_sex_oral_V_displayName_3": "轮流舔阴",
                 "com_sex_oral_V_displayName_4": "同时舔阴",
+                "com_sex_oral_V_displayName_1_force": "舌头插入",
+                "com_sex_oral_V_displayName_2_force": "交替舌头插入",
+                "com_sex_oral_V_displayName_3_force": "轮流舌头插入",
+                "com_sex_oral_V_displayName_4_force": "同时舌头插入",
 
                 "com_sex_oral_V_description_begin_1":"$doer.firstname$的脸贴上了$receiver.firstname$的小穴，开始舔弄着对方的阴部",
                 "com_sex_oral_V_description_after_1":"高潮中的$receiver.firstname$的双腿紧紧夹住了$doer.firstname$的脑袋",
@@ -138,6 +191,10 @@
                 "com_sex_oral_V_displayName_2": "Alt. Cunnilingus",
                 "com_sex_oral_V_displayName_3": "Alt. Cunnilingus",
                 "com_sex_oral_V_displayName_4": "Alt. Cunnilingus",
+                "com_sex_oral_V_displayName_1_force": "Tongue Insertion",
+                "com_sex_oral_V_displayName_2_force": "Alt. Tongue Insertion",
+                "com_sex_oral_V_displayName_3_force": "Alt. Tongue Insertion",
+                "com_sex_oral_V_displayName_4_force": "Alt. Tongue Insertion",
 
                 "com_sex_oral_V_description_begin_1":"$doer.firstname$ presses their face against $receiver.firstname$'s pussy and begins to lick their vulva",
                 "com_sex_oral_V_description_after_1":"Orgasming, $receiver.firstname$'s legs tightly clamp around $doer.firstname$'s head",

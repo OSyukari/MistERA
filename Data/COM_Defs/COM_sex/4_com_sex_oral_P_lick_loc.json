@@ -1,0 +1,22 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for 4_com_sex_oral_P_lick.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "com_sex_oral_P_lick": "%%tooltip_sex_com_alternating_tooltip%%",
+
+                "com_sex_oral_P_lick_displayName_1": "Lick Cock",
+                "com_sex_oral_P_lick_displayName_2": "Alt. Cock Licking",
+                "com_sex_oral_P_lick_displayName_3": "Alt. Cock Licking",
+                "com_sex_oral_P_lick_displayName_4": "Alt. Cock Licking",
+
+                "com_sex_oral_P_lick_description_begin_1": "$doer.firstname$ leans into $receiver.firstname$'s crotch and runs their tongue along the cock",
+                "com_sex_oral_P_lick_description_after_1": "Teased by $doer.firstname$'s tongue, $receiver.firstname$'s cock shoots out semen",
+                "com_sex_oral_P_lick_description_remove_1": "$doer.firstname$'s tongue leaves $receiver.firstname$'s cock",
+                "com_sex_oral_P_lick_description_ongoing_1": "$doer.firstname$ is licking up and down $receiver.firstname$'s cock"
+            }
+        }
+    }
+}

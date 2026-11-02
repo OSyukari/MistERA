@@ -1,0 +1,7 @@
+{
+    "Dictionary":{"Entries":{"en-us":{
+        "Mall_Foodcourt_Begin_initial":"The food court smells of hot rice and soup. Set meals are ready at the counter; there is time to find a table and enjoy a leisurely meal.",
+        "Mall_Foodcourt_Begin_join":"$joining.name$ enters the food court, looking past the pickup counter for a place to sit. Steam rises from the meals amid the hum of conversation.",
+        "Mall_Foodcourt_Begin_late":"$joining.name$ reaches the food court a little late. The pickup counter is still lit, with enough time to sit down and enjoy a proper meal."
+    }}}
+}

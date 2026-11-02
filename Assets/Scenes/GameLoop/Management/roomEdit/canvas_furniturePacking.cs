@@ -225,7 +225,8 @@ public class canvas_furniturePacking : scr_Menu
                 tooltip = reason;
                 return false;
             }
-            tooltip = "";
+            // planned recreation activities relying on furniture like this one (RecreationActivity.facility) - a warning, not a block
+            tooltip = RecreationUtility.FurniturePlannedUseWarning(inst.JobGiver);
             return true;
         }
 

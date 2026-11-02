@@ -28,12 +28,6 @@ public class FloorDoor
 }
 
 
-/// <summary>
-/// room - door - room
-/// 
-/// 
-/// </summary>
-
 public class Door_Instance
 {
     float cost = 0.1f;

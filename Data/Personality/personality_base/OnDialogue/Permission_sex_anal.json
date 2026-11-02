@@ -1,0 +1,43 @@
+{
+    "_doc": "口上loose entry文件：许可「肛交」（sex_anal，涉及肛门的性行为：插入、手指、口、置入物品）的请求口上。条目含义与生成规范同 Permission_intimacy_low.json 的 _doc（Request / Granted / Refused，每条目一个variant、3条response，无通用兜底）。文件名含 sex，安全模式不加载。",
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "permission_sex_anal_Request",
+                    "_comment": "玩家想请求肛交许可，刚开口。男性NPC察觉话题时的反应。",
+                    "variants": [ { "responses": [
+                        "\"后面？……你确定？\"",
+                        "\"你说的该不会是那个吧。\"",
+                        "\"那种玩法啊……说吧。\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "permission_sex_anal_Granted",
+                    "_comment": "答应给予肛交许可。也会在涉及肛门的指令进行中被自动请求获准时说出（正处于性行为中），台词需两种场合都自然。男性说话者。",
+                    "variants": [ { "responses": [
+                        "\"……行，后面也可以，慢点。\"\n%%permission_sex_anal_consent%%",
+                        "\"好吧，就依你。\"\n%%permission_sex_anal_consent%%",
+                        "\"……来吧，别太粗暴。\"\n%%permission_sex_anal_consent%%"
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "permission_sex_anal_Refused",
+                    "_comment": "拒绝给予肛交许可。男性NPC，干脆为主，不过度激烈。",
+                    "variants": [ { "responses": [
+                        "\"那个不行。\"",
+                        "\"后面就算了，我接受不了。\"",
+                        "\"这个我没法答应。\""
+                    ] } ]
+                }
+            }
+        ]
+    }
+}

@@ -247,6 +247,32 @@ public class Character_Relationship
 
     public int RelationshipCooldown = 0;
 
+    [JsonIgnore] bool relationshipCheckQueued = false;
+    [JsonIgnore] int personalRelationshipVersion = 0;
+
+    bool CanCheckNaturalRelationship()
+    {
+        var campaign = scr_System_CampaignManager.current;
+        var owner = Manager?.Owner;
+        if (campaign == null || owner == null || owner.RefID <= 0 || owner.Stats == null) return false;
+        var target = Target;
+        return target != null && target != owner && !owner.Stats.isConsciousnessUnconscious
+            && campaign.FindInstanceByID(owner.RefID) == owner && campaign.FindInstanceByID(target.RefID) == target;
+    }
+
+    /// <summary>Coalesce score/hourly triggers into the existing deferred event queue, never a recursive retry.</summary>
+    public void QueueRelationshipCheck()
+    {
+        if (relationshipCheckQueued || RelationshipCooldown > 0 || !CanCheckNaturalRelationship()
+            || scr_UpdateHandler.current == null) return;
+        relationshipCheckQueued = true;
+        scr_UpdateHandler.current.AddEventCallback(() =>
+        {
+            relationshipCheckQueued = false;
+            CheckMaintainRelationship();
+        });
+    }
+
     Action _callback = null;
     bool _callbackExecute = false;
     /// <summary>
@@ -267,20 +293,20 @@ public class Character_Relationship
 
     protected void CheckMaintainRelationship()
     {
-        if (RelationshipCooldown > 0) return;
+        if (RelationshipCooldown > 0 || !CanCheckNaturalRelationship()) return;
         if (this.Relationship_Personal != null && this.Relationship_Personal.CanMaintain(this, !isA_Personal))
         {
             if (this.Relationship_Personal.CanUpgradeInto(this, out var relation, out var isA))
             {
-                Debug.LogError($"{Owner.FirstName} -> {Target.FirstName} CheckMaintainRelationship {this.Relationship_Personal.DisplayName} CanUpgradeInto {relation.DisplayName}");
-                RelationshipCooldown = 6;
-                TryChangeRelationship(relation, isA);
+                TryChangeRelationship(relation, isA, true);
                 
             }
             return;
         }
         else
         {
+            // A failed numeric maintenance check is risk, not permission to replace or erase a relationship.
+            if (Relationship_Personal != null && !Relationship_Personal.AllowsNaturalReconsideration(this, !isA_Personal)) return;
             if (this.relationshipTypeID_Personal != "") Debug.Log($"{Owner.CallName} Relationship CANNOT MAINTAIN RELATIONSHIP ID {this.relationshipTypeID_Personal}");
             bool isA = false;
             RelationshipType relation = null;
@@ -318,11 +344,39 @@ public class Character_Relationship
         }
     }
 
-    protected void TryChangeRelationship(RelationshipType relation, bool isA)
+    protected void TryChangeRelationship(RelationshipType relation, bool isA, bool isUpgrade = false)
     {
         if (relation != null)
         {
-            RelationshipCooldown = 6;
+            var reverse = Target.Relationships.FindRelationshipWith(Owner);
+            var original = Relationship_Personal;
+            int version = personalRelationshipVersion;
+            int reverseVersion = reverse.personalRelationshipVersion;
+            bool resolved = false;
+
+            bool StillValid()
+            {
+                if (resolved || !CanCheckNaturalRelationship() || personalRelationshipVersion != version
+                    || reverse.personalRelationshipVersion != reverseVersion
+                    || Target.Relationships.PeekRelationshipWith(Owner) != reverse
+                    || Owner.Relationships.PeekRelationshipWith(Target) != this
+                    || scr_System_Serializer.current.MasterList.RelationshipTypes.GetByID(relation.ID) != relation) return false;
+                if (relation.requireTargetValidation(!isA) && Target.Stats.isConsciousnessUnconscious) return false;
+                if (isUpgrade)
+                    return original != null && original.CanMaintain(this, !isA_Personal)
+                        && original.CanUpgradeTo(this, relation, isA);
+                if (original != null && (original.CanMaintain(this, !isA_Personal)
+                    || !original.AllowsNaturalReconsideration(this, !isA_Personal))) return false;
+                if (!scr_System_Serializer.current.MasterList.RelationshipTypes.ProposableRelationships.Contains(relation)) return false;
+                return isA
+                    ? (relation.isEqualRelationship || relation.requireTargetValidation(false))
+                        && relation.isValid(this, false) && relation.CanMaintain(reverse, true)
+                    : !relation.isEqualRelationship && relation.isValid(this, true) && relation.CanMaintain(reverse, false);
+            }
+
+            if (!StillValid()) return;
+            // Throttle both directions so refusal cannot immediately turn into a reverse-side proposal.
+            RelationshipCooldown = reverse.RelationshipCooldown = 6;
             if (relation.canPropose(!isA) && relation.requireTargetValidation(!isA))
             {
                 Debug.Log($"{Owner.CallName} new Relationship {relation.DisplayName} require validation, setting up event");
@@ -337,15 +391,30 @@ public class Character_Relationship
                 evinst.Targets.Add("target", new List<Character_Trainable>() { Target });
 
                 var npcCallback = new List<Action>();
-                npcCallback.Add(() => { Target.Relationships.FindRelationshipWith(Owner).TryAcceptRelationship(relation, !isA); });
+                npcCallback.Add(() =>
+                {
+                    if (!StillValid()) { resolved = true; return; }
+                    resolved = true;
+                    reverse.TryAcceptRelationship(relation, !isA);
+                });
                 evinst.FunctionCalls.Add("acceptanceCheck", npcCallback);
 
                 var acceptCallback = new List<Action>();
-                acceptCallback.Add(() => { SetPersonalRelationship(relation, isA, true, true); });
+                acceptCallback.Add(() =>
+                {
+                    if (!StillValid()) { resolved = true; return; }
+                    resolved = true;
+                    SetPersonalRelationship(relation, isA, true, true);
+                });
                 evinst.FunctionCalls.Add("accept", acceptCallback);
 
                 var refuseCallback = new List<Action>();
-                refuseCallback.Add(() => Target.Relationships.FindRelationshipWith(Owner).NotifyRefuse(relation, isA));
+                refuseCallback.Add(() =>
+                {
+                    if (!StillValid()) { resolved = true; return; }
+                    resolved = true;
+                    reverse.NotifyRefuse(relation, !isA);
+                });
                 evinst.FunctionCalls.Add("refuse", refuseCallback);
 
                 evinst.AppendStrings.Add("original", new List<string>() { this.Relationship_Personal == null ? "-" : Relationship_Personal.GetDisplayName(Owner, !this.isA_Personal) });
@@ -356,6 +425,7 @@ public class Character_Relationship
             else
             {
                 Debug.Log($"{Owner.CallName} new Relationship {relation.DisplayName} does not require validation, changing");
+                resolved = true;
                 SetPersonalRelationship(relation, isA, true);
             }
         }
@@ -389,6 +459,7 @@ public class Character_Relationship
 
     protected void NotifyRefuse(RelationshipType relation, bool isA)
     {
+        RelationshipCooldown = Target.Relationships.FindRelationshipWith(Owner).RelationshipCooldown = 6;
         var refuseID = $"{relation.ID}_refuse{(relation.isEqualRelationship ? "" : isA ? "_A" : "_B")}";
         LogKojoMessage(refuseID);
         Target.Relationships.FindRelationshipWith(Owner).NotifyRefused(relation, !isA);
@@ -441,58 +512,58 @@ public class Character_Relationship
     }
     public bool HasPermission_Follow()
     {
-        if (this.Relationship_Bio != null && this.Relationship_Bio.HasPermission_Follow(!isA_Bio)) return true;
-        foreach (var key in Relationship_Social_Keys)
-        {
-            if (tryGetSocialFaction(key, out var rel, out var isa) && rel != null && rel.HasPermission_Follow(!isa)) return true;
-        }
-        if (this.Relationship_Personal != null && this.Relationship_Personal.HasPermission_Follow(!isA_Personal)) return true;
-        if (this.Owner.Relationships.CurrentPride < PrideLevel.High) return true;
-        return false;
+        return PermissionService.HasPermission(this, "permission_follow");
     }
     public bool HasPermission_Intimacy_Low()
     {
-        if (this.Relationship_Bio != null && this.Relationship_Bio.HasPermission_Intimacy_Low(!isA_Bio)) return true;
-        foreach (var key in Relationship_Social_Keys)
-        {
-            if (tryGetSocialFaction(key, out var rel, out var isa) && rel != null && rel.HasPermission_Intimacy_Low(!isa)) return true;
-        }
-        if (this.Relationship_Personal != null && this.Relationship_Personal.HasPermission_Intimacy_Low(!isA_Personal)) return true;
-        if (this.Owner.Relationships.CurrentPride < PrideLevel.High) return true;
-        return false;
+        return PermissionService.HasPermission(this, "permission_intimacy_low");
     }
     public bool HasPermission_Intimacy_Medium()
     {
-        if (this.Relationship_Bio != null && this.Relationship_Bio.HasPermission_Intimacy_Medium(!isA_Bio)) return true;
-        foreach (var key in Relationship_Social_Keys)
-        {
-            if (tryGetSocialFaction(key, out var rel, out var isa) && rel != null && rel.HasPermission_Intimacy_Medium(!isa)) return true;
-        }
-        if (this.Relationship_Personal != null && this.Relationship_Personal.HasPermission_Intimacy_Medium(!isA_Personal)) return true;
-        if (this.Owner.Relationships.CurrentPride < PrideLevel.Medium) return true;
-        return false;
+        return PermissionService.HasPermission(this, "permission_intimacy_medium");
     }
     public bool HasPermission_Intimacy_High()
     {
-        if (this.Relationship_Bio != null && this.Relationship_Bio.HasPermission_Intimacy_High(!isA_Bio)) return true;
-        foreach (var key in Relationship_Social_Keys)
-        {
-            if (tryGetSocialFaction(key, out var rel, out var isa) && rel != null && rel.HasPermission_Intimacy_High(!isa)) return true;
-        }
-        if (this.Relationship_Personal != null && this.Relationship_Personal.HasPermission_Intimacy_High(!isA_Personal)) return true;
-        if (this.Owner.Relationships.CurrentPride < PrideLevel.Low) return true;
-        return false;
+        return PermissionService.HasPermission(this, "permission_intimacy_high");
     }
-    public bool HasPermission_Family()
+    // Family permission retired: its creampie consequences are PermissionDefinition.consequences of
+    // permission_sex_unprotected / permission_sex_anal / permission_sex_dangerday_creampie (PermissionConsequences).
+
+    internal IEnumerable<PermissionRelationshipSource> ReadPermissionSources()
     {
-        if (this.Relationship_Bio != null && this.Relationship_Bio.HasPermission_Family(!isA_Bio)) return true;
-        foreach (var key in Relationship_Social_Keys)
+        var campaign = scr_System_CampaignManager.current;
+        var target = campaign?.FindInstanceByID(targetRefID);
+        if (target == null) yield break;
+        var types = scr_System_Serializer.current.MasterList.RelationshipTypes;
+        var bio = string.IsNullOrEmpty(relationshipTypeID_Bio) ? null : types.GetByID(relationshipTypeID_Bio);
+        if (bio != null) yield return new PermissionRelationshipSource(bio, !isA_Bio, PermissionEffectiveSource.BiologicalRelationship);
+        var personal = string.IsNullOrEmpty(relationshipTypeID_Personal) ? null : types.GetByID(relationshipTypeID_Personal);
+        if (personal != null) yield return new PermissionRelationshipSource(personal, !isA_Personal, PermissionEffectiveSource.PersonalRelationship);
+
+        // Preserve legacy social sources, but resolve current membership instead of the lazy pair cache.
+        var party = Owner.FactionManager.CurrentActiveParty;
+        if (party != null && party.ManagedRefs.Contains(Owner.RefID) && party.ManagedRefs.Contains(targetRefID)
+            && (party.isPrisoner(Owner) || party.isPrisoner(target)))
         {
-            if (tryGetSocialFaction(key, out var rel, out var isa) && rel != null && rel.HasPermission_Family(!isa)) return true;
+            var relation = party.GetRelationshipBetween(Owner.RefID, targetRefID, out var isA, silent: true);
+            if (relation != null) yield return new PermissionRelationshipSource(relation, !isA, PermissionEffectiveSource.SocialRelationship, party);
         }
-        if (this.Relationship_Personal != null && this.Relationship_Personal.HasPermission_Family(!isA_Personal)) return true;
-        if (this.Owner.Relationships.CurrentPride < PrideLevel.Low) return true;
-        return false;
+
+        bool added = false;
+        foreach (var faction in Owner.FactionManager.Factions)
+        {
+            if (faction == null || !faction.isManagedChara(Owner.RefID) || !faction.isManagedChara(targetRefID)) continue;
+            var relation = faction.GetRelationshipBetween(Owner.RefID, targetRefID, out var isA, silent: true);
+            if (relation == null) continue;
+            added = true;
+            yield return new PermissionRelationshipSource(relation, !isA, PermissionEffectiveSource.SocialRelationship, faction);
+        }
+        if (!added && Owner.FactionManager.HomeFactions.Count > 0)
+        {
+            var home = Owner.FactionManager.HomeFactions[0];
+            var relation = relationshipScoresSum >= 100 ? home.Relationship_Acquaintance : home.Relationship_Stranger;
+            if (relation != null) yield return new PermissionRelationshipSource(relation, true, PermissionEffectiveSource.SocialRelationship, home);
+        }
     }
 
     /// <summary>
@@ -518,18 +589,16 @@ public class Character_Relationship
         return false;
     }
 
-    bool? _canBeAttractedTo = null;
     /// <summary>
     /// Whether Owner can feel sexual attraction toward Target, per Owner's trait_GenderPreference trait
-    /// and both characters' resolved InteractionGenderType. Always false in safe mode. Cached for the
-    /// lifetime of this relationship instance - traits/gender aren't expected to change after chargen.
+    /// and both characters' resolved InteractionGenderType. Always false in safe mode. Recomputed so
+    /// live trait, gender and CentralControl preference changes take effect immediately.
     /// </summary>
     [JsonIgnore]
     public bool CanBeAttractedTo
     {
         get
         {
-            if (_canBeAttractedTo.HasValue) return _canBeAttractedTo.Value;
             bool result = false;
             if (!scr_System_CentralControl.current.isSafeMode && Owner != null && Target != null)
             {
@@ -551,7 +620,6 @@ public class Character_Relationship
                     result = true;
                 }
             }
-            _canBeAttractedTo = result;
             return result;
         }
     }
@@ -583,6 +651,7 @@ public class Character_Relationship
         var v = Owner.Memory.AddEntryMSG(memString, new List<string>() { "forbidMerge","important" });
         v.disableRoomName = true;
 
+        personalRelationshipVersion++;
         this._Relationship_Personal = a;
         this.relationshipTypeID_Personal = a == null ? "" : a.ID;
         this.isA_Personal = isA;
@@ -601,6 +670,7 @@ public class Character_Relationship
     protected void OnRelationshioChange()
     {
         _trustCap_cached = false;
+        ClearEPCache();
     }
 
 
@@ -609,9 +679,11 @@ public class Character_Relationship
 
     public void ChangePersonalRelationship(string newID, bool isA = false)
     {
+        personalRelationshipVersion++;
         relationshipTypeID_Personal = newID;
         _Relationship_Personal = null;
         this.isA_Personal = isA;
+        OnRelationshioChange();
     }
     [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
     [DefaultValue("")]
@@ -1167,6 +1239,16 @@ public class Character_Relationship
 
     [JsonIgnore] public float Desire { get { return Desire_Raw / Desire_Div * Desire_Mult; } }
 
+    [JsonIgnore]
+    public string DesireProgressTooltip => LocalizeDictionary.QueryThenParse("relationship_desire_progress")
+        .Replace("$stored$", Desire_Base.ToString("0.##"))
+        .Replace("$bonus$", Desire_Bonus.ToString("+0.##;-0.##;0"))
+        .Replace("$raw$", Desire_Raw.ToString("0.##"))
+        .Replace("$rank$", Desire_Div.ToString("0"))
+        .Replace("$lust$", (Owner.Stats.Lust?.Severity ?? 0).ToString("0.##"))
+        .Replace("$mult$", Desire_Mult.ToString("0.##"))
+        .Replace("$effective$", Desire.ToString("0.##"));
+
     [JsonIgnore] public string TargetName { get { return this.displayName != "" ? LocalizeDictionary.QueryThenParse(this.displayName) : Target != null ? Target.FirstName : "missing"; } }
 
     /// <summary>
@@ -1298,7 +1380,7 @@ public class Character_Relationship
     /// toward the Personal type. Social-faction bonuses are left out - factions may not be assigned yet
     /// at creation, and reading Relationship_Social_Keys here would cache them early. Only ever raises.
     /// </summary>
-    public void InitializeScoresFromTypes()
+    public void InitializeScoresFromTypes(bool silent = false)
     {
         var types = scr_System_Serializer.current.MasterList.RelationshipTypes;
         var bio = relationshipTypeID_Bio == "" ? null : types.GetByID(relationshipTypeID_Bio);
@@ -1330,12 +1412,12 @@ public class Character_Relationship
             var check = (float[])scores.Clone();
             if (bio != null) bio.RaiseInitialScores(check, fullBonus, isA_Bio);
             if (personal != null) personal.RaiseInitialScores(check, fullBonus, isA_Personal);
-            if (check[t] > scores[t]) Debug.LogWarning($"{Owner.FirstName} -> {targetBaseID} preset relationship needs stored Trust {check[t]} but trust cap is {trustCap}, it will fail its requirements");
+            if (!silent && check[t] > scores[t]) Debug.LogWarning($"{Owner.FirstName} -> {targetBaseID} preset relationship needs stored Trust {check[t]} but trust cap is {trustCap}, it will fail its requirements");
         }
 
         relationshipScores = scores;
         _debugScoreTooltip.Clear();
-        if (scr_System_CentralControl.current.LogPrefs.DLog_Relationships) Debug.Log($"{Owner.FirstName} -> {targetBaseID} preset relationship scores initialized {Debug_RelationshipScores}");
+        if (!silent && scr_System_CentralControl.current.LogPrefs.DLog_Relationships) Debug.Log($"{Owner.FirstName} -> {targetBaseID} preset relationship scores initialized {Debug_RelationshipScores}");
     }
 
     public void ModRelationValue(RelationshipScoreType type, float value, bool silent = true)
@@ -1354,17 +1436,7 @@ public class Character_Relationship
         }
 
         _debugScoreTooltip.Clear();
-        if (Target != null)
-        {
-            if (!silent && RelationshipCooldown == 0 && !Owner.Stats.isConsciousnessUnconscious)
-            {
-               // var eventInstance = new EventInstance(this.Owner, "AttitudeChange", "");
-              //  eventInstance.Targets.Add("target", new List<Character_Trainable>() { Target });
-
-                scr_UpdateHandler.current.AddEventCallback(CheckMaintainRelationship);
-
-            }
-        }
+        if (!silent) QueueRelationshipCheck();
     }
 
 }

@@ -1,0 +1,46 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for Permissions_Sex.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "permission_sex_anal": "Ask for: %%permission_sex_anal_displayName%%",
+                "permission_sex_anal_question_plain": "Ask $person.name$ for permission: \"%%permission_sex_anal_displayName%%\"?",
+                "permission_sex_anal_question": "$kojo_ask$\n\n%%permission_sex_anal_question_plain%%",
+                "permission_sex_anal_granted": "$person.name$ gave you permission: %%permission_sex_anal_displayName%%$permission_grant_type$.",
+                "permission_sex_anal_granted_temporary": "$person.name$ gave you permission: %%permission_sex_anal_displayName%%. Your relationship does not meet its prerequisites, so it only lasts for today.",
+
+                "permission_sex_vaginal": "Ask for: %%permission_sex_vaginal_displayName%%",
+                "permission_sex_vaginal_question_plain": "Ask $person.name$ for permission: \"%%permission_sex_vaginal_displayName%%\"?",
+                "permission_sex_vaginal_question": "$kojo_ask$\n\n%%permission_sex_vaginal_question_plain%%",
+                "permission_sex_vaginal_granted": "$person.name$ gave you permission: %%permission_sex_vaginal_displayName%%$permission_grant_type$.",
+                "permission_sex_vaginal_granted_temporary": "$person.name$ gave you permission: %%permission_sex_vaginal_displayName%%. Your relationship does not meet its prerequisites, so it only lasts for today.",
+
+                "permission_sex_dangerday_creampie": "Ask for: %%permission_sex_dangerday_creampie_displayName%%",
+                "permission_sex_dangerday_creampie_question_plain": "Ask $person.name$ for permission: \"%%permission_sex_dangerday_creampie_displayName%%\"?",
+                "permission_sex_dangerday_creampie_question": "$kojo_ask$\n\n%%permission_sex_dangerday_creampie_question_plain%%",
+                "permission_sex_dangerday_creampie_granted": "$person.name$ gave you permission: %%permission_sex_dangerday_creampie_displayName%%$permission_grant_type$.",
+                "permission_sex_dangerday_creampie_granted_temporary": "$person.name$ gave you permission: %%permission_sex_dangerday_creampie_displayName%%. Your relationship does not meet its prerequisites, so it only lasts for today.",
+
+                "permission_sex_unprotected": "Ask for: %%permission_sex_unprotected_displayName%%",
+                "permission_sex_unprotected_question_plain": "Ask $person.name$ for permission: \"%%permission_sex_unprotected_displayName%%\"?",
+                "permission_sex_unprotected_question": "$kojo_ask$\n\n%%permission_sex_unprotected_question_plain%%",
+                "permission_sex_unprotected_granted": "$person.name$ gave you permission: %%permission_sex_unprotected_displayName%%$permission_grant_type$.",
+                "permission_sex_unprotected_granted_temporary": "$person.name$ gave you permission: %%permission_sex_unprotected_displayName%%. Your relationship does not meet its prerequisites, so it only lasts for today.",
+
+                "permission_sex_group": "Ask for: %%permission_sex_group_displayName%%",
+                "permission_sex_group_question_plain": "Ask $person.name$ for permission: \"%%permission_sex_group_displayName%%\"?",
+                "permission_sex_group_question": "$kojo_ask$\n\n%%permission_sex_group_question_plain%%",
+                "permission_sex_group_granted": "$person.name$ gave you permission: %%permission_sex_group_displayName%%$permission_grant_type$.",
+                "permission_sex_group_granted_temporary": "$person.name$ gave you permission: %%permission_sex_group_displayName%%. Your relationship does not meet its prerequisites, so it only lasts for today.",
+
+                "permission_sex_observed": "Ask for: %%permission_sex_observed_displayName%%",
+                "permission_sex_observed_question_plain": "Ask $person.name$ for permission: \"%%permission_sex_observed_displayName%%\"?",
+                "permission_sex_observed_question": "$kojo_ask$\n\n%%permission_sex_observed_question_plain%%",
+                "permission_sex_observed_granted": "$person.name$ gave you permission: %%permission_sex_observed_displayName%%$permission_grant_type$.",
+                "permission_sex_observed_granted_temporary": "$person.name$ gave you permission: %%permission_sex_observed_displayName%%. Your relationship does not meet its prerequisites, so it only lasts for today."
+            }
+        }
+    }
+}
