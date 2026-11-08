@@ -1,8 +1,0 @@
-{
-  "Dictionary": { "Entries": { "en-us": {
-    "jp_greenside": "Greenside", "greenside_entrance": "Greenside Entrance", "greenside_walkway": "Community Walkway",
-    "park_entrance": "Park Entrance", "park_path": "Shaded Park Path", "park_lawn": "Park Lawn", "park_play_area": "Playground", "park_pond": "Park Pond", "park_restroom": "Public Restroom",
-    "library_lobby": "Library Lobby", "library_quiet_study": "Quiet Study Room", "petshop_counter": "Pet Shop Counter", "petcafe_cat_room": "Cat Lounge", "petcafe_dog_room": "Dog Playroom",
-    "sento_entrance": "Public Bath Reception", "sento_changing_male": "Men's Changing Room", "sento_changing_female": "Women's Changing Room", "sento_bath_male": "Men's Bath", "sento_bath_female": "Women's Bath"
-  } } }
-}

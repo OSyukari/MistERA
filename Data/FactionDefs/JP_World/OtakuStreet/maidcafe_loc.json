@@ -1,6 +1,0 @@
-{
-    "Dictionary": { "Entries": { "en-us": {
-        "jp_maid_cafe": "Maid Cafe", "otaku_omurice": "Cafe Omelet Rice", "membertype_otaku_maid_staff": "Cafe Staff", "membertype_otaku_maid_parttime": "Part-Time Maid", "membertype_otaku_maid_day": "Maid Day Shift 11-17", "membertype_otaku_maid_evening": "Maid Evening Shift 17-22", "membertype_otaku_maid_npc": "Duty Maid 11-22", "membertype_otaku_kitchen": "Part-Time Kitchen Staff", "membertype_otaku_kitchen_day": "Kitchen Day Shift 11-17", "membertype_otaku_kitchen_evening": "Kitchen Evening Shift 17-22", "membertype_otaku_kitchen_npc": "Duty Cook 11-22",
-        "otaku_maid_visit": "Maid Cafe Break", "otaku_maid_counter": "Cafe Counter", "otaku_kitchen": "Kitchen Worktop", "otaku_cafe_tables": "Cafe Tables", "otaku_maid_duty": "Cafe Reception and Tidying", "otaku_kitchen_duty": "Kitchen Preparation", "otaku_cafe_visit": "Relax at the Cafe", "otaku_maid_working": "$doer.firstname$ sorts menus and clears tables.", "otaku_kitchen_working": "$doer.firstname$ prepares food and washes dishes in the kitchen.", "otaku_cafe_visiting": "$doer.firstname$ sits in the cafe, looking through the menu.", "clothing_otaku_maid_dress": "Long-Skirt Maid Uniform", "clothing_otaku_maid_dress_tooltip": "A cafe uniform consisting of a long black dress and a white apron."
-    } } }
-}
