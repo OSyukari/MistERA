@@ -394,7 +394,7 @@
                 "AcceptanceCheck": {
                     "baseAcceptanceValue": 0
                 },
-                "DifficultyCheck":{ "baseD20Check":0 },
+                "DifficultyCheck":{ "baseD20Check":5 },
                 "description_ongoing":{
                     "Entries":
                     [

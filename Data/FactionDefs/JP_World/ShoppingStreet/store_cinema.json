@@ -161,7 +161,7 @@
             "comTags":["furniture","recreation","jp_mall_cinema"],
             "requirements":{"requirement":{"treatReceiverAsDoer":true},"requireRoomExisting":{"requireActiveRecreationOffer":["jp_mall_cinema_show_13","jp_mall_cinema_show_16","jp_mall_cinema_show_19","jp_mall_cinema_show_21","jp_mall_cinema_show_late"]}},
             "variants":[{"requirements":{"requirement":{"doerCount":1}},"displayName":"jp_mall_cinema_watch_name"},{"requirements":{"requirement":{"doerCount":99}},"displayName":"jp_mall_cinema_watch_group"}],
-            "AcceptanceCheck":{"baseAcceptanceValue":15},"DifficultyCheck":{"baseD20Check":0},
+            "AcceptanceCheck":{"baseAcceptanceValue":15},"DifficultyCheck":{"baseD20Check":5},
             "description_begin":{"Entries":[{"texts":["jp_mall_cinema_watch_begin"]}]},
             "description_ongoing":{"Entries":[{"texts":["jp_mall_cinema_watch_ongoing"]}]},
             "description_remove":{"Entries":[{"texts":["jp_mall_cinema_watch_remove"]}]},
