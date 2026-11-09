@@ -25,7 +25,7 @@
                 "hotelGuestMemberTypes": [ "membertype_jp_hotel_guest_single", "membertype_jp_hotel_guest_twin", "membertype_jp_hotel_guest_double" ],
                 "_comment_assignableMemberTypes": "Only the player-joinable restaurant part-time shifts (parent stands for its shifts).",
                 "assignableMemberTypes": [ "membertype_jp_hotel_parttime" ],
-                "joinableMemberTypes": [ "membertype_jp_hotel_parttime" ],
+                "_joinableMemberTypes": [ "membertype_jp_hotel_parttime" ],
                 "_comment_fallbackWorkers": "Front desk is always staffed (day 08-20 + night 20-08 posts, NPC only) and so is housekeeping by day; the restaurant part-time shifts are left open for NPCs or the player. templateID = CharaTemplateGenerator from JP_World/Characters/templates.json.",
                 "fallbackWorkers": [
                     { "memberTypeID": "membertype_jp_hotel_frontdesk_day", "headcount": 1, "maxFallback": 0, "templateID": "jp_store_clerk" },

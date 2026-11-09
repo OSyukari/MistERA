@@ -1,9 +1,82 @@
 {
     "_comment": "Cosplay cafe (2026-11-08): the maid cafe and the cosplay photo studio merged into one venue - cafe hall + kitchen, costume loan counter, filming area and a changing room. No recording/ErAV linkage and no staff-on-customer service. Photographer duty maintains the set; visitors use the self-timer photo COM. The cosplay offer's OutfitSet loans the costume for the visit. Both offers stay disabled (_recreationOffers) until the venue is built out.",
     "MapPlans": {
-        "factionInit": [{ "ID": "jp_cosplay_cafe", "initializeFaction": "jp_cosplay_cafe", "setPrivateRoomOwner": false, "floors": [{ "ID": "floor_jp_cosplay_cafe", "nameOverwrite": "jp_cosplay_cafe" }], "floorListHostFactionID": "jp_downtown", "isRentingFloor": true, "landlordFactionID": "jp_downtown", "mainExit": { "roomID": "cosplaycafe_hall", "exitCost": 5 }, "managerBaseIDs": [""], "salesCurrency": "currency_JPY", "salesInventory": [{ "matchByID": "consumable_bento_box", "nameOverwrite": "otaku_omurice" }, { "matchByID": "consumable_onigiri" }, { "matchByID": "clothing_otaku_studio_costume" }, { "matchByID": "clothing_otaku_maid_dress" }], "assignableMemberTypes": ["membertype_otaku_maid_parttime", "membertype_otaku_kitchen", "membertype_otaku_studio_parttime", "membertype_otaku_photographer_parttime"], "joinableMemberTypes": ["membertype_otaku_maid_parttime", "membertype_otaku_kitchen", "membertype_otaku_studio_parttime", "membertype_otaku_photographer_parttime"], "_comment_fallbackWorkers": "Only the cafe counter and the costume loan counter get a fallback worker; kitchen and photographer posts are left open for other NPCs or the player.", "fallbackWorkers": [{ "memberTypeID": "membertype_otaku_maid_npc", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }, { "memberTypeID": "membertype_otaku_studio_npc", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }],
-            "floorDoors": [{ "sourceFloor": "floor_jp_cosplay_cafe", "sourceExit": "street", "targetFaction": "jp_downtown", "targetFloor": "floor_jp_downtown", "targetExit": "to_jp_cosplay_cafe", "cost": 1 }]
-        }],
+        "factionInit": [
+            {
+                "ID": "jp_cosplay_cafe",
+                "initializeFaction": "jp_cosplay_cafe",
+                "setPrivateRoomOwner": false,
+                "floors": [
+                    {
+                        "ID": "floor_jp_cosplay_cafe",
+                        "nameOverwrite": "jp_cosplay_cafe"
+                    }
+                ],
+                "floorListHostFactionID": "jp_downtown",
+                "isRentingFloor": true,
+                "landlordFactionID": "jp_downtown",
+                "mainExit": {
+                    "roomID": "cosplaycafe_hall",
+                    "exitCost": 5
+                },
+                "managerBaseIDs": [
+                    ""
+                ],
+                "salesCurrency": "currency_JPY",
+                "salesInventory": [
+                    {
+                        "matchByID": "consumable_bento_box",
+                        "nameOverwrite": "otaku_omurice"
+                    },
+                    {
+                        "matchByID": "consumable_onigiri"
+                    },
+                    {
+                        "matchByID": "clothing_otaku_studio_costume"
+                    },
+                    {
+                        "matchByID": "clothing_otaku_maid_dress"
+                    }
+                ],
+                "assignableMemberTypes": [
+                    "membertype_otaku_maid_parttime",
+                    "membertype_otaku_kitchen",
+                    "membertype_otaku_studio_parttime",
+                    "membertype_otaku_photographer_parttime"
+                ],
+                "_joinableMemberTypes": [
+                    "membertype_otaku_maid_parttime",
+                    "membertype_otaku_kitchen",
+                    "membertype_otaku_studio_parttime",
+                    "membertype_otaku_photographer_parttime"
+                ],
+                "_comment_fallbackWorkers": "Only the cafe counter and the costume loan counter get a fallback worker; kitchen and photographer posts are left open for other NPCs or the player.",
+                "fallbackWorkers": [
+                    {
+                        "memberTypeID": "membertype_otaku_maid_npc",
+                        "headcount": 1,
+                        "maxFallback": 1,
+                        "templateID": "jp_store_clerk"
+                    },
+                    {
+                        "memberTypeID": "membertype_otaku_studio_npc",
+                        "headcount": 1,
+                        "maxFallback": 1,
+                        "templateID": "jp_store_clerk"
+                    }
+                ],
+                "floorDoors": [
+                    {
+                        "sourceFloor": "floor_jp_cosplay_cafe",
+                        "sourceExit": "street",
+                        "targetFaction": "jp_downtown",
+                        "targetFloor": "floor_jp_downtown",
+                        "targetExit": "to_jp_cosplay_cafe",
+                        "cost": 1
+                    }
+                ]
+            }
+        ],
         "floorPlans": [{
             "ID": "floor_jp_cosplay_cafe", "imagePath": "BGAssets/Generated/shopping_mall_01.webp", "isFloorPlan": false, "floorWidth": 400, "floorHeight": 400, "resize": 1, "mapExit": "cosplaycafe_hall",
             "exits": [{ "ID": "street", "connectedRoom": "cosplaycafe_hall", "hideOnMap": true }],

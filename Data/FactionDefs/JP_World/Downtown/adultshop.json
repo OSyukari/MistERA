@@ -3,7 +3,9 @@
         "factionInit": [{ "ID": "jp_neon_adultshop", "initializeFaction": "jp_neon_adultshop", "floors": [], "_comment_floors": "no floor of its own: its room adultshop_floor (counter, shelves, a furniture_fitting_room divider) lives on the Downtown floor (subfactionOwnerOverwrite)", "isRentingFloor": true, "mainExit": { "roomID": "adultshop_floor", "exitCost": 1 }, "salesCurrency": "currency_JPY",
             "_comment": "Stock is faction-wide. Existing lingerie and local wearable costume items use ordinary wardrobe equipment. NSFW stock is skipped by the normal safe-mode loader; no shop/service COM grants intimacy permissions.",
             "salesInventory": [{ "matchByID": "clothing_skin_bra" }, { "matchByID": "clothing_skin_panty" }, { "matchByID": "clothing_skin_panty_opencrotch" }, { "matchByID": "clothing_skin_stocking" }, { "matchByID": "clothing_inner_killerheels" }, { "matchByID": "clothing_neon_costume_dress" }, { "matchByID": "clothing_neon_harness" }, { "matchByID": "item_neon_novelty_vibrator" }, { "matchByID": "consumable_lube" }, { "matchByID": "condom" }],
-            "assignableMemberTypes": [], "joinableMemberTypes": [], "_comment_fallbackWorkers": "Single counter clerk covering the whole 12:00-04:00 opening window (not actually 24h) - merged from the previous day/night split, which gave this one post two fallback workers for no operational reason.", "fallbackWorkers": [
+            "assignableMemberTypes": [],
+            "_comment_fallbackWorkers": "Single counter clerk covering the whole 12:00-04:00 opening window (not actually 24h) - merged from the previous day/night split, which gave this one post two fallback workers for no operational reason.",
+            "fallbackWorkers": [
                 { "memberTypeID": "membertype_neon_adultshop_counter", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }
             ] }],
         "memberTypes": [{ "ID": "membertype_neon_adultshop", "socialStandingKey": "membertype_neon_adultshop", "isMember": true, "childMemberTypes": [

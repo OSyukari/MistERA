@@ -1,7 +1,41 @@
 {
     "MapPlans": {
-        "factionInit": [{ "ID": "jp_arcade", "initializeFaction": "jp_arcade", "setPrivateRoomOwner": false, "floors": [], "_comment_floors": "no floor of its own: its room arcade_floor lives on the Downtown floor (subfactionOwnerOverwrite)", "isRentingFloor": true, "landlordFactionID": "jp_downtown", "mainExit": { "roomID": "arcade_floor", "exitCost": 5 }, "managerBaseIDs": [""], "salesCurrency": "currency_JPY", "salesInventory": [{ "matchByTags": ["videogame"] }], "assignableMemberTypes": ["membertype_otaku_arcade_clerk"], "joinableMemberTypes": [], "fallbackWorkers": [{ "memberTypeID": "membertype_otaku_arcade_clerk", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }]
-        }],
+        "factionInit": [
+            {
+                "ID": "jp_arcade",
+                "initializeFaction": "jp_arcade",
+                "setPrivateRoomOwner": false,
+                "floors": [],
+                "_comment_floors": "no floor of its own: its room arcade_floor lives on the Downtown floor (subfactionOwnerOverwrite)",
+                "isRentingFloor": true,
+                "landlordFactionID": "jp_downtown",
+                "mainExit": {
+                    "roomID": "arcade_floor",
+                    "exitCost": 5
+                },
+                "managerBaseIDs": [
+                    ""
+                ],
+                "salesCurrency": "currency_JPY",
+                "salesInventory": [
+                    {
+                        "matchByTags": [
+                            "videogame"
+                        ]
+                    }
+                ],
+                "assignableMemberTypes": [
+                    "membertype_otaku_arcade_clerk"
+                ],
+                "fallbackWorkers": [
+                    {
+                        "memberTypeID": "membertype_otaku_arcade_clerk",
+                        "headcount": 1,
+                        "maxFallback": 1,
+                        "templateID": "jp_store_clerk"
+                    }
+                ]
+            }],
         "memberTypes": [{ "ID": "membertype_otaku_arcade_clerk", "socialStandingKey": "membertype_otaku_arcade_clerk", "isMember": true, "workModule": { "jobPostID": "membertype_otaku_arcade_clerk", "workCommands": ["otaku_arcade_duty"], "activeHours": [10,11,12,13,14,15,16,17,18,19,20,21,22,23], "activeDays": [], "hourlyPayout": [{ "itemID": "currency_JPY", "itemCount": 1250 }], "paymentCadence": "Daily" } }],
         "recreationOffers": [{ "mainTypeTag": "gaming", "secondaryTags": ["indoor", "arcade", "amusement"], "ID": "recreation_offer_otaku_arcade", "mode": "Flexible", "factionID": "jp_arcade", "minHours": 2, "maxHours": 3, "daysInAdvance": 1, "minDaysBetween": 1, "allowWalkIn": true, "trustRewardEligible": true, "provideAcceptanceBonus": 5, "activityMoodlet": { "stress": 1 }, "entranceFee": { "itemID": "currency_JPY", "itemCount": 600 }, "gatherRoomID": "arcade_floor", "launchEventID": "Otaku_Arcade_Begin", "activityCommands": ["otaku_arcade_play", "otaku_crane_play", "otaku_photo_booth"], "workModule": { "jobPostID": "otaku_arcade_visit", "workCommands": ["otaku_arcade_play", "otaku_crane_play", "otaku_photo_booth"], "activeHours": [10,11,12,13,14,15,16,17,18,19,20,21,22,23], "activeDays": [] }, "invite": { "visibility": "Private", "inviteChance": 0.6, "minParticipants": 1, "TargetValidators": [{ "refKeys": ["companion"], "baseScope": "SelfRelationships", "chara_conditions": [{ "parameters": ["excludeSelf"] }], "maxTargetCount": 3, "stopAtMaxTargetCount": true, "required": false, "maxParticipants": 3 }] }, "_comment_fee": "Single visit credit budget; no extra charge per COM, no prize payout executor." }]
     },

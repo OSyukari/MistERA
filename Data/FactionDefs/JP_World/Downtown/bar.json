@@ -1,9 +1,57 @@
 {
     "_comment": "Hostess employment is voluntary presence-only pending E2. No hostess service COM, table-client offer or permission grant. Bartender counter work and ordinary friends' drinks are independent recreation.",
     "MapPlans": {
-        "factionInit": [{ "ID": "jp_bar", "initializeFaction": "jp_bar", "floors": [{ "ID": "floor_jp_bar", "nameOverwrite": "jp_bar" }], "isRentingFloor": true, "floorListHostFactionID": "jp_downtown", "floorDoors": [{ "sourceFloor": "floor_jp_bar", "sourceExit": "street", "targetFaction": "jp_downtown", "targetFloor": "floor_jp_downtown", "targetExit": "to_jp_bar", "cost": 1 }], "mainExit": { "roomID": "bar_entrance", "exitCost": 1 }, "salesCurrency": "currency_JPY", "salesInventory": [{ "matchByID": "consumable_alcohol_beer" }], "assignableMemberTypes": ["membertype_neon_bartender", "membertype_neon_hostess"], "joinableMemberTypes": ["membertype_neon_bartender", "membertype_neon_hostess"], "_comment_fallbackWorkers": "Only the manager (bar counter) gets a fallback worker. Hostess posts have no workCommands yet (standby wages, service not implemented) and are left open for real NPCs/the player, never generic fallback fillers.", "fallbackWorkers": [
-            { "memberTypeID": "membertype_neon_bar_manager", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }
-        ] }],
+        "factionInit": [
+            {
+                "ID": "jp_bar",
+                "initializeFaction": "jp_bar",
+                "floors": [
+                    {
+                        "ID": "floor_jp_bar",
+                        "nameOverwrite": "jp_bar"
+                    }
+                ],
+                "isRentingFloor": true,
+                "floorListHostFactionID": "jp_downtown",
+                "floorDoors": [
+                    {
+                        "sourceFloor": "floor_jp_bar",
+                        "sourceExit": "street",
+                        "targetFaction": "jp_downtown",
+                        "targetFloor": "floor_jp_downtown",
+                        "targetExit": "to_jp_bar",
+                        "cost": 1
+                    }
+                ],
+                "mainExit": {
+                    "roomID": "bar_entrance",
+                    "exitCost": 1
+                },
+                "salesCurrency": "currency_JPY",
+                "salesInventory": [
+                    {
+                        "matchByID": "consumable_alcohol_beer"
+                    }
+                ],
+                "assignableMemberTypes": [
+                    "membertype_neon_bartender",
+                    "membertype_neon_hostess"
+                ],
+                "_joinableMemberTypes": [
+                    "membertype_neon_bartender",
+                    "membertype_neon_hostess"
+                ],
+                "_comment_fallbackWorkers": "Only the manager (bar counter) gets a fallback worker. Hostess posts have no workCommands yet (standby wages, service not implemented) and are left open for real NPCs/the player, never generic fallback fillers.",
+                "fallbackWorkers": [
+                    {
+                        "memberTypeID": "membertype_neon_bar_manager",
+                        "headcount": 1,
+                        "maxFallback": 1,
+                        "templateID": "jp_store_clerk"
+                    }
+                ]
+            }
+        ],
         "floorPlans": [{
             "ID": "floor_jp_bar", "imagePath": "BGAssets/Generated/office_lounge_05.webp", "isFloorPlan": false,
             "floorWidth": 400, "floorHeight": 400, "resize": 1, "mapExit": "bar_entrance",

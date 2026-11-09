@@ -1,8 +1,49 @@
 {
     "_comment": "The Kiryu-gumi ring's only front (the soapland was merged in 2026-11-08): dispatch office + in-house washing service (dispatch_bath_1..3, furniture_neon_soap_bath). E2/E5 deferred: rooms + manager/reception, driver and voluntary worker standby posts only. NO dispatch job, washing service COM, client generator, booking/dispatch/ring offer or intimacy permission. Kiryu ownership uses verified ErAV_Kanon (office leader); parent must add existing-character membership as membertype_neon_kiryu_owner, since managerBaseIDs only promotes an already-managed character.",
     "MapPlans": {
-        "factionInit": [{ "ID": "jp_neon_dispatch", "initializeFaction": "jp_neon_dispatch", "floors": [{ "ID": "floor_jp_neon_dispatch", "nameOverwrite": "jp_neon_dispatch" }], "isRentingFloor": true, "floorListHostFactionID": "jp_downtown", "floorDoors": [{ "sourceFloor": "floor_jp_neon_dispatch", "sourceExit": "street", "targetFaction": "jp_downtown", "targetFloor": "floor_jp_downtown", "targetExit": "to_jp_neon_dispatch", "cost": 1 }], "setPrivateRoomOwner": false, "landlordFactionID": "ErAV_KiryuGumi_Office", "mainExit": { "roomID": "dispatch_reception", "exitCost": 1 }, "managerBaseIDs": ["ErAV_Kanon"], "memberTypeOverrideBaseIDs": { "ErAV_Kanon": "membertype_neon_kiryu_owner" }, "assignableMemberTypes": ["membertype_neon_dispatch_worker"], "joinableMemberTypes": ["membertype_neon_dispatch_worker"], "_comment_fallbackWorkers": "Only the manager (reception counter) gets a fallback worker. Driver and worker posts have no workCommands yet (standby wages, dispatch and washing service not implemented) and are left open for real NPCs/the player, never generic fallback fillers.", "fallbackWorkers": [
-            { "memberTypeID": "membertype_neon_dispatch_manager", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }
+        "factionInit": [
+            {
+                "ID": "jp_neon_dispatch",
+                "initializeFaction": "jp_neon_dispatch",
+                "floors": [
+                    {
+                        "ID": "floor_jp_neon_dispatch",
+                        "nameOverwrite": "jp_neon_dispatch"
+                    }
+                ],
+                "isRentingFloor": true,
+                "floorListHostFactionID": "jp_downtown",
+                "floorDoors": [
+                    {
+                        "sourceFloor": "floor_jp_neon_dispatch",
+                        "sourceExit": "street",
+                        "targetFaction": "jp_downtown",
+                        "targetFloor": "floor_jp_downtown",
+                        "targetExit": "to_jp_neon_dispatch",
+                        "cost": 1
+                    }
+                ],
+                "setPrivateRoomOwner": false,
+                "landlordFactionID": "ErAV_KiryuGumi_Office",
+                "mainExit": {
+                    "roomID": "dispatch_reception",
+                    "exitCost": 1
+                },
+                "managerBaseIDs": [
+                    "ErAV_Kanon"
+                ],
+                "memberTypeOverrideBaseIDs": {
+                    "ErAV_Kanon": "membertype_neon_kiryu_owner"
+                },
+                "assignableMemberTypes": [
+                    "membertype_neon_dispatch_worker"
+                ],
+                "_joinableMemberTypes": [
+                    "membertype_neon_dispatch_worker"
+                ],
+                "_comment_fallbackWorkers": "Only the manager (reception counter) gets a fallback worker. Driver and worker posts have no workCommands yet (standby wages, dispatch and washing service not implemented) and are left open for real NPCs/the player, never generic fallback fillers.",
+                "fallbackWorkers": [
+                    { "memberTypeID": "membertype_neon_dispatch_manager", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }
         ] }],
         "floorPlans": [{
             "ID": "floor_jp_neon_dispatch", "imagePath": "BGAssets/Generated/office_interior_03.webp", "isFloorPlan": false,

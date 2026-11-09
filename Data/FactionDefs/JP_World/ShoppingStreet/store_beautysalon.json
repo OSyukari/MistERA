@@ -3,9 +3,18 @@
     "MapPlans": {
         "factionInit":[{
             "ID":"jp_beauty_salon","initializeFaction":"jp_beauty_salon","setPrivateRoomOwner":false,
-            "mainExit":{"roomID":"salon_reception","exitCost":5},"floors":[],"mealHours":[],
+            "mainExit": {
+                "roomID": "salon_reception",
+                "exitCost": 5
+            },
+            "floors": [],
+            "mealHours": [],
             "salesCurrency":"currency_JPY","salesInventory":[{"matchByID":"consumable_jp_mall_salon_haircare"}],
-            "assignableMemberTypes":["membertype_jp_mall_salon_stylist","membertype_jp_mall_salon_assistant"],"joinableMemberTypes":[],
+            "assignableMemberTypes": [
+                "membertype_jp_mall_salon_stylist",
+                "membertype_jp_mall_salon_assistant"
+            ],
+            "joinableMemberTypes": [],
             "_comment_fallbackWorkers": "Only the stylist gets a fallback worker. Neither post has a workCommand or a service COM yet (pure standby presence), so stylist/assistant are mechanically interchangeable - the assistant is left open for a real NPC/the player, with no fallback worker behind it.",
             "fallbackWorkers":[
                 {"memberTypeID":"membertype_jp_mall_salon_stylist","headcount":1,"maxFallback":1,"templateID":"jp_store_clerk"}

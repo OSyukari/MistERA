@@ -8,7 +8,7 @@
       "ID": "jp_park", "initializeFaction": "jp_park", "floors": [{ "ID": "floor_jp_park", "nameOverwrite": "jp_park" }], "floorListHostFactionID": "jp_district_houses", "isRentingFloor": false, "setPrivateRoomOwner": false,
       "floorDoors": [{ "sourceFloor": "floor_jp_park", "sourceExit": "street", "targetFaction": "jp_district_houses", "targetFloor": "floor_jp_district_houses", "targetExit": "to_jp_park", "cost": 1 }],
       "mainExit": { "roomID": "park_entrance", "exitCost": 5 }, "managerBaseIDs": [""], "salesCurrency": "currency_JPY", "salesInventory": [],
-      "assignableMemberTypes": [], "joinableMemberTypes": [],
+      "assignableMemberTypes": [], 
       "fallbackWorkers": [{ "memberTypeID": "membertype_jp_park_maintenance", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }]
     }],
     "floorPlans": [{

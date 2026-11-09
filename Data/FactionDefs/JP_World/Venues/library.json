@@ -7,7 +7,7 @@
       "ID": "jp_library", "initializeFaction": "jp_library", "floors": [{ "ID": "floor_jp_library", "nameOverwrite": "jp_library" }], "floorListHostFactionID": "jp_high_school", "isRentingFloor": false, "setPrivateRoomOwner": false,
       "floorDoors": [{ "sourceFloor": "floor_jp_library", "sourceExit": "street", "targetFaction": "jp_high_school", "targetFloor": "floor_jp_high_school", "targetExit": "to_jp_library", "cost": 1 }],
       "mainExit": { "roomID": "library_lobby", "exitCost": 5 }, "managerBaseIDs": [""], "salesCurrency": "currency_JPY", "salesInventory": [],
-      "assignableMemberTypes": ["membertype_jp_librarian_parttime"], "joinableMemberTypes": ["membertype_jp_librarian_parttime"],
+      "assignableMemberTypes": ["membertype_jp_librarian_parttime"], "_joinableMemberTypes": ["membertype_jp_librarian_parttime"],
       "fallbackWorkers": [{ "memberTypeID": "membertype_jp_librarian_npc", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }]
     }],
     "floorPlans": [{

@@ -27,7 +27,9 @@
                 "activeHoursEnd":0,
     "_comment_assignableMemberTypes": "Existing NPC mall clerk retained. Dedicated ticket staff extend coverage to closing; only usher shifts are player-joinable.",
     "assignableMemberTypes": [ "membertype_jp_mall_clerk", "membertype_jp_mall_cinema_ticket", "membertype_jp_mall_usher" ],
-    "joinableMemberTypes": ["membertype_jp_mall_usher"],
+    "_joinableMemberTypes": [
+        "membertype_jp_mall_usher"
+    ],
     "_comment_fallbackWorkers": "Existing mall clerk kept at maxFallback 0 (placeholder for future concession sales - salesInventory is still empty, so it's deliberately not fallback-filled). Single fallback ticket clerk covers the whole 10:00-01:00 window, merged from the previous day/Fri-Sat-late split. Usher shifts are left open for other NPCs or the player, with no fallback worker behind them.",
     "fallbackWorkers": [
         { "memberTypeID": "membertype_jp_mall_clerk", "headcount": 1, "maxFallback": 0, "templateID": "jp_store_clerk" },

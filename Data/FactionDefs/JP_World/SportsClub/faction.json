@@ -32,7 +32,9 @@
                     "membertype_jp_sports_center_maintenance"
                 ],
                 "_comment_joinableMemberTypes": "The membership: joined at the front desk (sports_club_dialogue_options) or through Opt_ArrangeJoin_Recreation (tag memberType_recreation). Also what the club's own staff may book here off shift (Manageable.GetOfferedRecreationTypes).",
-                "joinableMemberTypes": [ "membertype_jp_sports_center_member" ],
+                "joinableMemberTypes": [
+                    "membertype_jp_sports_center_member"
+                ],
                 "_comment_fallbackWorkers": "Only the NPC-only front desk post (10-22, every day) gets a fallback worker, so reception is always staffed with a single fallback worker. Every other post (front desk early/late, trainer, cleaner, maintenance) is left open for other NPCs or the player, with no fallback worker. templateID jp_store_clerk (JP_World/Characters/templates.json) until club staff portrait bases / uniforms exist.",
                 "fallbackWorkers": [
                     { "memberTypeID": "membertype_jp_sports_center_frontdesk_npc", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }

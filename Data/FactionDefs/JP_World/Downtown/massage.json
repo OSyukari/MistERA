@@ -1,8 +1,42 @@
 {
     "_comment": "Pure massage service (no ring role - the ring is only the Kiryu dispatch office). The massage service itself (E2) is deferred: rooms, reception, voluntary practitioner posts and opening hours only. No offer, client generator or service command.",
     "MapPlans": {
-        "factionInit": [{ "ID": "jp_massage", "initializeFaction": "jp_massage", "floors": [{ "ID": "floor_jp_massage", "nameOverwrite": "jp_massage" }], "isRentingFloor": true, "floorListHostFactionID": "jp_district_luxury_apartment", "floorDoors": [{ "sourceFloor": "floor_jp_massage", "sourceExit": "street", "targetFaction": "jp_district_luxury_apartment", "targetFloor": "floor_jp_district_luxury_apartment", "targetExit": "to_jp_massage", "cost": 1 }], "setPrivateRoomOwner": false, "mainExit": { "roomID": "massage_reception", "exitCost": 1 }, "assignableMemberTypes": ["membertype_neon_massage_worker"], "joinableMemberTypes": ["membertype_neon_massage_worker"], "_comment_fallbackWorkers": "Single front-desk clerk covers the whole 12:00-02:00 opening window (not actually 24h) - merged from the previous day/night split. Worker posts have no workCommands yet (standby wages, service not implemented) and are left open for real NPCs/the player, never generic fallback fillers.", "fallbackWorkers": [
-            { "memberTypeID": "membertype_neon_massage_reception_counter", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }
+        "factionInit": [
+            {
+                "ID": "jp_massage",
+                "initializeFaction": "jp_massage",
+                "floors": [
+                    {
+                        "ID": "floor_jp_massage",
+                        "nameOverwrite": "jp_massage"
+                    }
+                ],
+                "isRentingFloor": true,
+                "floorListHostFactionID": "jp_district_luxury_apartment",
+                "floorDoors": [
+                    {
+                        "sourceFloor": "floor_jp_massage",
+                        "sourceExit": "street",
+                        "targetFaction": "jp_district_luxury_apartment",
+                        "targetFloor": "floor_jp_district_luxury_apartment",
+                        "targetExit": "to_jp_massage",
+                        "cost": 1
+                    }
+                ],
+                "setPrivateRoomOwner": false,
+                "mainExit": {
+                    "roomID": "massage_reception",
+                    "exitCost": 1
+                },
+                "assignableMemberTypes": [
+                    "membertype_neon_massage_worker"
+                ],
+                "_joinableMemberTypes": [
+                    "membertype_neon_massage_worker"
+                ],
+                "_comment_fallbackWorkers": "Single front-desk clerk covers the whole 12:00-02:00 opening window (not actually 24h) - merged from the previous day/night split. Worker posts have no workCommands yet (standby wages, service not implemented) and are left open for real NPCs/the player, never generic fallback fillers.",
+                "fallbackWorkers": [
+                    { "memberTypeID": "membertype_neon_massage_reception_counter", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }
         ] }],
         "floorPlans": [{
             "ID": "floor_jp_massage", "imagePath": "BGAssets/Generated/office_04.webp", "isFloorPlan": false,

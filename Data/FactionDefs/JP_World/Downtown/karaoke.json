@@ -4,7 +4,14 @@
             "ID": "jp_karaoke", "initializeFaction": "jp_karaoke", "floors": [{ "ID": "floor_jp_karaoke", "nameOverwrite": "jp_karaoke" }], "isRentingFloor": true, "floorListHostFactionID": "jp_downtown", "setPrivateRoomOwner": false, "mainExit": { "roomID": "karaoke_entrance", "exitCost": 1 },
             "floorDoors": [{ "sourceFloor": "floor_jp_karaoke", "sourceExit": "street", "targetFaction": "jp_downtown", "targetFloor": "floor_jp_downtown", "targetExit": "to_jp_karaoke", "cost": 1 }],
             "salesCurrency": "currency_JPY", "salesInventory": [{ "matchByID": "consumable_alcohol_beer" }],
-            "assignableMemberTypes": ["membertype_neon_karaoke_desk", "membertype_neon_karaoke_roomstaff"], "joinableMemberTypes": ["membertype_neon_karaoke_desk", "membertype_neon_karaoke_roomstaff"],
+            "assignableMemberTypes": [
+                "membertype_neon_karaoke_desk",
+                "membertype_neon_karaoke_roomstaff"
+            ],
+            "_joinableMemberTypes": [
+                "membertype_neon_karaoke_desk",
+                "membertype_neon_karaoke_roomstaff"
+            ],
             "_comment_fallbackWorkers": "Single front-desk clerk covers the whole 12:00-05:00 opening window (not actually 24h) - merged from the previous day/night split, and given its own jobPostID (the old npc_day/npc_night posts duplicated the player-joinable desk_day/desk_night post's jobPostID). Room-staff housekeeping is dropped entirely - neither karaoke-singing COM requires it - and left open for real NPCs/the player, same as the roomstaff posts already are.",
             "fallbackWorkers": [
                 { "memberTypeID": "membertype_neon_karaoke_npc_counter", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }

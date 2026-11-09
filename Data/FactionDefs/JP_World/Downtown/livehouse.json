@@ -3,7 +3,12 @@
         "factionInit": [{
             "ID": "jp_neon_livehouse", "initializeFaction": "jp_neon_livehouse", "floors": [{ "ID": "floor_jp_neon_livehouse", "nameOverwrite": "jp_neon_livehouse" }], "isRentingFloor": true, "floorListHostFactionID": "jp_downtown", "mainExit": { "roomID": "live_entrance", "exitCost": 1 }, "salesCurrency": "currency_JPY", "salesInventory": [{ "matchByID": "consumable_alcohol_beer" }],
             "floorDoors": [{ "sourceFloor": "floor_jp_neon_livehouse", "sourceExit": "street", "targetFaction": "jp_downtown", "targetFloor": "floor_jp_downtown", "targetExit": "to_jp_neon_livehouse", "cost": 1 }],
-            "assignableMemberTypes": ["membertype_neon_live_staff"], "joinableMemberTypes": ["membertype_neon_live_staff"],
+            "assignableMemberTypes": [
+                "membertype_neon_live_staff"
+            ],
+            "_joinableMemberTypes": [
+                "membertype_neon_live_staff"
+            ],
             "_comment_fallbackWorkers": "Only the counter gets a fallback worker. PA/soundcheck isn't required by the band's or the audience's COM (pure flavor; not assignable/joinable either) and has been dropped. The NPC-only generated band is dropped too, pending a dedicated band-NPC system - see _recreationOffers below for the Fri/Sat live show, disabled until then.",
             "fallbackWorkers": [
                 { "memberTypeID": "membertype_neon_live_counter", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }

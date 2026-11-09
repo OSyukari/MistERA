@@ -4,8 +4,55 @@
     "_comment_outcome": "A one-minute Join does not finish the two-hour booking or a whole game. The guarded scene authors only a short friendly tutorial and fair practice turns, never winner-based Trust. Future custom events may add time/checks; none are invented here. No invitation-acceptance, end-of-visit or fallback reward. Solo/ineligible paths show only neutral text.",
     "_comment_rewards": "Each score uses normal IncreaseRelationship group fanout: distinct directed nonself pairs, no duplicate pairs within a call. Initial attendees -> attendees once per score; arrivals joining -> companions and reverse once per score, without paying existing companion pairs again. Goodwill base 2 (Trust: trustRewardEligible - paid by the job at the launch to those who agreed beforehand and came on time, not by the scene) remains subject to normal API scaling/caps; no group-N multiplier or final stored amount is promised.",
     "MapPlans": {
-        "factionInit": [{ "ID": "jp_otaku_hobbyshop", "initializeFaction": "jp_otaku_hobbyshop", "setPrivateRoomOwner": false, "floors": [], "_comment_floors": "no floor of its own: its room hobbyshop_floor (counter + board-game tables + game master) lives on the Downtown floor (subfactionOwnerOverwrite)", "isRentingFloor": true, "landlordFactionID": "jp_downtown", "mainExit": { "roomID": "hobbyshop_floor", "exitCost": 5 }, "managerBaseIDs": [""], "salesCurrency": "currency_JPY", "salesInventory": [{ "matchByID": "item_otaku_card_starter" }, { "matchByID": "item_otaku_model_kit" }, { "matchByID": "item_otaku_boardgame" }, { "matchByID": "item_paperbooks_mask_nyarla" }], "assignableMemberTypes": ["membertype_otaku_hobby_parttime", "membertype_otaku_gamemaster_parttime"], "joinableMemberTypes": ["membertype_otaku_hobby_parttime", "membertype_otaku_gamemaster_parttime"], "_comment_fallbackWorkers": "Only the shop counter gets a fallback worker; the gamemaster post is left open for other NPCs or the player, with no fallback worker behind it.", "fallbackWorkers": [{ "memberTypeID": "membertype_otaku_hobby_npc", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }]
-        }],
+        "factionInit": [
+            {
+                "ID": "jp_otaku_hobbyshop",
+                "initializeFaction": "jp_otaku_hobbyshop",
+                "setPrivateRoomOwner": false,
+                "floors": [],
+                "_comment_floors": "no floor of its own: its room hobbyshop_floor (counter + board-game tables + game master) lives on the Downtown floor (subfactionOwnerOverwrite)",
+                "isRentingFloor": true,
+                "landlordFactionID": "jp_downtown",
+                "mainExit": {
+                    "roomID": "hobbyshop_floor",
+                    "exitCost": 5
+                },
+                "managerBaseIDs": [
+                    ""
+                ],
+                "salesCurrency": "currency_JPY",
+                "salesInventory": [
+                    {
+                        "matchByID": "item_otaku_card_starter"
+                    },
+                    {
+                        "matchByID": "item_otaku_model_kit"
+                    },
+                    {
+                        "matchByID": "item_otaku_boardgame"
+                    },
+                    {
+                        "matchByID": "item_paperbooks_mask_nyarla"
+                    }
+                ],
+                "assignableMemberTypes": [
+                    "membertype_otaku_hobby_parttime",
+                    "membertype_otaku_gamemaster_parttime"
+                ],
+                "_joinableMemberTypes": [
+                    "membertype_otaku_hobby_parttime",
+                    "membertype_otaku_gamemaster_parttime"
+                ],
+                "_comment_fallbackWorkers": "Only the shop counter gets a fallback worker; the gamemaster post is left open for other NPCs or the player, with no fallback worker behind it.",
+                "fallbackWorkers": [
+                    {
+                        "memberTypeID": "membertype_otaku_hobby_npc",
+                        "headcount": 1,
+                        "maxFallback": 1,
+                        "templateID": "jp_store_clerk"
+                    }
+                ]
+            }],
         "memberTypes": [{
             "ID": "membertype_otaku_hobby_staff", "socialStandingKey": "membertype_otaku_hobby_staff", "isMember": true, "canBeTransferred": true,
             "joinHandler": { "$type": "JoinHandler_WorkPost, Assembly-CSharp", "optionTextKey": "otaku_joinOption", "bindTargetKey": "worker" }, "leaveHandler": { "$type": "LeaveHandler_WorkPost, Assembly-CSharp", "optionTextKey": "work_post_leaveOption", "bindTargetKey": "worker" },

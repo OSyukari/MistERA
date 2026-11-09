@@ -7,7 +7,7 @@
       "floorDoors": [{ "sourceFloor": "floor_jp_pet_cafe", "sourceExit": "street", "targetFaction": "jp_high_school", "targetFloor": "floor_jp_high_school", "targetExit": "to_jp_pet_cafe", "cost": 1 }],
       "mainExit": { "roomID": "petshop_counter", "exitCost": 5 }, "managerBaseIDs": [""], "salesCurrency": "currency_JPY",
       "salesInventory": [{ "matchByID": "jp_pet_brush" }, { "matchByID": "jp_pet_ball" }],
-      "assignableMemberTypes": ["membertype_jp_petcafe_parttime"], "joinableMemberTypes": ["membertype_jp_petcafe_parttime"],
+      "assignableMemberTypes": ["membertype_jp_petcafe_parttime"], "_joinableMemberTypes": ["membertype_jp_petcafe_parttime"],
       "fallbackWorkers": [{ "memberTypeID": "membertype_jp_petcafe_clerk_npc", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }]
     }],
     "floorPlans": [{

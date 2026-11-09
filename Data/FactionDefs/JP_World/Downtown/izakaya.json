@@ -1,6 +1,57 @@
 {
     "MapPlans": {
-        "factionInit": [{ "ID": "jp_izakaya", "initializeFaction": "jp_izakaya", "floors": [{ "ID": "floor_jp_izakaya", "nameOverwrite": "jp_izakaya" }], "isRentingFloor": true, "floorListHostFactionID": "jp_district_budget_apartment", "floorDoors": [{ "sourceFloor": "floor_jp_izakaya", "sourceExit": "street", "targetFaction": "jp_district_budget_apartment", "targetFloor": "floor_jp_district_budget_apartment", "targetExit": "to_jp_izakaya", "cost": 1 }], "mainExit": { "roomID": "izakaya_counter", "exitCost": 1 }, "mealHours": [18,21], "salesCurrency": "currency_JPY", "salesInventory": [{ "matchByID": "consumable_alcohol_beer" }], "assignableMemberTypes": ["membertype_neon_izakaya_waiter"], "joinableMemberTypes": ["membertype_neon_izakaya_waiter"], "fallbackWorkers": [{ "memberTypeID": "membertype_neon_izakaya_counter", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }] }],
+        "factionInit": [
+            {
+                "ID": "jp_izakaya",
+                "initializeFaction": "jp_izakaya",
+                "floors": [
+                    {
+                        "ID": "floor_jp_izakaya",
+                        "nameOverwrite": "jp_izakaya"
+                    }
+                ],
+                "isRentingFloor": true,
+                "floorListHostFactionID": "jp_district_budget_apartment",
+                "floorDoors": [
+                    {
+                        "sourceFloor": "floor_jp_izakaya",
+                        "sourceExit": "street",
+                        "targetFaction": "jp_district_budget_apartment",
+                        "targetFloor": "floor_jp_district_budget_apartment",
+                        "targetExit": "to_jp_izakaya",
+                        "cost": 1
+                    }
+                ],
+                "mainExit": {
+                    "roomID": "izakaya_counter",
+                    "exitCost": 1
+                },
+                "mealHours": [
+                    18,
+                    21
+                ],
+                "salesCurrency": "currency_JPY",
+                "salesInventory": [
+                    {
+                        "matchByID": "consumable_alcohol_beer"
+                    }
+                ],
+                "assignableMemberTypes": [
+                    "membertype_neon_izakaya_waiter"
+                ],
+                "_joinableMemberTypes": [
+                    "membertype_neon_izakaya_waiter"
+                ],
+                "fallbackWorkers": [
+                    {
+                        "memberTypeID": "membertype_neon_izakaya_counter",
+                        "headcount": 1,
+                        "maxFallback": 1,
+                        "templateID": "jp_store_clerk"
+                    }
+                ]
+            }
+        ],
         "floorPlans": [{
             "ID": "floor_jp_izakaya", "imagePath": "BGAssets/Generated/office_cafeteria_03.webp", "isFloorPlan": false,
             "floorWidth": 400, "floorHeight": 400, "resize": 1, "mapExit": "izakaya_counter",

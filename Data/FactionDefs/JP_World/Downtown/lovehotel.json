@@ -1,8 +1,36 @@
 {
     "_comment": "Rest implemented with E1 reservation tag. E4 overnight integration belongs to parent: faction jp_neon_lovehotel, private room prefix hotel_room_, reserve tag booth_neon_hotel_pair, 4 units, bed ID furniture_bed_neon_hotel, capacity 2, check-in 22:00, check-out 08:00, suggested one-time price 8000 JPY per visitor (rest 3500). Temp-home assignment must own the SAME reserved room, reject an existing temp home, release ownership and temp home on checkout/cancel, and link a partner without double-reserving. No stay offer or invented event result until that API is supplied.",
     "MapPlans": {
-        "factionInit": [{ "ID": "jp_neon_lovehotel", "initializeFaction": "jp_neon_lovehotel", "floors": [{ "ID": "floor_jp_neon_lovehotel", "nameOverwrite": "jp_neon_lovehotel" }], "isRentingFloor": true, "floorListHostFactionID": "jp_downtown", "floorDoors": [{ "sourceFloor": "floor_jp_neon_lovehotel", "sourceExit": "street", "targetFaction": "jp_downtown", "targetFloor": "floor_jp_downtown", "targetExit": "to_jp_neon_lovehotel", "cost": 1 }], "setPrivateRoomOwner": false, "mainExit": { "roomID": "hotel_front", "exitCost": 1 }, "assignableMemberTypes": [], "joinableMemberTypes": [], "fallbackWorkers": [
-            { "memberTypeID": "membertype_neon_hotel_cleaner_day", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" },
+        "factionInit": [
+            {
+                "ID": "jp_neon_lovehotel",
+                "initializeFaction": "jp_neon_lovehotel",
+                "floors": [
+                    {
+                        "ID": "floor_jp_neon_lovehotel",
+                        "nameOverwrite": "jp_neon_lovehotel"
+                    }
+                ],
+                "isRentingFloor": true,
+                "floorListHostFactionID": "jp_downtown",
+                "floorDoors": [
+                    {
+                        "sourceFloor": "floor_jp_neon_lovehotel",
+                        "sourceExit": "street",
+                        "targetFaction": "jp_downtown",
+                        "targetFloor": "floor_jp_downtown",
+                        "targetExit": "to_jp_neon_lovehotel",
+                        "cost": 1
+                    }
+                ],
+                "setPrivateRoomOwner": false,
+                "mainExit": {
+                    "roomID": "hotel_front",
+                    "exitCost": 1
+                },
+                "assignableMemberTypes": [],
+                "fallbackWorkers": [
+                    { "memberTypeID": "membertype_neon_hotel_cleaner_day", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" },
             { "memberTypeID": "membertype_neon_hotel_cleaner_night", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }
         ] }],
         "floorPlans": [{

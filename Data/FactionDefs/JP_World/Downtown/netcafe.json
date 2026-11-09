@@ -2,8 +2,84 @@
     "_comment_sessions": "Flexible duration is clamped by the engine to 2-4h; the design's 1-3h becomes supported 2-3h. Reservation engine supplied by parent: one tagged bed per room, six single units and two pair units; reservation overrides gatherRoomID. No service mechanics.",
     "_comment_overnight": { "status": "Parent owns optional overnight activity support; do not activate as a hostless Fixed World session or invent event executors.", "offerID": "recreation_offer_otaku_netcafe_overnight", "factionID": "jp_otaku_netcafe", "jobPostID": "otaku_netcafe_overnight_visit", "startHour": 22, "hours": 10, "checkoutHour": 8, "entranceFee": { "itemID": "currency_JPY", "itemCount": 2200 }, "reserveFurnitureTag": "booth_netcafe_single", "roomPrefix": "netcafe_booth_", "temporaryHomeMemberTypeID": "membertype_otaku_netcafe_guest", "gatherRoomID": "netcafe_frontdesk", "launchEventID": "Otaku_NetCafe_Overnight_Begin", "gatherFailedEventID": "Recreation_GatherFailed_Leave", "allowWalkIn": false, "requirements": "Private per-booking reserved room; assign temp home and room ownership to the reserved room, reject existing temp home, allow normal home sleep during booking, clear only this stay's ownership/temp home and release reservation on checkout/cancel/failure/last actor. No daytime flexible clamp and no duty COM forcing awake." },
     "MapPlans": {
-        "factionInit": [{ "ID": "jp_otaku_netcafe", "initializeFaction": "jp_otaku_netcafe", "setPrivateRoomOwner": false, "floors": [{ "ID": "floor_jp_otaku_netcafe", "nameOverwrite": "jp_otaku_netcafe" }], "floorListHostFactionID": "jp_downtown", "isRentingFloor": true, "landlordFactionID": "jp_downtown", "mainExit": { "roomID": "netcafe_frontdesk", "exitCost": 5 }, "managerBaseIDs": [""], "mealHours": [0,6,12,18], "salesCurrency": "currency_JPY", "_comment_manga": "The manga and doujin shop was merged in (2026-11-08): its two rooms mangashop_floor / mangashop_r18, its stock, its bookshop staff posts and its browse offer now belong to the net cafe. Their definitions stay in netcafe_manga.json.", "salesInventory": [{ "matchByID": "consumable_instant_ramen" }, { "matchByID": "consumable_onigiri" }, { "matchByID": "consumable_bento_box" }, { "matchByID": "item_otaku_manga_volume" }, { "matchByID": "item_otaku_doujin_allages" }, { "matchByID": "item_otaku_doujin_r18" }], "assignableMemberTypes": ["membertype_otaku_netcafe_parttime", "membertype_otaku_manga_parttime"], "joinableMemberTypes": ["membertype_otaku_netcafe_parttime", "membertype_otaku_manga_parttime"], "fallbackWorkers": [{ "memberTypeID": "membertype_otaku_netcafe_npc_day", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }, { "memberTypeID": "membertype_otaku_netcafe_npc_night", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }, { "memberTypeID": "membertype_otaku_manga_npc", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }],
-            "floorDoors": [{ "sourceFloor": "floor_jp_otaku_netcafe", "sourceExit": "street", "targetFaction": "jp_downtown", "targetFloor": "floor_jp_downtown", "targetExit": "to_jp_otaku_netcafe", "cost": 1 }]
+        "factionInit": [
+            {
+                "ID": "jp_otaku_netcafe",
+                "initializeFaction": "jp_otaku_netcafe",
+                "setPrivateRoomOwner": false,
+                "floors": [
+                    {
+                        "ID": "floor_jp_otaku_netcafe",
+                        "nameOverwrite": "jp_otaku_netcafe"
+                    }
+                ],
+                "floorListHostFactionID": "jp_downtown",
+                "isRentingFloor": true,
+                "landlordFactionID": "jp_downtown",
+                "mainExit": {
+                    "roomID": "netcafe_frontdesk",
+                    "exitCost": 5
+                },
+                "managerBaseIDs": [
+                    ""
+                ],
+                "mealHours": [
+                    0,
+                    6,
+                    12,
+                    18
+                ],
+                "salesCurrency": "currency_JPY",
+                "_comment_manga": "The manga and doujin shop was merged in (2026-11-08): its two rooms mangashop_floor / mangashop_r18, its stock, its bookshop staff posts and its browse offer now belong to the net cafe. Their definitions stay in netcafe_manga.json.",
+                "salesInventory": [
+                    {
+                        "matchByID": "consumable_instant_ramen"
+                    },
+                    {
+                        "matchByID": "consumable_onigiri"
+                    },
+                    {
+                        "matchByID": "consumable_bento_box"
+                    },
+                    {
+                        "matchByID": "item_otaku_manga_volume"
+                    },
+                    {
+                        "matchByID": "item_otaku_doujin_allages"
+                    },
+                    {
+                        "matchByID": "item_otaku_doujin_r18"
+                    }
+                ],
+                "assignableMemberTypes": [
+                    "membertype_otaku_netcafe_parttime",
+                    "membertype_otaku_manga_parttime"
+                ],
+                "_joinableMemberTypes": [
+                    "membertype_otaku_netcafe_parttime",
+                    "membertype_otaku_manga_parttime"
+                ],
+                "fallbackWorkers": [
+                    {
+                        "memberTypeID": "membertype_otaku_netcafe_npc_day",
+                        "headcount": 1,
+                        "maxFallback": 1,
+                        "templateID": "jp_store_clerk"
+                    },
+                    {
+                        "memberTypeID": "membertype_otaku_netcafe_npc_night",
+                        "headcount": 1,
+                        "maxFallback": 1,
+                        "templateID": "jp_store_clerk"
+                    },
+                    {
+                        "memberTypeID": "membertype_otaku_manga_npc",
+                        "headcount": 1,
+                        "maxFallback": 1,
+                        "templateID": "jp_store_clerk"
+                    }
+                ],
+                "floorDoors": [{ "sourceFloor": "floor_jp_otaku_netcafe", "sourceExit": "street", "targetFaction": "jp_downtown", "targetFloor": "floor_jp_downtown", "targetExit": "to_jp_otaku_netcafe", "cost": 1 }]
         }],
         "floorPlans": [{
             "ID": "floor_jp_otaku_netcafe", "imagePath": "BGAssets/Generated/shopping_mall_01.webp", "isFloorPlan": false, "floorWidth": 400, "floorHeight": 400, "resize": 1, "mapExit": "netcafe_frontdesk",
