@@ -1025,6 +1025,31 @@ public class BodyInternal_Instance : I_TraceHolder
         }
     }
 
+    /// <summary>Read-only check for a positive removal using the same mode and arithmetic as Deflate.</summary>
+    public bool WouldDeflate(bool fullDeflate)
+    {
+        if (fullDeflate ? !canFullyDeflate : !canDeflate) return false;
+        var contents = Contains;
+        float expellableTotal = 0f, nonExpellableTotal = 0f;
+        foreach (var item in contents)
+        {
+            var ing = item.Comp_Ingestible;
+            if (ing == null) continue;
+            if (ing.CanBeExpelled) expellableTotal += ing.amount;
+            else nonExpellableTotal += ing.amount;
+        }
+        if (expellableTotal <= 0f) return false;
+
+        float targetExpellableTotal = fullDeflate ? 0f : Math.Max(0f, VolumeCapacity - nonExpellableTotal);
+        float ratio = targetExpellableTotal / expellableTotal;
+        foreach (var item in contents)
+        {
+            var ing = item.Comp_Ingestible;
+            if (ing != null && ing.CanBeExpelled && ing.amount - ing.amount * ratio > 0f) return true;
+        }
+        return false;
+    }
+
     /// <summary>
     /// Proportionally removes expellable content from this part, preserving the pre-expulsion ratio between
     /// expellable items and leaving non-expellable content untouched (fullDeflate forces the expellable target
@@ -1663,7 +1688,8 @@ public class BodyInternal_Instance : I_TraceHolder
         return Parent.GetRevealingScore(layer, slots);
     }
 
-    public bool TransferContentTo(BodyInternal_Instance instance, bool fullDeflate, ExperienceLog m = null)
+    /// <param name="movedTags">if given, the item tags of every item the target actually took are added to it (no duplicates)</param>
+    public bool TransferContentTo(BodyInternal_Instance instance, bool fullDeflate, ExperienceLog m = null, List<string> movedTags = null)
     {
         if (instance == null || !instance.canContain) return false;
         var items = this.Deflate(fullDeflate);
@@ -1679,6 +1705,11 @@ public class BodyInternal_Instance : I_TraceHolder
             if (instance.Ingest(item, m, ignoreClimaxAppend : true))
             {
                 any = true;
+                if (movedTags != null)
+                {
+                    var itemTags = item.Tags;
+                    for (int t = 0; t < itemTags.Count; t++) if (!movedTags.Contains(itemTags[t])) movedTags.Add(itemTags[t]);
+                }
             }
             else
             {
@@ -1948,4 +1979,3 @@ public class Sexperience
 
 // global sexp : best sex, worst sex, most sex, 
 // global sexp based on whole sex session
-

@@ -29,8 +29,17 @@
                         }
                     }
                 },
-                "AcceptanceCheck":{ "baseAcceptanceValue":26,
-                    "SkillBonus_Receiver":["skill_sensitivity_V"] },
+                "_comment_actModifiers":"Docs/Interactions/Plan_CommandProgression.md: terms start at the act's permission gate (Goodwill 50, Trust 30, Desire 200); cap = AC - 7 - residual 2.",
+                "AcceptanceCheck":{ "baseAcceptanceValue":23,
+                    "SkillBonus_Receiver":["skill_sensitivity_V"],
+                    "actModifiers":{
+                        "enabled":true, "totalMin":0, "totalMax":14,
+                        "terms":[
+                            {"source":"PartnerGoodwill", "appliesTo":"BothDeciders", "scale":0.05, "offset":-2.5, "min":0, "max":2},
+                            {"source":"PartnerTrust", "appliesTo":"BothDeciders", "scale":0.05, "offset":-1.5, "min":0, "max":3},
+                            {"source":"PartnerDesire", "appliesTo":"BothDeciders", "scale":0.04, "offset":-8, "min":0, "max":11}
+                        ]
+                    } },
                 "DifficultyCheck":{ "baseD20Check":15 ,
                     "SkillBonus_Receiver":["skill_sensitivity_V"]},
                 "variants":[

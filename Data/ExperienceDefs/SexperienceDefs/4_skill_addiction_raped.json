@@ -16,10 +16,10 @@
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",
                             "entries":[
                                 {
-                                    "requireExperiences": [{ "experienceID":"experience_sex_raped", "operand":"gte", "value":30 }]
+                                    "requireSumExperiences": { "experienceIDs":["experience_sex_raped","experience_sex_molested"], "operand":"gte", "value":30 }
                                 },
                                 {
-                                    "requireExperiences": [{ "experienceID":"experience_sex_raped_climax", "operand":"gte", "value":3 }]
+                                    "requireSumExperiences": { "experienceIDs":["experience_sex_raped_climax","experience_sex_molested_climax"], "operand":"gte", "value":3 }
                                 }
                             ]
                          },
@@ -39,8 +39,8 @@
                         "requirements":{
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",
                             "entries":[
-                                {"requireExperiences":[{ "experienceID":"experience_sex_raped", "operand":"gte", "value":100 }]},
-                                {"requireExperiences":[{ "experienceID":"experience_sex_raped_climax", "operand":"gte", "value":10 }]}
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_raped","experience_sex_molested"], "operand":"gte", "value":100 }},
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_raped_climax","experience_sex_molested_climax"], "operand":"gte", "value":10 }}
                             ]
                          },
                          "stat_modifiers":
@@ -52,8 +52,8 @@
                         "requirements":{
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",
                             "entries":[
-                                {"requireExperiences":[{ "experienceID":"experience_sex_raped", "operand":"gte", "value":220 }]},
-                                {"requireExperiences":[{ "experienceID":"experience_sex_raped_climax", "operand":"gte", "value":20 }]}
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_raped","experience_sex_molested"], "operand":"gte", "value":220 }},
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_raped_climax","experience_sex_molested_climax"], "operand":"gte", "value":20 }}
                             ]
                          },
                          "stat_modifiers":
@@ -65,8 +65,8 @@
                         "requirements":{
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",
                             "entries":[
-                                {"requireExperiences":[{ "experienceID":"experience_sex_raped", "operand":"gte", "value":400 }]},
-                                {"requireExperiences":[{ "experienceID":"experience_sex_raped_climax", "operand":"gte", "value":40 }]}
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_raped","experience_sex_molested"], "operand":"gte", "value":400 }},
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_raped_climax","experience_sex_molested_climax"], "operand":"gte", "value":40 }}
                             ]
                          },
                          "stat_modifiers":
@@ -78,8 +78,8 @@
                         "requirements":{
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",
                             "entries":[
-                                {"requireExperiences":[{ "experienceID":"experience_sex_raped", "operand":"gte", "value":800 }]},
-                                {"requireExperiences":[{ "experienceID":"experience_sex_raped_climax", "operand":"gte", "value":80 }]}
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_raped","experience_sex_molested"], "operand":"gte", "value":800 }},
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_raped_climax","experience_sex_molested_climax"], "operand":"gte", "value":80 }}
                             ]
                          },
                          "stat_modifiers":
@@ -91,8 +91,8 @@
                         "requirements":{
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",
                             "entries":[
-                                {"requireExperiences":[{ "experienceID":"experience_sex_raped", "operand":"gte", "value":1600 }]},
-                                {"requireExperiences":[{ "experienceID":"experience_sex_raped_climax", "operand":"gte", "value":150 }]}
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_raped","experience_sex_molested"], "operand":"gte", "value":1600 }},
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_raped_climax","experience_sex_molested_climax"], "operand":"gte", "value":150 }}
                             ]
                          },
                          "stat_modifiers":
@@ -104,8 +104,8 @@
                         "requirements":{
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",
                             "entries":[
-                                {"requireExperiences":[{ "experienceID":"experience_sex_raped", "operand":"gte", "value":2000 }]},
-                                {"requireExperiences":[{ "experienceID":"experience_sex_raped_climax", "operand":"gte", "value":200 }]}
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_raped","experience_sex_molested"], "operand":"gte", "value":2000 }},
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_raped_climax","experience_sex_molested_climax"], "operand":"gte", "value":200 }}
                             ]
                          },
                          "stat_modifiers":
@@ -117,8 +117,8 @@
                         "requirements":{
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",
                             "entries":[
-                                {"requireExperiences":[{ "experienceID":"experience_sex_raped", "operand":"gte", "value":2800 }]},
-                                {"requireExperiences":[{ "experienceID":"experience_sex_raped_climax", "operand":"gte", "value":280 }]}
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_raped","experience_sex_molested"], "operand":"gte", "value":2800 }},
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_raped_climax","experience_sex_molested_climax"], "operand":"gte", "value":280 }}
                             ]
                          },
                          "stat_modifiers":
@@ -130,8 +130,8 @@
                         "requirements":{
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",
                             "entries":[
-                                {"requireExperiences":[{ "experienceID":"experience_sex_raped", "operand":"gte", "value":4000 }]},
-                                {"requireExperiences":[{ "experienceID":"experience_sex_raped_climax", "operand":"gte", "value":400 }]}
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_raped","experience_sex_molested"], "operand":"gte", "value":4000 }},
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_raped_climax","experience_sex_molested_climax"], "operand":"gte", "value":400 }}
                             ]
                          },
                          "stat_modifiers":
@@ -143,8 +143,8 @@
                         "requirements":{
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",
                             "entries":[
-                                {"requireExperiences":[{ "experienceID":"experience_sex_raped", "operand":"gte", "value":6000 }]},
-                                {"requireExperiences":[{ "experienceID":"experience_sex_raped_climax", "operand":"gte", "value":600 }]}
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_raped","experience_sex_molested"], "operand":"gte", "value":6000 }},
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_raped_climax","experience_sex_molested_climax"], "operand":"gte", "value":600 }}
                             ]
                          },
                          "stat_modifiers":
@@ -164,7 +164,7 @@
             "zh-cn":
             {
                 "skill_addiction_raped": "被奸成瘾",
-                "skill_addiction_raped_tooltip": "%%skill_addiction_tooltip%%\n适用范围：一切处于「被强奸」状态下的互动"
+                "skill_addiction_raped_tooltip": "%%skill_addiction_tooltip%%\n适用范围：一切处于受性胁迫状态下的互动。进阶合计被强奸与被猥亵经验及其绝顶经验；强奸仅指阴茎插入。"
             },
             "en-us":
             {

@@ -1,0 +1,45 @@
+{
+    "_comment_integration": "Budget 1LDK apartment district (Docs/Locations/Plan_ResidentialDistricts.md 2.1). One world door at (450,290), floorExitID budget_apartment_entrance, listed in world.json initializeFactions. Every home uses the shared BGAssets/House_1ldk layout and links to the entrance.",
+    "_comment_art": "PLACEHOLDER: imagePath/roomImagePath reuse existing BGAssets/Generated art; replace with dedicated art later. The coin laundry has no washer furniture yet.",
+    "MapPlans": {
+        "factionInit": [{
+            "ID": "jp_district_budget_apartment", "isPublic": true, "isRentingFloor": false, "setPrivateRoomOwner": false, "listConnectedFloors": true,
+            "mainExit": { "roomID": "budget_apartment_entrance", "exitCost": 5 },
+            "floors": [{ "ID": "floor_jp_district_budget_apartment", "nameOverwrite": "jp_district_budget_apartment" }],
+            "_comment_residential": "1LDK apartment rentals. Every home links to attachRoomID (empty = mainExit room budget_apartment_entrance).",
+            "residential": {
+                "maxResidences": 12,
+                "templates": [ { "templateID": "jp_home_tpl_apt_1ldk", "weight": 1 } ]
+            },
+            "managerBaseIDs": [""], "salesInventory": [], "workModules": [], "workHours": [], "workAssignment": []
+        }],
+        "floorPlans": [{
+            "ID": "floor_jp_district_budget_apartment", "imagePath": "BGAssets/Generated/house_2story_09.webp",
+            "isFloorPlan": false, "floorWidth": 400, "floorHeight": 400, "resize": 1, "mapExit": "budget_apartment_entrance",
+            "_comment_exits": "hidden sockets for venues hanging off the district (venue factionInit floorDoors -> exit to_<venueID>); homes use runtime exits instead",
+            "exits": [
+                { "ID": "to_jp_sento", "connectedRoom": "budget_apartment_entrance", "hideOnMap": true },
+                { "ID": "to_jp_izakaya", "connectedRoom": "budget_apartment_entrance", "hideOnMap": true }
+            ],
+            "rooms": [
+                {
+                    "ID": "budget_apartment_entrance",
+                    "displayName": "budget_apartment_entrance",
+                    "hideOnMap": true,
+                    "connects": [],
+                    "roomImagePath": "BGAssets/Generated/house_2story_09.webp"
+                }
+            ]
+        }
+    ]
+},
+"Dictionary": {
+    "Entries": {
+        "zh-cn": {
+            "jp_district_budget_apartment": "廉价公寓",
+            "budget_apartment_entrance": "廉价公寓门口",
+            "budget_apartment_coin_laundry": "投币洗衣房"
+        }
+    }
+}
+}

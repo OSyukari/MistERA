@@ -1,0 +1,197 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_sleep_Begin",
+                    "interruptSelfJob": false,
+                    "variants": [
+                        {
+                            "requireMaster": true,
+                            "requireSelfNotMaster": true,
+                            "requirement": { "requireSelfForced": true },
+                            "extraSelfPortraitTags": ["troubled", "fear"],
+                            "useActiveTags": false,
+                            "responses": ["kojo_sleep_begin_forced_1", "kojo_sleep_begin_forced_2"]
+                        },
+                        {
+                            "requirement": { "variantID": 1 },
+                            "extraSelfPortraitTags": ["relaxed"],
+                            "useActiveTags": false,
+                            "responses": ["kojo_sleep_begin_together_1", "kojo_sleep_begin_together_2"]
+                        },
+                        {
+                            "requireMaster": true,
+                            "requireSelfNotMaster": true,
+                            "requirement": { "requireSelfAttitudeGTE": "Like" },
+                            "extraSelfPortraitTags": ["happy", "relaxed"],
+                            "useActiveTags": false,
+                            "responses": ["kojo_sleep_begin_like_1", "kojo_sleep_begin_like_2"]
+                        },
+                        {
+                            "extraSelfPortraitTags": ["relaxed"],
+                            "useActiveTags": false,
+                            "responses": ["kojo_sleep_begin_1", "kojo_sleep_begin_2", "kojo_sleep_begin_3"]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_sleep",
+                    "variants": [
+                        {
+                            "requirement": { "requireEPFailure": true },
+                            "variants": [
+                                {
+                                    "requirement": { "requireSelfAttitudeGTE": "Neutral" },
+                                    "extraSelfPortraitTags": ["apology", "troubled"],
+                                    "useActiveTags": false,
+                                    "responses": ["kojo_sleep_refuse_polite_1", "kojo_sleep_refuse_polite_2", "kojo_sleep_refuse_polite_3"]
+                                }
+                            ],
+                            "extraSelfPortraitTags": ["angry", "troubled"],
+                            "useActiveTags": false,
+                            "responses": ["kojo_sleep_refuse_hostile_1", "kojo_sleep_refuse_hostile_2", "kojo_sleep_refuse_hostile_3"]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "OnSleepComplete_Solo",
+                    "variants": [{
+                        "requireSelfOnly": true,
+                        "hideWhenNotFocused": false,
+                        "displayType": "AlwaysDisplay",
+                        "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false },
+                        "responses": ["kojo_sleep_complete_1", "kojo_sleep_complete_2", "kojo_sleep_complete_3"]
+                    }]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "OnSleepComplete_UndressSelf",
+                    "variants": [
+                        { "requireSelfOnly": true, "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }, "responses": ["kojo_sleep_undress_self"] }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "OnSleepComplete_UndressTogether",
+                    "variants": [
+                        { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_marriage"] }, "responses": ["kojo_sleep_undress_marriage"] },
+                        { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_couple", "relationship_fwb"] }, "responses": ["kojo_sleep_undress_close"] },
+                        { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }, "responses": ["kojo_sleep_undress_fallback"] }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "OnSleepComplete_LieDownTogether",
+                    "variants": [
+                        { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_marriage"] }, "responses": ["kojo_sleep_lie_marriage"] },
+                        { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_couple", "relationship_fwb"] }, "responses": ["kojo_sleep_lie_close"] },
+                        { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }, "responses": ["kojo_sleep_lie_fallback"] }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "OnSleepComplete_JoinSleeper",
+                    "variants": [
+                        { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_marriage", "relationship_couple", "relationship_fwb"] }, "responses": ["kojo_sleep_join_close"] },
+                        { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }, "responses": ["kojo_sleep_join_fallback"] }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "OnSleepComplete_GoodnightKiss",
+                    "variants": [
+                        { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_marriage"] }, "responses": ["kojo_sleep_kiss_marriage"] },
+                        { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_couple", "relationship_fwb"] }, "responses": ["kojo_sleep_kiss_close"] },
+                        { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }, "responses": ["kojo_sleep_kiss_fallback"] }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "kojo_sleep_begin_forced_1": "$self$迟疑了一下，还是低声应了下来，朝睡觉的地方走去。",
+                "kojo_sleep_begin_forced_2": "$self$抿着嘴移开视线，默默照着吩咐安顿下来。",
+                "kojo_sleep_begin_together_1": "$self$看了$target$一眼，在旁边安顿下来。\"晚安。\"",
+                "kojo_sleep_begin_together_2": "$self$给$target$留出些地方，调整姿势准备休息。",
+                "kojo_sleep_begin_like_1": "$self$打了个哈欠，笑着点头。\"嗯，是该睡了。\"",
+                "kojo_sleep_begin_like_2": "$self$揉了揉眼睛。\"好，该休息了。\"",
+                "kojo_sleep_begin_1": "$self$点了点头，安顿下来准备休息。",
+                "kojo_sleep_begin_2": "$self$伸了个懒腰。\"该睡了。\"",
+                "kojo_sleep_begin_3": "$self$揉揉眼睛，慢吞吞地找了个舒服的姿势。",
+                "kojo_sleep_refuse_polite_1": "$self$歉意地摇摇头。\"抱歉，我现在还不想睡。\"",
+                "kojo_sleep_refuse_polite_2": "$self$摆了摆手。\"你先休息吧，我还有点事。\"",
+                "kojo_sleep_refuse_polite_3": "$self$轻声说：\"谢谢，不过我暂时还睡不着。\"",
+                "kojo_sleep_refuse_hostile_1": "$self$皱起眉头。\"我什么时候睡不用你管。\"",
+                "kojo_sleep_refuse_hostile_2": "$self$冷淡地回道：\"不去，别烦我。\"",
+                "kojo_sleep_refuse_hostile_3": "$self$瞥了$target$一眼。\"你自己睡去吧。\"",
+                "kojo_sleep_complete_1": "$self$安静下来，闭上了眼睛。",
+                "kojo_sleep_complete_2": "$self$调整了一下姿势，准备歇息。",
+                "kojo_sleep_complete_3": "$self$放松下来，不再说话。",
+                "kojo_sleep_undress_self": "$self$舒了口气。\"这下舒服多了。\"",
+                "kojo_sleep_undress_marriage": "$self$望向$target$，语气里带着熟悉的松快。\"忙了一天，总算能歇下了。\"",
+                "kojo_sleep_undress_close": "$self$朝$target$笑了笑。\"到这个时候，才真觉得今天结束了。\"",
+                "kojo_sleep_undress_fallback": "$self$略有些拘谨，朝$target$轻轻点头。\"你也准备好了？\"",
+                "kojo_sleep_lie_marriage": "$self$带着倦意看向$target$。\"明天的事明天再说。晚安。\"",
+                "kojo_sleep_lie_close": "$self$对$target$露出一个困倦的笑。\"你在旁边，倒觉得安心了。晚安。\"",
+                "kojo_sleep_lie_fallback": "$self$朝$target$低声说：\"这样挤不挤？不够地方就告诉我。晚安。\"",
+                "kojo_sleep_join_close": "$self$看着熟睡的$target$，眼神柔和下来，没再出声。",
+                "kojo_sleep_join_fallback": "$self$确认$target$没有被惊醒，便安静下来。",
+                "kojo_sleep_kiss_marriage": "$self$望向$target$，困倦地笑了一下。\"嗯，晚安。明早见。\"",
+                "kojo_sleep_kiss_close": "$self$愣了一瞬，随后对$target$露出浅浅的笑。\"晚安，睡个好觉。\"",
+                "kojo_sleep_kiss_fallback": "$self$有些意外地看了$target$一眼，轻声道：\"……晚安。\""
+            },
+            "en-us": {
+                "kojo_sleep_begin_forced_1": "$self$ hesitates, then quietly agrees and moves over to rest.",
+                "kojo_sleep_begin_forced_2": "$self$ presses their lips together, looks away, and silently settles down as instructed.",
+                "kojo_sleep_begin_together_1": "$self$ glances at $target$ and settles down beside them. \"Good night.\"",
+                "kojo_sleep_begin_together_2": "$self$ leaves some room for $target$ and shifts into a position to rest.",
+                "kojo_sleep_begin_like_1": "$self$ yawns and nods with a smile. \"Mm, it is time for bed.\"",
+                "kojo_sleep_begin_like_2": "$self$ rubs their eyes. \"All right, time to rest.\"",
+                "kojo_sleep_begin_1": "$self$ nods and settles down to rest.",
+                "kojo_sleep_begin_2": "$self$ stretches. \"Time for bed.\"",
+                "kojo_sleep_begin_3": "$self$ rubs their eyes and slowly finds a comfortable position.",
+                "kojo_sleep_refuse_polite_1": "$self$ shakes their head apologetically. \"Sorry, I don't want to sleep yet.\"",
+                "kojo_sleep_refuse_polite_2": "$self$ waves a hand. \"Go ahead and rest. I still have something to do.\"",
+                "kojo_sleep_refuse_polite_3": "$self$ says softly, \"Thanks, but I don't think I could sleep yet.\"",
+                "kojo_sleep_refuse_hostile_1": "$self$ frowns. \"When I sleep is none of your business.\"",
+                "kojo_sleep_refuse_hostile_2": "$self$ replies coldly, \"No. Leave me alone.\"",
+                "kojo_sleep_refuse_hostile_3": "$self$ glances at $target$. \"Go to bed yourself.\"",
+                "kojo_sleep_complete_1": "$self$ grows quiet and closes their eyes.",
+                "kojo_sleep_complete_2": "$self$ shifts position, ready to rest.",
+                "kojo_sleep_complete_3": "$self$ relaxes and falls silent.",
+                "kojo_sleep_undress_self": "$self$ lets out a relieved breath. \"That's more comfortable.\"",
+                "kojo_sleep_undress_marriage": "$self$ looks toward $target$ with familiar ease. \"A whole day gone. Finally, some rest.\"",
+                "kojo_sleep_undress_close": "$self$ smiles at $target$. \"Only now does it really feel like the day's over.\"",
+                "kojo_sleep_undress_fallback": "A little self-conscious, $self$ nods to $target$. \"Ready for bed too?\"",
+                "kojo_sleep_lie_marriage": "$self$ gives $target$ a tired look. \"Tomorrow can wait until tomorrow. Good night.\"",
+                "kojo_sleep_lie_close": "$self$ gives $target$ a sleepy smile. \"It feels reassuring having you here. Good night.\"",
+                "kojo_sleep_lie_fallback": "$self$ says quietly to $target$, \"Enough room? Tell me if you need more. Good night.\"",
+                "kojo_sleep_join_close": "Watching the sleeping $target$, $self$'s expression softens, without a word.",
+                "kojo_sleep_join_fallback": "$self$ makes sure $target$ hasn't stirred, then falls quiet.",
+                "kojo_sleep_kiss_marriage": "$self$ looks at $target$ with a sleepy smile. \"Mm, good night. See you in the morning.\"",
+                "kojo_sleep_kiss_close": "Surprised for a moment, $self$ then gives $target$ a small smile. \"Good night. Sleep well.\"",
+                "kojo_sleep_kiss_fallback": "$self$ gives $target$ a surprised glance and says softly, \"...Good night.\""
+            }
+        }
+    }
+}

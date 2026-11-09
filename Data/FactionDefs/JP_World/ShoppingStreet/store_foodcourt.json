@@ -8,10 +8,10 @@
             "mealHours":[11,12,13,18,19,20],
             "initializers":[{"initClass":"campaign_init_factionInventory","initArguments":["jp_mall_foodcourt","consumable_jp_mall_foodcourt_meal","","1"]}],
             "salesCurrency":"currency_JPY", "salesInventory":[{"matchByID":"consumable_jp_mall_foodcourt_meal"}],
-            "assignableMemberTypes":["membertype_jp_mall_waiter"], "joinableMemberTypes":["membertype_jp_mall_waiter"],
+            "assignableMemberTypes":[], "joinableMemberTypes":[],
+            "_comment_fallbackWorkers": "Single waiter clerk covering the whole 10:00-21:00 opening window - merged from the previous day/evening split, which gave this one post two fallback workers for no operational reason. Not assignable/joinable - a player can't apply.",
             "fallbackWorkers":[
-                {"memberTypeID":"membertype_jp_mall_waiter_day","headcount":1,"maxFallback":1,"templateID":"jp_store_clerk"},
-                {"memberTypeID":"membertype_jp_mall_waiter_evening","headcount":1,"maxFallback":1,"templateID":"jp_store_clerk"}
+                {"memberTypeID":"membertype_jp_mall_waiter_npc","headcount":1,"maxFallback":1,"templateID":"jp_store_clerk"}
             ],
                 "activeHoursStart":10,
                 "activeHoursEnd":21,
@@ -23,15 +23,15 @@
             "joinHandler":{"$type":"JoinHandler_WorkPost, Assembly-CSharp","optionTextKey":"jp_mall_foodcourt_joinOption","bindTargetKey":"worker"},
             "leaveHandler":{"$type":"LeaveHandler_WorkPost, Assembly-CSharp","optionTextKey":"work_post_leaveOption","bindTargetKey":"worker"},
             "childMemberTypes":[
-                {"ID":"membertype_jp_mall_waiter_day","socialStandingKey":"jp_mall_waiter_day","workModule":{"jobPostID":"jp_mall_waiter_day","workCommands":["jp_mall_foodcourt_waiter_duty"],"activeHours":[10,11,12,13,14,15],"activeDays":[],"hourlyPayout":[{"itemID":"currency_JPY","itemCount":1200}],"paymentCadence":"Daily","holidayPayoutMultiplier":1.2}},
-                {"ID":"membertype_jp_mall_waiter_evening","socialStandingKey":"jp_mall_waiter_evening","workModule":{"jobPostID":"jp_mall_waiter_evening","workCommands":["jp_mall_foodcourt_waiter_duty"],"activeHours":[16,17,18,19,20,21],"activeDays":[],"hourlyPayout":[{"itemID":"currency_JPY","itemCount":1200}],"paymentCadence":"Daily","holidayPayoutMultiplier":1.2}}
+                {"ID":"membertype_jp_mall_waiter_npc","socialStandingKey":"jp_mall_waiter_npc","workModule":{"jobPostID":"jp_mall_waiter_npc","workCommands":["jp_mall_foodcourt_waiter_duty"],"activeHours":[10,11,12,13,14,15,16,17,18,19,20,21],"activeDays":[],"hourlyPayout":[{"itemID":"currency_JPY","itemCount":1200}],"paymentCadence":"Daily","holidayPayoutMultiplier":1.2}}
             ]
         }],
         "recreationOffers":[{
             "ID":"jp_mall_foodcourt_eat_together", "mode":"Flexible", "factionID":"jp_mall_foodcourt", "minHours":2,"maxHours":2,
+            "mainTypeTag":"dining", "secondaryTags":["indoor","meal","social"], "provideAcceptanceBonus":5, "activityMoodlet":{"stress":1},
             "workModule":{"jobPostID":"jp_mall_foodcourt_eat_together","workCommands":["com_furniture_getmeal"],"activeHours":[11,12,13,18,19,20],"activeDays":[]},
             "entranceFee":{"itemID":"currency_JPY","itemCount":900}, "gatherRoomID":"fastfood_counter", "launchEventID":"Mall_Foodcourt_Begin",
-            "weight":1.0,"participationChance":0.5,"minDaysBetween":1,"daysInAdvance":0,"allowWalkIn":true,
+            "weight":1.0,"participationChance":0.5,"minDaysBetween":1,"daysInAdvance":0,"allowWalkIn":true,"trustRewardEligible":true,
             "invite":{"visibility":"Friends","inviteChance":1.0,"minParticipants":1},
             "AcceptanceMods":[{"Requirement_ActionPackage":{"targetComID":"com_furniture_getmeal","isDoer":true},"Result_EvaluationPackage":{"overrideResponse":"Accept","overrideResponseExplanation":"jp_mall_foodcourt_activity_accept"}}]
         }]
@@ -59,8 +59,7 @@
         "jp_mall_foodcourt_tables":"美食广场餐桌",
         "jp_mall_foodcourt_counter":"餐饮服务柜台",
         "membertype_jp_mall_waiter":"美食广场兼职服务员",
-        "jp_mall_waiter_day":"服务员 日班10—16时",
-        "jp_mall_waiter_evening":"服务员 晚班16—22时",
+        "jp_mall_waiter_npc":"服务员 10—22时",
         "jp_mall_foodcourt_joinOption":"让$name$担任$memberType$",
         "jp_mall_foodcourt_eat_together":"一起外出吃饭（含套餐）",
         "jp_mall_foodcourt_activity_accept":"正在参加聚餐",

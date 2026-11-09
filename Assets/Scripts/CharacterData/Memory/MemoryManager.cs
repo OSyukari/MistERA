@@ -83,17 +83,22 @@ public class MemoryManager
 
     [JsonProperty] protected SortedList<long, Memory_Entry> entries = null;
 
-    List<Memory_Entry> _Entries = null;
-    [JsonIgnore] public List<Memory_Entry> Entries 
-    { 
+    // snapshot list for external readers, refilled in place only after entries gained/lost an entry
+    // (internal code indexes entries.Values directly). A merge into Last leaves it valid.
+    List<Memory_Entry> _Entries = new List<Memory_Entry>();
+    bool _entriesDirty = true;
+    [JsonIgnore] public List<Memory_Entry> Entries
+    {
         get {
-            if (_Entries == null)
+            if (_entriesDirty)
             {
                 if (entries == null) entries = new SortedList<long, Memory_Entry>();
-                _Entries = new List<Memory_Entry>(entries.Values);
+                _entriesDirty = false;
+                _Entries.Clear();
+                _Entries.AddRange(entries.Values);
             }
             return _Entries;
-        } 
+        }
     }
 
     [JsonProperty] protected long lastRef = long.MinValue;
@@ -102,8 +107,8 @@ public class MemoryManager
 
             if (entries == null || entries.Count < 1) return null;
             if (lastRef != long.MinValue && entries.TryGetValue(lastRef, out var value)) return value;
-            lastRef = entries.Last().Key;
-            return entries[lastRef]; } }
+            lastRef = entries.Keys[entries.Count - 1];
+            return entries.Values[entries.Count - 1]; } }
 
     private int ownerRef = -1;
     private Character_Trainable owner = null;
@@ -144,7 +149,11 @@ public class MemoryManager
         {
             var entry = entries.Values[i];
             clearcache = (entry.Tick(t) && entry.HasStatMod) || clearcache;
-            if (entry.Duration == 0) entries.RemoveAt(i);
+            if (entry.Duration == 0)
+            {
+                entries.RemoveAt(i);
+                _entriesDirty = true;
+            }
         }
         if (clearcache) ClearCache();
     }
@@ -157,7 +166,11 @@ public class MemoryManager
     {
         for(var i = entries.Count - 1; i >= 0; i--)
         {
-            if (entries.Values[i].Duration == 0) entries.RemoveAt(entries.IndexOfValue(entries.Values[i]));
+            if (entries.Values[i].Duration == 0)
+            {
+                entries.RemoveAt(entries.IndexOfValue(entries.Values[i]));
+                _entriesDirty = true;
+            }
         }
     }
 
@@ -233,17 +246,22 @@ public class MemoryManager
         return count;
     }
 
+    // rebuilt on every memory change - previous MemBlacklist objects are reused rather than reallocated
+    [NonSerialized][JsonIgnore] List<MemBlacklist> blacklistPool = new List<MemBlacklist>();
     public void UpdateBlacklist()
     {
+        blacklistPool.AddRange(Blacklist);
         Blacklist.Clear();
         int maxcount = Owner.Stats.MemoryEntryCount;
+        var values = entries.Values;
         for (int i = entries.Count - 1; i >= 0; i--)
         {
+            // MemoryEntryCount 0 (no memory keyword) = no recent entries considered, as in GetRecentMemoryStatMods
+            if (maxcount <= 0) break;
            // if (Entries[i].Duration == 0) continue;
 
-            Entries[i].FillBlacklist(Blacklist);
+            values[i].FillBlacklist(Blacklist, blacklistPool);
             maxcount--;
-            if (maxcount == 0) break;
             //if (!Entries[i].isRefuseOnly) break;
         }
     }
@@ -266,8 +284,9 @@ public class MemoryManager
     /// <returns></returns>
     public List<Stat_Modifier> GetRecentMemoryStatMods(int overrideMemoryCount = -1)
     {
-        if (recentMemoryCache == null)
+        if (recentMemoryDirty)
         {
+            recentMemoryDirty = false;
             if (overrideMemoryCount == -1) overrideMemoryCount = Owner.Stats.MemoryEntryCount;
 
             rm_lust.Clear();
@@ -275,24 +294,28 @@ public class MemoryManager
             rm_stress.Clear();
 
             overrideMemoryCount = Math.Min(overrideMemoryCount, entries.Count);
-            recentMemoryCache = new List<Stat_Modifier>();
+            recentMemoryCache.Clear();
+            var values = entries.Values;
             for (int i = entries.Count - 1; i >= 0; i--)
             {
                 if (overrideMemoryCount < 1) break;
-                if (Entries[i].Duration == 0) continue;
-                if (Entries[i].noDisplay) continue;
-                else if (Entries[i].selfTags.Contains("unconscious")) continue;
+                var entry = values[i];
+                if (entry.Duration == 0) continue;
+                if (entry.noDisplay) continue;
+                else if (entry.selfTags.Contains("unconscious")) continue;
                 overrideMemoryCount -= 1;
 
-                AddMoodlet(ref rm_lust, Entries[i].Mod_Lust);
-                AddMoodlet(ref rm_mood, Entries[i].Mod_Mood);
-                AddMoodlet(ref rm_stress, Entries[i].Mod_Stress);
+                AddMoodlet(ref rm_lust, entry.Mod_Lust);
+                AddMoodlet(ref rm_mood, entry.Mod_Mood);
+                AddMoodlet(ref rm_stress, entry.Mod_Stress);
             }
             //Debug.Log($"{Owner.FirstName} GetRecentMemoryStatMods count {recentMemoryCache.Count}");
         }
         return recentMemoryCache;
     }
-    List<Stat_Modifier> recentMemoryCache = null;
+    // same list instance throughout, refilled when dirty (ClearCache already emptied the old one in place)
+    List<Stat_Modifier> recentMemoryCache = new List<Stat_Modifier>();
+    bool recentMemoryDirty = true;
 
     public const string MemoryStat_Stress = "chara_status_stress";
     public const string MemoryStat_Mood = "chara_status_mood";
@@ -325,7 +348,7 @@ public class MemoryManager
 
     protected void AddMoodlet(ref List<int> compareList, List<Stat_Modifier> statmod)
     {
-        foreach (var i in statmod) AddMoodlet(ref compareList, i);
+        for (int i = 0; i < statmod.Count; i++) AddMoodlet(ref compareList, statmod[i]);
     }
     /*
     protected void AddMoodlet(ref List<int> compareList, Stat_Modifier statmod)
@@ -490,19 +513,27 @@ public class MemoryManager
 
     private Memory_Entry GetMostRecentEntry(int targetRef = -1, COM com = null, List<string> comTags = null, bool checkConscious = true)
     {
+        var values = entries.Values;
+        string comID = com == null ? "" : com.ID;
         for (int i = entries.Count - 1; i >= 0; i--)
         {
-            var mem = Entries[i];
-            if (mem.isRelevant(targetRef, com == null ? "" : com.ID, comTags, checkConscious)) return mem;
+            var mem = values[i];
+            if (mem.isRelevant(targetRef, comID, comTags, checkConscious)) return mem;
         }
         return null;
     }
 
     public void ClearCache()
     {
-        _Entries = null;
-        if (recentMemoryCache != null) recentMemoryCache.Clear();
-        recentMemoryCache = null;
+        _entriesDirty = true;
+        ClearCacheKeepEntries();
+    }
+
+    /// <summary> ClearCache for changes inside existing entries (merge into Last) - the Entries snapshot stays valid </summary>
+    void ClearCacheKeepEntries()
+    {
+        recentMemoryCache.Clear();
+        recentMemoryDirty = true;
         Owner.Stats.RefreshAttitude();
         Owner.Relationships.RefreshAttitudes();
         UpdateBlacklist();
@@ -513,10 +544,36 @@ public class MemoryManager
     //Character_Trainable ownerCache = null;
     //Character_Trainable Owner { get { if (ownerCache == null) ownerCache = scr_System_CampaignManager.current.FindInstanceByID(ownerRefID); return ownerCache; } }
 
+    /// <summary> read-only empty tag list - MemInstance / Memory_Entry copy the tags they are given </summary>
+    static readonly List<string> NoTags = new List<string>();
+
     public Memory_Entry AddEntryMSG(string msg, List<string> tags, int duration = -1)
     {
-        var memInst = new MemInstance(new List<int>(), new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.None, msg);
+        var memInst = new MemInstance(new List<int>(), NoTags, "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.None, msg);
         return AddEntry(memInst, tags, duration);
+    }
+
+    /// <summary>
+    /// Shared tail of the AddEntry paths: merge candidate into Last, else finish its display and store it.
+    /// candidate must have been built with deferDisplay. Returns the entry now holding the memory.
+    /// </summary>
+    Memory_Entry StoreOrMerge(Memory_Entry candidate, Room_Instance room = null)
+    {
+        var last = this.Last;
+        if (last != null && last.TryMergeWith(candidate))
+        {
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Memory) Debug.Log("memory merge last");
+            ClearCacheKeepEntries();
+            return last;
+        }
+
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Memory) Debug.Log("memory new entry");
+        candidate.BuildDisplay();
+        this.entries.Add(candidate.EndTime.Ticks, candidate);
+        if (lastRef < candidate.EndTime.Ticks) lastRef = candidate.EndTime.Ticks;
+        if (room != null && room.isNameDynamic) candidate.roomNameOverride = room.DisplayName;
+        ClearCache();
+        return candidate;
     }
 
     /// <summary>
@@ -531,23 +588,11 @@ public class MemoryManager
 
         var room = scr_System_CampaignManager.current.GetCharaRoomInstance(Owner.RefID);
         var roomRef = room.RefID;
-        var memInst = new MemInstance(new List<int>(), new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.None, String.Join("\n", appendMessages));
-        Memory_Entry entry = new Memory_Entry(Owner, null, roomRef, selfTags, memInst, entryDescription, duration);
+        var memInst = new MemInstance(new List<int>(), NoTags, "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.None, String.Join("\n", appendMessages));
+        Memory_Entry entry = new Memory_Entry(Owner, null, roomRef, selfTags, memInst, entryDescription, duration, true);
         entry.MergeWithAll = mergeWithAll;
 
-        if (this.Last == null || !this.Last.TryMergeWith(entry))
-        {
-            this.entries.Add(entry.EndTime.Ticks, entry);
-            if (lastRef < entry.EndTime.Ticks) lastRef = entry.EndTime.Ticks;
-            if (room.isNameDynamic) entry.roomNameOverride = room.DisplayName;
-            ClearCache();
-            return entry;
-        }
-        else
-        {
-            ClearCache();
-            return this.Last;
-        }
+        return StoreOrMerge(entry, room);
     }
 
     /// <summary>
@@ -658,22 +703,10 @@ public class MemoryManager
 #endif
         var room = scr_System_CampaignManager.current.GetCharaRoomInstance(Owner.RefID);
         var roomRef = room.RefID;
-        Memory_Entry entry = new Memory_Entry(Owner, null, roomRef, selfTags, memInstance, "", duration);
+        Memory_Entry entry = new Memory_Entry(Owner, null, roomRef, selfTags, memInstance, "", duration, true);
         entry.MergeWithAll = mergeWithAll;
 
-        if (this.Last == null || !this.Last.TryMergeWith(entry))
-        {
-            this.entries.Add(entry.EndTime.Ticks, entry);
-            if (lastRef < entry.EndTime.Ticks) lastRef = entry.EndTime.Ticks;
-            if (room.isNameDynamic) entry.roomNameOverride = room.DisplayName;
-            ClearCache();
-            return entry;
-        }
-        else
-        {
-            ClearCache();
-            return this.Last;
-        }
+        return StoreOrMerge(entry, room);
     }
 
     /// <summary>
@@ -715,8 +748,8 @@ public class MemoryManager
         }
         else if (ep.Master == Owner)
         {
-            selfTags = new List<string>();
-            targetTags = new List<string>();
+            selfTags = NoTags;
+            targetTags = NoTags;
             attitude = Memory_Attitude.Neutral;
         }
         else
@@ -740,8 +773,9 @@ public class MemoryManager
             memInstance.AddMoodletScore(dc.moodMod, dc.stressMod, dc.lustMod);
         }
 
-        Memory_Entry entry = new Memory_Entry(Owner, job, roomRef, selfTags, memInstance, jobDesc, memDuration);
-        var jobStartTime = ep.Package.job.GetActorLastJoinTime(Owner.RefID);
+        Memory_Entry entry = new Memory_Entry(Owner, job, roomRef, selfTags, memInstance, jobDesc, memDuration, true);
+        // job resolves through jobRefID and is null once the job is gone (or for job-less packages)
+        var jobStartTime = job == null ? DateTime.MinValue : job.GetActorLastJoinTime(Owner.RefID);
         entry.StartTime = ep.Package.StartTime < jobStartTime ? jobStartTime : ep.Package.StartTime;
 
         if (ep.targetCOM != null && (ep.targetCOM.comTags.Contains("initSex") || ep.targetCOM.comTags.Contains("endSex")))
@@ -754,20 +788,7 @@ public class MemoryManager
             entry.MergeWithAll = mergeWithAll;
         }
 
-        if (this.Last == null || !this.Last.TryMergeWith(entry))
-        {
-            if (scr_System_CentralControl.current.LogPrefs.DLog_Memory) Debug.Log("memory new entry");
-            this.entries.Add(entry.EndTime.Ticks, entry);
-            if (lastRef < entry.EndTime.Ticks) lastRef = entry.EndTime.Ticks;
-            ClearCache();
-            return entry;
-        }
-        else
-        {
-            if (scr_System_CentralControl.current.LogPrefs.DLog_Memory) Debug.Log("memory merge last");
-            ClearCache();
-            return this.Last;
-        }
+        return StoreOrMerge(entry);
     }
 
 

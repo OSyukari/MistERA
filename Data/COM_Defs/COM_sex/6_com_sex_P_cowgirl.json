@@ -37,123 +37,25 @@
                         }
                     }
                 },
+                "_comment_actModifiers":"Docs/Interactions/Plan_CommandProgression.md: terms start at the act's permission gate (Goodwill 50, Trust 30, Desire 200); cap = AC - 7 - residual 6.",
                 "AcceptanceCheck": {
-                    "baseAcceptanceValue": 30,
-                    "SkillBonus_Doer":["skill_sensitivity_V"]
+                    "baseAcceptanceValue": 29,
+                    "SkillBonus_Doer":["skill_sensitivity_V"],
+                    "actModifiers":{
+                        "enabled":true, "totalMin":0, "totalMax":16,
+                        "terms":[
+                            {"source":"PartnerGoodwill", "appliesTo":"BothDeciders", "scale":0.05, "offset":-2.5, "min":0, "max":2},
+                            {"source":"PartnerTrust", "appliesTo":"BothDeciders", "scale":0.05, "offset":-1.5, "min":0, "max":3},
+                            {"source":"PartnerDesire", "appliesTo":"BothDeciders", "scale":0.04, "offset":-8, "min":0, "max":13}
+                        ]
+                    }
                 },
                 "DifficultyCheck": {
                     "baseD20Check": 15,
                     "SkillBonus_Doer":["skill_sensitivity_V"]
                 },
+                "_comment_upgrades": "The overpenetration and forceful versions are upgrade commands (com_sex_P_cowgirl_overpen / _force below), offered in this command's + panel while it is ongoing.",
                 "variants": [
-                    {
-                        "requirements": {
-                            "requirement": {
-                                "doerCount": 1,
-                                "receiverCount": 1
-                            },
-                            "requireExisting": {
-                                "OverPenetration": true,
-                                "requireCOMID": "com_sex_P_cowgirl"
-                            }
-                        },
-                        "displayName": "com_sex_P_V_overpen_1",
-                        "setForce": true
-                    },
-                    {
-                        "requirements": {
-                            "requirement": {
-                                "doerCount": 1,
-                                "receiverCount": 99
-                            },
-                            "requireExisting": {
-                                "OverPenetration": true,
-                                "requireCOMID": "com_sex_P_cowgirl"
-                            }
-                        },
-                        "displayName": "com_sex_P_V_overpen_2",
-                        "setForce": true
-                    },
-                    {
-                        "requirements": {
-                            "requirement": {
-                                "doerCount": 99,
-                                "receiverCount": 1
-                            },
-                            "requireExisting": {
-                                "OverPenetration": true,
-                                "requireCOMID": "com_sex_P_cowgirl"
-                            }
-                        },
-                        "displayName": "com_sex_P_V_overpen_3",
-                        "setForce": true
-                    },
-                    {
-                        "requirements": {
-                            "requirement": {
-                                "doerCount": 99,
-                                "receiverCount": 99
-                            },
-                            "requireExisting": {
-                                "OverPenetration": true,
-                                "requireCOMID": "com_sex_P_cowgirl"
-                            }
-                        },
-                        "displayName": "com_sex_P_V_overpen_4",
-                        "setForce": true
-                    },
-                    {
-                        "requirements": {
-                            "requirement": {
-                                "doerCount": 1,
-                                "receiverCount": 1
-                            },
-                            "requireExisting": {
-                                "requireCOMID": "com_sex_P_cowgirl"
-                            }
-                        },
-                        "displayName": "com_sex_P_V_force_1",
-                        "setForce": true
-                    },
-                    {
-                        "requirements": {
-                            "requirement": {
-                                "doerCount": 1,
-                                "receiverCount": 99
-                            },
-                            "requireExisting": {
-                                "requireCOMID": "com_sex_P_cowgirl"
-                            }
-                        },
-                        "displayName": "com_sex_P_V_force_2",
-                        "setForce": true
-                    },
-                    {
-                        "requirements": {
-                            "requirement": {
-                                "doerCount": 99,
-                                "receiverCount": 1
-                            },
-                            "requireExisting": {
-                                "requireCOMID": "com_sex_P_cowgirl"
-                            }
-                        },
-                        "displayName": "com_sex_P_V_force_3",
-                        "setForce": true
-                    },
-                    {
-                        "requirements": {
-                            "requirement": {
-                                "doerCount": 99,
-                                "receiverCount": 99
-                            },
-                            "requireExisting": {
-                                "requireCOMID": "com_sex_P_cowgirl"
-                            }
-                        },
-                        "displayName": "com_sex_P_V_force_4",
-                        "setForce": true
-                    },
                     {
                         "requirements": {
                             "requirement": {
@@ -369,6 +271,210 @@
                         }
                     ]
                 }
+            },
+            {
+                "parentCOMID":"com_sex_base",
+                "ID": "com_sex_P_cowgirl_overpen",
+                "upgradeFrom": "com_sex_P_cowgirl",
+                "_comment_upgrade": "Upgrade of com_sex_P_cowgirl (was its overpenetration setForce variants; needs a long enough penis, requireExisting OverPenetration). One round in place of the ongoing cowgirl, which then resumes. Own acceptance roll every round. AC/DC copied from cowgirl for tuning; setForce keeps the strong-act rules. Texts and kojo: cowgirl's unless its own are added.",
+                "traceKeywords":["insert"],
+                "ActionPackageClass": "ActionPackage_Sex",
+                "categoryTags":["com_category_v"],
+                "displayName": "com_sex_P_V_overpen_1",
+                "timeScale": 3,
+                "comTags": [
+                    "sex",
+                    "penetration",
+                    "position_face",
+                    "position_equal",
+                    "permission_vaginal"
+                ],
+                "portraitTags": ["cowgirl"],
+                "requirements": {
+                    "requirement": {
+                        "req_Doers": {
+                            "BodyTags": [
+                                "vagina"
+                            ],
+                            "minRevealingScore": 1,
+                            "cost_ST": 2
+                        },
+                        "req_Receivers": {
+                            "BodyTags": [
+                                "penis"
+                            ],
+                            "minRevealingScore": 1,
+                            "requireConscious": false,
+                            "requireAction": false
+                        }
+                    }
+                },
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 29,
+                    "SkillBonus_Doer":["skill_sensitivity_V"]
+                },
+                "DifficultyCheck": {
+                    "baseD20Check": 15,
+                    "SkillBonus_Doer":["skill_sensitivity_V"]
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "receiverCount": 1
+                            },
+                            "requireExisting": {
+                                "OverPenetration": true,
+                                "requireCOMID": "com_sex_P_cowgirl"
+                            }
+                        },
+                        "displayName": "com_sex_P_V_overpen_1",
+                        "setForce": true
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "receiverCount": 99
+                            },
+                            "requireExisting": {
+                                "OverPenetration": true,
+                                "requireCOMID": "com_sex_P_cowgirl"
+                            }
+                        },
+                        "displayName": "com_sex_P_V_overpen_2",
+                        "setForce": true
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 99,
+                                "receiverCount": 1
+                            },
+                            "requireExisting": {
+                                "OverPenetration": true,
+                                "requireCOMID": "com_sex_P_cowgirl"
+                            }
+                        },
+                        "displayName": "com_sex_P_V_overpen_3",
+                        "setForce": true
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 99,
+                                "receiverCount": 99
+                            },
+                            "requireExisting": {
+                                "OverPenetration": true,
+                                "requireCOMID": "com_sex_P_cowgirl"
+                            }
+                        },
+                        "displayName": "com_sex_P_V_overpen_4",
+                        "setForce": true
+                    }
+                ]
+            },
+            {
+                "parentCOMID":"com_sex_base",
+                "ID": "com_sex_P_cowgirl_force",
+                "upgradeFrom": "com_sex_P_cowgirl",
+                "_comment_upgrade": "Upgrade of com_sex_P_cowgirl (was its forceful setForce variants). One round in place of the ongoing cowgirl, which then resumes. Own acceptance roll every round. AC/DC copied from cowgirl for tuning; setForce keeps the strong-act rules. Texts and kojo: cowgirl's unless its own are added.",
+                "traceKeywords":["insert"],
+                "ActionPackageClass": "ActionPackage_Sex",
+                "categoryTags":["com_category_v"],
+                "displayName": "com_sex_P_V_force_1",
+                "timeScale": 3,
+                "comTags": [
+                    "sex",
+                    "penetration",
+                    "position_face",
+                    "position_equal",
+                    "permission_vaginal"
+                ],
+                "portraitTags": ["cowgirl"],
+                "requirements": {
+                    "requirement": {
+                        "req_Doers": {
+                            "BodyTags": [
+                                "vagina"
+                            ],
+                            "minRevealingScore": 1,
+                            "cost_ST": 2
+                        },
+                        "req_Receivers": {
+                            "BodyTags": [
+                                "penis"
+                            ],
+                            "minRevealingScore": 1,
+                            "requireConscious": false,
+                            "requireAction": false
+                        }
+                    }
+                },
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 29,
+                    "SkillBonus_Doer":["skill_sensitivity_V"]
+                },
+                "DifficultyCheck": {
+                    "baseD20Check": 15,
+                    "SkillBonus_Doer":["skill_sensitivity_V"]
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "receiverCount": 1
+                            },
+                            "requireExisting": {
+                                "requireCOMID": "com_sex_P_cowgirl"
+                            }
+                        },
+                        "displayName": "com_sex_P_V_force_1",
+                        "setForce": true
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "receiverCount": 99
+                            },
+                            "requireExisting": {
+                                "requireCOMID": "com_sex_P_cowgirl"
+                            }
+                        },
+                        "displayName": "com_sex_P_V_force_2",
+                        "setForce": true
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 99,
+                                "receiverCount": 1
+                            },
+                            "requireExisting": {
+                                "requireCOMID": "com_sex_P_cowgirl"
+                            }
+                        },
+                        "displayName": "com_sex_P_V_force_3",
+                        "setForce": true
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 99,
+                                "receiverCount": 99
+                            },
+                            "requireExisting": {
+                                "requireCOMID": "com_sex_P_cowgirl"
+                            }
+                        },
+                        "displayName": "com_sex_P_V_force_4",
+                        "setForce": true
+                    }
+                ]
             }
         ]
     },
@@ -380,6 +486,8 @@
             {
                 "com_sex_P_cowgirl":"%%tooltip_sex_com_alternating_tooltip%%",
 
+                "com_sex_P_cowgirl_overpen":"%%tooltip_sex_com_alternating_tooltip%%",
+                "com_sex_P_cowgirl_force":"%%tooltip_sex_com_alternating_tooltip%%",
                 "com_sex_P_cowgirl_displayName_1": "骑乘位V",
                 "com_sex_P_cowgirl_displayName_2": "交替骑乘位V",
                 "com_sex_P_cowgirl_displayName_3": "轮流骑乘位V",
@@ -409,6 +517,8 @@
             {
                 "com_sex_P_cowgirl":"%%tooltip_sex_com_alternating_tooltip%%",
 
+                "com_sex_P_cowgirl_overpen":"%%tooltip_sex_com_alternating_tooltip%%",
+                "com_sex_P_cowgirl_force":"%%tooltip_sex_com_alternating_tooltip%%",
                 "com_sex_P_cowgirl_displayName_1": "Cowgirl",
                 "com_sex_P_cowgirl_displayName_2": "Alt. Cowgirl",
                 "com_sex_P_cowgirl_displayName_3": "Alt. Cowgirl",

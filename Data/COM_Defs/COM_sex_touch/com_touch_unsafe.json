@@ -27,7 +27,7 @@
             "ActionPackageClass":"ActionPackage_Interaction",
             "displayName":"com_touch_butt_displayName_2",
             "timeScale":2,
-            "comTags":["touch","massage"],
+            "comTags":["touch","massage","intimacy"],
             "requirements":{
                 "requirement":{
                     "doerCount":1,
@@ -70,7 +70,18 @@
                     "displayName":"com_touch_butt_displayName_2"
                 }
             ],
-            "AcceptanceCheck":{ "baseAcceptanceValue":20 },
+            "_comment_actModifiers":"Provisional, untested new D20 bonuses. Relationships belong to the act owner toward the actual partner, not the master. Parent EP gates ordinary conscious, unrestrained, non-threat actual pairs; special, forced and group contexts stay unchanged.",
+            "AcceptanceCheck":{
+                "baseAcceptanceValue":19,
+                "actModifiers":{
+                    "enabled":true, "totalMin":0, "totalMax":11,
+                    "terms":[
+                        {"source":"PartnerGoodwill", "appliesTo":"BothDeciders", "scale":0.05, "offset":-2, "min":0, "max":2},
+                        {"source":"PartnerTrust", "appliesTo":"BothDeciders", "scale":0.05, "offset":-1, "min":0, "max":3},
+                        {"source":"PartnerDesire", "appliesTo":"BothDeciders", "scale":0.04, "offset":-2, "min":0, "max":8}
+                    ]
+                }
+            },
             "DifficultyCheck":{ "baseD20Check":15 }
         },
         {
@@ -79,7 +90,7 @@
             "ActionPackageClass":"ActionPackage_Interaction",
             "displayName":"com_touch_abdomen_displayName_2",
             "timeScale":2,
-            "comTags":["touch","massage"],
+            "comTags":["touch","massage","intimacy"],
             "requirements":
             {
                 "requirement":
@@ -125,7 +136,17 @@
                     "displayName":"com_touch_abdomen_displayName_2"
                 }
             ],
-            "AcceptanceCheck":{ "baseAcceptanceValue":16 },
+            "_comment_actModifiers":"Docs/Interactions/Plan_CommandProgression.md: com_touch_back profile (Goodwill 30 -> 90, Trust 20 -> 80).",
+            "AcceptanceCheck":{
+                "baseAcceptanceValue":15,
+                "actModifiers":{
+                    "enabled":true, "totalMin":0, "totalMax":6,
+                    "terms":[
+                        {"source":"PartnerGoodwill", "appliesTo":"BothDeciders", "scale":0.05, "offset":-1.5, "min":0, "max":3},
+                        {"source":"PartnerTrust", "appliesTo":"BothDeciders", "scale":0.05, "offset":-1, "min":0, "max":3}
+                    ]
+                }
+            },
             "DifficultyCheck":{ "baseD20Check":11 }
         },
         {
@@ -134,7 +155,7 @@
             "ActionPackageClass":"ActionPackage_Interaction",
             "displayName":"com_touch_thigh_displayName_2",
             "timeScale":2,
-            "comTags":["touch","massage"],
+            "comTags":["touch","massage","intimacy"],
             "requirements":{
                 "requirement":{
                     "req_Doers":{ "BodyTags":["arm"] },
@@ -176,7 +197,18 @@
                     "displayName":"com_touch_thigh_displayName_2"
                 }
             ],
-            "AcceptanceCheck":{ "baseAcceptanceValue":19 },
+            "_comment_actModifiers":"Provisional, untested new D20 bonuses. Relationships belong to the act owner toward the actual partner, not the master. Parent EP gates ordinary conscious, unrestrained, non-threat actual pairs; special, forced and group contexts stay unchanged.",
+            "AcceptanceCheck":{
+                "baseAcceptanceValue":18,
+                "actModifiers":{
+                    "enabled":true, "totalMin":0, "totalMax":10,
+                    "terms":[
+                        {"source":"PartnerGoodwill", "appliesTo":"BothDeciders", "scale":0.05, "offset":-2, "min":0, "max":2},
+                        {"source":"PartnerTrust", "appliesTo":"BothDeciders", "scale":0.05, "offset":-1, "min":0, "max":3},
+                        {"source":"PartnerDesire", "appliesTo":"BothDeciders", "scale":0.04, "offset":-2, "min":0, "max":6}
+                    ]
+                }
+            },
             "DifficultyCheck":{ "baseD20Check":14 }
         },
         {
@@ -185,7 +217,7 @@
             "ActionPackageClass":"ActionPackage_Interaction",
             "displayName":"com_touch_back_displayName_2",
             "timeScale":2,
-            "comTags":["touch","massage"],
+            "comTags":["touch","massage","intimacy"],
             "requirements":{
                 "requirement":{
                     "req_Doers":{ "BodyTags":["arm"] },
@@ -226,16 +258,26 @@
                     "displayName":"com_touch_back_displayName_2"
                 }
             ],
-            "AcceptanceCheck":{ "baseAcceptanceValue":17 },
+            "_comment_actModifiers":"Provisional, untested new D20 bonuses. Relationships belong to the act owner toward the actual partner, not the master. Parent EP gates ordinary conscious, unrestrained, non-threat actual pairs; special, forced and group contexts stay unchanged.",
+            "AcceptanceCheck":{
+                "baseAcceptanceValue":16,
+                "actModifiers":{
+                    "enabled":true, "totalMin":0, "totalMax":6,
+                    "terms":[
+                        {"source":"PartnerGoodwill", "appliesTo":"BothDeciders", "scale":0.05, "offset":-1.5, "min":0, "max":3},
+                        {"source":"PartnerTrust", "appliesTo":"BothDeciders", "scale":0.05, "offset":-1, "min":0, "max":3}
+                    ]
+                }
+            },
             "DifficultyCheck":{ "baseD20Check":12 }
         },
         {
-            "parentCOMID":"com_touch_unsafe_base",
+            "parentCOMID":"com_touch_safe_base",
             "ID":"com_touch_shoulders",
             "ActionPackageClass":"ActionPackage_Interaction",
             "displayName":"com_touch_shoulders_displayName_2",
             "timeScale":2,
-            "comTags":["touch","massage"],
+            "comTags":["touch","safe","massage","intimacy"],
             "requirements":{
                 "requirement":{
                     "req_Doers":{ "BodyTags":["arm"] },
@@ -275,7 +317,17 @@
                     "displayName":"com_touch_shoulders_displayName_2"
                 }
             ],
-            "AcceptanceCheck":{ "baseAcceptanceValue":16 },
+            "_comment_actModifiers":"Docs/Interactions/Plan_CommandProgression.md: com_touch_back profile (Goodwill 30 -> 90, Trust 20 -> 80).",
+            "AcceptanceCheck":{
+                "baseAcceptanceValue":12,
+                "actModifiers":{
+                    "enabled":true, "totalMin":0, "totalMax":6,
+                    "terms":[
+                        {"source":"PartnerGoodwill", "appliesTo":"BothDeciders", "scale":0.05, "offset":-1.5, "min":0, "max":3},
+                        {"source":"PartnerTrust", "appliesTo":"BothDeciders", "scale":0.05, "offset":-1, "min":0, "max":3}
+                    ]
+                }
+            },
             "DifficultyCheck":{ "baseD20Check":11 }
         },
         {
@@ -284,7 +336,7 @@
             "ActionPackageClass":"ActionPackage_Interaction",
             "displayName":"com_touch_fingers_displayName_1",
             "timeScale":2,
-            "comTags":["touch","massage"],
+            "comTags":["touch","massage","intimacy"],
             "requirements":{
                 "requirement":{
                     "req_Doers":{ "BodyTags":["arm"] },
@@ -310,7 +362,17 @@
                     "displayName":"com_touch_fingers_displayName_1"
                 }
             ],
-            "AcceptanceCheck":{ "baseAcceptanceValue":17 },
+            "_comment_actModifiers":"Docs/Interactions/Plan_CommandProgression.md: com_touch_back profile (Goodwill 30 -> 90, Trust 20 -> 80).",
+            "AcceptanceCheck":{
+                "baseAcceptanceValue":16,
+                "actModifiers":{
+                    "enabled":true, "totalMin":0, "totalMax":6,
+                    "terms":[
+                        {"source":"PartnerGoodwill", "appliesTo":"BothDeciders", "scale":0.05, "offset":-1.5, "min":0, "max":3},
+                        {"source":"PartnerTrust", "appliesTo":"BothDeciders", "scale":0.05, "offset":-1, "min":0, "max":3}
+                    ]
+                }
+            },
             "DifficultyCheck":{ "baseD20Check":12 }
         },
         {
@@ -319,7 +381,7 @@
             "ActionPackageClass":"ActionPackage_Interaction",
             "displayName":"com_touch_foot_toes_displayName_1",
             "timeScale":2,
-            "comTags":["touch","massage"],
+            "comTags":["touch","massage","intimacy"],
             "requirements":{
                 "requirement":{
                     "receiverBodyTags":[""],
@@ -346,7 +408,17 @@
                     "displayName":"com_touch_foot_toes_displayName_1"
                 }
             ],
-            "AcceptanceCheck":{ "baseAcceptanceValue":17 },
+            "_comment_actModifiers":"Docs/Interactions/Plan_CommandProgression.md: com_touch_back profile (Goodwill 30 -> 90, Trust 20 -> 80).",
+            "AcceptanceCheck":{
+                "baseAcceptanceValue":16,
+                "actModifiers":{
+                    "enabled":true, "totalMin":0, "totalMax":6,
+                    "terms":[
+                        {"source":"PartnerGoodwill", "appliesTo":"BothDeciders", "scale":0.05, "offset":-1.5, "min":0, "max":3},
+                        {"source":"PartnerTrust", "appliesTo":"BothDeciders", "scale":0.05, "offset":-1, "min":0, "max":3}
+                    ]
+                }
+            },
             "DifficultyCheck":{ "baseD20Check":12 }
         },
         {
@@ -355,7 +427,7 @@
             "ActionPackageClass":"ActionPackage_Interaction",
             "displayName":"com_touch_ears_displayName_1",
             "timeScale":2,
-            "comTags":["touch","massage"],
+            "comTags":["touch","massage","intimacy"],
             "requirements":{
                 "requirement":{
                     "req_Doers":{ "BodyTags":["arm"] },
@@ -381,7 +453,17 @@
                     "displayName":"com_touch_ears_displayName_1"
                 }
             ],
-            "AcceptanceCheck":{ "baseAcceptanceValue":18 },
+            "_comment_actModifiers":"Docs/Interactions/Plan_CommandProgression.md: com_touch_back profile (Goodwill 30 -> 90, Trust 20 -> 80).",
+            "AcceptanceCheck":{
+                "baseAcceptanceValue":17,
+                "actModifiers":{
+                    "enabled":true, "totalMin":0, "totalMax":6,
+                    "terms":[
+                        {"source":"PartnerGoodwill", "appliesTo":"BothDeciders", "scale":0.05, "offset":-1.5, "min":0, "max":3},
+                        {"source":"PartnerTrust", "appliesTo":"BothDeciders", "scale":0.05, "offset":-1, "min":0, "max":3}
+                    ]
+                }
+            },
             "DifficultyCheck":{ "baseD20Check":13 }
         }
 

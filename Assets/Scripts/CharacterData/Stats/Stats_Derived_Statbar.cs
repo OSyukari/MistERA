@@ -120,6 +120,8 @@ public class Stats_Derived_Extended_Instance
     [JsonIgnore] public float Value { get { return value; } }
 
     [JsonProperty] protected string parentID = "";
+    /// <summary>The stored parent ID - unlike ID, never resolves Parent.</summary>
+    [JsonIgnore] public string StoredParentID { get { return parentID; } }
     protected Stats_Derived_Extended parent = null;
     [JsonIgnore] public Stats_Derived_Extended Parent { get
         {

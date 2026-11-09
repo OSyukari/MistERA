@@ -663,7 +663,9 @@ public static class Utility
 
 
     /// <summary>
-    /// Contains List.Distinct() which may interfere with equality comparison ?
+    /// Set equality: order and duplicates ignored. Elements compare through comparer (default: value equality for
+    /// strings/value types, reference equality for classes without an Equals override).<br/>
+    /// Small lists (the common case: refID / tag lists) are compared in place without allocating.
     /// </summary>
     /// <param name="L1"></param>
     /// <param name="L2"></param>
@@ -674,13 +676,29 @@ public static class Utility
             return L2 == null || L2.Count == 0;
         if (L2 == null || L2.Count == 0)
             return false;
+        if (ReferenceEquals(L1, L2)) return true;
 
         comparer = comparer ?? EqualityComparer<T>.Default;
+
+        // every element of each list must exist in the other - quadratic, but allocation-free for small lists
+        if (L1.Count <= ListEqualsInPlaceLimit && L2.Count <= ListEqualsInPlaceLimit)
+        {
+            for (int i = 0; i < L1.Count; i++) if (!ListContainsWith(L2, L1[i], comparer)) return false;
+            for (int i = 0; i < L2.Count; i++) if (!ListContainsWith(L1, L2[i], comparer)) return false;
+            return true;
+        }
 
         HashSet<T> setL1 = new(L1, comparer);
         HashSet<T> setL2 = new(L2, comparer);
 
         return setL1.SetEquals(setL2);
+    }
+
+    const int ListEqualsInPlaceLimit = 16;
+    static bool ListContainsWith<T>(List<T> list, T item, IEqualityComparer<T> comparer)
+    {
+        for (int i = 0; i < list.Count; i++) if (comparer.Equals(list[i], item)) return true;
+        return false;
     }
 
     public static void DestroyAllChildrenFrom(RectTransform rect, int startFromIndex = 0, bool useDestroyImmediate = false)

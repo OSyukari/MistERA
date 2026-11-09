@@ -29,55 +29,21 @@
                         }
                     }
                 },
-                "AcceptanceCheck":{ "baseAcceptanceValue":27,
-                    "SkillBonus_Doer":["skill_sensitivity_M"] },
+                "_comment_actModifiers":"Docs/Interactions/Plan_CommandProgression.md: terms start at the act's permission gate (Goodwill 50, Trust 30, Desire 120 oral); cap = AC - 7 - residual 6.",
+                "AcceptanceCheck":{ "baseAcceptanceValue":25,
+                    "SkillBonus_Doer":["skill_sensitivity_M"],
+                    "actModifiers":{
+                        "enabled":true, "totalMin":0, "totalMax":12,
+                        "terms":[
+                            {"source":"PartnerGoodwill", "appliesTo":"BothDeciders", "scale":0.05, "offset":-2.5, "min":0, "max":2},
+                            {"source":"PartnerTrust", "appliesTo":"BothDeciders", "scale":0.05, "offset":-1.5, "min":0, "max":3},
+                            {"source":"PartnerDesire", "appliesTo":"BothDeciders", "scale":0.04, "offset":-4.8, "min":0, "max":9}
+                        ]
+                    } },
                 "DifficultyCheck":{ "baseD20Check":10,
                     "SkillBonus_Doer":["skill_sensitivity_M"] },
+                "_comment_upgrades":"Deep throat is an upgrade command (com_sex_oral_P_force below), offered in this command's + panel while it is ongoing.",
                 "variants":[
-                    {
-                        "requirements":{
-                            "requirement":{
-                                "doerCount":1,
-                                "receiverCount":1
-                            },
-                            "requireExisting":{ "OverPenetration":true,"requireCOMID":"com_sex_oral_P"  }
-                        },
-                        "displayName":"com_sex_oral_P_displayName_1_force",
-                        "setForce":true
-                    },
-                    {
-                        "requirements":{
-                            "requirement":{
-                                "doerCount":1,
-                                "receiverCount":99
-                            },
-                            "requireExisting":{ "OverPenetration":true,"requireCOMID":"com_sex_oral_P"  }
-                        },
-                        "displayName":"com_sex_oral_P_displayName_2_force",
-                        "setForce":true
-                    },
-                    {
-                        "requirements":{
-                            "requirement":{
-                                "doerCount":99,
-                                "receiverCount":1
-                            },
-                            "requireExisting":{ "OverPenetration":true,"requireCOMID":"com_sex_oral_P"  }
-                        },
-                        "displayName":"com_sex_oral_P_displayName_3_force",
-                        "setForce":true
-                    },
-                    {
-                        "requirements":{
-                            "requirement":{
-                                "doerCount":99,
-                                "receiverCount":99
-                            },
-                            "requireExisting":{ "OverPenetration":true,"requireCOMID":"com_sex_oral_P"  }
-                        },
-                        "displayName":"com_sex_oral_P_displayName_4_force",
-                        "setForce":true
-                    },
                     {
                         "requirements":{
                             "requirement":{
@@ -154,6 +120,86 @@
 
                 },
                 "results_EP": { "result_event": { "id_overwrite": "com_sex_oral_swallow", "eventLabel": "doer" } }
+            },
+            {
+                "parentCOMID":"com_sex_service_base",
+                "ID":"com_sex_oral_P_force",
+                "upgradeFrom":"com_sex_oral_P",
+                "_comment_upgrade":"Upgrade of com_sex_oral_P (was its overpenetration setForce variants): deep throat, needs a long enough penis (requireExisting OverPenetration). One round in place of the ongoing blowjob, which then resumes. Own acceptance roll every round. AC/DC copied from the blowjob for tuning; setForce keeps the strong-act rules. Texts and kojo: the blowjob's unless its own are added.",
+                "_comment_traces":"Body traces: saliva on the penis, aroused receiver's precum into the mouth, pubes on the doer's face (low chance).",
+                "traceKeywords":["lick","wet","oral"],
+                "ActionPackageClass":"ActionPackage_Sex",
+                "categoryTags":["com_category_service"],
+                "displayName":"com_sex_oral_P_displayName_1_force",
+                "timeScale":3,
+                "comTags":["sex","service","penetration", "position_face", "position_inequal"],
+                "portraitTags":["blowjob"],
+                "requirements":{
+                    "requirement":{
+                        "req_Doers":{
+                            "BodyTags":["mouth"],
+                            "minRevealingScore":1,
+                            "cost_ST": 2
+                        },
+                        "req_Receivers":{
+                            "BodyTags":["penis"],
+                            "minRevealingScore":1,
+                            "requireConscious":false,
+                            "requireAction": false
+                        }
+                    }
+                },
+                "AcceptanceCheck":{ "baseAcceptanceValue":25,
+                    "SkillBonus_Doer":["skill_sensitivity_M"] },
+                "DifficultyCheck":{ "baseD20Check":10,
+                    "SkillBonus_Doer":["skill_sensitivity_M"] },
+                "variants":[
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":1,
+                                "receiverCount":1
+                            },
+                            "requireExisting":{ "OverPenetration":true,"requireCOMID":"com_sex_oral_P"  }
+                        },
+                        "displayName":"com_sex_oral_P_displayName_1_force",
+                        "setForce":true
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":1,
+                                "receiverCount":99
+                            },
+                            "requireExisting":{ "OverPenetration":true,"requireCOMID":"com_sex_oral_P"  }
+                        },
+                        "displayName":"com_sex_oral_P_displayName_2_force",
+                        "setForce":true
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":99,
+                                "receiverCount":1
+                            },
+                            "requireExisting":{ "OverPenetration":true,"requireCOMID":"com_sex_oral_P"  }
+                        },
+                        "displayName":"com_sex_oral_P_displayName_3_force",
+                        "setForce":true
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":99,
+                                "receiverCount":99
+                            },
+                            "requireExisting":{ "OverPenetration":true,"requireCOMID":"com_sex_oral_P"  }
+                        },
+                        "displayName":"com_sex_oral_P_displayName_4_force",
+                        "setForce":true
+                    }
+                ],
+                "results_EP": { "result_event": { "id_overwrite": "com_sex_oral_swallow", "eventLabel": "doer" } }
             }
         ]
     },
@@ -164,6 +210,7 @@
             "zh-cn":
             {
                 "com_sex_oral_P":"%%tooltip_sex_com_alternating_tooltip%%",
+                "com_sex_oral_P_force":"%%tooltip_sex_com_alternating_tooltip%%",
 
                 "com_sex_oral_P_displayName_1": "口交",
                 "com_sex_oral_P_displayName_2": "交替口交",
@@ -183,6 +230,7 @@
             "en-us":
             {
                 "com_sex_oral_P":"%%tooltip_sex_com_alternating_tooltip%%",
+                "com_sex_oral_P_force":"%%tooltip_sex_com_alternating_tooltip%%",
 
                 "com_sex_oral_P_displayName_1": "Blowjob",
                 "com_sex_oral_P_displayName_2": "Alt. Blowjob",

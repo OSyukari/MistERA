@@ -281,6 +281,8 @@ public partial class EvaluationPackage
         {
             if (c == null || participants.Contains(c.RefID) || c == granter) continue;
             if (c.isSleeping || c.Stats.isConsciousnessUnconscious) continue;
+            // a stall's door hides the scene (room dividers blocking visibility)
+            if (!(ep.Package != null ? MapUtility.CanSee(c, ep.Package) : MapUtility.CanSee(c, granter))) continue;
             ownerTags.Add("scene_observed");
             break;
         }

@@ -17,7 +17,7 @@
                 { "option": "late", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isLate"] }, { "Type": "JumpToLabel", "arguments": ["", "late"] }] },
                 { "option": "initial", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "begin"] }] }
             ] },
-            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "begin", "line": "otaku_arcade_begin", "isLast": true },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "begin", "line": "otaku_arcade_begin", "isLast": true, "Results": [{ "Type": "FlushMessageExpAll", "arguments": ["false"] }] },
             { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "join", "line": "otaku_arcade_join", "isLast": true },
             { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "line": "otaku_arcade_late", "isLast": true }
         ] },
@@ -27,7 +27,7 @@
                 { "option": "late", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isLate"] }, { "Type": "JumpToLabel", "arguments": ["", "late"] }] },
                 { "option": "initial", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "begin"] }] }
             ] },
-            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "begin", "line": "otaku_manga_begin", "isLast": true },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "begin", "line": "otaku_manga_begin", "isLast": true, "Results": [{ "Type": "FlushMessageExpAll", "arguments": ["false"] }] },
             { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "join", "line": "otaku_manga_join", "isLast": true },
             { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "line": "otaku_manga_late", "isLast": true }
         ] },

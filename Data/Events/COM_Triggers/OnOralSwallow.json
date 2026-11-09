@@ -33,12 +33,12 @@
                         "label": "receiver",
                         "options": [
                             {
+                                "_comment": "no line here: the mouth may only hold saliva/precum/etc. (body traces), the line is picked by what was swallowed in receiver_result",
                                 "option": "receiver swallows",
-                                "line": "com_sex_oral_swallow_receiver_line_1",
                                 "target_chara_conditions": { "swallower_receiver": [] },
                                 "Results": [
-                                    { "Type": "SwallowInternal", "arguments": ["swallower_receiver", "mouth", "true"] },
-                                    { "Type": "JumpToLabel", "arguments": ["", "end"] }
+                                    { "Type": "SwallowInternal", "arguments": ["swallower_receiver", "mouth", "true", "swallowed_receiver"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "receiver_result"] }
                                 ]
                             },
                             {
@@ -51,16 +51,41 @@
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "receiver_result",
+                        "options": [
+                            {
+                                "option": "_swallowed_cum",
+                                "Results": [
+                                    { "Type": "AppendStringContains", "arguments": ["swallowed_receiver", "cum"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "receiver_cum"] }
+                                ]
+                            },
+                            {
+                                "option": "_nothing_notable, swallowed silently",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "end"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "receiver_cum",
+                        "line": "com_sex_oral_swallow_receiver_line_1",
+                        "nextEntryLabel": "end"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "_comment": "com_sex_oral_P's result_event enters here directly via eventLabel:\"doer\".",
                         "label": "doer",
                         "options": [
                             {
+                                "_comment": "no line here, see receiver swallows",
                                 "option": "doer swallows",
-                                "line": "com_sex_oral_swallow_doer_line_1",
                                 "target_chara_conditions": { "swallower_doer": [] },
                                 "Results": [
-                                    { "Type": "SwallowInternal", "arguments": ["swallower_doer", "mouth", "true"] },
-                                    { "Type": "JumpToLabel", "arguments": ["", "end"] }
+                                    { "Type": "SwallowInternal", "arguments": ["swallower_doer", "mouth", "true", "swallowed_doer"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "doer_result"] }
                                 ]
                             },
                             {
@@ -70,6 +95,31 @@
                                 ]
                             }
                         ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "doer_result",
+                        "options": [
+                            {
+                                "option": "_swallowed_cum",
+                                "Results": [
+                                    { "Type": "AppendStringContains", "arguments": ["swallowed_doer", "cum"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "doer_cum"] }
+                                ]
+                            },
+                            {
+                                "option": "_nothing_notable, swallowed silently",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "end"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "doer_cum",
+                        "line": "com_sex_oral_swallow_doer_line_1",
+                        "nextEntryLabel": "end"
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",

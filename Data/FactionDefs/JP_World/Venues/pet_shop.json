@@ -3,18 +3,18 @@
   "_comment_animals": "Cats and dogs in cafe scenes are ambient narrative, not spawned/trainable animal characters. Sales are real locally defined pet supplies; no live-pet purchase, adoption, taming, hunger simulation or item-use effects are invented.",
   "MapPlans": {
     "factionInit": [{
-      "ID": "jp_pet_shop", "initializeFaction": "jp_pet_shop", "floors": [{ "ID": "floor_jp_pet_shop", "nameOverwrite": "jp_pet_shop" }], "floorListHostFactionID": "jp_greenside", "isRentingFloor": true, "landlordFactionID": "jp_greenside", "setPrivateRoomOwner": false,
-      "floorDoors": [{ "sourceFloor": "floor_jp_pet_shop", "sourceExit": "street", "targetFaction": "jp_greenside", "targetFloor": "floor_jp_greenside", "targetExit": "to_jp_pet_shop", "cost": 1 }],
+      "ID": "jp_pet_cafe", "initializeFaction": "jp_pet_cafe", "floors": [{ "ID": "floor_jp_pet_cafe", "nameOverwrite": "jp_pet_cafe" }], "floorListHostFactionID": "jp_high_school", "isRentingFloor": true, "landlordFactionID": "", "setPrivateRoomOwner": false,
+      "floorDoors": [{ "sourceFloor": "floor_jp_pet_cafe", "sourceExit": "street", "targetFaction": "jp_high_school", "targetFloor": "floor_jp_high_school", "targetExit": "to_jp_pet_cafe", "cost": 1 }],
       "mainExit": { "roomID": "petshop_counter", "exitCost": 5 }, "managerBaseIDs": [""], "salesCurrency": "currency_JPY",
-      "salesInventory": [{ "matchByID": "jp_greenside_pet_brush" }, { "matchByID": "jp_greenside_pet_ball" }],
+      "salesInventory": [{ "matchByID": "jp_pet_brush" }, { "matchByID": "jp_pet_ball" }],
       "assignableMemberTypes": ["membertype_jp_petcafe_parttime"], "joinableMemberTypes": ["membertype_jp_petcafe_parttime"],
       "fallbackWorkers": [{ "memberTypeID": "membertype_jp_petcafe_clerk_npc", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }]
     }],
     "floorPlans": [{
-      "ID": "floor_jp_pet_shop", "imagePath": "BGAssets/Generated/shopping_mall_01.webp",
+      "ID": "floor_jp_pet_cafe", "imagePath": "BGAssets/Generated/shopping_mall_01.webp",
       "isFloorPlan": false, "floorWidth": 400, "floorHeight": 400, "resize": 1, "mapExit": "petshop_counter",
       "exits": [{ "ID": "street", "connectedRoom": "petshop_counter", "hideOnMap": true }],
-      "_comment_wholeBuildingRent": "Original monthly commercial tenant costs, charged once for this independent floor rather than per room; landlord remains jp_greenside.",
+      "_comment_wholeBuildingRent": "Original monthly commercial tenant costs, charged once for this independent floor rather than per room; landlord unspecified.",
       "wholeBuildingRent": { "maintenanceFee": { "itemID": "currency_JPY", "itemCount": 10000 }, "rentFee": { "itemID": "currency_JPY", "itemCount": 80000 }, "cadence": "Monthly" },
       "rooms": [
         { "ID": "petshop_counter", "displayName": "petshop_counter", "hideOnMap": true, "furnitureIDs": ["furniture_jp_petshop_counter"], "connects": [], "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp" },
@@ -34,17 +34,18 @@
         { "ID": "membertype_jp_petcafe_clerk_npc", "socialStandingKey": "membertype_jp_petcafe_clerk_npc", "Tags": ["jp_petcafe_hiring"], "workModule": { "jobPostID": "membertype_jp_petcafe_clerk_npc", "workCommands": ["jp_petcafe_serve", "jp_petcafe_care"], "activeHours": [10,11,12,13,14,15,16,17,18,19], "activeDays": [], "hourlyPayout": [{ "itemID": "currency_JPY", "itemCount": 1250 }], "paymentCadence": "Daily" } }
       ]
     }],
-    "recreationOffers": [{
-      "ID": "recreation_offer_jp_petcafe_visit", "mode": "Flexible", "factionID": "jp_pet_shop",
+    "_recreationOffers": [{
+      "ID": "recreation_offer_jp_petcafe_visit", "mode": "Flexible", "factionID": "jp_pet_cafe", "provideAcceptanceBonus": 5, "activityMoodlet": { "stress": 1 },
       "workModule": { "jobPostID": "recreation_offer_jp_petcafe_visit", "workCommands": ["jp_petcafe_visit"], "activeHours": [10,11,12,13,14,15,16,17,18,19], "activeDays": [] },
+      "activityCommands": ["jp_petcafe_visit"],
       "entranceFee": { "itemID": "currency_JPY", "itemCount": 1000 }, "minHours": 2, "maxHours": 2, "weeklyTarget": 1, "minDaysBetween": 1, "daysInAdvance": 1, "allowWalkIn": true, "trustRewardEligible": false,
-      "gatherRoomID": "petcafe_cat_room", "launchEventID": "Greenside_PetCafe_Begin",
+      "gatherRoomID": "petcafe_cat_room", "launchEventID": "Venue_PetCafe_Begin",
       "invite": { "visibility": "Private", "inviteChance": 0.6, "minParticipants": 1, "TargetValidators": [{ "refKeys": ["companion"], "baseScope": "SelfRelationships", "chara_conditions": [{ "parameters": ["excludeSelf"] }, { "selfRelationshipRequirement": { "requireRawScore": [{ "requireScoreID": "Goodwill", "operand": "gte", "value": 25 }], "requireRawScoreCompare": [{ "requireScoreID": "Goodwill", "operand": "gt", "compareScoreID": "Badwill", "compareScoreMult": 1.1 }] } }], "maxTargetCount": 3, "maxParticipants": 3, "required": false, "stopAtMaxTargetCount": true, "orderBy": "friendliness" }] }
     }]
   },
   "Items": { "list": [
-    { "id": "jp_greenside_pet_brush", "displayName": "jp_greenside_pet_brush", "tooltip": "jp_greenside_pet_brush_tip", "Tags": ["pet_supplies", "industrial"], "value": 800 },
-    { "id": "jp_greenside_pet_ball", "displayName": "jp_greenside_pet_ball", "tooltip": "jp_greenside_pet_ball_tip", "Tags": ["pet_supplies", "industrial"], "value": 500 }
+    { "id": "jp_pet_brush", "displayName": "jp_pet_brush", "tooltip": "jp_pet_brush_tip", "Tags": ["pet_supplies", "industrial"], "value": 800 },
+    { "id": "jp_pet_ball", "displayName": "jp_pet_ball", "tooltip": "jp_pet_ball_tip", "Tags": ["pet_supplies", "industrial"], "value": 500 }
   ] },
   "Furnitures": { "list": [
     { "ID": "furniture_jp_petshop_counter", "displayName": "petshop_counter", "recipe": [], "furnitureSize": 4, "value": 30000, "givesJob": [{ "comID": ["jp_petcafe_serve"] }, { "comTags": ["furniture", "retailTrade"] }] },
@@ -54,10 +55,10 @@
   ] },
   "COMs": { "list": [
     {
-      "ID": "jp_petcafe_visit", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "jp_petcafe_visit", "timeScale": 30, "comTags": ["furniture", "recreation", "jp_pet_shop"],
+      "ID": "jp_petcafe_visit", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "jp_petcafe_visit", "timeScale": 30, "comTags": ["furniture", "recreation", "jp_pet_cafe"],
       "_comment_gate": "No requireActiveRecreationOffer: that API sees posted Fixed offers only, never Flexible bookings. Organized visits pay the booking fee; manual furniture use is not separately charged, consistent with soft opening hours.",
       "requirements": { "requirement": { "treatReceiverAsDoer": true } },
-      "variants": [{ "displayName": "jp_petcafe_visit", "requirements": { "requirement": { "doerCount": 99 } } }], "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 0 },
+      "variants": [{ "displayName": "jp_petcafe_visit", "requirements": { "requirement": { "doerCount": 99 } } }], "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 5 },
       "results_EP": { "results_character": [{ "entry_conditions": { "applyToDoer": true }, "entry_results": { "type": "statMod_ST", "value": "3" } }] },
       "description_begin": { "Entries": [{ "texts": ["jp_petcafe_visit_begin"] }] }, "description_ongoing": { "Entries": [{ "texts": ["jp_petcafe_visit_ongoing"] }] }, "description_after": { "Entries": [{ "texts": ["jp_petcafe_visit_after"] }] }
     },
@@ -74,12 +75,39 @@
       "description_begin": { "Entries": [{ "texts": ["jp_petcare_begin"] }] }, "description_ongoing": { "Entries": [{ "texts": ["jp_petcare_ongoing"] }] }, "description_after": { "Entries": [{ "texts": ["jp_petcare_after"] }] }
     }
   ] },
-  "Dictionary": { "Entries": { "zh-cn": {
-    "recreation_offer_jp_petcafe_visit": "宠物咖啡馆聚会", "jp_petcafe_visit": "与宠物相处", "jp_petcafe_serve": "宠物店与咖啡馆接待", "jp_petcafe_care": "照顾店内动物", "jp_petcafe_care_station": "动物照料区", "jp_petcafe_cat_seating": "猫咪休息室座位", "jp_petcafe_dog_seating": "狗狗活动室座位",
-    "membertype_jp_petcafe_staff": "宠物咖啡馆员工", "membertype_jp_petcafe_parttime": "宠物咖啡馆兼职", "membertype_jp_petcafe_morning": "宠物咖啡馆早班（10-15）", "membertype_jp_petcafe_evening": "宠物咖啡馆晚班（15-20）", "membertype_jp_petcafe_clerk_npc": "宠物店值班店员（10-20）", "jp_petcafe_joinOption": "让$name$担任$memberType$",
-    "jp_greenside_pet_brush": "宠物梳", "jp_greenside_pet_brush_tip": "一把日常宠物梳。普通商品，暂无使用效果。", "jp_greenside_pet_ball": "宠物玩具球", "jp_greenside_pet_ball_tip": "供宠物玩耍的小球。普通商品，暂无使用效果。",
-    "jp_petcafe_visit_begin": "$doer.firstname$在宠物活动室的座位旁蹲下。", "jp_petcafe_visit_ongoing": "$doer.firstname$安静地等动物靠近，陪它们玩一会儿。", "jp_petcafe_visit_after": "$doer.firstname$把玩具放回原处，起身洗手。",
-    "jp_petserve_begin": "$doer.firstname$来到店内柜台。", "jp_petserve_ongoing": "$doer.firstname$整理货架，接待进店的客人。", "jp_petserve_after": "$doer.firstname$擦净柜台，收好接待用品。",
-    "jp_petcare_begin": "$doer.firstname$取出照料用具。", "jp_petcare_ongoing": "$doer.firstname$换好饮水，整理垫子，清洁动物活动区。", "jp_petcare_after": "$doer.firstname$洗净照料用具，仔细洗手。"
-  } } }
+  "Dictionary": {
+    "Entries": {
+      "zh-cn": {
+        "jp_pet_cafe": "宠物咖啡厅（施工中）",
+        "petshop_counter": "宠物店柜台", "petcafe_cat_room": "猫咪休息室", "petcafe_dog_room": "狗狗活动室",
+
+        "recreation_offer_jp_petcafe_visit": "宠物咖啡馆聚会",
+        "jp_petcafe_visit": "与宠物相处",
+        "jp_petcafe_serve": "宠物店与咖啡馆接待",
+        "jp_petcafe_care": "照顾店内动物",
+        "jp_petcafe_care_station": "动物照料区",
+        "jp_petcafe_cat_seating": "猫咪休息室座位",
+        "jp_petcafe_dog_seating": "狗狗活动室座位",
+        "membertype_jp_petcafe_staff": "宠物咖啡馆员工",
+        "membertype_jp_petcafe_parttime": "宠物咖啡馆兼职",
+        "membertype_jp_petcafe_morning": "宠物咖啡馆早班（10-15）",
+        "membertype_jp_petcafe_evening": "宠物咖啡馆晚班（15-20）",
+        "membertype_jp_petcafe_clerk_npc": "宠物店值班店员（10-20）",
+        "jp_petcafe_joinOption": "让$name$担任$memberType$",
+        "jp_pet_brush": "宠物梳",
+        "jp_pet_brush_tip": "一把日常宠物梳。普通商品，暂无使用效果。",
+        "jp_pet_ball": "宠物玩具球",
+        "jp_pet_ball_tip": "供宠物玩耍的小球。普通商品，暂无使用效果。",
+        "jp_petcafe_visit_begin": "$doer.firstname$在宠物活动室的座位旁蹲下。",
+        "jp_petcafe_visit_ongoing": "$doer.firstname$安静地等动物靠近，陪它们玩一会儿。",
+        "jp_petcafe_visit_after": "$doer.firstname$把玩具放回原处，起身洗手。",
+        "jp_petserve_begin": "$doer.firstname$来到店内柜台。",
+        "jp_petserve_ongoing": "$doer.firstname$整理货架，接待进店的客人。",
+        "jp_petserve_after": "$doer.firstname$擦净柜台，收好接待用品。",
+        "jp_petcare_begin": "$doer.firstname$取出照料用具。",
+        "jp_petcare_ongoing": "$doer.firstname$换好饮水，整理垫子，清洁动物活动区。",
+        "jp_petcare_after": "$doer.firstname$洗净照料用具，仔细洗手。"
+      }
+    }
+  }
 }

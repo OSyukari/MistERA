@@ -196,12 +196,22 @@ public class CombatStatManager : I_StatsManager
 
     int _statModsVersion = 0;
     // include the parent's version so changes to the character's permanent modifiers propagate
-    // to this manager's copied stat instances as well
-    [JsonIgnore] public int StatModsVersion { get { return _statModsVersion + (Parent == null ? 0 : Parent.StatModsVersion); } }
+    // to this manager's copied stat instances as well. AnyChangeVersion: the parent's per-stat invalidations too - this
+    // copy does not track dependency edges, so any change wipes all of it (whole-character behaviour)
+    [JsonIgnore] public int StatModsVersion { get { return _statModsVersion + (Parent == null ? 0 : Parent.AnyChangeVersion); } }
     public void NotifyStatModsChanged()
     {
         _statModsVersion++;
     }
+
+    // per-stat invalidation is not tracked here: every change falls back to the whole-copy wipe
+    public void BeginStatCompute(I_StatNode node) { }
+    public void EndStatCompute(I_StatNode node) { }
+    public void RegisterStatRead(I_StatNode node) { }
+    public void RegisterStatusValueRead(string statusMatch) { }
+    public void NotifyStatusValueChanged(Status_Instance status) { NotifyStatModsChanged(); }
+    public void NotifyStatusIndexChanged(Status_Instance status, int previousIndex) { NotifyStatModsChanged(); }
+    public void MarkStatDirty(string statID) { NotifyStatModsChanged(); }
 
     /// <summary>
     /// Add to combat modifiers specific to this manager and do not touch original

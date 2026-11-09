@@ -46,6 +46,8 @@ public class ActionPackage_Sex : ActionPackage
     {
         get
         {
+            // an upgrade (French kiss...) runs one round, then gives the act back to its parent (Job_Sex_Group.ResumeUpgradeParent)
+            if (targetCOM != null && targetCOM.IsUpgrade) return false;
             return toggleRepeat;
             // return !this.extraCOMTags.Contains("norepeat") && toggleRepeat;
         }

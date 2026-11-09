@@ -1,10 +1,10 @@
 {
   "Dictionary": { "Entries": { "en-us": {
-    "Greenside_PetCafe_initial": "The cat lounge door closes softly. Wash hands before entering and let the animals approach in their own time; the dog playroom is next door.",
-    "Greenside_PetCafe_join": "$joining.name$ washes hands and finds a seat in the cat lounge.",
-    "Greenside_PetCafe_late": "$joining.name$ reaches the pet cafe a little later, washes hands and quietly opens the lounge door.",
-    "Greenside_Sento_initial": "A faint scent of soap drifts through the bath reception. Signs point to the separate changing rooms. Rinse before entering the baths; reception offers a place to rest afterwards.",
-    "Greenside_Sento_join": "$joining.name$ reaches reception and checks the signs for the changing rooms.",
-    "Greenside_Sento_late": "$joining.name$ reaches the public bath a little later and slows down at reception."
+    "Venue_PetCafe_initial": "The cat lounge door closes softly. Wash hands before entering and let the animals approach in their own time; the dog playroom is next door.",
+    "Venue_PetCafe_join": "$joining.name$ washes hands and finds a seat in the cat lounge.",
+    "Venue_PetCafe_late": "$joining.name$ reaches the pet cafe a little later, washes hands and quietly opens the lounge door.",
+    "Venue_Sento_initial": "A faint scent of soap drifts through the bath reception. Signs point to the separate changing rooms. Rinse before entering the baths; reception offers a place to rest afterwards.",
+    "Venue_Sento_join": "$joining.name$ reaches reception and checks the signs for the changing rooms.",
+    "Venue_Sento_late": "$joining.name$ reaches the public bath a little later and slows down at reception."
   } } }
 }

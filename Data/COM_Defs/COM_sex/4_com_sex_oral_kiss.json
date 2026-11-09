@@ -30,57 +30,23 @@
                         }
                     }
                 },
-                "AcceptanceCheck":{ "baseAcceptanceValue":25,
+                "_comment_actModifiers":"Provisional, untested new D20 bonuses. Relationships belong to the act owner toward the actual partner, not the master. Parent EP gates ordinary conscious, unrestrained, non-threat actual pairs; setForce (French kiss), special, forced and group contexts stay unchanged. The generated _noSex clone inherits this block.",
+                "AcceptanceCheck":{ "baseAcceptanceValue":20,
                     "SkillBonus_Doer":["skill_sensitivity_M"],
-                    "SkillBonus_Receiver":["skill_sensitivity_M"] },
+                    "SkillBonus_Receiver":["skill_sensitivity_M"],
+                    "actModifiers":{
+                        "enabled":true, "totalMin":0, "totalMax":11,
+                        "terms":[
+                            {"source":"PartnerGoodwill", "appliesTo":"BothDeciders", "scale":0.05, "offset":-2.5, "min":0, "max":4},
+                            {"source":"PartnerTrust", "appliesTo":"BothDeciders", "scale":0.05, "offset":-1.5, "min":0, "max":3},
+                            {"source":"PartnerDesire", "appliesTo":"BothDeciders", "scale":0.04, "offset":-4.8, "min":0, "max":6}
+                        ]
+                    } },
                 "DifficultyCheck":{ "baseD20Check":5,
                     "SkillBonus_Doer":["skill_sensitivity_M"],
                     "SkillBonus_Receiver":["skill_sensitivity_M"]  },
+                "_comment_upgrades":"The French kiss is its own upgrade command (com_sex_oral_kiss_tongue below), offered in this command's + panel while kissing.",
                 "variants":[
-                    {
-                        "requirements":{
-                            "requirement":{
-                                "doerCount":1,
-                                "receiverCount":1
-                            },
-                            "requireExisting":{ "requireCOMID":"com_sex_oral_kiss"  }
-                        },
-                        "displayName":"com_sex_oral_kiss_displayName_1_force",
-                        "setForce":true
-                    },
-                    {
-                        "requirements":{
-                            "requirement":{
-                                "doerCount":1,
-                                "receiverCount":99
-                            },
-                            "requireExisting":{ "requireCOMID":"com_sex_oral_kiss"  }
-                        },
-                        "displayName":"com_sex_oral_kiss_displayName_2_force",
-                        "setForce":true
-                    },
-                    {
-                        "requirements":{
-                            "requirement":{
-                                "doerCount":99,
-                                "receiverCount":1
-                            },
-                            "requireExisting":{ "requireCOMID":"com_sex_oral_kiss"  }
-                        },
-                        "displayName":"com_sex_oral_kiss_displayName_3_force",
-                        "setForce":true
-                    },
-                    {
-                        "requirements":{
-                            "requirement":{
-                                "doerCount":99,
-                                "receiverCount":99
-                            },
-                            "requireExisting":{ "requireCOMID":"com_sex_oral_kiss"  }
-                        },
-                        "displayName":"com_sex_oral_kiss_displayName_4_force",
-                        "setForce":true
-                    },
                     {
                         "requirements":{
                             "requirement":{
@@ -148,13 +114,113 @@
                 },
                 "description_begin":
                 {
-                    "Entries":[ 
+                    "Entries":[
                         {
                             "keepLooking":true,
                             "texts": ["com_sex_oral_kiss_description_begin_1"]
                         }
                     ]
-                    
+
+                }
+            },
+            {
+                "parentCOMID":"com_sex_service_base",
+                "ID":"com_sex_oral_kiss_tongue",
+                "upgradeFrom":"com_sex_oral_kiss",
+                "_comment_upgrade":"Upgrade of com_sex_oral_kiss (was its setForce variants): one round in place of the ongoing kiss, which then resumes. Own acceptance roll on each new round (none when repeated right after an accepted round). AC/DC copied from kiss for tuning; setForce keeps the strong-act rules (no actModifiers, traceKeywords_strong, strong kojo). description_remove / description_after: kiss's (COM.OrUpgradeParent). Kojo: kiss's lines (Character_Personality fallback).",
+                "ActionPackageClass":"ActionPackage_Sex",
+                "categoryTags":["com_category_service"],
+                "displayName":"com_sex_oral_kiss_displayName_1_force",
+                "timeScale":3,
+                "comTags":["sex",
+                    "service","position_face", "position_equal"],
+                "portraitTags":["kiss"],
+                "_comment_traces":"Body traces (Data/RaceDefs/TraceDefs.json): saliva into each other's mouth, 20% of it on each other's face.",
+                "traceKeywords_strong":["kiss"],
+                "requirements":{
+                    "requirement":{
+                        "req_Doers":{
+                            "BodyTags":["mouth"],
+                            "minRevealingScore":1,
+                            "cost_ST": 1
+                        },
+                        "req_Receivers":{
+                            "BodyTags":["mouth"],
+                            "minRevealingScore":1,
+                            "requireConscious":false,
+                            "requireAction": false
+                        }
+                    }
+                },
+                "AcceptanceCheck":{ "baseAcceptanceValue":20,
+                    "SkillBonus_Doer":["skill_sensitivity_M"],
+                    "SkillBonus_Receiver":["skill_sensitivity_M"] },
+                "DifficultyCheck":{ "baseD20Check":5,
+                    "SkillBonus_Doer":["skill_sensitivity_M"],
+                    "SkillBonus_Receiver":["skill_sensitivity_M"]  },
+                "variants":[
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":1,
+                                "receiverCount":1
+                            },
+                            "requireExisting":{ "requireCOMID":"com_sex_oral_kiss"  }
+                        },
+                        "displayName":"com_sex_oral_kiss_displayName_1_force",
+                        "setForce":true
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":1,
+                                "receiverCount":99
+                            },
+                            "requireExisting":{ "requireCOMID":"com_sex_oral_kiss"  }
+                        },
+                        "displayName":"com_sex_oral_kiss_displayName_2_force",
+                        "setForce":true
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":99,
+                                "receiverCount":1
+                            },
+                            "requireExisting":{ "requireCOMID":"com_sex_oral_kiss"  }
+                        },
+                        "displayName":"com_sex_oral_kiss_displayName_3_force",
+                        "setForce":true
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":99,
+                                "receiverCount":99
+                            },
+                            "requireExisting":{ "requireCOMID":"com_sex_oral_kiss"  }
+                        },
+                        "displayName":"com_sex_oral_kiss_displayName_4_force",
+                        "setForce":true
+                    }
+                ],
+                "description_ongoing":{
+                    "Entries":
+                    [
+                        {
+                            "keepLooking":true,
+                            "texts": [ "com_sex_oral_kiss_tongue_description_ongoing_1" ]
+                        }
+                    ]
+                },
+                "description_begin":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "texts": ["com_sex_oral_kiss_tongue_description_begin_1"]
+                        }
+                    ]
                 }
             }
         ]
@@ -179,7 +245,11 @@
                 "com_sex_oral_kiss_description_begin_1":"$doer.firstname$亲上了$receiver.firstname$的嘴唇",
                 "com_sex_oral_kiss_description_after_1":"高潮中的$receiver.firstname$与$doer.firstname$更激烈地交换着唾液",
                 "com_sex_oral_kiss_description_remove_1":"$doer.firstname$和$receiver.firstname$紧贴的唇终于分开来",
-                "com_sex_oral_kiss_description_ongoing_1":"$doer.firstname$亲吻着$receiver.firstname$"
+                "com_sex_oral_kiss_description_ongoing_1":"$doer.firstname$亲吻着$receiver.firstname$",
+
+                "com_sex_oral_kiss_tongue":"%%tooltip_sex_com_alternating_tooltip%%",
+                "com_sex_oral_kiss_tongue_description_begin_1":"$doer.firstname$将舌头探入$receiver.firstname$的口中，与对方的舌头纠缠在一起",
+                "com_sex_oral_kiss_tongue_description_ongoing_1":"$doer.firstname$与$receiver.firstname$舌头交缠，深深地吻着"
 
             },
             "en-us":
@@ -198,7 +268,11 @@
                 "com_sex_oral_kiss_description_begin_1":"$doer.firstname$ kisses $receiver.firstname$'s lips.",
                 "com_sex_oral_kiss_description_after_1":"In the throes of climax, $receiver.firstname$ exchanges saliva with $doer.firstname$ more intensely.",
                 "com_sex_oral_kiss_description_remove_1":"$doer.firstname$ and $receiver.firstname$'s pressed lips finally separate.",
-                "com_sex_oral_kiss_description_ongoing_1":"$doer.firstname$ is kissing $receiver.firstname$."
+                "com_sex_oral_kiss_description_ongoing_1":"$doer.firstname$ is kissing $receiver.firstname$.",
+
+                "com_sex_oral_kiss_tongue":"%%tooltip_sex_com_alternating_tooltip%%",
+                "com_sex_oral_kiss_tongue_description_begin_1":"$doer.firstname$ slips their tongue into $receiver.firstname$'s mouth, tangling it with theirs.",
+                "com_sex_oral_kiss_tongue_description_ongoing_1":"$doer.firstname$ and $receiver.firstname$ kiss deeply, tongues intertwined."
 
             }
         }

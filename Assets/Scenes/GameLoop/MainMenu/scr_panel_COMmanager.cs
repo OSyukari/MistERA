@@ -43,8 +43,12 @@ public class scr_panel_COMmanager : scr_Menu
     
 
     List<int> trackedJobRefs = new List<int>();
-    /// <summary>The phase each tracked Job_Activity's entry button was made for: wait and late join are separate buttons.</summary>
+    /// <summary>The phase each tracked Job_Activity's entry button was made for: the wait exists only while gathering.</summary>
     readonly Dictionary<int, ActivityPhase> trackedActivityPhases = new Dictionary<int, ActivityPhase>();
+    /// <summary>The room activity context (Room_Instance.ActivityContextStamp) each tracked furniture's buttons were made for: covered commands swap for the activity's bound copies.</summary>
+    readonly Dictionary<int, int> trackedFurnitureActivityStamps = new Dictionary<int, int>();
+    /// <summary> Job_Furniture.OccupancyRevision a bed / sofa box was built at - its buttons carry the sleepers (sleep with) and owners </summary>
+    readonly Dictionary<int, int> trackedFurnitureOccupancyStamps = new Dictionary<int, int>();
 
     public void notifyActorsChange()
     {
@@ -749,6 +753,8 @@ public class scr_panel_COMmanager : scr_Menu
             }
         }
         trackedJobRefs.Clear();
+        trackedFurnitureActivityStamps.Clear();
+        trackedFurnitureOccupancyStamps.Clear();
     }
 
     protected void OnLoadComplete()
@@ -761,7 +767,8 @@ public class scr_panel_COMmanager : scr_Menu
         // if current thing not active then skip
 
         var campaign = scr_System_CampaignManager.current;
-        var roomSexJob = campaign.FindSexJobInRoom(campaign.Map.FindRoomByChara(campaign.Player.RefID));
+        // the scene where the player is: the room's open area or the divider (stall) the player is inside
+        var roomSexJob = campaign.FindSexJobForViewer(campaign.Player);
         var playerSexJob = roomSexJob != null && roomSexJob.actorRefID.Contains(campaign.Player.RefID) ? roomSexJob : null;
         if (currentSexJob != playerSexJob)
         {
@@ -815,9 +822,12 @@ public class scr_panel_COMmanager : scr_Menu
 
 
         //Debug.Log("UPDATEJOBCOM currentRoom ["+ scr_System_CampaignManager.current.CurrentRoom .DisplayName+ "] isJobsnull? ["+(scr_System_CampaignManager.current.CurrentRoom.Jobs == null) +"]");
+        // inside a room divider (stall): only that divider's box - the rest of the room is out of reach (and 离开 stands out)
+        int playerScope = scr_System_CampaignManager.current.Player.ScopeRef;
         foreach (var job in scr_System_CampaignManager.current.CurrentRoom.Jobs)
         {
             if (job is Job_Sex_Group && job != currentSexJob) continue;
+            if (playerScope != -1 && job is Job_Furniture && job.RefID != playerScope) continue;
             //Debug.LogError("UPDATEJOBCOM JOB " + job.DisplayName);
             tempList.Add(job.RefID);
             s3 += "\nTracking Roomjobref " + job.RefID;
@@ -835,6 +845,21 @@ public class scr_panel_COMmanager : scr_Menu
                 && trackedActivityPhases.TryGetValue(jobRef, out var madePhase) && madePhase != phased.Phase)
             {
                 DestroyCOMButton(jobRef);
+                trackedJobRefs.Remove(jobRef);
+            }
+
+            // a furniture whose room activity context changed since its buttons were made (an activity launched here, the
+            // player now takes part...): rebuild them - covered commands swap for the activity's bound copies
+            if (j is Job_Furniture stamped && trackedJobRefs.Contains(jobRef) && stamped.ParentRoom != null
+                && trackedFurnitureActivityStamps.TryGetValue(jobRef, out var madeStamp)
+                && madeStamp != stamped.ParentRoom.ActivityContextStamp(scr_System_CampaignManager.current.Player)
+                || j is Job_Furniture occupied && trackedJobRefs.Contains(jobRef)
+                && trackedFurnitureOccupancyStamps.TryGetValue(jobRef, out var madeOccupancy) && madeOccupancy != occupied.OccupancyRevision)
+            {
+                DestroyCOMButton(jobRef);
+                if (furnitureRectList.ContainsKey(jobRef)) DestroyCOMBox(jobRef);
+                foreach (KeyValuePair<string, Dictionary<int, bool>> kvp in forbidCOMRepeatList)
+                    if (kvp.Value.ContainsKey(jobRef)) kvp.Value.Remove(jobRef);
                 trackedJobRefs.Remove(jobRef);
             }
 
@@ -859,6 +884,7 @@ public class scr_panel_COMmanager : scr_Menu
                     {
                         if (c.isHiddenParent || c.isHiddenChild) continue;
                         if (c.hidden) continue;
+                        if (c.IsUpgrade) continue;
 
                         //Debug.Log("Making Chara COM " + c.ID);
                         var targetRect = GetManagedCOMRect(c.comTags);
@@ -875,8 +901,8 @@ public class scr_panel_COMmanager : scr_Menu
                 }
                 else if (j is Job_Activity jActivity)
                 {
-                    // Gathering stays at the meeting room; launched joins use local attendees and an authored event.
-                    // one entry button per activity: wait while gathering, the late join once launched
+                    // the activity's one entry button: the wait while gathering, at the meeting room. A launched activity
+                    // is joined through its bound packages on the furniture (walk-in join - Job_Activity.RequestWalkIn).
                     var player = scr_System_CampaignManager.current.Player;
                     trackedActivityPhases[jobRef] = jActivity.Phase;
                     if (jActivity.Phase == ActivityPhase.Gathering)
@@ -884,18 +910,10 @@ public class scr_panel_COMmanager : scr_Menu
                         var waitAP = jActivity.MakePlayerWaitPackage(player);
                         if (waitAP != null && waitAP.targetCOM != null) MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, j, waitAP.targetCOM, true, jActivity.PlayerMayJoin, waitAP);
                     }
-                    else if (jActivity.Phase == ActivityPhase.Launched)
-                    {
-                        var joinAP = jActivity.MakePlayerJoinPackage(player);
-                        if (joinAP != null && joinAP.targetCOM != null) MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, j, joinAP.targetCOM, true, true, joinAP);
-                    }
                 }
-                else if (j is Job_MediaSession jMedia)
-                {
-                    // a running movie / game session in this room: the player's own button - watch / play to the end
-                    var sessionAP = jMedia.MakePlayerSessionPackage(scr_System_CampaignManager.current.Player);
-                    if (sessionAP != null && sessionAP.targetCOM != null) MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, j, sessionAP.targetCOM, true, true, sessionAP);
-                }
+                // a running movie / game session (Job_MediaSession) gets no button of its own: a participant starts a round from
+                // the furniture (the activity's bound copy - Job_Activity.AppendParticipantCommandOffers), anyone joins a running
+                // round through its join button (I_PlayerJoinableJob below - a walk-in through the confirm)
                 else if (j is Job_PlayerCOM)
                 {
                     Job_PlayerCOM jPlayer = j as Job_PlayerCOM;
@@ -928,6 +946,8 @@ public class scr_panel_COMmanager : scr_Menu
                     {
                         if (c.hidden) continue;
                         if (c.isHiddenParent || c.isHiddenChild) continue;
+                        // upgrades are offered in their parent's "+" panel only (LoadUpgradeCOMPanel)
+                        if (c.IsUpgrade) continue;
 
                         var getrect = GetGrid(c.CategoryLabel);
                         MakeCOMButton(getrect, buttonPrefab_COM, jdebug, c);
@@ -939,10 +959,14 @@ public class scr_panel_COMmanager : scr_Menu
 
                     // Debug.Log("Making Furniture Job ");
                     Job_Furniture jfurn = j as Job_Furniture;
+                    if (jfurn.ParentRoom != null) trackedFurnitureActivityStamps[jobRef] = jfurn.ParentRoom.ActivityContextStamp(scr_System_CampaignManager.current.Player);
+                    bool ownBox = jfurn.DrawsOwnBox;
+                    if (ownBox) trackedFurnitureOccupancyStamps[jobRef] = jfurn.OccupancyRevision;
 
                     if ((j as Job_Furniture).allusableCOMs.Count > 0)
                     {
-                        if (jfurn.Container != null || jfurn.isContainer)
+                        // a bed (owners / sleepers) or a room divider is one box per furniture, never merged (Job_Furniture.DrawsOwnBox)
+                        if (jfurn.Container != null || jfurn.isContainer || ownBox)
                         {
                             scr_IndividualCOMBox newScript = Instantiate(prefab_IndividualCOMBox);
                             newScript.title.text = jfurn.DisplayName;
@@ -1013,6 +1037,8 @@ public class scr_panel_COMmanager : scr_Menu
             {
                 DestroyCOMButton(trackedJobRefs[i]);
                 trackedActivityPhases.Remove(trackedJobRefs[i]);
+                trackedFurnitureActivityStamps.Remove(trackedJobRefs[i]);
+                trackedFurnitureOccupancyStamps.Remove(trackedJobRefs[i]);
                 if (furnitureRectList.ContainsKey(trackedJobRefs[i])) DestroyCOMBox(trackedJobRefs[i]);
 
                 foreach (KeyValuePair<string, Dictionary<int, bool>> kvp in forbidCOMRepeatList)
@@ -1032,7 +1058,7 @@ public class scr_panel_COMmanager : scr_Menu
                         foreach (var ap in j.JoinablePackages(0))
                         {
                             if (scr_System_CentralControl.current.LogPrefs.DLog_CurrentRoomJob) Debug.Log($"package comID {ap.targetCOM.ID} actors {String.Join("|", ap.actorRefs)} remaining {ap.Duration} jobref {ap.job.RefID}");
-                            joinableAPTracker.Add(MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, ap, true, true));
+                            TrackJoinableAP(ap);
                         }
                         /*
                         var packages = (j as Job_Furniture).MakePackagesJoinable(scr_System_CampaignManager.current.Player);
@@ -1048,7 +1074,7 @@ public class scr_panel_COMmanager : scr_Menu
                 {
                     foreach (var ap in j.JoinablePackages(0))
                     {
-                        joinableAPTracker.Add(MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, ap, true, true));
+                        TrackJoinableAP(ap);
                     }
                 }
             }
@@ -1347,11 +1373,30 @@ public class scr_panel_COMmanager : scr_Menu
             ButtonValidator validator = validatorsByID[indexCOM[kvp]];
             validatorsByID.Remove(indexCOM[kvp]);
 
+            UntrackJoinableAP(validator);
             validator.Destroy();
             text.gameObject.SetActive(false);
             Destroy(text.gameObject);
             indexCOM.Remove(kvp);
         }
+    }
+
+    /// <summary>Makes ap's join button and tracks it (joinableAPTracker); no button made is an error, logged - never a null entry.</summary>
+    void TrackJoinableAP(ActionPackage ap)
+    {
+        var validator = MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, ap, true, true);
+        if (validator == null)
+        {
+            Debug.LogError($"join button not made for package {ap?.DisplayName} (job {ap?.job?.RefID.ToString() ?? "null"}, COM {ap?.targetCOM?.ID ?? "null"})");
+            return;
+        }
+        joinableAPTracker.Add(validator);
+    }
+
+    /// <summary>A destroyed join button leaves joinableAPTracker with it - the job's buttons share its key (DestroyCOMButton), so a furniture rebuild destroys its join buttons too.</summary>
+    void UntrackJoinableAP(ButtonValidator validator)
+    {
+        if (validator is ButtonValidator_validateAP joinable) joinableAPTracker.Remove(joinable);
     }
 
     private void DestroyCOMButtonByOptionID(int optionID)
@@ -1368,6 +1413,7 @@ public class scr_panel_COMmanager : scr_Menu
         ButtonValidator validator = validatorsByID[optionID];
         validatorsByID.Remove(optionID);
 
+        UntrackJoinableAP(validator);
         validator.Destroy();
         text.gameObject.SetActive(false);
         Destroy(text.gameObject);
@@ -1479,11 +1525,14 @@ public class scr_panel_COMmanager : scr_Menu
                     }
                     else if (package is ActionPackage_Interaction || package is ActionPackage_ProductionOrder)
                     {
-                        var doers = new List<int>(package.DoerRefs);
-                        var receivers = new List<int>(package.ReceiverRefs);
+                        // an activity package: rebuilt from the running package each time - the player plus the companions it
+                        // can take as well (Job_Activity.CompanionsFor), each answering for themselves once joined
+                        bool activityPackage = package.IsBoundActivityPackage;
+                        var doers = new List<int>(activityPackage ? cachedAP.DoerRefs : package.DoerRefs);
+                        var receivers = new List<int>(activityPackage ? cachedAP.ReceiverRefs : package.ReceiverRefs);
                         List<int> targets = new List<int>();
                         // joinAlone: the player joins by themselves (see OnClickButton)
-                        bool joinAlone = package.targetCOM != null && package.targetCOM.requirements.requirement.joinAlone;
+                        bool joinAlone = (package.targetCOM != null && package.targetCOM.requirements.requirement.joinAlone) || activityPackage;
                         var currentref = scr_System_CampaignManager.current.CurrentTargetRef;
                         if (!joinAlone && currentref > 0 && !doers.Contains(currentref) && !receivers.Contains(currentref)) targets.Add(currentref);
                         if (!joinAlone && (package.targetCOM == null || !package.targetCOM.requirements.requirement.forbidTeammateJoin)) targets.AddRange(scr_System_CampaignManager.current.PlayerPartyMembers);
@@ -1493,6 +1542,11 @@ public class scr_panel_COMmanager : scr_Menu
 
                         if (doers.Count < 1) doers.Add(0);
                         else if (!doers.Contains(0) && !receivers.Contains(0)) receivers.Add(0);
+                        if (activityPackage)
+                        {
+                            package.ResetRequest(new List<int>(doers), new List<int>(receivers), cachedAP.masterRef);
+                            targets.AddRange(Job_Activity.CompanionsFor(package));
+                        }
                         receivers.AddRange(targets);
 
                         package.ResetRequest(doers, receivers, cachedAP.masterRef);
@@ -1500,7 +1554,7 @@ public class scr_panel_COMmanager : scr_Menu
                     }
                     else
                     {
-                        Debug.LogError("COMMANAGER package typecheck failed");
+                        Debug.LogError($"COMMANAGER package typecheck failed {package.DisplayName}");
                     }
 
 
@@ -1508,11 +1562,17 @@ public class scr_panel_COMmanager : scr_Menu
                     //text.SetText(package.DisplayName);
 
 
+                    // not part of the bound activity yet: the join validates like any join (ValidateActivityCommandPolicy
+                    // admits the would-be walk-in - Job_Activity.AdmitsWalkIn); clicking asks first (OnClickButton)
+                    var walkIn = WalkInActivity();
                     if (!package.Validate())
                     {
                         returnVal = false;
                         package.tooltip.RemoveAll(x => x == "" || x.Length < 1);
-                        tooltip += package.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_comInvalid")).Replace("$tooltips$", String.Join("\n", package.tooltip));
+                        if (walkIn != null && !walkIn.CanWalkIn(scr_System_CampaignManager.current.Player, cachedAP, out var walkInReason))
+                            package.tooltip.Add(LocalizeDictionary.QueryThenParse(walkInReason));
+                        tooltip += package.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_comInvalid"))
+                            .Replace("$tooltips$", String.Join("\n", package.tooltip));
                     }
                     else if (package.ComTags.Contains("sleep") && !scr_System_CampaignManager.current.Player.shouldSleep && !parent.GetCOMFilter(COMFilter.Debug))
                     {
@@ -1523,6 +1583,7 @@ public class scr_panel_COMmanager : scr_Menu
                     else
                     {
                         tooltip += package.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip"));
+                        if (walkIn != null) tooltip += "\n" + walkIn.WalkInTooltip();
                     }
 
                     if (job.targetActorRef != scr_System_CampaignManager.current.CurrentTargetRef)
@@ -1532,19 +1593,19 @@ public class scr_panel_COMmanager : scr_Menu
                 }
             }
 
-            if (package.DoerRefs.Contains(0)) text.SetText(package.DisplayName);
-            else 
+            if (package.DoerRefs.Contains(0)) text.SetText(package.ButtonDisplayName);
+            else
             {
                 var tempList = new List<string>();
                 foreach (var i in package.doer) tempList.Add(i.FirstName);
                 if (tempList.Count > 1)
                 {
-                    text.SetText(LocalizeDictionary.QueryThenParse(package.JoinAPDescriptorKeyEX).Replace("$apName$", package.DisplayName).Replace("$target$", $"...({tempList.Count})"));
+                    text.SetText(LocalizeDictionary.QueryThenParse(package.JoinAPDescriptorKeyEX).Replace("$apName$", package.ButtonDisplayName).Replace("$target$", $"...({tempList.Count})"));
                     //tooltip += $"\nParticipating actors: {String.Join(" ", tempList)}";
                 }
                 else
                 {
-                    text.SetText(LocalizeDictionary.QueryThenParse(package.JoinAPDescriptorKey).Replace("$apName$", package.DisplayName).Replace("$target$", String.Join(" ", tempList)));
+                    text.SetText(LocalizeDictionary.QueryThenParse(package.JoinAPDescriptorKey).Replace("$apName$", package.ButtonDisplayName).Replace("$target$", String.Join(" ", tempList)));
                 }
             }
 
@@ -1600,14 +1661,33 @@ public class scr_panel_COMmanager : scr_Menu
             this.parent = null;
         }
 
+        /// <summary>The activity cachedAP is bound to, when the player is not part of it yet - the button is a walk-in offer (Job_Activity.RequestWalkIn).</summary>
+        Job_Activity WalkInActivity()
+        {
+            if (cachedAP == null || cachedAP.ActivityExecutionRef < 0 || cachedAP.job is Job_Activity) return null;
+            var activity = scr_System_CampaignManager.current.FindJobInstanceByID(cachedAP.ActivityExecutionRef, false) as Job_Activity;
+            return activity != null && activity.IsWalkInOffer(cachedAP, scr_System_CampaignManager.current.Player) ? activity : null;
+        }
+
         public void OnClickButton()
         {
             var txt = this.text.Text.text;
             scr_System_CentralControl.current.AutoSave();
 
+            // not part of the activity yet: ask first - agreeing registers the player and joins this package
+            var walkIn = WalkInActivity();
+            if (walkIn != null)
+            {
+                if (walkIn.RequestWalkIn(scr_System_CampaignManager.current.Player, cachedAP)) scr_System_CampaignManager.current.FreeUpdate();
+                return;
+            }
+
             List<Character_Trainable> actors = new List<Character_Trainable>();
             actors.Add(scr_System_CampaignManager.current.Player);
-            if (cachedAP.targetCOM == null || !cachedAP.targetCOM.requirements.requirement.joinAlone)
+            // an activity package: the player joins, then the companions it can take join too, each answering for themselves
+            // (Job_Activity.JoinCompanions)
+            bool activityPackage = cachedAP.IsBoundActivityPackage;
+            if (!activityPackage && (cachedAP.targetCOM == null || !cachedAP.targetCOM.requirements.requirement.joinAlone))
             {
                 actors.AddRange(scr_System_CampaignManager.current.party.Members);
                 actors.Add(scr_System_CampaignManager.current.CurrentTarget);
@@ -1628,7 +1708,7 @@ public class scr_panel_COMmanager : scr_Menu
 
 
             // need to reset EP. Re-request should trigger EP rebuild on next update
-            cachedAP.JoinAP(actors);
+            if (cachedAP.JoinAP(actors) && activityPackage) Job_Activity.JoinCompanions(cachedAP);
             if (cachedAP.isPaused) scr_System_CampaignManager.current.Register(cachedAP, false);
             cachedAP.LoggedBegin = false;
             scr_System_CampaignManager.current.FreeUpdate(-1, txt);
@@ -1745,16 +1825,10 @@ public class scr_panel_COMmanager : scr_Menu
             if (innerAP is ActionPackage_ActivityWait && innerAP.job is Job_Activity activity)
             {
                 // The same tracked visit can move between rooms without recreating its button.
-                var player = scr_System_CampaignManager.current.Player;
-                injectAP = innerAP.targetCOM.ID == Job_Activity.JoinCOMID
-                    ? activity.MakePlayerJoinPackage(player)
-                    : activity.MakePlayerWaitPackage(player);
+                injectAP = activity.MakePlayerWaitPackage(scr_System_CampaignManager.current.Player);
             }
-            else if (innerAP is ActionPackage_MediaSession && innerAP.job is Job_MediaSession mediaSession)
-            {
-                // fresh each click: its length is the rest of the session at that moment
-                injectAP = mediaSession.MakePlayerSessionPackage(scr_System_CampaignManager.current.Player);
-            }
+            // a package made by the job (e.g. a media session round) remakes as a plain copy: the copy keeps the activity
+            // binding (Copy) the bound furniture offer carries
             else if (innerAP != null)
             {
                 injectAP = innerAP.Copy();
@@ -1837,7 +1911,7 @@ public class scr_panel_COMmanager : scr_Menu
                 var player = campaign.Player;
                 var target = campaign.CurrentTarget;
                 var room = campaign.Map.FindRoomByChara(player.RefID);
-                bool occupied = campaign.FindSexJobInRoom(room) != null;
+                bool occupied = campaign.FindSexJobForViewer(player) != null;
                 var receivers = new List<int>();
                 if (target != null && target.RefID != player.RefID) receivers.Add(target.RefID);
                 // Only free-room starts retain the legacy party defaults; joins always use the selected pair.
@@ -1929,6 +2003,14 @@ public class scr_panel_COMmanager : scr_Menu
                         if (package is ActionPackage_Interaction && job is Job_CharaCOM && !package.ComTags.Contains("endSex") && !package.ComTags.Contains("initSex")) forbidInjectTarget = true;
                         // joinAlone: the player takes it by themselves - no current target / teammates added (e.g. waiting for an activity)
                         if (package.targetCOM != null && package.targetCOM.requirements.requirement.joinAlone) forbidInjectTarget = true;
+                        // an activity package: the player plus the companions it can take as well (Job_Activity.CompanionsFor -
+                        // each answers for themselves when it starts; the ones it can't take are released on Execute)
+                        if (package.IsBoundActivityPackage)
+                        {
+                            forbidInjectTarget = true;
+                            package.ResetRequest(new List<int>() { 0 }, new List<int>(cachedReceivers), 0);
+                            targets.AddRange(Job_Activity.CompanionsFor(package));
+                        }
 
                         var currentref = scr_System_CampaignManager.current.CurrentTargetRef;
                         if (!forbidInjectTarget && currentref > 0 && !doers.Contains(currentref) && !receivers.Contains(currentref)) targets.Add(currentref);
@@ -1996,7 +2078,7 @@ public class scr_panel_COMmanager : scr_Menu
             {
                 var campaign = scr_System_CampaignManager.current;
                 var room = campaign.Map.FindRoomByChara(campaign.Player.RefID);
-                bool occupied = campaign.FindSexJobInRoom(room) != null;
+                bool occupied = campaign.FindSexJobForViewer(campaign.Player) != null;
                 tooltip += "\n" + LocalizeDictionary.QueryThenParse(occupied || package.JoinsExistingSexScene
                     ? "ui_sexEntry_joinTooltip" : "ui_sexEntry_startTooltip");
                 if (!COM.TryResolveSexSceneEntry(room,
@@ -2009,7 +2091,8 @@ public class scr_panel_COMmanager : scr_Menu
                 }
             }
 
-            text.SetText(package.DisplayName);
+            bool upgradeMenu = OpensUpgradePanel();
+            text.SetText(upgradeMenu ? package.ButtonDisplayName + "+" : package.ButtonDisplayName);
 
             if (!COMRepeat)
             {
@@ -2017,7 +2100,7 @@ public class scr_panel_COMmanager : scr_Menu
                 bool comRepeatGet = parent.COMRepeat_Get(this.comID, job.RefID, returnVal);
 
                 //Debug.Log("COMREPEAT Get COM[" + comID + "] from job[" + job.RefID + "] with value [" + returnVal + "] and in list [" + parent.forbidCOMRepeatList[comID][job.RefID] + "] returnValue ["+ comRepeatGet + "]" + parent.forbidCOMRepeatListContent);
-                
+
                 if (comRepeatGet) display = display && true;
 
                 //else if (!com.HideWhenInvalid) this.text.gameObject.SetActive(true);
@@ -2037,7 +2120,13 @@ public class scr_panel_COMmanager : scr_Menu
             if (display && returnVal)
             {
                 //tooltip = $"{text.Text.text}\n{tooltip}";
-                if (package.RequestRate * package.ResponseRate == 0)
+                // an ongoing act continues without a new roll, so its
+                // acceptance never disables it - otherwise a no-longer-accepted act would leave nothing to click
+                if (ContinuesWithoutRoll())
+                {
+                    tooltip += $"\n{LocalizeDictionary.QueryThenParse(upgradeMenu ? "ui_com_upgradePanel_tooltip" : "ui_com_continueNoRoll_tooltip")}";
+                }
+                else if (package.RequestRate * package.ResponseRate == 0)
                 {
                     tooltip += $"\n{LocalizeDictionary.QueryThenParse("ui_com_disabled_autofailure_tooltip")}";
                     return false;
@@ -2049,7 +2138,7 @@ public class scr_panel_COMmanager : scr_Menu
                 }
             }
 
-            if (returnVal && display && package.targetCOM != null && package.targetCOM.childCOMs.Count > 0)
+            if (returnVal && display && package.targetCOM != null && (package.targetCOM.childCOMs.Count > 0 || upgradeMenu))
             {
                 this.text.isButtonToggle = true;
                 if (parent.childCOMPanel.Active && parent.childCOMPanel.ap != null)
@@ -2067,6 +2156,22 @@ public class scr_panel_COMmanager : scr_Menu
                 this.text.isButtonToggle = false;
                 return returnVal;
             }
+        }
+
+        /// <summary> This button's sex act continues without a new acceptance roll (Job_Sex_Group.ContinuesWithoutRoll). </summary>
+        bool ContinuesWithoutRoll()
+        {
+            return package is ActionPackage_Sex && !package.IsSexSceneEntry && job is Job_Sex_Group scene && scene.ContinuesWithoutRoll(package);
+        }
+
+        /// <summary>
+        /// The "+" button: a command with upgrades whose act is ongoing for this pair - clicking opens the choice between
+        /// continuing it and its upgrades (LoadUpgradeCOMPanel). Never inside that panel itself (allowChildPanel false).
+        /// </summary>
+        bool OpensUpgradePanel()
+        {
+            return allowChildPanel && package is ActionPackage_Sex && package.targetCOM != null && package.targetCOM.HasUpgrades
+                && job is Job_Sex_Group scene && scene.FindOngoingAct(package.targetCOM, package.DoerRefs, package.ReceiverRefs) != null;
         }
 
         /// <summary>
@@ -2098,6 +2203,15 @@ public class scr_panel_COMmanager : scr_Menu
                 // create panel
                 parent.LoadChildCOMPanel(job, package);
             }
+            else if (allowChildPanel && package.targetCOM != null && package.targetCOM.comTags.Contains(FurnitureOccupancyUtility.Tag_PutDownFolder))
+            {
+                // 安放: the furniture in reach the carried character can be put down on
+                parent.LoadPutDownPanel(package);
+            }
+            else if (OpensUpgradePanel())
+            {
+                parent.LoadUpgradeCOMPanel(job, package);
+            }
             else
             {
                 var ppp = package.Copy();
@@ -2127,7 +2241,7 @@ public class scr_panel_COMmanager : scr_Menu
             // ActionPackage_Sex too: non-sex-tagged acts opted in to scenes (condom commands)
             if ((ppp is ActionPackage_Interaction || ppp is ActionPackage_Sex) && !ppp.IsSexSceneEntry && ppp.targetCOM.comTags.Contains("allowedDuringSex"))
             {
-                var scene = scr_System_CampaignManager.current.FindSexJobInRoom(ppp.PackageRoom);
+                var scene = scr_System_CampaignManager.current.FindSexJobInScope(ppp.PackageRoom, MapUtility.PackageScope(ppp));
                 if (scene != null && ppp.actorRefs.Count > 0 && ppp.actorRefs.All(scene.actorRefID.Contains))
                 {
                     job = scene;
@@ -2180,6 +2294,13 @@ public class scr_panel_COMmanager : scr_Menu
             }
 
             job.AddPackage(new List<ActionPackage>() { ppp }, true);
+            // an activity package: the companions it couldn't take are released (logged; a follower stops following)
+            if (ppp.IsBoundActivityPackage)
+            {
+                var leftOut = new List<int>();
+                Job_Activity.CompanionsFor(ppp, leftOut);
+                Job_Activity.ReleaseLeftOut(ppp, leftOut);
+            }
             scr_System_CampaignManager.current.FreeUpdate(-1, this.text.Text.text);
         }
     }
@@ -2251,7 +2372,8 @@ public class scr_panel_COMmanager : scr_Menu
         
     }
 
-    public void LoadChildCOMPanel(Job sourceJob, ActionPackage sourceAP)
+    /// <summary> Opens childCOMPanel at the mouse for sourceAP, its previous buttons removed. </summary>
+    void ResetChildCOMPanel(ActionPackage sourceAP)
     {
         Vector2 mousePos = Input.mousePosition;
         childCOMPanel.ap = sourceAP;
@@ -2277,6 +2399,74 @@ public class scr_panel_COMmanager : scr_Menu
             if (matchKey != null) indexCOM.Remove(matchKey);
         }
         childCOMPanel.trackedIDs.Clear();
+    }
+
+    /// <summary>
+    /// 安放 (put down): 'put down here' (standing, com_player_putDownHere - only for a carried who can stand), then one
+    /// button per bed / sofa in the player's room - each the furniture's hidden com_furniture_putDown package (doer player,
+    /// receiver the carried). Plan_FurnitureOccupancy.md §3
+    /// </summary>
+    public void LoadPutDownPanel(ActionPackage sourceAP)
+    {
+        ResetChildCOMPanel(sourceAP);
+        childCOMPanel.title.SetText(sourceAP.DisplayName);
+        childCOMPanel.Active = true;
+
+        var campaign = scr_System_CampaignManager.current;
+
+        // first: standing, where the player is (only valid for a carried who can stand - otherwise shown with the reason)
+        var here = FurnitureOccupancyUtility.MakePutDownHerePackage(campaign.Player);
+        if (here != null)
+        {
+            var hereJob = here.job;
+            var hereIndex = MakeCOMButton(childCOMPanel.comList, buttonPrefab_COM, hereJob, here.targetCOM, true, false, here, here.DisplayName, false);
+            if (hereIndex != -1 && !childCOMPanel.trackedIDs.Contains(hereIndex)) childCOMPanel.trackedIDs.Add(hereIndex);
+        }
+
+        var room = campaign.CurrentRoom;
+        if (room == null) return;
+        var jobs = room.Jobs;
+        for (int i = 0; i < jobs.Count; i++)
+        {
+            var furniture = jobs[i] as Job_Furniture;
+            if (furniture == null) continue;
+            var ap = FurnitureOccupancyUtility.MakePutDownPackage(furniture, campaign.Player);
+            if (ap == null) continue;
+            var index = MakeCOMButton(childCOMPanel.comList, buttonPrefab_COM, furniture, ap.targetCOM, true, false, ap, ap.DisplayName, false);
+            if (index != -1 && !childCOMPanel.trackedIDs.Contains(index)) childCOMPanel.trackedIDs.Add(index);
+        }
+    }
+
+    /// <summary>
+    /// The "+" panel of an ongoing act with upgrades (COM.upgradeFrom): continue the act itself (no new acceptance roll),
+    /// or one of its upgrades for one round (its own acceptance, see Job_Sex_Group.AddPackage). Same pair as sourceAP.
+    /// </summary>
+    public void LoadUpgradeCOMPanel(Job sourceJob, ActionPackage sourceAP)
+    {
+        ResetChildCOMPanel(sourceAP);
+        childCOMPanel.title.SetText($"{sourceJob.DisplayName}: {sourceAP.DisplayName}+");
+        childCOMPanel.Active = true;
+
+        AddChildCOMPanelButton(sourceJob, sourceAP.Copy(), "upgradeParent");
+        foreach (var upgrade in sourceAP.targetCOM.upgrades)
+        {
+            if (upgrade == null || upgrade.hidden) continue;
+            var ap = upgrade.MakePackage(sourceJob, new List<int>(sourceAP.DoerRefs), new List<int>(sourceAP.ReceiverRefs), 0);
+            if (ap == null) continue;
+            AddChildCOMPanelButton(sourceJob, ap, "upgrade");
+        }
+    }
+
+    void AddChildCOMPanelButton(Job sourceJob, ActionPackage ap, string suffix)
+    {
+        var index = MakeCOMButton(childCOMPanel.comList, buttonPrefab_COM, sourceJob, ap.targetCOM, true, false, ap, suffix, false);
+        if (index != -1 && !childCOMPanel.trackedIDs.Contains(index)) childCOMPanel.trackedIDs.Add(index);
+        else Debug.LogError($"error creating {ap.targetCOM.ID} with index {index}");
+    }
+
+    public void LoadChildCOMPanel(Job sourceJob, ActionPackage sourceAP)
+    {
+        ResetChildCOMPanel(sourceAP);
 
         childCOMPanel.title.SetText($"{sourceJob.DisplayName}: {sourceAP.targetCOM.DisplayName(sourceAP.COMVariantID)}");
         childCOMPanel.Active = true;
@@ -2351,6 +2541,8 @@ public class scr_panel_COMmanager : scr_Menu
     /// evicting anyone from the sex job. Only applies when the player is actually a participant in
     /// currentSexJob (their CurrentJob) and relevantTarget is also one of its actors - otherwise this
     /// stale/unrelated sex job must not hijack an unrelated interaction's doer/receiver.
+    /// joinAlone (e.g. com_interaction_waste_time): never carries the sex panel's selected receiver(s)
+    /// along - it stays a solo act regardless of who is currently selected there.
     /// </summary>
     private bool TryOverrideForActiveSex(ActionPackage ap, Character_Trainable relevantTarget)
     {
@@ -2359,7 +2551,8 @@ public class scr_panel_COMmanager : scr_Menu
         if (player.CurrentJob != currentSexJob) return false;
         if (!currentSexJob.actorRefID.Contains(player.RefID)) return false;
         if (relevantTarget == null || !currentSexJob.actorRefID.Contains(relevantTarget.RefID)) return false;
-        ap.ResetRequest(new List<int>(SexComDoers), new List<int>(SexComReceivers), 0);
+        bool joinAlone = ap.targetCOM != null && ap.targetCOM.requirements.requirement.joinAlone;
+        ap.ResetRequest(new List<int>(SexComDoers), joinAlone ? new List<int>() : new List<int>(SexComReceivers), 0);
         ap.ReEstablishParent(currentSexJob);
         return true;
     }
@@ -2497,7 +2690,7 @@ public class scr_panel_COMmanager : scr_Menu
             
             int charaRefID = scr_System_CampaignManager.current.CurrentTargetRef;
             var campaign = scr_System_CampaignManager.current;
-            var job = campaign.FindSexJobInRoom(campaign.Map.FindRoomByChara(campaign.Player.RefID));
+            var job = campaign.FindSexJobForViewer(campaign.Player);
 
             // current job is not sex
             if (job == null || !job.actorRefID.Contains(campaign.Player.RefID))
@@ -2548,19 +2741,26 @@ public class scr_panel_COMmanager : scr_Menu
                 tooltip = LocalizeDictionary.QueryThenParse("ui_sexEntry_invalidRoom");
                 return;
             }
-            var job = campaign.FindSexJobInRoom(room);
+            // the player's scope: the room's open area or the divider (stall) the player is inside
+            int scope = campaign.Player.ScopeRef;
+            var job = campaign.FindSexJobInScope(room, scope);
 
             if (job == null || !job.actorRefID.Contains(campaign.Player.RefID))
             {
                 endString_saved = endString;
-                var actors = campaign.CharaRefsInRoom(room.RefID);
+                var actors = new List<int>();
+                foreach (var actorRef in campaign.CharaRefsInRoom(room.RefID))
+                {
+                    var actor = campaign.FindInstanceByID(actorRef);
+                    if (actor != null && actor.ScopeRef == scope) actors.Add(actorRef);
+                }
                 if (job != null)
                 {
                     job.AddAuthoredParticipants(new List<int>(), actors);
                 }
                 else
                 {
-                    if (!campaign.CanStartSexJob(room, out var reason))
+                    if (!campaign.CanStartSexJob(room, scope, out var reason))
                     {
                         tooltip = LocalizeDictionary.QueryThenParse(reason);
                         return;
@@ -2875,8 +3075,13 @@ public class scr_panel_COMmanager : scr_Menu
             }
 
             tooltip += ap.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip"));
-            
-            if (ap.RequestRate * ap.ResponseRate == 0)
+
+            // same as the command buttons: an ongoing act is never disabled by its acceptance
+            if (ap is ActionPackage_Sex && !ap.IsSexSceneEntry && job is Job_Sex_Group scene && scene.ContinuesWithoutRoll(ap))
+            {
+                tooltip += $"\n{LocalizeDictionary.QueryThenParse("ui_com_continueNoRoll_tooltip")}";
+            }
+            else if (ap.RequestRate * ap.ResponseRate == 0)
             {
                 tooltip += $"\n{LocalizeDictionary.QueryThenParse("ui_com_disabled_autofailure_tooltip")}";
                 return false;
@@ -2927,7 +3132,7 @@ public class scr_panel_COMmanager : scr_Menu
             // ActionPackage_Sex too: non-sex-tagged acts opted in to scenes (condom commands)
             if ((ppp is ActionPackage_Interaction || ppp is ActionPackage_Sex) && !ppp.IsSexSceneEntry && ppp.targetCOM.comTags.Contains("allowedDuringSex"))
             {
-                var scene = scr_System_CampaignManager.current.FindSexJobInRoom(ppp.PackageRoom);
+                var scene = scr_System_CampaignManager.current.FindSexJobInScope(ppp.PackageRoom, MapUtility.PackageScope(ppp));
                 if (scene != null && ppp.actorRefs.Count > 0 && ppp.actorRefs.All(scene.actorRefID.Contains))
                 {
                     job = scene;

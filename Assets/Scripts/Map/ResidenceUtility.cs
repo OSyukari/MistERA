@@ -4,37 +4,26 @@ using System.Linq;
 using UnityEngine;
 
 /// <summary>
-/// MapPlan.residential of a district factionInit (e.g. jp_res_aoba_mansion): how many homes it may hold, its blocks
-/// (the district rooms homes attach to, each with its own home templates) and the fallback template. Home templates are
-/// factionInits not in initializeFactions. See ResidenceUtility.CreateResidence and Docs/Locations/Plan_ResidentialDistricts.md.
+/// MapPlan.residential of a district factionInit (e.g. jp_district_apartment): how many homes it may hold, the district
+/// room every home attaches to, and the home templates it builds. Home templates are factionInits not in
+/// initializeFactions. See ResidenceUtility.CreateResidence and Docs/Locations/Plan_ResidentialDistricts.md.
 /// </summary>
 public class ResidentialSpec
 {
     /// <summary>Most homes this district ever holds (generated homes are never removed yet).</summary>
     public int maxResidences = 0;
     /// <summary>
-    /// Fallback home template: used by every block that lists no templates of its own, and by any block with room left
-    /// when none of the listed templates fits the household (too few bedrooms).
+    /// The district room every home is linked to by a runtime floor door (hidden runtime exits on both sides); any number
+    /// of homes share it. Empty = the district's mainExit room.
     /// </summary>
-    public string fallbackTemplateID = "";
-    public List<ResidentialBlock> blocks = new List<ResidentialBlock>();
-}
-
-/// <summary>
-/// One block of a district: a district room (roomID - street block, corridor...) that new homes attach to by a runtime
-/// floor door (hidden runtime exits on both sides), and the home templates built there. Empty templates = the district's fallbackTemplateID. Any number of homes
-/// may share one block, up to maxResidences (0 = only the district's total applies).
-/// </summary>
-public class ResidentialBlock
-{
-    public string roomID = "";
-    public int maxResidences = 0;
+    public string attachRoomID = "";
+    /// <summary>Home templates built here, weighted random among those with a bedroom per character.</summary>
     public List<ResidenceTemplateEntry> templates = new List<ResidenceTemplateEntry>();
 }
 
 /// <summary>
-/// One home template a block may build, with its pick weight. linkRoomID = the room of the home's floor linked to the
-/// block room; empty = the home template's mainExit room (its front door).
+/// One home template a district may build, with its pick weight. linkRoomID = the room of the home's floor linked to the
+/// district's attach room; empty = the home template's mainExit room (its front door).
 /// </summary>
 public class ResidenceTemplateEntry
 {
@@ -43,7 +32,22 @@ public class ResidenceTemplateEntry
     public string linkRoomID = "";
 }
 
-/// <summary>A generated home of a district (Manageable.residences) - save data, never reused.</summary>
+/// <summary>
+/// WorldPlan.initializeResidences entry: an authored home faction (own factionInit, mapPlanID empty = factionID) that
+/// belongs to districtID instead of the world. templateID = the district home template it counts as (must be one the
+/// district builds; recorded in its ResidenceRecord); its floor may differ. See ResidenceUtility.AdoptResidence.
+/// </summary>
+public class ResidenceInit
+{
+    public string factionID = "";
+    public string mapPlanID = "";
+    public string districtID = "";
+    public string templateID = "";
+
+    public string MapPlanID { get { return string.IsNullOrEmpty(mapPlanID) ? factionID : mapPlanID; } }
+}
+
+/// <summary>A home of a district (Manageable.residences), generated or adopted - save data, never reused.</summary>
 public class ResidenceRecord
 {
     public string factionID = "";
@@ -93,23 +97,13 @@ public static class ResidenceUtility
         return count;
     }
 
-    /// <summary>The district room of a block (by Base ID, on a live floor), or null.</summary>
-    static Room_Instance FindBlockRoom(Manageable district, string roomID)
+    /// <summary>The district room homes attach to (spec.attachRoomID by Base ID on a live floor, empty = MainExit), or null.</summary>
+    static Room_Instance FindAttachRoom(Manageable district, ResidentialSpec spec)
     {
-        return district.ManagedRooms.Values.FirstOrDefault(r => r.Base != null && r.Base.ID == roomID && r.parentFloor != null);
-    }
-
-    static bool BlockHasRoom(Manageable district, ResidentialBlock block)
-    {
-        return block.maxResidences <= 0 || district.residences.Count(x => x.attachRoomID == block.roomID) < block.maxResidences;
-    }
-
-    /// <summary>The block's own templates, or the district fallback when it lists none.</summary>
-    static List<ResidenceTemplateEntry> BlockTemplates(ResidentialSpec spec, ResidentialBlock block)
-    {
-        if (block.templates != null && block.templates.Count > 0) return block.templates;
-        if (string.IsNullOrEmpty(spec.fallbackTemplateID)) return new List<ResidenceTemplateEntry>();
-        return new List<ResidenceTemplateEntry>() { new ResidenceTemplateEntry() { templateID = spec.fallbackTemplateID } };
+        if (string.IsNullOrEmpty(spec.attachRoomID)) return district.MainExit != null && district.MainExit.parentFloor != null ? district.MainExit : null;
+        foreach (var room in district.ManagedRooms.Values)
+            if (room != null && room.Base != null && room.Base.ID == spec.attachRoomID && room.parentFloor != null) return room;
+        return null;
     }
 
     /// <summary>Whether a home template takes householdSize characters (one bedroom each) and, if templateID is given, is that one.</summary>
@@ -135,62 +129,35 @@ public static class ResidenceUtility
     }
 
     /// <summary>
-    /// Where a new home for householdSize characters goes: among the blocks with room left (and an existing room) whose
-    /// templates (own, or the fallback when none) have one that fits, the block with the fewest homes - then a weighted
-    /// pick of its fitting templates. When no block has a fitting template, any block with room left gets the fallback
-    /// template if that fits. templateID (optional) restricts the pick to that template. False when nothing fits or the
-    /// district is full.
+    /// Where a new home for householdSize characters goes: the district's attach room, and a weighted pick among its
+    /// templates with a bedroom per character. templateID (optional) restricts the pick to that template. False when the
+    /// district is full, nothing fits, or the attach room is missing.
     /// </summary>
-    public static bool TryPickPlacement(Manageable district, int householdSize, string templateID, out Room_Instance blockRoom, out ResidenceTemplateEntry entry)
+    public static bool TryPickPlacement(Manageable district, int householdSize, string templateID, out Room_Instance attachRoom, out ResidenceTemplateEntry entry)
     {
-        blockRoom = null;
+        attachRoom = null;
         entry = null;
         var spec = GetSpec(district);
-        if (spec == null || spec.blocks == null || district.residences.Count >= spec.maxResidences) return false;
+        if (spec == null || spec.templates == null || district.residences.Count >= spec.maxResidences) return false;
 
-        var open = new List<KeyValuePair<ResidentialBlock, Room_Instance>>();
-        foreach (var block in spec.blocks)
-        {
-            if (block == null || !BlockHasRoom(district, block)) continue;
-            var room = FindBlockRoom(district, block.roomID);
-            if (room == null)
-            {
-                Debug.LogError($"ResidenceUtility: district [{district.ID}] has no block room [{block.roomID}]");
-                continue;
-            }
-            open.Add(new KeyValuePair<ResidentialBlock, Room_Instance>(block, room));
-        }
+        var fitting = new List<ResidenceTemplateEntry>();
+        foreach (var e in spec.templates)
+            if (Fits(e, householdSize, templateID)) fitting.Add(e);
+        if (fitting.Count == 0) return false;
 
-        int bestUsed = int.MaxValue;
-        List<ResidenceTemplateEntry> bestFitting = null;
-        foreach (var kvp in open)
+        attachRoom = FindAttachRoom(district, spec);
+        if (attachRoom == null)
         {
-            var fitting = BlockTemplates(spec, kvp.Key).FindAll(e => Fits(e, householdSize, templateID));
-            if (fitting.Count == 0) continue;
-            int used = district.residences.Count(x => x.attachRoomID == kvp.Key.roomID);
-            if (used >= bestUsed) continue;
-            bestUsed = used;
-            blockRoom = kvp.Value;
-            bestFitting = fitting;
+            Debug.LogError($"ResidenceUtility: district [{district.ID}] has no attach room [{(string.IsNullOrEmpty(spec.attachRoomID) ? "(main exit)" : spec.attachRoomID)}]");
+            return false;
         }
-        if (bestFitting != null)
-        {
-            entry = PickWeighted(bestFitting);
-            return entry != null;
-        }
-
-        // nothing listed fits: the fallback template on the least used open block
-        var fallback = new ResidenceTemplateEntry() { templateID = spec.fallbackTemplateID };
-        if (open.Count == 0 || !Fits(fallback, householdSize, templateID)) return false;
-        var least = open.OrderBy(kvp => district.residences.Count(x => x.attachRoomID == kvp.Key.roomID)).First();
-        blockRoom = least.Value;
-        entry = fallback;
-        return true;
+        entry = PickWeighted(fitting);
+        return entry != null;
     }
 
     /// <summary>
-    /// Builds a new home for householdSize characters in district (TryPickPlacement: block + template), instantiates it
-    /// under a new faction ID "(district)_res_(n)", links its link room to the block room with a runtime floor door (hidden runtime exits) and
+    /// Builds a new home for householdSize characters in district (TryPickPlacement: template), instantiates it
+    /// under a new faction ID "(district)_res_(n)", links its link room to the district's attach room with a runtime floor door (hidden runtime exits) and
     /// records it on the district. Null (nothing created) when the district is full, nothing fits, or a room is missing.
     /// The home is named "(district) (n)" until AssignResidence names it after its leader.
     /// </summary>
@@ -226,28 +193,85 @@ public static class ResidenceUtility
             return null;
         }
 
-        home.residentialDistrictID = district.ID;
         home.FactionDisplayName = LocalizeDictionary.QueryThenParse("ui_residence_unitName")
             .Replace("$district$", district.FactionDisplayName).Replace("$n$", district.residenceCounter.ToString());
-        district.residences.Add(new ResidenceRecord() { factionID = newID, templateID = entry.templateID, attachRoomID = attach.Base.ID });
+        LinkResidence(district, home, attach, homeRoom, entry.templateID);
+        return home;
+    }
 
-        // runtime sockets: a hidden exit on the block room for this home, one on the home's link room (its own floor
+    /// <summary>
+    /// Registers home as a home of district (shared by generated and adopted homes): marks it (residentialDistrictID),
+    /// records it, and links homeRoom to the district's attach room with a runtime floor door between hidden runtime exits.
+    /// rebuildPath false = the caller rebuilds pathing later (world instantiation, before its floors are on the map).
+    /// </summary>
+    static void LinkResidence(Manageable district, Manageable home, Room_Instance attach, Room_Instance homeRoom, string templateID, bool rebuildPath = true)
+    {
+        home.residentialDistrictID = district.ID;
+        district.residences.Add(new ResidenceRecord() { factionID = home.ID, templateID = templateID, attachRoomID = attach.Base.ID });
+
+        // runtime sockets: a hidden exit on the attach room for this home, one on the home's link room (its own floor
         // instance), joined by a runtime floor door between the real faction IDs
-        string districtExitID = "res_" + newID;
+        string districtExitID = "res_" + home.ID;
         const string homeExitID = "res_link";
         attach.parentFloor.AddRuntimeExit(districtExitID, attach.Base.ID);
-        homeRoom.parentFloor.AddRuntimeExit(homeExitID, linkRoomID);
-        campaign.Map.RegisterRuntimeFloorDoor(new FloorDoor()
+        homeRoom.parentFloor.AddRuntimeExit(homeExitID, homeRoom.Base.ID);
+        scr_System_CampaignManager.current.Map.RegisterRuntimeFloorDoor(new FloorDoor()
         {
             cost = 1f,
             sourceFaction = district.ID,
             sourceFloor = attach.parentFloor.floorPlanID,
             sourceExit = districtExitID,
-            targetFaction = newID,
+            targetFaction = home.ID,
             targetFloor = homeRoom.parentFloor.floorPlanID,
             targetExit = homeExitID,
-        });
-        return home;
+        }, rebuildPath);
+    }
+
+    static bool HasResidenceRecord(Manageable district, string factionID)
+    {
+        foreach (var record in district.residences)
+            if (record != null && record.factionID == factionID) return true;
+        return false;
+    }
+
+    /// <summary>
+    /// Makes an existing authored home (WorldPlan.initializeResidences) a home of district, the same way a generated
+    /// home is registered: TryPickPlacement (household size 0 - the home's rooms already exist - limited to templateID,
+    /// which the district must build) checks capacity and the attach room, LinkResidence links and records it. Its own name and ID stay. Then drops its
+    /// world-mesh links (saves made before the move hold them), so the district door is its only connection.
+    /// Idempotent - runs on every world instantiation / load. False (logged) when the district is full, doesn't build
+    /// templateID, or the link room is missing. rebuildPath false = the caller runs Map.BuildPath afterwards.
+    /// </summary>
+    public static bool AdoptResidence(Manageable district, Manageable home, string templateID, bool rebuildPath = true)
+    {
+        var campaign = scr_System_CampaignManager.current;
+        if (home == null || GetSpec(district) == null)
+        {
+            Debug.LogError($"AdoptResidence: [{district?.ID}] is not a residential district (home [{home?.ID}])");
+            return false;
+        }
+        if (!HasResidenceRecord(district, home.ID))
+        {
+            if (!TryPickPlacement(district, 0, templateID, out var attach, out var entry))
+            {
+                Debug.LogError($"AdoptResidence: district [{district.ID}] is full or doesn't build template [{templateID}] - home [{home.ID}] not placed");
+                return false;
+            }
+            string linkRoomID = !string.IsNullOrEmpty(entry.linkRoomID) ? entry.linkRoomID : GetPlan(home.mapPlanID)?.mainExit?.roomID;
+            Room_Instance homeRoom = null;
+            if (!string.IsNullOrEmpty(linkRoomID))
+                foreach (var room in home.ManagedRooms.Values)
+                    if (room != null && room.Base != null && room.Base.ID == linkRoomID && room.parentFloor != null) { homeRoom = room; break; }
+            if (homeRoom == null)
+            {
+                Debug.LogError($"AdoptResidence: home [{home.ID}] has no link room [{linkRoomID}]");
+                return false;
+            }
+            LinkResidence(district, home, attach, homeRoom, templateID, rebuildPath);
+        }
+        else home.residentialDistrictID = district.ID;
+        campaign.Map.RemoveFromFactionGraphs(home.ID);
+        return true;
     }
 
     /// <summary>
@@ -312,12 +336,12 @@ public static class ResidenceUtility
     }
 
     /// <summary>
-    /// Builds a new home in district for household (first = leader; CreateResidence picks block + a template with a
+    /// Builds a new home in district for household (first = leader; CreateResidence picks a template with a
     /// bedroom each, templateID optional), makes it their home (leader / member types), gives each a private room (leader:
     /// double bed first), names it after the leader and seeds their relationships. Null with nothing created when the
-    /// district is full or nothing fits.
+    /// district is full or nothing fits. sendEvent false = no join events (load-time rehousing, FactionLoadCleanup).
     /// </summary>
-    public static Manageable AssignResidence(List<Character_Trainable> household, Manageable district, MemberType leaderType, MemberType memberType, string templateID = null)
+    public static Manageable AssignResidence(List<Character_Trainable> household, Manageable district, MemberType leaderType, MemberType memberType, string templateID = null, bool sendEvent = true)
     {
         if (household == null || household.Count == 0 || leaderType == null || memberType == null) return null;
         var home = CreateResidence(district, household.Count, string.IsNullOrEmpty(templateID) ? null : templateID);
@@ -325,7 +349,7 @@ public static class ResidenceUtility
 
         for (int i = 0; i < household.Count; i++)
         {
-            household[i].FactionManager.SetHomeFaction(home.ID, i == 0 ? leaderType : memberType);
+            household[i].FactionManager.SetHomeFaction(home.ID, i == 0 ? leaderType : memberType, sendEvent);
             if (AssignPrivateRoom(home, household[i], i == 0) == null)
                 Debug.LogError($"AssignResidence: no private room left in [{home.ID}] for {household[i].FullName}");
         }
@@ -339,7 +363,7 @@ public static class ResidenceUtility
     /// <summary>
     /// AssignResidence [targetKey, districtID, leaderMemberTypeID, memberMemberTypeID, optional templateID, optional outKey]:
     /// AssignResidence for the characters of targetKey; stores the new faction ID under AppendStrings[outKey]. False with
-    /// nothing created when the district is full or no block has a template (own or fallback) with a bedroom each.
+    /// nothing created when the district is full or none of its templates has a bedroom each.
     /// </summary>
     public static bool AssignResidence(EventInstance owner, List<string> args)
     {
@@ -526,16 +550,16 @@ public static class ResidenceUtility
     /// one without becomes a permanent resident. Then takes a free private room starting with roomIDPrefix. Returns the
     /// room, or null (nothing changed) when none is free.
     /// </summary>
-    public static Room_Instance CheckIntoHotel(Manageable hotel, MemberType type, Character_Trainable c, string roomIDPrefix)
+    public static Room_Instance CheckIntoHotel(Manageable hotel, MemberType type, Character_Trainable c, string roomIDPrefix, bool sendEvent = true)
     {
         var room = hotel?.FindUnownedRoom(r => r.isRoomPrivate
             && (string.IsNullOrEmpty(roomIDPrefix) || r.Base != null && r.Base.ID.StartsWith(roomIDPrefix)));
-        return CheckIntoHotel(hotel, type, c, room);
+        return CheckIntoHotel(hotel, type, c, room, null, sendEvent);
     }
 
-    /// <summary>Admit to a selected room, sharing only with explicitly admitted members of the same stay.</summary>
+    /// <summary>Admit to a selected room, sharing only with explicitly admitted members of the same stay. sendEvent false = no join events.</summary>
     public static Room_Instance CheckIntoHotel(Manageable hotel, MemberType type, Character_Trainable c,
-        Room_Instance room, ISet<int> sameStayGuests = null)
+        Room_Instance room, ISet<int> sameStayGuests = null, bool sendEvent = true)
     {
         if (hotel == null || type == null || c == null || room == null || !room.isRoomPrivate
             || !hotel.ManagedRooms.ContainsKey(room.RefID)) return null;
@@ -548,8 +572,8 @@ public static class ResidenceUtility
                 && (c.FactionManager.Faction_Home == hotel || c.FactionManager.Faction_Home_Temporary == hotel) ? room : null;
         if (c.FactionManager.Faction_Home_Temporary != null
             || hotel.RoomOwners(room.RefID).Any(id => sameStayGuests == null || !sameStayGuests.Contains(id))) return null;
-        if (c.FactionManager.Faction_Home != null) c.FactionManager.SetTempHomeFaction(hotel.ID, type);
-        else c.FactionManager.SetHomeFaction(hotel.ID, type);
+        if (c.FactionManager.Faction_Home != null) c.FactionManager.SetTempHomeFaction(hotel.ID, type, sendEvent);
+        else c.FactionManager.SetHomeFaction(hotel.ID, type, sendEvent);
         hotel.AddRoomOwnership(c.RefID, room.RefID);
         return room;
     }

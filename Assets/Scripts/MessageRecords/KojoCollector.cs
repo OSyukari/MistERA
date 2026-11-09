@@ -119,7 +119,14 @@ public class KojoCollector : I_ResultStorage, I_Records
         if (Visibility == VisibilityLevel.Global) return true;
         if (room != null && !room.RoomChara.Contains(c)) return false;
         var actlist = RelevantActorRefs;
-        return DirectlyRelated(c) || actlist.Count < 1 || actlist.Contains(c.RefID);
+        if (DirectlyRelated(c)) return true;
+        // said behind a stall's door (room divider blocking visibility) - no actor of it is seen
+        if (room != null && MapUtility.NoneVisibleTo(c, actlist))
+        {
+            Debug.LogWarning($"[Visibility] kojo hidden from {c.FirstName} (no actor visible across a room divider): {collect?.message}");
+            return false;
+        }
+        return actlist.Count < 1 || actlist.Contains(c.RefID);
     }
 
     // validate target baseID
@@ -345,6 +352,26 @@ public class KojoCollector : I_ResultStorage, I_Records
 
         UtilityEX.GetActorTag(ref this.targetTags, Target);
     }
+
+    EvaluationPackage sourceEP;
+
+    public bool UseEPPartnerAsTarget()
+    {
+        if (!hasPackageData || (selfRef != doerRef && selfRef != receiverRef)) return false;
+        int partnerRef = selfRef == doerRef ? (receiverRef >= 0 ? receiverRef : doerRef) : doerRef;
+        if (partnerRef < 0) return false;
+        if (targetRef == partnerRef) return true;
+        var partner = scr_System_CampaignManager.current.FindInstanceByID(partnerRef);
+        if (partner == null) return false;
+        Target = partner;
+        _relation = null;
+        // Never retain the injected listener's tags or mutate an EP's shared tag list.
+        targetTags = sourceEP != null
+            ? new List<string>(partner == sourceEP.Doer ? sourceEP.DoerTargetTag : sourceEP.ReceiverTargetTag)
+            : new List<string>();
+        UtilityEX.GetActorTag(ref targetTags, partner);
+        return true;
+    }
     /// <summary>
     /// Load EP data.
     /// </summary>
@@ -445,6 +472,7 @@ public class KojoCollector : I_ResultStorage, I_Records
     public void LoadEP(EvaluationPackage ep, Character_Trainable target)
     {
         if (ep == null) return;
+        sourceEP = ep;
         hasPackageData = true;
         hasPermission = ep.hasPermission;
         isStrongP = ep.isStrongP;

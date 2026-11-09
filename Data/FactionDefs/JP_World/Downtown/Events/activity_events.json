@@ -31,16 +31,6 @@
             { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "join", "line": "neon_activity_izakaya_join", "isLast": true },
             { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "line": "neon_activity_izakaya_late", "isLast": true }
         ] },
-        { "ID": "Neon_Bowling_Begin", "events": [
-            { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [
-                { "option": "explicit join", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isJoin"] }, { "Type": "JumpToLabel", "arguments": ["", "join"] }] },
-                { "option": "late arrival", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isLate"] }, { "Type": "JumpToLabel", "arguments": ["", "late"] }] },
-                { "option": "initial launch", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "begin"] }] }
-            ] },
-            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "begin", "line": "neon_activity_bowling_begin", "isLast": true },
-            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "join", "line": "neon_activity_bowling_join", "isLast": true },
-            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "line": "neon_activity_bowling_late", "isLast": true }
-        ] },
         { "ID": "Neon_Bar_Begin", "events": [
             { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [
                 { "option": "explicit join", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isJoin"] }, { "Type": "JumpToLabel", "arguments": ["", "join"] }] },
@@ -86,8 +76,7 @@
         "neon_activity_karaoke_begin": "点歌屏亮了起来。麦克风摆在桌边，歌单还等着填上第一首歌。", "neon_activity_karaoke_join": "$joining.name$走进包厢，在点歌屏旁找到了座位。", "neon_activity_karaoke_late": "$joining.name$晚些赶到包厢，等着眼前这首歌唱完。",
         "neon_activity_live_begin": "观众区的灯光暗了下去，舞台方向传来调试设备的声音。十九点的演出时段到了。", "neon_activity_live_join": "$joining.name$走进观众区，在舞台前找了个位置。", "neon_activity_live_late": "$joining.name$赶到时演出时段已经开始，便从观众区侧面轻轻挤了进去。",
         "neon_activity_izakaya_begin": "榻榻米座上摆好了菜单，小碟碰在桌面上，发出轻轻的响声。", "neon_activity_izakaya_join": "$joining.name$脱下鞋，在矮桌旁坐下翻开菜单。", "neon_activity_izakaya_late": "$joining.name$晚些到了居酒屋，沿着座席边缘找到空位。",
-        "neon_activity_bowling_begin": "记分屏切到了新的球局，架上的保龄球缓缓滚回原位。", "neon_activity_bowling_join": "$joining.name$走到球道旁，挑选起适合的球。", "neon_activity_bowling_late": "$joining.name$稍晚来到球道旁，先望了一眼记分屏。",
-        "neon_activity_bar_begin": "卡座上的小灯亮着，菜单被摊在桌边。这里离街上的喧闹远了一些。", "neon_activity_bar_join": "$joining.name$在卡座旁停下，拉开椅子坐了进去。", "neon_activity_bar_late": "$joining.name$晚些推门进来，在音乐声里找到了卡座。",
+                "neon_activity_bar_begin": "卡座上的小灯亮着，菜单被摊在桌边。这里离街上的喧闹远了一些。", "neon_activity_bar_join": "$joining.name$在卡座旁停下，拉开椅子坐了进去。", "neon_activity_bar_late": "$joining.name$晚些推门进来，在音乐声里找到了卡座。",
         "neon_activity_adultshop_begin": "货架上按尺码挂着服饰，用品的包装朝外摆得整整齐齐。逛店并不代表购买或同意任何服务。", "neon_activity_adultshop_join": "$joining.name$走到服饰区，翻看起衣架上的尺码牌。", "neon_activity_adultshop_late": "$joining.name$晚些来到卖场，在货架旁停下脚步。",
         "neon_activity_hotel_begin": "短时休息的房间里很安静，床头灯映着干净的床单。这不是过夜登记，也不包含任何服务。", "neon_activity_hotel_join": "$joining.name$走进预留的客房，把随身物品放在桌边。", "neon_activity_hotel_late": "$joining.name$稍晚走进预留的客房，轻轻合上门。",
         "neon_activity_pachinko_begin": "机台上的灯一排排亮着。这次娱乐按已预留的固定预算计费，不包含兑换奖金。", "neon_activity_pachinko_join": "$joining.name$在机台前坐下，开始了限额娱乐时段。", "neon_activity_pachinko_late": "$joining.name$晚些来到机台区，找到了空着的位置。"

@@ -1,0 +1,43 @@
+{
+    "_doc": "口上loose entry文件：许可「口交」（sex_oral，使用自己嘴部的亲密行为：接吻、口交、舔舐、用嘴戴套等）的请求口上。条目含义与生成规范同 Permission_intimacy_low.json 的 _doc（Request / Granted / Refused，每条目一个variant、3条response，无通用兜底）。文件名含 sex，安全模式不加载。",
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "permission_sex_oral_Request",
+                    "_comment": "玩家想请求口交（用嘴的亲密行为）许可，刚开口。男性NPC察觉话题时的反应。",
+                    "variants": [ { "responses": [
+                        "\"……你想说的是用嘴的事吧。\"",
+                        "\"嘴？你确定？\"",
+                        "\"这话题……行，说吧。\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "permission_sex_oral_Granted",
+                    "_comment": "答应给予口交许可。也会在接吻、口交等指令进行中被自动请求获准时说出，台词需两种场合都自然。男性说话者。",
+                    "variants": [ { "responses": [
+                        "\"……行，用嘴也可以。\"\n%%permission_sex_oral_consent%%",
+                        "\"好，我答应你。\"\n%%permission_sex_oral_consent%%",
+                        "\"可以，不过别得寸进尺。\"\n%%permission_sex_oral_consent%%"
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "permission_sex_oral_Refused",
+                    "_comment": "拒绝给予口交许可。男性NPC，干脆为主，不过度激烈。",
+                    "variants": [ { "responses": [
+                        "\"用嘴不行。\"",
+                        "\"这个我还没法接受。\"",
+                        "\"算了吧，别想了。\""
+                    ] } ]
+                }
+            }
+        ]
+    }
+}

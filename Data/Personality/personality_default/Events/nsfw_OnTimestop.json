@@ -153,6 +153,19 @@
                                     "requirement": {
                                         "requireSelfAction": false,
                                         "selfTags": [
+                                            "carried",
+                                            "unconscious"
+                                        ]
+                                    },
+                                    "_comment": "1.0 时停解除 被携带 失去意识/睡眠 - in the player's arms (携带, 'carried' actor tag): blocks the sleeping descriptions below (bed / pillow / blanket)",
+                                    "responses": [
+                                        "OnTimestopEnd_carried_unconscious_1"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
                                             "climax"
                                         ]
                                     },
@@ -383,6 +396,7 @@
                 "OnTimestopEnd_sleep_pleasure_7": "$self$在枕头上难耐地磨蹭着脸颊，嘴里含糊不清地呢喃着。\"再……再深一点……嗯哼……\"",
                 "OnTimestopEnd_sleep_pleasure_8": "$self$腰肢开始无意识地扭动，仿佛在迎合着空气中残留的律动。\"啊……那里……好棒……\"",
                 "OnTimestopEnd_sleep_pleasure_9": "$self$发出软绵绵的鼻音，双腿在被子里轻轻磨蹭，像是沉浸在一个极度香艳的美梦中。\"哈啊……还要……\"",
+                "OnTimestopEnd_carried_unconscious_1": "被抱在怀里的$self$依旧一动不动，对刚才发生的一切毫无察觉。",
                 "OnTimestopEnd_sleep_normal_1": "$self$只是翻了个身，咂了咂嘴，继续沉浸在梦乡之中。",
                 "OnTimestopEnd_sleep_normal_2": "$self$呼吸依旧平稳绵长，完全不知道刚才发生了什么。",
                 "OnTimestopEnd_sleep_normal_3": "$self$把脸埋进枕头里蹭了蹭，发出轻微的鼾声。",
@@ -491,6 +505,7 @@
                 "OnTimestopEnd_sleep_pleasure_7": "$self$ rubbed her cheek against the pillow in frustration, mumbling indistinctly. \"More... deeper... ngh...\"",
                 "OnTimestopEnd_sleep_pleasure_8": "$self$'s waist began to twist unconsciously, as if welcoming a lingering rhythm in the air. \"Ah... there... so great...\"",
                 "OnTimestopEnd_sleep_pleasure_9": "$self$ made a soft nasal sound, legs rubbing gently in the quilt, like she was lost in a highly erotic dream. \"Haaa... want more...\"",
+                "OnTimestopEnd_carried_unconscious_1": "Held in someone's arms, $self$ stays completely still, unaware of anything that just happened.",
                 "OnTimestopEnd_sleep_normal_1": "$self$ simply rolled over, smacked her lips, and continued to dream.",
                 "OnTimestopEnd_sleep_normal_2": "$self$'s breathing remained steady and long, completely unaware of what had just happened.",
                 "OnTimestopEnd_sleep_normal_3": "$self$ buried her face in the pillow and nuzzled it, making a slight snoring sound.",

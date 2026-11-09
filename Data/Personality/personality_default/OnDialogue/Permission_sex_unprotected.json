@@ -49,6 +49,18 @@
                         "\"直接进来不可以……请戴上吧。\""
                     ] } ]
                 }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_unprotected_Ignored",
+                    "_comment": "说话者要求戴套（OnAPRefuse_Unprotected），对方无视继续直接插入。退而求其次地请求对方至少不要射在里面。女性说话者，不满、恳求。",
+                    "variants": [ { "responses": [
+                        "\"真是的……那至少不要射在里面。\"",
+                        "\"等……那、那至少别射在里面，拜托了……\"",
+                        "\"……最后一定要拔出来哦。\""
+                    ] } ]
+                }
             }
         ]
     }

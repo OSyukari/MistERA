@@ -5,6 +5,112 @@
     "Events": {
         "list": [
             {
+                "ID": "permission_sex_oral",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Permissions",
+                "UISpec": { "displayMode": "AVG" },
+                "SelfValidator": { "chara_conditions": [ { "parameters": [ "exists" ] }, { "parameters": [ "isPlayer" ] } ] },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "person" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [ { "parameters": [ "exists" ] }, { "parameters": [ "excludePlayer" ] }, { "parameters": [ "canRequestPermission", "permission_sex_oral", "self" ] } ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "start",
+                        "options": [
+                            {
+                                "option": "_kojo",
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "person", "self", "permission_sex_oral_Request", "kojo_ask" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "ask" ] }
+                                ]
+                            },
+                            { "option": "_plain", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "ask_plain" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "ask",
+                        "UISpec": { "portraitRefKey": "person" },
+                        "question": "permission_sex_oral_question",
+                        "options": [
+                            { "option": "Permission_Request_confirm", "isDefaultAccept": true, "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "decide" ] } ] },
+                            { "option": "Permission_Request_cancel", "isDefaultCancel": true, "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "end" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "ask_plain",
+                        "UISpec": { "portraitRefKey": "person" },
+                        "question": "permission_sex_oral_question_plain",
+                        "options": [
+                            { "option": "Permission_Request_confirm", "isDefaultAccept": true, "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "decide" ] } ] },
+                            { "option": "Permission_Request_cancel", "isDefaultCancel": true, "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "end" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "decide",
+                        "options": [
+                            {
+                                "option": "_accept",
+                                "target_chara_conditions": { "person": [ { "parameters": [ "acceptsPermissionRequest", "permission_sex_oral", "self" ] } ] },
+                                "Results": [
+                                    { "Type": "GrantPermission", "arguments": [ "person", "self", "permission_sex_oral", "Request" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "accept_kojo" ] }
+                                ]
+                            },
+                            { "option": "_refuse", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "refuse_kojo" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "accept_kojo",
+                        "options": [
+                            {
+                                "option": "_kojo",
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "person", "self", "permission_sex_oral_Granted", "kojo_reply" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "accept_reply" ] }
+                                ]
+                            },
+                            { "option": "_plain", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "accept_status" ] } ] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "accept_reply", "UISpec": { "portraitRefKey": "person" }, "line": "Permission_Request_reply", "nextEntryLabel": "accept_status" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "accept_status",
+                        "options": [
+                            { "option": "_normal", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "granted" ] } ] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "granted", "UISpec": { "portraitRefKey": "person" }, "line": "permission_sex_oral_granted", "isLast": true },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "refuse_kojo",
+                        "options": [
+                            {
+                                "option": "_kojo",
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "person", "self", "permission_sex_oral_Refused", "kojo_reply" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "refuse_reply" ] }
+                                ]
+                            },
+                            { "option": "_plain", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "refused" ] } ] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "refuse_reply", "UISpec": { "portraitRefKey": "person" }, "line": "Permission_Request_reply", "nextEntryLabel": "refused" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "refused", "UISpec": { "portraitRefKey": "person" }, "line": "Permission_Request_refused", "isLast": true },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "end", "line": "", "isLast": true }
+                ]
+            },
+            {
                 "ID": "permission_sex_anal",
                 "allowDuplicate": false,
                 "trigger": "OnDialogue_Permissions",
@@ -219,7 +325,7 @@
             {
                 "ID": "permission_sex_group",
                 "allowDuplicate": false,
-                "trigger": "OnDialogue_Permissions",
+                "_trigger": "OnDialogue_Permissions",
                 "UISpec": { "displayMode": "AVG" },
                 "SelfValidator": { "chara_conditions": [ { "parameters": [ "exists" ] }, { "parameters": [ "isPlayer" ] } ] },
                 "TargetValidators": [
@@ -325,7 +431,7 @@
             {
                 "ID": "permission_sex_observed",
                 "allowDuplicate": false,
-                "trigger": "OnDialogue_Permissions",
+                "_trigger": "OnDialogue_Permissions",
                 "UISpec": { "displayMode": "AVG" },
                 "SelfValidator": { "chara_conditions": [ { "parameters": [ "exists" ] }, { "parameters": [ "isPlayer" ] } ] },
                 "TargetValidators": [
@@ -645,6 +751,12 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
+                "permission_sex_oral": "请求：%%permission_sex_oral_displayName%%",
+                "permission_sex_oral_question_plain": "要向$person.name$请求「%%permission_sex_oral_displayName%%」的许可吗？",
+                "permission_sex_oral_question": "$kojo_ask$\n\n%%permission_sex_oral_question_plain%%",
+                "permission_sex_oral_granted": "$person.name$允许了你：%%permission_sex_oral_displayName%%$permission_grant_type$。",
+                "permission_sex_oral_granted_temporary": "$person.name$允许了你：%%permission_sex_oral_displayName%%。由于双方关系不满足前提，该许可仅今天有效。",
+
                 "permission_sex_anal": "请求：%%permission_sex_anal_displayName%%",
                 "permission_sex_anal_question_plain": "要向$person.name$请求「%%permission_sex_anal_displayName%%」的许可吗？",
                 "permission_sex_anal_question": "$kojo_ask$\n\n%%permission_sex_anal_question_plain%%",

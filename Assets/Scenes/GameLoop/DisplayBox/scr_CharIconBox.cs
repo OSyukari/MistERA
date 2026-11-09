@@ -74,8 +74,28 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
         }
         else
         {
+            RefreshObscured();
             updateImage();
         }
+    }
+
+    // ---- behind a room divider's door (stall): shown, dimmed, not clickable - Docs/Furniture/Plan_FurnitureOccupancy.md §6 ----
+    const float ObscuredAlpha = 0.35f;
+    bool obscured = false;
+
+    /// <summary>
+    /// in the player's room but not seen by the player (one of them inside a divider blocking visibility): the portrait
+    /// image's alpha is lowered (DrawIcon only swaps the sprite, never the colour)
+    /// </summary>
+    void RefreshObscured()
+    {
+        if (isCombatBox) return;
+        bool o = !scr_System_CampaignManager.current.isCharaVisibleToPlayer(chara_refID);
+        if (o == obscured) return;
+        obscured = o;
+        var color = picture.color;
+        color.a = o ? ObscuredAlpha : 1f;
+        picture.color = color;
     }
 
     public void OnUpdateNotice(bool b = false)
@@ -85,6 +105,7 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
     private void ReadCurrentChar(int i, bool foceUpdate)
     {
+        RefreshObscured();
         if (!isCombatBox)
         {
             if (this.chara_refID == i) nameBox.color = scr_System_CentralControl.current.DisplaySetting.TextColor_toggle.Color;
@@ -152,6 +173,7 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
     void IPointerClickHandler.OnPointerClick(PointerEventData eventData)
     {
+        if (obscured) return;   // behind a room divider's door: shown, not selectable
         if (this.chara != null && !isCombatBox)
         {
             if (scr_System_CampaignManager.current.displaySex)
@@ -178,7 +200,7 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
     bool mouseOver;
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (!isCombatBox)
+        if (!isCombatBox && !obscured)
         {
             if (nameBox.gameObject.activeInHierarchy) nameBox.color = scr_System_CentralControl.current.Color_hover;
             updateImage();

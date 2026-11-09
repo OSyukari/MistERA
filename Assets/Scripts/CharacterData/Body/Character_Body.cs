@@ -1486,8 +1486,15 @@ public class Character_Body
                     }
                 }
 
+                // The role + insertion markers were correlated within each executed EP, before merging tags.
+                // Award one climax category per role; penile assault takes precedence over non-penile assault.
+                if (allClimaxOwnerTags.Contains("experience_raped_penile"))
+                    allClimaxOwnerTags.RemoveAll(tag => tag == "experience_raped_nonpenile");
+                if (allClimaxOwnerTags.Contains("experience_rape_penile"))
+                    allClimaxOwnerTags.RemoveAll(tag => tag == "experience_rape_nonpenile");
+
                 // single grant covering every climax-experience for Owner (C/B/M/V/W/A_climax from the per-part
-                // loop above, raped_climax/masturbate_climax/animal_climax from prideTags/partnerTags above, if
+                // loop above, coercion/masturbate/animal_climax from prideTags/partnerTags above, if
                 // Owner was in a Job_Sex_Group) - RequiredOwnerTags/RequiredCOMTags on each experience decides
                 // which of them actually grant from this one merged pool.
                 UtilityEX.CheckExperienceGainNoStimulate(Owner, 1, false, Utility.Distinct(allClimaxOwnerTags), Utility.Distinct(allClimaxComTags), exp);

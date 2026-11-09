@@ -84,8 +84,10 @@ public class scr_panel_TargetInfo : scr_Menu
     public RectTransform Grid_UnequipSingles;
 
     List<int> managedEquipRefs = new List<int>();
-
+    string nameTooltip = "";
+    List<string> ttips1 = new List<string>(), ttips2 = new List<string>();
     public RectTransform prefab_equippedItem;
+    Character_Relationship rel;
     private void Refresh()
     {
 
@@ -94,6 +96,7 @@ public class scr_panel_TargetInfo : scr_Menu
         var turnOff = false;
         if (chara != null && chara.RefID > 0)
         {
+            rel = chara.Relationships.FindRelationshipWith(0);
             //image_bg.raycastTarget = true;
             //parentBox1.gameObject.SetActive(true);
             //parentBox2.gameObject.SetActive(true);
@@ -102,7 +105,10 @@ public class scr_panel_TargetInfo : scr_Menu
             self_canvasGroup.gameObject.SetActive(true);
 
             fullname.SetText(chara.FullName+(chara.FactionManager.CurrentlyActiveFaction == null ? "" : ", "+chara.CurrentActiveFactionName));
-            fullname.SetExternalTooltip(chara.FactionManager.CurrentlyActiveFaction == null ? "" : chara.FactionManager.CurrentlyActiveFaction.GetCharaSocialStandingTooltip(chara));
+
+            nameTooltip = chara.FactionManager.CurrentlyActiveFaction == null ? "" : chara.FactionManager.CurrentlyActiveFaction.GetCharaSocialStandingTooltip(chara);
+            RelationshipManager.GetRelTooltip(rel, ref nameTooltip, ttips1, ttips2);
+            fullname.SetExternalTooltip(nameTooltip);
 
             if(chara.Stats.HP != null) chara.Stats.HP.Draw(hp);
             else this.hp.SetText(" - ");
@@ -118,7 +124,6 @@ public class scr_panel_TargetInfo : scr_Menu
 
             //if (chara.FactionManager.CurrentlyActiveFaction != null) socialStatusBox.SetText(chara.FactionManager.CurrentlyActiveFactionStatus);
 
-            Character_Relationship rel = chara.Relationships.FindRelationshipWith(0);
             RelationshipManager.Draw_Attitude(chara, rel, attitudeBox);
 
             if (chara.Stats.Mood != null) chara.Stats.Mood.Draw(moodBox);

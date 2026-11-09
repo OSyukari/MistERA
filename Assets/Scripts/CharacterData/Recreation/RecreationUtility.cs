@@ -100,7 +100,7 @@ public static partial class RecreationUtility
     public const string Event_ActivityNotice = "Recreation_ActivityNotice";
 
     /// <summary>Why a booking was cancelled - picks the reason text (ui_recreation_cancel_* keys).</summary>
-    public enum CancelReason { None, Slept, WorkForbidden, LostAccess, NoTime, Displaced, MembershipChanged, ByEvent, ByRequest, GroupCancelled, GroupFailed, NoShow, FacilityRemoved }
+    public enum CancelReason { None, Slept, WorkForbidden, LostAccess, NoTime, Displaced, MembershipChanged, ByEvent, ByRequest, GroupCancelled, GroupFailed, NoShow, FacilityRemoved, OfferRemoved, FeeDeclined }
 
     /// <summary>What an activity announces about itself.</summary>
     public enum ActivityNoticeKind { Confirmed, Rescheduled, Cancelled }
@@ -149,13 +149,16 @@ public static partial class RecreationUtility
         finally { soloParticipants.Clear(); }
     }
 
-    /// <summary>A session announces itself once resolved (ResolveSession - confirmed) or when cancelled (CancelSession) - participants = who attends / was coming.</summary>
-    static void AnnounceSession(RecreationGroup g, ActivityNoticeKind kind, CancelReason reason, List<Character_Trainable> participants)
+    /// <summary>
+    /// A session announces itself once resolved (ResolveSession - confirmed) or when cancelled (CancelSession) -
+    /// participants = who attends / was coming. householdForced: shown for the player's household even out of view, as at midnight.
+    /// </summary>
+    static void AnnounceSession(RecreationGroup g, ActivityNoticeKind kind, CancelReason reason, List<Character_Trainable> participants, bool householdForced = false)
     {
         if (g == null) return;
         // the night's sessions resolve at midnight: forced on screen for the player's household, as the night's solo bookings are
         bool midnight = scr_System_Time.current.getCurrentTime().Hour == 0;
-        Announce(kind, DescribeSessionLine(g), reason, participants, midnight);
+        Announce(kind, DescribeSessionLine(g), reason, participants, midnight || householdForced);
     }
 
     /// <summary>
@@ -292,9 +295,13 @@ public static partial class RecreationUtility
             f.ClearInviteMemory();
             int today = scr_System_Time.current.getAbsoluteDay();
             scr_System_CampaignManager.current.RecreationBoard.PostCalendar();
+            // the hour's late passes that follow (the day update runs before them) are the day's one booking round for
+            // sessions (OnLatePass -> SessionPass); every planner re-ranks then, whether or not new sessions were posted
+            planningLateCycle = scr_System_Time.current.HoursLateCycle + 1;
             bool added = false;
             if (ShouldPlan(f))
             {
+                f.RecreationDirty = true;
                 for (int day = today; day <= today + 1; day++)
                 {
                     if (day > f.LastRecreationPlanDay) added |= PlanDay(f, day, int.MaxValue);
@@ -887,6 +894,8 @@ public static partial class RecreationUtility
         member.considered = true;
         member.state = RecreationMemberState.Attending;
         member.reason = member.failedCheck = "";
+        // joining one already resolved: fee put to the payer, announced with this update's newcomers (OnJoinedResolvedSession)
+        if (g.resolved) OnJoinedResolvedSession(g, member);
         f.PushSession(g);
         // joining a session: it announces itself and wakes its members as it confirms (ResolveSession) - an already
         // confirmed one wakes this joiner now
@@ -1163,7 +1172,7 @@ public static partial class RecreationUtility
                 if (activity == null || IsOvernight(activity) || string.IsNullOrEmpty(activity.ID) || activity.daysInAdvance > maxAdvance) continue;
                 string key = ActivitySourceKey(source.faction, activity);
                 if (!ActivityAllows(ctx.f, ctx.day, key, activity, source.faction)) continue;
-                float weight = activity.baseWeight * WeeklyFactor(ctx, key, activity) * TravelFactor(home, source.faction) * PersonalityFactor(ctx.c, source.faction, activity);
+                float weight = CharacterWeight(ctx.c, activity) * WeeklyFactor(ctx, key, activity) * TravelFactor(home, source.faction) * PersonalityFactor(ctx.c, source.faction, activity);
                 if (weight <= 0f) continue;
                 var cand = new Candidate() { faction = source.faction, activity = activity, sourceKey = key, memberTypeID = source.memberTypeID, weight = weight };
                 result.Add(cand);
@@ -1177,7 +1186,7 @@ public static partial class RecreationUtility
             if (activity.daysInAdvance > maxAdvance) continue;
             var venue = scr_System_CampaignManager.current.FindFactionByID(def.factionID);
             if (!OfferAllows(ctx.f, ctx.day, def) || !activity.AllowsDay(ctx.day - ctx.today, venue)) continue;
-            float weight = activity.baseWeight * WeeklyFactor(ctx, def.ID, activity) * TravelFactor(home, venue) * PersonalityFactor(ctx.c, venue, activity);
+            float weight = CharacterWeight(ctx.c, activity) * WeeklyFactor(ctx, def.CooldownKey, activity) * TravelFactor(home, venue) * PersonalityFactor(ctx.c, venue, activity);
             if (weight <= 0f) continue;
             result.Add(new Candidate() { faction = venue, activity = activity, sourceKey = def.ID, memberTypeID = def.memberTypeID, weight = weight, source = RecreationBookingSource.Offer });
         }
@@ -1216,13 +1225,37 @@ public static partial class RecreationUtility
         return faction.GetOfferedRecreationTypes().Exists(t => t.ID == memberTypeID);
     }
 
-    /// <summary>Days f has a visit for key: attended (remembered window) or booked.</summary>
+    /// <summary>Days f has a visit for cooldown key `key` (CooldownKeyOf): attended (remembered window - RecordAttendance is keyed the same) or booked.</summary>
     static HashSet<int> VisitDays(Character_Factions f, string key)
     {
         var days = new HashSet<int>(f.GetAttendedDays(key));
         var bookings = f.RecreationBookings;
-        for (int i = 0; i < bookings.Count; i++) if (bookings[i] != null && bookings[i].sourceKey == key) days.Add(bookings[i].day);
+        for (int i = 0; i < bookings.Count; i++) if (bookings[i] != null && CooldownKeyOf(bookings[i].sourceKey) == key) days.Add(bookings[i].day);
         return days;
+    }
+
+    /// <summary>sourceKey -> cooldown key, per campaign (offer defs don't change during one).</summary>
+    static readonly Dictionary<string, string> cooldownKeyCache = new Dictionary<string, string>();
+    static scr_System_CampaignManager cooldownKeyCampaign = null;
+
+    /// <summary>
+    /// The key the cooldown / one-reservation rules count a booking or session of sourceKey under: a fixed / flexible
+    /// offer's CooldownKey (its cooldownTag - the same kind of activity at one venue), else sourceKey itself (an
+    /// activity's sourceKey already is its cooldownTag or faction ID + ":" + activity ID - ActivitySourceKey).
+    /// </summary>
+    public static string CooldownKeyOf(string sourceKey)
+    {
+        if (string.IsNullOrEmpty(sourceKey)) return sourceKey ?? "";
+        var campaign = scr_System_CampaignManager.current;
+        if (cooldownKeyCampaign != campaign)
+        {
+            cooldownKeyCache.Clear();
+            cooldownKeyCampaign = campaign;
+        }
+        if (cooldownKeyCache.TryGetValue(sourceKey, out var key)) return key;
+        key = RecreationBoard.FindDef(sourceKey)?.CooldownKey ?? sourceKey;
+        cooldownKeyCache[sourceKey] = key;
+        return key;
     }
 
     /// <summary>Never twice on one day; with minDays (minDaysBetween), no other visit of key within that many days either side of `day`.</summary>
@@ -1289,6 +1322,7 @@ public static partial class RecreationUtility
         return activity.AllowsDay(ahead, venue) && activity.AllowsAdvance(ahead) && (provider || CooldownAllows(f, day, key, activity.minDaysBetween))
             && IsEligible(f.Owner, activity) && FacilityAvailable(venue, activity)
             && (provider || !HasPendingReservation(f, key, except))
+            && DailyMainTypeAllows(f, day, activity, except)
             && (except == null || ReservationRefusal(f, PreviewBooking(except)) == "");
     }
 
@@ -1307,9 +1341,11 @@ public static partial class RecreationUtility
     /// </summary>
     static bool OfferAllows(Character_Factions f, int day, RecreationOfferDef def, RecreationGroup except = null)
     {
-        if (def == null || !CooldownAllows(f, day, def.ID, def.minDaysBetween)) return false;
+        // counted under its cooldown key: offers sharing a cooldownTag (the same kind of activity at one venue) count as one
+        if (def == null || !CooldownAllows(f, day, def.CooldownKey, def.minDaysBetween)) return false;
+        if (!DailyMainTypeAllows(f, day, def.AsActivity, except)) return false;
         if (day - scr_System_Time.current.getAbsoluteDay() > def.daysInAdvance) return false;
-        if (HasPendingReservation(f, def.ID, except)) return false;
+        if (HasPendingReservation(f, def.CooldownKey, except)) return false;
         var venue = scr_System_CampaignManager.current.FindFactionByID(def.factionID);
         if (venue == null || HasUnpaidActivityFee(f, venue)) return false;
         if (!IsEligible(f.Owner, def.AsActivity) || !FacilityAvailable(venue, def.AsActivity)) return false;
@@ -1317,9 +1353,10 @@ public static partial class RecreationUtility
     }
 
     /// <summary>
-    /// One reservation per activity: f already holds a booking of key (an activity's / offer's sourceKey) that hasn't
-    /// ended, or hosts an open session of it not yet ended (posted, not booked yet) - except's own booking / except itself
-    /// not counted. A new one of the same activity waits until that one is over.
+    /// One reservation per activity: f already holds a booking under cooldown key `key` (CooldownKeyOf - an activity's /
+    /// offer's sourceKey, or the cooldownTag offers share) that hasn't ended, or hosts an open session of it not yet ended
+    /// (posted, not booked yet) - except's own booking / except itself not counted. A new one of the same activity waits
+    /// until that one is over.
     /// </summary>
     static bool HasPendingReservation(Character_Factions f, string key, RecreationGroup except)
     {
@@ -1328,13 +1365,13 @@ public static partial class RecreationUtility
         for (int i = 0; i < bookings.Count; i++)
         {
             var b = bookings[i];
-            if (b != null && b.sourceKey == key && b.AbsEnd > nowAbs && (except == null || b.Session != except)) return true;
+            if (b != null && b.AbsEnd > nowAbs && (except == null || b.Session != except) && CooldownKeyOf(b.sourceKey) == key) return true;
         }
         var inbox = f.SessionInbox;
         for (int i = 0; i < inbox.Count; i++)
         {
             var g = inbox[i];
-            if (g != null && g != except && g.IsOpen && g.AbsEnd > nowAbs && g.sourceKey == key && g.hostRef == f.Owner.RefID) return true;
+            if (g != null && g != except && g.IsOpen && g.AbsEnd > nowAbs && g.hostRef == f.Owner.RefID && CooldownKeyOf(g.sourceKey) == key) return true;
         }
         return false;
     }
@@ -1396,7 +1433,28 @@ public static partial class RecreationUtility
         return minutes;
     }
 
-    /// <summary>Hook for personality-driven taste (traits, interests...). Neutral for now.</summary>
+    /// <summary>Relative preference before weekly/travel factors; zero opts out of autonomous selection.</summary>
+    public static float CharacterWeight(Character_Trainable c, RecreationActivity activity)
+    {
+        if (activity == null) return 1f;
+        float weight = activity.baseWeight;
+        if (activity.weightMods != null)
+            foreach (var mod in activity.weightMods)
+            {
+                if (mod == null) continue;
+                if (mod.condition == null || (c != null && EventUtility.isCharaValid(mod.condition, ConditionContext(c), c)))
+                    weight += mod.modValue;
+            }
+        return float.IsNaN(weight) || float.IsInfinity(weight) ? 0f : Mathf.Max(0f, weight);
+    }
+
+    /// <summary>Deterministic invitation preference, independent of availability and random selection.</summary>
+    public static float BookingPreference(Character_Trainable c, RecreationBooking booking)
+    {
+        return CharacterWeight(c, booking?.GetActivity(c?.FactionManager));
+    }
+
+    /// <summary>Future personal preferences may use mainTypeTag and secondaryTags here. Neutral for now.</summary>
     static float PersonalityFactor(Character_Trainable c, Manageable venue, RecreationActivity activity)
     {
         return 1f;
@@ -1516,6 +1574,10 @@ public static partial class RecreationUtility
             RememberActivityRoom(booking, room);
 
             result.Add(booking);
+            // Neither a shared cooldown nor a daily category may follow itself in this chain.
+            string placedKey = CooldownKeyOf(cand.sourceKey);
+            for (int i = pool.Count - 1; i >= 0; i--)
+                if (CooldownKeyOf(pool[i].sourceKey) == placedKey || SameDailyMainType(ctx.f, cand.activity, pool[i].activity)) pool.RemoveAt(i);
             chainStart = chain.Count == 0 ? span.start : Math.Min(chainStart, span.start);
             chainEnd = chain.Count == 0 ? span.end : Math.Max(chainEnd, span.end);
             chain.Add(span);
@@ -1710,13 +1772,13 @@ public static partial class RecreationUtility
 
     /// <summary>
     /// AddRecreationOffer: posts fixed offer def defID on day today + dayOffset (optionally at another start/length) - its
-    /// hostless World session goes on the venue's world list and committed changes trigger eligible characters' ranking.
-    /// False if the def is unknown or flexible.
+    /// hostless World session goes on the venue's world list. answerNow: every NPC who sees it answers in their next late
+    /// pass (AnswerImmediatePosts); else they answer at the next day update, like any post. False if the def is unknown or flexible.
     /// </summary>
-    public static bool PostOffer(string defID, int dayOffset, int startHour = -1, int hours = -1)
+    public static bool PostOffer(string defID, int dayOffset, int startHour = -1, int hours = -1, bool answerNow = false)
     {
         int day = scr_System_Time.current.getAbsoluteDay() + dayOffset;
-        return scr_System_CampaignManager.current.RecreationBoard.Post(defID, day, startHour, hours);
+        return scr_System_CampaignManager.current.RecreationBoard.Post(defID, day, startHour, hours, byEvent: true, answerNow: answerNow);
     }
 
     /// <summary>

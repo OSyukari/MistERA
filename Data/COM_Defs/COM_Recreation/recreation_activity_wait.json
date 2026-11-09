@@ -24,27 +24,6 @@
                 "description_ongoing":{ "Entries":[ { "keepLooking":true, "texts":["recreation_activity_wait_ongoing"] } ] },
                 "description_remove":{ "Entries":[ { "keepLooking":true, "texts":["recreation_activity_wait_remove"] } ] },
                 "description_after":{ "Entries":[ { "keepLooking":true, "texts":["recreation_activity_wait_after"] } ] }
-            },
-            {
-                "_comment":"Player-only brief event entry for an activity already under way (Job_Activity.JoinCOMID, button from MakePlayerJoinPackage). joinAlone excludes targets and teammates. No interaction/job rewards or Results are attached to this COM.",
-                "ID":"recreation_activity_join",
-                "ActionPackageClass":"ActionPackage_ActivityWait",
-                "displayName":"recreation_activity_join_displayName",
-                "timeScale":1,
-                "comTags":["recreation","activity_join"],
-                "requirements": { "requirement": { "treatReceiverAsDoer": true, "joinAlone": true } },
-                "variants": [
-                    {
-                        "requirements": { "requirement": { } },
-                        "displayName":"recreation_activity_join_displayName"
-                    }
-                ],
-                "AcceptanceCheck": { "baseAcceptanceValue": 10 },
-                "DifficultyCheck":{ "baseD20Check":0 },
-                "description_begin":{ "Entries":[ { "keepLooking":true, "texts":["recreation_activity_join_begin"] } ] },
-                "description_ongoing":{ "Entries":[ { "keepLooking":true, "texts":["recreation_activity_join_ongoing"] } ] },
-                "description_remove":{ "Entries":[ { "keepLooking":true, "texts":["recreation_activity_join_remove"] } ] },
-                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["recreation_activity_join_after"] } ] }
             }
         ]
     },
@@ -59,13 +38,7 @@
                 "recreation_activity_wait_ongoing": "$doer.firstname$正在等待活动开始",
                 "recreation_activity_wait_remove": "$doer.firstname$不再等待活动",
                 "recreation_activity_wait_after": "$doer.firstname$结束了等候",
-                "recreation_activity_join_displayName": "加入活动",
-                "recreation_activity_wait_playerDisplayName": "加入活动",
-                "recreation_activity_join_tooltip": "加入正在进行的活动：$activity$\n$detail$",
-                "recreation_activity_join_begin": "$doer.firstname$走上前，准备加入活动",
-                "recreation_activity_join_ongoing": "$doer.firstname$正在加入活动",
-                "recreation_activity_join_remove": "$doer.firstname$停下脚步，没有继续加入",
-                "recreation_activity_join_after": "$doer.firstname$来到活动现场"
+                "recreation_activity_join_tooltip": "参加的活动：$activity$\n$detail$"
             }
         }
     }

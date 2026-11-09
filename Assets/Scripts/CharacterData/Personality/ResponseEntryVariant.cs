@@ -283,7 +283,9 @@ public partial class ResponseEntry
 
             List<string> ttips = new List<string>();
 
-            if (!requirement.Validate(kol.Owner, kol.Target, kol.SelfTags, kol.TargetTags, kol, kol.Relation, out var hadlock)) return false;
+            var rel = requirement.requireRelationshipTypes != null && requirement.requireRelationshipTypes.Count > 0
+                ? kol.Owner?.Relationships?.PeekRelationshipWith(kol.Target) : kol.Relation;
+            if (!requirement.Validate(kol.Owner, kol.Target, kol.SelfTags, kol.TargetTags, kol, rel, out var hadlock)) return false;
 
             return true;
         }
@@ -349,6 +351,8 @@ public partial class ResponseEntry
             public List<string> selfTags = new List<string>();
             public List<string> excludeSelfTags = new List<string>();
             public List<string> targetTags = new List<string>();
+            /// <summary>Any listed type on the supplied speaker -> listener relationship; null/empty means no filter.</summary>
+            public List<string> requireRelationshipTypes = null;
             public List<string> excludeTargetTags = new List<string>();
             public bool requireSelfForced = false;
             public int variantID = -1;
@@ -364,6 +368,8 @@ public partial class ResponseEntry
             {
 
                 hardlock = false;
+                if (requireRelationshipTypes != null && requireRelationshipTypes.Count > 0
+                    && (rel == null || !rel.HasRelationshipType(requireRelationshipTypes))) return false;
                 //if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents_validations) Debug.Log("Validating kojo req [" + (self == null ? "null" : self.FirstName) + "->" + (target == null ? "null" : target.FirstName) + $"], self[{String.Join("|", selfTags)}" + "] target[" + String.Join("|", targetTags) + "]");
 
                 List<string> tooltips = new List<string>();

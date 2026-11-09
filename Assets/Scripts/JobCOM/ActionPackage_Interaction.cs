@@ -21,6 +21,7 @@ public class ActionPackage_Interaction : ActionPackage
     {
         get
         {
+            if (targetCOM == null || !targetCOM.allowJoining) return false;
             var maxcount = this.targetCOM.MaxActorCount;
             if (this.targetCOM.AllowMaxActorMod && this.job is Job_Furniture)
             {
@@ -34,10 +35,10 @@ public class ActionPackage_Interaction : ActionPackage
 
     public override int canJoinAP(Character_Trainable c, out List<int> doers, out List<int> receivers, out List<string> tooltips)
     {
-        var tempPackage = this.Copy();
-
         base.canJoinAP(c, out doers, out receivers, out var ttps);
+        if (targetCOM == null || !targetCOM.allowJoining) { tooltips = ttps; return -1; }
 
+        var tempPackage = this.Copy();
         tempPackage.ResetRequest(doers, receivers, this.masterRef);
         if (tempPackage.Validate())
         {
@@ -54,10 +55,10 @@ public class ActionPackage_Interaction : ActionPackage
 
     public override int canJoinAP(List<Character_Trainable> cs, out List<int> doers, out List<int> receivers, out List<string> tooltips)
     {
-        var tempPackage = this.Copy();
-
         base.canJoinAP(cs, out doers, out receivers, out tooltips);
+        if (targetCOM == null || !targetCOM.allowJoining) return -1;
 
+        var tempPackage = this.Copy();
         tempPackage.ResetRequest(doers, receivers, this.masterRef);
         if (tempPackage.Validate()) return tempPackage.COMVariantID;
         else

@@ -195,7 +195,7 @@ public static class PermissionService
         return string.Join("\n", lines);
     }
 
-    /// <summary>Localized "（长期）" / "（仅限今日）" for the $permission_grant_type$ token of the [id]_consent lines.</summary>
+    /// <summary>Localized "（长期）" / "（临时）" for the $permission_grant_type$ token of the [id]_consent lines.</summary>
     public static string GrantTypeLabel(PermissionGrantType type)
     {
         return LocalizeDictionary.QueryThenParse(type == PermissionGrantType.Temporary ? "ui_permission_grantType_temporary" : "ui_permission_grantType_normal");
@@ -210,6 +210,61 @@ public static class PermissionService
             () => IsLivePair(granter, holder), out changed)) return false;
         if (changed) InvalidatePair(granter, holder);
         return true;
+    }
+
+    [ThreadStatic] static List<int> removedHoldersBuffer;
+
+    /// <summary>
+    /// Granter's day update: removes the temporary grants it gave, except to a holder in the same running sex scene
+    /// (those are removed when the scene ends, ClearTemporaryForPair).
+    /// </summary>
+    public static void ClearTemporaryOnDayUpdate(Character_Trainable granter)
+    {
+        var campaign = scr_System_CampaignManager.current;
+        if (campaign?.PermissionGrants == null || granter == null || granter.RefID < 0) return;
+        var scene = RunningSexScene(granter);
+        var removed = removedHoldersBuffer ?? (removedHoldersBuffer = new List<int>());
+        removed.Clear();
+        campaign.PermissionGrants.RemoveTemporaryByGranter(granter.RefID,
+            scene == null ? (Func<int, bool>)null : holderRef => ReferenceEquals(RunningSexScene(campaign.FindInstanceByID(holderRef)), scene),
+            removed);
+        for (int i = 0; i < removed.Count; i++)
+        {
+            var holder = campaign.FindInstanceByID(removed[i]);
+            if (holder != null && holder != granter && granter.Relationships != null && holder.Relationships != null)
+                InvalidatePair(granter, holder);
+        }
+        removed.Clear();
+    }
+
+    /// <summary>Sex scene end for the pair: removes the temporary grants between them, both directions.</summary>
+    public static void ClearTemporaryForPair(Character_Trainable a, Character_Trainable b)
+    {
+        var campaign = scr_System_CampaignManager.current;
+        if (campaign?.PermissionGrants == null || a == null || b == null || a == b || a.RefID < 0 || b.RefID < 0) return;
+        if (campaign.PermissionGrants.RemoveTemporaryForPair(a.RefID, b.RefID)
+            && a.Relationships != null && b.Relationships != null)
+            InvalidatePair(a, b);
+    }
+
+    /// <summary>Load cleanup: drops temporary grants from earlier days unless the pair shares a running sex scene.</summary>
+    public static int RemoveStaleTemporaryOnLoad(DateTime gameTime)
+    {
+        var campaign = scr_System_CampaignManager.current;
+        if (campaign?.PermissionGrants == null) return 0;
+        // During load: look the job up without CurrentJob, whose cached pointer would outlive later load reconciliation.
+        return campaign.PermissionGrants.RemoveStaleTemporary(gameTime, (granterRef, holderRef) =>
+        {
+            var granter = campaign.FindInstanceByID(granterRef);
+            var holder = campaign.FindInstanceByID(holderRef);
+            if (granter == null || holder == null || granter.CurrentJobRefID < 0 || granter.CurrentJobRefID != holder.CurrentJobRefID) return false;
+            return campaign.FindJobInstanceByID(granter.CurrentJobRefID) is Job_Sex_Group scene && !scene.IsEnded;
+        });
+    }
+
+    static Job_Sex_Group RunningSexScene(Character_Trainable c)
+    {
+        return c?.CurrentJob is Job_Sex_Group scene && !scene.IsEnded ? scene : null;
     }
 
     private static void InvalidatePair(Character_Trainable granter, Character_Trainable holder)

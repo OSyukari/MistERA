@@ -1,5 +1,5 @@
 {
-    "_doc": "Session commands of Job_MediaSession (a group movie / game session - RecreationActivity.requireMedia, Docs/Utnapishtim_Activities/Plan_UtnapishtimActivities.md). The job builds one in its room for each participant, in a package of their own, and issues it again each time it finishes - short, so anyone can break for a need and rejoin. Silent: no begin / ongoing / remove / after lines, so a session of several hours doesn't flood the log (the session's own start / end events tell the story). Not furniture commands (no 'furniture' tag) - never offered by furniture to the ordinary sandbox. joinAlone: the player joining one drags no target or teammates along.",
+    "_doc": "Session commands of Job_MediaSession (a group movie / game session - RecreationActivity.requireMedia, Docs/Utnapishtim_Activities/Plan_UtnapishtimActivities.md). Each package is a short round (timeScale, no repeat) shared by one group of the activity (Docs/Activities/Plan_MediaSessionSharedPackage.md): the movie's progress is the job's own state, and anyone can break for a need and rejoin a later round. No doer cap (no doerCount); everyone is a doer (treatReceiverAsDoer), so watching together counts as an interaction. Like every activity package, the player's package holds their target / followers too (Job_Activity.CompanionsFor), each answering for themselves - a refusing one leaves, the player goes on. Silent: no begin / ongoing / remove / after lines, so a session of several hours doesn't flood the log (the session's own start / end events tell the story). Not furniture commands (no 'furniture' tag) - never offered by furniture to the ordinary sandbox.",
     "COMs":
     {
         "list":
@@ -11,7 +11,7 @@
                 "displayName":"com_media_watch_displayName",
                 "timeScale":15,
                 "comTags":["recreation","media_session"],
-                "requirements": { "requirement": { "treatReceiverAsDoer": true, "joinAlone": true } },
+                "requirements": { "requirement": { "treatReceiverAsDoer": true } },
                 "GenerateCOM": {
                     "itemTag": "furniture_watchVideo",
                     "targetCOMClass": {
@@ -21,14 +21,14 @@
                         "displayName": "com_media_watch_displayName_item",
                         "timeScale": 15,
                         "comTags": ["recreation","media_session"],
-                        "requirements": { "requirement": { "treatReceiverAsDoer": true, "joinAlone": true } },
+                        "requirements": { "requirement": { "treatReceiverAsDoer": true } },
                         "results_EP": {
                             "results_character": [
                                 { "entry_conditions": { "applyToDoer": true }, "entry_results": { "type": "statMod_ST", "value": "3" } }
                             ]
                         },
                         "variants": [
-                            { "requirements": { "requirement": { "doerCount": 1 } }, "displayName":"com_media_watch_displayName_item" }
+                            { "requirements": { "requirement": { } }, "displayName":"com_media_watch_displayName_item" }
                         ],
                         "AcceptanceCheck": { "baseAcceptanceValue": 10 },
                         "DifficultyCheck": { "baseD20Check": 0 }
@@ -40,7 +40,7 @@
                     ]
                 },
                 "variants": [
-                    { "requirements": { "requirement": { "doerCount": 1 } }, "displayName":"com_media_watch_displayName" }
+                    { "requirements": { "requirement": { } }, "displayName":"com_media_watch_displayName" }
                 ],
                 "AcceptanceCheck": { "baseAcceptanceValue": 10 },
                 "DifficultyCheck": { "baseD20Check": 0 }
@@ -52,7 +52,7 @@
                 "displayName":"com_media_play_displayName",
                 "timeScale":15,
                 "comTags":["recreation","media_session"],
-                "requirements": { "requirement": { "treatReceiverAsDoer": true, "joinAlone": true, "req_Doers": { "cost_EN": 1 } } },
+                "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "cost_EN": 1 } } },
                 "GenerateCOM": {
                     "itemTag": "furniture_playVideoGames",
                     "targetCOMClass": {
@@ -62,14 +62,14 @@
                         "displayName": "com_media_play_displayName_item",
                         "timeScale": 15,
                         "comTags": ["recreation","media_session"],
-                        "requirements": { "requirement": { "treatReceiverAsDoer": true, "joinAlone": true, "req_Doers": { "cost_EN": 1 } } },
+                        "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "cost_EN": 1 } } },
                         "results_EP": {
                             "results_character": [
                                 { "entry_conditions": { "applyToDoer": true }, "entry_results": { "type": "statMod_ST", "value": "3" } }
                             ]
                         },
                         "variants": [
-                            { "requirements": { "requirement": { "doerCount": 1 } }, "displayName":"com_media_play_displayName_item" }
+                            { "requirements": { "requirement": { } }, "displayName":"com_media_play_displayName_item" }
                         ],
                         "AcceptanceCheck": { "baseAcceptanceValue": 10 },
                         "DifficultyCheck": { "baseD20Check": 0 }
@@ -81,7 +81,7 @@
                     ]
                 },
                 "variants": [
-                    { "requirements": { "requirement": { "doerCount": 1 } }, "displayName":"com_media_play_displayName" }
+                    { "requirements": { "requirement": { } }, "displayName":"com_media_play_displayName" }
                 ],
                 "AcceptanceCheck": { "baseAcceptanceValue": 10 },
                 "DifficultyCheck": { "baseD20Check": 0 }

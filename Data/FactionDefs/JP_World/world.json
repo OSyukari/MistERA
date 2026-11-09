@@ -29,9 +29,6 @@
         "initializeFactions":
         {
             "jp_convenience_store_SunMart":"jp_convenience_store_SunMart",
-            "Katsuragi_Household":"Katsuragi_Household",
-            "ErAV_miyama_Household":"ErAV_miyama_Household",
-            "ErAV_Kiryu_Household":"ErAV_Kiryu_Household",
             "ErAV_KiryuGumi_Office":"ErAV_KiryuGumi_Office",
             "jp_shopping_street":"jp_shopping_street",
             "jp_mall_clothing":"jp_mall_clothing",
@@ -43,78 +40,49 @@
             "jp_mall_foodcourt":"jp_mall_foodcourt",
             "jp_mall_cinema":"jp_mall_cinema",
             "jp_beauty_salon":"jp_beauty_salon",
-            "jp_greenside":"jp_greenside",
             "jp_park":"jp_park",
-            "jp_greenside_library":"jp_greenside_library",
-            "jp_pet_shop":"jp_pet_shop",
-            "jp_greenside_sento":"jp_greenside_sento",
-            "jp_otaku_street":"jp_otaku_street",
-            "jp_maid_cafe":"jp_maid_cafe",
+            "jp_library":"jp_library",
+            "jp_pet_cafe":"jp_pet_cafe",
+            "jp_sento":"jp_sento",
+            "jp_downtown":"jp_downtown",
+            "jp_cosplay_cafe":"jp_cosplay_cafe",
             "jp_arcade":"jp_arcade",
-            "jp_otaku_mangashop":"jp_otaku_mangashop",
             "jp_otaku_netcafe":"jp_otaku_netcafe",
             "jp_otaku_hobbyshop":"jp_otaku_hobbyshop",
-            "jp_otaku_cosplaystudio":"jp_otaku_cosplaystudio",
-            "jp_neon_street":"jp_neon_street",
             "jp_karaoke":"jp_karaoke",
             "jp_neon_livehouse":"jp_neon_livehouse",
-            "jp_neon_massage":"jp_neon_massage",
-            "jp_neon_izakaya":"jp_neon_izakaya",
-            "jp_neon_bowling":"jp_neon_bowling",
+            "jp_massage":"jp_massage",
+            "jp_izakaya":"jp_izakaya",
             "jp_bar":"jp_bar",
             "jp_neon_adultshop":"jp_neon_adultshop",
             "jp_neon_lovehotel":"jp_neon_lovehotel",
             "jp_neon_pachinko":"jp_neon_pachinko",
-            "jp_neon_soapland":"jp_neon_soapland",
             "jp_neon_dispatch":"jp_neon_dispatch",
             "jp_high_school":"jp_high_school",
-            "CoffinAnL_Household":"CoffinAnL_Household",
             "jp_hospital":"jp_hospital",
             "jp_sports_center":"jp_sports_center",
             "jp_tourist_riverside":"jp_tourist_riverside",
             "jp_tourist_shrine":"jp_tourist_shrine",
-            "jp_res_aoba_mansion":"jp_res_aoba_mansion",
-            "jp_res_sakuragaoka":"jp_res_sakuragaoka",
-            "jp_res_tower_heights":"jp_res_tower_heights",
-            "jp_res_kotobuki_so":"jp_res_kotobuki_so",
+            "jp_district_apartment":"jp_district_apartment",
+            "jp_district_houses":"jp_district_houses",
+            "jp_district_luxury_apartment":"jp_district_luxury_apartment",
+            "jp_district_budget_apartment":"jp_district_budget_apartment",
             "jp_hotel_business":"jp_hotel_business"
         },
+        "_comment_initializeResidences": "Authored homes that belong to a residential district, not the world (Docs/Locations/Plan_HouseholdsIntoDistricts.md): each is instantiated from its own factionInit (mapPlanID empty = factionID) and registered as a home of districtID (ResidenceUtility.AdoptResidence: district block choice + runtime floor door). No world door, no world mesh. templateID = the district home template it counts as.",
+        "initializeResidences":
+        [
+            { "factionID":"Katsuragi_Household",   "districtID":"jp_district_houses",    "templateID":"jp_home_tpl_house_4ldk" },
+            { "factionID":"ErAV_miyama_Household", "districtID":"jp_district_houses",    "templateID":"jp_home_tpl_house_4ldk" },
+            { "factionID":"ErAV_Kiryu_Household",  "districtID":"jp_district_houses",    "templateID":"jp_home_tpl_house_4ldk" },
+            { "factionID":"CoffinAnL_Household",   "districtID":"jp_district_apartment", "templateID":"jp_home_tpl_apt_2ldk" }
+        ],
         "doors":
         [
-            {
-                "offset_x":460, "offset_y":250,
-                "factionID":"jp_convenience_store_SunMart",
-                "floorExitID":"store_1F_entrance"
-            },
-            {
-                "offset_x":430, "offset_y":220, "isPublic":false,
-                "factionID":"Katsuragi_Household",
-                "floorExitID":"4ldk_floor_1L_frontDoor"
-            },
-            {
-                "offset_x":520, "offset_y":230, "isPublic":false,
-                "factionID":"CoffinAnL_Household",
-                "floorExitID":"floor_2ldk_2floor_1_1L_frontDoor"
-            },
-            {
-                "offset_x":480, "offset_y":190, "isPublic":false,
-                "factionID":"ErAV_miyama_Household",
-                "floorExitID":"4ldk_floor_1L_frontDoor"
-            },
-            {
-                "offset_x":750, "offset_y":260, "isPublic":false,
-                "factionID":"ErAV_Kiryu_Household",
-                "floorExitID":"4ldk_floor_1L_frontDoor"
-            },
             {
                 "offset_x":650, "offset_y":260,
                 "factionID":"ErAV_KiryuGumi_Office",
                 "floorExitID":"erav_kiryu_office_frontDoor"
-            },
-            {
-                "offset_x":440, "offset_y":150,
-                "factionID":"jp_greenside",
-                "floorExitID":"greenside_entrance"
             },
             {
                 "_comment":"placeholder - no factionInit yet",
@@ -134,24 +102,10 @@
                 "floorExitID":"jp_shopping_street_entrance"
             },
             {
+                "_comment":"Downtown (繁华街): merged entertainment district, ex Neon Street + Otaku Street (Downtown/Faction.json)",
                 "offset_x":710, "offset_y":300,
-                "factionID":"jp_neon_street",
-                "floorExitID":"neon_entrance"
-            },
-            {
-                "offset_x":640, "offset_y":160,
-                "factionID":"jp_otaku_street",
-                "floorExitID":"otaku_street_entrance"
-            },
-            {
-                "offset_x":620, "offset_y":275,
-                "factionID":"jp_sports_center",
-                "floorExitID":"sports_club_lobby"
-            },
-            {
-                "offset_x":540, "offset_y":275,
-                "factionID":"jp_mall_cinema",
-                "floorExitID":"cinema_lobby"
+                "factionID":"jp_downtown",
+                "floorExitID":"downtown_entrance"
             },
             {
                 "_comment":"placeholder - no factionInit yet",
@@ -188,33 +142,28 @@
                 "floorExitID":"ranch_entrance"
             },
             {
-                "_comment":"residential district (Residential/AobaMansion.json) - generated homes attach to its corridors, no doors of their own",
+                "_comment":"residential district (Residential/Apartment.json) - homes link to its entrance, no doors of their own",
                 "offset_x":530, "offset_y":160,
-                "factionID":"jp_res_aoba_mansion",
-                "floorExitID":"aoba_entrance"
+                "factionID":"jp_district_apartment",
+                "floorExitID":"apartment_entrance"
             },
             {
-                "_comment":"residential district (Residential/Sakuragaoka.json)",
+                "_comment":"residential district (Residential/Houses.json)",
                 "offset_x":390, "offset_y":200,
-                "factionID":"jp_res_sakuragaoka",
-                "floorExitID":"sakura_entrance"
+                "factionID":"jp_district_houses",
+                "floorExitID":"houses_entrance"
             },
             {
-                "_comment":"residential district (Residential/TowerHeights.json)",
+                "_comment":"residential district (Residential/LuxuryApartment.json)",
                 "offset_x":740, "offset_y":160,
-                "factionID":"jp_res_tower_heights",
-                "floorExitID":"tower_lobby"
+                "factionID":"jp_district_luxury_apartment",
+                "floorExitID":"luxury_apartment_lobby"
             },
             {
-                "_comment":"residential district (Residential/KotobukiSo.json)",
+                "_comment":"residential district (Residential/BudgetApartment.json)",
                 "offset_x":450, "offset_y":290,
-                "factionID":"jp_res_kotobuki_so",
-                "floorExitID":"kotobuki_entrance"
-            },
-            {
-                "offset_x":725, "offset_y":225,
-                "factionID":"jp_hotel_business",
-                "floorExitID":"hotel_lobby"
+                "factionID":"jp_district_budget_apartment",
+                "floorExitID":"budget_apartment_entrance"
             }
         ],
         "npcInit":
@@ -348,7 +297,6 @@
                 "jp_shopping_street": "商店街",
                 "jp_family_restaurant": "家庭餐厅",
                 "jp_sports_center": "体育中心",
-                "jp_pet_shop": "宠物店",
                 "jp_casino": "赌场",
                 "jp_train_station": "车站",
                 "jp_tourist_riverside": "河畔",
@@ -430,7 +378,7 @@
                 "jp_shopping_street": "Shopping Street",
                 "jp_family_restaurant": "Family Restaurant",
                 "jp_sports_center": "Sports Club",
-                "jp_pet_shop": "Pet Shop",
+                "jp_pet_cafe": "Pet Café",
                 "jp_casino": "Casino",
                 "jp_train_station": "Train Station",
                 "jp_tourist_riverside": "Riverside",

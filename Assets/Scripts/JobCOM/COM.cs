@@ -47,12 +47,40 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
 
     public bool hidden = false;
 
+    /// <summary>
+    /// Sex command this one upgrades (e.g. French kiss from kiss). Offered only in the parent's "+" panel while the parent
+    /// act is ongoing for the same pair; it runs one round in place of the parent, which then resumes without a new
+    /// acceptance roll (Job_Sex_Group). Not parentCOMID - that is the folder / acceptance-chain relation.
+    /// </summary>
+    public string upgradeFrom = "";
+    /// <summary> Commands naming this one in upgradeFrom (built in Index_COM.LateInitialize). </summary>
+    [JsonIgnore][NonSerialized] public List<COM> upgrades = new List<COM>();
+    [JsonIgnore] public bool IsUpgrade { get { return !string.IsNullOrEmpty(upgradeFrom); } }
+    [JsonIgnore] public bool HasUpgrades { get { return upgrades != null && upgrades.Count > 0; } }
+    COM _upgradeParent = null;
+    [JsonIgnore]
+    public COM UpgradeParent
+    {
+        get
+        {
+            if (_upgradeParent == null && IsUpgrade) _upgradeParent = scr_System_Serializer.current.MasterList.COMs.GetByID(upgradeFrom);
+            return _upgradeParent;
+        }
+    }
+    public void NotifyUpgrade(COM upgrade)
+    {
+        if (upgrade == null || upgrades.Contains(upgrade)) return;
+        upgrades.Add(upgrade);
+    }
+
     [JsonIgnore] public bool isHiddenChild = false;
     /// <summary>
     /// The doer acts on themselves only: receivers are never attached (ActionPackage.ResetRequest drops them), so the
     /// command stays a self command whoever is targeted or selected in a scene.
     /// </summary>
     public bool selfOnly = false;
+    /// <summary>Whether other actors may join an already-running package of this command.</summary>
+    public bool allowJoining = true;
     /// <summary>
     /// Base item ID whose "use" folder (COM_ItemFolder, built in Index_COM.LateInitialize) this command is listed
     /// under. Generated templates use "$itemID$".
@@ -418,64 +446,109 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             return i > 1 || j > 1;
         }
     }
+    /// <summary>
+    /// An upgrade (upgradeFrom) uses its own command-level text of a kind when it yields any (no block, or no entry whose
+    /// conditions pass, yields none) - else its parent's. So it shares the parent's lines unless it authors its own.
+    /// </summary>
+    bool UsesUpgradeParentText(string own)
+    {
+        return IsUpgrade && UpgradeParent != null && (string.IsNullOrEmpty(own) || own == "$DEFAULT$");
+    }
+
     public virtual string GetDescription_Begin(EvaluationPackage evp, int variantID)
     {
         //Debug.LogError("GetDescription_Begin with variantID " + variantID);
-        if (variantID == -1) return description_begin.GetText(ref evp);
+        if (variantID == -1)
+        {
+            var own = description_begin.GetText(ref evp);
+            return UsesUpgradeParentText(own) ? UpgradeParent.GetDescription_Begin(evp, -1) : own;
+        }
         else if (variantID >= variants.Count) return "GetDescription_Begin ERROR variantID out of bound";
         else return variants[variantID].GetDescription_Begin(this, evp);
     }
     public virtual string GetDescription_Begin(ActionPackage ap, int variantID)
     {
         //Debug.LogError("GetDescription_Begin with variantID " + variantID);
-        if (variantID == -1) return description_begin.GetText(ap);
+        if (variantID == -1)
+        {
+            var own = description_begin.GetText(ap);
+            return UsesUpgradeParentText(own) ? UpgradeParent.GetDescription_Begin(ap, -1) : own;
+        }
         else if (variantID >= variants.Count) return "GetDescription_Begin ERROR variantID out of bound";
         else return variants[variantID].GetDescription_Begin(this, ap);
     }
 
     public virtual string GetDescription_Remove(EvaluationPackage evp, int variantID)
     {
-        if (variantID == -1) return description_remove.GetText(ref evp);
+        if (variantID == -1)
+        {
+            var own = description_remove.GetText(ref evp);
+            return UsesUpgradeParentText(own) ? UpgradeParent.GetDescription_Remove(evp, -1) : own;
+        }
         else if (variantID >= variants.Count) return "GetDescription_Remove ERROR variantID out of bound";
         else return variants[variantID].GetDescription_Remove(this, evp);
     }
 
     public virtual string GetDescription_Ongoing(EvaluationPackage evp, int variantID)
     {
-        if (variantID == -1) return description_ongoing.GetText(ref evp);
+        if (variantID == -1)
+        {
+            var own = description_ongoing.GetText(ref evp);
+            return UsesUpgradeParentText(own) ? UpgradeParent.GetDescription_Ongoing(evp, -1) : own;
+        }
         else if (variantID >= variants.Count) return "GetDescription_Ongoing ERROR variantID out of bound";
         else return variants[variantID].GetDescription_Ongoing(this, evp);
     }
     public virtual string GetDescription_Ongoing(ActionPackage ap, int variantID)
     {
-        if (variantID == -1) return description_ongoing.GetText(ap);
+        if (variantID == -1)
+        {
+            var own = description_ongoing.GetText(ap);
+            return UsesUpgradeParentText(own) ? UpgradeParent.GetDescription_Ongoing(ap, -1) : own;
+        }
         else if (variantID >= variants.Count) return "GetDescription_Ongoing ERROR variantID out of bound";
         else return variants[variantID].GetDescription_Ongoing(this, ap);
     }
     public virtual string GetDescription_After(EvaluationPackage evp, int variantID)
     {
-        if (variantID == -1) return description_after.GetText(ref evp);
+        if (variantID == -1)
+        {
+            var own = description_after.GetText(ref evp);
+            return UsesUpgradeParentText(own) ? UpgradeParent.GetDescription_After(evp, -1) : own;
+        }
         else if (variantID >= variants.Count) return "GetDescription_After ERROR variantID out of bound";
         else return variants[variantID].GetDescription_After(this, evp);
     }
 
     public virtual string GetDescription_After(ActionPackage ap, int variantID)
     {
-        if (variantID == -1) return description_after.GetText(ap);
+        if (variantID == -1)
+        {
+            var own = description_after.GetText(ap);
+            return UsesUpgradeParentText(own) ? UpgradeParent.GetDescription_After(ap, -1) : own;
+        }
         else if (variantID >= variants.Count) return "GetDescription_After ERROR variantID out of bound";
         else return variants[variantID].GetDescription_After(this, ap);
     }
 
     public virtual string GetDescription_OnComplete(EvaluationPackage evp, int variantID)
     {
-        if (variantID == -1) return description_onComplete.GetText(ref evp);
+        if (variantID == -1)
+        {
+            var own = description_onComplete.GetText(ref evp);
+            return UsesUpgradeParentText(own) ? UpgradeParent.GetDescription_OnComplete(evp, -1) : own;
+        }
         else if (variantID >= variants.Count) return "GetDescription_OnComplete ERROR variantID out of bound";
         else return variants[variantID].GetDescription_OnComplete(this, evp);
     }
 
     public virtual string GetDescription_OnComplete(ActionPackage ap, int variantID)
     {
-        if (variantID == -1) return description_onComplete.GetText(ap);
+        if (variantID == -1)
+        {
+            var own = description_onComplete.GetText(ap);
+            return UsesUpgradeParentText(own) ? UpgradeParent.GetDescription_OnComplete(ap, -1) : own;
+        }
         else if (variantID >= variants.Count) return "GetDescription_OnComplete ERROR variantID out of bound";
         else return variants[variantID].GetDescription_OnComplete(this, ap);
     }
@@ -508,10 +581,18 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         // }
 
     }
-    public void ApplyResultsImmediate(Job job, ActionPackage p, EvaluationPackage evp, Memory_Attitude att, Character_Trainable target, ExperienceLog log)
+    public void ApplyResultsImmediate(Job job, ActionPackage p, EvaluationPackage evp, Memory_Attitude att, Character_Trainable target, ExperienceLog log, bool dispatchEvent = true)
     {
         //Debug.Log("ApplyResults doer[" + (evp.Doer != null ? evp.Doer.FirstName : "-") + "] receiver[" + (evp.Receiver != null ? evp.Receiver.FirstName : "-") + "]");
         results_immediate_EP.ApplyResults(job, p, evp, target, log);
+        if (dispatchEvent && target == evp.Doer) ApplyImmediateResultEvent(p, evp);
+    }
+
+    internal void ApplyImmediateResultEvent(ActionPackage p, EvaluationPackage evp)
+    {
+        if (results_immediate_EP.result_event == null || evp.Doer == null || !p.requestAccepted
+            || evp.Response < Memory_Response.Accept || !evp.TryMarkImmediateResultEvent()) return;
+        results_immediate_EP.result_event.Apply(p, evp);
     }
 
     /// <summary>
@@ -535,11 +616,11 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         }
     }
 
-    public void ApplyResults_AP(ActionPackage p)
+    public void ApplyResults_AP(ActionPackage p, System.Action<EventInstance> prepareSleepEvent = null)
     {
         var variant = (p.COMVariantID >= 0 && p.COMVariantID < variants.Count) ? variants[p.COMVariantID] : null;
-        if ((variant == null || variant.useDefaultEventResult_AP) && results_AP.result_event != null) results_AP.result_event.Apply(p, null);
-        if (variant != null && variant.result_event_AP != null) variant.result_event_AP.Apply(p, null);
+        if ((variant == null || variant.useDefaultEventResult_AP) && results_AP.result_event != null) results_AP.result_event.Apply(p, null, prepareSleepEvent);
+        if (variant != null && variant.result_event_AP != null) variant.result_event_AP.Apply(p, null, prepareSleepEvent);
 
         // AP-scoped, fires once for the whole ActionPackage regardless of teammate count (unlike results_EP,
         // which runs once per doer). Resolves the faction using the AP's own single doer.
@@ -714,7 +795,13 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             reason = "ui_sexEntry_invalidRoom";
             return false;
         }
-        if (!joinsExisting && !campaign.CanStartSexJob(room, out reason)) return false;
+        // one scene per open area and per room divider allowing sex: the actors must share where they are
+        if (!FurnitureOccupancyUtility.TryGetSharedScope(doers, receivers, out int scopeRef))
+        {
+            reason = "ui_sexEntry_wrongScope";
+            return false;
+        }
+        if (!joinsExisting && !campaign.CanStartSexJob(room, scopeRef, out reason)) return false;
         if (doers == null || receivers == null || doers.Count == 0
             || doers.Concat(receivers).Any(actor => actor == null || !ReferenceEquals(campaign.FindInstanceByID(actor.RefID), actor)))
         {
@@ -743,7 +830,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             return true;
         }
 
-        var existing = campaign.FindSexJobInRoom(room);
+        var existing = campaign.FindSexJobInScope(room, scopeRef);
         if (existing == null || existing.IsEnded || existing.RefID < 0
             || !ReferenceEquals(campaign.FindJobInstanceByID(existing.RefID, false), existing)
             || !ReferenceEquals(existing.ParentRoom, room))
@@ -1370,11 +1457,11 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             case "ActionPackage_WaitUntilNextHour":
                 returnValue = new ActionPackage_WaitUntilNextHour(job, this, doers, receivers, masterRef);
                 break;
+            case "ActionPackage_DividerMove":
+                returnValue = new ActionPackage_DividerMove(job, this, doers, receivers, masterRef);
+                break;
             case "ActionPackage_ActivityWait":
                 returnValue = new ActionPackage_ActivityWait(job, this, doers, receivers, masterRef);
-                break;
-            case "ActionPackage_MediaSession":
-                returnValue = new ActionPackage_MediaSession(job, this, doers, receivers, masterRef);
                 break;
             case "ActionPackage_GoToSchedule":
                 returnValue = new ActionPackage_GoToSchedule(job, this, doers, receivers, masterRef);
@@ -1429,7 +1516,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
                 }
             }
 
-            if (returnValues.Count < 1) Debug.Log($"Error GenerateAP for com {ID}, probably missing items");
+            //if (returnValues.Count < 1) Debug.Log($"Error GenerateAP for com {ID}, probably missing items");
         }
         else
         {
@@ -1449,12 +1536,12 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
                     returnValue = new ActionPackage_WaitUntilNextHour(job, this, doers, receivers, masterRef);
                     if (returnValue != null) returnValues.Add(returnValue);
                     break;
-                case "ActionPackage_ActivityWait":
-                    returnValue = new ActionPackage_ActivityWait(job, this, doers, receivers, masterRef);
+                case "ActionPackage_DividerMove":
+                    returnValue = new ActionPackage_DividerMove(job, this, doers, receivers, masterRef);
                     if (returnValue != null) returnValues.Add(returnValue);
                     break;
-                case "ActionPackage_MediaSession":
-                    returnValue = new ActionPackage_MediaSession(job, this, doers, receivers, masterRef);
+                case "ActionPackage_ActivityWait":
+                    returnValue = new ActionPackage_ActivityWait(job, this, doers, receivers, masterRef);
                     if (returnValue != null) returnValues.Add(returnValue);
                     break;
                 case "ActionPackage_GoToSchedule":

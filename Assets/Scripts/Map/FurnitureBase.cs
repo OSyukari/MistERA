@@ -16,6 +16,7 @@ public class FurnitureInstance: IDisposable, I_Disposable
     [JsonIgnore] public bool noDisplay { get { return FurnitureBase.noDisplay; } }
 
     [JsonProperty] private string furnitureBaseID = "";
+    [JsonIgnore] public string FurnitureBaseID { get { return furnitureBaseID; } }
     private FurnitureBase furnitureBaseRef = null;
     [JsonIgnore] public FurnitureBase FurnitureBase { get { if (furnitureBaseRef == null && furnitureBaseID != "") furnitureBaseRef = scr_System_Serializer.current.GetByNameOrID_FurnitureBase(furnitureBaseID);
             return furnitureBaseRef;

@@ -1227,6 +1227,13 @@ public partial class scr_UpdateHandler : MonoBehaviour
     public event Action Observer_PostUpdateTime_2;
     public event Action Observer_PostUpdateTime_3;
     public event Action<bool> Observer_PostUpdateTime_EventEnd;
+    /// <summary>
+    /// End of a simulated minute, after every AP, PostUpdateTime step and queued event callback of that minute
+    /// has run - also fired once when SingleUpdate exits, before control returns to the player. Used for
+    /// per-round state that must be settled before the player sees the next command list (attitude round:
+    /// finalized at the start of the next minute instead, the UI previewed an AC the next roll no longer used).
+    /// </summary>
+    public event Action Observer_PostUpdateTime_Finalize;
     //public event Action Observer_PostUpdateTime_4;
     public event Action<bool> Observer_LogsSingleStepUpdate;
     public event Action<EventStatus, bool> Observer_EventStatus;
@@ -1436,6 +1443,8 @@ public partial class scr_UpdateHandler : MonoBehaviour
             // at the top of the next iteration, before another minute ticks.
             ExecuteEventCallbacks(CallbackResumeUpdate);
 
+            Observer_PostUpdateTime_Finalize?.Invoke();
+
             cnManager.ClearExecutedAPs();
             //cnManager.ClearLogs(true);
             scr_System_Time.current.NotifyTimeResumeEnd();
@@ -1496,6 +1505,8 @@ public partial class scr_UpdateHandler : MonoBehaviour
         bool skipElapsedLog = halted && loopCount == 0;
 
         ExecuteEventCallbacks(CallbackResumeUpdate);
+        // APs resolved by events after the loop (ExecutePackageOutsideUpdate) settle here, before the player sees the command list
+        Observer_PostUpdateTime_Finalize?.Invoke();
         FlushCollectedLogs(true, oneLoop, true);
         //NotifyLogsSingleUpdate(CallbackResumeUpdate);
         scr_System_CampaignManager.current.NotifyEventEnd();
@@ -1541,20 +1552,38 @@ public partial class scr_UpdateHandler : MonoBehaviour
         //Debug.Log($"ExecuteEventCallbacks count {eventCallbacks.Count}");
         bool log = scr_System_CentralControl.current.LogPrefs.DLog_Events;
         FlushCollectedLogs(true, true, false);
-        var loopCount = 300;
-        while(loopCount > 0)
+        const int loopBatch = 300;
+        var loopCount = loopBatch;
+        int batchStartCount;
+        lock (eventCallbacks) batchStartCount = eventCallbacks.Count;
+        bool forcedExit = false;
+        while(true)
         {
             Action vv;
             lock (eventCallbacks)
             {
                 if (eventCallbacks.Count == 0) break;
+                if (loopCount < 1)
+                {
+                    // batch used up: if the queue shrank since the batch started, callbacks are draining (many NPCs), not looping
+                    if (eventCallbacks.Count < batchStartCount)
+                    {
+                        loopCount = loopBatch;
+                        batchStartCount = eventCallbacks.Count;
+                    }
+                    else
+                    {
+                        forcedExit = true;
+                        break;
+                    }
+                }
                 vv = eventCallbacks[0];
                 eventCallbacks.RemoveAt(0);
             }
             vv?.Invoke();
             loopCount--;
         }
-        if (loopCount < 1) Debug.LogError("Eventcallback stack exceed 300, forced exit");
+        if (forcedExit) Debug.LogError($"Eventcallback stack exceed {loopBatch} without shrinking ({batchStartCount} remaining), forced exit");
 
         if (log) Debug.Log($"invoking Observer_PostUpdateTime_EventEnd, stillupdating? {this.EventHandler.Active}");
         Observer_PostUpdateTime_EventEnd?.Invoke(this.EventHandler.Active);

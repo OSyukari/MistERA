@@ -1,14 +1,11 @@
 {
-    "_comment": "E2 and extra-menu services deferred: rooms, reception, voluntary practitioner posts and opening hours only. No offer, client generator or service command.",
+    "_comment": "Pure massage service (no ring role - the ring is only the Kiryu dispatch office). The massage service itself (E2) is deferred: rooms, reception, voluntary practitioner posts and opening hours only. No offer, client generator or service command.",
     "MapPlans": {
-        "factionInit": [{ "ID": "jp_neon_massage", "initializeFaction": "jp_neon_massage", "floors": [{ "ID": "floor_jp_neon_massage", "nameOverwrite": "jp_neon_massage" }], "isRentingFloor": true, "floorListHostFactionID": "jp_neon_street", "floorDoors": [{ "sourceFloor": "floor_jp_neon_massage", "sourceExit": "street", "targetFaction": "jp_neon_street", "targetFloor": "floor_jp_neon_street", "targetExit": "to_jp_neon_massage", "cost": 1 }], "setPrivateRoomOwner": false, "mainExit": { "roomID": "massage_reception", "exitCost": 1 }, "assignableMemberTypes": ["membertype_neon_massage_worker"], "joinableMemberTypes": ["membertype_neon_massage_worker"], "fallbackWorkers": [
-            { "memberTypeID": "membertype_neon_massage_reception_day", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" },
-            { "memberTypeID": "membertype_neon_massage_reception_night", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" },
-            { "memberTypeID": "membertype_neon_massage_worker_day", "headcount": 2, "maxFallback": 2, "templateID": "jp_store_clerk" },
-            { "memberTypeID": "membertype_neon_massage_worker_night", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }
+        "factionInit": [{ "ID": "jp_massage", "initializeFaction": "jp_massage", "floors": [{ "ID": "floor_jp_massage", "nameOverwrite": "jp_massage" }], "isRentingFloor": true, "floorListHostFactionID": "jp_district_luxury_apartment", "floorDoors": [{ "sourceFloor": "floor_jp_massage", "sourceExit": "street", "targetFaction": "jp_district_luxury_apartment", "targetFloor": "floor_jp_district_luxury_apartment", "targetExit": "to_jp_massage", "cost": 1 }], "setPrivateRoomOwner": false, "mainExit": { "roomID": "massage_reception", "exitCost": 1 }, "assignableMemberTypes": ["membertype_neon_massage_worker"], "joinableMemberTypes": ["membertype_neon_massage_worker"], "_comment_fallbackWorkers": "Single front-desk clerk covers the whole 12:00-02:00 opening window (not actually 24h) - merged from the previous day/night split. Worker posts have no workCommands yet (standby wages, service not implemented) and are left open for real NPCs/the player, never generic fallback fillers.", "fallbackWorkers": [
+            { "memberTypeID": "membertype_neon_massage_reception_counter", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }
         ] }],
         "floorPlans": [{
-            "ID": "floor_jp_neon_massage", "imagePath": "BGAssets/Generated/office_04.webp", "isFloorPlan": false,
+            "ID": "floor_jp_massage", "imagePath": "BGAssets/Generated/office_04.webp", "isFloorPlan": false,
             "floorWidth": 400, "floorHeight": 400, "resize": 1, "mapExit": "massage_reception",
             "exits": [{ "ID": "street", "connectedRoom": "massage_reception", "hideOnMap": true }],
             "wholeBuildingRent": { "maintenanceFee": { "itemID": "currency_JPY", "itemCount": 20000 }, "rentFee": { "itemID": "currency_JPY", "itemCount": 160000 }, "cadence": "Monthly" },
@@ -21,9 +18,8 @@
             ]
         }],
         "memberTypes": [
-            { "ID": "membertype_neon_massage_reception", "socialStandingKey": "membertype_neon_massage_reception", "isMember": true, "Tags": ["jp_neon_massage_hiring"], "childMemberTypes": [
-                { "ID": "membertype_neon_massage_reception_day", "socialStandingKey": "neon_day_shift", "workModule": { "jobPostID": "neon_massage_reception_day", "workCommands": ["jp_neon_counter_duty"], "activeHours": [12,13,14,15,16,17,18,19,20,21], "activeDays": [], "hourlyPayout": [{ "itemID": "currency_JPY", "itemCount": 1200 }], "paymentCadence": "Daily" } },
-                { "ID": "membertype_neon_massage_reception_night", "socialStandingKey": "neon_night_shift", "workModule": { "jobPostID": "neon_massage_reception_night", "workCommands": ["jp_neon_counter_duty"], "activeHours": [22,23,0,1], "activeDays": [], "hourlyPayout": [{ "itemID": "currency_JPY", "itemCount": 1500 }], "paymentCadence": "Daily" } }
+            { "ID": "membertype_neon_massage_reception", "socialStandingKey": "membertype_neon_massage_reception", "isMember": true, "Tags": ["jp_massage_hiring"], "childMemberTypes": [
+                { "ID": "membertype_neon_massage_reception_counter", "socialStandingKey": "neon_massage_reception_counter", "workModule": { "jobPostID": "neon_massage_reception_counter", "workCommands": ["jp_neon_counter_duty"], "activeHours": [12,13,14,15,16,17,18,19,20,21,22,23,0,1], "activeDays": [], "hourlyPayout": [{ "itemID": "currency_JPY", "itemCount": 1200 }], "paymentCadence": "Daily" } }
             ] },
             { "ID": "membertype_neon_massage_worker", "socialStandingKey": "membertype_neon_massage_worker", "isMember": true, "Tags": ["memberType_work_partTime"],
                 "joinHandler": { "$type": "JoinHandler_WorkPost, Assembly-CSharp", "optionTextKey": "neon_join_option", "bindTargetKey": "worker" }, "leaveHandler": { "$type": "LeaveHandler_WorkPost, Assembly-CSharp", "optionTextKey": "work_post_leaveOption", "bindTargetKey": "worker" },
@@ -33,5 +29,21 @@
                 ] }
         ]
     },
-    "Dictionary": { "Entries": { "zh-cn": { "jp_neon_massage": "霓虹按摩店", "membertype_neon_massage_reception": "按摩店前台", "membertype_neon_massage_worker": "按摩师（服务暂未开放）", "neon_massage_reception_day": "按摩店前台 12-22", "neon_massage_reception_night": "按摩店前台 22-02", "neon_massage_worker_day": "按摩师待岗 12-22", "neon_massage_worker_night": "按摩师待岗 22-02" } } }
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "jp_massage": "按摩店（施工中）",
+                "massage_reception": "按摩店前台",
+                "massage_waiting": "按摩店等候室",
+                "massage_room_1": "按摩室一",
+                "massage_room_2": "按摩室二",
+                "massage_room_3": "按摩室三",
+                "membertype_neon_massage_reception": "按摩店前台",
+                "membertype_neon_massage_worker": "按摩师（服务暂未开放）",
+                "neon_massage_reception_counter": "按摩店前台 12-02",
+                "neon_massage_worker_day": "按摩师待岗 12-22",
+                "neon_massage_worker_night": "按摩师待岗 22-02"
+            }
+        }
+    }
 }

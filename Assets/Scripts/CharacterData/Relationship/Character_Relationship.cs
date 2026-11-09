@@ -671,6 +671,7 @@ public class Character_Relationship
     {
         _trustCap_cached = false;
         ClearEPCache();
+        Manager?.MarkMoodletsDirty();   // relationship types add score bonuses (Trust_Bonus etc.)
     }
 
 
@@ -1436,6 +1437,7 @@ public class Character_Relationship
         }
 
         _debugScoreTooltip.Clear();
+        Manager?.MarkMoodletsDirty();   // Trust/Fear, Goodwill/Badwill bands drive this owner's moodlets
         if (!silent) QueueRelationshipCheck();
     }
 

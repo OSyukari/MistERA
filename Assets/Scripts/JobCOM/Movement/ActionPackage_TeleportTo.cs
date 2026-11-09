@@ -147,7 +147,8 @@ public class ActionPackage_TeleportTo : ActionPackage
 
         foreach (var c in room.RoomChara)
         {
-            if (Doer.RefID == 0 && (c.RefID == 0 || scr_System_CampaignManager.current.PlayerPartyMembers.Contains(c.RefID))) continue;
+            // came along with the player: teammates or the carried (TravelsWithPlayer - both mechanisms)
+            if (Doer.RefID == 0 && scr_System_CampaignManager.current.TravelsWithPlayer(c.RefID)) continue;
             if (Doer == c) continue;
             if (c == null) continue;
             s2.Add(c.FirstName);// += ", " + c.FirstName;

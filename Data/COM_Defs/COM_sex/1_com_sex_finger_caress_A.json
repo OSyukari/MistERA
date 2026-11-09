@@ -10,7 +10,7 @@
                 "categoryTags":["com_category_a","com_category_service"],
                 "displayName":"com_sex_finger_caress_A_displayName_3",
                 "timeScale":3,
-                "comTags":["sex","service"],
+                "comTags":["sex","service","permission_anal"],
                 "portraitTags_Receiver":["spread_pussy"],
                 "requirements":{
                     "requirement":{
@@ -27,9 +27,18 @@
                         }
                     }
                 },
-                "AcceptanceCheck":{ 
-                    "baseAcceptanceValue":27 ,
-                    "SkillBonus_Receiver":["skill_sensitivity_A"]
+                "_comment_actModifiers":"Docs/Interactions/Plan_CommandProgression.md: terms start at the act's permission gate (Goodwill 50, Trust 60, Desire 250); cap = AC - 7 - residual 2.",
+                "AcceptanceCheck":{
+                    "baseAcceptanceValue":25,
+                    "SkillBonus_Receiver":["skill_sensitivity_A"],
+                    "actModifiers":{
+                        "enabled":true, "totalMin":0, "totalMax":16,
+                        "terms":[
+                            {"source":"PartnerGoodwill", "appliesTo":"BothDeciders", "scale":0.05, "offset":-2.5, "min":0, "max":2},
+                            {"source":"PartnerTrust", "appliesTo":"BothDeciders", "scale":0.05, "offset":-3, "min":0, "max":3},
+                            {"source":"PartnerDesire", "appliesTo":"BothDeciders", "scale":0.04, "offset":-10, "min":0, "max":13}
+                        ]
+                    }
                 },
                 "DifficultyCheck":{ 
                     "baseD20Check":10,

@@ -1,0 +1,14 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for recreation_fee_approval.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "Recreation_FeeApproval_question": "Activity fee request:\n$feeRequestText$",
+                "Recreation_FeeApproval_approve": "Approve",
+                "Recreation_FeeApproval_decline": "Decline"
+            }
+        }
+    }
+}

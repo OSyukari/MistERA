@@ -29,59 +29,25 @@
                             "BodyTags":["clit","vagina"],
                             "minRevealingScore":1,
                             "requireConscious":false,
-                            "requireAction": false 
+                            "requireAction": false
                         }
                     }
                 },
+                "_comment_actModifiers":"Docs/Interactions/Plan_CommandProgression.md: terms start at the act's strictest permission gate (Goodwill 50, Trust 30, Desire 200 vaginal); cap = AC - 7 - residual 6.",
                 "AcceptanceCheck":{ "baseAcceptanceValue":26,
-                    "SkillBonus_Receiver":["skill_sensitivity_V","skill_sensitivity_C"] },
+                    "SkillBonus_Receiver":["skill_sensitivity_V","skill_sensitivity_C"],
+                    "actModifiers":{
+                        "enabled":true, "totalMin":0, "totalMax":13,
+                        "terms":[
+                            {"source":"PartnerGoodwill", "appliesTo":"BothDeciders", "scale":0.05, "offset":-2.5, "min":0, "max":2},
+                            {"source":"PartnerTrust", "appliesTo":"BothDeciders", "scale":0.05, "offset":-1.5, "min":0, "max":3},
+                            {"source":"PartnerDesire", "appliesTo":"BothDeciders", "scale":0.04, "offset":-8, "min":0, "max":10}
+                        ]
+                    } },
                 "DifficultyCheck":{ "baseD20Check":5,
                     "SkillBonus_Receiver":["skill_sensitivity_V","skill_sensitivity_C"] },
+                "_comment_upgrades":"The tongue (vagina) version is an upgrade command (com_sex_oral_V_force below), offered in this command's + panel while it is ongoing.",
                 "variants":[
-                    {
-                        "requirements":{
-                            "requirement":{
-                                "doerCount":1,
-                                "receiverCount":1
-                            },
-                            "requireExisting":{ "requireCOMID":"com_sex_oral_V"  }
-                        },
-                        "displayName":"com_sex_oral_V_displayName_1_force",
-                        "setForce":true
-                    },
-                    {
-                        "requirements":{
-                            "requirement":{
-                                "doerCount":1,
-                                "receiverCount":99
-                            },
-                            "requireExisting":{ "requireCOMID":"com_sex_oral_V"  }
-                        },
-                        "displayName":"com_sex_oral_V_displayName_2_force",
-                        "setForce":true
-                    },
-                    {
-                        "requirements":{
-                            "requirement":{
-                                "doerCount":99,
-                                "receiverCount":1
-                            },
-                            "requireExisting":{ "requireCOMID":"com_sex_oral_V"  }
-                        },
-                        "displayName":"com_sex_oral_V_displayName_3_force",
-                        "setForce":true
-                    },
-                    {
-                        "requirements":{
-                            "requirement":{
-                                "doerCount":99,
-                                "receiverCount":99
-                            },
-                            "requireExisting":{ "requireCOMID":"com_sex_oral_V"  }
-                        },
-                        "displayName":"com_sex_oral_V_displayName_4_force",
-                        "setForce":true
-                    },
                     {
                         "requirements":{
                             "requirement":{
@@ -157,6 +123,88 @@
                     ]
                     
                 }
+            },
+            {
+                "parentCOMID":"com_sex_service_base",
+                "ID":"com_sex_oral_V_force",
+                "upgradeFrom":"com_sex_oral_V",
+                "_comment_upgrade":"Upgrade of com_sex_oral_V (was its setForce variants): the tongue version, one round in place of the ongoing cunnilingus, which then resumes. Own acceptance roll every round. AC/DC copied from cunnilingus for tuning; setForce keeps the strong-act rules (receiverActTags_strong: the vagina, traceKeywords_strong). Texts and kojo: cunnilingus's unless its own are added.",
+                "ActionPackageClass":"ActionPackage_Sex",
+                "categoryTags":["com_category_v","com_category_service"],
+                "displayName":"com_sex_oral_V_displayName_1_force",
+                "timeScale":3,
+                "comTags":["sex","service", "position_face", "position_inequal","permission_vaginal"],
+                "portraitTags":["cunnilingus"],
+                "portraitTags_Receiver":["spread_pussy"],
+                "receiverActTags":["clit"],
+                "receiverActTags_strong":["vagina"],
+                "_comment_traces":"Body traces (Data/RaceDefs/TraceDefs.json): saliva into the vagina, aroused receiver's love juice into the mouth, pubes on the doer's face (low chance).",
+                "traceKeywords_strong":["lick","wet","oral"],
+                "requirements":{
+                    "requirement":{
+                        "req_Doers":{
+                            "BodyTags":["mouth"],
+                            "minRevealingScore":1,
+                            "cost_ST": 1
+                        },
+                        "req_Receivers":{
+                            "BodyTags":["clit","vagina"],
+                            "minRevealingScore":1,
+                            "requireConscious":false,
+                            "requireAction": false
+                        }
+                    }
+                },
+                "AcceptanceCheck":{ "baseAcceptanceValue":26,
+                    "SkillBonus_Receiver":["skill_sensitivity_V","skill_sensitivity_C"] },
+                "DifficultyCheck":{ "baseD20Check":5,
+                    "SkillBonus_Receiver":["skill_sensitivity_V","skill_sensitivity_C"] },
+                "variants":[
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":1,
+                                "receiverCount":1
+                            },
+                            "requireExisting":{ "requireCOMID":"com_sex_oral_V"  }
+                        },
+                        "displayName":"com_sex_oral_V_displayName_1_force",
+                        "setForce":true
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":1,
+                                "receiverCount":99
+                            },
+                            "requireExisting":{ "requireCOMID":"com_sex_oral_V"  }
+                        },
+                        "displayName":"com_sex_oral_V_displayName_2_force",
+                        "setForce":true
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":99,
+                                "receiverCount":1
+                            },
+                            "requireExisting":{ "requireCOMID":"com_sex_oral_V"  }
+                        },
+                        "displayName":"com_sex_oral_V_displayName_3_force",
+                        "setForce":true
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":99,
+                                "receiverCount":99
+                            },
+                            "requireExisting":{ "requireCOMID":"com_sex_oral_V"  }
+                        },
+                        "displayName":"com_sex_oral_V_displayName_4_force",
+                        "setForce":true
+                    }
+                ]
             }
         ]
     },
@@ -168,6 +216,7 @@
             {
                 "com_sex_oral_V":"%%tooltip_sex_com_alternating_tooltip%%",
 
+                "com_sex_oral_V_force":"%%tooltip_sex_com_alternating_tooltip%%",
                 "com_sex_oral_V_displayName_1": "舔阴",
                 "com_sex_oral_V_displayName_2": "交替舔阴",
                 "com_sex_oral_V_displayName_3": "轮流舔阴",
@@ -187,6 +236,7 @@
             {
                 "com_sex_oral_V":"%%tooltip_sex_com_alternating_tooltip%%",
 
+                "com_sex_oral_V_force":"%%tooltip_sex_com_alternating_tooltip%%",
                 "com_sex_oral_V_displayName_1": "Cunnilingus",
                 "com_sex_oral_V_displayName_2": "Alt. Cunnilingus",
                 "com_sex_oral_V_displayName_3": "Alt. Cunnilingus",

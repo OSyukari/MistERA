@@ -30,14 +30,14 @@
                     }
                 },
                 "_comment_actModifiers":"Provisional, untested new D20 bonuses. Relationships belong to the act owner toward the actual partner, not the master. Parent EP gates ordinary conscious, unrestrained, non-threat actual pairs; special, forced and group contexts stay unchanged. clone_noSex descendants inherit through the existing cloning pipeline; GenerateCOM flags are unchanged.",
-                "AcceptanceCheck":{ "baseAcceptanceValue":24,
+                "AcceptanceCheck":{ "baseAcceptanceValue":21,
                     "SkillBonus_Receiver":["skill_sensitivity_C"],
                     "actModifiers":{
-                        "enabled":true, "totalMin":0, "totalMax":8,
+                        "enabled":true, "totalMin":0, "totalMax":13,
                         "terms":[
-                            {"source":"PartnerGoodwill", "appliesTo":"BothDeciders", "scale":0.02, "offset":0, "min":0, "max":2},
-                            {"source":"PartnerTrust", "appliesTo":"BothDeciders", "scale":0.03, "offset":0, "min":0, "max":3},
-                            {"source":"PartnerDesire", "appliesTo":"BothDeciders", "scale":0.05, "offset":0, "min":0, "max":5}
+                            {"source":"PartnerGoodwill", "appliesTo":"BothDeciders", "scale":0.05, "offset":-2.5, "min":0, "max":2},
+                            {"source":"PartnerTrust", "appliesTo":"BothDeciders", "scale":0.05, "offset":-1.5, "min":0, "max":3},
+                            {"source":"PartnerDesire", "appliesTo":"BothDeciders", "scale":0.04, "offset":-4, "min":0, "max":10}
                         ]
                     }
                 },

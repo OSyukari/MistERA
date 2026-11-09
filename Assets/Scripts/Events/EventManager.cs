@@ -52,6 +52,21 @@ public class EventManager
             return false;
         }
 
+        /// <summary>hasCooldown's verdict when it needs no targets (EventManager.BlockedWithoutTargets): any cooldown blocks a
+        /// non-duplicate event; a self match blocks a self-restricted one unless AND also needs a target match.</summary>
+        public bool BlocksWithoutTargets(Event def, Character_Trainable self)
+        {
+            if (cooldowns.Count == 0) return false;
+            if (!def.allowDuplicate) return true;
+            if (!def.cooldownRestrictSelf || self == null || (def.cooldownRestrictAND && def.cooldownRestrictTarget)) return false;
+            int selfRef = self.RefID;
+            for (int i = 0; i < cooldowns.Count; i++)
+            {
+                if (cooldowns[i].selfRef == selfRef) return true;
+            }
+            return false;
+        }
+
         /// <summary>Any chara in targets has its RefID in refs - non-allocating.</summary>
         static bool anyTargetIn(Dictionary<string, List<Character_Trainable>> targets, List<int> refs)
         {
@@ -312,18 +327,71 @@ public class EventManager
         } }
 
 
+    /// <summary>
+    /// The part of CheckConflict that needs no resolved targets, run before an instance is built and validated (Trigger,
+    /// StartEvent Result): true only when CheckConflict would reject every instance of def on self (non-duplicate on
+    /// cooldown or running, self match on a self-restricted cooldown or running duplicate). Target-restricted checks
+    /// stay in CheckConflict.
+    /// </summary>
+    internal bool BlockedWithoutTargets(Event def, Character_Trainable self)
+    {
+        if (def.cooldownTime > 0)
+        {
+            if (eventCooldowns.TryGetValue(def.ID, out var cd) && cd.BlocksWithoutTargets(def, self)) return true;
+            return def.manualCooldown && ActiveBlocksWithoutTargets(def, self);
+        }
+        return ActiveBlocksWithoutTargets(def, self);
+    }
+
+    /// <summary>conflictsWithActive's verdict when it needs no targets (see EventInstance.ConflictWith).</summary>
+    bool ActiveBlocksWithoutTargets(Event def, Character_Trainable self)
+    {
+        for (int i = 0; i < activeEvents.Count; i++)
+        {
+            var active = activeEvents[i];
+            if (active.Definition != def) continue;
+            if (!def.allowDuplicate) return true;
+            if (def.cooldownRestrictSelf && self != null && active.Self == self) return true;
+        }
+        return false;
+    }
+
+    // reused by Trigger: a candidate is validated on it and only a valid one that is kept becomes a real instance
+    EventInstance triggerProbe = null;
+
+    /// <summary>
+    /// Validates def for chara on the reused probe. Valid and keep: the probe is promoted and handed out as instance
+    /// (the next call builds a new probe). Otherwise the probe goes back for reuse. The probe leaves the slot while in
+    /// use, so a nested Trigger (e.g. OnEnterRoom of a character generated during validation) builds its own.
+    /// </summary>
+    bool ProbeTrigger(Character_Trainable chara, Event def, bool forbidGeneration, bool keep, out EventInstance instance)
+    {
+        instance = null;
+        var probe = triggerProbe ?? new EventInstance(null, "", "", immediateInit: false);
+        triggerProbe = null;
+        probe.ResetForProbe(chara, forbidGeneration);
+        probe.LoadNext(def, "");
+        bool valid = probe.isValid;
+        if (valid && keep)
+        {
+            probe.PromoteProbe();
+            instance = probe;
+        }
+        else triggerProbe = probe;
+        return valid;
+    }
+
     public void Trigger(Character_Trainable chara, EventTrigger trigger)
     {
         if (trigger <= EventTrigger.None) return;
-        foreach(var i in scr_System_Serializer.current.MasterList.Events.list)
+        var candidates = scr_System_Serializer.current.MasterList.Events.GetByTrigger(trigger);
+        for (int n = 0; n < candidates.Count; n++)
         {
-            // check trigger keyword
-            if (i.trigger != trigger) continue;
+            var def = candidates[n];
+            // cooldown / already running for this self: rejected by StartEvent anyway, skip before validating
+            if (BlockedWithoutTargets(def, chara)) continue;
             // check chara satisfy event self condition
-            var newinstance = new EventInstance(chara, i.ID, "");
-            // Debug.Log($"Trigger {trigger} on {chara.FirstName} trying event {i.ID}");
-
-            if ( !newinstance.isValid) continue;
+            if (!ProbeTrigger(chara, def, false, true, out var newinstance)) continue;
             // if condition satisfy, launch event
 #if UNITY_EDITOR
             if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Trigger {trigger} Hit event {newinstance.Name} on {chara.FirstName}");
@@ -350,14 +418,20 @@ public class EventManager
         EventInstance best = null;
         Event bestDef = null;
         bool tie = false;
-        foreach (var i in scr_System_Serializer.current.MasterList.Events.list)
+        // no BlockedWithoutTargets here: a winner on cooldown must still win (and be refused by StartEvent), not hand the
+        // dispatch to a lower-priority event
+        var candidates = scr_System_Serializer.current.MasterList.Events.GetByTrigger(trigger);
+        for (int n = 0; n < candidates.Count; n++)
         {
-            if (i.trigger != trigger) continue;
-            var candidate = new EventInstance(chara, i.ID, "", forbidGeneration:true);
-            if (!candidate.isValid) continue;
+            var i = candidates[n];
+            // below the current best it can neither win nor tie - not validated
+            if (bestDef != null && i.priority < bestDef.priority) continue;
+            bool better = bestDef == null || i.priority > bestDef.priority;
+            // a same-priority candidate is validated only for the tie warning, never kept
+            if (!ProbeTrigger(chara, i, true, better, out var candidate)) continue;
 
-            if (best == null || i.priority > bestDef.priority) { best = candidate; bestDef = i; tie = false; }
-            else if (i.priority == bestDef.priority) tie = true;
+            if (better) { best = candidate; bestDef = i; tie = false; }
+            else tie = true;
         }
         if (tie) Debug.LogWarning($"EventManager.Trigger exclusive: multiple {trigger} events tied at priority {bestDef.priority}; picked {bestDef.ID}");
         if (best != null)
@@ -478,8 +552,8 @@ public class EventManager
         else if (ev != runningEV)
         {
             // one run call should resolve most if not all events, and leave waiting events
-            activeEvents.RemoveAll(x => x.Status != EventStatus.waiting && !x.canRun);
-            activeEvents.RemoveAll(x => x.Status != EventStatus.waiting && !x.Validate());
+            RemoveInvalidEvents(false);
+            RemoveInvalidEvents(true);
             ev = activeEvents.Count > 0 ? activeEvents[0] : null;// actinew List<EventInstance>(activeEvents);
 
             runningEV = ev;
@@ -490,8 +564,21 @@ public class EventManager
     public void Remove(EventInstance ev)
     {
         this.activeEvents.Remove(ev);
+        ev.CompleteCallbacks();
         if (!updateHandler.Updating) updateHandler.FlushCollectedLogs(true, false, true);
         Run();
+    }
+
+    void RemoveInvalidEvents(bool validate)
+    {
+        List<EventInstance> removed = null;
+        activeEvents.RemoveAll(ev =>
+        {
+            if (ev.Status == EventStatus.waiting || (validate ? ev.Validate() : ev.canRun)) return false;
+            (removed ??= new List<EventInstance>()).Add(ev);
+            return true;
+        });
+        if (removed != null) foreach (var ev in removed) ev.CompleteCallbacks();
     }
 
     public bool Active { get { return this.activeEvents.Count > 0; } }

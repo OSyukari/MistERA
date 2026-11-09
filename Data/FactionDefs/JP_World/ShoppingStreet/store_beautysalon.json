@@ -6,9 +6,9 @@
             "mainExit":{"roomID":"salon_reception","exitCost":5},"floors":[],"mealHours":[],
             "salesCurrency":"currency_JPY","salesInventory":[{"matchByID":"consumable_jp_mall_salon_haircare"}],
             "assignableMemberTypes":["membertype_jp_mall_salon_stylist","membertype_jp_mall_salon_assistant"],"joinableMemberTypes":[],
+            "_comment_fallbackWorkers": "Only the stylist gets a fallback worker. Neither post has a workCommand or a service COM yet (pure standby presence), so stylist/assistant are mechanically interchangeable - the assistant is left open for a real NPC/the player, with no fallback worker behind it.",
             "fallbackWorkers":[
-                {"memberTypeID":"membertype_jp_mall_salon_stylist","headcount":1,"maxFallback":1,"templateID":"jp_store_clerk"},
-                {"memberTypeID":"membertype_jp_mall_salon_assistant","headcount":1,"maxFallback":1,"templateID":"jp_store_clerk"}
+                {"memberTypeID":"membertype_jp_mall_salon_stylist","headcount":1,"maxFallback":1,"templateID":"jp_store_clerk"}
             ],
                 "activeHoursStart":10,
                 "activeHoursEnd":19,
@@ -29,7 +29,7 @@
         "id":"consumable_jp_mall_salon_haircare","displayName":"jp_mall_salon_haircare","tooltip":"jp_mall_salon_haircare_tooltip","Tags":["salon_retail","industrial"],"value":1800,"itemComps_Template":[]
     }]},
     "Dictionary":{"Entries":{"zh-cn":{
-        "jp_beauty_salon":"琉璃美容院",
+        "jp_beauty_salon":"美容院（施工中）",
         "jp_mall_salon_reception":"美容院接待区",
         "jp_mall_salon_chairs":"美发座席区",
         "jp_mall_salon_shampoo":"洗发区",

@@ -8,7 +8,7 @@
             "timeScale":2,
             "VariantDoNotReadRequirement":true,
             "HideWhenInvalid":true,
-            "comTags":["action","interaction","initSex","unsafe"],
+            "comTags":["action","interaction","initSex","unsafe","permission_intimacy_high"],
             "requirements":{
                 "requirement":{ 
                     "req_Receivers":{ "requireConscious":false, "requireAction": false } }
@@ -209,13 +209,13 @@
             ],
             "_comment_actModifiers":"Provisional, untested new D20 bonuses. Relationships belong to the act owner toward the actual partner, not the master. Parent EP gates ordinary conscious, unrestrained, non-threat actual pairs; special, forced and group contexts stay unchanged.",
             "AcceptanceCheck":{
-                "baseAcceptanceValue":25,
+                "baseAcceptanceValue":22,
                 "actModifiers":{
-                    "enabled":true, "totalMin":0, "totalMax":8,
+                    "enabled":true, "totalMin":0, "totalMax":12,
                     "terms":[
-                        {"source":"PartnerGoodwill", "appliesTo":"BothDeciders", "scale":0.04, "offset":0, "min":0, "max":3},
-                        {"source":"PartnerTrust", "appliesTo":"BothDeciders", "scale":0.04, "offset":0, "min":0, "max":3},
-                        {"source":"PartnerDesire", "appliesTo":"BothDeciders", "scale":0.04, "offset":0, "min":0, "max":4}
+                        {"source":"PartnerGoodwill", "appliesTo":"BothDeciders", "scale":0.05, "offset":-2.5, "min":0, "max":3},
+                        {"source":"PartnerTrust", "appliesTo":"BothDeciders", "scale":0.05, "offset":-1.5, "min":0, "max":3},
+                        {"source":"PartnerDesire", "appliesTo":"BothDeciders", "scale":0.04, "offset":-4, "min":0, "max":8}
                     ]
                 }
             },

@@ -2,20 +2,9 @@
     "_comment_status": "Mounted from Docs/Interactions/ActivityProposals/cafe_boardgames.json. Goodwill -> ordinary NPC invitations -> authored shared Trust; not dating. The 25/40 proposal tiers and this 40 threshold are data-tuning suggestions, not an approved progression pace.",
     "_comment_invitations": "SelfRelationships with no relationship-type filter admits existing ordinary acquaintances. selfRelationshipRequirement checks the host -> candidate existing relationship via Peek and fails if absent; it does not create relationships. Goodwill controls eligibility, not inviteChance. Friendliness is existing composite ordering, not pure Goodwill probability. No Friend/Trust/current-awake/mood gate is added.",
     "_comment_outcome": "A one-minute Join does not finish the two-hour booking or a whole game. The guarded scene authors only a short friendly tutorial and fair practice turns, never winner-based Trust. Future custom events may add time/checks; none are invented here. No invitation-acceptance, end-of-visit or fallback reward. Solo/ineligible paths show only neutral text.",
-    "_comment_rewards": "Each score uses normal IncreaseRelationship group fanout: distinct directed nonself pairs, no duplicate pairs within a call. Initial attendees -> attendees once per score; arrivals joining -> companions and reverse once per score, without paying existing companion pairs again. Trust base 1 and Goodwill base 2 remain subject to normal API scaling/caps; no group-N multiplier or final stored amount is promised.",
+    "_comment_rewards": "Each score uses normal IncreaseRelationship group fanout: distinct directed nonself pairs, no duplicate pairs within a call. Initial attendees -> attendees once per score; arrivals joining -> companions and reverse once per score, without paying existing companion pairs again. Goodwill base 2 (Trust: trustRewardEligible - paid by the job at the launch to those who agreed beforehand and came on time, not by the scene) remains subject to normal API scaling/caps; no group-N multiplier or final stored amount is promised.",
     "MapPlans": {
-        "factionInit": [{ "ID": "jp_otaku_hobbyshop", "initializeFaction": "jp_otaku_hobbyshop", "setPrivateRoomOwner": false, "floors": [{ "ID": "floor_jp_otaku_hobbyshop", "nameOverwrite": "jp_otaku_hobbyshop" }], "floorListHostFactionID": "jp_otaku_street", "isRentingFloor": true, "landlordFactionID": "jp_otaku_street", "mainExit": { "roomID": "hobbyshop_floor", "exitCost": 5 }, "managerBaseIDs": [""], "salesCurrency": "currency_JPY", "salesInventory": [{ "matchByID": "item_otaku_card_starter" }, { "matchByID": "item_otaku_model_kit" }, { "matchByID": "item_otaku_boardgame" }, { "matchByID": "item_paperbooks_mask_nyarla" }], "assignableMemberTypes": ["membertype_otaku_hobby_parttime", "membertype_otaku_gamemaster_parttime"], "joinableMemberTypes": ["membertype_otaku_hobby_parttime", "membertype_otaku_gamemaster_parttime"], "fallbackWorkers": [{ "memberTypeID": "membertype_otaku_hobby_npc", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }, { "memberTypeID": "membertype_otaku_gamemaster_npc", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }],
-            "floorDoors": [{ "sourceFloor": "floor_jp_otaku_hobbyshop", "sourceExit": "street", "targetFaction": "jp_otaku_street", "targetFloor": "floor_jp_otaku_street", "targetExit": "to_jp_otaku_hobbyshop", "cost": 1 }]
-        }],
-        "floorPlans": [{
-            "ID": "floor_jp_otaku_hobbyshop", "imagePath": "BGAssets/Generated/shopping_mall_01.webp", "isFloorPlan": false, "floorWidth": 400, "floorHeight": 400, "resize": 1, "mapExit": "hobbyshop_floor",
-            "exits": [{ "ID": "street", "connectedRoom": "hobbyshop_floor", "hideOnMap": true }],
-            "_comment_rent": "Preserves the original monthly unitRent amounts per faction per physical floor, independent of room count.",
-            "wholeBuildingRent": { "maintenanceFee": { "itemID": "currency_JPY", "itemCount": 3000 }, "rentFee": { "itemID": "currency_JPY", "itemCount": 18000 }, "cadence": "Monthly" },
-            "rooms": [
-                { "ID": "hobbyshop_floor", "displayName": "hobbyshop_floor", "hideOnMap": true, "furnitureIDs": ["furniture_otaku_hobby_counter"], "connects": [], "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp" },
-                { "ID": "hobby_tables", "displayName": "hobby_tables", "hideOnMap": true, "furnitureIDs": ["furniture_otaku_boardgame_tables", "furniture_otaku_game_master"], "connects": [{ "ID": "hobbyshop_floor", "cost": 1 }], "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp" }
-            ]
+        "factionInit": [{ "ID": "jp_otaku_hobbyshop", "initializeFaction": "jp_otaku_hobbyshop", "setPrivateRoomOwner": false, "floors": [], "_comment_floors": "no floor of its own: its room hobbyshop_floor (counter + board-game tables + game master) lives on the Downtown floor (subfactionOwnerOverwrite)", "isRentingFloor": true, "landlordFactionID": "jp_downtown", "mainExit": { "roomID": "hobbyshop_floor", "exitCost": 5 }, "managerBaseIDs": [""], "salesCurrency": "currency_JPY", "salesInventory": [{ "matchByID": "item_otaku_card_starter" }, { "matchByID": "item_otaku_model_kit" }, { "matchByID": "item_otaku_boardgame" }, { "matchByID": "item_paperbooks_mask_nyarla" }], "assignableMemberTypes": ["membertype_otaku_hobby_parttime", "membertype_otaku_gamemaster_parttime"], "joinableMemberTypes": ["membertype_otaku_hobby_parttime", "membertype_otaku_gamemaster_parttime"], "_comment_fallbackWorkers": "Only the shop counter gets a fallback worker; the gamemaster post is left open for other NPCs or the player, with no fallback worker behind it.", "fallbackWorkers": [{ "memberTypeID": "membertype_otaku_hobby_npc", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }]
         }],
         "memberTypes": [{
             "ID": "membertype_otaku_hobby_staff", "socialStandingKey": "membertype_otaku_hobby_staff", "isMember": true, "canBeTransferred": true,
@@ -33,11 +22,13 @@
                 { "ID": "membertype_otaku_gamemaster_npc", "socialStandingKey": "membertype_otaku_gamemaster_npc", "workModule": { "jobPostID": "membertype_otaku_gamemaster_npc", "workCommands": ["otaku_gamemaster_duty"], "activeHours": [12,13,14,15,16,17,18,19,20,21], "activeDays": [], "hourlyPayout": [{ "itemID": "currency_JPY", "itemCount": 1300 }], "paymentCadence": "Daily" } }
             ]
         }],
-        "recreationOffers": [{
-            "ID": "recreation_offer_otaku_boardgames", "mode": "Flexible", "factionID": "jp_otaku_hobbyshop",
+        "_recreationOffers": [{
+            "_comment_disabled": "Renamed from recreationOffers to _recreationOffers - the deserializer ignores unknown keys, so this offer is inert (data kept for later). Re-enable by renaming the key back once the hobby shop is actually built out.",
+            "ID": "recreation_offer_otaku_boardgames", "mode": "Flexible", "factionID": "jp_otaku_hobbyshop", "provideAcceptanceBonus": 5, "activityMoodlet": { "stress": 1 },
+            "activityCommands": ["otaku_boardgames_play"],
             "workModule": { "jobPostID": "otaku_boardgames_name", "workCommands": ["otaku_boardgames_play"], "activeHours": [12,13,14,15,16,17,18,19,20,21], "activeDays": [] },
-            "minHours": 2, "maxHours": 2, "weeklyTarget": 2, "minDaysBetween": 1, "daysInAdvance": 1, "weight": 1, "participationChance": 1, "allowWalkIn": true, "trustRewardEligible": true, "gatherRoomID": "hobby_tables", "launchEventID": "Otaku_Boardgames_Begin",
-            "_comment_mount": "Proposal placeholders resolved to hobby shop / hobby_tables / otaku_boardgames_play. Hours narrowed from proposal 10-22 to shop 12-22; invitation and reward tuning unchanged.",
+            "minHours": 2, "maxHours": 2, "weeklyTarget": 2, "minDaysBetween": 1, "daysInAdvance": 1, "weight": 1, "participationChance": 1, "allowWalkIn": true, "trustRewardEligible": true, "gatherRoomID": "hobbyshop_floor", "launchEventID": "Otaku_Boardgames_Begin",
+            "_comment_mount": "Proposal placeholders resolved to hobby shop / hobbyshop_floor (the shop's one room since 2026-11-08) / otaku_boardgames_play. Hours narrowed from proposal 10-22 to shop 12-22; invitation and reward tuning unchanged.",
             "invite": { "visibility": "Private", "inviteChance": 0.3, "minParticipants": 1, "TargetValidators": [{ "refKeys": ["companion"], "baseScope": "SelfRelationships", "extraScopeArguments": [], "chara_conditions": [
                 { "parameters": ["excludeSelf"] },
                 { "selfRelationshipRequirement": { "requireRawScore": [{ "requireScoreID": "Goodwill", "operand": "gte", "value": 40 }], "requireRawScoreCompare": [{ "requireScoreID": "Goodwill", "operand": "gt", "compareScoreID": "Badwill", "compareScoreMult": 1.1 }] } }
@@ -52,14 +43,43 @@
     "COMs": { "list": [
         { "ID": "otaku_hobby_duty", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "otaku_hobby_duty", "timeScale": 30, "comTags": ["job", "furniture"], "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "CurrentActive", "requireMemberTypeScope": "JobFaction", "requireMemberType": ["membertype_otaku_hobby_parttime", "membertype_otaku_hobby_npc"] } } }, "variants": [{ "requirements": { "requirement": { "doerCount": 1 } }, "displayName": "otaku_hobby_duty" }], "AcceptanceCheck": { "baseAcceptanceValue": 0 }, "DifficultyCheck": { "baseD20Check": 0 }, "description_ongoing": { "Entries": [{ "texts": ["otaku_hobby_working"] }] } },
         { "ID": "otaku_gamemaster_duty", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "otaku_gamemaster_duty", "timeScale": 30, "comTags": ["job", "furniture"], "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "CurrentActive", "requireMemberTypeScope": "JobFaction", "requireMemberType": ["membertype_otaku_gamemaster_parttime", "membertype_otaku_gamemaster_npc"] } } }, "variants": [{ "requirements": { "requirement": { "doerCount": 1 } }, "displayName": "otaku_gamemaster_duty" }], "AcceptanceCheck": { "baseAcceptanceValue": 0 }, "DifficultyCheck": { "baseD20Check": 0 }, "description_ongoing": { "Entries": [{ "texts": ["otaku_gamemaster_working"] }] } },
-        { "ID": "otaku_boardgames_play", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "otaku_boardgames_play", "timeScale": 30, "comTags": ["furniture", "recreation"], "requirements": { "requirement": { "treatReceiverAsDoer": true } }, "variants": [{ "requirements": { "requirement": { "doerCount": 99 } }, "displayName": "otaku_boardgames_play" }], "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 0 }, "description_ongoing": { "Entries": [{ "texts": ["otaku_boardgames_playing"] }] } }
+        { "ID": "otaku_boardgames_play", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "otaku_boardgames_play", "timeScale": 30, "comTags": ["furniture", "recreation"], "requirements": { "requirement": { "treatReceiverAsDoer": true } }, "variants": [{ "requirements": { "requirement": { "doerCount": 99 } }, "displayName": "otaku_boardgames_play" }], "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 5 }, "description_ongoing": { "Entries": [{ "texts": ["otaku_boardgames_playing"] }] } }
     ] },
     "Items": { "list": [
         { "id": "item_otaku_card_starter", "Tags": ["rarity_common"], "value": 1500 },
         { "id": "item_otaku_model_kit", "Tags": ["rarity_common"], "value": 3200 },
         { "id": "item_otaku_boardgame", "Tags": ["rarity_common"], "value": 3800 }
     ] },
-    "Dictionary": { "Entries": { "zh-cn": {
-        "jp_otaku_hobbyshop": "模型卡牌与桌游店", "membertype_otaku_hobby_staff": "桌游店员工", "membertype_otaku_hobby_parttime": "模型卡牌店兼职", "membertype_otaku_hobby_day": "店员日班 12–17", "membertype_otaku_hobby_evening": "店员晚班 17–22", "membertype_otaku_hobby_npc": "值班店员 12–22", "membertype_otaku_gamemaster_parttime": "桌游主持兼职", "membertype_otaku_gamemaster_day": "桌游主持日班 12–17", "membertype_otaku_gamemaster_evening": "桌游主持晚班 17–22", "membertype_otaku_gamemaster_npc": "值班桌游主持 12–22", "otaku_boardgames_name": "桌游店聚会", "otaku_hobby_counter": "模型卡牌柜台", "otaku_game_master": "规则与配件整理台", "otaku_boardgame_tables": "桌游桌", "otaku_hobby_duty": "模型卡牌收银理货", "otaku_gamemaster_duty": "整理桌游与规则册", "otaku_boardgames_play": "玩桌游", "otaku_hobby_working": "$doer.firstname$核对卡牌和模型库存。", "otaku_gamemaster_working": "$doer.firstname$整理规则册，清点盒中的棋子。", "otaku_boardgames_playing": "$doer.firstname$对照规则册，轮流摆放棋子。", "item_otaku_card_starter": "卡牌入门套装", "item_otaku_card_starter_tooltip": "一副入门卡组和规则说明。", "item_otaku_model_kit": "拼装模型套件", "item_otaku_model_kit_tooltip": "需要自行剪裁、拼装的塑料模型。", "item_otaku_boardgame": "盒装桌游", "item_otaku_boardgame_tooltip": "附有棋子、卡牌与规则册的桌游。"
-    } } }
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "jp_otaku_hobbyshop": "模型卡牌与桌游店（施工中）",
+                "membertype_otaku_hobby_staff": "桌游店员工",
+                "membertype_otaku_hobby_parttime": "模型卡牌店兼职",
+                "membertype_otaku_hobby_day": "店员日班 12–17",
+                "membertype_otaku_hobby_evening": "店员晚班 17–22",
+                "membertype_otaku_hobby_npc": "值班店员 12–22",
+                "membertype_otaku_gamemaster_parttime": "桌游主持兼职",
+                "membertype_otaku_gamemaster_day": "桌游主持日班 12–17",
+                "membertype_otaku_gamemaster_evening": "桌游主持晚班 17–22",
+                "membertype_otaku_gamemaster_npc": "值班桌游主持 12–22",
+                "otaku_boardgames_name": "桌游店聚会",
+                "otaku_hobby_counter": "模型卡牌柜台",
+                "otaku_game_master": "规则与配件整理台",
+                "otaku_boardgame_tables": "桌游桌",
+                "otaku_hobby_duty": "模型卡牌收银理货",
+                "otaku_gamemaster_duty": "整理桌游与规则册",
+                "otaku_boardgames_play": "玩桌游",
+                "otaku_hobby_working": "$doer.firstname$核对卡牌和模型库存。",
+                "otaku_gamemaster_working": "$doer.firstname$整理规则册，清点盒中的棋子。",
+                "otaku_boardgames_playing": "$doer.firstname$对照规则册，轮流摆放棋子。",
+                "item_otaku_card_starter": "卡牌入门套装",
+                "item_otaku_card_starter_tooltip": "一副入门卡组和规则说明。",
+                "item_otaku_model_kit": "拼装模型套件",
+                "item_otaku_model_kit_tooltip": "需要自行剪裁、拼装的塑料模型。",
+                "item_otaku_boardgame": "盒装桌游",
+                "item_otaku_boardgame_tooltip": "附有棋子、卡牌与规则册的桌游。"
+            }
+        }
+    }
 }

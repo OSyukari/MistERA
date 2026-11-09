@@ -393,7 +393,8 @@ public partial class EvaluationPackage : I_ResultStorage
         get
         {
             var pp = this.Package as ActionPackage_Sex;
-            return pp == null ? false : pp.isStrongPenetration;
+            // an upgrade command (French kiss...) is its parent's strong round
+            return pp == null ? false : pp.isStrongPenetration || (pp.targetCOM != null && pp.targetCOM.IsUpgrade);
         }
     }
 
@@ -829,10 +830,19 @@ public partial class EvaluationPackage : I_ResultStorage
     /// Called for COM's executeimmediate
     /// </summary>
     /// <param name="m"></param>
-    public void ExecuteImmediate(MessageCollect m)
+    [JsonProperty] bool immediateResultEventApplied = false;
+
+    internal bool TryMarkImmediateResultEvent()
     {
-        if (Doer != null) targetCOM.ApplyResultsImmediate(job, p, this, attitude_doer, Doer, m == null ? null : m.exp);
-        if (Receiver != null && Receiver.RefID != Doer.RefID && !Package.ComTags.Contains("ignored")) targetCOM.ApplyResultsImmediate(job, p, this, attitude_receiver, Receiver, m == null ? null : m.exp);
+        if (immediateResultEventApplied) return false;
+        immediateResultEventApplied = true;
+        return true;
+    }
+
+    public void ExecuteImmediate(MessageCollect m, bool deferResultEvent = false)
+    {
+        if (Doer != null) targetCOM.ApplyResultsImmediate(job, p, this, attitude_doer, Doer, m == null ? null : m.exp, !deferResultEvent);
+        if (Receiver != null && Receiver != Doer && !Package.ComTags.Contains("ignored")) targetCOM.ApplyResultsImmediate(job, p, this, attitude_receiver, Receiver, m == null ? null : m.exp, !deferResultEvent);
 
     }
 
@@ -914,12 +924,10 @@ public partial class EvaluationPackage : I_ResultStorage
         {
 
             RollResult();
+            AddCoercionExperienceTags();
 
             if (jobSex != null && (Package is ActionPackage_Sex || targetCOM.comTags.Contains("touch")))
-                jobSex.RecordSummaryAct(DoerRef, Receiver == null ? DoerRef : ReceiverRef, targetCOM,
-                    isForced || Package.isForced || (pSex != null && pSex.UsesForcedSexSelection)
-                    || DoerSelfTag.Contains("raped") || ReceiverSelfTag.Contains("raped") || !hasPermission,
-                    Package is ActionPackage_Sex);
+                jobSex.RecordSummaryAct(DoerRef, Receiver == null ? DoerRef : ReceiverRef, targetCOM, Package is ActionPackage_Sex);
 
             if (Package is ActionPackage_Sex)
             {
@@ -1491,6 +1499,47 @@ public partial class EvaluationPackage : I_ResultStorage
             }
             foreach (var mod in _receiverAcceptanceMods) mod.Apply(this, Receiver, Doer);
         }
+
+        // a bonus from outside the command (ActionPackage.externalAcceptanceBonus, e.g. an event's commandAcceptanceBonus)
+        var bonus = p?.externalAcceptanceBonus;
+        if (bonus != null && bonus.value != 0)
+        {
+            if (Doer != null && Doer.RefID == bonus.deciderRef) AddAcceptanceModifier(true, bonus.explanation, bonus.value);
+            else if (Receiver != null && Receiver.RefID == bonus.deciderRef) AddAcceptanceModifier(false, bonus.explanation, bonus.value);
+        }
+
+        ApplyActivityAcceptanceBonus();
+    }
+
+    /// <summary>Every request can benefit from shared live participation, even when the command itself is unbound.</summary>
+    void ApplyActivityAcceptanceBonus()
+    {
+        var campaign = scr_System_CampaignManager.current;
+        if (p == null || campaign == null) return;
+
+        int BonusFor(Character_Trainable requester, Character_Trainable decider)
+        {
+            if (requester == null || decider == null || requester == decider) return 0;
+            if (p.ActivityExecutionRef >= 0)
+            {
+                var bound = campaign.FindJobInstanceByID(p.ActivityExecutionRef, false) as Job_Activity;
+                return bound != null && bound.SharesLaunchedGroup(requester, decider, p.ActivityGroupKey)
+                    ? bound.VisitAcceptanceBonus : 0;
+            }
+            if (campaign.TemporaryJobRefs != null)
+                foreach (var id in campaign.TemporaryJobRefs)
+                    if (campaign.FindJobInstanceByID(id, false) is Job_Activity activity
+                        && activity.SharesLaunchedGroup(requester, decider, Job_Activity.NoGroupCheck))
+                        return activity.VisitAcceptanceBonus;
+            return 0;
+        }
+
+        // Master asks the doer, including commands with a receiver; the doer asks the receiver.
+        // Resolve each side independently, but never accumulate bonuses from multiple participants or executions.
+        int doerBonus = BonusFor(Master, Doer);
+        if (doerBonus != 0) AddAcceptanceModifier(true, "Activity companion", doerBonus);
+        int receiverBonus = BonusFor(Doer, Receiver);
+        if (receiverBonus != 0) AddAcceptanceModifier(false, "Activity companion", receiverBonus);
     }
 
     private void RollAttitude(ref int attitudeRate_pos, ref int attitudeRate_neg, ref Memory_Attitude attitude_begin, bool isDoerRole)
@@ -1544,7 +1593,7 @@ public partial class EvaluationPackage : I_ResultStorage
                 //s3 = Doer.Relationships.GetKOJOMessage Doer.Relationships.Personality.GetKOJOMessage("DisruptSleep", injectRel);
                 if (s3 != null)
                 {
-                    s3.collect.message = s3.collect.message.Replace("$epDescription$", Package.targetCOM.DisplayName(Package.COMVariantID));
+                    s3.collect.message = s3.collect.message.Replace("$epDescription$", FurnitureOccupancyUtility.CommandNameForKojo(Package));
                     responses.Add(s3);
                     if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{s3.collect.message}]");
                 }
@@ -1562,7 +1611,7 @@ public partial class EvaluationPackage : I_ResultStorage
                     s4 = Receiver.Relationships.GetKOJOMessage("DisruptSleep", targetRel);
                     if (s4 != null)
                     {
-                        s4.collect.message = s4.collect.message.Replace("$epDescription$", Package.targetCOM.DisplayName(Package.COMVariantID));
+                        s4.collect.message = s4.collect.message.Replace("$epDescription$", FurnitureOccupancyUtility.CommandNameForKojo(Package));
                         responses.Add(s4);
                         if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{s4.collect.message}]");
                     }
@@ -2012,6 +2061,25 @@ public partial class EvaluationPackage : I_ResultStorage
         return false;
     }
 
+    void AddCoercionExperienceTags()
+    {
+        if (Doer == null || Receiver == null || Doer == Receiver || targetCOM == null) return;
+
+        // Classify the executed act, not the COM positions: either side can be coerced or be the perpetrator.
+        bool penileInsertion = (targetCOM.comTags.Contains("penetration")
+            || (targetCOM.ParentCOM != null && targetCOM.ParentCOM.comTags.Contains("penetration")))
+            && TryGetPenetration(out var penetrator, out _) && penetrator.hasTag("penis");
+        foreach (bool isDoer in new[] { true, false })
+        {
+            var selfTags = isDoer ? DoerSelfTag : ReceiverSelfTag;
+            string role = selfTags.Contains("raped") ? "raped" : selfTags.Contains("rape") ? "rape" : null;
+            if (role == null) continue;
+            var tags = isDoer ? extraDoerTags : extraReceiverTags;
+            tags.Add($"experience_{role}_{(penileInsertion ? "penile" : "nonpenile")}");
+        }
+        InvalidateTagCache();
+    }
+
     /// <summary>
     /// Signed DC modifier from the penetrated organ's EffectiveLubrication, per its definition's lubricationDC fields.
     /// False when the parts form no penetration, the organ needs no lubrication or has no authored curve.
@@ -2458,7 +2526,8 @@ public partial class EvaluationPackage : I_ResultStorage
         {
             float summaryPleasureAfter = string.IsNullOrEmpty(body.Sensitivity) ? 0
                 : body.Owner.Stats.GetStatusByStringMatch(body.Sensitivity)?.StoredSeverity ?? 0;
-            float summaryPainAfter = body.Owner.Stats.GetStatusByStringMatch("chara_status_pain_sex")?.StoredSeverity ?? 0;
+            var summaryPainStatus = body.Owner.Stats.GetStatusByStringMatch("chara_status_pain_sex");
+            float summaryPainAfter = summaryPainStatus?.StoredSeverity ?? 0;
             // record gained pleasure and what pain took from it separately, not their net. The status change is the applied
             // net, so gained = change + deduction; a status that ignored the addition (eg. while climaxing) records nothing.
             double summaryPleasureChange = summaryPleasureAfter - summaryPleasureBefore;
@@ -2466,7 +2535,8 @@ public partial class EvaluationPackage : I_ResultStorage
             jobSex.RecordSummaryEffect(body.Owner.RefID, source?.RefID ?? -1,
                 summaryPleasureApplied ? (float)Math.Max(0, summaryPleasureChange + summaryPainDeduction) : 0,
                 summaryPleasureApplied ? (float)summaryPainDeduction : 0,
-                Math.Max(0, Math.Abs(summaryPainAfter) - Math.Abs(summaryPainBefore)));
+                Math.Max(0, Math.Abs(summaryPainAfter) - Math.Abs(summaryPainBefore)),
+                summaryPainStatus?.SeverityIndex ?? 0);
         }
     }
 

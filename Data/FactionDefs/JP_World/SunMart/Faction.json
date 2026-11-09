@@ -10,6 +10,9 @@
                 "isRentingFloor": true,
                 "_comment_isRentingFloor": "leases the storefront, unspecified landlord",
                 "mainExit": { "roomID": "store_1F_entrance", "exitCost": 5 },
+                "_comment_floorDoors": "No world door: the floor plan's South exit leads to the apartment district (hidden socket to_jp_convenience_store_SunMart), drawn in the district's block.",
+                "floorListHostFactionID": "jp_district_apartment",
+                "floorDoors": [{ "sourceFloor": "floor_jp_convenience_store", "sourceExit": "South", "targetFaction": "jp_district_apartment", "targetFloor": "floor_jp_district_apartment", "targetExit": "to_jp_convenience_store_SunMart", "cost": 1 }],
                 "floors":
                 [
                     {
@@ -33,7 +36,8 @@
                     { "matchByID":"raw_rice","nameOverwrite":"jp_convenience_store_rice_bag_5kg", "itemCount":5000, "countOverride":true },
                     { "matchByID":"currency_pyroxene","nameOverwrite":"jp_convenience_store_pyroxene_4800", "itemCount":4800, "countOverride":true },
                     { "matchByID":"consumable_drug_sleepingpill","nameOverwrite":"jp_convenience_store_otcsleepingpills_6pack", "itemCount":6, "countOverride":true },
-                    { "matchByID":"consumable_alcohol_beer","nameOverwrite":"jp_convenience_store_beer_6pack", "itemCount":6, "countOverride":true }
+                    { "matchByID":"consumable_alcohol_beer","nameOverwrite":"jp_convenience_store_beer_6pack", "itemCount":6, "countOverride":true },
+                    { "matchByID":"condom","nameOverwrite":"condom_3pack", "itemCount":3, "countOverride":true }
                 ],
                 "_comment":"here is faction initializer. Calling mapPlan init create a new instance of the faction following this same template.",
                 "_comment2":"called by MapPlan.Instantiate(args)",
@@ -698,6 +702,9 @@
                 "membertype_jp_convenience_store_night_b":"夜班兼职B",
                 "membertype_jp_convenience_store_npc_day":"日间店员",
                 "membertype_jp_convenience_store_npc_night":"夜间店员",
+
+                "condom_3pack":"避孕套（3个）",
+
                 "jp_convenience_store_manager":"店长 日班",
                 "jp_convenience_store_assistant_manager":"副店长 午后至打烊",
                 "jp_convenience_store_morning_a":"兼职 早班（周一至周四）",

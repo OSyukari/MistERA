@@ -17,6 +17,9 @@
                 "floors": [
                     { "ID": "floor_jp_sports_center", "nameOverwrite": "jp_sports_center" }
                 ],
+                "_comment_floorDoors": "No world door: reached from the shopping street through hidden exits (street <-> to_jp_sports_center), drawn in the street's block.",
+                "floorListHostFactionID": "jp_shopping_street",
+                "floorDoors": [{ "sourceFloor": "floor_jp_sports_center", "sourceExit": "street", "targetFaction": "jp_shopping_street", "targetFloor": "floor_jp_shopping_street", "targetExit": "to_jp_sports_center", "cost": 1 }],
                 "mealHours": [],
                 "salesCurrency": "currency_JPY",
                 "salesInventory": [],
@@ -51,6 +54,7 @@
                 "floorHeight": 400.0,
                 "resize": 1.0,
                 "mapExit": "sports_club_lobby",
+                "exits": [ { "ID": "street", "connectedRoom": "sports_club_lobby", "hideOnMap": true } ],
                 "_comment_wholeBuildingRent": "the club owns the building (isRentingFloor:false), so only maintenanceFee applies; NPC faction, never actually charged in practice",
                 "wholeBuildingRent": {
                     "maintenanceFee": { "itemID": "currency_JPY", "itemCount": 400000 },
@@ -195,6 +199,8 @@
                     "activities": [
                         {
                             "ID": "gym",
+                            "trustRewardEligible": true, "provideAcceptanceBonus": 5, "activityMoodlet": { "stress": 1 },
+                            "mainTypeTag": "exercise", "secondaryTags": ["indoor", "strength", "cardio"],
                             "typeID": "gym_training", "allowMultipleInstances": true, "mergeWithSame": true,
                             "conflictsWith": [], "replaceCommandTags": [],
                             "replaceCommands": ["jp_sports_center_cardio", "jp_sports_center_weights", "jp_sports_center_machine_workout", "jp_sports_center_gym_rest"],
@@ -204,13 +210,6 @@
                                 "workCommands": ["jp_sports_center_cardio", "jp_sports_center_weights", "jp_sports_center_machine_workout", "jp_sports_center_gym_rest"],
                                 "activeHours": [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
                             },
-                            "_comment_AcceptanceMods": "Applied while a visit of this activity is in effect (Character_Factions.CurrentActiveActivity): +5 D20 to accept being asked to do one of its own workCommands. treatReceiverAsDoer evaluates the asked character as a doer, hence isDoer true. Same for every activity below.",
-                            "AcceptanceMods": [
-                                { "Requirement_ActionPackage": { "targetComID": "jp_sports_center_cardio", "isDoer": true }, "Result_EvaluationPackage": { "acceptanceModifier": 5, "acceptanceModifierExplanation": "jp_sports_center_activity_accept_reason" } },
-                                { "Requirement_ActionPackage": { "targetComID": "jp_sports_center_weights", "isDoer": true }, "Result_EvaluationPackage": { "acceptanceModifier": 5, "acceptanceModifierExplanation": "jp_sports_center_activity_accept_reason" } },
-                                { "Requirement_ActionPackage": { "targetComID": "jp_sports_center_machine_workout", "isDoer": true }, "Result_EvaluationPackage": { "acceptanceModifier": 5, "acceptanceModifierExplanation": "jp_sports_center_activity_accept_reason" } },
-                                { "Requirement_ActionPackage": { "targetComID": "jp_sports_center_gym_rest", "isDoer": true }, "Result_EvaluationPackage": { "acceptanceModifier": 5, "acceptanceModifierExplanation": "jp_sports_center_activity_accept_reason" } }
-                            ],
                             "minHours": 2, "maxHours": 3,
                             "minDaysBetween": 1,
                             "weeklyTarget": 2,
@@ -220,6 +219,8 @@
                         },
                         {
                             "ID": "yoga",
+                            "trustRewardEligible": true, "provideAcceptanceBonus": 5, "activityMoodlet": { "stress": 1 },
+                            "mainTypeTag": "exercise", "secondaryTags": ["indoor", "yoga", "flexibility"],
                             "typeID": "yoga_training", "allowMultipleInstances": true, "mergeWithSame": true,
                             "conflictsWith": [], "replaceCommandTags": [],
                             "replaceCommands": ["jp_sports_center_yoga", "jp_sports_center_stretch"], "activityCommands": ["jp_sports_center_yoga", "jp_sports_center_stretch"],
@@ -228,10 +229,6 @@
                                 "workCommands": ["jp_sports_center_yoga", "jp_sports_center_stretch"],
                                 "activeHours": [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
                             },
-                            "AcceptanceMods": [
-                                { "Requirement_ActionPackage": { "targetComID": "jp_sports_center_yoga", "isDoer": true }, "Result_EvaluationPackage": { "acceptanceModifier": 5, "acceptanceModifierExplanation": "jp_sports_center_activity_accept_reason" } },
-                                { "Requirement_ActionPackage": { "targetComID": "jp_sports_center_stretch", "isDoer": true }, "Result_EvaluationPackage": { "acceptanceModifier": 5, "acceptanceModifierExplanation": "jp_sports_center_activity_accept_reason" } }
-                            ],
                             "minHours": 2, "maxHours": 2,
                             "minDaysBetween": 2,
                             "weeklyTarget": 1,
@@ -239,6 +236,8 @@
                         },
                         {
                             "ID": "swimming",
+                            "trustRewardEligible": true, "provideAcceptanceBonus": 5, "activityMoodlet": { "stress": 1 },
+                            "mainTypeTag": "exercise", "secondaryTags": ["indoor", "swimming", "cardio"],
                             "typeID": "swimming_training", "allowMultipleInstances": true, "mergeWithSame": true,
                             "conflictsWith": [], "replaceCommandTags": [],
                             "replaceCommands": ["jp_sports_center_swim_laps", "jp_sports_center_water_walk", "jp_sports_center_poolside_rest"],
@@ -248,11 +247,6 @@
                                 "workCommands": ["jp_sports_center_swim_laps", "jp_sports_center_water_walk", "jp_sports_center_poolside_rest"],
                                 "activeHours": [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
                             },
-                            "AcceptanceMods": [
-                                { "Requirement_ActionPackage": { "targetComID": "jp_sports_center_swim_laps", "isDoer": true }, "Result_EvaluationPackage": { "acceptanceModifier": 5, "acceptanceModifierExplanation": "jp_sports_center_activity_accept_reason" } },
-                                { "Requirement_ActionPackage": { "targetComID": "jp_sports_center_water_walk", "isDoer": true }, "Result_EvaluationPackage": { "acceptanceModifier": 5, "acceptanceModifierExplanation": "jp_sports_center_activity_accept_reason" } },
-                                { "Requirement_ActionPackage": { "targetComID": "jp_sports_center_poolside_rest", "isDoer": true }, "Result_EvaluationPackage": { "acceptanceModifier": 5, "acceptanceModifierExplanation": "jp_sports_center_activity_accept_reason" } }
-                            ],
                             "minHours": 2, "maxHours": 3,
                             "minDaysBetween": 2,
                             "weeklyTarget": 1,
@@ -260,6 +254,8 @@
                         },
                         {
                             "ID": "sauna",
+                            "trustRewardEligible": true, "provideAcceptanceBonus": 5, "activityMoodlet": { "stress": 1 },
+                            "mainTypeTag": "relaxation", "secondaryTags": ["indoor", "sauna", "wellness"],
                             "typeID": "sauna_visit", "allowMultipleInstances": true, "mergeWithSame": true,
                             "conflictsWith": [], "replaceCommandTags": [],
                             "replaceCommands": ["jp_sports_center_sauna", "jp_sports_center_cool_down"], "activityCommands": ["jp_sports_center_sauna", "jp_sports_center_cool_down"],
@@ -268,10 +264,6 @@
                                 "workCommands": ["jp_sports_center_sauna", "jp_sports_center_cool_down"],
                                 "activeHours": [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
                             },
-                            "AcceptanceMods": [
-                                { "Requirement_ActionPackage": { "targetComID": "jp_sports_center_sauna", "isDoer": true }, "Result_EvaluationPackage": { "acceptanceModifier": 5, "acceptanceModifierExplanation": "jp_sports_center_activity_accept_reason" } },
-                                { "Requirement_ActionPackage": { "targetComID": "jp_sports_center_cool_down", "isDoer": true }, "Result_EvaluationPackage": { "acceptanceModifier": 5, "acceptanceModifierExplanation": "jp_sports_center_activity_accept_reason" } }
-                            ],
                             "minHours": 2, "maxHours": 2,
                             "minDaysBetween": 1,
                             "weeklyTarget": 1,
@@ -582,7 +574,7 @@
                 "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "Any" } } },
                 "variants": [ { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 8, "cost_EN": 3 } } }, "displayName": "jp_sports_center_cardio_displayName" },
                               { "requirements": { "requirement": { "doerCount": 2, "req_Doers": { "cost_ST": 8, "cost_EN": 3 } } }, "displayName": "jp_sports_center_cardio_displayName_2" } ],
-                "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 0 },
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 5 },
                 "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$踏上跑步机开始慢跑"] } ] },
                 "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正在跑步机上挥汗如雨"] } ] },
                 "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$从跑步机上下来了"] } ] },
@@ -595,7 +587,7 @@
                 "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "Any" } } },
                 "variants": [ { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 10, "cost_EN": 3 } } }, "displayName": "jp_sports_center_weights_displayName" },
                               { "requirements": { "requirement": { "doerCount": 2, "req_Doers": { "cost_ST": 10, "cost_EN": 3 } } }, "displayName": "jp_sports_center_weights_displayName_2" } ],
-                "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 0 },
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 5 },
                 "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$在哑铃架前开始力量训练"] } ] },
                 "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正在咬牙举着哑铃"] } ] },
                 "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$放下了哑铃"] } ] },
@@ -608,7 +600,7 @@
                 "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "Any" } } },
                 "variants": [ { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 8, "cost_EN": 3 } } }, "displayName": "jp_sports_center_machine_workout_displayName" },
                               { "requirements": { "requirement": { "doerCount": 2, "req_Doers": { "cost_ST": 8, "cost_EN": 3 } } }, "displayName": "jp_sports_center_machine_workout_displayName_2" } ],
-                "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 0 },
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 5 },
                 "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$调好器械的重量，开始训练"] } ] },
                 "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正在器械上一组一组地练着"] } ] },
                 "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$离开了训练器械"] } ] },
@@ -623,7 +615,7 @@
                 "results_EP": { "results_character": [ { "entry_conditions": { "applyToDoer": true }, "entry_results": { "type": "statMod_ST", "value": "4" } } ] },
                 "variants": [ { "requirements": { "requirement": { "doerCount": 1 } }, "displayName": "jp_sports_center_gym_rest_displayName" },
                               { "requirements": { "requirement": { "doerCount": 2 } }, "displayName": "jp_sports_center_gym_rest_displayName_2" } ],
-                "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 0 },
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 5 },
                 "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$坐下来喝了口水"] } ] },
                 "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正在调整呼吸"] } ] },
                 "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$站起身来"] } ] },
@@ -636,7 +628,7 @@
                 "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "Any" } } },
                 "variants": [ { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 4, "cost_EN": 2 } } }, "displayName": "jp_sports_center_yoga_displayName" },
                               { "requirements": { "requirement": { "doerCount": 2, "req_Doers": { "cost_ST": 4, "cost_EN": 2 } } }, "displayName": "jp_sports_center_yoga_displayName_2" } ],
-                "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 0 },
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 5 },
                 "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$铺好瑜伽垫，开始做瑜伽"] } ] },
                 "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正保持着瑜伽体式慢慢呼吸"] } ] },
                 "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$收起了瑜伽垫"] } ] },
@@ -649,7 +641,7 @@
                 "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "Any" } } },
                 "variants": [ { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 2, "cost_EN": 2 } } }, "displayName": "jp_sports_center_stretch_displayName" },
                               { "requirements": { "requirement": { "doerCount": 2, "req_Doers": { "cost_ST": 2, "cost_EN": 2 } } }, "displayName": "jp_sports_center_stretch_displayName_2" } ],
-                "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 0 },
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 5 },
                 "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$在垫子上开始拉伸"] } ] },
                 "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正在垫子上舒展身体"] } ] },
                 "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$从垫子上起身"] } ] },
@@ -662,7 +654,7 @@
                 "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "Any" } } },
                 "variants": [ { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 10, "cost_EN": 3 } } }, "displayName": "jp_sports_center_swim_laps_displayName" },
                               { "requirements": { "requirement": { "doerCount": 2, "req_Doers": { "cost_ST": 10, "cost_EN": 3 } } }, "displayName": "jp_sports_center_swim_laps_displayName_2" } ],
-                "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 0 },
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 5 },
                 "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$滑进泳道开始游泳"] } ] },
                 "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正在泳道里一圈一圈地游着"] } ] },
                 "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$从泳池里上来了"] } ] },
@@ -675,7 +667,7 @@
                 "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "Any" } } },
                 "variants": [ { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 4, "cost_EN": 2 } } }, "displayName": "jp_sports_center_water_walk_displayName" },
                               { "requirements": { "requirement": { "doerCount": 2, "req_Doers": { "cost_ST": 4, "cost_EN": 2 } } }, "displayName": "jp_sports_center_water_walk_displayName_2" } ],
-                "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 0 },
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 5 },
                 "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$下到泳池里开始水中步行"] } ] },
                 "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正在水里慢慢地走着"] } ] },
                 "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$从泳池里上来了"] } ] },
@@ -689,7 +681,7 @@
                 "results_EP": { "results_character": [ { "entry_conditions": { "applyToDoer": true }, "entry_results": { "type": "statMod_ST", "value": "4" } } ] },
                 "variants": [ { "requirements": { "requirement": { "doerCount": 1 } }, "displayName": "jp_sports_center_poolside_rest_displayName" },
                               { "requirements": { "requirement": { "doerCount": 2 } }, "displayName": "jp_sports_center_poolside_rest_displayName_2" } ],
-                "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 0 },
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 5 },
                 "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$在池边长椅上坐下歇口气"] } ] },
                 "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正裹着毛巾在池边休息"] } ] },
                 "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$从池边站了起来"] } ] },
@@ -702,7 +694,7 @@
                 "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "Any" } } },
                 "variants": [ { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 2, "cost_EN": 2 } } }, "displayName": "jp_sports_center_sauna_displayName" },
                               { "requirements": { "requirement": { "doerCount": 2, "req_Doers": { "cost_ST": 2, "cost_EN": 2 } } }, "displayName": "jp_sports_center_sauna_displayName_2" } ],
-                "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 0 },
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 5 },
                 "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$走进了桑拿房"] } ] },
                 "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正在桑拿房里蒸得满身是汗"] } ] },
                 "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$走出了桑拿房"] } ] },
@@ -716,7 +708,7 @@
                 "results_EP": { "results_character": [ { "entry_conditions": { "applyToDoer": true }, "entry_results": { "type": "statMod_ST", "value": "6" } } ] },
                 "variants": [ { "requirements": { "requirement": { "doerCount": 1 } }, "displayName": "jp_sports_center_cool_down_displayName" },
                               { "requirements": { "requirement": { "doerCount": 2 } }, "displayName": "jp_sports_center_cool_down_displayName_2" } ],
-                "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 0 },
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 5 },
                 "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$泡进了冷水池"] } ] },
                 "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正在冷水池和躺椅之间来回放松"] } ] },
                 "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$从冷水池里出来了"] } ] },

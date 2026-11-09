@@ -1,5 +1,5 @@
 {
-    "_comment": "Mounted proposal scene; isJoin must be checked before isLate. Only actual launch attendees or newcomer/local companions receive shared outcomes; expected invitees are never recipients. Tuning comments retained in hobbyshop.json.",
+    "_comment": "Mounted proposal scene; isJoin must be checked before isLate. Only actual launch attendees or newcomer/local companions receive shared outcomes; expected invitees are never recipients. Tuning comments retained in hobbyshop.json. Trust is not granted here: the job pays it at the launch to those who agreed beforehand and came on time (Job_Activity.AwardKeptPromiseTrust) - this scene adds Goodwill only.",
     "Events": { "list": [{
         "ID": "Otaku_Boardgames_Begin",
         "events": [
@@ -20,12 +20,9 @@
                 { "option": "neutral finish", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "finish"] }] }
             ] },
             { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "initial_reward", "line": "otaku_boardgames_shared_initial", "nextEntryLabel": "finish", "Results": [
-                { "Type": "IncreaseRelationship", "arguments": ["attendees", "attendees", "Trust", "1"] },
                 { "Type": "IncreaseRelationship", "arguments": ["attendees", "attendees", "Goodwill", "2"] }
             ] },
             { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "arrival_reward", "line": "otaku_boardgames_shared_arrival", "nextEntryLabel": "finish", "Results": [
-                { "Type": "IncreaseRelationship", "arguments": ["joining", "companions", "Trust", "1"] },
-                { "Type": "IncreaseRelationship", "arguments": ["companions", "joining", "Trust", "1"] },
                 { "Type": "IncreaseRelationship", "arguments": ["joining", "companions", "Goodwill", "2"] },
                 { "Type": "IncreaseRelationship", "arguments": ["companions", "joining", "Goodwill", "2"] }
             ] },

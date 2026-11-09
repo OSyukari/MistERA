@@ -81,7 +81,7 @@
                 {
                     "requireRawScore":[
                         {"requireScoreID":"Trust","operand":"gte","value":15},
-                        {"requireScoreID":"Desire","operand":"gte","value":150}
+                        {"requireScoreID":"Desire","operand":"gte","value":500}
                     ],
                     "requireRawScoreCompare":[
                         {"requireScoreID":"Desire","operand":"gt","compareScoreID":"Badwill","compareScoreMult":1.1}

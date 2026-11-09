@@ -253,11 +253,12 @@ public class scr_System_Time : MonoBehaviour
     /// Fired once per hour change, after Observer_globalTime_Hours and - at midnight - after the day update: every
     /// character has had its hourly tick (and day update) by now. Second update of the hour, invoked (pass) for pass 0 ..
     /// HoursLatePasses - 1 - every listener sees a pass before any listener sees the next: recreation sessions posted in
-    /// the first update are answered (RecreationUtility.LatePass_Respond / _RespondExtended - Character_Trainable.Observer_GlobalHourLate)
-    /// and then resolve themselves (LatePass_Resolve - RecreationGroup).
+    /// the first update are answered (RecreationUtility.LatePass_Respond / _RespondExtended - Character_Trainable.Observer_GlobalHourLate),
+    /// the player gets the invitations still worth answering (LatePass_InvitePlayer) and then they resolve themselves
+    /// (LatePass_Resolve - RecreationGroup).
     /// </summary>
     public event Action<int> Observer_globalTime_HoursLate;
-    public const int HoursLatePasses = 3;
+    public const int HoursLatePasses = 4;
     /// <summary>Counts the hours whose late passes have begun (incremented right before pass 0).</summary>
     public int HoursLateCycle { get; private set; } = 0;
 
@@ -331,7 +332,10 @@ public class scr_System_Time : MonoBehaviour
     {
         // handle single tick, observers might need local last_updated tracker if they dont want update
         currentDate += TimeSpan.FromMinutes(amount);
-        Observer_globalTime?.Invoke(TimeSpan.FromMinutes(amount), TimeSpan.FromMinutes(realTime));
+        using (Character_Trainable.BeginNaturalWakeBatch())
+        {
+            Observer_globalTime?.Invoke(TimeSpan.FromMinutes(amount), TimeSpan.FromMinutes(realTime));
+        }
         if (amount != 0 && (currentDate.Minute % 5) == 0) Observer_globalTime_5min?.Invoke(TimeSpan.FromMinutes(5));
     }
 

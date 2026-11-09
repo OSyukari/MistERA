@@ -3,7 +3,7 @@
         {
             "ID": "jp_otaku_cosplaystudio_Opt_Apply", "trigger": "OnDialogue_Options", "allowDuplicate": false, "UISpec": { "displayMode": "AVG" },
             "SelfValidator": { "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["isPlayer"] }] },
-            "TargetValidators": [{ "refkeys": ["staff"], "baseScope": "CurrentTarget", "minTargetCount": 1, "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_otaku_cosplaystudio"] }, { "parameters": ["hasActorTag", "jp_otaku_cosplaystudio_hiring"] }] }],
+            "TargetValidators": [{ "refkeys": ["staff"], "baseScope": "CurrentTarget", "minTargetCount": 1, "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_cosplay_cafe"] }, { "parameters": ["hasActorTag", "jp_otaku_cosplaystudio_hiring"] }] }],
             "events": [
                 { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "otaku_apply_greeting", "Results": [{ "Type": "JoinActiveFaction", "arguments": ["applyOptions", "selfAndFollowers", "staff", "membertype_otaku_studio_parttime", "applyError"] }] },
                 { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [{ "option": "options", "Results": [{ "Type": "ExistStoredOptions", "arguments": ["applyOptions"] }, { "Type": "JumpToLabel", "arguments": ["", "ask"] }] }, { "option": "error", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "error"] }] }] },
@@ -17,7 +17,7 @@
         {
             "ID": "jp_otaku_cosplaystudio_Opt_ApplyPhotographer", "trigger": "OnDialogue_Options", "allowDuplicate": false, "UISpec": { "displayMode": "AVG" },
             "SelfValidator": { "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["isPlayer"] }] },
-            "TargetValidators": [{ "refkeys": ["staff"], "baseScope": "CurrentTarget", "minTargetCount": 1, "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_otaku_cosplaystudio"] }, { "parameters": ["hasActorTag", "jp_otaku_cosplaystudio_hiring"] }] }],
+            "TargetValidators": [{ "refkeys": ["staff"], "baseScope": "CurrentTarget", "minTargetCount": 1, "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_cosplay_cafe"] }, { "parameters": ["hasActorTag", "jp_otaku_cosplaystudio_hiring"] }] }],
             "events": [
                 { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "otaku_apply_greeting", "Results": [{ "Type": "JoinActiveFaction", "arguments": ["applyOptions", "selfAndFollowers", "staff", "membertype_otaku_photographer_parttime", "applyError"] }] },
                 { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [{ "option": "options", "Results": [{ "Type": "ExistStoredOptions", "arguments": ["applyOptions"] }, { "Type": "JumpToLabel", "arguments": ["", "ask"] }] }, { "option": "error", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "error"] }] }] },
@@ -32,8 +32,8 @@
             "ID": "jp_otaku_cosplaystudio_Opt_Quit", "trigger": "OnDialogue_Options", "allowDuplicate": false, "UISpec": { "displayMode": "AVG", "infoDisplay": "Hide" },
             "SelfValidator": { "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["isPlayer"] }] },
             "TargetValidators": [
-                { "refkeys": ["staff"], "baseScope": "CurrentTarget", "minTargetCount": 1, "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_otaku_cosplaystudio"] }, { "parameters": ["hasActorTag", "jp_otaku_cosplaystudio_hiring"] }] },
-                { "refkeys": ["leavers"], "baseScope": "FactionMembersWithMemberType", "extraScopeArguments": ["jp_otaku_cosplaystudio", "membertype_otaku_studio_staff"], "minTargetCount": 1, "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["sharesHomeFaction"] }] }
+                { "refkeys": ["staff"], "baseScope": "CurrentTarget", "minTargetCount": 1, "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_cosplay_cafe"] }, { "parameters": ["hasActorTag", "jp_otaku_cosplaystudio_hiring"] }] },
+                { "refkeys": ["leavers"], "baseScope": "FactionMembersWithMemberType", "extraScopeArguments": ["jp_cosplay_cafe", "membertype_otaku_studio_staff"], "minTargetCount": 1, "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["sharesHomeFaction"] }] }
             ],
             "events": [
                 { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [{ "option": "build", "Results": [{ "Type": "LeaveActiveFaction", "arguments": ["quitOptions", "leavers", "staff", "membertype_otaku_studio_staff"] }, { "Type": "JumpToLabel", "arguments": ["", "ask"] }] }] },

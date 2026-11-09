@@ -1,0 +1,45 @@
+{
+    "_comment_integration": "Mid-tier apartment district (Docs/Locations/Plan_ResidentialDistricts.md 2.1). One world door at (530,160), floorExitID apartment_entrance, listed in world.json initializeFactions. The authored Graves household (CoffinAnL_Household) is registered here by world.json initializeResidences, counting as jp_home_tpl_apt_2ldk (Docs/Locations/Plan_HouseholdsIntoDistricts.md). Other homes are not authored here: AssignResidence / console spawnResident build them on demand (ResidenceUtility.CreateResidence), using the shared BGAssets/House_2ldk layout and linking the home's front door to the entrance hall.",
+    "_comment_art": "PLACEHOLDER: imagePath/roomImagePath reuse existing BGAssets/Generated art; replace with dedicated art later. Background-image floor with hidden rooms, no room coordinates (district cluster pattern).",
+    "MapPlans": {
+        "factionInit": [{
+            "ID": "jp_district_apartment", "isPublic": true, "isRentingFloor": false, "setPrivateRoomOwner": false, "listConnectedFloors": true,
+            "mainExit": { "roomID": "apartment_entrance", "exitCost": 5 },
+            "floors": [{ "ID": "floor_jp_district_apartment", "nameOverwrite": "jp_district_apartment" }],
+            "_comment_residential": "Every home links to attachRoomID (empty = mainExit room apartment_entrance).",
+            "residential": {
+                "maxResidences": 30,
+                "templates": [ { "templateID": "jp_home_tpl_apt_2ldk", "weight": 1 } ]
+            },
+            "managerBaseIDs": [""], "salesInventory": [], "workModules": [], "workHours": [], "workAssignment": []
+        }],
+        "floorPlans": [{
+            "ID": "floor_jp_district_apartment", "imagePath": "BGAssets/Generated/house_2story_05.webp",
+            "isFloorPlan": false, "floorWidth": 400, "floorHeight": 400, "resize": 1, "mapExit": "apartment_entrance",
+            "_comment_exits": "hidden sockets for venues hanging off the district (venue factionInit floorDoors -> exit to_<venueID>); homes use runtime exits instead",
+            "exits": [
+                { "ID": "to_jp_convenience_store_SunMart", "connectedRoom": "apartment_entrance", "hideOnMap": true }
+            ],
+            "rooms": [
+                {
+                    "ID": "apartment_entrance",
+                    "displayName": "apartment_entrance",
+                    "hideOnMap": true,
+                    "connects": [],
+                    "roomImagePath": "BGAssets/Generated/house_hallway_01.webp"
+                }
+            ]
+        }
+    ]
+},
+"Dictionary": {
+    "Entries": {
+        "zh-cn": {
+            "jp_district_apartment": "公寓",
+            "apartment_entrance": "公寓入口大厅",
+            "apartment_mailboxes": "信箱区",
+            "apartment_bicycle_parking": "自行车停车场"
+        }
+    }
+}
+}

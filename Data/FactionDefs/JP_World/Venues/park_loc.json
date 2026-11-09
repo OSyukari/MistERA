@@ -1,12 +1,43 @@
 {
-  "Dictionary": { "Entries": { "en-us": {
-    "recreation_offer_jp_park_stroll": "Park Stroll", "recreation_offer_jp_community_cleanup": "Volunteer Community Cleanup", "recreation_offer_jp_park_picnic": "Lawn Picnic", "recreation_offer_jp_park_playground": "Playground Visit",
-    "membertype_jp_park_maintenance": "Park Maintenance (08-18)", "jp_park_path_marker": "Path and Benches", "jp_park_cleanup_tools": "Volunteer Cleanup Supplies", "jp_park_maintenance_tools": "Maintenance Tool Cabinet", "jp_park_picnic_table": "Picnic Table", "jp_park_play_equipment": "Swings and Play Equipment",
-    "jp_park_stroll": "Stroll in the Park", "jp_community_cleanup_help": "Help with Cleanup", "jp_park_picnic": "Relax at a Picnic Spot", "jp_park_playground": "Enjoy the Playground", "jp_park_maintenance": "Maintain the Park",
-    "jp_park_stroll_begin": "$doer.firstname$ starts along the shaded park path.", "jp_park_stroll_ongoing": "$doer.firstname$ walks beneath the trees and pauses by a bench.", "jp_park_stroll_after": "$doer.firstname$ finishes this stretch of the walk.",
-    "jp_cleanup_begin": "$doer.firstname$ picks up supplies to tidy the path.", "jp_cleanup_ongoing": "$doer.firstname$ gathers scraps of paper into a rubbish bag.", "jp_cleanup_after": "$doer.firstname$ puts the cleanup supplies away.",
-    "jp_picnic_begin": "$doer.firstname$ settles beside a picnic table.", "jp_picnic_ongoing": "$doer.firstname$ enjoys a quiet break beside the lawn.", "jp_picnic_after": "$doer.firstname$ gathers personal belongings from the picnic spot.",
-    "jp_playground_begin": "$doer.firstname$ heads over to the swings.", "jp_playground_ongoing": "$doer.firstname$ enjoys the play equipment, stopping now and then for a breather.", "jp_playground_after": "$doer.firstname$ leaves the playground.",
-    "jp_maintenance_begin": "$doer.firstname$ takes out the maintenance tools.", "jp_maintenance_ongoing": "$doer.firstname$ checks the paths and sweeps up fallen leaves.", "jp_maintenance_after": "$doer.firstname$ returns the tools to the cabinet."
-  } } }
+  "Dictionary": {
+    "Entries": {
+      "en-us": {
+        "park_entrance": "Park Entrance",
+        "park_path": "Shaded Park Path",
+        "park_lawn": "Park Lawn",
+        "park_play_area": "Playground",
+        "park_pond": "Park Pond",
+        "recreation_offer_jp_park_stroll": "Park Stroll",
+        "recreation_offer_jp_community_cleanup": "Volunteer Community Cleanup",
+        "recreation_offer_jp_park_picnic": "Lawn Picnic",
+        "recreation_offer_jp_park_playground": "Playground Visit",
+        "membertype_jp_park_maintenance": "Park Maintenance (08-18)",
+        "jp_park_path_marker": "Path and Benches",
+        "jp_park_cleanup_tools": "Volunteer Cleanup Supplies",
+        "jp_park_maintenance_tools": "Maintenance Tool Cabinet",
+        "jp_park_picnic_table": "Picnic Table",
+        "jp_park_play_equipment": "Swings and Play Equipment",
+        "jp_park_stroll": "Stroll in the Park",
+        "jp_community_cleanup_help": "Help with Cleanup",
+        "jp_park_picnic": "Relax at a Picnic Spot",
+        "jp_park_playground": "Enjoy the Playground",
+        "jp_park_maintenance": "Maintain the Park",
+        "jp_park_stroll_begin": "$doer.firstname$ starts along the shaded park path.",
+        "jp_park_stroll_ongoing": "$doer.firstname$ walks beneath the trees and pauses by a bench.",
+        "jp_park_stroll_after": "$doer.firstname$ finishes this stretch of the walk.",
+        "jp_cleanup_begin": "$doer.firstname$ picks up supplies to tidy the path.",
+        "jp_cleanup_ongoing": "$doer.firstname$ gathers scraps of paper into a rubbish bag.",
+        "jp_cleanup_after": "$doer.firstname$ puts the cleanup supplies away.",
+        "jp_picnic_begin": "$doer.firstname$ settles beside a picnic table.",
+        "jp_picnic_ongoing": "$doer.firstname$ enjoys a quiet break beside the lawn.",
+        "jp_picnic_after": "$doer.firstname$ gathers personal belongings from the picnic spot.",
+        "jp_playground_begin": "$doer.firstname$ heads over to the swings.",
+        "jp_playground_ongoing": "$doer.firstname$ enjoys the play equipment, stopping now and then for a breather.",
+        "jp_playground_after": "$doer.firstname$ leaves the playground.",
+        "jp_maintenance_begin": "$doer.firstname$ takes out the maintenance tools.",
+        "jp_maintenance_ongoing": "$doer.firstname$ checks the paths and sweeps up fallen leaves.",
+        "jp_maintenance_after": "$doer.firstname$ returns the tools to the cabinet."
+      }
+    }
+  }
 }

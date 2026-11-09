@@ -55,6 +55,13 @@ public class StatModStorage
             return _value;
         } }
 
+    /// <summary>Debug: the last computed Value without computing - false when stale or never computed.</summary>
+    public bool Debug_TryGetCachedValue(out float value)
+    {
+        value = _value;
+        return _value_cached;
+    }
+
     void Compute(List<string> tooltips)
     {
         float valueCeiling = 0f, valueFloor = 0f;
@@ -182,6 +189,10 @@ public class StatModStorage
     {
         entriesID.Clear();
         entriesNameRef.Clear();
+        // set entries too: Compute reads the baseValue key without the entriesID check, so a removed setBase / setMult
+        // (e.g. a dropped trait's baseValue override) used to keep applying
+        setValue.Clear();
+        setMult.Clear();
         _value_cached = false;
         _tooltips_cached = false;
         foreach (var kvp in addValue) kvp.Value.Clear();

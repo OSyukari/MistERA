@@ -1,15 +1,45 @@
 {
-    "_doc": "Home templates of the residential districts (Docs/Locations/Plan_ResidentialDistricts.md). Factions built from these are NEVER listed in initializeFactions: ResidenceUtility.CreateResidence instantiates one per generated home under a new ID (<districtID>_res_<n>) and links its mainExit room (or the district entry's linkRoomID) to a district attach room with a runtime RoomDoor. isPublic false + showLockedFloors true = the player sees the home's floor button but its rooms (requireFactionMembership on the floor plan) only open to residents, visit passes (GrantVisitAccess), bookings there and the player's followers. A generated home is named after its leader by AssignResidence; nameOverwrite below is only the placeholder until then. Meals: a non-player faction hands out a fresh copy of an inventory item without depleting stock, so one bento covers every meal at furniture_marker_getmeal (hospital pattern).",
+    "_doc": "Home templates of the residential districts (Docs/Locations/Plan_ResidentialDistricts.md). Factions built from these are NEVER listed in initializeFactions: ResidenceUtility.CreateResidence instantiates one per generated home under a new ID (<districtID>_res_<n>) and links its mainExit room (or the district entry's linkRoomID) to a district attach room with a runtime floor door (hidden runtime exits). Authored households can count as one of these templates without being built from it (world.json initializeResidences, ResidenceUtility.AdoptResidence). isPublic false + showLockedFloors true = the player sees the home's floor button but generated-home access only opens its rooms to residents, visit passes (GrantVisitAccess), bookings there and the player's followers, without room-level flags on shared floor plans. A generated home is named after its leader by AssignResidence; nameOverwrite below is only the placeholder until then. Meals: a non-player faction hands out a fresh copy of an inventory item without depleting stock, so one bento covers every meal at furniture_marker_getmeal (hospital pattern).",
     "MapPlans": {
         "factionInit": [
+            {
+                "ID": "jp_home_tpl_apt_1ldk",
+                "isPublic": false,
+                "showLockedFloors": true,
+                "isRentingFloor": true,
+                "_comment_isRentingFloor": "1LDK apartment rental using the shared floor's wholeBuildingRent, unspecified landlord",
+                "mainExit": { "roomID": "floor_1ldk_1_frontDoor", "exitCost": 1 },
+                "floors": [ { "ID": "floor_1ldk_1", "nameOverwrite": "jp_home_tpl_apt_1ldk" } ],
+                "mealHours": [7, 12, 18],
+                "initializers": [
+                    { "initClass": "campaign_init_factionInventory", "initArguments": ["", "consumable_bento_box", "", "1"] }
+                ],
+                "activeHoursStart": 7,
+                "activeHoursEnd": 22
+            },
             {
                 "ID": "jp_home_tpl_apt_2ldk",
                 "isPublic": false,
                 "showLockedFloors": true,
                 "isRentingFloor": true,
-                "_comment_isRentingFloor": "apartment units are leased (floor_res_apt_2ldk wholeBuildingRent), unspecified landlord",
-                "mainExit": { "roomID": "res_apt_2ldk_frontDoor", "exitCost": 1 },
-                "floors": [ { "ID": "floor_res_apt_2ldk", "nameOverwrite": "jp_home_tpl_apt_2ldk" } ],
+                "_comment_isRentingFloor": "2LDK apartment rental using the shared floor's wholeBuildingRent, unspecified landlord",
+                "mainExit": { "roomID": "floor_2ldk_2floor_1_1L_frontDoor", "exitCost": 1 },
+                "floors": [ { "ID": "floor_2ldk_2floor_1", "nameOverwrite": "jp_home_tpl_apt_2ldk" } ],
+                "mealHours": [7, 12, 18],
+                "initializers": [
+                    { "initClass": "campaign_init_factionInventory", "initArguments": ["", "consumable_bento_box", "", "1"] }
+                ],
+                "activeHoursStart": 7,
+                "activeHoursEnd": 22
+            },
+            {
+                "ID": "jp_home_tpl_apt_4ldk",
+                "isPublic": false,
+                "showLockedFloors": true,
+                "isRentingFloor": true,
+                "_comment_isRentingFloor": "4LDK luxury apartment rental using the shared floor's wholeBuildingRent, unspecified landlord",
+                "mainExit": { "roomID": "4ldk_floor_1L_frontDoor", "exitCost": 1 },
+                "floors": [ { "ID": "house_floor_4ldk", "nameOverwrite": "jp_home_tpl_apt_4ldk" } ],
                 "mealHours": [7, 12, 18],
                 "initializers": [
                     { "initClass": "campaign_init_factionInventory", "initArguments": ["", "consumable_bento_box", "", "1"] }
@@ -19,7 +49,7 @@
             },
             {
                 "ID": "jp_home_tpl_house_4ldk",
-                "_comment": "Detached 4LDK house on the existing house_floor_4ldk (shared with the existing households, not edited: its rooms carry no requireFactionMembership - a generated home locks all its rooms anyway, Room_Instance.CanBeAccessedBy). 4 bedrooms, one with a double bed for the leader.",
+                "_comment": "Detached 4LDK house on the shared house_floor_4ldk. Generated-home room access is enforced by Room_Instance.CanBeAccessedBy. 4 bedrooms, one with a double bed for the leader.",
                 "isPublic": false,
                 "showLockedFloors": true,
                 "isRentingFloor": false,
@@ -36,7 +66,9 @@
         ]
     },
     "Dictionary": { "Entries": { "zh-cn": {
+        "jp_home_tpl_apt_1ldk": "1LDK住户",
         "jp_home_tpl_apt_2ldk": "2LDK住户",
+        "jp_home_tpl_apt_4ldk": "4LDK公寓住户",
         "jp_home_tpl_house_4ldk": "4LDK独栋住宅"
     } } }
 }

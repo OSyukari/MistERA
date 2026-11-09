@@ -1,7 +1,7 @@
 {
     "_doc": { "purpose": "Localization companion for faction.json." },
     "Dictionary": { "Entries": { "en-us": {
-        "jp_hotel_business": "Ekimae Business Hotel",
+        "jp_hotel_business": "Business Hotel",
         "hotel_lobby": "Hotel Lobby", "hotel_restaurant": "Hotel Restaurant", "hotel_staff_room": "Staff Room", "hotel_corridor_1": "1F Guest Corridor", "hotel_corridor_2": "2F Guest Corridor",
         "hotel_room_s_101": "101 Single", "hotel_room_s_102": "102 Single", "hotel_room_s_103": "103 Single", "hotel_room_s_104": "104 Single",
         "hotel_room_t_201": "201 Twin", "hotel_room_t_202": "202 Twin", "hotel_room_d_203": "203 Double", "hotel_room_d_204": "204 Double",

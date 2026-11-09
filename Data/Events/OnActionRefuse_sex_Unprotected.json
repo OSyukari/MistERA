@@ -1,10 +1,14 @@
 {
-    "_doc": "Demand of permission_sex_unprotected (its demandEventID, Docs/Interactions/Step06FPermissionsImplementationPlan.md P5b part 3): started by ActionPackage.TryStopForDemand when the granter ACCEPTED a penis-in-vagina act but has not allowed unprotected sex - the act is stopped before it begins (no effects, no refusal costs). self = the requester (permission holder), evTarget = the granter. A refusal never comes here (plain OnAPRefuse). Code (ActionPackage.SendDemandEvent) builds the condom answers into StoredOptions[demandOptions] - the wearer is whoever's penis the act uses: put it on yourself / on $evTarget$ now (arms + an accessible condom; the act resumes with its accepted result kept), or let $evTarget$ put it on you by hand / mouth (the condom command runs with its acceptance kept; the act does not resume by itself). Unavailable answers stay visible, disabled, with the command's own reason. The event's own options: ignore the demand (apCallback: records the scene push - no demand for this pair again in this scene - and resumes the act) or give up (failCallback). An NPC requester decides in code (put it on now if possible, else ignore) and the event starts at that answer's line (br_condom_self / br_condom_target / br_npc_push / br_end). The granter's demand is the kojo permission_sex_unprotected_Demand. File name contains sex: safe mode skips it.",
+    "_doc": "Demand of permission_sex_unprotected (its demandEventID, Docs/Interactions/Step06FPermissionsImplementationPlan.md P5b part 3): started by ActionPackage.TryStopForDemand when the granter ACCEPTED a penis-in-vagina act but has not allowed unprotected sex - the act is stopped before it begins (no effects, no refusal costs). self = the requester (permission holder), evTarget = the granter. A refusal never comes here (plain OnAPRefuse). Code (ActionPackage.SendDemandEvent) builds the condom answers into StoredOptions[demandOptions] - the wearer is whoever's penis the act uses: put it on yourself / on $evTarget$ now (arms + an accessible condom; the act resumes with its accepted result kept), or let $evTarget$ put it on you by hand / mouth (the condom command rolls its own acceptance with this event's commandAcceptanceBonus on $evTarget$'s side; the option tooltip shows its rate, deterministic rolls below the threshold disable it with op_wouldRefuse, a refusal plays the ordinary OnAPRefuse; the act does not resume by itself). Unavailable answers stay visible, disabled, with the command's own reason. The event's own options: ignore the demand (apCallback: records the scene push - no demand for this pair again in this scene - and resumes the act) or give up (failCallback). An NPC requester decides in code (put it on now if possible, else ignore) and the event starts at that answer's line (br_condom_self / br_condom_target / br_npc_push / br_end). The granter's demand is the kojo permission_sex_unprotected_Demand; ignoring it (br_push / br_npc_push) adds the granter's permission_sex_unprotected_Ignored kojo ('then at least don't cum inside') under the push line. File name contains sex: safe mode skips it.",
     "Events": {
         "list": [
             {
                 "ID": "OnAPRefuse_Unprotected",
                 "SelfValidator": { "chara_conditions": [ { "parameters": [ "exists" ] } ] },
+                "_comment_commandAcceptanceBonus": "Given to the granter's acceptance check of the 'let $evTarget$ put it on you' answers (they asked for the condom). Docs/Interactions/Plan_CommandProgression.md section 5.",
+                "commandAcceptanceBonus": [
+                    { "comIDs": [ "com_condom_onTarget_hand", "com_condom_onTarget_mouth" ], "value": 2, "explanation": "event_OnAPRefuse_Unprotected_bonus" }
+                ],
                 "events": [
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
@@ -107,8 +111,30 @@
                         "Results": [ { "Type": "ExecuteCallback", "arguments": [ "failCallback" ] } ]
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment": "ignore the demand: the granter's 'then at least don't cum inside' (permission_sex_unprotected_Ignored); missing kojo -> plain push line",
                         "label": "br_push",
+                        "options": [
+                            {
+                                "option": "_kojo",
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "evTarget", "self", "permission_sex_unprotected_Ignored", "kojo_ignore" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "br_push_kojo" ] }
+                                ]
+                            },
+                            { "option": "_plain", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "br_push_plain" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_push_kojo",
+                        "line": "event_OnAPRefuse_Unprotected_push_kojo",
+                        "UISpec": { "portraitRefKey": "evTarget", "selfTags": [ "surprised", "worry" ] },
+                        "nextEntryLabel": "br_push_ops"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_push_plain",
                         "line": "event_OnAPRefuse_Unprotected_push",
                         "UISpec": { "portraitRefKey": "evTarget", "selfTags": [ "surprised", "worry" ] },
                         "nextEntryLabel": "br_push_ops"
@@ -132,9 +158,30 @@
                         ]
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "_comment": "NPC requester ignored the demand - already done in code, line only",
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment": "NPC requester ignored the demand - already done in code, lines only (same kojo as br_push)",
                         "label": "br_npc_push",
+                        "options": [
+                            {
+                                "option": "_kojo",
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "evTarget", "self", "permission_sex_unprotected_Ignored", "kojo_ignore" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "br_npc_push_kojo" ] }
+                                ]
+                            },
+                            { "option": "_plain", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "br_npc_push_plain" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_npc_push_kojo",
+                        "line": "event_OnAPRefuse_Unprotected_push_kojo",
+                        "UISpec": { "portraitRefKey": "evTarget", "selfTags": [ "surprised", "worry" ] },
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_npc_push_plain",
                         "line": "event_OnAPRefuse_Unprotected_push",
                         "UISpec": { "portraitRefKey": "evTarget", "selfTags": [ "surprised", "worry" ] },
                         "isLast": true
@@ -159,13 +206,16 @@
                 "event_OnAPRefuse_Unprotected_op_targetHand": "让$evTarget.name$用手戴上",
                 "event_OnAPRefuse_Unprotected_op_targetMouth": "让$evTarget.name$用嘴戴上",
                 "event_OnAPRefuse_Unprotected_op_unavailable": "现在无法这样做：",
+                "event_OnAPRefuse_Unprotected_op_wouldRefuse": "对方现在不会答应。",
+                "event_OnAPRefuse_Unprotected_bonus": "是自己要求戴套",
                 "event_OnAPRefuse_Unprotected_op_ignore": "无视$evTarget.name$",
                 "event_OnAPRefuse_Unprotected_op_giveup": "放弃",
                 "event_OnAPRefuse_Unprotected_condom_self": "$self.name$戴上了避孕套。",
                 "event_OnAPRefuse_Unprotected_condom_target": "$self.name$给$evTarget.name$戴上了避孕套。",
                 "event_OnAPRefuse_Unprotected_condom_partner": "$self.name$把避孕套交给了$evTarget.name$。",
                 "event_OnAPRefuse_Unprotected_end": "$self.name$放弃了。",
-                "event_OnAPRefuse_Unprotected_push": "$self.name$不顾$evTarget.name$的要求，继续下去。"
+                "event_OnAPRefuse_Unprotected_push": "$self.name$不顾$evTarget.name$的要求，继续下去。",
+                "event_OnAPRefuse_Unprotected_push_kojo": "%%event_OnAPRefuse_Unprotected_push%%\n\n$kojo_ignore$"
             }
         }
     }

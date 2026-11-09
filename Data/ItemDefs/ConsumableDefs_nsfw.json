@@ -3,7 +3,8 @@
 "list":[
         {
             "id":"consumable_cum",
-            "Tags":["trash"],
+            "_comment":"'cum' tag: lets events tell semen apart from the other mouth liquids (OnOralSwallow branches on SwallowInternal's swallowed tags with AppendStringContains).",
+            "Tags":["trash","cum"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Ingestible",

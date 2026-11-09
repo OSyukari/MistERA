@@ -56,6 +56,12 @@ public class DescriptionCollector : I_Records
             else return false;
         }
         if (DirectlyRelated(c)) return message.Length > 0;
+        // happening behind a stall's door (room divider blocking visibility) - no actor of it is seen
+        if (Visibility == VisibilityLevel.Roomwide && room != null && MapUtility.NoneVisibleTo(c, RelevantActors))
+        {
+            Debug.LogWarning($"[Visibility] description hidden from {c.FirstName} (no actor visible across a room divider): {message_excludeRelated}");
+            return false;
+        }
         else return message_excludeRelated.Length > 0;
     }
     public bool RightAlign(Character_Trainable c)

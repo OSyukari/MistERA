@@ -1,8 +1,8 @@
 {
     "MapPlans": {
-        "factionInit": [{ "ID": "jp_neon_izakaya", "initializeFaction": "jp_neon_izakaya", "floors": [{ "ID": "floor_jp_neon_izakaya", "nameOverwrite": "jp_neon_izakaya" }], "isRentingFloor": true, "floorListHostFactionID": "jp_neon_street", "floorDoors": [{ "sourceFloor": "floor_jp_neon_izakaya", "sourceExit": "street", "targetFaction": "jp_neon_street", "targetFloor": "floor_jp_neon_street", "targetExit": "to_jp_neon_izakaya", "cost": 1 }], "mainExit": { "roomID": "izakaya_counter", "exitCost": 1 }, "mealHours": [18,21], "salesCurrency": "currency_JPY", "salesInventory": [{ "matchByID": "consumable_alcohol_beer" }], "assignableMemberTypes": ["membertype_neon_izakaya_waiter"], "joinableMemberTypes": ["membertype_neon_izakaya_waiter"], "fallbackWorkers": [{ "memberTypeID": "membertype_neon_izakaya_counter", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }] }],
+        "factionInit": [{ "ID": "jp_izakaya", "initializeFaction": "jp_izakaya", "floors": [{ "ID": "floor_jp_izakaya", "nameOverwrite": "jp_izakaya" }], "isRentingFloor": true, "floorListHostFactionID": "jp_district_budget_apartment", "floorDoors": [{ "sourceFloor": "floor_jp_izakaya", "sourceExit": "street", "targetFaction": "jp_district_budget_apartment", "targetFloor": "floor_jp_district_budget_apartment", "targetExit": "to_jp_izakaya", "cost": 1 }], "mainExit": { "roomID": "izakaya_counter", "exitCost": 1 }, "mealHours": [18,21], "salesCurrency": "currency_JPY", "salesInventory": [{ "matchByID": "consumable_alcohol_beer" }], "assignableMemberTypes": ["membertype_neon_izakaya_waiter"], "joinableMemberTypes": ["membertype_neon_izakaya_waiter"], "fallbackWorkers": [{ "memberTypeID": "membertype_neon_izakaya_counter", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }] }],
         "floorPlans": [{
-            "ID": "floor_jp_neon_izakaya", "imagePath": "BGAssets/Generated/office_cafeteria_03.webp", "isFloorPlan": false,
+            "ID": "floor_jp_izakaya", "imagePath": "BGAssets/Generated/office_cafeteria_03.webp", "isFloorPlan": false,
             "floorWidth": 400, "floorHeight": 400, "resize": 1, "mapExit": "izakaya_counter",
             "exits": [{ "ID": "street", "connectedRoom": "izakaya_counter", "hideOnMap": true }],
             "wholeBuildingRent": { "maintenanceFee": { "itemID": "currency_JPY", "itemCount": 20000 }, "rentFee": { "itemID": "currency_JPY", "itemCount": 160000 }, "cadence": "Monthly" },
@@ -18,14 +18,33 @@
                     { "ID": "membertype_neon_izakaya_evening", "socialStandingKey": "neon_evening_shift", "workModule": { "jobPostID": "neon_izakaya_evening", "workCommands": ["jp_neon_counter_duty"], "activeHours": [17,18,19,20,21], "activeDays": [], "hourlyPayout": [{ "itemID": "currency_JPY", "itemCount": 1200 }], "paymentCadence": "Daily" } },
                     { "ID": "membertype_neon_izakaya_night", "socialStandingKey": "neon_night_shift", "workModule": { "jobPostID": "neon_izakaya_night", "workCommands": ["jp_neon_counter_duty"], "activeHours": [22,23,0], "activeDays": [], "hourlyPayout": [{ "itemID": "currency_JPY", "itemCount": 1500 }], "paymentCadence": "Daily" } }
                 ] },
-                { "ID": "membertype_neon_izakaya_counter", "socialStandingKey": "membertype_neon_izakaya_counter", "Tags": ["jp_neon_izakaya_hiring"], "workModule": { "jobPostID": "membertype_neon_izakaya_counter", "workCommands": ["jp_neon_counter_duty"], "activeHours": [17,18,19,20,21,22,23,0], "activeDays": [], "hourlyPayout": [{ "itemID": "currency_JPY", "itemCount": 1500 }], "paymentCadence": "Daily" } }
+                { "ID": "membertype_neon_izakaya_counter", "socialStandingKey": "membertype_neon_izakaya_counter", "Tags": ["jp_izakaya_hiring"], "workModule": { "jobPostID": "membertype_neon_izakaya_counter", "workCommands": ["jp_neon_counter_duty"], "activeHours": [17,18,19,20,21,22,23,0], "activeDays": [], "hourlyPayout": [{ "itemID": "currency_JPY", "itemCount": 1500 }], "paymentCadence": "Daily" } }
             ]
         }],
-        "recreationOffers": [{ "ID": "recreation_offer_neon_izakaya", "mode": "Flexible", "factionID": "jp_neon_izakaya", "minHours": 2, "maxHours": 2, "workModule": { "jobPostID": "neon_izakaya_drinks", "workCommands": ["jp_neon_izakaya_drinks"], "activeHours": [17,18,19,20,21,22,23,0], "activeDays": [] }, "gatherRoomID": "izakaya_tatami", "launchEventID": "Neon_Izakaya_Begin", "entranceFee": { "itemID": "currency_JPY", "itemCount": 1800 }, "minDaysBetween": 1, "allowWalkIn": false,
+        "_recreationOffers": [{ "ID": "recreation_offer_neon_izakaya", "mode": "Flexible", "factionID": "jp_izakaya", "provideAcceptanceBonus": 5, "activityMoodlet": { "stress": 1 }, "minHours": 2, "maxHours": 2, "activityCommands": ["jp_izakaya_drinks"], "workModule": { "jobPostID": "neon_izakaya_drinks", "workCommands": ["jp_izakaya_drinks"], "activeHours": [17,18,19,20,21,22,23,0], "activeDays": [] }, "gatherRoomID": "izakaya_tatami", "launchEventID": "Neon_Izakaya_Begin", "entranceFee": { "itemID": "currency_JPY", "itemCount": 1800 }, "minDaysBetween": 1, "allowWalkIn": false,
             "invite": { "visibility": "Private", "inviteChance": 1, "minParticipants": 2, "TargetValidators": [{ "refKeys": ["companion"], "baseScope": "SelfRelationships", "chara_conditions": [{ "parameters": ["excludeSelf"] }, { "selfRelationshipRequirement": { "requireRawScore": [{ "requireScoreID": "Goodwill", "operand": "gte", "value": 25 }], "requireRawScoreCompare": [{ "requireScoreID": "Goodwill", "operand": "gt", "compareScoreID": "Badwill", "compareScoreMult": 1.1 }] } }], "maxTargetCount": 3, "maxParticipants": 3, "stopAtMaxTargetCount": true, "required": true, "orderBy": "friendliness" }] }
         }]
     },
-    "Furnitures": { "list": [{ "ID": "furniture_neon_izakaya_table", "displayName": "neon_izakaya_table", "recipe": [], "furnitureSize": 0, "value": 40000, "Tags": [], "givesJob": [{ "comID": ["jp_neon_izakaya_drinks"] }] }] },
-    "COMs": { "list": [{ "ID": "jp_neon_izakaya_drinks", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "neon_izakaya_drinks", "timeScale": 30, "comTags": ["furniture", "recreation"], "requirements": { "requirement": { "treatReceiverAsDoer": true } }, "variants": [{ "requirements": { "requirement": { "doerCount": 1 } }, "displayName": "neon_izakaya_drinks" }, { "requirements": { "requirement": { "doerCount": 4 } }, "displayName": "neon_izakaya_drinks" }], "AcceptanceCheck": { "baseAcceptanceValue": 15 }, "DifficultyCheck": { "baseD20Check": 0 }, "description_begin": { "Entries": [{ "keepLooking": true, "texts": ["neon_izakaya_begin"] }] }, "description_ongoing": { "Entries": [{ "keepLooking": true, "texts": ["neon_izakaya_ongoing"] }] }, "description_remove": { "Entries": [{ "keepLooking": true, "texts": ["neon_izakaya_end"] }] }, "description_after": { "Entries": [{ "keepLooking": true, "texts": ["neon_izakaya_end"] }] } }] },
-    "Dictionary": { "Entries": { "zh-cn": { "jp_neon_izakaya": "灯下居酒屋", "membertype_neon_izakaya": "居酒屋员工", "membertype_neon_izakaya_waiter": "居酒屋兼职", "membertype_neon_izakaya_counter": "居酒屋柜台 17-01", "neon_evening_shift": "晚班", "neon_izakaya_evening": "居酒屋兼职 17-22", "neon_izakaya_night": "居酒屋兼职 22-01", "neon_izakaya_drinks": "居酒屋聚餐", "neon_izakaya_table": "榻榻米餐桌", "neon_izakaya_begin": "$doer.firstname$在矮桌旁坐下。", "neon_izakaya_ongoing": "$doer.firstname$就着小菜慢慢喝着饮料，听着店里的闲谈。", "neon_izakaya_end": "$doer.firstname$把杯子放回桌上。" } } }
+    "Furnitures": { "list": [{ "ID": "furniture_neon_izakaya_table", "displayName": "neon_izakaya_table", "recipe": [], "furnitureSize": 0, "value": 40000, "Tags": [], "givesJob": [{ "comID": ["jp_izakaya_drinks"] }] }] },
+    "COMs": { "list": [{ "ID": "jp_izakaya_drinks", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "neon_izakaya_drinks", "timeScale": 30, "comTags": ["furniture", "recreation"], "requirements": { "requirement": { "treatReceiverAsDoer": true } }, "variants": [{ "requirements": { "requirement": { "doerCount": 1 } }, "displayName": "neon_izakaya_drinks" }, { "requirements": { "requirement": { "doerCount": 4 } }, "displayName": "neon_izakaya_drinks" }], "AcceptanceCheck": { "baseAcceptanceValue": 15 }, "DifficultyCheck": { "baseD20Check": 5 }, "description_begin": { "Entries": [{ "keepLooking": true, "texts": ["neon_izakaya_begin"] }] }, "description_ongoing": { "Entries": [{ "keepLooking": true, "texts": ["neon_izakaya_ongoing"] }] }, "description_remove": { "Entries": [{ "keepLooking": true, "texts": ["neon_izakaya_end"] }] }, "description_after": { "Entries": [{ "keepLooking": true, "texts": ["neon_izakaya_end"] }] } }] },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "jp_izakaya": "灯下居酒屋（施工中）",
+                "izakaya_counter": "居酒屋柜台",
+                "izakaya_tatami": "居酒屋榻榻米座",
+                "membertype_neon_izakaya": "居酒屋员工",
+                "membertype_neon_izakaya_waiter": "居酒屋兼职",
+                "membertype_neon_izakaya_counter": "居酒屋柜台 17-01",
+                "neon_evening_shift": "晚班",
+                "neon_izakaya_evening": "居酒屋兼职 17-22",
+                "neon_izakaya_night": "居酒屋兼职 22-01",
+                "neon_izakaya_drinks": "居酒屋聚餐",
+                "neon_izakaya_table": "榻榻米餐桌",
+                "neon_izakaya_begin": "$doer.firstname$在矮桌旁坐下。",
+                "neon_izakaya_ongoing": "$doer.firstname$就着小菜慢慢喝着饮料，听着店里的闲谈。",
+                "neon_izakaya_end": "$doer.firstname$把杯子放回桌上。"
+            }
+        }
+    }
 }

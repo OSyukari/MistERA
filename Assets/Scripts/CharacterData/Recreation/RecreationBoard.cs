@@ -21,6 +21,9 @@ public enum RecreationOfferMode { Fixed, Flexible }
 public class RecreationOfferDef
 {
     public string ID = "";
+    public string mainTypeTag = "";
+    public List<string> secondaryTags = new List<string>();
+    public List<RecreationWeightMod> weightMods = new List<RecreationWeightMod>();
     public string typeID = "";
     public bool allowMultipleInstances = true;
     public bool mergeWithSame = false;
@@ -63,21 +66,35 @@ public class RecreationOfferDef
     public string launchEventID = "";
     /// <summary>See RecreationActivity.gatherFailedEventID - fired when the gathering fails at T+30 and for each latecomer after ("" = the generic Recreation_GatherFailed_Stay).</summary>
     public string gatherFailedEventID = "";
+    /// <summary>See RecreationActivity.endEventID - fired when a launched visit runs its course ("" = the generic Recreation_Activity_End).</summary>
+    public string endEventID = "";
     /// <summary>See RecreationActivity.behaviorOverrides - applied while a visit of this offer is in effect.</summary>
     public Dictionary<string, FindJobNode> behaviorOverrides = null;
     /// <summary>See RecreationActivity.Tags.</summary>
     public List<string> Tags = new List<string>();
     /// <summary>See RecreationActivity.AcceptanceMods.</summary>
     public List<PersonalityAcceptanceMod> AcceptanceMods = null;
+    /// <summary>See RecreationActivity.provideAcceptanceBonus.</summary>
+    public int provideAcceptanceBonus = 0;
+    /// <summary>See RecreationActivity.activityMoodlet.</summary>
+    public RecreationActivityMoodlet activityMoodlet = null;
     /// <summary>See RecreationActivity.outfit (e.g. a yukata for a fireworks festival).</summary>
     public OutfitSet outfit = null;
 
-    /// <summary>Flexible: its weight among the character's other flexible candidates (RecreationActivity.baseWeight). Fixed: unused (sessions are ranked by preference).</summary>
+    /// <summary>Base character preference: flexible selection weight, or deterministic session ranking score.</summary>
     public float weight = 1f;
     /// <summary>Chance each eligible NPC wants to go at all.</summary>
     public float participationChance = 1f;
     /// <summary>No other visit to this offer within this many days either side (0 = only never twice the same day) - e.g. one new-year visit over 01-01..01-03.</summary>
     public int minDaysBetween = 0;
+    /// <summary>
+    /// Shared cooldown / pending-reservation key ("" = the offer's own ID): offers with the same tag count as one - the same
+    /// kind of activity at one venue (e.g. the cinema's screenings), so a character books one of them per minDaysBetween
+    /// and holds one reservation of them at a time. Not the booking's sourceKey (that stays the ID - FindDef).
+    /// </summary>
+    public string cooldownTag = "";
+    /// <summary>The key the cooldown / one-reservation rules count this offer under: cooldownTag, else the ID.</summary>
+    [JsonIgnore] public string CooldownKey { get { return string.IsNullOrEmpty(cooldownTag) ? ID : cooldownTag; } }
     /// <summary>Actor tags (Utility.GetActorTag) an NPC must all have / must have none of to be eligible.</summary>
     public List<string> requireActorTags = new List<string>();
     public List<string> excludeActorTags = new List<string>();
@@ -88,7 +105,7 @@ public class RecreationOfferDef
     /// <summary>Allows extra participants to walk in, independently of invitation visibility. Conservative default: false.</summary>
     public bool allowWalkIn = false;
 
-    /// <summary>Reserved for future activity-level trust payouts, not the generic 0.1 interaction reward. Conservative default: false.</summary>
+    /// <summary>See RecreationActivity.trustRewardEligible - Trust between those who promised and showed up on time. Conservative default: false.</summary>
     public bool trustRewardEligible = false;
 
     /// <summary>
@@ -122,6 +139,9 @@ public class RecreationOfferDef
                 _activity = new RecreationActivity()
                 {
                     ID = ID,
+                    mainTypeTag = mainTypeTag,
+                    secondaryTags = secondaryTags,
+                    weightMods = weightMods,
                     typeID = typeID,
                     allowMultipleInstances = allowMultipleInstances,
                     mergeWithSame = mergeWithSame,
@@ -149,9 +169,12 @@ public class RecreationOfferDef
                     overnightGuestMemberTypeID = overnightGuestMemberTypeID,
                     launchEventID = launchEventID,
                     gatherFailedEventID = gatherFailedEventID,
+                    endEventID = endEventID,
                     behaviorOverrides = behaviorOverrides,
                     Tags = Tags,
                     AcceptanceMods = AcceptanceMods,
+                    provideAcceptanceBonus = provideAcceptanceBonus,
+                    activityMoodlet = activityMoodlet,
                     outfit = outfit,
                 };
             return _activity;
@@ -245,18 +268,24 @@ public class RecreationOffer
 }
 
 /// <summary>
-/// Campaign-wide list of posted fixed recreation offers (saved with the campaign). Each day's calendar offers are posted
-/// each def's daysInAdvance days ahead (PostCalendar - once a day, whichever character plans first); the
-/// AddRecreationOffer event Result posts more. Each posting creates a hostless World session
-/// (RecreationUtility.PostOfferSession); characters find it in their world's session list, never by a push from here.
+/// Campaign-wide list of posted fixed recreation offers. Each day's calendar offers are posted each def's daysInAdvance
+/// days ahead (PostCalendar - once a day, whichever character plans first); the AddRecreationOffer event Result posts
+/// more. Each posting creates a hostless World session (RecreationUtility.PostOfferSession); characters find it in their
+/// world's session list, never by a push from here.
+/// <br/>World data, never saved: the posts are rebuilt from the loaded worlds on load (RebuildAfterLoad), and so are their
+/// sessions nobody holds (RecreationGroupRegistry saves only those someone holds). The one saved part is eventOffers -
+/// what AddRecreationOffer posted, which no world data reproduces.
 /// </summary>
 public class RecreationBoard
 {
-    [JsonProperty] List<RecreationOffer> offers = new List<RecreationOffer>();
-    /// <summary>Absolute day the calendar was last run (PostCalendar - -1 = never).</summary>
-    [JsonProperty] int lastCalendarDay = -1;
-    /// <summary>Counts every offer ever posted; each offer keeps its value (RecreationOffer.serial).</summary>
-    [JsonProperty] int postSerial = 0;
+    /// <summary>The posted offers - rebuilt on load (RebuildAfterLoad), never saved.</summary>
+    [JsonIgnore] List<RecreationOffer> offers = new List<RecreationOffer>();
+    /// <summary>The AddRecreationOffer event Result's posts (PostOffer) - game state, not world data: the only saved part of the board.</summary>
+    [JsonProperty] List<RecreationOffer> eventOffers = new List<RecreationOffer>();
+    /// <summary>Absolute day the calendar was last run (PostCalendar - -1 = never; reset on load).</summary>
+    [JsonIgnore] int lastCalendarDay = -1;
+    /// <summary>Counts every offer posted since the campaign was loaded; each offer keeps its value (RecreationOffer.serial).</summary>
+    [JsonIgnore] int postSerial = 0;
 
     /// <summary>Serial of the newest posted offer (0 = none yet). Characters compare it with their own last seen one.</summary>
     [JsonIgnore] public int LatestSerial { get { return postSerial; } }
@@ -295,54 +324,193 @@ public class RecreationBoard
     /// <summary>
     /// Posts fixed offer defID on absolute day `day` unless already posted there, with its hostless World session
     /// (RecreationUtility.PostOfferSession). Flexible offers and private overnight stays are never World posts.
+    /// byEvent: the AddRecreationOffer event Result's post - also kept in eventOffers (saved, re-posted on load).
+    /// answerNow: every NPC who sees its session answers in their next late pass, not only at the day update
+    /// (RecreationGroupRegistry.MarkAnswerNow - an already posted one too); a reloaded post waits for the day update.
     /// </summary>
-    public bool Post(string defID, int day, int startHour = -1, int hours = -1)
+    public bool Post(string defID, int day, int startHour = -1, int hours = -1, bool byEvent = false, bool answerNow = false)
+    {
+        var def = PostableDef(defID);
+        if (def == null) return false;
+        if (FindPosted(defID, day) == null)
+        {
+            var offer = new RecreationOffer() { defID = defID, day = day, startHour = startHour, hours = hours, serial = ++postSerial };
+            if (byEvent && FindEventOffer(defID, day) == null) eventOffers.Add(offer);
+            offers.Add(offer);
+            RecreationUtility.PostOfferSession(def, offer);
+        }
+        if (answerNow)
+        {
+            var registry = scr_System_CampaignManager.current.RecreationGroups;
+            var session = FindPostedSession(registry, defID, day);
+            if (session != null) registry.MarkAnswerNow(session);
+        }
+        return true;
+    }
+
+    /// <summary>The open session posted for defID on `day`, or null (not placed - RecreationUtility.PostOfferSession may decline).</summary>
+    static RecreationGroup FindPostedSession(RecreationGroupRegistry registry, string defID, int day)
+    {
+        var all = registry.All;
+        for (int i = 0; i < all.Count; i++)
+        {
+            var g = all[i];
+            if (g != null && g.IsPostedOffer && g.IsOpen && !g.concluded && g.sourceKey == defID && g.day == day) return g;
+        }
+        return null;
+    }
+
+    /// <summary>defID's def if it can be posted: known, Fixed (logged otherwise), not a private overnight stay - else null.</summary>
+    static RecreationOfferDef PostableDef(string defID)
     {
         var def = FindDef(defID);
-        if (def == null) return false;
+        if (def == null) return null;
         // A stay is a private per-booking room, never a shared hostless World crowd.
-        if (!string.IsNullOrEmpty(def.overnightGuestMemberTypeID)) return false;
+        if (!string.IsNullOrEmpty(def.overnightGuestMemberTypeID)) return null;
         if (def.mode != RecreationOfferMode.Fixed)
         {
             UnityEngine.Debug.LogError($"RecreationBoard.Post: offer [{defID}] is {def.mode} - only fixed offers are posted");
-            return false;
+            return null;
         }
-        if (offers.Exists(o => o.defID == defID && o.day == day)) return true;
-        var offer = new RecreationOffer() { defID = defID, day = day, startHour = startHour, hours = hours, serial = ++postSerial };
-        offers.Add(offer);
-        RecreationUtility.PostOfferSession(def, offer);
-        return true;
+        return def;
+    }
+
+    RecreationOffer FindPosted(string defID, int day)
+    {
+        for (int i = 0; i < offers.Count; i++) if (offers[i] != null && offers[i].defID == defID && offers[i].day == day) return offers[i];
+        return null;
+    }
+
+    RecreationOffer FindEventOffer(string defID, int day)
+    {
+        for (int i = 0; i < eventOffers.Count; i++) if (eventOffers[i] != null && eventOffers[i].defID == defID && eventOffers[i].day == day) return eventOffers[i];
+        return null;
     }
 
     /// <summary>
     /// Once a day: posts each fixed offer's calendar dates from today up to its daysInAdvance days ahead (already posted
     /// ones are skipped - Post), and drops past offers. Run lazily by RecreationUtility.DailyPlan (whichever character
-    /// plans first) and GetUnderway; a no-op for the rest of the day.
+    /// plans first) and GetUnderway, and on load (RebuildAfterLoad); a no-op for the rest of the day.
     /// </summary>
     public void PostCalendar()
     {
         int today = scr_System_Time.current.getAbsoluteDay();
         if (lastCalendarDay == today) return;
         lastCalendarDay = today;
-        offers.RemoveAll(o => o.day < today - 1);   // yesterday's may still run past midnight
+        // yesterday's may still run past midnight
+        for (int i = offers.Count - 1; i >= 0; i--) if (offers[i] == null || offers[i].day < today - 1) offers.RemoveAt(i);
+        for (int i = eventOffers.Count - 1; i >= 0; i--) if (eventOffers[i] == null || eventOffers[i].day < today - 1) eventOffers.RemoveAt(i);
 
-        var campaign = scr_System_CampaignManager.current;
+        var ids = new List<string>();
+        foreach (var world in scr_System_CampaignManager.current.GetLoadedWorldPlans())
+            foreach (var d in world.AllRecreationOffers)
+                if (d != null && !string.IsNullOrEmpty(d.ID) && !ids.Contains(d.ID)) ids.Add(d.ID);
         // each ID once, as the def that wins it (FindDef) - an overridden entry's calendar never posts
-        var ids = campaign.GetLoadedWorldPlans().SelectMany(w => w.AllRecreationOffers)
-            .Where(d => d != null && !string.IsNullOrEmpty(d.ID)).Select(d => d.ID).Distinct().ToList();
         foreach (var id in ids)
         {
             var def = FindDef(id);
             if (def == null || def.mode != RecreationOfferMode.Fixed) continue;
-            // holiday/season tags are the venue's world's calendar (any of them, for a venue in several worlds); a venue
-            // no loaded world initializes falls back to the worlds listing the offer
-            var worlds = campaign.FindWorldsContainingFaction(def.factionID);
-            if (worlds.Count == 0) worlds = campaign.GetLoadedWorldPlans().Where(w => w.AllRecreationOffers.Exists(d => d != null && d.ID == id)).ToList();
             for (int ahead = 0; ahead <= Math.Max(0, def.daysInAdvance); ahead++)
-            {
-                var date = scr_System_Time.current.getStartTime().Date.AddDays(today + ahead);
-                if (worlds.Exists(w => def.MatchesCalendar(w, date))) Post(def.ID, today + ahead);
-            }
+                if (CalendarPosts(def, today + ahead)) Post(def.ID, today + ahead);
         }
+    }
+
+    /// <summary>
+    /// The calendar posts def on absolute day `day`: its dates / holiday or season tags / weekdays match that date in the
+    /// venue's world (any of them, for a venue in several worlds); a venue no loaded world initializes falls back to the
+    /// worlds listing the offer.
+    /// </summary>
+    static bool CalendarPosts(RecreationOfferDef def, int day)
+    {
+        var campaign = scr_System_CampaignManager.current;
+        var date = scr_System_Time.current.getStartTime().Date.AddDays(day);
+        var worlds = campaign.FindWorldsContainingFaction(def.factionID);
+        if (worlds.Count > 0)
+        {
+            for (int i = 0; i < worlds.Count; i++) if (def.MatchesCalendar(worlds[i], date)) return true;
+            return false;
+        }
+        foreach (var world in campaign.GetLoadedWorldPlans())
+        {
+            bool lists = false;
+            foreach (var d in world.AllRecreationOffers) if (d != null && d.ID == def.ID) { lists = true; break; }
+            if (lists && def.MatchesCalendar(world, date)) return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// After a save is loaded (scr_System_CampaignManager, right after RecreationGroupRegistry.OnAfterLoad): the posts are
+    /// rebuilt from the loaded worlds, never taken from the save.
+    /// <br/>- Every posted fixed offer's session the save still holds (an older save's unheld ones too): nobody holds it
+    ///   (RecreationGroup.HoldsAnyone) = dropped silently (RecreationGroupRegistry.Remove); held and still what the data
+    ///   posts there (MatchingPost - the same day, start and length, by the calendar or a saved event post) = its post
+    ///   record is restored; held but no longer posted = cancelled with its announcement (OfferRemoved) on the first
+    ///   update - events are not started while loading.
+    /// <br/>- Then the calendar runs (PostCalendar) and the saved event posts are posted again: new sessions only where none
+    ///   is held already.
+    /// </summary>
+    public void RebuildAfterLoad()
+    {
+        RecreationUtility.ResetFeeApprovals();
+        offers.Clear();
+        lastCalendarDay = -1;
+        postSerial = 0;
+        if (eventOffers == null) eventOffers = new List<RecreationOffer>();
+        int today = scr_System_Time.current.getAbsoluteDay();
+        for (int i = eventOffers.Count - 1; i >= 0; i--) if (eventOffers[i] == null || eventOffers[i].day < today - 1) eventOffers.RemoveAt(i);
+
+        var registry = scr_System_CampaignManager.current.RecreationGroups;
+        var unheld = new List<RecreationGroup>();
+        List<RecreationGroup> removed = null;
+        var all = registry.All;
+        for (int i = 0; i < all.Count; i++)
+        {
+            var g = all[i];
+            if (g == null || g.concluded || !g.IsPostedOffer) continue;
+            if (!g.HoldsAnyone) { unheld.Add(g); continue; }
+            var post = MatchingPost(g);
+            if (post != null) offers.Add(post);
+            else if (g.IsOpen) (removed ?? (removed = new List<RecreationGroup>())).Add(g);
+        }
+        for (int i = 0; i < unheld.Count; i++) registry.Remove(unheld[i]);
+
+        PostCalendar();
+        for (int i = 0; i < eventOffers.Count; i++)
+        {
+            var o = eventOffers[i];
+            if (FindPosted(o.defID, o.day) != null) continue;
+            var def = PostableDef(o.defID);
+            if (def == null) continue;
+            o.serial = ++postSerial;
+            offers.Add(o);
+            RecreationUtility.PostOfferSession(def, o);
+        }
+
+        if (removed != null)
+            scr_UpdateHandler.current.AddEventCallback(() =>
+            {
+                for (int i = 0; i < removed.Count; i++) RecreationUtility.CancelRemovedOfferSession(removed[i]);
+            });
+    }
+
+    /// <summary>
+    /// The post record of held session g if the world data still posts it as it is - a saved event post of the same def
+    /// and day, or the calendar's (def known and postable, the calendar posting it that day) - with the same start and
+    /// length; null when it no longer does.
+    /// </summary>
+    RecreationOffer MatchingPost(RecreationGroup g)
+    {
+        var def = FindDef(g.sourceKey);
+        if (def == null || def.mode != RecreationOfferMode.Fixed || !string.IsNullOrEmpty(def.overnightGuestMemberTypeID)) return null;
+        var post = FindEventOffer(g.sourceKey, g.day);
+        if (post == null)
+        {
+            if (!CalendarPosts(def, g.day)) return null;
+            post = new RecreationOffer() { defID = def.ID, day = g.day };
+        }
+        if (post.StartHour != g.startHour || post.Hours != g.hours) return null;
+        post.serial = ++postSerial;
+        return post;
     }
 }

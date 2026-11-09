@@ -8,7 +8,7 @@ public interface I_CacheValues
 }
 
 // record base stats: str_base, str_final, str_mod, and the same for con psy and wil
-public class Stats_Base : I_CacheValues, I_StatsDisplayable
+public class Stats_Base : I_CacheValues, I_StatsDisplayable, I_StatNode
 {
     [JsonProperty] protected int value_base = 10;
     public string stat_base_string = "";
@@ -62,14 +62,24 @@ public class Stats_Base : I_CacheValues, I_StatsDisplayable
     }
 
     int _cacheVersion = -1;
+    [JsonIgnore] bool _statDirty = false;
+    [JsonIgnore] readonly StatDependents _dependents = new StatDependents();
+    [JsonIgnore] public StatDependents Dependents { get { return _dependents; } }
+    public void MarkStatDirty()
+    {
+        if (_statDirty) return;
+        _statDirty = true;
+        _dependents.MarkAllDirty();
+    }
     /// <summary>
-    /// Lazily drop caches when the owner's modifier universe changed since they were computed.
+    /// Lazily drop caches when this stat was marked dirty or the owner's modifier universe changed since they were computed.
     /// </summary>
     void SyncCacheVersion()
     {
         if (parentCache == null) return;
-        if (_cacheVersion != parentCache.StatModsVersion)
+        if (_statDirty || _cacheVersion != parentCache.StatModsVersion)
         {
+            _statDirty = false;
             _cacheVersion = parentCache.StatModsVersion;
             ClearCache();
         }
@@ -90,6 +100,7 @@ public class Stats_Base : I_CacheValues, I_StatsDisplayable
     public float FinalValue(List<string> contextKeys = null)
     {
         SyncCacheVersion();
+        parentCache?.RegisterStatRead(this);
         var key = GetContextID(contextKeys);
         if (!_cache_values.ContainsKey(key)) GetValue(contextKeys);
         return _cache_values[key];
@@ -101,9 +112,14 @@ public class Stats_Base : I_CacheValues, I_StatsDisplayable
     {
         var key = GetContextID(contextKeys);
 
-        _modScratch.Clear();
-        Parent.GetModifiers(_modScratch, this, stat_base_string, contextKeys);
-        _cache_values[key] = UtilityEX.ParseStatMods(this, storage, _modScratch);
+        Parent.BeginStatCompute(this);
+        try
+        {
+            _modScratch.Clear();
+            Parent.GetModifiers(_modScratch, this, stat_base_string, contextKeys);
+            _cache_values[key] = UtilityEX.ParseStatMods(this, storage, _modScratch);
+        }
+        finally { Parent.EndStatCompute(this); }
     }
 
 
@@ -124,6 +140,9 @@ public class Stats_Base : I_CacheValues, I_StatsDisplayable
 
         if (this.storage != null) this.storage.SetBase(value_base, 1);
         ClearCache();
+        // readers (derived stats from this score) too
+        if (parentCache != null) parentCache.MarkStatDirty(ID);
+        else MarkStatDirty();
     }
     public int GetStatMod(List<string> contextKeys = null)
     {

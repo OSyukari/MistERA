@@ -1,0 +1,165 @@
+{
+    "_comment": "Wake stages use actual speaker->listener relationships. Solo keys are self-only; pair keys never target a scope containing the speaker. Tired variants check the speaker's real sleep-deprived status. All event requirements disable action/EP gates explicitly, including nested variants. Legacy default/base shared-room entries remain available.",
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": { "ID": "OnCharaWakeUp_SoloRested", "variants": [
+                    { "requireSelfOnly": true, "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }, "responses": ["kojo_wake_solo_rested"] }
+                ] }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": { "ID": "OnCharaWakeUp_SoloTired", "variants": [
+                    { "requireSelfOnly": true, "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "selfReq": { "requireConscious": false, "requireAction": false, "requireStatusValue": [{ "statusID": "chara_status_sleep_deprived", "checkExistOnly": true }] } }, "responses": ["kojo_wake_solo_tired"] }
+                ] }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": { "ID": "OnCharaWakeUp_WakeTogetherGreeting", "variants": [
+                    {
+                        "hideWhenNotFocused": false, "displayType": "AlwaysDisplay",
+                        "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "selfReq": { "requireConscious": false, "requireAction": false, "requireStatusValue": [{ "statusID": "chara_status_sleep_deprived", "checkExistOnly": true }] } },
+                        "variants": [
+                            { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_marriage"] }, "responses": ["kojo_wake_together_tired_marriage"] },
+                            { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_couple"] }, "responses": ["kojo_wake_together_tired_couple"] },
+                            { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_fwb"] }, "responses": ["kojo_wake_together_tired_fwb"] },
+                            { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }, "responses": ["kojo_wake_together_tired_other"] }
+                        ]
+                    },
+                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_marriage"] }, "responses": ["kojo_wake_together_rested_marriage"] },
+                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_couple"] }, "responses": ["kojo_wake_together_rested_couple"] },
+                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_fwb"] }, "responses": ["kojo_wake_together_rested_fwb"] },
+                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }, "responses": ["kojo_wake_together_rested_other"] }
+                ] }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": { "ID": "OnCharaWakeUp_BesideSleepingPartner", "variants": [
+                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_marriage"] }, "responses": ["kojo_wake_sleeper_marriage"] },
+                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_couple"] }, "responses": ["kojo_wake_sleeper_couple"] },
+                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_fwb"] }, "responses": ["kojo_wake_sleeper_fwb"] },
+                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }, "responses": ["kojo_wake_sleeper_other"] }
+                ] }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": { "ID": "OnCharaWakeUp_RoomGreeting", "variants": [
+                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_marriage"] }, "responses": ["kojo_wake_room_marriage"] },
+                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_couple"] }, "responses": ["kojo_wake_room_couple"] },
+                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_fwb"] }, "responses": ["kojo_wake_room_fwb"] },
+                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }, "responses": ["kojo_wake_room_other"] }
+                ] }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": { "ID": "OnCharaWakeUp_RoomReply", "variants": [
+                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_marriage"] }, "responses": ["kojo_wake_reply_marriage"] },
+                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_couple"] }, "responses": ["kojo_wake_reply_couple"] },
+                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_fwb"] }, "responses": ["kojo_wake_reply_fwb"] },
+                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }, "responses": ["kojo_wake_reply_other"] }
+                ] }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "OnCharaWakeUp_SharedRoomGreeting",
+                    "variants": [
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "responses": [
+                                "kojo_shared_wakeup_greeting_1",
+                                "kojo_shared_wakeup_greeting_2",
+                                "kojo_shared_wakeup_greeting_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "OnCharaWakeUp_SharedRoomGreeting",
+                    "variants": [
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "responses": [
+                                "kojo_shared_wakeup_greeting_1",
+                                "kojo_shared_wakeup_greeting_2",
+                                "kojo_shared_wakeup_greeting_3"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "kojo_wake_solo_rested": "\"……嗯，精神好些了。\"",
+                "kojo_wake_solo_tired": "\"……眼皮还是好沉。\"",
+                "kojo_wake_together_tired_marriage": "\"$target$……你也醒了。能这样陪着你真好，就是还困着……\"",
+                "kojo_wake_together_tired_couple": "\"$target$……一起醒来的感觉真好。嗯……我还没缓过来。\"",
+                "kojo_wake_together_tired_fwb": "\"$target$，你也醒了啊……我眼睛都还睁不太开。\"",
+                "kojo_wake_together_tired_other": "\"……$target$，你也醒了。我还困着呢。\"",
+                "kojo_wake_together_rested_marriage": "\"醒来就有你在身旁……$target$，真好。\"",
+                "kojo_wake_together_rested_couple": "\"$target$，我们差不多一起醒了呢。看见你就觉得安心。\"",
+                "kojo_wake_together_rested_fwb": "\"$target$，这回倒是一起醒了。一起歇着还挺舒服。\"",
+                "kojo_wake_together_rested_other": "\"$target$，你也醒了啊。一起歇了一会儿，感觉好多了。\"",
+                "kojo_wake_sleeper_marriage": "$self$望着仍在熟睡的$target$，低低呢喃：\"亲爱的，再睡一会儿吧。\"",
+                "kojo_wake_sleeper_couple": "$self$望着$target$，声音压得很轻：\"你睡你的，我不吵你。\"",
+                "kojo_wake_sleeper_fwb": "$self$瞧着熟睡的$target$，低声道：\"睡得真沉……不闹你了。\"",
+                "kojo_wake_sleeper_other": "$self$留意到$target$还在睡，低声道：\"……轻点，别吵醒人。\"",
+                "kojo_wake_room_marriage": "\"$target$，亲爱的……我醒了。见到你真好。\"",
+                "kojo_wake_room_couple": "\"$target$，我醒啦。刚醒就能见到你，真好。\"",
+                "kojo_wake_room_fwb": "\"$target$，嗨……我刚醒，声音还有点哑。\"",
+                "kojo_wake_room_other": "\"……$target$，你好。我刚醒。\"",
+                "kojo_wake_reply_marriage": "\"醒了呀，亲爱的。$target$，先慢慢缓一缓。\"",
+                "kojo_wake_reply_couple": "\"$target$，醒啦。别着急，慢慢来。\"",
+                "kojo_wake_reply_fwb": "\"嗨，$target$。瞧见你醒了，打个招呼。\"",
+                "kojo_wake_reply_other": "\"$target$，你好。醒了就先缓缓吧。\"",
+                "kojo_shared_wakeup_greeting_1": "\"……$target$，你也在啊。\"",
+                "kojo_shared_wakeup_greeting_2": "\"$target$……早。\"",
+                "kojo_shared_wakeup_greeting_3": "\"……你好，$target$。\""
+            },
+            "en-us": {
+                "kojo_wake_solo_rested": "\"...Mm. I feel a little fresher.\"",
+                "kojo_wake_solo_tired": "\"...My eyes still feel so heavy.\"",
+                "kojo_wake_together_tired_marriage": "\"$target$...you're awake too. It's lovely being beside you, even if I'm still so sleepy...\"",
+                "kojo_wake_together_tired_couple": "\"$target$...it's nice waking together. Mm...I'm still coming round.\"",
+                "kojo_wake_together_tired_fwb": "\"$target$, you're awake too... I can barely keep my eyes open.\"",
+                "kojo_wake_together_tired_other": "\"...$target$, you're awake too. I'm still sleepy.\"",
+                "kojo_wake_together_rested_marriage": "\"Waking with you beside me...it's lovely, $target$.\"",
+                "kojo_wake_together_rested_couple": "\"$target$, we woke almost together. Seeing you is comforting.\"",
+                "kojo_wake_together_rested_fwb": "\"$target$, awake together this time. Resting together was rather nice.\"",
+                "kojo_wake_together_rested_other": "\"$target$, you're awake too. That rest did me some good.\"",
+                "kojo_wake_sleeper_marriage": "$self$ watches the still-sleeping $target$ and murmurs, \"Sleep a little longer, darling.\"",
+                "kojo_wake_sleeper_couple": "$self$ looks at $target$, speaking very softly. \"You keep sleeping. I won't disturb you.\"",
+                "kojo_wake_sleeper_fwb": "$self$ glances at the sleeping $target$ and whispers, \"Out like a light...I'll leave you be.\"",
+                "kojo_wake_sleeper_other": "Noticing that $target$ is still asleep, $self$ murmurs, \"...Quietly. Let's not wake anyone.\"",
+                "kojo_wake_room_marriage": "\"$target$, darling...I'm awake. It's good to see you.\"",
+                "kojo_wake_room_couple": "\"$target$, I'm awake. It's lovely seeing you just after waking.\"",
+                "kojo_wake_room_fwb": "\"$target$, hey...I've just woken. My voice is still a bit rough.\"",
+                "kojo_wake_room_other": "\"...Hello, $target$. I've just woken.\"",
+                "kojo_wake_reply_marriage": "\"You're awake, darling. Take your time coming round, $target$.\"",
+                "kojo_wake_reply_couple": "\"$target$, you're awake. No hurry; take your time.\"",
+                "kojo_wake_reply_fwb": "\"Hey, $target$. Just saying hello now you're awake.\"",
+                "kojo_wake_reply_other": "\"Hello, $target$. Take a moment to come round.\"",
+                "kojo_shared_wakeup_greeting_1": "\"...$target$, you're here too.\"",
+                "kojo_shared_wakeup_greeting_2": "\"$target$... Morning.\"",
+                "kojo_shared_wakeup_greeting_3": "\"...Hello, $target$.\""
+            }
+        }
+    }
+}

@@ -91,6 +91,67 @@ public partial class Job_Activity
         RefreshActivityRooms();
     }
 
+    /// <summary>c is already doing (or heading to) one of commands at a job other than this one.</summary>
+    bool IsBusyWithVisitCommand(Character_Trainable c, List<string> commands)
+    {
+        var current = c?.CurrentJob;
+        if (current == null || current == this || commands == null) return false;
+        foreach (var id in commands)
+            if (current.hasActivePackge(c.RefID, id) || (current.allusableCOMStrings.Contains(id) && current.hasActivePathing(c.RefID)))
+                return true;
+        return false;
+    }
+
+    /// <summary>
+    /// Sends c to furniture where an ongoing package bound to this activity and c's group (BindActivityExecution / GroupOf) runs one of commands
+    /// (or one of the activity's own bound commands) and c could join it - one holding the player first. The furniture's
+    /// own join preference then joins c to it (Job_Furniture.UpdateActorPackage - RequestJoin for the player's).
+    /// Looks in the gather / facility room, plus the covered venue rooms unless the facility confines dispatch to its
+    /// room. False when there is none.
+    /// </summary>
+    bool DispatchToBoundPackage(Character_Trainable c, List<string> commands)
+    {
+        if (c == null || phase != ActivityPhase.Launched) return false;
+        Job_Furniture best = null;
+        string bestCOM = null;
+        bool bestHasPlayer = false;
+        int group = GroupOf(c.RefID);
+        var fac = VisitActivity?.facility;
+        bool onlyGatherRoom = fac != null && fac.dispatchInRoom;
+        int roomCount = onlyGatherRoom ? 1 : 1 + coveredRoomRefs.Count;
+        for (int r = 0; r < roomCount && !bestHasPlayer; r++)
+        {
+            var room = r == 0 ? ParentRoom : scr_System_CampaignManager.current.Map.GetRoomByRef(coveredRoomRefs[r - 1]);
+            if (room == null) continue;
+            var jobs = room.Jobs;
+            for (int j = 0; j < jobs.Count && !bestHasPlayer; j++)
+            {
+                if (!(jobs[j] is Job_Furniture furniture)) continue;
+                var packages = furniture.ExecutingPackages;
+                for (int p = 0; p < packages.Count; p++)
+                {
+                    var ap = packages[p];
+                    if (ap == null || ap.ActivityExecutionRef != RefID || ap.targetCOM == null || ap.Duration < 2 || ap.isPaused || !ap.AllowJoining) continue;
+                    // only their own group's packages (step 3)
+                    if (ap.ActivityGroupKey != NoGroupCheck && ap.ActivityGroupKey != group) continue;
+                    if (!MatchesCommand(commands, ap.targetCOM) && !OffersBoundCopy(ap.targetCOM)) continue;
+                    var actors = ap.actorRefs;
+                    if (actors.Contains(c.RefID) || !furniture.ValidateActor(c, ap.targetCOM)) continue;
+                    bool hasPlayer = actors.Contains(0);
+                    if (best != null && (!hasPlayer || bestHasPlayer)) continue;
+                    best = furniture;
+                    bestCOM = ap.targetCOM.ID;
+                    bestHasPlayer = hasPlayer;
+                    if (hasPlayer) break;
+                }
+            }
+        }
+        if (best == null) return false;
+        best.SetActivityDispatchHint(c.RefID, RefID, group);
+        c.ChangeCurrentJob(best, bestCOM);
+        return true;
+    }
+
     /// <summary>
     /// Dispatch for a facility visit (launched only): keeps c at what they are doing within the visit's commands; else
     /// sends c to qualifying furniture for one of the commands it offers; else the room-restricted workModule sandbox
@@ -108,11 +169,10 @@ public partial class Job_Activity
         if (commands.Count == 0) return false;
 
         // already doing (or heading to) one of the visit's commands - keep at it
-        var current = c.CurrentJob;
-        if (current != null && current != this)
-            foreach (var id in commands)
-                if (current.hasActivePackge(c.RefID, id) || (current.allusableCOMStrings.Contains(id) && current.hasActivePathing(c.RefID)))
-                    return true;
+        if (IsBusyWithVisitCommand(c, commands)) return true;
+
+        // someone of this activity (the player first) is already at one of its commands: join them there
+        if (DispatchToBoundPackage(c, commands)) return true;
 
         var units = RecreationUtility.FacilityUnits(room, fac);
         Utility.Shuffle(units);

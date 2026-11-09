@@ -5,6 +5,23 @@
     "Dictionary": {
         "Entries": {
             "en-us": {
+                "comManager_com_carry": "Carry",
+                "com_interaction_carry_begin_1": "$doer.firstname$ picked $receiver.firstname$ up",
+                "com_interaction_carry_ongoing_1": "$doer.firstname$ is picking $receiver.firstname$ up",
+                "comManager_com_putDown": "Put down",
+                "com_furniture_putDown_displayName": "Put down on $furniture$",
+                "com_furniture_putDown_begin_1": "$doer.firstname$ gently laid $receiver.firstname$ down",
+                "com_furniture_putDown_ongoing_1": "$doer.firstname$ is laying $receiver.firstname$ down",
+                "comManager_com_carry_timestop": "Carry (time stop)",
+                "com_interaction_carry_timestop_begin_1": "$doer.firstname$ picked up the time-frozen $receiver.firstname$",
+                "com_interaction_carry_timestop_ongoing_1": "$doer.firstname$ is picking up the time-frozen $receiver.firstname$",
+                "com_furniture_putDown_timestop_begin_1": "$doer.firstname$ set the time-frozen $receiver.firstname$ down",
+                "com_furniture_putDown_timestop_ongoing_1": "$doer.firstname$ is setting the time-frozen $receiver.firstname$ down",
+                "com_player_putDownHere_displayName": "Put down here",
+                "com_player_putDownHere_begin_1": "$doer.firstname$ set $receiver.firstname$ down",
+                "com_player_putDownHere_ongoing_1": "$doer.firstname$ is setting $receiver.firstname$ down",
+                "com_player_putDownHere_timestop_begin_1": "$doer.firstname$ stood the time-frozen $receiver.firstname$ in place",
+                "com_player_putDownHere_timestop_ongoing_1": "$doer.firstname$ is setting the time-frozen $receiver.firstname$ down",
                 "com_interaction_talk_begin_1_topic": "$doer.firstname$ started chatting with $receiver.firstname$ about $topic$ without much focus",
                 "com_interaction_talk_begin_2_topic": "$doer.firstname$ started chatting with $receiver.firstname$ about $topic$ nonchalantly",
                 "com_interaction_talk_begin_3_topic": "$doer.firstname$ casually chatted with $receiver.firstname$ about $topic$",

@@ -8,6 +8,14 @@ using Newtonsoft.Json;
 
 public class Job_Furniture : Job
 {
+    // Set by an activity dispatch after it selected an exact running package. It survives pathing/undressing, then
+    // constrains this actor's next joinable-package selection before the player-preference heuristic runs.
+    readonly Dictionary<int, (int executionRef, int groupKey)> activityDispatchHints = new Dictionary<int, (int executionRef, int groupKey)>();
+
+    public void SetActivityDispatchHint(int charaRef, int executionRef, int groupKey)
+    {
+        if (charaRef >= 0 && executionRef >= 0) activityDispatchHints[charaRef] = (executionRef, groupKey);
+    }
     /*
      make job capacity check (set capacity in furniturebase jobgiver config)
 
@@ -54,7 +62,43 @@ public class Job_Furniture : Job
     {
         get
         {
-            return ParentInstance.DisplayName +(!isContainer ? "" : " : "+( Container == null? " - ": Container.DisplayName ));
+            if (isContainer) return ParentInstance.DisplayName + " : " + (Container == null ? " - " : Container.DisplayName);
+            if (!HasOccupancy) return ParentInstance.DisplayName;
+            // "bed : owners" - cached per occupancy revision (the command panel reads it every refresh)
+            if (_occupancyNameCache == null || _occupancyNameRev != OccupancyRevision)
+            {
+                _occupancyNameRev = OccupancyRevision;
+                var owners = OwnerNames;
+                _occupancyNameCache = owners.Length > 0 ? ParentInstance.DisplayName + " : " + owners : ParentInstance.DisplayName;
+            }
+            return _occupancyNameCache;
+        }
+    }
+    [NonSerialized][JsonIgnore] string _occupancyNameCache = null, _occupancyTooltipCache = null;
+    [NonSerialized][JsonIgnore] int _occupancyNameRev = -1, _occupancyTooltipRev = -1;
+
+    /// <summary> who this furniture keeps (sleepers / characters inside) - cached per occupancy revision </summary>
+    [JsonIgnore] public string OccupancyTooltip
+    {
+        get
+        {
+            if (occupantRefs.Count < 1) return "";
+            if (_occupancyTooltipCache == null || _occupancyTooltipRev != OccupancyRevision)
+            {
+                _occupancyTooltipRev = OccupancyRevision;
+                var sb = new System.Text.StringBuilder();
+                var sep = LocalizeDictionary.QueryThenParse("ui_entry_separator");
+                for (int i = 0; i < occupantRefs.Count; i++)
+                {
+                    var c = scr_System_CampaignManager.current.FindInstanceByID(occupantRefs[i]);
+                    if (c == null) continue;
+                    if (sb.Length > 0) sb.Append(sep);
+                    sb.Append(c.FirstName);
+                }
+                _occupancyTooltipCache = LocalizeDictionary.QueryThenParse(HoldsUnconscious && !IsDivider ? "ui_furniture_occupancy_sleepers" : "ui_furniture_occupancy_inside")
+                    .Replace("$names$", sb.ToString());
+            }
+            return _occupancyTooltipCache;
         }
     }
 
@@ -120,9 +164,26 @@ public class Job_Furniture : Job
     }
 
     /// <summary>
+    /// Load check, before OnAfterDeserialize: the saved furniture or its room no longer exists in the data
+    /// (map/furniture configuration changed since the save). Such a job must be dropped, not rebuilt.
+    /// </summary>
+    [JsonIgnore] public bool IsOrphanedOnLoad
+    {
+        get
+        {
+            if (parentInstance != null) return false;
+            if (string.IsNullOrEmpty(furnitureInstanceID)) return false;
+            if (scr_System_Serializer.current.GetByNameOrID_FurnitureBase(furnitureInstanceID) == null) return true;
+            return ParentRoom == null;
+        }
+    }
+    [JsonIgnore] public int ParentRoomID { get { return parentRoomID; } }
+    [JsonIgnore] public string FurnitureBaseID { get { return furnitureInstanceID; } }
+
+    /// <summary>
     /// Used for serializer. DO NOT CALL THIS MANUALLY!!!!
     /// </summary>
-    public Job_Furniture() : base() 
+    public Job_Furniture() : base()
     {
 
     }
@@ -142,10 +203,19 @@ public class Job_Furniture : Job
         {
             list.AddRange(MapUtility.GetFurnitureCOMs(comGiver));
         }
+        // a room divider (stall, private bathroom) is entered and left explicitly - its own Enter / Leave commands
+        if (ParentInstance.FurnitureBase.occupancy != null && ParentInstance.FurnitureBase.occupancy.isRoomDivider)
+        {
+            var enter = scr_System_Serializer.current.MasterList.COMs.GetByID(FurnitureOccupancyUtility.COM_DividerEnter);
+            var leave = scr_System_Serializer.current.MasterList.COMs.GetByID(FurnitureOccupancyUtility.COM_DividerLeave);
+            if (enter != null) list.Add(enter);
+            if (leave != null) list.Add(leave);
+        }
         foreach (COM com in list)
         {
           //  if (com.ParentCOM != null) continue;
             if (com.comTags.Contains("job")) hasProductionJob = true;
+            if (com.isSleepCOM) hasSleepCOM = true;
             if (com.requirements.requireContaining != null && com.requirements.requireContaining.isValid) isContainer = true;
         }
         return list.Distinct().ToList();
@@ -154,6 +224,24 @@ public class Job_Furniture : Job
 
     [NonSerialized][JsonIgnore] public bool hasProductionJob = false;   // public accessible value updated by UpdateAllUsableCOMs
     [NonSerialized][JsonIgnore] public bool isContainer = false;        // public accessible value updated by UpdateAllUsableCOMs
+    [NonSerialized][JsonIgnore] public bool hasSleepCOM = false;        // public accessible value updated by UpdateAllUsableCOMs
+
+    /// <summary>
+    /// The command panel draws this furniture in a box of its own instead of merging its buttons with the same
+    /// commands of other furniture: a bed with owners, a room divider (its own enter / inside commands), or a bed
+    /// offering sleep (its sleepers - "sleep with" - are its own). A sofa keeping someone unconscious still merges.
+    /// </summary>
+    [JsonIgnore] public bool DrawsOwnBox
+    {
+        get
+        {
+            if (!HasOccupancy) return false;
+            if (AssignsOwnership || IsDivider) return true;
+            if (!HoldsUnconscious) return false;
+            var coms = allusableCOMs;   // builds hasSleepCOM on first read
+            return coms != null && hasSleepCOM;
+        }
+    }
 
     [JsonIgnore] public override bool CanBeInterrupted { get { return base.CanBeInterrupted; } }//&& !this.isContainer; } }
 
@@ -163,14 +251,111 @@ public class Job_Furniture : Job
         {
             if (base.IsInUse) return true;
             if (isContainer && Container != null && Container.HasContent) return true;
+            if (occupantRefs.Count > 0) return true;
             return false;
         }
     }
 
     public void RefreshValidCOMs(bool allowLazyRefresh = true)
     {
-        if (allowLazyRefresh && this.actorRefID.Count < 1 && (this.Container == null || !this.Container.HasContent)) return;
+        if (allowLazyRefresh && this.actorRefID.Count < 1 && (this.Container == null || !this.Container.HasContent) && occupantRefs.Count < 1) return;
         _validCOMs_cached = false;
+    }
+
+    // ---- occupancy (soft character container) - Docs/Furniture/Plan_FurnitureOccupancy.md ----
+    // Written only through FurnitureOccupancyUtility (Enter / Leave / EvictAll), which keeps the character's
+    // furnitureLocationRef in step. Not job registration: an occupant is not in actorRefID.
+
+    /// <summary> characters kept by this furniture (sleepers in a bed, characters inside a divider) </summary>
+    [JsonProperty] protected List<int> occupantRefs = new List<int>();
+    /// <summary> assigned owners (beds - Room_Instance.ReassignFurnitureOwnership) </summary>
+    [JsonProperty] protected List<int> ownerRefs = new List<int>();
+
+    [JsonIgnore] public List<int> OccupantRefs { get { return occupantRefs; } }
+    /// <summary> assigned owners; the room assigns them once after load if needed (Room_Instance.EnsureFurnitureOwnership - flag check) </summary>
+    [JsonIgnore] public List<int> OwnerRefs { get { if (ownerRefs.Count == 0) ParentRoom?.EnsureFurnitureOwnership(); return ownerRefs; } }
+    [JsonIgnore] public FurnitureOccupancyDef OccupancyDef { get { var fi = ParentInstance; return fi == null || fi.FurnitureBase == null ? null : fi.FurnitureBase.occupancy; } }
+    [JsonIgnore] public bool HasOccupancy { get { return OccupancyDef != null; } }
+    [JsonIgnore] public bool HoldsUnconscious { get { var d = OccupancyDef; return d != null && d.holdsUnconscious; } }
+    [JsonIgnore] public bool IsDivider { get { var d = OccupancyDef; return d != null && d.isRoomDivider; } }
+    [JsonIgnore] public bool BlocksVisibility { get { var d = OccupancyDef; return d != null && d.isRoomDivider && d.blocksVisibility; } }
+    [JsonIgnore] public bool AllowsSexJob { get { var d = OccupancyDef; return d != null && d.isRoomDivider && d.allowSexJob; } }
+    [JsonIgnore] public bool AssignsOwnership { get { var d = OccupancyDef; return d != null && d.assignOwnership; } }
+    [JsonIgnore] public int Capacity
+    {
+        get
+        {
+            var d = OccupancyDef;
+            if (d == null) return 0;
+            if (d.capacity >= 0) return d.capacity;
+            var fi = ParentInstance;
+            return fi == null || fi.FurnitureBase == null ? 0 : (int)fi.FurnitureBase.furnitureSize;
+        }
+    }
+    /// <summary> the space this furniture's commands run in: its own RefID for a divider, -1 (room open area) otherwise </summary>
+    [JsonIgnore] public int ScopeRef { get { return IsDivider ? RefID : -1; } }
+
+    /// <summary> bumped on every occupant / owner change - UI rebuild stamps compare it </summary>
+    [NonSerialized][JsonIgnore] public int OccupancyRevision = 0;
+
+    public bool HasOccupant(int charaRef) { return occupantRefs.Contains(charaRef); }
+    public bool IsOwner(int charaRef) { return OwnerRefs.Contains(charaRef); }
+    [JsonIgnore] public bool HasOwners { get { return OwnerRefs.Count > 0; } }
+
+    /// <summary> FurnitureOccupancyUtility only </summary>
+    internal void Occupancy_Add(int charaRef)
+    {
+        if (occupantRefs.Contains(charaRef)) return;
+        occupantRefs.Add(charaRef);
+        OccupancyRevision++;
+        _validCOMs_cached = false;
+        if (BlocksVisibility) FurnitureOccupancyUtility.NotifyBlockingOccupancy(1);
+    }
+
+    /// <summary> FurnitureOccupancyUtility only </summary>
+    internal bool Occupancy_Remove(int charaRef)
+    {
+        if (!occupantRefs.Remove(charaRef)) return false;
+        OccupancyRevision++;
+        _validCOMs_cached = false;
+        if (BlocksVisibility) FurnitureOccupancyUtility.NotifyBlockingOccupancy(-1);
+        return true;
+    }
+
+    /// <summary> Room_Instance.ReassignFurnitureOwnership only </summary>
+    internal void Ownership_Set(List<int> owners)
+    {
+        ownerRefs.Clear();
+        if (owners != null) ownerRefs.AddRange(owners);
+        _ownerNamesCache = null;
+        OccupancyRevision++;
+    }
+
+    string _ownerNamesCache = null;
+    /// <summary> owners' first names joined by the UI separator, "" when unowned. Cached until the owners change </summary>
+    [JsonIgnore] public string OwnerNames
+    {
+        get
+        {
+            if (_ownerNamesCache == null)
+            {
+                _ownerNamesCache = "";
+                if (OwnerRefs.Count > 0)
+                {
+                    var sep = LocalizeDictionary.QueryThenParse("ui_entry_separator");
+                    var sb = new System.Text.StringBuilder();
+                    for (int i = 0; i < ownerRefs.Count; i++)
+                    {
+                        var c = scr_System_CampaignManager.current.FindInstanceByID(ownerRefs[i]);
+                        if (c == null) continue;
+                        if (sb.Length > 0) sb.Append(sep);
+                        sb.Append(c.FirstName);
+                    }
+                    _ownerNamesCache = sb.ToString();
+                }
+            }
+            return _ownerNamesCache;
+        }
     }
 
     /// <summary>RefID of the job (I_FurnitureReserver) currently reserving this furniture, -1 = none.</summary>
@@ -230,10 +415,10 @@ public class Job_Furniture : Job
         if (IsReservedAgainst(c)) return false;
         if (com != null && !this.ValidCOMs.Contains(com)) return false;
         // a GenerateAP command (e.g. getmeal) is only worth heading to when it has an item to make a package from
-        if (com != null) return AllowsActivityCommand(c, com) && com.HasGenerateAPItems(this) && com.GetValidVariant(c, false, this) >= 0;
+        if (com != null) return OccupancyAllowsSeeker(c, com) && AllowsActivityCommand(c, com) && com.HasGenerateAPItems(this) && com.GetValidVariant(c, false, this) >= 0;
         foreach (COM com2 in this.ValidCOMs)
         {
-            if (AllowsActivityCommand(c, com2) && com2.HasGenerateAPItems(this) && com2.GetValidVariant(c, false, this) >= 0) return true;
+            if (OccupancyAllowsSeeker(c, com2) && AllowsActivityCommand(c, com2) && com2.HasGenerateAPItems(this) && com2.GetValidVariant(c, false, this) >= 0) return true;
         }
         var room = ParentRoom;
         if (room != null)
@@ -243,17 +428,97 @@ public class Job_Furniture : Job
         return false;
     }
 
+    /// <summary>
+    /// Find-job gate of the soft container (ValidateActor only - the player path never reaches it, so the player is
+    /// never blocked). Sleep on a bed: its owners always pass; an owned bed takes nobody else; an unowned bed takes
+    /// nobody while someone sleeps in it (NPCs join a sleeper only in their own bed - user decision D1), nor once the
+    /// actors already heading there fill it.
+    /// </summary>
+    public bool OccupancyAllowsSeeker(Character_Trainable c, COM com)
+    {
+        if (com == null || !HasOccupancy) return true;
+        if (com.isSleepCOM && HoldsUnconscious)
+        {
+            if (AssignsOwnership && HasOwners) return IsOwner(c.RefID);
+            if (occupantRefs.Count > 0) return false;
+            return CountSeekers(c.RefID, com) < Capacity;
+        }
+        if (IsDivider)
+        {
+            // a stall in use is no valid target for anyone looking for one (D3) - counting those already inside and
+            // those registered on their way; a direct Enter is never blocked. Enter / Leave alone are no reason to come.
+            if (FurnitureOccupancyUtility.IsDividerMoveCOM(com)) return false;
+            if (occupantRefs.Contains(c.RefID)) return true;
+            return CountSeekers(c.RefID, null) < Capacity;
+        }
+        return true;
+    }
+
+    /// <summary> occupants + actors registered on this job for com (any command when null - heading here), not counting self, no double count </summary>
+    int CountSeekers(int selfRef, COM com)
+    {
+        int n = 0;
+        for (int i = 0; i < occupantRefs.Count; i++) if (occupantRefs[i] != selfRef) n++;
+        var registered = actorRefID;
+        for (int i = 0; i < registered.Count; i++)
+        {
+            int r = registered[i];
+            if (r == selfRef || occupantRefs.Contains(r)) continue;
+            if (com != null && actorRefIDStorage.TryGetValue(r, out var match) && !match.Match(com)) continue;
+            n++;
+        }
+        return n;
+    }
+
     public bool AllowsActivityCommand(Character_Trainable actor, COM command)
     {
         return ParentRoom == null || ParentRoom.AllowsActivityCommand(this, command, actor);
+    }
+
+    /// <summary>Room_Instance.AllowsUnboundActivityCommand: actor may share a normal (not activity-bound) package of command here.</summary>
+    public bool AllowsUnboundActivityCommand(Character_Trainable actor, COM command)
+    {
+        return ParentRoom == null || ParentRoom.AllowsUnboundActivityCommand(this, command, actor);
     }
 
     public override List<ActionPackage> MakePackages(Character_Trainable c, bool allowParent, bool allowChild,
         bool allowInvalid = false, COM filter = null, List<string> debug = null)
     {
         var results = base.MakePackages(c, allowParent, allowChild, allowInvalid, filter, debug);
+        ReplaceSleepWithOccupants(c, results, allowParent, allowChild, allowInvalid, filter, debug);
         if (!IsReservedAgainst(c)) ParentRoom?.AppendActivityOffers(this, c, results, allowInvalid, filter);
         return results;
+    }
+
+    /// <summary>
+    /// A bed someone sleeps in only offers "sleep with" them: its sleep packages are rebuilt with the sleepers as
+    /// receivers (com_furniture_sleep variant 3 - the only variant valid with unconscious receivers). Sleeping alone
+    /// in an occupied bed is sleeping with them. Plan_FurnitureOccupancy.md §2.4
+    /// </summary>
+    void ReplaceSleepWithOccupants(Character_Trainable c, List<ActionPackage> results, bool allowParent, bool allowChild, bool allowInvalid, COM filter, List<string> debug)
+    {
+        if (!HoldsUnconscious || occupantRefs.Count < 1 || results.Count < 1) return;
+        FurnitureOccupancyUtility.PruneStale(this);
+
+        int others = 0;
+        for (int i = 0; i < occupantRefs.Count; i++) if (occupantRefs[i] != c.RefID) others++;
+        if (others < 1) return;
+
+        COM sleepCOM = null;
+        for (int i = results.Count - 1; i >= 0; i--)
+        {
+            var com = results[i].targetCOM;
+            if (com == null || !com.isSleepCOM) continue;
+            sleepCOM = com;
+            results.RemoveAt(i);
+        }
+        if (sleepCOM == null) return;
+
+        var sleepers = new List<int>(others);
+        for (int i = 0; i < occupantRefs.Count; i++) if (occupantRefs[i] != c.RefID) sleepers.Add(occupantRefs[i]);
+
+        var doers = new List<int>(1) { c.RefID };
+        results.AddRange(MakePackages(c, doers, sleepers, -1, allowParent, allowChild, allowInvalid, sleepCOM, debug));
     }
 
     public List<ActionPackage> MakePackagesJoinable(Character_Trainable c)
@@ -262,7 +527,11 @@ public class Job_Furniture : Job
         bool debug = scr_System_CentralControl.current.LogPrefs.DLog_JoinAP;
         foreach(var pkg in this.ActivePackages)
         {
+            if (activityDispatchHints.TryGetValue(c.RefID, out var hint)
+                && (pkg.ActivityExecutionRef != hint.executionRef
+                    || (hint.groupKey != Job_Activity.NoGroupCheck && pkg.ActivityGroupKey != hint.groupKey))) continue;
             if (!AllowsActivityCommand(c, pkg.targetCOM)) continue;
+            if (!FurnitureOccupancyUtility.ScopeAllowsCommand(this, c, pkg.targetCOM)) continue;
             if (pkg.isTemporaryAP)
             {
                 //if (debug) Debug.LogError($"{c.FirstName} try join {pkg.DisplayName} fail, package is temporary");
@@ -348,6 +617,8 @@ public class Job_Furniture : Job
         {
             // Live actor policy must never be cached in ValidCOMs, even for allowInvalid/UI queries.
             if (!AllowsActivityCommand(c, com)) continue;
+            // inside / outside a divider (stall): what c can reach from where c is
+            if (!FurnitureOccupancyUtility.ScopeAllowsCommand(this, c, com)) continue;
 
             if (!allowInvalid)
             {
@@ -428,6 +699,19 @@ public class Job_Furniture : Job
             AddPackage(new List<ActionPackage>() { package });
             return true;
         }
+        else if (IsDivider && c.ScopeRef != RefID)
+        {
+            // a stall / bathroom: go in first (explicit, like pathing) - its commands are only reachable from inside
+            var package = FurnitureOccupancyUtility.MakeDividerPackage(this, c, true);
+            if (package == null)
+            {
+                ss += "actor divider enter package creation failed ||";
+                return false;
+            }
+            ss += "actor divider enter created ||";
+            AddPackage(new List<ActionPackage>() { package });
+            return true;
+        }
         else if (desiredCOM != null && c.NeedUndress(desiredCOM.requirements, true))
         {
             ActionPackage_Undress package = new ActionPackage_Undress(this, c.RefID, desiredCOM.requirements, true);
@@ -451,102 +735,13 @@ public class Job_Furniture : Job
             var list2 = MakePackagesJoinable(c);
 
             var pl1 = list1.Count > 0 ? Utility.GetRandomElement(list1) : null;
-            var pl2 = list2.Count > 0 ? Utility.GetRandomElement(list2) : null;
+            // join an ongoing package over starting one - the player's first (Job.PickJoinable / JoinPackage)
+            var pl2 = PickJoinable(list2);
+            activityDispatchHints.Remove(c.RefID);
 
-            
             if (pl2 != null)
             {
-                if (pl2.actorRefs.Contains(scr_System_CampaignManager.current.Player.RefID)) 
-                {
-                    ss += "try join player existing pkg " + pl2.DescriptionText(scr_System_CampaignManager.current.Player.RefID);
-                    if (scr_System_CentralControl.current.LogPrefs.DLog_JoinAP) Debug.LogError($"{c.FirstName} try join player {pl2.DescriptionText(scr_System_CampaignManager.current.Player.RefID)}");
-                    var ev = new EventInstance(c, "RequestJoin", "");
-                    ev.Self = c;
-                    ev.Targets.Add("evTarget", new List<Character_Trainable>() { scr_System_CampaignManager.current.Player });
-
-                    var rel = c.Relationships.FindRelationshipWith(scr_System_CampaignManager.current.Player);
-                    var comstring = pl2.targetCOM.ID;
-
-                    var empty = new List<string>() { "" };
-
-                    var msg1 = new KojoCollector(c, pl2.targetCOM.ID, "_Tryjoin");
-                    msg1.LoadRel(rel);
-                    msg1 = c.Relationships.GetKOJOMessage_Suffix(msg1, null);
-                    var texts1 = new List<string>();
-                    msg1?.DumpMessage(texts1);
-                    ev.AppendStrings.Add("kojo_tryjoin", texts1.Count > 0 ? texts1 : empty);
-
-                    var msg2 = new KojoCollector(c, pl2.targetCOM.ID, "_Joined");
-                    msg2.LoadRel(rel);
-                    msg2 = c.Relationships.GetKOJOMessage_Suffix(msg2, null);
-                    var texts2 = new List<string>();
-                    msg2?.DumpMessage(texts2);
-                    ev.AppendStrings.Add("kojo_joined", texts2.Count > 0 ? texts2 : empty);
-
-                    var msg3 = new KojoCollector(c, pl2.targetCOM.ID, "_Join_Refused");
-                    msg3.LoadRel(rel);
-                    msg3 = c.Relationships.GetKOJOMessage_Suffix(msg3, null);
-                    var texts3 = new List<string>();
-                    msg3?.DumpMessage(texts3);
-                    ev.AppendStrings.Add("kojo_join_refused", texts3.Count > 0 ? texts3 : empty);
-
-                    var addMems = new List<Action>();
-                    ev.FunctionCalls.Add("OnRefusedJoin", addMems);
-
-                    var join = new List<Action>();
-                    ev.FunctionCalls.Add("FindJoinableAP_Callback", join);
-                    join.Add(() => pl2.JoinAP(c, Memory_Response.None, true));
-
-                    string desc = $"failed to join {pl2.DescriptionText()}";
-                    var mem = new MemInstance(pl2.actorRefs, new List<string>(pl2.ComTags), pl2.targetCOM.ID, pl2.COMVariantID, pl2.masterRef, false, Memory_Response.Refuse, Memory_Attitude.None, desc);
-#if UNITY_EDITOR
-                    addMems.Add(() => Debug.LogError($"OnRefuseJoin fired on {c.FirstName} for job {pl2.DescriptionText(scr_System_CampaignManager.current.Player.RefID)}"));
-#endif
-                    addMems.Add(() => c.Memory.AddEntry(mem, new List<string>()));
-                    addMems.Add(() => c.ChangeCurrentJob(null));
-                   // addMems.Add(() => Debug.LogError($"changing {c.FirstName} job to null"));
-
-                    scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
-                    actorJobComplete.Add(c.RefID);
-                    return true;
-                }
-                else if( pl2.JoinAP(c, Memory_Response.None, true))
-                {
-                    ss += $"join existing pkg {(pl2.Ticked? "ONGOING" : "SILENT")} {pl2.DescriptionText(c.RefID)}";
-
-
-                    if (pl2.Ticked)
-                    {
-                        // make an event that skip straight to join print since joining is already handled
-                        var empty = new List<string>() { "" };
-                        var ev = new EventInstance(c, "RequestJoin", "br_join");
-                        ev.Self = c;
-                        var tActors = new List<Character_Trainable>();
-                        foreach (var a in pl2.actorRefs) if (a != c.RefID) tActors.Add(scr_System_CampaignManager.current.FindInstanceByID(a));
-                        ev.Targets.Add("evTarget", tActors);
-                        ev.AppendStrings.Add("kojo_joined", empty);
-                        ev.AppendStrings.Add("kojo_join_refused", empty);
-                        ev.AppendStrings.Add("kojo_tryjoin", empty);
-
-                        scr_UpdateHandler.current.EventHandler.StartEvent(ev, false); 
-                        if (scr_System_CentralControl.current.LogPrefs.DLog_JoinAP) Debug.Log($"{scr_System_Time.current.getCurrentTime()}: {c.FirstName} join existing package {pl2.DescriptionText(c.RefID)}");
-
-                    }else if (scr_System_CentralControl.current.LogPrefs.DLog_JoinAP) Debug.Log($"{scr_System_Time.current.getCurrentTime()}: {c.FirstName} NOT TICKED, SILENT JOIN {pl2.DescriptionText(c.RefID)}");
-
-
-
-
-                    return true;
-                }
-                else
-                {
-                    // failed to join npc package
-                    string desc = $"failed to join {pl2.DescriptionText()}";
-                    var mem = new MemInstance(pl2.actorRefs, new List<string>(pl2.ComTags), pl2.targetCOM.ID, pl2.COMVariantID, pl2.masterRef, false, Memory_Response.Refuse, Memory_Attitude.None, desc);
-                    c.Memory.AddEntry(mem, new List<string>());
-                    return false;
-                }
-
+                return JoinPackage(c, pl2, ref ss);
             }
             else if (pl1 != null)
             {
@@ -664,7 +859,7 @@ public class Job_Furniture : Job
 
     [JsonProperty] public JobContainer Container = null;
     [JsonIgnore] public string ContainerTooltip { get {
-            if (Container == null) return "";
+            if (Container == null) return OccupancyTooltip;
             return Container.Tooltip;} }
 
     [JsonIgnore] public bool CanContain { get { return this.Container == null || this.Container.hasRemainingCapacity; } }
@@ -1046,5 +1241,7 @@ public class Job_Furniture : Job
         if (ParentInstance != null) ParentInstance.ReEstablishParent(ParentRoom.RefID, jobRefID);
         if (ParentRoom != null && ParentInstance != null) ParentRoom.RegisterJobFurniture(this, ParentInstance);
         if (this.Container != null) Container.ReEstablishParent(this);
+        if (occupantRefs == null) occupantRefs = new List<int>();
+        if (ownerRefs == null) ownerRefs = new List<int>();
     }
 }

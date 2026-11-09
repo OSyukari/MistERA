@@ -7,15 +7,21 @@ using UnityEngine;
 /// A group movie / game session (RecreationActivity.requireMedia - Docs/Utnapishtim_Activities/Plan_UtnapishtimActivities.md),
 /// launched by the media activity's begin event (LaunchJob, roles "participants"; its instanceKey AppendString links it
 /// to the Job_Activity, which then hands its participants over - Job_Activity.DispatchChild).
-/// <br/>- Runs for the media item's runtime (comp_Media.runtimeMinutes) from its launch, in the activity's room.
-/// <br/>- Each participant repeats a short silent command (the session command - com_media_watch / com_media_play) in
-///   a package of their own, so anyone may break for a need and rejoin: the job is interruptible, and the activity's
-///   pull brings them back (Job_Activity.DispatchChild).
+/// <br/>- Runs for the media item's runtime (comp_Media.runtimeMinutes) from its launch, in the activity's room. The
+///   runtime is the job's own state (startTime / ElapsedMinutes) - no package lasts the whole movie.
+/// <br/>- The session command is the ordinary TV command's per-item child (requireMedia.sessionCommandID + "_" + item -
+///   com_furniture_watchVideo_<item> / com_furniture_playVideoGames_<item>): the same standard 30-minute package as
+///   sandbox TV use, with its DC check and relationship changes each round. One shared package per group of the
+///   activity (bound - BindActivityExecution / Job_Activity.GroupOf): an NPC joins their group's round or starts one
+///   (UpdateActorPackage), so watching together is an interaction between everyone in it. Anyone may break for a need
+///   and rejoin a later round: the job is interruptible, and the activity's pull brings them back
+///   (Job_Activity.DispatchChild). When the session ends (runtime over, or the activity ended first), the rounds still
+///   running resolve then (EndSession - ResolveRunningRounds). The player's followers only join the player's round.
+///   Docs/Activities/Plan_MediaSessionSharedPackage.md.
 /// <br/>- The item's startEventID fires on the first update, its endEventID when the runtime is over (both optional, no
 ///   fallback); targets "participants". Then the job ends and the participants are free for the rest of their booking.
-/// <br/>- The player is never driven: while the session runs in the room they stand in, the command panel shows them a
-///   button of their own (MakePlayerSessionPackage - the session command lasting the rest of the session); clicking it
-///   makes them a participant and they watch / play to the end.
+/// <br/>- The player is never driven: they start a round from the furniture (the activity's bound copy) or join a running
+///   one, with their target / followers (Job_Activity.CompanionsFor) - each answering for themselves.
 /// </summary>
 public class Job_MediaSession : Job, I_RequireSpecialTracker, I_EventLaunchedJob, I_PlayerJoinableJob, I_ActivityChildJob
 {
@@ -40,7 +46,47 @@ public class Job_MediaSession : Job, I_RequireSpecialTracker, I_EventLaunchedJob
     [JsonIgnore] int ElapsedMinutes { get { return (int)(scr_System_Time.current.getCurrentTime() - startTime).TotalMinutes; } }
     [JsonIgnore] ItemComponentTemplate_Media Media { get { return ItemComponentTemplate_Media.Of(mediaItemID); } }
     [JsonIgnore] Job_Activity ActivityJob { get { return activityJobRef < 0 ? null : scr_System_CampaignManager.current.FindJobInstanceByID(activityJobRef, false) as Job_Activity; } }
-    [JsonIgnore] COM SessionCOM { get { return string.IsNullOrEmpty(commandID) ? null : scr_System_Serializer.current.MasterList.COMs.GetByID(commandID); } }
+    [JsonIgnore] COM SessionCOM
+    {
+        get
+        {
+            if (!commandChecked) RefreshCommandID();
+            return string.IsNullOrEmpty(commandID) ? null : scr_System_Serializer.current.MasterList.COMs.GetByID(commandID);
+        }
+    }
+
+    /// <summary>The stored commandID was checked against the current data this session (RefreshCommandID) - not saved.</summary>
+    [JsonIgnore] bool commandChecked = false;
+
+    /// <summary>
+    /// The session command for mediaItemID: the item's own comp_Media.sessionCommandID, else the activity's
+    /// (requireMedia.sessionCommandID); its per-item child (GenerateCOM - "&lt;command&gt;_&lt;itemID&gt;", e.g. "Watch
+    /// &lt;title&gt; together") when there is one, so the log and memories name what was watched / played. "" = none.
+    /// </summary>
+    static string ResolveCommandID(Job_Activity activity, string mediaItemID, ItemComponentTemplate_Media media)
+    {
+        if (media == null) return "";
+        string id = !string.IsNullOrEmpty(media.sessionCommandID) ? media.sessionCommandID : activity?.MediaRequirement?.sessionCommandID ?? "";
+        if (string.IsNullOrEmpty(id)) return "";
+        string itemCommandID = id + "_" + mediaItemID;
+        return scr_System_Serializer.current.MasterList.COMs.GetByID(itemCommandID) != null ? itemCommandID : id;
+    }
+
+    /// <summary>
+    /// A loaded session re-resolves its command from the current data (ResolveCommandID): the stored commandID may name a
+    /// command the data no longer has (e.g. the former session-only com_media_watch_&lt;item&gt;). Once the activity job is
+    /// found - until then (still loading) the stored one stands and the next call tries again.
+    /// </summary>
+    void RefreshCommandID()
+    {
+        var activity = ActivityJob;
+        if (activity == null) return;
+        commandChecked = true;
+        string id = ResolveCommandID(activity, mediaItemID, Media);
+        if (string.IsNullOrEmpty(id) || id == commandID) return;
+        commandID = id;
+        allusableCOMs_cache = null;
+    }
 
     // ---------------- launch ---------------- //
 
@@ -59,12 +105,8 @@ public class Job_MediaSession : Job, I_RequireSpecialTracker, I_EventLaunchedJob
         mediaItemID = activity.MediaItemID;
         var media = Media;
         if (media == null) return false;
-        var requirement = activity.MediaRequirement;
-        commandID = !string.IsNullOrEmpty(media.sessionCommandID) ? media.sessionCommandID : requirement?.sessionCommandID ?? "";
-        // the command's per-item child (GenerateCOM - "<command>_<itemID>", e.g. "Watch <title> together") when there is
-        // one, so the log and memories name what was watched / played
-        string itemCommandID = commandID + "_" + mediaItemID;
-        if (!string.IsNullOrEmpty(commandID) && scr_System_Serializer.current.MasterList.COMs.GetByID(itemCommandID) != null) commandID = itemCommandID;
+        commandID = ResolveCommandID(activity, mediaItemID, media);
+        commandChecked = true;
         if (SessionCOM == null)
         {
             Debug.LogError($"Job_MediaSession: no session command [{commandID}] for media [{mediaItemID}]");
@@ -110,10 +152,10 @@ public class Job_MediaSession : Job, I_RequireSpecialTracker, I_EventLaunchedJob
         }
     }
 
-    /// <summary>The panel offers the player their session button while it runs in the room they stand in and they're not already in it.</summary>
+    /// <summary>The panel tracks the session (its running rounds as join buttons) while it runs in the room the player stands in and they're not already in it.</summary>
     public bool OffersJoinTo(Character_Trainable player) { return player != null && player.RefID == 0 && !ended && PlayerInRoom && !IsInSession(0); }
 
-    /// <summary>Minutes of the session still to run (at least 1) - the length of the player's package.</summary>
+    /// <summary>Minutes of the session still to run (at least 1).</summary>
     [JsonIgnore] public int MinutesLeft { get { return Math.Max(1, durationMinutes - ElapsedMinutes); } }
 
     /// <summary>charaRef runs one of this session's packages right now (not run out).</summary>
@@ -125,9 +167,9 @@ public class Job_MediaSession : Job, I_RequireSpecialTracker, I_EventLaunchedJob
     }
 
     /// <summary>
-    /// The player's own session package (the command panel shows it as a button while OffersJoinTo): the session command
-    /// in its room, lasting the rest of the session (ActionPackage_MediaSession) - clicking it makes the player a
-    /// participant (AddActor) and time advances to the end; they're never driven. Null without a room / command.
+    /// The player's own session package (the activity's bound furniture offer - Job_Activity.AppendParticipantCommandOffers): a round of the session command in its room
+    /// (the TV command's per-item child - repeatable like any TV command, until the session ends) - clicking it makes the player a participant
+    /// (AddActor); they're never driven. Null without a room / command.
     /// </summary>
     public ActionPackage MakePlayerSessionPackage(Character_Trainable player)
     {
@@ -164,8 +206,11 @@ public class Job_MediaSession : Job, I_RequireSpecialTracker, I_EventLaunchedJob
     }
 
     /// <summary>
-    /// Walk to the session's room, then run the session command there in a package of one's own (issued again each time
-    /// it finishes). The player is never driven: they only keep the package they joined.
+    /// Walk to the session's room, then join a running round (JoinableRounds - canJoinAP keeps groups apart), else start one -
+    /// bound to the activity and that group. Every next round, and whoever dropped out, comes back through here.
+    /// The player is never driven: they only keep the package they joined. The player's followers go with the player:
+    /// they join the player's round, never start one of their own (the player's round takes them along -
+    /// Job_Activity.CompanionsFor); without one they are released and follow the player.
     /// </summary>
     public override bool UpdateActorPackage(Character_Trainable c, out string ss)
     {
@@ -174,6 +219,8 @@ public class Job_MediaSession : Job, I_RequireSpecialTracker, I_EventLaunchedJob
         if (packages_current.Exists(x => x.actorRefs.Contains(c.RefID))) { ss += "has current package"; return true; }
         if (packages_previous.Exists(x => x.actorRefs.Contains(c.RefID) && x.Duration > 0)) { ss += "has ongoing package"; return true; }
         if (c.RefID == 0) { ss += "player never driven"; return false; }
+        bool follower = scr_System_CampaignManager.current.PlayerPartyMembers.Contains(c.RefID);
+        if (follower && !IsInSession(0)) { ss += "follows the player - no round of the player's to join"; return false; }
 
         var room = ParentRoom;
         if (room == null) { ss += "room gone"; return false; }
@@ -186,12 +233,38 @@ public class Job_MediaSession : Job, I_RequireSpecialTracker, I_EventLaunchedJob
             ss += "pathing to the session room";
             return true;
         }
+        // join an ongoing round over starting one, the way every NPC joins (Job.PickJoinable / JoinPackage)
+        var round = PickJoinable(JoinableRounds(c));
+        if (follower)
+        {
+            // PickJoinable prefers the player's round: anything else means the player's can't take them
+            if (round == null || !round.actorRefs.Contains(0)) { ss += "follows the player - cannot join the player's round"; return false; }
+            return JoinPackage(c, round, ref ss);
+        }
+        if (round != null) return JoinPackage(c, round, ref ss);
+        var activity = ActivityJob;
+        int group = activity != null ? activity.GroupOf(c.RefID) : Job_Activity.NoGroupCheck;
         var com = SessionCOM;
         var pkg = com?.MakePackage(this, new List<int>() { c.RefID }, new List<int>(), -1, room);
+        if (pkg != null && activity != null) pkg.BindActivityExecution(activity, group);
         if (pkg == null || !pkg.Validate()) { ss += $"session command [{commandID}] invalid"; return false; }
         AddPackage(new List<ActionPackage>() { pkg });
         ss += $"running [{commandID}]";
         return true;
+    }
+
+    /// <summary>The ongoing rounds c may join (as Job_Furniture.MakePackagesJoinable): canJoinAP decides - the activity's group / walk-in admission included.</summary>
+    List<ActionPackage> JoinableRounds(Character_Trainable c)
+    {
+        var result = new List<ActionPackage>();
+        var packages = ActivePackages;
+        for (int i = 0; i < packages.Count; i++)
+        {
+            var ap = packages[i];
+            if (ap.isTemporaryAP || ap.isPaused || ap.Duration <= 1 || !ap.AllowJoining || ap.actorRefs.Contains(c.RefID)) continue;
+            if (ap.canJoinAP(c, out _, out _, out _) >= 0) result.Add(ap);
+        }
+        return result;
     }
 
     public override void RemoveActor(int charaRef)
@@ -232,6 +305,9 @@ public class Job_MediaSession : Job, I_RequireSpecialTracker, I_EventLaunchedJob
         if (ElapsedMinutes >= durationMinutes) EndSession("runtime over", true);
     }
 
+    /// <summary>The activity is ending (Job_Activity.EndJob): the session ends with it now, so its running rounds resolve before the activity's end event.</summary>
+    public void EndWithActivity() { EndSession("activity ended", false); }
+
     /// <summary>Ends the session: the end event (finished only), actors released, the activity told (its participants are free from now on).</summary>
     void EndSession(string reason, bool finished)
     {
@@ -240,6 +316,10 @@ public class Job_MediaSession : Job, I_RequireSpecialTracker, I_EventLaunchedJob
         if (finished) FireMediaEvent(Media?.endEventID);
         // the player watching to the end: their package ends with the session - stop advancing time through it
         bool playerWatching = IsInSession(0);
+        // rounds under way resolve now, as if they had run out (results, DC, relationship changes) - never cut off, whether
+        // the runtime is over or the activity ended first (its booking is the runtime rounded up to hours, from T - the
+        // session starts later, so the booking often ends before the movie does)
+        ResolveRunningRounds();
         var packages = new List<ActionPackage>(packages_current.Count + packages_previous.Count);
         packages.AddRange(packages_current);
         packages.AddRange(packages_previous);
@@ -252,6 +332,44 @@ public class Job_MediaSession : Job, I_RequireSpecialTracker, I_EventLaunchedJob
         if (!scr_UpdateHandler.current.Updating) NotifyDescriptionsOutOfUpdate();
         scr_System_CampaignManager.current.NotifyEndJob(this);
         if (scr_System_CentralControl.current.LogPrefs.DLog_Jobs) Debug.Log($"{DisplayName} ended: {reason}");
+    }
+
+    /// <summary>
+    /// Executes every round under way (begun, not paused, time left) now - the execution its last minute would have run,
+    /// no repeat - as the tick does (registered as executed), then collects its logs the way PostUpdateTime would (this
+    /// job is unregistered right after, so it gets no PostUpdateTime of its own). A round not begun yet was never asked
+    /// and is just dropped.
+    /// </summary>
+    void ResolveRunningRounds()
+    {
+        List<ActionPackage> running = null;
+        for (int i = 0; i < packages_previous.Count; i++)
+        {
+            var ap = packages_previous[i];
+            if (ap == null || ap.Duration <= 0 || !ap.Ticked || ap.isPaused || ap.isTemporaryAP) continue;
+            if (running == null) running = new List<ActionPackage>();
+            running.Add(ap);
+        }
+        if (running == null) return;
+        var campaign = scr_System_CampaignManager.current;
+        bool visible = isVisibleToPlayer;
+        bool anyLogged = false;
+        for (int i = 0; i < running.Count; i++)
+        {
+            var ap = running[i];
+            ap.PackageRepeat = false;
+            ap.ExecutePackageOutsideUpdate();
+            if (!campaign.isPackageExecuted(ap)) campaign.RegisterExecutedAP(ap);
+            if (visible || ap.isOwnRoomVisibleToPlayer) { CollectLogs(ap); anyLogged = true; }
+            if (!ap.isTemporaryAP) actorJobComplete.AddRange(ap.actorRefs);
+        }
+        if (!anyLogged) return;
+        m.exp.AddRelevantChara(this.actorRemove);
+        m.exp.AddRelevantChara(this.actorJobComplete);
+        m.exp.AddRelevantChara(this.actorRefID);
+        // in the update loop: handed over now, flushed with the minute's logs; out of it EndSession's
+        // NotifyDescriptionsOutOfUpdate sends them
+        if (scr_UpdateHandler.current.Updating) scr_UpdateHandler.current.NotifyJobDescriptions(m);
     }
 
     /// <summary>

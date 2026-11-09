@@ -1,10 +1,10 @@
 {
     "Dictionary": { "Entries": { "en-us": {
-        "neon_counter": "Shop Counter", "neon_housekeeping": "Cleaning Supplies", "neon_massage_table": "Massage Table (Service Unavailable)", "neon_soap_bath": "Bath Station (Service Unavailable)", "neon_hotel_panel": "Self-Service Room Panel",
+        "neon_counter": "Shop Counter", "neon_housekeeping": "Cleaning Supplies", "neon_massage_table": "Massage Table (Service Unavailable)", "neon_soap_bath": "Washing Station (Service Unavailable)", "neon_hotel_panel": "Self-Service Room Panel",
         "jp_neon_counter_duty": "Counter Duty", "jp_neon_housekeeping": "Housekeeping",
         "neon_counter_begin": "$doer.firstname$ takes over the counter log.", "neon_counter_ongoing": "$doer.firstname$ checks receipts, straightens stock and attends the counter.", "neon_counter_end": "$doer.firstname$ leaves the counter tidy at the end of this stint.",
         "neon_housekeeping_begin": "$doer.firstname$ picks up the cleaning supplies.", "neon_housekeeping_ongoing": "$doer.firstname$ wipes surfaces and replenishes supplies.", "neon_housekeeping_end": "$doer.firstname$ puts the cleaning supplies away.",
         "neon_join_option": "Hire $name$ as $memberType$", "neon_adult_join_option": "$name$ voluntarily applies as $memberType$",
-        "jp_neon_izakaya_drinks": "Enjoy small dishes, drinks and conversation at the izakaya.", "jp_neon_bowl": "Practice bowling on a lane.", "jp_neon_bar_drinks": "Have drinks with friends at the bar. Includes no hostess service.", "jp_neon_adultshop_browse": "Browse clothing and accessories without automatic purchases or service consent.", "jp_neon_hotel_rest": "Rest briefly in a reserved room. Includes no overnight check-in or service.", "jp_neon_pachinko_play": "Play pachinko. The booking fee covers a fixed budget, with no prize redemption."
+        "jp_izakaya_drinks": "Enjoy small dishes, drinks and conversation at the izakaya.", "jp_neon_bar_drinks": "Have drinks with friends at the bar. Includes no hostess service.", "jp_neon_adultshop_browse": "Browse clothing and accessories without automatic purchases or service consent.", "jp_neon_hotel_rest": "Rest briefly in a reserved room. Includes no overnight check-in or service.", "jp_neon_pachinko_play": "Play pachinko. The booking fee covers a fixed budget, with no prize redemption."
     } } }
 }

@@ -1,6 +1,6 @@
 {
   "Dictionary": { "Entries": { "en-us": {
-    "jp_greenside_sento": "Greenside Public Bath", "recreation_offer_jp_greenside_sento": "Public Bath Outing", "membertype_jp_greenside_sento_attendant": "Bath Attendant (15-24)", "jp_greenside_sento_counter": "Bath Reception Counter", "jp_greenside_sento_bath": "Communal Bath", "jp_greenside_sento_soak": "Relax in the Bath", "jp_greenside_sento_attend": "Bath Reception and Upkeep",
+    "jp_sento": "Public Bath", "sento_entrance": "Public Bath Reception", "sento_changing_male": "Men's Changing Room", "sento_changing_female": "Women's Changing Room", "sento_bath_male": "Men's Bath", "sento_bath_female": "Women's Bath", "recreation_offer_jp_sento": "Public Bath Outing", "membertype_jp_sento_attendant": "Bath Attendant (15-24)", "jp_sento_counter": "Bath Reception Counter", "jp_sento_bath": "Communal Bath", "jp_sento_soak": "Relax in the Bath", "jp_sento_attend": "Bath Reception and Upkeep",
     "jp_sento_soak_begin": "$doer.firstname$ eases into the warm bath.", "jp_sento_soak_ongoing": "$doer.firstname$ rests by the side of the bath, letting tense shoulders relax.", "jp_sento_soak_after": "$doer.firstname$ leaves the water and takes a short break beside the bath.",
     "jp_sento_work_begin": "$doer.firstname$ takes a shift at the bath reception counter.", "jp_sento_work_ongoing": "$doer.firstname$ sorts towels, welcomes visitors and checks cleaning supplies.", "jp_sento_work_after": "$doer.firstname$ tidies the reception counter."
   } } }

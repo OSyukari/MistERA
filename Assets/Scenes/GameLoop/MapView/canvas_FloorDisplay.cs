@@ -119,15 +119,21 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         currentFloorIDs.Add(btn.optionID);
     }
 
-    private void addExit(scr_roomBTN prefab, RectTransform parent, Floor_Base.FloorPlan_Exit exits, Floor_Instance targetFloor)
+    /// <summary>
+    /// listEntry = false: the exit pin on the floor-plan picture (positioned by offset). true: the same exit as an
+    /// entry in the right-panel exitList, drawn for every connected exit including hideOnMap ones.
+    /// </summary>
+    private void addExit(scr_roomBTN prefab, RectTransform parent, Floor_Base.FloorPlan_Exit exits, Floor_Instance targetFloor, bool listEntry = false)
     {
         scr_roomBTN r2 = Instantiate(prefab);
         r2.SelfRect.SetParent(parent, false);
         /// ANCHOR CONVERSION ///
-        r2.SelfRect.anchoredPosition = ConvertOffset(exits.offsetX, exits.offsetY);
+        if (!listEntry) r2.SelfRect.anchoredPosition = ConvertOffset(exits.offsetX, exits.offsetY);
         /// ANCHOR CONVERSION ///
 
-        r2.bgImage.color = scr_System_CentralControl.current.DisplaySetting.BackgroundColor_Transparent.Color;
+        r2.bgImage.color = listEntry
+            ? scr_System_CentralControl.current.DisplaySetting.TextColor_transparent
+            : scr_System_CentralControl.current.DisplaySetting.BackgroundColor_Transparent.Color;
 
         r2.transform.rotation = Quaternion.identity;
 
@@ -136,14 +142,79 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         btn.Initialize(this, new ButtonValidator_ChangeFloor(this, targetFloor, btn));
         btn.SetText(targetFloor.displayName);
 
-        btn.optionID = (floor.GetHashCode() + exits.GetHashCode());
+        btn.optionID = (floor.GetHashCode() + exits.GetHashCode()) * 2 + (listEntry ? 1 : 0);
         buttonsByID.Add(btn.optionID, btn);
         validatorsByID.Add(btn.optionID, btn.Validator);
         btn.Validate();
 
-        r2.sizeFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+        if (!listEntry) r2.sizeFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
 
         currentFloorIDs.Add(btn.optionID);
+    }
+
+    /// <summary>Right-panel list of every connected exit of the shown floor (hidden exits included).</summary>
+    public RectTransform exitList;
+    /// <summary>Optional list-entry prefab for exitList; falls back to prefab_roomButton.</summary>
+    public scr_roomBTN prefab_exitButton;
+    /// <summary>Optional container (exitList + its header), hidden when the shown floor has no connected exit.</summary>
+    public GameObject exitPanel;
+    /// <summary>
+    /// Optional right-panel list of the homes of a residential district (exits whose floor belongs to a district home,
+    /// ResidenceUtility.IsGeneratedHome), kept apart from exitList. Unassigned = homes are listed in exitList.
+    /// </summary>
+    public RectTransform residenceList;
+    /// <summary>Optional container (residenceList + its header, ui_map_floor_residences), hidden when there is no home.</summary>
+    public GameObject residencePanel;
+
+    /// <summary>
+    /// A district map: a background-image floor (no floor plan) that exists to connect other floors through exits.
+    /// The floors it leads to are listed in the right panel instead of under its block in the floor list - except
+    /// venues of a host with MapPlan.listConnectedFloors, which keep their own button (district homes never do).
+    /// </summary>
+    private static bool IsDistrictHub(Floor_Instance f)
+    {
+        if (f == null || f.FloorBase.isFloorPlan) return false;
+        foreach (var _ in f.Exits) return true;
+        return false;
+    }
+
+    private static bool HasExitTo(Floor_Instance from, Floor_Instance to)
+    {
+        foreach (var exit in from.Exits)
+            if (scr_System_CampaignManager.current.Map.TryGetExitDestination(from, exit, out _, out var destinationFloor) && destinationFloor == to) return true;
+        return false;
+    }
+
+    /// <summary>Whether f belongs to a home of a residential district (generated or adopted - ResidenceUtility.IsGeneratedHome).</summary>
+    private static bool IsResidenceFloor(Floor_Instance f)
+    {
+        if (f == null || f.rooms.Count == 0) return false;
+        return ResidenceUtility.IsGeneratedHome(f.rooms[0].FactionOwner?.FactionOwnerRoot);
+    }
+
+    /// <summary>Floor hidden from the floor list -> the district hub floor whose button stands in for it.</summary>
+    Dictionary<Floor_Instance, Floor_Instance> districtFloorOf = new Dictionary<Floor_Instance, Floor_Instance>();
+    public Floor_Instance GetDistrictFloorOf(Floor_Instance f)
+    {
+        return f != null && districtFloorOf.TryGetValue(f, out var hub) ? hub : null;
+    }
+
+    /// <summary>
+    /// One level up from a floor: the floor of its floor-list host faction (ResolveHost) that has an exit leading to
+    /// it - e.g. 图书馆 -> 绿地区, 摄影工作室 -> 桐生组事务所. Null when the floor is its own host (back goes to the world map).
+    /// </summary>
+    private Floor_Instance FindParentFloor(Floor_Instance f)
+    {
+        if (f == null || f.rooms.Count == 0) return null;
+        var owner = f.rooms[0].FactionOwner?.FactionOwnerRoot;
+        if (owner == null) return null;
+
+        var host = ResolveHost(owner, new Dictionary<Manageable, Manageable>(), new HashSet<Manageable>());
+        if (host == null || host == owner) return null;
+
+        foreach (var hostFloor in host.ManagedFloors)
+            if (hostFloor != f && HasExitTo(hostFloor, f)) return hostFloor;
+        return null;
     }
 
     private void addBtn(scr_roomBTN prefab, RectTransform parent, Room_Instance ri, bool extraOffset = false, bool displayCharaName = false, bool ignorePathToggle = false)
@@ -248,7 +319,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         foreach (var kvp in plan) if (kvp.Value == kvp.Key) BuildFaction(kvp.Key);
         foreach (var kvp in plan.OrderBy(p => p.Key.ID, StringComparer.Ordinal))
             if (kvp.Value != kvp.Key && factionBlocksByID.TryGetValue(kvp.Value.FactionOwnerRoot.ID, out var hostBlock))
-                AddFloorButtons(hostBlock, kvp.Key);
+                AddFloorButtons(hostBlock, kvp.Key, kvp.Value);
 
         // only once every faction (including merged-in companions) has finished drawing into its block can we
         // tell what actually ended up under it. A block left with no floor at all (e.g. its host faction was
@@ -442,7 +513,8 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         return block;
     }
 
-    private void AddFloorButtons(scr_factionBlock block, I_IsJobGiver faction)
+    /// <param name="host">The block's own faction when faction is a merged-in companion; null when drawing the host itself.</param>
+    private void AddFloorButtons(scr_factionBlock block, I_IsJobGiver faction, I_IsJobGiver host = null)
     {
         // a faction hidden from the world map is still tracked (discovered, host-resolved, contributes to
         // trackedWorld) but its own floors stay undrawn unless debug mode is on - matches the world-map door
@@ -457,6 +529,13 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
             // ManagedFloors, so skip it here if some earlier faction in this pass already drew it.
             if (buttonsByID.ContainsKey(floor.GetHashCode())) continue;
 
+            // a floor that a district hub of the host leads to is reached through that hub's right panel instead:
+            // always for district homes (独栋住宅区 -> 葛城家宅), and for venues unless the host lists them
+            // (MapPlan.listConnectedFloors: 独栋住宅区 -> 公园 keeps its button, 霓虹街 -> 卡拉OK doesn't). Floors behind a
+            // host with real content (桐生组事务所 -> 摄影工作室) always keep their button
+            if (host != null && (IsResidenceFloor(floor) || !(host is Manageable hm && hm.ListConnectedFloors))
+                && IsReachedFromDistrictHub(host, floor)) continue;
+
             var btn = Instantiate(block.buttonPrefab);
             btn.transform.SetParent(block.floorList, false);
 
@@ -469,6 +548,17 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
             noDestroyList.Add(btn.optionID);
         }
+    }
+
+    private bool IsReachedFromDistrictHub(I_IsJobGiver host, Floor_Instance floor)
+    {
+        foreach (var hostFloor in host.ManagedFloors)
+        {
+            if (hostFloor == floor || !IsDistrictHub(hostFloor) || !HasExitTo(hostFloor, floor)) continue;
+            districtFloorOf[floor] = hostFloor;
+            return true;
+        }
+        return false;
     }
 
     Coroutine CO = null;
@@ -487,6 +577,10 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         }
         currentFloorIDs.Clear();
         Utility.DestroyAllChildrenFrom( roomList);
+        if (exitList != null) Utility.DestroyAllChildrenFrom(exitList);
+        if (exitPanel != null) exitPanel.SetActive(false);
+        if (residenceList != null) Utility.DestroyAllChildrenFrom(residenceList);
+        if (residencePanel != null) residencePanel.SetActive(false);
         var pictureRect = picture.rectTransform;
         Utility.DestroyAllChildrenFrom( pictureRect, 1);
     }
@@ -544,16 +638,27 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
         }
 
-        // one exit button per visible exit whose door is connected; hidden exits draw nothing (their floors stay
-        // reachable through the floor list)
-        if (isFloorPlan)
+        // every exit whose door is connected gets a right-panel entry (one per destination floor): district homes in
+        // residenceList (when assigned), everything else in exitList; a visible exit on a floor plan additionally gets
+        // its pin on the picture
+        var listedExitFloors = new List<Floor_Instance>();
+        int exitCount = 0, residenceCount = 0;
+        foreach (var exit in floor.Exits)
         {
-            foreach (var exit in floor.Exits)
-            {
-                if (exit.hideOnMap || !scr_System_CampaignManager.current.Map.TryGetExitDestination(floor, exit, out _, out var destinationFloor)) continue;
-                addExit(prefab_roomButton, picture.rectTransform, exit, destinationFloor);
-            }
+            if (!scr_System_CampaignManager.current.Map.TryGetExitDestination(floor, exit, out _, out var destinationFloor)) continue;
+            if (isFloorPlan && !exit.hideOnMap) addExit(prefab_roomButton, picture.rectTransform, exit, destinationFloor);
+            if (listedExitFloors.Contains(destinationFloor)) continue;
+            listedExitFloors.Add(destinationFloor);
+
+            bool asResidence = residenceList != null && IsResidenceFloor(destinationFloor);
+            var list = asResidence ? residenceList : exitList;
+            if (list == null) continue;
+            addExit(prefab_exitButton != null ? prefab_exitButton : prefab_roomButton, list, exit, destinationFloor, true);
+            if (asResidence) residenceCount++;
+            else exitCount++;
         }
+        if (exitPanel != null) exitPanel.SetActive(exitCount > 0);
+        if (residencePanel != null) residencePanel.SetActive(residenceCount > 0);
 
 
         // --- AI GENERATED FLOOR LINE DRAW FUNCTION --- //
@@ -663,6 +768,8 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
             scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Room);
             return;
         }
+        // inside a room divider (stall): leave it first - always explicit (the room buttons show why)
+        if (scr_System_CampaignManager.current.Player.ScopeRef != -1) return;
         scr_System_CentralControl.current.AutoSave();
 
         var playerJob = scr_System_CampaignManager.current.Player.InteractionJob;
@@ -735,6 +842,10 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         }
         else if (floor != null && floor.rooms.Count > 0)
         {
+            // a venue/annex floor backs up to the floor that leads to it before the world map
+            var parentFloor = FindParentFloor(floor);
+            if (parentFloor != null) { LoadFloor(parentFloor); return; }
+
             var owner = floor.rooms[0].FactionOwner?.FactionOwnerRoot;
             if (owner != null)
             {
@@ -1084,6 +1195,15 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
                 this.text.Toggle(true, true);
                 return true;
             }
+            else if (scr_System_CampaignManager.current.Player.ScopeRef != -1)
+            {
+                // inside a room divider (stall): leaving it is an explicit step first
+                var player = scr_System_CampaignManager.current.Player;
+                this.text.Toggle(true, false);
+                this.tooltip = ttip.Replace("$time$", "-") + "\n" + LocalizeDictionary.QueryThenParse("ui_divider_leaveFirst")
+                    .Replace("$name$", player.FirstName).Replace("$furniture$", FurnitureOccupancyUtility.ScopeName(player));
+                return false;
+            }
             else if (!room.CanBeAccessedBy(scr_System_CampaignManager.current.Player))
             {
                 this.text.Toggle(true, false);
@@ -1137,6 +1257,8 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
         public override bool IsButtonValid()
         {
+            var playerFloor = scr_System_CampaignManager.current.PlayerFloor;
+            text.Toggle(true, playerFloor == floor || parent.GetDistrictFloorOf(playerFloor) == floor);
             return true;
         }
 
@@ -1167,8 +1289,10 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         {
             // only the player's own floor lights up in the floor list - an annex/sub floor is listed in its
             // host's block itself, so there's nothing to forward to (the world-map pin handles that case, see
-            // ButtonValidator_SelectWorldDoor)
-            text.Toggle(true, scr_System_CampaignManager.current.PlayerFloor == floor);
+            // ButtonValidator_SelectWorldDoor). A district hub also lights up while the player is in one of the
+            // floors it hides from the list (see IsReachedFromDistrictHub).
+            var playerFloor = scr_System_CampaignManager.current.PlayerFloor;
+            text.Toggle(true, playerFloor == floor || parent.GetDistrictFloorOf(playerFloor) == floor);
             return true;
         }
 

@@ -17,11 +17,18 @@
                     "requirement": {
                         "treatReceiverAsDoer": true,
                         "req_Doers": {
-                            "clothingRequirement":"Skin",
+                            "clothingRequirement":"Outer",
+                            "requireConscious": false,
+                            "requireAction": false
+                        },
+                        "req_Receivers": {
                             "requireConscious": false,
                             "requireAction": false
                         }
                     }
+                },
+                "results_AP": {
+                    "result_event": { "id_overwrite": "OnSleepComplete", "requireSuccess": true, "deferSleepUntilEnd": true }
                 },
                 "results_EP": {
                     "results_character": [
@@ -55,9 +62,10 @@
                         "displayName": "com_furniture_sleep_displayName_1"
                     },
                     {
+                        "_comments": "sleep together - also 'sleep with' the bed's sleepers (Job_Furniture.MakePackages puts them as receivers, Docs/Furniture/Plan_FurnitureOccupancy.md). doerCount above 9 = no actor count limit, the bed's capacity is the limit",
                         "requirements": {
                             "requirement": {
-                                "doerCount": 2
+                                "doerCount": 10
                             }
                         },
                         "displayName": "com_furniture_sleep_displayName_2"
@@ -67,17 +75,60 @@
                     "baseAcceptanceValue": 15
                 },
                 "DifficultyCheck": { "baseD20Check": 0 },
-                "description_onComplete":
-                {
-                    "Entries":[
-                        {
-                            "keepLooking":true,
-                            "texts":[ "com_furniture_sleep_onComplete_1" ]
-                        }
-                    ]
-                },
                 "description_begin":{ "Entries":[{"texts":["com_furniture_sleep_description_begin_1"]}], "keepLooking":false },
                 "description_ongoing":{ "Entries":[{"texts":["com_furniture_sleep_description_ongoing_1"]}], "keepLooking":false }
+            },
+            {
+                "ID": "com_furniture_divider_enter",
+                "_comments": "going into a room divider (stall, private bathroom) - added by code to every furniture whose occupancy isRoomDivider (Job_Furniture.UpdateAllUsableCOMs), offered only from outside. Inside, the divider's own commands are reachable and the rest of the room is not. Temporary transit step (ActionPackage_DividerMove); the effect is applied on completion by the dividerEnter tag. Docs/Furniture/Plan_FurnitureOccupancy.md §4",
+                "ActionPackageClass": "ActionPackage_DividerMove",
+                "displayName": "com_furniture_divider_enter_displayName",
+                "timeScale": 1,
+                "comTags": [
+                    "furniture",
+                    "dividerEnter"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer": true
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { } },
+                        "displayName": "com_furniture_divider_enter_displayName"
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 0 },
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "description_begin":{ "Entries":[{"texts":["com_furniture_divider_enter_begin_1"]}], "keepLooking":false },
+                "description_ongoing":{ "Entries":[{"texts":["com_furniture_divider_enter_ongoing_1"]}], "keepLooking":false }
+            },
+            {
+                "ID": "com_furniture_divider_leave",
+                "_comments": "coming out of a room divider - offered only from inside, not while in a sex scene. Moving to another room needs it first (always explicit). Same mechanics as com_furniture_divider_enter.",
+                "ActionPackageClass": "ActionPackage_DividerMove",
+                "displayName": "com_furniture_divider_leave_displayName",
+                "timeScale": 1,
+                "comTags": [
+                    "furniture",
+                    "dividerLeave"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer": true
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { } },
+                        "displayName": "com_furniture_divider_leave_displayName"
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 0 },
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "description_begin":{ "Entries":[{"texts":["com_furniture_divider_leave_begin_1"]}], "keepLooking":false },
+                "description_ongoing":{ "Entries":[{"texts":["com_furniture_divider_leave_ongoing_1"]}], "keepLooking":false }
             },
             {
                 "ID": "com_furniture_restroom",
@@ -401,7 +452,7 @@
                             {
                                 "requirements": {
                                     "requirement": {
-                                        "doerCount": 2
+                                        "doerCount": 99
                                     }
                                 },
                                 "displayName": "com_furniture_playVideoGames_displayName_variant_2"
@@ -459,7 +510,7 @@
                     {
                         "requirements": {
                             "requirement": {
-                                "doerCount": 2
+                                "doerCount": 99
                             }
                         },
                         "displayName": "com_furniture_playVideoGames_displayName_2"
@@ -560,7 +611,7 @@
                             {
                                 "requirements": {
                                     "requirement": {
-                                        "doerCount": 2
+                                        "doerCount": 99
                                     }
                                 },
                                 "displayName": "com_furniture_watchVideo_displayName_variant_2"
@@ -618,7 +669,7 @@
                     {
                         "requirements": {
                             "requirement": {
-                                "doerCount": 2
+                                "doerCount": 99
                             }
                         },
                         "displayName": "com_furniture_watchVideo_displayName_2"
@@ -792,37 +843,62 @@
             {
                 "ID": "com_furniture_takeShower",
                 "ActionPackageClass": "ActionPackage_Interaction",
+                "allowJoining": false,
                 "displayName": "com_furniture_takeShower_displayName_1",
                 "timeScale": 30,
                 "comTags": [
                     "furniture",
                     "shower",
-                    "privacy"
+                    "privacy",
+                    "permission_intimacy_medium"
                 ],
                 "requirements": {
                     "requirement": {
-                        "doerCount": 1
+                        "doerCount": 1,
+                        "forbidTeammateJoin": true
                     }
                 },
                 "variants": [
                     {
                         "requirements": {
                             "requirement": {
-                                "receiverCount": 0
+                                "receiverCount": 0,
+                                "treatDoerAsReceiver": true
                             }
                         },
-                        "displayName": "com_furniture_takeShower_displayName_1"
+                        "displayName": "com_furniture_takeShower_displayName_1",
+                        "description_ongoing": { "Entries": [{ "texts": ["com_furniture_takeShower_description_ongoing_1"] }] }
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "receiverCount": 1
+                            }
+                        },
+                        "displayName": "com_furniture_takeShower_displayName_2",
+                        "description_ongoing": { "Entries": [{ "texts": ["com_furniture_takeShower_description_ongoing_2"] }] }
                     }
                 ],
                 "AcceptanceCheck": {
-                    "baseAcceptanceValue": 25
+                    "baseAcceptanceValue": 18,
+                    "actModifiers": {
+                        "enabled": true, "totalMin": 0, "totalMax": 10,
+                        "terms": [
+                            { "source": "PartnerGoodwill", "appliesTo": "BothDeciders", "scale": 0.05, "offset": -2, "min": 0, "max": 2 },
+                            { "source": "PartnerTrust", "appliesTo": "BothDeciders", "scale": 0.05, "offset": -1, "min": 0, "max": 3 },
+                            { "source": "PartnerDesire", "appliesTo": "BothDeciders", "scale": 0.04, "offset": -2, "min": 0, "max": 6 }
+                        ]
+                    }
                 },
                 "DifficultyCheck": { "baseD20Check": 0 },
+                "results_immediate_EP": {
+                    "result_event": { "id_overwrite": "com_furniture_takeShower_start", "requireSuccess": true }
+                },
                 "results_EP": {
                     "results_character": [
                         {
                             "entry_conditions": {
-                                "applyToDoer": true
+                                "applyToReceiver": true
                             },
                             "entry_results": {
                                 "type": "statMod_ST",
@@ -831,28 +907,19 @@
                         },
                         {
                             "entry_conditions": {
-                                "applyToDoer": true
+                                "applyToReceiver": true
                             },
                             "entry_results": {
                                 "type": "statMod_EN",
                                 "value": "10"
                             }
-                        },
-                        {
-                            "_comment": "washes body traces off (Docs/Body/Plan_BodyTraces.md), whether or not the deflate event runs",
-                            "entry_conditions": {
-                                "applyToDoer": true
-                            },
-                            "entry_results": {
-                                "type": "washTraces"
-                            }
                         }
                     ],
                     "result_event": { "id_overwrite": "com_furniture_takeShower_deflate", "requireSuccess": true }
                 },
-                "description_begin":{ "Entries":[{"texts":["com_furniture_takeShower_description_begin_1"]}], "keepLooking":false },
-                "description_ongoing":{ "Entries":[{"texts":["com_furniture_takeShower_description_ongoing_1"]}], "keepLooking":false },
-                "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_takeShower_description_onComplete_1"]}] }
+                "description_begin": { "Entries": [] },
+                "description_ongoing": { "Entries": [] },
+                "description_onComplete": { "Entries": [] }
             },
             {
                 "ID": "com_furniture_restroom_fix",
@@ -1104,7 +1171,8 @@
                     ]
                 },
                 "AcceptanceCheck": {
-                    "baseAcceptanceValue": 10
+                    "baseAcceptanceValue": 10,
+                    "permissionBonus": [ { "permissions": ["Follow"], "bonus": 3 } ]
                 },
                 "DifficultyCheck": { "baseD20Check": 0 },
                 "description_begin":{ "Entries":[{"texts":["com_furniture_getmeal_begin_1","com_furniture_getmeal_begin_2","com_furniture_getmeal_begin_3"]}], "keepLooking":false },
@@ -1231,7 +1299,7 @@
                 "AcceptanceCheck": {
                     "baseAcceptanceValue": 10
                 },
-                "DifficultyCheck": { "baseD20Check": 0 },
+                "DifficultyCheck": { "baseD20Check": 10 },
                 "description_begin":
                 {
                     "Entries":[
@@ -1289,7 +1357,7 @@
                 "AcceptanceCheck": {
                     "baseAcceptanceValue": 10
                 },
-                "DifficultyCheck": { "baseD20Check": 0 },
+                "DifficultyCheck": { "baseD20Check": 10 },
                 "description_begin":
                 {
                     "Entries":[
@@ -1335,7 +1403,7 @@
                     }
                 ],
                 "AcceptanceCheck": { "baseAcceptanceValue": 10 },
-                "DifficultyCheck": { "baseD20Check": 0 },
+                "DifficultyCheck": { "baseD20Check": 10 },
                 "description_begin": { "Entries":[ { "keepLooking":true, "texts": ["com_furniture_music_practice_begin_1","com_furniture_music_practice_begin_2"] } ] },
                 "description_ongoing":{ "Entries":[{"texts":["com_furniture_music_practice_description_ongoing_1"]}], "keepLooking":false },
                 "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_music_practice_description_onComplete_1"]}] }
@@ -1382,7 +1450,14 @@
                 "com_furniture_restroom_description_onComplete_1": "$doer.firstname$上完了厕所",
 
                 "com_furniture_sleep_displayName_1": "睡觉",
-                "com_furniture_sleep_displayName_2": "一起睡觉",
+                "com_furniture_sleep_displayName_2": "一起睡觉",                "com_furniture_sleep_withNames": "和$names$一起睡",
+                "com_furniture_divider_enter_displayName": "进入",
+                "com_furniture_divider_enter_begin_1": "$doer.firstname$走了进去",
+                "com_furniture_divider_enter_ongoing_1": "$doer.firstname$正在走进去",
+                "com_furniture_divider_leave_displayName": "离开",
+                "com_furniture_divider_leave_begin_1": "$doer.firstname$走了出来",
+                "com_furniture_divider_leave_ongoing_1": "$doer.firstname$正在走出来",
+                "com_furniture_sleep_ownedBed": "$command$（$owners$的床）",
                 "com_furniture_sleep": "玩家只有在可睡眠时间段（默认为23H-6H）才可睡眠，可以在阵营管理-工作分配界面检查玩家的时间表确认。\n该指令执行后，参与者会获得时长等于参与者自身%%stats_derived_sleepNeed%%分钟的睡眠状态。当该状态结束时角色会立刻醒来",
                 "com_furniture_sleep_begin_1": "$doer.firstname$舒服地把自己埋进被子里",
                 "com_furniture_sleep_begin_2": "$doer.firstname$关掉床头灯后缓缓闭上眼睛",
@@ -1435,10 +1510,11 @@
                 "com_furniture_watchVideo_displayName_variant_2":"一起观看$name$",
                 
                 "com_furniture_takeShower_displayName_1": "洗澡",
-                "com_furniture_takeShower_displayName_2": "一起洗澡",
+                "com_furniture_takeShower_displayName_2": "帮忙洗澡",
                 "com_furniture_takeShower_displayName_3": "全员一起洗澡",
                 "com_furniture_takeShower_description_begin_1": "$doer.firstname$开始洗澡",
                 "com_furniture_takeShower_description_ongoing_1": "$doer.firstname$正在洗澡",
+                "com_furniture_takeShower_description_ongoing_2": "$doer.firstname$正在帮$receiver.firstname$洗澡",
 
                 "com_furniture_cryosleep_displayName_REMOVE": "解除休眠",
                 "com_furniture_cryosleep_displayName_ADD": "冷冻休眠",
@@ -1550,7 +1626,7 @@
                 "com_furniture_watchVideo_displayName_2": "Watch video",
                 "com_furniture_watchVideo_displayName_3": "Watch video",
                 "com_furniture_takeShower_displayName_1": "Take shower",
-                "com_furniture_takeShower_displayName_2": "Take shower",
+                "com_furniture_takeShower_displayName_2": "Help wash",
                 "com_furniture_takeShower_displayName_3": "Take shower",
                 "com_furniture_cryosleep": "Crypsleep",
                 "com_furniture_cryosleep_displayName_REMOVE": "Terminate cryosleep",
@@ -1592,6 +1668,7 @@
 
     "com_furniture_takeShower_description_begin_1": "$doer.firstname$ starts taking a shower",
     "com_furniture_takeShower_description_ongoing_1": "$doer.firstname$ is taking a shower",
+    "com_furniture_takeShower_description_ongoing_2": "$doer.firstname$ is helping $receiver.firstname$ wash",
 
     "com_furniture_cryosleep_description_ongoing_1_ADD": "$doer.firstname$ is in cryosleep",
     "com_furniture_cryosleep_description_ongoing_1_REMOVE": "$doer.firstname$ is waking up from cryosleep",

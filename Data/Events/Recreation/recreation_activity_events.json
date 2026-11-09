@@ -63,10 +63,55 @@
                                 "Type": "LaunchJob",
                                 "arguments": [ "participants=participating" ],
                                 "jobTemplate": { "$type": "Job_MediaSession, Assembly-CSharp" }
-                            }
+                            },
+                            { "Type": "FlushMessageExpAll", "arguments": [ "false" ] }
                         ]
                     },
                     { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "isLast": true, "line": "Recreation_MediaSession_Begin_late" }
+                ]
+            },
+            {
+                "ID": "Recreation_Activity_TrustReward",
+                "_comment": "Begin event of a SILENT launch (launchEventID \"\") of a trustRewardEligible activity, fired only when there is a trust reward to pay (2+ keptPromise - Job_Activity.StartBeginEvent): the job pays the Trust into this event's message log before it starts, the FlushMessageExpAll shows it. Same targets / AppendStrings as a begin event, plus keptPromise / hasKeptPromise. Not replayed for late arrivals (the activity's launchEventID stays \"\"). Every custom begin event of a trustRewardEligible activity must likewise FlushMessageExpAll on its initial-launch path.",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "isLast": true, "line": "Recreation_Activity_TrustReward_line",
+                        "Results": [ { "Type": "FlushMessageExpAll", "arguments": [ "false" ] } ]
+                    }
+                ]
+            },
+            {
+                "ID": "Recreation_Activity_End",
+                "_comment": "Generic end event of a launched activity that ran its course (RecreationActivity.endEventID \"\" - Job_Activity.EndJob; never after a failed gathering or a cancellation). Only notes the end; a custom endEventID may replace it to add activity-specific relationship bonuses (the trust reward is paid by the job at the launch either way). SELF ONLY DECIDES VISIBILITY. Targets: tookPart (at the launch or joining late), keptPromise (agreed beforehand + on time - the trust reward's group, hasKeptPromise when set), plus the outcome events' participants / mandatory / optional / host / <role IDs> / waited / late / player. AppendStrings: activityEnded, activityName, playerInvite, activityTrustEligible, mediaName.",
+                "events": [
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "isLast": true, "line": "Recreation_Activity_End_line" }
+                ]
+            },
+            {
+                "ID": "Recreation_WalkIn_Confirm",
+                "_comment": "Fired from code (Job_Activity.RequestWalkIn), no trigger, the player only: they clicked an ongoing activity package (activity: ...) of an activity they are not part of. Self = the player; Targets.companions = who is at that package; AppendStrings activityName / command (the package's command) / feeText (the entrance fee line, empty when free; hasFee set when there is one). The join option runs the 'join' callback: the player is registered in that package's group (the activity's begin event plays as the join, the fee is charged) and joins the package. Asked only while the player is not part of the activity.",
+                "allowDuplicate": true,
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "companions" },
+                        "question": "Recreation_WalkIn_Confirm_question",
+                        "options": [
+                            {
+                                "option": "Recreation_WalkIn_Confirm_join",
+                                "Results": [
+                                    { "Type": "ExecuteCallbackPermissive", "arguments": [ "join" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "end" ] }
+                                ]
+                            },
+                            {
+                                "option": "Recreation_WalkIn_Confirm_cancel",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "end" ] } ]
+                            }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "end", "line": "", "isLast": true }
                 ]
             }
         ]
@@ -80,7 +125,12 @@
                 "Recreation_GatherFailed_Leave_waited": "$waited.name$等了半个小时，$late.name$还是没有来，只好先离开了。",
                 "Recreation_GatherFailed_Leave_late": "$late.name$赶到时已经太晚了，$activityName$早已取消，等待的人也都离开了。",
                 "Recreation_MediaSession_Begin_start": "$participating.name$聚到一起，$activityName$开始了：$mediaName$。",
-                "Recreation_MediaSession_Begin_late": "$joining.name$悄悄加入了正在进行的$activityName$。"
+                "Recreation_MediaSession_Begin_late": "$joining.name$悄悄加入了正在进行的$activityName$。",
+                "Recreation_Activity_TrustReward_line": "$keptPromise.name$都如约准时到场，$activityName$开始了。",
+                "Recreation_Activity_End_line":"$tookPart.name$的$activityName$结束了。",
+                "Recreation_WalkIn_Confirm_question": "$companions.name$正在进行【$command$】（$activityName$）。\n要加入吗？$feeText$",
+                "Recreation_WalkIn_Confirm_join": "加入",
+                "Recreation_WalkIn_Confirm_cancel": "算了"
             }
         }
     }

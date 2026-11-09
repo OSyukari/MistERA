@@ -89,6 +89,37 @@
                         "_comment": "Event trigger. This event trigger contains description text for self. This will not fire if Target is not player",
                         "variants": [
                             {
+                                "_comment": "carried by the player (携带 - 'carried' actor tag), unconscious / asleep: reminder, blocks the sleeping description",
+                                "tags": [
+                                    "nsfw"
+                                ],
+                                "requirement": {
+                                    "requireSelfAction": false,
+                                    "selfTags": [
+                                        "carried",
+                                        "unconscious"
+                                    ]
+                                },
+                                "responses": [
+                                    "Descriptor_Carried_Unconscious_1"
+                                ]
+                            },
+                            {
+                                "_comment": "carried by the player, awake but unable to move",
+                                "tags": [
+                                    "nsfw"
+                                ],
+                                "requirement": {
+                                    "requireSelfAction": false,
+                                    "selfTags": [
+                                        "carried"
+                                    ]
+                                },
+                                "responses": [
+                                    "Descriptor_Carried_1"
+                                ]
+                            },
+                            {
                                 "tags": [
                                     "nsfw"
                                 ],
@@ -431,6 +462,8 @@
         "Entries": {
             "zh-cn": {
 
+                "Descriptor_Carried_Unconscious_1": "($self$) $self$在$target$怀里一动不动",
+                "Descriptor_Carried_1": "($self$) 动弹不得的$self$被$target$抱在怀里",
                 "Descriptor_Sleeping_1": "($self$) 正在房间里熟睡的$self$呼吸均匀，完全没注意到$target$的靠近",
                 "Descriptor_Timestop_1": "($self$) $target$正在端详着时间停止中一动不动的$self$",
                 "Descriptor_FixingClothes_1": "($self$) $target$不仅看到了衣衫不整的$self$，还目睹了她慌乱整理衣物的样子",
@@ -450,6 +483,8 @@
             },
             "en-us": {
 
+                "Descriptor_Carried_Unconscious_1": "($self$) $self$ lies motionless in $target$'s arms.",
+                "Descriptor_Carried_1": "($self$) Unable to move, $self$ is held in $target$'s arms.",
                 "Descriptor_Sleeping_1": "($self$) $self$ is fast asleep in the room, breathing evenly, completely unaware of $target$'s approach.",
                 "Descriptor_Timestop_1": "($self$) $target$ is examining the motionless $self$, frozen in stopped time.",
                 "Descriptor_FixingClothes_1": "($self$) $target$ catches $self$ not only in disarray but also frantically trying to fix her clothes.",

@@ -1979,6 +1979,7 @@ public static class UtilityEX
                 return modifier.ValueFloat;
             case Stat_Modifier_Type.getStatusValue:
                 //Debug.Log("Getting status value");
+                Stats.RegisterStatusValueRead(modifier.valueString);   // the computing stat follows this status' value
                 var i = Stats.GetStatusByStringMatch(modifier.valueString);
                 return i == null ? 0 : i.Severity;
             default:

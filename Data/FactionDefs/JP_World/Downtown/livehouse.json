@@ -1,13 +1,12 @@
 {
     "MapPlans": {
         "factionInit": [{
-            "ID": "jp_neon_livehouse", "initializeFaction": "jp_neon_livehouse", "floors": [{ "ID": "floor_jp_neon_livehouse", "nameOverwrite": "jp_neon_livehouse" }], "isRentingFloor": true, "floorListHostFactionID": "jp_neon_street", "mainExit": { "roomID": "live_entrance", "exitCost": 1 }, "salesCurrency": "currency_JPY", "salesInventory": [{ "matchByID": "consumable_alcohol_beer" }],
-            "floorDoors": [{ "sourceFloor": "floor_jp_neon_livehouse", "sourceExit": "street", "targetFaction": "jp_neon_street", "targetFloor": "floor_jp_neon_street", "targetExit": "to_jp_neon_livehouse", "cost": 1 }],
+            "ID": "jp_neon_livehouse", "initializeFaction": "jp_neon_livehouse", "floors": [{ "ID": "floor_jp_neon_livehouse", "nameOverwrite": "jp_neon_livehouse" }], "isRentingFloor": true, "floorListHostFactionID": "jp_downtown", "mainExit": { "roomID": "live_entrance", "exitCost": 1 }, "salesCurrency": "currency_JPY", "salesInventory": [{ "matchByID": "consumable_alcohol_beer" }],
+            "floorDoors": [{ "sourceFloor": "floor_jp_neon_livehouse", "sourceExit": "street", "targetFaction": "jp_downtown", "targetFloor": "floor_jp_downtown", "targetExit": "to_jp_neon_livehouse", "cost": 1 }],
             "assignableMemberTypes": ["membertype_neon_live_staff"], "joinableMemberTypes": ["membertype_neon_live_staff"],
+            "_comment_fallbackWorkers": "Only the counter gets a fallback worker. PA/soundcheck isn't required by the band's or the audience's COM (pure flavor; not assignable/joinable either) and has been dropped. The NPC-only generated band is dropped too, pending a dedicated band-NPC system - see _recreationOffers below for the Fri/Sat live show, disabled until then.",
             "fallbackWorkers": [
-                { "memberTypeID": "membertype_neon_live_counter", "headcount": 2, "maxFallback": 2, "templateID": "jp_store_clerk" },
-                { "memberTypeID": "membertype_neon_live_pa", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" },
-                { "memberTypeID": "membertype_neon_band_performer", "headcount": 4, "maxFallback": 4, "templateID": "jp_band_member" }
+                { "memberTypeID": "membertype_neon_live_counter", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }
             ]
         }],
         "floorPlans": [{
@@ -33,9 +32,10 @@
                 "_comment": "NPC-only, not in assignable/joinable lists and no join/leave handler or remote-work tag. Fri/Sat setup and performance 18-21; audience starts 19. Four generated members share a stage of capacity four.",
                 "workModule": { "jobPostID": "membertype_neon_band_performer", "workCommands": ["jp_neon_band_perform"], "activeHours": [18,19,20], "activeDays": [0,0,0,0,1,1,0], "hourlyPayout": [{ "itemID": "currency_JPY", "itemCount": 2000 }], "paymentCadence": "Daily" } }
         ],
-        "recreationOffers": [{
-            "ID": "recreation_offer_neon_live", "mode": "Fixed", "factionID": "jp_neon_livehouse", "startHour": 19, "hours": 2, "weekdays": [0,0,0,0,1,1,0], "daysInAdvance": 3,
-            "workModule": { "jobPostID": "neon_live_audience", "workCommands": ["jp_neon_watch_live"] }, "gatherRoomID": "live_floor", "launchEventID": "Neon_Live_Begin", "allowWalkIn": true,
+        "_recreationOffers": [{
+            "_comment_disabled": "Renamed from recreationOffers to _recreationOffers - the deserializer ignores unknown keys, so this offer is inert (data kept for later). The fallback band performer was dropped (pending a dedicated band-NPC system), so this show would otherwise gather an audience to watch an empty stage. Re-enable by renaming the key back once there's a band to watch.",
+            "ID": "recreation_offer_neon_live", "mode": "Fixed", "factionID": "jp_neon_livehouse", "provideAcceptanceBonus": 5, "activityMoodlet": { "stress": 1 }, "startHour": 19, "hours": 2, "weekdays": [0,0,0,0,1,1,0], "daysInAdvance": 3,
+            "activityCommands": ["jp_neon_watch_live"], "workModule": { "jobPostID": "neon_live_audience", "workCommands": ["jp_neon_watch_live"] }, "gatherRoomID": "live_floor", "launchEventID": "Neon_Live_Begin", "allowWalkIn": true,
             "entranceFee": { "itemID": "currency_JPY", "itemCount": 2000 }, "participationChance": 0.6, "trustRewardEligible": false
         }]
     },
@@ -48,11 +48,31 @@
     "COMs": { "list": [
         { "ID": "jp_neon_band_perform", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "jp_neon_band_perform", "timeScale": 30, "comTags": ["job", "furniture", "workModules"], "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "CurrentActive", "requireMemberTypeScope": "JobFaction", "requireMemberType": ["membertype_neon_band_performer"] } } }, "variants": [{ "requirements": { "requirement": { "doerCount": 1 } }, "displayName": "jp_neon_band_perform" }, { "requirements": { "requirement": { "doerCount": 4 } }, "displayName": "jp_neon_band_perform" }], "AcceptanceCheck": { "baseAcceptanceValue": 0 }, "DifficultyCheck": { "baseD20Check": 0 }, "description_begin": { "Entries": [{ "keepLooking": true, "texts": ["neon_perform_begin"] }] }, "description_ongoing": { "Entries": [{ "keepLooking": true, "texts": ["neon_perform_ongoing"] }] }, "description_after": { "Entries": [{ "keepLooking": true, "texts": ["neon_perform_end"] }] }, "description_remove": { "Entries": [{ "keepLooking": true, "texts": ["neon_perform_end"] }] } },
         { "ID": "jp_neon_live_soundcheck", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "jp_neon_live_soundcheck", "timeScale": 30, "comTags": ["job", "furniture", "workModules"], "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "CurrentActive", "requireMemberTypeScope": "JobFaction", "requireMemberType": ["membertype_neon_live_pa"] } } }, "variants": [{ "requirements": { "requirement": { "doerCount": 1 } }, "displayName": "jp_neon_live_soundcheck" }], "AcceptanceCheck": { "baseAcceptanceValue": 0 }, "DifficultyCheck": { "baseD20Check": 0 }, "description_ongoing": { "Entries": [{ "keepLooking": true, "texts": ["neon_pa_ongoing"] }] }, "description_after": { "Entries": [{ "keepLooking": true, "texts": ["neon_pa_end"] }] } },
-        { "ID": "jp_neon_watch_live", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "neon_live_audience", "timeScale": 60, "comTags": ["furniture", "recreation"], "requirements": { "requirement": { "treatReceiverAsDoer": true }, "requireRoomExisting": { "requireActiveRecreationOffer": ["recreation_offer_neon_live"] } }, "variants": [{ "requirements": { "requirement": { "doerCount": 1 } }, "displayName": "neon_live_audience" }, { "requirements": { "requirement": { "doerCount": 99 } }, "displayName": "neon_live_audience" }], "AcceptanceCheck": { "baseAcceptanceValue": 15 }, "DifficultyCheck": { "baseD20Check": 0 }, "description_begin": { "Entries": [{ "keepLooking": true, "texts": ["neon_watch_begin"] }] }, "description_ongoing": { "Entries": [{ "keepLooking": true, "texts": ["neon_watch_ongoing"] }] }, "description_after": { "Entries": [{ "keepLooking": true, "texts": ["neon_watch_end"] }] }, "description_remove": { "Entries": [{ "keepLooking": true, "texts": ["neon_watch_end"] }] } }
+        { "ID": "jp_neon_watch_live", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "neon_live_audience", "timeScale": 60, "comTags": ["furniture", "recreation"], "requirements": { "requirement": { "treatReceiverAsDoer": true }, "requireRoomExisting": { "requireActiveRecreationOffer": ["recreation_offer_neon_live"] } }, "variants": [{ "requirements": { "requirement": { "doerCount": 1 } }, "displayName": "neon_live_audience" }, { "requirements": { "requirement": { "doerCount": 99 } }, "displayName": "neon_live_audience" }], "AcceptanceCheck": { "baseAcceptanceValue": 15 }, "DifficultyCheck": { "baseD20Check": 5 }, "description_begin": { "Entries": [{ "keepLooking": true, "texts": ["neon_watch_begin"] }] }, "description_ongoing": { "Entries": [{ "keepLooking": true, "texts": ["neon_watch_ongoing"] }] }, "description_after": { "Entries": [{ "keepLooking": true, "texts": ["neon_watch_end"] }] }, "description_remove": { "Entries": [{ "keepLooking": true, "texts": ["neon_watch_end"] }] } }
     ] },
-    "Dictionary": { "Entries": { "zh-cn": {
-        "jp_neon_livehouse": "霓虹Livehouse", "membertype_neon_live_staff": "演出场兼职", "membertype_neon_live_counter": "检票及吧台员工 15-24", "membertype_neon_live_pa": "音响师 15-24", "membertype_neon_band_performer": "驻场乐队 周五六18-21", "neon_band_member_title": "乐队成员", "neon_live_stage": "舞台设备", "neon_pa_desk": "调音台", "neon_live_audience": "观看现场演出", "jp_neon_band_perform": "舞台演奏", "jp_neon_live_soundcheck": "调试音响",
-        "jp_neon_watch_live": "在演出时段的观众区观看现场演出。",
-        "neon_perform_begin": "$doer.firstname$走上舞台，检查乐器和麦克风。", "neon_perform_ongoing": "$doer.firstname$在舞台上演奏，鼓点与旋律穿过观众区。", "neon_perform_end": "$doer.firstname$收住最后一个音，调整好台上的设备。", "neon_pa_ongoing": "$doer.firstname$戴着耳机检查各路音量。", "neon_pa_end": "$doer.firstname$记下调音台的设置。", "neon_watch_begin": "$doer.firstname$在观众区找到了位置。", "neon_watch_ongoing": "$doer.firstname$跟着台上的节拍轻轻点头。", "neon_watch_end": "$doer.firstname$随着人群鼓掌。"
-    } } }
+    "Dictionary": { "Entries": {
+            "zh-cn": {
+                "jp_neon_livehouse": "Livehouse（施工中）",
+                "membertype_neon_live_staff": "演出场兼职",
+                "membertype_neon_live_counter": "检票及吧台员工 15-24",
+                "membertype_neon_live_pa": "音响师 15-24",
+                "membertype_neon_band_performer": "驻场乐队 周五六18-21",
+                "neon_band_member_title": "乐队成员",
+                "neon_live_stage": "舞台设备",
+                "neon_pa_desk": "调音台",
+                "neon_live_audience": "观看现场演出",
+                "jp_neon_band_perform": "舞台演奏",
+                "jp_neon_live_soundcheck": "调试音响",
+                "jp_neon_watch_live": "在演出时段的观众区观看现场演出。",
+                "neon_perform_begin": "$doer.firstname$走上舞台，检查乐器和麦克风。",
+                "neon_perform_ongoing": "$doer.firstname$在舞台上演奏，鼓点与旋律穿过观众区。",
+                "neon_perform_end": "$doer.firstname$收住最后一个音，调整好台上的设备。",
+                "neon_pa_ongoing": "$doer.firstname$戴着耳机检查各路音量。",
+                "neon_pa_end": "$doer.firstname$记下调音台的设置。",
+                "neon_watch_begin": "$doer.firstname$在观众区找到了位置。",
+                "neon_watch_ongoing": "$doer.firstname$跟着台上的节拍轻轻点头。",
+                "neon_watch_end": "$doer.firstname$随着人群鼓掌。"
+            }
+        }
+    }
 }

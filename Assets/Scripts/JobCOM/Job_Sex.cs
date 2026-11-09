@@ -64,8 +64,17 @@ public class Job_Sex_Group : Job
         undress = immediateUndress;
         this.parentRoomRef = ri;
         this.parentRoomID = ri.RefID;
+        this.scopeRef = FurnitureOccupancyUtility.SexSceneScope(preRegisteredActorRefs);
 
     }
+
+    /// <summary>
+    /// The space of the room the scene takes place in: -1 = the room's open area, else the room divider (stall) it is
+    /// in. One scene per open area and one per divider allowing sex (Plan_FurnitureOccupancy.md §4.5). Set from the
+    /// actors at creation.
+    /// </summary>
+    [JsonProperty] protected int scopeRef = -1;
+    [JsonIgnore] public int ScopeRef { get { return scopeRef; } }
 
     public int restrictDuration = -1;
     public string onJobEndEventID = "", onJobEndEventLabel = "";
@@ -101,6 +110,7 @@ public class Job_Sex_Group : Job
         undress = immediateUndress;
         this.parentRoomRef = ri;
         this.parentRoomID = ri.RefID;
+        this.scopeRef = FurnitureOccupancyUtility.SexSceneScope(preRegisteredActorRefs);
 
         if (restrictTags != null) this.restrictTags = new List<string>(restrictTags);
     }
@@ -170,6 +180,8 @@ public class Job_Sex_Group : Job
         [JsonProperty] public bool entrySnapshotKnown, victimAtEntry, aggressorAtEntry, forcedContext;
         [JsonProperty] public bool experiencedForcedActs, settled, activeNow;
         [JsonProperty] public int acts, forcedActCount, climaxes;
+        // highest chara_status_pain_sex SeverityIndex reached during this participation
+        [JsonProperty] public int painPeak;
         // pleasure: gained (before the organ's pain deduction); pleasureLostToPain: what pain took away from it
         [JsonProperty] public double pleasure, pleasureLostToPain, pain;
         [JsonProperty] public List<SummaryInterval> intervals = new List<SummaryInterval>();
@@ -228,9 +240,10 @@ public class Job_Sex_Group : Job
     /// <summary>
     /// Call once per accepted paired command, not on package creation or for each body effect. countsAsAct: only sex
     /// commands count as acts (and forced acts); gentle in-scene commands (touch: headpat, hug) still record the partner,
-    /// command and tags.
+    /// command and tags. Forced / non-consensual is decided by this scene's own rapist roles only (Rapist,
+    /// isActorGettingRaped) - a command's forced tag, a strong act or a missing permission does not make anyone a victim.
     /// </summary>
-    public void RecordSummaryAct(int doerRef, int receiverRef, COM com, bool forced, bool countsAsAct)
+    public void RecordSummaryAct(int doerRef, int receiverRef, COM com, bool countsAsAct)
     {
         lock (summaryLock)
         {
@@ -249,12 +262,11 @@ public class Job_Sex_Group : Job
                     foreach (var tag in com.categoryTags)
                         if (!record.categories.Contains(tag)) record.categories.Add(tag);
                 }
-                record.forcedContext |= forced || Rapist.Count > 0 || isActorGettingRaped(actorRef);
+                bool victim = isActorGettingRaped(actorRef);
+                record.forcedContext |= Rapist.Count > 0 || victim;
                 if (!countsAsAct) continue;
                 record.acts++;
-                // The aggregate bool does not make the doer a victim. Reversed roles use the scene role source.
-                if (isActorGettingRaped(actorRef) || (forced && actorRef == receiverRef
-                    && !isActorGettingRaped(doerRef) && !Rapist.Contains(receiverRef)))
+                if (victim)
                 {
                     record.forcedActCount++;
                     record.experiencedForcedActs = true;
@@ -267,7 +279,8 @@ public class Job_Sex_Group : Job
     /// Received, actually applied amounts only: pleasure gained, the part of it pain took away, and pain. partnerRef may be
     /// absent for unpaired effects.
     /// </summary>
-    public void RecordSummaryEffect(int actorRef, int partnerRef, float pleasure, float pleasureLostToPain, float pain)
+    /// <param name="painLevel">chara_status_pain_sex SeverityIndex after the effect, tracked as the record's painPeak</param>
+    public void RecordSummaryEffect(int actorRef, int partnerRef, float pleasure, float pleasureLostToPain, float pain, int painLevel)
     {
         lock (summaryLock)
         {
@@ -279,6 +292,7 @@ public class Job_Sex_Group : Job
             if (!float.IsNaN(pleasure) && !float.IsInfinity(pleasure)) record.pleasure += Math.Max(0, pleasure);
             if (!float.IsNaN(pleasureLostToPain) && !float.IsInfinity(pleasureLostToPain)) record.pleasureLostToPain += Math.Max(0, pleasureLostToPain);
             if (!float.IsNaN(pain) && !float.IsInfinity(pain)) record.pain += Math.Max(0, pain);
+            if (painLevel > record.painPeak) record.painPeak = painLevel;
         }
     }
 
@@ -315,11 +329,15 @@ public class Job_Sex_Group : Job
             var minutes = record.intervals.Sum(x => Math.Max(0, ((x.end ?? now) - x.start).TotalMinutes));
             bool victimAtExit = isActorGettingRaped(actorRef);
             bool aggressorAtExit = Rapist.Contains(actorRef);
+            // lingering sexual pain at settlement, as a level (pain sensitivity already applied); the peak includes it
+            int painLevel = actor.Stats.GetStatusByStringMatch("chara_status_pain_sex")?.SeverityIndex ?? 0;
+            if (painLevel > record.painPeak) record.painPeak = painLevel;
             var scalars = new Dictionary<string, double>
             {
                 { "sceneRef", RefID }, { "roomRef", parentRoomID }, { "participation", record.participationIndex }, { "minutes", minutes },
                 { "entryLust", record.entryLust }, { "acts", record.acts },
-                { "pleasure", record.pleasure }, { "pleasureLostToPain", record.pleasureLostToPain }, { "pain", record.pain }, { "climaxes", record.climaxes }
+                { "pleasure", record.pleasure }, { "pleasureLostToPain", record.pleasureLostToPain }, { "pain", record.pain }, { "climaxes", record.climaxes },
+                { "painLevel", painLevel }, { "painPeak", record.painPeak }
             };
             foreach (var pair in scalars)
             {
@@ -772,22 +790,30 @@ public class Job_Sex_Group : Job
 
         for(var i = packages_previous.Count - 1; !preservePackagesOnJoin && i >= 0; i--)
         {
+            // a resumed upgrade parent leaves this list too (ResumeUpgradeParent), possibly below i
+            if (i >= packages_previous.Count) continue;
             // unregister and re-register all
             if (packages_previous[i].Duration == 0) continue;
             // COM-less packages (wait / LLM pins injected via Job.InjectPackage) have nothing to reset or re-validate
             if (packages_previous[i].targetCOM == null) continue;
-            scr_System_CampaignManager.current.Unregister(packages_previous[i]);
-            packages_previous[i].Reset();
-            if (packages_previous[i].Validate())
+            // a parent act suspended for its upgrade's round is revived by the upgrade only (ResumeUpgradeParent)
+            if (IsSuspendedForUpgrade(packages_previous[i])) continue;
+            var revalidated = packages_previous[i];
+            scr_System_CampaignManager.current.Unregister(revalidated);
+            revalidated.Reset();
+            if (revalidated.Validate())
             {
-                AddPackage_Current(packages_previous[i]);
-                Debug.Log("Re-registered package " + packages_previous[i].DisplayName);
+                AddPackage_Current(revalidated);
+                Debug.Log("Re-registered package " + revalidated.DisplayName);
+                RemovePackageAt_Previous(i);
             }
             else
             {
-                Debug.Log(packages_previous[i].DisplayName+" did not pass re-validation, removed");
+                Debug.Log(revalidated.DisplayName+" did not pass re-validation, removed");
+                RemovePackageAt_Previous(i);
+                // a dropped upgrade gives the round back to its parent act
+                if (revalidated.upgradeResumeAct != null) ResumeUpgradeParent(revalidated);
             }
-            RemovePackageAt_Previous(i);
         }
 
         endjob = false;
@@ -806,6 +832,10 @@ public class Job_Sex_Group : Job
             var chara = scr_System_CampaignManager.current.FindInstanceByID(charaRef);
             // leaving the scene (EndJob removes everyone): every worn condom comes off and is discarded, filled or not
             if (chara != null) SingleUseEquipUtility.TakeOffWornContainers(chara);
+            // the scene ends for her: temporary permissions with everyone still in it expire (EndJob removes everyone in turn)
+            if (chara != null)
+                foreach (var other in actorRefID)
+                    if (other != charaRef) PermissionService.ClearTemporaryForPair(chara, scr_System_CampaignManager.current.FindInstanceByID(other));
             this.actorJoinTime.Remove(charaRef);
             if (chara != null && chara.CurrentJob == this) chara.ChangeCurrentJob(null);
             base.RemoveActor(charaRef);
@@ -930,6 +960,19 @@ public class Job_Sex_Group : Job
                     // the new copy continues it (begin text not logged again); anything else - e.g. replaying an act that
                     // ended (ejaculation) or another pair / position - is a new act. Copies never carry these flags.
                     bool continuation = IsRepeatingSameAct(p);
+
+                    // upgrade (French kiss...): one round in place of its ongoing parent act, which resumes afterwards
+                    ActionPackage upgradeParentAct = null;
+                    if (p.targetCOM.IsUpgrade)
+                    {
+                        upgradeParentAct = FindOngoingAct(p.targetCOM.UpgradeParent, p.DoerRefs, p.ReceiverRefs);
+                        if (upgradeParentAct == null)
+                        {
+                            Debug.Log($"Job_Sex AddPackage: upgrade {p.targetCOM.ID} without its ongoing {p.targetCOM.upgradeFrom}, skipped");
+                            continue;
+                        }
+                        SuspendForUpgrade(upgradeParentAct);
+                    }
                     for (int ii = packages_current.Count - 1; ii >= 0; ii--)
                     {
                         if (UtilityEX.ArePackagesEqual(p, packages_current[ii]))
@@ -985,6 +1028,7 @@ public class Job_Sex_Group : Job
                         }
                         ActionPackage ap = p.Copy();
                         ap.LoggedBegin = continuation;
+                        if (upgradeParentAct != null) ap.upgradeResumeAct = upgradeParentAct;
                         AddPackage_Current(ap);
                         if (isPlayerCOM) scr_System_CampaignManager.current.SetDisplayCOM(ap, scr_System_CampaignManager.displayAP_Reason.isPlayerCOM);
                     }
@@ -1050,6 +1094,139 @@ public class Job_Sex_Group : Job
         return UtilityEX.ArePackagesEqual(a, b) && a.COMVariantID == b.COMVariantID && Utility.ListEquals(a.ReceiverRefs, b.ReceiverRefs);
     }
 
+    static bool IsActOf(ActionPackage p, COM com, List<int> doers, List<int> receivers)
+    {
+        return p is ActionPackage_Sex && p.targetCOM == com && Utility.ListEquals(p.DoerRefs, doers) && Utility.ListEquals(p.ReceiverRefs, receivers);
+    }
+
+    /// <summary>
+    /// The act of com (any variant) between exactly these doers and receivers that is still repeating in this scene: waiting
+    /// for its next round (packages_current) or executing one (packages_previous, Duration > 0). null when there is none.
+    /// Clicking such an act again continues it - no new acceptance roll (AddPackage keeps the running one).
+    /// </summary>
+    public ActionPackage FindOngoingAct(COM com, List<int> doers, List<int> receivers)
+    {
+        if (com == null) return null;
+        foreach (var existing in packages_current)
+            if (existing != null && existing.PackageRepeat && existing.Duration > -1 && IsActOf(existing, com, doers, receivers)) return existing;
+        foreach (var existing in packages_previous)
+            if (existing != null && existing.PackageRepeat && existing.Duration > 0 && IsActOf(existing, com, doers, receivers)) return existing;
+        return null;
+    }
+
+    /// <summary> The package's act continues without a new acceptance roll: an ongoing act clicked again. An upgrade always rolls. </summary>
+    public bool ContinuesWithoutRoll(ActionPackage p)
+    {
+        if (p == null || p.targetCOM == null || p.targetCOM.IsUpgrade) return false;
+        return FindOngoingAct(p.targetCOM, p.DoerRefs, p.ReceiverRefs) != null;
+    }
+
+    /// <summary>
+    /// Upgrade start: the ongoing parent act is disabled for this round like a replaced act, but without its remove text
+    /// (the upgrade carries on from it), and kept on the upgrade to be revived when the upgrade ends. Stays in
+    /// packages_previous until the next PostUpdateTime, so the upgrade's begin texts see it (existsPreviousCOM).
+    /// </summary>
+    bool IsSuspendedForUpgrade(ActionPackage parentAct)
+    {
+        foreach (var p in packages_current) if (p != null && p.upgradeResumeAct == parentAct) return true;
+        foreach (var p in packages_previous) if (p != null && p.upgradeResumeAct == parentAct) return true;
+        return false;
+    }
+
+    void SuspendForUpgrade(ActionPackage parentAct)
+    {
+        parentAct.LoggedBegin = true;
+        parentAct.PackageRepeat = false;
+        parentAct.DisablePackage();
+        int index = packages_current.IndexOf(parentAct);
+        if (index >= 0)
+        {
+            MovePackageToPrevious(index);
+        }
+        else
+        {   // mid-round (not a player decision point): stop the running round
+            scr_System_CampaignManager.current.Unregister(parentAct);
+        }
+    }
+
+    /// <summary>
+    /// Upgrade end (completed, refused, or dropped): its parent act comes back as a normal repeat - accepted result and EP
+    /// results kept (Repeat keeps requested / epjson), ongoing text instead of begin text - when its actors are still here.
+    /// A parent revived mid-round (the upgrade was refused at its start) joins the running round through InjectPackage
+    /// (aligned and registered at once - otherwise the acts drift apart and the update never stops), so mid-round it must
+    /// run serially: from the event-callback drain, never inside the scheduler pass or the parallel PostUpdateTime.
+    /// </summary>
+    public void ResumeUpgradeParent(ActionPackage upgrade)
+    {
+        var parentAct = upgrade.upgradeResumeAct;
+        upgrade.upgradeResumeAct = null;
+        if (parentAct == null || parentAct.targetCOM == null) return;
+        foreach (var actor in parentAct.actorRefs)
+            if (!actorRefID.Contains(actor)) return;
+        if (FindOngoingAct(parentAct.targetCOM, parentAct.DoerRefs, parentAct.ReceiverRefs) != null) return;
+
+        packages_completed.Remove(parentAct);
+        RemovePackage_Previous(parentAct);
+        parentAct.Repeat();
+        parentAct.PackageRepeat = true;
+        if (IsRoundRunning()) InjectPackage(parentAct, true);
+        else AddPackage_Current(parentAct);
+    }
+
+    /// <summary> A sex act of this scene is mid-round (started and not yet finished). </summary>
+    bool IsRoundRunning()
+    {
+        foreach (var running in packages_previous)
+            if (running is ActionPackage_Sex && running.Ticked && running.Duration > 0) return true;
+        return false;
+    }
+
+    /// <summary>
+    /// Validates a refused upgrade's forced retry while its parent act is still set aside (it comes back after this update
+    /// step, ResumeUpgradeParent): the parent briefly stands in packages_current for the upgrade's requireExisting.
+    /// </summary>
+    public bool ValidateUpgradeRetry(ActionPackage retry, ActionPackage parentAct)
+    {
+        bool standIn = parentAct != null && !packages_current.Contains(parentAct);
+        if (standIn) AddPackage_Current(parentAct);
+        bool valid = retry.Validate();
+        if (standIn) RemovePackageAt_Current(packages_current.IndexOf(parentAct));
+        return valid;
+    }
+
+    /// <summary>
+    /// An act injected mid-round (a demand's resumed act, a condom command, a forced retry after a refusal) joins the
+    /// round already running: its first round ends with the scene's running acts. Otherwise the player's repeating acts
+    /// drift apart, one is always mid-round when the update loop ends, and the update keeps continuing by itself.
+    /// </summary>
+    public override void InjectPackage(ActionPackage ap, bool skipExistingActors = false)
+    {
+        // an injected upgrade (the forced retry after its refusal) takes its parent's round like a clicked one
+        if (ap is ActionPackage_Sex && ap.targetCOM != null && ap.targetCOM.IsUpgrade && ap.upgradeResumeAct == null)
+        {
+            var parentAct = FindOngoingAct(ap.targetCOM.UpgradeParent, ap.DoerRefs, ap.ReceiverRefs);
+            if (parentAct != null)
+            {
+                SuspendForUpgrade(parentAct);
+                ap.upgradeResumeAct = parentAct;
+                // its actors are the parent act's, already here: re-adding them (AddActor) would re-validate this upgrade
+                // with its parent set aside, drop it for a missing prerequisite and still register it below
+                skipExistingActors = true;
+            }
+        }
+        if (ap is ActionPackage_Sex)
+        {
+            for (int i = 0; i < packages_previous.Count; i++)
+            {
+                var running = packages_previous[i];
+                if (running == ap || !(running is ActionPackage_Sex) || !running.Ticked || running.Duration <= 0) continue;
+                ap.AlignDuration(running.Duration);
+                break;
+            }
+        }
+        base.InjectPackage(ap, skipExistingActors);
+    }
+
     public override List<ActionPackage> GetConflictPackages(ActionPackage a)
     {
         List<ActionPackage> tooltips = new List<ActionPackage>();
@@ -1068,6 +1245,11 @@ public class Job_Sex_Group : Job
                     if (UtilityEX.ArePackagesEqual(p, packages_current[ii]))
                     {
 
+
+                    }
+                    // an upgrade's parent act is only suspended for the round, it resumes afterwards
+                    else if (p.targetCOM.IsUpgrade && IsActOf(packages_current[ii], p.targetCOM.UpgradeParent, p.DoerRefs, p.ReceiverRefs))
+                    {
 
                     }
                     else if (UtilityEX.DetectConflict(p, packages_current[ii]))
@@ -1306,8 +1488,9 @@ public class Job_Sex_Group : Job
         var target = scr_System_CampaignManager.current.FindInstanceByID(targetRef);
         if (target == null || target == c || HasPenetrationBetween(c.RefID, targetRef)) return false;
 
-        var candidates = this.allusableCOMs.FindAll(x =>
-            (restrictTags.Count < 1 || Utility.ListContainsStrict(x.comTags, restrictTags))
+        // upgrades (French kiss...) are player-only for now: NPC strong rounds stay SetForced / isStrongPenetration
+        var candidates = this.allusableCOMs.FindAll(x => !x.IsUpgrade
+            && (restrictTags.Count < 1 || Utility.ListContainsStrict(x.comTags, restrictTags))
             && (occupiedBodyTags.Count < 1 || !Utility.ListContainsLoose(x.requirements.requirement.doerBodyTags, occupiedBodyTags))
             && (conflictTags.Count < 1 || !Utility.ListContainsLoose(x.comTags, conflictTags)));
         var penetrations = candidates.FindAll(x => TryGetPenetratedSide(x, out _, out _));
@@ -1346,6 +1529,47 @@ public class Job_Sex_Group : Job
             return true;
         }
         return false;
+    }
+
+    /// <summary> Per round (sync point), the chance an NPC turns one of its ongoing acts into one of that act's upgrades. </summary>
+    const double NPCUpgradeChance = 0.3;
+
+    /// <summary>
+    /// An NPC upgrades one of its own ongoing acts (sole doer) that has upgrade commands (COM.upgradeFrom): one round of an
+    /// upgrade in its place, through AddPackage like the player's - it rolls its own acceptance, and the act resumes
+    /// afterwards (ResumeUpgradeParent). The upgrade is drawn evenly from every valid (act, upgrade) pair, and drawn again
+    /// at every round boundary (an upgrade never repeats).
+    /// </summary>
+    bool TryNPCUpgrade(Character_Trainable c, ref string ss)
+    {
+        if (Utility.Random.NextDouble() >= NPCUpgradeChance) return false;
+
+        bool rapist = Rapist.Contains(c.RefID);
+        ActionPackage_Sex chosen = null;
+        string chosenFrom = "";
+        int found = 0;
+        foreach (var act in packages_current)
+        {
+            if (!(act is ActionPackage_Sex) || act.targetCOM == null || !act.targetCOM.HasUpgrades || !act.PackageRepeat || act.Duration < 0) continue;
+            if (act.DoerRefs.Count != 1 || act.DoerRefs[0] != c.RefID) continue;
+            foreach (var upgrade in act.targetCOM.upgrades)
+            {
+                if (upgrade == null || upgrade.hidden) continue;
+                var ap = new ActionPackage_Sex(this, upgrade, new List<int>(act.DoerRefs), new List<int>(act.ReceiverRefs), c.RefID, rapist);
+                if (!ap.Validate()) continue;
+                // keep one valid candidate evenly at random without collecting them
+                found++;
+                if (Utility.Random.Next(found) != 0) continue;
+                chosen = ap;
+                chosenFrom = act.targetCOM.ID;
+            }
+        }
+        if (chosen == null) return false;
+
+        AddPackage(new List<ActionPackage>() { chosen });
+        SetForced(new List<int>() { c.RefID });
+        ss += $"|upgrading {chosenFrom} to {chosen.targetCOM.ID} ({found} candidates)|";
+        return true;
     }
 
     /// <summary> A non-penetrative act raising the penetrated side's stimulation: on the partner, or alone on oneself. </summary>
@@ -1420,6 +1644,9 @@ public class Job_Sex_Group : Job
             else if (isActorGettingRaped(c.RefID)) ss += "|being raped|";
             else if (CollectValidActorAndBodytag(c.RefID, out var validTarget, out var occupiedBodyTags, out var actionCount))
             {
+                // a strong round of one of its ongoing acts (French kiss...), now and then
+                if (!c.Climaxing && TryNPCUpgrade(c, ref ss)) return true;
+
                 List<string> conflictTags = new List<string>();
                 if (c.Climaxing)
                 {
@@ -1479,8 +1706,8 @@ public class Job_Sex_Group : Job
                 if (TryNPCPreparedPenetration(c, randomTarget, occupiedBodyTags, conflictTags, actionCount, ref ss)) return true;
 
                 //Debug.Log($"actor {c.CallName} looking to add sex, actionCount {actionCount} tags {String.Join("|", occupiedBodyTags)}");
-                var listAll = this.allusableCOMs.FindAll(x =>
-                    (restrictTags.Count < 1 || Utility.ListContainsStrict(x.comTags, restrictTags))
+                var listAll = this.allusableCOMs.FindAll(x => !x.IsUpgrade
+                    && (restrictTags.Count < 1 || Utility.ListContainsStrict(x.comTags, restrictTags))
                     && (selected == null ? true : Utility.ListContainsLoose(selected.Base.tags, x.requirements.requirement.doerBodyTags))
                     && (occupiedBodyTags.Count < 1 || !Utility.ListContainsLoose(x.requirements.requirement.doerBodyTags, occupiedBodyTags))
                     && (conflictTags.Count < 1 || !Utility.ListContainsLoose(x.comTags, conflictTags)));
@@ -1564,6 +1791,20 @@ public class Job_Sex_Group : Job
         forceFucking.Clear();
 
         base.PostUpdateTime();
+
+        // upgrades that ended in this update (packages_completed: completed, refused, or their actor left) give the round
+        // back to their parent act. At the round's end it simply repeats; mid-round (refused at its start) it is injected
+        // into the running round, which must happen in the serial callback drain, not in this parallel pass.
+        // Resuming removes the parent from this list, so walk it from the end.
+        bool roundRunning = IsRoundRunning();
+        for (int i = packages_completed.Count - 1; i >= 0; i--)
+        {
+            if (i >= packages_completed.Count) continue;
+            var done = packages_completed[i];
+            if (done == null || done.upgradeResumeAct == null) continue;
+            if (roundRunning) scr_UpdateHandler.current.AddEventCallback(() => ResumeUpgradeParent(done));
+            else ResumeUpgradeParent(done);
+        }
 
         List<string> currs = new List<string>();
         List<string> prevs = new List<string>();

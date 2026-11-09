@@ -391,6 +391,8 @@ public class scr_System_CampaignManager : MonoBehaviour
         //foreach (var i in Index_JobReferenceID.Values) i.OnAfterDeserialize();
 
         Index_JobReferenceID = obj.Jobs;
+        // not saved: recounted from the loaded furniture on first use
+        FurnitureOccupancyUtility.ResetBlockingOccupantCount();
         organizations = obj.Factions;
         Index_ItemReferenceID = obj.Items;
         Index_referenceID = obj.Characters;
@@ -401,6 +403,11 @@ public class scr_System_CampaignManager : MonoBehaviour
         int removedPermissionGrants = PermissionGrants.RemoveMissingCharacters(new HashSet<int>(Index_referenceID.Keys));
         if (removedPermissionGrants > 0)
             Debug.Log($"Permissions: removed {removedPermissionGrants} grants with missing characters on load");
+        DropOrphanedFurnitureJobsOnLoad();
+        // temporary grants used to expire by date only: drop those from earlier days (scene lookup via the job index above)
+        int removedStaleTemporary = PermissionService.RemoveStaleTemporaryOnLoad(scr_System_Time.current.getCurrentTime());
+        if (removedStaleTemporary > 0)
+            Debug.Log($"Permissions: removed {removedStaleTemporary} expired temporary grants on load");
         foreach (var i in Index_JobReferenceID) i.Value.OnAfterDeserialize();
         foreach (var i in Index_ItemReferenceID) i.Value.OnAfterDeserialize();
         // factions require job to already exist
@@ -416,6 +423,17 @@ public class scr_System_CampaignManager : MonoBehaviour
                 if (faction != null)
                     FactionFloorMigration.Reconcile(faction, scr_System_Serializer.current.GetByNameOrID_MapPlan(entry.Value));
             }
+        // district homes declared by the worlds (WorldPlan.initializeResidences) get the same pass
+        foreach (var world in GetLoadedWorldPlans())
+        {
+            if (world.initializeResidences == null) continue;
+            foreach (var entry in world.initializeResidences)
+            {
+                var faction = entry == null ? null : FindFactionByID(entry.factionID);
+                if (faction != null)
+                    FactionFloorMigration.Reconcile(faction, scr_System_Serializer.current.GetByNameOrID_MapPlan(entry.MapPlanID));
+            }
+        }
 
         // Prepare all replacement rooms, reconcile explicit tenants and authored exits, then evacuate
         // obsolete rooms. All registries and faction hooks must be live before this ordered pass.
@@ -455,6 +473,10 @@ public class scr_System_CampaignManager : MonoBehaviour
         // Every registry GetRefID can be checked against is live now.
         ScrubDeletedRefIDs();
 
+        // factions whose template was removed from the data: homes move to current districts, residents are rehoused
+        // (district / hotel) or removed, worker pools go. Needs the new districts (world reconciliation above) and loaded characters.
+        FactionLoadCleanup.DropObsoleteFactions();
+
         this.statisRoomID = obj.statisRoomRef;
         this.tempRoomID = obj.tempRoomRef;
         this.StasisRoom = null;
@@ -468,6 +490,8 @@ public class scr_System_CampaignManager : MonoBehaviour
 
         // recreation sessions relink their members' bookings / inboxes before each character drops what found no session
         RecreationGroups.OnAfterLoad();
+        // fixed-offer posts are world data, never saved: rebuilt now (unheld posted sessions dropped, held ones checked)
+        RecreationBoard.RebuildAfterLoad();
         foreach (var i in Index_referenceID) i.Value.PostReloadUpdate();
         ActivityLifecycleLoading = false;
         RecreationUtility.RebuildActivityLifecycle(Index_referenceID.Values);
@@ -500,7 +524,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         foreach (var job in Index_JobReferenceID.Values)
         {
             if (job is Job_Sex_Group sexJob && !sexJob.IsEnded)
-                FindSexJobInRoom(sexJob.ParentRoom);
+                FindSexJobInScope(sexJob.ParentRoom, sexJob.ScopeRef);
         }
 
         NotifyUpdate();
@@ -1256,6 +1280,24 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     [SerializeField] Dictionary<int, Job> Index_JobReferenceID = new Dictionary<int, Job>();
 
+    /// <summary>
+    /// characters kept inside room dividers that block visibility (stalls), over all furniture - the one-off recount
+    /// behind FurnitureOccupancyUtility.AnyoneInBlockingDivider. Walks the job index (no allocation), not the characters.
+    /// </summary>
+    public int CountBlockingDividerOccupants()
+    {
+        int n = 0;
+        foreach (var job in Index_JobReferenceID.Values)
+        {
+            if (job is Job_Furniture f && f.BlocksVisibility)
+            {
+                FurnitureOccupancyUtility.PruneStale(f);
+                n += f.OccupantRefs.Count;
+            }
+        }
+        return n;
+    }
+
     public int GlobalTimeScale { get { return 4; } }
 
     //public void displayDetach(scr_Panel_CurrentChars s)
@@ -1293,6 +1335,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     public void RegisterExecutedAP(ActionPackage ap)
     {
         Map.dirtyCharaAPRef.Add(ap);
+        Map.MarkMoodletsDirty(ap.RoomKey);
         executedPackagesByRoom.Add(ap, ap.RoomKey);
     }
 
@@ -1387,6 +1430,7 @@ public class scr_System_CampaignManager : MonoBehaviour
             else registeredPackagesByRoom[p.RoomKey].Insert(validInsertIndex, p);
         }
         Map.dirtyCharaAPRef.Add(p);
+        Map.MarkMoodletsDirty(p.RoomKey);   // an action starts
     }
     public bool Unregister(ActionPackage p)
     {
@@ -1458,7 +1502,9 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     public bool isCharaVisibleToPlayer(int charaRefID)
     {
-        return CurrentRoom.RoomCharaRefs.Contains(charaRefID);
+        if (!CurrentRoom.RoomCharaRefs.Contains(charaRefID)) return false;
+        // same room, but not behind a stall's door (room dividers blocking visibility)
+        return charaRefID == Player.RefID || MapUtility.CanSee(Player, FindInstanceByID(charaRefID));
         //return Map.IsBothCharaInSameRoom(charaRefID, Player.RefID);// Map.FindRoomByChara(charaRefID) == Map.FindRoomByChara();//.RefID == currentRoomRef;
     }
 
@@ -1680,6 +1726,27 @@ public class scr_System_CampaignManager : MonoBehaviour
         return (a == b || (isPlayerPartyMember(a.RefID) && isPlayerPartyMember(b.RefID)));
     }
 
+    /// <summary>
+    /// Travels with the player: the player, a teammate (party mechanism - isPlayerPartyMember, unchanged) or the
+    /// character the player carries (carry mechanism - Player.CarriedRefID). Two separate mechanisms, each asked on its own.
+    /// </summary>
+    public bool TravelsWithPlayer(int refID)
+    {
+        if (isPlayerPartyMember(refID)) return true;                 // teammate (and the player)
+        return refID > 0 && refID == Player.CarriedRefID;           // carried
+    }
+
+    /// <summary>
+    /// a and b move together: teammates (IsInSameParty - party mechanism, unchanged) or the carrier and the carried
+    /// (carry mechanism). Two separate mechanisms, each asked on its own.
+    /// </summary>
+    public bool TravelsTogether(Character_Trainable a, Character_Trainable b)
+    {
+        if (IsInSameParty(a, b)) return true;                                                   // teammates
+        if (a == null || b == null) return false;
+        return (a.IsCarrying && a.CarriedRefID == b.RefID) || (b.IsCarrying && b.CarriedRefID == a.RefID);   // carrier + carried
+    }
+
     public bool IsDisplayCOM(ActionPackage ap)
     {
         bool returnVal = false;
@@ -1888,6 +1955,33 @@ public class scr_System_CampaignManager : MonoBehaviour
         return this.executedPackagesByRoom.ContainsKey(p);
     }
 
+    /// <summary>
+    /// Load cleanup, before jobs deserialize: furniture jobs whose furniture (or room) was removed from the data since
+    /// the save was made cannot rebuild. Drop them from the registry and from their room; actors still pointing at them
+    /// resolve a null CurrentJob and re-pick work.
+    /// </summary>
+    private void DropOrphanedFurnitureJobsOnLoad()
+    {
+        List<Job_Furniture> orphans = null;
+        foreach (var kvp in Index_JobReferenceID)
+        {
+            if (kvp.Value is Job_Furniture jf && jf.IsOrphanedOnLoad)
+            {
+                if (orphans == null) orphans = new List<Job_Furniture>();
+                orphans.Add(jf);
+            }
+        }
+        if (orphans == null) return;
+
+        for (int i = 0; i < orphans.Count; i++)
+        {
+            var jf = orphans[i];
+            Debug.LogWarning($"Load: dropped furniture job [{jf.RefID}] furniture [{jf.FurnitureBaseID}] room [{jf.ParentRoomID}]: furniture or room no longer exists");
+            map.GetRoomByRef(jf.ParentRoomID)?.DropMissingJobRef(jf.RefID);
+            Index_JobReferenceID.Remove(jf.RefID);
+        }
+    }
+
     public void Unregister(Job j)
     {
         var expeditionJob = j as Job_Expedition;
@@ -1917,20 +2011,42 @@ public class scr_System_CampaignManager : MonoBehaviour
     }
     [NonSerialized, JsonIgnore] private HashSet<int> warnedDuplicateSexJobRooms = new HashSet<int>();
 
-    /// <summary>Returns the lowest-RefID registered, unended sex job in this live map room, including legacy duplicates.</summary>
+    /// <summary>The scene of this live map room's open area (scope -1) - see FindSexJobInScope.</summary>
     public Job_Sex_Group FindSexJobInRoom(Room_Instance room)
+    {
+        return FindSexJobInScope(room, -1);
+    }
+
+    /// <summary>
+    /// Returns the lowest-RefID registered, unended sex job in this live map room's scope (-1 = open area, else the room
+    /// divider it takes place in - one scene each, Plan_FurnitureOccupancy.md §4.5), including legacy duplicates.
+    /// </summary>
+    public Job_Sex_Group FindSexJobInScope(Room_Instance room, int scopeRef)
     {
         if (room == null || map == null || !ReferenceEquals(map.GetRoomByRef(room.RefID), room)) return null;
 
         Job_Sex_Group first = null;
-        foreach (var job in Index_JobReferenceID.Values.OrderBy(x => x.RefID))
+        bool duplicate = false;
+        foreach (var job in Index_JobReferenceID.Values)
         {
-            if (!(job is Job_Sex_Group sexJob) || sexJob.IsEnded || sexJob.ParentRoom?.RefID != room.RefID) continue;
+            if (!(job is Job_Sex_Group sexJob) || sexJob.IsEnded || sexJob.ScopeRef != scopeRef || sexJob.ParentRoom?.RefID != room.RefID) continue;
             if (first == null) first = sexJob;
-            else if (!ReferenceEquals(first, sexJob) && warnedDuplicateSexJobRooms.Add(room.RefID))
-                Debug.LogWarning($"Multiple unended sex jobs registered in room {room.RefID}; using first job {first.RefID}, leaving legacy jobs unchanged.");
+            else
+            {
+                duplicate = true;
+                if (sexJob.RefID < first.RefID) first = sexJob;
+            }
         }
+        if (duplicate && warnedDuplicateSexJobRooms.Add(room.RefID))
+            Debug.LogWarning($"Multiple unended sex jobs registered in room {room.RefID} scope {scopeRef}; using first job {first.RefID}, leaving legacy jobs unchanged.");
         return first;
+    }
+
+    /// <summary> the scene where c is: c's room and scope (open area / the divider c is inside) </summary>
+    public Job_Sex_Group FindSexJobForViewer(Character_Trainable c)
+    {
+        if (c == null || map == null) return null;
+        return FindSexJobInScope(map.FindRoomByChara(c.RefID), c.ScopeRef);
     }
 
     /// <summary>Returns the lowest-RefID registered, unended sex job containing the actor, regardless of CurrentJob.</summary>
@@ -1947,12 +2063,23 @@ public class scr_System_CampaignManager : MonoBehaviour
     /// <summary>Checks new-scene entry only. Join/event callers must resolve and reuse an existing job separately.</summary>
     public bool CanStartSexJob(Room_Instance room, out string reason)
     {
+        return CanStartSexJob(room, -1, out reason);
+    }
+
+    /// <summary> new scene in room's scope (-1 = open area, else a room divider - which must allow sex) </summary>
+    public bool CanStartSexJob(Room_Instance room, int scopeRef, out string reason)
+    {
         if (room == null || map == null || !ReferenceEquals(map.GetRoomByRef(room.RefID), room))
         {
             reason = "ui_sexEntry_invalidRoom";
             return false;
         }
-        if (FindSexJobInRoom(room) != null)
+        if (!FurnitureOccupancyUtility.ScopeAllowsSex(scopeRef))
+        {
+            reason = "ui_sexEntry_scopeNoSex";
+            return false;
+        }
+        if (FindSexJobInScope(room, scopeRef) != null)
         {
             reason = "ui_sexEntry_roomOccupied";
             return false;
@@ -1971,7 +2098,7 @@ public class scr_System_CampaignManager : MonoBehaviour
             foreach (var registered in Index_JobReferenceID.Values)
             {
                 if (registered is Job_Sex_Group occupied && !ReferenceEquals(occupied, candidate)
-                    && !occupied.IsEnded && occupied.ParentRoom?.RefID == room.RefID) return -1;
+                    && !occupied.IsEnded && occupied.ScopeRef == candidate.ScopeRef && occupied.ParentRoom?.RefID == room.RefID) return -1;
             }
         }
 
@@ -3077,10 +3204,12 @@ public class scr_System_CampaignManager : MonoBehaviour
     }
 
 
-    private void UpdateCurrentTarget()
+    /// <summary> the current target is dropped when the player no longer sees them (room change, a room divider's door between them) </summary>
+    public void UpdateCurrentTarget()
     {
         if (currentTarget == 0) return;
-        if (currentTarget > 0 && CharaRefInCurrentRoom.Contains(currentTarget)) return;
+        // in the room and not behind a stall's door (room dividers blocking visibility)
+        if (currentTarget > 0 && isCharaVisibleToPlayer(currentTarget)) return;
         ChangeCurrentTarget(0);
     }
 
@@ -3098,6 +3227,8 @@ public class scr_System_CampaignManager : MonoBehaviour
     {
         MoveCharacterTo(FindInstanceByID(charaRef), Map.GetRoomByRef(targetRoomRef));
     }
+    [NonSerialized][JsonIgnore] bool movingCarried = false;
+
     public void MoveCharacterTo(Character_Trainable charaRef, Room_Instance targetRoomRef, bool silent = false)
     {
         bool playerMoved = false;
@@ -3110,6 +3241,9 @@ public class scr_System_CampaignManager : MonoBehaviour
         if (charaRef.RefID == CurrentTargetRef || charaRef.RefID == 0) updateTarget = true;
         //if (charaLocation[charaRef] == currentRoomRef) updateTarget = true;
         //else if (targetRoomRef == currentRoomRef && currentTarget < 1) updateTarget = true;
+
+        // the carried character moved by something other than the player carrying them (event, kidnapping...) - no longer carried
+        if (!movingCarried && charaRef.RefID != 0 && FurnitureOccupancyUtility.IsCarriedRef(charaRef.RefID)) Player.ClearCarried();
 
         Map.MoveCharaTo(charaRef, targetRoomRef, silent);
 
@@ -3132,6 +3266,14 @@ public class scr_System_CampaignManager : MonoBehaviour
 #endif
                     teammate.ChangeCurrentJob(null);
                 }
+            }
+            // the character the player carries (携带) comes along
+            var carried = charaRef.Carried;   // the player's own carried (carry mechanism, not the party)
+            if (carried != null)
+            {
+                movingCarried = true;
+                try { MoveCharacterTo(carried, targetRoomRef, silent); }
+                finally { movingCarried = false; }
             }
             ChangeCurrentRoom(Map.GetRoomByRef(targetRoomRef.RefID));
             //UpdateScene();
@@ -3220,6 +3362,13 @@ public class scr_System_CampaignManager : MonoBehaviour
         if (organizations.TryGetValue(faction.ID, out var existing)) return existing;
         organizations.Add(faction.ID, faction);
         return faction;
+    }
+
+    /// <summary>Load cleanup only (FactionLoadCleanup): takes an emptied, released faction out of the registry.</summary>
+    public void RemoveFaction(Manageable faction)
+    {
+        if (faction == null) return;
+        if (organizations.TryGetValue(faction.ID, out var registered) && registered == faction) organizations.Remove(faction.ID);
     }
 
     public Manageable FindorAddSubfactionByID(string id, Manageable prevOwner)
@@ -3589,7 +3738,51 @@ public static class WorldManager
             }
         }
 
+        // district homes: instantiated after the mesh so they never join it, then registered with their district
+        InstantiateResidences(world, allFloors);
+
         return allFloors;
+    }
+
+    /// <summary>
+    /// WorldPlan.initializeResidences: instantiates each missing home from its own factionInit (an existing one only gets
+    /// its missing authored floors, like a world faction), then registers it as a home of its district
+    /// (ResidenceUtility.AdoptResidence - idempotent, also adopts homes of saves made before the move). The districts
+    /// must already exist (world initializeFactions). See Docs/Locations/Plan_HouseholdsIntoDistricts.md.
+    /// </summary>
+    static void InstantiateResidences(WorldPlan world, Dictionary<int, Floor_Instance> allFloors)
+    {
+        if (world.initializeResidences == null) return;
+        var campaign = scr_System_CampaignManager.current;
+        foreach (var entry in world.initializeResidences)
+        {
+            if (entry == null || string.IsNullOrEmpty(entry.factionID)) continue;
+            var mapPlan = scr_System_Serializer.current.GetByNameOrID_MapPlan(entry.MapPlanID);
+            if (mapPlan == null)
+            {
+                Debug.LogError($"InstantiateResidences: cannot find MapPlan [{entry.MapPlanID}] for home [{entry.factionID}] in world [{world.worldID}]");
+                continue;
+            }
+            var district = campaign.FindFactionByID(entry.districtID);
+            if (district == null)
+            {
+                Debug.LogError($"InstantiateResidences: district [{entry.districtID}] of home [{entry.factionID}] not found in world [{world.worldID}]");
+                continue;
+            }
+
+            var home = campaign.FindFactionByID(entry.factionID);
+            if (home == null)
+            {
+                campaign.FindOrAddFaction(entry.factionID, entry.MapPlanID);
+                foreach (var kvpF in Instantiate(mapPlan, entry.factionID, true)) allFloors[kvpF.Key] = kvpF.Value;
+                home = campaign.FindFactionByID(entry.factionID);
+            }
+            else FactionFloorMigration.Reconcile(home, mapPlan);
+            if (home == null) continue;
+
+            // the caller (Map.AddWorldTemplate) adds the floors to the map and rebuilds pathing afterwards
+            ResidenceUtility.AdoptResidence(district, home, entry.templateID, false);
+        }
     }
 
     public static Dictionary<int, Floor_Instance> Instantiate(MapPlan map, string factionOverride = "", bool disablePlayerInit = false, bool disableCharaInstantiation = false)

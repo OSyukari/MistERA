@@ -39,6 +39,9 @@ public class Floor_Instance : IDisposable, I_Disposable
             return mapPlan; 
         } }
 
+    /// <summary>Load check: this floor's template was removed from the data since the save was made.</summary>
+    [JsonIgnore] public bool IsTemplateRemoved { get { return !string.IsNullOrEmpty(floorPlanID) && FloorBase == null; } }
+
     Floor_Base floorBase = null;
     [JsonIgnore] public Floor_Base FloorBase { get {
         if (floorBase == null) floorBase = scr_System_Serializer.current.GetByNameOrID_Floor_Base(floorPlanID);
@@ -285,6 +288,13 @@ public class Floor_Instance : IDisposable, I_Disposable
         {
             pendingRoomRemovals = rooms.FindAll(x => x.Base == null);
             pendingRoomAdditions = FloorBase.rooms.FindAll(rb => rooms.Find(x => x.Base != null && x.Base.ID == rb.ID) == null);
+        }
+        else if (!buildpath && IsTemplateRemoved)
+        {
+            // the whole floor template was removed from the data: every room goes (occupants evacuate to a main exit)
+            Debug.LogWarning($"Floor [{refID}] template [{floorPlanID}] no longer exists; removing its {rooms.Count} rooms on load");
+            pendingRoomRemovals = new List<Room_Instance>(rooms);
+            pendingRoomAdditions.Clear();
         }
 
         foreach (var room in rooms)

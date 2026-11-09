@@ -477,7 +477,7 @@
             "actionTags": ["sex"],
             "actions": [{ "id": "action", "all": ["irrumatio"], "roles": { "doer": "actDoer", "receiver": "actReceiver" } }],
             "prompts": ["irrumatio", "fellatio", "forced"],
-            "scenePrompts": ["$doer.shortPrompt$ $doer.be$ receiving oral sex from $receiver.shortPrompt$."],
+            "scenePrompts": ["$doer.shortPrompt$ $doer.be$ performing irrumatio on $receiver.shortPrompt$."],
             "options": {
                 "sizeDifference": [
                     { "id": "extremeSmallSub", "all": ["actReceiver:any:petite", "actDoer:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actReceiver.petite$", "larger $actDoer.horse&!petite$"] },
@@ -487,7 +487,7 @@
                     { "id": "none", "prompts": [] }
                 ],
                 "participants": [
-                    { "id": "human", "none": ["bestiality"], "prompts": ["{deepthroat|hand on another's head|face fucking}"] },
+                    { "id": "human", "none": ["bestiality"], "prompts": ["deepthroat, face fucking, { $doer.shortTag$ hand on $receiver.shortTag$ head | $doer.shortTag$ pulling $receiver.shortTag$ hair },"] },
                     { "id": "bestiality", "all": ["bestiality"], "prompts": ["{deepthroat|face fucking}"] }
                 ],
                 "isfuta": [
@@ -496,7 +496,7 @@
                 ],
                 "camera": [
                     { "id": "pov", "none": ["bestiality"], "all": ["pov_possible"], "view": "pov", "prompts": ["pov"] },
-                    { "id": "random_angles", "view": "external", "prompts": ["{from side|from above}"] }
+                    { "id": "random_angles", "view": "external", "prompts": ["{from side|from below|cowboy shot}"] }
                 ]
             }
         },
@@ -528,7 +528,7 @@
             "id": "blowjob",
             "actionTags": ["sex"],
             "actions": [{ "id": "action", "all": ["blowjob"], "roles": { "doer": "actReceiver", "receiver": "actDoer" } }],
-            "scenePrompts": ["$doer.shortPrompt$ $doer.be$ performing oral stimulation on $receiver.shortPrompt$."],
+            "scenePrompts": ["$doer.shortPrompt$ $doer.be$ giving blowjob to $receiver.shortPrompt$."],
             "prompts": ["fellatio", "{|licking penis|testicle sucking|69, cunnilingus}"],
             "options": {
                 "sizeDifference": [
@@ -577,7 +577,7 @@
             "actionTags": ["sex"],
             "actions": [{ "id": "action", "all": ["cunnilingus"], "roles": { "doer": "actReceiver", "receiver": "actDoer" } }],
             "prompts": ["cunnilingus", "spread legs", "$receiver.lower_front$"],
-            "scenePrompts": ["$doer.shortPrompt$ $doer.be$ performing oral stimulation on $receiver.shortPrompt$."],
+            "scenePrompts": ["$doer.shortPrompt$ $doer.be$ giving cunnilingus to $receiver.shortPrompt$."],
             "options": {
                 "sizeDifference": [
                     { "id": "extremeSmallSub", "all": ["actReceiver:any:petite", "actDoer:any:horse&!petite"], "prompts": ["size difference", "extreme size difference", "smaller $actReceiver.petite$", "larger $actDoer.horse&!petite$"] },
@@ -600,7 +600,7 @@
             "id": "rimjob",
             "actionTags": ["sex"],
             "actions": [{ "id": "action", "all": ["rimjob"], "roles": { "doer": "actReceiver", "receiver": "actDoer" } }],
-            "scenePrompts": ["$doer.shortPrompt$ $doer.be$ performing oral stimulation on $receiver.shortPrompt$."],
+            "scenePrompts": ["$doer.shortPrompt$ $doer.be$ doing rimjob on $receiver.shortPrompt$."],
             "prompts": ["anilingus", "{|handjob, reach-around}", "$receiver.lower_back$"],
             "options": {
                 "sizeDifference": [

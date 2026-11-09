@@ -1,568 +1,360 @@
 {
+    "_comment": "Start and finish share this file. Self remains the COM doer for npcDecides; bather is receiver when present, otherwise doer. Every fallible branch has an unconditional fallback jump to overwrite the failed attempt's continuation. Stage personalities own all dialogue.",
     "Events": {
         "list": [
             {
-                "ID": "com_furniture_takeShower_deflate",
-                "SelfValidator": {
-                    "chara_conditions": [
-                        {
-                            "parameters": [
-                                "canDeflate"
-                            ]
-                        }
-                    ]
-                },
+                "ID": "com_furniture_takeShower_start",
                 "events": [
                     {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "_comment": "opening beat before the branch/kojo cascade below",
-                        "isLast": true,
-                        "line": "com_furniture_takeShower_deflate_start",
-                        "nextEntryLabel": "attempt1"
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "resolve_bather",
+                        "options": [
+                            { "option": "receiver", "target_chara_conditions": { "receiver": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "CopyTargets", "arguments": ["receiver", "bather"] }, { "Type": "JumpToLabel", "arguments": ["", "undress"] }] },
+                            { "option": "solo", "Results": [{ "Type": "CopyTargets", "arguments": ["doer", "bather"] }, { "Type": "JumpToLabel", "arguments": ["", "undress"] }] },
+                            { "option": "missing bather", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "done"] }] }
+                        ]
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-                        "_comment": "block 1: mouth, full deflate. failure skips straight to block 2's attempt rather than aborting.",
+                        "label": "undress",
+                        "options": [
+                            { "option": "removed clothing", "Results": [{ "Type": "Undress", "arguments": ["bather", "None", "Erotic", "false", "true"] }, { "Type": "JumpToLabel", "arguments": ["", "undress_mode"] }] },
+                            { "option": "nothing removable", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "begin_mode"] }] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "undress_mode",
+                        "options": [
+                            { "option": "assisted", "target_chara_conditions": { "receiver": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "undress_assisted"] }] },
+                            { "option": "solo", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "undress_self"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "undress_self", "line": "shower_self_undress", "nextEntryLabel": "undress_self_kojo" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "undress_self_kojo",
+                        "options": [
+                            { "option": "reaction", "Results": [{ "Type": "GetKojoEntry", "arguments": ["bather", "bather", "Shower_Self_Undress", "showerUndressSelf"] }, { "Type": "JumpToLabel", "arguments": ["", "undress_self_reaction"] }] },
+                            { "option": "no reaction", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "begin_mode"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "undress_self_reaction", "line": "$showerUndressSelf$", "nextEntryLabel": "begin_mode" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "undress_assisted", "line": "shower_assisted_undress", "nextEntryLabel": "undress_assisted_kojo" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "undress_assisted_kojo",
+                        "options": [
+                            { "option": "reaction", "Results": [{ "Type": "GetKojoEntry", "arguments": ["bather", "doer", "Shower_Assisted_Undress", "showerUndressAssisted"] }, { "Type": "JumpToLabel", "arguments": ["", "undress_assisted_reaction"] }] },
+                            { "option": "no reaction", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "begin_mode"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "undress_assisted_reaction", "line": "$showerUndressAssisted$", "nextEntryLabel": "begin_mode" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "begin_mode",
+                        "options": [
+                            { "option": "assisted", "target_chara_conditions": { "receiver": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "begin_assisted"] }] },
+                            { "option": "solo", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "begin_self"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "begin_self", "line": "shower_self_begin", "nextEntryLabel": "begin_self_kojo" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "begin_self_kojo",
+                        "options": [
+                            { "option": "reaction", "Results": [{ "Type": "GetKojoEntry", "arguments": ["bather", "bather", "Shower_Self_BeginWash", "showerBeginSelf"] }, { "Type": "JumpToLabel", "arguments": ["", "begin_self_reaction"] }] },
+                            { "option": "no reaction", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "done"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "begin_self_reaction", "line": "$showerBeginSelf$", "nextEntryLabel": "done" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "begin_assisted", "line": "shower_assisted_begin", "nextEntryLabel": "begin_assisted_kojo" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "begin_assisted_kojo",
+                        "options": [
+                            { "option": "reaction", "Results": [{ "Type": "GetKojoEntry", "arguments": ["bather", "doer", "Shower_Assisted_BeginWash", "showerBeginAssisted"] }, { "Type": "JumpToLabel", "arguments": ["", "begin_assisted_reaction"] }] },
+                            { "option": "no reaction", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "begin_helper_kojo"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "begin_assisted_reaction", "line": "$showerBeginAssisted$", "nextEntryLabel": "begin_helper_kojo" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "begin_helper_kojo",
+                        "options": [
+                            { "option": "reaction", "Results": [{ "Type": "GetKojoEntry", "arguments": ["doer", "bather", "Shower_Assisted_HelperBegin", "showerBeginHelper"] }, { "Type": "JumpToLabel", "arguments": ["", "begin_helper_reaction"] }] },
+                            { "option": "no reaction", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "done"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "begin_helper_reaction", "line": "$showerBeginHelper$", "nextEntryLabel": "done" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "done", "line": "", "isLast": true }
+                ]
+            },
+            {
+                "ID": "com_furniture_takeShower_deflate",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "resolve_bather",
+                        "options": [
+                            { "option": "receiver", "target_chara_conditions": { "receiver": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "CopyTargets", "arguments": ["receiver", "bather"] }, { "Type": "JumpToLabel", "arguments": ["", "expel_gate"] }] },
+                            { "option": "solo", "Results": [{ "Type": "CopyTargets", "arguments": ["doer", "bather"] }, { "Type": "JumpToLabel", "arguments": ["", "expel_gate"] }] },
+                            { "option": "missing bather", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "done"] }] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "expel_gate",
+                        "_comment": "Match actual removal: mouth/vagina/anus fully, all other internals only above the partial-expulsion threshold. Empty or zero-volume contents never open the question.",
+                        "options": [
+                            { "option": "mouth contents", "target_chara_conditions": { "bather": [{ "parameters": ["wouldDeflate", "mouth", "true"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "expel_mode"] }] },
+                            { "option": "vaginal contents", "target_chara_conditions": { "bather": [{ "parameters": ["wouldDeflate", "vagina", "true"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "expel_mode"] }] },
+                            { "option": "anal contents", "target_chara_conditions": { "bather": [{ "parameters": ["wouldDeflate", "anus", "true"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "expel_mode"] }] },
+                            { "option": "partial expulsion possible", "target_chara_conditions": { "bather": [{ "parameters": ["wouldDeflate", "", "false"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "expel_mode"] }] },
+                            { "option": "no eligible contents", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "intimacy_gate"] }] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "expel_mode",
+                        "options": [
+                            { "option": "assisted", "target_chara_conditions": { "receiver": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "expel_question_assisted"] }] },
+                            { "option": "solo", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "expel_question_self"] }] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "expel_question_self", "question": "shower_self_expel_question", "npcDecides": true,
+                        "options": [
+                            { "option": "shower_expel_yes", "isDefaultAccept": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "attempt1"] }] },
+                            { "option": "shower_expel_no", "isDefaultCancel": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "intimacy_gate"] }] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "expel_question_assisted", "question": "shower_assisted_expel_question", "npcDecides": true,
+                        "options": [
+                            { "option": "shower_expel_help_yes", "isDefaultAccept": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "attempt1"] }] },
+                            { "option": "shower_expel_no", "isDefaultCancel": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "intimacy_gate"] }] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "label": "attempt1",
                         "options": [
-                            {
-                                "option": "deflate mouth",
-                                "Results": [
-                                    {
-                                        "Type": "DeflateInternal",
-                                        "arguments": [
-                                            "mouth",
-                                            "true",
-                                            "true",
-                                            "deflateMsg1",
-                                            "deflateKojo1",
-                                            "deflateMemory"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "print1"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "option": "deflation failed, skip to next block",
-                                "Results": [
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "attempt2"
-                                        ]
-                                    }
-                                ]
-                            }
+                            { "option": "mouth full", "Results": [{ "Type": "DeflateInternal", "arguments": ["mouth", "true", "true", "deflateMsg1", "", "deflateMemory", "bather"] }, { "Type": "JumpToLabel", "arguments": ["", "print1"] }] },
+                            { "option": "unchanged", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "attempt2"] }] }
                         ]
                     },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "print1", "line": "$deflateMsg1$", "nextEntryLabel": "attempt2" },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-                        "_comment": "block 1 print: prefer kojo text, else fall back to plain message; AlwaysFalse forces both attempts before continuing",
-                        "label": "print1",
-                        "options": [
-                            {
-                                "option": "kojo print attempt",
-                                "Results": [
-                                    {
-                                        "Type": "ExistAppendStrings",
-                                        "arguments": [
-                                            "deflateKojo1"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "FlushAppendStrings",
-                                        "arguments": [
-                                            "deflateKojo1",
-                                            "true"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "AlwaysFalse",
-                                        "arguments": []
-                                    }
-                                ]
-                            },
-                            {
-                                "option": "plain message print attempt",
-                                "Results": [
-                                    {
-                                        "Type": "ExistAppendStrings",
-                                        "arguments": [
-                                            "deflateMsg1"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "FlushAppendStrings",
-                                        "arguments": [
-                                            "deflateMsg1",
-                                            "true"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "AlwaysFalse",
-                                        "arguments": []
-                                    }
-                                ]
-                            },
-                            {
-                                "option": "continue to block 2",
-                                "Results": [
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "attempt2"
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-                        "_comment": "block 2: womb, partial deflate. failure skips straight to block 3's attempt.",
                         "label": "attempt2",
                         "options": [
-                            {
-                                "option": "deflate womb",
-                                "Results": [
-                                    {
-                                        "Type": "DeflateInternal",
-                                        "arguments": [
-                                            "womb",
-                                            "true",
-                                            "false",
-                                            "deflateMsg2",
-                                            "deflateKojo2",
-                                            "deflateMemory"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "print2"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "option": "deflation failed, skip to next block",
-                                "Results": [
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "attempt3"
-                                        ]
-                                    }
-                                ]
-                            }
+                            { "option": "womb partial", "Results": [{ "Type": "DeflateInternal", "arguments": ["womb", "true", "false", "deflateMsg2", "", "deflateMemory", "bather"] }, { "Type": "JumpToLabel", "arguments": ["", "print2"] }] },
+                            { "option": "unchanged", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "attempt3"] }] }
                         ]
                     },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "print2", "line": "$deflateMsg2$", "nextEntryLabel": "attempt3" },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-                        "_comment": "block 2 print",
-                        "label": "print2",
-                        "options": [
-                            {
-                                "option": "kojo print attempt",
-                                "Results": [
-                                    {
-                                        "Type": "ExistAppendStrings",
-                                        "arguments": [
-                                            "deflateKojo2"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "FlushAppendStrings",
-                                        "arguments": [
-                                            "deflateKojo2",
-                                            "true"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "AlwaysFalse",
-                                        "arguments": []
-                                    }
-                                ]
-                            },
-                            {
-                                "option": "plain message print attempt",
-                                "Results": [
-                                    {
-                                        "Type": "ExistAppendStrings",
-                                        "arguments": [
-                                            "deflateMsg2"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "FlushAppendStrings",
-                                        "arguments": [
-                                            "deflateMsg2",
-                                            "true"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "AlwaysFalse",
-                                        "arguments": []
-                                    }
-                                ]
-                            },
-                            {
-                                "option": "continue to block 3",
-                                "Results": [
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "attempt3"
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-                        "_comment": "block 3: vagina, full deflate. failure skips straight to block 4's attempt.",
                         "label": "attempt3",
                         "options": [
-                            {
-                                "option": "deflate vagina",
-                                "Results": [
-                                    {
-                                        "Type": "DeflateInternal",
-                                        "arguments": [
-                                            "vagina",
-                                            "true",
-                                            "true",
-                                            "deflateMsg3",
-                                            "deflateKojo3",
-                                            "deflateMemory"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "print3"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "option": "deflation failed, skip to next block",
-                                "Results": [
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "attempt4"
-                                        ]
-                                    }
-                                ]
-                            }
+                            { "option": "vagina full", "Results": [{ "Type": "DeflateInternal", "arguments": ["vagina", "true", "true", "deflateMsg3", "", "deflateMemory", "bather"] }, { "Type": "JumpToLabel", "arguments": ["", "print3"] }] },
+                            { "option": "unchanged", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "attempt4"] }] }
                         ]
                     },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "print3", "line": "$deflateMsg3$", "nextEntryLabel": "attempt4" },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-                        "_comment": "block 3 print",
-                        "label": "print3",
-                        "options": [
-                            {
-                                "option": "kojo print attempt",
-                                "Results": [
-                                    {
-                                        "Type": "ExistAppendStrings",
-                                        "arguments": [
-                                            "deflateKojo3"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "FlushAppendStrings",
-                                        "arguments": [
-                                            "deflateKojo3",
-                                            "true"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "AlwaysFalse",
-                                        "arguments": []
-                                    }
-                                ]
-                            },
-                            {
-                                "option": "plain message print attempt",
-                                "Results": [
-                                    {
-                                        "Type": "ExistAppendStrings",
-                                        "arguments": [
-                                            "deflateMsg3"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "FlushAppendStrings",
-                                        "arguments": [
-                                            "deflateMsg3",
-                                            "true"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "AlwaysFalse",
-                                        "arguments": []
-                                    }
-                                ]
-                            },
-                            {
-                                "option": "continue to block 4",
-                                "Results": [
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "attempt4"
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-                        "_comment": "block 4: anus, full deflate. failure skips straight to the cleanup pass.",
                         "label": "attempt4",
                         "options": [
-                            {
-                                "option": "deflate anus",
-                                "Results": [
-                                    {
-                                        "Type": "DeflateInternal",
-                                        "arguments": [
-                                            "anus",
-                                            "true",
-                                            "true",
-                                            "deflateMsg4",
-                                            "deflateKojo4",
-                                            "deflateMemory"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "print4"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "option": "deflation failed, skip to cleanup",
-                                "Results": [
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "cleanup"
-                                        ]
-                                    }
-                                ]
-                            }
+                            { "option": "anus full", "Results": [{ "Type": "DeflateInternal", "arguments": ["anus", "true", "true", "deflateMsg4", "", "deflateMemory", "bather"] }, { "Type": "JumpToLabel", "arguments": ["", "print4"] }] },
+                            { "option": "unchanged", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "attempt5"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "print4", "line": "$deflateMsg4$", "nextEntryLabel": "attempt5" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "attempt5",
+                        "options": [
+                            { "option": "remaining partial", "Results": [{ "Type": "DeflateInternal", "arguments": ["", "true", "false", "deflateMsg5", "", "deflateMemory", "bather"] }, { "Type": "JumpToLabel", "arguments": ["", "print5"] }] },
+                            { "option": "unchanged", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "expel_result"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "print5", "line": "$deflateMsg5$", "nextEntryLabel": "expel_result" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "expel_result",
+                        "_comment": "The accumulated memory exists only after an actual expulsion. Do not invent a reaction when every attempt failed.",
+                        "options": [
+                            { "option": "expelled", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["deflateMemory"] }, { "Type": "JumpToLabel", "arguments": ["", "expel_memory"] }] },
+                            { "option": "all failed", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "intimacy_gate"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "expel_memory", "line": "", "Results": [{ "Type": "LogMemoryEntryWithAppend", "arguments": ["bather", "", "deflateMemory", "true"] }], "nextEntryLabel": "expel_kojo_mode" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "expel_kojo_mode",
+                        "options": [
+                            { "option": "assisted", "target_chara_conditions": { "receiver": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "expel_assisted_kojo"] }] },
+                            { "option": "solo", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "expel_self_kojo"] }] }
                         ]
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-                        "_comment": "block 4 print",
-                        "label": "print4",
+                        "label": "expel_self_kojo",
                         "options": [
-                            {
-                                "option": "kojo print attempt",
-                                "Results": [
-                                    {
-                                        "Type": "ExistAppendStrings",
-                                        "arguments": [
-                                            "deflateKojo4"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "FlushAppendStrings",
-                                        "arguments": [
-                                            "deflateKojo4",
-                                            "true"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "AlwaysFalse",
-                                        "arguments": []
-                                    }
-                                ]
-                            },
-                            {
-                                "option": "plain message print attempt",
-                                "Results": [
-                                    {
-                                        "Type": "ExistAppendStrings",
-                                        "arguments": [
-                                            "deflateMsg4"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "FlushAppendStrings",
-                                        "arguments": [
-                                            "deflateMsg4",
-                                            "true"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "AlwaysFalse",
-                                        "arguments": []
-                                    }
-                                ]
-                            },
-                            {
-                                "option": "continue to cleanup",
-                                "Results": [
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "cleanup"
-                                        ]
-                                    }
-                                ]
-                            }
+                            { "option": "reaction", "Results": [{ "Type": "GetKojoEntry", "arguments": ["bather", "bather", "Shower_Self_Expel", "showerExpelSelf"] }, { "Type": "JumpToLabel", "arguments": ["", "expel_self_reaction"] }] },
+                            { "option": "no reaction", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "intimacy_gate"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "expel_self_reaction", "line": "$showerExpelSelf$", "nextEntryLabel": "intimacy_gate" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "expel_assisted_kojo",
+                        "options": [
+                            { "option": "reaction", "Results": [{ "Type": "GetKojoEntry", "arguments": ["bather", "doer", "Shower_Assisted_Expel", "showerExpelAssisted"] }, { "Type": "JumpToLabel", "arguments": ["", "expel_assisted_reaction"] }] },
+                            { "option": "no reaction", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "expel_helper_kojo"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "expel_assisted_reaction", "line": "$showerExpelAssisted$", "nextEntryLabel": "expel_helper_kojo" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "expel_helper_kojo",
+                        "options": [
+                            { "option": "reaction", "Results": [{ "Type": "GetKojoEntry", "arguments": ["doer", "bather", "Shower_Assisted_HelperExpel", "showerExpelHelper"] }, { "Type": "JumpToLabel", "arguments": ["", "expel_helper_reaction"] }] },
+                            { "option": "no reaction", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "intimacy_gate"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "expel_helper_reaction", "line": "$showerExpelHelper$", "nextEntryLabel": "intimacy_gate" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "intimacy_gate",
+                        "options": [
+                            { "option": "assisted only", "target_chara_conditions": { "receiver": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "intimacy_player"] }] },
+                            { "option": "solo", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "wash"] }] }
                         ]
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-                        "_comment": "block 5 (cleanup): no tag filter, PARTIAL deflate, catches any other organ missed by the 4 named blocks above and reduces it back under the visibly-expanded threshold so canDeflate no longer holds anywhere. Still prints like every other block if it actually removed anything.",
-                        "label": "cleanup",
+                        "label": "intimacy_player",
                         "options": [
-                            {
-                                "option": "deflate everything else",
-                                "Results": [
-                                    {
-                                        "Type": "DeflateInternal",
-                                        "arguments": [
-                                            "",
-                                            "true",
-                                            "false",
-                                            "deflateMsg5",
-                                            "deflateKojo5",
-                                            "deflateMemory"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "print5"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "option": "nothing left, silent exit",
-                                "Results": [
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "end"
-                                        ]
-                                    }
-                                ]
-                            }
+                            { "option": "player helper", "target_chara_conditions": { "doer": [{ "parameters": ["isPlayer"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "intimacy_relationship"] }] },
+                            { "option": "player bather", "target_chara_conditions": { "bather": [{ "parameters": ["isPlayer"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "intimacy_relationship"] }] },
+                            { "option": "NPC pair", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "wash"] }] }
                         ]
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-                        "_comment": "block 5 print",
-                        "label": "print5",
+                        "label": "intimacy_relationship",
                         "options": [
-                            {
-                                "option": "kojo print attempt",
-                                "Results": [
-                                    {
-                                        "Type": "ExistAppendStrings",
-                                        "arguments": [
-                                            "deflateKojo5"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "FlushAppendStrings",
-                                        "arguments": [
-                                            "deflateKojo5",
-                                            "true"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "AlwaysFalse",
-                                        "arguments": []
-                                    }
-                                ]
-                            },
-                            {
-                                "option": "plain message print attempt",
-                                "Results": [
-                                    {
-                                        "Type": "ExistAppendStrings",
-                                        "arguments": [
-                                            "deflateMsg5"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "FlushAppendStrings",
-                                        "arguments": [
-                                            "deflateMsg5",
-                                            "true"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "AlwaysFalse",
-                                        "arguments": []
-                                    }
-                                ]
-                            },
-                            {
-                                "option": "end",
-                                "Results": [
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "end"
-                                        ]
-                                    }
-                                ]
-                            }
+                            { "option": "bather toward helper", "target_chara_conditions": { "bather": [{ "parameters": ["hasRelationshipWith", "doer", "relationship_couple", "relationship_fwb", "relationship_marriage"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "intimacy_question"] }] },
+                            { "option": "helper toward bather", "target_chara_conditions": { "doer": [{ "parameters": ["hasRelationshipWith", "bather", "relationship_couple", "relationship_fwb", "relationship_marriage"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "intimacy_question"] }] },
+                            { "option": "not an intimate pair", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "wash"] }] }
                         ]
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "_comment": "log any accumulated deflateMemory into self's own memory; no-op if none of the blocks above ever ran DeflateInternal",
-                        "label": "end",
-                        "isLast": true,
-                        "line": "",
-                        "Results": [
-                            {
-                                "Type": "LogMemoryEntryWithAppend",
-                                "arguments": [
-                                    "self",
-                                    "",
-                                    "deflateMemory",
-                                    "true"
-                                ]
-                            }
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "intimacy_question", "question": "shower_intimacy_question", "npcDecides": false,
+                        "options": [
+                            { "option": "shower_intimacy_yes", "target_chara_conditions": { "shower_intimacy_not_implemented": [{ "parameters": ["exists"] }] }, "invalidTooltip": "shower_intimacy_unavailable", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "wash"] }] },
+                            { "option": "shower_intimacy_no", "isDefaultCancel": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "wash"] }] }
                         ]
-                    }
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "wash",
+                        "options": [
+                            { "option": "washed residue", "Results": [{ "Type": "WashTraces", "arguments": ["bather"] }, { "Type": "JumpToLabel", "arguments": ["", "rinse_changed_mode"] }] },
+                            { "option": "no washable traces", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "rinse_plain_mode"] }] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "rinse_changed_mode",
+                        "options": [
+                            { "option": "assisted", "target_chara_conditions": { "receiver": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "rinse_assisted_changed"] }] },
+                            { "option": "solo", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "rinse_self_changed"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "rinse_self_changed", "line": "shower_self_rinse_changed", "nextEntryLabel": "rinse_self_kojo" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "rinse_assisted_changed", "line": "shower_assisted_rinse_changed", "nextEntryLabel": "rinse_assisted_kojo" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "rinse_plain_mode",
+                        "options": [
+                            { "option": "assisted", "target_chara_conditions": { "receiver": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "rinse_assisted_plain"] }] },
+                            { "option": "solo", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "rinse_self_plain"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "rinse_self_plain", "line": "shower_self_rinse_plain", "nextEntryLabel": "rinse_self_kojo" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "rinse_assisted_plain", "line": "shower_assisted_rinse_plain", "nextEntryLabel": "rinse_assisted_kojo" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "rinse_self_kojo",
+                        "options": [
+                            { "option": "reaction", "Results": [{ "Type": "GetKojoEntry", "arguments": ["bather", "bather", "Shower_Self_Rinse", "showerRinseSelf"] }, { "Type": "JumpToLabel", "arguments": ["", "rinse_self_reaction"] }] },
+                            { "option": "no reaction", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "end_mode"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "rinse_self_reaction", "line": "$showerRinseSelf$", "nextEntryLabel": "end_mode" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "rinse_assisted_kojo",
+                        "options": [
+                            { "option": "reaction", "Results": [{ "Type": "GetKojoEntry", "arguments": ["bather", "doer", "Shower_Assisted_Rinse", "showerRinseAssisted"] }, { "Type": "JumpToLabel", "arguments": ["", "rinse_assisted_reaction"] }] },
+                            { "option": "no reaction", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "rinse_helper_kojo"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "rinse_assisted_reaction", "line": "$showerRinseAssisted$", "nextEntryLabel": "rinse_helper_kojo" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "rinse_helper_kojo",
+                        "options": [
+                            { "option": "reaction", "Results": [{ "Type": "GetKojoEntry", "arguments": ["doer", "bather", "Shower_Assisted_HelperRinse", "showerRinseHelper"] }, { "Type": "JumpToLabel", "arguments": ["", "rinse_helper_reaction"] }] },
+                            { "option": "no reaction", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "end_mode"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "rinse_helper_reaction", "line": "$showerRinseHelper$", "nextEntryLabel": "end_mode" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "end_mode",
+                        "options": [
+                            { "option": "assisted", "target_chara_conditions": { "receiver": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "end_assisted"] }] },
+                            { "option": "solo", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "end_self"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "end_self", "line": "shower_self_end", "nextEntryLabel": "end_self_kojo" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "end_self_kojo",
+                        "options": [
+                            { "option": "reaction", "Results": [{ "Type": "GetKojoEntry", "arguments": ["bather", "bather", "Shower_Self_End", "showerEndSelf"] }, { "Type": "JumpToLabel", "arguments": ["", "end_self_reaction"] }] },
+                            { "option": "no reaction", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "done"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "end_self_reaction", "line": "$showerEndSelf$", "nextEntryLabel": "done" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "end_assisted", "line": "shower_assisted_end", "nextEntryLabel": "end_assisted_kojo" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "end_assisted_kojo",
+                        "options": [
+                            { "option": "reaction", "Results": [{ "Type": "GetKojoEntry", "arguments": ["bather", "doer", "Shower_Assisted_End", "showerEndAssisted"] }, { "Type": "JumpToLabel", "arguments": ["", "end_assisted_reaction"] }] },
+                            { "option": "no reaction", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "end_helper_kojo"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "end_assisted_reaction", "line": "$showerEndAssisted$", "nextEntryLabel": "end_helper_kojo" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "end_helper_kojo",
+                        "options": [
+                            { "option": "reaction", "Results": [{ "Type": "GetKojoEntry", "arguments": ["doer", "bather", "Shower_Assisted_HelperEnd", "showerEndHelper"] }, { "Type": "JumpToLabel", "arguments": ["", "end_helper_reaction"] }] },
+                            { "option": "no reaction", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "done"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "end_helper_reaction", "line": "$showerEndHelper$", "nextEntryLabel": "done" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "done", "line": "", "isLast": true }
                 ]
             }
         ]
@@ -570,7 +362,46 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "com_furniture_takeShower_deflate_start": "$self.name$洗得比平时更加仔细。"
+                "shower_self_undress": "$bather.firstname$脱下了能脱下的衣物，将它们放到水流溅不到的地方。",
+                "shower_assisted_undress": "$bather.firstname$能脱下的衣物已被卸下，放在一旁避开水流，留出清洗的余地。",
+                "shower_self_begin": "$bather.firstname$打开淋浴，调好水温，让温水沿着身体流下，开始清洗。",
+                "shower_assisted_begin": "$doer.firstname$打开淋浴，调好水温，将水流移向$bather.firstname$，开始帮忙清洗。",
+                "shower_self_expel_question": "淋浴还在继续。是否让$bather.firstname$排出体内可排出的内容物？",
+                "shower_assisted_expel_question": "淋浴还在继续。是否让$doer.firstname$协助$bather.firstname$排出体内可排出的内容物？",
+                "shower_expel_yes": "排出可排出的内容物",
+                "shower_expel_help_yes": "协助排出可排出的内容物",
+                "shower_expel_no": "不排出，继续清洗",
+                "shower_intimacy_question": "$doer.firstname$与$bather.firstname$仍在淋浴间。是否继续一段亲密互动？",
+                "shower_intimacy_yes": "继续亲密互动（尚未开放）",
+                "shower_intimacy_unavailable": "淋浴中的亲密互动尚未实装。",
+                "shower_intimacy_no": "只完成清洗",
+                "shower_self_rinse_changed": "$bather.firstname$借着水流洗去了身上可洗掉的残留，随后仔细冲洗。",
+                "shower_assisted_rinse_changed": "$doer.firstname$用水流帮$bather.firstname$洗去身上可洗掉的残留，随后仔细冲洗。",
+                "shower_self_rinse_plain": "$bather.firstname$让温水再次流过身体，做最后的冲洗。",
+                "shower_assisted_rinse_plain": "$doer.firstname$将温水缓缓移过$bather.firstname$的身体，帮忙完成最后的冲洗。",
+                "shower_self_end": "$bather.firstname$关掉淋浴，水声渐渐停下。这次清洗结束了。",
+                "shower_assisted_end": "$doer.firstname$关掉淋浴，水声渐渐停下。对$bather.firstname$的清洗结束了。"
+            },
+            "en-us": {
+                "shower_self_undress": "$bather.firstname$ removes the clothing that can be taken off and sets it beyond the spray.",
+                "shower_assisted_undress": "The removable clothing has been taken off $bather.firstname$ and set aside, away from the spray, leaving room to wash.",
+                "shower_self_begin": "$bather.firstname$ turns on the shower, adjusts the temperature, and begins washing under the warm water.",
+                "shower_assisted_begin": "$doer.firstname$ turns on the shower, adjusts the temperature, and directs the warm water over $bather.firstname$ to begin helping with the wash.",
+                "shower_self_expel_question": "The shower is still running. Should $bather.firstname$ expel any internal contents that can be expelled?",
+                "shower_assisted_expel_question": "The shower is still running. Should $doer.firstname$ help $bather.firstname$ expel any internal contents that can be expelled?",
+                "shower_expel_yes": "Expel eligible contents",
+                "shower_expel_help_yes": "Help expel eligible contents",
+                "shower_expel_no": "Leave the contents alone and keep washing",
+                "shower_intimacy_question": "$doer.firstname$ and $bather.firstname$ are still in the shower. Continue with an intimate interaction?",
+                "shower_intimacy_yes": "Continue with intimacy (not yet available)",
+                "shower_intimacy_unavailable": "Intimate interactions in the shower have not been implemented yet.",
+                "shower_intimacy_no": "Just finish washing",
+                "shower_self_rinse_changed": "$bather.firstname$ washes away the removable residue on the body, then rinses carefully.",
+                "shower_assisted_rinse_changed": "$doer.firstname$ helps wash the removable residue off $bather.firstname$, then rinses carefully.",
+                "shower_self_rinse_plain": "$bather.firstname$ lets the warm water run over the body once more for a final rinse.",
+                "shower_assisted_rinse_plain": "$doer.firstname$ slowly directs the warm water over $bather.firstname$ for a final rinse.",
+                "shower_self_end": "$bather.firstname$ turns off the shower. The sound of running water fades, and the wash is complete.",
+                "shower_assisted_end": "$doer.firstname$ turns off the shower. The sound of running water fades, and $bather.firstname$'s wash is complete."
             }
         }
     }

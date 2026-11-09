@@ -112,6 +112,12 @@ public class Manageable : I_Disposable, I_IsJobGiver
             return plan != null && plan.showLockedFloors;
         } }
 
+    /// <summary>MapPlan.listConnectedFloors of this faction's template: its district hub's venue floors also get floor-list buttons.</summary>
+    [JsonIgnore] public bool ListConnectedFloors { get {
+            var plan = string.IsNullOrEmpty(mapPlanID) ? null : scr_System_Serializer.current.GetByNameOrID_MapPlan(mapPlanID);
+            return plan != null && plan.listConnectedFloors;
+        } }
+
     [JsonIgnore] public virtual I_IsJobGiver getLocaleFaction { get { return this; } }
 
     [JsonIgnore] public Manageable Faction { get { return this; } }
@@ -1879,6 +1885,8 @@ public class Manageable : I_Disposable, I_IsJobGiver
         foreach (var i in managedChara)
         {
             if (i.RefID != chara.RefID &&
+                !FurnitureOccupancyUtility.IsInCarry(i) &&   // carrying / being carried (携带): not sought out
+                MapUtility.CanSee(chara, i) &&               // not across a stall's door (PreEvaluate would refuse it)
                 ( scr_System_CentralControl.current.CanInteractWith(chara.RefID, i.RefID) ) &&
                 (!restrainedOnly || i.isRestrained) &&
                 (i.InteractionJob.HasAvailableCOMwithCOMTags (new List<string>() { tag  }))
@@ -3393,6 +3401,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         }
 
         [JsonProperty] protected string targetFactionID = "";
+        [JsonIgnore] public string TargetFactionID { get { return targetFactionID; } }
         protected Manageable targetFactionCache = null;
         [JsonIgnore] public Manageable TargetFaction
         {
@@ -3981,6 +3990,31 @@ public class Manageable : I_Disposable, I_IsJobGiver
         {
             return isPlayerFaction;
         }
+    }
+
+    /// <summary>A faction dropped on load (FactionLoadCleanup): forget the trade orders and obligations held toward it.</summary>
+    public void RemoveTradesWith(string factionID)
+    {
+        if (string.IsNullOrEmpty(factionID) || TradeManager == null) return;
+        TradeOrders.RemoveAll(t => t != null && t.TargetFactionID == factionID);
+        TradeManager.Obligations.RemoveAll(o => o != null && o.targetFactionID == factionID);
+    }
+
+    /// <summary>
+    /// This faction is dropped on load (FactionLoadCleanup - its template no longer exists; members, rooms and links are
+    /// already gone): unregister its rally job, destroy its inventory and unhook its time observers.
+    /// </summary>
+    public void ReleaseOnDrop()
+    {
+        if (rallyJobID != -1)
+        {
+            var job = scr_System_CampaignManager.current.FindJobInstanceByID(rallyJobID, false);
+            if (job != null) scr_System_CampaignManager.current.Unregister(job);
+            rallyJobID = -1;
+            _rallyJob = null;
+        }
+        _inventory?.Destroy();
+        DisposeInternal();
     }
 
     public void DisposeInternal()

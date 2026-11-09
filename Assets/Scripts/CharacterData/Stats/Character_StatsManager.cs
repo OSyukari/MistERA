@@ -41,12 +41,27 @@ public interface I_StatsManager
     public void RestoreAll();
 
     /// <summary>
-    /// Monotonic counter, incremented whenever the modifier universe changes (modifier add/rebuild,
-    /// status add/remove, status variant crossing). Stat caches store the version they were computed
-    /// at and lazily self-invalidate on mismatch.
+    /// Monotonic counter, incremented on structural changes that invalidate every stat (modifier rebuild, status
+    /// add/remove, UpdateStatus). Stat caches store the version they were computed at and lazily self-invalidate on
+    /// mismatch. Finer changes go through the per-stat calls below (Docs/Stats/Plan_StatInvalidation.md).
     /// </summary>
     [JsonIgnore] public int StatModsVersion { get; }
     public void NotifyStatModsChanged();
+
+    // ---- per-stat invalidation (dependency edges captured while nodes compute) ----
+    /// <summary>Brackets a node's recompute: reads registered meanwhile become edges into it. Pair with EndStatCompute.</summary>
+    public void BeginStatCompute(I_StatNode node);
+    public void EndStatCompute(I_StatNode node);
+    /// <summary>A node's value was read: the node computing right now (if any) depends on it.</summary>
+    public void RegisterStatRead(I_StatNode node);
+    /// <summary>A status severity was read by statusMatch (Contains match, as FindStatusByID / GetStatusByStringMatch).</summary>
+    public void RegisterStatusValueRead(string statusMatch);
+    /// <summary>A status' severity value changed (decay, variation tick, SeverityAdd / Set): dirties its value readers.</summary>
+    public void NotifyStatusValueChanged(Status_Instance status);
+    /// <summary>A status crossed into another variant: dirties the stats its old and new variant modifiers target.</summary>
+    public void NotifyStatusIndexChanged(Status_Instance status, int previousIndex);
+    /// <summary>Dirties the node of statID (base / derived / StatusEx) and its readers; no-op when it has no instance.</summary>
+    public void MarkStatDirty(string statID);
 }
 
 public class StatsManager : I_StatsManager
@@ -224,7 +239,91 @@ public class StatsManager : I_StatsManager
     public void NotifyStatModsChanged()
     {
         _statModsVersion++;
+        _anyChangeVersion++;
     }
+
+    #region Per-stat invalidation (Docs/Stats/Plan_StatInvalidation.md)
+    int _anyChangeVersion = 0;
+    /// <summary>
+    /// Bumped by every invalidation, structural or per-stat. For copies that cannot follow per-stat edges
+    /// (CombatStatManager composes it into its own StatModsVersion = the old whole-character behaviour).
+    /// </summary>
+    [JsonIgnore] public int AnyChangeVersion { get { return _anyChangeVersion; } }
+
+    // nodes currently recomputing, innermost last; reads register an edge into the innermost
+    [JsonIgnore] readonly List<I_StatNode> _computeStack = new List<I_StatNode>(4);
+    // status severity readers, by the match string they read with (Contains, as FindStatusByID / GetStatusByStringMatch)
+    [JsonIgnore] readonly Dictionary<string, StatDependents> _statusValueReaders = new Dictionary<string, StatDependents>();
+
+    public void BeginStatCompute(I_StatNode node)
+    {
+        _computeStack.Add(node);
+    }
+    public void EndStatCompute(I_StatNode node)
+    {
+        int last = _computeStack.Count - 1;
+        if (last >= 0 && ReferenceEquals(_computeStack[last], node)) { _computeStack.RemoveAt(last); return; }
+        // unbalanced (an exception skipped an End): drop down to this node so later edges stay correct
+        for (int i = last; i >= 0; i--)
+        {
+            bool found = ReferenceEquals(_computeStack[i], node);
+            _computeStack.RemoveAt(i);
+            if (found) return;
+        }
+    }
+    public void RegisterStatRead(I_StatNode node)
+    {
+        int last = _computeStack.Count - 1;
+        if (last < 0) return;
+        var reader = _computeStack[last];
+        if (!ReferenceEquals(reader, node)) node.Dependents.Add(reader);
+    }
+    public void RegisterStatusValueRead(string statusMatch)
+    {
+        int last = _computeStack.Count - 1;
+        if (last < 0 || string.IsNullOrEmpty(statusMatch)) return;
+        if (!_statusValueReaders.TryGetValue(statusMatch, out var readers))
+        {
+            readers = new StatDependents();
+            _statusValueReaders.Add(statusMatch, readers);
+        }
+        readers.Add(_computeStack[last]);
+    }
+    public void NotifyStatusValueChanged(Status_Instance status)
+    {
+        _anyChangeVersion++;
+        if (_statusValueReaders.Count == 0) return;
+        var id = status.ID;
+        foreach (var kvp in _statusValueReaders)
+            if (id.Contains(kvp.Key)) kvp.Value.MarkAllDirty();
+    }
+    public void NotifyStatusIndexChanged(Status_Instance status, int previousIndex)
+    {
+        // value readers too: summation_capmod reads the index, and an index can move without the value (threshold mod)
+        NotifyStatusValueChanged(status);
+        var variants = status.BaseRef?.variants;
+        if (variants == null) return;
+        if (previousIndex >= 0 && previousIndex < variants.Count) MarkStatIDsDirty(variants[previousIndex].stat_modifiers);
+        MarkStatIDsDirty(status.SeverityModifiers);
+    }
+    void MarkStatIDsDirty(List<Stat_Modifier> mods)
+    {
+        if (mods == null) return;
+        for (int i = 0; i < mods.Count; i++) MarkStatDirty(mods[i].statID);
+    }
+    public void MarkStatDirty(string statID)
+    {
+        _anyChangeVersion++;
+        if (string.IsNullOrEmpty(statID)) return;
+        // stored fields only: an instance not created yet has nothing cached (it computes fresh when created)
+        if (baseStat_STR != null && statID == baseStat_STR.ID) { baseStat_STR.MarkStatDirty(); return; }
+        if (baseStat_CON != null && statID == baseStat_CON.ID) { baseStat_CON.MarkStatDirty(); return; }
+        if (baseStat_PSY != null && statID == baseStat_PSY.ID) { baseStat_PSY.MarkStatDirty(); return; }
+        if (baseStat_WIL != null && statID == baseStat_WIL.ID) { baseStat_WIL.MarkStatDirty(); return; }
+        if (_list_statDerived != null && _list_statDerived.TryGetValue(statID, out var derived)) { derived.MarkStatDirty(); return; }
+        if (_statusInstancesEx.TryGetValue(statID, out var statusEx)) statusEx.MarkStatDirty();
+    }
+    #endregion
 
     public void SetStatusSeverity(string statusID, float severity)
     {
@@ -483,10 +582,12 @@ public class StatsManager : I_StatsManager
     /// <summary>
     /// Only reset statusEX
     /// </summary>
+    /// <summary>The memory-fed StatusEx (MemoryManager.IsMemoryStatID) go dirty; recomputed lazily on the next read.</summary>
     public void RefreshAttitude()
     {
-        if (this.Mood != null) this.Mood.ClearCache();
-        if (this.Stress != null) this.Stress.ClearCache();
+        MarkStatDirty(MemoryManager.MemoryStat_Mood);
+        MarkStatDirty(MemoryManager.MemoryStat_Stress);
+        MarkStatDirty(MemoryManager.MemoryStat_Lust);
     }
 
     List<string> _permanentTags = new List<string>();
@@ -657,6 +758,38 @@ public class StatsManager : I_StatsManager
         return null;
     }
 
+    #region Debug stat queries
+    // For logs: read stored or already-cached state only. Unlike Severity / MaxValue / readiness getters they never evaluate
+    // modifiers, fill caches or consume RNG. Cached StatusEx severity: StatusEx_Instance.Debug_TryGetCachedSeverity.
+
+    /// <summary>The stored value of the statbar (HP, ST...) whose parent ID is statbarID - false when this character has none.</summary>
+    public bool Debug_TryGetStatbarValue(string statbarID, out float value)
+    {
+        for (int i = 0; i < list_statsExtended.Count; i++)
+        {
+            var bar = list_statsExtended[i];
+            if (bar == null || bar.StoredParentID != statbarID) continue;
+            value = bar.Value;
+            return true;
+        }
+        value = 0f;
+        return false;
+    }
+
+    /// <summary>Appends the stored severity of every status matching statusID (FindStatusByID matching), comma separated.</summary>
+    public void Debug_AppendStoredStatusSeverities(string statusID, System.Text.StringBuilder sb)
+    {
+        bool first = true;
+        foreach (var i in _statusInstances)
+        {
+            if (!i.Key.Contains(statusID)) continue;
+            if (!first) sb.Append(',');
+            sb.Append(i.Value.StoredSeverity.ToString(System.Globalization.CultureInfo.InvariantCulture));
+            first = false;
+        }
+    }
+    #endregion
+
 
     private Status_Instance climaxing = null;
     [JsonIgnore] public Status_Instance Climaxing { get { if (climaxing == null) climaxing = GetStatusByStringMatch("chara_status_climaxing"); return climaxing; } }
@@ -784,6 +917,10 @@ public class StatsManager : I_StatsManager
                 results.Add(mod);
             }
         }
+
+        // Launched recreation activities supply live, derived moodlets. They are intentionally not stored in
+        // Modifiers_Temporary: participation is the source of truth and repeated dispatches must not stack them.
+        Job_Activity.AppendActivityMoodletModifiers(Owner, statID, results);
 
         // and grab status modifiers
 
@@ -977,7 +1114,11 @@ public class StatsManager : I_StatsManager
         if (timestopped) return;
         for (int i = StatusInstances.Count - 1; i >= 0; i--)
         {
-            if (!StatusInstances[i].BaseRef.constant) StatusInstances[i].elapsedTime += minutes;
+            var status = StatusInstances[i];
+            if (status.BaseRef.constant) continue;
+            status.elapsedTime += minutes;
+            // Severity includes Variation(elapsedTime): a time-driven variation moved the value without SeverityAdd
+            if (status.hasTimeVariation) NotifyStatusValueChanged(status);
         }
     }
 
@@ -999,9 +1140,13 @@ public class StatsManager : I_StatsManager
 
         bool refresh = false;
 
-        var keys = _statusInstances.Keys.ToArray();
-        foreach (var key in keys)
+        // snapshot: the loop removes / adds statuses. Reused buffer - one call per character per minute
+        var keys = _statusKeyScratch;
+        keys.Clear();
+        foreach (var key in _statusInstances.Keys) keys.Add(key);
+        for (int k = 0; k < keys.Count; k++)
         {
+            var key = keys[k];
             // TotalMinutes, not Minutes: the Minutes component is 0 for whole-hour spans (EndDormantState catch-up)
             int time = (int)(Owner.isTimeStopped ? t.TotalMinutes : t_real.TotalMinutes);
             var curr = _statusInstances[key];
@@ -1098,6 +1243,8 @@ public class StatsManager : I_StatsManager
         if (refresh) UpdateStatus();
 
     }
+
+    [JsonIgnore] readonly List<string> _statusKeyScratch = new List<string>();
 
     [JsonIgnore] protected bool hasSexualStimulation { get { return pauseXMinAfterMod > 0 || (SexStimulation != null && SexStimulation.Severity != 0) ; } }
 

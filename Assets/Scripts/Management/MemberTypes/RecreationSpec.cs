@@ -21,6 +21,16 @@ public class RecreationSpec
 }
 
 /// <summary>
+/// Additive adjustment to a character's recreation preference.
+/// </summary>
+public class RecreationWeightMod
+{
+    public float modValue = 0f;
+    /// <summary>Checked against the deciding character as self; null is unconditional.</summary>
+    public Event.EventScope_Self condition = null;
+}
+
+/// <summary>
 /// One bookable activity - of a recreation membership (RecreationSpec.activities), or a recreation offer's
 /// (RecreationOfferDef.AsActivity). Its workModule drives the visit like a shift drives a worker: the booking copies its
 /// schedule part, and the default behavior_job (TryFindScheduledJobNode, a booked visit's branch) does one random
@@ -35,6 +45,13 @@ public class RecreationActivity
     /// <summary>Unique within the membership; with the faction ID it keys the activity's cooldown / weekly target (faction ID + ":" + this).</summary>
     public string ID = "";
 
+    /// <summary>Daily scheduling category, shared across venues. Empty imposes no category limit.</summary>
+    public string mainTypeTag = "";
+    /// <summary>Preference metadata, not actor tags or execution identities.</summary>
+    public List<string> secondaryTags = new List<string>();
+    /// <summary>Additive character-dependent adjustments to baseWeight; all matching entries apply.</summary>
+    public List<RecreationWeightMod> weightMods = new List<RecreationWeightMod>();
+
     /// <summary>Stable conflict/merge identity; empty uses ID, never a localized name or cooldown tag.</summary>
     public string typeID = "";
     public bool allowMultipleInstances = true;
@@ -47,6 +64,13 @@ public class RecreationActivity
     public List<string> replaceCommands = new List<string>();
     /// <summary>Enrolled execution commands on furniture/the linked child job. Empty keeps workCommands; entry always uses wait/join.</summary>
     public List<string> activityCommands = new List<string>();
+    /// <summary>
+    /// While launched, the covered commands in the activity's rooms are its own: non-participants lose the normal
+    /// command there too ("the range is booked"). False (default): non-participants keep the normal command next to the
+    /// activity's bound copies - public places (a stroll, a meal) must stay usable for everyone else. Participants only
+    /// ever get the bound copy either way (Room_Instance.AllowsActivityCommand / AllowsUnboundActivityCommand).
+    /// </summary>
+    public bool exclusiveUse = false;
 
     public string TypeID { get { return string.IsNullOrEmpty(typeID) ? ID : typeID; } }
 
@@ -126,6 +150,15 @@ public class RecreationActivity
     public string gatherFailedEventID = "";
 
     /// <summary>
+    /// Event fired when a launched visit of this activity runs its course (Job_Activity.EndJob - the booked hours are
+    /// over; never after a failed gathering or a cancellation). Gets the outcome events' targets / AppendStrings plus
+    /// keptPromise (who earned the trust reward) and activityEnded - self only decides visibility. "" = the generic
+    /// Recreation_Activity_End (Data/Events/Recreation/recreation_activity_events.json - only notes the end); a custom
+    /// one may add its own relationship bonuses (the trust reward is paid by the job at the launch either way).
+    /// </summary>
+    public string endEventID = "";
+
+    /// <summary>
     /// Behavior nodes swapped in while a visit of this activity is in effect, keyed by FindJobNode.behaviorOverrideID -
     /// same shape as MemberType.behaviorOverrides, and checked before the acting MemberType's (FindJobNodeRoot.TryGetJob).
     /// Null = none (the booked visit runs its workModule through the default tree).
@@ -140,6 +173,12 @@ public class RecreationActivity
     /// with the MemberType's) - e.g. more accepting while out to have fun. Null = none.
     /// </summary>
     public List<PersonalityAcceptanceMod> AcceptanceMods = null;
+
+    /// <summary>Additional D20 acceptance points between actual participants of this execution and invitation group.</summary>
+    public int provideAcceptanceBonus = 0;
+
+    /// <summary>Derived status contribution while actually participating in a launched execution; null = none.</summary>
+    public RecreationActivityMoodlet activityMoodlet = null;
 
     /// <summary>
     /// Optional outfit (Character_Wardrobe) worn during a visit of this activity - e.g. a swimsuit. Copied into the
@@ -183,7 +222,14 @@ public class RecreationActivity
     /// <summary>Allows extra participants to walk in, independently of invitation visibility. Conservative default: false.</summary>
     public bool allowWalkIn = false;
 
-    /// <summary>Reserved for future activity-level trust payouts, not the generic 0.1 interaction reward. Conservative default: false.</summary>
+    /// <summary>
+    /// Activity-level trust payout (not the generic 0.1 interaction reward): at the launch, everyone who agreed to take
+    /// part beforehand (a confirmed attendee - never a walk-in) and showed up on time (present at the launch - never a
+    /// latecomer) gains Trust towards each other one of them (Job_Activity.AwardKeptPromiseTrust), logged in the begin
+    /// event's message log - so a launchEventID must FlushMessageExpAll on its initial-launch path (a silent launch gets
+    /// Recreation_Activity_TrustReward). Also sets the activityTrustEligible AppendString on the outcome events.
+    /// Conservative default: false.
+    /// </summary>
     public bool trustRewardEligible = false;
 
     /// <summary>Who a character booking a visit invites along (null = RecreationInviteSpec.Default; solo = nobody).</summary>
@@ -208,12 +254,20 @@ public class RecreationActivity
     public int MaxHours { get { return System.Math.Max(MinHours, System.Math.Min(maxHours, RecreationUtility.MaxSegmentHours)); } }
 }
 
+/// <summary>Optional sustained status contribution supplied by a launched recreation activity.</summary>
+public class RecreationActivityMoodlet
+{
+    public int stress = 0;
+    public int mood = 0;
+    public int lust = 0;
+}
+
 /// <summary>RecreationActivity.requireMedia: which media item the visit needs (ItemComponent_Media) and what its participants do during it.</summary>
 public class RecreationMediaRequirement
 {
     /// <summary>The item's comp_Media.mediaTags must contain this (e.g. "movie", "game"). "" = any media.</summary>
     public string mediaTag = "";
-    /// <summary>The short repeating command of the session (e.g. com_media_watch) - an item's own comp_Media.sessionCommandID wins.</summary>
+    /// <summary>The command the session runs - an ordinary furniture command with per-item children (e.g. com_furniture_watchVideo; the item's child "_&lt;itemID&gt;" is used when it exists). An item's own comp_Media.sessionCommandID wins.</summary>
     public string sessionCommandID = "";
 }
 

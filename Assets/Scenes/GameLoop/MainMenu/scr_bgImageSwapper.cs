@@ -124,7 +124,9 @@ public class scr_bgImageSwapper : MonoBehaviour
                 else if (room.Base != null) // inactive
                 {
                     if (!faction.isWorldDay && room.Base.roomImagePath_Inactive_Night != "") imagepath = room.Base.roomImagePath_Inactive_Night;
-                    else imagepath = room.Base.roomImagePath_Inactive;
+                    else if (room.Base.roomImagePath_Inactive != "") imagepath = room.Base.roomImagePath_Inactive;
+                    else if (!faction.isWorldDay && room.Base.roomImagePath_Night != "") imagepath = room.Base.roomImagePath_Night;
+                    // else default
                 }
             }
             

@@ -89,6 +89,8 @@ public class scr_Panel_CurrentCharList : scr_Menu
         {
             AddChara(chara);
         }
+        // who is behind a room divider's door may have changed (entering / leaving a stall)
+        ValidateAll();
     }
 
     private void OnPlayerPartyChange(bool value) { ValidateAll(); }
@@ -214,6 +216,18 @@ public class scr_Panel_CurrentCharList : scr_Menu
                 //transform.SetSiblingIndex(0);
             }
             else text.Toggle(true, false);
+
+            // in the room, but behind a room divider's door (stall): listed, not selectable
+            if (!scr_System_CampaignManager.current.isCharaVisibleToPlayer(refID))
+            {
+                var campaign = scr_System_CampaignManager.current;
+                var c = campaign.FindInstanceByID(refID);
+                var where = FurnitureOccupancyUtility.ScopeName(c);
+                if (where.Length < 1) where = FurnitureOccupancyUtility.ScopeName(campaign.Player);
+                tooltip = LocalizeDictionary.QueryThenParse("ui_charList_obscured").Replace("$name$", firstName).Replace("$furniture$", where);
+                return false;
+            }
+            tooltip = "";
 
           //  if (scr_System_CampaignManager.current.displaySex){
           //      tooltip += "Cannot change target via this button during Training";

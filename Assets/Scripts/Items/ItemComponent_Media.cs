@@ -17,7 +17,7 @@ public class ItemComponentTemplate_Media
     public string startEventID = "";
     /// <summary>Event fired when a session of it ends (after runtimeMinutes; targets participants). "" = none.</summary>
     public string endEventID = "";
-    /// <summary>The short repeating command the session's participants run ("" = the activity's RecreationMediaRequirement.sessionCommandID).</summary>
+    /// <summary>The command the session's participants run, e.g. com_furniture_watchVideo ("" = the activity's RecreationMediaRequirement.sessionCommandID).</summary>
     public string sessionCommandID = "";
 
     /// <summary>The media template of item base itemBaseID (its first comp_Media), or null.</summary>

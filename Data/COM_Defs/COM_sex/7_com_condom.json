@@ -49,7 +49,7 @@
                         "req_Receivers": { "BodyTags": ["penis"], "minRevealingScore": 1, "requireConscious": false, "requireAction": false }
                     }
                 },
-                "AcceptanceCheck": { "baseAcceptanceValue": 25, "SkillBonus_Doer": ["skill_sexSkill_service"] },
+                "AcceptanceCheck": { "baseAcceptanceValue": 19, "SkillBonus_Doer": ["skill_sexSkill_service"] },
                 "DifficultyCheck": { "baseD20Check": 10 },
                 "variants": [
                     {
@@ -79,7 +79,7 @@
                         "req_Receivers": { "BodyTags": ["penis"], "minRevealingScore": 1, "requireConscious": false, "requireAction": false }
                     }
                 },
-                "AcceptanceCheck": { "baseAcceptanceValue": 27, "SkillBonus_Doer": ["skill_sexSkill_service"] },
+                "AcceptanceCheck": { "baseAcceptanceValue": 21, "SkillBonus_Doer": ["skill_sexSkill_service"] },
                 "DifficultyCheck": { "baseD20Check": 15 },
                 "variants": [
                     {
@@ -110,7 +110,7 @@
                         "req_Receivers": { "BodyTags": ["arm"] }
                     }
                 },
-                "AcceptanceCheck": { "baseAcceptanceValue": 25, "SkillBonus_Receiver": ["skill_sexSkill_service"] },
+                "AcceptanceCheck": { "baseAcceptanceValue": 19, "SkillBonus_Receiver": ["skill_sexSkill_service"] },
                 "DifficultyCheck": { "baseD20Check": 10 },
                 "variants": [
                     {
@@ -141,7 +141,7 @@
                         "req_Receivers": { "BodyTags": ["mouth"] }
                     }
                 },
-                "AcceptanceCheck": { "baseAcceptanceValue": 27, "SkillBonus_Receiver": ["skill_sexSkill_service"] },
+                "AcceptanceCheck": { "baseAcceptanceValue": 21, "SkillBonus_Receiver": ["skill_sexSkill_service"] },
                 "DifficultyCheck": { "baseD20Check": 15 },
                 "variants": [
                     {
@@ -203,7 +203,7 @@
                         "req_Receivers": { "BodyTags": ["penis"], "requireConscious": false, "requireAction": false }
                     }
                 },
-                "AcceptanceCheck": { "baseAcceptanceValue": 25, "SkillBonus_Doer": ["skill_sexSkill_service"] },
+                "AcceptanceCheck": { "baseAcceptanceValue": 19, "SkillBonus_Doer": ["skill_sexSkill_service"] },
                 "DifficultyCheck": { "baseD20Check": 10 },
                 "variants": [
                     {
@@ -235,7 +235,7 @@
                         "req_Receivers": { "BodyTags": ["arm"] }
                     }
                 },
-                "AcceptanceCheck": { "baseAcceptanceValue": 25, "SkillBonus_Receiver": ["skill_sexSkill_service"] },
+                "AcceptanceCheck": { "baseAcceptanceValue": 19, "SkillBonus_Receiver": ["skill_sexSkill_service"] },
                 "DifficultyCheck": { "baseD20Check": 10 },
                 "variants": [
                     {

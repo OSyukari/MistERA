@@ -6,6 +6,8 @@
                 "ID":"Katsuragi_Household",
                 "z_rotation":0.0,
                 "isPublic":false,
+                "showLockedFloors":true,
+                "_comment_residence":"home in 独栋住宅区 jp_district_houses (world.json initializeResidences), no world door",
                 "setPrivateRoomOwner":true,
                 "mainExit": { "roomID": "4ldk_floor_1L_frontDoor", "exitCost": 5 },
                 "floors":[

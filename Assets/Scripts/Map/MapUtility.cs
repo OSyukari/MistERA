@@ -4,6 +4,131 @@ using static UnityEngine.UI.GridLayoutGroup;
 
 public static class MapUtility
 {
+    // ---- visibility inside a room: room dividers (stalls) - Docs/Furniture/Plan_FurnitureOccupancy.md §5 ----
+    // Same room assumed (callers already iterate one room). Same scope (open area / same divider) = see each other;
+    // otherwise only when neither side is inside a divider that blocks visibility (a jail cell does not, a stall does).
+    // Nobody inside a blocking divider game-wide (FurnitureOccupancyUtility.AnyoneInBlockingDivider, a cached count):
+    // answered at once. Otherwise O(1): two ScopeRef reads, a job lookup only for a divider.
+
+    /// <summary> a scope (divider RefID, -1 = open area) whose inside cannot be seen from outside (and vice versa) </summary>
+    public static bool IsBlockingScope(int scope)
+    {
+        if (scope < 0) return false;
+        var f = scr_System_CampaignManager.current.FindJobInstanceByID(scope) as Job_Furniture;
+        return f != null && f.BlocksVisibility;
+    }
+
+    public static bool CanSeeScope(int scopeA, int scopeB)
+    {
+        if (scopeA == scopeB) return true;
+        return !IsBlockingScope(scopeA) && !IsBlockingScope(scopeB);
+    }
+
+    /// <summary> a and b (same room) see each other </summary>
+    public static bool CanSee(Character_Trainable a, Character_Trainable b)
+    {
+        if (a == null || b == null) return false;
+        if (ReferenceEquals(a, b)) return true;
+        if (!FurnitureOccupancyUtility.AnyoneInBlockingDivider) return true;   // nobody in a stall: nobody hidden
+        return CanSeeScope(a.ScopeRef, b.ScopeRef);
+    }
+
+    /// <summary> observer (same room) sees what ap does - the package takes place where its first doer is </summary>
+    public static bool CanSee(Character_Trainable observer, ActionPackage ap)
+    {
+        if (observer == null || ap == null) return false;
+        if (!FurnitureOccupancyUtility.AnyoneInBlockingDivider) return true;   // nobody in a stall: nobody hidden
+        return CanSeeScope(observer.ScopeRef, PackageScope(ap));
+    }
+
+    /// <summary>
+    /// where ap takes place: its first doer's scope (a stall's commands run inside it, its Enter outside). All its actors
+    /// share one scope - a package across a divider's door (actors inside and outside) is an error and is logged.
+    /// </summary>
+    public static int PackageScope(ActionPackage ap)
+    {
+        var doers = ap.DoerRefs;
+        if (doers == null || doers.Count < 1) return -1;
+        var campaign = scr_System_CampaignManager.current;
+        var c = campaign.FindInstanceByID(doers[0]);
+        int scope = c == null ? -1 : c.ScopeRef;
+
+        var actors = ap.actorRefs;
+        for (int i = 0; actors != null && i < actors.Count; i++)
+        {
+            var a = campaign.FindInstanceByID(actors[i]);
+            if (a == null || a.ScopeRef == scope) continue;
+            Debug.LogWarning($"[Visibility] mixed-scope package {ap.DisplayName} (job {ap.job?.RefID}): doer {c?.FirstName} in scope {scope}, actor {a.FirstName} in scope {a.ScopeRef}");
+            break;
+        }
+        return scope;
+    }
+
+    /// <summary> no actor of refs is visible to c (refs empty = not actor bound, visible) - message filtering </summary>
+    public static bool NoneVisibleTo(Character_Trainable c, List<int> refs)
+    {
+        if (c == null || refs == null || refs.Count < 1) return false;
+        if (!FurnitureOccupancyUtility.AnyoneInBlockingDivider) return false;   // nobody in a stall: nobody hidden
+        int scope = c.ScopeRef;
+        var campaign = scr_System_CampaignManager.current;
+        for (int i = 0; i < refs.Count; i++)
+        {
+            if (refs[i] == c.RefID) return false;
+            var a = campaign.FindInstanceByID(refs[i]);
+            if (a == null || CanSeeScope(scope, a.ScopeRef)) return false;
+        }
+        return true;
+    }
+
+    /// <summary>
+    /// RefreshMoodlets for everyone in chara: each from the characters they see. No divider blocks anyone (the common
+    /// case) = the whole list, as before; otherwise a per-character visible subset in one reused buffer (RefreshMoodlets
+    /// only iterates it).
+    /// </summary>
+    public static void RefreshMoodletsVisible(List<Character_Trainable> chara)
+    {
+        bool anyBlocked = false;
+        if (FurnitureOccupancyUtility.AnyoneInBlockingDivider)   // nobody in a stall anywhere: skip even the per-room check
+            for (int i = 0; i < chara.Count && !anyBlocked; i++)
+                if (chara[i] != null && chara[i].IsInBlockingDivider) anyBlocked = true;
+
+        if (!anyBlocked)
+        {
+            for (int i = 0; i < chara.Count; i++) chara[i]?.Relationships.RefreshMoodlets(chara);
+            return;
+        }
+        var visible = _moodletBuffer;
+        for (int i = 0; i < chara.Count; i++)
+        {
+            var self = chara[i];
+            if (self == null) continue;
+            visible.Clear();
+            for (int j = 0; j < chara.Count; j++) if (chara[j] != null && CanSee(self, chara[j])) visible.Add(chara[j]);
+            self.Relationships.RefreshMoodlets(visible);
+        }
+        visible.Clear();
+    }
+    /// <summary>RefreshMoodlets for self alone, from the characters of roomChara it sees (see above).</summary>
+    public static void RefreshMoodletsVisible(Character_Trainable self, List<Character_Trainable> roomChara)
+    {
+        if (self == null) return;
+        bool anyBlocked = false;
+        if (FurnitureOccupancyUtility.AnyoneInBlockingDivider)
+            for (int i = 0; i < roomChara.Count && !anyBlocked; i++)
+                if (roomChara[i] != null && roomChara[i].IsInBlockingDivider) anyBlocked = true;
+
+        if (!anyBlocked)
+        {
+            self.Relationships.RefreshMoodlets(roomChara);
+            return;
+        }
+        var visible = _moodletBuffer;
+        visible.Clear();
+        for (int j = 0; j < roomChara.Count; j++) if (roomChara[j] != null && CanSee(self, roomChara[j])) visible.Add(roomChara[j]);
+        self.Relationships.RefreshMoodlets(visible);
+        visible.Clear();
+    }
+    static readonly List<Character_Trainable> _moodletBuffer = new List<Character_Trainable>(16);
 
 
     public static bool CheckReverseInterrupt(List<EvaluationPackage> eps, Character_Trainable self, Character_Trainable target)

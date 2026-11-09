@@ -188,6 +188,7 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
             playerInit = self.playerInit ?? parent.playerInit,
             clienteleInfo = self.clienteleInfo.population > 0 ? self.clienteleInfo : parent.clienteleInfo,
             initializeFactions = new Dictionary<string, string>(parent.initializeFactions),
+            initializeResidences = new List<ResidenceInit>(parent.initializeResidences),
             doors = new List<WorldPlan.DoorConnection>(parent.doors),
             npcInit = new List<NPCInit>(parent.npcInit),
             recreationOffers = new List<RecreationOfferDef>(parent.recreationOffers),
@@ -195,6 +196,12 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
             seasonDefs = new List<SeasonDef>(parent.seasonDefs),
         };
         foreach (var kvp in self.initializeFactions) merged.initializeFactions[kvp.Key] = kvp.Value;
+        foreach (var residence in self.initializeResidences)
+        {
+            if (residence == null) continue;
+            merged.initializeResidences.RemoveAll(x => x != null && x.factionID == residence.factionID);
+            merged.initializeResidences.Add(residence);
+        }
         merged.doors.AddRange(self.doors);
         merged.npcInit.AddRange(self.npcInit);
         merged.recreationOffers.AddRange(self.recreationOffers);   // a child's entry with a parent's ID wins (RecreationBoard.FindDef takes the last)
@@ -323,10 +330,24 @@ public class MapPlan
     public string floorListHostFactionID = "";
 
     /// <summary>
+    /// Floor-list UI only, for a district hub (a background-image floor with exits, e.g. a street or a residential
+    /// district): true = the venue floors its exits lead to also get their own button under this faction's block in
+    /// the left floor list (e.g. 独栋住宅区 -> 公园); false (default) = they are only listed in the hub's right-panel
+    /// exit list (e.g. 霓虹街 -> 卡拉OK). District homes are never listed on the left either way.
+    /// </summary>
+    public bool listConnectedFloors = false;
+
+    /// <summary>
     /// Residential district: the homes it may generate (ResidenceUtility.CreateResidence / AssignResidence result). Read
     /// from this template when needed, never saved. Null = not a district.
     /// </summary>
     public ResidentialSpec residential = null;
+
+    /// <summary>
+    /// Hotel: the guest MemberTypes (JoinHandler_HotelGuest, one per room type) characters can be checked in as. Lets code
+    /// find the world's hotels - e.g. rehousing residents of a faction dropped on load (FactionLoadCleanup). Empty = not a hotel.
+    /// </summary>
+    public List<string> hotelGuestMemberTypes = new List<string>();
 
     /// <summary>
     /// A private (isPublic false) faction whose floor buttons are still drawn - visible but locked, e.g. generated homes

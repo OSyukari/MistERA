@@ -16,6 +16,8 @@ public partial class ResponseEntry
     public bool debugLogging = false;
     public string RedirectID = "";
     public bool requirePlayer = true;
+    /// <summary>Opt-in for automatic command Kojo: address the action partner, not an injected master/listener.</summary>
+    public bool useEPPartnerAsTarget = false;
 
 
     public string CheckRedirect(string original)
@@ -40,6 +42,7 @@ public partial class ResponseEntry
     }
     public MessageCollect_KojoEntry GetResponse(KojoCollector kol)
     {
+        if (useEPPartnerAsTarget && !kol.UseEPPartnerAsTarget()) return null;
         if (!Validate(kol.Owner, kol.Target))
         {
             if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.LogError($"Character_Personality GetKOJOMessage evID[{kol.eventID}{kol.suffix}] [{(kol.Owner.FirstName)}{(kol.Target == null ? "" : $" -> {kol.Target.FirstName}")}] self and target validation failed");
@@ -129,7 +132,7 @@ public partial class ResponseEntry
                     if (v2 == null) break;
                     if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("finding epdescription " + v2 + ", replace with " + ep.Description_Ongoing);
                    //v2.message = v2.message.Replace("$epDescription$", ep.Package.targetCOM.DisplayName(ep.Package.COMVariantID));
-                    v2.message = v2.message.Replace("$epDescription$", ep.Package.targetCOM.DisplayName(ep.Package.COMVariantID));
+                    v2.message = v2.message.Replace("$epDescription$", FurnitureOccupancyUtility.CommandNameForKojo(ep.Package));
                     if (responses == null) responses = v2;
                     else
                     {

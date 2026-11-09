@@ -1,0 +1,52 @@
+{
+    "_doc": "Fired from code (RecreationUtility.StartFeeRequest), no trigger: a paid activity's entrance fee put to the paying faction's manager (the participant's priority home - the payer of RecreationUtility.ChargeEntranceFee) - one event per activity occurrence and payer, batched per update (RecreationUtility_FeeApproval). Self = the approver: the player for a player-managed payer, else the payer's first manager - an NPC never sees the question (npcDecides: the isDefaultAccept option, approve). $feeRequestText$ = the activity line, every participant, the ones this payer pays for and the total (built and localized by code). The request is carried only by the event's runtime callbacks (events are never saved): ExecuteCallback approve / decline. Declining drops every participant of the request.",
+    "Events": {
+        "list": [
+            {
+                "ID": "Recreation_FeeApproval",
+                "allowDuplicate": true,
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "ask",
+                        "question": "Recreation_FeeApproval_question",
+                        "npcDecides": true,
+                        "options": [
+                            {
+                                "option": "Recreation_FeeApproval_approve",
+                                "isDefaultAccept": true,
+                                "Results": [
+                                    { "Type": "ExecuteCallbackPermissive", "arguments": [ "approve" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "end" ] }
+                                ]
+                            },
+                            {
+                                "option": "Recreation_FeeApproval_decline",
+                                "isDefaultCancel": true,
+                                "Results": [
+                                    { "Type": "ExecuteCallbackPermissive", "arguments": [ "decline" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "end" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "end",
+                        "line": "",
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "Recreation_FeeApproval_question": "活动费用申请：\n$feeRequestText$",
+                "Recreation_FeeApproval_approve": "批准",
+                "Recreation_FeeApproval_decline": "拒绝"
+            }
+        }
+    }
+}

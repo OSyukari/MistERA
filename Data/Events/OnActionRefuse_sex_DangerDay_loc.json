@@ -1,0 +1,14 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for OnActionRefuse_sex_DangerDay.json. Options and answer lines reuse the event_OnAPRefuse_Unprotected_* keys (OnActionRefuse_sex_Unprotected_loc.json)."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "event_OnAPRefuse_DangerDay_q_plain": "It's $evTarget.name$'s danger day: $evTarget.name$ won't $com_variant_name$ without protection and asks for a condom.",
+                "event_OnAPRefuse_DangerDay_q": "$kojo_demand$\n\n%%event_OnAPRefuse_DangerDay_q_plain%%",
+                "event_OnAPRefuse_DangerDay_push": "%%event_OnAPRefuse_Unprotected_push%%\n\n$kojo_ignore$"
+            }
+        }
+    }
+}

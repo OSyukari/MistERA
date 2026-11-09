@@ -1,12 +1,13 @@
 {
-    "_doc": "House activities every home faction offers its own home members (permanent and temporary home - guests yes, prisoners no: each activity's eligibility), and the family doctor every faction may assign. Not for subfactions / worker pools (Manageable.OffersSharedHouseContent). Each activity is bound to furniture by the command it offers (facility.comTag - never a room ID: the player may move furniture), so a home only offers what its furniture allows (RecreationUtility.FacilityAvailable); the room is chosen when the activity's job is created. Only home members search for these (RecreationUtility.ActivitySources); anyone else may still be invited (BookingCheck.Passes). A faction's own MapPlan.houseActivities entry with the same ID replaces the shared one. Plan: Docs/Utnapishtim_Activities/Plan_UtnapishtimActivities.md. en-us: HouseActivities_loc.json.",
+    "_doc": "House activities every home faction offers its own home members (permanent and temporary home - guests yes, prisoners no: each activity's eligibility), and the family doctor every faction may assign. Not for subfactions / worker pools (Manageable.OffersSharedHouseContent). Each activity is bound to furniture by the command it offers (facility.comTag - never a room ID: the player may move furniture), so a home only offers what its furniture allows (RecreationUtility.FacilityAvailable); the room is chosen when the activity's job is created. Only home members search for these (RecreationUtility.ActivitySources); anyone else may still be invited (BookingCheck.Passes). A faction's own MapPlan.houseActivities entry with the same ID replaces the shared one. Every house activity is trustRewardEligible (Trust between housemates who agreed beforehand and showed up on time - Job_Activity.AwardKeptPromiseTrust) except the family doctor checkup. Plan: Docs/Utnapishtim_Activities/Plan_UtnapishtimActivities.md. en-us: HouseActivities_loc.json.",
     "MapPlans": {
         "sharedHouseActivities": [
             {
                 "ID": "shooting_training",
+                "mainTypeTag": "exercise", "secondaryTags": ["indoor", "shooting", "training"],
                 "typeID": "shooting_training", "allowMultipleInstances": true, "mergeWithSame": true,
                 "conflictsWith": [], "replaceCommandTags": ["training_shooting"],
-                "replaceCommands": [], "activityCommands": ["com_furniture_training_shooting"],
+                "replaceCommands": [], "activityCommands": ["com_furniture_training_shooting"], "exclusiveUse": true,
                 "_comment": "Training visits may share an execution in a qualifying range room; private invitations remain independent.",
                 "workModule": {
                     "jobPostID": "house_activity_shooting_training",
@@ -15,7 +16,7 @@
                 },
                 "facility": { "comTag": "training_shooting", "reserve": "None", "unitCapacity": 2, "dispatchInRoom": true },
                 "eligibility": { "chara_conditions": [ { "parameters": [ "isPrisonerAtHome", "false" ] } ] },
-                "allowWalkIn": true,
+                "allowWalkIn": true, "trustRewardEligible": true, "provideAcceptanceBonus": 5,
                 "minHours": 2, "maxHours": 2,
                 "minDaysBetween": 1,
                 "weeklyTarget": 2,
@@ -39,9 +40,10 @@
             },
             {
                 "ID": "combat_training",
+                "mainTypeTag": "exercise", "secondaryTags": ["indoor", "combat", "training"],
                 "typeID": "combat_training", "allowMultipleInstances": true, "mergeWithSame": true,
                 "conflictsWith": [], "replaceCommandTags": ["training_melee"],
-                "replaceCommands": [], "activityCommands": ["com_furniture_training_melee"],
+                "replaceCommands": [], "activityCommands": ["com_furniture_training_melee"], "exclusiveUse": true,
                 "_comment": "Combat practice shares qualifying arena rooms without holding furniture; private sparring invitations remain independent.",
                 "workModule": {
                     "jobPostID": "house_activity_combat_training",
@@ -50,7 +52,7 @@
                 },
                 "facility": { "comTag": "training_melee", "reserve": "None", "unitCapacity": 2, "dispatchInRoom": true },
                 "eligibility": { "chara_conditions": [ { "parameters": [ "isPrisonerAtHome", "false" ] } ] },
-                "allowWalkIn": true,
+                "allowWalkIn": true, "trustRewardEligible": true, "provideAcceptanceBonus": 5,
                 "minHours": 2, "maxHours": 2,
                 "minDaysBetween": 1,
                 "weeklyTarget": 2,
@@ -73,20 +75,21 @@
             },
             {
                 "ID": "movie_session",
+                "mainTypeTag": "movie", "secondaryTags": ["indoor", "home", "media"],
                 "typeID": "movie_session", "allowMultipleInstances": false, "mergeWithSame": true,
                 "conflictsWith": ["group_gaming", "music_practice"], "replaceCommandTags": ["TV"],
-                "replaceCommands": ["com_furniture_watchVideo", "com_furniture_playVideoGames"], "activityCommands": ["com_media_watch"],
-                "_comment": "Selected movie data and runtime are retained when booked. A qualifying TV room with seating hosts one compatible movie execution, replacing ordinary TV viewing and gaming; furniture and inventory copies are not held. The movie comes from the home's own inventory (requireMedia).",
+                "replaceCommands": ["com_furniture_watchVideo", "com_furniture_playVideoGames"], "activityCommands": ["com_furniture_watchVideo"], "exclusiveUse": true,
+                "_comment": "Selected movie data and runtime are retained when booked. A qualifying TV room with seating hosts one compatible movie execution, replacing ordinary TV viewing and gaming; furniture and inventory copies are not held. The movie comes from the home's own inventory (requireMedia). The session (Job_MediaSession) runs the ordinary TV command's per-item child (com_furniture_watchVideo_<itemID> - 30-minute rounds, DC 5, group variant), the same command as sandbox TV viewing.",
                 "workModule": {
                     "jobPostID": "house_activity_movie_session",
                     "workCommands": ["com_furniture_watchVideo"],
                     "activeHours": [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
                 },
                 "facility": { "comTag": "TV", "reserve": "None", "unitCapacity": 0, "requireInRoom": ["rest"], "dispatchInRoom": true },
-                "requireMedia": { "mediaTag": "movie", "sessionCommandID": "com_media_watch" },
+                "requireMedia": { "mediaTag": "movie", "sessionCommandID": "com_furniture_watchVideo" },
                 "launchEventID": "Recreation_MediaSession_Begin",
                 "eligibility": { "chara_conditions": [ { "parameters": [ "isPrisonerAtHome", "false" ] } ] },
-                "allowWalkIn": true,
+                "allowWalkIn": true, "trustRewardEligible": true, "provideAcceptanceBonus": 5,
                 "minHours": 2, "maxHours": 3,
                 "minDaysBetween": 1,
                 "weeklyTarget": 2,
@@ -99,31 +102,31 @@
             },
             {
                 "ID": "group_gaming",
+                "mainTypeTag": "gaming", "secondaryTags": ["indoor", "home", "video_games"],
                 "typeID": "group_gaming", "allowMultipleInstances": false, "mergeWithSame": true,
                 "conflictsWith": ["movie_session", "music_practice"], "replaceCommandTags": ["TV"],
-                "replaceCommands": ["com_furniture_watchVideo", "com_furniture_playVideoGames"], "activityCommands": ["com_media_play"],
-                "_comment": "A game from the home's inventory (requireMedia - comp_Media tagged game; runtime = length) on a TV with seating, played together: always with 1-3 housemates (a required role - never solo; solo gaming stays plain sandbox). Same session flow as movie_session (Job_MediaSession, com_media_play). workCommands = fallback only.",
+                "replaceCommands": ["com_furniture_watchVideo", "com_furniture_playVideoGames"], "activityCommands": ["com_furniture_playVideoGames"], "exclusiveUse": true,
+                "_comment": "A game from the home's inventory (requireMedia - comp_Media tagged game; runtime = length) on a TV with seating, invites 1-3 housemates (optional role - nobody is mandatory; plays alone if none come). Same session flow as movie_session (Job_MediaSession running com_furniture_playVideoGames_<itemID> - the ordinary TV command, DC 10, group variant). workCommands = fallback only.",
                 "workModule": {
                     "jobPostID": "house_activity_group_gaming",
                     "workCommands": ["com_furniture_playVideoGames"],
                     "activeHours": [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
                 },
                 "facility": { "comTag": "TV", "reserve": "None", "unitCapacity": 0, "requireInRoom": ["rest"], "dispatchInRoom": true },
-                "requireMedia": { "mediaTag": "game", "sessionCommandID": "com_media_play" },
+                "requireMedia": { "mediaTag": "game", "sessionCommandID": "com_furniture_playVideoGames" },
                 "launchEventID": "Recreation_MediaSession_Begin",
                 "eligibility": { "chara_conditions": [ { "parameters": [ "isPrisonerAtHome", "false" ] } ] },
-                "allowWalkIn": true,
+                "allowWalkIn": true, "trustRewardEligible": true, "provideAcceptanceBonus": 5,
                 "minDaysBetween": 1,
                 "weeklyTarget": 1,
                 "baseWeight": 0.8,
                 "invite": {
                     "visibility": "Private",
                     "inviteChance": 1.0,
-                    "minParticipants": 2,
+                    "minParticipants": 1,
                     "TargetValidators": [
                         {
                             "refKeys": [ "player2" ],
-                            "required": true,
                             "baseScope": "FactionMembers",
                             "extraScopeArguments": [ "@selfHomeFaction" ],
                             "chara_conditions": [ { "parameters": [ "excludeSelf" ] } ],
@@ -135,9 +138,10 @@
             },
             {
                 "ID": "music_practice",
+                "mainTypeTag": "music", "secondaryTags": ["indoor", "home", "practice"],
                 "typeID": "music_practice", "allowMultipleInstances": false, "mergeWithSame": false,
                 "conflictsWith": ["movie_session", "group_gaming"], "replaceCommandTags": ["music_practice"],
-                "replaceCommands": [], "activityCommands": ["com_furniture_music_practice"],
+                "replaceCommands": [], "activityCommands": ["com_furniture_music_practice"], "exclusiveUse": true,
                 "_comment": "Stage practice conflicts with movie and gaming execution in the same room by activity policy, without exclusive furniture ownership. A piano is for performances, not this.",
                 "workModule": {
                     "jobPostID": "house_activity_music_practice",
@@ -146,7 +150,7 @@
                 },
                 "facility": { "comTag": "music_practice", "reserve": "None", "dispatchInRoom": true },
                 "eligibility": { "chara_conditions": [ { "parameters": [ "isPrisonerAtHome", "false" ] } ] },
-                "allowWalkIn": true,
+                "allowWalkIn": true, "trustRewardEligible": true, "provideAcceptanceBonus": 5,
                 "minHours": 2, "maxHours": 2,
                 "minDaysBetween": 1,
                 "weeklyTarget": 2,
@@ -174,6 +178,7 @@
                 "minDaysBetween": 2,
                 "weeklyTarget": 1,
                 "baseWeight": 0.6,
+                "trustRewardEligible": true, "provideAcceptanceBonus": 5, "activityMoodlet": { "stress": 1 },
                 "invite": {
                     "visibility": "Friends",
                     "inviteChance": 1.0,
@@ -225,6 +230,7 @@
                 "providedActivities": [
                     {
                         "ID": "family_doctor_checkup",
+                        "mainTypeTag": "medical_checkup", "secondaryTags": ["indoor", "health", "doctor"],
                         "_comment": "Booked by each member on their own (the planner): the member hosts a Private session, the doctor is its required provider (any member of their home whose type provides it - providesActivity). One examination bed per checkup (facility medical_checkup, Unit). Every 30 days at most, whoever provides it (cooldownTag medical_checkup). The begin event Checkup_Begin launches Job_Checkup (Data/Events/Recreation/checkup_events.json). workCommands = fallback only (a seat while waiting).",
                         "cooldownTag": "medical_checkup",
                         "workModule": {

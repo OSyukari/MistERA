@@ -1,5 +1,5 @@
 {
-    "_doc": "Ekimae Business Hotel (Docs/Locations/Plan_ResidentialDistricts.md 3). Works like a home that anyone may check into by paying: a guest holds a child of membertype_jp_hotel_guest (one per room type, each with its own Daily membershipFee and room ID prefix) through JoinHandler_HotelGuest - a character with a home gets the hotel as TEMPORARY home (their home stays, they sleep in the owned hotel room since temp homes come first), one without a home becomes a PERMANENT resident (user rule, ResidenceUtility.CheckIntoHotel). NPCs are put here by the AssignHotelGuest event result with the same rule. Check-out = LeaveHandler_HotelGuest (temp-home guests only; a permanent resident leaves only when an event sets a new home) or automatically when the daily fee fails (Hotel_FeeFailed -> CheckOutHotelGuest). Guest rooms are private (bed) and members only (requireFactionMembership); lobby and restaurant are public. Meals: the restaurant's furniture_marker_getmeal at mealHours (non-player faction - one bento in stock is never used up, hospital pattern). World door (725,225), floorExitID hotel_lobby.",
+    "_doc": "Business Hotel (Docs/Locations/Plan_ResidentialDistricts.md 3), reached from the shopping street (no world door of its own). Works like a home that anyone may check into by paying: a guest holds a child of membertype_jp_hotel_guest (one per room type, each with its own Daily membershipFee and room ID prefix) through JoinHandler_HotelGuest - a character with a home gets the hotel as TEMPORARY home (their home stays, they sleep in the owned hotel room since temp homes come first), one without a home becomes a PERMANENT resident (user rule, ResidenceUtility.CheckIntoHotel). NPCs are put here by the AssignHotelGuest event result with the same rule. Check-out = LeaveHandler_HotelGuest (temp-home guests only; a permanent resident leaves only when an event sets a new home) or automatically when the daily fee fails (Hotel_FeeFailed -> CheckOutHotelGuest). Guest rooms are private (bed) and members only (requireFactionMembership); lobby and restaurant are public. Meals: the restaurant's furniture_marker_getmeal at mealHours (non-player faction - one bento in stock is never used up, hospital pattern). World door (725,225), floorExitID hotel_lobby.",
     "_comment_art": "PLACEHOLDER: imagePath/roomImagePath reuse existing BGAssets/Generated art; replace with dedicated art later. Background-image floor with hidden rooms, no room coordinates.",
     "MapPlans": {
         "factionInit": [
@@ -11,6 +11,9 @@
                 "_comment_isRentingFloor": "the hotel owns its building",
                 "mainExit": { "roomID": "hotel_lobby", "exitCost": 5 },
                 "floors": [ { "ID": "floor_jp_hotel_business", "nameOverwrite": "jp_hotel_business" } ],
+                "_comment_floorDoors": "No world door: reached from the shopping street through hidden exits (street <-> to_jp_hotel_business), drawn in the street's block.",
+                "floorListHostFactionID": "jp_shopping_street",
+                "floorDoors": [{ "sourceFloor": "floor_jp_hotel_business", "sourceExit": "street", "targetFaction": "jp_shopping_street", "targetFloor": "floor_jp_shopping_street", "targetExit": "to_jp_hotel_business", "cost": 1 }],
                 "mealHours": [7, 12, 19],
                 "initializers": [
                     { "initClass": "campaign_init_factionInventory", "initArguments": ["", "consumable_bento_box", "", "1"] }
@@ -18,14 +21,16 @@
                 "activeHoursStart": 6,
                 "activeHoursEnd": 23,
                 "managerBaseIDs": [""],
+                "_comment_hotelGuestMemberTypes": "Marks this faction as a hotel (MapPlan.hotelGuestMemberTypes): the guest room types code may check characters in as - e.g. residents rehoused when their home was removed from the data (FactionLoadCleanup).",
+                "hotelGuestMemberTypes": [ "membertype_jp_hotel_guest_single", "membertype_jp_hotel_guest_twin", "membertype_jp_hotel_guest_double" ],
                 "_comment_assignableMemberTypes": "Only the player-joinable restaurant part-time shifts (parent stands for its shifts).",
                 "assignableMemberTypes": [ "membertype_jp_hotel_parttime" ],
                 "joinableMemberTypes": [ "membertype_jp_hotel_parttime" ],
                 "_comment_fallbackWorkers": "Front desk is always staffed (day 08-20 + night 20-08 posts, NPC only) and so is housekeeping by day; the restaurant part-time shifts are left open for NPCs or the player. templateID = CharaTemplateGenerator from JP_World/Characters/templates.json.",
                 "fallbackWorkers": [
-                    { "memberTypeID": "membertype_jp_hotel_frontdesk_day", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" },
-                    { "memberTypeID": "membertype_jp_hotel_frontdesk_night", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" },
-                    { "memberTypeID": "membertype_jp_hotel_housekeeping", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }
+                    { "memberTypeID": "membertype_jp_hotel_frontdesk_day", "headcount": 1, "maxFallback": 0, "templateID": "jp_store_clerk" },
+                    { "memberTypeID": "membertype_jp_hotel_frontdesk_night", "headcount": 1, "maxFallback": 0, "templateID": "jp_store_clerk" },
+                    { "memberTypeID": "membertype_jp_hotel_housekeeping", "headcount": 1, "maxFallback": 0, "templateID": "jp_store_clerk" }
                 ],
                 "salesInventory": [], "workModules": [], "workHours": [], "workAssignment": []
             }
@@ -34,6 +39,7 @@
             {
                 "ID": "floor_jp_hotel_business", "imagePath": "BGAssets/Generated/office_02.webp",
                 "isFloorPlan": false, "floorWidth": 400, "floorHeight": 400, "resize": 1, "mapExit": "hotel_lobby",
+                "exits": [ { "ID": "street", "connectedRoom": "hotel_lobby", "hideOnMap": true } ],
                 "_comment_rooms": "Guest room IDs carry the room-type prefix the guest posts claim rooms by (hotel_room_s_ single, hotel_room_t_ twin, hotel_room_d_ double). Every guest room has a bed (private room) and a bathroom.",
                 "rooms": [
                     { "ID": "hotel_lobby", "displayName": "hotel_lobby", "hideOnMap": true, "connects": [],
@@ -47,21 +53,21 @@
                     { "ID": "hotel_corridor_2", "displayName": "hotel_corridor_2", "hideOnMap": true, "connects": [{ "ID": "hotel_corridor_1", "cost": 2 }],
                       "furnitureIDs": ["furniture_jp_hotel_housekeeping_cart"], "roomImagePath": "BGAssets/Generated/office_hallway_02.webp" },
                     { "ID": "hotel_room_s_101", "displayName": "hotel_room_s_101", "hideOnMap": true, "requireFactionMembership": true, "connects": [{ "ID": "hotel_corridor_1", "cost": 1 }],
-                      "furnitureIDs": ["furniture_bed_single", "furniture_bathroom_set", "furniture_shower"], "roomImagePath": "BGAssets/Generated/office_interior_02.webp" },
+                      "furnitureIDs": ["furniture_bed_single", "furniture_toilet_shower_set", "furniture_shower"], "roomImagePath": "BGAssets/Generated/office_interior_02.webp" },
                     { "ID": "hotel_room_s_102", "displayName": "hotel_room_s_102", "hideOnMap": true, "requireFactionMembership": true, "connects": [{ "ID": "hotel_corridor_1", "cost": 1 }],
-                      "furnitureIDs": ["furniture_bed_single", "furniture_bathroom_set", "furniture_shower"], "roomImagePath": "BGAssets/Generated/office_interior_02.webp" },
+                      "furnitureIDs": ["furniture_bed_single", "furniture_toilet_shower_set", "furniture_shower"], "roomImagePath": "BGAssets/Generated/office_interior_02.webp" },
                     { "ID": "hotel_room_s_103", "displayName": "hotel_room_s_103", "hideOnMap": true, "requireFactionMembership": true, "connects": [{ "ID": "hotel_corridor_1", "cost": 1 }],
-                      "furnitureIDs": ["furniture_bed_single", "furniture_bathroom_set", "furniture_shower"], "roomImagePath": "BGAssets/Generated/office_interior_02.webp" },
+                      "furnitureIDs": ["furniture_bed_single", "furniture_toilet_shower_set", "furniture_shower"], "roomImagePath": "BGAssets/Generated/office_interior_02.webp" },
                     { "ID": "hotel_room_s_104", "displayName": "hotel_room_s_104", "hideOnMap": true, "requireFactionMembership": true, "connects": [{ "ID": "hotel_corridor_1", "cost": 1 }],
-                      "furnitureIDs": ["furniture_bed_single", "furniture_bathroom_set", "furniture_shower"], "roomImagePath": "BGAssets/Generated/office_interior_02.webp" },
+                      "furnitureIDs": ["furniture_bed_single", "furniture_toilet_shower_set", "furniture_shower"], "roomImagePath": "BGAssets/Generated/office_interior_02.webp" },
                     { "ID": "hotel_room_t_201", "displayName": "hotel_room_t_201", "hideOnMap": true, "requireFactionMembership": true, "connects": [{ "ID": "hotel_corridor_2", "cost": 1 }],
-                      "furnitureIDs": ["furniture_bed_single", "furniture_bed_single", "furniture_bathroom_set", "furniture_shower"], "roomImagePath": "BGAssets/Generated/office_interior_03.webp" },
+                      "furnitureIDs": ["furniture_bed_single", "furniture_bed_single", "furniture_toilet_shower_set", "furniture_shower"], "roomImagePath": "BGAssets/Generated/office_interior_03.webp" },
                     { "ID": "hotel_room_t_202", "displayName": "hotel_room_t_202", "hideOnMap": true, "requireFactionMembership": true, "connects": [{ "ID": "hotel_corridor_2", "cost": 1 }],
-                      "furnitureIDs": ["furniture_bed_single", "furniture_bed_single", "furniture_bathroom_set", "furniture_shower"], "roomImagePath": "BGAssets/Generated/office_interior_03.webp" },
+                      "furnitureIDs": ["furniture_bed_single", "furniture_bed_single", "furniture_toilet_shower_set", "furniture_shower"], "roomImagePath": "BGAssets/Generated/office_interior_03.webp" },
                     { "ID": "hotel_room_d_203", "displayName": "hotel_room_d_203", "hideOnMap": true, "requireFactionMembership": true, "connects": [{ "ID": "hotel_corridor_2", "cost": 1 }],
-                      "furnitureIDs": ["furniture_bed_double", "furniture_bathroom_set", "furniture_shower"], "roomImagePath": "BGAssets/Generated/office_interior_04.webp" },
+                      "furnitureIDs": ["furniture_bed_double", "furniture_toilet_shower_set", "furniture_shower"], "roomImagePath": "BGAssets/Generated/office_interior_04.webp" },
                     { "ID": "hotel_room_d_204", "displayName": "hotel_room_d_204", "hideOnMap": true, "requireFactionMembership": true, "connects": [{ "ID": "hotel_corridor_2", "cost": 1 }],
-                      "furnitureIDs": ["furniture_bed_double", "furniture_bathroom_set", "furniture_shower"], "roomImagePath": "BGAssets/Generated/office_interior_04.webp" }
+                      "furnitureIDs": ["furniture_bed_double", "furniture_toilet_shower_set", "furniture_shower"], "roomImagePath": "BGAssets/Generated/office_interior_04.webp" }
                 ]
             }
         ],
@@ -285,7 +291,7 @@
         ]
     },
     "Dictionary": { "Entries": { "zh-cn": {
-        "jp_hotel_business": "站前商务酒店",
+        "jp_hotel_business": "商务酒店（施工中）",
         "hotel_lobby": "酒店大堂", "hotel_restaurant": "酒店餐厅", "hotel_staff_room": "员工休息室", "hotel_corridor_1": "1楼客房走廊", "hotel_corridor_2": "2楼客房走廊",
         "hotel_room_s_101": "101 单人房", "hotel_room_s_102": "102 单人房", "hotel_room_s_103": "103 单人房", "hotel_room_s_104": "104 单人房",
         "hotel_room_t_201": "201 双床房", "hotel_room_t_202": "202 双床房", "hotel_room_d_203": "203 大床房", "hotel_room_d_204": "204 大床房",

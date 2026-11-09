@@ -5,7 +5,13 @@
     "Dictionary": {
         "Entries": {
             "en-us": {
-                "permission_sex_anal": "Ask for: %%permission_sex_anal_displayName%%",
+                "permission_sex_oral": "Ask for: %%permission_sex_oral_displayName%%",
+                "permission_sex_oral_question_plain": "Ask $person.name$ for permission: \"%%permission_sex_oral_displayName%%\"?",
+                "permission_sex_oral_question": "$kojo_ask$\n\n%%permission_sex_oral_question_plain%%",
+                "permission_sex_oral_granted": "$person.name$ gave you permission: %%permission_sex_oral_displayName%%$permission_grant_type$.",
+                "permission_sex_oral_granted_temporary": "$person.name$ gave you permission: %%permission_sex_oral_displayName%%. Your relationship does not meet its prerequisites, so it only lasts for today.",
+
+                "permission_sex_anal":"Ask for: %%permission_sex_anal_displayName%%",
                 "permission_sex_anal_question_plain": "Ask $person.name$ for permission: \"%%permission_sex_anal_displayName%%\"?",
                 "permission_sex_anal_question": "$kojo_ask$\n\n%%permission_sex_anal_question_plain%%",
                 "permission_sex_anal_granted": "$person.name$ gave you permission: %%permission_sex_anal_displayName%%$permission_grant_type$.",

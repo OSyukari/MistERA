@@ -924,7 +924,18 @@ public class Job : IDisposable, I_Disposable
             if(ap.Duration < 2) continue;
             if(ap.actorRefs.Contains(actorRef)) continue;
             if(!ap.AllowJoining) continue;
-            if (furniture != null && !furniture.AllowsActivityCommand(actor, ap.targetCOM)) continue;
+            if (furniture != null)
+            {
+                bool allowed;
+                if (ap.ActivityExecutionRef < 0) allowed = furniture.AllowsUnboundActivityCommand(actor, ap.targetCOM);
+                else
+                {
+                    // the player outside the bound activity: always listed - a walk-in offer (Job_Activity.RequestWalkIn), valid or greyed with the reason
+                    var execution = actorRef == 0 ? scr_System_CampaignManager.current.FindJobInstanceByID(ap.ActivityExecutionRef, false) as Job_Activity : null;
+                    allowed = (execution != null && execution.IsWalkInOffer(ap, actor)) || furniture.AllowsActivityCommand(actor, ap.targetCOM);
+                }
+                if (!allowed) continue;
+            }
             returnVal.Add(ap);
         }
         // These are existing-package joins only. Activity entry offers start their own coordinator package.
@@ -1072,6 +1083,124 @@ public class Job : IDisposable, I_Disposable
         ss = "UpdateActor package on Job";
 
         return false;
+    }
+
+    /// <summary>The package an NPC joins out of joinable (each already passed canJoinAP): the player's, else any - null when empty.</summary>
+    protected static ActionPackage PickJoinable(List<ActionPackage> joinable)
+    {
+        if (joinable == null || joinable.Count == 0) return null;
+        for (int i = 0; i < joinable.Count; i++)
+            if (joinable[i].actorRefs.Contains(0)) return joinable[i];
+        return Utility.GetRandomElement(joinable);
+    }
+
+    /// <summary>
+    /// How an NPC joins an ongoing package (one that passed canJoinAP for them) - every job's NPC join goes through here
+    /// (Job_Furniture, Job_MediaSession): the player's package through the RequestJoin event (the player is asked, then
+    /// JoinAP - c's own acceptance) - except the player's followers, who join straight away (logged); anyone else's
+    /// directly through JoinAP (silent), with the join line when it already runs. A failed join is remembered; one into the player's activity package by a follower makes them leave the party
+    /// (Job_Activity.OnJoinFailed). True while the join is under way / done (c keeps the job), false = c gets no package.
+    /// </summary>
+    protected bool JoinPackage(Character_Trainable c, ActionPackage pl2, ref string ss)
+    {
+        // walking into a paid activity: the fee is put to c's payer first (Job_Activity.HoldWalkInFee) - asked before
+        // joining, so the round is not disturbed; approved, c joins it from the answer
+        if (pl2.ActivityExecutionRef >= 0 && !(this is Job_Activity)
+            && scr_System_CampaignManager.current.FindJobInstanceByID(pl2.ActivityExecutionRef, false) is Job_Activity execution
+            && !execution.TookPart(c) && execution.HoldWalkInFee(c, pl2))
+        {
+            ss += "walk-in fee awaiting approval";
+            return false;
+        }
+        // the player's followers never ask: they join straight away (their own acceptance, logged)
+        bool follower = scr_System_CampaignManager.current.PlayerPartyMembers.Contains(c.RefID);
+        if (!follower && pl2.actorRefs.Contains(scr_System_CampaignManager.current.Player.RefID))
+        {
+            ss += "try join player existing pkg " + pl2.DescriptionText(scr_System_CampaignManager.current.Player.RefID);
+            if (scr_System_CentralControl.current.LogPrefs.DLog_JoinAP) Debug.LogError($"{c.FirstName} try join player {pl2.DescriptionText(scr_System_CampaignManager.current.Player.RefID)}");
+            var ev = new EventInstance(c, "RequestJoin", "");
+            ev.Self = c;
+            ev.Targets.Add("evTarget", new List<Character_Trainable>() { scr_System_CampaignManager.current.Player });
+
+            var rel = c.Relationships.FindRelationshipWith(scr_System_CampaignManager.current.Player);
+
+            var empty = new List<string>() { "" };
+
+            var msg1 = new KojoCollector(c, pl2.targetCOM.ID, "_Tryjoin");
+            msg1.LoadRel(rel);
+            msg1 = c.Relationships.GetKOJOMessage_Suffix(msg1, null);
+            var texts1 = new List<string>();
+            msg1?.DumpMessage(texts1);
+            ev.AppendStrings.Add("kojo_tryjoin", texts1.Count > 0 ? texts1 : empty);
+
+            var msg2 = new KojoCollector(c, pl2.targetCOM.ID, "_Joined");
+            msg2.LoadRel(rel);
+            msg2 = c.Relationships.GetKOJOMessage_Suffix(msg2, null);
+            var texts2 = new List<string>();
+            msg2?.DumpMessage(texts2);
+            ev.AppendStrings.Add("kojo_joined", texts2.Count > 0 ? texts2 : empty);
+
+            var msg3 = new KojoCollector(c, pl2.targetCOM.ID, "_Join_Refused");
+            msg3.LoadRel(rel);
+            msg3 = c.Relationships.GetKOJOMessage_Suffix(msg3, null);
+            var texts3 = new List<string>();
+            msg3?.DumpMessage(texts3);
+            ev.AppendStrings.Add("kojo_join_refused", texts3.Count > 0 ? texts3 : empty);
+
+            var addMems = new List<Action>();
+            ev.FunctionCalls.Add("OnRefusedJoin", addMems);
+
+            var join = new List<Action>();
+            ev.FunctionCalls.Add("FindJoinableAP_Callback", join);
+            join.Add(() => { if (!pl2.JoinAP(c, Memory_Response.None, true)) Job_Activity.OnJoinFailed(c, pl2); });
+
+            string desc = $"failed to join {pl2.DescriptionText()}";
+            var mem = new MemInstance(pl2.actorRefs, new List<string>(pl2.ComTags), pl2.targetCOM.ID, pl2.COMVariantID, pl2.masterRef, false, Memory_Response.Refuse, Memory_Attitude.None, desc);
+#if UNITY_EDITOR
+            addMems.Add(() => Debug.LogError($"OnRefuseJoin fired on {c.FirstName} for job {pl2.DescriptionText(scr_System_CampaignManager.current.Player.RefID)}"));
+#endif
+            addMems.Add(() => c.Memory.AddEntry(mem, new List<string>()));
+            addMems.Add(() => c.ChangeCurrentJob(null));
+            addMems.Add(() => Job_Activity.OnJoinFailed(c, pl2));
+
+            scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
+            actorJobComplete.Add(c.RefID);
+            return true;
+        }
+        else if (pl2.JoinAP(c, Memory_Response.None, !follower))
+        {
+            ss += $"join existing pkg {(pl2.Ticked ? "ONGOING" : "SILENT")} {pl2.DescriptionText(c.RefID)}";
+
+            if (pl2.Ticked)
+            {
+                // make an event that skip straight to join print since joining is already handled
+                var empty = new List<string>() { "" };
+                var ev = new EventInstance(c, "RequestJoin", "br_join");
+                ev.Self = c;
+                var tActors = new List<Character_Trainable>();
+                foreach (var a in pl2.actorRefs) if (a != c.RefID) tActors.Add(scr_System_CampaignManager.current.FindInstanceByID(a));
+                ev.Targets.Add("evTarget", tActors);
+                ev.AppendStrings.Add("kojo_joined", empty);
+                ev.AppendStrings.Add("kojo_join_refused", empty);
+                ev.AppendStrings.Add("kojo_tryjoin", empty);
+
+                scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
+                if (scr_System_CentralControl.current.LogPrefs.DLog_JoinAP) Debug.Log($"{scr_System_Time.current.getCurrentTime()}: {c.FirstName} join existing package {pl2.DescriptionText(c.RefID)}");
+
+            }
+            else if (scr_System_CentralControl.current.LogPrefs.DLog_JoinAP) Debug.Log($"{scr_System_Time.current.getCurrentTime()}: {c.FirstName} NOT TICKED, SILENT JOIN {pl2.DescriptionText(c.RefID)}");
+
+            return true;
+        }
+        else
+        {
+            // failed to join npc package
+            string desc = $"failed to join {pl2.DescriptionText()}";
+            var mem = new MemInstance(pl2.actorRefs, new List<string>(pl2.ComTags), pl2.targetCOM.ID, pl2.COMVariantID, pl2.masterRef, false, Memory_Response.Refuse, Memory_Attitude.None, desc);
+            c.Memory.AddEntry(mem, new List<string>());
+            if (follower) Job_Activity.OnJoinFailed(c, pl2);
+            return false;
+        }
     }
 
     [JsonIgnore] public virtual bool isPlayerRelatedJob { get { return this.actorRefID.Contains(0) 
@@ -1227,7 +1356,9 @@ public class Job : IDisposable, I_Disposable
             // Duration 0 meaning they just run, meaning
             if (p.Duration <= 0)
             {
-                
+                // an action ends (a repeat round too): its actors' rooms refresh moodlets in this minute's UpdateAllRoom
+                scr_System_CampaignManager.current.Map.MarkMoodletsDirtyForChara(p.actorRefs);
+
                 if (p.PackageRepeat)
                 {
                     if (scr_System_CentralControl.current.LogPrefs.DLog_AP) Debug.Log("readding package " + p.DisplayName);
@@ -1339,7 +1470,7 @@ public class Job : IDisposable, I_Disposable
 
     //inject without conflict detection
     //skipExistingActors: don't re-AddActor actors already in the job (Job_Sex.AddActor would reset its ongoing packages)
-    public void InjectPackage(ActionPackage ap, bool skipExistingActors = false)
+    public virtual void InjectPackage(ActionPackage ap, bool skipExistingActors = false)
     {
         AddPackage_Previous(ap);
         foreach (int actorref in ap.actorRefs)

@@ -21,13 +21,35 @@
             },
             {
                 "ID": "OnCharaWakeUp",
+                "_comment": "Runtime binds wake scopes and wakeBedName before validators from the registered sleep furniture snapshot. No bed means a singleton with no bed companions. Followers still run both callbacks, then skip the shared scene. Never infer companions from room ownership. Distinct Kojo stores per display stage prevent overwrites before delayed log rendering.",
+                "TargetValidators": [
+                    { "refKeys": ["wake_npcs"], "baseScope": "ScopeWithinRef", "extraScopeArguments": ["waking_group"], "chara_conditions": [{ "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }] },
+                    { "refKeys": ["together_npcs"], "baseScope": "ScopeWithinRef", "extraScopeArguments": ["waking_together"], "chara_conditions": [{ "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }] },
+                    { "refKeys": ["bedmate_npcs"], "baseScope": "ScopeWithinRef", "extraScopeArguments": ["awake_bedmates"], "chara_conditions": [{ "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }] },
+                    { "refKeys": ["roommate_npcs"], "baseScope": "ScopeWithinRef", "extraScopeArguments": ["awake_roommates"], "chara_conditions": [{ "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }] }
+                ],
                 "events": [
                     {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "line": "event_OnCharaWakeUp_ev01"
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "player_wake_boundary",
+                        "options": [
+                            { "option": "player wakes up", "self_chara_conditions": [{ "parameters": ["isPlayer"] }], "Results": [{ "Type": "JumpToLabel", "arguments": ["", "player_wake_separator"] }] },
+                            { "option": "NPC wakeup", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "wake_mode"] }] }
+                        ]
                     },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "player_wake_separator", "line": "wake_player_separator" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "wake_mode",
+                        "options": [
+                            { "option": "follower callbacks only", "self_chara_conditions": [{ "parameters": ["isInTargets", "wake_followers"] }], "Results": [{ "Type": "JumpToLabel", "arguments": ["", "callbacks"] }] },
+                            { "option": "same bed group", "target_chara_conditions": { "waking_together": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "wake_together"] }] },
+                            { "option": "singleton including no bed", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "wake_solo"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "wake_together", "line": "wake_group", "nextEntryLabel": "callbacks" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "wake_solo", "line": "event_OnCharaWakeUp_ev01", "nextEntryLabel": "callbacks" },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "callbacks",
                         "options":[
                             {
                                 "option": "silent branch event, this shouldnt be displayed...unless",
@@ -42,10 +64,141 @@
                         ]
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "label": "end",
+                        "options": [
+                            { "option": "follower scene already handled", "self_chara_conditions": [{ "parameters": ["isInTargets", "wake_followers"] }], "Results": [{ "Type": "JumpToLabel", "arguments": ["", "greeting_end"] }] },
+                            { "option": "leader scene", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "tired_prior"] }] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "tired_prior",
+                        "options": [
+                            { "option": "sleep debt remains", "target_chara_conditions": { "wake_tired": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "tired"] }] },
+                            { "option": "none tired", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "rested_prior"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "tired", "line": "wake_tired_description" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "rested_prior",
+                        "options": [
+                            { "option": "no sleep debt", "target_chara_conditions": { "wake_rested": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "rested"] }] },
+                            { "option": "none rested", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "solo_prior"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "rested", "line": "wake_rested_description" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "solo_prior",
+                        "options": [
+                            { "option": "group uses pair greetings", "target_chara_conditions": { "waking_together": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "greeting_prior"] }] },
+                            { "option": "tired NPC self reaction", "self_chara_conditions": [{ "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isInTargets", "wake_tired"] }], "Results": [{ "Type": "GetKojoEntry", "arguments": ["self", "self", "OnCharaWakeUp_SoloTired", "wakeSoloKojo", "replace"] }, { "Type": "JumpToLabel", "arguments": ["", "solo_text"] }] },
+                            { "option": "rested NPC self reaction", "self_chara_conditions": [{ "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isInTargets", "wake_rested"] }], "Results": [{ "Type": "GetKojoEntry", "arguments": ["self", "self", "OnCharaWakeUp_SoloRested", "wakeSoloKojo", "replace"] }, { "Type": "JumpToLabel", "arguments": ["", "solo_text"] }] },
+                            { "option": "no self reaction", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "greeting_prior"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "solo_text", "line": "$wakeSoloKojo$" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "greeting_prior",
+                        "options": [
+                            {
+                                "option": "NPC leader to actual waking companion",
+                                "self_chara_conditions": [{ "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }],
+                                "target_chara_conditions": { "waking_together": [{ "parameters": ["exists"] }] },
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "self", "waking_together", "OnCharaWakeUp_WakeTogetherGreeting", "wakeTogetherSelfKojo", "replace" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "greeting" ] }
+                                ]
+                            },
+                            {
+                                "option": "_no_greeting",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "together_reply_prior" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "greeting",
+                        "line": "$wakeTogetherSelfKojo$",
+                        "nextEntryLabel": "together_reply_prior"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "together_reply_prior",
+                        "options": [
+                            { "option": "NPC companions to conscious leader", "self_chara_conditions": [{ "parameters": ["isConscious"] }], "target_chara_conditions": { "together_npcs": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "GetKojoEntry", "arguments": ["together_npcs", "self", "OnCharaWakeUp_WakeTogetherGreeting", "wakeTogetherReplyKojo", "replace"] }, { "Type": "JumpToLabel", "arguments": ["", "together_reply"] }] },
+                            { "option": "no reply", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "sleepers_prior"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "together_reply", "line": "$wakeTogetherReplyKojo$" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "sleepers_prior",
+                        "options": [
+                            { "option": "same bed still sleeping", "target_chara_conditions": { "still_sleeping": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "sleepers"] }] },
+                            { "option": "no sleepers", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "bedmates_prior"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "sleepers", "line": "wake_sleepers" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "sleepers_kojo_prior",
+                        "options": [
+                            { "option": "conscious NPC wakers quietly address sleepers", "target_chara_conditions": { "wake_npcs": [{ "parameters": ["exists"] }], "still_sleeping": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "GetKojoEntry", "arguments": ["wake_npcs", "still_sleeping", "OnCharaWakeUp_BesideSleepingPartner", "wakeSleepingPartnerKojo", "replace"] }, { "Type": "JumpToLabel", "arguments": ["", "sleepers_kojo"] }] },
+                            { "option": "no reaction", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "bedmates_prior"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "sleepers_kojo", "line": "$wakeSleepingPartnerKojo$" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "bedmates_prior",
+                        "options": [
+                            { "option": "already awake bedmates", "target_chara_conditions": { "awake_bedmates": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "bedmates"] }] },
+                            { "option": "no awake bedmates", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "room_prior"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "bedmates", "line": "wake_bedmates" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "bedmate_greeting_prior",
+                        "options": [
+                            { "option": "NPC wakers greet awake bedmates", "target_chara_conditions": { "wake_npcs": [{ "parameters": ["exists"] }], "awake_bedmates": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "GetKojoEntry", "arguments": ["wake_npcs", "awake_bedmates", "OnCharaWakeUp_RoomGreeting", "wakeBedmateGreetingKojo", "replace"] }, { "Type": "JumpToLabel", "arguments": ["", "bedmate_greeting"] }] },
+                            { "option": "no greeting", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "bedmate_reply_prior"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "bedmate_greeting", "line": "$wakeBedmateGreetingKojo$" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "bedmate_reply_prior",
+                        "options": [
+                            { "option": "NPC bedmates reply to wakers", "target_chara_conditions": { "bedmate_npcs": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "GetKojoEntry", "arguments": ["bedmate_npcs", "waking_group", "OnCharaWakeUp_RoomReply", "wakeBedmateReplyKojo", "replace"] }, { "Type": "JumpToLabel", "arguments": ["", "bedmate_reply"] }] },
+                            { "option": "no reply", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "room_prior"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "bedmate_reply", "line": "$wakeBedmateReplyKojo$" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "room_prior",
+                        "options": [
+                            { "option": "other awake room actors", "target_chara_conditions": { "awake_roommates": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "room"] }] },
+                            { "option": "no others", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "greeting_end"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "room", "line": "wake_roommates" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "room_greeting_prior",
+                        "options": [
+                            { "option": "NPC wakers greet others", "target_chara_conditions": { "wake_npcs": [{ "parameters": ["exists"] }], "awake_roommates": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "GetKojoEntry", "arguments": ["wake_npcs", "awake_roommates", "OnCharaWakeUp_RoomGreeting", "wakeRoomGreetingKojo", "replace"] }, { "Type": "JumpToLabel", "arguments": ["", "room_greeting"] }] },
+                            { "option": "no greeting", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "room_reply_prior"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "room_greeting", "line": "$wakeRoomGreetingKojo$" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "room_reply_prior",
+                        "options": [
+                            { "option": "other NPCs greet wakers", "target_chara_conditions": { "roommate_npcs": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "GetKojoEntry", "arguments": ["roommate_npcs", "waking_group", "OnCharaWakeUp_RoomReply", "wakeRoomReplyKojo", "replace"] }, { "Type": "JumpToLabel", "arguments": ["", "room_reply"] }] },
+                            { "option": "no reply", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "greeting_end"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "room_reply", "line": "$wakeRoomReplyKojo$" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "greeting_end",
                         "line": "",
-                        "isLast" :true
+                        "isLast": true
                     }
                 ]
             }
@@ -57,11 +210,25 @@
         {
             "zh-cn":
             {
-                "event_OnCharaWakeUp_ev01":"$currentTime$ - $self.name$醒来了"
+                "wake_player_separator": "<align=\"center\">----- 醒来 -----</align>",
+                "event_OnCharaWakeUp_ev01":"$currentTime$ - $self.name$睁开眼睛，周围的轮廓逐渐清晰。",
+                "wake_group": "$currentTime$ - $waking_group.name$在$wakeBedName$上相继醒来，身旁的睡意与轻微动静交织在一起。",
+                "wake_tired_description": "$wake_tired.name$的头发睡得凌乱，衣着也有些不整，眼皮沉重，仍是一副没睡醒的模样。",
+                "wake_rested_description": "$wake_rested.name$的神色舒缓，目光渐渐清亮，比入睡前多了几分精神。",
+                "wake_sleepers": "$still_sleeping.name$仍在$wakeBedName$上安睡，姿势未变，没有醒来，也没有出声。",
+                "wake_bedmates": "同在$wakeBedName$上的$awake_bedmates.name$已经醒着。新醒来的人和清醒的床伴之间，多了些轻声的招呼。",
+                "wake_roommates": "房间里另有$awake_roommates.name$醒着，彼此间传来轻声的招呼。"
             },
             "en-us":
             {
-                "event_OnCharaWakeUp_ev01":"$currentTime$ - $self.name$ wakes up"
+                "wake_player_separator": "<align=\"center\">----- Waking Up -----</align>",
+                "event_OnCharaWakeUp_ev01":"$currentTime$ - $self.name$ opens their eyes as the surroundings gradually come into focus.",
+                "wake_group": "$currentTime$ - $waking_group.name$ wake close together on $wakeBedName$, amid lingering drowsiness and small sounds nearby.",
+                "wake_tired_description": "$wake_tired.name$ have tousled hair, disordered clothing and heavy eyes, still looking far from properly awake.",
+                "wake_rested_description": "$wake_rested.name$ look more at ease, their gaze gradually clearing, with a little more freshness than before sleep.",
+                "wake_sleepers": "$still_sleeping.name$ remain asleep on $wakeBedName$, unmoving, without waking or speaking.",
+                "wake_bedmates": "$awake_bedmates.name$ are already awake on the same $wakeBedName$. Quiet greetings pass between the newly awake and their conscious bedmates.",
+                "wake_roommates": "$awake_roommates.name$ are also awake elsewhere in the room. Quiet greetings pass between them and the newly awake."
             }
         }
     }

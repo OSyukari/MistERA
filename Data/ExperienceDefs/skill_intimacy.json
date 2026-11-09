@@ -1,0 +1,91 @@
+{
+    "Skills": {
+        "list": [
+            {
+                "ID": "skill_intimacy",
+                "tags": [],
+                "levels": [
+                    {
+                        "DisplayName": "-"
+                    },
+                    {
+                        "DisplayName": "1",
+                        "requirements": {
+                            "$type": "CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries": [
+                                {
+                                    "requireExperiences": [ { "experienceID": "experience_intimacy", "operand": "gte", "value": 10 } ]
+                                }
+                            ]
+                        },
+                        "validUse": [
+                            {
+                                "skillUseTags": "intimacy",
+                                "requireCOMTags": ["touch", "interaction"],
+                                "allowDC": true,
+                                "allowAC": false,
+                                "allowFailedRescue": false
+                            }
+                        ]
+                    },
+                    {
+                        "DisplayName": "2",
+                        "requirements": {
+                            "$type": "CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries": [
+                                {
+                                    "requireExperiences": [ { "experienceID": "experience_intimacy", "operand": "gte", "value": 30 } ]
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "DisplayName": "3",
+                        "requirements": {
+                            "$type": "CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries": [
+                                {
+                                    "requireExperiences": [ { "experienceID": "experience_intimacy", "operand": "gte", "value": 90 } ]
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "DisplayName": "4",
+                        "requirements": {
+                            "$type": "CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries": [
+                                {
+                                    "requireExperiences": [ { "experienceID": "experience_intimacy", "operand": "gte", "value": 150 } ]
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "DisplayName": "5",
+                        "requirements": {
+                            "$type": "CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries": [
+                                {
+                                    "requireExperiences": [ { "experienceID": "experience_intimacy", "operand": "gte", "value": 300 } ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "skill_intimacy": "亲密",
+                "skill_intimacy_tooltip": "适用范围：摸头、拥抱及日常抚摸、按摩。提高动作技巧，不影响接受意愿或许可。"
+            },
+            "en-us": {
+                "skill_intimacy": "Intimacy",
+                "skill_intimacy_tooltip": "Applies to head pats, hugs, and ordinary touching or massage. Improves technique, not willingness or permission."
+            }
+        }
+    }
+}

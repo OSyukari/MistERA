@@ -88,6 +88,35 @@ public static class EventUtility
     }
 
 
+    /// <summary>Any null (or destroyed - Unity ==) character in list; null list = false.</summary>
+    static bool HasNullChara(List<Character_Trainable> list)
+    {
+        if (list == null) return false;
+        for (int i = 0; i < list.Count; i++)
+            if (list[i] == null) return true;
+        return false;
+    }
+
+    /// <summary>Index of the first character in list with this RefID, -1 if none.</summary>
+    static int IndexOfRefID(List<Character_Trainable> list, int refID)
+    {
+        for (int i = 0; i < list.Count; i++)
+            if (list[i] != null && list[i].RefID == refID) return i;
+        return -1;
+    }
+
+    /// <summary>Adds c under key, then drops duplicates in place (first occurrence kept, like Distinct).</summary>
+    static void AddTargetDistinct(Dictionary<string, List<Character_Trainable>> targets, string key, Character_Trainable c)
+    {
+        if (!targets.TryGetValue(key, out var list))
+        {
+            list = new List<Character_Trainable>();
+            targets.Add(key, list);
+        }
+        list.Add(c);
+        Utility.DistinctInPlace(list);
+    }
+
     public static bool Validate(Event ev, EventInstance instance)
     {
         instance.PrepareTargetValidation(ev);
@@ -156,12 +185,7 @@ public static class EventUtility
                                     {
                                         c.FactionManager.AddToParty(party, scr_System_Serializer.current.MasterList.MapPlans.GetByID_MemberType(g.status), true);
 
-                                        foreach (var key in g.frontlineKeys)
-                                        {
-                                            if (!instance.Targets.ContainsKey(key)) instance.Targets.Add(key, new List<Character_Trainable>());
-                                            instance.Targets[key].Add(c);
-                                            instance.Targets[key] = instance.Targets[key].Distinct().ToList();
-                                        }
+                                        foreach (var key in g.frontlineKeys) AddTargetDistinct(instance.Targets, key, c);
 
                                         c.isTemporaryActor = true;
                                     }
@@ -173,12 +197,7 @@ public static class EventUtility
                                     {
                                         c.FactionManager.AddToParty(party, scr_System_Serializer.current.MasterList.MapPlans.GetByID_MemberType(g.status), true);
 
-                                        foreach (var key in g.supportKeys)
-                                        {
-                                            if (!instance.Targets.ContainsKey(key)) instance.Targets.Add(key, new List<Character_Trainable>());
-                                            instance.Targets[key].Add(c);
-                                            instance.Targets[key] = instance.Targets[key].Distinct().ToList();
-                                        }
+                                        foreach (var key in g.supportKeys) AddTargetDistinct(instance.Targets, key, c);
 
                                         c.isTemporaryActor = true;
                                     }
@@ -208,12 +227,7 @@ public static class EventUtility
                             c.FactionManager.AddToParty(party, scr_System_Serializer.current.MasterList.MapPlans.GetByID_MemberType(i.status), true);
                         }
 
-                        foreach (var key in i.refKeys)
-                        {
-                            if (!instance.Targets.ContainsKey(key)) instance.Targets.Add(key, new List<Character_Trainable>());
-                            instance.Targets[key].Add(c);
-                            instance.Targets[key] = instance.Targets[key].Distinct().ToList();
-                        }
+                        foreach (var key in i.refKeys) AddTargetDistinct(instance.Targets, key, c);
 
                         c.isTemporaryActor = true;
                     }
@@ -540,7 +554,24 @@ public static class EventUtility
         }
 
         if (r.parameters.Count < 1) return true;
+        else if (r.parameters[0] == "isSilent")
+            return ev != null && (r.parameters.Count < 2 ? ev.silent
+                : bool.TryParse(r.parameters[1], out var expectedSilent) && ev.silent == expectedSilent);
         else if (c == null) return false;
+
+        if (r.parameters[0] == "isInTargets")
+            return r.parameters.Count == 2 && ev != null
+                && ev.Targets.TryGetValue(r.parameters[1], out var membershipTargets) && membershipTargets.Contains(c);
+
+        if (r.parameters[0] == "hasRelationshipWith")
+        {
+            // Checked character -> one distinct target; never create a relationship while probing.
+            if (r.parameters.Count < 3 || !TryResolveExecTargets(ev, r.parameters[1], out var relationshipTargets)
+                || relationshipTargets == null || relationshipTargets.Count != 1 || relationshipTargets[0] == null
+                || relationshipTargets[0] == c) return false;
+            return c.Relationships?.PeekRelationshipWith(relationshipTargets[0])
+                ?.HasRelationshipType(r.parameters.Skip(2).ToList()) == true;
+        }
 
         var room = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
 
@@ -961,6 +992,19 @@ public static class EventUtility
                 }
                 return false;
             }
+            case "wouldDeflate":
+            {
+                // wouldDeflate [bodypartTag, fullDeflate]: actual positive removal, without changing contents.
+                if (r.parameters.Count != 3 || !bool.TryParse(r.parameters[2], out var fullDeflate)
+                    || c.Body == null) return false;
+                string tag = r.parameters[1];
+                foreach (var part in c.Body.Internals)
+                {
+                    if (tag != "" && !part.hasTag(tag)) continue;
+                    if (part.WouldDeflate(fullDeflate)) return true;
+                }
+                return false;
+            }
             case "canFullyDeflate":
             {
                 // canFullyDeflate [optional bodypartTag] -- true if any matching body_internal part canFullyDeflate
@@ -1100,6 +1144,7 @@ public static class EventUtility
                     foreach (var chara in Ordered(charaRefs))
                     {
                         if (Full()) break;
+                        if (!MapUtility.CanSee(self, chara)) continue;   // behind a stall's door (room divider)
                         bool isvalid = true;
                         foreach (var cond in scope.chara_conditions) if (!isValid(cond, ev, chara)) isvalid = false;
                         if (!isvalid) continue;
@@ -1114,7 +1159,9 @@ public static class EventUtility
                     {
                         if (Full()) break;
                         if (chara == self) continue;
-                        if (scr_System_CampaignManager.current.IsInSameParty(self, chara)) continue;
+                        // came along with self: teammates or the carried (TravelsTogether - both mechanisms)
+                        if (scr_System_CampaignManager.current.TravelsTogether(self, chara)) continue;
+                        if (!MapUtility.CanSee(self, chara)) continue;   // behind a stall's door (room divider)
                         bool isvalid = true;
                         foreach (var cond in scope.chara_conditions) if (!isValid(cond, ev, chara)) isvalid = false;
                         if (!isvalid) continue;
@@ -1179,6 +1226,10 @@ public static class EventUtility
                                     //Debug.Log($"ScopeInRoomExceptRef locationref conflict");
                                     continue;
                                 }
+                                // in the room but behind a stall's door (room divider blocking visibility) from every reference character
+                                bool seen = false;
+                                for (int li = 0; li < locationRef.Count && !seen; li++) seen = MapUtility.CanSee(locationRef[li], chara);
+                                if (!seen) continue;
                                 if (chara.CurrentJob != null && !chara.CurrentJob.CanBeInterrupted)
                                 {
                                    // Debug.Log($"{chara.CallName} current job non null and CANNOT BE INTERRUPTED, jobRef {chara.CurrentJob.RefID}, jobName {chara.CurrentJob.DisplayName}");
@@ -1266,9 +1317,13 @@ public static class EventUtility
         else if (scope.pickAmongValidTargets) Utility.FilterRandXInList(list, scope.maxTargetCount);
         foreach(var key in scope.refKeys)
         {
-            if (!library.ContainsKey(key)) library.Add(key, new List<Character_Trainable>());
-            library[key].AddRange(list);
-            library[key] = library[key].Distinct().ToList();
+            if (!library.TryGetValue(key, out var bound))
+            {
+                bound = new List<Character_Trainable>();
+                library.Add(key, bound);
+            }
+            bound.AddRange(list);
+            Utility.DistinctInPlace(bound);
         }
         ev.RelevantActors = null;
         return true;
@@ -1368,7 +1423,9 @@ public static class EventUtility
         }
         else
         {
+#if UNITY_EDITOR
             Debug.LogError($"Event {owner.Name} questionbox {block.Name} not visible to player! calling default cancel");
+#endif
             var def = block.Default;
             if (def == null) return;
             Execute(owner, def, true);
@@ -1495,6 +1552,7 @@ public static class EventUtility
     public static bool TryResolveExecTargets(EventInstance owner, string key, out List<Character_Trainable> result)
     {
         result = null;
+        if (owner == null || key == null) return false;
         if (key == "self")
         {
             result = new List<Character_Trainable>() { owner.Self };
@@ -1601,11 +1659,14 @@ public static class EventUtility
         return result;
     }
 
-    /// <summary>Display text of an option, with "$name$" resolved for per-target copies.</summary>
+    /// <summary>Display text of an option, with full/short name tokens resolved for per-target copies.</summary>
     public static string GetOptionText(EventInstance owner, Event.EventEntry.Options op)
     {
         var text = UtilityEX.ParseEventEntry(owner, op.option);
-        if (op.boundTarget != null) text = text.Replace("$name$", op.boundTarget.FullName);
+        if (op.boundTarget != null)
+            text = text.Replace("$name$", op.boundTarget.FullName)
+                .Replace("$callname$", op.boundTarget.CallName)
+                .Replace("$firstname$", op.boundTarget.FirstName);
         return text;
     }
 
@@ -1840,34 +1901,34 @@ public static class EventUtility
             string state = "";
             if (physiology && checkpoints != null)
             {
-                // Read stored fields only: Severity/MaxValue and readiness getters can evaluate modifiers,
-                // populate caches or consume RNG. Raw values are deliberately distinguished from the checkpoint.
-                object Stored(object instance, string field) => instance == null ? null : instance.GetType()
-                    .GetField(field, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
-                    ?.GetValue(instance);
-                string Value(object value) => value == null ? "unavailable" : Convert.ToString(value, System.Globalization.CultureInfo.InvariantCulture);
-                state = "; physiology=[" + string.Join("; ", doers.Concat(receivers).Distinct().Select(actor =>
+                // Debug stat queries only (stored / already-cached state): Severity/MaxValue and readiness getters can evaluate
+                // modifiers, populate caches or consume RNG. Raw values are deliberately distinguished from the checkpoint.
+                const string unavailable = "unavailable";
+                string F(float value) => value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                var sb = new System.Text.StringBuilder("; physiology=[");
+                var logged = new HashSet<Character_Trainable>();
+                void AppendActor(Character_Trainable actor)
                 {
-                    var stats = Stored(actor, "stats") as StatsManager;
+                    if (actor == null || !logged.Add(actor)) return;
+                    if (logged.Count > 1) sb.Append("; ");
+                    var stats = actor.Debug_StoredStats;
                     var stimulation = stats?.GetStatusEXByStringMatch("chara_status_sex_stimulation");
-                    var stimulationBase = Stored(stimulation, "baseRef") as StatusEx_Base;
-                    var storage = Stored(stimulation, "storage");
-                    object currentStimulation = null;
-                    if (Stored(stimulation, "_cached") is true
-                        && Stored(stimulation, "_cacheVersion") is int version && version == stats.StatModsVersion
-                        && Stored(storage, "_value_cached") is true && Stored(storage, "_value") is float cached
-                        && stimulationBase?.variants?.Count > 0)
-                        currentStimulation = Math.Clamp(cached + stimulation.DebugSeverityMod,
-                            stimulationBase.variants[0].threshold, stimulationBase.variants[stimulationBase.variants.Count - 1].threshold);
-                    var bars = stats?.StatsExtended;
-                    object Bar(string id) => bars == null ? null : bars.FirstOrDefault(b => b != null
-                        && (string)Stored(b, "parentID") == id)?.Value;
-                    return $"ref={actor.RefID}, checkpoint={(checkpoints.TryGetValue(actor, out var checkpoint) ? Value(checkpoint) : "not required")}, "
-                        + $"stimulationCurrent={Value(currentStimulation)}, stimulationCurrentRaw={Value(Stored(stimulation, "severity"))}, "
-                        + $"ST={Value(Bar("stats_derived_extended_stamina"))}, HP={Value(Bar("stats_derived_extended_hp"))}, "
-                        + $"climaxBlocker={actor.Body?.isClimaxing()}, climaxingRaw=[{string.Join(",", stats?.FindStatusByID("chara_status_climaxing").Select(s => Value(Stored(s, "severity"))) ?? Enumerable.Empty<string>())}], "
-                        + $"aftermathRaw=[{string.Join(",", stats?.FindStatusByID("chara_status_sexual_climax_after").Select(s => Value(Stored(s, "severity"))) ?? Enumerable.Empty<string>())}]";
-                })) + "]";
+                    sb.Append("ref=").Append(actor.RefID)
+                        .Append(", checkpoint=").Append(checkpoints.TryGetValue(actor, out var checkpoint) ? F(checkpoint) : "not required")
+                        .Append(", stimulationCurrent=").Append(stimulation != null && stimulation.Debug_TryGetCachedSeverity(out var current) ? F(current) : unavailable)
+                        .Append(", stimulationCurrentRaw=").Append(stimulation != null ? F(stimulation.StoredSeverity) : unavailable)
+                        .Append(", ST=").Append(stats != null && stats.Debug_TryGetStatbarValue("stats_derived_extended_stamina", out var st) ? F(st) : unavailable)
+                        .Append(", HP=").Append(stats != null && stats.Debug_TryGetStatbarValue("stats_derived_extended_hp", out var hp) ? F(hp) : unavailable)
+                        .Append(", climaxBlocker=").Append(actor.Body == null ? "" : actor.Body.isClimaxing().ToString())
+                        .Append(", climaxingRaw=[");
+                    stats?.Debug_AppendStoredStatusSeverities("chara_status_climaxing", sb);
+                    sb.Append("], aftermathRaw=[");
+                    stats?.Debug_AppendStoredStatusSeverities("chara_status_sexual_climax_after", sb);
+                    sb.Append(']');
+                }
+                if (doers != null) for (int i = 0; i < doers.Count; i++) AppendActor(doers[i]);
+                if (receivers != null) for (int i = 0; i < receivers.Count; i++) AppendActor(receivers[i]);
+                state = sb.Append(']').ToString();
             }
             Debug.LogWarning($"Event AP failed: event={owner.CurrentEventID}, entry={owner.CurrentEntryLabel ?? "<none>"}, "
                 + $"source=[{owner.EntryResultsSource ?? "direct"}], executor={exec.Type}, COM={(exec.arguments != null && exec.arguments.Count > 2 ? exec.arguments[2] : "<missing>")}, "
@@ -2046,6 +2107,23 @@ public static class EventUtility
         }
     }
 
+    /// <summary>
+    /// StartEvent Result for one self (null = no-actor event). Skipped before anything is built when its cooldown or
+    /// running instance would refuse it anyway (EventManager.BlockedWithoutTargets); an instance failing validation is
+    /// not handed to the EventManager. injectKey ("" = none) binds owner.Self in a list of its own per started event.
+    /// </summary>
+    static void StartEventResult(EventInstance owner, EventManager handler, Character_Trainable self, Event def, string label,
+        string injectKey, List<string> features)
+    {
+        if (handler.BlockedWithoutTargets(def, self)) return;
+        var ev = new EventInstance(self, def.ID, label, immediateInit: false);
+        if (features != null) ev.AppendStrings[ExpeditionUtility.FeatureKeywordsKey] = new List<string>(features);
+        if (injectKey != "") ev.Targets.Add(injectKey, new List<Character_Trainable>() { owner.Self });
+        ev.LoadNext(def, label);
+        if (!ev.isValid) return;
+        handler.StartEvent(ev, false);
+    }
+
     static bool ExecuteResult(EventInstance owner, Event.EventEntry.Executor exec)
     {
         //Debug.Log($"Execute option type {exec.Type}");
@@ -2188,14 +2266,15 @@ public static class EventUtility
                     }
                     if (exec.arguments[2].Length < 1 || exec.arguments[3].Length < 1) return false;
                     List<string> texts = new List<string>();
-                    List<string> texts_debug = new List<string>();
+                    // debug text only built while DLog_Events_Execute is on (null-conditional Add skips its argument)
+                    List<string> texts_debug = debug ? new List<string>() : null;
                     foreach(var i in requestlist)
                     {
                         var randtarget = Utility.GetRandomElement(targetlist);
                         var rel = i.Relationships.FindRelationshipWith(randtarget);
                         if (rel != null)
                         {
-                            texts_debug.Add($"fetching kojo self {rel.Owner.FirstName} targe {rel.Target.FirstName} ID {exec.arguments[2]}");
+                            texts_debug?.Add($"fetching kojo self {rel.Owner.FirstName} targe {rel.Target.FirstName} ID {exec.arguments[2]}");
                         }
                         var kol = new KojoCollector(i, exec.arguments[2]);
                         kol.LoadRel(rel);
@@ -2213,7 +2292,7 @@ public static class EventUtility
                     var storeMode = exec.arguments.Count >= 5 ? exec.arguments[4] : "";
                     StoreKojoAppendStrings(owner, exec.arguments[3], texts, storeMode);
 
-                    Debug.Log($"GetKojoEntry result {exec.arguments[3]} : [{String.Join(" | ", texts)}] debugmsg [{String.Join("|", texts_debug)}]");
+                    if (debug) Debug.Log($"GetKojoEntry result {exec.arguments[3]} : [{String.Join(" | ", texts)}] debugmsg [{String.Join("|", texts_debug)}]");
                     return texts.Count > 0;
                 }
                 else return false;
@@ -2312,7 +2391,10 @@ public static class EventUtility
                     var targetList = owner.Targets[exec.arguments[0]];
                     var target = targetList.Count < 1 ? null : Utility.GetRandomElement(targetList);
                     var targetJob = target == null ? null : target.CurrentJob;
-                    var packages = targetJob == null ? new List<ActionPackage>() : targetJob.GetExistingPackages(target, false, false, false).FindAll(x => x.AllowJoining && (exec.arguments[1] == "" || x.ComTags.Contains(exec.arguments[1])));
+                    // lambdas capture block locals, never the owner/exec parameters: a captured parameter makes the
+                    // compiler allocate the closure on every ExecuteResult call, whatever the result type
+                    var joinTag = exec.arguments[1];
+                    var packages = targetJob == null ? new List<ActionPackage>() : targetJob.GetExistingPackages(target, false, false, false).FindAll(x => x.AllowJoining && (joinTag == "" || x.ComTags.Contains(joinTag)));
                     if (packages.Count < 1)
                     {
                         if (debug) Debug.Log($"JoinTargetJob cannot find package containg keyword [{exec.arguments[1]}], key[{exec.arguments[0]}] targs[{targetList.Count} targ[{(target == null ? "null" : target.FirstName)}");
@@ -2325,7 +2407,8 @@ public static class EventUtility
                     {
                         var callbacks = new List<Action>();
                         owner.FunctionCalls.Add("FindJoinableAP_Callback", callbacks);
-                        callbacks.Add(() => randpackage.JoinAP(owner.Self, forceResponse, true));
+                        var joinOwner = owner;
+                        callbacks.Add(() => randpackage.JoinAP(joinOwner.Self, forceResponse, true));
 
                         var c = owner.Self;
                         var pl2 = randpackage;
@@ -2387,7 +2470,8 @@ public static class EventUtility
                     var targetList = owner.Targets[exec.arguments[0]];
                     var target = targetList.Count < 1 ? null : Utility.GetRandomElement(targetList);
                     var targetJob = target == null ? null : target.CurrentJob;
-                    var packages = targetJob == null ? new List<ActionPackage>() : targetJob.GetExistingPackages(target, false, false, false).FindAll(x => x.AllowJoining && (exec.arguments[1] == "" || x.ComTags.Contains(exec.arguments[1])));
+                    var joinTag = exec.arguments[1];
+                    var packages = targetJob == null ? new List<ActionPackage>() : targetJob.GetExistingPackages(target, false, false, false).FindAll(x => x.AllowJoining && (joinTag == "" || x.ComTags.Contains(joinTag)));
                     if (packages.Count < 1)
                     {
                         if (debug) Debug.Log($"JoinTargetJob cannot find package containg keyword [{exec.arguments[1]}], key[{exec.arguments[0]}] targs[{targetList.Count} targ[{(target == null ? "null" : target.FirstName)}");
@@ -2500,10 +2584,11 @@ public static class EventUtility
                         var desc = new DescriptionCollector(message, owner.Self == null || owner.Self.CurrentRoom == null ? VisibilityLevel.Global : VisibilityLevel.Roomwide);
                         if (owner.Self != null && owner.Self.CurrentRoom != null) owner.Self.CurrentRoom.NotifyDescCollect(desc, MessageCollect_Type.after);
                         var snap = owner.CurrentUISpec.Clone();
+                        var logOwner = owner;
                         // animate:false -- if this Result sits alongside a Line's own text, an immediate (animate:true) draw
                         // can fire in the same synchronous batch right after that line auto-completes and empties the display
                         // queue, clearing the AVG box before the line ever gets rendered. Queuing normally avoids that race.
-                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(desc, owner.Self, false, null, snap));
+                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(desc, logOwner.Self, false, null, snap));
                     }
 
                     return true;
@@ -2513,18 +2598,25 @@ public static class EventUtility
                 owner.CurrentUISpec.BGImagePath = exec.arguments.Count >= 1 ? exec.arguments[0] : "";
                 return true;
             case Event.EventEntry.ExecutionType.DeflateInternal:
-                // [tagFilter, deleteObject(bool), fullDeflate(bool), deflateStringkey, kojoStringKey, memoryStringKey]
-                if (exec.arguments.Count >= 5 && owner.Self != null)
+                // [tagFilter, deleteObject, fullDeflate, deflateStringKey, kojoStringKey, optional memoryStringKey, optional scopeKey]
+                if (exec.arguments.Count >= 5)
                 {
                     if (bool.TryParse(exec.arguments[1], out var deleteObject) && bool.TryParse(exec.arguments[2], out var fullDeflate))
                     {
                         var memoryStringKey = exec.arguments.Count >= 6 ? exec.arguments[5] : "";
-                        return owner.Self.DeflateInternal(owner, exec.arguments[3], exec.arguments[4], memoryStringKey, fullDeflate, deleteObject, exec.arguments[0]);
+                        var scopeKey = exec.arguments.Count >= 7 ? exec.arguments[6] : "self";
+                        if (!TryResolveExecTargets(owner, scopeKey, out var bathers) || bathers == null
+                            || bathers.Count != 1 || bathers[0] == null) return false;
+                        return bathers[0].DeflateInternal(owner, exec.arguments[3], exec.arguments[4], memoryStringKey, fullDeflate, deleteObject, exec.arguments[0]);
                     }
                 }
                 return false;
+            case Event.EventEntry.ExecutionType.WashTraces:
+                if (exec.arguments.Count != 1 || !TryResolveExecTargets(owner, exec.arguments[0], out var washTargets)
+                    || washTargets == null || washTargets.Count != 1 || washTargets[0]?.Body == null) return false;
+                return washTargets[0].Body.WashTraces();
             case Event.EventEntry.ExecutionType.SwallowInternal:
-                // [string refkey, string bodyTag, bool fullDeflate]
+                // [string refkey, string bodyTag, bool fullDeflate, optional string appendKey]
                 if (exec.arguments.Count >= 3 && bool.TryParse(exec.arguments[2], out var swallowFullDeflate))
                 {
                     List<Character_Trainable> targets1 = null;
@@ -2543,8 +2635,18 @@ public static class EventUtility
 
                     if (targets1 == null || targets1.Count < 1) return false;
 
+                    string swallowAppendKey = exec.arguments.Count >= 4 ? exec.arguments[3] : "";
+                    List<string> swallowedTags = null;
+                    if (swallowAppendKey != "")
+                    {
+                        // add to an existing entry instead of replacing it (tags already listed are skipped)
+                        if (!owner.AppendStrings.TryGetValue(swallowAppendKey, out swallowedTags) || swallowedTags == null) swallowedTags = new List<string>();
+                    }
+
                     bool anySwallowed = false;
-                    foreach (var t in targets1) if (t.SwallowInternal(swallowFullDeflate, exec.arguments[1], owner.message.exp)) anySwallowed = true;
+                    foreach (var t in targets1) if (t.SwallowInternal(swallowFullDeflate, exec.arguments[1], owner.message.exp, swallowedTags)) anySwallowed = true;
+
+                    if (swallowedTags != null && swallowedTags.Count > 0) owner.AppendStrings[swallowAppendKey] = swallowedTags;
                     return anySwallowed;
                 }
                 return false;
@@ -2742,7 +2844,9 @@ public static class EventUtility
                 if (exec.arguments.Count < 2 || !int.TryParse(exec.arguments[1], out var offerDayOffset)) return false;
                 int offerStart = exec.arguments.Count >= 3 && int.TryParse(exec.arguments[2], out var os) ? os : -1;
                 int offerHours = exec.arguments.Count >= 4 && int.TryParse(exec.arguments[3], out var oh) ? oh : -1;
-                return RecreationUtility.PostOffer(exec.arguments[0], offerDayOffset, offerStart, offerHours);
+                // "now": every NPC who sees it answers in their next late pass; "dayUpdate" (default): at the next day update
+                bool offerAnswerNow = exec.arguments.Count >= 5 && exec.arguments[4] == "now";
+                return RecreationUtility.PostOffer(exec.arguments[0], offerDayOffset, offerStart, offerHours, offerAnswerNow);
             }
             case Event.EventEntry.ExecutionType.SetRecreationBooking:
             {
@@ -2914,14 +3018,20 @@ public static class EventUtility
                 if (!TryResolveExecTargets(owner, exec.arguments[0], out var fromTargets)
                     || !TryResolveExecTargets(owner, exec.arguments[1], out var toTargets)
                     || fromTargets == null || toTargets == null || fromTargets.Count == 0 || toTargets.Count == 0
-                    || fromTargets.Any(c => c == null) || toTargets.Any(c => c == null)) return false;
+                    || HasNullChara(fromTargets) || HasNullChara(toTargets)) return false;
 
-                var sources = fromTargets.GroupBy(c => c.RefID).Select(g => g.First()).ToList();
-                var targets2 = toTargets.GroupBy(c => c.RefID).Select(g => g.First()).ToList();
-                foreach (var from in sources)
-                    foreach (var to in targets2)
-                        if (from.RefID != to.RefID)
-                            from.Relationships.IncreaseRelationshipWith(to.RefID, score, amount, owner.message.exp, silent: false);
+                // first character per RefID, in list order (was GroupBy(RefID).First()), without copying the lists
+                for (int f = 0; f < fromTargets.Count; f++)
+                {
+                    var from = fromTargets[f];
+                    if (IndexOfRefID(fromTargets, from.RefID) != f) continue;
+                    for (int t = 0; t < toTargets.Count; t++)
+                    {
+                        var to = toTargets[t];
+                        if (IndexOfRefID(toTargets, to.RefID) != t || from.RefID == to.RefID) continue;
+                        from.Relationships.IncreaseRelationshipWith(to.RefID, score, amount, owner.message.exp, silent: false);
+                    }
+                }
                 return true;
             }
             case Event.EventEntry.ExecutionType.InitializeRelationshipsBetween:
@@ -3033,7 +3143,8 @@ public static class EventUtility
                         var snap = owner.CurrentUISpec.Clone();
                         // animate:false -- see RevealFaction's identical comment: an immediate draw here can race a sibling
                         // Result's own Line text in the same synchronous batch and clear it before it's ever rendered.
-                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(desc, owner.Self, false, null, snap));
+                        var logOwner = owner;
+                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(desc, logOwner.Self, false, null, snap));
                     }
 
                     return true;
@@ -3095,7 +3206,8 @@ public static class EventUtility
                         var snap = owner.CurrentUISpec.Clone();
                         // animate:false -- see RevealFaction's identical comment: an immediate draw here can race a sibling
                         // Result's own Line text in the same synchronous batch and clear it before it's ever rendered.
-                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(desc, owner.Self, false, null, snap));
+                        var logOwner = owner;
+                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(desc, logOwner.Self, false, null, snap));
                     }
 
                     return true;
@@ -3205,7 +3317,8 @@ public static class EventUtility
 #endif
                         var joblists = new List<Job>();
                         queryPackages = scr_System_CampaignManager.current.GetExistingPackages(owner.Self, true, true, true);
-                        if (exec.arguments[2] != "") queryPackages = queryPackages.FindAll(x => UtilityEX.MatchAPbyType(x, exec.arguments[2]));
+                        var apType = exec.arguments[2];
+                        if (apType != "") queryPackages = queryPackages.FindAll(x => UtilityEX.MatchAPbyType(x, apType));
 #if UNITY_EDITOR
                         if (debug) Debug.Log($"found relevant package {queryPackages.Count}");
 #endif
@@ -3242,12 +3355,13 @@ public static class EventUtility
                         }
                         else
                         {
+                            var apType = exec.arguments[2];
                             foreach (var chara in owner.Targets[exec.arguments[0]])
                             {
                                 var joblists = new List<Job>();
 
                                 queryPackages = scr_System_CampaignManager.current.GetExistingPackages(chara, true, true, true);
-                                if (exec.arguments[2] != "") queryPackages = queryPackages.FindAll(x => UtilityEX.MatchAPbyType(x, exec.arguments[2]));
+                                if (apType != "") queryPackages = queryPackages.FindAll(x => UtilityEX.MatchAPbyType(x, apType));
 #if UNITY_EDITOR
                                 if (debug) Debug.Log($"found relevant package {queryPackages.Count} on {chara.FirstName}");
 #endif
@@ -3433,7 +3547,8 @@ public static class EventUtility
                             owner.QueueEventHeader(desc.DirectlyRelated(owner.Self) ? desc.message : desc.message_excludeRelated);
                         // animate:false -- see RevealFaction's identical comment: an immediate draw here can race a sibling
                         // Result's own Line text in the same synchronous batch and clear it before it's ever rendered.
-                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(desc, owner.Self, false, null, snap));
+                        var logOwner = owner;
+                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(desc, logOwner.Self, false, null, snap));
 
                         return true;
                     }
@@ -3449,8 +3564,15 @@ public static class EventUtility
                 var path = scr_System_CampaignManager.current.Map.Findpath(owner.Self.RefID, currentRoom.FactionOwner.MainExit.RefID, currentRoom.RefID);
                 var oneStepExit = path == null || path.Count() < 1 ? -1 : path.First().Target;
                 if (oneStepExit == -1) return false;
-
-                Debug.LogError($"Execute LeaveRoom, one step exit to roomRef {oneStepExit}");
+#if UNITY_EDITOR
+                var targetRoom = scr_System_CampaignManager.current.Map.GetRoomByRef(oneStepExit);
+                var fromNames = "";
+                if (owner.Targets.TryGetValue("requestFrom", out var requestFrom2))
+                {
+                    foreach (var i in requestFrom2) fromNames += $"{i.FirstName} ";
+                }
+                Debug.LogError($"Execute LeaveRoom, [{owner.Self.FirstName}] one step exit from [{currentRoom.DisplayName}] to [{targetRoom.DisplayNameShort}], requested by [{fromNames}]");
+#endif
                 scr_System_CampaignManager.current.MoveCharacterTo(owner.Self, oneStepExit);
 
                 return true;
@@ -3472,16 +3594,48 @@ public static class EventUtility
                     }
                 }
                 return false;
+            case Event.EventEntry.ExecutionType.PrepareForSleep:
+                if (exec.arguments.Count < 1 || !TryResolveExecTargets(owner, exec.arguments[0], out var sleepTargets)
+                    || sleepTargets == null) return false;
+                var changedSleepTargets = new List<Character_Trainable>();
+                foreach (var c in sleepTargets.Distinct().ToList())
+                {
+                    if (c?.Body == null || c.Stats.isConsciousnessUnconscious) continue;
+                    var before = c.EquippedItemRefs.ToDictionary(id => id, id => c.Body.ResolveEquip(id));
+                    if (c == scr_System_CampaignManager.current.Player)
+                    {
+                        if (!scr_System_CentralControl.current.isSafeMode)
+                        {
+                            c.Undress(BodyEquipLayer.Outer, Revealing.Erotic, true, false);
+                            c.Undress(BodyEquipLayer.Inner, Revealing.Erotic, true, false);
+                        }
+                    }
+                    else c.Wardrobe?.PrepareForSleep();
+                    if (before.Count != c.EquippedItemRefs.Count
+                        || c.EquippedItemRefs.Any(id => !before.TryGetValue(id, out var item) || !ReferenceEquals(item, c.Body.ResolveEquip(id))))
+                        changedSleepTargets.Add(c);
+                }
+                if (exec.arguments.Count >= 2) owner.Targets[exec.arguments[1]] = changedSleepTargets;
+                return changedSleepTargets.Count > 0;
             case Event.EventEntry.ExecutionType.Undress:
                 if (exec.arguments.Count >= 4)
                 {
-                    if (owner.Targets.TryGetValue(exec.arguments[0], out var tgts) 
+                    bool requireChange = false;
+                    if (exec.arguments.Count >= 5 && !bool.TryParse(exec.arguments[4], out requireChange)) return false;
+                    if (TryResolveExecTargets(owner, exec.arguments[0], out var tgts) && tgts != null
                         && Enum.TryParse< BodyEquipLayer>(exec.arguments[1], out var layer) 
                         && Enum.TryParse< Revealing >( exec.arguments[2], out var reveal)
                         && bool.TryParse(exec.arguments[3], out var armor))
                     {
-                        foreach (var c in tgts) c.Undress(layer, reveal, armor);
-                        return true;
+                        bool removed = false;
+                        foreach (var c in tgts)
+                        {
+                            if (c == null) continue;
+                            var before = requireChange ? new List<int>(c.EquippedItemRefs) : null;
+                            c.Undress(layer, reveal, armor);
+                            if (requireChange && before.Any(id => !c.EquippedItemRefs.Contains(id))) removed = true;
+                        }
+                        return !requireChange || removed;
                     }
                 }
                 return false;
@@ -3534,11 +3688,12 @@ public static class EventUtility
 
                     // AP collection can finalize EXP before this executor runs, just as in FlushMessageAll.
                     var snap = owner.CurrentUISpec.Clone();
+                    var logOwner = owner;
                     foreach (var message in owner.message.messages_exp)
                     {
                         owner.ObserveExperience(message);
                         scr_UpdateHandler.current.AddEventCallback(() => {
-                            scr_System_CampaignManager.current.AddLog(message, owner.Self, true, null, snap);
+                            scr_System_CampaignManager.current.AddLog(message, logOwner.Self, true, null, snap);
                         });
                     }
                     owner.message.messages_exp.Clear();
@@ -3770,15 +3925,18 @@ public static class EventUtility
                     {
                         owner.Targets.TryGetValue(exec.arguments[0], out rapists);
                         rapists = rapists ?? new List<Character_Trainable>();
-                        if (victims == null || victims.Count == 0 || victims.Any(c => c == null)
-                            || rapists.Any(c => c == null) || locations == null || locations.Count == 0
-                            || locations.Any(c => c == null))
+                        if (victims == null || victims.Count == 0 || HasNullChara(victims)
+                            || HasNullChara(rapists) || locations == null || locations.Count == 0
+                            || HasNullChara(locations))
                         {
                             Debug.LogWarning("StartSexJobInParty: missing participants or location actors.");
                             return false;
                         }
-                        victims = victims.Distinct().ToList();
-                        rapists = rapists.Distinct().ToList();
+                        // own copies (the job keeps them), deduplicated - never the owner's target lists
+                        victims = new List<Character_Trainable>(victims);
+                        Utility.DistinctInPlace(victims);
+                        rapists = new List<Character_Trainable>(rapists);
+                        Utility.DistinctInPlace(rapists);
 
                         List<string> namesa = new List<string>(), namesb = new List<string>();
                         foreach (var i in victims) namesa.Add(i.CallName);
@@ -3799,19 +3957,24 @@ public static class EventUtility
                             if (i.FactionManager.CurrentActiveParty != null ) i.FactionManager.CurrentActiveParty.NotifyCharaKidnapped(i, f, false);
                         }
 
-                        List<string> restrictTags = exec.arguments[4].Split("|", StringSplitOptions.RemoveEmptyEntries).ToList();
+                        List<string> restrictTags = new List<string>(exec.arguments[4].Split("|", StringSplitOptions.RemoveEmptyEntries));
 
                         // Same-room movement can reset an incumbent's job and active packages.
-                        foreach (var c in victims.Concat(rapists).Distinct())
+                        // victims, then rapists not already moved as a victim (both lists are distinct already)
+                        for (int i = 0; i < victims.Count + rapists.Count; i++)
                         {
+                            var c = i < victims.Count ? victims[i] : rapists[i - victims.Count];
+                            if (i >= victims.Count && victims.Contains(c)) continue;
                             if (campaign.Map.FindRoomByChara(c.RefID)?.RefID != actualRoom.RefID)
                                 campaign.MoveCharacterTo(c, actualRoom);
                         }
 
                         // Movement/party notifications may end the previously resolved scene.
                         if (j == null || j.IsEnded) j = campaign.FindSexJobInRoom(actualRoom);
-                        var rapistRefs = rapists.Select(c => c.RefID).ToList();
-                        var victimRefs = victims.Select(c => c.RefID).ToList();
+                        var rapistRefs = new List<int>(rapists.Count);
+                        foreach (var c in rapists) rapistRefs.Add(c.RefID);
+                        var victimRefs = new List<int>(victims.Count);
+                        foreach (var c in victims) victimRefs.Add(c.RefID);
                         string description = "";
 
                         var lastMessage = exec.arguments[7] == "" ? "" : LocalizeDictionary.QueryThenParse(exec.arguments[7]);
@@ -4122,53 +4285,27 @@ public static class EventUtility
             case Event.EventEntry.ExecutionType.StartEvent:
                 if (exec.arguments.Count >= 4)
                 {
-                    var targetChars = new List<Character_Trainable>();
+                    // an unknown event ID never started anything (the instance cleared itself) - still a success, as before
+                    var startEvDef = scr_System_Serializer.current.GetEventByID(exec.arguments[1]);
+                    if (startEvDef == null) return true;
+                    var startEvLabel = exec.arguments[2];
+                    var startEvInjectKey = exec.arguments[3] != "" && owner.Self != null ? exec.arguments[3] : "";
+                    owner.AppendStrings.TryGetValue(ExpeditionUtility.FeatureKeywordsKey, out var startEvFeatures);
+                    var startEvHandler = scr_UpdateHandler.current.EventHandler;
                     switch (exec.arguments[0])
                     {
                         case "self":
-                            if (owner.Self != null) targetChars.Add(owner.Self);
+                            if (owner.Self != null) StartEventResult(owner, startEvHandler, owner.Self, startEvDef, startEvLabel, startEvInjectKey, startEvFeatures);
                             break;
                         case "":
+                            StartEventResult(owner, startEvHandler, null, startEvDef, startEvLabel, startEvInjectKey, startEvFeatures);
                             break;
                         default:
-                            if (owner.Targets.ContainsKey(exec.arguments[0])) targetChars.AddRange(owner.Targets[exec.arguments[0]]);
+                            // indexed walk of the owner's own list, no copy: a started event never edits the owner's targets
+                            if (owner.Targets.TryGetValue(exec.arguments[0], out var startEvTargets))
+                                for (int i = 0; i < startEvTargets.Count; i++)
+                                    StartEventResult(owner, startEvHandler, startEvTargets[i], startEvDef, startEvLabel, startEvInjectKey, startEvFeatures);
                             break;
-                    }
-
-                    var selfInject = owner.Self == null ? new List<Character_Trainable>() : new List<Character_Trainable>() { owner.Self };
-
-                    if (targetChars.Count < 1 && exec.arguments[0] == "")
-                    {
-                        //  Debug.LogError($"result startevent {exec.arguments[1]} on null actors");
-                        var ev = new EventInstance(null, exec.arguments[1], exec.arguments[2], immediateInit: false);
-                        if (owner.AppendStrings.TryGetValue(ExpeditionUtility.FeatureKeywordsKey, out var features))
-                            ev.AppendStrings[ExpeditionUtility.FeatureKeywordsKey] = new List<string>(features);
-                        if (exec.arguments[3] != "" && owner.Self != null)
-                        {
-                            //Debug.LogError($"-- injecting self {owner.Self.FirstName} as {selfInject}");
-                            ev.Targets.Add(exec.arguments[3], selfInject);
-                        }
-                        ev.LoadNext(exec.arguments[1], exec.arguments[2]);
-                        scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
-                    }
-                    else
-                    {
-                        var evID = exec.arguments[1];
-                        var evLabel = exec.arguments[2];
-                        foreach (var chara in targetChars)
-                        {
-                            // Debug.LogError($"result startevent {exec.arguments[1]} on {chara.FirstName}");
-                            var ev = new EventInstance(chara, exec.arguments[1], exec.arguments[2], immediateInit: false);
-                            if (owner.AppendStrings.TryGetValue(ExpeditionUtility.FeatureKeywordsKey, out var features))
-                                ev.AppendStrings[ExpeditionUtility.FeatureKeywordsKey] = new List<string>(features);
-                            if (exec.arguments[3] != "" && owner.Self != null)
-                            {
-                                //Debug.LogError($"-- injecting  self {owner.Self.FirstName} as {selfInject}");
-                                ev.Targets.Add(exec.arguments[3], selfInject);
-                            }
-                            ev.LoadNext(exec.arguments[1], exec.arguments[2]);
-                            scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
-                        }
                     }
 
                     return true;
@@ -4309,6 +4446,9 @@ public static class EventUtility
             case Event.EventEntry.ExecutionType.AppendStringEquals:
                 if (exec.arguments.Count < 2) return false;
                 return owner.AppendStrings.TryGetValue(exec.arguments[0], out var appendValues) && appendValues != null && appendValues.Contains(exec.arguments[1]);
+            case Event.EventEntry.ExecutionType.AppendStringContains:
+                if (exec.arguments.Count < 2) return false;
+                return owner.AppendStrings.TryGetValue(exec.arguments[0], out var containValues) && containValues != null && containValues.Contains(exec.arguments[1]);
             case Event.EventEntry.ExecutionType.RequestFallbackWorker:
             case Event.EventEntry.ExecutionType.RequestFallbackWorkerFromLocalWorld:
             {

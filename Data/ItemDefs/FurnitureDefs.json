@@ -8,6 +8,7 @@
             "furnitureSize":2.0,
             "value":20000,
             "Tags":["rarity_common"],
+            "occupancy": { "capacity": 1, "holdsUnconscious": true, "assignOwnership": true },
             "givesJob":
             [ { "comTags":["furniture","bed"] } ]
         },
@@ -18,6 +19,7 @@
             "furnitureSize":2.5,
             "value":40000,
             "Tags":["rarity_common"],
+            "occupancy": { "capacity": 2, "holdsUnconscious": true, "assignOwnership": true },
             "givesJob":
             [ { "comTags":["furniture","bed"] } ]
         },
@@ -28,6 +30,7 @@
             "furnitureSize":3,
             "value":35000,
             "Tags":["rarity_common"],
+            "occupancy": { "capacity": 2, "holdsUnconscious": true, "assignOwnership": true },
             "givesJob":
             [ { "comTags":["furniture","bed"] } ]
         },
@@ -38,6 +41,7 @@
             "furnitureSize":4,
             "value":50000,
             "Tags":["rarity_common"],
+            "occupancy": { "capacity": 3, "holdsUnconscious": true, "assignOwnership": true },
             "givesJob":
             [ { "comTags":["furniture","bed"] } ]
         },
@@ -48,6 +52,7 @@
             "furnitureSize":5,
             "value":70000,
             "Tags":["rarity_common"],
+            "occupancy": { "capacity": 4, "holdsUnconscious": true, "assignOwnership": true },
             "givesJob":
             [ { "comTags":["furniture","bed"] }]
         },
@@ -57,6 +62,7 @@
             "furnitureSize":4,
             "value":50000,
             "Tags":["rarity_common"],
+            "occupancy": { "capacity": 1, "holdsUnconscious": true },
             "givesJob": [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak"] } ]
         },
         {
@@ -65,6 +71,7 @@
             "furnitureSize":1,
             "value":25000,
             "Tags":["rarity_common"],
+            "occupancy": { "capacity": 1, "holdsUnconscious": true },
             "givesJob":
             [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak"] } ]
         },
@@ -188,11 +195,39 @@
             "furnitureSize":1,
             "value":200000,
             "Tags":["rarity_common","plumbing"],
+            "_comments_occupancy":"private room bathroom as one piece: a room divider - entered and left explicitly, hides who is inside (Docs/Furniture/Plan_FurnitureOccupancy.md 2.2)",
+            "occupancy": { "capacity": 2, "isRoomDivider": true, "blocksVisibility": true, "allowSexJob": true },
             "givesJob":
             [ { "comTags":["furniture","bathroom"] },
             { "comTags":["furniture","shower"] },
             { "comID":["com_furniture_restroom_fix"] },
             { "comID":["com_furniture_changeOutfit"] } ]
+        },
+        {
+            "ID":"furniture_toilet_stall",
+            "displayName":"厕所隔间",
+            "recipe":[],
+            "furnitureSize":1,
+            "value":60000,
+            "Tags":["rarity_common","plumbing"],
+            "_comments_occupancy":"public toilet stall as standalone furniture: a room divider for one - entered and left explicitly, hides who is inside, may host its own sex scene. Several in one restroom replace one room per stall (Docs/Furniture/Plan_FurnitureOccupancy.md 2.1)",
+            "occupancy": { "capacity": 1, "isRoomDivider": true, "blocksVisibility": true, "allowSexJob": true },
+            "givesJob":
+            [ { "comTags":["furniture","bathroom"] },
+            { "comID":["com_furniture_restroom_fix"] },
+            { "comID":["com_furniture_changeOutfit"] } ]
+        },
+        {
+            "ID":"furniture_fitting_room",
+            "displayName":"试衣间",
+            "recipe":[],
+            "furnitureSize":1,
+            "value":40000,
+            "Tags":["rarity_common"],
+            "_comments_occupancy":"shop fitting room as standalone furniture: a room divider for one, like a toilet stall - entered and left explicitly, hides who is inside. Replaces a separate fitting room (Docs/Furniture/Plan_FurnitureOccupancy.md 2.1)",
+            "occupancy": { "capacity": 1, "isRoomDivider": true, "blocksVisibility": true, "allowSexJob": true },
+            "givesJob":
+            [ { "comID":["com_furniture_changeOutfit"] } ]
         },
         {
             "ID":"furniture_table_1_chair_1",
@@ -402,6 +437,7 @@
 "furniture_bathtub":"浴缸",
 "furniture_bathroom_set":"卫生间",
 "furniture_toilet_shower_set":"卫生单间",
+"furniture_toilet_stall":"厕所隔间",
 "furniture_table_1_chair_1":"单人桌椅",
 "furniture_dining_table_10":"长餐桌",
 "furniture_cafe_table_2":"咖啡桌",

@@ -3,7 +3,7 @@
         "floorPlans": [
             {
                 "ID": "house_floor_4ldk",
-                "imagePath": "House_4ldk/house_layout_4ldk.jpg",
+                "imagePath": "BGAssets/House_4ldk/house_layout_4ldk.jpg",
                 "floorWidth": 1024,
                 "floorHeight": 482,
                 "AnchorType": "TopLeft",
@@ -83,7 +83,7 @@
                     },
                     {
                         "ID": "4ldk_floor_1L_bath",
-                        "displayName":"map_toilet",
+                        "displayName":"map_bath",
                         "offsetX": 106,
                         "offsetY": 135,
                         "connects": [

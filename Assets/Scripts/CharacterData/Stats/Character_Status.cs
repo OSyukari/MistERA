@@ -159,12 +159,20 @@ public class Status_Instance
     /// </summary>
     [JsonProperty] protected int randomSeed = 0;
 
-    [JsonIgnore] public bool hasRandomVariation 
-    { get 
+    [JsonIgnore] public bool hasRandomVariation
+    { get
         {
             if (this.baseRef.variationMode.randomVariation is Status_Base.RandomVariation_Sex) return true;
             return false;
-        } 
+        }
+    }
+    /// <summary>Variation follows elapsedTime (sine / noise): Severity moves every tick without SeverityAdd.</summary>
+    [JsonIgnore] public bool hasTimeVariation
+    { get
+        {
+            var variation = BaseRef?.variationMode?.randomVariation;
+            return variation is Status_Base.RandomVariation_Sine || variation is Status_Base.RandomVariation_Noise;
+        }
     }
 
     [JsonIgnore] public int TickTillDecay
@@ -232,8 +240,9 @@ public class Status_Instance
         severity = Mathf.Max(target, min);
         severity = Mathf.Min(severity, max);
 
+        // value readers first: UpdateSeverity below reads VariantThresholdMod
         var severityChanged = !severity.Equals(previousSeverity);
-        if (severityChanged) owner?.NotifyStatModsChanged();
+        if (severityChanged) owner?.NotifyStatusValueChanged(this);
 
         if (severity == max) maxed = true;
         else maxed = false;
@@ -247,8 +256,8 @@ public class Status_Instance
 
         if (this.SeverityIndex != initialS)
         {
-            // Continuous changes already invalidated caches before dependency reads.
-            if (!severityChanged) owner?.NotifyStatModsChanged();
+            // another variant: the stats its old / new variant modifiers target
+            owner?.NotifyStatusIndexChanged(this, initialS);
             return true;
         }
         return false;
@@ -271,7 +280,7 @@ public class Status_Instance
         severity = Mathf.Clamp(target, min, max);
 
         var severityChanged = !severity.Equals(previousSeverity);
-        if (severityChanged) owner?.NotifyStatModsChanged();
+        if (severityChanged) owner?.NotifyStatusValueChanged(this);
 
         if (severity == max) maxed = true;
         else maxed = false;
@@ -279,7 +288,7 @@ public class Status_Instance
         _severityIndex = UpdateSeverity();
         if (this.SeverityIndex != initialS)
         {
-            if (!severityChanged) owner?.NotifyStatModsChanged();
+            owner?.NotifyStatusIndexChanged(this, initialS);
             return true;
         }
         return false;

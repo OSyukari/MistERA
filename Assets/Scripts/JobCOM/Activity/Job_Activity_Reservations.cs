@@ -70,9 +70,10 @@ public partial class Job_Activity
 
     void EndExpiredReservation()
     {
-        if (!TryGetInstance(out var g, out var b)
-            || (g != null ? !g.IsOpen || NowAbs() >= g.AbsEnd
-                : b == null || OwnerFactions?.HasBooking(b) != true || NowAbs() >= b.AbsEnd)) EndJob("reservation expired");
+        if (!TryGetInstance(out var g, out var b)) { EndJob("reservation expired"); return; }
+        // over (or a concluded session): the visit ran its course - its end event fires
+        bool over = g != null ? NowAbs() >= g.AbsEnd || g.status == RecreationGroupStatus.Ended : b != null && NowAbs() >= b.AbsEnd;
+        if (over || (g != null ? !g.IsOpen : b == null || OwnerFactions?.HasBooking(b) != true)) EndJob("reservation expired", over);
         else SyncReservationParticipants();
     }
 
@@ -214,7 +215,7 @@ public partial class Job_Activity
     public void BookingRemoved(int charaRef)
     {
         var rec = FindParticipant(charaRef);
-        if (rec != null) rec.state = ActivityParticipantState.Left;
+        SetParticipantState(rec, ActivityParticipantState.Left);
         CheckOutOvernight(charaRef);
         // Create's caller must see Failed, not Ended (Ended takes the fee-charging plain-sandbox fallback).
         // LastUpdate removes the cancelled instance on the next tick.
@@ -253,7 +254,7 @@ public partial class Job_Activity
                 && (!HasOvernightGuest(c) || Venue?.IsRoomOwner(gatherRoomRef, rec.charaRef) != true);
             if (!live || lostStay)
             {
-                rec.state = ActivityParticipantState.Left;
+                SetParticipantState(rec, ActivityParticipantState.Left);
                 CheckOutOvernight(rec.charaRef);
                 if (lostStay)
                 {

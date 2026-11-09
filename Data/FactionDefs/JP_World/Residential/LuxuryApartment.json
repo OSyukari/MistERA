@@ -1,0 +1,47 @@
+{
+    "_comment_integration": "Luxury apartment district (Docs/Locations/Plan_ResidentialDistricts.md 2.1). One world door at (740,160), floorExitID luxury_apartment_lobby, listed in world.json initializeFactions. Every home uses the shared BGAssets/House_4ldk layout as a rental and links to the lobby.",
+    "_comment_amenities": "residentsOnly rooms (Room_Base.residentsOnly) open only to residents of this district's homes, district members, visit-pass holders, bookings here and the player's followers (ResidenceUtility.HasRoomAccess). The gym has no workout furniture yet: the sports club's treadmills/benches are gated to sports-club membership through their COMs (requireJobFaction), so reusing them needs a check of those gates first - left for later.",
+    "_comment_art": "PLACEHOLDER: imagePath/roomImagePath reuse existing BGAssets/Generated art; replace with dedicated art later.",
+    "MapPlans": {
+        "factionInit": [{
+            "ID": "jp_district_luxury_apartment", "isPublic": true, "isRentingFloor": false, "setPrivateRoomOwner": false, "listConnectedFloors": true,
+            "mainExit": { "roomID": "luxury_apartment_lobby", "exitCost": 5 },
+            "floors": [{ "ID": "floor_jp_district_luxury_apartment", "nameOverwrite": "jp_district_luxury_apartment" }],
+            "_comment_residential": "4LDK luxury apartment rentals. Every home links to attachRoomID (empty = mainExit room luxury_apartment_lobby).",
+            "residential": {
+                "maxResidences": 40,
+                "templates": [ { "templateID": "jp_home_tpl_apt_4ldk", "weight": 1 } ]
+            },
+            "managerBaseIDs": [""], "salesInventory": [], "workModules": [], "workHours": [], "workAssignment": []
+        }],
+        "floorPlans": [{
+            "ID": "floor_jp_district_luxury_apartment", "imagePath": "BGAssets/Generated/office_01.webp",
+            "isFloorPlan": false, "floorWidth": 400, "floorHeight": 400, "resize": 1, "mapExit": "luxury_apartment_lobby",
+            "_comment_exits": "hidden sockets for venues hanging off the district (venue factionInit floorDoors -> exit to_<venueID>); homes use runtime exits instead",
+            "exits": [
+                { "ID": "to_jp_massage", "connectedRoom": "luxury_apartment_lobby", "hideOnMap": true }
+            ],
+            "rooms": [
+                {
+                    "ID": "luxury_apartment_lobby",
+                    "displayName": "luxury_apartment_lobby",
+                    "hideOnMap": true,
+                    "connects": [],
+                    "roomImagePath": "BGAssets/Generated/office_lounge_01.webp"
+                }
+            ]
+        }
+    ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "jp_district_luxury_apartment": "高级公寓",
+                "luxury_apartment_lobby": "高级公寓大堂",
+                "luxury_apartment_concierge": "礼宾服务台",
+                "luxury_apartment_gym": "住户健身房",
+                "luxury_apartment_lounge": "住户休息室"
+            }
+        }
+    }
+}

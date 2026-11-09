@@ -21,13 +21,44 @@ public class PartyMemberSnapshot
 
 public class EventInstance
 {
+    [JsonIgnore, Newtonsoft.Json.JsonIgnore] Action completion;
+    [JsonIgnore, Newtonsoft.Json.JsonIgnore] bool completionInvoked;
+
+    /// <summary>Runtime-only, once per instance, including invalidation and external manager removal.</summary>
+    public void OnCompleted(Action callback)
+    {
+        if (completionInvoked) callback?.Invoke();
+        else completion += callback;
+    }
+
+    public void CompleteCallbacks()
+    {
+        if (completionInvoked) return;
+        completionInvoked = true;
+        var callbacks = completion;
+        completion = null;
+        if (callbacks == null) return;
+        foreach (Action callback in callbacks.GetInvocationList())
+        {
+            try { callback(); }
+            catch (Exception ex) { Debug.LogException(ex); }
+        }
+    }
+
     // Keyed by anchor identity, so aliases and nextEventID scopes use the same roster after a party transfer.
-    public Dictionary<int, List<PartyMemberSnapshot>> PartyMemberSnapshots = new Dictionary<int, List<PartyMemberSnapshot>>();
+    // Collections most instances never use are created on first access (lazy getters below) - an instance is built for
+    // every StartEvent Result target and trigger hit, so eager empty collections were most of its allocation.
+    Dictionary<int, List<PartyMemberSnapshot>> _partyMemberSnapshots;
+    public Dictionary<int, List<PartyMemberSnapshot>> PartyMemberSnapshots
+    {
+        get => _partyMemberSnapshots ??= new Dictionary<int, List<PartyMemberSnapshot>>();
+        set => _partyMemberSnapshots = value;
+    }
 
     internal bool TryGetPartyMemberSnapshot(int anchorRef, string memberTypeFilter, out IEnumerable<int> members)
     {
         members = null;
-        if (!PartyMemberSnapshots.TryGetValue(anchorRef, out var snapshot)) return false;
+        if (_partyMemberSnapshots == null || !_partyMemberSnapshots.TryGetValue(anchorRef, out var snapshot)) return false;
         members = snapshot.Where(member => memberTypeFilter == ""
             || MemberType.Matches(FactionUtility.GetMemberType(member.memberTypeID), memberTypeFilter)).Select(member => member.charaRef);
         return true;
@@ -36,8 +67,9 @@ public class EventInstance
     public bool scoped = false;
     [JsonIgnore] Event targetValidationEvent;
     [JsonIgnore] Event targetOverrideEvent;
-    [JsonIgnore] readonly HashSet<Event> generatedTargetEvents = new HashSet<Event>();
-    [JsonIgnore] readonly HashSet<Event> scopedTargetEvents = new HashSet<Event>();
+    // lazy: only filled when a nextEventID chain moves to another definition
+    [JsonIgnore] HashSet<Event> generatedTargetEvents;
+    [JsonIgnore] HashSet<Event> scopedTargetEvents;
 
     /// <summary>Initialization belongs to a definition, not the entire nextEventID chain.</summary>
     internal void PrepareTargetValidation(Event definition)
@@ -46,10 +78,10 @@ public class EventInstance
         if (targetValidationEvent == null) targetOverrideEvent = definition;
         else
         {
-            if (generated) generatedTargetEvents.Add(targetValidationEvent);
-            if (scoped) scopedTargetEvents.Add(targetValidationEvent);
-            generated = generatedTargetEvents.Contains(definition);
-            scoped = scopedTargetEvents.Contains(definition);
+            if (generated) (generatedTargetEvents ??= new HashSet<Event>()).Add(targetValidationEvent);
+            if (scoped) (scopedTargetEvents ??= new HashSet<Event>()).Add(targetValidationEvent);
+            generated = generatedTargetEvents != null && generatedTargetEvents.Contains(definition);
+            scoped = scopedTargetEvents != null && scopedTargetEvents.Contains(definition);
         }
         targetValidationEvent = definition;
     }
@@ -114,8 +146,18 @@ public class EventInstance
 
     public bool overrideTargetGen = false;
     public bool overrideTargetScope = false;
-    public List<Event.GenerationParameters> OverrideTargetGen = new List<Event.GenerationParameters>();
-    public List<EventScope_Target> OverrideTargetScope = new List<EventScope_Target>();
+    List<Event.GenerationParameters> _overrideTargetGen;
+    List<EventScope_Target> _overrideTargetScope;
+    public List<Event.GenerationParameters> OverrideTargetGen
+    {
+        get => _overrideTargetGen ??= new List<Event.GenerationParameters>();
+        set => _overrideTargetGen = value;
+    }
+    public List<EventScope_Target> OverrideTargetScope
+    {
+        get => _overrideTargetScope ??= new List<EventScope_Target>();
+        set => _overrideTargetScope = value;
+    }
 
     bool firstInit = true;
     public bool displayOverride = false;
@@ -135,7 +177,12 @@ public class EventInstance
     public bool SilentEndedNormally { get; private set; }
     public string SilentEndReason { get; private set; }
     /// <summary>Characters lent to this instance by RequestFallbackWorker - a silent run sends the ones no party holds back to their pool when it ends.</summary>
-    public List<Character_Trainable> LentWorkers = new List<Character_Trainable>();
+    List<Character_Trainable> _lentWorkers;
+    public List<Character_Trainable> LentWorkers
+    {
+        get => _lentWorkers ??= new List<Character_Trainable>();
+        set => _lentWorkers = value;
+    }
 
     public bool isVisible
     {
@@ -208,14 +255,29 @@ public class EventInstance
         }
     }
 
-    public Dictionary<string, List<Action>> FunctionCalls = new Dictionary<string, List<Action>>();
+    Dictionary<string, List<Action>> _functionCalls;
+    public Dictionary<string, List<Action>> FunctionCalls
+    {
+        get => _functionCalls ??= new Dictionary<string, List<Action>>();
+        set => _functionCalls = value;
+    }
     public Dictionary<string, List<Character_Trainable>> Targets = new Dictionary<string, List<Character_Trainable>>();
     /// <summary>
     /// Runtime only: ready-made question options stored under a key (e.g. by the JoinActiveFaction Result), loaded by an
     /// EventEntry_Question with loadOptionsKey. Options may carry an onSelect callback and a disabledReasonKey.
     /// </summary>
-    public Dictionary<string, List<Event.EventEntry.Options>> StoredOptions = new Dictionary<string, List<Event.EventEntry.Options>>();
-    public Dictionary<string, double> Parameters = new Dictionary<string, double>();
+    Dictionary<string, List<Event.EventEntry.Options>> _storedOptions;
+    public Dictionary<string, List<Event.EventEntry.Options>> StoredOptions
+    {
+        get => _storedOptions ??= new Dictionary<string, List<Event.EventEntry.Options>>();
+        set => _storedOptions = value;
+    }
+    Dictionary<string, double> _parameters;
+    public Dictionary<string, double> Parameters
+    {
+        get => _parameters ??= new Dictionary<string, double>();
+        set => _parameters = value;
+    }
     /// <summary>
     /// Can be used to store strings (flush with dict key)
     /// or store string key that ca
@@ -256,10 +318,15 @@ public class EventInstance
     public MessageCollect message = new MessageCollect(true);
     // Presentation-only backlink, delivered once when this instance ends (not on definition changes).
     [JsonIgnore] internal Action<I_Records> ExperienceObserver;
-    [JsonIgnore] readonly HashSet<I_Records> observedExperience = new HashSet<I_Records>();
-    [JsonIgnore] readonly ExperienceLog eventExperience = new ExperienceLog();
-    [JsonIgnore] readonly List<string> eventExperienceMessages = new List<string>();
-    [JsonIgnore] readonly HashSet<ExperienceLog> trackedExperience = new HashSet<ExperienceLog>();
+    // lazy: only touched while an ExperienceObserver or SilentSink is attached
+    [JsonIgnore] HashSet<I_Records> _observedExperience;
+    [JsonIgnore] ExperienceLog _eventExperience;
+    [JsonIgnore] List<string> _eventExperienceMessages;
+    [JsonIgnore] HashSet<ExperienceLog> _trackedExperience;
+    HashSet<I_Records> observedExperience => _observedExperience ??= new HashSet<I_Records>();
+    ExperienceLog eventExperience => _eventExperience ??= new ExperienceLog();
+    List<string> eventExperienceMessages => _eventExperienceMessages ??= new List<string>();
+    HashSet<ExperienceLog> trackedExperience => _trackedExperience ??= new HashSet<ExperienceLog>();
     [JsonIgnore] bool experienceCompleted;
 
     internal void TrackExperience(ExperienceLog log)
@@ -305,12 +372,15 @@ public class EventInstance
         }
         finally
         {
-            foreach (var log in trackedExperience) log.presentationObserver -= CollectExperience;
-            trackedExperience.Clear();
+            if (_trackedExperience != null)
+            {
+                foreach (var log in _trackedExperience) log.presentationObserver -= CollectExperience;
+                _trackedExperience.Clear();
+            }
             ExperienceObserver = null;
-            eventExperience.Clear();
-            eventExperienceMessages.Clear();
-            observedExperience.Clear();
+            _eventExperience?.Clear();
+            _eventExperienceMessages?.Clear();
+            _observedExperience?.Clear();
         }
     }
 
@@ -437,7 +507,13 @@ public class EventInstance
     /// Line/Question/InputField overwrites this with its own authored fields (see EventUtility) and the
     /// merged result is snapshotted at queue time, not read live at draw time.
     /// </summary>
-    public UISpec CurrentUISpec = new UISpec();
+    // lazy: LoadNext replaces it with the event's own clone right away, so the initial one was always thrown away
+    UISpec _currentUISpec;
+    public UISpec CurrentUISpec
+    {
+        get => _currentUISpec ??= new UISpec();
+        set => _currentUISpec = value;
+    }
     /// <summary>
     /// TargetRef == -1 for null target
     /// </summary>
@@ -565,7 +641,14 @@ public class EventInstance
 
     public void LoadNext(string eventID = "", string label = "")
     {
-        nextEvent = eventID == "" ? currentEvent : scr_System_Serializer.current.GetEventByID(eventID);
+        LoadNext(eventID == "" ? currentEvent : scr_System_Serializer.current.GetEventByID(eventID), label, eventID);
+    }
+
+    /// <summary>LoadNext with the definition already in hand (skips the ID lookup). eventID is only used in error logs.</summary>
+    public void LoadNext(Event next, string label, string eventID = null)
+    {
+        if (eventID == null) eventID = next?.ID ?? "";
+        nextEvent = next;
         if (nextEvent == null) this.Clear($"EventInstance cannot find event with id {eventID}");
         else
         {
@@ -577,7 +660,8 @@ public class EventInstance
             PrepareTargetValidation(nextEvent);
             // entering a different event (including the very first load) resets the running display
             // setting to that event's own template, rather than carrying over the previous event's state
-            if (nextEvent != currentEvent) CurrentUISpec = nextEvent.UISpec.Clone();
+            // (a trigger probe clones it on promotion instead - validation never reads it)
+            if (nextEvent != currentEvent && !QuietDiscard) CurrentUISpec = nextEvent.UISpec.Clone();
 
             // at this point eventid will never be ""
             // so here we only accept either empty or non empty label
@@ -669,6 +753,9 @@ public class EventInstance
 #if UNITY_EDITOR
         if (errorMsg != "" && scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.LogError(errorMsg);
 #endif
+        CompleteCallbacks();
+        // a trigger probe was never queued: a failed validation must not touch the EventManager (Remove would also Run it)
+        if (QuietDiscard) return;
         // a silent instance was never queued: touching the EventManager here would start the next queued event mid-run
         if (silent)
         {
@@ -682,6 +769,49 @@ public class EventInstance
     {
         isValid = this.canRun && EventUtility.Validate( this.nextEvent,this);
         return isValid;
+    }
+
+    /// <summary>The loaded definition (current, else next) - what ConflictWith compares.</summary>
+    [JsonIgnore] internal Event Definition => currentEvent ?? nextEvent;
+
+    /// <summary>Set on a reused EventManager.Trigger probe: Clear() never reaches the EventManager, and the UISpec
+    /// clone waits for PromoteProbe.</summary>
+    [JsonIgnore] internal bool QuietDiscard;
+
+    /// <summary>
+    /// EventManager.Trigger probe reuse: back to a freshly built, not-yet-loaded instance for eventSelf. Covers what
+    /// LoadNext + EventUtility.Validate write (targets, condition AppendStrings, target-validation bookkeeping); a probe
+    /// never runs, so its run-time state (messages, options, callbacks, parameters, snapshots) is still empty.
+    /// </summary>
+    internal void ResetForProbe(Character_Trainable eventSelf, bool forbidGeneration)
+    {
+        QuietDiscard = true;
+        _self = null;
+        targetRef = -1;
+        Self = eventSelf;
+        this.forbidGeneration = forbidGeneration;
+        maxCallStack = 300;
+        isValid = false;
+        currentEvent = null;
+        currentEntry = null;
+        nextEvent = null;
+        nextEntry = null;
+        generated = false;
+        scoped = false;
+        targetValidationEvent = null;
+        targetOverrideEvent = null;
+        generatedTargetEvents?.Clear();
+        scopedTargetEvents?.Clear();
+        Targets.Clear();
+        AppendStrings.Clear();
+        relevantActors = null;
+    }
+
+    /// <summary>A validated probe becomes an ordinary instance (it is no longer reused).</summary>
+    internal void PromoteProbe()
+    {
+        QuietDiscard = false;
+        if (nextEvent != null) CurrentUISpec = nextEvent.UISpec.Clone();
     }
     /// <summary>
     /// Generic return call from EventEntry.Execute to Event's parent

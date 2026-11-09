@@ -1,33 +1,33 @@
 {
   "_comment": "Neutral initial/explicit-join/late scenes for the two commercial visits. Job_Activity alone charges their entranceFee. No fee Result, relationship payout or claim that a shared bath occurred across gendered rooms.",
   "Events": { "list": [
-    { "ID": "Greenside_PetCafe_Begin", "events": [
+    { "ID": "Venue_PetCafe_Begin", "events": [
       { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [
         { "option": "explicit join", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isJoin"] }, { "Type": "JumpToLabel", "arguments": ["", "join"] }] },
         { "option": "late arrival", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isLate"] }, { "Type": "JumpToLabel", "arguments": ["", "late"] }] },
         { "option": "initial launch", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "initial"] }] }
       ] },
-      { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "initial", "line": "Greenside_PetCafe_initial", "isLast": true },
-      { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "join", "line": "Greenside_PetCafe_join", "isLast": true },
-      { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "line": "Greenside_PetCafe_late", "isLast": true }
+      { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "initial", "line": "Venue_PetCafe_initial", "isLast": true },
+      { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "join", "line": "Venue_PetCafe_join", "isLast": true },
+      { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "line": "Venue_PetCafe_late", "isLast": true }
     ] },
-    { "ID": "Greenside_Sento_Begin", "events": [
+    { "ID": "Venue_Sento_Begin", "events": [
       { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [
         { "option": "explicit join", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isJoin"] }, { "Type": "JumpToLabel", "arguments": ["", "join"] }] },
         { "option": "late arrival", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isLate"] }, { "Type": "JumpToLabel", "arguments": ["", "late"] }] },
         { "option": "initial launch", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "initial"] }] }
       ] },
-      { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "initial", "line": "Greenside_Sento_initial", "isLast": true },
-      { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "join", "line": "Greenside_Sento_join", "isLast": true },
-      { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "line": "Greenside_Sento_late", "isLast": true }
+      { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "initial", "line": "Venue_Sento_initial", "isLast": true },
+      { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "join", "line": "Venue_Sento_join", "isLast": true },
+      { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "line": "Venue_Sento_late", "isLast": true }
     ] }
   ] },
   "Dictionary": { "Entries": { "zh-cn": {
-    "Greenside_PetCafe_initial": "猫咪休息室的门轻轻合上。入内前先洗手，等动物自己靠近；隔壁还有狗狗活动室。",
-    "Greenside_PetCafe_join": "$joining.name$洗过手，在猫咪休息室找了个座位。",
-    "Greenside_PetCafe_late": "$joining.name$晚些来到宠物咖啡馆，先洗手，再轻轻推开休息室的门。",
-    "Greenside_Sento_initial": "钱汤接待处飘着淡淡的皂香。更衣室的指示牌分列两边，先冲洗再入池；出浴后可以回到接待处休息。",
-    "Greenside_Sento_join": "$joining.name$来到钱汤接待处，看了看两侧更衣室的指示牌。",
-    "Greenside_Sento_late": "$joining.name$晚些来到钱汤，在接待处放慢了脚步。"
+    "Venue_PetCafe_initial": "猫咪休息室的门轻轻合上。入内前先洗手，等动物自己靠近；隔壁还有狗狗活动室。",
+    "Venue_PetCafe_join": "$joining.name$洗过手，在猫咪休息室找了个座位。",
+    "Venue_PetCafe_late": "$joining.name$晚些来到宠物咖啡馆，先洗手，再轻轻推开休息室的门。",
+    "Venue_Sento_initial": "钱汤接待处飘着淡淡的皂香。更衣室的指示牌分列两边，先冲洗再入池；出浴后可以回到接待处休息。",
+    "Venue_Sento_join": "$joining.name$来到钱汤接待处，看了看两侧更衣室的指示牌。",
+    "Venue_Sento_late": "$joining.name$晚些来到钱汤，在接待处放慢了脚步。"
   } } }
 }

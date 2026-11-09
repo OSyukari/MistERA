@@ -29,11 +29,12 @@ public sealed class PermissionGrant
     }
 
     // Normal grants still require the caller to check their live relationship prerequisites.
+    // Temporary grants live until removed: the granter's day update (unless the pair shares a running sex scene)
+    // or the pair's sex scene ending (PermissionService.ClearTemporaryOnDayUpdate / ClearTemporaryForPair).
     public bool IsWithinLifetime(DateTime gameTime)
     {
         if (gameTime < grantedAt) return false;
-        return type == PermissionGrantType.Normal
-            || (type == PermissionGrantType.Temporary && gameTime.Date == grantedAt.Date);
+        return type == PermissionGrantType.Normal || type == PermissionGrantType.Temporary;
     }
 }
 
@@ -114,6 +115,64 @@ public sealed class PermissionGrantDatabase
     {
         lock (sync)
             grants.RemoveAll(grant => grant.granterRef == characterRef || grant.holderRef == characterRef);
+    }
+
+    /// <summary>
+    /// Removes the temporary grants given by granterRef, except those whose holder keepHolder protects. Holders of removed
+    /// grants are appended to removedHolders (no duplicates) so the caller can invalidate the pairs.
+    /// </summary>
+    public void RemoveTemporaryByGranter(int granterRef, Func<int, bool> keepHolder, List<int> removedHolders)
+    {
+        lock (sync)
+        {
+            for (int i = grants.Count - 1; i >= 0; i--)
+            {
+                var grant = grants[i];
+                if (grant.granterRef != granterRef || grant.type != PermissionGrantType.Temporary) continue;
+                if (keepHolder != null && keepHolder(grant.holderRef)) continue;
+                grants.RemoveAt(i);
+                if (removedHolders != null && !removedHolders.Contains(grant.holderRef)) removedHolders.Add(grant.holderRef);
+            }
+        }
+    }
+
+    /// <summary>Removes the temporary grants between two characters, both directions. True if any was removed.</summary>
+    public bool RemoveTemporaryForPair(int refA, int refB)
+    {
+        bool removed = false;
+        lock (sync)
+        {
+            for (int i = grants.Count - 1; i >= 0; i--)
+            {
+                var grant = grants[i];
+                if (grant.type != PermissionGrantType.Temporary) continue;
+                if (!((grant.granterRef == refA && grant.holderRef == refB) || (grant.granterRef == refB && grant.holderRef == refA))) continue;
+                grants.RemoveAt(i);
+                removed = true;
+            }
+        }
+        return removed;
+    }
+
+    /// <summary>
+    /// Load cleanup for saves from before temporary grants were removed explicitly: drops temporary grants issued before
+    /// today's date unless keepPair protects the (granter, holder) pair. Returns the removed count.
+    /// </summary>
+    public int RemoveStaleTemporary(DateTime gameTime, Func<int, int, bool> keepPair)
+    {
+        int removed = 0;
+        lock (sync)
+        {
+            for (int i = grants.Count - 1; i >= 0; i--)
+            {
+                var grant = grants[i];
+                if (grant.type != PermissionGrantType.Temporary || grant.grantedAt.Date >= gameTime.Date) continue;
+                if (keepPair != null && keepPair(grant.granterRef, grant.holderRef)) continue;
+                grants.RemoveAt(i);
+                removed++;
+            }
+        }
+        return removed;
     }
 
     public int RemoveMissingCharacters(ISet<int> existingCharacterRefs)

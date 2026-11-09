@@ -1,18 +1,12 @@
 {
     "_doc": {
-        "purpose": "Localization companion for recreation_activity_wait.json. Holds en-us entries for activity gathering and brief event entry."
+        "purpose": "Localization companion for recreation_activity_wait.json. Holds en-us entries for activity gathering."
     },
     "Dictionary": {
         "Entries": {
             "en-us": {
                 "recreation_activity_wait_displayName": "Wait for the activity to begin",
-                "recreation_activity_join_displayName": "Join the activity",
-                "recreation_activity_wait_playerDisplayName": "Join the activity",
-                "recreation_activity_join_tooltip": "Join the activity already under way: $activity$\n$detail$",
-                "recreation_activity_join_begin": "$doer.firstname$ stepped over to join the activity",
-                "recreation_activity_join_ongoing": "$doer.firstname$ is joining the activity",
-                "recreation_activity_join_remove": "$doer.firstname$ stopped short of joining",
-                "recreation_activity_join_after": "$doer.firstname$ arrived at the activity",
+                "recreation_activity_join_tooltip": "Activity: $activity$\n$detail$",
                 "recreation_activity_wait_begin": "$doer.firstname$ joined the activity and waits for it to begin",
                 "recreation_activity_wait_ongoing": "$doer.firstname$ is waiting for the activity to begin",
                 "recreation_activity_wait_remove": "$doer.firstname$ stopped waiting for the activity",

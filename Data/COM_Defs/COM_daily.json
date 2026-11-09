@@ -19,10 +19,11 @@
                     "doerCount":1, 
                     "receiverCount":1,
                     "req_Doers":{ "allowNPC":false } ,
-                    "req_Receivers":{ "requireUnrestrained":true, "requireAction":false, "requireConscious":false } 
+                    "_comments_req_Receivers": "conscious only (CharaReq defaults) - an unconscious character is carried instead (com_interaction_carry)",
+                    "req_Receivers":{ "requireUnrestrained":true }
                 }
             },
-            "results_EP": 
+            "results_EP":
             { "results_character":
                 [
                     { "entry_conditions":{ "applyToReceiver":true }, "entry_results": { "toggleTeamStatus":true } }
@@ -30,18 +31,11 @@
             },
             "variants":[
                 {
-                    "requirements":{ 
-                        "requirement":{ 
+                    "requirements":{
+                        "requirement":{
                             "req_Receivers":{ "requireAction":true, "requireNotFollowing":true }
                      } },
                     "displayName":"comManager_com_follow_request"
-                },
-                {
-                    "requirements":{ 
-                        "requirement":{ 
-                            "req_Receivers":{ "requireNotFollowing":true }
-                     } },
-                    "displayName":"comManager_com_followCarry_request"
                 }
             ],
             "AcceptanceCheck":{ "baseAcceptanceValue":10 },
@@ -87,18 +81,11 @@
             },
             "variants":[
                 {
-                    "requirements":{ 
-                        "requirement":{ 
-                            "req_Receivers":{ "requireAction":true,"requireFollowing":true }
-                     } },
-                    "displayName":"comManager_com_follow_stop"
-                },
-                {
-                    "requirements":{ 
-                        "requirement":{ 
+                    "requirements":{
+                        "requirement":{
                             "req_Receivers":{ "requireFollowing":true }
                      } },
-                    "displayName":"comManager_com_followCarry_stop"
+                    "displayName":"comManager_com_follow_stop"
                 }
             ],
             "description_after":
@@ -110,6 +97,154 @@
                     }
                 ]
             }
+        },
+        {
+            "ID":"com_interaction_carry",
+            "_comments": "携带: the player picks up the current target who cannot move (unconscious, immobilized, time stopped), lifted out of the bed / sofa keeping them. One at a time; they move with the player and are only put down through 安放 (com_player_putDown). Dialogue tab like 同行 (dialogueOnly): it rebuilds the receiver from the live current target, the main panel's player COM buttons keep the target they were built with. Variant 0 = time stopped target (first, so it wins). Docs/Furniture/Plan_FurnitureOccupancy.md §3",
+            "ActionPackageClass":"ActionPackage_Interaction",
+            "displayName":"comManager_com_carry",
+            "timeScale":1,
+            "comTags": [
+                "action",
+                "player",
+                "carryRequest",
+                "nsfw",
+                "NonInteraction",
+                "dialogueOnly"
+            ],
+            "requirements":{
+                "requirement":{
+                    "forbidTeammateJoin":true,
+                    "doerCount":1,
+                    "receiverCount":1,
+                    "req_Doers":{ "allowNPC":false } ,
+                    "_comments_req_Receivers": "cannot move but not locked (unconscious / immobilized, not restrained / jailed) is checked in code - FurnitureOccupancyUtility.CanBeCarried",
+                    "req_Receivers":{ "requireUnrestrained":true, "requireAction":false, "requireConscious":false, "requireNotFollowing":true }
+                }
+            },
+            "variants":[
+                {
+                    "requirements":{ "requirement":{ "req_Receivers":{ "requireTimestopped":true } } },
+                    "displayName":"comManager_com_carry_timestop",
+                    "useBaseDescription": false,
+                    "description_begin":{ "Entries":[{"texts":["com_interaction_carry_timestop_begin_1"]}], "keepLooking":false },
+                    "description_ongoing":{ "Entries":[{"texts":["com_interaction_carry_timestop_ongoing_1"]}], "keepLooking":false }
+                },
+                {
+                    "requirements":{ "requirement":{ } },
+                    "displayName":"comManager_com_carry"
+                }
+            ],
+            "description_begin":{ "Entries":[{"texts":["com_interaction_carry_begin_1"]}], "keepLooking":false },
+            "description_ongoing":{ "Entries":[{"texts":["com_interaction_carry_ongoing_1"]}], "keepLooking":false }
+        },
+        {
+            "ID":"com_player_putDown",
+            "_comments": "安放: folder - clicking lists every bed / sofa in the room that can take the carried character (scr_panel_COMmanager.LoadPutDownPanel), each a com_furniture_putDown package. Never executed itself.",
+            "ActionPackageClass":"ActionPackage_Interaction",
+            "displayName":"comManager_com_putDown",
+            "timeScale":1,
+            "comTags": [
+                "action",
+                "player",
+                "putDownFolder",
+                "nsfw",
+                "NonInteraction"
+            ],
+            "requirements":{
+                "requirement":{
+                    "forbidTeammateJoin":true,
+                    "joinAlone":true,
+                    "doerCount":1,
+                    "req_Doers":{ "allowNPC":false },
+                    "req_Receivers":{ "requireAction":false, "requireConscious":false }
+                }
+            },
+            "variants":[
+                {
+                    "requirements":{ "requirement":{ } },
+                    "displayName":"comManager_com_putDown"
+                }
+            ]
+        },
+        {
+            "ID":"com_furniture_putDown",
+            "_comments": "one 安放 choice: the player lays the carried receiver on this bed / sofa, which keeps them (soft container). Built per furniture by FurnitureOccupancyUtility.MakePutDownPackage, not offered by any furniture's givesJob.",
+            "ActionPackageClass":"ActionPackage_Interaction",
+            "displayName":"com_furniture_putDown_displayName",
+            "timeScale":1,
+            "comTags": [
+                "furniture",
+                "putDown",
+                "nsfw",
+                "NonInteraction"
+            ],
+            "requirements":{
+                "requirement":{
+                    "forbidTeammateJoin":true,
+                    "joinAlone":true,
+                    "doerCount":1,
+                    "receiverCount":1,
+                    "req_Doers":{ "allowNPC":false } ,
+                    "req_Receivers":{ "requireAction":false, "requireConscious":false }
+                }
+            },
+            "variants":[
+                {
+                    "requirements":{ "requirement":{ "req_Receivers":{ "requireTimestopped":true } } },
+                    "displayName":"com_furniture_putDown_displayName",
+                    "useBaseDescription": false,
+                    "description_begin":{ "Entries":[{"texts":["com_furniture_putDown_timestop_begin_1"]}], "keepLooking":false },
+                    "description_ongoing":{ "Entries":[{"texts":["com_furniture_putDown_timestop_ongoing_1"]}], "keepLooking":false }
+                },
+                {
+                    "requirements":{ "requirement":{ } },
+                    "displayName":"com_furniture_putDown_displayName"
+                }
+            ],
+            "AcceptanceCheck": { "baseAcceptanceValue": 0, "alwaysAccept": true },
+            "DifficultyCheck": { "baseD20Check": 0 },
+            "description_begin":{ "Entries":[{"texts":["com_furniture_putDown_begin_1"]}], "keepLooking":false },
+            "description_ongoing":{ "Entries":[{"texts":["com_furniture_putDown_ongoing_1"]}], "keepLooking":false }
+        },
+        {
+            "ID":"com_player_putDownHere",
+            "_comments": "安放 choice 'put down here': the carried is set down standing where the player is (no furniture) - only when they can stand: conscious and able to move but for a time stop (FurnitureOccupancyUtility.ValidateCarryRules). Unconscious / immobilized: bed or sofa only. Built by FurnitureOccupancyUtility.MakePutDownHerePackage on the player's command job, listed first in the 安放 panel; not tagged player (never in the main panel itself).",
+            "ActionPackageClass":"ActionPackage_Interaction",
+            "displayName":"com_player_putDownHere_displayName",
+            "timeScale":1,
+            "comTags": [
+                "putDownHere",
+                "nsfw",
+                "NonInteraction"
+            ],
+            "requirements":{
+                "requirement":{
+                    "forbidTeammateJoin":true,
+                    "joinAlone":true,
+                    "doerCount":1,
+                    "receiverCount":1,
+                    "req_Doers":{ "allowNPC":false } ,
+                    "req_Receivers":{ "requireAction":false, "requireConscious":false }
+                }
+            },
+            "variants":[
+                {
+                    "requirements":{ "requirement":{ "req_Receivers":{ "requireTimestopped":true } } },
+                    "displayName":"com_player_putDownHere_displayName",
+                    "useBaseDescription": false,
+                    "description_begin":{ "Entries":[{"texts":["com_player_putDownHere_timestop_begin_1"]}], "keepLooking":false },
+                    "description_ongoing":{ "Entries":[{"texts":["com_player_putDownHere_timestop_ongoing_1"]}], "keepLooking":false }
+                },
+                {
+                    "requirements":{ "requirement":{ } },
+                    "displayName":"com_player_putDownHere_displayName"
+                }
+            ],
+            "AcceptanceCheck": { "baseAcceptanceValue": 0, "alwaysAccept": true },
+            "DifficultyCheck": { "baseD20Check": 0 },
+            "description_begin":{ "Entries":[{"texts":["com_player_putDownHere_begin_1"]}], "keepLooking":false },
+            "description_ongoing":{ "Entries":[{"texts":["com_player_putDownHere_ongoing_1"]}], "keepLooking":false }
         },
         {
             "ID":"com_interaction_waste_time",
@@ -426,7 +561,7 @@
             "zh-cn":
             {
                 "com_interaction_partyInvite":"%%com_unique_party_invite_tooltip%%",
-                "com_interaction_waste_time": "玩家限定，NPC不可执行。跟NPC组队时请请先解散NPC",
+                "com_interaction_waste_time": "玩家限定，NPC不可执行。会无视当前对象以及随行NPC，仅玩家执行。",
                 "com_interaction_waste_time_displayName": "什么都不做",
                 "com_interaction_goto_schedule": "玩家限定。前往当前时段日程所在的地点",
                 "com_interaction_goto_schedule_displayName": "前往……",
@@ -455,6 +590,23 @@
                 "com_interaction_partyInvite_begin_1": "$receiver.firstname$加入了$doer.firstname$",
                 "com_interaction_partyInvite_ongoing_1": "$receiver.firstname$正准备跟上$doer.firstname$",
                 "comManager_com_follow_stop_begin_1": "$receiver.firstname$离开了$doer.firstname$",
+                "comManager_com_carry": "携带",
+                "com_interaction_carry_begin_1": "$doer.firstname$把$receiver.firstname$抱了起来",
+                "com_interaction_carry_ongoing_1": "$doer.firstname$正在抱起$receiver.firstname$",
+                "comManager_com_putDown": "安放",
+                "com_furniture_putDown_displayName": "安放到$furniture$",
+                "com_furniture_putDown_begin_1": "$doer.firstname$把$receiver.firstname$轻轻放了下来",
+                "com_furniture_putDown_ongoing_1": "$doer.firstname$正在把$receiver.firstname$放下",
+                "comManager_com_carry_timestop": "携带（时停）",
+                "com_interaction_carry_timestop_begin_1": "$doer.firstname$把时间静止中的$receiver.firstname$抱了起来",
+                "com_interaction_carry_timestop_ongoing_1": "$doer.firstname$正在抱起时间静止中的$receiver.firstname$",
+                "com_furniture_putDown_timestop_begin_1": "$doer.firstname$把时间静止中的$receiver.firstname$放了下来",
+                "com_furniture_putDown_timestop_ongoing_1": "$doer.firstname$正在放下时间静止中的$receiver.firstname$",
+                "com_player_putDownHere_displayName": "就地放下",
+                "com_player_putDownHere_begin_1": "$doer.firstname$把$receiver.firstname$放了下来",
+                "com_player_putDownHere_ongoing_1": "$doer.firstname$正在把$receiver.firstname$放下",
+                "com_player_putDownHere_timestop_begin_1": "$doer.firstname$让时间静止中的$receiver.firstname$站在了原地",
+                "com_player_putDownHere_timestop_ongoing_1": "$doer.firstname$正在把时间静止中的$receiver.firstname$放下",
                 "com_interaction_waste_time_begin_1": "$doer.firstname$什么都没做",
                 "com_interaction_waste_time_description_ongoing_1": "$doer.firstname$正在发呆",
 

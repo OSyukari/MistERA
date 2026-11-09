@@ -1,5 +1,5 @@
 {
-    "_doc": "口上loose entry文件：许可「危险日生中出」（sex_dangerday_creampie，在自己的危险日——排卵期——不采取保护地插入并内射，有怀孕风险）的请求口上。条目含义与生成规范同 Permission_intimacy_low.json 的 _doc（Request / Granted / Refused，每条目一个variant、3条response，无通用兜底）。文件名含 sex，安全模式不加载。",
+    "_doc": "口上loose entry文件：许可「危险日生中出」（sex_dangerday_creampie，在自己的危险日——排卵期——不采取保护地插入并内射，有怀孕风险）的请求口上，以及性行为中要求戴套的 Demand（OnAPRefuse_DangerDay）。条目含义与生成规范同 Permission_intimacy_low.json 的 _doc（Request / Granted / Refused，每条目一个variant、3条response，无通用兜底）。文件名含 sex，安全模式不加载。",
     "Character_Personalities": {
         "looselist": [
             {
@@ -35,6 +35,30 @@
                         "\"今天不行，会中的。\"",
                         "\"危险日别射在里面。\"",
                         "\"这个我不能答应。\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "permission_sex_dangerday_creampie_Demand",
+                    "_comment": "性行为进行中，对方想不戴套直接插入，而说话者今天是危险日且未允许危险日生中出——拒绝继续并要求对方戴上避孕套（OnAPRefuse_DangerDay 的问题文本）。男性说话者（被插入一方），干脆为主。",
+                    "variants": [ { "responses": [
+                        "\"今天危险日，先戴套。\"",
+                        "\"不戴的话今天会中的，戴上再说。\"",
+                        "\"危险日直接来不行。\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "permission_sex_dangerday_creampie_Ignored",
+                    "_comment": "说话者要求戴套（OnAPRefuse_DangerDay），对方无视继续直接插入。危险日，退而求其次地要求对方至少不要射在里面。男性说话者（被插入一方），干脆为主。",
+                    "variants": [ { "responses": [
+                        "\"危险日别射在里面。\"",
+                        "\"……至少别射在里面。\"",
+                        "\"最后拔出来，会中的。\""
                     ] } ]
                 }
             }

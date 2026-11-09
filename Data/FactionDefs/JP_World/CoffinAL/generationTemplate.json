@@ -1,0 +1,109 @@
+{
+    "MapPlans":{
+        "_comment":"in faction generator, the home faction itself is provided externally. for example, we will specify generate this family at which location ->  ",
+        "factionGenerator":[
+            {
+                "ID":"householdInit_TCoAaL_2",
+                "characters":[
+                    {
+                        "scopeKey":"andrew",
+                        "_generatorID":"either a character baseID or a generator template ID",
+                        "generatorID":"TCoAaL_Char_Andrew"
+                    },
+                    {
+                        "scopeKey":"leily",
+                        "generatorID":"TCoAaL_Char_Ashley"
+                    }
+                ],
+                "homeFaction":
+                {
+                    "_comment":"below are original faction init code. if generator specified a location, then mainExit and floors data will be dropped. do faction read data from template? can we keep the same factionID without using the floor config?",
+
+                    "_comment2":"if an alternate homefaction is provided, then this is dropped. each character need to be specified with new membertype then",
+
+                    "ID":"CoffinAnL_Household",
+                    "z_rotation":0.0,
+                    "isPublic":false,
+                    "setPrivateRoomOwner":true,
+                    "isRentingFloor": true,
+                    "_comment_isRentingFloor": "renting their apartment, unspecified landlord",
+                    "mainExit": { "roomID": "floor_2ldk_2floor_1_1L_frontDoor", "exitCost": 5 },
+                     
+                    "floors":[
+                        {
+                            "ID":"floor_2ldk_2floor_1",
+                            "nameOverwrite":"CoffinAnL_Household_Home",
+                            "Additional":[
+                                {
+                                    "addClass":"map_init_placeChara",
+                                    "map_init_placeChara":{ "roomID":"floor_2ldk_2floor_1_2L_room", "charaBaseID": [ "TCoAaL_Char_Andrew", "TCoAaL_Char_Ashley" ] }
+                                }
+                            ]
+                        }
+                    ],
+
+                    "memberTypeOverrideBaseIDs": {
+                        "TCoAaL_Char_Andrew": "membertype_family_member",
+                        "TCoAaL_Char_Ashley": "membertype_family_member"
+                    },
+                    "mealHours":[7, 12, 18],
+                    "activeHoursStart":7,
+                    "activeHoursEnd":22
+                },
+                "TempHomefactions":
+                [
+                    {
+                        "scopeConditions":[
+                            {
+                                "_comment":"we will need this for when we create a family and want them to say live in hotel while preserving the family hierarchy -> in this case it will mean the family will have their home created but vacent.",
+                                "_comment2":"mainly for hospital patient etc.",
+                                "_comment3":"we use scopeconditions so we dont have to hardcode factionID and this will allow generator to automatically fill in job slots in the world wherever that is."
+                            }
+                        ],
+                        "assignTo":
+                        [
+                            {
+                                "targetKey":"andrew",
+                                "forseSatisfySkillsReq":true
+                            }
+                        ],
+                        "_comment":"if force, character always satisfy membertype requirement (such as skill req) and will be upgrade to it. if false, then check character actual skills."
+                    }
+                ],
+                "workFactions":
+                [
+                    {
+                        "scopeConditions":[
+                            {
+                                "_comment":"list of conditions to find a valid faction with valid membertypes. for example, day time/ night time job, what type of job (doctor/conveniencestore)"
+                            }
+                        ],
+                        "assignTo":
+                        [
+                            {
+                                "targetKey":"andrew",
+                                "forseSatisfySkillsReq":true
+                            }
+                        ],
+                        "_comment":"if force, character always satisfy membertype requirement (such as skill req) and will be upgrade to it. if false, then check character actual skills."
+                    }
+                ],
+                "activityFactions":
+                [
+                    {
+                        "scopeConditions":[],
+                        "assignTo":
+                        [
+                            {
+                                "targetKey":"andrew",
+                                "forseSatisfySkillsReq":true
+                            }
+                        ],
+                        "_comment":"subscribe to activities, for example gym membership"
+
+                    }
+                ]
+            }
+        ]
+    }
+}

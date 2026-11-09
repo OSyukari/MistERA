@@ -4,7 +4,7 @@
     {
       "ID": "jp_petcafe_Opt_Apply", "allowDuplicate": false, "trigger": "OnDialogue_Options", "UISpec": { "displayMode": "AVG" },
       "SelfValidator": { "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["isPlayer"] }] },
-      "TargetValidators": [{ "refkeys": ["staff"], "baseScope": "CurrentTarget", "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_pet_shop"] }, { "parameters": ["hasActorTag", "jp_petcafe_hiring"] }], "minTargetCount": 1 }],
+      "TargetValidators": [{ "refkeys": ["staff"], "baseScope": "CurrentTarget", "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_pet_cafe"] }, { "parameters": ["hasActorTag", "jp_petcafe_hiring"] }], "minTargetCount": 1 }],
       "events": [
         { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "UISpec": { "portraitRefKey": "staff", "selfTags": ["focused"] }, "line": "jp_petcafe_Opt_Apply_greeting", "Results": [{ "Type": "JoinActiveFaction", "arguments": ["applyOptions", "selfAndFollowers", "staff", "membertype_jp_petcafe_parttime", "applyError"] }] },
         { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [
@@ -22,8 +22,8 @@
       "ID": "jp_petcafe_Opt_Quit", "allowDuplicate": false, "trigger": "OnDialogue_Options", "UISpec": { "displayMode": "AVG", "infoDisplay": "Hide" },
       "SelfValidator": { "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["isPlayer"] }] },
       "TargetValidators": [
-        { "refkeys": ["staff"], "baseScope": "CurrentTarget", "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_pet_shop"] }, { "parameters": ["hasActorTag", "jp_petcafe_hiring"] }], "minTargetCount": 1 },
-        { "refkeys": ["leavers"], "baseScope": "FactionMembersWithMemberType", "extraScopeArguments": ["jp_pet_shop", "membertype_jp_petcafe_staff"], "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["sharesHomeFaction"] }], "minTargetCount": 1 }
+        { "refkeys": ["staff"], "baseScope": "CurrentTarget", "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_pet_cafe"] }, { "parameters": ["hasActorTag", "jp_petcafe_hiring"] }], "minTargetCount": 1 },
+        { "refkeys": ["leavers"], "baseScope": "FactionMembersWithMemberType", "extraScopeArguments": ["jp_pet_cafe", "membertype_jp_petcafe_staff"], "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["sharesHomeFaction"] }], "minTargetCount": 1 }
       ],
       "events": [
         { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [{ "option": "build options", "Results": [{ "Type": "LeaveActiveFaction", "arguments": ["quitOptions", "leavers", "staff", "membertype_jp_petcafe_staff"] }, { "Type": "JumpToLabel", "arguments": ["", "quit_ask"] }] }] },

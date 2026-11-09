@@ -1,42 +1,163 @@
 {
-    "_comment": "District host keeps neon_entrance; eleven independent tenant floors connect through their factionInit floorDoors (venue exit street <-> host hidden exit to_<venueID>, Docs/Locations/Plan_HiddenExitSockets.md). World wiring belongs to the parent agent: initialize host AND all eleven venue IDs; one door at (710,300), floorExitID neon_entrance; absorb jp_karaoke/jp_bar/jp_casino placeholder doors. All art below is PLACEHOLDER, reused existing Generated backgrounds.",
+    "_comment": "Downtown (繁华街): the merged entertainment district (ex Neon Street + Otaku Street, 2026-11-08) - nightlife and otaku shops (the Kiryu-gumi office keeps its own world door). Every venue is its own floor connected through its factionInit floorDoors (venue exit street <-> host hidden exit to_<venueID>, Docs/Locations/Plan_HiddenExitSockets.md). One world door (710,300), floorExitID downtown_entrance. All art is PLACEHOLDER, reused existing Generated backgrounds.",
     "MapPlans": {
         "factionInit": [
-            { "ID": "jp_neon_street", "isRentingFloor": false, "setPrivateRoomOwner": false, "mainExit": { "roomID": "neon_entrance", "exitCost": 5 }, "floors": [{ "ID": "floor_jp_neon_street", "nameOverwrite": "jp_neon_street" }], "mealHours": [], "managerBaseIDs": [], "workModules": [] }
+            { "ID": "jp_downtown", "isRentingFloor": false, "setPrivateRoomOwner": false, "mainExit": { "roomID": "downtown_entrance", "exitCost": 5 }, "floors": [{ "ID": "floor_jp_downtown", "nameOverwrite": "jp_downtown" }], "mealHours": [], "managerBaseIDs": [], "workModules": [] }
         ],
         "floorPlans": [
             {
-                "ID": "floor_jp_neon_street", "imagePath": "BGAssets/Generated/shopping_district_03.webp", "isFloorPlan": false,
-                "mapExit": "neon_entrance",
+                "ID": "floor_jp_downtown", "imagePath": "BGAssets/Generated/shopping_district_03.webp", "isFloorPlan": false,
+                "mapExit": "downtown_entrance",
                 "floorWidth": 400, "floorHeight": 400, "resize": 1,
-                "_comment_exits": "Hidden sockets, one per venue floor door (venue factionInit floorDoors -> exit to_<venueID>).",
+                "_comment_unitRent": "monthly rent per small shop whose room sits on this floor (subfactionOwnerOverwrite tenants below); one value for every tenant room. Venues with their own floor pay their own wholeBuildingRent instead.",
+                "unitRent": {
+                    "maintenanceFee": { "itemID": "currency_JPY", "itemCount": 3000 },
+                    "rentFee": { "itemID": "currency_JPY", "itemCount": 18000 },
+                    "cadence": "Monthly"
+                },
+                "_comment_exits": "Hidden sockets, one per venue that has its own floor (venue factionInit floorDoors -> exit to_<venueID>).",
                 "exits": [
-                    { "ID": "to_jp_neon_adultshop", "connectedRoom": "neon_entrance", "hideOnMap": true },
-                    { "ID": "to_jp_bar", "connectedRoom": "neon_entrance", "hideOnMap": true },
-                    { "ID": "to_jp_neon_bowling", "connectedRoom": "neon_entrance", "hideOnMap": true },
-                    { "ID": "to_jp_neon_dispatch", "connectedRoom": "neon_entrance", "hideOnMap": true },
-                    { "ID": "to_jp_neon_izakaya", "connectedRoom": "neon_entrance", "hideOnMap": true },
-                    { "ID": "to_jp_karaoke", "connectedRoom": "neon_entrance", "hideOnMap": true },
-                    { "ID": "to_jp_neon_livehouse", "connectedRoom": "neon_entrance", "hideOnMap": true },
-                    { "ID": "to_jp_neon_lovehotel", "connectedRoom": "neon_entrance", "hideOnMap": true },
-                    { "ID": "to_jp_neon_massage", "connectedRoom": "neon_entrance", "hideOnMap": true },
-                    { "ID": "to_jp_neon_pachinko", "connectedRoom": "neon_entrance", "hideOnMap": true },
-                    { "ID": "to_jp_neon_soapland", "connectedRoom": "neon_entrance", "hideOnMap": true }
+                    { "ID": "to_jp_bar", "connectedRoom": "downtown_entrance", "hideOnMap": true },
+                    { "ID": "to_jp_neon_dispatch", "connectedRoom": "downtown_entrance", "hideOnMap": true },
+                    { "ID": "to_jp_karaoke", "connectedRoom": "downtown_entrance", "hideOnMap": true },
+                    { "ID": "to_jp_neon_livehouse", "connectedRoom": "downtown_entrance", "hideOnMap": true },
+                    { "ID": "to_jp_neon_lovehotel", "connectedRoom": "downtown_entrance", "hideOnMap": true },
+                    { "ID": "to_jp_cosplay_cafe", "connectedRoom": "downtown_entrance", "hideOnMap": true },
+                    { "ID": "to_jp_otaku_netcafe", "connectedRoom": "downtown_entrance", "hideOnMap": true }
                 ],
+                "_comment_rooms": "Small shops are a single room each on this floor, owned by their own faction through subfactionOwnerOverwrite (mall pattern): arcade, pachinko, adult shop, hobby shop.",
                 "rooms": [
-                    { "ID": "neon_entrance", "displayName": "neon_entrance", "hideOnMap": true, "connects": [], "roomImagePath": "BGAssets/Generated/shopping_district_03.webp" }
+                    {
+                        "ID": "downtown_entrance",
+                        "displayName": "downtown_entrance",
+                        "hideOnMap": true,
+                        "connects": [],
+                        "roomImagePath": "BGAssets/Generated/shopping_district_03.webp"
+                    },
+                    {
+                        "ID": "arcade_floor",
+                        "displayName": "arcade_floor",
+                        "hideOnMap": true,
+                        "subfactionOwnerOverwrite": "jp_arcade",
+                        "furnitureIDs": [
+                            "furniture_otaku_arcade_counter",
+                            "furniture_otaku_arcade_cabinets",
+                            "furniture_otaku_crane_games",
+                            "furniture_otaku_photo_booth"
+                        ],
+                        "connects": [
+                            {
+                                "ID": "downtown_entrance",
+                                "cost": 1
+                            }
+                        ],
+                        "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
+                    },
+                    {
+                        "ID": "pachinko_floor",
+                        "displayName": "pachinko_floor",
+                        "hideOnMap": true,
+                        "subfactionOwnerOverwrite": "jp_neon_pachinko",
+                        "furnitureIDs": [
+                            "furniture_neon_counter",
+                            "furniture_neon_pachinko_machine",
+                            "furniture_neon_pachinko_machine",
+                            "furniture_neon_pachinko_machine"
+                        ],
+                        "connects": [
+                            {
+                                "ID": "downtown_entrance",
+                                "cost": 1
+                            }
+                        ],
+                        "roomImagePath": "BGAssets/Generated/shopping_mall_03.webp"
+                    },
+                    {
+                        "ID": "adultshop_floor",
+                        "displayName": "adultshop_floor",
+                        "hideOnMap": true,
+                        "subfactionOwnerOverwrite": "jp_neon_adultshop",
+                        "furnitureIDs": [
+                            "furniture_neon_counter",
+                            "furniture_neon_adultshop_shelves",
+                            "furniture_fitting_room"
+                        ],
+                        "connects": [
+                            {
+                                "ID": "downtown_entrance",
+                                "cost": 1
+                            }
+                        ],
+                        "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
+                    },
+                    {
+                        "ID": "hobbyshop_floor",
+                        "displayName": "hobbyshop_floor",
+                        "hideOnMap": true,
+                        "subfactionOwnerOverwrite": "jp_otaku_hobbyshop",
+                        "furnitureIDs": [
+                            "furniture_otaku_hobby_counter",
+                            "furniture_otaku_boardgame_tables",
+                            "furniture_otaku_game_master"
+                        ],
+                        "connects": [
+                            {
+                                "ID": "downtown_entrance",
+                                "cost": 1
+                            }
+                        ],
+                        "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
+                    }
                 ]
             }
         ]
     },
-    "Dictionary": { "Entries": { "zh-cn": {
-        "jp_neon_street": "霓虹街", "neon_entrance": "霓虹街入口", "neon_front": "霓虹街前街", "neon_alley": "霓虹街后巷",
-        "karaoke_entrance": "卡拉OK前台", "ktv_room_s1": "小包厢一", "ktv_room_s2": "小包厢二", "ktv_room_s3": "小包厢三", "ktv_room_l1": "聚会大包厢", "ktv_kitchen": "卡拉OK小厨房",
-        "live_entrance": "演出场检票口", "live_floor": "观众区", "live_stage": "舞台", "live_backstage": "后台", "live_bar": "演出场吧台",
-        "massage_reception": "按摩店前台", "massage_waiting": "按摩店等候室", "massage_room_1": "按摩室一", "massage_room_2": "按摩室二", "massage_room_3": "按摩室三",
-        "izakaya_counter": "居酒屋柜台", "izakaya_tatami": "居酒屋榻榻米座", "bowling_entrance": "保龄球馆前台", "bowling_lanes": "保龄球道",
-        "bar_entrance": "酒吧吧台", "bar_booths": "酒吧卡座", "bar_backroom": "酒吧休息室", "adultshop_floor": "成人用品卖场", "adultshop_fitting": "试衣间",
-        "hotel_front": "情侣旅馆自助前台", "hotel_room_1": "旅馆客房一", "hotel_room_2": "旅馆客房二", "hotel_room_3": "旅馆客房三", "hotel_room_4": "旅馆客房四",
-        "pachinko_entrance": "柏青哥柜台", "pachinko_floor": "柏青哥机台区", "soap_reception": "浴场前台", "soap_waiting": "浴场等候厅", "soap_room_1": "浴场单间一", "soap_room_2": "浴场单间二", "soap_room_3": "浴场单间三", "dispatch_reception": "派遣事务所前台", "dispatch_waiting_room": "派遣员工待机室"
-    } } }
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "jp_downtown": "繁华街",
+                "downtown_entrance": "繁华街入口",
+                "karaoke_entrance": "卡拉OK前台",
+                "ktv_room_s1": "小包厢一",
+                "ktv_room_s2": "小包厢二",
+                "ktv_room_s3": "小包厢三",
+                "ktv_room_l1": "聚会大包厢",
+                "ktv_kitchen": "卡拉OK小厨房",
+                "live_entrance": "演出场检票口",
+                "live_floor": "观众区",
+                "live_stage": "舞台",
+                "live_backstage": "后台",
+                "live_bar": "演出场吧台",
+                "bar_entrance": "酒吧吧台",
+                "bar_booths": "酒吧卡座",
+                "bar_backroom": "酒吧休息室",
+                "adultshop_floor": "成人用品卖场",
+                "hotel_front": "情侣旅馆自助前台",
+                "hotel_room_1": "旅馆客房一",
+                "hotel_room_2": "旅馆客房二",
+                "hotel_room_3": "旅馆客房三",
+                "hotel_room_4": "旅馆客房四",
+                "pachinko_floor": "柏青哥店",
+                "dispatch_reception": "派遣事务所前台",
+                "dispatch_waiting_room": "派遣员工待机室",
+                "arcade_floor": "游戏中心",
+                "mangashop_floor": "网咖漫画同人书区",
+                "mangashop_r18": "帘后成人书区",
+                "hobbyshop_floor": "模型卡牌桌游店",
+                "netcafe_frontdesk": "漫画网咖·前台",
+                "netcafe_reading": "开放阅览席",
+                "netcafe_drinkbar": "自助饮料吧",
+                "netcafe_shower": "网咖淋浴间",
+                "netcafe_booth_1": "单人平垫包间1",
+                "netcafe_booth_2": "单人平垫包间2",
+                "netcafe_booth_3": "单人躺椅包间3",
+                "netcafe_booth_4": "单人躺椅包间4",
+                "netcafe_booth_5": "单人平垫包间5",
+                "netcafe_booth_6": "单人平垫包间6",
+                "netcafe_pair_1": "双人包间1",
+                "netcafe_pair_2": "双人包间2",
+                "otaku_joinOption": "让$name$担任$memberType$"
+            }
+        }
+    }
 }

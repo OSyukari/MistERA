@@ -435,7 +435,11 @@ public class Map_Instance
         if (Rooms.TryGetValue(refID, out room) || rooms_orphans.TryGetValue(refID, out room))
         {
             EvacuateRoomForRemoval(room);
-            foreach (var job in room.Jobs) scr_System_CampaignManager.current.Unregister(job);
+            foreach (var job in room.Jobs)
+            {
+                if (job is Job_Furniture jf) FurnitureOccupancyUtility.EvictAll(jf, OccupancyReason.FurnitureRemoved);
+                scr_System_CampaignManager.current.Unregister(job);
+            }
             room.Inventory.Destroy();
         }
         Rooms.Remove(refID);
@@ -466,6 +470,52 @@ public class Map_Instance
     /// </summary>
     [JsonIgnore] public List<ActionPackage> dirtyCharaAPRef = new List<ActionPackage>();
 
+    /// <summary>
+    /// Rooms whose occupants need RefreshMoodlets: someone entered / left, an action started / ended, a divider or the
+    /// room's cleanliness changed. Unlike the dirty lists above it survives NotifyEventEnd (event-driven moves still
+    /// refresh), and is consumed by UpdateAllRoom. Orphan rooms are never consumed (frozen on purpose).
+    /// </summary>
+    [JsonIgnore] HashSet<int> moodletDirtyRooms = new HashSet<int>();
+    [JsonIgnore] HashSet<int> moodletDirtyRooms_processing = new HashSet<int>();
+
+    public void MarkMoodletsDirty(int roomRef)
+    {
+        if (roomRef >= 0) moodletDirtyRooms.Add(roomRef);
+    }
+    /// <summary>Marks the rooms the given characters currently stand in.</summary>
+    public void MarkMoodletsDirtyForChara(List<int> charaRefs)
+    {
+        for (int i = 0; i < charaRefs.Count; i++) MarkMoodletsDirtyForChara(charaRefs[i]);
+    }
+    public void MarkMoodletsDirtyForChara(int charaRef)
+    {
+        if (charaRoomRef.TryGetValue(charaRef, out var roomRef)) moodletDirtyRooms.Add(roomRef);
+    }
+    public bool IsActiveRoom(int roomRef)
+    {
+        return Rooms != null && Rooms.ContainsKey(roomRef);
+    }
+
+    /// <summary>
+    /// UpdateRoom's interrupt / greeting / OnEnterRoom work only does anything for a room holding a dirty character (or one
+    /// that moved in time stop, on resume) or an AP registered this minute - otherwise every check in it is skipped. Read
+    /// live when the room is processed, so dirt raised by an earlier room's events in the same pass is still seen.
+    /// </summary>
+    bool RoomNeedsInterruptCheck(Room_Instance ri, bool timeResume)
+    {
+        var chara = ri.RoomChara;
+        for (int i = 0; i < chara.Count; i++)
+        {
+            var c = chara[i];
+            if (c == null) continue;
+            if (dirtyCharaRef.Contains(c.RefID)) return true;
+            if (timeResume && c.CanActInTimeStop && c.MovedInTimeStop) return true;
+        }
+        for (int i = 0; i < dirtyCharaAPRef.Count; i++)
+            if (dirtyCharaAPRef[i].RoomKey == ri.RefID) return true;
+        return false;
+    }
+
     public bool IsCharaInActiveFloors(int charaRef)
     {
         var floor = FindRoomByChara(charaRef).parentFloor;
@@ -478,6 +528,19 @@ public class Map_Instance
         {
             UpdateRoom(i.Value, true);
         }
+    }
+
+    internal void ReplayWakeGreeting(Character_Trainable self, Character_Trainable target)
+    {
+        var campaign = scr_System_CampaignManager.current;
+        if (!IsBothCharaInSameRoom(self.RefID, target.RefID)
+            || campaign.isPlayerPartyMember(self.RefID) == campaign.isPlayerPartyMember(target.RefID)
+            || Character_Trainable.DeferNaturalWakeGreeting(self, target) || self.forbidGreeting) return;
+        // Re-evaluate live packages: the wake may have removed/replaced the original sleeping APs.
+        UtilityEX.GetEPsFrom(self, out List<EvaluationPackage> selfEPs);
+        UtilityEX.GetEPsFrom(target, out List<EvaluationPackage> targetEPs);
+        if (!MapUtility.CheckReverseInterrupt(selfEPs, self, target))
+            self.Relationships.NotifyMeeting(target, selfEPs, targetEPs, "DailyGreeting");
     }
 
     private void UpdateRoom(Room_Instance ri, bool forceGreeting = false)
@@ -528,7 +591,11 @@ public class Map_Instance
             }
             else if (xx.CurrentJob != null && !xx.CurrentJob.CanBeInterrupted)
             {
-                //
+                // party members (Job_FollowPlayer) land here
+            }
+            else if (FurnitureOccupancyUtility.IsCarriedRef(xx.RefID))
+            {
+                // the character the player carries (携带) - no job of their own, skipped like the party
             }
             else
             {
@@ -541,6 +608,10 @@ public class Map_Instance
                                                                       // if (xx.InteractionJob != null && i.job != null && i.job.RefID == xx.InteractionJob.RefID) continue;//{ Debug.LogError("dirtychararef interactionjob identical [" + i.job.DisplayName + "]"); continue; }
                     if (Utility.ListContainsStrict(ignoreList, i.actorRefs)) continue;//{ Debug.LogError("dirtychararef ignorelist contains [" + String.Join("|", ignoreList) + "] [" + String.Join("|", i.actorRefs) + "]"); continue; }
                     if (i.timestopTick && !xx.CanActInTimeStop) continue;
+                    // a sleeper someone joins in bed is not woken by that sleep package (ActionPackage.IsUndisturbedSleeper)
+                    if (i.IsUndisturbedSleeper(xx) && i.actorRefs.Contains(xx.RefID)) continue;
+                    // what happens behind a stall's door (or outside it, seen from inside) is not seen
+                    if (!MapUtility.CanSee(xx, i)) continue;
                     //if (xx.InteractionJob != null && xx.InteractionJob.isActive) continue;
                     if (log) Debug.Log($"Checking interrupt on {xx.FirstName} for AP {i.DisplayName} [{(i.targetCOM == null ? "" : String.Join("|", i.targetCOM.comTags))}] selftags [{String.Join("|", selfTags)}]");
 
@@ -559,6 +630,8 @@ public class Map_Instance
                 var yy = charaInRoom[y];
                 if (xx == yy) continue;
                 if (yy == null) continue;
+                // no greeting through a stall's door (room dividers blocking visibility)
+                if (!MapUtility.CanSee(xx, yy)) continue;
 
 
                 var yyEPs = tempDicts[yy];
@@ -570,6 +643,10 @@ public class Map_Instance
                 {   // "greeting" event is not being used, use "dailygreeting" instead
                     // allow party member to trigger each other greeting (and log relationship)
                     if (log) Debug.Log($"Greeting from {yy.FirstName} to {xx.FirstName}");
+                }
+                else if (greeting && Character_Trainable.DeferNaturalWakeGreeting(yy, xx))
+                {
+                    // Resolve shared waking pairs before any reverse interrupt or daily greeting runs.
                 }
                 else if (greeting && yy.forbidGreeting)
                 {
@@ -596,11 +673,6 @@ public class Map_Instance
             {
                 scr_UpdateHandler.current.EventHandler.Trigger(xx, EventTrigger.OnEnterRoom);
             }
-        }
-
-        foreach (var i in charaInRoom)
-        {
-            i.Relationships.RefreshMoodlets(charaInRoom);
         }
     }
 
@@ -734,20 +806,8 @@ public class Map_Instance
 
     public void RefreshRoomMoodlets()
     {
-        foreach(var i in this.Rooms)
-        {
-            foreach(var c in i.Value.RoomChara)
-            {
-                c.Relationships.RefreshMoodlets(i.Value.RoomChara);
-            }
-        }
-        foreach (var i in this.rooms_orphans)
-        {
-            foreach (var c in i.Value.RoomChara)
-            {
-                c.Relationships.RefreshMoodlets(i.Value.RoomChara);
-            }
-        }
+        foreach(var i in this.Rooms) MapUtility.RefreshMoodletsVisible(i.Value.RoomChara);
+        foreach (var i in this.rooms_orphans) MapUtility.RefreshMoodletsVisible(i.Value.RoomChara);
     }
 
 
@@ -771,10 +831,21 @@ public class Map_Instance
             Debug.Log($"UpdateAllRoom, check interrupt\nDirtyCharaRefs {dirtyCharaRef.Count}: {String.Join("|",names)}\nDirtyAPRefs {dirtyCharaAPRef.Count}: {String.Join("|", names2)}");
         }
 
+        // rooms marked from here on (events fired by UpdateRoom) wait for the next pass instead of being dropped
+        var moodletRooms = moodletDirtyRooms;
+        moodletDirtyRooms = moodletDirtyRooms_processing;
+        moodletDirtyRooms_processing = moodletRooms;
+
+        bool timeResume = scr_System_Time.current.TimeResume;
         foreach (var i in Rooms)
         {
-            UpdateRoom(i.Value);
+            var ri = i.Value;
+            if (RoomNeedsInterruptCheck(ri, timeResume)) UpdateRoom(ri);
+            else ri.Tick();
+            // each from the characters they see (room dividers)
+            if (moodletRooms.Contains(ri.RefID)) MapUtility.RefreshMoodletsVisible(ri.RoomChara);
         }
+        moodletRooms.Clear();
         //System.Threading.Tasks.Parallel.ForEach(roomCharaRef, entry => UpdateRoom(entry));
 
 
@@ -835,6 +906,8 @@ public class Map_Instance
     public void MoveCharaTo(Character_Trainable charaRef, Room_Instance newRoom, bool silent = false)
     {
         var oldRoom = FindRoomByChara(charaRef.RefID);
+        // a bed / divider does not travel with its occupant
+        if (!ReferenceEquals(oldRoom, newRoom)) FurnitureOccupancyUtility.OnRoomChange(charaRef);
         if (charaRoomRef.ContainsKey(charaRef.RefID))
         {
             if (oldRoom == null)
@@ -879,6 +952,9 @@ public class Map_Instance
 
         dirtyCharaRef.Add(charaRef.RefID);
         Utility.DistinctInPlace(dirtyCharaRef);
+        // who is present changed in both rooms
+        if (oldRoom != null) MarkMoodletsDirty(oldRoom.RefID);
+        MarkMoodletsDirty(newRoom.RefID);
 
         if (charaRef.CanActInTimeStop && scr_System_Time.current.TimeStop) charaRef.MovedInTimeStop = true;
 
@@ -1441,6 +1517,43 @@ public class Map_Instance
     }
 
     /// <summary>
+    /// Drops every factionGraphs link of factionID (both directions). Floor-door links (factionFloorDoorConnections)
+    /// stay - used for a home adopted by a residential district (ResidenceUtility.AdoptResidence), whose saved
+    /// world-mesh links predate the move. False when it had none.
+    /// </summary>
+    public bool RemoveFromFactionGraphs(string factionID)
+    {
+        if (string.IsNullOrEmpty(factionID) || !factionGraphs.TryGetValue(factionID, out var peers)) return false;
+        foreach (var peer in peers)
+            if (factionGraphs.TryGetValue(peer, out var back)) back.Remove(factionID);
+        factionGraphs.Remove(factionID);
+        return true;
+    }
+
+    /// <summary>
+    /// A faction dropped on load (FactionLoadCleanup): every factionGraphs / commercialPactGraphs link and every floor door
+    /// (authored or runtime, e.g. a residential district's home doors) naming it. Pathing is rebuilt by the caller (RebuildPath).
+    /// </summary>
+    public void RemoveFactionLinks(string factionID)
+    {
+        if (string.IsNullOrEmpty(factionID)) return;
+        RemoveFromFactionGraphs(factionID);
+        if (commercialPactGraphs.TryGetValue(factionID, out var peers))
+        {
+            foreach (var peer in peers)
+                if (commercialPactGraphs.TryGetValue(peer, out var back)) back.Remove(factionID);
+            commercialPactGraphs.Remove(factionID);
+        }
+        factionFloorDoorConnections.RemoveAll(d => d.sourceFaction == factionID || d.targetFaction == factionID);
+    }
+
+    /// <summary>Rebuilds pathing after a batch of changes made with rebuildPath false (e.g. FactionLoadCleanup).</summary>
+    public void RebuildPath()
+    {
+        BuildPath();
+    }
+
+    /// <summary>
     /// Commercial pact links between factions (management UI: bulk trading relationships only - see
     /// scr_Menu_AddTrade). Kept as a separate list from `factionGraphs` (populated independently, e.g. from
     /// the addlinkfaction UI) and deliberately does NOT grant connectivity on its own: isConnectedFaction/
@@ -1604,6 +1717,19 @@ public class Map_Instance
             faction.InvalidateMainExitCache();
         }
         foreach (var floor in liveFloors) floor.ApplyPendingRoomChanges();
+        // floors whose template was removed from the data are empty now (their rooms evacuated and removed above) - drop them.
+        // Factions need no cleanup: ManagedFloors derives from managed rooms, already removed.
+        foreach (var floor in liveFloors)
+        {
+            if (!floor.IsTemplateRemoved) continue;
+            if (floor.rooms.Count > 0)
+            {
+                Debug.LogError($"Floor [{floor.refID}] template [{floor.floorPlanID}] removed but {floor.rooms.Count} rooms remain; floor kept");
+                continue;
+            }
+            floors.Remove(floor.refID);
+            Debug.LogWarning($"Floor [{floor.refID}] template [{floor.floorPlanID}] no longer exists; floor removed on load");
+        }
         foreach (var faction in scr_System_CampaignManager.current.Factions) faction.InvalidateMainExitCache();
     }
 

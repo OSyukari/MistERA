@@ -870,6 +870,7 @@ public class Character_Factions
     {
         if (booking == null || booking.hours < 1) return false;
         if (booking.Faction == null) return false;
+        if (!RecreationUtility.DailyMainTypeBookingAllows(this, booking)) return false;
         if (RecreationUtility.ReservationRefusal(this, booking) != "") return false;
         foreach (var b in Bookings) if (b != null && b.Overlaps(booking.AbsStart, booking.AbsEnd)) return false;
 
@@ -1027,6 +1028,50 @@ public class Character_Factions
 
     /// <summary>Recreation source key (a membership's faction ID, an offer's ID) -> absolute days a visit was attended, last RecreationUtility.AttendanceMemoryDays only.</summary>
     [JsonProperty] Dictionary<string, List<int>> recreationAttendance = new Dictionary<string, List<int>>();
+
+    class MainTypeAttendance
+    {
+        public int day;
+        public string tag = "";
+        public RecreationActivityKey occurrence;
+    }
+
+    // Only today and yesterday can still receive attendance (visits last at most 24 hours).
+    [JsonProperty] List<MainTypeAttendance> recreationMainTypeAttendance = new List<MainTypeAttendance>();
+
+    public void RecordMainTypeAttendance(string tag, int day, RecreationActivityKey occurrence)
+    {
+        if (string.IsNullOrEmpty(tag)) return;
+        if (recreationMainTypeAttendance == null) recreationMainTypeAttendance = new List<MainTypeAttendance>();
+        int today = scr_System_Time.current != null ? scr_System_Time.current.getAbsoluteDay() : day;
+        recreationMainTypeAttendance.RemoveAll(x => x == null || x.day < today - 1);
+        if (day < today - 1) return;
+        foreach (var entry in recreationMainTypeAttendance)
+            if (entry.day == day && entry.tag == tag && SameAttendanceOccurrence(entry.occurrence, occurrence)) return;
+        recreationMainTypeAttendance.Add(new MainTypeAttendance { day = day, tag = tag, occurrence = occurrence });
+    }
+
+    static bool SameAttendanceOccurrence(RecreationActivityKey a, RecreationActivityKey b)
+    {
+        if (a == null || b == null) return a == b;
+        if (a.isSession != b.isSession) return false;
+        return a.isSession
+            ? a.day == b.day && a.startHour == b.startHour && a.factionID == b.factionID && a.sourceKey == b.sourceKey && a.hostRef == b.hostRef
+            : a.absStart == b.absStart && a.factionID == b.factionID && a.ownerRef == b.ownerRef;
+    }
+
+    /// <summary>Actual attendance, not a reservation. The same occurrence may revalidate or admit its member again.</summary>
+    public bool HasAttendedMainType(string tag, int day, RecreationGroup exceptSession = null, RecreationBooking exceptBooking = null)
+    {
+        if (string.IsNullOrEmpty(tag) || recreationMainTypeAttendance == null) return false;
+        foreach (var entry in recreationMainTypeAttendance)
+        {
+            if (entry == null || entry.day != day || entry.tag != tag) continue;
+            if (entry.occurrence != null && (entry.occurrence.Matches(exceptSession) || entry.occurrence.Matches(exceptBooking))) continue;
+            return true;
+        }
+        return false;
+    }
 
     /// <summary>Notes a visit for sourceKey on absolute day `day` (once per day), forgetting days older than the planner looks back.</summary>
     public void RecordAttendance(string sourceKey, int day)

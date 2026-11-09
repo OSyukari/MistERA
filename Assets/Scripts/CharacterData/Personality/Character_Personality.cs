@@ -302,7 +302,34 @@ public class Character_Personality
         }
     }
 
+    /// <summary>
+    /// An upgrade command (French kiss...) speaks its own lines when it has any that fit, else its parent's (kiss) -
+    /// requireCOMStrongVariant lines there apply, the upgrade being the strong round (EvaluationPackage.isStrongP).
+    /// </summary>
     public MessageCollect_KojoEntry GetKOJOMessage(KojoCollector kol)
+    {
+        var message = GetKOJOMessage_Command(kol);
+        if (kol.Owner.RefID == 0 || HasKojoText(message)) return message;
+
+        var com = scr_System_Serializer.current.MasterList.COMs.GetByID(kol.eventID);
+        if (com == null || !com.IsUpgrade) return message;
+        var upgradeID = kol.eventID;
+        kol.eventID = com.upgradeFrom;
+        var parentMessage = GetKOJOMessage(kol);
+        if (HasKojoText(parentMessage)) return parentMessage;
+        kol.eventID = upgradeID;
+        return message;
+    }
+
+    static bool HasKojoText(MessageCollect_KojoEntry message)
+    {
+        if (message == null) return false;
+        var texts = new List<string>();
+        message.DumpMessage(texts);
+        return texts.Count > 0;
+    }
+
+    MessageCollect_KojoEntry GetKOJOMessage_Command(KojoCollector kol)
     { if (kol.Owner.RefID == 0) return null;
         var key = $"{kol.eventID}{kol.suffix}";
 
@@ -312,7 +339,8 @@ public class Character_Personality
         {
             // command fallback
             var com = scr_System_Serializer.current.MasterList.COMs.GetByID(kol.eventID);
-            if (com != null && com.ParentCOM != null)
+            // an upgrade without its own lines falls back to its parent's in GetKOJOMessage, not to its folder parent
+            if (com != null && com.ParentCOM != null && !com.IsUpgrade)
             {
                 var backup = kol.eventID;
                 kol.eventID = com.ParentCOM.ID;

@@ -31,6 +31,12 @@
                 "floorHeight": 729,
                 "AnchorType": "TopLeft",
                 "mapExit": "jp_shopping_street_entrance",
+                "_comment_exits": "hidden sockets for venues with their own floor that hang off the street (floorDoors on the venue's factionInit, Docs/Locations/Plan_HiddenExitSockets.md)",
+                "exits": [
+                    { "ID": "to_jp_mall_cinema", "connectedRoom": "jp_shopping_street_entrance", "hideOnMap": true },
+                    { "ID": "to_jp_hotel_business", "connectedRoom": "jp_shopping_street_entrance", "hideOnMap": true },
+                    { "ID": "to_jp_sports_center", "connectedRoom": "jp_shopping_street_entrance", "hideOnMap": true }
+                ],
                 "_comment_unitRent": "per-shop rent/maintenance for whichever of the 8 rooms below are reassigned to a tenant faction via subfactionOwnerOverwrite, charged monthly. isRentingFloor defaults true on each shop's own factionInit, so they're treated as tenants automatically.",
                 "unitRent": {
                     "maintenanceFee": { "itemID": "currency_JPY", "itemCount": 30000 },

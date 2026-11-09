@@ -1,12 +1,50 @@
 {
-    "Dictionary": { "Entries": { "en-us": {
-        "jp_neon_street": "Neon Street", "neon_entrance": "Neon Street Entrance", "neon_front": "Front Street", "neon_alley": "Back Alley",
-        "karaoke_entrance": "Karaoke Reception", "ktv_room_s1": "Small Karaoke Room 1", "ktv_room_s2": "Small Karaoke Room 2", "ktv_room_s3": "Small Karaoke Room 3", "ktv_room_l1": "Party Karaoke Room", "ktv_kitchen": "Karaoke Kitchen",
-        "live_entrance": "Livehouse Ticket Desk", "live_floor": "Audience Floor", "live_stage": "Stage", "live_backstage": "Backstage", "live_bar": "Livehouse Bar",
-        "massage_reception": "Massage Reception", "massage_waiting": "Massage Waiting Room", "massage_room_1": "Massage Room 1", "massage_room_2": "Massage Room 2", "massage_room_3": "Massage Room 3",
-        "izakaya_counter": "Izakaya Counter", "izakaya_tatami": "Tatami Tables", "bowling_entrance": "Bowling Reception", "bowling_lanes": "Bowling Lanes",
-        "bar_entrance": "Bar Counter", "bar_booths": "Bar Booths", "bar_backroom": "Bar Staff Room", "adultshop_floor": "Adult Goods Shop", "adultshop_fitting": "Fitting Room",
-        "hotel_front": "Love Hotel Self-Service Reception", "hotel_room_1": "Hotel Room 1", "hotel_room_2": "Hotel Room 2", "hotel_room_3": "Hotel Room 3", "hotel_room_4": "Hotel Room 4",
-        "pachinko_entrance": "Pachinko Counter", "pachinko_floor": "Pachinko Floor", "soap_reception": "Soapland Reception", "soap_waiting": "Soapland Waiting Lounge", "soap_room_1": "Soapland Room 1", "soap_room_2": "Soapland Room 2", "soap_room_3": "Soapland Room 3", "dispatch_reception": "Dispatch Office Reception", "dispatch_waiting_room": "Dispatch Staff Waiting Room"
-    } } }
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "jp_downtown": "Downtown",
+                "downtown_entrance": "Downtown Entrance",
+                "karaoke_entrance": "Karaoke Reception",
+                "ktv_room_s1": "Small Karaoke Room 1",
+                "ktv_room_s2": "Small Karaoke Room 2",
+                "ktv_room_s3": "Small Karaoke Room 3",
+                "ktv_room_l1": "Party Karaoke Room",
+                "ktv_kitchen": "Karaoke Kitchen",
+                "live_entrance": "Livehouse Ticket Desk",
+                "live_floor": "Audience Floor",
+                "live_stage": "Stage",
+                "live_backstage": "Backstage",
+                "live_bar": "Livehouse Bar",
+                "bar_entrance": "Bar Counter",
+                "bar_booths": "Bar Booths",
+                "bar_backroom": "Bar Staff Room",
+                "adultshop_floor": "Adult Goods Shop",
+                "hotel_front": "Love Hotel Self-Service Reception",
+                "hotel_room_1": "Hotel Room 1",
+                "hotel_room_2": "Hotel Room 2",
+                "hotel_room_3": "Hotel Room 3",
+                "hotel_room_4": "Hotel Room 4",
+                "pachinko_floor": "Pachinko Parlor",
+                "dispatch_reception": "Dispatch Office Reception",
+                "dispatch_waiting_room": "Dispatch Staff Waiting Room",
+                "arcade_floor": "Game Center",
+                "mangashop_floor": "Net Cafe Manga and Doujin Corner",
+                "mangashop_r18": "Curtained Adult Books Section",
+                "hobbyshop_floor": "Hobby, Card and Board Game Shop",
+                "netcafe_frontdesk": "Manga and Net Cafe Reception",
+                "netcafe_reading": "Open Reading Seats",
+                "netcafe_drinkbar": "Self-Service Drink Bar",
+                "netcafe_shower": "Net Cafe Shower",
+                "netcafe_booth_1": "Single Mat Booth 1",
+                "netcafe_booth_2": "Single Mat Booth 2",
+                "netcafe_booth_3": "Single Recliner Booth 3",
+                "netcafe_booth_4": "Single Recliner Booth 4",
+                "netcafe_booth_5": "Single Mat Booth 5",
+                "netcafe_booth_6": "Single Mat Booth 6",
+                "netcafe_pair_1": "Pair Booth 1",
+                "netcafe_pair_2": "Pair Booth 2",
+                "otaku_joinOption": "$name$ as $memberType$"
+            }
+        }
+    }
 }

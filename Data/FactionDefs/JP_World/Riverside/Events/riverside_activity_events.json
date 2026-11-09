@@ -1,5 +1,5 @@
 {
-    "_doc": "Activity launchEventID scenes, reused on explicit player join (isJoin present) and NPC arrival (isLate present). Test isJoin first. Initial attendees are actually present launch participants, not expected guests. On join/late, joining is the newcomer singleton, companions are locally present already-arrived others, and participants is their union. SELF only decides visibility. activityTrustEligible is present only when true. Initial shared outcomes require both activityTrustEligible and hasSharedAttendees (present only for at least two real attendees); arrival shared outcomes require both activityTrustEligible and hasCompanions (present only for at least one local nonjoining companion). Check both presence flags in a Branch before jumping to a separate narrative/reward node. Either flag missing goes to finish without shared text or reward Results. Initial Trust uses attendees->attendees once per directed nonself pair; arrivals use joining->companions and companions->joining only. Never reward stale player/late/expected targets or invitation acceptance.",
+    "_doc": "Activity launchEventID scenes, reused on explicit player join (isJoin present) and NPC arrival (isLate present). Test isJoin first. Initial attendees are actually present launch participants, not expected guests. On join/late, joining is the newcomer singleton, companions are locally present already-arrived others, and participants is their union. SELF only decides visibility. activityTrustEligible is present only when true. Initial shared outcomes require both activityTrustEligible and hasSharedAttendees (present only for at least two real attendees); arrival shared outcomes require both activityTrustEligible and hasCompanions (present only for at least one local nonjoining companion). Check both presence flags in a Branch before jumping to a separate narrative/reward node. Either flag missing goes to finish without shared text or reward Results. Trust is never granted by these scenes: the job pays it at the launch to those who agreed beforehand and came on time (Job_Activity.AwardKeptPromiseTrust). Other relationship rewards: initial attendees->attendees once per directed nonself pair; arrivals joining->companions and companions->joining only. Never reward stale player/late/expected targets or invitation acceptance.",
     "Events": {
         "list": [
             {
@@ -18,7 +18,8 @@
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "begin",
                         "line": "Riverside_Fireworks_Begin_EV01",
-                        "isLast": true
+                        "isLast": true,
+                        "Results": [ { "Type": "FlushMessageExpAll", "arguments": ["false"] } ]
                     },
                     { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "join", "line": "Riverside_Fireworks_Begin_join", "isLast": true },
                     { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "line": "Riverside_Fireworks_Begin_late", "isLast": true }
@@ -26,7 +27,7 @@
             },
             {
                 "ID": "Riverside_Stroll_Begin",
-                "_comment": "recreation_offer_jp_riverside_stroll: mutually exclusive initial / explicit join / late arrival scenes. Only the guarded shared-walk outcome grants mutual BASE +1 Trust. Ineligible entry, fewer than two initial attendees, or an arrival without local companions goes straight to the neutral ending without shared text or reward Results. No invitation or elapsed-time reward.",
+                "_comment": "recreation_offer_jp_riverside_stroll: mutually exclusive initial / explicit join / late arrival scenes. The guarded shared-walk outcome is narration only (Trust: trustRewardEligible - paid by the job at the launch to those who agreed beforehand and came on time). Ineligible entry, fewer than two initial attendees, or an arrival without local companions goes straight to the neutral ending without shared text. No invitation or elapsed-time reward.",
                 "events": [
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
@@ -55,13 +56,11 @@
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "initial_reward", "line": "Riverside_Stroll_Begin_shared_initial",
-                        "nextEntryLabel": "finish",
-                        "Results": [ { "Type": "IncreaseRelationship", "arguments": ["attendees", "attendees", "Trust", "1"] } ]
+                        "nextEntryLabel": "finish"
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "arrival_reward", "line": "Riverside_Stroll_Begin_shared_arrival",
-                        "nextEntryLabel": "finish",
-                        "Results": [ { "Type": "IncreaseRelationship", "arguments": ["joining", "companions", "Trust", "1"] }, { "Type": "IncreaseRelationship", "arguments": ["companions", "joining", "Trust", "1"] } ]
+                        "nextEntryLabel": "finish"
                     },
                     { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "finish", "line": "Riverside_Stroll_Begin_finish", "isLast": true, "Results": [ { "Type": "FlushMessageExpAll", "arguments": ["false"] } ] }
                 ]

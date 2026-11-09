@@ -1,6 +1,6 @@
 {
     "_doc": "Public riverside park along the embankment. Minimal standalone faction: the world faction (Manageable_World) cannot own it - its only room is the world-map transit room, so a booking there would lead to that room, and world-map travel time is only measured between initializeFactions members with their own door. No floor plan: rooms are hideOnMap with no offsetX/offsetY, walking minutes as door cost (hospital pattern). No members and no staff.",
-    "_doc_recreation": "Anyone may stroll here (jp_riverside_relax: generic 'recreation', ungated). Fireworks viewing (jp_riverside_watch_fireworks) is open while the fireworks offer is under way (its requireActiveRecreationOffer gate). Both are offers (MapPlans.recreationOffers below: recreation_offer_jp_riverside_fireworks on Saturdays of the hanabi season, recreation_offer_jp_riverside_stroll daily, or a SetRecreationBooking event with one as template). No MemberTypes: a booked visit runs on its offer's own workModule - the default behavior tree sandboxes its workCommands (TryFindScheduledJobNode's booked-visit branch).",
+    "_doc_recreation": "Anyone may stroll or jog here (generic recreation, ungated) on the promenade or lawn. Ordinary 30-minute rounds allow the existing random multiroom dispatch to reselect a surface. Fireworks viewing retains its active-offer gate. Stroll and jogging are Flexible offers; fireworks remain seasonal. No MemberTypes: a booked visit runs on its offer's own workModule.",
 
     "MapPlans": {
         "factionInit": [
@@ -46,7 +46,16 @@
                         "connects": [
                             { "ID": "riverside_entrance", "cost": 2.0 }
                         ],
-                        "furnitureIDs": ["furniture_jp_riverside_bench", "furniture_jp_riverside_viewing_spot"],
+                        "furnitureIDs": ["furniture_jp_riverside_bench", "furniture_jp_riverside_viewing_spot", "furniture_jp_riverside_jogging_route"],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_RiversideRoad.jpg",
+                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_RiversideRoad.jpg"
+                    },
+                    {
+                        "ID": "riverside_lawn",
+                        "displayName": "jp_riverside_lawn",
+                        "hideOnMap": true,
+                        "connects": [{ "ID": "riverside_promenade", "cost": 3.0 }],
+                        "furnitureIDs": ["furniture_jp_riverside_lawn_route"],
                         "roomImagePath": "Media_UI_Scenario_Background/BG_RiversideRoad.jpg",
                         "roomImagePath_Night": "Media_UI_Scenario_Background/BG_RiversideRoad.jpg"
                     }
@@ -57,12 +66,16 @@
         "recreationOffers": [
             {
                 "ID": "recreation_offer_jp_riverside_fireworks",
+                "mainTypeTag": "sightseeing",
+                "secondaryTags": ["outdoor", "seasonal", "fireworks"],
                 "allowWalkIn": true,
-                "trustRewardEligible": false,
+                "trustRewardEligible": true, "provideAcceptanceBonus": 5, "activityMoodlet": { "stress": 1 },
                 "factionID": "jp_tourist_riverside",
                 "startHour": 19,
                 "hours": 2,
                 "workModule": { "jobPostID": "jp_riverside_fireworks", "workCommands": ["jp_riverside_watch_fireworks"] },
+                "_comment_activityCommands": "Participants watch through the activity's bound copy (activity: watch the fireworks), one package per invitation group (the families each sit together - Plan_ActivityFurnitureCommands step 3); non-participants keep the normal command (no exclusiveUse).",
+                "activityCommands": ["jp_riverside_watch_fireworks"],
                 "_comment_activity": "Job_Activity gathers on the embankment lawn and launches at T+5 (World session, no mandatory participants), firing Riverside_Fireworks_Begin (Events/riverside_activity_events.json).",
                 "gatherRoomID": "riverside_promenade",
                 "launchEventID": "Riverside_Fireworks_Begin",
@@ -83,14 +96,17 @@
             {
                 "_comment": "Everyday riverside stroll - a flexible offer: never posted, every eligible character may plan it into free time like a membership activity (2h, not two days running). Placement weight = weight.",
                 "ID": "recreation_offer_jp_riverside_stroll",
+                "mainTypeTag": "stroll",
+                "secondaryTags": ["outdoor", "riverside", "relaxation"],
                 "allowWalkIn": true,
-                "trustRewardEligible": true,
+                "trustRewardEligible": true, "provideAcceptanceBonus": 5, "activityMoodlet": { "stress": 1 },
                 "mode": "Flexible",
                 "factionID": "jp_tourist_riverside",
                 "minHours": 2,
                 "maxHours": 2,
                 "daysInAdvance": 0,
                 "workModule": { "jobPostID": "jp_riverside_stroll", "workCommands": ["jp_riverside_relax"] },
+                "activityCommands": ["jp_riverside_relax"],
                 "_comment_activity": "Job_Activity gathers at the promenade and launches once everyone attending is there (Private), firing Riverside_Stroll_Begin.",
                 "gatherRoomID": "riverside_promenade",
                 "launchEventID": "Riverside_Stroll_Begin",
@@ -122,6 +138,23 @@
                         }
                     ]
                 }
+            },
+            {
+                "ID": "recreation_offer_jp_riverside_jogging",
+                "mode": "Flexible",
+                "factionID": "jp_tourist_riverside",
+                "mainTypeTag": "exercise",
+                "secondaryTags": ["outdoor", "riverside", "jogging", "cardio", "sport"],
+                "allowWalkIn": true,
+                "trustRewardEligible": true, "provideAcceptanceBonus": 5, "activityMoodlet": { "stress": 1 },
+                "minHours": 2,
+                "maxHours": 2,
+                "daysInAdvance": 0,
+                "weight": 1.0,
+                "minDaysBetween": 1,
+                "workModule": { "jobPostID": "recreation_offer_jp_riverside_jogging", "workCommands": ["jp_riverside_jogging"], "activeHours": [6,7,8,9,10,11,12,13,14,15,16,17,18,19], "activeDays": [] },
+                "activityCommands": ["jp_riverside_jogging"],
+                "gatherRoomID": "riverside_promenade"
             }
         ]
     },
@@ -137,6 +170,18 @@
                 "value": 30000,
                 "Tags": [],
                 "givesJob": [ { "comID": ["jp_riverside_relax"] } ]
+            },
+            {
+                "ID": "furniture_jp_riverside_jogging_route",
+                "displayName": "jp_riverside_jogging_route",
+                "recipe": [], "furnitureSize": 0, "value": 0,
+                "givesJob": [{ "comID": ["jp_riverside_jogging"] }]
+            },
+            {
+                "ID": "furniture_jp_riverside_lawn_route",
+                "displayName": "jp_riverside_lawn_route",
+                "recipe": [], "furnitureSize": 0, "value": 0,
+                "givesJob": [{ "comID": ["jp_riverside_relax", "jp_riverside_jogging"] }]
             },
             {
                 "ID": "furniture_jp_riverside_viewing_spot",
@@ -159,7 +204,7 @@
                 "ActionPackageClass": "ActionPackage_Interaction",
                 "displayName": "jp_riverside_relax_displayName",
                 "_comment": "Open to everyone at any time - found by the generic recreation search too.",
-                "timeScale": 60,
+                "timeScale": 30,
                 "comTags": ["furniture", "recreation", "jp_tourist_riverside"],
                 "requirements": { "requirement": { "treatReceiverAsDoer": true } },
                 "results_EP": {
@@ -178,11 +223,25 @@
                     }
                 ],
                 "AcceptanceCheck": { "baseAcceptanceValue": 10 },
-                "DifficultyCheck": { "baseD20Check": 0 },
+                "DifficultyCheck": { "baseD20Check": 5 },
                 "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$沿着河边慢慢散步"] } ] },
                 "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正望着河面吹风"] } ] },
                 "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$离开了河边"] } ] },
                 "description_after": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$在河边歇够了"] } ] }
+            },
+            {
+                "ID": "jp_riverside_jogging",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "jp_riverside_jogging",
+                "timeScale": 30,
+                "comTags": ["furniture", "recreation", "jp_tourist_riverside"],
+                "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "cost_ST": 6, "cost_EN": 2 } } },
+                "variants": [{ "displayName": "jp_riverside_jogging", "requirements": { "requirement": { "doerCount": 99 } } }],
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 },
+                "DifficultyCheck": { "baseD20Check": 5 },
+                "description_begin": { "Entries": [{ "texts": ["jp_riverside_jogging_begin"] }] },
+                "description_ongoing": { "Entries": [{ "texts": ["jp_riverside_jogging_ongoing"] }] },
+                "description_after": { "Entries": [{ "texts": ["jp_riverside_jogging_after"] }] }
             },
             {
                 "ID": "jp_riverside_watch_fireworks",
@@ -206,7 +265,7 @@
                     }
                 ],
                 "AcceptanceCheck": { "baseAcceptanceValue": 15 },
-                "DifficultyCheck": { "baseD20Check": 0 },
+                "DifficultyCheck": { "baseD20Check": 5 },
                 "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$在河岸找了个位置，仰头等待烟火"] } ] },
                 "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正仰望着夜空中绽放的烟火"] } ] },
                 "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$不再看烟火了"] } ] },
@@ -217,6 +276,14 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
+                "jp_riverside_lawn": "河堤草坪",
+                "jp_riverside_jogging_route": "河畔慢跑道",
+                "jp_riverside_lawn_route": "草坪边步道",
+                "recreation_offer_jp_riverside_jogging": "河畔慢跑",
+                "jp_riverside_jogging": "沿河慢跑",
+                "jp_riverside_jogging_begin": "$doer.firstname$迈开步子，沿着河岸慢跑。",
+                "jp_riverside_jogging_ongoing": "$doer.firstname$迎着河风，保持着轻快的步伐。",
+                "jp_riverside_jogging_after": "$doer.firstname$放慢脚步，调整呼吸。",
                 "jp_riverside_entrance": "河堤入口",
                 "jp_riverside_promenade": "河畔步道",
 
@@ -233,6 +300,16 @@
                 "jp_riverside_stroll": "河边散步",
                 "jp_riverside_fireworks_accept_reason": "活动中",
                 "jp_riverside_stroll_accept_reason": "活动中"
+            },
+            "en-us": {
+                "jp_riverside_lawn": "Embankment Lawn",
+                "jp_riverside_jogging_route": "Riverside Jogging Route",
+                "jp_riverside_lawn_route": "Lawnside Path",
+                "recreation_offer_jp_riverside_jogging": "Riverside Jogging",
+                "jp_riverside_jogging": "Jog Along the River",
+                "jp_riverside_jogging_begin": "$doer.firstname$ starts jogging along the riverbank.",
+                "jp_riverside_jogging_ongoing": "$doer.firstname$ keeps a steady pace in the river breeze.",
+                "jp_riverside_jogging_after": "$doer.firstname$ slows down and catches their breath."
             }
         }
     }

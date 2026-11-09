@@ -216,11 +216,15 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
             }
 
 
-            if (list[i].comTags.Contains("sex") && (list[i].comTags.Contains("service") || list[i].comTags.Contains("nosexvariant")))
+            // upgrades run only inside a sex scene (Job_Sex_Group), so they get no _noSex clone
+            if (list[i].comTags.Contains("sex") && !list[i].IsUpgrade && (list[i].comTags.Contains("service") || list[i].comTags.Contains("nosexvariant")))
             {
                 var serializedParent = JsonConvert.SerializeObject(list[i], UtilityEX.SerializerSettings);
                 var newCOM = JsonConvert.DeserializeObject<COM_Sex>(serializedParent, UtilityEX.SerializerSettings);
                 newCOM.comTags.Remove("sex");
+                // losing "sex" would drop the clone to Medium intimacy (permissions.json rules); a sexual act stays High outside a scene
+                if (!newCOM.comTags.Contains("permission_intimacy_low") && !newCOM.comTags.Contains("permission_intimacy_medium") && !newCOM.comTags.Contains("permission_intimacy_high"))
+                    newCOM.comTags.Add("permission_intimacy_high");
                 newCOM.requirements.requirement.req_Receivers.requireAbsentJobwithCOMTag.Add("sex");
                 newCOM.ID += "_noSex";
                 newCOM.AppendParentID("_noSex");
@@ -254,6 +258,12 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
         foreach (var com in ID_Dictionary.Values)
         {
             if (com.ParentCOM != null) com.ParentCOM.NotifyChild(com);
+            if (com.IsUpgrade)
+            {
+                var upgradeParent = com.UpgradeParent;
+                if (upgradeParent != null) upgradeParent.NotifyUpgrade(com);
+                else Debug.LogError($"Index_COM: {com.ID} upgradeFrom [{com.upgradeFrom}] is not a command");
+            }
         }
 
         /*

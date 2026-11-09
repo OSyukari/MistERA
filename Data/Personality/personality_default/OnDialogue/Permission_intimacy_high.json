@@ -1,12 +1,12 @@
 {
-    "_doc": "口上loose entry文件：许可「高度亲密」（intimacy_high，发生性关系）的请求口上。条目含义与生成规范同 Permission_intimacy_low.json 的 _doc（Request / Granted / Refused，每条目一个variant、3条response，无通用兜底）。本文件在安全模式下也会加载，台词须含蓄、不出现露骨描写。",
+    "_doc": "口上loose entry文件：许可「亲密行为」（intimacy_high，发生性关系）的请求口上。条目含义与生成规范同 Permission_intimacy_low.json 的 _doc（Request / Granted / Refused，每条目一个variant、3条response，无通用兜底）。本文件在安全模式下也会加载，台词须含蓄、不出现露骨描写。",
     "Character_Personalities": {
         "looselist": [
             {
                 "ID": "personality_default",
                 "Entry": {
                     "ID": "permission_intimacy_high_Request",
-                    "_comment": "玩家想请求高度亲密许可，刚开口、尚未说明。女性NPC对此的反应，可带紧张或察觉。含蓄。",
+                    "_comment": "玩家想请求亲密行为许可，刚开口、尚未说明。女性NPC对此的反应，可带紧张或察觉。含蓄。",
                     "variants": [ { "responses": [
                         "\"你、你是认真的吗……\"",
                         "\"……这么认真的样子，难道是那个意思？\"",
@@ -18,7 +18,7 @@
                 "ID": "personality_default",
                 "Entry": {
                     "ID": "permission_intimacy_high_Granted",
-                    "_comment": "答应给予高度亲密许可（菜单请求获准，或性行为指令进行中被自动请求获准，可能正处于亲密场景中）。女性说话者。含蓄。",
+                    "_comment": "答应给予亲密行为许可（菜单请求获准，或性行为指令进行中被自动请求获准，可能正处于亲密场景中）。女性说话者。含蓄。",
                     "variants": [ { "responses": [
                         "\"……嗯，我愿意把自己交给你。\"\n%%permission_intimacy_high_consent%%",
                         "\"既然是你的话……我可以的。\"\n%%permission_intimacy_high_consent%%",
@@ -30,7 +30,7 @@
                 "ID": "personality_default",
                 "Entry": {
                     "ID": "permission_intimacy_high_Refused",
-                    "_comment": "拒绝给予高度亲密许可。女性NPC，委婉为主。含蓄。",
+                    "_comment": "拒绝给予亲密行为许可。女性NPC，委婉为主。含蓄。",
                     "variants": [ { "responses": [
                         "\"对不起……那种事我还做不到。\"",
                         "\"我还没有那种心理准备……\"",

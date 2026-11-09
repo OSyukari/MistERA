@@ -125,6 +125,15 @@ public class ActionPackage_PathTo : ActionPackage
             isValid = false;
         }
 
+        // inside a room divider (stall): leaving it is an explicit step first (D2 - TryLeaveDividerForJob)
+        var doerChara = scr_System_CampaignManager.current.FindInstanceByID(doerRef);
+        if (doerChara != null && doerChara.ScopeRef != -1)
+        {
+            tooltip.Add(LocalizeDictionary.QueryThenParse("ui_divider_leaveFirst").Replace("$name$", doerChara.FirstName)
+                .Replace("$furniture$", FurnitureOccupancyUtility.ScopeName(doerChara)));
+            isValid = false;
+        }
+
         if (path == null)
         {
             tooltip.Add("ActionPackage_PathTo preEvaluation: cannot find valid path between doer["+doerRef+"] and targetroom["+ TargetRoom .RefID+ "]");
@@ -268,7 +277,8 @@ public class ActionPackage_PathTo : ActionPackage
                 
             foreach (var c in room.RoomChara)
             {
-                if (Doer.RefID == 0 && (c.RefID == 0 || scr_System_CampaignManager.current.PlayerPartyMembers.Contains(c.RefID))) continue;
+                // came along with the player: teammates or the carried (TravelsWithPlayer - both mechanisms)
+                if (Doer.RefID == 0 && scr_System_CampaignManager.current.TravelsWithPlayer(c.RefID)) continue;
                 if (Doer == c) continue;
                 if (c == null) continue;
                 s2.Add(c.FirstName);// += ", " + c.FirstName;

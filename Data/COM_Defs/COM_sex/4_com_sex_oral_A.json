@@ -30,11 +30,20 @@
                         }
                     }
                 },
+                "_comment_actModifiers":"Docs/Interactions/Plan_CommandProgression.md: terms start at the act's permission gate (Goodwill 50, Trust 60, Desire 250); cap = AC - 7 - residual 6.",
                 "AcceptanceCheck": {
-                    "baseAcceptanceValue": 35,
+                    "baseAcceptanceValue": 34,
                     "SkillBonus_Receiver": [
                         "skill_sensitivity_A"
-                    ]
+                    ],
+                    "actModifiers":{
+                        "enabled":true, "totalMin":0, "totalMax":21,
+                        "terms":[
+                            {"source":"PartnerGoodwill", "appliesTo":"BothDeciders", "scale":0.05, "offset":-2.5, "min":0, "max":2},
+                            {"source":"PartnerTrust", "appliesTo":"BothDeciders", "scale":0.05, "offset":-3, "min":0, "max":3},
+                            {"source":"PartnerDesire", "appliesTo":"BothDeciders", "scale":0.04, "offset":-10, "min":0, "max":18}
+                        ]
+                    }
                 },
                 "DifficultyCheck": {
                     "baseD20Check": 5,
@@ -42,51 +51,8 @@
                         "skill_sensitivity_A"
                     ]
                 },
+                "_comment_upgrades":"The tongue version is an upgrade command (com_sex_oral_A_force below), offered in this command's + panel while it is ongoing.",
                 "variants": [
-                    {
-                        "requirements":{
-                            "requirement":{
-                                "doerCount":1,
-                                "receiverCount":1
-                            },
-                            "requireExisting":{ "requireCOMID":"com_sex_oral_A"  }
-                        },
-                        "displayName":"com_sex_oral_A_displayName_1_force",
-                        "setForce":true
-                    },
-                    {
-                        "requirements":{
-                            "requirement":{
-                                "doerCount":1,
-                                "receiverCount":99
-                            },
-                            "requireExisting":{ "requireCOMID":"com_sex_oral_A"  }
-                        },
-                        "displayName":"com_sex_oral_A_displayName_2_force",
-                        "setForce":true
-                    },
-                    {
-                        "requirements":{
-                            "requirement":{
-                                "doerCount":99,
-                                "receiverCount":1
-                            },
-                            "requireExisting":{ "requireCOMID":"com_sex_oral_A"  }
-                        },
-                        "displayName":"com_sex_oral_A_displayName_3_force",
-                        "setForce":true
-                    },
-                    {
-                        "requirements":{
-                            "requirement":{
-                                "doerCount":99,
-                                "receiverCount":99
-                            },
-                            "requireExisting":{ "requireCOMID":"com_sex_oral_A"  }
-                        },
-                        "displayName":"com_sex_oral_A_displayName_4_force",
-                        "setForce":true
-                    },
                     {
                         "requirements":{
                             "requirement":{
@@ -162,6 +128,94 @@
                     ]
                     
                 }
+            },
+            {
+                "parentCOMID":"com_sex_service_base",
+                "ID":"com_sex_oral_A_force",
+                "upgradeFrom":"com_sex_oral_A",
+                "_comment_upgrade":"Upgrade of com_sex_oral_A (was its setForce variants): the tongue version, one round in place of the ongoing rimming, which then resumes. Own acceptance roll every round. AC/DC copied from rimming for tuning; setForce keeps the strong-act rules. Texts and kojo: rimming's unless its own are added.",
+                "ActionPackageClass":"ActionPackage_Sex",
+                "categoryTags":["com_category_a","com_category_service"],
+                "displayName":"com_sex_oral_A_displayName_1_force",
+                "timeScale":3,
+                "comTags":["sex","service", "position_face", "position_inequal","permission_anal"],
+                "portraitTags":["rimjob"],
+                "portraitTags_Receiver":["spread_pussy"],
+                "_comment_traces":"Body traces (Data/RaceDefs/TraceDefs.json): saliva into the anus (cap from trace_saliva), anal pubes on the doer's face (low chance, natural only).",
+                "traceKeywords":["lick","oral"],
+                "requirements":{
+                    "requirement":{
+                        "req_Doers":{
+                            "BodyTags":["mouth"],
+                            "minRevealingScore":1,
+                            "cost_ST": 1
+                        },
+                        "req_Receivers":{
+                            "BodyTags":["anus"],
+                            "minRevealingScore":1,
+                            "requireConscious":false,
+                            "requireAction": false
+                        }
+                    }
+                },
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 34,
+                    "SkillBonus_Receiver": [
+                        "skill_sensitivity_A"
+                    ]
+                },
+                "DifficultyCheck": {
+                    "baseD20Check": 5,
+                    "SkillBonus_Receiver": [
+                        "skill_sensitivity_A"
+                    ]
+                },
+                "variants": [
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":1,
+                                "receiverCount":1
+                            },
+                            "requireExisting":{ "requireCOMID":"com_sex_oral_A"  }
+                        },
+                        "displayName":"com_sex_oral_A_displayName_1_force",
+                        "setForce":true
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":1,
+                                "receiverCount":99
+                            },
+                            "requireExisting":{ "requireCOMID":"com_sex_oral_A"  }
+                        },
+                        "displayName":"com_sex_oral_A_displayName_2_force",
+                        "setForce":true
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":99,
+                                "receiverCount":1
+                            },
+                            "requireExisting":{ "requireCOMID":"com_sex_oral_A"  }
+                        },
+                        "displayName":"com_sex_oral_A_displayName_3_force",
+                        "setForce":true
+                    },
+                    {
+                        "requirements":{
+                            "requirement":{
+                                "doerCount":99,
+                                "receiverCount":99
+                            },
+                            "requireExisting":{ "requireCOMID":"com_sex_oral_A"  }
+                        },
+                        "displayName":"com_sex_oral_A_displayName_4_force",
+                        "setForce":true
+                    }
+                ]
             }
         ]
     },
@@ -173,6 +227,7 @@
             {
                 "com_sex_oral_A":"%%tooltip_sex_com_alternating_tooltip%%",
 
+                "com_sex_oral_A_force":"%%tooltip_sex_com_alternating_tooltip%%",
                 "com_sex_oral_A_displayName_1": "舔肛",
                 "com_sex_oral_A_displayName_2": "交替舔肛",
                 "com_sex_oral_A_displayName_3": "轮流舔肛",
@@ -192,6 +247,7 @@
             {
                 "com_sex_oral_A":"%%tooltip_sex_com_alternating_tooltip%%",
 
+                "com_sex_oral_A_force":"%%tooltip_sex_com_alternating_tooltip%%",
                 "com_sex_oral_A_displayName_1": "Rimming",
                 "com_sex_oral_A_displayName_2": "Alt. Rimming",
                 "com_sex_oral_A_displayName_3": "Alt. Rimming",

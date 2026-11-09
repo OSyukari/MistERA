@@ -61,18 +61,66 @@ public class Room_Instance: IDisposable, I_Disposable
         activities.Remove(activity);
     }
 
-    /// <summary>Concurrent contexts are alternatives, not cumulative membership requirements.</summary>
+    /// <summary>
+    /// What this room's furniture offers actor through its activities, as one number: the registered activities, their
+    /// phases and whether actor takes part. The command panel rebuilds a furniture's buttons when it changes (an
+    /// activity launches here, the player arrives late...), since a covered command is swapped for the bound copy.
+    /// </summary>
+    public int ActivityContextStamp(Character_Trainable actor)
+    {
+        unchecked
+        {
+            int stamp = 17;
+            for (int i = 0; i < activities.Count; i++)
+            {
+                var a = activities[i];
+                stamp = stamp * 31 + a.RefID;
+                stamp = stamp * 31 + (int)a.Phase;
+                stamp = stamp * 31 + (a.TookPart(actor) ? 1 : 0);
+            }
+            return stamp;
+        }
+    }
+
+    /// <summary>
+    /// Whether actor may do command on furniture in some form - the activity's bound copy or the normal command.
+    /// Concurrent contexts are alternatives, not cumulative membership requirements: allowed as a participant of any
+    /// covering activity; otherwise blocked only by a covering activity that is exclusive (exclusiveUse) or that actor
+    /// takes part in (its participants get its commands only as its bound copies, and not this one).
+    /// </summary>
     public bool AllowsActivityCommand(Job_Furniture furniture, COM command, Character_Trainable actor)
     {
-        bool replaced = false;
+        bool blocked = false;
         for (int i = 0; i < activities.Count; i++)
         {
             var activity = activities[i];
             if (!activity.ReplacesCommand(furniture, command)) continue;
-            replaced = true;
             if (activity.AllowsParticipantCommand(actor, command)) return true;
+            if (activity.ExclusiveUse || activity.TookPart(actor)) blocked = true;
         }
-        return !replaced;
+        return !blocked;
+    }
+
+    /// <summary>
+    /// Whether actor may take part in an UNBOUND (normal) package of command on furniture: not while a covering activity
+    /// is exclusive, nor as a participant of a covering activity that offers command as a bound copy (activityCommands -
+    /// they use that copy, so groups never mix with outsiders' packages). A participant of an activity without bound
+    /// copies keeps using the normal command, as long as the activity allows it (AllowsActivityCommand).
+    /// </summary>
+    public bool AllowsUnboundActivityCommand(Job_Furniture furniture, COM command, Character_Trainable actor)
+    {
+        for (int i = 0; i < activities.Count; i++)
+        {
+            var activity = activities[i];
+            if (!activity.ReplacesCommand(furniture, command)) continue;
+            if (activity.TookPart(actor))
+            {
+                if (activity.OffersBoundCopy(command) || !activity.AllowsParticipantCommand(actor, command)) return false;
+                continue;
+            }
+            if (activity.ExclusiveUse) return false;
+        }
+        return true;
     }
 
     /// <summary>Reuse a result list across furniture to deduplicate coordinator-bound offers.</summary>
@@ -344,7 +392,88 @@ public class Room_Instance: IDisposable, I_Disposable
         this.ownerNames = null;
         this._displayNameCache = "";
         this._displayNameShortCache = "";
+        ReassignFurnitureOwnership();
+    }
 
+    // ---- furniture (bed) ownership - Docs/Furniture/Plan_FurnitureOccupancy.md §2.2 ----
+    // Computed only when the room's ownership or furniture changes (and once after load), then kept on the
+    // furniture's job. Nothing per tick.
+
+    [NonSerialized][JsonIgnore] bool _furnitureOwnershipChecked = false;
+    static readonly List<Job_Furniture> _ownershipBeds = new List<Job_Furniture>();
+    static readonly List<int> _ownershipBuffer = new List<int>();
+
+    /// <summary> First read after load: assign once (older saves have no bed owners). Cheap flag check afterwards. </summary>
+    public void EnsureFurnitureOwnership()
+    {
+        if (_furnitureOwnershipChecked) return;
+        ReassignFurnitureOwnership();
+    }
+
+    /// <summary>
+    /// Stable re-assignment of bed owners from the room's owners: a bed keeps owners that still own the room, owners
+    /// without a bed get a random one among the beds with the fewest owners (unowned first). Party rooms (owners =
+    /// every member, never notified) and unowned rooms leave their beds unowned. Room owner preferences and a player
+    /// facing editor plug in here later.
+    /// </summary>
+    public void ReassignFurnitureOwnership()
+    {
+        _furnitureOwnershipChecked = true;
+        var beds = _ownershipBeds;
+        beds.Clear();
+        if (roomJobFurnitures != null)
+        {
+            for (int i = 0; i < roomJobFurnitures.Count; i++)
+            {
+                if (roomJobFurnitures[i].JobGiver is Job_Furniture jf && jf.AssignsOwnership) beds.Add(jf);
+            }
+        }
+        if (beds.Count < 1) return;
+
+        // Manageable only: a party room (Manageable_Party) lists every member as owner and is never notified
+        var faction = FactionOwner as Manageable;
+        List<int> owners = faction == null ? null : faction.RoomOwners(RefID);
+        var buffer = _ownershipBuffer;
+
+        // 1 - keep still-valid owners, drop the rest (and duplicates across beds)
+        for (int b = 0; b < beds.Count; b++)
+        {
+            var bed = beds[b];
+            var current = bed.OwnerRefs;
+            buffer.Clear();
+            for (int i = 0; i < current.Count; i++)
+            {
+                int o = current[i];
+                if (owners == null || !owners.Contains(o) || buffer.Contains(o)) continue;
+                bool takenEarlier = false;
+                for (int pb = 0; pb < b && !takenEarlier; pb++) takenEarlier = beds[pb].OwnerRefs.Contains(o);
+                if (!takenEarlier) buffer.Add(o);
+            }
+            if (buffer.Count != current.Count) bed.Ownership_Set(buffer);
+        }
+
+        // 2 - owners without a bed: random bed among those with the fewest owners
+        if (owners == null) return;
+        for (int i = 0; i < owners.Count; i++)
+        {
+            int o = owners[i];
+            bool hasBed = false;
+            for (int b = 0; b < beds.Count && !hasBed; b++) hasBed = beds[b].OwnerRefs.Contains(o);
+            if (hasBed) continue;
+
+            int fewest = int.MaxValue, ties = 0;
+            Job_Furniture pick = null;
+            for (int b = 0; b < beds.Count; b++)
+            {
+                int n = beds[b].OwnerRefs.Count;
+                if (n < fewest) { fewest = n; ties = 1; pick = beds[b]; }
+                else if (n == fewest && UnityEngine.Random.Range(0, ++ties) == 0) pick = beds[b];   // reservoir pick among ties
+            }
+            buffer.Clear();
+            buffer.AddRange(pick.OwnerRefs);
+            buffer.Add(o);
+            pick.Ownership_Set(buffer);
+        }
     }
 
     public Inventory Inventory = new Inventory();
@@ -355,7 +484,8 @@ public class Room_Instance: IDisposable, I_Disposable
     {
         get
         {
-            if (baseRoom == null && baseRoomID != "Debug") baseRoom = scr_System_Serializer.current.GetByNameOrID_Floor_Base(baseFloorID).GetRoom(baseRoomID);
+            // the floor template may have been removed from the data since the save was made (the floor then drops this room on load)
+            if (baseRoom == null && baseRoomID != "Debug") baseRoom = scr_System_Serializer.current.GetByNameOrID_Floor_Base(baseFloorID)?.GetRoom(baseRoomID);
             //else baseRoom = new Room_Base();
             return baseRoom;
         }
@@ -552,6 +682,7 @@ public class Room_Instance: IDisposable, I_Disposable
         roomJobs = null;
         displayableFurnitures = null;
         InvalidateFurnitureDependentCache();
+        if (inst.JobGiver != null && inst.JobGiver.AssignsOwnership) ReassignFurnitureOwnership();
 
         return inst;
     }
@@ -651,6 +782,8 @@ public class Room_Instance: IDisposable, I_Disposable
     {
         if (inst == null) return false;
         bool removed;
+        // read before the job is disposed below
+        bool wasOwnedFurniture = inst.JobGiver != null && inst.JobGiver.AssignsOwnership;
         if (inst.JobGiver != null)
         {
             var job = inst.JobGiver;
@@ -666,6 +799,7 @@ public class Room_Instance: IDisposable, I_Disposable
                 {
                     scr_System_CampaignManager.current.FindInstanceByID(charaRef)?.ChangeCurrentJob(null);
                 }
+                if (job is Job_Furniture jf) FurnitureOccupancyUtility.EvictAll(jf, OccupancyReason.FurnitureRemoved);
 
                 this.FactionOwner?.RemoveJobPost(job);
                 job.DisposeInternal();
@@ -681,6 +815,7 @@ public class Room_Instance: IDisposable, I_Disposable
         if (removed)
         {
             InvalidateFurnitureDependentCache();
+            if (wasOwnedFurniture) ReassignFurnitureOwnership();
 
             if (this.FactionOwner != null)
             {
@@ -701,7 +836,12 @@ public class Room_Instance: IDisposable, I_Disposable
             if (roomJobs == null)
             {
                 roomJobs = new List<Job>();
-                foreach(var i in roomJobRefs) roomJobs.Add(scr_System_CampaignManager.current.FindJobInstanceByID(i));
+                foreach(var i in roomJobRefs)
+                {
+                    // a ref left behind by a job dropped on load (its furniture no longer exists)
+                    var job = scr_System_CampaignManager.current.FindJobInstanceByID(i);
+                    if (job != null) roomJobs.Add(job);
+                }
             }
             return roomJobs;
         } 
@@ -719,6 +859,16 @@ public class Room_Instance: IDisposable, I_Disposable
             if (this.roomJobFurnitures != null) list.AddRange(roomJobFurnitures);
             return list;
         }
+    }
+
+    /// <summary>
+    /// Load cleanup: forget a furniture job that was dropped before deserializing (its furniture base no longer exists).
+    /// </summary>
+    public void DropMissingJobRef(int jobRefID)
+    {
+        roomJobRefs.Remove(jobRefID);
+        roomJobs = null;
+        displayableFurnitures = null;
     }
 
     public void RegisterJobFurniture(Job_Furniture j, FurnitureInstance i)
@@ -1040,10 +1190,8 @@ public class Room_Instance: IDisposable, I_Disposable
     {
         _cachedCleanliness = false;
 
-        foreach (var i in RoomChara)
-        {
-            i.Relationships.RefreshMoodlets(RoomChara);
-        }
+        // the cleanliness moodlet: refreshed with the room's next update
+        scr_System_CampaignManager.current?.Map?.MarkMoodletsDirty(RefID);
     }
 
     public CleaningStatus RoomCleanliness(Character_Trainable c) 
@@ -1137,8 +1285,16 @@ public class Room_Instance: IDisposable, I_Disposable
     {
         ResetActorTagContext();
         //Debug.LogError("Room SerializationRebuilt");
-        foreach (var i in furnitures)
+        for (int n = furnitures.Count - 1; n >= 0; n--)
         {
+            var i = furnitures[n];
+            // furniture removed from the data since this save was made
+            if (i == null || i.FurnitureBase == null)
+            {
+                Debug.LogWarning($"Room [{RefID}] dropped furniture [{i?.FurnitureBaseID}] on load: furniture base no longer exists");
+                furnitures.RemoveAt(n);
+                continue;
+            }
             i.ReEstablishParent(RefID, -1);
         }
     }

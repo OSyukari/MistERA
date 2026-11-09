@@ -10,13 +10,15 @@ public class Result_Event
 
     public bool requireSuccess = false;
     public bool requireFailure = false;
+    /// <summary>AP-scoped successful sleep commands only: finish this event before the sleep transition.</summary>
+    public bool deferSleepUntilEnd = false;
 
     /// <summary>
     /// Agnostic to call path: pass the current EvaluationPackage for EP-scoped targets (this pairing only), or
     /// null for AP-scoped targets (the whole ActionPackage's own doer/receiver). Either way, the doer/receiver/actor
     /// targets are read directly off the AP/EP's own already-resolved Doer/Receiver/Actors — no re-derivation.
     /// </summary>
-    public void Apply(ActionPackage p, EvaluationPackage evp)
+    public void Apply(ActionPackage p, EvaluationPackage evp, System.Action<EventInstance> prepareSleepEvent = null)
     {
         if (p == null || p.targetCOM == null) return;
 
@@ -71,6 +73,8 @@ public class Result_Event
         ev.Targets.Add("doer", doerTargets);
         ev.Targets.Add("receiver", receiverTargets);
         ev.Targets.Add("actor", actorTargets);
+        if (deferSleepUntilEnd && evp == null && p.executeSuccessful && p.targetCOM.comTags.Contains("sleep"))
+            prepareSleepEvent?.Invoke(ev);
 
         // standby: AP-wide actors assigned to no EvaluationPackage at all (e.g. leftover unpaired
         // doer/receiver in a multi-actor AP whose random-match pairing didn't cover everyone)
@@ -99,13 +103,21 @@ public class Result_Event
         // (e.g. group scenes) can correctly read ev.Targets["doer"/"receiver"/etc.]
         if (ev.silent)
         {
-            ExpeditionSilentRunner.RunChild(parent, ev, finalID, eventLabel);
+            try { ExpeditionSilentRunner.RunChild(parent, ev, finalID, eventLabel); }
+            finally { ev.CompleteCallbacks(); }
             return;
         }
 
-        ev.LoadNext(finalID, eventLabel);
-
-        scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
+        try
+        {
+            ev.LoadNext(finalID, eventLabel);
+            if (!ev.isValid || !scr_UpdateHandler.current.EventHandler.StartEvent(ev, false)) ev.CompleteCallbacks();
+        }
+        catch
+        {
+            ev.CompleteCallbacks();
+            throw;
+        }
     }
 
     string ComposeID(string comID)

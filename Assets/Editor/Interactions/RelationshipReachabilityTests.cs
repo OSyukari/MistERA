@@ -128,7 +128,7 @@ public static class RelationshipReachabilityTests
                 @"{ 'requireRawScore':[{'requireScoreID':'Trust','operand':'gte','value':150},{'requireScoreID':'Goodwill','operand':'gte','value':150}],
                     'requireRawScoreCompare':[{'requireScoreID':'Goodwill','operand':'gt','compareScoreID':'Badwill','compareScoreMult':1.1}],
                     'requireMood':{'operand':'gte','value':0} }",
-                @"{ 'requireRawScore':[{'requireScoreID':'Trust','operand':'gte','value':15},{'requireScoreID':'Desire','operand':'gte','value':150}],
+                @"{ 'requireRawScore':[{'requireScoreID':'Trust','operand':'gte','value':15},{'requireScoreID':'Desire','operand':'gte','value':500}],
                     'requireRawScoreCompare':[{'requireScoreID':'Desire','operand':'gt','compareScoreID':'Badwill','compareScoreMult':1.1}],
                     'requireMood':{'operand':'gte','value':0} }",
                 @"{ 'requireRawScore':[{'requireScoreID':'Trust','operand':'gte','value':25},{'requireScoreID':'Badwill','operand':'gte','value':50}],
@@ -454,7 +454,7 @@ public static class RelationshipReachabilityTests
                 }
             }
         });
-        test("Permissions: persisted Normal grants survive midnight; Temporary grants do not", () =>
+        test("Permissions: persisted grants live until removed; temporary removal leaves Normal grants", () =>
         {
             var now = new DateTime(2026, 10, 30, 23, 59, 0);
             foreach (var type in new[] { PermissionGrantType.Normal, PermissionGrantType.Temporary })
@@ -462,9 +462,30 @@ public static class RelationshipReachabilityTests
                 var grant = new PermissionGrant(1, 0, "permission_intimacy_high", type, PermissionGrantSource.Request, now);
                 var loaded = JsonConvert.DeserializeObject<PermissionGrant>(JsonConvert.SerializeObject(grant));
                 Require(loaded.type == type && loaded.IsWithinLifetime(now), "Persisted type/lifetime changed");
-                Require(loaded.IsWithinLifetime(now.AddMinutes(1)) == (type == PermissionGrantType.Normal), "Midnight boundary");
+                Require(loaded.IsWithinLifetime(now.AddMinutes(1)), "Grant expired by date instead of removal");
                 Require(!loaded.IsWithinLifetime(now.AddMinutes(-1)), "Grant active before issuance");
             }
+            var grants = new List<PermissionGrant>
+            {
+                new PermissionGrant(1, 0, "permission_intimacy_high", PermissionGrantType.Temporary, PermissionGrantSource.Request, now),
+                new PermissionGrant(0, 1, "permission_intimacy_high", PermissionGrantType.Temporary, PermissionGrantSource.Request, now),
+                new PermissionGrant(1, 2, "permission_intimacy_high", PermissionGrantType.Temporary, PermissionGrantSource.Request, now),
+                new PermissionGrant(1, 0, "permission_follow", PermissionGrantType.Normal, PermissionGrantSource.Request, now),
+            };
+            var db = JsonConvert.DeserializeObject<PermissionGrantDatabase>(JsonConvert.SerializeObject(new { grants }));
+            Require(db.GetSnapshot().Count == 4, "Grant fixture not loaded");
+            Require(db.RemoveTemporaryForPair(0, 1) && db.GetSnapshot().Count == 2, "Pair clear missed a direction");
+            Require(!db.RemoveTemporaryForPair(0, 1), "Pair clear removed twice");
+            var removedHolders = new List<int>();
+            db.RemoveTemporaryByGranter(1, holder => holder == 2, removedHolders);
+            Require(removedHolders.Count == 0 && db.GetSnapshot().Count == 2, "Kept holder removed");
+            db.RemoveTemporaryByGranter(1, null, removedHolders);
+            Require(removedHolders.Count == 1 && removedHolders[0] == 2 && db.GetSnapshot().Count == 1
+                && db.GetSnapshot()[0].type == PermissionGrantType.Normal, "Granter clear wrong");
+            var stale = JsonConvert.DeserializeObject<PermissionGrantDatabase>(JsonConvert.SerializeObject(new { grants }));
+            Require(stale.RemoveStaleTemporary(now, null) == 0, "Same-day temporary dropped on load");
+            Require(stale.RemoveStaleTemporary(now.AddMinutes(1), (g, h) => g == 1 && h == 2) == 2
+                && stale.GetSnapshot().Count == 2, "Stale temporary load cleanup wrong");
             Require(!PermissionService.CanRequest(null, null, null) && !PermissionService.AcceptsRequest(null, null, null), "Invalid request accepted");
             Require(PermissionService.ResolveGrantType(null, PermissionGrantSource.Request) == PermissionGrantType.Temporary, "Unknown lifetime became permanent");
         });

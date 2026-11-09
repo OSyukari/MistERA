@@ -1,0 +1,166 @@
+{
+    "_comment": "Bedtime only. Runtime binds bedtime_* before validators and deferred successful sleep starts after this event ends. Snapshot companions here; never search the room. PrepareForSleep reports actual equipment changes. Self addresses one actual conscious companion; each conscious NPC companion addresses self, never a random room actor. Sleeping companions first appear at lie-down, never undress or speak. Only an awake player chooses a narrative-only kiss; silent/NPC-only routes skip the question.",
+    "Events": { "list": [{
+        "ID": "OnSleepComplete",
+        "TargetValidators": [
+            { "refKeys": ["awake_companions"], "baseScope": "ScopeWithinRef", "extraScopeArguments": ["bedtime_companions"], "chara_conditions": [{ "parameters": ["isConscious"] }, { "parameters": ["excludeSelf"] }] },
+            { "refKeys": ["npc_awake_companions"], "baseScope": "ScopeWithinRef", "extraScopeArguments": ["bedtime_companions"], "chara_conditions": [{ "parameters": ["isConscious"] }, { "parameters": ["excludeSelf"] }, { "parameters": ["excludePlayer"] }] },
+            { "refKeys": ["sleeping_companions"], "baseScope": "ScopeWithinRef", "extraScopeArguments": ["bedtime_sleeping"], "chara_conditions": [{ "parameters": ["isSleeping"] }, { "parameters": ["excludeSelf"] }] },
+            { "refKeys": ["awake_npcs", "kiss_candidates"], "baseScope": "ScopeWithinRef", "extraScopeArguments": ["bedtime_awake"], "chara_conditions": [{ "parameters": ["isConscious"] }, { "parameters": ["excludePlayer"] }] },
+            { "refKeys": ["kiss_candidates"], "baseScope": "ScopeWithinRef", "extraScopeArguments": ["bedtime_companions"], "chara_conditions": [{ "parameters": ["excludePlayer"] }] },
+            { "refKeys": ["awake_player"], "baseScope": "ScopeWithinRef", "extraScopeArguments": ["bedtime_awake"], "chara_conditions": [{ "parameters": ["isConscious"] }, { "parameters": ["isPlayer"] }] }
+        ],
+        "events": [
+            {
+                "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "prepare",
+                "options": [
+                    { "option": "changed clothing", "Results": [{ "Type": "PrepareForSleep", "arguments": ["bedtime_awake", "changedSleepActors"] }, { "Type": "JumpToLabel", "arguments": ["", "undress"] }] },
+                    { "option": "already ready", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "lie_down"] }] }
+                ]
+            },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "undress", "line": "sleep_undress_changed" },
+            {
+                "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "undress_mode",
+                "options": [
+                    { "option": "conscious company", "self_chara_conditions": [{ "parameters": ["isConscious"] }], "target_chara_conditions": { "awake_companions": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "undress_together"] }] },
+                    { "option": "company not awake", "target_chara_conditions": { "bedtime_companions": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "lie_down"] }] },
+                    { "option": "solo", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "undress_solo"] }] }
+                ]
+            },
+            {
+                "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "undress_solo",
+                "options": [
+                    { "option": "self reaction", "self_chara_conditions": [{ "parameters": ["isConscious"] }, { "parameters": ["excludePlayer"] }], "Results": [{ "Type": "GetKojoEntry", "arguments": ["self", "self", "OnSleepComplete_UndressSelf", "sleepUndressSoloKojo", "replace"] }, { "Type": "JumpToLabel", "arguments": ["", "undress_solo_text"] }] },
+                    { "option": "no reaction", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "lie_down"] }] }
+                ]
+            },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "undress_solo_text", "line": "$sleepUndressSoloKojo$", "nextEntryLabel": "lie_down" },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "undress_together", "line": "sleep_undress_together" },
+            {
+                "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "undress_self_together",
+                "options": [
+                    { "option": "self to companion", "self_chara_conditions": [{ "parameters": ["excludePlayer"] }], "Results": [{ "Type": "GetKojoEntry", "arguments": ["self", "awake_companions", "OnSleepComplete_UndressTogether", "sleepUndressSelfKojo", "replace"] }, { "Type": "JumpToLabel", "arguments": ["", "undress_self_text"] }] },
+                    { "option": "player", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "undress_companions"] }] }
+                ]
+            },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "undress_self_text", "line": "$sleepUndressSelfKojo$" },
+            {
+                "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "undress_companions",
+                "options": [
+                    { "option": "each conscious companion to self", "Results": [{ "Type": "GetKojoEntry", "arguments": ["npc_awake_companions", "self", "OnSleepComplete_UndressTogether", "sleepUndressCompanionsKojo", "replace"] }, { "Type": "JumpToLabel", "arguments": ["", "undress_companions_text"] }] },
+                    { "option": "no reaction", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "lie_down"] }] }
+                ]
+            },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "undress_companions_text", "line": "$sleepUndressCompanionsKojo$" },
+            {
+                "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "lie_down",
+                "options": [
+                    { "option": "join sleepers", "target_chara_conditions": { "sleeping_companions": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "join_sleepers"] }] },
+                    { "option": "lie down together", "target_chara_conditions": { "awake_companions": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "lie_together"] }] },
+                    { "option": "lie alone", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "lie_solo"] }] }
+                ]
+            },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "join_sleepers", "line": "sleep_join_sleepers" },
+            {
+                "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                "options": [
+                    { "option": "newcomers quietly react", "Results": [{ "Type": "GetKojoEntry", "arguments": ["awake_npcs", "sleeping_companions", "OnSleepComplete_JoinSleeper", "sleepJoinKojo", "replace"] }, { "Type": "JumpToLabel", "arguments": ["", "join_text"] }] },
+                    { "option": "no reaction", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "kiss_gate"] }] }
+                ]
+            },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "join_text", "line": "$sleepJoinKojo$", "nextEntryLabel": "kiss_gate" },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "lie_solo", "line": "sleep_lie_solo" },
+            {
+                "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                "options": [
+                    { "option": "solo reaction", "self_chara_conditions": [{ "parameters": ["isConscious"] }, { "parameters": ["excludePlayer"] }], "Results": [{ "Type": "GetKojoEntry", "arguments": ["self", "self", "OnSleepComplete_Solo", "sleepSoloKojo", "replace"] }, { "Type": "JumpToLabel", "arguments": ["", "solo_text"] }] },
+                    { "option": "no reaction", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "kiss_gate"] }] }
+                ]
+            },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "solo_text", "line": "$sleepSoloKojo$", "nextEntryLabel": "kiss_gate" },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "lie_together", "line": "sleep_lie_together" },
+            {
+                "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                "options": [
+                    { "option": "self to companion", "self_chara_conditions": [{ "parameters": ["isConscious"] }, { "parameters": ["excludePlayer"] }], "Results": [{ "Type": "GetKojoEntry", "arguments": ["self", "awake_companions", "OnSleepComplete_LieDownTogether", "sleepLieSelfKojo", "replace"] }, { "Type": "JumpToLabel", "arguments": ["", "lie_self_text"] }] },
+                    { "option": "no reaction", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "lie_companions"] }] }
+                ]
+            },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "lie_self_text", "line": "$sleepLieSelfKojo$" },
+            {
+                "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "lie_companions",
+                "options": [
+                    { "option": "companions to conscious self", "self_chara_conditions": [{ "parameters": ["isConscious"] }], "Results": [{ "Type": "GetKojoEntry", "arguments": ["npc_awake_companions", "self", "OnSleepComplete_LieDownTogether", "sleepLieCompanionsKojo", "replace"] }, { "Type": "JumpToLabel", "arguments": ["", "lie_companions_text"] }] },
+                    { "option": "no reaction", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "kiss_gate"] }] }
+                ]
+            },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "lie_companions_text", "line": "$sleepLieCompanionsKojo$" },
+            {
+                "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "kiss_gate",
+                "options": [
+                    { "option": "silent defaults to no kiss", "self_chara_conditions": [{ "parameters": ["isSilent"] }], "Results": [{ "Type": "JumpToLabel", "arguments": ["", "end"] }] },
+                    { "option": "awake player including receiver", "target_chara_conditions": { "awake_player": [{ "parameters": ["exists"] }, { "parameters": ["isPlayer"] }], "kiss_candidates": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "CopyTargets", "arguments": ["awake_player", "kissDoer"] }, { "Type": "JumpToLabel", "arguments": ["", "kiss_question"] }] },
+                    { "option": "NPC only or alone", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "end"] }] }
+                ]
+            },
+            {
+                "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp", "label": "kiss_question", "question": "sleep_kiss_question", "npcDecides": false,
+                "options": [
+                    { "option": "sleep_kiss_yes", "forEachTargetKey": "kiss_candidates", "bindTargetKey": "kissTarget", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "kiss"] }] },
+                    { "option": "sleep_kiss_no", "isDefaultCancel": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "end"] }] }
+                ]
+            },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "kiss", "line": "sleep_kiss_narration" },
+            {
+                "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                "options": [
+                    { "option": "sleeping target stays asleep", "target_chara_conditions": { "kissTarget": [{ "parameters": ["isSleeping"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "kiss_sleeping"] }] },
+                    { "option": "conscious NPC reaction", "target_chara_conditions": { "kissTarget": [{ "parameters": ["isConscious"] }, { "parameters": ["excludePlayer"] }] }, "Results": [{ "Type": "GetKojoEntry", "arguments": ["kissTarget", "kissDoer", "OnSleepComplete_GoodnightKiss", "sleepKissKojo", "replace"] }, { "Type": "JumpToLabel", "arguments": ["", "kiss_text"] }] },
+                    { "option": "no reaction", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "end"] }] }
+                ]
+            },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "kiss_sleeping", "line": "sleep_kiss_sleeping", "nextEntryLabel": "end" },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "kiss_text", "line": "$sleepKissKojo$" },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "end", "line": "sleep_end" },
+            {
+                "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "player_sleep_boundary",
+                "options": [
+                    { "option": "player falls asleep", "target_chara_conditions": { "awake_player": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "player_sleep_separator"] }] },
+                    { "option": "NPC bedtime", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "sleep_complete"] }] }
+                ]
+            },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "player_sleep_separator", "line": "sleep_player_separator", "isLast": true },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "sleep_complete", "line": "", "isLast": true }
+        ]
+    }] },
+    "Dictionary": { "Entries": {
+        "zh-cn": {
+            "sleep_undress_changed": "$changedSleepActors.name$在$sleepBedName$旁整理睡前的穿着，将脱下的衣物收拢放好。衣料窸窣作响，很快又静了下来。",
+            "sleep_undress_together": "$self.name$和$awake_companions.name$在床边留出位置，将衣物放到被褥之外。",
+            "sleep_join_sleepers": "$bedtime_awake.name$来到$sleepBedName$边。$sleeping_companions.name$已经睡着，呼吸平稳。新来的人放轻动作，在一旁躺下，小心拉好被子，没有惊动原先的睡伴。",
+            "sleep_lie_together": "$bedtime_awake.name$在$sleepBedName$上各自找好位置，一起躺下。被子轻轻展开，身旁的人都留出了转身的余地。",
+            "sleep_lie_solo": "$bedtime_awake.name$在$sleepBedName$上躺下，拉好被子，把枕头调整到舒服的位置。",
+            "sleep_kiss_question": "入睡前，要给身旁的人一个晚安吻吗？",
+            "sleep_kiss_yes": "轻吻$callname$的额头，道晚安",
+            "sleep_kiss_no": "什么也不做，睡觉",
+            "sleep_kiss_narration": "$kissDoer.name$轻轻凑近，在$kissTarget.name$的额头落下一个短短的晚安吻，随即躺回自己的位置。",
+            "sleep_kiss_sleeping": "$kissTarget.name$仍在安睡，没有醒来；身旁很快恢复了安静。",
+            "sleep_end": "被角安顿妥当，睡前的动静渐渐停了下来。",
+            "sleep_player_separator": "<align=\"center\">----- 入睡 -----</align>"
+        },
+        "en-us": {
+            "sleep_undress_changed": "Beside $sleepBedName$, $changedSleepActors.name$ prepare their clothing for sleep and set the removed garments aside. Fabric rustles, then falls quiet.",
+            "sleep_undress_together": "$self.name$ and $awake_companions.name$ make room at the bedside and set their clothing clear of the bedding.",
+            "sleep_join_sleepers": "$bedtime_awake.name$ approach $sleepBedName$. $sleeping_companions.name$ are already asleep, breathing steadily. The newcomers lie down alongside them and draw up the covers gently, without disturbing the sleepers.",
+            "sleep_lie_together": "$bedtime_awake.name$ find their places on $sleepBedName$ and lie down together. The covers unfold softly, with room left for everyone to turn comfortably.",
+            "sleep_lie_solo": "$bedtime_awake.name$ lie down on $sleepBedName$, draw up the covers, and adjust the pillow until comfortable.",
+            "sleep_kiss_question": "Give someone beside you a goodnight kiss before sleeping?",
+            "sleep_kiss_yes": "Kiss $callname$ gently on the forehead",
+            "sleep_kiss_no": "Do nothing and sleep",
+            "sleep_kiss_narration": "$kissDoer.name$ lean close, leave a brief goodnight kiss on $kissTarget.name$'s forehead, and settle back into their own place.",
+            "sleep_kiss_sleeping": "$kissTarget.name$ remain asleep without waking; quiet soon returns to the bedside.",
+            "sleep_end": "The covers are settled, and the last small sounds of bedtime fade away.",
+            "sleep_player_separator": "<align=\"center\">----- Falling Asleep -----</align>"
+        }
+    } }
+}

@@ -30,6 +30,8 @@ public class RecreationGroupMember
     public string failedCheck = "";
     /// <summary>Seen at the venue during the session (no-show check).</summary>
     public bool arrived = false;
+    /// <summary>Their entrance fee was put to their payer's manager (RecreationUtility.QueueMemberFee - asked once; declined drops them).</summary>
+    public bool feeChecked = false;
 
     [JsonIgnore] public Character_Trainable Chara { get { return scr_System_CampaignManager.current.FindInstanceByID(charaRef); } }
     /// <summary>Holds the member booking and passed the latest self-update.</summary>
@@ -99,6 +101,10 @@ public class RecreationGroup : I_ActivityBooking
     [JsonIgnore] internal bool resolveDue;
     /// <summary>The first HoursLateCycle whose resolve pass may resolve it - one registered after an hour's passes began waits for the next hour's answers.</summary>
     [JsonIgnore] internal int readyCycle;
+    /// <summary>Fee approval answers still to come for its members (RecreationUtility_FeeApproval) - its resolution / new-member notice waits for them.</summary>
+    [JsonIgnore] internal int feeOutstanding;
+    /// <summary>Members who joined after it resolved (or a posted offer's members at its resolution), announced together once their fees are answered (RecreationUtility.AnnounceNewMembers).</summary>
+    [JsonIgnore] internal readonly List<int> pendingAnnounce = new List<int>();
     /// <summary>Its end has been processed (RecreationGroupRegistry.Conclude) - kept in the registry until the next day for the report only.</summary>
     [JsonIgnore] internal bool concluded;
     [JsonIgnore] RecreationGroupRegistry latePassRegistry;
@@ -149,6 +155,27 @@ public class RecreationGroup : I_ActivityBooking
     [JsonIgnore] public int AbsEnd { get { return AbsStart + hours; } }
     [JsonIgnore] public bool IsOpen { get { return status == RecreationGroupStatus.Open; } }
     [JsonIgnore] public Character_Trainable Host { get { return hostRef < 0 ? null : scr_System_CampaignManager.current.FindInstanceByID(hostRef); } }
+
+    /// <summary>
+    /// A posted fixed offer's session (hostless, from the offer board): world data, rebuilt on load
+    /// (RecreationBoard.RebuildAfterLoad) - saved only while someone holds it (HoldsAnyone).
+    /// </summary>
+    [JsonIgnore] public bool IsPostedOffer { get { return hostRef < 0 && source == RecreationBookingSource.Offer; } }
+
+    /// <summary>Someone holds this session: a member attending or invited (their bookings / inboxes point at it), or its activity job exists.</summary>
+    [JsonIgnore] public bool HoldsAnyone
+    {
+        get
+        {
+            if (activityJobRef >= 0) return true;
+            for (int i = 0; i < members.Count; i++)
+            {
+                var state = members[i].state;
+                if (state == RecreationMemberState.Attending || state == RecreationMemberState.Invited) return true;
+            }
+            return false;
+        }
+    }
 
     // ---------------- I_ActivityBooking ---------------- //
 
@@ -210,7 +237,28 @@ public class RecreationGroup : I_ActivityBooking
 /// </summary>
 public class RecreationGroupRegistry
 {
-    [JsonProperty] List<RecreationGroup> sessions = new List<RecreationGroup>();
+    [JsonIgnore] List<RecreationGroup> sessions = new List<RecreationGroup>();
+
+    /// <summary>
+    /// What is saved: every session except a posted fixed offer nobody holds (RecreationGroup.IsPostedOffer, not
+    /// HoldsAnyone) - that is world data, rebuilt on load (RecreationBoard.RebuildAfterLoad). Replace: loading sets the
+    /// list, never fills the filtered copy.
+    /// </summary>
+    [JsonProperty("sessions", ObjectCreationHandling = ObjectCreationHandling.Replace)]
+    List<RecreationGroup> SavedSessions
+    {
+        get
+        {
+            var saved = new List<RecreationGroup>(Sessions.Count);
+            for (int i = 0; i < Sessions.Count; i++)
+            {
+                var s = Sessions[i];
+                if (s != null && (!s.IsPostedOffer || s.HoldsAnyone)) saved.Add(s);
+            }
+            return saved;
+        }
+        set { sessions = value ?? new List<RecreationGroup>(); }
+    }
 
     /// <summary>
     /// Creation order of facility / media visits (RecreationBooking / RecreationGroup.createdSerial): when furniture
@@ -305,6 +353,47 @@ public class RecreationGroupRegistry
         if (!string.IsNullOrEmpty(session.scopeFactionID) && posted.TryGetValue(session.scopeFactionID, out var list) && list.sessions.Remove(session)) list.serial++;
         RecreationUtility.ForgetActivitySession(session);
         RecreationUtility.UnhookSession(session);
+    }
+
+    /// <summary>
+    /// Drops session from the campaign without concluding or announcing it - a posted fixed offer nobody holds, rebuilt
+    /// from world data on load (RecreationBoard.RebuildAfterLoad): off its scope's list, the venue index and the late
+    /// passes, unhooked from the characters still holding it in an inbox / ranking.
+    /// </summary>
+    public void Remove(RecreationGroup session)
+    {
+        if (session == null || !Sessions.Remove(session)) return;
+        answerNow.Remove(session);
+        session.UnsubscribeLatePass();
+        if (!string.IsNullOrEmpty(session.scopeFactionID) && posted.TryGetValue(session.scopeFactionID, out var list) && list.sessions.Remove(session)) list.serial++;
+        RecreationUtility.ForgetActivitySession(session);
+        RecreationUtility.UnhookSession(session);
+    }
+
+    /// <summary>
+    /// Posted offers an event made answerable at once (AddRecreationOffer "now" - RecreationBoard.Post answerNow): every
+    /// NPC who sees one answers it in their next late pass, outside the day update too (RecreationUtility.AnswerImmediatePosts).
+    /// Runtime only - a reloaded post waits for the day update like any other.
+    /// </summary>
+    [JsonIgnore] readonly List<RecreationGroup> answerNow = new List<RecreationGroup>();
+
+    /// <summary>The open, not yet started "answer now" posts (closed / started ones are dropped here).</summary>
+    [JsonIgnore] public IReadOnlyList<RecreationGroup> AnswerNowSessions
+    {
+        get
+        {
+            if (answerNow.Count == 0 || scr_System_Time.current == null) return answerNow;
+            int nowAbs = RecreationBooking.AbsoluteHour(scr_System_Time.current.getAbsoluteDay(), scr_System_Time.current.getCurrentTime().Hour);
+            for (int i = answerNow.Count - 1; i >= 0; i--)
+                if (answerNow[i] == null || !answerNow[i].IsOpen || answerNow[i].concluded || answerNow[i].AbsStart <= nowAbs) answerNow.RemoveAt(i);
+            return answerNow;
+        }
+    }
+
+    /// <summary>session is answered by every NPC who sees it in their next late pass (AnswerNowSessions).</summary>
+    public void MarkAnswerNow(RecreationGroup session)
+    {
+        if (session != null && !answerNow.Contains(session)) answerNow.Add(session);
     }
 
     /// <summary>Reused snapshot for OnHourUpdate (a session's check may add or conclude sessions).</summary>

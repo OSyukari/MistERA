@@ -141,7 +141,7 @@ public class StatusEx_Base
 }
 
 
-public class StatusEx_Instance : I_CacheValues
+public class StatusEx_Instance : I_CacheValues, I_StatNode
 {
     [JsonProperty] protected string baseID = "";
     [JsonIgnore] public string ID { get { return baseID; } }
@@ -209,14 +209,24 @@ public class StatusEx_Instance : I_CacheValues
     }
 
     int _cacheVersion = -1;
+    [JsonIgnore] bool _statDirty = false;
+    [JsonIgnore] readonly StatDependents _dependents = new StatDependents();
+    [JsonIgnore] public StatDependents Dependents { get { return _dependents; } }
+    public void MarkStatDirty()
+    {
+        if (_statDirty) return;
+        _statDirty = true;
+        _dependents.MarkAllDirty();
+    }
     /// <summary>
-    /// Lazily drop the cached compute when the owner's modifier universe changed since it ran.
+    /// Lazily drop the cached compute when this status was marked dirty or the owner's modifier universe changed since it ran.
     /// </summary>
     void SyncCacheVersion()
     {
         if (owner == null) return;
-        if (_cacheVersion != owner.StatModsVersion)
+        if (_statDirty || _cacheVersion != owner.StatModsVersion)
         {
+            _statDirty = false;
             _cacheVersion = owner.StatModsVersion;
             _cached = false;
         }
@@ -228,6 +238,7 @@ public class StatusEx_Instance : I_CacheValues
         get
         {
             SyncCacheVersion();
+            owner?.RegisterStatRead(this);
             if (!_cached) ClearCache();
             return storage.Value + DebugSeverityMod;
         }
@@ -289,6 +300,13 @@ public class StatusEx_Instance : I_CacheValues
         if (_cached) SeverityPrevious = Severity;
         _cached = false;
 
+        owner.BeginStatCompute(this);
+        try { Recompute(); }
+        finally { owner.EndStatCompute(this); }
+    }
+
+    void Recompute()
+    {
         if (this.BaseRef.variationMode.variationType == StatusEx_Base.Status_Variation_Type.summation)
         {
             storage.Reset();
@@ -299,6 +317,7 @@ public class StatusEx_Instance : I_CacheValues
             // setval on top of the base+entries result rather than replacing it. Folding severity into
             // this sum too (as before) double-counted it: base(severity) + final(severity + others).
             float othersSum = 0f;
+            owner.RegisterStatusValueRead(BaseRef.variationMode.stringData);
             _statusScratch.Clear();
             owner.FindStatusByID(BaseRef.variationMode.stringData, _statusScratch);
             foreach (var inst in _statusScratch)
@@ -326,6 +345,8 @@ public class StatusEx_Instance : I_CacheValues
 
             Status_Instance winner = null;
             int winnerIndex = 0;
+            // contributors' variant index (NotifyStatusIndexChanged also wakes value readers)
+            owner.RegisterStatusValueRead(BaseRef.variationMode.stringData);
             _statusScratch.Clear();
             owner.FindStatusByID(BaseRef.variationMode.stringData, _statusScratch);
             foreach (var inst in _statusScratch)
@@ -404,6 +425,7 @@ public class StatusEx_Instance : I_CacheValues
         get
         {
             SyncCacheVersion();
+            owner?.RegisterStatRead(this);
             if (!_cached) ClearCache();
             if (_severityIndex == -1) _severityIndex = UpdateIndex();
             return _severityIndex;
@@ -420,6 +442,24 @@ public class StatusEx_Instance : I_CacheValues
     }
 
     [JsonIgnore] public int DebugSeverityMod = 0;
+
+    /// <summary>The stored base severity, without evaluating modifiers.</summary>
+    [JsonIgnore] public float StoredSeverity { get { return severity; } }
+
+    /// <summary>
+    /// Debug, side-effect free: Severity as a read would return it right now, from the cache only - false when that read
+    /// would recompute (cache cleared, modifier universe changed since, or never computed).
+    /// </summary>
+    public bool Debug_TryGetCachedSeverity(out float value)
+    {
+        value = 0f;
+        if (!_cached || _statDirty || owner == null || storage == null || _cacheVersion != owner.StatModsVersion) return false;
+        var variants = baseRef?.variants;
+        if (variants == null || variants.Count < 1) return false;
+        if (!storage.Debug_TryGetCachedValue(out var cached)) return false;
+        value = Math.Clamp(cached + DebugSeverityMod, variants[0].threshold, variants[variants.Count - 1].threshold);
+        return true;
+    }
 
     public StatusEx_Instance()
     {

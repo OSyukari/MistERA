@@ -11,7 +11,12 @@
                 "Recreation_GatherFailed_Leave_waited": "$waited.name$ waited half an hour, but $late.name$ never came, so they left.",
                 "Recreation_GatherFailed_Leave_late": "$late.name$ arrived far too late - the $activityName$ had been called off, and everyone who waited had already left.",
                 "Recreation_MediaSession_Begin_start": "$participating.name$ gathered and the $activityName$ began: $mediaName$.",
-                "Recreation_MediaSession_Begin_late": "$joining.name$ quietly joined the $activityName$ already under way."
+                "Recreation_MediaSession_Begin_late": "$joining.name$ quietly joined the $activityName$ already under way.",
+                "Recreation_Activity_TrustReward_line": "$keptPromise.name$ all showed up on time as promised, and the $activityName$ began.",
+                "Recreation_Activity_End_line":"The $activityName$ of $tookPart.name$ has come to an end.",
+                "Recreation_WalkIn_Confirm_question": "$companions.name$ are doing [$command$] ($activityName$).\nJoin them?$feeText$",
+                "Recreation_WalkIn_Confirm_join": "Join",
+                "Recreation_WalkIn_Confirm_cancel": "Never mind"
             }
         }
     }

@@ -14,13 +14,17 @@ using UnityEngine;
 /// then a fixed order) and confirm in that order (TryConfirm: time, conflicts - a flexible visit in the way moves, a
 /// lower-ranked session gives way - extending the invitation, then the member booking). The ranking is kept and re-run
 /// when the character's schedule changes (Character_Factions.RecreationDirty) or new sessions become visible.
+/// <br/>Then (LatePass_InvitePlayer) the player gets the invitation event of every session sent to them that can still
+/// take place with them (PublishPlayerInvitations) - after every NPC has answered, so a session its host just gave up
+/// never reaches them; the others are dropped silently.
 /// <br/>Step 4 (LatePass_Resolve): each unresolved session confirms or cancels itself and announces it (ResolveSession;
 /// a pending player invitation resolves it when answered; confirmed, it wakes its participants in time). From then on
 /// it checks itself hourly (RecreationGroupRegistry.OnHourUpdate -> HourlySessionCheck): attendance (arrival comes from
 /// its Job_Activity's gathering), required extended invitations, validity - cancelled if invalid at T-1, T or T+1. The
 /// session pushes its outcome: a cancellation purges every member's booking, a failed member's booking is cancelled by
 /// it (no refill).
-/// <br/>The player never ranks: they get the Recreation_Invite event whenever someone picks them as an invitee.
+/// <br/>The player never ranks: they get the Recreation_Invite event for each invitation in the hour's LatePass_InvitePlayer
+/// (an event-hosted session: as soon as its NPC invitees answered - ConfirmInvitedNow).
 /// </summary>
 public static partial class RecreationUtility
 {
@@ -152,6 +156,8 @@ public static partial class RecreationUtility
             typeID = null;
             var f = c?.FactionManager;
             if (f == null) return false;
+            if (source != RecreationBookingSource.Event && session != null
+                && !DailyMainTypeAllows(f, session.day, ResolveActivity(session), session)) return false;
             switch (source)
             {
                 case RecreationBookingSource.Membership:
@@ -373,10 +379,12 @@ public static partial class RecreationUtility
 
     static bool AddSolo(Character_Factions f, RecreationBooking b)
     {
+        if (!DailyMainTypeBookingAllows(f, b)) return false;
         if (!CanPlaceActivity(b.GetActivity(f), b.Faction, b.AbsStart, b.AbsEnd, f.Owner, exceptBooking: b)) return false;
         if (!f.Owner.AcceptBooking(b, null) || !f.AddBooking(b, false)) return false;
-        // a solo activity needs no confirmation: complete once booked
-        AnnounceSolo(b, ActivityNoticeKind.Confirmed);
+        // a solo activity needs no confirmation: complete once booked - a paid one once its payer approved the fee
+        // (QueueSoloFee - announced then, removed quietly when declined)
+        if (!QueueSoloFee(f, b)) AnnounceSolo(b, ActivityNoticeKind.Confirmed);
         return true;
     }
 
@@ -439,6 +447,8 @@ public static partial class RecreationUtility
             if (!host.AcceptHosting(g, ctx)) return false;
         }
 
+        if (b.source != RecreationBookingSource.Event
+            && !DailyMainTypeAllows(f, g.day, b.GetActivity(f), g, b)) return false;
         if (!HasReservationSpace(b.Faction, b.GetActivity(f), g.AbsStart, g.AbsEnd, exceptBooking: hostBooked ? b : null)) return false;
         if (!CanPlaceActivity(b.GetActivity(f), b.Faction, g.AbsStart, g.AbsEnd, host, g, b)) return false;
         g.setupDepth++;
@@ -462,7 +472,7 @@ public static partial class RecreationUtility
         foreach (var t in targets) InviteMember(g, t.chara, t.role.RoleID, RecreationMemberOrigin.Scope, -1);
         g.setupDepth--;
         RememberActivityRoom(g, GetPlannedActivityRoom(g));
-        PublishSessionInvitations(g);
+        // the player's invitation waits for the NPCs' answers (LatePass_InvitePlayer; an event's session: ConfirmInvitedNow)
         RefreshValidity(g);
         NotifyActivityChanged(g);
         return true;
@@ -574,7 +584,7 @@ public static partial class RecreationUtility
         NotifyActivityChanged(session);
     }
 
-    /// <summary>Adds c to g (Invited) and pushes it to c's inbox; the player gets the invitation event right away.</summary>
+    /// <summary>Adds c to g (Invited) and pushes it to c's inbox; the player's invitation event comes once the NPCs answered (PublishPlayerInvitations).</summary>
     static void InviteMember(RecreationGroup g, Character_Trainable c, string roleID, RecreationMemberOrigin origin, int extendedByRef)
     {
         var m = new RecreationGroupMember() { charaRef = c.RefID, roleID = roleID, origin = origin, extendedByRef = extendedByRef };
@@ -582,12 +592,50 @@ public static partial class RecreationUtility
         c.FactionManager.PushSession(g);
     }
 
-    static void PublishSessionInvitations(RecreationGroup g)
+    /// <summary>
+    /// The player's invitation to g, once the NPCs answered (LatePass_InvitePlayer, ConfirmInvitedNow): shown if g can
+    /// still take place with them (CouldTakePlaceWith), else dropped silently (Declined "notViable" - they never hear of it).
+    /// </summary>
+    static void PublishPlayerInvitation(RecreationGroup g)
     {
-        if (g.setupDepth > 0) return;
-        foreach (var member in g.members.ToArray())
-            if (!member.considered && member.state == RecreationMemberState.Invited && member.Chara == Player)
-                StartInviteEvent(g, member, Player);
+        var player = Player;
+        if (g == null || g.setupDepth > 0 || player == null) return;
+        var m = g.FindMember(player.RefID);
+        if (m == null || m.considered || m.state != RecreationMemberState.Invited || m.origin == RecreationMemberOrigin.Host) return;
+        if (g.IsOpen && g.AbsStart > NowAbs() && CouldTakePlaceWith(g, m)) { StartInviteEvent(g, m, player); return; }
+        m.considered = true;
+        m.state = RecreationMemberState.Declined;
+        m.reason = "notViable";
+        player.FactionManager?.DropSession(g);
+        NotifyActivityChanged(g);
+    }
+
+    /// <summary>Reused inbox snapshot of PublishPlayerInvitations (never re-entered).</summary>
+    static readonly List<RecreationGroup> playerInviteBuffer = new List<RecreationGroup>();
+
+    /// <summary>LatePass_InvitePlayer: every invitation in the player's inbox not shown yet (PublishPlayerInvitation), in inbox order.</summary>
+    static void PublishPlayerInvitations(Character_Factions f)
+    {
+        playerInviteBuffer.Clear();
+        var inbox = f.SessionInbox;
+        for (int i = 0; i < inbox.Count; i++) playerInviteBuffer.Add(inbox[i]);
+        try { for (int i = 0; i < playerInviteBuffer.Count; i++) PublishPlayerInvitation(playerInviteBuffer[i]); }
+        finally { playerInviteBuffer.Clear(); }
+    }
+
+    /// <summary>g would be valid (IsValid) if member m - the invited player - attended: the NPCs' answers leave it a chance.</summary>
+    static bool CouldTakePlaceWith(RecreationGroup g, RecreationGroupMember m)
+    {
+        var state = m.state;
+        string failed = m.failedCheck;
+        m.state = RecreationMemberState.Attending;
+        m.failedCheck = "";
+        try { return IsValid(g, ResolveSpec(g.specRef)); }
+        finally
+        {
+            m.state = state;
+            m.failedCheck = failed;
+        }
     }
 
     // ---------------- steps 2-3: rank and confirm ---------------- //
@@ -629,9 +677,10 @@ public static partial class RecreationUtility
     static readonly Stack<List<string>> listIDPool = new Stack<List<string>>();
 
     /// <summary>
-    /// Steps 2-3 for a targeted refresh (NPCs that plan only): when f's schedule changed (RecreationDirty) or new sessions
-    /// became visible, re-rank (RankSessions) and confirm in order (ConfirmSessions). True if a booking changed (the
-    /// schedule is already refreshed).
+    /// Steps 2-3 for a targeted refresh (NPCs that plan only) - run only in the late passes following the day update
+    /// (OnLatePass - IsPlanningLateCycle; DailyPlan marks every planner RecreationDirty): when f's schedule changed or new
+    /// sessions became visible, re-rank (RankSessions) and confirm in order (ConfirmSessions). True if a booking changed
+    /// (the schedule is already refreshed).
     /// </summary>
     static bool SessionPass(Character_Factions f)
     {
@@ -822,7 +871,8 @@ public static partial class RecreationUtility
         finally
         {
             g.setupDepth--;
-            PublishSessionInvitations(g);
+            // after the NPCs answered: only an invitation the session can still take place with reaches the player
+            PublishPlayerInvitation(g);
             // everyone asked has answered: the session resolves now (or on the player's answer, if they are invited)
             ResolveSession(g);
             RefreshValidity(g);
@@ -857,7 +907,6 @@ public static partial class RecreationUtility
         finally
         {
             g.setupDepth--;
-            PublishSessionInvitations(g);
             if (booked || previousState != m.state || previousReason != m.reason || previousFailure != m.failedCheck)
             {
                 RefreshValidity(g);
@@ -904,10 +953,12 @@ public static partial class RecreationUtility
             foreach (var b in move) f.AddBooking(b, false);   // put back as it was
             return Block(g, m,"conflict");
         }
-        // the answer: the session announces itself once it resolves (ResolveSession), not per member
+        // the answer: the session announces itself once it resolves (ResolveSession); joining one already resolved is
+        // announced with this update's other newcomers, once the fee is answered (OnJoinedResolvedSession)
         m.state = RecreationMemberState.Attending;
         m.reason = "";
         m.failedCheck = "";
+        if (g.resolved) OnJoinedResolvedSession(g, m);
         // joining one already confirmed: up in time for it (otherwise the session wakes its members as it confirms - ResolveSession)
         if (g.resolved && g.valid) WakeForSessions(c);
         foreach (var b in move) TryReschedule(f, b, CancelReason.Displaced);
@@ -1142,19 +1193,85 @@ public static partial class RecreationUtility
     public const int LatePass_Respond = 0;
     /// <summary>Late pass: the invitees an accepting member extended the invitation to (in LatePass_Respond) answer.</summary>
     public const int LatePass_RespondExtended = 1;
+    /// <summary>Late pass: every NPC has answered - the player gets their invitations still worth answering (PublishPlayerInvitations).</summary>
+    public const int LatePass_InvitePlayer = 2;
     /// <summary>Late pass: each unresolved session confirms or cancels itself (RecreationGroup.OnLatePass -> ResolveSession).</summary>
-    public const int LatePass_Resolve = 2;
+    public const int LatePass_Resolve = 3;
 
     /// <summary>
-    /// Character_Trainable.Observer_GlobalHourLate: in the answer passes, f answers what is visible to them (SessionPass -
-    /// rank, then confirm in order; in LatePass_RespondExtended only when their inbox / lists changed, which an extension
-    /// does). NPCs that plan only; the player answers through the invitation event.
+    /// The HoursLateCycle whose late passes follow the day update (DailyPlan sets it - the day update runs before the
+    /// hour's passes): NPCs book new activities only then (SessionPass). Not saved - none until the next day update.
+    /// </summary>
+    static int planningLateCycle = -1;
+
+    /// <summary>This hour's late passes follow the day update - the only time NPCs book new sessions (SessionPass).</summary>
+    static bool IsPlanningLateCycle { get { return scr_System_Time.current != null && scr_System_Time.current.HoursLateCycle == planningLateCycle; } }
+
+    /// <summary>
+    /// Character_Trainable.Observer_GlobalHourLate: in the answer passes, f answers what is visible to them. NPCs book new
+    /// activities only on the day update: SessionPass (rank, then confirm in order; in LatePass_RespondExtended only when
+    /// their inbox / lists changed, which an extension does) runs only in the passes following it (IsPlanningLateCycle).
+    /// In any other hour only what an event made answerable at once (AnswerImmediatePosts - an AddRecreationOffer post
+    /// with "now"); an event-hosted session's invitees answer right away anyway (ConfirmInvitedNow). NPCs that plan only;
+    /// the player answers through the invitation event, started in LatePass_InvitePlayer.
     /// </summary>
     public static void OnLatePass(Character_Factions f, int pass)
     {
+        if (pass == LatePass_InvitePlayer)
+        {
+            if (f?.Owner != null && scr_System_CampaignManager.current != null && f.Owner == Player) PublishPlayerInvitations(f);
+            return;
+        }
         if (pass != LatePass_Respond && pass != LatePass_RespondExtended) return;
         if (f?.Owner == null || scr_System_CampaignManager.current == null || scr_System_Time.current.DebugSkipBeforeLastDay || !ShouldPlan(f)) return;
-        SessionPass(f);
+        if (IsPlanningLateCycle) SessionPass(f);
+        else AnswerImmediatePosts(f);
+    }
+
+    /// <summary>
+    /// Outside the day update: f answers each open "answer now" event post they see (RecreationGroupRegistry.AnswerNowSessions
+    /// - posted to one of their lists, or in their inbox through an extension) and haven't answered - once, like an
+    /// event-hosted session's invitee (ConfirmInvitedNow): their first look (AcceptSession; no = Refused), then TryConfirm
+    /// ranked last (never displaces another session of theirs). Pulled by each character in its own pass.
+    /// </summary>
+    static void AnswerImmediatePosts(Character_Factions f)
+    {
+        var posts = Sessions.AnswerNowSessions;
+        if (posts.Count == 0) return;
+        var c = f.Owner;
+        int nowAbs = NowAbs();
+        bool changed = false;
+        for (int i = 0; i < posts.Count; i++)
+        {
+            var g = posts[i];
+            if (g == null || !g.IsOpen || g.AbsStart <= nowAbs) continue;
+            var m = g.FindMember(c.RefID);
+            if (m == null)
+            {
+                if (!SeesList(f, g.scopeFactionID) || !BookingCheck.For(g).Passes(c, out _)) continue;
+                string role = PickScopeRole(g, ResolveSpec(g.specRef), c);
+                if (role == null) continue;
+                m = new RecreationGroupMember() { charaRef = c.RefID, roleID = role, origin = RecreationMemberOrigin.Scope };
+                g.members.Add(m);
+            }
+            // answered once: a refusal, a booking, or a confirmation that failed (Blocked) stays
+            if (m.considered && m.state != RecreationMemberState.Invited) continue;
+            if (!m.considered)
+            {
+                m.considered = true;
+                if (!c.AcceptSession(g, MakeContext(g, c)))
+                {
+                    m.state = RecreationMemberState.Refused;
+                    m.reason = "refused";
+                    f.DropSession(g);
+                    InviterOf(g, m)?.FactionManager?.AddInviteRefusal(c.RefID);
+                    NotifyActivityChanged(g);
+                    continue;
+                }
+            }
+            changed |= TryConfirm(f, g, m, int.MaxValue, false);
+        }
+        if (changed) f.RefreshSchedule();
     }
 
     /// <summary>The player is invited to g and has not answered yet (their invitation event is still to run).</summary>
@@ -1177,6 +1294,9 @@ public static partial class RecreationUtility
         if (g == null || g.resolved || g.setupDepth > 0) return;
         if (!g.IsOpen) { g.resolved = true; g.UnsubscribeLatePass(); return; }
         if (PlayerAnswerPending(g)) { g.resolveDue = true; return; }
+        // each attending member's entrance fee is put to their payer once (RecreationUtility_FeeApproval): the
+        // resolution waits for the answers (FinishSessionFees - declined members have dropped out by then)
+        if (QueueSessionFees(g)) { g.resolveDue = true; return; }
         g.resolved = true;
         g.resolveDue = false;
         g.UnsubscribeLatePass();
@@ -1186,7 +1306,15 @@ public static partial class RecreationUtility
         g.lastUpdatedAbsHour = nowAbs;
         if (!g.valid) { CancelSession(g, CancelReason.GroupFailed); return; }
         var participants = g.AttendingCharas();
-        AnnounceSession(g, ActivityNoticeKind.Confirmed, CancelReason.None, participants);
+        if (g.IsPostedOffer)
+        {
+            // a posted offer always takes place - resolving says nothing: its members are announced as they join
+            // (AnnounceNewMembers), these with this update's newcomers
+            for (int i = 0; i < participants.Count; i++)
+                if (!g.pendingAnnounce.Contains(participants[i].RefID)) g.pendingAnnounce.Add(participants[i].RefID);
+            TouchSession(g);
+        }
+        else AnnounceSession(g, ActivityNoticeKind.Confirmed, CancelReason.None, participants);
         for (int i = 0; i < participants.Count; i++) WakeForSessions(participants[i]);
         NotifyActivityChanged(g);
     }
@@ -1302,9 +1430,10 @@ public static partial class RecreationUtility
 
     /// <summary>
     /// Cancels g for good and announces it (to those who were coming), then tells every member holding its booking, who
-    /// purges it from their schedule (GroupCancelled - an event's host booking too). No refill.
+    /// purges it from their schedule (GroupCancelled - an event's host booking too). No refill. householdForced: the
+    /// notice is shown for the player's household even out of view (as at midnight - AnnounceSession).
     /// </summary>
-    static void CancelSession(RecreationGroup g, CancelReason reason)
+    static void CancelSession(RecreationGroup g, CancelReason reason, bool householdForced = false)
     {
         if (g == null || !g.IsOpen) return;
         var coming = g.AttendingCharas();
@@ -1313,7 +1442,7 @@ public static partial class RecreationUtility
         g.resolved = true;
         g.resolveDue = false;
         g.UnsubscribeLatePass();
-        AnnounceSession(g, ActivityNoticeKind.Cancelled, reason, coming);
+        AnnounceSession(g, ActivityNoticeKind.Cancelled, reason, coming, householdForced);
         (g.ActivityJob as Job_Activity)?.CancelReservation();
         // members are only ever appended: the count taken here covers everyone holding a booking now
         for (int i = 0, n = g.members.Count; i < n && i < g.members.Count; i++)
@@ -1323,6 +1452,17 @@ public static partial class RecreationUtility
             if (b != null) f.CancelBooking(b, true, CancelReason.GroupCancelled);
         }
         NotifyActivityChanged(g);
+    }
+
+    /// <summary>
+    /// RecreationBoard.RebuildAfterLoad (on the first update after a load): a posted fixed offer's session someone holds
+    /// whose post the world data no longer makes (its def removed, no longer Fixed, off the calendar, or at other hours) -
+    /// cancelled with its announcement (OfferRemoved, shown for the player's household), every member's booking purged.
+    /// </summary>
+    public static void CancelRemovedOfferSession(RecreationGroup g)
+    {
+        if (g == null || !g.IsOpen || g.concluded) return;
+        CancelSession(g, CancelReason.OfferRemoved, true);
     }
 
     /// <summary>
@@ -1339,7 +1479,8 @@ public static partial class RecreationUtility
     /// <summary>
     /// Character_Factions.NotifyBookingCancelled: f's member booking of a session went - their answer changes: asked to
     /// cancel by the player (ByRequest) = Refused (final - the player freed that time); given up for something else
-    /// (Displaced) or the session cancelled = Declined; anything else (slept, work, no-show...) = Blocked.
+    /// (Displaced) or the session cancelled = Declined; anything else (slept, work, no-show...) = Blocked. The mandatory
+    /// host of a resolved session giving it up (Displaced / ByRequest) cancels it at once.
     /// </summary>
     public static void OnSessionBookingCancelled(Character_Factions f, RecreationBooking b, CancelReason reason)
     {
@@ -1363,6 +1504,14 @@ public static partial class RecreationUtility
                 m.state = RecreationMemberState.Blocked;
                 break;
         }
+        // a confirmed session whose mandatory host gave it up (for something else, or on request) can't take place:
+        // cancelled and announced now, not at T-1 - so its participants hear of it before anything they answer next
+        if (g.resolved && g.IsOpen && g.hostRef == f.Owner.RefID && (reason == CancelReason.Displaced || reason == CancelReason.ByRequest)
+            && ResolveSpec(g.specRef).IsMandatory)
+        {
+            CancelSession(g, CancelReason.GroupCancelled);
+            return;
+        }
         RefreshValidity(g);
         NotifyActivityChanged(g);
     }
@@ -1382,12 +1531,16 @@ public static partial class RecreationUtility
 
     /// <summary>
     /// Job_Activity's launch: c took part in their visit b (launched with it, or joined late) - the visit counts as
-    /// attended (Character_Factions.RecordAttendance - the planner's cooldowns and weekly targets).
+    /// attended (Character_Factions.RecordAttendance - the planner's cooldowns and weekly targets), under its cooldown
+    /// key (CooldownKeyOf - offers sharing a cooldownTag count as one).
     /// </summary>
     public static void OnActivityAttended(Character_Trainable c, RecreationBooking b)
     {
         if (c?.FactionManager == null || b == null) return;
-        c.FactionManager.RecordAttendance(b.sourceKey, b.day);
+        c.FactionManager.RecordAttendance(CooldownKeyOf(b.sourceKey), b.day);
+        var activity = b.Session != null ? ResolveActivity(b.Session) : b.GetActivity(c.FactionManager);
+        if (!string.IsNullOrEmpty(activity?.mainTypeTag) && !ProvidesActivity(c, activity))
+            c.FactionManager.RecordMainTypeAttendance(activity.mainTypeTag, b.Session?.day ?? b.day, ActivityKeyFor(c.FactionManager, b));
     }
 
     /// <summary>RecreationGroupRegistry.Prune: an ended session leaves every inbox / ranking holding it (its members).</summary>

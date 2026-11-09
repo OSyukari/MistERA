@@ -2,42 +2,42 @@
   "_comment": "SunMart work-post handler pattern: player and followers, invalid candidates retained disabled by JoinHandler_WorkPost, permanent-home salary source. NPC-only duty librarian always carries the hiring tag while active. Only part-time parent is joinable; leave matches the root and all descendants.",
   "Events": { "list": [
     {
-      "ID": "jp_greenside_library_Opt_Apply", "allowDuplicate": false, "trigger": "OnDialogue_Options", "UISpec": { "displayMode": "AVG" },
+      "ID": "jp_library_Opt_Apply", "allowDuplicate": false, "trigger": "OnDialogue_Options", "UISpec": { "displayMode": "AVG" },
       "SelfValidator": { "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["isPlayer"] }] },
-      "TargetValidators": [{ "refkeys": ["staff"], "baseScope": "CurrentTarget", "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_greenside_library"] }, { "parameters": ["hasActorTag", "jp_greenside_library_hiring"] }], "minTargetCount": 1 }],
+      "TargetValidators": [{ "refkeys": ["staff"], "baseScope": "CurrentTarget", "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_library"] }, { "parameters": ["hasActorTag", "jp_library_hiring"] }], "minTargetCount": 1 }],
       "events": [
-        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "UISpec": { "portraitRefKey": "staff", "selfTags": ["focused"] }, "line": "jp_greenside_library_Opt_Apply_greeting", "Results": [{ "Type": "JoinActiveFaction", "arguments": ["applyOptions", "selfAndFollowers", "staff", "membertype_jp_greenside_librarian_parttime", "applyError"] }] },
+        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "UISpec": { "portraitRefKey": "staff", "selfTags": ["focused"] }, "line": "jp_library_Opt_Apply_greeting", "Results": [{ "Type": "JoinActiveFaction", "arguments": ["applyOptions", "selfAndFollowers", "staff", "membertype_jp_librarian_parttime", "applyError"] }] },
         { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [
           { "option": "has options", "Results": [{ "Type": "ExistStoredOptions", "arguments": ["applyOptions"] }, { "Type": "JumpToLabel", "arguments": ["", "apply_ask"] }] },
           { "option": "no options", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "apply_error"] }] }
         ] },
         { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "apply_error", "line": "$applyError$", "isLast": true },
-        { "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp", "label": "apply_ask", "UISpec": { "portraitRefKey": "staff", "selfTags": ["focused"] }, "question": "jp_greenside_library_Opt_Apply_question", "loadOptionsKey": "applyOptions", "loadOptionsResults": [{ "Type": "JumpToLabel", "arguments": ["", "apply_done"] }], "options": [{ "option": "jp_greenside_library_Opt_cancel", "isDefaultCancel": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "apply_cancel"] }] }] },
-        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "apply_done", "UISpec": { "portraitRefKey": "staff", "selfTags": ["focused"] }, "line": "jp_greenside_library_Opt_Apply_done" },
+        { "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp", "label": "apply_ask", "UISpec": { "portraitRefKey": "staff", "selfTags": ["focused"] }, "question": "jp_library_Opt_Apply_question", "loadOptionsKey": "applyOptions", "loadOptionsResults": [{ "Type": "JumpToLabel", "arguments": ["", "apply_done"] }], "options": [{ "option": "jp_library_Opt_cancel", "isDefaultCancel": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "apply_cancel"] }] }] },
+        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "apply_done", "UISpec": { "portraitRefKey": "staff", "selfTags": ["focused"] }, "line": "jp_library_Opt_Apply_done" },
         { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "$factionChangeString$", "isLast": true },
-        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "apply_cancel", "line": "jp_greenside_library_Opt_cancelLine", "isLast": true }
+        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "apply_cancel", "line": "jp_library_Opt_cancelLine", "isLast": true }
       ]
     },
     {
-      "ID": "jp_greenside_library_Opt_Quit", "allowDuplicate": false, "trigger": "OnDialogue_Options", "UISpec": { "displayMode": "AVG", "infoDisplay": "Hide" },
+      "ID": "jp_library_Opt_Quit", "allowDuplicate": false, "trigger": "OnDialogue_Options", "UISpec": { "displayMode": "AVG", "infoDisplay": "Hide" },
       "SelfValidator": { "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["isPlayer"] }] },
       "TargetValidators": [
-        { "refkeys": ["staff"], "baseScope": "CurrentTarget", "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_greenside_library"] }, { "parameters": ["hasActorTag", "jp_greenside_library_hiring"] }], "minTargetCount": 1 },
-        { "refkeys": ["leavers"], "baseScope": "FactionMembersWithMemberType", "extraScopeArguments": ["jp_greenside_library", "membertype_jp_greenside_librarian"], "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["sharesHomeFaction"] }], "minTargetCount": 1 }
+        { "refkeys": ["staff"], "baseScope": "CurrentTarget", "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["excludePlayer"] }, { "parameters": ["isConscious"] }, { "parameters": ["isActiveFaction", "jp_library"] }, { "parameters": ["hasActorTag", "jp_library_hiring"] }], "minTargetCount": 1 },
+        { "refkeys": ["leavers"], "baseScope": "FactionMembersWithMemberType", "extraScopeArguments": ["jp_library", "membertype_jp_librarian"], "chara_conditions": [{ "parameters": ["exists"] }, { "parameters": ["sharesHomeFaction"] }], "minTargetCount": 1 }
       ],
       "events": [
-        { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [{ "option": "build options", "Results": [{ "Type": "LeaveActiveFaction", "arguments": ["quitOptions", "leavers", "staff", "membertype_jp_greenside_librarian"] }, { "Type": "JumpToLabel", "arguments": ["", "quit_ask"] }] }] },
-        { "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp", "label": "quit_ask", "UISpec": { "portraitRefKey": "staff", "selfTags": ["focused"] }, "question": "jp_greenside_library_Opt_Quit_question", "loadOptionsKey": "quitOptions", "loadOptionsResults": [{ "Type": "JumpToLabel", "arguments": ["", "quit_done"] }], "options": [{ "option": "jp_greenside_library_Opt_cancel", "isDefaultCancel": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "quit_abort"] }] }] },
-        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "quit_done", "UISpec": { "portraitRefKey": "staff", "selfTags": ["focused"] }, "line": "jp_greenside_library_Opt_Quit_done" },
+        { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [{ "option": "build options", "Results": [{ "Type": "LeaveActiveFaction", "arguments": ["quitOptions", "leavers", "staff", "membertype_jp_librarian"] }, { "Type": "JumpToLabel", "arguments": ["", "quit_ask"] }] }] },
+        { "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp", "label": "quit_ask", "UISpec": { "portraitRefKey": "staff", "selfTags": ["focused"] }, "question": "jp_library_Opt_Quit_question", "loadOptionsKey": "quitOptions", "loadOptionsResults": [{ "Type": "JumpToLabel", "arguments": ["", "quit_done"] }], "options": [{ "option": "jp_library_Opt_cancel", "isDefaultCancel": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "quit_abort"] }] }] },
+        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "quit_done", "UISpec": { "portraitRefKey": "staff", "selfTags": ["focused"] }, "line": "jp_library_Opt_Quit_done" },
         { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "$factionChangeString$", "isLast": true },
-        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "quit_abort", "line": "jp_greenside_library_Opt_cancelLine", "isLast": true }
+        { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "quit_abort", "line": "jp_library_Opt_cancelLine", "isLast": true }
       ]
     }
   ] },
   "Dictionary": { "Entries": { "zh-cn": {
-    "jp_greenside_library_Opt_Apply": "应聘图书馆兼职", "jp_greenside_library_Opt_Apply_greeting": "「兼职主要负责整理图书和接待读者。时薪一千二，按天结算；有九点到十四点、十四点到二十点两班。」",
-    "jp_greenside_library_Opt_Apply_question": "「请问哪一位要应聘？」", "jp_greenside_library_Opt_Apply_done": "「登记好了。请先熟悉一下书架分类，工作时尽量放轻声音。」\n（可以在所属家庭管理界面的职务页调整班次。）",
-    "jp_greenside_library_Opt_Quit": "辞去图书馆工作", "jp_greenside_library_Opt_Quit_question": "「请问要为哪一位办理离职？」", "jp_greenside_library_Opt_Quit_done": "「离职登记好了。谢谢这段时间的帮忙，以后也欢迎来读书。」",
-    "jp_greenside_library_Opt_cancel": "暂时不办理", "jp_greenside_library_Opt_cancelLine": "「想好后再来服务台就行。」"
+    "jp_library_Opt_Apply": "应聘图书馆兼职", "jp_library_Opt_Apply_greeting": "「兼职主要负责整理图书和接待读者。时薪一千二，按天结算；有九点到十四点、十四点到二十点两班。」",
+    "jp_library_Opt_Apply_question": "「请问哪一位要应聘？」", "jp_library_Opt_Apply_done": "「登记好了。请先熟悉一下书架分类，工作时尽量放轻声音。」\n（可以在所属家庭管理界面的职务页调整班次。）",
+    "jp_library_Opt_Quit": "辞去图书馆工作", "jp_library_Opt_Quit_question": "「请问要为哪一位办理离职？」", "jp_library_Opt_Quit_done": "「离职登记好了。谢谢这段时间的帮忙，以后也欢迎来读书。」",
+    "jp_library_Opt_cancel": "暂时不办理", "jp_library_Opt_cancelLine": "「想好后再来服务台就行。」"
   } } }
 }

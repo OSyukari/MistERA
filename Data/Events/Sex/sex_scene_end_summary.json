@@ -1,9 +1,9 @@
 {
     "_comment": "Job_Sex dispatches SexScene_EndSummary once per completed participation record, not once per partner or per displayed line. Rejoining opens a fresh record and may settle again without reusing prior facts. sex_summary_participation identifies this character's participation number within the scene. These are historical facts, not new permission, consent, an orgasm quota, or a request to replay acts. Larger rewards and personality-specific outcomes may be authored later; this event grants no stats, relationships, or XP. Offscreen, exhausted, sleeping, and unconscious NPCs remain eligible; execution is independent of normal visibility and never forces an offscreen display.",
     "_comment_targets": "Keep the injected targets unchanged: self is the actual departed character; partners is the actual interacted list and may be empty; participants is the historical roster. Do not scope by current room, generate targets, inject the player, or require partners to exist. Text names only self and assigns no body roles.",
-    "_comment_inputs": "True-only AppendStrings keys: sex_summary_hadActs, sex_summary_hadPleasure, sex_summary_hadPain, sex_summary_hadClimax, sex_summary_forcedContext, sex_summary_wasForced, sex_summary_victimAtEntry, sex_summary_aggressorAtEntry, sex_summary_victimAtExit, sex_summary_aggressorAtExit, sex_summary_noActs, sex_summary_entryKnown. False flags are absent. Invariant numeric single-string keys: sex_summary_sceneRef, sex_summary_roomRef, sex_summary_participation, sex_summary_minutes, sex_summary_entryLust, sex_summary_acts (sex commands only; gentle in-scene touch commands are not acts), sex_summary_pleasure (pleasure gained, before pain's deduction), sex_summary_pleasureLostToPain (the part of it pain took away), sex_summary_pain, sex_summary_climaxes. Lists: sex_summary_comIDs, sex_summary_comTags (command tags), sex_summary_categories (command categoryTags, eg. com_category_v). CompareAppendNumber takes exactly [key, op, value]; supported operators are eq, ne, gt, gte, lt, lte. Legacy active scenes have unknown entry/history, so do not infer nothing happened before observation began.",
+    "_comment_inputs": "True-only AppendStrings keys: sex_summary_hadActs, sex_summary_hadPleasure, sex_summary_hadPain, sex_summary_hadClimax, sex_summary_forcedContext, sex_summary_wasForced, sex_summary_victimAtEntry, sex_summary_aggressorAtEntry, sex_summary_victimAtExit, sex_summary_aggressorAtExit, sex_summary_noActs, sex_summary_entryKnown. False flags are absent. Invariant numeric single-string keys: sex_summary_sceneRef, sex_summary_roomRef, sex_summary_participation, sex_summary_minutes, sex_summary_entryLust, sex_summary_acts (sex commands only; gentle in-scene touch commands are not acts), sex_summary_pleasure (pleasure gained, before pain's deduction), sex_summary_pleasureLostToPain (the part of it pain took away), sex_summary_pain, sex_summary_climaxes, sex_summary_painLevel (chara_status_pain_sex SeverityIndex at settlement - lingering pain; pain sensitivity already applied: 1 = 0-5 not displayed, 2 = 5-15, 3 = 15-30, 4+ = pain_fear), sex_summary_painPeak (the highest of that level during this participation, includes painLevel). wasForced / forcedContext / victim* / aggressor* come from the scene's own rapist roles only (Job_Sex.Rapist / isActorGettingRaped): a forced-tag command (eg. irrumatio com_sex_oral_P_Force), a strong act or a missing permission is not non-consensual. Lists: sex_summary_comIDs, sex_summary_comTags (command tags), sex_summary_categories (command categoryTags, eg. com_category_v). CompareAppendNumber takes exactly [key, op, value]; supported operators are eq, ne, gt, gte, lt, lte. Legacy active scenes have unknown entry/history, so do not infer nothing happened before observation began.",
     "_comment_duplicatePolicy": "Allow queued summaries to overlap in self and targets: another participation or scene may end before an earlier summary finishes. Each record's persisted settlement guard prevents duplicate publication; a global event cooldown must not discard a new participation's frozen summary.",
-    "_comment_kojoExtension": "Stable reaction labels: relieved, forcedAftermath, painful, satisfied, contentNonpenetrative, unsatisfied, neutral; all converge on finish. These are provisional initial-presentation rules, not universal personality judgments or C# classifications. A future authored GetKojoEntry fetch branch or premade NPC override can be inserted before a reaction Line, with a fallback to that Line; no Kojo scaffolding is implemented now. Pleasure or climax does not imply consent or erase a forced aftermath. contentNonpenetrative is a stable presentation label, not an inference about which acts occurred.",
+    "_comment_kojoExtension": "Stable reaction labels: relieved, forcedAftermath, painful, satisfiedRough, satisfied, sore, contentNonpenetrative, unsatisfied, neutral; all converge on finish. These are provisional initial-presentation rules, not universal personality judgments or C# classifications. A future authored GetKojoEntry fetch branch or premade NPC override can be inserted before a reaction Line, with a fallback to that Line; no Kojo scaffolding is implemented now. Pleasure or climax does not imply consent or erase a forced aftermath. contentNonpenetrative is a stable presentation label, not an inference about which acts occurred.",
     "Events": {
         "list": [
             {
@@ -21,7 +21,7 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "label": "start",
-                        "_comment": "Ordered first-success routing. Results contain only checks AND JumpToLabel, never effects: Results do not short-circuit. Keep any future effects on separate destination Lines.",
+                        "_comment": "Ordered first-success routing. Results contain only checks AND JumpToLabel, never effects: Results do not short-circuit. Keep any future effects on separate destination Lines. Order: forced (rapist roles) first, then lingering heavy pain (painLevel >= 4, pain_fear), then climax (with a noticeable sting at some point: satisfiedRough), then mild pain without climax (sore). Pain level 1 is not displayed in game and is ignored.",
                         "options": [
                             {
                                 "option": "_relieved",
@@ -42,8 +42,16 @@
                             {
                                 "option": "_painful",
                                 "Results": [
-                                    { "Type": "CompareAppendNumber", "arguments": ["sex_summary_pain", "gt", "0"] },
+                                    { "Type": "CompareAppendNumber", "arguments": ["sex_summary_painLevel", "gte", "4"] },
                                     { "Type": "JumpToLabel", "arguments": ["", "painful"] }
+                                ]
+                            },
+                            {
+                                "option": "_satisfiedRough",
+                                "Results": [
+                                    { "Type": "ExistAppendStrings", "arguments": ["sex_summary_hadClimax"] },
+                                    { "Type": "CompareAppendNumber", "arguments": ["sex_summary_painPeak", "gte", "2"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "satisfiedRough"] }
                                 ]
                             },
                             {
@@ -51,6 +59,13 @@
                                 "Results": [
                                     { "Type": "ExistAppendStrings", "arguments": ["sex_summary_hadClimax"] },
                                     { "Type": "JumpToLabel", "arguments": ["", "satisfied"] }
+                                ]
+                            },
+                            {
+                                "option": "_sore",
+                                "Results": [
+                                    { "Type": "CompareAppendNumber", "arguments": ["sex_summary_painPeak", "gte", "2"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "sore"] }
                                 ]
                             },
                             {
@@ -97,8 +112,20 @@
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "satisfiedRough",
+                        "line": "SexScene_EndSummary_satisfiedRough",
+                        "nextEntryLabel": "finish"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "satisfied",
                         "line": "SexScene_EndSummary_satisfied",
+                        "nextEntryLabel": "finish"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "sore",
+                        "line": "SexScene_EndSummary_sore",
                         "nextEntryLabel": "finish"
                     },
                     {
@@ -138,7 +165,9 @@
                 "SexScene_EndSummary_relieved": "对$self.name$而言，至少这次没有再发生什么，紧绷感终于有了消退的余地。",
                 "SexScene_EndSummary_forcedAftermath": "$self.name$所经历的强迫已经停止，留下的不适却不会因此一笔勾销。",
                 "SexScene_EndSummary_painful": "余下的疼痛让$self.name$难以轻松下来。",
+                "SexScene_EndSummary_satisfiedRough": "$self.name$的身体在余韵中渐渐平复，残留的些许刺痛并没有盖过先前的快感。",
                 "SexScene_EndSummary_satisfied": "$self.name$的身体在余韵中渐渐平复，先前的紧绷暂时得到了缓解。",
+                "SexScene_EndSummary_sore": "$self.name$身上还留着些许不适，一时难以完全放松下来。",
                 "SexScene_EndSummary_contentNonpenetrative": "$self.name$留着一点舒适的余韵，这一刻还算平和。",
                 "SexScene_EndSummary_unsatisfied": "对$self.name$而言，先前的期待还悬着，身体的躁意也没有完全消退。",
                 "SexScene_EndSummary_neutral": "对$self.name$而言，这一段暂且告一段落。",

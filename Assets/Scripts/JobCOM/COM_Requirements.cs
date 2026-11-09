@@ -317,6 +317,7 @@ public class COM_Requirements
                 return false;
             }
 
+            bool lengthFailed = false;
             for (int i = existing.Count - 1; i >= 0; i--)
             {
                 if (existing[i] == null)
@@ -369,13 +370,16 @@ public class COM_Requirements
                 {
                    // tooltip.Add($"remove by 8, doerRefs {String.Join("|", existing[i].DoerRefs)}, receiveRefs {String.Join("|", existing[i].ReceiverRefs)}");
                     existing.RemoveAt(i);
+                    lengthFailed = true;
                     continue;
                 }
             }
 
             if (existing.Count < 1)
             {
-                if (logging) tooltip.Add(LocalizeDictionary.QueryThenParse("ui_RequireExisting_missingPrereq")+"(2)");
+                // the prerequisite act is there for this pair, only too short for an overpenetration command
+                if (logging) tooltip.Add(lengthFailed ? LocalizeDictionary.QueryThenParse("ui_RequireExisting_overPenetration")
+                    : LocalizeDictionary.QueryThenParse("ui_RequireExisting_missingPrereq")+"(2)");
                 return false;
             }
             else return true;
@@ -436,6 +440,7 @@ public class COM_Requirements
                 return false;
             }
 
+            bool lengthFailed = false;
             for (int i = existing.Count - 1; i >= 0; i--)
             {
                 if (existing[i] == null)
@@ -482,13 +487,16 @@ public class COM_Requirements
                 {
                    // tooltip.Add($"remove by 8, doerRefs {String.Join("|", existing[i].DoerRefs)}, receiveRefs {String.Join("|", existing[i].ReceiverRefs)}");
                     existing.RemoveAt(i);
+                    lengthFailed = true;
                     continue;
                 }
             }
 
             if (existing.Count < 1)
             {
-                if (logging) tooltip.Add(LocalizeDictionary.QueryThenParse("ui_RequireExisting_missingPrereq") + "(2)");
+                // the prerequisite act is there for this pair, only too short for an overpenetration command
+                if (logging) tooltip.Add(lengthFailed ? LocalizeDictionary.QueryThenParse("ui_RequireExisting_overPenetration")
+                    : LocalizeDictionary.QueryThenParse("ui_RequireExisting_missingPrereq") + "(2)");
                 return false;
             }
             else return true;

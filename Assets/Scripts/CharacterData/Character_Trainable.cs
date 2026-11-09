@@ -104,6 +104,107 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             return furnitureLockJobCache;
         }
     }
+    /// <summary>
+    /// Furniture whose soft container (occupancy) holds this character - lying in a bed, inside a divider. Not job
+    /// registration. Written only by FurnitureOccupancyUtility. Docs/Furniture/Plan_FurnitureOccupancy.md
+    /// </summary>
+    [JsonProperty] protected int furnitureLocationRef = -1;
+    Job_Furniture furnitureLocationCache = null;
+
+    [JsonIgnore] public int FurnitureLocationRef { get { return FurnitureLocation == null ? -1 : furnitureLocationRef; } }
+    /// <summary> stored ref without the self-heal check (FurnitureOccupancyUtility.PruneStale) </summary>
+    [JsonIgnore] internal int FurnitureLocationRefRaw { get { return furnitureLocationRef; } }
+
+    /// <summary> self-heals: a location whose job is gone or no longer lists this character is dropped </summary>
+    [JsonIgnore] public Job_Furniture FurnitureLocation
+    {
+        get
+        {
+            if (furnitureLocationRef < 0) return null;
+            if (furnitureLocationCache == null)
+                furnitureLocationCache = scr_System_CampaignManager.current.FindJobInstanceByID(furnitureLocationRef) as Job_Furniture;
+            if (furnitureLocationCache == null || !furnitureLocationCache.HasOccupant(RefID))
+            {
+                furnitureLocationCache = null;
+                furnitureLocationRef = -1;
+            }
+            return furnitureLocationCache;
+        }
+    }
+
+    /// <summary> the space this character is in: the divider's RefID when inside one, -1 = the room's open area </summary>
+    /// <summary> carried (携带): wherever the player carrying them is </summary>
+    [JsonIgnore] public int ScopeRef { get
+        {
+            var campaign = scr_System_CampaignManager.current;
+            if (RefID != 0 && campaign != null && FurnitureOccupancyUtility.IsCarriedRef(RefID)) return campaign.Player.ScopeRef;
+            var f = FurnitureLocation;
+            return f != null && f.IsDivider ? f.RefID : -1;
+        } }
+    [JsonIgnore] public bool IsInBlockingDivider { get
+        {
+            int scope = ScopeRef;
+            if (scope < 0) return false;
+            var f = scr_System_CampaignManager.current.FindJobInstanceByID(scope) as Job_Furniture;
+            return f != null && f.BlocksVisibility;
+        } }
+
+    // ---- carrying (携带 / 安放) - the carrier holds the carried. Docs/Furniture/Plan_FurnitureOccupancy.md §3 ----
+    // Separate from teammates (Party): the carried is no party member and has no Job_FollowPlayer. Moved along with
+    // the carrier (scr_System_CampaignManager.MoveCharacterTo), set down on a bed / sofa or standing (安放), or where the
+    // carrier is when one of them can no longer go on (CheckConsciousness). Only the player carries for now
+    // (FurnitureOccupancyUtility.IsCarriedRef reads the player).
+
+    [JsonProperty] protected int carriedRefID = -1;
+    [JsonIgnore] public int CarriedRefID { get { return carriedRefID; } }
+    [JsonIgnore] public bool IsCarrying { get { return carriedRefID >= 0; } }
+    [JsonIgnore] public Character_Trainable Carried { get { return carriedRefID < 0 ? null : scr_System_CampaignManager.current.FindInstanceByID(carriedRefID); } }
+
+    /// <summary> picks c up: out of any bed / sofa, job dropped; a teammate picked up stops being one (never both) </summary>
+    public void Carry(Character_Trainable c)
+    {
+        if (c == null || c == this) return;
+        var campaign = scr_System_CampaignManager.current;
+        if (campaign.party.HasMember(c.RefID)) campaign.party.RemoveFromParty(c);
+        // no bed / sofa reference left on either side (the carried is in the carrier's arms)
+        FurnitureOccupancyUtility.ReleaseForCarry(c);
+        c.ChangeCurrentJob(null);
+        carriedRefID = c.RefID;
+        c.InvalidateActorTags();   // "carried" actor tag
+        campaign.NotifyUpdate();
+    }
+
+    /// <summary> stops carrying (put down / set down / moved away by something else) </summary>
+    public void ClearCarried()
+    {
+        if (carriedRefID < 0) return;
+        var carried = Carried;
+        carriedRefID = -1;
+        carried?.InvalidateActorTags();   // "carried" actor tag
+        scr_System_CampaignManager.current.NotifyUpdate();
+    }
+
+    /// <summary>
+    /// The carried is set down where the carrier is (no furniture): one of them can no longer go on.
+    /// textKey gets $player$ (the carrier) / $name$ (the carried).
+    /// </summary>
+    public void SetDownCarried(string textKey)
+    {
+        var carried = Carried;
+        ClearCarried();
+        if (carried == null) return;
+        var text = LocalizeDictionary.QueryThenParse(textKey).Replace("$player$", FirstName).Replace("$name$", carried.FirstName);
+        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, text));
+    }
+
+    /// <summary> FurnitureOccupancyUtility only </summary>
+    internal void SetFurnitureLocation(Job_Furniture job)
+    {
+        furnitureLocationCache = job;
+        furnitureLocationRef = job == null ? -1 : job.RefID;
+        _cachedJobDescription = string.Empty;
+    }
+
     [JsonIgnore] public Job_Furniture.JobContainer_Chara Jail
     {
         get
@@ -423,14 +524,17 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     }
 
     protected bool queuedWakeup = false;
+    [NonSerialized] WakeupRequest pendingNaturalWake;
+    [NonSerialized] bool wakeupInProgress;
 
     private void PreUpdateTime()
     {
-        if (!isTimeStoppedLoose)
+        if (!isTimeStoppedLoose && pendingNaturalWake == null && !wakeupInProgress)
         {
             queuedWakeup = false;
         }
         this._cachedJobDescription = string.Empty;
+        // normally a no-op (settled in PostUpdateTimeFinalize); catches APs resolved outside any update
         Relationships.FinalizeAttitudeRound();
         Body.ClearLastInteractedRefs();
         Relationships.ClearLastInteractedRelationships();
@@ -502,8 +606,21 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     {
         if (this.isTemporaryActor) return;
 
+        // carrying (携带): a carrier no longer able to move drops the carried; a carried able to move again gets down
+        if (carriedRefID >= 0 && !canMoveIgnoringTimestop) SetDownCarried("ui_carry_setDown_playerOut");
+        else if (canMove && FurnitureOccupancyUtility.IsCarriedRef(RefID))   // time stop counts as unable
+            scr_System_CampaignManager.current.Player.SetDownCarried("ui_carry_setDown_woke");
+
         if (Stats.isConsciousnessUnconscious) Memory.ConsciousnessLost_TryStart();
         else if (Memory.consciousnessMemory != null) WakeUp(true);
+
+        // a bed / sofa keeps a character only while they cannot move (asleep, unconscious, immobilized, time stopped and
+        // put down there) - able to move again, they get up. Also covers older saves with no consciousness snapshot to wake from.
+        if (furnitureLocationRef >= 0 && canMove)
+        {
+            var lyingIn = FurnitureLocation;
+            if (lyingIn != null && !lyingIn.IsDivider) FurnitureOccupancyUtility.Leave(this, OccupancyReason.Wake);
+        }
     }
 
     private void PostUpdateTime3()
@@ -516,6 +633,18 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             MovedInTimeStop = false;
             forbidGreeting = false;
         }
+    }
+
+    /// <summary>
+    /// Settles this minute's attitude round before the player sees the next command list, so the AC preview
+    /// matches the attitude the next roll uses. lastInteractedRelationships are still populated here (cleared
+    /// in the next PreUpdateTime), same data FinalizeAttitudeRound used to see there.
+    /// </summary>
+    private void PostUpdateTimeFinalize()
+    {
+        Relationships.FinalizeAttitudeRound();
+        // a relationship change outside any room trigger (events) - no-op when this update's UpdateAllRoom already refreshed
+        Relationships.RefreshMoodletsIfDirty();
     }
 
     private void Observer_GlobalMinute5(TimeSpan t)
@@ -1253,6 +1382,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     {
         if (updateOrder != 0) return;
         this.FactionManager.FlagForDailyNeed();
+        // temporary permissions she gave expire, except to a partner in her running sex scene (cleared when it ends)
+        PermissionService.ClearTemporaryOnDayUpdate(this);
     }
 
     /// <summary>Day update stage 3 (after factions and characters updated): recreation planning only.</summary>
@@ -1311,6 +1442,12 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         internal bool Valid;
     }
 
+    /// <summary> next AppendActorTags rebuilds the per-minute tags (a state they read changed mid-minute, e.g. carried) </summary>
+    internal void InvalidateActorTags()
+    {
+        if (actorTagCache != null) actorTagCache.Minute = long.MinValue;
+    }
+
     internal void AppendActorTags(List<string> destination)
     {
         if (actorTagCache == null) actorTagCache = new ActorTagCache();
@@ -1335,6 +1472,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             }
             cache.ConsciousnessOffset = tags.Count;
             if (scr_System_CampaignManager.current != null && scr_System_CampaignManager.current.Player == this) tags.Add("pov");
+            // in the carrier's arms (携带) - Carry / ClearCarried reset this cache
+            if (FurnitureOccupancyUtility.IsCarriedRef(RefID)) tags.Add("carried");
             if (isVisiblyPregnant) tags.Add("pregnant");
             if (ReproductionUtility.IsDangerDay(this)) tags.Add("dangerDay");
             if (Body != null)
@@ -1445,6 +1584,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
     [JsonIgnore] public StatsManager Stats { get { if (stats == null) stats = new StatsManager();
         return stats; } }
+    /// <summary>Debug: the stats as stored - null when never created (Stats would create them).</summary>
+    [JsonIgnore] public StatsManager Debug_StoredStats { get { return stats; } }
 
     [JsonProperty]
     protected FameTracker fame = null;
@@ -1828,11 +1969,11 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     /// the session ranking (RecreationUtility.RankSessions - ties fall back to a fixed order: earlier start, host, venue)
     /// and of a session against a flexible visit in its way (RecreationUtility.TryConfirm: the session wins unless the
     /// visit is preferred). Must be deterministic (no random rolls) so the same situation always resolves the same way.
-    /// Equal for now.
+    /// Uses the activity's character-dependent weight, without random rolls or availability factors.
     /// </summary>
     public int CompareBookingPreference(RecreationBooking existing, RecreationInviteContext existingCtx, RecreationBooking incoming, RecreationInviteContext incomingCtx)
     {
-        return 0;
+        return RecreationUtility.BookingPreference(this, incoming).CompareTo(RecreationUtility.BookingPreference(this, existing));
     }
 
     [JsonProperty] private Character_Factions factionManager = null;
@@ -1934,6 +2075,13 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         {
             if (log) ss += $" | interrupted, delaying job search |";
             interrupted = false;
+            if (s != null) s.Add(ss);
+            return;
+        }
+        // inside a divider (stall) the current job doesn't take place in: leave it first - always explicit (D2)
+        if (FurnitureOccupancyUtility.TryLeaveDividerForJob(this))
+        {
+            if (log) ss += " | leaving " + FurnitureOccupancyUtility.ScopeName(this) + " first |";
             if (s != null) s.Add(ss);
             return;
         }
@@ -2836,11 +2984,239 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         WakeUp(true, eventContext);
     }
 
+    sealed class WakeupRequest
+    {
+        internal Character_Trainable owner;
+        internal EventInstance context, notification;
+        Job_Furniture bed;
+        Room_Instance room;
+        string bedName;
+        List<Character_Trainable> bedmates, roommates;
+        bool completed;
+
+        internal WakeupRequest(Character_Trainable owner, EventInstance context = null)
+        {
+            this.owner = owner;
+            this.context = context;
+        }
+
+        internal void Capture()
+        {
+            var campaign = scr_System_CampaignManager.current;
+            bed = owner.FurnitureLocation;
+            FurnitureOccupancyUtility.PruneStale(bed);
+            if (bed != null && (bed.IsDivider || !bed.HoldsUnconscious || !bed.HasOccupant(owner.RefID))) bed = null;
+            bedName = bed?.ParentInstance?.DisplayName ?? "";
+            bedmates = bed == null ? new List<Character_Trainable>() : bed.OccupantRefs
+                .Select(campaign.FindInstanceByID).Where(c => c != null && c != owner && c.FurnitureLocation == bed).Distinct().ToList();
+            room = campaign.Map.FindRoomByChara(owner.RefID);
+            roommates = room == null ? new List<Character_Trainable>() : new List<Character_Trainable>(room.RoomChara);
+        }
+
+        internal void Bind(List<WakeupRequest> batch)
+        {
+            // Only conscious, successfully prepared wakes share a scene. No bed means a singleton, not a room group.
+            var group = batch.Where(r => r == this || r.notification != null && !r.owner.Stats.isConsciousnessUnconscious
+                    && !r.owner.Stats.isSleeping && bed != null && r.bed == bed)
+                .Select(r => r.owner).Distinct().OrderBy(c => c.RefID).ToList();
+            var player = scr_System_CampaignManager.current.Player;
+            var leader = group.Contains(player) ? player : group[0];
+            bool Awake(Character_Trainable c) => c != null && !c.Stats.isConsciousnessUnconscious && !c.Stats.isSleeping;
+            notification.Targets["waking_group"] = group;
+            notification.Targets["waking_together"] = group.Where(c => c != owner).ToList();
+            notification.Targets["still_sleeping"] = bedmates.Where(c => c.Stats.isSleeping && !group.Contains(c)).ToList();
+            notification.Targets["awake_bedmates"] = bedmates.Where(c => Awake(c) && !group.Contains(c)).ToList();
+            notification.Targets["awake_roommates"] = roommates.Where(c => c != owner && Awake(c)
+                && !bedmates.Contains(c) && !group.Contains(c)
+                && scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID) == room).Distinct().ToList();
+            notification.Targets["wake_scene_leader"] = new List<Character_Trainable> { leader };
+            notification.Targets["wake_followers"] = group.Where(c => c != leader).ToList();
+            notification.Targets["wake_tired"] = group.Where(c => c.Stats.HasStatusByStringMatch(StatsUtility.Status_SleepDeprived)).ToList();
+            notification.Targets["wake_rested"] = group.Where(c => !c.Stats.HasStatusByStringMatch(StatsUtility.Status_SleepDeprived)).ToList();
+            notification.AppendStrings["wakeBedName"] = new List<string> { bedName };
+
+            // The shared wake replaces today's first greeting, only for actual conscious waking bedmates.
+            if (group.Count >= 2 && Awake(owner))
+            {
+                foreach (var other in group.Where(c => c != owner))
+                {
+                    var fromOwner = owner.Relationships.FindRelationshipWith(other);
+                    var fromOther = other.Relationships.FindRelationshipWith(owner);
+                    owner.Relationships.SetKojoVariable(true, fromOwner, "dailyGreeting",
+                        Math.Max(1, owner.Relationships.GetKojoVariable(true, fromOwner, "dailyGreeting")));
+                    other.Relationships.SetKojoVariable(true, fromOther, "dailyGreeting",
+                        Math.Max(1, other.Relationships.GetKojoVariable(true, fromOther, "dailyGreeting")));
+                    // The wake scene itself supplies this pair's greeting; replay only unrelated meetings.
+                    greetingWakeBatch?.greetings.Remove((owner, other));
+                    greetingWakeBatch?.greetings.Remove((other, owner));
+                }
+            }
+        }
+
+        internal void Dispatch()
+        {
+            try { DispatchWakeupNotification(notification, context); }
+            catch
+            {
+                try { notification.Terminate("exception while dispatching wake notification"); }
+                finally { notification.CompleteCallbacks(); }
+                throw;
+            }
+            finally { Complete(); }
+        }
+
+        internal void Complete()
+        {
+            if (completed || notification == null) return;
+            completed = true;
+            try { owner.Stats.RefreshAllStats(); }
+            finally
+            {
+                try { owner.Memory.ConsciousnessRegained_End(); }
+                finally { owner.wakeupInProgress = false; }
+            }
+        }
+    }
+
+    static NaturalWakeBatch naturalWakeBatch;
+    static NaturalWakeBatch greetingWakeBatch;
+
+    internal static bool DeferNaturalWakeGreeting(Character_Trainable self, Character_Trainable target)
+    {
+        var batch = greetingWakeBatch;
+        if (batch == null || !(self.Stats.isSleeping || target.Stats.isSleeping
+            || batch.requests.Any(r => r.owner == self || r.owner == target))) return false;
+        batch.greetings.Add((self, target));
+        return true;
+    }
+
+    /// <summary>Only natural WakeUp(false) requests during this minute's observers are collected.</summary>
+    internal static IDisposable BeginNaturalWakeBatch() => new NaturalWakeBatch();
+
+    sealed class NaturalWakeBatch : IDisposable
+    {
+        readonly NaturalWakeBatch previous = naturalWakeBatch;
+        readonly NaturalWakeBatch previousGreetings = greetingWakeBatch;
+        internal readonly List<WakeupRequest> requests = new List<WakeupRequest>();
+        internal readonly HashSet<(Character_Trainable self, Character_Trainable target)> greetings = new HashSet<(Character_Trainable, Character_Trainable)>();
+        bool disposed;
+        bool greetingsReleased;
+
+        internal NaturalWakeBatch() { naturalWakeBatch = this; greetingWakeBatch = this; }
+
+        void ReleaseGreetings()
+        {
+            if (greetingsReleased) return;
+            greetingsReleased = true;
+            greetingWakeBatch = previousGreetings;
+            foreach (var pair in greetings)
+            {
+                try { scr_System_CampaignManager.current.Map.ReplayWakeGreeting(pair.self, pair.target); }
+                catch (Exception ex) { Debug.LogException(ex); }
+            }
+        }
+
+        public void Dispose()
+        {
+            if (disposed) return;
+            disposed = true;
+            // Notification dispatch can advance time or wake another actor reentrantly. Those are separate scopes.
+            naturalWakeBatch = null;
+            try
+            {
+                if (requests.Count == 0) return;
+                var ready = new List<WakeupRequest>();
+                foreach (var request in requests)
+                {
+                    if (!ReferenceEquals(request.owner.pendingNaturalWake, request) || !request.owner.Stats.isSleeping) continue;
+                    try { request.Capture(); ready.Add(request); }
+                    catch (Exception ex) { Debug.LogException(ex); }
+                }
+                foreach (var request in ready)
+                {
+                    if (!ReferenceEquals(request.owner.pendingNaturalWake, request) || !request.owner.Stats.isSleeping) continue;
+                    try { request.owner.WakeUp(true, null, request); }
+                    catch (Exception ex) { Debug.LogException(ex); }
+                }
+                // Bind every snapshot before the first LoadNext/validator/callback can change the world.
+                var bound = new List<WakeupRequest>();
+                foreach (var request in ready)
+                {
+                    if (request.notification == null) continue;
+                    try { request.Bind(ready); bound.Add(request); }
+                    catch (Exception ex) { Debug.LogException(ex); }
+                }
+                // FullRest/bed exit/AP mechanics may have requested greetings before the group was knowable.
+                ReleaseGreetings();
+                ScheduleWakeupNotifications(bound);
+            }
+            finally
+            {
+                foreach (var request in requests)
+                {
+                    if (ReferenceEquals(request.owner.pendingNaturalWake, request))
+                    {
+                        request.owner.pendingNaturalWake = null;
+                        request.owner.queuedWakeup = false;
+                    }
+                    try { request.Complete(); }
+                    catch (Exception ex) { Debug.LogException(ex); }
+                }
+                naturalWakeBatch = previous;
+                ReleaseGreetings();
+            }
+        }
+    }
+
+    static void ScheduleWakeupNotifications(List<WakeupRequest> requests)
+    {
+        // Shared target bindings would otherwise make queued notifications conflict with each other.
+        // Trampoline synchronous completion; an asynchronous completion owns the remaining requests.
+        int next = 0;
+        bool dispatching = false, resume = false;
+        void DispatchNext()
+        {
+            if (dispatching) { resume = true; return; }
+            dispatching = true;
+            try
+            {
+                do
+                {
+                    resume = false;
+                    if (next == requests.Count) break;
+                    var activeWake = scr_UpdateHandler.current.EventHandler.activeEvents
+                        .FirstOrDefault(ev => ev.CurrentEventID == "OnCharaWakeUp");
+                    if (activeWake != null)
+                    {
+                        activeWake.OnCompleted(DispatchNext);
+                        break;
+                    }
+                    var request = requests[next++];
+                    request.notification.OnCompleted(DispatchNext);
+                    try { request.Dispatch(); }
+                    catch (Exception ex) { Debug.LogException(ex); }
+                } while (resume);
+            }
+            catch
+            {
+                // Also release requests owned by an asynchronous continuation if dispatch cannot proceed.
+                foreach (var request in requests)
+                {
+                    try { request.Complete(); }
+                    catch (Exception ex) { Debug.LogException(ex); }
+                }
+                throw;
+            }
+            finally { dispatching = false; }
+        }
+        DispatchNext();
+    }
+
     static EventInstance CreateWakeupNotification(Character_Trainable self, EventInstance context)
     {
         bool suppress = context != null && (context.EntryResultsSilentActive || MessageCollect.PresentationSuppressed);
         bool contained = context != null && (context.silent || suppress);
-        var notification = new EventInstance(self, "OnCharaWakeUp", "", immediateInit: !contained);
+        var notification = new EventInstance(self, "OnCharaWakeUp", "", immediateInit: false);
         if (contained)
         {
             // Set silent before LoadNext: validation failure must not touch the normal EventManager either.
@@ -2876,7 +3252,9 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     {
         if (!notification.silent)
         {
-            scr_UpdateHandler.current.EventHandler.StartEvent(notification, false);
+            notification.LoadNext("OnCharaWakeUp", "");
+            if (!notification.isValid || !scr_UpdateHandler.current.EventHandler.StartEvent(notification, false))
+                notification.CompleteCallbacks();
             return;
         }
 
@@ -2903,26 +3281,62 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     }
 
     /// <summary>
-    /// If not immediate, then queue event and over <br/>
-    /// if immediate, then actually execute
+    /// Natural requests join the current minute's batch, or queue the legacy wake event outside a minute tick.
+    /// Immediate/contextual wakes execute now with a singleton notification context.
     /// </summary>
     public void WakeUp(bool immediate)
     {
         WakeUp(immediate, null);
     }
 
-    void WakeUp(bool immediate, EventInstance eventContext)
+    void WakeUp(bool immediate, EventInstance eventContext, WakeupRequest request = null)
     {
+        if (wakeupInProgress) return;
         if (!immediate) 
         {
             if (!queuedWakeup)
             {
                 queuedWakeup = true;
-                scr_UpdateHandler.current.EventHandler.StartEvent(this, "QueuedWakeupEvent", "", RefID == 0);
+                if (naturalWakeBatch != null)
+                {
+                    pendingNaturalWake = new WakeupRequest(this);
+                    naturalWakeBatch.requests.Add(pendingNaturalWake);
+                }
+                else scr_UpdateHandler.current.EventHandler.StartEvent(this, "QueuedWakeupEvent", "", RefID == 0);
+            }
+            return;
+        }
+
+        pendingNaturalWake = null;
+        queuedWakeup = false;
+        // A queued event/request must not wake an actor again after a forced wake consumed it.
+        if (!Stats.isSleeping && Memory.consciousnessMemory == null) return;
+        bool deferred = request != null;
+        request ??= new WakeupRequest(this, eventContext);
+        if (!deferred) request.Capture();
+        wakeupInProgress = true;
+        try
+        {
+            ApplyWakeup(request);
+            if (request.notification == null) wakeupInProgress = false;
+            // A queued presentation must not retain the old consciousness snapshot/guard across a new sleep.
+            else if (deferred) request.Complete();
+            else
+            {
+                request.Bind(new List<WakeupRequest> { request });
+                request.Dispatch();
             }
         }
-        else
+        catch
         {
+            try { request.Complete(); }
+            finally { wakeupInProgress = false; }
+            throw;
+        }
+    }
+
+    void ApplyWakeup(WakeupRequest request)
+    {
             //Debug.LogError("Wakeup immediate!");
             // IF SLEEP DEPRIVED, IT IS ALREADY ADDED PRIOR TO THIS POINT (ON CALLING WakeupPrep)        
             this.Stats.RemoveStatusByStringMatch("chara_status_sleeping");
@@ -2932,6 +3346,9 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
             if (!this.Stats.isConsciousnessUnconscious)
             {
+                // gets up from the bed / sofa that kept them (unless still unable to move); a divider (booth, stall) is still where they are
+                var lyingIn = FurnitureLocation;
+                if (lyingIn != null && !lyingIn.IsDivider && canMove) FurnitureOccupancyUtility.Leave(this, OccupancyReason.Wake);
 
                 var memInst = new MemInstance(new List<int>(), new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.None, LocalizeDictionary.QueryThenParse("ui_entry_memory_sleep_end"));
                 var memEntry = this.Memory.AddEntry(memInst, new List<string>() { "forbidMerge" });
@@ -2941,7 +3358,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                 // re-check every AP
                 UtilityEX.GetAPsFrom(this, out List<ActionPackage> aps);
 
-                var wakeupEV = CreateWakeupNotification(this, eventContext);
+                var wakeupEV = CreateWakeupNotification(this, request.context);
                 var callbacks = new List<Action>();
                 var appends = new List<Action>();
 
@@ -3134,20 +3551,11 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                     this.ChangeCurrentJob(null);
                 }
 
-                // Only now, after callbacks/appends are fully populated above, actually launch the event -
-                // StartEvent forces itself to run synchronously whenever scr_UpdateHandler.current.Updating
-                // is true (which it always is here), cascading through OnCharaWakeUp's Line and Branch (and
-                // therefore ExecuteCallback("onWakeUp"/"jobCallback")) in this same call. Starting it any
-                // earlier means those ExecuteCallback steps run against still-empty lists.
-                //scr_UpdateHandler.current.EventHandler.StartEvent(this, "OnCharaWakeUp", "", false);
+                // Populate callbacks before any LoadNext/StartEvent can run synchronously. A natural batch
+                // dispatches only after every actor's own wake mechanics and target bindings are ready.
                 wakeupEV.FunctionCalls.Add("jobCallback", callbacks);
                 if (wakeupEV.silent || this.InteractionJob.isVisibleToPlayer) wakeupEV.FunctionCalls.Add("onWakeUp", appends);
-                try { DispatchWakeupNotification(wakeupEV, eventContext); }
-                finally
-                {
-                    this.Stats.RefreshAllStats();
-                    Memory.ConsciousnessRegained_End();
-                }
+                request.notification = wakeupEV;
 
                 // if exit job, then removeactor already called endongoingmemory
                 // so, if last memory is ended and uncons, then, problem!
@@ -3169,7 +3577,6 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             }
 
             // scr_UpdateHandler.current.FlushCollectedLogs(true, false);
-        }
     }
 
     private int ComputeSleepWindowMinutes()
@@ -3653,6 +4060,13 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     {
         actorTagCache = null;
         string s = "Loaded Chara " + FullName + "\n";
+        // locked into furniture whose job was dropped on load (furniture removed from the data since the save)
+        if (furnitureLockJobRef != -1 && !(scr_System_CampaignManager.current.FindJobInstanceByID(furnitureLockJobRef, false) is Job_Furniture))
+        {
+            Debug.LogWarning($"Load: [{FullName}] released from missing furniture lock job [{furnitureLockJobRef}]");
+            furnitureLockJobCache = null;
+            furnitureLockJobRef = -1;
+        }
         if (this.factionManager != null) FactionManager.ReEstablishParentData(this);
         if (this.Inventory != null) Inventory.ReEstablishParent(this);
         if (this.wardrobe == null) this.wardrobe = new Character_Wardrobe();
@@ -3708,7 +4122,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         scr_System_Time.current.Observer_globalTime_Day += Observer_GlobalDay_3;
     }
 
-    /// <summary>The hour's second update, per pass: this character answers the recreation sessions sent to it (RecreationUtility.OnLatePass).</summary>
+    /// <summary>The hour's second update, per pass: this character answers the recreation sessions sent to it - the player gets their invitation events (RecreationUtility.OnLatePass).</summary>
     protected void Observer_GlobalHourLate(int pass)
     {
         RecreationUtility.OnLatePass(FactionManager, pass);
@@ -3725,6 +4139,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         scr_UpdateHandler.current.Observer_PreUpdateTime += PreUpdateTime;
         scr_UpdateHandler.current.Observer_PostUpdateTime_2 += PostUpdateTime2;
         scr_UpdateHandler.current.Observer_PostUpdateTime_3 += PostUpdateTime3;
+        scr_UpdateHandler.current.Observer_PostUpdateTime_Finalize += PostUpdateTimeFinalize;
         scr_UpdateHandler.current.Observer_PostUpdateTime_EventEnd += PostEvent;
     }
 
@@ -3760,6 +4175,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         scr_UpdateHandler.current.Observer_PreUpdateTime -= PreUpdateTime;
         scr_UpdateHandler.current.Observer_PostUpdateTime_2 -= PostUpdateTime2;
         scr_UpdateHandler.current.Observer_PostUpdateTime_3 -= PostUpdateTime3;
+        scr_UpdateHandler.current.Observer_PostUpdateTime_Finalize -= PostUpdateTimeFinalize;
         scr_UpdateHandler.current.Observer_PostUpdateTime_EventEnd -= PostEvent;
     }
 
@@ -3890,7 +4306,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         return true;
     }
 
-    public bool SwallowInternal(bool fullDeflate, string bodyTag = "", ExperienceLog m = null)
+    /// <param name="swallowedTags">if given, the item tags of everything swallowed are added to it (no duplicates)</param>
+    public bool SwallowInternal(bool fullDeflate, string bodyTag = "", ExperienceLog m = null, List<string> swallowedTags = null)
     {
         var internals = this.Body.Internals;
         bool any = false;
@@ -3904,7 +4321,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                 ? null : this.Body.GetRandomInternalWithTag(part.overflowOutTag);
             if (target == null) continue;
 
-            if (part.TransferContentTo(target, fullDeflate, m)) any = true;
+            if (part.TransferContentTo(target, fullDeflate, m, swallowedTags)) any = true;
         }
         return any;
     }

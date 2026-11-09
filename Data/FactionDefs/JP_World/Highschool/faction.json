@@ -11,6 +11,8 @@
                 "isRentingFloor": false,
                 "_comment_isRentingFloor": "school owns its own facility outright",
                 "mainExit": { "roomID": "school_frontGate", "exitCost": 5 },
+                "_comment_listConnectedFloors": "venues hanging off the school (pet cafe, library) keep their own button under its block in the floor list",
+                "listConnectedFloors": true,
                 "floors": [
                     {
                         "ID": "floor_jp_high_school",
@@ -41,6 +43,11 @@
                 "floorHeight":400.0,
                 "resize":1.0,
                 "mapExit":"school_frontGate",
+                "_comment_exits": "hidden sockets for venues around the school (venue factionInit floorDoors -> exit to_<venueID>)",
+                "exits": [
+                    { "ID": "to_jp_pet_cafe", "connectedRoom": "school_frontGate", "hideOnMap": true },
+                    { "ID": "to_jp_library", "connectedRoom": "school_frontGate", "hideOnMap": true }
+                ],
                 "_comment_wholeBuildingRent": "full school facility upkeep (multi-building campus, gym, grounds), charged monthly - the school itself owns the building (see isRentingFloor:false on the jp_high_school factionInit), so only maintenanceFee ever applies; NPC faction, never actually charged in practice",
                 "wholeBuildingRent": {
                     "maintenanceFee": { "itemID": "currency_JPY", "itemCount": 300000 },
@@ -154,7 +161,7 @@
                         "connects": [
                             { "ID": "school_2F_corridor", "cost": 1.0 }
                         ],
-                        "furnitureIDs":["furniture_bathroom_set","furniture_bathroom_set","furniture_marker_gender_male"],
+                        "furnitureIDs":["furniture_toilet_stall","furniture_toilet_stall","furniture_marker_gender_male"],
                         "roomImagePath":"Media_UI_Scenario_Background/BG_LockerRoom.jpg",
                         "roomImagePath_Inactive_Night":"Media_UI_Scenario_Background/BG_LockerRoom_Night.jpg"
                     },
@@ -165,7 +172,7 @@
                         "connects": [
                             { "ID": "school_2F_corridor", "cost": 1.0 }
                         ],
-                        "furnitureIDs":["furniture_bathroom_set","furniture_bathroom_set","furniture_marker_gender_female"],
+                        "furnitureIDs":["furniture_toilet_stall","furniture_toilet_stall","furniture_marker_gender_female"],
                         "roomImagePath":"Media_UI_Scenario_Background/BG_LockerRoom.jpg",
                         "roomImagePath_Inactive_Night":"Media_UI_Scenario_Background/BG_LockerRoom_Night.jpg"
                     },

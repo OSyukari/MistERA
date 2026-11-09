@@ -1,0 +1,56 @@
+{
+    "_comment_integration": "Standalone-house district (Docs/Locations/Plan_ResidentialDistricts.md 2.1). One world door at (390,200), floorExitID houses_entrance, listed in world.json initializeFactions. Homes are built on demand by AssignResidence / console spawnResident (ResidenceUtility.CreateResidence), all linked to the entrance. Only the 4LDK house (existing house_floor_4ldk) is listed; add the 3LDK house once its floor plan and art exist. The authored Katsuragi / Miyama / Kiryu households are homes of this district too: world.json initializeResidences registers them here (ResidenceUtility.AdoptResidence) with their own IDs, counting as jp_home_tpl_house_4ldk - see Docs/Locations/Plan_HouseholdsIntoDistricts.md.",
+    "_comment_art": "PLACEHOLDER: imagePath/roomImagePath reuse existing BGAssets/Generated art; replace with dedicated art later.",
+    "MapPlans": {
+        "factionInit": [{
+            "ID": "jp_district_houses", "isPublic": true, "isRentingFloor": false, "setPrivateRoomOwner": false, "listConnectedFloors": true,
+            "mainExit": { "roomID": "houses_entrance", "exitCost": 5 },
+            "floors": [{ "ID": "floor_jp_district_houses", "nameOverwrite": "jp_district_houses" }],
+            "_comment_residential": "Every home links to attachRoomID (empty = mainExit room houses_entrance). Add the 3LDK house to templates once it exists.",
+            "residential": {
+                "maxResidences": 24,
+                "templates": [ { "templateID": "jp_home_tpl_house_4ldk", "weight": 1 } ]
+            },
+            "managerBaseIDs": [""], "salesInventory": [], "workModules": [], "workHours": [], "workAssignment": []
+        }],
+        "floorPlans": [{
+            "ID": "floor_jp_district_houses", "imagePath": "BGAssets/Generated/house_2story_02.webp",
+            "isFloorPlan": false, "floorWidth": 400, "floorHeight": 400, "resize": 1, "mapExit": "houses_entrance",
+            "_comment_exits": "hidden sockets for venues hanging off the district (venue factionInit floorDoors -> exit to_<venueID>); homes use runtime exits instead",
+            "exits": [
+                { "ID": "to_jp_park", "connectedRoom": "houses_entrance", "hideOnMap": true }
+            ],
+            "rooms": [
+                {
+                    "ID": "houses_entrance",
+                    "displayName": "houses_entrance",
+                    "hideOnMap": true,
+                    "connects": [],
+                    "roomImagePath": "BGAssets/Generated/house_2story_02.webp"
+                },
+                {
+                    "ID": "houses_garbage_point",
+                    "displayName": "houses_garbage_point",
+                    "hideOnMap": true,
+                    "connects": [
+                        {
+                            "ID": "houses_entrance",
+                            "cost": 1
+                        }
+                    ],
+                    "roomImagePath": "BGAssets/Generated/house_2story_09.webp"
+                }
+            ]
+        }]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "jp_district_houses": "独栋住宅区",
+                "houses_entrance": "独栋住宅区入口",
+                "houses_park_corner": "街角小公园",
+                "houses_garbage_point": "垃圾收集点"
+            }
+        }
+    }
+}

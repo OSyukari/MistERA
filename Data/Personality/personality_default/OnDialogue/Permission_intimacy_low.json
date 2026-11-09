@@ -1,12 +1,12 @@
 {
-    "_doc": "口上loose entry文件：许可「轻度亲密」（intimacy_low，摸头、拥抱、牵手等轻度身体接触）的请求口上。Permission_[id]_Request：玩家在对话菜单选择请求该许可、确认框弹出时（尚未正式提出）；Permission_[id]_Granted：答应给予许可时——对话菜单请求获准，或指令进行中被自动请求并获准（插在该指令接受结果之前）；Permission_[id]_Refused：拒绝时。供 Data/Events/OnDialogue_Permissions 与 EvaluationPackage.RequestMissingPermissions 检索，无通用兜底。\n\n== 口上通用生成规范 ==\n1. 每条response只能是一句被引号包裹的台词，禁止旁白、动作、心理与场景描写。\n2. 不自我介绍、不点名说话者；$self$/$target$仅用于自然称呼，可不使用。\n3. 1~2句自然口语。personality_default为女性口上，personality_base为男性口上，语气应区分。\n4. 每个条目一个variant、3条可选response，语义同向、措辞各异；以后再按关系等条件扩充。",
+    "_doc": "口上loose entry文件：许可「友好接触」（intimacy_low，摸头、拥抱、牵手等轻度身体接触）的请求口上。Permission_[id]_Request：玩家在对话菜单选择请求该许可、确认框弹出时（尚未正式提出）；Permission_[id]_Granted：答应给予许可时——对话菜单请求获准，或指令进行中被自动请求并获准（插在该指令接受结果之前）；Permission_[id]_Refused：拒绝时。供 Data/Events/OnDialogue_Permissions 与 EvaluationPackage.RequestMissingPermissions 检索，无通用兜底。\n\n== 口上通用生成规范 ==\n1. 每条response只能是一句被引号包裹的台词，禁止旁白、动作、心理与场景描写。\n2. 不自我介绍、不点名说话者；$self$/$target$仅用于自然称呼，可不使用。\n3. 1~2句自然口语。personality_default为女性口上，personality_base为男性口上，语气应区分。\n4. 每个条目一个variant、3条可选response，语义同向、措辞各异；以后再按关系等条件扩充。",
     "Character_Personalities": {
         "looselist": [
             {
                 "ID": "personality_default",
                 "Entry": {
                     "ID": "permission_intimacy_low_Request",
-                    "_comment": "玩家想请求轻度亲密许可，刚开口、尚未说明。女性NPC对此的反应。全年龄。",
+                    "_comment": "玩家想请求友好接触许可，刚开口、尚未说明。女性NPC对此的反应。全年龄。",
                     "variants": [ { "responses": [
                         "\"嗯？怎么啦，表情这么认真。\"",
                         "\"有什么想对我说的吗？\"",
@@ -18,7 +18,7 @@
                 "ID": "personality_default",
                 "Entry": {
                     "ID": "permission_intimacy_low_Granted",
-                    "_comment": "答应给予轻度亲密许可（菜单请求获准，或接触类指令进行中被自动请求获准）。女性说话者。全年龄。",
+                    "_comment": "答应给予友好接触许可（菜单请求获准，或接触类指令进行中被自动请求获准）。女性说话者。全年龄。",
                     "variants": [ { "responses": [
                         "\"……嗯，可以哦，不过要温柔一点。\"\n%%permission_intimacy_low_consent%%",
                         "\"牵牵手、抱一下什么的，没关系的。\"\n%%permission_intimacy_low_consent%%",
@@ -30,7 +30,7 @@
                 "ID": "personality_default",
                 "Entry": {
                     "ID": "permission_intimacy_low_Refused",
-                    "_comment": "拒绝给予轻度亲密许可。女性NPC，委婉为主，不过度激烈。全年龄。",
+                    "_comment": "拒绝给予友好接触许可。女性NPC，委婉为主，不过度激烈。全年龄。",
                     "variants": [ { "responses": [
                         "\"抱歉……我们还没那么熟吧。\"",
                         "\"这个……还是先保持点距离吧。\"",

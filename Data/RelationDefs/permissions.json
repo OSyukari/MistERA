@@ -3,13 +3,13 @@
         "purpose": "Permission definitions and the actions that need them (rules). Granter = the deciding character of a willingness check, holder = its act partner (holderRole ActPartner) or whoever the check is toward, Master included (CheckTarget).",
         "rules": "Matched like experience entries (EvaluationPackage.ApplyPermissionRules): applyToDoer / applyToReceiver = the granter's position; RequiredOwnerTags / ExcludeOwnerTags against the granter's tags plus context tags (doer / receiver, body_[tag] and partner_body_[tag] from the command's requirement body tags and an ingest command's ingestBodyTag, scene_group = sex job with more than 2 actors, scene_observed = awake conscious non-participant in the room); RequiredCOMTags / ExcludeCOMTags against the leaf command's and its parent's comTags. Any matching rule counts the permission once per check; penalty on a rule overrides missingPermissionPenalty. Missing soft permissions stack; a missing Hard one sets the check to 0.",
         "legacy": "permission_follow and permission_intimacy_low/medium/high reproduce the former hardcoded chain (followRequest > sex > unsafe > touch, only the strongest applies, through ExcludeCOMTags) with holderRole CheckTarget, legacyConsent (clears the old hasPermission flag) and their old tooltip keys. The Family permission is retired: its creampie memory / relationship costs are now consequences.",
-        "modes": "Soft (default): penalty only. Hard: a true gate - check 0 everywhere, previews included (command shown disabled), forcing cannot override it, plain OnAPRefuse. SoftEvent (permission_sex_unprotected): penalty only, the acceptance check decides (a refusal plays the plain OnAPRefuse). An act accepted while it is still missing is stopped before it begins and the granter's demand plays (demandEventID, ActionPackage.TryStopForDemand); ignoring the demand resumes the act with the accepted result kept and records the pair on the scene (Job_Sex_Group.RecordPermissionPush) - no demand for it again in this scene. Forced commands get no demand.",
+        "modes": "Soft (default): penalty only. Hard: a true gate - check 0 everywhere, previews included (command shown disabled), forcing cannot override it, plain OnAPRefuse. SoftEvent (permission_sex_unprotected, permission_sex_dangerday_creampie): penalty only, the acceptance check decides (a refusal plays the plain OnAPRefuse). An act accepted while it is still missing is stopped before it begins and the granter's demand plays (demandEventID, ActionPackage.TryStopForDemand); ignoring the demand resumes the act with the accepted result kept and records the pair on the scene (Job_Sex_Group.RecordPermissionPush) - no demand for it again in this scene. When the pair misses several of them in one act (danger day without either permission), only the first in list order demands (dangerday) and ignoring it records the push for all of them. Forced commands get no demand.",
         "consequences": "Relationship cost when the act happens without the permission (PermissionConsequences.Apply, at the cum delivery): the granter gained experienceID from the holder (optional RequiredOwnerTags / ExcludeOwnerTags on the granter's experience tags, actor tags included) -> each score changes by gained amount (ml for *_cum_total) x multiplier, granter -> holder. Any applied consequence also makes the creampie memory the 'nopermission' one with attitude Hate. No mouth (M) consequence for now.",
         "intimacyTags": "A command can ask for an intimacy tier explicitly with the comTag permission_intimacy_low / _medium / _high (e.g. the condom commands, which carry no 'sex' tag); the lower tiers exclude the higher tags so only the strongest applies.",
-        "commandTags": "Commands needing anal permission carry the comTag permission_anal (A positions, finger insert, oral A, anal item insertion), vaginal ones permission_vaginal (V positions, finger insert, oral V, vaginal item insertion). The body_anus / body_vagina owner tag picks which side is the granter. Caress-only commands (finger caress A, legs caress C, P_V outside) carry neither.",
-        "dangerDay": "sex_dangerday_creampie (危险日生中出合意): penis-in-vagina while the vagina's owner is on a danger day - actor tag dangerDay from UtilityEX.GetActorTag (ReproductionUtility.IsDangerDay: ovulation phase / estrus, or a released unfertilized egg in a womb). It stacks with sex_vaginal.",
+        "commandTags": "Commands needing anal permission carry the comTag permission_anal (A positions, finger insert, oral A, anal item insertion), vaginal ones permission_vaginal (V positions, finger insert, oral V, vaginal item insertion). The body_anus / body_vagina owner tag picks which side is the granter. Caress-only commands (legs caress C, P_V outside) carry neither; finger caress A carries permission_anal (2026-11-06). permission_sex_oral needs no command tag: its granter is whoever's own mouth the command uses (owner tag body_mouth) on any sex or condom command - a kiss asks both sides.",
+        "dangerDay": "sex_dangerday_creampie (危险日生中出合意): penis-in-vagina while the vagina's owner is on a danger day - actor tag dangerDay from UtilityEX.GetActorTag (ReproductionUtility.IsDangerDay: ovulation phase / estrus, or a released unfertilized egg in a womb). It stacks with sex_vaginal. SoftEvent: an accepted act still missing it plays the condom demand OnAPRefuse_DangerDay (same answers as OnAPRefuse_Unprotected); ignoring it lets the act go on, and a creampie applies the consequences.",
         "protection": "Context tag condom / partner_condom: the granter's / partner's organ in this act wears an empty condom (EvaluationPackage.IsActOrganProtected, EVP_ActOrgans - the chosen organ, or the one the pick will prefer). sex_unprotected and sex_dangerday_creampie exclude partner_condom; a filled condom is not protection.",
-        "tuning": "Null or omitted missingPermissionPenalty means unconfigured. The sex_* penalties are provisional.",
+        "tuning": "Null or omitted missingPermissionPenalty means unconfigured. The sex_* penalties are provisional. Intimacy -4/-6/-10 (2026-11-03, was -2/-3/-4): raised by the amount each tier's command base AC was lowered (2/3/6), so a held permission is the main way the consensual route becomes reachable while a missing one stays about where it was at High pride. Request Desire raised 2026-11-06 (Desire accumulates fast once intimacy starts; reaching it is the hard part): medium 50, high 100, vaginal 200, anal 250, unprotected 300 (Trust lowered 75 -> 50), danger-day Trust 150 (was 100), observed 1000, group 1500.",
         "skillBypass": "Optional { skillID, minLevel, excludedTraitIDs }: the granter's own skill at that level counts as the permission unless any excluded trait is present (PermissionEffectiveSource.SkillBypass). Nothing stored or requested; the act's own acceptance check still applies. Provisional: sex_anal = skill_sensitivity_A 3, sex_vaginal = skill_sensitivity_V 3; available for all Chastity traits.",
         "requests": "Both menu and automatic requests use PermissionService.CanRequest / AcceptsRequest: live pair, requestable, canAct granter and explicit requiredRelationshipTags, then every adjusted requestRequirements entry, no roll. Shipped intimacy has no requiredRelationshipTags. normalGrantRelationshipTags selects only NEW grant lifetime: sexual_partner = Normal, otherwise Temporary today. Existing Normal grants still use only requiredRelationshipTags for validity. Event/preset grants stay explicit. GrantPermission fourth argument Request opts menu requests into the shared decision and requestGrantType.",
         "requestModifiers": "Provisional, directed granter-to-holder. Select any relationship ID/source-side tag, optionally requiring a granter traitID. Only positive gt/gte requireScore/requireRawScore thresholds change; score comparisons (including Badwill), mood, lust, stress and upper/equality bounds never change. Per score take strongest relationship benefit (never stack): Low Friend Trust -2, BFF Trust -4, sexual_partner all requestable scopes x0.8 (20%). Then multiply matched trait scales using decimal arithmetic and ceil to integer. Low/Medium caring x1.25 / indifferent x0.75; High and all detailed scopes caring x1.5 / indifferent x0.5. Normal/absent trait = x1. Modifiers affect requests only, never global action acceptance or explicit grants. Pride grants follow only.",
@@ -39,7 +39,7 @@
                     { "displayName": "permission_request_caring_medium", "traitID": "trait_Chastity_caring", "thresholdScale": 1.25 },
                     { "displayName": "permission_request_indifferent_medium", "traitID": "trait_Chastity_indifferent", "thresholdScale": 0.75 }
                 ],
-                "missingPermissionPenalty": -2,
+                "missingPermissionPenalty": -4,
                 "holderRole": "CheckTarget",
                 "legacyConsent": true,
                 "missingTooltip": "com_rel_tooltip_nopermission_low",
@@ -53,13 +53,13 @@
                 "displayName": "permission_intimacy_medium_displayName",
                 "normalGrantRelationshipTags": ["sexual_partner"],
                 "requestable": true,
-                "requestRequirements": [ { "requireScore": [ { "requireScoreID": "Trust", "operand": "gte", "value": 20 }, { "requireScoreID": "Desire", "operand": "gte", "value": 30 } ] } ],
+                "requestRequirements": [ { "requireScore": [ { "requireScoreID": "Trust", "operand": "gte", "value": 20 }, { "requireScoreID": "Desire", "operand": "gte", "value": 50 } ] } ],
                 "requestModifiers": [
                     { "displayName": "permission_request_partner", "relationshipTags": ["sexual_partner"], "thresholdScale": 0.8 },
                     { "displayName": "permission_request_caring_medium", "traitID": "trait_Chastity_caring", "thresholdScale": 1.25 },
                     { "displayName": "permission_request_indifferent_medium", "traitID": "trait_Chastity_indifferent", "thresholdScale": 0.75 }
                 ],
-                "missingPermissionPenalty": -3,
+                "missingPermissionPenalty": -6,
                 "holderRole": "CheckTarget",
                 "legacyConsent": true,
                 "missingTooltip": "com_rel_tooltip_nopermission_medium",
@@ -73,19 +73,42 @@
                 "displayName": "permission_intimacy_high_displayName",
                 "normalGrantRelationshipTags": ["sexual_partner"],
                 "requestable": true,
-                "requestRequirements": [ { "requireScore": [ { "requireScoreID": "Trust", "operand": "gte", "value": 30 }, { "requireScoreID": "Desire", "operand": "gte", "value": 60 } ] } ],
+                "requestRequirements": [ { "requireScore": [ { "requireScoreID": "Trust", "operand": "gte", "value": 30 }, { "requireScoreID": "Desire", "operand": "gte", "value": 100 } ] } ],
                 "requestModifiers": [
                     { "displayName": "permission_request_partner", "relationshipTags": ["sexual_partner"], "thresholdScale": 0.8 },
                     { "displayName": "permission_request_caring_high", "traitID": "trait_Chastity_caring", "thresholdScale": 1.5 },
                     { "displayName": "permission_request_indifferent_high", "traitID": "trait_Chastity_indifferent", "thresholdScale": 0.5 }
                 ],
-                "missingPermissionPenalty": -4,
+                "missingPermissionPenalty": -10,
                 "holderRole": "CheckTarget",
                 "legacyConsent": true,
                 "missingTooltip": "com_rel_tooltip_nopermission_high",
                 "rules": [
                     { "RequiredCOMTags": ["sex"], "ExcludeCOMTags": ["followRequest"] },
                     { "RequiredCOMTags": ["permission_intimacy_high"], "ExcludeCOMTags": ["followRequest"] }
+                ]
+            },
+            {
+                "ID": "permission_sex_oral",
+                "displayName": "permission_sex_oral_displayName",
+                "tags": ["nsfw"],
+                "normalGrantRelationshipTags": ["sexual_partner"],
+                "requestModifiers": [
+                    { "displayName": "permission_request_partner", "relationshipTags": ["sexual_partner"], "thresholdScale": 0.8 },
+                    { "displayName": "permission_request_caring_high", "traitID": "trait_Chastity_caring", "thresholdScale": 1.5 },
+                    { "displayName": "permission_request_indifferent_high", "traitID": "trait_Chastity_indifferent", "thresholdScale": 0.5 }
+                ],
+                "requestable": true,
+                "requestRequirements": [ {
+                    "requireScore": [ { "requireScoreID": "Trust", "operand": "gte", "value": 30 }, { "requireScoreID": "Desire", "operand": "gte", "value": 120 } ],
+                    "requireScoreCompare": [ { "requireScoreID": "Desire", "operand": "gt", "compareScoreID": "Badwill", "compareScoreMult": 1.0 } ],
+                    "requireLust": { "operand": "gte", "value": 1 }
+                } ],
+                "missingPermissionPenalty": -3,
+                "skillBypass": { "skillID": "skill_sensitivity_M", "minLevel": 3 },
+                "rules": [
+                    { "RequiredOwnerTags": ["body_mouth"], "RequiredCOMTags": ["sex"] },
+                    { "RequiredOwnerTags": ["body_mouth"], "RequiredCOMTags": ["condom"] }
                 ]
             },
             {
@@ -100,7 +123,7 @@
                 ],
                 "requestable": true,
                 "requestRequirements": [ {
-                    "requireScore": [ { "requireScoreID": "Trust", "operand": "gte", "value": 60 }, { "requireScoreID": "Desire", "operand": "gte", "value": 100 } ],
+                    "requireScore": [ { "requireScoreID": "Trust", "operand": "gte", "value": 60 }, { "requireScoreID": "Desire", "operand": "gte", "value": 250 } ],
                     "requireScoreCompare": [ { "requireScoreID": "Desire", "operand": "gt", "compareScoreID": "Badwill", "compareScoreMult": 1.0 } ],
                     "requireLust": { "operand": "gte", "value": 1 }
                 } ],
@@ -123,7 +146,7 @@
                 ],
                 "requestable": true,
                 "requestRequirements": [ {
-                    "requireScore": [ { "requireScoreID": "Trust", "operand": "gte", "value": 30 }, { "requireScoreID": "Desire", "operand": "gte", "value": 60 } ],
+                    "requireScore": [ { "requireScoreID": "Trust", "operand": "gte", "value": 30 }, { "requireScoreID": "Desire", "operand": "gte", "value": 200 } ],
                     "requireScoreCompare": [ { "requireScoreID": "Desire", "operand": "gt", "compareScoreID": "Badwill", "compareScoreMult": 1.0 } ],
                     "requireLust": { "operand": "gte", "value": 1 }
                 } ],
@@ -143,10 +166,12 @@
                 ],
                 "requestable": true,
                 "requestRequirements": [ {
-                    "requireScore": [ { "requireScoreID": "Trust", "operand": "gte", "value": 100 }, { "requireScoreID": "Goodwill", "operand": "gte", "value": 100 }, { "requireScoreID": "Desire", "operand": "gte", "value": 100 } ],
+                    "requireScore": [ { "requireScoreID": "Trust", "operand": "gte", "value": 150 }, { "requireScoreID": "Goodwill", "operand": "gte", "value": 100 }, { "requireScoreID": "Desire", "operand": "gte", "value": 100 } ],
                     "requireScoreCompare": [ { "requireScoreID": "Desire", "operand": "gt", "compareScoreID": "Badwill", "compareScoreMult": 1.0 } ],
                     "requireMood": { "operand": "gte", "value": 0 }
                 } ],
+                "mode": "SoftEvent",
+                "demandEventID": "OnAPRefuse_DangerDay",
                 "missingPermissionPenalty": -3,
                 "rules": [ { "RequiredOwnerTags": ["body_vagina", "dangerDay", "partner_body_penis"], "ExcludeOwnerTags": ["partner_condom"], "RequiredCOMTags": ["permission_vaginal", "penetration"] } ],
                 "consequences": [
@@ -165,7 +190,7 @@
                 ],
                 "requestable": true,
                 "requestRequirements": [ {
-                    "requireScore": [ { "requireScoreID": "Trust", "operand": "gte", "value": 75 }, { "requireScoreID": "Desire", "operand": "gte", "value": 100 } ],
+                    "requireScore": [ { "requireScoreID": "Trust", "operand": "gte", "value": 50 }, { "requireScoreID": "Desire", "operand": "gte", "value": 300 } ],
                     "requireScoreCompare": [ { "requireScoreID": "Desire", "operand": "gt", "compareScoreID": "Badwill", "compareScoreMult": 1.0 } ],
                     "requireMood": { "operand": "gte", "value": 0 }
                 } ],
@@ -189,7 +214,7 @@
                 ],
                 "requestable": true,
                 "requestRequirements": [ {
-                    "requireScore": [ { "requireScoreID": "Desire", "operand": "gte", "value": 150 } ],
+                    "requireScore": [ { "requireScoreID": "Desire", "operand": "gte", "value": 1500 } ],
                     "requireScoreCompare": [ { "requireScoreID": "Desire", "operand": "gt", "compareScoreID": "Badwill", "compareScoreMult": 1.0 } ],
                     "requireLust": { "operand": "gte", "value": 2 }
                 } ],
@@ -208,7 +233,7 @@
                 ],
                 "requestable": true,
                 "requestRequirements": [ {
-                    "requireScore": [ { "requireScoreID": "Desire", "operand": "gte", "value": 100 } ],
+                    "requireScore": [ { "requireScoreID": "Desire", "operand": "gte", "value": 1000 } ],
                     "requireScoreCompare": [ { "requireScoreID": "Desire", "operand": "gt", "compareScoreID": "Badwill", "compareScoreMult": 1.0 } ],
                     "requireLust": { "operand": "gte", "value": 1 }
                 } ],

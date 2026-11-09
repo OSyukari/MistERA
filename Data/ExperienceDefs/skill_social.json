@@ -30,16 +30,6 @@
                                 "skillUseTags":"social",
                                 "requireCOMTags":["interaction"],
                                 "allowDC":true
-                            } ,
-                            {
-                                "skillUseTags":"touch",
-                                "requireCOMTags":["safe"],
-                                "allowDC":true
-                            } ,
-                            {
-                                "skillUseTags":"unsafe",
-                                "requireCOMTags":["touch"],
-                                "allowDC":true
                             }
                         ]
                     },{

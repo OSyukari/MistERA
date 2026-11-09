@@ -4,7 +4,14 @@
     },
     "Dictionary": {
         "Entries": {
-            "en-us": {
+            "en-us": {                "com_furniture_sleep_withNames": "Sleep with $names$",
+                "com_furniture_divider_enter_displayName": "Go in",
+                "com_furniture_divider_enter_begin_1": "$doer.firstname$ went in",
+                "com_furniture_divider_enter_ongoing_1": "$doer.firstname$ is going in",
+                "com_furniture_divider_leave_displayName": "Come out",
+                "com_furniture_divider_leave_begin_1": "$doer.firstname$ came out",
+                "com_furniture_divider_leave_ongoing_1": "$doer.firstname$ is coming out",
+                "com_furniture_sleep_ownedBed": "$command$ ($owners$'s bed)",
                 "com_furniture_changeOutfit_displayName_1": "Change outfit",
                 "com_furniture_changeOutfit_begin_1": "$doer.firstname$ starts changing their outfit",
                 "com_furniture_changeOutfit_ongoing_1": "$doer.firstname$ is changing their outfit",

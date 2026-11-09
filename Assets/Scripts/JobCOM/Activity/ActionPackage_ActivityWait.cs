@@ -24,28 +24,10 @@ public class ActionPackage_ActivityWait : ActionPackage_Interaction
 
     }
 
-    /// <summary>The player's late-join command (Job_Activity.JoinCOMID) rather than a wait.</summary>
-    [JsonIgnore] bool IsJoin { get { return targetCOM != null && targetCOM.ID == Job_Activity.JoinCOMID; } }
-
-    /// <summary>The player's own package - shown as a command button (Job_Activity.MakePlayerWaitPackage / MakePlayerJoinPackage).</summary>
+    /// <summary>The player's own package - shown as a command button (Job_Activity.MakePlayerWaitPackage).</summary>
     [JsonIgnore] bool IsPlayers { get { return DoerRefs.Contains(0); } }
 
-    [JsonProperty] bool joinStarted = false;
-
-    /// <summary>
-    /// The player's wait button reads as joining (recreation_activity_wait_playerDisplayName) once T is reached; before
-    /// T it keeps the COM's own name ("等待活动开始"), like everyone else's package.
-    /// </summary>
-    [JsonIgnore] public override string DisplayName
-    {
-        get
-        {
-            bool joining = IsPlayers && !IsJoin && job is Job_Activity activity && activity.HasStarted;
-            return joining ? LocalizeDictionary.QueryThenParse("recreation_activity_wait_playerDisplayName") : base.DisplayName;
-        }
-    }
-
-    /// <summary>The player's buttons (wait and late join) also tell which activity they join: its name and details (I_ActivityBooking of the job's visit).</summary>
+    /// <summary>The player's wait button also tells which activity they wait for: its name and details (I_ActivityBooking of the job's visit).</summary>
     public override string GetTooltips(string s)
     {
         s = base.GetTooltips(s);
@@ -58,31 +40,29 @@ public class ActionPackage_ActivityWait : ActionPackage_Interaction
         return string.IsNullOrEmpty(s) ? line : $"{s}\n{line}";
     }
 
-    /// <summary>A wait: the job's remaining wait (Job_Activity.WaitMinutesLeft); the late join: 1 minute; else the COM's own timeScale.</summary>
+    /// <summary>The job's remaining wait (Job_Activity.WaitMinutesLeft); else the COM's own timeScale.</summary>
     int WaitDuration
     {
         get
         {
-            if (IsJoin) return 1;
             if (job is Job_Activity activity) return activity.WaitMinutesLeft;
             return targetCOM != null ? System.Math.Max(1, targetCOM.TimeScale) : 1;
         }
     }
 
-    /// <summary>The same admission rules apply to the button and the actual event invocation.</summary>
+    /// <summary>Only while gathering; the player's wait also needs the job's admission (CanPlayerJoin).</summary>
     protected override bool PreEvaluate()
     {
         if (!base.PreEvaluate()) return false;
         if (job is Job_Activity activity)
         {
-            bool phaseOk = IsJoin ? activity.Phase == ActivityPhase.Launched : activity.Phase == ActivityPhase.Gathering;
-            if (!phaseOk)
+            if (activity.Phase != ActivityPhase.Gathering)
             {
-                tooltip.Add(LocalizeDictionary.QueryThenParse(IsJoin ? "ui_ap_PreEvaluate_activityNotLaunched" : "ui_ap_PreEvaluate_activityNotGathering"));
+                tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_PreEvaluate_activityNotGathering"));
                 isValid = false;
                 return false;
             }
-            if (IsPlayers && !activity.CanPlayerJoin(scr_System_CampaignManager.current.Player, PackageRoom, IsJoin, out var reason))
+            if (IsPlayers && !activity.CanPlayerJoin(scr_System_CampaignManager.current.Player, PackageRoom, false, out var reason))
             {
                 tooltip.Add(LocalizeDictionary.QueryThenParse(reason));
                 isValid = false;
@@ -90,15 +70,6 @@ public class ActionPackage_ActivityWait : ActionPackage_Interaction
             }
         }
         return true;
-    }
-
-    protected override void PackageBegin(MessageCollect m = null)
-    {
-        if (!IsJoin) { base.PackageBegin(m); return; }
-        if (joinStarted) return;
-        joinStarted = true;
-        if (!(job is Job_Activity activity) || !IsPlayers
-            || !activity.JoinPlayer(scr_System_CampaignManager.current.Player, PackageRoom)) DisablePackage();
     }
 
     public override void ReInitializeCOM(Job job, COM targetCOM, List<int> doer, List<int> receiver, int masterRef = -1, bool resetDuration = true)
@@ -125,7 +96,6 @@ public class ActionPackage_ActivityWait : ActionPackage_Interaction
         var copy = new ActionPackage_ActivityWait(job, targetCOM, DoerRefs, ReceiverRefs, masterRef);
         copy.SetVariantID(this.validVariant);
         copy.LoggedBegin = this.LoggedBegin;
-        copy.joinStarted = this.joinStarted;
         return copy;
     }
 }

@@ -71,6 +71,8 @@
                 "ID":"CoffinAnL_Household",
                 "z_rotation":0.0,
                 "isPublic":false,
+                "showLockedFloors":true,
+                "_comment_residence":"home in the apartment district jp_district_apartment (JP_World/world.json initializeResidences), no world door",
                 "setPrivateRoomOwner":true,
                 "isRentingFloor": true,
                 "_comment_isRentingFloor": "renting their apartment, unspecified landlord",

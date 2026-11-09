@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public enum PrideLevel
 {
@@ -354,17 +355,17 @@ public class RelationshipManager
     [JsonIgnore] Character_Attitude _currentAttitude = null;
 
     // Round-scoped signal buffer. Not serialized - losing one round's signal across a save/load is an
-    // acceptable, rare edge case (the buffer is only ever read at the start of the next PreUpdateTime tick
-    // after it's built, then unconditionally discarded - see FinalizeAttitudeRound/_attitudeRoundPending).
+    // acceptable, rare edge case (the buffer is read at the end of the minute it's built in, then
+    // unconditionally discarded - see FinalizeAttitudeRound/_attitudeRoundPending).
     [JsonIgnore] RelationshipScoreType? _roundDominantKey = null;
     [JsonIgnore] Character_Relationship _roundDominantTargetRel = null;
     [JsonIgnore] float _roundDominantMagnitude = 0f;
     [JsonIgnore] int _roundDominantSign = 0;
 
     // Set by NotifyAttitudeRoundPending (called from ActionPackage completion, once per involved actor) and
-    // consumed by FinalizeAttitudeRound (called from this actor's own PreUpdateTime). Lets several APs that
-    // resolve for this actor within the same tick all accumulate into one shared round buffer via
-    // RegisterAttitudeDelta and get evaluated together in a single pass at the next tick boundary, instead
+    // consumed by FinalizeAttitudeRound (called from this actor's own PostUpdateTimeFinalize). Lets several APs
+    // that resolve for this actor within the same tick all accumulate into one shared round buffer via
+    // RegisterAttitudeDelta and get evaluated together in a single pass at the end of that tick, instead
     // of each AP synchronously triggering its own immediate, fragmented evaluation.
     [JsonIgnore] bool _attitudeRoundPending = false;
 
@@ -404,8 +405,11 @@ public class RelationshipManager
     }
 
     /// <summary>
-    /// Called once per actor from that actor's own Character_Trainable.PreUpdateTime (NOT by whichever
-    /// ActionPackage happens to touch them - ownership of when to evaluate belongs to the actor). Skips
+    /// Called once per actor from that actor's own Character_Trainable.PostUpdateTimeFinalize, at the end of
+    /// the minute the APs resolved in - before the player sees the next command list, so the AC preview uses
+    /// the attitude the next roll will (NOT by whichever ActionPackage happens to touch them - ownership of
+    /// when to evaluate belongs to the actor). PreUpdateTime also calls it as a safety net for APs resolved
+    /// outside any update; with nothing pending that call only clears the buffer. Skips
     /// entirely unless an AP notified this actor since the last call (see _attitudeRoundPending) - but
     /// either way, the round buffer is unconditionally discarded before returning, so nothing carries over
     /// past one tick. When it does run: applies mismatch-gated decay, rechecks at 0 intensity.
@@ -823,8 +827,39 @@ public class RelationshipManager
         RegisterAttitudeDelta(relID, targetRel, amount);
     }
     public List<Stat_Modifier> moodlets = new List<Stat_Modifier>();
+
+    /// <summary>
+    /// A relationship score / type of this owner changed: refresh moodlets at the owner's own PostUpdateTimeFinalize,
+    /// whatever its room did. Starts true so every character refreshes once after load. Cleared by any RefreshMoodlets
+    /// (a room-driven refresh earlier in the same update covers it).
+    /// </summary>
+    [JsonIgnore] bool _moodletsDirty = true;
+    public void MarkMoodletsDirty() { _moodletsDirty = true; }
+    public void RefreshMoodletsIfDirty()
+    {
+        if (!_moodletsDirty) return;
+        _moodletsDirty = false;
+        var map = scr_System_CampaignManager.current.Map;
+        var room = map.FindRoomByChara(Owner.RefID);
+        if (room == null || !map.IsActiveRoom(room.RefID)) return;   // orphan rooms stay frozen
+        MapUtility.RefreshMoodletsVisible(Owner, room.RoomChara);
+    }
+
+    // previous refresh's moodlets: the Stat_Modifiers are reused and mutated in place, so their values are kept separately
+    [JsonIgnore] readonly List<Stat_Modifier> _moodletsPrevious = new List<Stat_Modifier>();
+    [JsonIgnore] readonly List<float> _moodletValuesPrevious = new List<float>();
+
     public void RefreshMoodlets(List<Character_Trainable> cs)
     {
+        _moodletsDirty = false;
+        _moodletsPrevious.Clear();
+        _moodletValuesPrevious.Clear();
+        for (int i = 0; i < moodlets.Count; i++)
+        {
+            _moodletsPrevious.Add(moodlets[i]);
+            _moodletValuesPrevious.Add(moodlets[i].ValueFloat);
+        }
+
         moodlets.Clear();
         // Room-wide Trust/Fear/Goodwill/Badwill moodlets from every character sharing the room turned out to
         // be too noisy - a character locked into an uninterruptible job (e.g. mid-scene) should only pick up
@@ -845,8 +880,15 @@ public class RelationshipManager
             var modd = room.GetCleanlinessMod(Owner);
             if (modd != null) moodlets.Add(modd);
         }
-        if (Owner.Stats.Stress != null) Owner.Stats.Stress.ClearCache();
-        if (Owner.Stats.Mood != null) Owner.Stats.Mood.ClearCache();
+
+        // Stress / Mood pull moodlets in their own recompute (StatusEx_Instance.ClearCache), which no stat notification
+        // tracks - so they are marked dirty here (with their readers; recomputed on next read), and only when the result changed
+        bool changed = moodlets.Count != _moodletsPrevious.Count;
+        for (int i = 0; i < moodlets.Count && !changed; i++)
+            changed = !ReferenceEquals(moodlets[i], _moodletsPrevious[i]) || moodlets[i].ValueFloat != _moodletValuesPrevious[i];
+        if (!changed) return;
+        Owner.Stats.MarkStatDirty(MemoryManager.MemoryStat_Stress);
+        Owner.Stats.MarkStatDirty(MemoryManager.MemoryStat_Mood);
     }
 
     public List<Stat_Modifier> GetMoodlet(string statID)
@@ -1182,12 +1224,67 @@ public class RelationshipManager
         return LocalizeDictionary.QueryThenParse("relationship_attitude_uiEntry").Replace("$content$", attitude == null ? " - " : attitude.DisplayName);
     }
 
+    public static void GetRelTooltip(Character_Relationship rel, ref string output, List<string> relName, List<string> relTooltip)
+    {
+        relName.Clear();
+        relTooltip.Clear();
+
+        relTooltip.Add(rel.TrustCap_Tooltip);
+        if (!scr_System_CentralControl.current.isSafeMode)
+        {
+            relTooltip.Add(LocalizeDictionary.QueryThenParse(rel.CanBeAttractedTo
+                ? "relationship_attraction_eligible"
+                : "relationship_attraction_ineligible").Replace("$target$", rel.TargetName));
+        }
+
+
+        if (rel.Relationship_Bio != null)
+        {
+            var name = rel.Relationship_Bio.GetDisplayName(rel.Owner, !rel.isA_Bio);
+            if (name.Length > 0)
+            {
+                relName.Add(name);
+                relTooltip.Add($"{LocalizeDictionary.QueryThenParse("rel_tooltip_biological")}: {rel.Relationship_Bio.TooltipShort}");
+            }
+        }
+        foreach (var key in rel.Relationship_Social_Keys)
+        {
+            if (rel.tryGetSocialFaction(key, out var rel2, out var isA))
+            {
+                var name = rel2.GetDisplayName(rel.Owner, !isA);
+                if (name.Length > 0)
+                {
+                    relName.Add(name);
+                    relTooltip.Add($"{LocalizeDictionary.QueryThenParse("rel_tooltip_social")}: {rel2.TooltipShort}");
+                }
+            }
+        }
+        if (rel.Relationship_Personal != null)
+        {
+            var name = rel.Relationship_Personal.GetDisplayName(rel.Owner, !rel.isA_Personal);
+            if (name.Length > 0)
+            {
+                relName.Add(name);
+                relTooltip.Add($"{LocalizeDictionary.QueryThenParse("rel_tooltip_personal")}: {rel.Relationship_Personal.Tooltip}");
+            }
+        }
+
+        output += "\n\n" + rel.relationText.Replace("$name$", $"{rel.TargetName}" + (rel.Target.isTemporaryActor && rel.Target.Title.Length > 0 ? $"({rel.Target.Title})" : "")).Replace("$relation$", relName.Count > 0 ? String.Join(",", relName) : "no relation");
+        output += "\n\n" + String.Join("\n\n", relTooltip);
+    }
+
     public static void Draw(Character_Relationship rel, scr_box_relationship box, bool reverseScore = false)
     {
         List<string> relName = new List<string>();
         List<string> relTooltip = new List<string>();
 
         relTooltip.Add(rel.TrustCap_Tooltip);
+        if (!scr_System_CentralControl.current.isSafeMode)
+        {
+            relTooltip.Add(LocalizeDictionary.QueryThenParse(rel.CanBeAttractedTo
+                ? "relationship_attraction_eligible"
+                : "relationship_attraction_ineligible").Replace("$target$", rel.TargetName));
+        }
 
 
         if (rel.Relationship_Bio != null)

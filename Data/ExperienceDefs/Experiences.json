@@ -5,6 +5,7 @@
 {  "ExperienceID":"experience_cooking", "tags":[], "RequiredOwnerTags":[], "RequiredCOMTags":["cooking"] , "ExcludeOwnerTags":[] },
 {  "ExperienceID":"experience_farming", "tags":[], "RequiredOwnerTags":[], "RequiredCOMTags":["farming"] , "ExcludeOwnerTags":[] },
 {  "ExperienceID":"experience_social", "tags":[], "RequiredOwnerTags":[], "RequiredCOMTags":["social", "interaction"] , "ExcludeOwnerTags":[] },
+{  "ExperienceID":"experience_intimacy", "tags":[], "CountTotal":false, "ApplyToDoer":true, "ApplyToReceiver":true, "RequiredCOMTags":["intimacy", "touch", "interaction"], "ExcludeOwnerTags":["unconscious", "timestop"], "ExcludeCOMTags":["sex", "service", "NonInteraction"] },
 {  "ExperienceID":"experience_operating", "tags":[], "RequiredOwnerTags":[], "RequiredCOMTags":["operating"] , "ExcludeOwnerTags":[] }
         ]
     },
@@ -20,6 +21,8 @@
     "experience_cooking_tooltip":"int，调味 手艺 刀工",
     "experience_social":"社交经验",
     "experience_social_tooltip":"wis，交涉，察言观色，议价，欺瞒",
+    "experience_intimacy":"亲密经验",
+    "experience_intimacy_tooltip":"通过摸头、拥抱及日常抚摸、按摩积累，用于提升亲密技能。",
     "experience_farming":"农活经验",
 
     "experience_perception":"察觉经验",
@@ -69,6 +72,8 @@
     "experience_cooking_tooltip": "int, Seasoning, Craftsmanship, Knife Work",
     "experience_social": "Social Exp",
     "experience_social_tooltip": "wis, Negotiation, Insight, Bargaining, Deception",
+    "experience_intimacy": "Intimacy Exp",
+    "experience_intimacy_tooltip": "Gained through head pats, hugs, and ordinary touching or massage. Advances the Intimacy skill.",
     "experience_farming": "Farming Exp",
 
     "experience_perception": "Perception Exp",

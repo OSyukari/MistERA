@@ -53,6 +53,19 @@ public class Index_Events : I_IndexMergeable, I_IndexHasID, I_SerializationCallb
             if (!ID_Dictionary.TryAdd(i.ID, i)) Debug.Log($"failed to add Index_Events id [{i.ID}] due to duplicate");
         }
 
+        // EventManager.Trigger buckets, in list order. Each entry stores the definition registered under its ID (what the
+        // ID lookup used to return), so a duplicate ID still runs the registered definition.
+        int maxTrigger = 0;
+        foreach (EventTrigger t in System.Enum.GetValues(typeof(EventTrigger))) if ((int)t > maxTrigger) maxTrigger = (int)t;
+        triggerBuckets = new List<Event>[maxTrigger + 1];
+        foreach (var i in list)
+        {
+            if (i.trigger <= EventTrigger.None || string.IsNullOrEmpty(i.ID) || !ID_Dictionary.TryGetValue(i.ID, out var registered)) continue;
+            int t = (int)i.trigger;
+            if (t >= triggerBuckets.Length) continue;
+            (triggerBuckets[t] ??= new List<Event>()).Add(registered);
+        }
+
         s.Add($"Index_Events : registering questIDs with list length [{quests.Count}]");
         foreach (var q in quests)
         {
@@ -70,6 +83,16 @@ public class Index_Events : I_IndexMergeable, I_IndexHasID, I_SerializationCallb
 
     public Event GetByID(string ID)
     { return ID_Dictionary.ContainsKey(ID) ? ID_Dictionary[ID] : null; }
+
+    static readonly List<Event> NoEvents = new List<Event>();
+    List<Event>[] triggerBuckets = new List<Event>[0];
+
+    /// <summary>Events with this trigger in list order (built by RegisterAllID). Shared - do not modify.</summary>
+    public List<Event> GetByTrigger(EventTrigger trigger)
+    {
+        int i = (int)trigger;
+        return i >= 0 && i < triggerBuckets.Length && triggerBuckets[i] != null ? triggerBuckets[i] : NoEvents;
+    }
 
     public EventChain GetChainByID(string ID)
     { return ID != null && Chain_ID_Dictionary.TryGetValue(ID, out var c) ? c : null; }
@@ -295,6 +318,32 @@ public class Event : I_SerializationCallbackReceiver
     /// the event resolves (e.g. only apply on refusal) rather than always applying on start.
     /// </summary>
     public bool manualCooldown = false;
+
+    /// <summary>
+    /// Acceptance bonuses this event gives the commands it builds and injects itself (e.g. OnAPRefuse_Unprotected's
+    /// "let them put the condom on" answers, ActionPackage.SendDemandEvent). Read by the code that builds the command;
+    /// the bonus goes to the deciding side named there, with explanation as its tooltip reason.
+    /// </summary>
+    public List<CommandAcceptanceBonus> commandAcceptanceBonus = null;
+
+    public class CommandAcceptanceBonus
+    {
+        /// <summary>Commands this bonus applies to.</summary>
+        public List<string> comIDs = new List<string>();
+        /// <summary>D20 points (+1 = +5%).</summary>
+        public int value = 0;
+        /// <summary>Localization key of the reason shown with the check's modifiers.</summary>
+        public string explanation = "";
+    }
+
+    /// <summary>The bonus for comID, or null.</summary>
+    public CommandAcceptanceBonus GetCommandAcceptanceBonus(string comID)
+    {
+        if (commandAcceptanceBonus == null) return null;
+        foreach (var bonus in commandAcceptanceBonus)
+            if (bonus != null && bonus.comIDs != null && bonus.comIDs.Contains(comID)) return bonus;
+        return null;
+    }
 
     /// <summary>
     /// Since there is jump involved, Event itself should not be managing the flow
@@ -673,6 +722,8 @@ public class Event : I_SerializationCallbackReceiver
             ModStatusValue,
             ModStatEXValue,
             WakeUp,
+            /// <summary>[scopeKey, BodyEquipLayer, Revealing, bool armor, optional bool requireChange=false].
+            /// With requireChange, succeeds only if at least one equipped garment was actually removed.</summary>
             Undress,
             /// <summary>
             /// [string eventID, string selfLabel, string targetLabel, (int cooldownTime)] - registers a cooldown against
@@ -874,15 +925,15 @@ public class Event : I_SerializationCallbackReceiver
             SetBGImage,
 
             /// <summary>
-            /// [string tagFilter, bool deleteObject, bool fullDeflate, string deflateStringkey, string kojoStringKey, optional string memoryStringKey] <br/>
-            /// calls owner.Self.DeflateInternal(...) with the given arguments; returns whatever it returns (true if any deflation happened).
+            /// [string tagFilter, bool deleteObject, bool fullDeflate, string deflateStringkey, string kojoStringKey, optional string memoryStringKey, optional string scopeKey="self"] <br/>
+            /// Calls the scope's single non-null character's DeflateInternal; true if any deflation happened.
             /// memoryStringKey is the same as deflateStringkey's messages but without $name$, meant to be fed into
             /// LogMemoryEntryWithAppend's appendkey to log the deflation into the owner's own memory.
             /// </summary>
             DeflateInternal,
 
             /// <summary>
-            /// [string refkey, string bodyTag, bool fullDeflate] <br/>
+            /// [string refkey, string bodyTag, bool fullDeflate, optional string appendKey] <br/>
             /// resolves refkey against owner.Self ("self") or owner.Targets[refkey] (e.g. "doer"/"receiver"), then calls
             /// each resolved character's SwallowInternal(fullDeflate, bodyTag, owner.message.exp) — moving swallowable
             /// contents from that body part into wherever its tag_directionOut chain leads (e.g. mouth -> stomach),
@@ -891,6 +942,9 @@ public class Event : I_SerializationCallbackReceiver
             /// only swallows down to the visibly-expanded threshold (gated by canDeflate). Returns true if anyone
             /// swallowed anything. A FlushMessageExpAll (or FlushMessageAll) step is needed afterward in the same
             /// event to actually finalize and display whatever this logged into owner.message.exp.
+            /// If appendKey is given, the item tags of everything actually swallowed are added (no duplicates) to
+            /// AppendStrings[appendKey] - existing entries are kept, the key is not created when nothing was swallowed.
+            /// Branch on them with AppendStringContains (e.g. [appendKey, "cum"]).
             /// </summary>
             SwallowInternal,
 
@@ -1081,10 +1135,13 @@ public class Event : I_SerializationCallbackReceiver
             LeaveHeldFactionsByTag,
 
             /// <summary>
-            /// [string offerDefID, int dayOffset, optional int startHour, optional int hours] <br/>
+            /// [string offerDefID, int dayOffset, optional int startHour (-1 = the def's), optional int hours (-1 = the def's),
+            /// optional string answer ("now" | "dayUpdate" - default)] <br/>
             /// Posts a recreation offer (RecreationOfferDef - WorldPlan.AllRecreationOffers) on today + dayOffset, optionally at
-            /// another start/length than the def's (RecreationUtility.PostOffer). Each NPC picks it up in its own update:
-            /// an already planned day at its next hourly check (booked alone), a later day in its daily planning. False if the def is unknown.
+            /// another start/length than the def's (RecreationUtility.PostOffer). answer "now": every NPC who sees it answers in
+            /// their next late pass (RecreationUtility.AnswerImmediatePosts); "dayUpdate": at the next day update, like any
+            /// post (NPCs book new activities only then). Saved (RecreationBoard.eventOffers); after a load it waits for the
+            /// day update. False if the def is unknown.
             /// </summary>
             AddRecreationOffer,
 
@@ -1202,6 +1259,13 @@ public class Event : I_SerializationCallbackReceiver
             /// action with side effects after it in the same option - jump to a label that does the action instead.
             /// </summary>
             AppendStringEquals,
+
+            /// <summary>
+            /// [string key, string content] - true if the list in AppendStrings[key] contains content (a membership check
+            /// over a multi-entry list, e.g. the item tags SwallowInternal collects). Same branching rules as
+            /// AppendStringEquals: put it first in a line-less option, then JumpToLabel.
+            /// </summary>
+            AppendStringContains,
 
             /// <summary>
             /// [string storeKey, string establishmentFactionID, string memberTypeID, string templateID,
@@ -1480,7 +1544,15 @@ public class Event : I_SerializationCallbackReceiver
             /// ends (room released, back to their own home). A permanent resident is left there - only a new home moves
             /// them. E.g. the guest post's membershipFee.onFailedEventID, with the guest under "target".
             /// </summary>
-            CheckOutHotelGuest
+            CheckOutHotelGuest,
+
+            /// <summary>[scopeKey]. Washes the single non-null character's body traces; true only when traces were removed.</summary>
+            WashTraces,
+
+            /// <summary>[scopeKey, optional changedKey]. Conscious actors only; wardrobe sleep policy for NPCs,
+            /// outer/inner undressing for the player. Returns true only when equipment changed.
+            /// changedKey, when supplied, receives only the actors whose equipment changed.</summary>
+            PrepareForSleep
 
         }
     }

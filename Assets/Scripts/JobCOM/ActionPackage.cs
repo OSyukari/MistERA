@@ -345,7 +345,7 @@ public abstract class ActionPackage
     {
         get
         {
-            return this.targetCOMID != "" && this.targetCOM != null;
+            return this.targetCOMID != "" && this.targetCOM != null && this.targetCOM.allowJoining;
         }
     }
 
@@ -404,6 +404,7 @@ public abstract class ActionPackage
     /// <returns></returns>
     public virtual bool JoinAP(Character_Trainable c, Memory_Response forceAccept = Memory_Response.None, bool silent = false)
     {
+        if (targetCOM != null && !targetCOM.allowJoining) return false;
         if (!ValidateActivityCommandPolicy(c)) return false;
         if (this.doer.Contains(c)) return true;
         else if (this.receiver.Contains(c)) return true;
@@ -426,6 +427,8 @@ public abstract class ActionPackage
 
             foreach(var c2 in newchara)
             {
+                // an activity package lets a refusing joiner leave on their own (SettleActivityJoiners - already logged)
+                if (result && !this.actorRefs.Contains(c2.RefID)) continue;
                 if (result) c2.ChangeCurrentJob(this.job, this.targetCOMID);
                 if (silent && result) { }
                 else
@@ -458,14 +461,16 @@ public abstract class ActionPackage
                 this.validVariant = old_varID;
                 Request(true, forceAccept);
             }
+            else RegisterBoundJoiners(newchara);
 
-            return result;
+            return result && this.actorRefs.Contains(c.RefID);
         }
         else return false;
     }
 
     public virtual bool JoinAP(List<Character_Trainable> cs, Memory_Response forceAccept = Memory_Response.None, bool silent = false)
     {
+        if (targetCOM != null && !targetCOM.allowJoining) return false;
         if (!ValidateActivityCommandPolicy()) return false;
         foreach (var c in cs) if (!ValidateActivityCommandPolicy(c)) return false;
         var variantID = canJoinAP(cs, out var doers1, out var receivers1, out var tooltipss);
@@ -487,6 +492,8 @@ public abstract class ActionPackage
             this.ResetRequest(doers1, receivers1, this.masterRef);
             this.validVariant = variantID;
             bool result = Request(true, forceAccept);
+            // an activity package lets a refusing joiner leave on their own (SettleActivityJoiners - already logged)
+            if (result) newchara.RemoveAll(x => !this.actorRefs.Contains(x.RefID));
 
             var names = new List<string>();
             foreach (var c in newchara)
@@ -517,7 +524,7 @@ public abstract class ActionPackage
             }
 
             if (silent && result) { }
-            else if (!logged)
+            else if (!logged && newchara.Count > 0)
             {
                 var desc = new DescriptionCollector(s);
                 desc.LoadActors(this.job.GetLogRelevantActors(this));
@@ -533,7 +540,8 @@ public abstract class ActionPackage
                 this.validVariant = old_varID;
                 Request(true, forceAccept);
             }
-            
+            else RegisterBoundJoiners(newchara);
+
             return result;
         }
         else return false;
@@ -543,7 +551,88 @@ public abstract class ActionPackage
     /// Return COM name. For AP description, go for DescriptionText()
     /// </summary>
     [JsonIgnore] public virtual string DisplayName { get {
-            return nameOverwrite != "" ? nameOverwrite : targetCOM != null ? (COMVariantID >= 0 ? targetCOM.DisplayName(COMVariantID) : targetCOM.DisplayName()):" - "; } }
+            if (nameOverwrite != "") return nameOverwrite;
+            if (targetCOM == null) return " - ";
+            var baseName = COMVariantID >= 0 ? targetCOM.DisplayName(COMVariantID) : targetCOM.DisplayName();
+            if (targetCOM.isSleepCOM) return FurnitureOccupancyUtility.DecorateSleepName(this, baseName, ref _sleepNameCache, ref _sleepNameKey);
+            if (targetCOM.comTags.Contains(FurnitureOccupancyUtility.Tag_PutDown)) return FurnitureOccupancyUtility.DecoratePutDownName(this, baseName, ref _sleepNameCache, ref _sleepNameKey);
+            return baseName;
+        } }
+
+    /// <summary>
+    /// A sleep command leaves anyone already unconscious alone (joining a sleeper): no evaluation package of their own
+    /// (no acceptance, no DisruptSleep kojo, no results, no memory), not re-slept on completion, not interrupted by it.
+    /// They stay receivers - the joiner lies down with them. Plan_FurnitureOccupancy.md §2.4
+    /// </summary>
+    public bool IsUndisturbedSleeper(Character_Trainable c)
+    {
+        return c != null && targetCOM != null && targetCOM.isSleepCOM && c.Stats.isConsciousnessUnconscious;
+    }
+
+    // Per execution, not per AP: repeat rounds must not share continuation state or actor lists.
+    Action SnapshotSleepTransition(out Action<EventInstance> prepareEvent)
+    {
+        var doers = new List<Character_Trainable>(doer);
+        var receivers = new List<Character_Trainable>(receiver);
+        var actors = doers.Concat(receivers).Where(c => c != null).Distinct().ToList();
+        var undisturbed = new HashSet<Character_Trainable>(actors.Where(IsUndisturbedSleeper));
+        var bed = job as Job_Furniture;
+        var companions = new List<Character_Trainable>(actors);
+        if (bed != null)
+        {
+            FurnitureOccupancyUtility.PruneStale(bed);
+            foreach (var id in bed.OccupantRefs)
+            {
+                var c = scr_System_CampaignManager.current.FindInstanceByID(id);
+                if (c != null && c.FurnitureLocation == bed && !companions.Contains(c)) companions.Add(c);
+            }
+        }
+        var awake = actors.Where(c => !c.Stats.isConsciousnessUnconscious).ToList();
+        var sleeping = companions.Where(c => c.Stats.isSleeping).ToList();
+        if (doers.Count > 0) companions.Remove(doers[0]);
+        string bedName = bed?.ParentInstance?.DisplayName ?? "";
+        if (bed != null && !bed.HoldsUnconscious) bed = null;
+        string commandName = targetCOM.DisplayName(COMVariantID);
+        int pending = 0;
+        bool ready = false, completed = false;
+
+        void Finish()
+        {
+            if (!ready || pending != 0 || completed) return;
+            completed = true;
+            // Preserve the receiver sleeper's original timing; Enter itself is idempotent.
+            foreach (var c in actors)
+            {
+                if (undisturbed.Contains(c))
+                {
+                    if (bed != null) FurnitureOccupancyUtility.Enter(c, bed, OccupancyReason.Sleep);
+                    continue;
+                }
+                if (c.hasSleepNeed && !c.Stats.isSleeping)
+                {
+                    c.Sleep();
+                    if (bed != null && c.Stats.isConsciousnessUnconscious) FurnitureOccupancyUtility.Enter(c, bed, OccupancyReason.Sleep);
+                    if (receivers.Contains(c)) Debug.Log($"{c.FirstName} is being set to sleep, current command {commandName}");
+                }
+                else Debug.LogError($"{c.FirstName} sleep error, either already sleeping or cannot sleep");
+            }
+        }
+
+        prepareEvent = ev =>
+        {
+            ev.Targets["bedtime_awake"] = new List<Character_Trainable>(awake);
+            ev.Targets["bedtime_sleeping"] = new List<Character_Trainable>(sleeping);
+            ev.Targets["bedtime_companions"] = new List<Character_Trainable>(companions);
+            ev.AppendStrings["sleepBedName"] = new List<string> { bedName };
+            pending++;
+            ev.OnCompleted(() => { pending--; Finish(); });
+        };
+        return () => { ready = true; Finish(); };
+    }
+
+    // furniture command name ("sleep (A's bed)" / "sleep with A" / "put down on X") - rebuilt only when its inputs change
+    [NonSerialized][JsonIgnore] string _sleepNameCache = null;
+    [NonSerialized][JsonIgnore] int _sleepNameKey = 0;
 
     public string nameOverwrite = "";
 
@@ -592,9 +681,47 @@ public abstract class ActionPackage
     [JsonProperty] int activityExecutionRef = -1;
     [JsonIgnore] public int ActivityExecutionRef { get { return job is Job_Activity activity ? activity.RefID : activityExecutionRef; } }
 
-    public void BindActivityExecution(Job_Activity activity)
+    /// <summary>The group within the bound activity this package belongs to (Job_Activity.GroupOf); Job_Activity.NoGroupCheck = any of its participants may join.</summary>
+    [JsonProperty] int activityGroupKey = Job_Activity.NoGroupCheck;
+    [JsonIgnore] public int ActivityGroupKey { get { return activityGroupKey; } }
+
+    /// <summary>
+    /// After a successful join: whoever joined this package bound to an activity without taking part in it yet (a walk-in
+    /// - the player through the confirm, an NPC sandboxing in, the player's target / follower) is registered by the
+    /// activity (Job_Activity.JoinParticipant - the package's group, entrance fee, begin event as the join). One the
+    /// activity won't take after all (overnight check-in / the begin event refused) leaves again.
+    /// </summary>
+    void RegisterBoundJoiners(List<Character_Trainable> joined)
+    {
+        if (activityExecutionRef < 0 || job is Job_Activity || joined == null) return;
+        var execution = scr_System_CampaignManager.current.FindJobInstanceByID(activityExecutionRef, false) as Job_Activity;
+        if (execution == null) return;
+        for (int i = 0; i < joined.Count; i++)
+        {
+            var c = joined[i];
+            if (c == null || execution.TookPart(c)) continue;
+            if (!execution.JoinParticipant(c, PackageRoom, activityGroupKey, this)) c.ChangeCurrentJob(null);
+        }
+    }
+
+    /// <summary>Binds this package to activity's execution, for groupKey's group of it (Job_Activity.GroupOf of its creator).</summary>
+    public void BindActivityExecution(Job_Activity activity, int groupKey = Job_Activity.NoGroupCheck)
     {
         activityExecutionRef = activity == null ? -1 : activity.RefID;
+        activityGroupKey = activity == null ? Job_Activity.NoGroupCheck : groupKey;
+    }
+
+    /// <summary>A package bound to an activity's execution (BindActivityExecution) - not Job_Activity's own wait package. The player starts / joins one with the companions it can take (Job_Activity.CompanionsFor); everyone answers for themselves (Request - SettleActivityJoiners).</summary>
+    [JsonIgnore] public bool IsBoundActivityPackage { get { return activityExecutionRef >= 0; } }
+
+    /// <summary>Command-button text: DisplayName, marked as the room activity's command when bound to one (BindActivityExecution - not Job_Activity's own wait package).</summary>
+    [JsonIgnore] public string ButtonDisplayName
+    {
+        get
+        {
+            if (activityExecutionRef < 0) return DisplayName;
+            return LocalizeDictionary.QueryThenParse("ui_activity_boundCommand").Replace("$command$", DisplayName);
+        }
     }
     protected Job job_cached = null;
     [JsonIgnore] public Job job { get {
@@ -706,7 +833,11 @@ public abstract class ActionPackage
             if (doer.Count == 0 || doer.Concat(receiver).Any(c => c == null || manager.FindInstanceByID(c.RefID) != c)) return false;
             reason = "ui_sexEntry_wrongRoom";
             if (doer.Concat(receiver).Any(c => manager.Map.FindRoomByChara(c.RefID) != room)) return false;
-            scene = manager.FindSexJobInRoom(room);
+            reason = "ui_sexEntry_wrongScope";
+            if (!FurnitureOccupancyUtility.TryGetSharedScope(doer, receiver, out int entryScope)) return false;
+            scene = manager.FindSexJobInScope(room, entryScope);
+            reason = "ui_sexEntry_scopeNoSex";
+            if (scene == null && !FurnitureOccupancyUtility.ScopeAllowsSex(entryScope)) return false;
         }
         else
         {
@@ -743,7 +874,9 @@ public abstract class ActionPackage
     {
         if (!PrepareSexSceneEntry(out reason)) return false;
         var manager = scr_System_CampaignManager.current;
-        var scene = AuthoredSexSceneEntry ? manager.FindSexJobInRoom(PackageRoom)
+        // the actors' shared scope (open area / room divider) - checked by PrepareSexSceneEntry
+        FurnitureOccupancyUtility.TryGetSharedScope(doer, receiver, out int entryScope);
+        var scene = AuthoredSexSceneEntry ? manager.FindSexJobInScope(PackageRoom, entryScope)
             : sexEntrySceneRef >= 0 ? manager.FindJobInstanceByID(sexEntrySceneRef, false) as Job_Sex_Group : null;
         if (scene != null)
         {
@@ -756,7 +889,7 @@ public abstract class ActionPackage
             scene = new Job_Sex_Group(new List<int>(actorRefs), PackageRoom, true);
             if (manager.Register(scene) < 0)
             {
-                scene = AuthoredSexSceneEntry ? manager.FindSexJobInRoom(PackageRoom) : null;
+                scene = AuthoredSexSceneEntry ? manager.FindSexJobInScope(PackageRoom, entryScope) : null;
                 if (scene == null) { reason = "ui_sexEntry_roomOccupied"; return false; }
                 scene.AddAuthoredParticipants(null, actorRefs.Where(id => !scene.actorRefID.Contains(id)).ToList());
             }
@@ -863,7 +996,11 @@ public abstract class ActionPackage
     /// <param name="receiver"></param>
     public virtual void ReInitializeCOM(Job job, COM targetCOM, List<int> doer, List<int> receiver, int masterRef = -1, bool resetDuration = true)
     {
-        if (jobRefID != (job?.RefID ?? -1) || targetCOMID != (targetCOM?.ID ?? "")) activityExecutionRef = -1;
+        if (jobRefID != (job?.RefID ?? -1) || targetCOMID != (targetCOM?.ID ?? ""))
+        {
+            activityExecutionRef = -1;
+            activityGroupKey = Job_Activity.NoGroupCheck;
+        }
 
         if (tooltip == null) tooltip = new List<string>();
 
@@ -892,7 +1029,6 @@ public abstract class ActionPackage
 
         if (resetDuration && targetCOM != null) this.duration = targetCOM.TimeScale;
     }
-
 
 
     [JsonIgnore] public virtual bool PackageRepeat
@@ -947,6 +1083,15 @@ public abstract class ActionPackage
         this.LoggedKojo = false;
         this.Ticked = false;
         this.repeated = true;
+    }
+    /// <summary>
+    /// Joins a round already in progress (Job_Sex.InjectPackage): this round ends after minutes (1..TimeScale);
+    /// Repeat restores the full TimeScale.
+    /// </summary>
+    public void AlignDuration(int minutes)
+    {
+        if (targetCOM == null) return;
+        this.duration = Math.Max(1, Math.Min(minutes, targetCOM.TimeScale));
     }
     public virtual void Reset(bool resetRequest = false)
     {
@@ -1017,7 +1162,12 @@ public abstract class ActionPackage
 
         if (!timeStop && !allUnconscious)
         {
-            if (!Ticked) StartTime = scr_System_Time.current.getCurrentTime() - TimeSpan.FromMinutes(tickDuration);
+            if (!Ticked)
+            {
+                StartTime = scr_System_Time.current.getCurrentTime() - TimeSpan.FromMinutes(tickDuration);
+                // the player doing something else while carrying sets the carried down (携带)
+                FurnitureOccupancyUtility.OnPackageBegins(this);
+            }
             this.duration = Math.Max(0, this.duration - tickDuration);
 
             if (this.isPaused)
@@ -1177,9 +1327,11 @@ public abstract class ActionPackage
         {
             var execution = scr_System_CampaignManager.current.FindJobInstanceByID(activityExecutionRef, false) as Job_Activity;
             if (execution == null || !execution.AppliesToRoom(PackageRoom)) return false;
-            if (joining != null && !execution.AllowsParticipantCommand(joining, targetCOM)) return false;
+            if (joining != null && !BelongsToBoundExecution(execution, joining)) return false;
             foreach (var actor in Actors)
-                if (!execution.AllowsParticipantCommand(actor, targetCOM)) return false;
+                if (actor == null || !BelongsToBoundExecution(execution, actor)) return false;
+            // bound: the execution decides who belongs (its participants are allowed by the room too - AllowsActivityCommand)
+            return true;
         }
         if (job is Job_Activity activity && activity.IsRoomCommandOffer(targetCOM))
         {
@@ -1189,10 +1341,23 @@ public abstract class ActionPackage
             return true;
         }
         if (!(job is Job_Furniture furniture) || targetCOM == null) return true;
-        if (joining != null && !furniture.AllowsActivityCommand(joining, targetCOM)) return false;
+        // unbound (normal) packages exclude participants of a covering activity and everyone under an exclusive one
+        if (joining != null && !furniture.AllowsUnboundActivityCommand(joining, targetCOM)) return false;
         foreach (var actor in Actors)
-            if (actor == null || !furniture.AllowsActivityCommand(actor, targetCOM)) return false;
+            if (actor == null || !furniture.AllowsUnboundActivityCommand(actor, targetCOM)) return false;
         return true;
+    }
+
+    /// <summary>
+    /// c belongs to this package's bound execution: a participant allowed the command, in the package's group (one group
+    /// per package - Plan_ActivityFurnitureCommands step 3); or an admissible new joiner (Job_Activity.AdmitsWalkIn
+    /// - confirmed late attendees keep their invitation group; outsiders join this package's group).
+    /// </summary>
+    bool BelongsToBoundExecution(Job_Activity execution, Character_Trainable c)
+    {
+        if (!execution.TookPart(c)) return execution.AdmitsWalkIn(c, this);
+        if (!execution.AllowsParticipantCommand(c, targetCOM)) return false;
+        return activityGroupKey == Job_Activity.NoGroupCheck || execution.GroupOf(c.RefID) == activityGroupKey;
     }
 
     protected virtual bool PreEvaluate()
@@ -1288,6 +1453,13 @@ public abstract class ActionPackage
         public void RefreshValidCOMs() foreach (COM com in allusableCOMs) if (com.ValidateRoom(ParentRoom) && com.ValidateJob(this) && CanCOMAcceptMoreActor(com)) validCOMs.Add(com);
         */
 
+        // carrying (携带 / 安放) and what it rules out (sleeping while carrying)
+        if (isValid && targetCOM != null && !FurnitureOccupancyUtility.ValidateCarryRules(this, tooltip)) isValid = false;
+        // inside / outside a room divider (stall): what each actor can reach from where they are
+        if (isValid && targetCOM != null && !FurnitureOccupancyUtility.ValidateDividerRules(this, tooltip)) isValid = false;
+        // no package across a stall's door (actors that cannot see each other)
+        if (isValid && !FurnitureOccupancyUtility.ValidateSameSide(this, tooltip)) isValid = false;
+
         return isValid;
     }
 
@@ -1364,6 +1536,7 @@ public abstract class ActionPackage
                 foreach (Character_Trainable c_doer in receiver)
                 {
                     if (!isValid) break;
+                    if (IsUndisturbedSleeper(c_doer)) continue;
                     EvaluationPackage t = new EvaluationPackage(c_doer, null, targetCOM, this);
                     this.isValid = this.isValid && t.Evaluate();
                     t.ApplyPersonalityMods();
@@ -1504,6 +1677,7 @@ public abstract class ActionPackage
         s = s.Replace("$acceptance_final$", $"{requestRate * responseRate / 100}%")
             .Replace("$time$", $"{Duration}")
             .Replace("$costs$", $"{ResourceCost}")
+            .Replace("$acceptance_base$", $"{targetCOM.baseAcceptanceValue}")
             .Replace("$difficulty$", $"{targetCOM.baseD20Check}");
 
         if (names_doer.Count < 1) s = s.Replace("$doer$", "-").Replace("$proposal$", "-");
@@ -1544,7 +1718,7 @@ public abstract class ActionPackage
 
         foreach (var package in packages)
         {
-            package.ExecuteImmediate(m);
+            package.ExecuteImmediate(m, deferResultEvent: true);
         }
 
         if (!LaunchOptionsChecked)
@@ -1567,6 +1741,9 @@ public abstract class ActionPackage
         {
             LogMessage_Begin(m);
         }
+
+        // Acceptance/begin Kojo is collected before an immediate event can run or queue its narration.
+        foreach (var package in packages) targetCOM.ApplyImmediateResultEvent(this, package);
 
     }
     /// <summary>
@@ -1712,7 +1889,7 @@ public abstract class ActionPackage
                         packages.Add(ep2);
                         tempArr2.Add(doer);
                     }
-                    if (receiver != null && !tempArr2.Contains(receiver))
+                    if (receiver != null && !tempArr2.Contains(receiver) && !IsUndisturbedSleeper(receiver))
                     {
                         var ep2 = new EvaluationPackage(receiver, null, this.targetCOM, this, tempArr);
                         ep2.epjson = ep;
@@ -1725,7 +1902,11 @@ public abstract class ActionPackage
             else
             {
                 foreach (var chara in doer) packages.Add(new EvaluationPackage(chara, null, this.targetCOM, this, tempArr));
-                foreach (var chara in receiver) packages.Add(new EvaluationPackage(chara, null, this.targetCOM, this, tempArr));
+                foreach (var chara in receiver)
+                {
+                    if (IsUndisturbedSleeper(chara)) continue;
+                    packages.Add(new EvaluationPackage(chara, null, this.targetCOM, this, tempArr));
+                }
             }
         }
         else if (epjson.Count > 0)
@@ -1842,9 +2023,12 @@ public abstract class ActionPackage
         }
 
         if (rebuildPackage) RemakePackages();
-        
-        bool returnVal = true;
 
+        bool returnVal = true;
+        // an activity package everyone does (treatReceiverAsDoer - one evaluation per actor): each answers for themselves -
+        // a refusing joiner leaves it, the rest go on (SettleActivityJoiners)
+        bool perActor = IsBoundActivityPackage && targetCOM != null && targetCOM.requirements.requirement.TreatReceiverAsDoer;
+        List<int> refusers = null;
 
         foreach(var ep in packages)
         {
@@ -1856,11 +2040,89 @@ public abstract class ActionPackage
             ep.ApplyPersonalityMods();
             if (!returnVal) break;
 
-            if (!ep.Request(false, forceAccept)) returnVal = false;
+            if (!ep.Request(false, forceAccept))
+            {
+                if (perActor && IsDroppableJoiner(ep.ActorRefs))
+                {
+                    if (refusers == null) refusers = new List<int>();
+                    for (int i = 0; i < ep.ActorRefs.Count; i++) if (!refusers.Contains(ep.ActorRefs[i])) refusers.Add(ep.ActorRefs[i]);
+                }
+                else returnVal = false;
+            }
         }
+        if (returnVal && perActor) returnVal = SettleActivityJoiners(refusers);
 
         requestAccepted = returnVal;
         return returnVal;
+    }
+
+    /// <summary>refs may leave the package on their own: neither the player nor the package's master (whose refusal is the package's).</summary>
+    bool IsDroppableJoiner(List<int> refs)
+    {
+        for (int i = 0; i < refs.Count; i++) if (refs[i] == 0 || (masterRef >= 0 && refs[i] == masterRef)) return false;
+        return true;
+    }
+
+    /// <summary>
+    /// Request of an activity package everyone does (perActor): whoever accepted without taking part in the activity yet
+    /// is registered by it (Job_Activity.JoinParticipant - the package's group, fee, begin event as the join); then
+    /// whoever refused - or the activity would not take - leaves the package (logged; a follower of the player stops
+    /// following - Job_Activity.OnJoinFailed) and the rest go on. False when the player / master can't be registered or
+    /// nobody is left.
+    /// </summary>
+    bool SettleActivityJoiners(List<int> refusers)
+    {
+        var execution = scr_System_CampaignManager.current.FindJobInstanceByID(activityExecutionRef, false) as Job_Activity;
+        if (execution != null)
+        {
+            var actors = new List<int>(actorRefs);
+            for (int i = 0; i < actors.Count; i++)
+            {
+                if (refusers != null && refusers.Contains(actors[i])) continue;
+                var c = scr_System_CampaignManager.current.FindInstanceByID(actors[i]);
+                if (c == null || execution.TookPart(c) || execution.JoinParticipant(c, PackageRoom, activityGroupKey)) continue;
+                if (!IsDroppableJoiner(new List<int>() { actors[i] })) return false;
+                if (refusers == null) refusers = new List<int>();
+                refusers.Add(actors[i]);
+            }
+        }
+        if (refusers == null || refusers.Count == 0) return true;
+
+        for (int i = packages.Count - 1; i >= 0; i--)
+        {
+            var refs = packages[i].ActorRefs;
+            for (int r = 0; r < refs.Count; r++)
+                if (refusers.Contains(refs[r])) { packages.RemoveAt(i); break; }
+        }
+        for (int i = 0; i < refusers.Count; i++)
+        {
+            doerRefs.Remove(refusers[i]);
+            receiverRefs.Remove(refusers[i]);
+        }
+        doer_cache = null;
+        receiver_cache = null;
+        actorRefs = null;
+        _actors = null;
+
+        string comname = DisplayName;
+        for (int i = 0; i < refusers.Count; i++)
+        {
+            var c = scr_System_CampaignManager.current.FindInstanceByID(refusers[i]);
+            if (c == null) continue;
+            var s = LocalizeDictionary.QueryThenParse("ui_ap_join_fail").Replace("$names$", c.FirstName).Replace("$comname$", comname);
+            if (!LogMessage_Join(c, s))
+            {
+                var desc = new DescriptionCollector(s);
+                desc.LoadActors(this.job.GetLogRelevantActors(this));
+                desc.LoadActors(c.RefID, true, true);
+                desc.message_excludeRelated = s;
+                this.job.m.AddMessage_Before(desc, this.RoomKey);
+            }
+            Job_Activity.OnJoinFailed(c, this);
+            // out of the job they were brought into (the package itself no longer holds them)
+            if (c.CurrentJob == job) c.ChangeCurrentJob(null);
+        }
+        return doerRefs.Count > 0;
     }
 
     /// <summary>
@@ -2449,7 +2711,15 @@ public abstract class ActionPackage
         // result_event, and Result_Event.Apply's own requireSuccess/requireFailure fields (checking
         // p.executeSuccessful directly, since this is the AP-scoped/evp==null path) decide per-event
         // whether a given result_event actually fires on this particular outcome.
-        if (targetCOM != null) targetCOM.ApplyResults_AP(this);
+        Action<EventInstance> prepareSleepEvent = null;
+        var sleepVariant = targetCOM != null && COMVariantID >= 0 && COMVariantID < targetCOM.variants.Count
+            ? targetCOM.variants[COMVariantID] : null;
+        bool deferSleep = ((sleepVariant == null || sleepVariant.useDefaultEventResult_AP)
+                && targetCOM?.results_AP.result_event?.deferSleepUntilEnd == true)
+            || sleepVariant?.result_event_AP?.deferSleepUntilEnd == true;
+        var finishSleep = deferSleep && executeSuccessful && targetCOM != null && targetCOM.comTags.Contains("sleep")
+            ? SnapshotSleepTransition(out prepareSleepEvent) : null;
+        if (targetCOM != null) targetCOM.ApplyResults_AP(this, prepareSleepEvent);
 
         if (executeSuccessful)// && targetCOM.requirements.requirement.TreatReceiverAsDoer)         // this behavior does not need to be limited to treatreceiverasdoer, right ?
         {   // if job is recreation and result at least neutral, increase relationship between all participating actors
@@ -2685,35 +2955,56 @@ public abstract class ActionPackage
 
                 }*/
             }
+            else if (targetCOM.comTags.Contains(FurnitureOccupancyUtility.Tag_DividerEnter) || targetCOM.comTags.Contains(FurnitureOccupancyUtility.Tag_DividerLeave))
+            {
+                // into / out of a room divider (stall): every actor of the package
+                var divider = job as Job_Furniture;
+                bool enter = targetCOM.comTags.Contains(FurnitureOccupancyUtility.Tag_DividerEnter);
+                // one target check after everyone moved (not halfway: player inside, target still outside)
+                FurnitureOccupancyUtility.BeginBatch();
+                try
+                {
+                    for (int i = 0; divider != null && i < Actors.Count; i++)
+                    {
+                        var c = Actors[i];
+                        if (c == null) continue;
+                        if (enter) FurnitureOccupancyUtility.Enter(c, divider, OccupancyReason.Enter);
+                        else if (c.FurnitureLocation == divider) FurnitureOccupancyUtility.Leave(c, OccupancyReason.LeaveCommand);
+                    }
+                }
+                finally { FurnitureOccupancyUtility.EndBatch(); }
+            }
+            else if (targetCOM.comTags.Contains(FurnitureOccupancyUtility.Tag_Carry))
+            {
+                // 携带: the doer (carrier) picks the receiver up (lifted out of the bed / sofa that kept them)
+                if (doer.Count > 0 && doer[0] != null && receiver.Count > 0 && receiver[0] != null) doer[0].Carry(receiver[0]);
+            }
+            else if (targetCOM.comTags.Contains(FurnitureOccupancyUtility.Tag_PutDownHere))
+            {
+                // 安放 'put down here': the carried stands where the carrier is - inside the carrier's divider (stall) too
+                var carrier = doer.Count > 0 ? doer[0] : null;
+                if (carrier != null && receiver.Count > 0 && receiver[0] != null && receiver[0].RefID == carrier.CarriedRefID)
+                {
+                    carrier.ClearCarried();
+                    var carrierDivider = carrier.FurnitureLocation;
+                    if (carrierDivider != null && carrierDivider.IsDivider) FurnitureOccupancyUtility.Enter(receiver[0], carrierDivider, OccupancyReason.PutDown);
+                }
+            }
+            else if (targetCOM.comTags.Contains(FurnitureOccupancyUtility.Tag_PutDown))
+            {
+                // 安放: the carried receiver is laid on this bed / sofa, which keeps them from now on
+                var carrier = doer.Count > 0 ? doer[0] : null;
+                var bed = job as Job_Furniture;
+                if (bed != null && carrier != null && receiver.Count > 0 && receiver[0] != null && receiver[0].RefID == carrier.CarriedRefID)
+                {
+                    carrier.ClearCarried();
+                    FurnitureOccupancyUtility.Enter(receiver[0], bed, OccupancyReason.PutDown);
+                }
+            }
             else if (targetCOM.comTags.Contains("sleep"))
             {
-                foreach (var c in doer)
-                {
-                    if (c.hasSleepNeed && !c.Stats.isSleeping)// && c.RefID > 0)
-                    {
-                        // Debug.Log($"{c.FirstName} is going to sleep, current command {targetCOM.DisplayName(COMVariantID)}");
-                        c.Sleep();
-
-                        //Debug.Log("ADDING SLEEP TO " + c.FirstName);
-                    }
-                    else
-                    {
-                        Debug.LogError($"{c.FirstName} sleep error, either already sleeping or cannot sleep");
-                    }
-                }
-                foreach (var c in receiver)
-                {
-                    if (c.hasSleepNeed && !c.Stats.isSleeping)
-                    {
-
-                        c.Sleep();
-                        Debug.Log($"{c.FirstName} is being set to sleep, current command {targetCOM.DisplayName(COMVariantID)}");
-                    }
-                    else
-                    {
-                        Debug.LogError($"{c.FirstName} sleep error, either already sleeping or cannot sleep");
-                    }
-                }
+                if (finishSleep == null) finishSleep = SnapshotSleepTransition(out _);
+                finishSleep();
             }
 
         }
@@ -3530,6 +3821,13 @@ public abstract class ActionPackage
 
     protected void SendRefuseEvent(List<Action> eventCollector = null)
     {
+        // a refused upgrade (French kiss...): its parent act gets the round back right after this update step
+        // (Job_Sex_Group PostUpdateTime -> ResumeUpgradeParent, injected into the running round), whatever the answer.
+        // The forced retry below validates with the parent standing in (its requireExisting), and injecting that retry
+        // sets the parent aside again (Job_Sex_Group.InjectPackage).
+        var upgradeScene = targetCOM != null && targetCOM.IsUpgrade && upgradeResumeAct != null ? job as Job_Sex_Group : null;
+        var upgradeParentAct = upgradeScene != null ? upgradeResumeAct : null;
+        bool upgradeParentResumed = upgradeScene != null;
 
         var targetDoer = this.doerRefs.Contains(0) ? scr_System_CampaignManager.current.Player : this.doer.Count == 1 ? this.doer[0] : null;
 
@@ -3598,6 +3896,8 @@ public abstract class ActionPackage
 
             failCallbacks.Add(() => scr_UpdateHandler.current.NotifyJobDescriptions(mm));// .m.Merge(mm, false));
             //failCallbacks.Add(() => scr_UpdateHandler.current.NotifyLogsSingleUpdate());
+            // giving up on an upgrade: the update goes on with its parent act (same as the forced retry below)
+            if (upgradeParentResumed && targetDoer == scr_System_CampaignManager.current.Player) failCallbacks.Add(() => scr_UpdateHandler.current.ToggleCallbackUpdate());
 
             ActionPackage forceAP = this.Copy();
             forceAP.temporaryM = mm;
@@ -3614,7 +3914,7 @@ public abstract class ActionPackage
             forceAP.Reset(true);
             forceAP.AddExtraCOMTag("forced");
             //Debug.Log($"adding force AP, isrepeat? {forceAP.PackageRepeat}");
-            if (forceAP.Validate())
+            if (upgradeScene != null ? upgradeScene.ValidateUpgradeRetry(forceAP, upgradeParentAct) : forceAP.Validate())
             {
                 MemInstance pressured = new MemInstance(new List<int>() { targetDoer.RefID }, new List<string>(), "", -1, -1, false, Memory_Response.Accept, Memory_Attitude.Dislike, "pressured by " + targetDoer.FirstName);
                 pressured.AddMoodletScore(-1, -1, 0);
@@ -3657,6 +3957,24 @@ public abstract class ActionPackage
     [JsonProperty] public bool acceptOnNextRequest = false;
 
     /// <summary>
+    /// An acceptance bonus a source outside the command gives this package (an event's commandAcceptanceBonus, e.g. the
+    /// condom demand's partner answers): value D20 points on deciderRef's side, applied with the check's other modifiers
+    /// (EvaluationPackage.ApplyPersonalityMods), so previews and the real roll both include it.
+    /// </summary>
+    public class ExternalAcceptanceBonus
+    {
+        public int deciderRef = -1;
+        public int value = 0;
+        public string explanation = "";
+    }
+    [JsonProperty] public ExternalAcceptanceBonus externalAcceptanceBonus = null;
+    /// <summary>
+    /// Upgrade command (COM.upgradeFrom) only: the parent act this round replaced - the original package, disabled when the
+    /// upgrade started and revived with its accepted result when the upgrade ends (Job_Sex_Group). Never copied.
+    /// </summary>
+    [JsonProperty] public ActionPackage upgradeResumeAct = null;
+
+    /// <summary>
     /// After acceptance, before the act begins (Tick): an accepted EP whose granter still misses a SoftEvent permission
     /// with a demandEventID (e.g. permission_sex_unprotected), not pushed past in this scene, stops this act - it ends
     /// without effects or refusal costs, and the demand plays (SendDemandEvent). Forced commands, event-run acts and acts
@@ -3682,10 +4000,24 @@ public abstract class ActionPackage
         }
         if (demand == null) return false;
 
+        // every other demand-carrying permission the same pair misses in this act (e.g. sex_unprotected alongside
+        // sex_dangerday_creampie): one demand plays, and ignoring it pushes past all of them
+        var pushedIDs = new List<string>() { demand.Definition.ID };
+        foreach (var ep in ListEP)
+        {
+            if (ep == null || ep.Response < Memory_Response.Accept) continue;
+            foreach (var missing in ep.MissingPermissions)
+            {
+                if (missing.Granter != demand.Granter || missing.Holder != demand.Holder) continue;
+                if (missing.Definition.mode != PermissionMode.SoftEvent || string.IsNullOrEmpty(missing.Definition.demandEventID)) continue;
+                if (!pushedIDs.Contains(missing.Definition.ID)) pushedIDs.Add(missing.Definition.ID);
+            }
+        }
+
         duration = 0;
         toggleRepeat = false;
         internalState = AP_Status.refused;
-        SendDemandEvent(demand, demandEP);
+        SendDemandEvent(demand, demandEP, pushedIDs);
         return true;
     }
 
@@ -3694,9 +4026,9 @@ public abstract class ActionPackage
 
     /// <summary>
     /// One way to answer a condom demand. immediate: the requester puts it on now with their hands (on themselves or on
-    /// the granter) and the act resumes; otherwise the granter puts it on the requester with the condom command (command
-    /// is injected with its acceptance kept), and the act does not resume by itself. command is null when it cannot be
-    /// done, with the command's own validation tooltip as reason.
+    /// the granter) and the act resumes; otherwise the granter puts it on the requester with the condom command, which
+    /// rolls its own acceptance (with the demand event's commandAcceptanceBonus), and the act does not resume by itself.
+    /// command is null when it cannot be done, with the command's own validation tooltip as reason.
     /// </summary>
     class CondomAnswer
     {
@@ -3711,9 +4043,10 @@ public abstract class ActionPackage
     /// <summary>
     /// The condom answers for this act: the wearer is the owner of the penis organ the demand's EP chose. Requester wears:
     /// put it on yourself, or let the granter do it by hand / mouth. Granter wears: put it on them. Validated with the
-    /// condom commands themselves (arms / mouth, exposed penis, an accessible condom).
+    /// condom commands themselves (arms / mouth, exposed penis, an accessible condom). The granter's answers carry the
+    /// demand event's commandAcceptanceBonus for their command, on the granter's side.
     /// </summary>
-    List<CondomAnswer> BuildCondomAnswers(EvaluationPackage ep, Character_Trainable requester, Character_Trainable granter)
+    List<CondomAnswer> BuildCondomAnswers(EvaluationPackage ep, Character_Trainable requester, Character_Trainable granter, Event demandEvent)
     {
         var answers = new List<CondomAnswer>();
         var organ = ep.doerInternal != null && ep.doerInternal.hasTag("penis") ? ep.doerInternal
@@ -3725,21 +4058,25 @@ public abstract class ActionPackage
         var mouth = scr_System_Serializer.current.GetByNameOrID_COM("com_condom_onTarget_mouth");
         if (wearer == requester)
         {
-            answers.Add(MakeCondomAnswer("event_OnAPRefuse_Unprotected_op_wearSelf", "br_condom_self", self, requester, null, true, wearer));
-            answers.Add(MakeCondomAnswer("event_OnAPRefuse_Unprotected_op_targetHand", "br_condom_partner", hand, granter, requester, false, wearer));
-            answers.Add(MakeCondomAnswer("event_OnAPRefuse_Unprotected_op_targetMouth", "br_condom_partner", mouth, granter, requester, false, wearer));
+            answers.Add(MakeCondomAnswer("event_OnAPRefuse_Unprotected_op_wearSelf", "br_condom_self", self, requester, null, true, wearer, null));
+            answers.Add(MakeCondomAnswer("event_OnAPRefuse_Unprotected_op_targetHand", "br_condom_partner", hand, granter, requester, false, wearer, demandEvent));
+            answers.Add(MakeCondomAnswer("event_OnAPRefuse_Unprotected_op_targetMouth", "br_condom_partner", mouth, granter, requester, false, wearer, demandEvent));
         }
         else if (wearer == granter)
-            answers.Add(MakeCondomAnswer("event_OnAPRefuse_Unprotected_op_wearTarget", "br_condom_target", hand, requester, granter, true, wearer));
+            answers.Add(MakeCondomAnswer("event_OnAPRefuse_Unprotected_op_wearTarget", "br_condom_target", hand, requester, granter, true, wearer, null));
         return answers;
     }
 
-    CondomAnswer MakeCondomAnswer(string textKey, string label, COM com, Character_Trainable doer, Character_Trainable receiver, bool immediate, Character_Trainable wearer)
+    CondomAnswer MakeCondomAnswer(string textKey, string label, COM com, Character_Trainable doer, Character_Trainable receiver, bool immediate, Character_Trainable wearer, Event bonusEvent)
     {
         var answer = new CondomAnswer { textKey = textKey, label = label, immediate = immediate, wearer = wearer };
         if (com == null || doer == null) return answer;
         var receivers = receiver == null ? new List<int>() : new List<int>() { receiver.RefID };
         var ap = com.MakePackage(this.job, new List<int>() { doer.RefID }, receivers, doer.RefID);
+        // the event's bonus goes on before validation, so the shown rate includes it (the doer decides: the granter)
+        var bonus = bonusEvent?.GetCommandAcceptanceBonus(com.ID);
+        if (ap != null && bonus != null)
+            ap.externalAcceptanceBonus = new ExternalAcceptanceBonus { deciderRef = doer.RefID, value = bonus.value, explanation = bonus.explanation };
         if (ap == null || !ap.Validate())
         {
             if (ap != null) answer.reason = String.Join("\n", ap.tooltip.Where(x => !string.IsNullOrEmpty(x)));
@@ -3766,12 +4103,14 @@ public abstract class ActionPackage
     /// - "apCallback" ignores the demand: records the scene push (no demand for this pair and permission again in this
     ///   scene) and resumes the act;<br/>
     /// - "failCallback" gives up.<br/>
+    /// pushedIDs: the permissions the push records - the demand's own plus every other demand-carrying permission the
+    /// pair misses in this act (TryStopForDemand), so one ignored demand covers them all.<br/>
     /// A resumed act is a copy with its accepted result kept (acceptOnNextRequest) that is never stopped for a demand
     /// again (demandAnswered). The player chooses in the event (StoredOptions[DemandOptionsKey] + the event's own options);
     /// an NPC requester decides here - put it on now if possible, else ignore - and the event starts at that answer's line,
-    /// so the act resumes in this tick. Same message handling as SendRefuseEvent.
+    /// so the act resumes at the end of this minute. Same message handling as SendRefuseEvent.
     /// </summary>
-    void SendDemandEvent(MissingPermission demand, EvaluationPackage ep)
+    void SendDemandEvent(MissingPermission demand, EvaluationPackage ep, List<string> pushedIDs)
     {
         var requester = demand.Holder;
         var granter = demand.Granter;
@@ -3797,12 +4136,15 @@ public abstract class ActionPackage
         bool canResume = resume.Validate();
         var resumeJob = this.job;
         int granterRef = granter.RefID, holderRef = requester.RefID;
-        string permissionID = demand.Definition.ID;
         Action resumeAct = () => { if (canResume) resumeJob.InjectPackage(resume, true); };
-        Action recordPush = () => { if (resumeJob is Job_Sex_Group pushScene) pushScene.RecordPermissionPush(granterRef, holderRef, permissionID); };
+        Action recordPush = () =>
+        {
+            if (!(resumeJob is Job_Sex_Group pushScene)) return;
+            foreach (var permissionID in pushedIDs) pushScene.RecordPermissionPush(granterRef, holderRef, permissionID);
+        };
         Action continueUpdate = () => { if (playerChooses) scr_UpdateHandler.current.ToggleCallbackUpdate(); };
 
-        var answers = BuildCondomAnswers(ep, requester, granter);
+        var answers = BuildCondomAnswers(ep, requester, granter, scr_System_Serializer.current.GetEventByID(demand.Definition.demandEventID));
         string startLabel = "";
         if (!playerChooses)
         {
@@ -3814,7 +4156,9 @@ public abstract class ActionPackage
                 recordPush();
                 startLabel = canResume ? "br_npc_push" : "br_end";
             }
-            if (canResume) resumeAct();
+            // injected after this minute's ticks: mid-tick the scene's acts are split between ticked and not yet ticked,
+            // so Job_Sex.InjectPackage could not read the running round's remaining time
+            if (canResume) scr_UpdateHandler.current.AddEventCallback(resumeAct);
         }
 
         var ev = new EventInstance(requester, demand.Definition.demandEventID, startLabel);
@@ -3860,14 +4204,24 @@ public abstract class ActionPackage
                 else if (a.immediate)
                     option.onSelect = _ => { if (ApplyCondomNow(a, requester)) resumeAct(); continueUpdate(); };
                 else
-                    option.onSelect = _ =>
-                    {
-                        // the granter puts it on: the condom command with its acceptance kept; the act is asked again after
-                        a.command.acceptOnNextRequest = true;
-                        a.command.temporaryM = mm;
-                        resumeJob.InjectPackage(a.command, true);
-                        continueUpdate();
-                    };
+                {
+                    // the granter puts it on: the condom command rolls its own acceptance (like OnAPRefuse's forced retry) -
+                    // its rate and modifiers in the tooltip; with deterministic rolls a rate below the threshold cannot pass
+                    var lines = new List<string>() { a.command.GetSuccessRateString() };
+                    foreach (var line in a.command.tooltip) if (!string.IsNullOrEmpty(line)) lines.Add(line);
+                    option.tooltip = String.Join("\n", lines);
+                    var campaign = scr_System_CampaignManager.current;
+                    if (campaign.DeterministicRolls && a.command.SuccessRate < campaign.DeterministicThreshold)
+                        option.disabledReasonKey = "event_OnAPRefuse_Unprotected_op_wouldRefuse";
+                    else
+                        option.onSelect = _ =>
+                        {
+                            // a refusal plays the ordinary OnAPRefuse; the stopped act does not resume by itself either way
+                            a.command.temporaryM = mm;
+                            resumeJob.InjectPackage(a.command, true);
+                            continueUpdate();
+                        };
+                }
                 options.Add(option);
             }
             ev.StoredOptions[DemandOptionsKey] = options;
@@ -3896,6 +4250,7 @@ public abstract class ActionPackage
             copy.IgnoreStatCost = false;
             copy.roomRefOverride = roomRefOverride;
             copy.activityExecutionRef = activityExecutionRef;
+            copy.activityGroupKey = activityGroupKey;
             copy._room = null;
             copy.AuthoredSexSceneEntry = AuthoredSexSceneEntry;
             copy.sexEntryBound = sexEntryBound;
@@ -3905,6 +4260,7 @@ public abstract class ActionPackage
             copy.sexEntryDoers = new List<int>(sexEntryDoers);
             copy.sexEntryReceivers = new List<int>(sexEntryReceivers);
             copy.sexEntryCommitted = sexEntryCommitted;
+            copy.externalAcceptanceBonus = externalAcceptanceBonus;
         }
         return copy;
     }

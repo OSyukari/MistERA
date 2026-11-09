@@ -1,7 +1,7 @@
 {
   "Dictionary": { "Entries": { "en-us": {
-    "jp_greenside_library": "Greenside Public Library", "recreation_offer_jp_library_study": "Library Study", "jp_library_quiet_study": "Study Quietly", "jp_greenside_study_table": "Study Desks and Chairs", "jp_greenside_library_desk": "Library Desk and Shelving",
-    "membertype_jp_greenside_librarian": "Librarian", "membertype_jp_greenside_librarian_parttime": "Part-Time Librarian", "membertype_jp_greenside_librarian_morning": "Library Morning Shift (09-14)", "membertype_jp_greenside_librarian_evening": "Library Evening Shift (14-20)", "membertype_jp_greenside_librarian_npc": "Duty Librarian (09-20)", "jp_greenside_library_joinOption": "$name$ as $memberType$",
+    "jp_library": "Public Library", "library_lobby": "Library Lobby", "library_quiet_study": "Quiet Study Room", "recreation_offer_jp_library_study": "Library Study", "jp_library_quiet_study": "Study Quietly", "jp_library_study_table": "Study Desks and Chairs", "jp_library_desk": "Library Desk and Shelving",
+    "membertype_jp_librarian": "Librarian", "membertype_jp_librarian_parttime": "Part-Time Librarian", "membertype_jp_librarian_morning": "Library Morning Shift (09-14)", "membertype_jp_librarian_evening": "Library Evening Shift (14-20)", "membertype_jp_librarian_npc": "Duty Librarian (09-20)", "jp_library_joinOption": "$name$ as $memberType$",
     "jp_library_study_begin": "$doer.firstname$ opens some books and notes.", "jp_library_study_ongoing": "$doer.firstname$ reads quietly and occasionally jots down a few lines.", "jp_library_study_after": "$doer.firstname$ marks the page and puts the notes away.",
     "jp_library_work_begin": "$doer.firstname$ takes a place at the library desk.", "jp_library_work_ongoing": "$doer.firstname$ sorts returned books and directs readers to the shelves.", "jp_library_work_after": "$doer.firstname$ tidies the desk and finishes this stretch of work."
   } } }

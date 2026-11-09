@@ -42,29 +42,25 @@
                 ],
                 "workModules": [],
                 "managerBaseIDs": [""],
-                "_comment_assignableMemberTypes": "Parent IDs stand for every shift under them (Manageable.AssignableMemberTypes).",
+                "_comment_assignableMemberTypes": "Explicit team-only list (not parent IDs): only the realistic team_a-d rota is assignable to a player/real staff member. The _npc_day/_npc_night posts added below for fallbackWorkers are deliberately left out, so they can never be assigned/joined - mirrors SunMart's npc_day/npc_night split.",
                 "assignableMemberTypes": [
-                    "membertype_jp_hospital_doctor",
-                    "membertype_jp_hospital_nurse",
-                    "membertype_jp_hospital_pharmacy",
-                    "membertype_jp_hospital_frontdesk"
+                    "membertype_jp_hospital_doctor_team_a", "membertype_jp_hospital_doctor_team_b",
+                    "membertype_jp_hospital_nurse_team_a", "membertype_jp_hospital_nurse_team_b", "membertype_jp_hospital_nurse_team_c", "membertype_jp_hospital_nurse_team_d",
+                    "membertype_jp_hospital_pharmacy_team_a", "membertype_jp_hospital_pharmacy_team_c",
+                    "membertype_jp_hospital_frontdesk_team_a", "membertype_jp_hospital_frontdesk_team_b", "membertype_jp_hospital_frontdesk_team_c", "membertype_jp_hospital_frontdesk_team_d"
                 ],
                 "_comment_joinableMemberTypes": "MemberTypes this faction can be joined as through the reachable-faction searches (FactionJoinUtility: Labor_Start admission, the join-by-tag dialogue options). Their joinHandler still decides who is admitted.",
                 "joinableMemberTypes": [ "membertype_jp_hospital_patient", "membertype_jp_hospital_pharmacy" ],
-                "_comment_fallbackWorkers": "Per-shift staffing: headcount = total wanted on shift, maxFallback = most fallback workers used. templateIDs = CharaTemplateGenerators from JP_World/Characters/templates.json. Each fallback worker is generated for exactly one of these memberTypeIDs and stays pinned to it (Manageable_WorkerPool.assignedMemberTypes). Pharmacy/front desk reuse the nurse template until dedicated clerk portrait bases exist.",
+                "_comment_fallbackWorkers": "Fallback workers are pinned to dedicated _npc_day/_npc_night posts (one pair per role, every day, no rest-day gaps) instead of the realistic team_a-d rota, so fallback staffing and the realistic schedule stay separate - the team_a-d posts are reserved for a future player/real-staff assignment pass and never get a fallback worker. 4 roles x 2 (day/night) = 8 fallback NPCs total, matching the design target. templateIDs = CharaTemplateGenerators from JP_World/Characters/templates.json. Pharmacy/front desk reuse the nurse template until dedicated clerk portrait bases exist.",
                 "fallbackWorkers": [
-                    { "memberTypeID": "membertype_jp_hospital_doctor_team_a", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_doctor" },
-                    { "memberTypeID": "membertype_jp_hospital_doctor_team_b", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_doctor" },
-                    { "memberTypeID": "membertype_jp_hospital_nurse_team_a", "headcount": 2, "maxFallback": 1, "templateID": "jp_hospital_nurse" },
-                    { "memberTypeID": "membertype_jp_hospital_nurse_team_b", "headcount": 2, "maxFallback": 1, "templateID": "jp_hospital_nurse" },
-                    { "memberTypeID": "membertype_jp_hospital_nurse_team_c", "headcount": 2, "maxFallback": 1, "templateID": "jp_hospital_nurse" },
-                    { "memberTypeID": "membertype_jp_hospital_nurse_team_d", "headcount": 2, "maxFallback": 1, "templateID": "jp_hospital_nurse" },
-                    { "memberTypeID": "membertype_jp_hospital_pharmacy_team_a", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_nurse" },
-                    { "memberTypeID": "membertype_jp_hospital_pharmacy_team_c", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_nurse" },
-                    { "memberTypeID": "membertype_jp_hospital_frontdesk_team_a", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_nurse" },
-                    { "memberTypeID": "membertype_jp_hospital_frontdesk_team_b", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_nurse" },
-                    { "memberTypeID": "membertype_jp_hospital_frontdesk_team_c", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_nurse" },
-                    { "memberTypeID": "membertype_jp_hospital_frontdesk_team_d", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_nurse" }
+                    { "memberTypeID": "membertype_jp_hospital_doctor_npc_day", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_doctor" },
+                    { "memberTypeID": "membertype_jp_hospital_doctor_npc_night", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_doctor" },
+                    { "memberTypeID": "membertype_jp_hospital_nurse_npc_day", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_nurse" },
+                    { "memberTypeID": "membertype_jp_hospital_nurse_npc_night", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_nurse" },
+                    { "memberTypeID": "membertype_jp_hospital_pharmacy_npc_day", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_nurse" },
+                    { "memberTypeID": "membertype_jp_hospital_pharmacy_npc_night", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_nurse" },
+                    { "memberTypeID": "membertype_jp_hospital_frontdesk_npc_day", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_nurse" },
+                    { "memberTypeID": "membertype_jp_hospital_frontdesk_npc_night", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_nurse" }
                 ],
                 "_comment_hourlyEvents": "Started every hour on the hospital's own patients (Manageable.StartHourlyEvents) - staff dispatch, see Events/hospital_medical_dispatch.json.",
                 "hourlyEvents": [
@@ -142,7 +138,7 @@
                         "connects":[
                             { "ID": "hospital_ward_corridor", "cost": 1.0 }
                         ],
-                        "furnitureIDs":["furniture_bathroom_set","furniture_bathroom_set","furniture_shower","furniture_marker_gender_male" ],
+                        "furnitureIDs":["furniture_toilet_stall","furniture_toilet_stall","furniture_shower","furniture_marker_gender_male" ],
                         "roomImagePath":"Media_UI_Scenario_Background/BG_LockerRoom.jpg",
                         "roomImagePath_Inactive_Night":"Media_UI_Scenario_Background/BG_LockerRoom_Night.jpg"
                     },
@@ -152,7 +148,7 @@
                         "connects":[
                             { "ID": "hospital_ward_corridor", "cost": 1.0 }
                         ],
-                        "furnitureIDs":["furniture_bathroom_set","furniture_bathroom_set","furniture_shower","furniture_marker_gender_female" ],
+                        "furnitureIDs":["furniture_toilet_stall","furniture_toilet_stall","furniture_shower","furniture_marker_gender_female" ],
                         "roomImagePath":"Media_UI_Scenario_Background/BG_LockerRoom.jpg",
                         "roomImagePath_Inactive_Night":"Media_UI_Scenario_Background/BG_LockerRoom_Night.jpg"
                     },
@@ -252,6 +248,34 @@
                             "_comment_holiday": "Wards are staffed every day - holiday work pays the 35% statutory premium.",
                             "holidayPayoutMultiplier": 1.35
                         }
+                    },
+                    {
+                        "ID": "membertype_jp_hospital_doctor_npc_day",
+                        "_comment": "NPC-only day post, every day, always covered by a fallback worker. Not in assignableMemberTypes, so it can't be joined or assigned - team_a/team_b above are reserved for a future player/real-staff assignment pass.",
+                        "socialStandingKey": "membertype_jp_hospital_doctor_npc_day",
+                        "workModule": {
+                            "jobPostID": "jp_hospital_doctor_npc_day",
+                            "workCommands": ["jp_hospital_triage_exam", "jp_hospital_ward_round"],
+                            "activeHours": [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
+                            "activeDays": [],
+                            "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 6600 } ],
+                            "paymentCadence": "Daily",
+                            "holidayPayoutMultiplier": 1.35
+                        }
+                    },
+                    {
+                        "ID": "membertype_jp_hospital_doctor_npc_night",
+                        "_comment": "NPC-only night post, every day, always covered by a fallback worker. Not in assignableMemberTypes.",
+                        "socialStandingKey": "membertype_jp_hospital_doctor_npc_night",
+                        "workModule": {
+                            "jobPostID": "jp_hospital_doctor_npc_night",
+                            "workCommands": ["jp_hospital_triage_exam", "jp_hospital_ward_round"],
+                            "activeHours": [19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6],
+                            "activeDays": [],
+                            "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 7560 } ],
+                            "paymentCadence": "Daily",
+                            "holidayPayoutMultiplier": 1.35
+                        }
                     }
                 ]
             },
@@ -340,6 +364,34 @@
                             "_comment_holiday": "Wards are staffed every day - holiday work pays the 35% statutory premium.",
                             "holidayPayoutMultiplier": 1.35
                         }
+                    },
+                    {
+                        "ID": "membertype_jp_hospital_nurse_npc_day",
+                        "_comment": "NPC-only day post, every day, always covered by a fallback worker. Not in assignableMemberTypes - team_a-d above are reserved for a future player/real-staff assignment pass. behavior_job still inherits TryFindNurseJobNode from the parent.",
+                        "socialStandingKey": "membertype_jp_hospital_nurse_npc_day",
+                        "workModule": {
+                            "jobPostID": "jp_hospital_nurse_npc_day",
+                            "workCommands": ["jp_hospital_triage_assist", "jp_hospital_patient_care"],
+                            "activeHours": [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
+                            "activeDays": [],
+                            "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 2500 } ],
+                            "paymentCadence": "Daily",
+                            "holidayPayoutMultiplier": 1.35
+                        }
+                    },
+                    {
+                        "ID": "membertype_jp_hospital_nurse_npc_night",
+                        "_comment": "NPC-only night post, every day, always covered by a fallback worker. Not in assignableMemberTypes.",
+                        "socialStandingKey": "membertype_jp_hospital_nurse_npc_night",
+                        "workModule": {
+                            "jobPostID": "jp_hospital_nurse_npc_night",
+                            "workCommands": ["jp_hospital_triage_assist", "jp_hospital_patient_care"],
+                            "activeHours": [19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6],
+                            "activeDays": [],
+                            "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 3340 } ],
+                            "paymentCadence": "Daily",
+                            "holidayPayoutMultiplier": 1.35
+                        }
                     }
                 ]
             },
@@ -391,6 +443,34 @@
                             "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1300 } ],
                             "paymentCadence": "Monthly",
                             "_comment_holiday": "Wards are staffed every day - holiday work pays the 35% statutory premium.",
+                            "holidayPayoutMultiplier": 1.35
+                        }
+                    },
+                    {
+                        "ID": "membertype_jp_hospital_pharmacy_npc_day",
+                        "_comment": "NPC-only day post, every day, always covered by a fallback worker. Not in assignableMemberTypes - team_a/team_c above are reserved for a future player/real-staff assignment pass.",
+                        "socialStandingKey": "membertype_jp_hospital_pharmacy_npc_day",
+                        "workModule": {
+                            "jobPostID": "jp_hospital_pharmacy_npc_day",
+                            "workCommands": ["jp_hospital_pharmacy_dispense"],
+                            "activeHours": [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
+                            "activeDays": [],
+                            "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1300 } ],
+                            "paymentCadence": "Daily",
+                            "holidayPayoutMultiplier": 1.35
+                        }
+                    },
+                    {
+                        "ID": "membertype_jp_hospital_pharmacy_npc_night",
+                        "_comment": "NPC-only night post, every day, always covered by a fallback worker. No realistic night pharmacy team exists yet, so this is the pharmacy's only night coverage - fallback-only, not in assignableMemberTypes. Pay matches frontdesk's night rate (same base, same late-night premium averaging).",
+                        "socialStandingKey": "membertype_jp_hospital_pharmacy_npc_night",
+                        "workModule": {
+                            "jobPostID": "jp_hospital_pharmacy_npc_night",
+                            "workCommands": ["jp_hospital_pharmacy_dispense"],
+                            "activeHours": [19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6],
+                            "activeDays": [],
+                            "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1490 } ],
+                            "paymentCadence": "Daily",
                             "holidayPayoutMultiplier": 1.35
                         }
                     }
@@ -461,6 +541,34 @@
                             "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1490 } ],
                             "paymentCadence": "Monthly",
                             "_comment_holiday": "Wards are staffed every day - holiday work pays the 35% statutory premium.",
+                            "holidayPayoutMultiplier": 1.35
+                        }
+                    },
+                    {
+                        "ID": "membertype_jp_hospital_frontdesk_npc_day",
+                        "_comment": "NPC-only day post, every day, always covered by a fallback worker. Not in assignableMemberTypes - team_a-d above are reserved for a future player/real-staff assignment pass.",
+                        "socialStandingKey": "membertype_jp_hospital_frontdesk_npc_day",
+                        "workModule": {
+                            "jobPostID": "jp_hospital_frontdesk_npc_day",
+                            "workCommands": ["jp_hospital_reception_duty"],
+                            "activeHours": [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
+                            "activeDays": [],
+                            "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1300 } ],
+                            "paymentCadence": "Daily",
+                            "holidayPayoutMultiplier": 1.35
+                        }
+                    },
+                    {
+                        "ID": "membertype_jp_hospital_frontdesk_npc_night",
+                        "_comment": "NPC-only night post, every day, always covered by a fallback worker. Not in assignableMemberTypes.",
+                        "socialStandingKey": "membertype_jp_hospital_frontdesk_npc_night",
+                        "workModule": {
+                            "jobPostID": "jp_hospital_frontdesk_npc_night",
+                            "workCommands": ["jp_hospital_reception_duty"],
+                            "activeHours": [19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6],
+                            "activeDays": [],
+                            "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1490 } ],
+                            "paymentCadence": "Daily",
                             "holidayPayoutMultiplier": 1.35
                         }
                     }
@@ -598,6 +706,7 @@
                 "furnitureSize":2,
                 "value":300000,
                 "Tags":[],
+                "occupancy": { "capacity": 1, "holdsUnconscious": true },
                 "givesJob": [ { "comID":["com_furniture_sleep", "jp_hospital_bed_rest", "com_furniture_rest_required"] } ]
             },
             {
@@ -867,6 +976,14 @@
                 "membertype_jp_hospital_frontdesk_team_b": "挂号员（B组·夜班）",
                 "membertype_jp_hospital_frontdesk_team_c": "挂号员（C组·日班）",
                 "membertype_jp_hospital_frontdesk_team_d": "挂号员（D组·夜班）",
+                "membertype_jp_hospital_doctor_npc_day": "值班医生（日班，每日）",
+                "membertype_jp_hospital_doctor_npc_night": "值班医生（夜班，每日）",
+                "membertype_jp_hospital_nurse_npc_day": "值班护士（日班，每日）",
+                "membertype_jp_hospital_nurse_npc_night": "值班护士（夜班，每日）",
+                "membertype_jp_hospital_pharmacy_npc_day": "值班药房职员（日班，每日）",
+                "membertype_jp_hospital_pharmacy_npc_night": "值班药房职员（夜班，每日）",
+                "membertype_jp_hospital_frontdesk_npc_day": "值班挂号员（日班，每日）",
+                "membertype_jp_hospital_frontdesk_npc_night": "值班挂号员（夜班，每日）",
                 "membertype_jp_hospital_patient": "住院患者",
                 "membertype_jp_hospital_visitor": "探视者",
 
@@ -886,6 +1003,14 @@
                 "jp_hospital_frontdesk_team_b": "B组夜班挂号（12小时）",
                 "jp_hospital_frontdesk_team_c": "C组日班挂号（12小时）",
                 "jp_hospital_frontdesk_team_d": "D组夜班挂号（12小时）",
+                "jp_hospital_doctor_npc_day": "值班诊疗（日班，每日）",
+                "jp_hospital_doctor_npc_night": "值班诊疗（夜班，每日）",
+                "jp_hospital_nurse_npc_day": "值班护理（日班，每日）",
+                "jp_hospital_nurse_npc_night": "值班护理（夜班，每日）",
+                "jp_hospital_pharmacy_npc_day": "值班药房（日班，每日）",
+                "jp_hospital_pharmacy_npc_night": "值班药房（夜班，每日）",
+                "jp_hospital_frontdesk_npc_day": "值班挂号（日班，每日）",
+                "jp_hospital_frontdesk_npc_night": "值班挂号（夜班，每日）",
                 "jp_hospital_visiting": "探视"
             },
             "en-us": {
@@ -936,6 +1061,14 @@
                 "membertype_jp_hospital_frontdesk_team_b": "Receptionist (Team B, Nights)",
                 "membertype_jp_hospital_frontdesk_team_c": "Receptionist (Team C, Days)",
                 "membertype_jp_hospital_frontdesk_team_d": "Receptionist (Team D, Nights)",
+                "membertype_jp_hospital_doctor_npc_day": "On-Duty Doctor (Days, Every Day)",
+                "membertype_jp_hospital_doctor_npc_night": "On-Duty Doctor (Nights, Every Day)",
+                "membertype_jp_hospital_nurse_npc_day": "On-Duty Nurse (Days, Every Day)",
+                "membertype_jp_hospital_nurse_npc_night": "On-Duty Nurse (Nights, Every Day)",
+                "membertype_jp_hospital_pharmacy_npc_day": "On-Duty Pharmacy Clerk (Days, Every Day)",
+                "membertype_jp_hospital_pharmacy_npc_night": "On-Duty Pharmacy Clerk (Nights, Every Day)",
+                "membertype_jp_hospital_frontdesk_npc_day": "On-Duty Receptionist (Days, Every Day)",
+                "membertype_jp_hospital_frontdesk_npc_night": "On-Duty Receptionist (Nights, Every Day)",
                 "membertype_jp_hospital_patient": "Inpatient",
                 "membertype_jp_hospital_visitor": "Visitor",
 
@@ -955,6 +1088,14 @@
                 "jp_hospital_frontdesk_team_b": "Team B Night Shift (12h)",
                 "jp_hospital_frontdesk_team_c": "Team C Day Shift (12h)",
                 "jp_hospital_frontdesk_team_d": "Team D Night Shift (12h)",
+                "jp_hospital_doctor_npc_day": "On-Duty Day Shift (12h, every day)",
+                "jp_hospital_doctor_npc_night": "On-Duty Night Shift (12h, every day)",
+                "jp_hospital_nurse_npc_day": "On-Duty Day Shift (12h, every day)",
+                "jp_hospital_nurse_npc_night": "On-Duty Night Shift (12h, every day)",
+                "jp_hospital_pharmacy_npc_day": "On-Duty Day Shift (12h, every day)",
+                "jp_hospital_pharmacy_npc_night": "On-Duty Night Shift (12h, every day)",
+                "jp_hospital_frontdesk_npc_day": "On-Duty Day Shift (12h, every day)",
+                "jp_hospital_frontdesk_npc_night": "On-Duty Night Shift (12h, every day)",
                 "jp_hospital_visiting": "Visiting"
             }
         }

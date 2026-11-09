@@ -902,6 +902,8 @@ public class Manageable_Party : I_IsJobGiver
         foreach (var i in ManagedChara)
         {
             if (i.RefID != chara.RefID &&
+                !FurnitureOccupancyUtility.IsInCarry(i) &&   // carrying / being carried (携带): not sought out
+                MapUtility.CanSee(chara, i) &&               // not across a stall's door (PreEvaluate would refuse it)
                 (scr_System_CentralControl.current.CanInteractWith(chara.RefID, i.RefID)) &&
                 (!restrainedOnly || i.isImprisoned || i.isRestrained) &&
                 (i.InteractionJob.HasAvailableCOMwithCOMTags(new List<string>() { tag }))

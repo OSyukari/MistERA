@@ -72,8 +72,9 @@
         "recreationOffers": [
             {
                 "ID": "recreation_offer_jp_shrine_hatsumode",
+                "mainTypeTag": "worship", "secondaryTags": ["outdoor", "shrine", "seasonal", "newyear"],
                 "allowWalkIn": true,
-                "trustRewardEligible": false,
+                "trustRewardEligible": true, "provideAcceptanceBonus": 5, "activityMoodlet": { "stress": 1 },
                 "factionID": "jp_tourist_shrine",
                 "startHour": 10,
                 "hours": 2,
@@ -135,7 +136,7 @@
                     }
                 ],
                 "AcceptanceCheck": { "baseAcceptanceValue": 10 },
-                "DifficultyCheck": { "baseD20Check": 0 },
+                "DifficultyCheck": { "baseD20Check": 5 },
                 "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$投下香油钱，摇响了铃铛"] } ] },
                 "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$二礼二拍手，正双手合十默默祈愿"] } ] },
                 "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$离开了拜殿前"] } ] },
@@ -155,7 +156,7 @@
                     }
                 ],
                 "AcceptanceCheck": { "baseAcceptanceValue": 10 },
-                "DifficultyCheck": { "baseD20Check": 0 },
+                "DifficultyCheck": { "baseD20Check": 5 },
                 "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$摇了摇签筒，抽出一支签"] } ] },
                 "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正仔细读着签文"] } ] },
                 "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$收起了签纸"] } ] },

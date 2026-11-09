@@ -8,7 +8,7 @@
                 {"option":"late arrival","Results":[{"Type":"ExistAppendStrings","arguments":["isLate"]},{"Type":"JumpToLabel","arguments":["","late"]}]},
                 {"option":"meal begins","Results":[{"Type":"JumpToLabel","arguments":["","begin"]}]}
             ]},
-            {"$type":"Event+EventEntry+EventEntry_Line, Assembly-CSharp","label":"begin","line":"Mall_Foodcourt_Begin_initial","isLast":true},
+            {"$type":"Event+EventEntry+EventEntry_Line, Assembly-CSharp","label":"begin","line":"Mall_Foodcourt_Begin_initial","isLast":true,"Results":[{"Type":"FlushMessageExpAll","arguments":["false"]}]},
             {"$type":"Event+EventEntry+EventEntry_Line, Assembly-CSharp","label":"join","line":"Mall_Foodcourt_Begin_join","isLast":true},
             {"$type":"Event+EventEntry+EventEntry_Line, Assembly-CSharp","label":"late","line":"Mall_Foodcourt_Begin_late","isLast":true}
         ]

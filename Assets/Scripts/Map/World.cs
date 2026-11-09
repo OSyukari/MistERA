@@ -109,6 +109,14 @@ public class WorldPlan
     /// </summary>
     public Dictionary<string, string> initializeFactions = new Dictionary<string, string>();
 
+    /// <summary>
+    /// Authored homes that belong to a residential district instead of the world (Docs/Locations/Plan_HouseholdsIntoDistricts.md):
+    /// instantiated from their own factionInit by WorldManager.InstantiateWorld, then registered as a home of the
+    /// district (ResidenceUtility.AdoptResidence). Not world members: no door, no world mesh link, no worldConnection.
+    /// Unioned with the parent world's (parentWorldID), a child's entry wins by factionID.
+    /// </summary>
+    public List<ResidenceInit> initializeResidences = new List<ResidenceInit>();
+
     public List<NPCInit> npcInit = new List<NPCInit>();
 
     /// <summary>
@@ -149,6 +157,8 @@ public class WorldPlan
                 var index = scr_System_Serializer.current?.MasterList?.MapPlans;
                 if (index != null && initializeFactions != null)
                     foreach (var factionID in initializeFactions.Keys) list.AddRange(index.GetRecreationOffersAt(factionID));
+                if (index != null && initializeResidences != null)
+                    foreach (var residence in initializeResidences) if (residence != null) list.AddRange(index.GetRecreationOffersAt(residence.factionID));
                 if (recreationOffers != null) list.AddRange(recreationOffers);
                 _allRecreationOffers = list;
             }

@@ -98,7 +98,7 @@ public interface I_StatsDisplayable
     public float FinalValue(List<string> contextKeys = null);
 }
 
-public class Stats_Derived_Instance : I_StatsDisplayable, I_CacheValues
+public class Stats_Derived_Instance : I_StatsDisplayable, I_CacheValues, I_StatNode
 {
 
     protected I_StatsManager owner = null;
@@ -125,14 +125,25 @@ public class Stats_Derived_Instance : I_StatsDisplayable, I_CacheValues
         _cache_values.Clear();
     }
     int _cacheVersion = -1;
+    bool _statDirty = false;
+    readonly StatDependents _dependents = new StatDependents();
+    [JsonIgnore] public StatDependents Dependents { get { return _dependents; } }
+    /// <summary>Dirty clears every cache key, both forbidStatus variants included.</summary>
+    public void MarkStatDirty()
+    {
+        if (_statDirty) return;
+        _statDirty = true;
+        _dependents.MarkAllDirty();
+    }
     /// <summary>
-    /// Lazily drop caches when the owner's modifier universe changed since they were computed.
+    /// Lazily drop caches when this stat was marked dirty or the owner's modifier universe changed since they were computed.
     /// </summary>
     void SyncCacheVersion()
     {
         if (owner == null) return;
-        if (_cacheVersion != owner.StatModsVersion)
+        if (_statDirty || _cacheVersion != owner.StatModsVersion)
         {
+            _statDirty = false;
             _cacheVersion = owner.StatModsVersion;
             ClearCache();
         }
@@ -157,6 +168,7 @@ public class Stats_Derived_Instance : I_StatsDisplayable, I_CacheValues
     public float FinalValue(List<string> contextKeys, bool forbidStatus)
     {
         SyncCacheVersion();
+        owner?.RegisterStatRead(this);
         var key = (GetContextID(contextKeys), forbidStatus);
         if (!_cache_values.ContainsKey(key)) GetFinalValue(contextKeys, forbidStatus);
         if (_cache_values[key] == -1)
@@ -201,10 +213,15 @@ public class Stats_Derived_Instance : I_StatsDisplayable, I_CacheValues
     /// </summary>
     float ComputeValue(List<string> contextKeys, bool forbidStatus)
     {
-        _modScratch.Clear();
-        _modScratch.AddRange(this.Parent.valueCalculations);
-        owner.GetModifiers(_modScratch, this.Parent, ID, null, forbidStatus);
+        owner.BeginStatCompute(this);
+        try
+        {
+            _modScratch.Clear();
+            _modScratch.AddRange(this.Parent.valueCalculations);
+            owner.GetModifiers(_modScratch, this.Parent, ID, null, forbidStatus);
 
-        return UtilityEX.ParseStatMods(this.Parent, storage, _modScratch);
+            return UtilityEX.ParseStatMods(this.Parent, storage, _modScratch);
+        }
+        finally { owner.EndStatCompute(this); }
     }
 }
