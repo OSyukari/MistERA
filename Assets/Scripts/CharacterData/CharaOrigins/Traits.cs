@@ -45,7 +45,7 @@ public enum Trait_AppearanceRequirement
 
 /// <summary>
 /// Requirement check shared by Traits and scr_Traits_Group (both carry the same flat json fields).
-/// Race keywords = Race.RaceType + RaceTemplate.actorKeyword.
+/// Race keywords = Race.RaceType + all RaceTemplates' actorKeyword.
 /// </summary>
 public static class Trait_Requirement
 {
@@ -54,8 +54,7 @@ public static class Trait_Requirement
         if (c == null) return;
         var race = c.Race;
         if (race != null) result.AddRange(race.RaceType);
-        var raceTemplate = c.RaceTemplate;
-        if (raceTemplate != null) result.AddRange(raceTemplate.actorKeyword);
+        foreach (var template in c.RaceTemplates) result.AddRange(template.actorKeyword);
     }
 
     public static bool IsAppearanceMet(Trait_AppearanceRequirement req, Humanoid_GenderAppearance app)

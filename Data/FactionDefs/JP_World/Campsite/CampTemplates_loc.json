@@ -1,0 +1,12 @@
+{
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "jp_home_tpl_camp_single": "Single-Person Camp",
+                "camp_single_room": "Camp",
+                "furniture_camp_sleeping_bag": "Sleeping Bag",
+                "furniture_marker_camp_rest": "Resting Spot"
+            }
+        }
+    }
+}

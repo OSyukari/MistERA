@@ -1,0 +1,380 @@
+{
+  "_comment": "Standalone base-world initialization for Bocchi content and the Gotoh household dog. Futari is mod-only. No world.json edit, periodic reconciliation, or new scheduler.",
+  "MapPlans": {
+    "factionInit": [
+      {
+        "ID": "btr_kessoku_band",
+        "isLocationless": true,
+        "assignableMemberTypes": [
+          "membertype_band_performer",
+          "membertype_band_manager",
+          "membertype_band_support_staff"
+        ],
+        "joinableMemberTypes": [
+          "membertype_band_performer",
+          "membertype_band_manager",
+          "membertype_band_support_staff"
+        ],
+        "mealHours": [],
+        "managerBaseIDs": [],
+        "workModules": [],
+        "activityOrganization": {
+          "memberTypeIDs": [
+            "membertype_band_performer"
+          ],
+          "minMembers": 4,
+          "activities": [
+            {
+              "ID": "jp_band_rehearsal",
+              "venueTags": [
+                "band_practice"
+              ],
+              "mainTypeTag": "music_practice",
+              "secondaryTags": [
+                "music",
+                "band"
+              ],
+              "cooldownTag": "band_rehearsal",
+              "daysInAdvance": 0,
+              "minDaysBetween": 2,
+              "weeklyTarget": 2,
+              "baseWeight": 1,
+              "minHours": 3,
+              "maxHours": 3
+            },
+            {
+              "ID": "jp_band_performance",
+              "venueTags": [
+                "band_performance"
+              ],
+              "mainTypeTag": "music_performance",
+              "secondaryTags": [
+                "music",
+                "band",
+                "live"
+              ],
+              "cooldownTag": "band_performance",
+              "daysInAdvance": 3,
+              "minDaysBetween": 14,
+              "weeklyTarget": 1,
+              "baseWeight": 1,
+              "minHours": 2,
+              "maxHours": 2
+            }
+          ]
+        }
+      }
+    ],
+    "worldInitAddons": [
+      {
+        "worldID": "world_erav_modern_jp",
+        "initializeFactions": {
+          "btr_kessoku_band": "btr_kessoku_band"
+        },
+        "initializeResidences": [
+          {
+            "factionID": "btr_home_gotoh",
+            "districtID": "jp_district_houses",
+            "templateID": "jp_home_tpl_house_4ldk"
+          },
+          {
+            "factionID": "btr_home_kita",
+            "districtID": "jp_district_apartment",
+            "templateID": "jp_home_tpl_apt_2ldk"
+          },
+          {
+            "factionID": "btr_home_ryo",
+            "districtID": "jp_district_budget_apartment",
+            "templateID": "jp_home_tpl_apt_1ldk"
+          },
+          {
+            "factionID": "btr_home_pa",
+            "districtID": "jp_district_apartment",
+            "templateID": "jp_home_tpl_apt_2ldk"
+          },
+          {
+            "factionID": "btr_home_kikuri",
+            "districtID": "jp_district_budget_apartment",
+            "templateID": "jp_home_tpl_apt_1ldk"
+          }
+        ],
+        "npcInit": [
+          {
+            "initID": "init_btr_naoki",
+            "actorBaseID": "BocchiRock_Char_Naoki_Gotoh",
+            "reconcileExistingAssignments": true,
+            "Homefaction": {
+              "factionID": "btr_home_gotoh",
+              "guestStatus": "membertype_family_leader",
+              "spawnFloorID": "floor_btr_gotoh_house",
+              "spawnRoomID": "4ldk_floor_2L_roomdouble",
+              "setRoomOwnership": true
+            },
+            "Workfactions": [
+              {
+                "factionID": "jp_hospital",
+                "guestStatus": "membertype_jp_hospital_doctor_team_a"
+              }
+            ],
+            "Recreationfactions": []
+          },
+          {
+            "initID": "init_btr_michiyo",
+            "actorBaseID": "BocchiRock_Char_Michiyo_Gotoh",
+            "reconcileExistingAssignments": true,
+            "Homefaction": {
+              "factionID": "btr_home_gotoh",
+              "guestStatus": "membertype_member",
+              "spawnFloorID": "floor_btr_gotoh_house",
+              "spawnRoomID": "4ldk_floor_2L_roomdouble",
+              "setRoomOwnership": true
+            },
+            "Workfactions": [],
+            "Recreationfactions": []
+          },
+          {
+            "initID": "init_btr_hitori",
+            "actorBaseID": "BocchiRock_Char_Hitori_Gotoh",
+            "reconcileExistingAssignments": true,
+            "Homefaction": {
+              "factionID": "btr_home_gotoh",
+              "guestStatus": "membertype_member",
+              "spawnFloorID": "floor_btr_gotoh_house",
+              "spawnRoomID": "4ldk_floor_2L_roomsingle1",
+              "setRoomOwnership": true
+            },
+            "Workfactions": [
+              {
+                "factionID": "jp_high_school",
+                "guestStatus": "membertype_jp_high_school_student"
+              },
+              {
+                "factionID": "jp_neon_livehouse",
+                "guestStatus": "membertype_starry_parttime"
+              }
+            ],
+            "Recreationfactions": [
+              {
+                "factionID": "btr_kessoku_band",
+                "guestStatus": "membertype_band_guitar"
+              }
+            ]
+          },
+          {
+            "initID": "init_btr_minoru",
+            "actorBaseID": "BocchiRock_Char_Tsukuyo_Kita",
+            "reconcileExistingAssignments": true,
+            "Homefaction": {
+              "factionID": "btr_home_kita",
+              "guestStatus": "membertype_family_leader",
+              "spawnFloorID": "floor_2ldk_2floor_1",
+              "spawnRoomID": "floor_2ldk_2floor_1_1L_room",
+              "setRoomOwnership": true
+            },
+            "Workfactions": [
+              {
+                "factionID": "jp_hospital",
+                "guestStatus": "membertype_jp_hospital_doctor_team_c"
+              }
+            ],
+            "Recreationfactions": []
+          },
+          {
+            "initID": "init_btr_kuruyo",
+            "actorBaseID": "BocchiRock_Char_Kuruyo_Kita",
+            "reconcileExistingAssignments": true,
+            "Homefaction": {
+              "factionID": "btr_home_kita",
+              "guestStatus": "membertype_member",
+              "spawnFloorID": "floor_2ldk_2floor_1",
+              "spawnRoomID": "floor_2ldk_2floor_1_1L_room",
+              "setRoomOwnership": true
+            },
+            "Workfactions": [],
+            "Recreationfactions": []
+          },
+          {
+            "initID": "init_btr_ikuyo",
+            "actorBaseID": "BocchiRock_Char_Ikuyo_Kita",
+            "reconcileExistingAssignments": true,
+            "Homefaction": {
+              "factionID": "btr_home_kita",
+              "guestStatus": "membertype_member",
+              "spawnFloorID": "floor_2ldk_2floor_1",
+              "spawnRoomID": "floor_2ldk_2floor_1_2L_room",
+              "setRoomOwnership": true
+            },
+            "Workfactions": [
+              {
+                "factionID": "jp_high_school",
+                "guestStatus": "membertype_jp_high_school_student"
+              },
+              {
+                "factionID": "jp_neon_livehouse",
+                "guestStatus": "membertype_starry_parttime"
+              }
+            ],
+            "Recreationfactions": [
+              {
+                "factionID": "btr_kessoku_band",
+                "guestStatus": "membertype_band_vocal"
+              }
+            ]
+          },
+          {
+            "initID": "init_btr_seika",
+            "actorBaseID": "BocchiRock_Char_Seika_Ijichi",
+            "reconcileExistingAssignments": true,
+            "Homefaction": {
+              "factionID": "jp_neon_livehouse",
+              "guestStatus": "membertype_starry_manager",
+              "spawnFloorID": "floor_jp_neon_livehouse",
+              "spawnRoomID": "btr_starry_bedroom",
+              "setRoomOwnership": true,
+              "migrateFromFactionID": "btr_home_ijichi"
+            },
+            "Workfactions": [
+              {
+                "factionID": "jp_neon_livehouse",
+                "guestStatus": "membertype_starry_manager"
+              }
+            ],
+            "Recreationfactions": []
+          },
+          {
+            "initID": "init_btr_nijika",
+            "actorBaseID": "BocchiRock_Char_Nijika_Ijichi",
+            "reconcileExistingAssignments": true,
+            "Homefaction": {
+              "factionID": "jp_neon_livehouse",
+              "guestStatus": "membertype_starry_parttime",
+              "spawnFloorID": "floor_jp_neon_livehouse",
+              "spawnRoomID": "btr_starry_bedroom",
+              "setRoomOwnership": true,
+              "migrateFromFactionID": "btr_home_ijichi"
+            },
+            "Workfactions": [
+              {
+                "factionID": "jp_university",
+                "guestStatus": "membertype_jp_university_student"
+              },
+              {
+                "factionID": "jp_neon_livehouse",
+                "guestStatus": "membertype_starry_parttime"
+              }
+            ],
+            "Recreationfactions": [
+              {
+                "factionID": "btr_kessoku_band",
+                "guestStatus": "membertype_band_drums"
+              }
+            ]
+          },
+          {
+            "initID": "init_btr_ryo",
+            "actorBaseID": "BocchiRock_Char_Ryo_Yamada",
+            "reconcileExistingAssignments": true,
+            "Homefaction": {
+              "factionID": "btr_home_ryo",
+              "guestStatus": "membertype_family_leader",
+              "spawnFloorID": "floor_1ldk_1",
+              "spawnRoomID": "floor_1ldk_1_room",
+              "setRoomOwnership": true
+            },
+            "Workfactions": [],
+            "Recreationfactions": [
+              {
+                "factionID": "btr_kessoku_band",
+                "guestStatus": "membertype_band_bass"
+              }
+            ]
+          },
+          {
+            "initID": "init_btr_pa",
+            "actorBaseID": "BocchiRock_Char_PA_San",
+            "reconcileExistingAssignments": true,
+            "Homefaction": {
+              "factionID": "btr_home_pa",
+              "guestStatus": "membertype_family_leader",
+              "spawnFloorID": "floor_2ldk_2floor_1",
+              "spawnRoomID": "floor_2ldk_2floor_1_1L_room",
+              "setRoomOwnership": true
+            },
+            "Workfactions": [
+              {
+                "factionID": "jp_neon_livehouse",
+                "guestStatus": "membertype_starry_pa"
+              }
+            ],
+            "Recreationfactions": []
+          },
+          {
+            "initID": "init_btr_kikuri",
+            "actorBaseID": "BocchiRock_Char_Kikuri_Hiroi",
+            "reconcileExistingAssignments": true,
+            "Homefaction": {
+              "factionID": "btr_home_kikuri",
+              "guestStatus": "membertype_family_leader",
+              "spawnFloorID": "floor_1ldk_1",
+              "spawnRoomID": "floor_1ldk_1_room",
+              "setRoomOwnership": true
+            },
+            "Workfactions": [],
+            "Recreationfactions": []
+          },
+          {
+            "initID": "init_jimihen",
+            "actorBaseID": "BocchiRock_Char_Jimihen",
+            "reconcileExistingAssignments": true,
+            "Homefaction": {
+              "factionID": "btr_home_gotoh",
+              "guestStatus": "membertype_house_pet_dog",
+              "spawnFloorID": "floor_btr_gotoh_house",
+              "spawnRoomID": "4ldk_floor_1L_living",
+              "setRoomOwnership": true
+            },
+            "Workfactions": [],
+            "Recreationfactions": []
+          }
+        ]
+      }
+    ]
+  },
+  "Dictionary": {
+    "Entries": {
+      "zh-cn": {
+        "btr_kessoku_band": "结束乐队",
+
+        "BocchiRock_Char_Naoki_Gotoh_firstname":"直树",
+        "BocchiRock_Char_Michiyo_Gotoh_firstname":"美智代",
+        "BocchiRock_Char_Futari_Gotoh_firstname":"二里",
+        "BocchiRock_Char_Hitori_Gotoh_firstname":"一里",
+        "BocchiRock_Char_Gotoh_lastname":"后藤",
+
+        "BocchiRock_Char_Kikuri_Hiroi_firstname":"菊理",
+        "BocchiRock_Char_Kikuri_Hiroi_lastname":"广井",
+
+        "BocchiRock_Char_Nijika_Ijichi_firstname":"虹夏",
+        "BocchiRock_Char_Seika_Ijichi_firstname":"星歌",
+        "BocchiRock_Char_Ijichi_lastname":"伊地知",
+
+        "BocchiRock_Char_PA_San_firstname":"PA小姐",
+
+        "BocchiRock_Char_Jimihen_firstname":"吉米亨",
+
+        "BocchiRock_Char_Tsukuyo_Kita_firstname":"津久代",
+        "BocchiRock_Char_Kuruyo_Kita_firstname":"久留代",
+        "BocchiRock_Char_Ikuyo_Kita_firstname":"郁代",
+        "BocchiRock_Char_Kita_lastname":"喜多",
+
+        "BocchiRock_Char_Ryo_Yamada_firstname":"凉",
+        "BocchiRock_Char_Ryo_Yamada_lastname":"山田"
+
+      },
+      "en-us": {
+        "btr_kessoku_band": "Kessoku Band",
+        "BocchiRock_Char_Jimihen_firstname": "Jimihen"
+      }
+    }
+  }
+}

@@ -91,6 +91,7 @@
                 "eligibility": { "chara_conditions": [ { "parameters": [ "isPrisonerAtHome", "false" ] } ] },
                 "allowWalkIn": true, "trustRewardEligible": true, "provideAcceptanceBonus": 5,
                 "minHours": 2, "maxHours": 3,
+                "daysInAdvance": 1,
                 "minDaysBetween": 1,
                 "weeklyTarget": 2,
                 "baseWeight": 0.8,

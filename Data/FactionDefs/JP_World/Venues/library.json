@@ -38,7 +38,7 @@
       "minHours": 2, "maxHours": 2, "weeklyTarget": 2, "minDaysBetween": 1, "daysInAdvance": 1, "weight": 1, "participationChance": 1, "allowWalkIn": true, "trustRewardEligible": true,
       "gatherRoomID": "library_quiet_study", "launchEventID": "Venue_LibraryStudy_Begin",
       "invite": { "visibility": "Private", "inviteChance": 0.3, "minParticipants": 1, "TargetValidators": [{
-        "refKeys": ["companion"], "baseScope": "SelfRelationships", "extraScopeArguments": [],
+        "refKeys": ["companion"], "baseScope": "SelfRelationships", "extraScopeArguments": [], "requireRelationshipTags": ["rel_positive"],
         "chara_conditions": [{ "parameters": ["excludeSelf"] }, { "selfRelationshipRequirement": { "requireRawScore": [{ "requireScoreID": "Goodwill", "operand": "gte", "value": 25 }], "requireRawScoreCompare": [{ "requireScoreID": "Goodwill", "operand": "gt", "compareScoreID": "Badwill", "compareScoreMult": 1.1 }] } }],
         "maxTargetCount": 1, "stopAtMaxTargetCount": true, "orderBy": "friendliness", "required": false, "maxParticipants": 1
       }] }

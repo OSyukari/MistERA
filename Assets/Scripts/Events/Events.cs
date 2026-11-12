@@ -214,6 +214,12 @@ public class EventScope_Target
     public List<string> refKeys = new List<string>();
     public TargetScope baseScope = TargetScope.None;
     public List<string> extraScopeArguments = new List<string>();
+    /// <summary>
+    /// SelfRelationships only: a relationship counts only when one of its types (biological / personal / social, the
+    /// acquaintance fallback included) carries one of these tags (RelationshipType.tags - e.g. "rel_positive"); with
+    /// extraScopeArguments (type IDs) both must hold. Empty = no tag needed.
+    /// </summary>
+    public List<string> requireRelationshipTags = new List<string>();
     public List<Event_CharaCondition> chara_conditions = new List<Event_CharaCondition>();
     public int minTargetCount = -1;
     public int maxTargetCount = -1;

@@ -4,6 +4,19 @@ using Newtonsoft.Json;
 public class FurnitureBase
 {
     public string ID = "";
+    public string bedTypeID = "";
+    [JsonIgnore] public string BedTypeID => !string.IsNullOrEmpty(bedTypeID) ? bedTypeID
+        : ID != null && ID.Contains("furniture_bed") ? BedPreferenceUtility.HumanType : "";
+    [JsonIgnore] public bool IsClassifiedBed => !string.IsNullOrEmpty(BedTypeID);
+    [JsonIgnore] BedPriority? cachedBedPriority;
+    [JsonIgnore] public BedPriority BedPriority
+    {
+        get
+        {
+            if (!cachedBedPriority.HasValue) cachedBedPriority = BedPreferenceUtility.GetPriority(BedTypeID);
+            return cachedBedPriority.Value;
+        }
+    }
     public string displayName = "";
     [JsonIgnore]
     public string DisplayName
@@ -36,7 +49,7 @@ public class FurnitureBase
 
     public void OnAfterDeserialize()
     {
-
+        cachedBedPriority = null;
     }
 
     public void OnBeforeSerialize()

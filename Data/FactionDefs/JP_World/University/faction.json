@@ -1,0 +1,333 @@
+{
+    "MapPlans": {
+        "worldInitAddons": [
+            {
+                "worldID": "world_erav_modern_jp",
+                "initializeFactions": { "jp_university": "jp_university" }
+            }
+        ],
+        "factionInit": [
+            {
+                "ID": "jp_university",
+                "initializeFaction": "jp_university",
+                "setPrivateRoomOwner": false,
+                "isRentingFloor": false,
+                "mainExit": { "roomID": "university_frontGate", "exitCost": 5 },
+                "floors": [{ "ID": "floor_jp_university", "nameOverwrite": "jp_university" }],
+                "assignableMemberTypes": ["membertype_jp_university_teacher", "membertype_jp_university_student"],
+                "joinableMemberTypes": ["membertype_jp_university_student"],
+                "mealHours": [12],
+                "initializers": [
+                    {
+                        "initClass": "campaign_init_factionInventory",
+                        "initArguments": ["jp_university", "consumable_jp_university_lunch", "", "1"]
+                    }
+                ],
+                "_comment_fallbackWorkers": "One generic adult covers teaching until authored staff are assigned. Reuses an existing generator; no named university or research canon is implied.",
+                "fallbackWorkers": [
+                    { "memberTypeID": "membertype_jp_university_teacher", "headcount": 1, "maxFallback": 1, "templateID": "jp_generic_adult_female" }
+                ],
+                "activeHoursStart": 9,
+                "activeHoursEnd": 16
+            }
+        ],
+        "floorPlans": [
+            {
+                "ID": "floor_jp_university",
+                "imagePath": "BGAssets/Generated/school_exterior_06.webp",
+                "_comment_images": "Placeholder school backgrounds, shared with Highschool. Abstract room-list layout, not a drawn floor plan.",
+                "isFloorPlan": false,
+                "floorWidth": 400.0,
+                "floorHeight": 400.0,
+                "resize": 1.0,
+                "mapExit": "university_frontGate",
+                "rooms": [
+                    {
+                        "ID": "university_frontGate",
+                        "displayName": "jp_university_entrance",
+                        "hideOnMap": true,
+                        "connects": [],
+                        "furnitureIDs": [],
+                        "roomImagePath": "BGAssets/Generated/school_exterior_06.webp"
+                    },
+                    {
+                        "ID": "university_corridor",
+                        "displayName": "jp_university_corridor",
+                        "hideOnMap": true,
+                        "connects": [{ "ID": "university_frontGate", "cost": 1.0 }],
+                        "furnitureIDs": [],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
+                        "roomImagePath_Inactive_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                    },
+                    {
+                        "ID": "university_classroom",
+                        "displayName": "jp_university_classroom",
+                        "hideOnMap": true,
+                        "connects": [{ "ID": "university_corridor", "cost": 1.0 }],
+                        "furnitureIDs": ["furniture_marker_jp_university_teacher_podium", "furniture_marker_jp_university_student_desk"],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_Auditorium.jpg",
+                        "roomImagePath_Inactive_Night": "Media_UI_Scenario_Background/BG_Auditorium_Night.jpg"
+                    },
+                    {
+                        "ID": "university_teachers_office",
+                        "displayName": "jp_university_teachers_office",
+                        "hideOnMap": true,
+                        "connects": [{ "ID": "university_corridor", "cost": 1.0 }],
+                        "furnitureIDs": [],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_ValkyrieOffice2.jpg",
+                        "roomImagePath_Inactive_Night": "Media_UI_Scenario_Background/BG_ValkyrieOffice2_Night.jpg"
+                    },
+                    {
+                        "ID": "university_cafeteria",
+                        "displayName": "jp_university_cafeteria",
+                        "hideOnMap": true,
+                        "connects": [{ "ID": "university_corridor", "cost": 1.0 }],
+                        "furnitureIDs": ["furniture_dining_table_10", "furniture_marker_getmeal"],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_SchoolCafeteria.jpg",
+                        "roomImagePath_Inactive_Night": "Media_UI_Scenario_Background/BG_SchoolCafeteria_Night.jpg"
+                    },
+                    {
+                        "ID": "university_restroom_male",
+                        "displayName": "map_toilet_male",
+                        "hideOnMap": true,
+                        "connects": [{ "ID": "university_corridor", "cost": 1.0 }],
+                        "furnitureIDs": ["furniture_toilet_stall", "furniture_marker_gender_male"],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_LockerRoom.jpg"
+                    },
+                    {
+                        "ID": "university_restroom_female",
+                        "displayName": "map_toilet_female",
+                        "hideOnMap": true,
+                        "connects": [{ "ID": "university_corridor", "cost": 1.0 }],
+                        "furnitureIDs": ["furniture_toilet_stall", "furniture_marker_gender_female"],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_LockerRoom.jpg"
+                    }
+                ]
+            }
+        ],
+        "memberTypes": [
+            {
+                "ID": "membertype_jp_university_teacher",
+                "socialStandingKey": "membertype_jp_university_teacher",
+                "isMember": true,
+                "isPrisoner": false,
+                "isManager": false,
+                "isHidden": false,
+                "canBeTransferred": true,
+                "canBeLiberated": false,
+                "canBeRescued": false,
+                "skipsJobDispatch": false,
+                "isPurgedOnPartyCleanup": false,
+                "isDisplayableInFactionUI": true,
+                "participatesInCombat": true,
+                "workModule": {
+                    "jobPostID": "jp_university_teacher_class",
+                    "workCommands": ["jp_university_teachers_lesson"],
+                    "activeHours": [9,10,11,12,13,14,15],
+                    "activeDays": [1,1,1,1,1,0,0],
+                    "holidayPayoutMultiplier": 0,
+                    "holidayTags_any": ["isHoliday", "school_break"],
+                    "hourlyPayout": [{ "itemID": "currency_JPY", "itemCount": 2200 }],
+                    "paymentCadence": "Monthly"
+                },
+                "behaviorOverrides": {
+                    "behavior_job": {
+                        "$type": "TryFindJobByIDNode, Assembly-CSharp",
+                        "evaluationHeuristic": "closest",
+                        "FindInJobFaction": true,
+                        "filter": {
+                            "matchCOMID": "jp_university_teachers_lesson",
+                            "checkBlacklist": true,
+                            "skipPrivateRoom": false,
+                            "searchJobList": true,
+                            "searchNonJobList": false,
+                            "excludePrisonRooms": false
+                        }
+                    }
+                }
+            },
+            {
+                "ID": "membertype_jp_university_student",
+                "socialStandingKey": "membertype_jp_university_student",
+                "Tags": ["memberType_student_fullTime"],
+                "joinHandler": {
+                    "$type": "JoinHandler_WorkPost, Assembly-CSharp",
+                    "optionTextKey": "jp_university_student_joinOption",
+                    "bindTargetKey": "worker"
+                },
+                "leaveHandler": {
+                    "$type": "LeaveHandler_WorkPost, Assembly-CSharp",
+                    "optionTextKey": "student_post_leaveOption",
+                    "bindTargetKey": "worker"
+                },
+                "isMember": true,
+                "isPrisoner": false,
+                "isManager": false,
+                "isHidden": false,
+                "canBeTransferred": true,
+                "canBeLiberated": false,
+                "canBeRescued": false,
+                "skipsJobDispatch": false,
+                "isPurgedOnPartyCleanup": false,
+                "isDisplayableInFactionUI": true,
+                "participatesInCombat": true,
+                "workModule": {
+                    "jobPostID": "jp_university_student_class",
+                    "workCommands": ["jp_university_student_lesson"],
+                    "activeHours": [9,10,11,12,13,14,15],
+                    "activeDays": [1,1,1,1,1,0,0],
+                    "holidayPayoutMultiplier": 0,
+                    "holidayTags_any": ["isHoliday", "school_break"]
+                },
+                "behaviorOverrides": {
+                    "behavior_job": {
+                        "$type": "TryFindJobByIDNode, Assembly-CSharp",
+                        "evaluationHeuristic": "closest",
+                        "FindInJobFaction": true,
+                        "filter": {
+                            "matchCOMID": "jp_university_student_lesson",
+                            "checkBlacklist": true,
+                            "skipPrivateRoom": false,
+                            "searchJobList": true,
+                            "searchNonJobList": false,
+                            "excludePrisonRooms": false
+                        }
+                    }
+                }
+            }
+        ]
+    },
+    "Furnitures": {
+        "list": [
+            {
+                "ID": "furniture_marker_jp_university_student_desk",
+                "displayName": "jp_university_student_desk",
+                "recipe": [],
+                "furnitureSize": 0,
+                "value": 8000,
+                "Tags": [],
+                "givesJob": [{ "comID": ["jp_university_student_lesson"] }]
+            },
+            {
+                "ID": "furniture_marker_jp_university_teacher_podium",
+                "displayName": "jp_university_teacher_podium",
+                "recipe": [],
+                "furnitureSize": 0,
+                "value": 20000,
+                "Tags": [],
+                "givesJob": [{ "comID": ["jp_university_teachers_lesson"] }]
+            }
+        ]
+    },
+    "COMs": {
+        "list": [
+            {
+                "ID": "jp_university_student_lesson",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "jp_university_student_lesson_displayName",
+                "timeScale": 45,
+                "comTags": ["job", "furniture", "social", "education"],
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer": true,
+                        "req_Doers": {
+                            "requireJobFaction": "CurrentActive",
+                            "requireMemberTypeScope": "JobFaction",
+                            "requireMemberType": ["membertype_jp_university_student"]
+                        }
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 2, "cost_EN": 5 } } },
+                        "displayName": "jp_university_student_lesson_displayName"
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 0 },
+                "DifficultyCheck": { "baseD20Check": 5 },
+                "description_begin": { "Entries": [{ "keepLooking": true, "texts": ["$doer.firstname$ opens a notebook as class begins."] }] },
+                "description_ongoing": { "Entries": [{ "keepLooking": true, "texts": ["$doer.firstname$ listens to the lecture and takes notes."] }] },
+                "description_remove": { "Entries": [{ "keepLooking": true, "texts": ["$doer.firstname$ puts the notebook aside."] }] },
+                "description_after": { "Entries": [{ "keepLooking": true, "texts": ["$receiver.firstname$ finishes class."] }] }
+            },
+            {
+                "ID": "jp_university_teachers_lesson",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "jp_university_teachers_lesson_displayName",
+                "timeScale": 45,
+                "comTags": ["job", "furniture", "social", "education"],
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer": true,
+                        "req_Doers": {
+                            "requireJobFaction": "CurrentActive",
+                            "requireMemberTypeScope": "JobFaction",
+                            "requireMemberType": ["membertype_jp_university_teacher"]
+                        }
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 3, "cost_EN": 6 } } },
+                        "displayName": "jp_university_teachers_lesson_displayName"
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 0 },
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "description_begin": { "Entries": [{ "keepLooking": true, "texts": ["$doer.firstname$ begins the lecture."] }] },
+                "description_ongoing": { "Entries": [{ "keepLooking": true, "texts": ["$doer.firstname$ explains the lesson and answers questions."] }] },
+                "description_remove": { "Entries": [{ "keepLooking": true, "texts": ["$doer.firstname$ pauses the lecture."] }] },
+                "description_after": { "Entries": [{ "keepLooking": true, "texts": ["$receiver.firstname$ concludes the lecture."] }] }
+            }
+        ]
+    },
+    "Items": {
+        "list": [
+            {
+                "id": "consumable_jp_university_lunch",
+                "displayName": "University Lunch",
+                "tooltip": "A lunch set from the university canteen.",
+                "_comment": "Highschool meal pattern: no degradation or industrial tag; NPC faction stock supplies fresh copies.",
+                "Tags": ["food_meal", "consumable", "rarity_common", "do_not_sell"],
+                "value": 300,
+                "itemComps_Template": [
+                    {
+                        "compType": "ItemComponent_Ingestible",
+                        "comp_Ingestible": {
+                            "ingestMethod": [{ "bodyTags": "stomach", "digestSpeed": -1, "digestDelay": 30, "digestDelayVariation": 10, "amountMod": 8 }],
+                            "amount": 5,
+                            "OnUseEffects": [
+                                { "effectID": "ModStatValuePercent", "arguments": ["stats_derived_extended_energy", "0.3"] },
+                                { "effectID": "ModStatValuePercent", "arguments": ["stats_derived_extended_stamina", "0.2"] }
+                            ]
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "default": {
+                "jp_university": "University",
+                "university_frontGate": "University",
+                "jp_university_entrance": "Main Gate",
+                "jp_university_corridor": "Corridor",
+                "jp_university_classroom": "Lecture Room",
+                "jp_university_teachers_office": "Faculty Office",
+                "jp_university_cafeteria": "University Canteen",
+                "membertype_jp_university_teacher": "University Teacher",
+                "membertype_jp_university_student": "University Student",
+                "jp_university_student_joinOption": "Enroll $name$ at university",
+                "jp_university_student_class": "University Classes",
+                "jp_university_teacher_class": "Teaching",
+                "jp_university_student_lesson_displayName": "Attend Lecture",
+                "jp_university_teachers_lesson_displayName": "Teach Lecture",
+                "jp_university_student_desk": "Student Desk",
+                "jp_university_teacher_podium": "Lectern",
+                "consumable_jp_university_lunch": "University Lunch",
+                "consumable_jp_university_lunch_tooltip": "A lunch set from the university canteen."
+            }
+        }
+    }
+}

@@ -333,6 +333,7 @@ public static class FactionUtility
 
             foreach (var post in jobs[key])
             {
+                if (post.ParentRoom.Base?.requireHomeMembership == true && !post.ParentRoom.CanBeAccessedBy(c)) continue;
                 if (post.ParentRoom.ActivityState != RoomActivityState.AlwaysActive && post.ParentRoom.FactionOwner is Manageable)
                 {
                     var faction = post.ParentRoom.FactionOwner as Manageable;
@@ -441,6 +442,7 @@ public static class FactionUtility
 
         foreach (var post in jobs[targetCOM])
         {
+            if (post.ParentRoom.Base?.requireHomeMembership == true && !post.ParentRoom.CanBeAccessedBy(c)) continue;
             if (post.ParentRoom.ActivityState != RoomActivityState.AlwaysActive && post.ParentRoom.FactionOwner is Manageable)
             {
                 var faction = post.ParentRoom.FactionOwner as Manageable;
@@ -549,7 +551,40 @@ public static class FactionUtility
         }
     }
 
-    public static bool GetValidPathsWithHeuristic(ref List<Job_Furniture> possibleJobs, Character_Trainable chara, Func<Job_Furniture, Character_Trainable, Dictionary<int, float>, float> heuristic, int returnCount, ref string s)
+    /// <summary>Only the requested command/tag opts in, never a candidate's other capabilities.</summary>
+    public static string GetPreferredBedTypeForQuery(Character_Trainable c, string comID, string tag = "")
+    {
+        if (!string.IsNullOrEmpty(comID))
+        {
+            if (comID == "com_furniture_sleep" || comID == "com_furniture_rest_required")
+                return BedPreferenceUtility.GetEffectiveType(c);
+            var com = scr_System_Serializer.current.MasterList.COMs.GetByID(comID);
+            return com != null && com.comTags.Contains("rest") ? BedPreferenceUtility.GetEffectiveType(c) : null;
+        }
+        return tag == "rest" ? BedPreferenceUtility.GetEffectiveType(c) : null;
+    }
+
+    private struct HeuristicScore
+    {
+        public Job_Furniture Job;
+        public int BedTier;
+        public float Score;
+        public int OriginalIndex;
+    }
+
+    private static readonly Stack<List<HeuristicScore>> heuristicScoresPool = new Stack<List<HeuristicScore>>();
+    private static readonly Stack<Dictionary<int, float>> heuristicCachePool = new Stack<Dictionary<int, float>>();
+    private static readonly IComparer<HeuristicScore> heuristicScoreComparer = Comparer<HeuristicScore>.Create(CompareHeuristicScores);
+
+    private static int CompareHeuristicScores(HeuristicScore a, HeuristicScore b)
+    {
+        int comparison = a.BedTier.CompareTo(b.BedTier);
+        if (comparison != 0) return comparison;
+        comparison = a.Score.CompareTo(b.Score);
+        return comparison != 0 ? comparison : a.OriginalIndex.CompareTo(b.OriginalIndex);
+    }
+
+    public static bool GetValidPathsWithHeuristic(ref List<Job_Furniture> possibleJobs, Character_Trainable chara, Func<Job_Furniture, Character_Trainable, Dictionary<int, float>, float> heuristic, int returnCount, ref string s, string preferredBedType = null)
     {
         if (possibleJobs.Count == 0)
         {
@@ -557,20 +592,83 @@ public static class FactionUtility
             return false;
         }
 
-        Dictionary<int, float> cachedResult = new Dictionary<int, float>();
+        if (returnCount <= 0)
+        {
+            possibleJobs.Clear();
+            if (s != null) s += " no jobs selected by heuristic";
+            return false;
+        }
 
-        var tiers = possibleJobs
-            .GroupBy(job => heuristic(job, chara, cachedResult))
-            .OrderBy(g => g.Key)
-            .Take(returnCount);
+        // Main-thread scratch is checked out until finally, keeping nested queries independent.
+        var scores = heuristicScoresPool.Count > 0 ? heuristicScoresPool.Pop() : new List<HeuristicScore>();
+        var cachedResult = heuristicCachePool.Count > 0 ? heuristicCachePool.Pop() : new Dictionary<int, float>();
+        try
+        {
+            for (int i = 0; i < possibleJobs.Count; i++)
+            {
+                var job = possibleJobs[i];
+                int bedTier = 0;
+                if (preferredBedType != null)
+                {
+                    var bedType = job.ParentInstance?.FurnitureBase?.BedTypeID;
+                    if (string.IsNullOrEmpty(bedType)) bedTier = 4;
+                    else
+                    {
+                        // IsOwner performs the existing lazy ownership initialization before the local gate.
+                        bool owned = job.IsOwner(chara.RefID);
+                        if (!job.CanAutonomouslyUseBed(chara)) continue;
+                        bedTier = bedType == preferredBedType ? (owned ? 0 : 1) : (owned ? 2 : 3);
+                    }
+                }
+                float value = heuristic(job, chara, cachedResult);
+                // Distance already reports unreachable candidates with this sentinel; do not let a preferred tier hide reachable fallbacks.
+                if (preferredBedType != null && (value == float.MaxValue || float.IsPositiveInfinity(value))) continue;
+                var score = new HeuristicScore
+                {
+                    Job = job,
+                    BedTier = bedTier,
+                    Score = value,
+                    OriginalIndex = i
+                };
+                // Nearly every behavior asks for one score tier. Retain its ties in one pass instead of sorting all candidates.
+                if (returnCount == 1 && scores.Count > 0)
+                {
+                    int comparison = score.BedTier.CompareTo(scores[0].BedTier);
+                    if (comparison == 0) comparison = score.Score.CompareTo(scores[0].Score);
+                    if (comparison > 0) continue;
+                    if (comparison < 0) scores.Clear();
+                }
+                scores.Add(score);
+            }
 
-        possibleJobs = tiers.SelectMany(g => g).ToList();
+            if (returnCount > 1) scores.Sort(heuristicScoreComparer);
+            possibleJobs.Clear();
+            int groups = 0;
+            for (int i = 0; i < scores.Count; i++)
+            {
+                var score = scores[i];
+                if (i == 0 || score.BedTier != scores[i - 1].BedTier || !score.Score.Equals(scores[i - 1].Score))
+                {
+                    if (groups >= returnCount) break;
+                    groups++;
+                }
+                possibleJobs.Add(score.Job);
+            }
 
-        if (possibleJobs.Count > 0)
-            return true;
-
-        if (s != null) s += " no jobs selected by heuristic";
-        return false;
+            if (possibleJobs.Count > 0) return true;
+            if (s != null) s += " no jobs selected by heuristic";
+            return false;
+        }
+        finally
+        {
+            scores.Clear();
+            cachedResult.Clear();
+            if (heuristicScoresPool.Count < 4)
+            {
+                heuristicScoresPool.Push(scores);
+                heuristicCachePool.Push(cachedResult);
+            }
+        }
     }
 
     public static float Heuristic_Random(Job_Furniture j, Character_Trainable c, Dictionary<int, float> cache)
@@ -602,7 +700,8 @@ public static class FactionUtility
         }
 
         var paths = map.FilterValidPathsOptimized(c, new List<int> { roomId }, false);
-        float distance = paths.Count > 0 ? (float)paths.Keys.First() : float.MaxValue;
+        float distance = float.MaxValue;
+        foreach (var entry in paths) { distance = entry.Key; break; }
         if (cache != null) cache[roomId] = distance;
         return distance;
     }

@@ -51,7 +51,7 @@ public static class RelationshipReachabilityTests
                     (column: "traits_PSY_SEX", id: "trait_SexualInterest", type: Trait_Type.Sexual_Psyche,
                         entries: new[] { "curious", "normal", "conservative" }),
                     (column: "traits_WIL_SEX", id: "trait_Chastity", type: Trait_Type.Sexual_Willpower,
-                        entries: new[] { "caring", "normal", "indifferent" })
+                        entries: new[] { "caring", "normal", "indifferent", "innocent" })
                 };
                 foreach (var spec in expected)
                 {
@@ -60,7 +60,7 @@ public static class RelationshipReachabilityTests
                     Require(group.SortType == Trait_Group_Type.SortedList, spec.id + " must replace other entries in the group");
                     Require(group.entries.Select(e => e.ID).SequenceEqual(spec.entries.Select(e => spec.id + "_" + e)), spec.id + " IDs/order");
                     Require(group.NeutralEntryIndex == 1 && group.getNeutralinGroup().ID == spec.id + "_normal", spec.id + " default");
-                    Require(group.entries.Select(e => e.trait_score).SequenceEqual(new[] { -1, 0, 1 }), spec.id + " scores");
+                    Require(group.entries.Select(e => e.trait_score).SequenceEqual(Enumerable.Range(-1, spec.entries.Length)), spec.id + " scores");
                     Require(group.entries.All(e => e.stat_modifiers.Count == 0), spec.id + " must not modify acceptance stats");
                 }
             });
@@ -73,7 +73,7 @@ public static class RelationshipReachabilityTests
                 foreach (var spec in new[]
                 {
                     (id: "trait_SexualInterest", names: new[] { "性兴趣", "好奇", "普通", "保守" }, entries: new[] { "curious", "normal", "conservative" }),
-                    (id: "trait_Chastity", names: new[] { "贞操", "重视", "普通", "不在乎" }, entries: new[] { "caring", "normal", "indifferent" })
+                    (id: "trait_Chastity", names: new[] { "在乎贞操", "重视", "普通", "不在乎", "天真" }, entries: new[] { "caring", "normal", "indifferent", "innocent" })
                 })
                 {
                     var keys = new[] { spec.id }.Concat(spec.entries.Select(e => spec.id + "_" + e)).ToArray();
@@ -386,7 +386,7 @@ public static class RelationshipReachabilityTests
         var requestable = permissions.Values.Where(p => p.requestable).ToArray();
         test("Permissions: no shipped request relation gate; independent lifetime and caring skill policy", () =>
         {
-            Require(requestable.Length == 9, "Expected nine requestable scopes");
+            Require(requestable.Length == 10, "Expected ten requestable scopes");
             foreach (var p in requestable)
             {
                 Require(p.requiredRelationshipTags.Count == 0, p.ID + " still gates requests by relationship");
@@ -414,6 +414,20 @@ public static class RelationshipReachabilityTests
             {
                 var caring = p.requestModifiers.Single(m => m.traitID == "trait_Chastity_caring");
                 var indifferent = p.requestModifiers.Single(m => m.traitID == "trait_Chastity_indifferent");
+                var innocent = p.requestModifiers.Single(m => m.traitID == "trait_Chastity_innocent");
+                var ownPartner = p.requestModifiers.Single(m => m.relationshipTags.Contains("sexual_partner"));
+                Near(innocent.thresholdScale, 0.25f, p.ID + " innocent scale");
+                Require(innocent.scoreIDs.Count == 0 && innocent.relationshipIDs.Count == 0
+                    && innocent.relationshipTags.Count == 0 && innocent.thresholdReduction == 0,
+                    p.ID + " innocent must scale all scores without a relationship gate or flat reduction");
+                Require(Adjust(30, "Trust", innocent) == 8, p.ID + " innocent Trust ceil");
+                Require(Adjust(150, "Desire", innocent) == 38, p.ID + " innocent Desire ceil");
+                Require(Adjust(100, "Goodwill", innocent) == 25, p.ID + " innocent Goodwill");
+                Require(Adjust(30, "Trust", ownPartner, innocent) == 6, p.ID + " partner then innocent");
+                Require(Adjust(0, "Trust", innocent) == 0 && Adjust(-10, "Trust", innocent) == -10,
+                    p.ID + " innocent must preserve nonpositive thresholds");
+                Require(PermissionDefinition.AdjustRequestThreshold(30, "Trust", LogicalOperand.gt, new[] { innocent }) == 8,
+                    p.ID + " innocent strict lower bound");
                 bool medium = p.ID == "permission_intimacy_low" || p.ID == "permission_intimacy_medium";
                 Near(caring.thresholdScale, medium ? 1.25f : 1.5f, p.ID + " caring scale");
                 Near(indifferent.thresholdScale, medium ? 0.75f : 0.5f, p.ID + " indifferent scale");
@@ -489,7 +503,7 @@ public static class RelationshipReachabilityTests
             Require(!PermissionService.CanRequest(null, null, null) && !PermissionService.AcceptsRequest(null, null, null), "Invalid request accepted");
             Require(PermissionService.ResolveGrantType(null, PermissionGrantSource.Request) == PermissionGrantType.Temporary, "Unknown lifetime became permanent");
         });
-        test("Permissions: all nine menu events use shared eligibility, decision and Request grants", () =>
+        test("Permissions: all requestable menu events use shared eligibility, decision and Request grants", () =>
         {
             int count = 0;
             foreach (var file in new[] { "Permissions_Intimacy.json", "Permissions_Sex.json" })

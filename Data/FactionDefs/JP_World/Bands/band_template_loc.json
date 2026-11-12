@@ -1,0 +1,10 @@
+{
+    "Dictionary": { "Entries": { "en-us": {
+        "jp_band_template": "Band (Generic Template)",
+        "jp_band_storage": "Band Equipment Storage",
+        "membertype_jp_band_member": "Band Member",
+        "jp_band_member_joinOption": "Have $name$ join the band",
+        "jp_band_rehearsal": "Band Rehearsal",
+        "jp_band_performance": "Live Band Performance"
+    } } }
+}

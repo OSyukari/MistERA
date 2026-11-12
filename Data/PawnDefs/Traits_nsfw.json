@@ -137,6 +137,12 @@
                     "trait_displayname": "Indifferent",
                     "trait_score":1,
                     "trait_tooltip": "Places little importance on chastity when considering intimate permissions. Does not modify action acceptance."
+                },
+                {
+                    "trait_ID": "trait_Chastity_innocent",
+                    "trait_displayname": "Innocent",
+                    "trait_score":2,
+                    "trait_tooltip": "Does not understand intimacy; requires only 25% of the usual permission request scores. Does not modify action acceptance."
                 }
             ],
             "SortType":"SortedList",
@@ -602,6 +608,8 @@
                 "trait_Chastity_normal_tooltip":"%%trait_Chastity_tooltip%%\n一般程度，正常要求",
                 "trait_Chastity_indifferent":"不在乎",
                 "trait_Chastity_indifferent_tooltip":"%%trait_Chastity_tooltip%%\n不太在乎贞操，条件要求更低",
+                "trait_Chastity_innocent":"天真",
+                "trait_Chastity_innocent_tooltip":"%%trait_Chastity_tooltip%%\n不了解亲密行为，请求合意所需的分数门槛仅为通常的25%，不影响行为接受度。",
                 "trait_Singular_Masochist":"自虐狂",
                 "trait_Singular_Masochist_tooltip":"%%notimplemented%%",
                 "trait_Singular_Sadist":"施虐狂",

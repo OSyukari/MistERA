@@ -109,7 +109,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
             btn.SetText(faction != null ? faction.FactionDisplayName : door.factionID);
         }
 
-        btn.optionID = (world.GetHashCode() + door.GetHashCode());
+        btn.optionID = UniqueDisplayID(world.GetHashCode() + door.GetHashCode());
         buttonsByID.Add(btn.optionID, btn);
         validatorsByID.Add(btn.optionID, btn.Validator);
         btn.Validate();
@@ -142,7 +142,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         btn.Initialize(this, new ButtonValidator_ChangeFloor(this, targetFloor, btn));
         btn.SetText(targetFloor.displayName);
 
-        btn.optionID = (floor.GetHashCode() + exits.GetHashCode()) * 2 + (listEntry ? 1 : 0);
+        btn.optionID = UniqueDisplayID((floor.GetHashCode() + exits.GetHashCode()) * 2 + (listEntry ? 1 : 0));
         buttonsByID.Add(btn.optionID, btn);
         validatorsByID.Add(btn.optionID, btn.Validator);
         btn.Validate();
@@ -150,6 +150,108 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         if (!listEntry) r2.sizeFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
 
         currentFloorIDs.Add(btn.optionID);
+
+        if (listEntry && !IsParentExit(targetFloor))
+            AddOccupantText(parent, targetFloor.rooms.SelectMany(room => scr_System_CampaignManager.current.CharaInRoom(room.RefID)));
+    }
+
+    private int UniqueDisplayID(int seed)
+    {
+        while (seed == -1 || seed == -9999 || buttonsByID.ContainsKey(seed) || validatorsByID.ContainsKey(seed))
+            seed = unchecked(seed + 1);
+        return seed;
+    }
+
+    private bool IsParentExit(Floor_Instance target)
+    {
+        if (target == FindParentFloor(floor)) return true;
+        // Legacy home floors may have no floor-list host, but still belong to a district.
+        foreach (var room in floor.rooms)
+        {
+            if (scr_System_CampaignManager.current.Map.IsAttachedRoom(room.RefID)) continue;
+            var districtID = room.FactionOwner?.FactionOwnerRoot?.residentialDistrictID;
+            if (!string.IsNullOrEmpty(districtID) && target.rooms.Any(r => r.FactionOwner?.FactionOwnerRoot?.ID == districtID))
+                return true;
+        }
+        return false;
+    }
+
+    private sealed class OccupantText
+    {
+        public scr_HoverableText hover;
+        public TMP_Text text;
+        public string fullText;
+        public int count;
+        public Vector2 size;
+        public bool pending = true;
+    }
+
+    private readonly List<OccupantText> occupantTexts = new List<OccupantText>();
+
+    private void AddOccupantText(RectTransform parent, IEnumerable<Character_Trainable> occupants)
+    {
+        var names = occupants.Where(c => c.RefID != 0).GroupBy(c => c.RefID).Select(g => g.First().CallName).ToList();
+        var rect = Instantiate(prefab_text_link);
+        rect.SetParent(parent, false);
+        var hover = rect.GetComponent<scr_HoverableText>();
+        string fullText = String.Join(" ", names);
+        hover.SetText(fullText);
+        hover.SetExternalTooltip(fullText);
+        occupantTexts.Add(new OccupantText { hover = hover, text = rect.GetComponent<TMP_Text>(), fullText = fullText, count = names.Count });
+    }
+
+    private void LateUpdate()
+    {
+        bool changed = false;
+        foreach (var entry in occupantTexts)
+        {
+            if (entry.text == null || !entry.text.isActiveAndEnabled) continue;
+            if (!entry.pending && entry.size == entry.text.rectTransform.rect.size) continue;
+            // Always measure the original names, not the previously collapsed label.
+            entry.hover.SetText(entry.fullText);
+            entry.pending = true;
+            changed = true;
+        }
+        if (!changed) return;
+
+        // Layout is deferred by Unity; settle it only for new entries or changed rects.
+        Canvas.ForceUpdateCanvases();
+        bool collapsed = false;
+        foreach (var entry in occupantTexts)
+        {
+            if (!entry.pending || entry.text == null || !entry.text.isActiveAndEnabled) continue;
+            entry.text.ForceMeshUpdate();
+            if (entry.text.isTextOverflowing || entry.text.isTextTruncated)
+            {
+                entry.hover.SetText("(" + entry.count + ")...");
+                collapsed = true;
+            }
+        }
+        // Capture the final rects so a content-sized collapsed label cannot trigger a rebuild every frame.
+        if (collapsed) Canvas.ForceUpdateCanvases();
+        foreach (var entry in occupantTexts)
+        {
+            if (!entry.pending || entry.text == null || !entry.text.isActiveAndEnabled) continue;
+            entry.size = entry.text.rectTransform.rect.size;
+            entry.pending = false;
+        }
+    }
+
+    private void AddAttachment(RectTransform parent, Room_Instance room)
+    {
+        var row = Instantiate(prefab_exitButton != null ? prefab_exitButton : prefab_roomButton);
+        row.SelfRect.SetParent(parent, false);
+        row.transform.rotation = Quaternion.identity;
+        row.bgImage.color = scr_System_CentralControl.current.DisplaySetting.TextColor_transparent;
+        var btn = row.Button;
+        btn.Initialize(this, new ButtonValidator_MoveRoom(this, room, btn, false, true));
+        btn.SetText(room.DisplayNameShort);
+        btn.optionID = UniqueDisplayID(room.GetHashCode());
+        buttonsByID.Add(btn.optionID, btn);
+        validatorsByID.Add(btn.optionID, btn.Validator);
+        currentFloorIDs.Add(btn.optionID);
+        btn.Validate();
+        AddOccupantText(parent, scr_System_CampaignManager.current.CharaInRoom(room.RefID));
     }
 
     /// <summary>Right-panel list of every connected exit of the shown floor (hidden exits included).</summary>
@@ -159,7 +261,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
     /// <summary>Optional container (exitList + its header), hidden when the shown floor has no connected exit.</summary>
     public GameObject exitPanel;
     /// <summary>
-    /// Optional right-panel list of the homes of a residential district (exits whose floor belongs to a district home,
+    /// Optional right-panel list of district homes (floor exits or directly attached rooms,
     /// ResidenceUtility.IsGeneratedHome), kept apart from exitList. Unassigned = homes are listed in exitList.
     /// </summary>
     public RectTransform residenceList;
@@ -237,16 +339,10 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         if (displayCharaName)
         {
             btn.Initialize(this, new ButtonValidator_MoveRoom(this, ri, btn, false, ignorePathToggle));
-            var list = scr_System_CampaignManager.current.CharaInRoom(ri.RefID);
-            List<string> names = new List<string>();
-            foreach (var i in list)  if (i.RefID != 0) names.Add(i.FirstName);
-
             btn.SetText(tempRefID + " - " + ri.DisplayNameShort);
             r2.bgImage.color = scr_System_CentralControl.current.DisplaySetting.TextColor_transparent;
 
-            var namesRect = Instantiate(prefab_text_standard);
-            namesRect.SetParent(parent, false);
-            namesRect.GetComponent<TMP_Text>().text = String.Join(" ", names);
+            AddOccupantText(parent, scr_System_CampaignManager.current.CharaInRoom(ri.RefID));
         }
         else
         {
@@ -257,8 +353,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
             r2.sizeFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
         }
 
-        if (extraOffset) btn.optionID = (floor.GetHashCode() + ri.GetHashCode()) * 2 + 1;
-        else btn.optionID = (floor.GetHashCode() + ri.GetHashCode()) * 2;
+        btn.optionID = UniqueDisplayID((floor.GetHashCode() + ri.GetHashCode()) * 2 + (extraOffset ? 1 : 0));
 
 
         buttonsByID.Add(btn.optionID, btn);
@@ -491,7 +586,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
     protected scr_factionBlock BuildFaction(I_IsJobGiver faction)
     {
-        if (faction == null)
+        if (faction == null || faction is Manageable logical && logical.IsLocationless)
         {
            // Debug.LogError("initfaction error faction null");
             return null;
@@ -516,11 +611,15 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
     /// <param name="host">The block's own faction when faction is a merged-in companion; null when drawing the host itself.</param>
     private void AddFloorButtons(scr_factionBlock block, I_IsJobGiver faction, I_IsJobGiver host = null)
     {
+        if (faction is Manageable logical && logical.IsLocationless) return;
+        bool? displayOverride = (faction as Manageable)?.OverrideMapFloorDisplay;
+        if (displayOverride == false) return;
+
         // a faction hidden from the world map is still tracked (discovered, host-resolved, contributes to
         // trackedWorld) but its own floors stay undrawn unless debug mode is on - matches the world-map door
         // pin visibility rule (canvas_FloorDisplay.cs addWorldDoor). A template with showLockedFloors (generated homes)
         // is still drawn - visible but locked: its rooms refuse entry without access (Room_Instance.CanBeAccessedBy).
-        if (faction is Manageable m && m.hiddenOnWorldMap && !m.ShowLockedFloors && !scr_System_CampaignManager.current.DebugMode) return;
+        if (displayOverride == null && faction is Manageable m && m.hiddenOnWorldMap && !m.ShowLockedFloors && !scr_System_CampaignManager.current.DebugMode) return;
 
         foreach(var floor in faction.ManagedFloors)
         {
@@ -533,7 +632,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
             // always for district homes (独栋住宅区 -> 葛城家宅), and for venues unless the host lists them
             // (MapPlan.listConnectedFloors: 独栋住宅区 -> 公园 keeps its button, 霓虹街 -> 卡拉OK doesn't). Floors behind a
             // host with real content (桐生组事务所 -> 摄影工作室) always keep their button
-            if (host != null && (IsResidenceFloor(floor) || !(host is Manageable hm && hm.ListConnectedFloors))
+            if (displayOverride == null && host != null && (IsResidenceFloor(floor) || !(host is Manageable hm && hm.ListConnectedFloors))
                 && IsReachedFromDistrictHub(host, floor)) continue;
 
             var btn = Instantiate(block.buttonPrefab);
@@ -565,6 +664,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
     private void ClearDisplay()
     {
+        occupantTexts.Clear();
         foreach (var button in currentFloorIDs)
         {
             if (noDestroyList.Contains(button)) continue;
@@ -621,21 +721,13 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         }
         floorName.text = floor.displayName;
 
+        var map = scr_System_CampaignManager.current.Map;
+        var listedRooms = new HashSet<int>();
         foreach (Room_Instance ri in floor.rooms)
         {
-            // keyed on the room-list button (always drawn) rather than the map button, which is skipped for a
-            // room with Room_Base.hideOnMap
-            if (!buttonsByID.ContainsKey((floor.GetHashCode() + ri.GetHashCode()) * 2 + 1))
-            {
-                if (isFloorPlan && !ri.Base.hideOnMap) addBtn(prefab_roomButton, picture.rectTransform, ri, false, false, false);
-                addBtn(prefab_roomButton, roomList, ri, true, true, true);
-
-            }
-            else
-            {
-                //Debug.Log("scr_Panel_Map OnEnable skipping redraw for room [" + ri.displayName + "]");
-            }
-
+            if (map.IsAttachedRoom(ri.RefID) || !listedRooms.Add(ri.RefID)) continue;
+            if (isFloorPlan && !ri.Base.hideOnMap) addBtn(prefab_roomButton, picture.rectTransform, ri, false, false, false);
+            addBtn(prefab_roomButton, roomList, ri, true, true, true);
         }
 
         // every exit whose door is connected gets a right-panel entry (one per destination floor): district homes in
@@ -657,6 +749,19 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
             if (asResidence) residenceCount++;
             else exitCount++;
         }
+        var listedAttachments = new HashSet<int>();
+        foreach (var attachment in map.GetRoomAttachments(floor))
+        {
+            var room = map.GetRoomByRef(attachment.roomRef);
+            if (room == null || room.parentFloor != floor || floor.FindRoom(attachment.sourceRoomRef) == null
+                || !listedAttachments.Add(room.RefID)) continue;
+            bool asResidence = residenceList != null && ResidenceUtility.IsGeneratedHome(room.FactionOwner?.FactionOwnerRoot);
+            var list = asResidence ? residenceList : exitList;
+            if (list == null) continue;
+            AddAttachment(list, room);
+            if (asResidence) residenceCount++;
+            else exitCount++;
+        }
         if (exitPanel != null) exitPanel.SetActive(exitCount > 0);
         if (residencePanel != null) residencePanel.SetActive(residenceCount > 0);
 
@@ -670,7 +775,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         {
             /// ANCHOR CONVERSION ///
             // hideOnMap rooms/exits get no lookup entry, so DrawConnections leaves a gap in the path line there
-            if (!ri.Base.hideOnMap) connectionPosLookup[ri.RefID] = ConvertOffset(ri.Base.offsetX, ri.Base.offsetY);
+            if (!map.IsAttachedRoom(ri.RefID) && !ri.Base.hideOnMap) connectionPosLookup[ri.RefID] = ConvertOffset(ri.Base.offsetX, ri.Base.offsetY);
             /// ANCHOR CONVERSION ///
         }
         // the room behind each visible exit is drawn at that exit
@@ -714,32 +819,6 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
             return;
         }
 
-        // A one-room district is still a navigation menu when it has doors to other floors.
-        if (floornew.rooms.Count == 1 && floornew.ConnectedDoors.Count == 0)
-        {
-            Room_Instance onlyRoom = floornew.rooms[0];
-            bool alreadyThere = scr_System_CampaignManager.current.CurrentRoom == onlyRoom;
-
-            if (!alreadyThere)
-            {
-                // a floor with a single room has nothing worth showing as its own screen - walk there directly
-                MoveToRoom(onlyRoom);
-                return;
-            }
-            else
-            {
-                // already standing in this floor's only room and there's no image to show it with -
-                // jump to the parent world map instead, since there's nowhere useful to go from here locally
-                var owner = onlyRoom.FactionOwner?.FactionOwnerRoot;
-                if (owner != null)
-                {
-                    var worldID = ResolveWorldID(owner, new HashSet<Manageable>());
-                    var world = string.IsNullOrEmpty(worldID) ? null : scr_System_Serializer.current.GetByNameOrID_WorldPlan(worldID);
-                    if (world != null && !string.IsNullOrEmpty(world.mapImagePath)) { OpenWorldMap(world); return; }
-                }
-            }
-        }
-
         if (floor != floornew || worldView != null)
         {
             // create new
@@ -759,7 +838,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
     /// <summary>
     /// Queues a path-to job for the player to the given room and closes this canvas, without ever
-    /// rendering a floor screen for it. Shared by single-room LoadFloor redirects and room buttons.
+    /// rendering a floor screen for it. Used by ordinary and attached room buttons.
     /// </summary>
     public void MoveToRoom(Room_Instance room)
     {
@@ -952,7 +1031,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
     {
         List<string> names = new List<string>();
         var list = scr_System_CampaignManager.current.CharaInRoom(room.RefID);
-        foreach (var ii in list) if (ii.RefID != 0) names.Add(ii.FirstName);
+        foreach (var ii in list) if (ii.RefID != 0) names.Add(ii.CallName);
 
         return LocalizeDictionary.QueryThenParse("ui_map_roomTooltip")
             .Replace("$room$", room.DisplayName)

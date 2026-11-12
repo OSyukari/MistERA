@@ -1,0 +1,47 @@
+{
+  "baseID": "BocchiRock_Char_Tsukuyo_Kita",
+  "_comment": "Sources: user-approved adult father/doctor adaptation; family and temperament from Mods/BocchiRock/喜多郁代.md, user-supplied world-card supplement (secondary material, not verified canon). Doctor is an explicitly approved non-canon profession replacing that supplement's civil-servant job. Appearance, height, weight, stats and all body traits are generic implementation defaults, not canon looks or measurements. Hospital day-team C assignment is supplied by the Bocchi world addon; no new medical qualification marker or Template.Skills entry is introduced. Numeric age is reserved for the mod patch.",
+  
+
+  "Portrait":{
+    "portraitPriorityList":[
+      {
+        "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+            
+        "icon_offset_x":-17.9,            
+        "icon_offset_y":-91.1,            
+        "icon_offset_size":0.6,
+
+        "portrait_path":"CharaAssets/NPC_mob/mob_フラリーマン.png",
+        "icon_path":"CharaAssets/NPC_mob/mob_フラリーマン.png"
+      }
+    ]
+  },
+  "Template": {
+    "Appearance": "Male",
+    "stat_STR": 9,
+    "stat_CON": 10,
+    "stat_PSY": 10,
+    "stat_WIL": 10,
+    "personalityID": "personality_base",
+    "traits_body_sex": ["trait_Sensitivity_B_default", "trait_Sensitivity_M_default", "trait_Sensitivity_C_default", "trait_Sensitivity_V_default", "trait_Sensitivity_A_default", "trait_Size_B_AAA", "trait_Size_P_average", "trait_Size_V_none", "trait_Size_A_1"],
+    "traits_body": ["trait_BodyType_average", "trait_SkinColor_fair", "trait_HairColor_brown", "trait_EyeColor_brown"],
+    "Height": 172,
+    "Weight": 68,
+    "traits": [],
+    "initialRelationship": [
+      { "baseID": "BocchiRock_Char_Kuruyo_Kita", "initialPersonalRelationship": "relationship_marriage", "initialPersonalRelationship_isA": true },
+      { "baseID": "BocchiRock_Char_Ikuyo_Kita", "initialBiologicalRelationship": "relationship_parent", "initialBiologicalRelationship_isA": true, "initialPersonalRelationship": "relationship_housemate" }
+    ],
+    "initialInventory": [],
+    "CharacterCard": "<Minoru_Kita>\nIdentity: Minoru Kita, an adult man, Ikuyo Kita's father and Kuruyo Kita's husband. He lives with his wife and daughter. His profession as a doctor is a user-approved non-canon adaptation.\nLife: His daughter balances school, singing and guitar with Kessoku Band. The family shares a home where practice, study, sleep and visitors affect one another.\nCharacter: The supplied family supplement describes him as the gentler, more easygoing parent, interested in youth trends. Kuruyo is more cautious about their daughter's safety and plans. These family descriptions come from secondary material.\nAppearance: The brown hair, brown eyes, fair skin, average build and body measurements used by this implementation are generic defaults. Detailed original appearance, medical specialty and workplace history remain unspecified.\n</Minoru_Kita>"
+  },
+  "firstName": "BocchiRock_Char_Tsukuyo_Kita_firstname",
+  "middleName": "",
+  "lastName": "BocchiRock_Char_Kita_lastname",
+  "nameDisplayFormat": "chara_fullname_lastToFirst",
+  "origin": "charOrigin_none",
+  "race": "humanRace_human",
+  "raceTemplate": "humanRaceAddon_standard",
+  "startingGift": "charOriginGift_none"
+}

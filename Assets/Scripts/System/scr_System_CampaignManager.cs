@@ -414,6 +414,9 @@ public class scr_System_CampaignManager : MonoBehaviour
         // also requires Items to exist cuz inventory refresh
         foreach (var i in Factions.ToList()) i.OnAfterDeserialize();
 
+        // Map.factionGraphs is not saved: rebuild the same-world mesh before room evacuation / characters can path
+        foreach (var world in GetLoadedWorldPlans()) WorldManager.ConnectWorldFactions(world);
+
         // Existing tenants can now have authored floors of their own. Create those destinations
         // before obsolete host rooms evacuate, without replaying faction/NPC/inventory initialization.
         foreach (var world in GetLoadedWorldPlans())
@@ -421,7 +424,10 @@ public class scr_System_CampaignManager : MonoBehaviour
             {
                 var faction = FindFactionByID(entry.Key);
                 if (faction != null)
+                {
                     FactionFloorMigration.Reconcile(faction, scr_System_Serializer.current.GetByNameOrID_MapPlan(entry.Value));
+                    WorldManager.RegisterRoomConnections(scr_System_Serializer.current.GetByNameOrID_MapPlan(entry.Value), faction);
+                }
             }
         // district homes declared by the worlds (WorldPlan.initializeResidences) get the same pass
         foreach (var world in GetLoadedWorldPlans())
@@ -431,7 +437,10 @@ public class scr_System_CampaignManager : MonoBehaviour
             {
                 var faction = entry == null ? null : FindFactionByID(entry.factionID);
                 if (faction != null)
+                {
                     FactionFloorMigration.Reconcile(faction, scr_System_Serializer.current.GetByNameOrID_MapPlan(entry.MapPlanID));
+                    WorldManager.RegisterRoomConnections(scr_System_Serializer.current.GetByNameOrID_MapPlan(entry.MapPlanID), faction);
+                }
             }
         }
 
@@ -2672,13 +2681,6 @@ public class scr_System_CampaignManager : MonoBehaviour
                     }
                 }
 #endif
-                else if (ini.initClass == "campaign_init_factionConnect")
-                {
-                    var f1 = scr_System_CampaignManager.current.FindFactionByID(ini.initArguments[0]);
-                    var f2 = scr_System_CampaignManager.current.FindFactionByID(ini.initArguments[1]);
-                    scr_System_CampaignManager.current.Map.ConnectFactions(f1, f2);
-                    // FindInstanceByID(0).baseID = ini.initArguments[0];
-                }
                 else if (ini.initClass == "campaign_init_commercialPact")
                 {
                     var f1 = scr_System_CampaignManager.current.FindFactionByID(ini.initArguments[0]);
@@ -2820,6 +2822,15 @@ public class scr_System_CampaignManager : MonoBehaviour
         StartCampaign(camp, camp_ex, main, sub);
         yield return null;
         yield return CachePortraitCoroutine();
+        // StartNewGame only kicks off the Game scene load; nothing above waited for it. On a slow load the
+        // opening event (OnCampaignStart) used to run before the scene's panels existed and left the player
+        // on an empty Logs view, so hold the loading screen until the scene is actually in.
+        if (scr_System_SceneManager.current.SceneLoading)
+        {
+            Observer_LoadProgress?.Invoke(1f, "Loading scene...");
+            while (scr_System_SceneManager.current.SceneLoading) yield return null;
+            Observer_LoadProgress?.Invoke(1f, "");
+        }
         Observer_LoadComplete?.Invoke();
         // launch all on-gamestart event
         scr_UpdateHandler.current.EventHandler.Trigger(Player, EventTrigger.OnCampaignStart);
@@ -2827,6 +2838,9 @@ public class scr_System_CampaignManager : MonoBehaviour
         {
             ChangeCurrentViewMode(ViewMode.View_Logs);
             scr_UpdateHandler.current.EventHandler.Run();
+            // Run re-validates before starting; an event dropped there (or one that finished without a visible
+            // entry) must not strand the player on the Logs view it never used.
+            if (!scr_UpdateHandler.current.EventHandler.Active) ChangeCurrentViewMode(ViewMode.View_Room);
         }
         // always notify after load completes (mirrors InitializeLoadSave) - UI ValidateAll calls made
         // during the loading screen are skipped, so listeners like scr_Panel_BottomBar need this pass.
@@ -3285,6 +3299,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     }
 
     Dictionary<string, Manageable> organizations = new Dictionary<string, Manageable>();
+    [JsonIgnore] internal Dictionary<string, Manageable>.ValueCollection ActivityFactions => organizations.Values;
     [JsonIgnore] public List<Manageable> Factions { get { return organizations.Values.ToList(); } }
     public Manageable FindorAddHomeFactionByID(string id)
     {
@@ -3688,7 +3703,7 @@ public static class WorldManager
     /// Instantiates every faction listed in a WorldPlan that isn't already present in the current campaign's faction registry
     /// (fresh campaign start: nothing exists yet, so everything gets instantiated; save-load reconciliation: only newly-added
     /// factions get instantiated). Existing factions receive only missing authored floors, without
-    /// replaying their initialization. Then auto-connects all factions in the world to each other.
+    /// replaying their initialization. Auto-connects physical factions, while locationless organizations retain only world membership.
     /// </summary>
     public static Dictionary<int, Floor_Instance> InstantiateWorld(WorldPlan world, bool isPlayerInitWorld = false)
     {
@@ -3718,10 +3733,45 @@ public static class WorldManager
             else
             {
                 FactionFloorMigration.Reconcile(existing, scr_System_Serializer.current.GetByNameOrID_MapPlan(kvp.Value));
+                RegisterRoomConnections(scr_System_Serializer.current.GetByNameOrID_MapPlan(kvp.Value), existing);
             }
-            if (existing != null) factionsInWorld.Add(existing);
+            if (existing != null)
+            {
+                if (existing.IsLocationless) scr_System_CampaignManager.current.Map.RemoveFromFactionGraphs(existing.ID);
+                else factionsInWorld.Add(existing);
+            }
         }
 
+        ConnectWorldFactions(world, factionsInWorld);
+
+        // district homes: instantiated after the mesh so they never join it, then registered with their district
+        InstantiateResidences(world, allFloors);
+
+        // Generated homes are not initializeResidences entries. Restore their standalone attachments too.
+        foreach (var faction in factionsInWorld)
+            if (ResidenceUtility.GetSpec(faction) != null)
+                ResidenceUtility.RestoreStandaloneResidenceAttachments(faction, false);
+
+        return allFloors;
+    }
+
+    /// <summary>
+    /// Map.factionGraphs is not saved: rebuilds the same-world full mesh from the WorldPlan alone. Used on load before
+    /// anything paths; InstantiateWorld runs it again later for factions added to the data after the save.
+    /// </summary>
+    public static void ConnectWorldFactions(WorldPlan world)
+    {
+        var factionsInWorld = new List<Manageable>();
+        foreach (var kvp in world.initializeFactions)
+        {
+            var faction = scr_System_CampaignManager.current.FindFactionByID(kvp.Key);
+            if (faction != null && !faction.IsLocationless) factionsInWorld.Add(faction);
+        }
+        ConnectWorldFactions(world, factionsInWorld);
+    }
+
+    static void ConnectWorldFactions(WorldPlan world, List<Manageable> factionsInWorld)
+    {
         // the world's own synthetic hub faction (Manageable_World) - see FindOrAddWorldFaction, the only
         // place one is ever constructed - is added to the same full-mesh below so it's reachable via Findpath
         // like any other member, letting a stuck traveler path out of its transit room like a world door. The
@@ -3737,11 +3787,6 @@ public static class WorldManager
                 scr_System_CampaignManager.current.Map.ConnectFactions(factionsInWorld[i], factionsInWorld[j]);
             }
         }
-
-        // district homes: instantiated after the mesh so they never join it, then registered with their district
-        InstantiateResidences(world, allFloors);
-
-        return allFloors;
     }
 
     /// <summary>
@@ -3777,11 +3822,34 @@ public static class WorldManager
                 foreach (var kvpF in Instantiate(mapPlan, entry.factionID, true)) allFloors[kvpF.Key] = kvpF.Value;
                 home = campaign.FindFactionByID(entry.factionID);
             }
-            else FactionFloorMigration.Reconcile(home, mapPlan);
+            else
+            {
+                FactionFloorMigration.Reconcile(home, mapPlan);
+                RegisterRoomConnections(mapPlan, home);
+            }
             if (home == null) continue;
 
             // the caller (Map.AddWorldTemplate) adds the floors to the map and rebuilds pathing afterwards
             ResidenceUtility.AdoptResidence(district, home, entry.templateID, false);
+        }
+    }
+
+    /// <summary>Refresh deferred attachments without replaying faction initialization or mutating template endpoints.</summary>
+    public static void RegisterRoomConnections(MapPlan plan, Manageable faction)
+    {
+        if (plan == null || faction == null || faction.mapPlanID != plan.ID || plan.isLocationless || plan.roomConnections == null) return;
+        foreach (var connection in plan.roomConnections)
+        {
+            if (connection == null) continue;
+            scr_System_CampaignManager.current.Map.RegisterRoomConnection(new MapPlan.RoomConnection
+            {
+                sourceFaction = string.IsNullOrEmpty(connection.sourceFaction) || connection.sourceFaction == plan.ID ? faction.ID : connection.sourceFaction,
+                sourceFloor = connection.sourceFloor,
+                sourceRoom = connection.sourceRoom,
+                targetFaction = string.IsNullOrEmpty(connection.targetFaction) || connection.targetFaction == plan.ID ? faction.ID : connection.targetFaction,
+                targetRoom = connection.targetRoom,
+                cost = connection.cost
+            });
         }
     }
 
@@ -3791,8 +3859,9 @@ public static class WorldManager
         var initialRefID = -1;
         var targetFaction = factionOverride != "" ? factionOverride : map.ID;
 
-        foreach (MapPlan.MapPlan_Floor fpi in map.floors)
+        for (int i = 0; !map.isLocationless && i < map.floors.Count; i++)
         {
+            var fpi = map.floors[i];
             Floor_Instance fp = Instantiate( fpi,disablePlayerInit, disableCharaInstantiation);
 
             if (fp != null && fp.refID > 0)
@@ -3822,6 +3891,22 @@ public static class WorldManager
             {
                 org.AddToFaction(f, true, map.setPrivateRoomOwner, map.isRentingFloor, map.landlordFactionID);
             }
+
+            if (!map.isLocationless && map.rooms != null)
+                foreach (var definition in map.rooms)
+                {
+                    var templateFloor = definition == null || string.IsNullOrEmpty(definition.floorID)
+                        ? null : scr_System_Serializer.current.GetByNameOrID_Floor_Base(definition.floorID);
+                    var roomBase = templateFloor?.rooms?.Find(r => r != null && r.ID == definition.roomID);
+                    if (roomBase == null)
+                    {
+                        Debug.LogError($"Instantiate MapPlan [{map.ID}]: standalone room [{definition?.floorID}/{definition?.roomID}] not found");
+                        continue;
+                    }
+                    var room = new Room_Instance(templateFloor, roomBase) { isStandalone = true };
+                    scr_System_CampaignManager.current.Register(room);
+                    org.AddToFaction(room, true, map.setPrivateRoomOwner, map.isRentingFloor, map.landlordFactionID);
+                }
             
             foreach (var ini in map.initializers)
             {
@@ -3906,7 +3991,7 @@ public static class WorldManager
                 org.AddJobPost(module);
             }
 
-            if (map.mainExit != null && map.mainExit.roomID != "")
+            if (!map.isLocationless && map.mainExit != null && map.mainExit.roomID != "")
             {
                 org.SetMainExit(map.mainExit);
                 org.EnsureMainExitWaitMarker();
@@ -3914,8 +3999,9 @@ public static class WorldManager
 
             // blank / own-template faction IDs resolve to the instantiated faction ID (a factionOverride instance must
             // not match the template's first instance - Map_Instance.ResolveFloorDoorExit)
-            foreach (var fd in map.floorDoors)
+            for (int i = 0; !map.isLocationless && i < map.floorDoors.Count; i++)
             {
+                var fd = map.floorDoors[i];
                 scr_System_CampaignManager.current.Map.RegisterFactionFloorDoor(new FloorDoor
                 {
                     cost = fd.cost,
@@ -3929,6 +4015,7 @@ public static class WorldManager
             }
 
             org.mapPlanID = map.ID;
+            RegisterRoomConnections(map, org);
             org.hiddenOnWorldMap = !map.isPublic;
             org.RefreshSalesInventory(map);
 
@@ -4055,13 +4142,16 @@ public static class WorldManager
 
         if (string.IsNullOrEmpty(fi.spawnRoomID)) return faction.MainExit;
 
-        Floor_Instance floor = string.IsNullOrEmpty(fi.spawnFloorID)
-            ? null
-            : faction.ManagedFloors.Find(f => f.floorPlanID == fi.spawnFloorID);
-
-        return floor != null
-            ? floor.FindRoom(fi.spawnRoomID)
-            : faction.ManagedRooms.Values.FirstOrDefault(r => r.Base != null && r.Base.ID == fi.spawnRoomID);
+        if (!string.IsNullOrEmpty(fi.spawnFloorID))
+        {
+            var floors = faction.ManagedFloors;
+            for (int i = 0; i < floors.Count; i++)
+                if (floors[i].floorPlanID == fi.spawnFloorID) return floors[i].FindRoom(fi.spawnRoomID);
+            return null;
+        }
+        foreach (var room in faction.ManagedRooms.Values)
+            if (room.Base != null && room.Base.ID == fi.spawnRoomID) return room;
+        return null;
     }
 
     /// <summary>
@@ -4070,16 +4160,14 @@ public static class WorldManager
     /// </summary>
     static Room_Instance ResolveNPCInitSpawnRoom(NPCInit init)
     {
-        var candidates = new List<NPCInit.FactionInit>();
-        if (init.Homefaction != null) candidates.Add(init.Homefaction);
-        if (init.TempHomefaction != null) candidates.Add(init.TempHomefaction);
-        if (init.Workfactions != null) candidates.AddRange(init.Workfactions);
-
-        foreach (var candidate in candidates)
-        {
-            Room_Instance spawnRoom = ResolveNPCInitRoom(candidate);
-            if (spawnRoom != null) return spawnRoom;
-        }
+        var spawnRoom = ResolveNPCInitRoom(init.Homefaction) ?? ResolveNPCInitRoom(init.TempHomefaction);
+        if (spawnRoom != null) return spawnRoom;
+        if (init.Workfactions != null)
+            for (int i = 0; i < init.Workfactions.Count; i++)
+            {
+                spawnRoom = ResolveNPCInitRoom(init.Workfactions[i]);
+                if (spawnRoom != null) return spawnRoom;
+            }
         return null;
     }
 
@@ -4152,6 +4240,104 @@ public static class WorldManager
         }
     }
 
+    static bool ReconcileNPCInitAssignments(Character_Trainable chara, NPCInit init)
+    {
+        var campaign = scr_System_CampaignManager.current;
+        var factions = chara?.FactionManager;
+        if (factions == null || chara == campaign.Player) return false;
+
+        bool Available(NPCInit.FactionInit assignment) => assignment == null
+            || campaign.FindFactionByID(assignment.factionID) != null && FactionUtility.TryGetMemberType(assignment.guestStatus, out _);
+        if (!Available(init.Homefaction) || !Available(init.TempHomefaction)) return false;
+        if (init.Workfactions != null)
+            for (int i = 0; i < init.Workfactions.Count; i++) if (!Available(init.Workfactions[i])) return false;
+        if (init.Recreationfactions != null)
+            for (int i = 0; i < init.Recreationfactions.Count; i++) if (!Available(init.Recreationfactions[i])) return false;
+
+        void ReconcileHome(NPCInit.FactionInit assignment, bool temporary)
+        {
+            if (assignment == null || !FactionUtility.TryGetMemberType(assignment.guestStatus, out var status)) return;
+            var home = campaign.FindFactionByID(assignment.factionID);
+            if (home == null) return;
+            var held = temporary ? factions.Faction_Home_Temporary : factions.Faction_Home;
+            if (held != null && held != home) return;
+            if (held == null)
+            {
+                if (temporary) factions.SetTempHomeFaction(home.ID, status, false);
+                else factions.SetHomeFaction(home.ID, status, false);
+            }
+            if (!assignment.setRoomOwnership || home.OwnedRoomByChara.TryGetValue(chara.RefID, out var owned) && owned.Count > 0) return;
+            var room = ResolveNPCInitRoom(assignment);
+            if (room != null && !home.HasRoomOwners(room.RefID)) home.AddRoomOwnership(chara.RefID, room.RefID);
+        }
+
+        // Setup/load only: never teleport an existing actor or overwrite their household and employment choices.
+        ReconcileHome(init.Homefaction, false);
+        ReconcileHome(init.TempHomefaction, true);
+        if (init.Workfactions != null && factions.WorkFactions.Count == 0)
+            for (int i = 0; i < init.Workfactions.Count; i++)
+            {
+                var assignment = init.Workfactions[i];
+                if (assignment == null || !FactionUtility.TryGetMemberType(assignment.guestStatus, out var status)) continue;
+                var work = campaign.FindFactionByID(assignment.factionID);
+                if (work == null || factions.HomeFactions.Contains(work) || factions.RecreationFactions.Contains(work)) continue;
+                var source = string.IsNullOrEmpty(assignment.sourceFactionID) ? null : campaign.FindFactionByID(assignment.sourceFactionID);
+                factions.AddWorkFaction(work.ID, status, false, source);
+            }
+        if (init.Recreationfactions == null) return true;
+        for (int i = 0; i < init.Recreationfactions.Count; i++)
+        {
+            var assignment = init.Recreationfactions[i];
+            if (assignment == null || !FactionUtility.TryGetMemberType(assignment.guestStatus, out var status)) continue;
+            var band = campaign.FindFactionByID(assignment.factionID);
+            if (band == null || factions.HomeFactions.Contains(band) || factions.WorkFactions.Contains(band)) continue;
+            if (factions.RecreationFactions.Contains(band))
+            {
+                if (!MemberType.Matches(band.GetMemberType(chara), status.ID))
+                    Debug.LogWarning($"NPCInit [{init.initID}]: preserving existing role at [{band.ID}] for [{chara.RefID}]");
+                continue;
+            }
+            // Keep a role already recorded by the faction if only the supplementary-list entry was missing.
+            var held = band.isManagedChara(chara.RefID) ? band.GetMemberType(chara) : status;
+            factions.AddRecreationFaction(band.ID, held, false);
+        }
+        return true;
+    }
+
+    static void MigrateNPCInitHome(Character_Trainable chara, NPCInit.FactionInit assignment)
+    {
+        var campaign = scr_System_CampaignManager.current;
+        var factions = chara?.FactionManager;
+        if (factions == null || chara == campaign.Player || assignment == null || string.IsNullOrEmpty(assignment.migrateFromFactionID)) return;
+        var previous = factions.Faction_Home;
+        if (previous == null || previous.ID != assignment.migrateFromFactionID) return;
+        var home = campaign.FindFactionByID(assignment.factionID);
+        var destination = ResolveNPCInitRoom(assignment);
+        if (home == null || destination == null || !FactionUtility.TryGetMemberType(assignment.guestStatus, out var declaredStatus)) return;
+
+        var currentRoom = campaign.Map.FindRoomByChara(chara.RefID);
+        bool leaveRetiredRooms = currentRoom == null || currentRoom.FactionOwner?.Faction == previous;
+        bool employedHere = factions.WorkFactions.Contains(home);
+        var status = home.isManagedChara(chara.RefID) ? home.GetMemberType(chara) : declaredStatus;
+        factions.SetHomeFaction(home.ID, status, false);
+        if (!employedHere && status.workModule != null) factions.SetWorkPaused(home, true);
+
+        if (home.OwnedRoomByChara.TryGetValue(chara.RefID, out var existing) && existing.Count > 0)
+            destination = campaign.Map.GetRoomByRef(existing[0]) ?? destination;
+        else if (assignment.setRoomOwnership && destination.CanAssignBedOwnership)
+        {
+            int places = 0;
+            for (int i = 0; i < destination.FurnitureCount; i++)
+                if (destination.GetFurniture(i)?.JobGiver is Job_Furniture bed && bed.AssignsOwnership) places += Math.Max(0, bed.Capacity);
+            if (home.RoomOwners(destination.RefID).Count < places) home.AddRoomOwnership(chara.RefID, destination.RefID);
+        }
+        if (leaveRetiredRooms)
+        {
+            if (chara.CurrentJob?.ParentRoom?.FactionOwner?.Faction == previous) chara.ChangeCurrentJob(null);
+            campaign.Map.MoveCharaTo(chara, destination, true);
+        }
+    }
+
     /// <summary>
     /// Spawns one NPCInit entry: resolves a spawn room, instantiates the character there, then applies
     /// Home/TempHome/Work faction membership. Must only run after every faction/map in the campaign has
@@ -4165,9 +4351,24 @@ public static class WorldManager
             return;
         }
 
-        // already spawned (fresh campaign re-entry, or save-load reconciliation for an already-fulfilled entry) - skip
+        // Existing entries are untouched unless their content explicitly opts into filling missing assignments.
         var existingRefs = scr_System_CampaignManager.current.FindRefIDByBaseID(init.actorBaseID);
-        if (existingRefs != null && existingRefs.Count > 0) return;
+        if (existingRefs != null && existingRefs.Count > 0)
+        {
+            if (init.reconcileExistingAssignments)
+            {
+                if (string.IsNullOrEmpty(init.initID)) Debug.LogError("NPCInit: assignment reconciliation requires a stable initID");
+                else if (existingRefs.Count == 1)
+                {
+                    var existing = scr_System_CampaignManager.current.FindInstanceByID(existingRefs[0]);
+                    MigrateNPCInitHome(existing, init.Homefaction);
+                    if (existing?.FactionManager != null && !existing.FactionManager.HasAppliedNpcAssignments(init.initID)
+                        && ReconcileNPCInitAssignments(existing, init)) existing.FactionManager.MarkNpcAssignmentsApplied(init.initID);
+                }
+                else Debug.LogWarning($"NPCInit [{init.initID}]: ambiguous existing actors for [{init.actorBaseID}], assignments left unchanged");
+            }
+            return;
+        }
 
         Room_Instance spawnRoom = ResolveNPCInitSpawnRoom(init);
         if (spawnRoom == null)
@@ -4184,12 +4385,13 @@ public static class WorldManager
         }
 
         ApplyFactionAssignments(chara, init);
+        if (init.reconcileExistingAssignments && !string.IsNullOrEmpty(init.initID)) chara.FactionManager.MarkNpcAssignmentsApplied(init.initID);
     }
 
     /// <summary>
     /// Runs every npcInit entry in a WorldPlan. InitializeNPC itself skips any actorBaseID that's already
     /// instantiated, so this is safe to call again on save-load reconciliation - only npcInit entries added
-    /// to a world's JSON after the save was made actually spawn anyone.
+    /// to a world's JSON after the save was made actually spawn anyone. Opted-in entries can also fill missing assignments.
     /// </summary>
     public static void ProcessNPCInit(WorldPlan world)
     {

@@ -1292,7 +1292,7 @@ public static class EventUtility
                     break;
                 case TargetScope.SelfRelationships:
                     if (self?.Relationships == null) return false;
-                    foreach (var chara in Ordered(self.Relationships.GetRelationTargets(scope.extraScopeArguments)))
+                    foreach (var chara in Ordered(self.Relationships.GetRelationTargets(scope.extraScopeArguments, scope.requireRelationshipTags)))
                     {
                         if (Full()) break;
                         if (chara == null || chara == self) continue;

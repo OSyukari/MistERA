@@ -1,0 +1,90 @@
+{
+  "baseID": "GirlsBandCry_Char_Tomo_Ebizuka",
+  "Portrait":{
+    "portraitPriorityList":[
+      {
+        "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+
+        "random_portrait_folder":"Tomo_Ebizuka/portrait",
+            
+        "icon_offset_x":0,            "icon_offset_y":-145.4,            "icon_offset_size":0.6,
+
+        "icon_path":"Tomo_Ebizuka/portrait/ComfyUI_0042 (2).webp"
+      }
+    ]
+  },
+  "Template": {
+    "Appearance": "Female",
+    "stat_STR": 6,
+    "stat_CON": 8,
+    "stat_PSY": 12,
+    "stat_WIL": 9,
+    "personalityID": "personality_default",
+    "traits_body_sex": [
+      "trait_Sensitivity_B_default",
+      "trait_Sensitivity_M_default",
+      "trait_Sensitivity_C_default",
+      "trait_Sensitivity_V_default",
+      "trait_Sensitivity_A_default",
+      "trait_Size_B_B",
+      "trait_Size_P_none",
+      "trait_Size_V_1",
+      "trait_Size_A_1"
+    ],
+    "traits_body": [
+      "trait_BodyType_petite",
+      "trait_SkinColor_fair",
+      "trait_HairColor_brown",
+      "trait_EyeColor_red"
+    ],
+    "Height": 148,
+    "Weight": 41,
+    "traits": [
+      "trait_SelfEsteem_low",
+      "trait_MemoryCapacity_high",
+      "trait_MemoryRetention_high",
+      "trait_EnergyCapacity_low",
+      "trait_MentalFortitude_low"
+    ],
+    "initialRelationship": [
+      {
+        "baseID": "GirlsBandCry_Char_Nina_Iseri",
+        "initialPersonalRelationship": "relationship_friend"
+      },
+      {
+        "baseID": "GirlsBandCry_Char_Momoka_Kawaragi",
+        "initialPersonalRelationship": "relationship_friend"
+      },
+      {
+        "baseID": "GirlsBandCry_Char_Subaru_Awa",
+        "initialPersonalRelationship": "relationship_friend"
+      },
+      {
+        "baseID": "GirlsBandCry_Char_Rupa",
+        "initialPersonalRelationship": "relationship_housemate"
+      }
+    ],
+      "promptProfile": {
+          "prompts": [ "ebizuka tomo" ],
+          "desired prompts":"girl, ebizuka tomo, girls band cry, petite, small breasts,short hair, red eyes, red hairband with bow, black bowtie, long  sleeves, shoulder cutout, black frilled dress, white collar, black thighhighs, black shoes, zettai ryouiki,  white belt, belt buckle, ",
+          "inheritRulesets": [ "ruleset_character_tag" ]
+      },
+    "initialInventory": [],
+    "defaultHairstyle": {
+      "hairstyleID": "hairstyle_bob",
+      "slotSelection": {
+        "front": "hair_front_side_swept"
+      }
+    },
+    "CharacterCard": "<Tomo_Ebizuka>\nIdentity: Tomo Ebizuka, 16-year-old keyboard player of TOGENASHI TOGEARI. From a wealthy Sendai family, she now shares an apartment with Rupa.\nCurrent timeline: The band continues independently after leaving its agency. Tomo and Rupa have returned to their prior restaurant work; the shared job is a beef-bowl restaurant, not a business they own.\nCharacter: Guarded, skeptical, and slow to trust, with a habit of either delivering harsh criticism or suppressing what she actually thinks. She has learned through Nina’s persistence that the others can hear honest musical feedback without abandoning her. Her standards remain sharp even after that change. She keeps reptiles, is especially fond of geckos, and privately enjoys a detective drama starring Subaru’s grandmother.\nAppearance: Short wavy gray-brown bob, dark reddish-brown eyes, and a burgundy headband.\n</Tomo_Ebizuka>",
+    "Skills": null
+  },
+  "firstName": "GirlsBandCry_Char_Tomo_Ebizuka_firstname",
+  "middleName": "",
+  "lastName": "GirlsBandCry_Char_Tomo_Ebizuka_lastname",
+  "nameDisplayFormat": "chara_fullname_lastToFirst",
+  "origin": "charOrigin_none",
+  "race": "humanRace_human",
+  "raceTemplate": "humanRaceAddon_standard",
+  "startingGift": "charOriginGift_none"
+}

@@ -1,0 +1,93 @@
+{
+  "MapPlans": {
+    "factionInit": [
+      {
+        "ID": "gbc_home_nina",
+        "isPublic": false,
+        "showLockedFloors": true,
+        "isRentingFloor": true,
+        "mainExit": { "roomID": "floor_1ldk_1_frontDoor", "exitCost": 1 },
+        "floors": [{ "ID": "floor_1ldk_1", "nameOverwrite": "gbc_home_nina" }],
+        "mealHours": [7, 12, 18],
+        "initializers": [
+          { "initClass": "campaign_init_factionInventory", "initArguments": ["", "consumable_bento_box", "", "1"] }
+        ],
+        "activeHoursStart": 7,
+        "activeHoursEnd": 23
+      },
+      {
+        "ID": "gbc_home_momoka",
+        "isPublic": false,
+        "showLockedFloors": true,
+        "isRentingFloor": true,
+        "mainExit": { "roomID": "floor_1ldk_1_frontDoor", "exitCost": 1 },
+        "floors": [{ "ID": "floor_1ldk_1", "nameOverwrite": "gbc_home_momoka" }],
+        "mealHours": [7, 12, 18],
+        "initializers": [
+          { "initClass": "campaign_init_factionInventory", "initArguments": ["", "consumable_bento_box", "", "1"] }
+        ],
+        "activeHoursStart": 7,
+        "activeHoursEnd": 23
+      },
+      {
+        "ID": "gbc_home_tomo_rupa",
+        "isPublic": false,
+        "showLockedFloors": true,
+        "isRentingFloor": true,
+        "mainExit": { "roomID": "floor_2ldk_2floor_1_1L_frontDoor", "exitCost": 1 },
+        "floors": [{ "ID": "floor_2ldk_2floor_1", "nameOverwrite": "gbc_home_tomo_rupa" }],
+        "mealHours": [7, 12, 18],
+        "initializers": [
+          { "initClass": "campaign_init_factionInventory", "initArguments": ["", "consumable_bento_box", "", "1"] }
+        ],
+        "activeHoursStart": 7,
+        "activeHoursEnd": 23
+      },
+      {
+        "ID": "gbc_home_subaru",
+        "isPublic": false,
+        "showLockedFloors": true,
+        "isRentingFloor": true,
+        "mainExit": { "roomID": "4ldk_floor_1L_frontDoor", "exitCost": 1 },
+        "floors": [{ "ID": "house_floor_4ldk", "nameOverwrite": "gbc_home_subaru" }],
+        "mealHours": [7, 12, 18],
+        "initializers": [
+          { "initClass": "campaign_init_factionInventory", "initArguments": ["", "consumable_bento_box", "", "1"] }
+        ],
+        "activeHoursStart": 7,
+        "activeHoursEnd": 23
+      }
+    ]
+  },
+  "Dictionary": {
+    "Entries": {
+      "zh-cn": {
+        "gbc_home_nina": "井芹仁菜的住处",
+        "gbc_home_momoka": "河原木桃香的住处",
+        "gbc_home_tomo_rupa": "智与露帕的合租公寓",
+        "gbc_home_subaru": "安和昴的住处",
+
+        "GirlsBandCry_Char_Momoka_Kawaragi_firstname":"桃香",
+        "GirlsBandCry_Char_Momoka_Kawaragi_lastname":"河原木",
+
+        "GirlsBandCry_Char_Subaru_Awa_firstname":"昴",
+        "GirlsBandCry_Char_Subaru_Awa_lastname":"安和",
+
+        "GirlsBandCry_Char_Tomo_Ebizuka_firstname":"智",
+        "GirlsBandCry_Char_Tomo_Ebizuka_lastname":"海老冢",
+
+        "GirlsBandCry_Char_Nina_Iseri_firstname":"仁菜",
+        "GirlsBandCry_Char_Nina_Iseri_lastname":"井芹",
+
+        "GirlsBandCry_Char_Rupa_firstname":"卢帕"
+
+      },
+      "en-us": {
+        "gbc_home_nina": "Nina's Apartment",
+        "gbc_home_momoka": "Momoka's Apartment",
+        "gbc_home_tomo_rupa": "Tomo and Rupa's Apartment",
+        "gbc_home_subaru": "Subaru's Apartment"
+      }
+    }
+  }
+}

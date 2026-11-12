@@ -1,0 +1,77 @@
+{
+  "baseID": "BocchiRock_Char_Kikuri_Hiroi",
+  "Portrait":{
+    "portraitPriorityList":[
+      {
+        "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+
+        "random_portrait_folder":"Kikuri_Hiroi/portrait",
+            
+        "icon_offset_x":0,            "icon_offset_y":-152,            "icon_offset_size":0.65,
+
+        "icon_path":"Kikuri_Hiroi/portrait/ComfyUI_0004 (2).webp"
+      }
+    ]
+  },
+  "_comment": "Source: Mods/BocchiRock/广井菊理.md. Adult profile; numeric age is reserved for the mod patch. SICK HACK and FOLT are biographical text only, with no runtime organization, venue or member references. The standard 1LDK with bathing facilities is the requested game adaptation. Stats, body-type/skin and intimate-body traits are implementation defaults, not sourced canon measurements.",
+  "Template": {
+    "Appearance": "Female",
+    "stat_STR": 8,
+    "stat_CON": 8,
+    "stat_PSY": 11,
+    "stat_WIL": 9,
+    "personalityID": "personality_default",
+    "traits_body_sex": [
+      "trait_Sensitivity_B_default",
+      "trait_Sensitivity_M_default",
+      "trait_Sensitivity_C_default",
+      "trait_Sensitivity_V_default",
+      "trait_Sensitivity_A_default",
+      "trait_Size_B_B",
+      "trait_Size_P_none",
+      "trait_Size_V_1",
+      "trait_Size_A_1"
+    ],
+    "traits_body": [
+      "trait_BodyType_slim",
+      "trait_SkinColor_fair",
+      "trait_HairColor_pink",
+      "trait_EyeColor_purple"
+    ],
+    "Height": 158,
+    "Weight": 43,
+    "traits": [],
+    "initialRelationship": [
+      {
+        "baseID": "BocchiRock_Char_Hitori_Gotoh",
+        "initialPersonalRelationship": "relationship_friend"
+      },
+      {
+        "baseID": "BocchiRock_Char_Seika_Ijichi",
+        "initialPersonalRelationship": "relationship_friend"
+      },
+      {
+        "baseID": "BocchiRock_Char_Nijika_Ijichi",
+        "initialPersonalRelationship": "relationship_acquaintance"
+      },
+      {
+        "baseID": "BocchiRock_Char_Ryo_Yamada",
+        "initialPersonalRelationship": "relationship_acquaintance"
+      }
+    ],
+    "initialInventory": [],
+    "defaultHairstyle": {
+      "hairstyleID": "hairstyle_braid",
+      "subCategoryID": "hairstyle_braid_single"
+    },
+    "CharacterCard": "<Kikuri_Hiroi>\nIdentity: Kikuri Hiroi, an adult bassist and vocalist of the psychedelic rock band SICK HACK, which performs at FOLT in Shinjuku. She is Seika Ijichi's college junior and took up band music after seeing Seika's band.\nLife: Performing, bass practice and heavy drinking occupy much of her life. Fines for damaged stage equipment consume her gig income, and she borrows money from others, including Hitori. In this game adaptation she lives alone in a standard 1LDK apartment.\nCharacter: Alcohol suppresses the gloomy, withdrawn anxiety she remembers from school. Drunk, she is intrusive and troublesome; sober, she becomes polite, timid and anxious, and can dwell on her band's failed first performance. Her playing is genuinely strong. She recognizes her younger self in Hitori and gives sincere, useful advice about performing and the future.\nRelationships: She met Hitori during ticket-selling and drew her into a street performance that sold Hitori's first tickets. She cheers at Kessoku Band shows. Seika feeds and reprimands her; Nijika criticizes her drinking habits while still helping her. Ryo admires her performances and shares her interest in bass.\nAppearance: Long mauve-pink hair in a side braid tied with a dark brown ribbon, magenta-purple eyes, sharp teeth, hanafuda earrings and black nail polish. Her manga design includes a circular tribal tattoo on her right hand and spider-lily patterns on her green dress; her usual outfit includes a black-and-white jacket and geta.\n</Kikuri_Hiroi>"
+  },
+  "firstName": "BocchiRock_Char_Kikuri_Hiroi_firstname",
+  "middleName": "",
+  "lastName": "BocchiRock_Char_Kikuri_Hiroi_lastname",
+  "nameDisplayFormat": "chara_fullname_lastToFirst",
+  "origin": "charOrigin_none",
+  "race": "humanRace_human",
+  "raceTemplate": "humanRaceAddon_standard",
+  "startingGift": "charOriginGift_none"
+}

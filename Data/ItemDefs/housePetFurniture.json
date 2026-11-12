@@ -1,0 +1,30 @@
+{
+    "Furnitures": {
+        "list": [
+            {
+                "ID": "furniture_pet_house",
+                "displayName": "furniture_pet_house",
+                "bedTypeID": "pet",
+                "recipe": [],
+                "furnitureSize": 1,
+                "value": 10000,
+                "Tags": ["pet_home"],
+                "occupancy": {
+                    "isRoomDivider": true,
+                    "capacity": 1,
+                    "assignOwnership": true,
+                    "holdsUnconscious": true,
+                    "blocksVisibility": false,
+                    "allowSexJob": false
+                },
+                "givesJob": [{ "comID": ["com_furniture_sleep", "com_furniture_rest_required", "com_furniture_takingBreak", "com_furniture_takingLongBreak"] }]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": { "furniture_pet_house": "宠物窝" },
+            "en-us": { "furniture_pet_house": "Pet House" }
+        }
+    }
+}

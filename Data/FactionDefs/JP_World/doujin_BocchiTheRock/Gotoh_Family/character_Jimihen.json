@@ -1,0 +1,33 @@
+{
+  "baseID": "BocchiRock_Char_Jimihen",
+  "Portrait": {
+    "portraitBaseIDOverride":"creature_animal_dog_template_1"
+  },
+  "Template": {
+    "Appearance": "Inhuman",
+    "stat_STR": 7,
+    "stat_CON": 10,
+    "stat_PSY": 7,
+    "stat_WIL": 10,
+    "personalityID": "personality_base_animal",
+    "Height": 38,
+    "Weight": 10,
+    "traits": ["trait_EnergyCapacity_high", "trait_MentalFortitude_high"],
+    "initialRelationship": [
+      { "baseID": "BocchiRock_Char_Hitori_Gotoh", "initialPersonalRelationship": "relationship_housemate" },
+      { "baseID": "BocchiRock_Char_Naoki_Gotoh", "initialPersonalRelationship": "relationship_housemate" },
+      { "baseID": "BocchiRock_Char_Michiyo_Gotoh", "initialPersonalRelationship": "relationship_housemate" }
+    ],
+    "initialInventory": [],
+    "CharacterCard": "<Jimihen>\nIdentity: Jimihen, the Gotoh family's male Shiba Inu, named by Naoki after Jimi Hendrix; estimated age 6 years. The age is a non-canon implementation estimate.\nHome: Lives with Naoki, Michiyo, Hitori, and Futari in the Gotoh family home.\nCharacter: Friendly, well-mannered, and supportive of the household. Usually accompanies Futari and readily accepted Kita and Nijika on their first visit. He can join walks or greet visitors but does not possess human-style understanding of family conversations or secrets.\nAppearance: Light brown upper coat, white face and underside, triangular eyes, and a curled tail that changes with mood.\n</Jimihen>",
+    "Skills": null
+  },
+  "firstName": "BocchiRock_Char_Jimihen_firstname",
+  "middleName": "",
+  "lastName": "",
+  "nameDisplayFormat": "chara_fullname_firstToLast",
+  "origin": "charOrigin_none",
+  "race": "creature_beastRace_dog",
+  "raceTemplate": "humanRaceAddon_standard",
+  "startingGift": "charOriginGift_none"
+}

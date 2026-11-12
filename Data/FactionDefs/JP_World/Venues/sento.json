@@ -32,7 +32,7 @@
       "activityCommands": ["jp_sento_soak"],
       "entranceFee": { "itemID": "currency_JPY", "itemCount": 550 }, "minHours": 2, "maxHours": 2, "weeklyTarget": 1, "minDaysBetween": 1, "daysInAdvance": 1, "allowWalkIn": true, "trustRewardEligible": false,
       "gatherRoomID": "sento_entrance", "launchEventID": "Venue_Sento_Begin",
-      "invite": { "visibility": "Private", "inviteChance": 0.5, "minParticipants": 1, "TargetValidators": [{ "refKeys": ["companion"], "baseScope": "SelfRelationships", "chara_conditions": [{ "parameters": ["excludeSelf"] }, { "selfRelationshipRequirement": { "requireRawScore": [{ "requireScoreID": "Goodwill", "operand": "gte", "value": 25 }], "requireRawScoreCompare": [{ "requireScoreID": "Goodwill", "operand": "gt", "compareScoreID": "Badwill", "compareScoreMult": 1.1 }] } }], "maxTargetCount": 3, "maxParticipants": 3, "required": false, "stopAtMaxTargetCount": true, "orderBy": "friendliness" }] }
+      "invite": { "visibility": "Private", "inviteChance": 0.5, "minParticipants": 1, "TargetValidators": [{ "refKeys": ["companion"], "baseScope": "SelfRelationships", "requireRelationshipTags": ["rel_positive"], "chara_conditions": [{ "parameters": ["excludeSelf"] }, { "selfRelationshipRequirement": { "requireRawScore": [{ "requireScoreID": "Goodwill", "operand": "gte", "value": 25 }], "requireRawScoreCompare": [{ "requireScoreID": "Goodwill", "operand": "gt", "compareScoreID": "Badwill", "compareScoreMult": 1.1 }] } }], "maxTargetCount": 3, "maxParticipants": 3, "required": false, "stopAtMaxTargetCount": true, "orderBy": "friendliness" }] }
     }]
   },
   "Furnitures": { "list": [

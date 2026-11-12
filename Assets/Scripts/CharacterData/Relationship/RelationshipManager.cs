@@ -259,12 +259,13 @@ public class RelationshipManager
     /// The characters this one has a relationship with of one of typeIDs (Character_Relationship.HasRelationshipType;
     /// null/empty = any), unsorted - TargetScope.SelfRelationships.
     /// </summary>
-    public List<Character_Trainable> GetRelationTargets(ICollection<string> typeIDs)
+    /// <summary>The targets of displayable relationships of one of typeIDs (empty = any type) that carry one of tags (Character_Relationship.HasRelationshipTag - empty = no tag needed).</summary>
+    public List<Character_Trainable> GetRelationTargets(ICollection<string> typeIDs, ICollection<string> tags = null)
     {
         var result = new List<Character_Trainable>();
         foreach (var rel in relationships.Values)
         {
-            if (rel == null || !rel.displayable || !rel.HasRelationshipType(typeIDs)) continue;
+            if (rel == null || !rel.displayable || !rel.HasRelationshipType(typeIDs) || !rel.HasRelationshipTag(tags)) continue;
             var target = rel.Target;
             if (target != null) result.Add(target);
         }

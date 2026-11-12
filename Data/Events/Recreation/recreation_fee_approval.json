@@ -1,5 +1,5 @@
 {
-    "_doc": "Fired from code (RecreationUtility.StartFeeRequest), no trigger: a paid activity's entrance fee put to the paying faction's manager (the participant's priority home - the payer of RecreationUtility.ChargeEntranceFee) - one event per activity occurrence and payer, batched per update (RecreationUtility_FeeApproval). Self = the approver: the player for a player-managed payer, else the payer's first manager - an NPC never sees the question (npcDecides: the isDefaultAccept option, approve). $feeRequestText$ = the activity line, every participant, the ones this payer pays for and the total (built and localized by code). The request is carried only by the event's runtime callbacks (events are never saved): ExecuteCallback approve / decline. Declining drops every participant of the request.",
+    "_doc": "Fired from code (RecreationUtility.StartFeeRequest), no trigger: a paid activity's entrance fee put to the paying faction's manager (the participant's priority home - the payer of RecreationUtility.ChargeEntranceFee) - one event per activity occurrence and payer, batched per update (RecreationUtility_FeeApproval). A request the player answers for an activity they are being invited to / notified of goes into that invitation's box instead (Recreation_Invite / Recreation_PublicInvite - Docs/Activities/Plan_ActivityPlayerPrompt.md). Self = the approver: the player for a player-managed payer, else the payer's first manager - an NPC never sees the question (npcDecides: the loaded isDefaultAccept option [支付]). $feeRequestText$ = the activity line, every participant (those waiting for this payment marked pending), the ones this payer pays for and the total; $feeConflictText$ = the player's bookings joining would clash with (built and localized by code). The request is carried only by the event's runtime callbacks (events are never saved): ExecuteCallback buildOptions = the loaded options, built just before the question shows - [支付], and for the player asked about a session they don't attend [支付并加入] (pay, then join it; disabled with the reason when they can't); ExecuteCallback decline = [拒绝]. Declining drops every participant of the request.",
     "Events": {
         "list": [
             {
@@ -7,19 +7,26 @@
                 "allowDuplicate": true,
                 "events": [
                     {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment": "Builds [支付] / [支付并加入] and the clashes text from the current state, then asks.",
+                        "options": [
+                            {
+                                "option": "_build",
+                                "Results": [
+                                    { "Type": "ExecuteCallbackPermissive", "arguments": [ "buildOptions" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "ask" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
                         "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
                         "label": "ask",
                         "question": "Recreation_FeeApproval_question",
                         "npcDecides": true,
+                        "loadOptionsKey": "feeOptions",
+                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "end" ] } ],
                         "options": [
-                            {
-                                "option": "Recreation_FeeApproval_approve",
-                                "isDefaultAccept": true,
-                                "Results": [
-                                    { "Type": "ExecuteCallbackPermissive", "arguments": [ "approve" ] },
-                                    { "Type": "JumpToLabel", "arguments": [ "", "end" ] }
-                                ]
-                            },
                             {
                                 "option": "Recreation_FeeApproval_decline",
                                 "isDefaultCancel": true,
@@ -43,8 +50,7 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "Recreation_FeeApproval_question": "活动费用申请：\n$feeRequestText$",
-                "Recreation_FeeApproval_approve": "批准",
+                "Recreation_FeeApproval_question": "活动费用申请：\n$feeRequestText$$feeConflictText$",
                 "Recreation_FeeApproval_decline": "拒绝"
             }
         }

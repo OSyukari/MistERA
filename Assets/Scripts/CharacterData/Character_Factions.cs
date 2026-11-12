@@ -4,6 +4,13 @@ using System.Linq;
 using UnityEngine;
 using Newtonsoft.Json;
 
+internal sealed class RecreationBookingChange
+{
+    public Character_Factions owner;
+    public RecreationBooking incoming;
+    public IReadOnlyList<RecreationBooking> displaced;
+}
+
 public class Character_Factions
 {
     // Owner Ref
@@ -107,6 +114,14 @@ public class Character_Factions
 
     }
 
+    [JsonProperty] HashSet<string> appliedNpcAssignmentInits;
+    internal bool HasAppliedNpcAssignments(string initID) => appliedNpcAssignmentInits != null && appliedNpcAssignmentInits.Contains(initID);
+    internal void MarkNpcAssignmentsApplied(string initID)
+    {
+        if (appliedNpcAssignmentInits == null) appliedNpcAssignmentInits = new HashSet<string>();
+        appliedNpcAssignmentInits.Add(initID);
+    }
+
     public void ReEstablishParentData(Character_Trainable owner)
     {
         if (this.ownerPointer == null && owner != null)
@@ -126,7 +141,16 @@ public class Character_Factions
         {
             if (Faction_Home != null)
             {
-                Faction_Home.RemoveFromFaction(Owner);
+                var previous = Faction_Home;
+                if (previous.ID != Faction_Home_Temporary_FactionID)
+                {
+                    if (WorkFactions.Contains(previous)) ReleaseHomeRoomAssignments(previous);
+                    else
+                    {
+                        previous.RemoveFromFaction(Owner);
+                        FactionIDs_WorkPaused?.Remove(previous.ID);
+                    }
+                }
                 if (Owner == null) Debug.LogError($"Error SetHomeFaction Owner Null on [{ownerRefID}]");
             }
             this.FactionID_Home = homeFactionID;
@@ -152,7 +176,16 @@ public class Character_Factions
     {
         if (tempFactionID != Faction_Home_Temporary_FactionID)
         {
-            if (Faction_Home_Temporary != null) Faction_Home_Temporary.RemoveFromFaction(Owner);
+            if (Faction_Home_Temporary != null && Faction_Home_Temporary != Faction_Home)
+            {
+                var previous = Faction_Home_Temporary;
+                if (WorkFactions.Contains(previous)) ReleaseHomeRoomAssignments(previous);
+                else
+                {
+                    previous.RemoveFromFaction(Owner);
+                    FactionIDs_WorkPaused?.Remove(previous.ID);
+                }
+            }
             this.Faction_Home_Temporary_FactionID = tempFactionID;
             this.Faction_Home_Temporary_Cache = null;   // else Faction_Home_Temporary below still returns the old faction
             DropRecreationEntry(tempFactionID);
@@ -167,6 +200,12 @@ public class Character_Factions
 
         // the permanent home is told its member was taken by / returned from a temp home (e.g. a fallback worker pool wakes them)
         Faction_Home?.OnMemberTempHomeChanged(Owner);
+    }
+
+    void ReleaseHomeRoomAssignments(Manageable home)
+    {
+        if (home.OwnedRoomByChara.TryGetValue(Owner.RefID, out var rooms))
+            for (int i = rooms.Count - 1; i >= 0; i--) home.RemoveRoomOwnership(Owner.RefID, rooms[i]);
     }
 
     /// <summary>
@@ -445,6 +484,7 @@ public class Character_Factions
         {
             // hired where they were a recreation member: the work MemberType replaces the membership
             DropRecreationEntry(targetFaction.ID);
+            if (!FactionIDs_Work.Contains(targetFaction.ID)) FactionIDs_WorkPaused?.Remove(targetFaction.ID);
             targetFaction.AddToFaction(Owner, status, sendEvent);
             if (!Factions_Work.Contains(targetFaction)) this.Factions_Work.Add(targetFaction);
             if (!FactionIDs_Work.Contains(targetFaction.ID)) this.FactionIDs_Work.Add(targetFaction.ID);
@@ -737,10 +777,17 @@ public class Character_Factions
     {
         Manageable targetFaction = Factions_Work.Find(x => x.ID == factionID);
         if (targetFaction == null) return;
-        targetFaction.RemoveFromFaction(Owner);
+        bool remainsHome = HomeFactions.Contains(targetFaction);
+        if (!remainsHome) targetFaction.RemoveFromFaction(Owner);
         this.FactionIDs_Work.Remove(targetFaction.ID);
         this.FactionIDs_WorkSource.Remove(targetFaction.ID);
-        if (FactionIDs_WorkPaused != null) FactionIDs_WorkPaused.Remove(targetFaction.ID);
+        if (remainsHome)
+        {
+            // One held role serves both affiliations. Retain residence/authority, but stop its implicit home work shift.
+            if (FactionIDs_WorkPaused == null) FactionIDs_WorkPaused = new List<string>();
+            if (!FactionIDs_WorkPaused.Contains(targetFaction.ID)) FactionIDs_WorkPaused.Add(targetFaction.ID);
+        }
+        else FactionIDs_WorkPaused?.Remove(targetFaction.ID);
         this.Factions_Work.Remove(targetFaction);
 
         UpdateFactionPriorityList();
@@ -754,7 +801,7 @@ public class Character_Factions
 
     /// <summary>
     /// Pauses (or resumes) attending workFaction's MemberType shift without leaving it - the character stays a member
-    /// (fees, access) but the shift stops driving their schedule. Only for one of this character's work factions.
+    /// (fees, access) but the shift stops driving their schedule. Home/work overlaps can keep the pause after job departure.
     /// </summary>
     public void SetWorkPaused(Manageable workFaction, bool paused)
     {
@@ -762,7 +809,7 @@ public class Character_Factions
         if (FactionIDs_WorkPaused == null) FactionIDs_WorkPaused = new List<string>();
         if (paused)
         {
-            if (!WorkFactions.Contains(workFaction))
+            if (!WorkFactions.Contains(workFaction) && !HomeFactions.Contains(workFaction))
             {
                 Debug.LogError($"SetWorkPaused target {workFaction.FactionDisplayName} not in workfactions, return");
                 return;
@@ -868,11 +915,7 @@ public class Character_Factions
     /// </summary>
     public bool AddBooking(RecreationBooking booking, bool refresh = true)
     {
-        if (booking == null || booking.hours < 1) return false;
-        if (booking.Faction == null) return false;
-        if (!RecreationUtility.DailyMainTypeBookingAllows(this, booking)) return false;
-        if (RecreationUtility.ReservationRefusal(this, booking) != "") return false;
-        foreach (var b in Bookings) if (b != null && b.Overlaps(booking.AbsStart, booking.AbsEnd)) return false;
+        if (!CanAddBooking(booking)) return false;
 
         if (Owner != null) booking.ownerRef = Owner.RefID;
         Bookings.Add(booking);
@@ -885,6 +928,206 @@ public class Character_Factions
         if (booking.MemberType != null) Owner?.Wardrobe?.RegisterMemberType(booking.Faction, booking.MemberType);
         Owner?.Wardrobe?.RegisterActivity(booking.Faction.FactionID, RecreationUtility.ResolveActivity(this, booking));
         if (refresh) RefreshSchedule();
+        return true;
+    }
+
+    [JsonIgnore] internal bool IsReplacingRecreationBookings { get; private set; }
+
+    bool CanAddBooking(RecreationBooking booking)
+    {
+        if (booking == null || booking.hours < 1) return false;
+        if (booking.Faction == null) return false;
+        if (!RecreationUtility.DailyMainTypeBookingAllows(this, booking)) return false;
+        if (RecreationUtility.ReservationRefusal(this, booking) != "") return false;
+        foreach (var b in Bookings) if (b != null && b.Overlaps(booking.AbsStart, booking.AbsEnd)) return false;
+
+        return true;
+    }
+
+    /// <summary>
+    /// Synchronous, read-only preflight with selected raw bookings hidden. The action must not commit additions
+    /// or other side effects: only the list contents and their original order are restored.
+    /// </summary>
+    internal T WithoutRecreationBookings<T>(IReadOnlyList<RecreationBooking> excluded, Func<T> action)
+    {
+        if (action == null) throw new ArgumentNullException(nameof(action));
+        if (excluded == null || excluded.Count == 0) return action();
+        var bookings = Bookings;
+        var original = bookingSnapshotPool.Count > 0 ? bookingSnapshotPool.Pop() : new List<RecreationBooking>();
+        try
+        {
+            for (int i = 0; i < bookings.Count; i++) original.Add(bookings[i]);
+            RecreationUtility.BeginPlacementPreflight();
+            try
+            {
+                for (int i = 0; i < excluded.Count; i++) bookings.Remove(excluded[i]);
+                return action();
+            }
+            finally
+            {
+                try
+                {
+                    bookings.Clear();
+                    bookings.AddRange(original);
+                }
+                finally
+                {
+                    RecreationUtility.EndPlacementPreflight();
+                }
+            }
+        }
+        finally
+        {
+            original.Clear();
+            if (bookingSnapshotPool.Count < 4 && original.Capacity <= 256) bookingSnapshotPool.Push(original);
+        }
+    }
+
+    // Checked-out buffers are never shared with nested synchronous preflights/transactions.
+    // Allocate only on a pool miss (or list growth); cap retained buffers and unusually large snapshots.
+    static readonly Stack<List<RecreationBooking>> bookingSnapshotPool = new Stack<List<RecreationBooking>>(4);
+    static readonly Stack<RecreationBookingChange[]> singleBookingChangePool = new Stack<RecreationBookingChange[]>(4);
+
+    /// <summary>
+    /// Validates and admits incoming before cleaning up displaced bookings. Validation must be synchronous and
+    /// read-only. No refresh or cancellation notices; the caller handles these after a successful replacement.
+    /// Callback side effects outside the raw booking list cannot be rolled back.
+    /// </summary>
+    internal bool TryReplaceRecreationBookings(RecreationBooking incoming, IReadOnlyList<RecreationBooking> displaced, Func<bool> validate)
+    {
+        var batch = singleBookingChangePool.Count > 0 ? singleBookingChangePool.Pop()
+            : new[] { new RecreationBookingChange() };
+        var change = batch[0];
+        change.owner = this;
+        change.incoming = incoming;
+        change.displaced = displaced;
+        try
+        {
+            return TryReplaceRecreationBookings(batch, validate);
+        }
+        finally
+        {
+            change.owner = null;
+            change.incoming = null;
+            change.displaced = null;
+            if (singleBookingChangePool.Count < 4) singleBookingChangePool.Push(batch);
+        }
+    }
+
+    /// <summary>
+    /// Atomically admits one booking per owner, hiding all displaced bookings before validation and preflight.
+    /// Old indices/jobs remain intact until every addition succeeds. No notices or schedule refreshes.
+    /// </summary>
+    internal static bool TryReplaceRecreationBookings(IReadOnlyList<RecreationBookingChange> changes, Func<bool> validate)
+    {
+        if (changes == null || changes.Count == 0) return false;
+        // Caller-owned input remains stable for this synchronous transaction; no batch copy is needed.
+        var batch = changes;
+        int count = batch.Count;
+        // Rollback scratch is allocated once per transaction, not per candidate preflight. Keep private
+        // snapshots until all additions and old-booking cleanup finish, including reentrant callbacks.
+        var owners = new HashSet<Character_Factions>();
+        var incoming = new HashSet<RecreationBooking>();
+        var lists = new List<RecreationBooking>[count];
+        var originals = new RecreationBooking[count][];
+        var removed = new HashSet<RecreationBooking>[count];
+        var ownerRefs = new int[count];
+        for (int i = 0; i < count; i++)
+        {
+            var change = batch[i];
+            if (change == null || change.owner == null || change.incoming == null
+                || !owners.Add(change.owner) || !incoming.Add(change.incoming)) return false;
+            var bookings = change.owner.recreationBookings;
+            lists[i] = bookings;
+            if (bookings != null)
+            {
+                originals[i] = new RecreationBooking[bookings.Count];
+                for (int j = 0; j < bookings.Count; j++) originals[i][j] = bookings[j];
+            }
+            ownerRefs[i] = change.incoming.ownerRef;
+            removed[i] = new HashSet<RecreationBooking>();
+            if (change.displaced == null) continue;
+            for (int j = 0; j < change.displaced.Count; j++)
+            {
+                var booking = change.displaced[j];
+                if (booking == null || bookings == null || !bookings.Contains(booking)
+                    || !removed[i].Add(booking)) return false;
+            }
+        }
+        for (int i = 0; i < count; i++)
+            if (originals[i] != null)
+                foreach (var booking in originals[i])
+                    if (booking != null && incoming.Contains(booking)) return false;
+
+        bool committed = false;
+        var appended = new bool[count];
+        RecreationUtility.BeginPlacementPreflight();
+        try
+        {
+            for (int i = 0; i < count; i++)
+            {
+                batch[i].owner.IsReplacingRecreationBookings = true;
+                var bookings = batch[i].owner.Bookings;
+                for (int j = bookings.Count - 1; j >= 0; j--)
+                    if (removed[i].Contains(bookings[j])) bookings.RemoveAt(j);
+            }
+            if (validate != null && !validate()) return false;
+            for (int i = 0; i < count; i++)
+                if (!batch[i].owner.CanAddBooking(batch[i].incoming)) return false;
+            for (int i = 0; i < count; i++)
+                if (!batch[i].owner.AddBooking(batch[i].incoming, false)) return false;
+            committed = true;
+        }
+        finally
+        {
+            try
+            {
+                for (int i = 0; i < count; i++) batch[i].owner.IsReplacingRecreationBookings = false;
+                if (!committed)
+                {
+                    // Restore every owner's raw list before any new-booking cleanup can call back into the group.
+                    for (int i = 0; i < count; i++)
+                    {
+                        var change = batch[i];
+                        appended[i] = change.owner.HasBooking(change.incoming);
+                        change.owner.recreationBookings = lists[i];
+                        if (lists[i] != null)
+                        {
+                            lists[i].Clear();
+                            lists[i].AddRange(originals[i]);
+                        }
+                    }
+                    Exception cleanupFailure = null;
+                    for (int i = 0; i < count; i++)
+                    {
+                        try
+                        {
+                            if (appended[i])
+                            {
+                                try { RecreationUtility.ForgetReservation(batch[i].incoming); }
+                                finally { RecreationUtility.ForgetActivityBooking(batch[i].incoming); }
+                            }
+                        }
+                        catch (Exception ex) { if (cleanupFailure == null) cleanupFailure = ex; }
+                        finally { batch[i].incoming.ownerRef = ownerRefs[i]; }
+                    }
+                    if (cleanupFailure != null) throw cleanupFailure;
+                }
+            }
+            finally
+            {
+                RecreationUtility.EndPlacementPreflight();
+            }
+        }
+
+        for (int i = 0; i < count; i++)
+            if (originals[i] != null)
+                foreach (var booking in originals[i])
+                    if (removed[i].Contains(booking))
+                    {
+                        RecreationUtility.ForgetReservation(booking);
+                        RecreationUtility.ForgetActivityBooking(booking);
+                    }
         return true;
     }
 

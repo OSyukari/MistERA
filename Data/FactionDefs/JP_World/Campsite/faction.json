@@ -1,0 +1,79 @@
+{
+    "_comment": "Shared hub only: no camps or NPCs are initialized here. Content addons create individual homes through initializeResidences. Register additional templateIDs in residential.templates; leave linkRoomID unset so each home's own mainExit is used.",
+    "MapPlans": {
+        "factionInit": [
+            {
+                "ID": "jp_campsite",
+                "isPublic": true,
+                "isRentingFloor": false,
+                "setPrivateRoomOwner": false,
+                "mainExit": { "roomID": "campsite_homeless_hub", "exitCost": 1 },
+                "floorListHostFactionID": "jp_tourist_riverside",
+                "floorDoors": [
+                    {
+                        "sourceFloor": "floor_jp_campsite",
+                        "sourceExit": "to_riverside",
+                        "targetFaction": "jp_tourist_riverside",
+                        "targetFloor": "floor_jp_tourist_riverside",
+                        "targetExit": "to_jp_campsite",
+                        "cost": 1
+                    }
+                ],
+                "floors": [
+                    { "ID": "floor_jp_campsite", "nameOverwrite": "jp_campsite" }
+                ],
+                "residential": {
+                    "maxResidences": 30,
+                    "attachRoomID": "campsite_homeless_hub",
+                    "templates": [
+                        { "templateID": "jp_home_tpl_camp_single", "weight": 1 }
+                    ]
+                },
+                "managerBaseIDs": [],
+                "workModules": [],
+                "workHours": [],
+                "workAssignment": []
+            }
+        ],
+        "floorPlans": [
+            {
+                "ID": "floor_jp_campsite",
+                "_comment_art": "Placeholder background shared with the riverside until campsite art is available.",
+                "imagePath": "Media_UI_Scenario_Background/BG_RiversideRoad.jpg",
+                "isFloorPlan": false,
+                "mapExit": "campsite_homeless_hub",
+                "exits": [
+                    { "ID": "to_riverside", "connectedRoom": "campsite_homeless_hub", "hideOnMap": true }
+                ],
+                "rooms": [
+                    {
+                        "ID": "campsite_homeless_hub",
+                        "displayName": "campsite_homeless_hub",
+                        "hideOnMap": true,
+                        "noCleaning": true,
+                        "connects": [],
+                        "furnitureIDs": [],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_RiversideRoad.jpg",
+                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_RiversideRoad.jpg"
+                    }
+                ]
+            }
+        ],
+        "worldInitAddons": [
+            {
+                "worldID": "world_erav_modern_jp",
+                "initializeFactions": {
+                    "jp_campsite": "jp_campsite"
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "jp_campsite": "露营地",
+                "campsite_homeless_hub": "流浪者聚集处"
+            }
+        }
+    }
+}

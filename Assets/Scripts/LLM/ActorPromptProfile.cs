@@ -216,7 +216,7 @@ public static class ActorPromptProfileUtility
         if (c == null) yield break;
         yield return c.Race?.promptProfile;
         foreach (var profile in EnumerateBodyLayers(c)) yield return profile;
-        yield return c.RaceTemplate?.promptProfile;
+        foreach (var template in c.RaceTemplates) yield return template.promptProfile;
         yield return c.Template?.promptProfile;
     }
 

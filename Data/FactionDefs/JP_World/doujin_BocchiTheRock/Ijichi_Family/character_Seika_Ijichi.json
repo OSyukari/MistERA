@@ -1,0 +1,48 @@
+{
+  "baseID": "BocchiRock_Char_Seika_Ijichi",
+  "Portrait":{
+    "portraitPriorityList":[
+      {
+        "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+
+        "random_portrait_folder":"Ijichi_Family/portrait_seika",
+            
+        "icon_offset_x":3.2,            
+        "icon_offset_y":-129.8,            
+        "icon_offset_size":0.6,
+
+        "icon_path":"Ijichi_Family/portrait_seika/ComfyUI_0008 (2).webp"
+      }
+    ]
+  },
+  "Template": {
+    "Appearance": "Female",
+    "stat_STR": 9,
+    "stat_CON": 10,
+    "stat_PSY": 12,
+    "stat_WIL": 14,
+    "personalityID": "personality_default",
+    "traits_body_sex": ["trait_Sensitivity_B_default", "trait_Sensitivity_M_default", "trait_Sensitivity_C_default", "trait_Sensitivity_V_default", "trait_Sensitivity_A_default", "trait_Size_B_B", "trait_Size_P_none", "trait_Size_V_1", "trait_Size_A_1"],
+    "traits_body": ["trait_BodyType_slim", "trait_SkinColor_fair", "trait_HairColor_blonde", "trait_EyeColor_red"],
+    "Height": 166,
+    "Weight": 50,
+    "traits": ["trait_MemoryCapacity_high", "trait_SelfEsteem_high", "trait_MentalFortitude_high"],
+    "initialRelationship": [
+      { "baseID": "BocchiRock_Char_Nijika_Ijichi", "initialBiologicalRelationship": "relationship_sibling", "initialBiologicalRelationship_isA": false, "initialPersonalRelationship": "relationship_housemate" },
+      { "baseID": "BocchiRock_Char_Hitori_Gotoh", "initialPersonalRelationship": "relationship_acquaintance" },
+      { "baseID": "BocchiRock_Char_PA_San", "initialPersonalRelationship": "relationship_colleague" }
+    ],
+    "initialInventory": [],
+    "defaultHairstyle": { "hairstyleID": "hairstyle_straight_long", "slotSelection": { "front": "hair_front_side_swept" } },
+    "CharacterCard": "<Seika_Ijichi>\nIdentity: Seika Ijichi, 30-year-old manager of the Shimokitazawa live house STARRY, Nijika's older sister, and a former college-band guitarist.\nHome: Lives with Nijika in the private upstairs residence at STARRY; knowing the venue does not grant access to their home or its family history.\nCharacter: Professional, proud, frank, and demanding about music. Her blunt delivery often sounds harsher than intended, including to Hitori, but she has quietly made room for Kessoku Band and thinks about its prospects deeply. She became Nijika's guardian after their mother died, abandoned her own band ambitions, and spent eight years opening STARRY. She is poor at housework and cooking, sleeps with stuffed toys, and handles troublemakers with forceful competence.\nAppearance: Long blonde hair with a triangular ahoge, orange-red eyes, black choker, and dark rock-inspired clothing.\n</Seika_Ijichi>",
+    "Skills": null
+  },
+  "firstName": "BocchiRock_Char_Seika_Ijichi_firstname",
+  "middleName": "",
+  "lastName": "BocchiRock_Char_Ijichi_lastname",
+  "nameDisplayFormat": "chara_fullname_lastToFirst",
+  "origin": "charOrigin_none",
+  "race": "humanRace_human",
+  "raceTemplate": "humanRaceAddon_standard",
+  "startingGift": "charOriginGift_none"
+}

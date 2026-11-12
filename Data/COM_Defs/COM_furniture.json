@@ -80,7 +80,7 @@
             },
             {
                 "ID": "com_furniture_divider_enter",
-                "_comments": "going into a room divider (stall, private bathroom) - added by code to every furniture whose occupancy isRoomDivider (Job_Furniture.UpdateAllUsableCOMs), offered only from outside. Inside, the divider's own commands are reachable and the rest of the room is not. Temporary transit step (ActionPackage_DividerMove); the effect is applied on completion by the dividerEnter tag. Docs/Furniture/Plan_FurnitureOccupancy.md §4",
+                "_comments": "going into a room divider (stall, private bathroom) - added by code to every furniture whose occupancy isRoomDivider (Job_Furniture.UpdateAllUsableCOMs), offered only from outside. Inside, the divider's own commands are reachable and the rest of the room is not. Temporary transit step (ActionPackage_DividerMove); the effect is applied on completion by the dividerEnter tag. The player's move is never refused: followers are its receivers (one who can't come stops following, named in the tooltip / log), a current target not following is first asked along with a real 同行 resolved on click - its rate is the command's rate. Docs/Furniture/Plan_FurnitureOccupancy.md §4",
                 "ActionPackageClass": "ActionPackage_DividerMove",
                 "displayName": "com_furniture_divider_enter_displayName",
                 "timeScale": 1,
@@ -90,7 +90,15 @@
                 ],
                 "requirements": {
                     "requirement": {
-                        "treatReceiverAsDoer": true
+                        "treatReceiverAsDoer": true,
+                        "req_Doers": {
+                            "requireConscious": false,
+                            "requireAction": false
+                        },
+                        "req_Receivers": {
+                            "requireConscious": false,
+                            "requireAction": false
+                        }
                     }
                 },
                 "variants": [
@@ -106,7 +114,7 @@
             },
             {
                 "ID": "com_furniture_divider_leave",
-                "_comments": "coming out of a room divider - offered only from inside, not while in a sex scene. Moving to another room needs it first (always explicit). Same mechanics as com_furniture_divider_enter.",
+                "_comments": "coming out of a room divider - offered only from inside, not while in a sex scene. Moving to another room needs it first (always explicit). Same mechanics as com_furniture_divider_enter (followers, 同行 invite).",
                 "ActionPackageClass": "ActionPackage_DividerMove",
                 "displayName": "com_furniture_divider_leave_displayName",
                 "timeScale": 1,
@@ -116,7 +124,15 @@
                 ],
                 "requirements": {
                     "requirement": {
-                        "treatReceiverAsDoer": true
+                        "treatReceiverAsDoer": true,
+                        "req_Doers": {
+                            "requireConscious": false,
+                            "requireAction": false
+                        },
+                        "req_Receivers": {
+                            "requireConscious": false,
+                            "requireAction": false
+                        }
                     }
                 },
                 "variants": [
@@ -1452,6 +1468,8 @@
                 "com_furniture_sleep_displayName_1": "睡觉",
                 "com_furniture_sleep_displayName_2": "一起睡觉",                "com_furniture_sleep_withNames": "和$names$一起睡",
                 "com_furniture_divider_enter_displayName": "进入",
+                "com_furniture_divider_enter_together_displayName": "一起进入",
+                "com_furniture_divider_leave_together_displayName": "一起离开",
                 "com_furniture_divider_enter_begin_1": "$doer.firstname$走了进去",
                 "com_furniture_divider_enter_ongoing_1": "$doer.firstname$正在走进去",
                 "com_furniture_divider_leave_displayName": "离开",

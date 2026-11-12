@@ -134,6 +134,8 @@ public class TryChangeLocaleNode : FindJobNode
     }
     public override bool TryGetJob(Character_Trainable c, I_IsJobGiver currentJobFaction, I_IsJobGiver currentLocaleFaction, bool resetJob, int currentHour, List<string> s)
     {
+        var activity = c?.FactionManager?.GetEffectiveBooking(currentHour)?.Session?.ActivityJob as Job_Activity;
+        if (activity != null && activity.OverridesLocaleRouting(c)) return false;
         // if working, currentjob is not home
         // if not working, currentjob is home
         // if currentjobfaction != currentlocalefaction && currentlocale is not home, go to currentjob -> specific job for rallying?
@@ -447,7 +449,6 @@ public class TryFindNonJobByTagNode : FindJobNode
         else if (currentLocaleFaction != null)
         {
             List<Job_Furniture> possibleRecreations = new List<Job_Furniture>();
-
             possibleRecreations.AddRange(currentLocaleFaction.GetValidJobs_Heuristics(Heuristic, 1, c, currentHour, filter, tagoverride: tag, s: s));
 
             if (possibleRecreations.Count < 1 && currentLocaleFaction != currentJobFaction)

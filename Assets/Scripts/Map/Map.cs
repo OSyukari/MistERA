@@ -200,6 +200,7 @@ public class Map_Instance
     /// </summary>
     private void BuildPath()
     {
+        ResolveRoomConnections();
         floorGraph.Clear();
         //graphs = new Dictionary<int, AdjacencyGraph<int, TaggedEdge<int, Door_Instance>>>();
         floorDoorQuickSearch = new Dictionary<int, List<int>>();
@@ -209,6 +210,7 @@ public class Map_Instance
         Dictionary<int, MapPlan> mapTemplateInstances = new Dictionary<int, MapPlan>();
         foreach(KeyValuePair<int, Floor_Instance> kvp_fl in floors)
         {
+            kvp_fl.Value.BuildPath();
             kvp_fl.Value.ConnectedDoors.Clear();
             floorGraph.AddVertex(kvp_fl.Value);
             if (!mapTemplateInstances.ContainsKey(kvp_fl.Value.mapTemplateInstanceID)) mapTemplateInstances.Add(kvp_fl.Value.mapTemplateInstanceID, kvp_fl.Value.MapTemplate);
@@ -272,10 +274,11 @@ public class Map_Instance
         // instantiation (e.g. InitializeFaction adding a faction after its door-connected neighbor) and
         // save/reload (BuildPath reruns via SerializationRebuilt) both self-correct.
         var loadedWorlds = scr_System_CampaignManager.current.GetLoadedWorldPlans();
-        foreach (var faction in scr_System_CampaignManager.current.Factions)
+        foreach (var faction in scr_System_CampaignManager.current.ActivityFactions)
         {
             faction.worldConnection.Clear();
             foreach (var w in loadedWorlds) if (w.initializeFactions.ContainsKey(faction.ID)) faction.worldConnection.Add(w.worldID);
+            if (faction.IsLocationless) RemoveFromFactionGraphs(faction.ID);
             faction.factionConnection.Clear();
         }
         foreach (var fd in factionFloorDoorConnections)
@@ -288,6 +291,17 @@ public class Map_Instance
                 if (!target.factionConnection.Contains(source)) target.factionConnection.Add(source);
             }
         }
+
+        foreach (var links in floorRoomAttachments.Values)
+            foreach (var link in links)
+            {
+                var source = GetRoomByRef(link.sourceRoomRef)?.FactionOwner?.FactionOwnerRoot;
+                var targetRoom = GetRoomByRef(link.roomRef);
+                var target = targetRoom?.FactionOwner?.FactionOwnerRoot;
+                if (source == null || target == null || source == target || targetRoom.parentFloor == null) continue;
+                if (!source.factionConnection.Contains(target)) source.factionConnection.Add(target);
+                if (!target.factionConnection.Contains(source)) target.factionConnection.Add(source);
+            }
 
 
         //graphsImmutable = new Dictionary<int, ArrayAdjacencyGraph<int, TaggedEdge<int, Door_Instance>>>();
@@ -342,6 +356,143 @@ public class Map_Instance
 
     // Orphaned room will NOT be updated
     [JsonProperty] protected Dictionary<int, Room_Instance> rooms_orphans = new Dictionary<int, Room_Instance>();
+
+    [JsonProperty] private Dictionary<int, Room_Instance> standaloneRooms = new Dictionary<int, Room_Instance>();
+    [JsonProperty] private Dictionary<int, List<RoomAttachment>> floorRoomAttachments = new Dictionary<int, List<RoomAttachment>>();
+    [JsonProperty] private List<MapPlan.RoomConnection> roomConnections = new List<MapPlan.RoomConnection>();
+
+    public void RegisterRoomConnection(MapPlan.RoomConnection connection)
+    {
+        if (connection == null) return;
+        var existing = roomConnections.Find(link => link.sourceFaction == connection.sourceFaction
+            && link.sourceFloor == connection.sourceFloor && link.sourceRoom == connection.sourceRoom
+            && link.targetFaction == connection.targetFaction && link.targetRoom == connection.targetRoom);
+        if (existing == null) roomConnections.Add(connection);
+        else existing.cost = connection.cost;
+    }
+
+    private void ResolveRoomConnections()
+    {
+        foreach (var connection in roomConnections)
+        {
+            var sourceFaction = scr_System_CampaignManager.current.FindFactionByID(connection.sourceFaction);
+            var targetFaction = scr_System_CampaignManager.current.FindFactionByID(connection.targetFaction);
+            if (sourceFaction == null || targetFaction == null) continue;
+            var sources = sourceFaction.ManagedRooms.Values.Where(room => room != null && !room.isStandalone
+                && room.parentFloor != null && room.parentFloor.floorPlanID == connection.sourceFloor
+                && room.TemplateRoomID == connection.sourceRoom).ToList();
+            var targets = targetFaction.ManagedRooms.Values.Where(room => room != null && room.isStandalone
+                && room.TemplateRoomID == connection.targetRoom).ToList();
+            if (sources.Count != 1 || targets.Count != 1)
+            {
+                Debug.LogWarning($"Room connection [{connection.sourceFaction}/{connection.sourceFloor}/{connection.sourceRoom} -> {connection.targetFaction}/{connection.targetRoom}] has missing or ambiguous endpoints");
+                continue;
+            }
+            AttachRoom(sources[0].parentFloor, sources[0], targets[0], connection.cost, false);
+        }
+    }
+
+    public class RoomAttachment
+    {
+        public int sourceRoomRef;
+        public int roomRef;
+        public float cost = 1f;
+    }
+
+    public IEnumerable<RoomAttachment> GetRoomAttachments(Floor_Instance floor)
+    {
+        if (floor != null && floorRoomAttachments.TryGetValue(floor.refID, out var links)) return links;
+        return Enumerable.Empty<RoomAttachment>();
+    }
+
+    public bool IsAttachedRoom(int roomRef)
+    {
+        return floorRoomAttachments.Values.Any(links => links.Any(link => link.roomRef == roomRef));
+    }
+
+    public bool AttachRoom(Floor_Instance floor, Room_Instance sourceRoom, Room_Instance room, float cost = 1f, bool rebuildPath = true)
+    {
+        if (floor == null || sourceRoom == null || room == null || !room.isStandalone || room == sourceRoom
+            || sourceRoom.isStandalone || sourceRoom.parentFloor != floor || !floor.rooms.Contains(sourceRoom)
+            || cost < 0f || float.IsNaN(cost) || float.IsInfinity(cost)) return false;
+        foreach (var entry in floorRoomAttachments)
+            foreach (var link in entry.Value)
+                if (link.roomRef == room.RefID && (entry.Key != floor.refID || link.sourceRoomRef != sourceRoom.RefID))
+                {
+                    Debug.LogWarning($"AttachRoom: room [{room.RefID}] already has a different attachment");
+                    return false;
+                }
+        if (room.parentFloor != null && room.parentFloor != floor) return false;
+        if (!floorRoomAttachments.TryGetValue(floor.refID, out var links))
+            floorRoomAttachments.Add(floor.refID, links = new List<RoomAttachment>());
+        var existing = links.Find(link => link.roomRef == room.RefID);
+        if (existing == null) links.Add(new RoomAttachment { sourceRoomRef = sourceRoom.RefID, roomRef = room.RefID, cost = cost });
+        else existing.cost = cost;
+        standaloneRooms[room.RefID] = room;
+        floor.AddAttachedRoom(room);
+        AddRoom(room, floor);
+        if (rebuildPath)
+        {
+            BuildPath();
+        }
+        return true;
+    }
+
+    /// <summary>Opt-in conversion of a saved single-room floor, preserving the live room and all its contents.</summary>
+    public bool ConvertToStandaloneRoom(Room_Instance room, Floor_Instance oldFloor)
+    {
+        if (room == null || oldFloor == null || room.isStandalone || room.parentFloor != oldFloor
+            || oldFloor.rooms.Count != 1 || oldFloor.rooms[0] != room || !floors.ContainsKey(oldFloor.refID)
+            || GetRoomAttachments(oldFloor).Any()) return false;
+        var ownerID = room.FactionOwner?.FactionOwnerRoot?.ID;
+        var removedDoors = factionFloorDoorConnections.Where(door =>
+            (door.sourceFaction == ownerID && door.sourceFloor == oldFloor.floorPlanID)
+            || (door.targetFaction == ownerID && door.targetFloor == oldFloor.floorPlanID)).ToList();
+        foreach (var door in removedDoors)
+        {
+            foreach (var floor in floors.Values)
+            {
+                if (floor.floorPlanID == door.sourceFloor && floor.rooms.Any(r => !r.isStandalone && r.FactionOwner?.FactionOwnerRoot?.ID == door.sourceFaction))
+                    floor.RemoveRuntimeExit(door.sourceExit);
+                if (floor.floorPlanID == door.targetFloor && floor.rooms.Any(r => !r.isStandalone && r.FactionOwner?.FactionOwnerRoot?.ID == door.targetFaction))
+                    floor.RemoveRuntimeExit(door.targetExit);
+            }
+            factionFloorDoorConnections.Remove(door);
+        }
+        oldFloor.rooms.Remove(room);
+        floors.Remove(oldFloor.refID);
+        roomFloorRef.Remove(room.RefID);
+        room.parentFloor = null;
+        room.isStandalone = true;
+        standaloneRooms[room.RefID] = room;
+        AddRoom(room);
+        return true;
+    }
+
+    private void RestoreRoomAttachments()
+    {
+        // Runtime floor membership is rebuilt from RefIDs; never serialize a second copy of a room.
+        foreach (var floor in floors.Values) floor.rooms.RemoveAll(room => room.isStandalone);
+        foreach (var room in standaloneRooms.Values) room.parentFloor = null;
+        foreach (var entry in floorRoomAttachments)
+        {
+            if (!floors.TryGetValue(entry.Key, out var floor)) continue;
+            foreach (var link in entry.Value)
+            {
+                var source = floor.FindRoom(link.sourceRoomRef);
+                if (source == null || source.isStandalone || !standaloneRooms.TryGetValue(link.roomRef, out var room)) continue;
+                if (room.parentFloor != null)
+                {
+                    Debug.LogWarning($"RestoreRoomAttachments: duplicate parent for room [{room.RefID}]");
+                    continue;
+                }
+                floor.AddAttachedRoom(room);
+                AddRoom(room, floor);
+            }
+        }
+        foreach (var room in standaloneRooms.Values.ToList())
+            if (room.parentFloor == null) AddRoom(room);
+    }
 
     /// <summary>
     /// worldID -> transit room refID. Room a traveler is placed in while dwelling out a world-map trip's
@@ -432,7 +583,7 @@ public class Map_Instance
     public Room_Instance UnregisterRoom(int refID, bool rebuildPath = true)
     {
         Room_Instance room = null;
-        if (Rooms.TryGetValue(refID, out room) || rooms_orphans.TryGetValue(refID, out room))
+        if (Rooms.TryGetValue(refID, out room) || rooms_orphans.TryGetValue(refID, out room) || standaloneRooms.TryGetValue(refID, out room))
         {
             EvacuateRoomForRemoval(room);
             foreach (var job in room.Jobs)
@@ -444,7 +595,21 @@ public class Map_Instance
         }
         Rooms.Remove(refID);
         rooms_orphans.Remove(refID);
+        standaloneRooms.Remove(refID);
+        foreach (var links in floorRoomAttachments.Values)
+        {
+            foreach (var link in links.Where(link => link.sourceRoomRef == refID).ToList())
+                if (standaloneRooms.TryGetValue(link.roomRef, out var attached))
+                {
+                    attached.parentFloor?.RemoveAttachedRoom(attached);
+                    attached.parentFloor = null;
+                    AddRoom(attached);
+                }
+            links.RemoveAll(link => link.roomRef == refID || link.sourceRoomRef == refID);
+        }
+        room?.parentFloor?.RemoveAttachedRoom(room);
         roomFloorRef.Remove(refID);
+        roomFloorRef_Immutable = new ReadOnlyDictionary<int, int>(roomFloorRef);
         foreach (var charaRef in charaRoomRef.Where(entry => entry.Value == refID).Select(entry => entry.Key).ToList())
             charaRoomRef.Remove(charaRef);
         foreach (var faction in scr_System_CampaignManager.current.Factions) faction.InvalidateMainExitCache();
@@ -861,6 +1026,7 @@ public class Map_Instance
     public Room_Instance GetRoomByRef(int roomRef)
     {
         if (this.Rooms.ContainsKey(roomRef)) return this.Rooms[roomRef];
+        if (standaloneRooms.TryGetValue(roomRef, out var standalone)) return standalone;
         if (this.rooms_orphans.ContainsKey(roomRef)) return rooms_orphans[roomRef];
         return null;
     }
@@ -882,12 +1048,20 @@ public class Map_Instance
 
     public void AddRoom(Room_Instance room, Floor_Instance floor = null)
     {
+        if (room.isStandalone && (!standaloneRooms.TryGetValue(room.RefID, out var stored) || !ReferenceEquals(stored, room)))
+            standaloneRooms[room.RefID] = room;
         if (room.parentFloor != null) floor = room.parentFloor;
 
         if (floor == null || floor.refID == -1)
         {
             //Debug.LogError("AddRoom floor refID not initialized, skipping");
-            if (!rooms_orphans.ContainsKey(room.RefID)) rooms_orphans.Add(room.RefID, room);
+            if (!room.isStandalone && !rooms_orphans.ContainsKey(room.RefID)) rooms_orphans.Add(room.RefID, room);
+            if (room.isStandalone)
+            {
+                Rooms.Remove(room.RefID);
+                rooms_orphans.Remove(room.RefID);
+                roomFloorRef.Remove(room.RefID);
+            }
         }
         else 
         {
@@ -1022,8 +1196,7 @@ public class Map_Instance
     /// Real travel time (in minutes) between two factions' doors on a WorldPlan they share, mirroring the
     /// distance/travelDistancePerMinute calc shown on the world-map tooltip (canvas_RoomDisplay.TravelTimeMinutesString).
     /// Falls back to the flat legacy cost of 5 when no shared WorldPlan has a door for both factions (e.g. a
-    /// faction connected only via campaign_init_factionConnect with no matching world door, or a door-only
-    /// annex faction - see ResolveDoorOwningFaction - whose resolved neighbor also has none).
+    /// door-only annex faction - see ResolveDoorOwningFaction - whose resolved neighbor also has none).
     /// </summary>
     Door_Instance GetFactionCrossingDoor(Manageable fromFaction, Manageable toFaction)
     {
@@ -1109,6 +1282,7 @@ public class Map_Instance
     {
         if (a == null || b == null) return false;
         if (a == b) return true;
+        if (a.IsLocationless || b.IsLocationless) return false;
 
         // a subfaction (e.g. a mall shop) is a virtual tenant with no physical presence of its own on the
         // world map - it's reachable wherever its parent (e.g. the mall) is, regardless of whether it ended up
@@ -1280,14 +1454,14 @@ public class Map_Instance
 
         if (fromFaction == null || toFaction == null) return false;
         if (!isConnectedFaction(fromFaction, toFaction)) return false;
-        if (fromFloor != -1 && toFloor != -1 && fromFloor == toFloor && Findpath_InsideFloor(roomRef, targetRoom, out path))
+        if (fromFloor != -1 && toFloor != -1 && fromFloor == toFloor)
         {   // same floor pathfinding
-            return true;
+            return Findpath_InsideFloor(roomRef, targetRoom, out path);
         }
         else if (fromFaction != toFaction)
         {
             // floors linked by floor doors (street <-> shop, district <-> home): walk through the doors
-            if (AreFloorsDoorLinked(roomRef, targetRoom) && Findpath_BetweenFloors(roomRef, targetRoom, out path)) return true;
+            if (AreFloorsDoorLinked(roomRef, targetRoom)) return Findpath_BetweenFloors(roomRef, targetRoom, out path);
             path = null;
             if (fromFaction.MainExit != null && toFaction.MainExit != null)
             {   // different faction pathfinding, no direct path require teleport
@@ -1455,23 +1629,40 @@ public class Map_Instance
     }
 
     /// <summary>
-    /// This list will be used when creating player move button and when update existing
+    /// This list will be used when creating player move button and when update existing.
+    /// Not saved: the same-world full mesh is rebuilt on every load (AddWorldTemplate -> InstantiateWorld).
     /// </summary>
-    [JsonProperty] Dictionary<string, List<string>> factionGraphs = new Dictionary<string, List<string>>();
+    [JsonIgnore] Dictionary<string, List<string>> factionGraphs = new Dictionary<string, List<string>>();
 
     public List<Manageable> GetConnectedFactions(string factionID)
     {
         var list = new List<Manageable>();
+        var selfFaction = scr_System_CampaignManager.current.FindFactionByID(factionID);
+        if (selfFaction?.IsLocationless == true) return list;
 
         bool hasFactionLink = factionGraphs.ContainsKey(factionID);
         // a commercial pact does not grants connectivity
         //bool hasPactLink = commercialPactGraphs.ContainsKey(factionID);
         // a factionFloorDoorConnections entry also grants connectivity, same as a manual factionGraphs link
-        bool hasDoorLink = factionFloorDoorConnections.Any(d => d.sourceFaction == factionID || d.targetFaction == factionID);
-        //if (!hasFactionLink && !hasPactLink && !hasDoorLink) return list;
-        if (!hasFactionLink && !hasDoorLink) return list;
+        bool hasDoorLink = false;
+        for (int i = 0; i < factionFloorDoorConnections.Count; i++)
+            if (factionFloorDoorConnections[i].sourceFaction == factionID || factionFloorDoorConnections[i].targetFaction == factionID)
+            { hasDoorLink = true; break; }
+        var attachmentIDs = new HashSet<string>();
+        foreach (var entry in floorRoomAttachments)
+            foreach (var link in entry.Value)
+            {
+                var source = GetRoomByRef(link.sourceRoomRef);
+                var target = GetRoomByRef(link.roomRef);
+                if (source?.parentFloor == null || target?.parentFloor != source.parentFloor
+                    || source.parentFloor.refID != entry.Key) continue;
+                var sourceID = source.FactionOwner?.FactionOwnerRoot?.ID;
+                var targetID = target.FactionOwner?.FactionOwnerRoot?.ID;
+                if (sourceID == factionID && !string.IsNullOrEmpty(targetID) && targetID != factionID) attachmentIDs.Add(targetID);
+                if (targetID == factionID && !string.IsNullOrEmpty(sourceID) && sourceID != factionID) attachmentIDs.Add(sourceID);
+            }
+        if (!hasFactionLink && !hasDoorLink && attachmentIDs.Count == 0) return list;
 
-        var selfFaction = scr_System_CampaignManager.current.FindFactionByID(factionID);
         if (selfFaction == null || selfFaction.MainExit == null)
         {
             Debug.LogError($"Faction [{factionID}] has no main exit");
@@ -1479,6 +1670,7 @@ public class Map_Instance
         }
 
         var ids = new List<string>();
+        ids.AddRange(attachmentIDs);
         if (hasFactionLink) ids.AddRange(factionGraphs[factionID]);
         //if (hasPactLink) foreach (var i in commercialPactGraphs[factionID]) if (!ids.Contains(i)) ids.Add(i);
         if (hasDoorLink) foreach (var d in factionFloorDoorConnections)
@@ -1490,7 +1682,7 @@ public class Map_Instance
         foreach (var i in ids)
         {
             var j = scr_System_CampaignManager.current.FindFactionByID(i);
-            if (j == null) continue;
+            if (j == null || j.IsLocationless) continue;
             list.Add(j);
         }
         return list;
@@ -1498,7 +1690,7 @@ public class Map_Instance
 
     public void ConnectFactions(Manageable a, Manageable b)
     {
-        if (a == null || b == null) return;
+        if (a == null || b == null || a == b || a.IsLocationless || b.IsLocationless) return;
 
         if (!factionGraphs.ContainsKey(a.ID)) factionGraphs.Add(a.ID, new List<string>() { b.ID });
         else if (!factionGraphs[a.ID].Contains(b.ID)) factionGraphs[a.ID].Add(b.ID);
@@ -1525,7 +1717,7 @@ public class Map_Instance
     {
         if (string.IsNullOrEmpty(factionID) || !factionGraphs.TryGetValue(factionID, out var peers)) return false;
         foreach (var peer in peers)
-            if (factionGraphs.TryGetValue(peer, out var back)) back.Remove(factionID);
+            if (peer != factionID && factionGraphs.TryGetValue(peer, out var back)) back.Remove(factionID);
         factionGraphs.Remove(factionID);
         return true;
     }
@@ -1605,7 +1797,7 @@ public class Map_Instance
     /// <summary>
     /// Factions eligible as trade partners: either a commercial pact (a long-distance trade agreement) OR
     /// physically/world connected (isConnectedFaction) - immediate neighbors can trade informally with no
-    /// pact required.
+    /// pact required. Locationless organizations can trade within their declared world without claiming physical reachability.
     /// </summary>
     public List<Manageable> GetTradePartnerFactions(string factionID)
     {
@@ -1613,12 +1805,29 @@ public class Map_Instance
         var self = scr_System_CampaignManager.current.FindFactionByID(factionID);
         if (self == null) return list;
         foreach (var faction in GetCommercialPactFactions(factionID)) list.Add(faction);
-        foreach (var faction in scr_System_CampaignManager.current.Factions)
+        foreach (var faction in scr_System_CampaignManager.current.ActivityFactions)
         {
             if (faction == self || list.Contains(faction)) continue;
+            if (self.IsLocationless || faction.IsLocationless)
+            {
+                if (SharesWorldForTrade(self, faction)) list.Add(faction);
+                continue;
+            }
             if (isConnectedFaction(self, faction)) list.Add(faction);
         }
         return list;
+    }
+
+    static bool SharesWorldForTrade(Manageable a, Manageable b)
+    {
+        if (a.worldConnection.Count > 0 && b.worldConnection.Count > 0)
+        {
+            for (int i = 0; i < a.worldConnection.Count; i++)
+                if (b.worldConnection.Contains(a.worldConnection[i])) return true;
+            return false;
+        }
+        string world = Manageable.ResolveWorldID(a);
+        return !string.IsNullOrEmpty(world) && world == Manageable.ResolveWorldID(b);
     }
 
     public bool IsCommercialPactLinked(Manageable a, Manageable b)
@@ -1663,6 +1872,9 @@ public class Map_Instance
         Rooms = new Dictionary<int, Room_Instance>();
         roomFloorRef = new Dictionary<int, int>();
 
+        foreach (var room in standaloneRooms.Values) room.SerializationRebuilt();
+        RestoreRoomAttachments();
+
         foreach (var i in Floors)
         {
             i.SerializationRebuilt(buildpath);
@@ -1676,7 +1888,7 @@ public class Map_Instance
             }
         }
 
-        foreach(var j in rooms_orphans.Values)
+        foreach(var j in rooms_orphans.Values.Concat(standaloneRooms.Values.Where(room => room.parentFloor == null)))
         {
             foreach (var c in j.RoomCharaRefs)
             {
@@ -1702,7 +1914,7 @@ public class Map_Instance
             var host = floor.FindPhysicalHost();
             if (host == null) continue;
             foreach (var room in floor.rooms)
-                if (!floor.IsPendingRoomRemoval(room) && !string.IsNullOrEmpty(room.Base?.subfactionOwnerOverwrite))
+                if (!room.isStandalone && !floor.IsPendingRoomRemoval(room) && !string.IsNullOrEmpty(room.Base?.subfactionOwnerOverwrite))
                     host.ReconcileRoomTenant(room);
         }
         // Tenant creation may have extended the faction registry. Restore authored exits only now,
@@ -1728,6 +1940,7 @@ public class Map_Instance
                 continue;
             }
             floors.Remove(floor.refID);
+            floorRoomAttachments.Remove(floor.refID);
             Debug.LogWarning($"Floor [{floor.refID}] template [{floor.floorPlanID}] no longer exists; floor removed on load");
         }
         foreach (var faction in scr_System_CampaignManager.current.Factions) faction.InvalidateMainExitCache();

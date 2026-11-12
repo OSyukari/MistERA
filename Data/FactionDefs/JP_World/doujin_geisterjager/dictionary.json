@@ -1,0 +1,29 @@
+{
+    "Dictionary": {
+        "Entries": {
+"zh-cn": {
+    "geisterjager_char_kana_firstname": "加奈",
+    "geisterjager_char_kana_lastname": "柏崎",
+
+    "geisterjager_char_tsukasa_firstname": "士",
+    "geisterjager_char_tsukasa_lastname": "樱井",
+    
+    "geisterjager_char_lawrence_firstname": "劳伦斯",
+    "geisterjager_home_tsukasa": "樱井士的公寓"
+    
+},
+"en-us": {
+
+    "geisterjager_char_kana_firstname": "Kana",
+    "geisterjager_char_kana_lastname": "Kashiwazaki",
+
+    "geisterjager_char_tsukasa_firstname": "Tsukasa",
+    "geisterjager_char_tsukasa_lastname": "Sakurai",
+    
+    "geisterjager_char_lawrence_firstname": "Lawrence",
+    "geisterjager_home_tsukasa": "Tsukasa's Apartment"
+    
+}
+        }
+  }
+}

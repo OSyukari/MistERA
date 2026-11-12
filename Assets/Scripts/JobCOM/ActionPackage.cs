@@ -1305,6 +1305,8 @@ public abstract class ActionPackage
     /// <returns></returns>
     public bool Validate()
     {
+        // a package settling its own actors before any check sees them (ActionPackage_DividerMove: who follows, who is invited)
+        BeforeValidate();
         // Outside virtual PreEvaluate: specialized packages cannot accidentally bypass room substitution.
         if (!ValidateActivityCommandPolicy())
         {
@@ -1320,6 +1322,9 @@ public abstract class ActionPackage
         }
         return Evaluate();
     }
+
+    /// <summary> first step of Validate, before the activity policy and PreEvaluate - no-op unless a package normalizes its own actors </summary>
+    protected virtual void BeforeValidate() { }
 
     bool ValidateActivityCommandPolicy(Character_Trainable joining = null)
     {
@@ -2957,22 +2962,8 @@ public abstract class ActionPackage
             }
             else if (targetCOM.comTags.Contains(FurnitureOccupancyUtility.Tag_DividerEnter) || targetCOM.comTags.Contains(FurnitureOccupancyUtility.Tag_DividerLeave))
             {
-                // into / out of a room divider (stall): every actor of the package
-                var divider = job as Job_Furniture;
-                bool enter = targetCOM.comTags.Contains(FurnitureOccupancyUtility.Tag_DividerEnter);
-                // one target check after everyone moved (not halfway: player inside, target still outside)
-                FurnitureOccupancyUtility.BeginBatch();
-                try
-                {
-                    for (int i = 0; divider != null && i < Actors.Count; i++)
-                    {
-                        var c = Actors[i];
-                        if (c == null) continue;
-                        if (enter) FurnitureOccupancyUtility.Enter(c, divider, OccupancyReason.Enter);
-                        else if (c.FurnitureLocation == divider) FurnitureOccupancyUtility.Leave(c, OccupancyReason.LeaveCommand);
-                    }
-                }
-                finally { FurnitureOccupancyUtility.EndBatch(); }
+                // into / out of a room divider (stall): the doer, and the player's followers with the player
+                if (this is ActionPackage_DividerMove move) move.ApplyMove(m);
             }
             else if (targetCOM.comTags.Contains(FurnitureOccupancyUtility.Tag_Carry))
             {

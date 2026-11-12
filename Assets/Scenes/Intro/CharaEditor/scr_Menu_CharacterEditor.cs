@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using TMPro;
 using System;
@@ -182,7 +183,8 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
     private void LoadRaceTemplate()
     {
-        this.raceTemplate.SetText(Character.RaceTemplate == null ? " - " : Character.RaceTemplate.DisplayName);// = "<link=" + id + "><u>" + Character.RaceTemplate.DisplayName + "</u></link>";
+        this.raceTemplate.SetText(Character.RaceTemplates.Count == 0 ? " - " : Character.RaceTemplatesDisplayName);
+        this.raceTemplate.SetExternalTooltip(Character.RaceTemplatesTooltip);
         //LayoutRebuilder.ForceRebuildLayoutImmediate(this.raceTemplate.rectTransform);
         //Debug.Log("SetRace on [" + this.Character.RaceTemplate.ID + "] as [" + id + "]");
     }
@@ -1001,10 +1003,10 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
             foreach (string s in this.parent.Character.Origin.disallowRaceTemplate_ID)
             {
-                if (this.parent.Character.RaceTemplate.ID == s)
+                if (this.parent.Character.RaceTemplates.Any(t => t.ID == s))
                 {
                     this.state = ButtonValidator_States.Conflict;
-                    string s2 = "Origin [" + parent.Character.Origin.DisplayName + "] conflict with Race Modifier [" + parent.Character.RaceTemplate.DisplayName + "]\n";
+                    string s2 = "Origin [" + parent.Character.Origin.DisplayName + "] conflict with Race Modifier [" + parent.Character.RaceTemplatesDisplayName + "]\n";
                     tooltip += s2;
                     parent.GetButton_ConfirmCharacter.NotifyConflict(s2);
                 }
@@ -1086,8 +1088,10 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         public void OnClickButton()
         {
             var c = parent.Character;
-            var nextval = isleft ? scr_System_Serializer.current.MasterList.humanoid_RaceTemplates.GetItemBefore(c.RaceTemplate, c.Origin, c.StartingGift, c.Race) : 
-                                    scr_System_Serializer.current.MasterList.humanoid_RaceTemplates.GetItemAfter(parent.Character.RaceTemplate, c.Origin, c.StartingGift, c.Race);
+            var index = scr_System_Serializer.current.MasterList.humanoid_RaceTemplates;
+            var primary = c.RaceTemplate ?? index.GetByID("humanRaceAddon_standard");
+            var nextval = isleft ? index.GetItemBefore(primary, c.Origin, c.StartingGift, c.Race) :
+                                    index.GetItemAfter(primary, c.Origin, c.StartingGift, c.Race);
             if (nextval != null) parent.Character.RaceTemplate = nextval;
             parent.LoadRaceTemplate();
         }

@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
 
 public class ActionPackage_ItemUse_RecordEditing : ActionPackage_ItemUse

@@ -18,8 +18,11 @@ public static partial class RecreationUtility
     {
         var result = new List<Job_Furniture>();
         if (room == null || fac == null || string.IsNullOrEmpty(fac.comTag)) return result;
-        foreach (var furniture in room.Furnitures)
+        for (int i = 0, count = room.FurnitureCount; i < count; i++)
+        {
+            var furniture = room.GetFurniture(i);
             if (furniture?.JobGiver is Job_Furniture job && job.HasAvailableCOMwithCOMTags(fac.comTag)) result.Add(job);
+        }
         return result;
     }
 
@@ -32,9 +35,12 @@ public static partial class RecreationUtility
         if (room == null || fac == null || room.isRoomPrison) return false;
         if (fac.hostPrivateRoom ? !room.isRoomPrivate : (!fac.allowPrivateRooms && room.isRoomPrivate)) return false;
         int units = 0;
-        foreach (var furniture in room.Furnitures)
+        for (int i = 0, count = room.FurnitureCount; i < count; i++)
+        {
+            var furniture = room.GetFurniture(i);
             if (furniture?.JobGiver is Job_Furniture job && !string.IsNullOrEmpty(fac.comTag)
                 && job.HasAvailableCOMwithCOMTags(fac.comTag)) units++;
+        }
         if (units < System.Math.Max(1, fac.minUnits)) return false;
         if (fac.requireInRoom != null)
             foreach (var tag in fac.requireInRoom)
@@ -44,8 +50,11 @@ public static partial class RecreationUtility
 
     static bool RoomOffersTag(Room_Instance room, string tag)
     {
-        foreach (var furniture in room.Furnitures)
+        for (int i = 0, count = room.FurnitureCount; i < count; i++)
+        {
+            var furniture = room.GetFurniture(i);
             if (furniture?.JobGiver != null && furniture.JobGiver.HasAvailableCOMwithCOMTags(tag)) return true;
+        }
         return false;
     }
 
@@ -61,12 +70,33 @@ public static partial class RecreationUtility
         var owned = fac.hostPrivateRoom && host != null ? new HashSet<int>(venue.GetOwnedRooms(host) ?? new List<int>()) : null;
         foreach (var room in venue.ManagedRooms.Values)
         {
+            if (!string.IsNullOrEmpty(activity.executionRoomID) && room?.Base?.ID != activity.executionRoomID) continue;
             if (!RoomQualifies(room, fac)) continue;
             if (owned != null && !owned.Contains(room.RefID)) continue;
             if (!string.IsNullOrEmpty(activity.gatherRoomID) && room.Base != null && room.Base.ID == activity.gatherRoomID) result.Insert(0, room);
             else result.Add(room);
         }
         return result;
+    }
+
+    static bool FacilityRoomAllows(Manageable venue, RecreationActivity activity, Character_Trainable host, Room_Instance room)
+    {
+        var fac = activity?.facility;
+        return venue != null && room != null && venue.ManagedRooms.TryGetValue(room.RefID, out var managed) && managed == room
+            && fac != null && (string.IsNullOrEmpty(activity.executionRoomID) || room.Base?.ID == activity.executionRoomID)
+            && RoomQualifies(room, fac)
+            && (!fac.hostPrivateRoom || host == null || venue.GetOwnedRooms(host)?.Contains(room.RefID) == true);
+    }
+
+    static void FillFacilityRooms(Manageable venue, RecreationActivity activity, Character_Trainable host, List<Room_Instance> result)
+    {
+        if (venue == null || activity?.facility == null) return;
+        foreach (var room in venue.ManagedRooms.Values)
+        {
+            if (!FacilityRoomAllows(venue, activity, host, room)) continue;
+            if (!string.IsNullOrEmpty(activity.gatherRoomID) && room.Base?.ID == activity.gatherRoomID) result.Insert(0, room);
+            else result.Add(room);
+        }
     }
 
     /// <summary>Whether activity can take place at venue as far as its facility goes: no facility, or some room qualifies.</summary>
@@ -77,7 +107,7 @@ public static partial class RecreationUtility
         if (venue == null) return false;
         // first qualifying room wins, no list (FacilityRooms with no host): asked of every home's shared activities
         foreach (var room in venue.ManagedRooms.Values)
-            if (RoomQualifies(room, fac)) return true;
+            if ((string.IsNullOrEmpty(activity.executionRoomID) || room?.Base?.ID == activity.executionRoomID) && RoomQualifies(room, fac)) return true;
         return false;
     }
 

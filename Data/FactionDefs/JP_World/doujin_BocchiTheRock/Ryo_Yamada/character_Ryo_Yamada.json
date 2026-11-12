@@ -1,0 +1,45 @@
+{
+  "baseID": "BocchiRock_Char_Ryo_Yamada",
+  "Portrait": {
+    "portraitPriorityList": [
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "random_portrait_folder": "Ryo_Yamada/portrait",
+        "icon_offset_x":3.2,            
+        "icon_offset_y":-129.8,            
+        "icon_offset_size":0.6,
+        "icon_path": "Ryo_Yamada/portrait/ComfyUI_0010 (2).webp"
+      }
+    ]
+  },
+  "Template": {
+    "Appearance": "Female",
+    "stat_STR": 7,
+    "stat_CON": 8,
+    "stat_PSY": 12,
+    "stat_WIL": 10,
+    "personalityID": "personality_default",
+    "traits_body_sex": ["trait_Sensitivity_B_default", "trait_Sensitivity_M_default", "trait_Sensitivity_C_default", "trait_Sensitivity_V_default", "trait_Sensitivity_A_default", "trait_Size_B_B", "trait_Size_P_none", "trait_Size_V_1", "trait_Size_A_1"],
+    "traits_body": ["trait_BodyType_slim", "trait_SkinColor_fair", "trait_HairColor_blue", "trait_EyeColor_yellow"],
+    "Height": 163,
+    "Weight": 50,
+    "traits": ["trait_CleanlinessTolerance_high", "trait_MemoryCapacity_high", "trait_MemoryRetention_high"],
+    "initialRelationship": [
+      { "baseID": "BocchiRock_Char_Nijika_Ijichi", "initialPersonalRelationship": "relationship_bff" },
+      { "baseID": "BocchiRock_Char_Hitori_Gotoh", "initialPersonalRelationship": "relationship_friend" },
+      { "baseID": "BocchiRock_Char_Ikuyo_Kita", "initialPersonalRelationship": "relationship_friend" }
+    ],
+    "initialInventory": [],
+    "defaultHairstyle": { "hairstyleID": "hairstyle_bob", "slotSelection": { "front": "hair_front_straight_bangs" } },
+    "CharacterCard": "<Ryo_Yamada>\nIdentity: Ryo Yamada, Kessoku Band bassist, backing vocalist, and composer.\nCurrent timeline: Lives alone in a small Saitama apartment after being kicked out of her family home. She remains active in Kessoku Band and posts as worldwideyamada on Twitta.\nCharacter: Quiet and cool at first glance, but actually eccentric, mischievous, and pleased to be regarded as a weirdo. She prefers solitude and escapes obligations with implausible excuses, yet becomes intensely articulate about music and insists on artistic honesty. From a wealthy family but perpetually broke after buying equipment, she casually borrows money and treats roadside weeds as a meal. Nijika is her deepest social anchor.\nAppearance: Short blue hair with two black square clips, light chartreuse eyes, and a mole under the left eye.\n</Ryo_Yamada>",
+    "Skills": null
+  },
+  "firstName": "BocchiRock_Char_Ryo_Yamada_firstname",
+  "middleName": "",
+  "lastName": "BocchiRock_Char_Ryo_Yamada_lastname",
+  "nameDisplayFormat": "chara_fullname_lastToFirst",
+  "origin": "charOrigin_none",
+  "race": "humanRace_human",
+  "raceTemplate": "humanRaceAddon_standard",
+  "startingGift": "charOriginGift_none"
+}

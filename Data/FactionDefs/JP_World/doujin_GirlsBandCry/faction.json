@@ -1,0 +1,195 @@
+{
+    "MapPlans":{
+
+"worldInitAddons":[
+    {
+        "worldID":"world_erav_modern_jp",
+        "initializeFactions":{
+            "gbc_togenashi_togeari": "gbc_togenashi_togeari"
+        },
+        "initializeResidences":[
+            { "factionID": "gbc_home_nina", "districtID": "jp_district_budget_apartment", "templateID": "jp_home_tpl_apt_1ldk" },
+            { "factionID": "gbc_home_momoka", "districtID": "jp_district_budget_apartment", "templateID": "jp_home_tpl_apt_1ldk" },
+            { "factionID": "gbc_home_tomo_rupa", "districtID": "jp_district_apartment", "templateID": "jp_home_tpl_apt_2ldk" },
+            { "factionID": "gbc_home_subaru", "districtID": "jp_district_luxury_apartment", "templateID": "jp_home_tpl_apt_4ldk" }
+        ],
+        "npcInit":[
+            {
+            "initID": "init_gbc_nina",
+            "actorBaseID": "GirlsBandCry_Char_Nina_Iseri",
+            "reconcileExistingAssignments": true,
+            "Homefaction": {
+                "factionID": "gbc_home_nina",
+                "guestStatus": "membertype_family_leader",
+                "spawnFloorID": "floor_1ldk_1",
+                "spawnRoomID": "floor_1ldk_1_room",
+                "setRoomOwnership": true
+            },
+            "Workfactions": [{ "factionID": "jp_mall_electronics", "guestStatus": "membertype_jp_mall_clerk_early_a" }],
+            "Recreationfactions": [{ "factionID": "gbc_togenashi_togeari", "guestStatus": "membertype_band_vocal" }]
+            },
+            {
+            "initID": "init_gbc_momoka",
+            "actorBaseID": "GirlsBandCry_Char_Momoka_Kawaragi",
+            "reconcileExistingAssignments": true,
+            "Homefaction": {
+                "factionID": "gbc_home_momoka",
+                "guestStatus": "membertype_family_leader",
+                "spawnFloorID": "floor_1ldk_1",
+                "spawnRoomID": "floor_1ldk_1_room",
+                "setRoomOwnership": true
+            },
+            "Workfactions": [{ "factionID": "jp_mall_furniture", "guestStatus": "membertype_jp_mall_clerk_early_a" }],
+            "Recreationfactions": [{ "factionID": "gbc_togenashi_togeari", "guestStatus": "membertype_band_guitar" }]
+            },
+            {
+            "initID": "init_gbc_rupa",
+            "actorBaseID": "GirlsBandCry_Char_Rupa",
+            "reconcileExistingAssignments": true,
+            "Homefaction": {
+                "factionID": "gbc_home_tomo_rupa",
+                "guestStatus": "membertype_family_leader",
+                "spawnFloorID": "floor_2ldk_2floor_1",
+                "spawnRoomID": "floor_2ldk_2floor_1_2L_room",
+                "setRoomOwnership": true
+            },
+            "Workfactions": [{ "factionID": "jp_mall_foodcourt", "guestStatus": "membertype_jp_mall_waiter_early_a" }],
+            "Recreationfactions": [{ "factionID": "gbc_togenashi_togeari", "guestStatus": "membertype_band_bass" }]
+            },
+            {
+            "initID": "init_gbc_tomo",
+            "actorBaseID": "GirlsBandCry_Char_Tomo_Ebizuka",
+            "reconcileExistingAssignments": true,
+            "Homefaction": {
+                "factionID": "gbc_home_tomo_rupa",
+                "guestStatus": "membertype_member",
+                "spawnFloorID": "floor_2ldk_2floor_1",
+                "spawnRoomID": "floor_2ldk_2floor_1_1L_room",
+                "setRoomOwnership": true
+            },
+            "Workfactions": [{ "factionID": "jp_mall_foodcourt", "guestStatus": "membertype_jp_mall_waiter_early_a" }],
+            "Recreationfactions": [{ "factionID": "gbc_togenashi_togeari", "guestStatus": "membertype_band_keyboard" }]
+            },
+            {
+            "initID": "init_gbc_subaru",
+            "actorBaseID": "GirlsBandCry_Char_Subaru_Awa",
+            "reconcileExistingAssignments": true,
+            "Homefaction": {
+                "factionID": "gbc_home_subaru",
+                "guestStatus": "membertype_family_leader",
+                "spawnFloorID": "house_floor_4ldk",
+                "spawnRoomID": "4ldk_floor_2L_roomsingle1",
+                "setRoomOwnership": true
+            },
+            "Workfactions": [{ "factionID": "jp_mall_cinema", "guestStatus": "membertype_jp_mall_cinema_ticket_early_a" }],
+            "Recreationfactions": [{ "factionID": "gbc_togenashi_togeari", "guestStatus": "membertype_band_drums" }]
+            }
+        ]
+        
+        
+    }
+],
+"factionInit": [
+    {
+    "ID": "gbc_togenashi_togeari",
+    "isLocationless": true,
+    "assignableMemberTypes": ["membertype_band_performer", "membertype_band_manager", "membertype_band_support_staff"],
+    "joinableMemberTypes": ["membertype_band_performer", "membertype_band_manager", "membertype_band_support_staff"],
+    "mealHours": [],
+    "managerBaseIDs": [],
+    "workModules": [],
+    "activityOrganization": {
+        "memberTypeIDs": ["membertype_band_performer"],
+        "minMembers": 5,
+        "activities": [
+        {
+            "ID": "jp_band_rehearsal",
+            "venueTags": ["band_practice"],
+            "mainTypeTag": "music_practice",
+            "secondaryTags": ["music", "band"],
+            "cooldownTag": "band_rehearsal",
+            "daysInAdvance": 0,
+            "minDaysBetween": 2,
+            "weeklyTarget": 2,
+            "baseWeight": 1.0,
+            "minHours": 3,
+            "maxHours": 3
+        },
+        {
+            "ID": "jp_band_performance",
+            "venueTags": ["band_performance"],
+            "mainTypeTag": "music_performance",
+            "secondaryTags": ["music", "band", "live"],
+            "cooldownTag": "band_performance",
+            "daysInAdvance": 3,
+            "minDaysBetween": 14,
+            "weeklyTarget": 1,
+            "baseWeight": 1.0,
+            "minHours": 2,
+            "maxHours": 2
+        },
+        {
+            "ID": "jp_individual_instrument_practice",
+            "_comment": "A member's own outdoor practice (individual: each member's own planner books it solo while in the band - the band never schedules it). Valid places: any public room of the world with a furniture_public_bench (facility comTag instrument_practice_outdoor - Data/COM_Defs/COM_Recreation/instrument_practice_outdoor.json). Only Nina actively schedules it (baseWeight 0 + weightMods); the bench command itself is open to anyone and passersby may join as listeners. Its own main type (not music_practice), so band rehearsal days don't block it, and it doesn't count toward the daily cap: squeezed into her free hours (flexible, any hour, 1-3h, booked the same day).",
+            "individual": true,
+            "mainTypeTag": "music_solo_practice",
+            "secondaryTags": ["music", "instrument", "outdoor"],
+            "daysInAdvance": 0,
+            "minDaysBetween": 0,
+            "weeklyTarget": 7,
+            "baseWeight": 0,
+            "weightMods": [
+                {
+                    "modValue": 20,
+                    "condition": { "chara_conditions": [{ "parameters": ["isActorBaseID", "GirlsBandCry_Char_Nina_Iseri"] }] }
+                }
+            ],
+            "countsTowardDailyCap": false,
+            "minHours": 1,
+            "maxHours": 3,
+            "invite": { "solo": true, "selfRequired": true, "visibility": "None" },
+            "allowWalkIn": true,
+            "Tags": ["activity_instrument_practice_outdoor"],
+            "facility": {
+                "comTag": "instrument_practice_outdoor",
+                "minUnits": 1,
+                "requireInRoom": ["rest"],
+                "dispatchInRoom": true
+            },
+            "workModule": {
+                "jobPostID": "jp_individual_instrument_practice",
+                "workCommands": ["com_instrument_practice_outdoor"],
+                "activeHours": [],
+                "activeDays": []
+            },
+            "activityCommands": ["com_instrument_practice_outdoor"],
+            "_comment_behavior": "Check ordinary tired rest before scheduled practice, then resume the scheduled dispatcher at the former rest slot. Breaks are not randomly mixed into workCommands.",
+            "behaviorOverrides": {
+                "behavior_job": {
+                    "$type": "TryFindRestNode, Assembly-CSharp",
+                    "evaluationHeuristic": "closest",
+                    "filter": {
+                        "checkBlacklist": true,
+                        "skipPrivateRoom": false,
+                        "searchJobList": false,
+                        "searchNonJobList": true,
+                        "excludePrisonRooms": true
+                    }
+                },
+                "behavior_rest": { "$type": "TryFindScheduledJobNode, Assembly-CSharp" }
+            }
+        }
+        ]
+    }
+    }
+]
+
+    },
+  "Dictionary": {
+    "Entries": {
+      "default": { "gbc_togenashi_togeari": "有刺无刺", "jp_individual_instrument_practice": "个人乐器练习" },
+      "en-us": { "gbc_togenashi_togeari": "Togenashi Togeari", "jp_individual_instrument_practice": "Solo Instrument Practice" }
+    }
+  }
+
+}

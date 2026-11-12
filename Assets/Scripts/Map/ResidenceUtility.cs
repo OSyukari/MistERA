@@ -13,7 +13,7 @@ public class ResidentialSpec
     /// <summary>Most homes this district ever holds (generated homes are never removed yet).</summary>
     public int maxResidences = 0;
     /// <summary>
-    /// The district room every home is linked to by a runtime floor door (hidden runtime exits on both sides); any number
+    /// The district room every home is linked to by a standalone attachment or runtime floor door; any number
     /// of homes share it. Empty = the district's mainExit room.
     /// </summary>
     public string attachRoomID = "";
@@ -22,7 +22,7 @@ public class ResidentialSpec
 }
 
 /// <summary>
-/// One home template a district may build, with its pick weight. linkRoomID = the room of the home's floor linked to the
+/// One home template a district may build, with its pick weight. linkRoomID = the room of the home linked to the
 /// district's attach room; empty = the home template's mainExit room (its front door).
 /// </summary>
 public class ResidenceTemplateEntry
@@ -63,8 +63,6 @@ public class ResidenceRecord
 /// </summary>
 public static class ResidenceUtility
 {
-    /// <summary>Furniture ID part that makes a room private (Room_Instance.isRoomPrivate) - a bedroom.</summary>
-    const string BedFurnitureID = "furniture_bed";
     const string DoubleBedFurnitureID = "furniture_bed_double";
 
     static MapPlan GetPlan(string id)
@@ -79,7 +77,7 @@ public static class ResidenceUtility
     }
 
     /// <summary>
-    /// Bedrooms of a home template, read from its floor plans: rooms whose furnitureIDs contain a bed. Lets callers
+    /// Bedrooms of a home template, including standalone rooms: rooms containing a human-type bed. Lets callers
     /// refuse a household that doesn't fit before anything is created.
     /// </summary>
     public static int CountTemplateBedrooms(string templateID)
@@ -92,17 +90,28 @@ public static class ResidenceUtility
             var fb = scr_System_Serializer.current.GetByNameOrID_Floor_Base(floor.ID);
             if (fb == null) continue;
             foreach (var room in fb.rooms)
-                if (room.furnitureIDs != null && room.furnitureIDs.Exists(id => id.Contains(BedFurnitureID))) count++;
+                if (room.furnitureIDs != null && room.furnitureIDs.Exists(id =>
+                    scr_System_Serializer.current.GetByNameOrID_FurnitureBase(id)?.BedTypeID == BedPreferenceUtility.HumanType)) count++;
         }
+        if (plan.rooms != null)
+            foreach (var definition in plan.rooms)
+            {
+                if (definition == null || string.IsNullOrEmpty(definition.floorID)) continue;
+                var fb = scr_System_Serializer.current.GetByNameOrID_Floor_Base(definition.floorID);
+                var room = fb?.rooms?.Find(r => r != null && r.ID == definition.roomID);
+                if (room?.furnitureIDs != null && room.furnitureIDs.Exists(id =>
+                    scr_System_Serializer.current.GetByNameOrID_FurnitureBase(id)?.BedTypeID == BedPreferenceUtility.HumanType)) count++;
+            }
         return count;
     }
 
     /// <summary>The district room homes attach to (spec.attachRoomID by Base ID on a live floor, empty = MainExit), or null.</summary>
-    static Room_Instance FindAttachRoom(Manageable district, ResidentialSpec spec)
+    static Room_Instance FindAttachRoom(Manageable district, ResidentialSpec spec, string recordedRoomID = null)
     {
-        if (string.IsNullOrEmpty(spec.attachRoomID)) return district.MainExit != null && district.MainExit.parentFloor != null ? district.MainExit : null;
+        string roomID = string.IsNullOrEmpty(recordedRoomID) ? spec.attachRoomID : recordedRoomID;
+        if (string.IsNullOrEmpty(roomID)) return district.MainExit != null && district.MainExit.parentFloor != null ? district.MainExit : null;
         foreach (var room in district.ManagedRooms.Values)
-            if (room != null && room.Base != null && room.Base.ID == spec.attachRoomID && room.parentFloor != null) return room;
+            if (room != null && room.Base != null && room.Base.ID == roomID && room.parentFloor != null) return room;
         return null;
     }
 
@@ -157,7 +166,7 @@ public static class ResidenceUtility
 
     /// <summary>
     /// Builds a new home for householdSize characters in district (TryPickPlacement: template), instantiates it
-    /// under a new faction ID "(district)_res_(n)", links its link room to the district's attach room with a runtime floor door (hidden runtime exits) and
+    /// under a new faction ID "(district)_res_(n)", links its link room to the district's attach room and
     /// records it on the district. Null (nothing created) when the district is full, nothing fits, or a room is missing.
     /// The home is named "(district) (n)" until AssignResidence names it after its leader.
     /// </summary>
@@ -186,7 +195,7 @@ public static class ResidenceUtility
 
         campaign.Map.AddMapTemplate(entry.templateID, newID);
         var home = campaign.FindFactionByID(newID);
-        var homeRoom = home?.ManagedRooms.Values.FirstOrDefault(r => r.Base != null && r.Base.ID == linkRoomID && r.parentFloor != null);
+        var homeRoom = home?.ManagedRooms.Values.FirstOrDefault(r => r != null && r.Base != null && r.Base.ID == linkRoomID);
         if (homeRoom == null)
         {
             Debug.LogError($"CreateResidence: home [{newID}] from [{entry.templateID}] has no link room [{linkRoomID}]");
@@ -195,17 +204,24 @@ public static class ResidenceUtility
 
         home.FactionDisplayName = LocalizeDictionary.QueryThenParse("ui_residence_unitName")
             .Replace("$district$", district.FactionDisplayName).Replace("$n$", district.residenceCounter.ToString());
-        LinkResidence(district, home, attach, homeRoom, entry.templateID);
-        return home;
+        return LinkResidence(district, home, attach, homeRoom, entry.templateID) ? home : null;
     }
 
     /// <summary>
     /// Registers home as a home of district (shared by generated and adopted homes): marks it (residentialDistrictID),
-    /// records it, and links homeRoom to the district's attach room with a runtime floor door between hidden runtime exits.
+    /// records it, and attaches a standalone homeRoom to the district floor, or uses the legacy runtime floor door.
     /// rebuildPath false = the caller rebuilds pathing later (world instantiation, before its floors are on the map).
     /// </summary>
-    static void LinkResidence(Manageable district, Manageable home, Room_Instance attach, Room_Instance homeRoom, string templateID, bool rebuildPath = true)
+    static bool LinkResidence(Manageable district, Manageable home, Room_Instance attach, Room_Instance homeRoom, string templateID, bool rebuildPath = true)
     {
+        if (homeRoom.isStandalone)
+        {
+            if (!scr_System_CampaignManager.current.Map.AttachRoom(attach.parentFloor, attach, homeRoom, 1f, rebuildPath)) return false;
+            home.residentialDistrictID = district.ID;
+            district.residences.Add(new ResidenceRecord() { factionID = home.ID, templateID = templateID, attachRoomID = attach.Base.ID });
+            return true;
+        }
+        if (homeRoom.parentFloor == null) return false;
         home.residentialDistrictID = district.ID;
         district.residences.Add(new ResidenceRecord() { factionID = home.ID, templateID = templateID, attachRoomID = attach.Base.ID });
 
@@ -225,6 +241,38 @@ public static class ResidenceUtility
             targetFloor = homeRoom.parentFloor.floorPlanID,
             targetExit = homeExitID,
         }, rebuildPath);
+        return true;
+    }
+
+    /// <summary>Restores saved generated homes without creating rooms or converting legacy floor-backed homes.</summary>
+    public static void RestoreStandaloneResidenceAttachments(Manageable district, bool rebuildPath = true)
+    {
+        if (GetSpec(district) == null) return;
+        foreach (var record in district.residences)
+        {
+            var home = record == null ? null : scr_System_CampaignManager.current.FindFactionByID(record.factionID);
+            if (home != null) EnsureStandaloneResidenceAttachment(district, home, record, rebuildPath);
+        }
+    }
+
+    static bool EnsureStandaloneResidenceAttachment(Manageable district, Manageable home, ResidenceRecord record, bool rebuildPath)
+    {
+        var spec = GetSpec(district);
+        var entry = spec?.templates?.Find(e => e != null && e.templateID == record.templateID);
+        string linkRoomID = !string.IsNullOrEmpty(entry?.linkRoomID) ? entry.linkRoomID : GetPlan(home.mapPlanID)?.mainExit?.roomID;
+        var homeRoom = home.ManagedRooms.Values.FirstOrDefault(r => r != null && r.isStandalone && r.Base != null && r.Base.ID == linkRoomID);
+        // The persisted room kind, not the current template, determines whether this is a standalone home.
+        if (homeRoom == null) return true;
+        var attach = spec == null ? null : FindAttachRoom(district, spec, record.attachRoomID);
+        if (attach == null)
+        {
+            Debug.LogError($"ResidenceUtility: cannot restore standalone home [{home.ID}] in district [{district.ID}]: attach room missing");
+            return false;
+        }
+        var map = scr_System_CampaignManager.current.Map;
+        if (map.IsAttachedRoom(homeRoom.RefID) && map.GetRoomAttachments(attach.parentFloor)
+            .Any(link => link.sourceRoomRef == attach.RefID && link.roomRef == homeRoom.RefID)) return true;
+        return map.AttachRoom(attach.parentFloor, attach, homeRoom, 1f, rebuildPath);
     }
 
     static bool HasResidenceRecord(Manageable district, string factionID)
@@ -261,15 +309,20 @@ public static class ResidenceUtility
             Room_Instance homeRoom = null;
             if (!string.IsNullOrEmpty(linkRoomID))
                 foreach (var room in home.ManagedRooms.Values)
-                    if (room != null && room.Base != null && room.Base.ID == linkRoomID && room.parentFloor != null) { homeRoom = room; break; }
+                    if (room != null && room.Base != null && room.Base.ID == linkRoomID) { homeRoom = room; break; }
             if (homeRoom == null)
             {
                 Debug.LogError($"AdoptResidence: home [{home.ID}] has no link room [{linkRoomID}]");
                 return false;
             }
-            LinkResidence(district, home, attach, homeRoom, templateID, rebuildPath);
+            if (!LinkResidence(district, home, attach, homeRoom, templateID, rebuildPath)) return false;
         }
-        else home.residentialDistrictID = district.ID;
+        else
+        {
+            var record = district.residences.Find(r => r != null && r.factionID == home.ID);
+            if (!EnsureStandaloneResidenceAttachment(district, home, record, rebuildPath)) return false;
+            home.residentialDistrictID = district.ID;
+        }
         campaign.Map.RemoveFromFactionGraphs(home.ID);
         return true;
     }
@@ -472,7 +525,8 @@ public static class ResidenceUtility
         if (string.IsNullOrEmpty(name)) return;
         string display = LocalizeDictionary.QueryThenParse("ui_residence_familyName").Replace("$name$", name);
         home.FactionDisplayName = display;
-        foreach (var floor in home.ManagedFloors) floor.SetNameOverwrite(display);
+        foreach (var floor in home.ManagedRooms.Values.Where(r => r != null && !r.isStandalone && r.parentFloor != null)
+            .Select(r => r.parentFloor).Distinct()) floor.SetNameOverwrite(display);
     }
 
     /// <summary>

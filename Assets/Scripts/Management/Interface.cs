@@ -21,7 +21,8 @@ public interface I_IsJobGiver
         string comIDOverride = "",
         string tagoverride = "",
         List<string> s = null,
-        List<int> restrictRoomList = null);
+        List<int> restrictRoomList = null,
+        string preferredBedType = null);
 
     public void NotifyFurnitureChange(Room_Instance room);
     /// <summary>

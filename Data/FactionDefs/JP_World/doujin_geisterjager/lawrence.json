@@ -1,0 +1,48 @@
+{
+  "baseID": "geisterjager_char_lawrence",
+  "_comment_source": "forbidCopy/_1A除灵猎人0.7.1.json: baseline entry 3; pay and opening residence in entries 16 and 30; ordinary social behavior in entry 31. No surname is supplied.",
+  "_comment_imageReference": "forbidCopy/LLS.png: violet eyes, fair skin, a jaw-to-neck-length copper-gold/light-brown bob, burgundy long coat with dark trim over a white double-breasted waistcoat, black tie, white gloves and black trousers. The image guides these visual details over the world book's blond hair and casual-clothing description. The existing source image is referenced in place, not copied out of forbidCopy.",
+  "Portrait": {
+    "portraitPriorityList": [
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "portrait_path": "doujin_geisterjager/forbidCopy/LLS.png",
+        "icon_path": "doujin_geisterjager/forbidCopy/LLS.png",
+        "icon_offset_x": 0,
+        "icon_offset_y": -112,
+        "icon_offset_size": 0.6
+      }
+    ]
+  },
+  "Template": {
+    "Age": 24,
+    "Appearance": "Male",
+    "stat_STR": 12,
+    "stat_CON": 12,
+    "stat_PSY": 13,
+    "stat_WIL": 7,
+    "personalityID": "personality_default",
+    "_comment_stats": "Gameplay interpretation: gym-trained ordinary human, pleasure-driven and socially practiced, but cowardly under real danger. High self-esteem represents arrogance rather than courage; no spiritual power is implied by PSY.",
+    "traits_body_sex": ["trait_Sensitivity_B_default", "trait_Sensitivity_M_default", "trait_Sensitivity_C_default", "trait_Sensitivity_V_default", "trait_Sensitivity_A_default", "trait_Size_B_AAA", "trait_Size_P_big", "trait_Size_V_none", "trait_Size_A_1"],
+    "traits_body": ["trait_BodyType_athletic_male", "trait_SkinColor_fair", "trait_HairColor_light_brown", "trait_EyeColor_purple"],
+    "_comment_measurements": "Height 180 cm and weight 78 kg are gameplay estimates for the described gym-trained physique, not world-book measurements. Fair skin and violet eyes are taken from LLS.png. Size_P_big approximates the source's stated 20 cm.",
+    "Height": 180,
+    "Weight": 78,
+    "traits": ["trait_SelfEsteem_veryhigh", "trait_MentalFortitude_low", "trait_GenderPreference_hetero"],
+    "initialRelationship": [
+
+    ],
+    "initialInventory": [],
+    "defaultHairstyle": { "hairstyleID": "hairstyle_bob", "slotSelection": {} },
+    "CharacterCard": "<Lawrence>\nIdentity: Lawrence (劳伦斯), a 24-year-old human from a wealthy, indulgent family. He is the workplace superior overseeing Kana Kashiwazaki and Tsukasa Sakurai. His authority comes from his position, wealth and access to confidential records; he has no spiritual power.\nAppearance: Meticulously maintained copper-gold/light-brown hair in a jaw-to-neck-length bob, violet eyes, fair skin and a gym-trained physique. His supplied outfit is a tailored burgundy long coat with dark trim over a white double-breasted waistcoat, black tie and trousers, and white gloves. He favors expensive clothing and cologne.\nLife and resources: Oversees the exorcists' work and daily pay. Money and organizational access give him opportunities to interfere with their assignments and private time. Outside work he socializes with disreputable friends and pursues women. He is practiced at polite conversation and concealment, and enjoys displaying his conquests on social media while obscuring identities.\nDisposition: Arrogant, pleasure-seeking and self-serving. He values money, status and private information for what they let him obtain from other people. Polite concern and professional guidance can serve as covers for manipulation. He enjoys making a strong person submit through leverage, but his confidence depends on personal safety: when evil spirits appear, he hides or flees and leaves the actual fighters to face them. Physical fitness does not make him a brave or capable exorcist.\nPrivate knowledge and conduct: While reading confidential Canghai Town mission records, he discovered Kana's former identity and its connection to the deaths of Tsukasa's parents. He uses disclosure as a threat and his supervisory role as a pretext for unwanted private access to Kana. He treats Tsukasa with outward courtesy and private contempt, regarding him as useful muscle. He wants to isolate and exploit Kana, rather than protect her interests. His boasting also creates evidence of his misconduct.\n</Lawrence>\n<Opening_State>\nIn the source scenario Lawrence lives separately in a well-furnished two-story house in Canghai Town's east district. Kana and Tsukasa are a couple under his supervision; his hold over Kana is blackmail, not a mutual romantic relationship. He is heterosexual, sexually experienced and strongly pleasure-driven. Any later escalation, loss of leverage or consequences depend on events rather than being predetermined outcomes.\n</Opening_State>",
+    "Skills": []
+  },
+  "firstName": "geisterjager_char_lawrence_firstname",
+  "middleName": "",
+  "lastName": "",
+  "nameDisplayFormat": "chara_fullname_lastToFirst",
+  "origin": "charOrigin_none",
+  "race": "humanRace_human",
+  "raceTemplate": "humanRaceAddon_standard",
+  "startingGift": "charOriginGift_none"
+}

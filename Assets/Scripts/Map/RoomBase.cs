@@ -15,6 +15,8 @@ public class Room_Base
     /// still appears in the room list and is fully connected/pathable via connects like any other room.
     /// </summary>
     public bool hideOnMap = false;
+    /// <summary>Allows everyone to enter, overriding residence locks and all room membership requirements.</summary>
+    public bool allowPublicAccess = false;
     /// <summary>
     /// If true, only characters belonging to this room's owning faction in any way (home, temporary home or
     /// work - see Character_Factions.Factions; no active-faction requirement) can path into it - see
@@ -22,6 +24,8 @@ public class Room_Base
     /// Only restricts rooms as a destination; a path may still pass through.
     /// </summary>
     public bool requireFactionMembership = false;
+    /// <summary>Private residence inside a workplace: only home/temporary-home members may enter, not coworkers or venue guests.</summary>
+    public bool requireHomeMembership = false;
     /// <summary>
     /// Residential district amenity (gym, lounge, residents' corridors): like requireFactionMembership, but residents of
     /// the district's generated homes may enter too (ResidenceUtility.HasRoomAccess / IsResidentOf).

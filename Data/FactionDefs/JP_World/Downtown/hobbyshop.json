@@ -76,7 +76,7 @@
             "workModule": { "jobPostID": "otaku_boardgames_name", "workCommands": ["otaku_boardgames_play"], "activeHours": [12,13,14,15,16,17,18,19,20,21], "activeDays": [] },
             "minHours": 2, "maxHours": 2, "weeklyTarget": 2, "minDaysBetween": 1, "daysInAdvance": 1, "weight": 1, "participationChance": 1, "allowWalkIn": true, "trustRewardEligible": true, "gatherRoomID": "hobbyshop_floor", "launchEventID": "Otaku_Boardgames_Begin",
             "_comment_mount": "Proposal placeholders resolved to hobby shop / hobbyshop_floor (the shop's one room since 2026-11-08) / otaku_boardgames_play. Hours narrowed from proposal 10-22 to shop 12-22; invitation and reward tuning unchanged.",
-            "invite": { "visibility": "Private", "inviteChance": 0.3, "minParticipants": 1, "TargetValidators": [{ "refKeys": ["companion"], "baseScope": "SelfRelationships", "extraScopeArguments": [], "chara_conditions": [
+            "invite": { "visibility": "Private", "inviteChance": 0.3, "minParticipants": 1, "TargetValidators": [{ "refKeys": ["companion"], "baseScope": "SelfRelationships", "extraScopeArguments": [], "requireRelationshipTags": ["rel_positive"], "chara_conditions": [
                 { "parameters": ["excludeSelf"] },
                 { "selfRelationshipRequirement": { "requireRawScore": [{ "requireScoreID": "Goodwill", "operand": "gte", "value": 40 }], "requireRawScoreCompare": [{ "requireScoreID": "Goodwill", "operand": "gt", "compareScoreID": "Badwill", "compareScoreMult": 1.1 }] } }
             ], "maxTargetCount": 3, "stopAtMaxTargetCount": true, "orderBy": "friendliness", "required": false, "maxParticipants": 3 }] }

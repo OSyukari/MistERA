@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 /// <summary>
 /// MemberType.recreation: makes a MemberType a recreation membership the daily RecreationUtility.DailyPlan books visits for
@@ -16,7 +17,9 @@ public class RecreationSpec
     public RecreationActivity GetActivity(string activityID)
     {
         if (activities == null || string.IsNullOrEmpty(activityID)) return null;
-        return activities.Find(a => a != null && a.ID == activityID);
+        for (int i = 0; i < activities.Count; i++)
+            if (activities[i] != null && activities[i].ID == activityID) return activities[i];
+        return null;
     }
 }
 
@@ -28,6 +31,14 @@ public class RecreationWeightMod
     public float modValue = 0f;
     /// <summary>Checked against the deciding character as self; null is unconditional.</summary>
     public Event.EventScope_Self condition = null;
+}
+
+/// <summary>A home-hosted walk; travel out and back is included in its two booked hours.</summary>
+public class PetWalkActivitySpec
+{
+    public List<string> destinationFactionIDs = new List<string>();
+    public int minimumOutdoorMinutes = 15;
+    public int returnBufferMinutes = 5;
 }
 
 /// <summary>
@@ -71,6 +82,15 @@ public class RecreationActivity
     /// ever get the bound copy either way (Room_Instance.AllowsActivityCommand / AllowsUnboundActivityCommand).
     /// </summary>
     public bool exclusiveUse = false;
+    /// <summary>Reject other scheduled activities in the execution room during the booked interval; does not restrict entry.</summary>
+    public bool roomExclusive = false;
+
+    internal RecreationActivity WithRoomExclusivity(bool value)
+    {
+        var result = (RecreationActivity)MemberwiseClone();
+        result.roomExclusive = value;
+        return result;
+    }
 
     public string TypeID { get { return string.IsNullOrEmpty(typeID) ? ID : typeID; } }
 
@@ -97,12 +117,16 @@ public class RecreationActivity
     /// venue's MainExit room.
     /// </summary>
     public string gatherRoomID = "";
+    /// <summary>Optional venue room binding for organization bookings; unlike a furniture search it cannot drift to another room.</summary>
+    public string executionRoomID = "";
     /// <summary>
     /// Furniture the activity is bound to (RecreationFacility - found by the command it offers, never by room ID), or
     /// null. Its room becomes the gather room, chosen when the activity's job is created (late binding - the player may
     /// move furniture). Not used together with reserveFurnitureTag.
     /// </summary>
     public RecreationFacility facility = null;
+
+    public PetWalkActivitySpec petWalk = null;
 
     /// <summary>
     /// Who may take part (chara_conditions, self = the booker / invitee / joiner), checked with the planner's activity
@@ -124,6 +148,7 @@ public class RecreationActivity
     /// home, a clinic later). Also the booking's sourceKey.
     /// </summary>
     public string cooldownTag = "";
+    public bool cooldownOnProvider = false;
 
     /// <summary>One tagged furniture unit per visit/session; its room overrides gatherRoomID.</summary>
     public string reserveFurnitureTag = "";
@@ -207,14 +232,76 @@ public class RecreationActivity
     public float baseWeight = 1f;
 
     /// <summary>
-    /// How many days ahead a visit may be booked: 0 = only on the day itself (planned that day's midnight), 1 = from the
-    /// day before (default). The planner looks at most one day ahead anyway (RecreationUtility.DailyPlan); invitations
-    /// to a session of it follow the same limit (RecreationUtility.ActivityAllows).
+    /// Its hours count toward the daily recreation cap (RecreationUtility.MaxDailyHours - DayContext). False = squeezed
+    /// in on top of the day's other activities (e.g. a hardworking musician's personal practice) - it still needs free
+    /// hours, only the cap ignores it, both when it is placed and when other visits are placed around it.
     /// </summary>
-    public int daysInAdvance = 1;
+    public bool countsTowardDailyCap = true;
+
+    /// <summary>
+    /// How many days ahead a visit may be booked: 0 (default) = only on the day itself, up to
+    /// RecreationUtility.MaxAdvanceDays (monthly bounded planning). Invitations follow the same limit.
+    /// </summary>
+    public int daysInAdvance = 0;
+
+    internal RecreationActivity AtVenue(RecreationActivity execution, string roomID)
+    {
+        if (execution == null) return null;
+        var result = (RecreationActivity)MemberwiseClone();
+        result.workModule = execution.workModule;
+        result.typeID = execution.TypeID;
+        result.allowMultipleInstances = execution.allowMultipleInstances;
+        result.mergeWithSame = false;
+        result.conflictsWith = execution.conflictsWith;
+        result.replaceCommandTags = execution.replaceCommandTags;
+        result.replaceCommands = execution.replaceCommands;
+        result.activityCommands = execution.activityCommands;
+        result.exclusiveUse = execution.exclusiveUse;
+        result.roomExclusive = execution.roomExclusive;
+        result.gatherRoomID = string.IsNullOrEmpty(execution.gatherRoomID) ? roomID : execution.gatherRoomID;
+        result.executionRoomID = roomID;
+        result.facility = execution.facility;
+        result.reserveFurnitureTag = execution.reserveFurnitureTag;
+        result.reserveCapacity = execution.reserveCapacity;
+        result.Tags = new List<string>(Tags ?? new List<string>());
+        if (execution.Tags != null)
+            foreach (var tag in execution.Tags) if (!result.Tags.Contains(tag)) result.Tags.Add(tag);
+        result.behaviorOverrides = execution.behaviorOverrides ?? behaviorOverrides;
+        result.AcceptanceMods = execution.AcceptanceMods ?? AcceptanceMods;
+        result.provideAcceptanceBonus = execution.provideAcceptanceBonus;
+        result.activityMoodlet = execution.activityMoodlet;
+        result.launchEventID = execution.launchEventID;
+        result.gatherFailedEventID = execution.gatherFailedEventID;
+        result.endEventID = execution.endEventID;
+        result.entranceFee = execution.entranceFee;
+        result.allowWalkIn = false;
+        result.minHours = System.Math.Max(MinHours, execution.MinHours);
+        result.maxHours = System.Math.Min(MaxHours, execution.MaxHours);
+        return result;
+    }
+
+    [JsonIgnore] bool advanceValidationLogged = false;
+    /// <summary>Validated lookahead horizon, or -1 for an invalid definition that must not be scanned.</summary>
+    [JsonIgnore] public int PlanningAdvanceDays
+    {
+        get
+        {
+            if (daysInAdvance >= 0 && daysInAdvance <= RecreationUtility.MaxAdvanceDays) return daysInAdvance;
+            if (!advanceValidationLogged)
+            {
+                advanceValidationLogged = true;
+                UnityEngine.Debug.LogError($"Recreation activity [{ID}]: daysInAdvance {daysInAdvance} must be between 0 and {RecreationUtility.MaxAdvanceDays}");
+            }
+            return -1;
+        }
+    }
 
     /// <summary>Whether a visit on the day daysLookahead from today may be booked now (daysInAdvance).</summary>
-    public bool AllowsAdvance(int daysLookahead) { return daysLookahead <= daysInAdvance; }
+    public bool AllowsAdvance(int daysLookahead)
+    {
+        int advance = PlanningAdvanceDays;
+        return advance >= 0 && daysLookahead >= 0 && daysLookahead <= advance;
+    }
 
     /// <summary>Visits of this activity can't be cancelled by the player's request (RecreationBooking.forbidCancel).</summary>
     public bool forbidCancel = false;

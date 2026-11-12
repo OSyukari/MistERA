@@ -1,0 +1,71 @@
+{
+  "baseID": "BocchiRock_Char_Michiyo_Gotoh",
+  "Portrait":{
+    "portraitPriorityList":[
+      {
+        "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+
+        "random_portrait_folder":"Gotoh_Family/portrait_michiyo",
+            
+        "icon_offset_x":0,            "icon_offset_y":-144.8,            "icon_offset_size":0.6,
+
+        "icon_path":"Gotoh_Family/portrait_michiyo/ComfyUI_0014 (2).webp"
+      }
+    ]
+  },
+  "Template": {
+    "Appearance": "Female",
+    "stat_STR": 8,
+    "stat_CON": 10,
+    "stat_PSY": 11,
+    "stat_WIL": 12,
+    "personalityID": "personality_default",
+    "traits_body_sex": [
+      "trait_Sensitivity_B_default",
+      "trait_Sensitivity_M_default",
+      "trait_Sensitivity_C_default",
+      "trait_Sensitivity_V_default",
+      "trait_Sensitivity_A_default",
+      "trait_Size_B_B",
+      "trait_Size_P_none",
+      "trait_Size_V_1",
+      "trait_Size_A_1"
+    ],
+    "traits_body": [
+      "trait_BodyType_average",
+      "trait_SkinColor_fair",
+      "trait_HairColor_pink",
+      "trait_EyeColor_brown"
+    ],
+    "Height": 160,
+    "Weight": 53,
+    "traits": [
+      "trait_EnergyCapacity_high",
+      "trait_MentalFortitude_high"
+    ],
+    "initialRelationship": [
+      {
+        "baseID": "BocchiRock_Char_Naoki_Gotoh",
+        "initialPersonalRelationship": "relationship_marriage",
+        "initialPersonalRelationship_isA": true
+      },
+      {
+        "baseID": "BocchiRock_Char_Hitori_Gotoh",
+        "initialBiologicalRelationship": "relationship_parent",
+        "initialBiologicalRelationship_isA": true,
+        "initialPersonalRelationship": "relationship_housemate"
+      }
+    ],
+    "initialInventory": [],
+    "CharacterCard": "<Michiyo_Gotoh>\nIdentity: Michiyo Gotoh, estimated age 41; mother of Hitori and Futari and Naoki's wife. The age is a non-canon implementation estimate.\nHome: Lives with Naoki, Hitori, Futari, and Jimihen in the Gotoh family home.\nCharacter: Gentle and nurturing without treating Hitori's anxiety as an excuse for everything. She respects Hitori's boundaries, is happy that music gave her friends, and directly names behavior that is causing trouble. She encourages small steps outside Hitori's comfort zone, practices yoga with her to ease anxiety, and is candid about her daughter's eccentricities without malice.\nAppearance: Pink hair.\n</Michiyo_Gotoh>",
+    "Skills": null
+  },
+  "firstName": "BocchiRock_Char_Michiyo_Gotoh_firstname",
+  "middleName": "",
+  "lastName": "BocchiRock_Char_Gotoh_lastname",
+  "nameDisplayFormat": "chara_fullname_lastToFirst",
+  "origin": "charOrigin_none",
+  "race": "humanRace_human",
+  "raceTemplate": "humanRaceAddon_standard",
+  "startingGift": "charOriginGift_none"
+}

@@ -1,0 +1,51 @@
+{
+  "baseID": "geisterjager_char_tsukasa",
+  "_comment_source": "forbidCopy/_1A除灵猎人0.7.1.json: protagonist entry 1, complementary combat in entries 0 and 2. The world book calls him <user>; this project identifies that role as Tsukasa Sakurai through dictionary.json and forbidCopy/guide.md. Local housing adaptation follows guide.md.",
+  "_comment_imageReference": "YJS.png: short swept dark hair with blue highlights, fair skin, black fitted long coat and vest with white piping, white shirt, orange tie and black gloves. The supplied image guides the outfit over the world book's blue-tie description; the eyes are obscured, so eye color remains unspecified.",
+  "Portrait": {
+    "portraitPriorityList": [
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "portrait_path": "doujin_geisterjager/YJS.png",
+        "icon_path": "doujin_geisterjager/YJS.png",
+        "icon_offset_x": 0,
+        "icon_offset_y": -84,
+        "icon_offset_size": 0.6
+      }
+    ]
+  },
+  "Template": {
+    "Age": 18,
+    "Appearance": "Male",
+    "stat_STR": 15,
+    "stat_CON": 15,
+    "stat_PSY": 14,
+    "stat_WIL": 14,
+    "personalityID": "personality_default",
+    "_comment_stats": "Gameplay interpretation: strong trained exorcist, physically below Kana; optimistic emotional drive and generally good resistance to stress, with specific vulnerabilities concerning Kana and childhood memories. Spiritual techniques are described in the card, not assigned as nonexistent legacy skill levels.",
+    "traits_body_sex": ["trait_Sensitivity_B_default", "trait_Sensitivity_M_default", "trait_Sensitivity_C_default", "trait_Sensitivity_V_default", "trait_Sensitivity_A_default", "trait_Size_B_AAA", "trait_Size_P_average", "trait_Size_V_none", "trait_Size_A_1"],
+    "traits_body": ["trait_BodyType_muscular", "trait_SkinColor_fair", "trait_HairColor_black"],
+    "_comment_measurements": "Height 180 cm is explicit in entry 1. Weight 78 kg is a gameplay estimate for the described muscular build. Fair skin is visible in YJS.png; the obscured eyes do not establish an eye color, so that group uses the engine default.",
+    "Height": 180,
+    "Weight": 78,
+    "traits": ["trait_FatigueResistance_high", "trait_MentalFortitude_high", "trait_GenderPreference_hetero"],
+    "initialRelationship": [
+      {
+        "baseID": "geisterjager_char_kana",
+        "initialPersonalRelationship": "relationship_couple"
+      }
+    ],
+    "initialInventory": [],
+    "defaultHairstyle": { "hairstyleID": "hairstyle_straight_long", "slotSelection": { "length": "hair_length_short", "front": "hair_front_side_swept" } },
+    "CharacterCard": "<Tsukasa_Sakurai>\nIdentity: Tsukasa Sakurai (樱井士), an 18-year-old human exorcist raised by the exorcist organization. Kana Kashiwazaki is his childhood friend and combat partner; they grew up together in the organization's care.\nAppearance: Short swept black hair with blue highlights, fair skin, a muscular build and a height of 180 cm. His work outfit consists of a fitted black long coat with white piping, black vest and trousers, white shirt, orange tie and black gloves. Carries an enchanted iron rod. A faint old claw-shaped scar remains on his back.\nWork and abilities: Combines iron-rod strikes, blocks and heavy blows with spiritual attacks, protective barriers and varied talismans. He can fight corporeal spirits and dispel incorporeal ones. His spiritual versatility complements Kana's stronger swordsmanship and close combat. He is cautious about work and prefers concrete tasks to abstract speculation.\nDisposition: Cheerful, sociable and optimistic, with a strong concern for fairness and other people's safety. He values loyalty to those close to him and to the organization that raised him. He generally handles stress well, but danger to Kana can make him impulsive and impair his judgment. His wish to protect her exists alongside reliance on her competence as a fellow fighter.\nPrivate history: Witnessed his parents being killed as a child. The memory was sealed, leaving fragmentary nightmares rather than a clear account of what happened. Afterward the organization adopted him, and he grew up with Kana. Reminders of that childhood can unsettle him even when he cannot explain their meaning.\n</Tsukasa_Sakurai>\n<Opening_State>\nTsukasa and Kana are newly established lovers, still inexperienced in their romantic and sexual relationship. He is heterosexual and begins sexually inexperienced. In the modern-Japan world, he lives alone in his own rented 1LDK in the budget-apartment district, with a bedroom and living/dining/kitchen area, separately from Kana's business-hotel room. Lawrence is their workplace superior. Tsukasa initially trusts Kana and does not know her former identity or its connection to his parents' deaths; that is an opening knowledge state, not an inability to investigate or learn the truth.\n</Opening_State>",
+    "Skills": []
+  },
+  "firstName": "geisterjager_char_tsukasa_firstname",
+  "middleName": "",
+  "lastName": "geisterjager_char_tsukasa_lastname",
+  "nameDisplayFormat": "chara_fullname_lastToFirst",
+  "origin": "charOrigin_none",
+  "race": "humanRace_human",
+  "raceTemplate": "humanRaceAddon_standard",
+  "startingGift": "charOriginGift_none"
+}

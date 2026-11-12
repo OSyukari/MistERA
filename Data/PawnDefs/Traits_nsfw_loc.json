@@ -21,6 +21,8 @@
                 "trait_Chastity_normal_tooltip": "%%trait_Chastity_tooltip%%\nPlaces ordinary importance on chastity.",
                 "trait_Chastity_indifferent": "Indifferent",
                 "trait_Chastity_indifferent_tooltip": "%%trait_Chastity_tooltip%%\nPlaces little importance on chastity.",
+                "trait_Chastity_innocent": "Innocent",
+                "trait_Chastity_innocent_tooltip": "%%trait_Chastity_tooltip%%\nDoes not understand intimacy; requires only 25% of the usual permission request scores. Does not modify action acceptance.",
                 "traits_BODY": "Body Traits",
                 "traits_BODY_SEX": "Sexual Body Traits",
                 "trait_PubicHair": "Pubic Hair",

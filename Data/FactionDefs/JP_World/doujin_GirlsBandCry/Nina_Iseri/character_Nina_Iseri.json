@@ -1,0 +1,89 @@
+{
+  "baseID": "GirlsBandCry_Char_Nina_Iseri",
+  "Portrait":{
+    "portraitPriorityList":[
+      {
+        "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+
+        "random_portrait_folder":"Nina_Iseri/portrait",
+            
+        "icon_offset_x":-7.7,            "icon_offset_y":-143.6,            "icon_offset_size":0.6,
+
+        "icon_path":"Nina_Iseri/portrait/ComfyUI_0024 (2).webp"
+      }
+    ]
+  },
+  "Template": {
+    "Appearance": "Female",
+    "stat_STR": 7,
+    "stat_CON": 8,
+    "stat_PSY": 10,
+    "stat_WIL": 11,
+    "personalityID": "personality_default",
+    "traits_body_sex": [
+      "trait_Sensitivity_B_default",
+      "trait_Sensitivity_M_default",
+      "trait_Sensitivity_C_default",
+      "trait_Sensitivity_V_default",
+      "trait_Sensitivity_A_default",
+      "trait_Size_B_B",
+      "trait_Size_P_none",
+      "trait_Size_V_1",
+      "trait_Size_A_1"
+    ],
+    "traits_body": [
+      "trait_BodyType_petite",
+      "trait_SkinColor_fair",
+      "trait_HairColor_purple",
+      "trait_EyeColor_blue"
+    ],
+    "Height": 152,
+    "Weight": 45,
+    "traits": [
+      "trait_SelfEsteem_low",
+      "trait_MemoryRetention_high",
+      "trait_EnergyCapacity_high",
+      "trait_MentalFortitude_high"
+    ],
+    "initialRelationship": [
+      {
+        "baseID": "GirlsBandCry_Char_Momoka_Kawaragi",
+        "initialPersonalRelationship": "relationship_bff"
+      },
+      {
+        "baseID": "GirlsBandCry_Char_Subaru_Awa",
+        "initialPersonalRelationship": "relationship_friend"
+      },
+      {
+        "baseID": "GirlsBandCry_Char_Tomo_Ebizuka",
+        "initialPersonalRelationship": "relationship_friend"
+      },
+      {
+        "baseID": "GirlsBandCry_Char_Rupa",
+        "initialPersonalRelationship": "relationship_friend"
+      }
+    ],
+    "initialInventory": [],
+    "defaultHairstyle": {
+      "hairstyleID": "hairstyle_twintails",
+      "slotSelection": {
+        "front": "hair_front_side_swept"
+      }
+    },
+      "promptProfile": {
+          "prompts": [ "iseri nina, girls band cry" ],
+          "_target prompts":"girl, iseri nina, girls band cry, short hair, low short ponytail, white shirt, blue jacket, open clothes, long sleeves, collarbone, red checkered pleated skirt, white socks, sneakers",
+          "inheritRulesets": [ "ruleset_character_tag" ]
+      },
+    "CharacterCard": "<Nina_Iseri>\nIdentity: Nina Iseri, 17-year-old vocalist and later rhythm guitarist of TOGENASHI TOGEARI. A high-school dropout from Kumamoto living alone in the Kawasaki/Tokyo area.\nCurrent timeline: After the agency arrangement ends, she continues independently with the band. Her guitar is still a newer skill beside her established singing and lyric work.\nCharacter: Once an inconspicuous girl who survived by reading the room, she becomes stubborn and volatile when something she values is dismissed. She distrusts easy friendliness at first, refuses to abandon the music that helped her, and can turn blunt conviction into a confrontation. She also persists through harsh musical criticism and will intervene when someone is being treated unfairly.\nAppearance: Short dull-purple hair, often in twin ponytails with uneven bangs; blue eyes.\n</Nina_Iseri>",
+    "Skills": null
+  },
+  "firstName": "GirlsBandCry_Char_Nina_Iseri_firstname",
+  "middleName": "",
+  "lastName": "GirlsBandCry_Char_Nina_Iseri_lastname",
+  "nameDisplayFormat": "chara_fullname_lastToFirst",
+  "origin": "charOrigin_none",
+  "race": "humanRace_human",
+  "raceTemplate": "humanRaceAddon_standard",
+  "startingGift": "charOriginGift_none"
+}

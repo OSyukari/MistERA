@@ -1,0 +1,54 @@
+{
+  "baseID": "geisterjager_char_kana",
+  "_comment_source": "forbidCopy/_1A除灵猎人0.7.1.json: baseline entry 2; ordinary activities in entry 26; D cup in disabled initializer entry 6 (88D-60-89). Conditional progression and the obsolete entry 23 are not starting characterization. Local housing adaptation follows forbidCopy/guide.md.",
+  "_comment_imageReference": "portrait_kana/ComfyUI_0012 (2).webp and its original reference: blue eyes, dark brown long hair with bangs and a gold-orange ribbon, black/white clothing with orange accents. The supplied artwork guides the visual description; measurements remain source-backed or explicitly estimated.",
+  "Portrait":{
+    "portraitPriorityList":[
+      {
+        "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+
+        "random_portrait_folder":"doujin_geisterjager/portrait_kana",
+            
+        "icon_offset_x":0,            
+        "icon_offset_y":-133.6,            
+        "icon_offset_size":0.6,
+
+        "icon_path":"doujin_geisterjager/portrait_kana/ComfyUI_0012 (2).webp"
+      }
+    ]
+  },
+  "Template": {
+    "Age": 18,
+    "Appearance": "Female",
+    "stat_STR": 18,
+    "stat_CON": 16,
+    "stat_PSY": 12,
+    "stat_WIL": 8,
+    "personalityID": "personality_default",
+    "_comment_stats": "Gameplay interpretation: exceptional close-combat strength and trained endurance; emotional drive is distinct from depleted spiritual power. Low WIL and reactive mental fortitude represent vulnerability to threats concerning her past, not poor combat competence.",
+    "traits_body_sex": ["trait_Sensitivity_B_default", "trait_Sensitivity_M_default", "trait_Sensitivity_C_sensitive", "trait_Sensitivity_V_default", "trait_Sensitivity_A_default", "trait_Size_B_D", "trait_Size_P_none", "trait_Size_V_1", "trait_Size_A_1"],
+    "traits_body": ["trait_BodyType_curvy", "trait_SkinColor_fair", "trait_HairColor_brown", "trait_EyeColor_blue"],
+    "_comment_measurements": "Height 165 cm and weight 60 kg are gameplay estimates for the described full figure and trained physique, not world-book measurements. Blue eyes are taken from the supplied portrait.",
+    "Height": 165,
+    "Weight": 60,
+    "traits": ["trait_FatigueResistance_high", "trait_SelfEsteem_low", "trait_MemoryRetention_high", "trait_MentalFortitude_low", "trait_GenderPreference_hetero"],
+    "initialRelationship": [
+      {
+        "baseID": "geisterjager_char_tsukasa",
+        "initialPersonalRelationship": "relationship_couple"
+      }
+    ],
+    "initialInventory": [],
+    "defaultHairstyle": { "hairstyleID": "hairstyle_straight_long", "slotSelection": { "length": "hair_length_very_long", "front": "hair_front_straight_bangs" } },
+    "CharacterCard": "<Kana_Kashiwazaki>\nIdentity: Kana Kashiwazaki (柏崎加奈), an 18-year-old human exorcist. Tsukasa Sakurai is her childhood friend and fellow exorcist; they grew up together after being rescued and taken in by the exorcist organization.\nAppearance: Waist-length dark brown hair with bangs and a gold-orange ribbon on the left, blue eyes, fair skin, a full bust and slender waist. Her work clothing combines a black jacket, white shirt, orange tie, high-waisted black skirt and dark stockings. The supplied outfit has orange lining and skirt panels, pale trim, waist straps and black gloves.\nWork and ordinary life: A highly capable tachi swordswoman and close-combat fighter, physically stronger than Tsukasa. She trained her body extensively after losing most of her spiritual power. She can cut down corporeal spirits and fight effectively in cramped spaces or against multiple enemies; incorporeal spirits require costly sword-energy attacks, and she struggles with spirit-powered talismans. Tsukasa's spiritual techniques complement her strengths. She researches the history of mission sites, plays console and mobile gacha games, enjoys sharing games with Tsukasa, and sometimes walks alone or plays with stray cats.\nDisposition: Affectionate and playful with someone she trusts, conscientious and dependable at work. Preserving the happiness she has built matters deeply to her. She regards that happiness as something she may lose if her past is exposed, and guilt makes threats of disclosure especially frightening. She can take initiative in work and everyday life while becoming evasive and anxious about her former identity. Her fear of Lawrence is tied to his specific leverage over her.\nPrivate history: Her former name was 帕崎星奈. A landlord abducted her and attempted to extract her spiritual power; the resulting trauma and evil-spirit disaster were indirectly connected to the deaths of Tsukasa's parents. An exorcist rescued her, and she began a new life as Kana. She fears that learning this history would make Tsukasa hate or fear her. Lawrence obtained the secret through confidential records and uses it to blackmail her.\n</Kana_Kashiwazaki>\n<Opening_State>\nKana and Tsukasa are newly established lovers as well as combat partners. Lawrence is their non-spiritual workplace superior. In the modern-Japan world, Kana lives in single room 101 of the business hotel, her only home, separately from Tsukasa's budget apartment. She begins sexually inexperienced and has ordinary heterosexual desire. Lawrence's coercion is unwanted; later dependency or changes in conduct belong to conditional story developments. Disclosure and acceptance of her past can remove his leverage, allowing her to resist and report him.\n</Opening_State>",
+    "Skills": []
+  },
+  "firstName": "geisterjager_char_kana_firstname",
+  "middleName": "",
+  "lastName": "geisterjager_char_kana_lastname",
+  "nameDisplayFormat": "chara_fullname_lastToFirst",
+  "origin": "charOrigin_none",
+  "race": "humanRace_human",
+  "raceTemplate": "humanRaceAddon_standard",
+  "startingGift": "charOriginGift_none"
+}

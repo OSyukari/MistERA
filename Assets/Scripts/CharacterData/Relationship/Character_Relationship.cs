@@ -590,6 +590,31 @@ public class Character_Relationship
     }
 
     /// <summary>
+    /// Whether one of this relationship's types - biological, personal, or a social one (the acquaintance / stranger
+    /// fallback included) - carries one of tags (RelationshipType.tags, of Owner's side for an unequal type). Empty = any.
+    /// </summary>
+    public bool HasRelationshipTag(ICollection<string> tags)
+    {
+        if (tags == null || tags.Count == 0) return true;
+        if (TypeHasTag(Relationship_Bio, !isA_Bio, tags)) return true;
+        if (TypeHasTag(Relationship_Personal, !isA_Personal, tags)) return true;
+        foreach (var key in Relationship_Social_Keys)
+            if (tryGetSocialFaction(key, out var rel, out bool isA) && TypeHasTag(rel, !isA, tags)) return true;
+        return false;
+    }
+
+    static bool TypeHasTag(RelationshipType type, bool isB, ICollection<string> tags)
+    {
+        if (type == null) return false;
+        if (type.tags != null)
+            for (int i = 0; i < type.tags.Count; i++) if (tags.Contains(type.tags[i])) return true;
+        var side = type.GetPermissionSide(isB);
+        if (side != null && side != type && side.tags != null)
+            for (int i = 0; i < side.tags.Count; i++) if (tags.Contains(side.tags[i])) return true;
+        return false;
+    }
+
+    /// <summary>
     /// Whether Owner can feel sexual attraction toward Target, per Owner's trait_GenderPreference trait
     /// and both characters' resolved InteractionGenderType. Always false in safe mode. Recomputed so
     /// live trait, gender and CentralControl preference changes take effect immediately.

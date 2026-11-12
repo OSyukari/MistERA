@@ -390,7 +390,7 @@ public class StatsManager : I_StatsManager
             var tempList = new List<Needs>();
             needsList_cache = new List<Needs>();
             if (Owner.Race != null) tempList.AddRange(Owner.Race.needs);
-            if (Owner.RaceTemplate != null) tempList.AddRange(Owner.RaceTemplate.needs);
+            foreach (var template in Owner.RaceTemplates) tempList.AddRange(template.needs);
 
             foreach(var i in tempList){
                 if (i.requiresStatKeyword != "" && !Owner.hasStatKeyword(i.requiresStatKeyword)) continue;
@@ -637,7 +637,7 @@ public class StatsManager : I_StatsManager
 
             AddStatModifier(Owner.Origin.stat_modifiers);
             AddStatModifier(Owner.Race.stat_modifiers); // get statMods from race
-            if (Owner.RaceTemplate != null) AddStatModifier(Owner.RaceTemplate.stat_modifiers); // get statMods from racetemplate
+            foreach (var template in Owner.RaceTemplates) AddStatModifier(template.stat_modifiers);
 
             /*
             if (Owner.Template != null && Owner.Template.Sensitivity_A != null) AddStatModifier(Owner.Template.Sensitivity_A.stat_modifiers);

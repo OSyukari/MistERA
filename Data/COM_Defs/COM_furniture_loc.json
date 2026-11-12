@@ -6,6 +6,8 @@
         "Entries": {
             "en-us": {                "com_furniture_sleep_withNames": "Sleep with $names$",
                 "com_furniture_divider_enter_displayName": "Go in",
+                "com_furniture_divider_enter_together_displayName": "Go in together",
+                "com_furniture_divider_leave_together_displayName": "Come out together",
                 "com_furniture_divider_enter_begin_1": "$doer.firstname$ went in",
                 "com_furniture_divider_enter_ongoing_1": "$doer.firstname$ is going in",
                 "com_furniture_divider_leave_displayName": "Come out",

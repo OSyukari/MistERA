@@ -15,7 +15,8 @@ public static class FactionJoinUtility
 
     /// <summary>
     /// Asks every faction in the world that is revealed on the world map, lists memberTypeID in its joinableMemberTypes
-    /// (Manageable.CanBeJoinedAs) and whose main exit the candidate can path to for the options of joining it as
+    /// (Manageable.CanBeJoinedAs) and whose main exit the candidate can path to (or which is explicitly locationless
+    /// and declares membership in the candidate's current world) for the options of joining it as
     /// memberTypeID (Manageable.BuildJoinOptions - the MemberType's joinHandler decides who offers what, e.g. only
     /// hospitals with a free patient room offer patient admission). Only enabled options are kept, labelled with their
     /// faction's name; one random option is marked isDefaultAccept (for an NPC decision). Nothing is offered to an
@@ -33,8 +34,9 @@ public static class FactionJoinUtility
 
     /// <summary>
     /// The search behind InsertJoinOptions, without an event: the enabled options of joining, as memberTypeID, every
-    /// revealed faction that lists it as joinable and whose main exit the candidate can path to (labelled with the
-    /// faction's name). Empty for an imprisoned candidate. Building options changes nothing - only picking one runs its join.
+    /// revealed faction that lists it as joinable and whose main exit the candidate can path to, or which is explicitly
+    /// locationless and declares membership in the candidate's current world (labelled with the faction's name).
+    /// Empty for an imprisoned candidate. Building options changes nothing - only picking one runs its join.
     /// </summary>
     public static List<Event.EventEntry.Options> BuildReachableJoinOptions(Character_Trainable candidate, string memberTypeID)
     {
@@ -168,22 +170,45 @@ public static class FactionJoinUtility
         var options = new List<Event.EventEntry.Options>();
         if (candidate == null || candidate.isImprisoned || types.Count == 0) return options;
 
-        var map = scr_System_CampaignManager.current.Map;
+        var campaign = scr_System_CampaignManager.current;
+        var map = campaign.Map;
         var fromRoom = map.FindRoomByChara(candidate.RefID);
         if (fromRoom == null) return options;
         var candidates = new List<Character_Trainable>() { candidate };
+        string candidateWorld = null;
+        bool candidateWorldResolved = false;
 
-        foreach (var faction in scr_System_CampaignManager.current.Factions)
+        foreach (var faction in campaign.ActivityFactions)
         {
             if (faction == null || faction.hiddenOnWorldMap) continue;
-            var joinable = types.FindAll(t => faction.CanBeJoinedAs(t.ID));
-            if (joinable.Count == 0) continue;
-            var exit = faction.MainExit;
-            if (exit == null) continue;
-            if (exit.RefID != fromRoom.RefID && map.Findpath(candidate.RefID, exit.RefID) == null) continue;
-
-            foreach (var type in joinable)
+            bool offersMembership = false;
+            for (int i = 0; i < types.Count; i++)
             {
+                if (!faction.CanBeJoinedAs(types[i].ID)) continue;
+                offersMembership = true;
+                break;
+            }
+            if (!offersMembership) continue;
+            if (faction.IsLocationless)
+            {
+                if (!candidateWorldResolved)
+                {
+                    candidateWorld = Manageable.ResolveWorldID(fromRoom.FactionOwner as Manageable);
+                    candidateWorldResolved = true;
+                }
+                if (string.IsNullOrEmpty(candidateWorld) || !faction.worldConnection.Contains(candidateWorld)) continue;
+            }
+            else
+            {
+                var exit = faction.MainExit;
+                if (exit == null) continue;
+                if (exit.RefID != fromRoom.RefID && map.Findpath(candidate.RefID, exit.RefID) == null) continue;
+            }
+
+            for (int i = 0; i < types.Count; i++)
+            {
+                var type = types[i];
+                if (!faction.CanBeJoinedAs(type.ID)) continue;
                 // a parent is joined as its first child - that child's handler builds the options
                 var built = faction.BuildJoinOptions(type, candidates, out var errorKey);
                 if (built.Count == 0 && includeDisabled && !string.IsNullOrEmpty(errorKey))

@@ -261,6 +261,17 @@ public static class CharaReqUtility
             }
             return false;
         }
+        if (q.requireActorTags != null && q.requireActorTags.Count > 0)
+        {
+            for (int i = 0; i < q.requireActorTags.Count; i++)
+            {
+                if (c.HasActorTag(q.requireActorTags[i])) continue;
+                if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireActorTags")
+                                    .Replace("$name$", c.FirstName)
+                                    .Replace("$tags$", String.Join(" ", q.requireActorTags)));
+                return false;
+            }
+        }
         if ((q.requireRaceKeywords != null && q.requireRaceKeywords.Count > 0) || (q.forbidRaceKeywords != null && q.forbidRaceKeywords.Count > 0))
         {
             var raceKeywords = new List<string>();

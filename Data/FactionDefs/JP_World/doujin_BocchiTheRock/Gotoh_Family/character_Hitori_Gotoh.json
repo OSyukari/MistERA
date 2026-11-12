@@ -1,0 +1,50 @@
+{
+  "baseID": "BocchiRock_Char_Hitori_Gotoh",
+  "Portrait":{
+    "portraitPriorityList":[
+      {
+        "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+
+        "random_portrait_folder":"Gotoh_Family/portrait_hitori",
+            
+        "icon_offset_x":0,            
+        "icon_offset_y":-144.8,            
+        "icon_offset_size":0.6,
+
+        "icon_path":"Gotoh_Family/portrait_hitori/ComfyUI_0004 (2).webp"
+      }
+    ]
+  },
+  "Template": {
+    "Appearance": "Female",
+    "stat_STR": 6,
+    "stat_CON": 8,
+    "stat_PSY": 11,
+    "stat_WIL": 8,
+    "personalityID": "personality_default",
+    "traits_body_sex": ["trait_Sensitivity_B_default", "trait_Sensitivity_M_default", "trait_Sensitivity_C_default", "trait_Sensitivity_V_default", "trait_Sensitivity_A_default", "trait_Size_B_B", "trait_Size_P_none", "trait_Size_V_1", "trait_Size_A_1"],
+    "traits_body": ["trait_BodyType_slim", "trait_SkinColor_fair", "trait_HairColor_pink", "trait_EyeColor_turquoise"],
+    "Height": 156,
+    "Weight": 50,
+    "traits": ["trait_FatigueResistance_low", "trait_SelfEsteem_verylow", "trait_MemoryRetention_high", "trait_EnergyCapacity_low", "trait_MentalFortitude_low"],
+    "initialRelationship": [
+      { "baseID": "BocchiRock_Char_Naoki_Gotoh", "initialBiologicalRelationship": "relationship_parent", "initialBiologicalRelationship_isA": false, "initialPersonalRelationship": "relationship_housemate" },
+      { "baseID": "BocchiRock_Char_Michiyo_Gotoh", "initialBiologicalRelationship": "relationship_parent", "initialBiologicalRelationship_isA": false, "initialPersonalRelationship": "relationship_housemate" },
+      { "baseID": "BocchiRock_Char_Nijika_Ijichi", "initialPersonalRelationship": "relationship_friend" },
+      { "baseID": "BocchiRock_Char_Ryo_Yamada", "initialPersonalRelationship": "relationship_friend" },
+      { "baseID": "BocchiRock_Char_Ikuyo_Kita", "initialPersonalRelationship": "relationship_friend" }
+    ],
+    "initialInventory": [],
+    "defaultHairstyle": { "hairstyleID": "hairstyle_straight_long", "slotSelection": { "front": "hair_front_side_swept" } },
+    "CharacterCard": "<Hitori_Gotoh>\nIdentity: Hitori Gotoh (Bocchi), 17-year-old third-year Shuka High student; lead guitarist and lyricist of Kessoku Band.\nCurrent timeline: Still works at STARRY, continues guitarhero and Twitta, and is participating in the Mikakunin Riot audition campaign.\nHome: Lives with Naoki, Michiyo, Futari, and the family Shiba Inu Jimihen near Kanazawa-hakkei, Yokohama. Her family knows she practices and runs guitarhero, but does not automatically know each band incident or undisclosed private matter.\nCharacter: An intensely socially anxious introvert who longs for praise and connection but assumes approval is a fluke. She avoids strangers and can spiral into elaborate catastrophizing, yet works hard alone and acts decisively when a performance is at stake. She is a self-taught, highly skilled guitarist, a loyal bandmate, and a reluctant but growing participant in ordinary social life.\nAppearance: Long straight pink hair with a right-side ahoge and blue-yellow cube clip; aqua eyes. Usually hides in an oversized pink tracksuit over a band T-shirt and long gray skirt.\n</Hitori_Gotoh>",
+    "Skills": null
+  },
+  "firstName": "BocchiRock_Char_Hitori_Gotoh_firstname",
+  "middleName": "",
+  "lastName": "BocchiRock_Char_Gotoh_lastname",
+  "nameDisplayFormat": "chara_fullname_lastToFirst",
+  "origin": "charOrigin_none",
+  "race": "humanRace_human",
+  "raceTemplate": "humanRaceAddon_standard",
+  "startingGift": "charOriginGift_none"
+}

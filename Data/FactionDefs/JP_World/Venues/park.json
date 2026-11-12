@@ -49,7 +49,8 @@
           "furnitureIDs": [
             "furniture_jp_park_path",
             "furniture_jp_park_picnic",
-            "furniture_marker_getmeal"
+            "furniture_marker_getmeal",
+            "furniture_public_bench"
           ],
           "connects": [
             {
@@ -131,10 +132,10 @@
         "mainTypeTag": "stroll", "secondaryTags": ["outdoor", "park", "relaxation"],
         "workModule": { "jobPostID": "recreation_offer_jp_park_stroll", "workCommands": ["jp_park_stroll"], "activeHours": [8,9,10,11,12,13,14,15,16,17,18,19], "activeDays": [] },
         "activityCommands": ["jp_park_stroll"],
-        "minHours": 2, "maxHours": 2, "weeklyTarget": 2, "minDaysBetween": 1, "daysInAdvance": 1, "weight": 1, "participationChance": 1, "allowWalkIn": true, "trustRewardEligible": true, "provideAcceptanceBonus": 5, "activityMoodlet": { "stress": 1 },
+        "minHours": 2, "maxHours": 2, "weeklyTarget": 2, "minDaysBetween": 1, "daysInAdvance": 0, "weight": 1, "participationChance": 1, "allowWalkIn": true, "trustRewardEligible": true, "provideAcceptanceBonus": 5, "activityMoodlet": { "stress": 1 },
         "gatherRoomID": "park_path", "launchEventID": "Venue_ParkStroll_Begin",
         "invite": { "visibility": "Private", "inviteChance": 0.3, "minParticipants": 1, "TargetValidators": [{
-          "refKeys": ["companion"], "baseScope": "SelfRelationships", "extraScopeArguments": [],
+          "refKeys": ["companion"], "baseScope": "SelfRelationships", "extraScopeArguments": [], "requireRelationshipTags": ["rel_positive"],
           "chara_conditions": [{ "parameters": ["excludeSelf"] }, { "selfRelationshipRequirement": { "requireRawScore": [{ "requireScoreID": "Goodwill", "operand": "gte", "value": 25 }], "requireRawScoreCompare": [{ "requireScoreID": "Goodwill", "operand": "gt", "compareScoreID": "Badwill", "compareScoreMult": 1.1 }] } }],
           "maxTargetCount": 1, "stopAtMaxTargetCount": true, "orderBy": "friendliness", "required": false, "maxParticipants": 1
         }] }
@@ -142,14 +143,38 @@
       {
         "ID": "recreation_offer_jp_park_playground", "mode": "Flexible", "factionID": "jp_park",
         "mainTypeTag": "playground", "secondaryTags": ["outdoor", "park", "play"],
-        "_comment_preference": "Autonomous booking is opt-in through the intentional playground actor preference tag, not age. Invitations and manual play remain available. No character tags are assigned here.",
+        "_comment_preference": "Autonomous booking is disabled by default. Mods may opt characters in through weight modifiers. Invitations and manual play remain available.",
         "weight": 0,
-        "weightMods": [{ "modValue": 1, "condition": { "chara_conditions": [{ "parameters": ["hasActorTag", "playground"] }] } }],
         "workModule": { "jobPostID": "recreation_offer_jp_park_playground", "workCommands": ["jp_park_playground", "jp_park_slide", "jp_park_swing", "jp_park_sandpit", "jp_park_blocks_play"], "activeHours": [8,9,10,11,12,13,14,15,16,17], "activeDays": [] },
         "activityCommands": ["jp_park_playground", "jp_park_slide", "jp_park_swing", "jp_park_sandpit", "jp_park_blocks_play"],
-        "minHours": 2, "maxHours": 2, "weeklyTarget": 1, "minDaysBetween": 1, "daysInAdvance": 1, "allowWalkIn": true, "trustRewardEligible": true, "provideAcceptanceBonus": 5, "activityMoodlet": { "stress": 1 },
+        "minHours": 2, "maxHours": 2, "weeklyTarget": 1, "minDaysBetween": 1, "daysInAdvance": 0, "allowWalkIn": true, "trustRewardEligible": true, "provideAcceptanceBonus": 5, "activityMoodlet": { "stress": 1 },
         "gatherRoomID": "park_play_area", "launchEventID": "Venue_Playground_Begin",
-        "invite": { "visibility": "Private", "inviteChance": 0.5, "minParticipants": 1, "TargetValidators": [{ "refKeys": ["companion"], "baseScope": "SelfRelationships", "chara_conditions": [{ "parameters": ["excludeSelf"] }], "maxTargetCount": 3, "maxParticipants": 3, "required": false, "stopAtMaxTargetCount": true, "orderBy": "friendliness" }] }
+        "invite": {
+          "visibility": "Private",
+          "inviteChance": 0.5,
+          "minParticipants": 1,
+          "TargetValidators": [
+            {
+              "refKeys": [
+                "companion"
+              ],
+              "baseScope": "SelfRelationships",
+              "requireRelationshipTags": ["rel_positive"],
+              "chara_conditions": [
+                {
+                  "parameters": [
+                    "excludeSelf"
+                  ]
+                }
+              ],
+              "maxTargetCount": 3,
+              "maxParticipants": 3,
+              "required": false,
+              "stopAtMaxTargetCount": true,
+              "orderBy": "friendliness"
+            }
+          ]
+        }
       }
     ],
     "_rec":[
@@ -160,7 +185,7 @@
         "minHours": 2, "maxHours": 2, "weeklyTarget": 1, "minDaysBetween": 1, "daysInAdvance": 1, "weight": 1, "participationChance": 1, "allowWalkIn": true, "trustRewardEligible": true, "provideAcceptanceBonus": 5, "activityMoodlet": { "stress": 1 },
         "gatherRoomID": "park_entrance", "launchEventID": "Venue_CommunityCleanup_Begin",
         "invite": { "visibility": "Private", "inviteChance": 0.3, "minParticipants": 1, "TargetValidators": [{
-          "refKeys": ["companion"], "baseScope": "SelfRelationships", "extraScopeArguments": [],
+          "refKeys": ["companion"], "baseScope": "SelfRelationships", "extraScopeArguments": [], "requireRelationshipTags": ["rel_positive"],
           "chara_conditions": [{ "parameters": ["excludeSelf"] }, { "selfRelationshipRequirement": { "requireRawScore": [{ "requireScoreID": "Goodwill", "operand": "gte", "value": 15 }], "requireRawScoreCompare": [{ "requireScoreID": "Goodwill", "operand": "gt", "compareScoreID": "Badwill", "compareScoreMult": 1.1 }] } }],
           "maxTargetCount": 3, "stopAtMaxTargetCount": true, "orderBy": "friendliness", "required": false, "maxParticipants": 3
         }] }
@@ -171,7 +196,7 @@
         "activityCommands": ["jp_park_picnic"],
         "minHours": 2, "maxHours": 2, "weeklyTarget": 1, "minDaysBetween": 1, "daysInAdvance": 1, "allowWalkIn": true, "trustRewardEligible": false, "provideAcceptanceBonus": 5, "activityMoodlet": { "stress": 1 },
         "gatherRoomID": "park_lawn", "launchEventID": "Venue_Picnic_Begin",
-        "invite": { "visibility": "Private", "inviteChance": 0.6, "minParticipants": 1, "TargetValidators": [{ "refKeys": ["companion"], "baseScope": "SelfRelationships", "chara_conditions": [{ "parameters": ["excludeSelf"] }, { "selfRelationshipRequirement": { "requireRawScore": [{ "requireScoreID": "Goodwill", "operand": "gte", "value": 25 }], "requireRawScoreCompare": [{ "requireScoreID": "Goodwill", "operand": "gt", "compareScoreID": "Badwill", "compareScoreMult": 1.1 }] } }], "maxTargetCount": 3, "maxParticipants": 3, "required": false, "stopAtMaxTargetCount": true, "orderBy": "friendliness" }] }
+        "invite": { "visibility": "Private", "inviteChance": 0.6, "minParticipants": 1, "TargetValidators": [{ "refKeys": ["companion"], "baseScope": "SelfRelationships", "requireRelationshipTags": ["rel_positive"], "chara_conditions": [{ "parameters": ["excludeSelf"] }, { "selfRelationshipRequirement": { "requireRawScore": [{ "requireScoreID": "Goodwill", "operand": "gte", "value": 25 }], "requireRawScoreCompare": [{ "requireScoreID": "Goodwill", "operand": "gt", "compareScoreID": "Badwill", "compareScoreMult": 1.1 }] } }], "maxTargetCount": 3, "maxParticipants": 3, "required": false, "stopAtMaxTargetCount": true, "orderBy": "friendliness" }] }
       }
     ]
   },

@@ -1,0 +1,65 @@
+{
+  "_comment": "JSON-only world integration following doujin_BocchiTheRock: Tsukasa rents a separate 1LDK in the existing budget district; Kana lives in the existing business hotel. Lawrence remains a character definition without a world placement.",
+  "MapPlans": {
+    "factionInit": [
+      {
+        "ID": "geisterjager_home_tsukasa",
+        "isPublic": false,
+        "showLockedFloors": true,
+        "isRentingFloor": true,
+        "setPrivateRoomOwner": false,
+        "mainExit": { "roomID": "floor_1ldk_1_frontDoor", "exitCost": 1 },
+        "floors": [{ "ID": "floor_1ldk_1", "nameOverwrite": "geisterjager_home_tsukasa" }],
+        "activeHoursStart": 7,
+        "activeHoursEnd": 23,
+        "mealHours": [7, 12, 18],
+        "initializers": [
+          { "initClass": "campaign_init_factionInventory", "initArguments": ["", "consumable_bento_box", "", "1"] }
+        ]
+      }
+    ],
+    "worldInitAddons": [
+      {
+        "worldID": "world_erav_modern_jp",
+        "initializeResidences": [
+          {
+            "factionID": "geisterjager_home_tsukasa",
+            "districtID": "jp_district_budget_apartment",
+            "templateID": "jp_home_tpl_apt_1ldk"
+          }
+        ],
+        "npcInit": [
+          {
+            "initID": "init_geisterjager_tsukasa",
+            "actorBaseID": "geisterjager_char_tsukasa",
+            "reconcileExistingAssignments": true,
+            "Homefaction": {
+              "factionID": "geisterjager_home_tsukasa",
+              "guestStatus": "membertype_family_leader",
+              "spawnFloorID": "floor_1ldk_1",
+              "spawnRoomID": "floor_1ldk_1_room",
+              "setRoomOwnership": true
+            },
+            "Workfactions": [],
+            "Recreationfactions": []
+          },
+          {
+            "initID": "init_geisterjager_kana",
+            "actorBaseID": "geisterjager_char_kana",
+            "reconcileExistingAssignments": true,
+            "_comment_hotel": "The hotel is Kana's only permanent home, with single-room client status. Permanent-home hotel fees are exempt under the current engine; this is intentional. No locationless household or temporary home is created.",
+            "Homefaction": {
+              "factionID": "jp_hotel_business",
+              "guestStatus": "membertype_jp_hotel_guest_single",
+              "spawnFloorID": "floor_jp_hotel_business",
+              "spawnRoomID": "hotel_room_s_101",
+              "setRoomOwnership": true
+            },
+            "Workfactions": [],
+            "Recreationfactions": []
+          }
+        ]
+      }
+    ]
+  }
+}

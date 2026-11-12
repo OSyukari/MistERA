@@ -1,0 +1,97 @@
+{
+    "_comment": "Generic organization template only: not initialized by any world, no roster or generated actors. A future band instance must supply its members and a matching downtown exit socket if its faction ID differs. Members retain their ordinary jobs; only shared organization bookings provide activity work modules at the chosen venue.",
+    "MapPlans": {
+        "factionInit": [{
+            "ID": "jp_band_template",
+            "floors": [{ "ID": "floor_jp_band_template", "nameOverwrite": "jp_band_template" }],
+            "isRentingFloor": true, "floorListHostFactionID": "jp_downtown",
+            "mainExit": { "roomID": "band_storage", "exitCost": 1 },
+            "floorDoors": [{ "sourceFloor": "floor_jp_band_template", "sourceExit": "street", "targetFaction": "jp_downtown", "targetFloor": "floor_jp_downtown", "targetExit": "to_jp_band_template", "cost": 1 }],
+            "assignableMemberTypes": ["membertype_band_performer", "membertype_band_manager", "membertype_band_support_staff", "membertype_jp_band_member"],
+            "joinableMemberTypes": ["membertype_band_performer", "membertype_band_manager", "membertype_band_support_staff", "membertype_jp_band_member"],
+            "mealHours": [], "managerBaseIDs": [], "workModules": [],
+            "activityOrganization": {
+                "memberTypeIDs": ["membertype_band_performer", "membertype_jp_band_member"], "minMembers": 2,
+                "activities": [
+                    {
+                        "ID": "jp_band_rehearsal", "venueTags": ["band_practice"],
+                        "mainTypeTag": "music_practice", "secondaryTags": ["music", "band"],
+                        "cooldownTag": "band_rehearsal", "daysInAdvance": 0,
+                        "minDaysBetween": 2, "weeklyTarget": 2, "baseWeight": 1.0,
+                        "minHours": 3, "maxHours": 3
+                    },
+                    {
+                        "ID": "jp_band_performance", "venueTags": ["band_performance"],
+                        "mainTypeTag": "music_performance", "secondaryTags": ["music", "band", "live"],
+                        "cooldownTag": "band_performance", "daysInAdvance": 3,
+                        "minDaysBetween": 14, "weeklyTarget": 1, "baseWeight": 1.0,
+                        "minHours": 2, "maxHours": 2
+                    }
+                ]
+            }
+        }],
+        "floorPlans": [{
+            "ID": "floor_jp_band_template", "imagePath": "BGAssets/Generated/office_04.webp", "isFloorPlan": false,
+            "floorWidth": 200, "floorHeight": 200, "resize": 1, "mapExit": "band_storage",
+            "exits": [{ "ID": "street", "connectedRoom": "band_storage", "hideOnMap": true }],
+            "rooms": [{ "ID": "band_storage", "displayName": "jp_band_storage", "hideOnMap": true, "connects": [], "furnitureIDs": [], "roomImagePath": "BGAssets/Generated/office_04.webp" }]
+        }],
+        "memberTypes": [{
+            "ID": "membertype_band_performer", "socialStandingKey": "membertype_band_performer",
+            "isMember": true, "isManager": false, "isDisplayableInFactionUI": true, "canBeTransferred": true,
+            "Tags": ["memberType_recreation", "jp_band_member"],
+            "joinHandler": { "$type": "JoinHandler_Recreation, Assembly-CSharp", "optionTextKey": "jp_band_member_joinOption", "bindTargetKey": "worker" },
+            "leaveHandler": { "$type": "LeaveHandler_Recreation, Assembly-CSharp", "optionTextKey": "recreation_leaveOption", "bindTargetKey": "worker" },
+            "childMemberTypes": [
+                { "ID": "membertype_band_vocal", "socialStandingKey": "membertype_band_vocal" },
+                { "ID": "membertype_band_guitar", "socialStandingKey": "membertype_band_guitar" },
+                { "ID": "membertype_band_bass", "socialStandingKey": "membertype_band_bass" },
+                { "ID": "membertype_band_drums", "socialStandingKey": "membertype_band_drums" },
+                { "ID": "membertype_band_keyboard", "socialStandingKey": "membertype_band_keyboard" }
+            ]
+        }, {
+            "ID": "membertype_band_manager", "socialStandingKey": "membertype_band_manager",
+            "isMember": true, "isManager": true, "isDisplayableInFactionUI": true, "canBeTransferred": true,
+            "Tags": ["memberType_recreation"],
+            "joinHandler": { "$type": "JoinHandler_Recreation, Assembly-CSharp", "optionTextKey": "jp_band_member_joinOption", "bindTargetKey": "worker" },
+            "leaveHandler": { "$type": "LeaveHandler_Recreation, Assembly-CSharp", "optionTextKey": "recreation_leaveOption", "bindTargetKey": "worker" }
+        }, {
+            "ID": "membertype_band_support_staff", "socialStandingKey": "membertype_band_support_staff",
+            "isMember": true, "isManager": false, "isDisplayableInFactionUI": true, "canBeTransferred": true,
+            "Tags": ["memberType_recreation"],
+            "joinHandler": { "$type": "JoinHandler_Recreation, Assembly-CSharp", "optionTextKey": "jp_band_member_joinOption", "bindTargetKey": "worker" },
+            "leaveHandler": { "$type": "LeaveHandler_Recreation, Assembly-CSharp", "optionTextKey": "recreation_leaveOption", "bindTargetKey": "worker" }
+        }, {
+            "ID": "membertype_jp_band_member", "socialStandingKey": "membertype_jp_band_member",
+            "isMember": true, "isDisplayableInFactionUI": true, "canBeTransferred": true,
+            "Tags": ["memberType_recreation", "jp_band_member"],
+            "joinHandler": { "$type": "JoinHandler_Recreation, Assembly-CSharp", "optionTextKey": "jp_band_member_joinOption", "bindTargetKey": "worker" },
+            "leaveHandler": { "$type": "LeaveHandler_Recreation, Assembly-CSharp", "optionTextKey": "recreation_leaveOption", "bindTargetKey": "worker" }
+        }]
+    },
+    "Dictionary": { "Entries": { "zh-cn": {
+        "jp_band_template": "乐队（通用模板）",
+        "jp_band_storage": "乐队器材储藏室",
+        "membertype_band_performer": "乐队演奏成员",
+        "membertype_band_vocal": "乐队主唱",
+        "membertype_band_guitar": "乐队吉他手",
+        "membertype_band_bass": "乐队贝斯手",
+        "membertype_band_drums": "乐队鼓手",
+        "membertype_band_keyboard": "乐队键盘手",
+        "membertype_band_manager": "乐队经纪人",
+        "membertype_band_support_staff": "乐队支援人员",
+        "membertype_jp_band_member": "乐队成员",
+        "jp_band_member_joinOption": "让$name$加入乐队",
+        "jp_band_rehearsal": "乐队合练",
+        "jp_band_performance": "乐队现场演出"
+    }, "en-us": {
+        "membertype_band_performer": "Band Performer",
+        "membertype_band_vocal": "Band Vocalist",
+        "membertype_band_guitar": "Band Guitarist",
+        "membertype_band_bass": "Band Bassist",
+        "membertype_band_drums": "Band Drummer",
+        "membertype_band_keyboard": "Band Keyboardist",
+        "membertype_band_manager": "Band Manager",
+        "membertype_band_support_staff": "Band Support Staff"
+    } } }
+}

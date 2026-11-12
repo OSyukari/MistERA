@@ -18,6 +18,20 @@ public class WorldPlan
     // each world instance is unique
     // if duplicate faction, add to same world with different factionID
 
+    /// <summary>
+    /// Merge with specifically worldplanAddons
+    /// </summary>
+    /// <param name="w"></param>
+    public void MergeWith(WorldPlan w)
+    {
+        foreach(var i in w.initializeFactions)
+        {
+            this.initializeFactions[i.Key] = i.Value;
+        }
+        this.initializeResidences.AddRange(w.initializeResidences);
+        this.npcInit.AddRange(w.npcInit);
+    }
+
     public string worldID = "";
 
     /// <summary>

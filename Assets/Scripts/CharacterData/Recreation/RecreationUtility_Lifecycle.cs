@@ -301,6 +301,9 @@ public static partial class RecreationUtility
     /// <summary>After a load (the lifecycle is not kept while loading): every character's bookings and every live session are indexed at their venue again.</summary>
     public static void RebuildActivityLifecycle(IEnumerable<Character_Trainable> characters)
     {
+        planningLateCycle = -1;
+        automaticPlanningDepth = 0;
+        dailyDiscoveryClosed = true;
         activityLifecycles.Remove(Sessions);
         foreach (var c in characters)
         {

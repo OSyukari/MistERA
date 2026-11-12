@@ -163,7 +163,9 @@
                 "$type":"RelationshipType, Assembly-CSharp",
 
                 "ID":"relationship_acquaintance",
-                "displayName":"relationship_acquaintance_displayName"
+                "displayName":"relationship_acquaintance_displayName",
+                "_comment_tags":"rel_positive: counts as a positive tie (invite roles' requireRelationshipTags). Acquaintance = the social fallback when the scores sum >= 100 and no faction relation exists.",
+                "tags":["rel_positive"]
             },
             {
                 "$type":"RelationshipType_Inequal, Assembly-CSharp",
@@ -303,7 +305,7 @@
                     ],
                     "requireMood":{"operand":"gte","value":0}
                 },
-                "MainEmotionKey":"Badwill", "tags":["Badwill"],
+                "MainEmotionKey":"Badwill", "tags":["Badwill","rel_positive"],
                 "MaintenanceRequirements":
                 {
                     "requireRawScoreCompare":[
@@ -337,7 +339,7 @@
                     ],
                     "requireMood":{"operand":"gte","value":0}
                 },
-                "MainEmotionKey":"Badwill", "tags":["Badwill"],
+                "MainEmotionKey":"Badwill", "tags":["Badwill","rel_positive"],
                 "MaintenanceRequirements":
                 {
                     "requireRawScore":[
@@ -377,7 +379,7 @@
                     ],
                     "requireMood":{"operand":"gte","value":0}
                 },
-                "MainEmotionKey":"Badwill", "tags":["Badwill","sexual_partner"],
+                "MainEmotionKey":"Badwill", "tags":["Badwill","sexual_partner","rel_positive"],
                 "MaintenanceRequirements":
                 {
                     "requireRawScore":[
@@ -418,7 +420,7 @@
                     ],
                     "requireMood":{"operand":"gte","value":0}
                 },
-                "MainEmotionKey":"Badwill", "tags":["Badwill","unsafe","sexual_partner"],
+                "MainEmotionKey":"Badwill", "tags":["Badwill","unsafe","sexual_partner","rel_positive"],
                 "MaintenanceRequirements":
                 {
                     "requireRawScore":[

@@ -10,6 +10,7 @@
                 "initializeFaction": "jp_tourist_riverside",
                 "setPrivateRoomOwner": false,
                 "isRentingFloor": false,
+                "listConnectedFloors": true,
                 "_comment_isRentingFloor": "public land",
                 "mainExit": { "roomID": "riverside_entrance", "exitCost": 5 },
                 "floors": [
@@ -28,6 +29,9 @@
                 "imagePath": "Media_UI_Scenario_Background/BG_RiversideRoad.jpg",
                 "isFloorPlan": false,
                 "mapExit": "riverside_entrance",
+                "exits": [
+                    { "ID": "to_jp_campsite", "connectedRoom": "riverside_lawn", "hideOnMap": true }
+                ],
                 "_comment_travel": "Approximate walking minutes per hop: entrance->promenade 2, promenade->embankment lawn 3.",
                 "rooms": [
                     {
@@ -55,7 +59,7 @@
                         "displayName": "jp_riverside_lawn",
                         "hideOnMap": true,
                         "connects": [{ "ID": "riverside_promenade", "cost": 3.0 }],
-                        "furnitureIDs": ["furniture_jp_riverside_lawn_route"],
+                        "furnitureIDs": ["furniture_jp_riverside_lawn_route", "furniture_public_bench"],
                         "roomImagePath": "Media_UI_Scenario_Background/BG_RiversideRoad.jpg",
                         "roomImagePath_Night": "Media_UI_Scenario_Background/BG_RiversideRoad.jpg"
                     }
@@ -63,7 +67,10 @@
             }
         ],
         "_comment_recreationOffers": "This venue's public activities (RecreationOfferDef) - every world that initializes jp_tourist_riverside collects them (WorldPlan.AllRecreationOffers). Template data, reloaded every game load, never saved. No MemberType: each visit runs on its offer's own workModule (the default behavior tree sandboxes its workCommands); behaviorOverrides / Tags / AcceptanceMods could be added per offer. Fireworks follow the world's hanabi season (seasonTags) on Saturdays (weekdays).",
-        "recreationOffers": [
+        "_rec":[
+            
+        ],
+        "rec":[
             {
                 "ID": "recreation_offer_jp_riverside_fireworks",
                 "mainTypeTag": "sightseeing",
@@ -92,7 +99,10 @@
                 "_comment_calendar": "Every Saturday of the fireworks season (world.json season_hanabi) - most real hanabi taikai (e.g. Sumida River) are held on summer Saturday evenings.",
                 "seasonTags": ["hanabi"],
                 "weekdays": [0, 0, 0, 0, 0, 1, 0]
-            },
+            }
+        ],
+        "recreationOffers": [
+            
             {
                 "_comment": "Everyday riverside stroll - a flexible offer: never posted, every eligible character may plan it into free time like a membership activity (2h, not two days running). Placement weight = weight.",
                 "ID": "recreation_offer_jp_riverside_stroll",

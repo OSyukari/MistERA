@@ -512,12 +512,12 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     {
         if (statKeyword == "") return true;
         if (this.Race.removeStatsKeyword.Contains(statKeyword) ||
-            this.RaceTemplate.removeStatsKeyword.Contains(statKeyword))
+            this.RaceTemplates.Any(t => t.removeStatsKeyword.Contains(statKeyword)))
             return false;
 
         // check race prop
         if (this.Race.addStatsKeyword.Contains(statKeyword)
-            || this.RaceTemplate.addStatsKeyword.Contains(statKeyword))
+            || this.RaceTemplates.Any(t => t.addStatsKeyword.Contains(statKeyword)))
             return true;
 
         return false;
@@ -1421,7 +1421,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                 _actorKeywords = new List<string>();
                 if (this.Template != null) _actorKeywords.AddRange(this.Template.actorKeyword);
                 if (this.Race != null) _actorKeywords.AddRange(this.Race.RaceType);
-                if (this.RaceTemplate != null) _actorKeywords.AddRange(this.RaceTemplate.actorKeyword);
+                foreach (var template in RaceTemplates) _actorKeywords.AddRange(template.actorKeyword);
                 Utility.DistinctInPlace(_actorKeywords);
             }
             return _actorKeywords;
@@ -1449,6 +1449,16 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     }
 
     internal void AppendActorTags(List<string> destination)
+    {
+        destination.AddRange(GetActorTags());
+    }
+
+    internal bool HasActorTag(string tag)
+    {
+        return GetActorTags().Contains(tag);
+    }
+
+    private List<string> GetActorTags()
     {
         if (actorTagCache == null) actorTagCache = new ActorTagCache();
         var cache = actorTagCache;
@@ -1511,7 +1521,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             cache.Consciousness = consciousness;
             cache.Valid = true;
         }
-        destination.AddRange(cache.Tags);
+        return cache.Tags;
     }
 
 
@@ -1742,15 +1752,77 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     [JsonIgnore] public Humanoid_Race Race {
         get { return scr_System_Serializer.current.MasterList.humanoid_Races.GetByID(race); }
         set { race = value.ID;
+            _actorKeywords = null;
+            InvalidateActorTags();
             this.Stats.RefreshAllStats(true);
         } }
 
-    [JsonProperty] private string raceTemplate = "humanRaceAddon_standard";
-    [JsonIgnore] public Humanoid_RaceTemplate RaceTemplate { 
-        get { return scr_System_Serializer.current.MasterList.humanoid_RaceTemplates.GetByID(raceTemplate); } 
-        set { raceTemplate = value.ID;
-            this.Stats.RefreshAllStats(true);
-        } }
+    private string legacyRaceTemplate = "humanRaceAddon_standard";
+    private List<string> raceTemplateIDs;
+    private IReadOnlyList<Humanoid_RaceTemplate> resolvedRaceTemplates;
+
+    // Read shipped single-template definitions and saves; an explicit list takes precedence.
+    [JsonProperty("raceTemplate")]
+    private string LegacyRaceTemplate
+    {
+        set { legacyRaceTemplate = value; ClearRaceTemplateCache(); }
+    }
+
+    [JsonProperty("raceTemplates", ObjectCreationHandling = ObjectCreationHandling.Replace)]
+    private List<string> SerializedRaceTemplates
+    {
+        get { return raceTemplateIDs ?? new List<string> { legacyRaceTemplate }; }
+        set
+        {
+            raceTemplateIDs = value?.Where(id => !string.IsNullOrEmpty(id)).Distinct().ToList();
+            ClearRaceTemplateCache();
+        }
+    }
+
+    [JsonIgnore] public IReadOnlyList<Humanoid_RaceTemplate> RaceTemplates
+    {
+        get
+        {
+            if (resolvedRaceTemplates == null)
+            {
+                var index = scr_System_Serializer.current.MasterList.humanoid_RaceTemplates;
+                resolvedRaceTemplates = SerializedRaceTemplates.Where(id => !string.IsNullOrEmpty(id))
+                    .Distinct().Select(index.GetByID).Where(t => t != null).ToList().AsReadOnly();
+            }
+            return resolvedRaceTemplates;
+        }
+    }
+
+    // The existing editor cycles the primary template without discarding additional layers.
+    [JsonIgnore] public Humanoid_RaceTemplate RaceTemplate
+    {
+        get { return RaceTemplates.FirstOrDefault(); }
+        set
+        {
+            var ids = new List<string>(SerializedRaceTemplates);
+            var primary = RaceTemplate;
+            int index = primary == null ? 0 : ids.IndexOf(primary.ID);
+            if (primary != null) ids.RemoveAt(index);
+            if (value != null) ids.Insert(index, value.ID);
+            SetRaceTemplates(ids);
+        }
+    }
+
+    [JsonIgnore] public string RaceTemplatesDisplayName => string.Join(", ", RaceTemplates.Select(t => t.DisplayName));
+    [JsonIgnore] public string RaceTemplatesTooltip => string.Join("\n\n", RaceTemplates.Select(t => t.Tooltip).Where(t => !string.IsNullOrEmpty(t)));
+
+    public void SetRaceTemplates(IEnumerable<string> ids)
+    {
+        SerializedRaceTemplates = ids?.ToList() ?? new List<string>();
+        this.Stats.RefreshAllStats(true);
+    }
+
+    private void ClearRaceTemplateCache()
+    {
+        resolvedRaceTemplates = null;
+        _actorKeywords = null;
+        InvalidateActorTags();
+    }
 
     [JsonProperty] private string startingGift = "charOriginGift_none";
     [JsonIgnore] public Character_Origin_startingOption StartingGift { 
@@ -1969,11 +2041,11 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     /// the session ranking (RecreationUtility.RankSessions - ties fall back to a fixed order: earlier start, host, venue)
     /// and of a session against a flexible visit in its way (RecreationUtility.TryConfirm: the session wins unless the
     /// visit is preferred). Must be deterministic (no random rolls) so the same situation always resolves the same way.
-    /// Uses the activity's character-dependent weight, without random rolls or availability factors.
+    /// Uses structural activity priority, then character-dependent weight, without random rolls or availability factors.
     /// </summary>
     public int CompareBookingPreference(RecreationBooking existing, RecreationInviteContext existingCtx, RecreationBooking incoming, RecreationInviteContext incomingCtx)
     {
-        return RecreationUtility.BookingPreference(this, incoming).CompareTo(RecreationUtility.BookingPreference(this, existing));
+        return RecreationUtility.CompareActivityPriority(this, existing, existingCtx, incoming, incomingCtx);
     }
 
     [JsonProperty] private Character_Factions factionManager = null;

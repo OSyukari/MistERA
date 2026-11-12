@@ -10,6 +10,7 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
     public List<MapPlan> factionInit = new List<MapPlan>();
     public List<Floor_Base> floorPlans = new List<Floor_Base>();
     public List<WorldPlan> worldInit = new List<WorldPlan>();
+    public List<WorldPlan> worldInitAddons = new List<WorldPlan>();
     public List<MemberType> memberTypes = new List<MemberType>();
     public List<SalesClienteleDef> clienteleDefs = new List<SalesClienteleDef>();
     public List<DebtClassDef> debtClasses = new List<DebtClassDef>();
@@ -57,6 +58,19 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
         }
 
         message.Add("Index_WorldPlan : registering ID with list length [" + worldInit.Count + "]");
+
+        // merge world addons
+        foreach(var i in this.worldInitAddons)
+        {
+            foreach (var j in this.worldInit)
+            {
+                if (j.worldID == i.worldID)
+                {
+                    j.MergeWith(i);
+                    break;
+                }
+            }
+        }
 
         foreach (WorldPlan o in this.worldInit)
         {
@@ -248,6 +262,7 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
         if (l.factionInit != null) this.factionInit.AddRange(l.factionInit);
         if (l.floorPlans != null) this.floorPlans.AddRange(l.floorPlans);
         if (l.worldInit != null) this.worldInit.AddRange(l.worldInit);
+        if (l.worldInitAddons != null) this.worldInitAddons.AddRange(l.worldInitAddons);
         if (l.memberTypes != null) this.memberTypes.AddRange(l.memberTypes);
         if (l.clienteleDefs != null) this.clienteleDefs.AddRange(l.clienteleDefs);
         if (l.debtClasses != null) this.debtClasses.AddRange(l.debtClasses);
@@ -316,7 +331,11 @@ public class MapPlan
 {
     public string ID = "";
     public float z_rotation = 0f;
+    /// <summary>Logical faction with no authored premises or travel destination; world membership and management remain available.</summary>
+    public bool isLocationless = false;
     public List<MapPlan_Floor> floors = new List<MapPlan_Floor>();
+    /// <summary>Standalone rooms instantiated from floorPlans definitions without creating those floors.</summary>
+    public List<MapPlan_Room> rooms = new List<MapPlan_Room>();
     public Map_MainExit mainExit = null;
 
     /// <summary>
@@ -325,6 +344,21 @@ public class MapPlan
     /// time (WorldManager.Instantiate) - see Door.cs. A blank faction (or this MapPlan's own ID) means the instantiated faction.
     /// </summary>
     public List<FloorDoor> floorDoors = new List<FloorDoor>();
+
+    /// <summary>Hidden room attachments, registered at instantiation/setup/load and resolved during path building. Targets must be standalone rooms.</summary>
+    public List<RoomConnection> roomConnections = new List<RoomConnection>();
+
+    public class RoomConnection
+    {
+        /// <summary>Blank or this MapPlan's ID means the instantiated faction, for either endpoint.</summary>
+        public string sourceFaction = "";
+        /// <summary>Source floor template ID and room base ID; target is matched by faction and room base ID.</summary>
+        public string sourceFloor = "";
+        public string sourceRoom = "";
+        public string targetFaction = "";
+        public string targetRoom = "";
+        public float cost = 1f;
+    }
 
     /// <summary>Floor-list UI grouping only; never determines ownership, connectivity, or world travel.</summary>
     public string floorListHostFactionID = "";
@@ -336,6 +370,9 @@ public class MapPlan
     /// exit list (e.g. 霓虹街 -> 卡拉OK). District homes are never listed on the left either way.
     /// </summary>
     public bool listConnectedFloors = false;
+
+    /// <summary>Floor-panel buttons for this faction: null uses automatic visibility, true forces show, false forces hide (including debug mode). Does not change access, grouping or world-map pins.</summary>
+    public bool? overrideMapFloorDisplay = null;
 
     /// <summary>
     /// Residential district: the homes it may generate (ResidenceUtility.CreateResidence / AssignResidence result). Read
@@ -441,6 +478,9 @@ public class MapPlan
     /// </summary>
     public RecreationSpec houseActivities = null;
 
+    public ActivityOrganizationSpec activityOrganization = null;
+    public List<VenueRentalOfferDef> venueRentalOffers = new List<VenueRentalOfferDef>();
+
     /// <summary>
     /// Per-shift staffing targets for this (non-player) faction, one entry per shift MemberType. Each hour
     /// FallbackWorkerManager.UpdateStaffing counts the real members covering that shift and wakes up to
@@ -453,9 +493,11 @@ public class MapPlan
     public class FallbackWorkerInit
     {
         public string memberTypeID = "";
+        /// <summary>Additional real-worker types (including descendants) covering this target. Null/empty = own type only.</summary>
+        public List<string> coversMemberTypes = null;
         /// <summary>Total workers wanted on this shift, real NPCs and fallback workers combined.</summary>
         public int headcount = 1;
-        /// <summary>Most fallback workers this shift may ever use (also caps the pool size for it). Negative = headcount.</summary>
+        /// <summary>Maximum fallback workers enabled for this target at once. Negative = headcount; temporary-home replacements can grow the parked pool.</summary>
         public int maxFallback = -1;
         /// <summary>CharaTemplateGenerator ID or base character ID fallback workers are generated from.</summary>
         public string templateID = "";
@@ -681,9 +723,19 @@ public class MapPlan
         public int endHour = 0;
         public string comID = "";
     }
+    public class MapPlan_Room
+    {
+        public string floorID = "";
+        public string roomID = "";
+        /// <summary>Opt-in setup/load migration: detach the owned room from this single-room physical host floor in place.</summary>
+        public string migrateFromFloorID = "";
+    }
+
     public class MapPlan_Floor
     {
         public string ID = "";
+        /// <summary>Opt-in setup/load migration: reuse this physical host's old floor instance instead of appending a replacement.</summary>
+        public string migrateFromFloorID = "";
         public List<MapPlan_FloorInit> Additional = new List<MapPlan_FloorInit>();
         public string nameOverwrite = "";
     }

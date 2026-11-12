@@ -13,6 +13,7 @@
         "skillBypass": "Optional { skillID, minLevel, excludedTraitIDs }: the granter's own skill at that level counts as the permission unless any excluded trait is present (PermissionEffectiveSource.SkillBypass). Nothing stored or requested; the act's own acceptance check still applies. Provisional: sex_anal = skill_sensitivity_A 3, sex_vaginal = skill_sensitivity_V 3; available for all Chastity traits.",
         "requests": "Both menu and automatic requests use PermissionService.CanRequest / AcceptsRequest: live pair, requestable, canAct granter and explicit requiredRelationshipTags, then every adjusted requestRequirements entry, no roll. Shipped intimacy has no requiredRelationshipTags. normalGrantRelationshipTags selects only NEW grant lifetime: sexual_partner = Normal, otherwise Temporary today. Existing Normal grants still use only requiredRelationshipTags for validity. Event/preset grants stay explicit. GrantPermission fourth argument Request opts menu requests into the shared decision and requestGrantType.",
         "requestModifiers": "Provisional, directed granter-to-holder. Select any relationship ID/source-side tag, optionally requiring a granter traitID. Only positive gt/gte requireScore/requireRawScore thresholds change; score comparisons (including Badwill), mood, lust, stress and upper/equality bounds never change. Per score take strongest relationship benefit (never stack): Low Friend Trust -2, BFF Trust -4, sexual_partner all requestable scopes x0.8 (20%). Then multiply matched trait scales using decimal arithmetic and ceil to integer. Low/Medium caring x1.25 / indifferent x0.75; High and all detailed scopes caring x1.5 / indifferent x0.5. Normal/absent trait = x1. Modifiers affect requests only, never global action acceptance or explicit grants. Pride grants follow only.",
+        "innocent": "Chastity Innocent does not understand intimacy: all requestable scopes use x0.25 score thresholds, after the strongest relationship benefit and rounded up. Other request requirements and action acceptance are unchanged.",
         "defaults": "Soft mode and Normal request grants are omitted. permission_follow remains non-requestable. Only sex_* definitions are tagged nsfw; coarse legacy flags remain available in safe mode."
     },
     "PermissionDefinitions": {
@@ -37,7 +38,8 @@
                     { "displayName": "permission_request_bff_low", "relationshipIDs": ["relationship_bff"], "scoreIDs": ["Trust"], "thresholdReduction": 4 },
                     { "displayName": "permission_request_partner", "relationshipTags": ["sexual_partner"], "thresholdScale": 0.8 },
                     { "displayName": "permission_request_caring_medium", "traitID": "trait_Chastity_caring", "thresholdScale": 1.25 },
-                    { "displayName": "permission_request_indifferent_medium", "traitID": "trait_Chastity_indifferent", "thresholdScale": 0.75 }
+                    { "displayName": "permission_request_indifferent_medium", "traitID": "trait_Chastity_indifferent", "thresholdScale": 0.75 },
+                    { "displayName": "permission_request_innocent", "traitID": "trait_Chastity_innocent", "thresholdScale": 0.25 }
                 ],
                 "missingPermissionPenalty": -4,
                 "holderRole": "CheckTarget",
@@ -57,7 +59,8 @@
                 "requestModifiers": [
                     { "displayName": "permission_request_partner", "relationshipTags": ["sexual_partner"], "thresholdScale": 0.8 },
                     { "displayName": "permission_request_caring_medium", "traitID": "trait_Chastity_caring", "thresholdScale": 1.25 },
-                    { "displayName": "permission_request_indifferent_medium", "traitID": "trait_Chastity_indifferent", "thresholdScale": 0.75 }
+                    { "displayName": "permission_request_indifferent_medium", "traitID": "trait_Chastity_indifferent", "thresholdScale": 0.75 },
+                    { "displayName": "permission_request_innocent", "traitID": "trait_Chastity_innocent", "thresholdScale": 0.25 }
                 ],
                 "missingPermissionPenalty": -6,
                 "holderRole": "CheckTarget",
@@ -77,7 +80,8 @@
                 "requestModifiers": [
                     { "displayName": "permission_request_partner", "relationshipTags": ["sexual_partner"], "thresholdScale": 0.8 },
                     { "displayName": "permission_request_caring_high", "traitID": "trait_Chastity_caring", "thresholdScale": 1.5 },
-                    { "displayName": "permission_request_indifferent_high", "traitID": "trait_Chastity_indifferent", "thresholdScale": 0.5 }
+                    { "displayName": "permission_request_indifferent_high", "traitID": "trait_Chastity_indifferent", "thresholdScale": 0.5 },
+                    { "displayName": "permission_request_innocent", "traitID": "trait_Chastity_innocent", "thresholdScale": 0.25 }
                 ],
                 "missingPermissionPenalty": -10,
                 "holderRole": "CheckTarget",
@@ -96,7 +100,8 @@
                 "requestModifiers": [
                     { "displayName": "permission_request_partner", "relationshipTags": ["sexual_partner"], "thresholdScale": 0.8 },
                     { "displayName": "permission_request_caring_high", "traitID": "trait_Chastity_caring", "thresholdScale": 1.5 },
-                    { "displayName": "permission_request_indifferent_high", "traitID": "trait_Chastity_indifferent", "thresholdScale": 0.5 }
+                    { "displayName": "permission_request_indifferent_high", "traitID": "trait_Chastity_indifferent", "thresholdScale": 0.5 },
+                    { "displayName": "permission_request_innocent", "traitID": "trait_Chastity_innocent", "thresholdScale": 0.25 }
                 ],
                 "requestable": true,
                 "requestRequirements": [ {
@@ -119,7 +124,8 @@
                 "requestModifiers": [
                     { "displayName": "permission_request_partner", "relationshipTags": ["sexual_partner"], "thresholdScale": 0.8 },
                     { "displayName": "permission_request_caring_high", "traitID": "trait_Chastity_caring", "thresholdScale": 1.5 },
-                    { "displayName": "permission_request_indifferent_high", "traitID": "trait_Chastity_indifferent", "thresholdScale": 0.5 }
+                    { "displayName": "permission_request_indifferent_high", "traitID": "trait_Chastity_indifferent", "thresholdScale": 0.5 },
+                    { "displayName": "permission_request_innocent", "traitID": "trait_Chastity_innocent", "thresholdScale": 0.25 }
                 ],
                 "requestable": true,
                 "requestRequirements": [ {
@@ -142,7 +148,8 @@
                 "requestModifiers": [
                     { "displayName": "permission_request_partner", "relationshipTags": ["sexual_partner"], "thresholdScale": 0.8 },
                     { "displayName": "permission_request_caring_high", "traitID": "trait_Chastity_caring", "thresholdScale": 1.5 },
-                    { "displayName": "permission_request_indifferent_high", "traitID": "trait_Chastity_indifferent", "thresholdScale": 0.5 }
+                    { "displayName": "permission_request_indifferent_high", "traitID": "trait_Chastity_indifferent", "thresholdScale": 0.5 },
+                    { "displayName": "permission_request_innocent", "traitID": "trait_Chastity_innocent", "thresholdScale": 0.25 }
                 ],
                 "requestable": true,
                 "requestRequirements": [ {
@@ -162,7 +169,8 @@
                 "requestModifiers": [
                     { "displayName": "permission_request_partner", "relationshipTags": ["sexual_partner"], "thresholdScale": 0.8 },
                     { "displayName": "permission_request_caring_high", "traitID": "trait_Chastity_caring", "thresholdScale": 1.5 },
-                    { "displayName": "permission_request_indifferent_high", "traitID": "trait_Chastity_indifferent", "thresholdScale": 0.5 }
+                    { "displayName": "permission_request_indifferent_high", "traitID": "trait_Chastity_indifferent", "thresholdScale": 0.5 },
+                    { "displayName": "permission_request_innocent", "traitID": "trait_Chastity_innocent", "thresholdScale": 0.25 }
                 ],
                 "requestable": true,
                 "requestRequirements": [ {
@@ -186,7 +194,8 @@
                 "requestModifiers": [
                     { "displayName": "permission_request_partner", "relationshipTags": ["sexual_partner"], "thresholdScale": 0.8 },
                     { "displayName": "permission_request_caring_high", "traitID": "trait_Chastity_caring", "thresholdScale": 1.5 },
-                    { "displayName": "permission_request_indifferent_high", "traitID": "trait_Chastity_indifferent", "thresholdScale": 0.5 }
+                    { "displayName": "permission_request_indifferent_high", "traitID": "trait_Chastity_indifferent", "thresholdScale": 0.5 },
+                    { "displayName": "permission_request_innocent", "traitID": "trait_Chastity_innocent", "thresholdScale": 0.25 }
                 ],
                 "requestable": true,
                 "requestRequirements": [ {
@@ -210,7 +219,8 @@
                 "requestModifiers": [
                     { "displayName": "permission_request_partner", "relationshipTags": ["sexual_partner"], "thresholdScale": 0.8 },
                     { "displayName": "permission_request_caring_high", "traitID": "trait_Chastity_caring", "thresholdScale": 1.5 },
-                    { "displayName": "permission_request_indifferent_high", "traitID": "trait_Chastity_indifferent", "thresholdScale": 0.5 }
+                    { "displayName": "permission_request_indifferent_high", "traitID": "trait_Chastity_indifferent", "thresholdScale": 0.5 },
+                    { "displayName": "permission_request_innocent", "traitID": "trait_Chastity_innocent", "thresholdScale": 0.25 }
                 ],
                 "requestable": true,
                 "requestRequirements": [ {
@@ -229,7 +239,8 @@
                 "requestModifiers": [
                     { "displayName": "permission_request_partner", "relationshipTags": ["sexual_partner"], "thresholdScale": 0.8 },
                     { "displayName": "permission_request_caring_high", "traitID": "trait_Chastity_caring", "thresholdScale": 1.5 },
-                    { "displayName": "permission_request_indifferent_high", "traitID": "trait_Chastity_indifferent", "thresholdScale": 0.5 }
+                    { "displayName": "permission_request_indifferent_high", "traitID": "trait_Chastity_indifferent", "thresholdScale": 0.5 },
+                    { "displayName": "permission_request_innocent", "traitID": "trait_Chastity_innocent", "thresholdScale": 0.25 }
                 ],
                 "requestable": true,
                 "requestRequirements": [ {

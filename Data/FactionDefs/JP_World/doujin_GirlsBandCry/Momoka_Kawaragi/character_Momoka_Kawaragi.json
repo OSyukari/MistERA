@@ -1,0 +1,88 @@
+{
+  "baseID": "GirlsBandCry_Char_Momoka_Kawaragi",
+  "Portrait":{
+    "portraitPriorityList":[
+      {
+        "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+
+        "random_portrait_folder":"Momoka_Kawaragi/portrait",
+            
+        "icon_offset_x":0,            "icon_offset_y":-144.8,            "icon_offset_size":0.6,
+
+        "icon_path":"Momoka_Kawaragi/portrait/ComfyUI_0004 (2).webp"
+      }
+    ]
+  },
+  "Template": {
+    "Appearance": "Female",
+    "stat_STR": 8,
+    "stat_CON": 9,
+    "stat_PSY": 11,
+    "stat_WIL": 12,
+    "personalityID": "personality_default",
+    "traits_body_sex": [
+      "trait_Sensitivity_B_default",
+      "trait_Sensitivity_M_default",
+      "trait_Sensitivity_C_default",
+      "trait_Sensitivity_V_default",
+      "trait_Sensitivity_A_default",
+      "trait_Size_B_B",
+      "trait_Size_P_none",
+      "trait_Size_V_1",
+      "trait_Size_A_1"
+    ],
+    "traits_body": [
+      "trait_BodyType_slim",
+      "trait_SkinColor_fair",
+      "trait_HairColor_silver",
+      "trait_EyeColor_purple"
+    ],
+    "Height": 164,
+    "Weight": 52,
+    "traits": [
+      "trait_AlcoholTolerance_good",
+      "trait_MemoryRetention_high",
+      "trait_MentalFortitude_high"
+    ],
+    "initialRelationship": [
+      {
+        "baseID": "GirlsBandCry_Char_Nina_Iseri",
+        "initialPersonalRelationship": "relationship_bff"
+      },
+      {
+        "baseID": "GirlsBandCry_Char_Subaru_Awa",
+        "initialPersonalRelationship": "relationship_friend"
+      },
+      {
+        "baseID": "GirlsBandCry_Char_Tomo_Ebizuka",
+        "initialPersonalRelationship": "relationship_friend"
+      },
+      {
+        "baseID": "GirlsBandCry_Char_Rupa",
+        "initialPersonalRelationship": "relationship_friend"
+      }
+    ],
+      "promptProfile": {
+          "prompts": [ "kawaragi momoka, girls band cry" ],
+          "intended prompts":"girl, kawaragi momoka, girls band cry, collarbone, black sweater, long sleeves, black transparent pantyhose, long hair, black choker, blue denim shorts, pantyhose under shorts",
+          "inheritRulesets": [ "ruleset_character_tag" ]
+      },
+    "initialInventory": [],
+    "defaultHairstyle": {
+      "hairstyleID": "hairstyle_bob",
+      "slotSelection": {
+        "front": "hair_front_side_swept"
+      }
+    },
+    "CharacterCard": "<Momoka_Kawaragi>\nIdentity: Momoka Kawaragi, 20-year-old lead guitarist and leader of TOGENASHI TOGEARI; former Diamond Dust member and street musician from Asahikawa.\nCurrent timeline: The band has left its agency and continues independently. In this game adaptation, she lives alone in a 1LDK apartment.\nCharacter: Straightforward, tomboyish, caring, and capable of taking the lead. She recognizes people’s musical potential and acts on it, but old professional disappointment makes her wary of asking younger people to gamble their futures on music. She left Diamond Dust over its changed direction without ceasing to care about the people or music she left behind. Her arguments with Nina are real conflicts, not a one-way mentor relationship.\nAppearance: Ash-silver asymmetrical hair, purple-toned eyes, plain dark clothing, and a black choker.\n</Momoka_Kawaragi>",
+    "Skills": null
+  },
+  "firstName": "GirlsBandCry_Char_Momoka_Kawaragi_firstname",
+  "middleName": "",
+  "lastName": "GirlsBandCry_Char_Momoka_Kawaragi_lastname",
+  "nameDisplayFormat": "chara_fullname_lastToFirst",
+  "origin": "charOrigin_none",
+  "race": "humanRace_human",
+  "raceTemplate": "humanRaceAddon_standard",
+  "startingGift": "charOriginGift_none"
+}

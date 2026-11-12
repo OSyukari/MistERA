@@ -61,6 +61,10 @@ public class DebugLogSettings
     public bool DLog_UIChange = false;
     public bool DLog_Interrupt = false;
     public bool DLog_Attitude = false;
+    /// <summary>[RecTrace] lines: why hosting / inviting / confirming a recreation session fails (RecreationUtility_HostTrace).</summary>
+    public bool DLog_Recreation = false;
+    /// <summary>DLog_Recreation only for this activity ID ("" = every activity - very noisy).</summary>
+    public string DLog_Recreation_ActivityID = "";
 }
 
 

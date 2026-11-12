@@ -3,7 +3,6 @@ using UnityEngine;
 using QuikGraph;
 using System;
 using Newtonsoft.Json;
-using System.Linq;
 
 public class ActionPackage_PathTo : ActionPackage
 {
@@ -37,13 +36,18 @@ public class ActionPackage_PathTo : ActionPackage
         {
             if (_path == null && _pathSnapshot != null)
             {
-                _path = _pathSnapshot.Select(s => new TaggedEdge<int, Door_Instance>(s.Source, s.Target, new Door_Instance(s.Cost) { worldInstance = s.WorldInstance })).ToList();
+                _path = new List<TaggedEdge<int, Door_Instance>>(_pathSnapshot.Count);
+                for (int i = 0; i < _pathSnapshot.Count; i++)
+                {
+                    var step = _pathSnapshot[i];
+                    _path.Add(new TaggedEdge<int, Door_Instance>(step.Source, step.Target, new Door_Instance(step.Cost) { worldInstance = step.WorldInstance }));
+                }
             }
             if (_path == null && doerRef != -1 && TargetRoom != null)
             {
                 var pp = scr_System_CampaignManager.current.Map.Findpath(doerRef, TargetRoom.RefID);
                 if (pp == null) return null;
-                _path = pp.ToList();
+                _path = new List<TaggedEdge<int, Door_Instance>>(pp);
                 SyncPathSnapshot();
             }
             return _path;
@@ -52,7 +56,14 @@ public class ActionPackage_PathTo : ActionPackage
 
     void SyncPathSnapshot()
     {
-        _pathSnapshot = _path?.Select(e => new PathEdgeSnapshot { Source = e.Source, Target = e.Target, Cost = e.Tag.Cost, WorldInstance = e.Tag.worldInstance }).ToList();
+        if (_path == null) { _pathSnapshot = null; return; }
+        if (_pathSnapshot == null) _pathSnapshot = new List<PathEdgeSnapshot>(_path.Count);
+        else _pathSnapshot.Clear();
+        for (int i = 0; i < _path.Count; i++)
+        {
+            var edge = _path[i];
+            _pathSnapshot.Add(new PathEdgeSnapshot { Source = edge.Source, Target = edge.Target, Cost = edge.Tag.Cost, WorldInstance = edge.Tag.worldInstance });
+        }
     }
 
     protected void PathPop()
@@ -107,7 +118,16 @@ public class ActionPackage_PathTo : ActionPackage
 
     [JsonIgnore] public override string DisplayName { get { return  LocalizeDictionary.QueryThenParse("chara_currentjob_pathing").Replace("$room$", TargetRoom.DisplayName); } }
 
-    [JsonIgnore] public override List<int> actorRefs { get { return new List<int>() { doerRef }; } }
+    [JsonIgnore] public override List<int> actorRefs
+    {
+        get
+        {
+            if (_actorRefs == null) _actorRefs = new List<int>(1);
+            int actor = doerRef;
+            if (_actorRefs.Count != 1 || _actorRefs[0] != actor) { _actorRefs.Clear(); _actorRefs.Add(actor); }
+            return _actorRefs;
+        }
+    }
 
     protected override bool PreEvaluate()
     {
@@ -166,6 +186,14 @@ public class ActionPackage_PathTo : ActionPackage
     protected override ActionPackage CopyPackage()
     {
         return this;
+    }
+
+    /// <summary>Caller must raw-detach first, then AddPackage to the new job before releasing the old actor.</summary>
+    internal void RehomeToJob(Job_MoveLocation homeJob)
+    {
+        // Keep this instance: route/snapshot, remaining duration, firstTick and doer refs are untouched.
+        ReEstablishParent(homeJob);
+        BindActivityExecution(null);
     }
 
     protected override bool Evaluate()

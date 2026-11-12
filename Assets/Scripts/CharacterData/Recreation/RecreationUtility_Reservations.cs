@@ -41,9 +41,12 @@ public static partial class RecreationUtility
         foreach (var room in venue.ManagedRooms.Values)
         {
             if (room == null || room.isRoomPrison || (IsOvernight(activity) && !room.isRoomPrivate)) continue;
-            foreach (var furniture in room.Furnitures)
+            for (int i = 0, count = room.FurnitureCount; i < count; i++)
+            {
+                var furniture = room.GetFurniture(i);
                 if (furniture?.JobGiver is Job_Furniture job && furniture.FurnitureBase.Tags.Contains(activity.reserveFurnitureTag)
                     && !result.Contains(job)) result.Add(job);
+            }
         }
         return result;
     }
@@ -80,12 +83,21 @@ public static partial class RecreationUtility
         RecreationGroup exceptSession = null, RecreationBooking exceptBooking = null)
     {
         if (string.IsNullOrEmpty(activity?.reserveFurnitureTag)) return true;
+        if (venue == null) return false;
+        bool overnight = IsOvernight(activity);
         var own = exceptSession?.ActivityJob as Job_Activity ?? exceptBooking?.ActivityJob as Job_Activity;
-        foreach (var furniture in ReservationFurniture(venue, activity))
+        foreach (var candidate in venue.ManagedRooms.Values)
         {
-            var room = furniture.ParentRoom;
-            if (!IsOvernight(activity) || venue.RoomOwners(room.RefID).Count == 0
-                || own != null && own.ParentRoom == room && OwnedOnlyByStay(venue, room, own)) return true;
+            if (candidate == null || candidate.isRoomPrison || (overnight && !candidate.isRoomPrivate)) continue;
+            for (int i = 0, count = candidate.FurnitureCount; i < count; i++)
+            {
+                var furniture = candidate.GetFurniture(i);
+                if (!(furniture?.JobGiver is Job_Furniture job)
+                    || !furniture.FurnitureBase.Tags.Contains(activity.reserveFurnitureTag)) continue;
+                var room = job.ParentRoom;
+                if (!overnight || !venue.HasRoomOwners(room.RefID)
+                    || own != null && own.ParentRoom == room && OwnedOnlyByStay(venue, room, own)) return true;
+            }
         }
         return false;
     }

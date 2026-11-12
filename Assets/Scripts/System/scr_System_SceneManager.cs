@@ -176,6 +176,15 @@ public class scr_System_SceneManager : MonoBehaviour
         }
     }
 
+    int pendingSceneLoads = 0;
+
+    /// <summary>
+    /// True while any LoadScene call is still loading additively in the background. Callers that need the
+    /// scene's objects (e.g. the Game scene's panels before running an opening event) wait on this instead of
+    /// assuming a fixed number of frames.
+    /// </summary>
+    public bool SceneLoading => pendingSceneLoads > 0;
+
     private IEnumerator LoadYourAsyncScene(string path)
     {
         // The Application loads the Scene in the background as the current Scene runs.
@@ -183,13 +192,15 @@ public class scr_System_SceneManager : MonoBehaviour
         // You could also load the Scene by using sceneBuildIndex. In this case Scene2 has
         // a sceneBuildIndex of 1 as shown in Build Settings.
 
+        pendingSceneLoads++;
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(path, LoadSceneMode.Additive);
 
         // Wait until the asynchronous scene fully loads
-        while (!asyncLoad.isDone)
+        while (asyncLoad != null && !asyncLoad.isDone)
         {
             yield return null;
         }
+        pendingSceneLoads--;
     }
 
     public void UnloadScene(string path)

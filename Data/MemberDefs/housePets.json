@@ -1,0 +1,181 @@
+{
+    "MapPlans": {
+        "memberTypes": [
+            {
+                "ID": "membertype_house_pet",
+                "displayNameKey": "membertype_house_pet",
+                "socialStandingKey": "membertype_house_pet",
+                "isMember": true,
+                "isManager": false,
+                "isPrisoner": false,
+                "isHidden": false,
+                "skipsJobDispatch": true,
+                "isPurgedOnPartyCleanup": false,
+                "participatesInCombat": false,
+                "preferredBedTypeID": "pet",
+                "workModule": { "workCommands": [], "activeHours": [], "activeDays": [] },
+                "recreation": { "activities": [] },
+                "providedActivities": [],
+                "_comment_forbidActivityTags": "Pets book, join and are invited to no activity (\"*\"); an activity the pet's own type provides (the dog's walk) is exempt.",
+                "forbidActivityTags": ["*"],
+                "behaviorOverrides": {
+                    "behavior_bedrest": {
+                        "$type": "TryFindPetRestByIDNode, Assembly-CSharp",
+                        "_comment_condition": "Runtime contract: c.requireBedRest && !c.shouldSleep; pet bed preference first, then generic bed-preference fallback. Inherits the normal ID-search fields.",
+                        "behaviorOverrideID": "behavior_bedrest",
+                        "targetID": "com_furniture_rest_required",
+                        "evaluationHeuristic": "ownership_Medium",
+                        "filter": {
+                            "matchCOMID": "com_furniture_rest_required",
+                            "checkBlacklist": false,
+                            "skipPrivateRoom": false,
+                            "searchJobList": false,
+                            "searchNonJobList": true,
+                            "excludePrisonRooms": true
+                        }
+                    },
+                    "behavior_sleep": {
+                        "$type": "TryFindPetRestByIDNode, Assembly-CSharp",
+                        "_comment_condition": "Runtime contract: c.shouldSleep; pet bed preference first, then generic bed-preference fallback. Inherits the normal ID-search fields.",
+                        "behaviorOverrideID": "behavior_sleep",
+                        "targetID": "com_furniture_sleep",
+                        "evaluationHeuristic": "ownership_Medium",
+                        "filter": {
+                            "matchCOMID": "com_furniture_sleep",
+                            "checkBlacklist": false,
+                            "skipPrivateRoom": false,
+                            "searchJobList": false,
+                            "searchNonJobList": true,
+                            "excludePrisonRooms": true
+                        }
+                    },
+                    "behavior_rest": {
+                        "$type": "TryFindPetRestByTagNode, Assembly-CSharp",
+                        "_comment_condition": "Runtime contract: c.shouldRest; pet bed preference first, then generic bed-preference fallback. Inherits the normal tag-search fields.",
+                        "behaviorOverrideID": "behavior_rest",
+                        "tag": "rest",
+                        "evaluationHeuristic": "ownership_Medium",
+                        "filter": {
+                            "matchCOMTag": "rest",
+                            "checkBlacklist": true,
+                            "skipPrivateRoom": false,
+                            "searchJobList": false,
+                            "searchNonJobList": true,
+                            "excludePrisonRooms": true
+                        }
+                    },
+                    "behavior_rest_fallback": {
+                        "$type": "TryFindPetRestByTagNode, Assembly-CSharp",
+                        "_comment_condition": "Runtime contract: unconditional fallback after higher-priority nodes; pet bed preference first, then generic bed-preference fallback. Inherits the normal tag-search fields.",
+                        "behaviorOverrideID": "behavior_rest_fallback",
+                        "tag": "rest",
+                        "evaluationHeuristic": "ownership_Medium",
+                        "filter": {
+                            "matchCOMTag": "rest",
+                            "checkBlacklist": false,
+                            "skipPrivateRoom": false,
+                            "searchJobList": false,
+                            "searchNonJobList": true,
+                            "excludePrisonRooms": true
+                        }
+                    }
+                },
+                "childMemberTypes": [
+                    {
+                        "ID": "membertype_house_pet_dog",
+                        "displayNameKey": "membertype_house_pet_dog",
+                        "socialStandingKey": "membertype_house_pet_dog",
+                        "providedActivities": [
+                            {
+                                "_comment": "The dog hosts (invite.SelfValidator: only the walk's provider) a Private session and invites up to 3 home members in friendliness order; the highest-ranked who accepts walks it (keepAccepted 1), the others are released. petWalk selects Job_ActivityPetWalk (travel to an authored destination, the walk commands below, back home within the 2 booked hours).",
+                                "ID": "house_activity_walk_dog",
+                                "mainTypeTag": "pet_care",
+                                "secondaryTags": ["outdoor", "home", "dog"],
+                                "typeID": "house_activity_walk_dog",
+                                "mergeWithSame": false,
+                                "allowWalkIn": false,
+                                "cooldownTag": "pet_walk",
+                                "cooldownOnProvider": true,
+                                "petWalk": {
+                                    "destinationFactionIDs": ["jp_park", "jp_tourist_riverside"],
+                                    "minimumOutdoorMinutes": 15,
+                                    "returnBufferMinutes": 5
+                                },
+                                "workModule": {
+                                    "jobPostID": "house_activity_walk_dog",
+                                    "workCommands": ["jp_park_stroll", "jp_riverside_relax"],
+                                    "activeHours": [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+                                    "activeDays": []
+                                },
+                                "eligibility": {
+                                    "chara_conditions": [
+                                        { "parameters": [ "isPrisonerAtHome", "false" ] }
+                                    ]
+                                },
+                                "minHours": 2,
+                                "maxHours": 2,
+                                "minDaysBetween": 1,
+                                "daysInAdvance": 0,
+                                "weeklyTarget": 7,
+                                "baseWeight": 20,
+                                "invite": {
+                                    "visibility": "Private",
+                                    "inviteChance": 100,
+                                    "minParticipants": 2,
+                                    "SelfValidator": {
+                                        "chara_conditions": [
+                                            { "parameters": [ "providesActivity", "house_activity_walk_dog" ] }
+                                        ]
+                                    },
+                                    "TargetValidators": [
+                                        {
+                                            "refKeys": [
+                                                "owner"
+                                            ],
+                                            "baseScope": "FactionMembers",
+                                            "extraScopeArguments": [
+                                                "@selfHomeFaction"
+                                            ],
+                                            "_comment_conditions": "No charaReq here: its defaults (requireConscious / requireAction) fail everyone asleep at the midnight planning. Pets are kept out by forbidActivityTags instead.",
+                                            "chara_conditions": [
+                                                { "parameters": [ "excludeSelf" ] }
+                                            ],
+                                            "required": true,
+                                            "minTargetCount": 1,
+                                            "maxTargetCount": 3,
+                                            "stopAtMaxTargetCount": true,
+                                            "maxParticipants": -1,
+                                            "keepAccepted": 1
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "ID": "membertype_house_pet_cat",
+                        "displayNameKey": "membertype_house_pet_cat",
+                        "socialStandingKey": "membertype_house_pet_cat",
+                        "providedActivities": []
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "membertype_house_pet": "家庭宠物",
+                "membertype_house_pet_dog": "家庭宠物犬",
+                "membertype_house_pet_cat": "家庭宠物猫",
+                "house_activity_walk_dog": "遛狗"
+            },
+            "en-us": {
+                "membertype_house_pet": "Household Pet",
+                "membertype_house_pet_dog": "Household Dog",
+                "membertype_house_pet_cat": "Household Cat",
+                "house_activity_walk_dog": "Walk the Dog"
+            }
+        }
+    }
+}

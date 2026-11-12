@@ -1,0 +1,47 @@
+{
+  "baseID": "BocchiRock_Char_Nijika_Ijichi",
+  "Portrait": {
+    "portraitPriorityList": [
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "random_portrait_folder": "Ijichi_Family/portrait_nijika",
+            
+        "icon_offset_x":0,            
+        "icon_offset_y":-144.8,            
+        "icon_offset_size":0.6,
+        "icon_path": "Ijichi_Family/portrait_nijika/ComfyUI_0002 (2).webp"
+      }
+    ]
+  },
+  "Template": {
+    "Appearance": "Female",
+    "stat_STR": 8,
+    "stat_CON": 9,
+    "stat_PSY": 11,
+    "stat_WIL": 13,
+    "personalityID": "personality_default",
+    "traits_body_sex": ["trait_Sensitivity_B_default", "trait_Sensitivity_M_default", "trait_Sensitivity_C_default", "trait_Sensitivity_V_default", "trait_Sensitivity_A_default", "trait_Size_B_B", "trait_Size_P_none", "trait_Size_V_1", "trait_Size_A_1"],
+    "traits_body": ["trait_BodyType_slim", "trait_SkinColor_fair", "trait_HairColor_blonde", "trait_EyeColor_red"],
+    "Height": 154,
+    "Weight": 48,
+    "traits": ["trait_EnergyCapacity_high", "trait_MentalFortitude_high"],
+    "initialRelationship": [
+      { "baseID": "BocchiRock_Char_Seika_Ijichi", "initialBiologicalRelationship": "relationship_sibling", "initialBiologicalRelationship_isA": true, "initialPersonalRelationship": "relationship_housemate" },
+      { "baseID": "BocchiRock_Char_Hitori_Gotoh", "initialPersonalRelationship": "relationship_friend" },
+      { "baseID": "BocchiRock_Char_Ryo_Yamada", "initialPersonalRelationship": "relationship_bff" },
+      { "baseID": "BocchiRock_Char_Ikuyo_Kita", "initialPersonalRelationship": "relationship_friend" }
+    ],
+    "initialInventory": [],
+    "defaultHairstyle": { "hairstyleID": "hairstyle_ponytail", "subCategoryID": "hairstyle_ponytail_side" },
+    "CharacterCard": "<Nijika_Ijichi>\nIdentity: Nijika Ijichi, 18-year-old Houdai University student; Kessoku Band drummer and practical leader.\nCurrent timeline: Continues playing and working at STARRY; has a driver's license and plans to drive the band on tours.\nHome: Lives with her older sister Seika at STARRY. She handles much of their cooking, housework, and everyday organization; the upstairs home remains private even though it shares the building with the venue.\nCharacter: Bright, considerate, and naturally good at making people comfortable. She holds the band together through concrete care, design and editing work, and straightforward follow-through. Her dream is for Kessoku Band to make STARRY famous in return for what Seika gave up for her. She can be sharp when friends evade responsibility, especially Ryo's freeloading or Bocchi's running away, without withdrawing her trust. She is notably uneasy around darkness and ghost stories.\nAppearance: Long blonde side ponytail with a triangular ahoge; vermilion eyes and her sister's red ribbon.\n</Nijika_Ijichi>",
+    "Skills": null
+  },
+  "firstName": "BocchiRock_Char_Nijika_Ijichi_firstname",
+  "middleName": "",
+  "lastName": "BocchiRock_Char_Ijichi_lastname",
+  "nameDisplayFormat": "chara_fullname_lastToFirst",
+  "origin": "charOrigin_none",
+  "race": "humanRace_human",
+  "raceTemplate": "humanRaceAddon_standard",
+  "startingGift": "charOriginGift_none"
+}

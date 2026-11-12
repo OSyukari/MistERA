@@ -1,6 +1,5 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 /// <summary>
@@ -11,8 +10,8 @@ using UnityEngine;
 /// <br/>Workers hold MemberType_FallbackWorker here (initiallyForbidWork), so by default the F1 forbid list
 /// keeps them away from their shift at the establishment; FallbackWorkerManager lifts it per worker when
 /// a shift is short-staffed and parks them (dormant: hour/day ticks only, per-minute state caught up on waking) back in the room when not needed.
-/// <br/>Not a shared pool: each worker is generated for one establishment MemberType (shift) and stays pinned to
-/// it for good (assignedMemberTypes) - they only ever cover that shift, never another one. A worker whose shift is no
+/// <br/>Each worker keeps one permanent establishment MemberType/schedule (assignedMemberTypes). Its staffing entry can
+/// count multiple regular posts through coversMemberTypes; the worker never changes into those posts. A worker whose schedule is no
 /// longer offered (dropped from fallbackWorkers, or unknown) is retired: parked, then removed (FallbackWorkerManager.RetireWorker).
 /// <br/>Subfactions (e.g. mall shops) don't get a pool of their own: they request workers from their owner's pool
 /// (FallbackWorkerManager.PoolOwnerFor), so one pool owned by the mall serves every shop. Each worker also records the
@@ -174,8 +173,63 @@ public class Manageable_WorkerPool : Manageable
     public void PruneAssignments()
     {
         if (assignedMemberTypes == null) return;
-        foreach (var refID in assignedMemberTypes.Keys.ToList())
-            if (!isManagedChara(refID)) ClearAssignedMemberType(refID);
+        var scratch = RentStaffingScratch();
+        try
+        {
+            PruneAssignments(scratch);
+        }
+        finally { ReturnStaffingScratch(scratch); }
+    }
+
+    internal void PruneAssignments(StaffingScratch scratch)
+    {
+        if (assignedMemberTypes == null) return;
+        foreach (var refID in assignedMemberTypes.Keys)
+            if (!isManagedChara(refID)) scratch.RemovedRefs.Add(refID);
+        for (int i = 0; i < scratch.RemovedRefs.Count; i++) ClearAssignedMemberType(scratch.RemovedRefs[i]);
+    }
+
+    // Pool-owned, bounded cache: nested callbacks rent separate scratch rather than clobbering an active pass.
+    [JsonIgnore] readonly Stack<StaffingScratch> staffingScratch = new Stack<StaffingScratch>();
+    internal sealed class StaffingScratch
+    {
+        internal readonly Dictionary<string, List<Character_Trainable>> WorkersByType = new Dictionary<string, List<Character_Trainable>>();
+        internal readonly List<List<Character_Trainable>> Buckets = new List<List<Character_Trainable>>();
+        internal readonly List<Character_Trainable> Retired = new List<Character_Trainable>();
+        internal readonly List<Character_Trainable> Workers = new List<Character_Trainable>();
+        internal readonly List<Character_Trainable> Ordered = new List<Character_Trainable>();
+        internal readonly List<int> RemovedRefs = new List<int>();
+        internal readonly List<string> CoveredTypes = new List<string>();
+        internal int UsedBuckets;
+
+        internal List<Character_Trainable> NextBucket()
+        {
+            if (UsedBuckets == Buckets.Count) Buckets.Add(new List<Character_Trainable>());
+            return Buckets[UsedBuckets++];
+        }
+
+        internal void Clear()
+        {
+            WorkersByType.Clear();
+            for (int i = 0; i < UsedBuckets; i++) Buckets[i].Clear();
+            UsedBuckets = 0;
+            Retired.Clear();
+            Workers.Clear();
+            Ordered.Clear();
+            RemovedRefs.Clear();
+            CoveredTypes.Clear();
+        }
+    }
+
+    internal StaffingScratch RentStaffingScratch()
+    {
+        return staffingScratch.Count > 0 ? staffingScratch.Pop() : new StaffingScratch();
+    }
+
+    internal void ReturnStaffingScratch(StaffingScratch scratch)
+    {
+        scratch.Clear();
+        if (staffingScratch.Count < 4) staffingScratch.Push(scratch);
     }
 }
 
@@ -184,8 +238,10 @@ public static class FallbackWorkerManager
     public const string MemberTypeID_FallbackWorker = "membertype_fallback_worker";
 
     static readonly HashSet<string> reportedMissingTemplates = new HashSet<string>();
+    static readonly HashSet<string> reportedInvalidCoveredTypes = new HashSet<string>();
+    static readonly HashSet<string> reportedNonLeafRoles = new HashSet<string>();
 
-    public static string PoolIDFor(Manageable establishment) { return PoolOwnerFor(establishment).ID + "_workerpool"; }
+    public static string PoolIDFor(Manageable establishment) { return PoolOwnerFor(establishment).WorkerPoolID; }
 
     /// <summary>
     /// The faction whose pool supplies establishment's fallback workers: the establishment itself, or for a subfaction
@@ -195,8 +251,17 @@ public static class FallbackWorkerManager
     public static Manageable PoolOwnerFor(Manageable establishment)
     {
         var owner = establishment;
-        var visited = new HashSet<Manageable>();
-        while (owner is Manageable_Subfaction sub && sub.Parent != null && visited.Add(owner)) owner = sub.Parent;
+        var slow = establishment;
+        var fast = establishment;
+        // Parent chains are normally one level; retain cycle safety without allocating a visited set every hour.
+        while (owner is Manageable_Subfaction sub && sub.Parent != null)
+        {
+            owner = sub.Parent;
+            slow = slow is Manageable_Subfaction slowSub ? slowSub.Parent : null;
+            fast = fast is Manageable_Subfaction fastSub ? fastSub.Parent : null;
+            fast = fast is Manageable_Subfaction fastParent ? fastParent.Parent : null;
+            if (slow != null && ReferenceEquals(slow, fast)) break;
+        }
         return owner;
     }
 
@@ -226,91 +291,127 @@ public static class FallbackWorkerManager
 
         // group every pooled worker by the one shift they were generated for - never by whatever membertype
         // they currently hold at the establishment, so a worker can't drift into (or be counted for) another shift
-        pool.PruneAssignments();
-        var workersByType = new Dictionary<string, List<Character_Trainable>>();
-        // workers whose shift can't be known (e.g. a save whose shift MemberType was since removed - it reads as None)
-        var retired = new List<Character_Trainable>();
-        foreach (var w in pool.ManagedChara)
+        var scratch = pool.RentStaffingScratch();
+        try
         {
-            if (!pool.IsPooledWorker(w)) continue;
-            // a shared pool (owner of several subfactions) also holds the other establishments' workers - leave those to
-            // their own establishment's pass, unless that establishment no longer exists
-            var establishmentID = pool.GetAssignedEstablishmentID(w);
-            if (establishmentID != establishment.ID)
+            pool.PruneAssignments(scratch);
+            var workersByType = scratch.WorkersByType;
+            // workers whose shift can't be known (e.g. a save whose shift MemberType was since removed - it reads as None)
+            var retired = scratch.Retired;
+            foreach (var w in pool.ManagedChara)
             {
-                if (scr_System_CampaignManager.current.FindFactionByID(establishmentID) == null) retired.Add(w);
-                continue;
-            }
-            // taken by a temp home (e.g. admitted as a hospital patient): not staffed, not sent home - its shift gets a replacement
-            if (w.FactionManager.Faction_Home_Temporary != null) continue;
-            var typeID = pool.GetAssignedMemberType(w);
-            if (string.IsNullOrEmpty(typeID)) { retired.Add(w); continue; }
-            // event-requested role (RequestOnDemand): never staffed or retired here - keep their membership and park one an
-            // event never released (stray safety net)
-            if (pool.IsOnDemandRole(typeID))
-            {
-                if (FactionUtility.TryGetMemberType(typeID, out var roleType)) EnsureAssignment(establishment, w, roleType);
-                SendHomeSafety(pool, w);
-                continue;
-            }
-            if (!workersByType.TryGetValue(typeID, out var list)) workersByType[typeID] = list = new List<Character_Trainable>();
-            list.Add(w);
-        }
-
-        foreach (var entry in hasShifts ? plan.fallbackWorkers : new List<MapPlan.FallbackWorkerInit>())
-        {
-            if (!FactionUtility.TryGetMemberType(entry.memberTypeID, out var shiftType) || shiftType.workModule == null) continue;
-
-            var module = shiftType.workModule;
-            bool shiftActive = module.IsActiveAt(hour, 0, establishment);   // a shift off on a day off (holidayPayoutMultiplier 0) needs no fallback
-
-            if (!workersByType.TryGetValue(shiftType.ID, out var workers)) workers = new List<Character_Trainable>();
-            workersByType.Remove(shiftType.ID);
-            foreach (var w in workers) EnsureAssignment(establishment, w, shiftType);
-
-            int real = 0;
-            if (shiftActive)
-            {
-                foreach (var c in establishment.ManagedChara)
+                if (!pool.IsPooledWorker(w)) continue;
+                // A shared pool also holds other establishments' workers; leave those to their own pass.
+                var establishmentID = pool.GetAssignedEstablishmentID(w);
+                if (establishmentID != establishment.ID)
                 {
-                    if (c == null || pool.IsPooledWorker(c) || establishment.GetMemberType(c)?.ID != shiftType.ID) continue;
-                    if (establishment.IsOnShift(c, hour)) real++;
+                    if (scr_System_CampaignManager.current.FindFactionByID(establishmentID) == null) retired.Add(w);
+                    continue;
                 }
-            }
-
-            int needed = shiftActive ? Mathf.Clamp(entry.headcount - real, 0, entry.MaxFallback) : 0;
-
-            while (workers.Count < needed)
-            {
-                var generated = Generate(establishment, pool, poolType, shiftType.ID, shiftType, entry.templateID);
-                if (generated == null) break;
-                workers.Add(generated);
-            }
-
-            // keep whoever is already working to avoid churn; among the rest, fetch at random
-            // (shuffle first - OrderByDescending is stable, so the random order survives within each group)
-            Utility.Shuffle(workers);
-            workers = workers.OrderByDescending(x => pool.AllowWorkFaction(x)).ToList();
-            for (int i = 0; i < workers.Count; i++)
-            {
-                var w = workers[i];
-                if (i < needed)
+                // A temp home runs its own sandboxing; the shift gets a replacement.
+                if (w.FactionManager.Faction_Home_Temporary != null) continue;
+                var typeID = pool.GetAssignedMemberType(w);
+                if (string.IsNullOrEmpty(typeID)) { retired.Add(w); continue; }
+                // Events own on-demand staffing; retain the stray safety net for unreleased workers.
+                if (pool.IsOnDemandRole(typeID))
                 {
-                    if (!pool.AllowWorkFaction(w)) pool.SetAllowWork(w, true);
-                    w.SetDormant(false);
-                    pool.strayHours.Remove(w.RefID);
-                }
-                else
-                {
-                    if (pool.AllowWorkFaction(w)) pool.SetAllowWork(w, false);
+                    if (FactionUtility.TryGetMemberType(typeID, out var roleType)) EnsureAssignment(establishment, w, roleType);
                     SendHomeSafety(pool, w);
+                    continue;
+                }
+                if (!workersByType.TryGetValue(typeID, out var list)) workersByType[typeID] = list = scratch.NextBucket();
+                list.Add(w);
+            }
+
+            for (int entryIndex = 0; hasShifts && entryIndex < plan.fallbackWorkers.Count; entryIndex++)
+            {
+                var entry = plan.fallbackWorkers[entryIndex];
+                if (entry == null) continue;
+                if (!FactionUtility.TryGetMemberType(entry.memberTypeID, out var shiftType) || shiftType.workModule == null) continue;
+                if (shiftType.Children.Count > 0)
+                {
+                    if (reportedNonLeafRoles.Add(shiftType.ID))
+                        Debug.LogError($"FallbackWorkerManager: [{establishment.ID}] staffed fallback role [{shiftType.ID}] must be a leaf MemberType");
+                    continue;
+                }
+
+                var module = shiftType.workModule;
+                bool shiftActive = module.IsActiveAt(hour, 0, establishment);   // a shift off on a day off (holidayPayoutMultiplier 0) needs no fallback
+
+                scratch.Workers.Clear();
+                if (!workersByType.TryGetValue(shiftType.ID, out var workers)) workers = scratch.Workers;
+                workersByType.Remove(shiftType.ID);
+                foreach (var w in workers) EnsureAssignment(establishment, w, shiftType);
+
+                int real = 0;
+                if (shiftActive && entry.MaxFallback > 0)
+                {
+                    scratch.CoveredTypes.Clear();
+                    if (entry.coversMemberTypes != null)
+                        for (int i = 0; i < entry.coversMemberTypes.Count; i++)
+                        {
+                            var coveredID = entry.coversMemberTypes[i];
+                            if (!string.IsNullOrEmpty(coveredID) && FactionUtility.TryGetMemberType(coveredID, out var coveredType))
+                                scratch.CoveredTypes.Add(coveredType.ID);
+                            else if (reportedInvalidCoveredTypes.Add(coveredID ?? ""))
+                                Debug.LogError($"FallbackWorkerManager: [{establishment.ID}] unknown coversMemberTypes ID [{coveredID}] for [{shiftType.ID}]");
+                        }
+                    var members = establishment.ManagedChara;
+                    for (int memberIndex = 0; memberIndex < members.Count; memberIndex++)
+                    {
+                        var c = members[memberIndex];
+                        if (c == null || pool.IsPooledWorker(c)) continue;
+                        if (!string.IsNullOrEmpty(c.fallbackPoolID)
+                            && scr_System_CampaignManager.current.FindFactionByID(c.fallbackPoolID) is Manageable_WorkerPool otherPool
+                            && otherPool.IsPooledWorker(c)) continue;
+                        var heldType = establishment.GetMemberType(c);
+                        bool covers = heldType?.ID == shiftType.ID;
+                        for (int i = 0; !covers && i < scratch.CoveredTypes.Count; i++)
+                            covers = MemberType.Matches(heldType, scratch.CoveredTypes[i]);
+                        if (!covers) continue;
+                        if (establishment.IsOnShift(c, hour)) real++;
+                    }
+                }
+
+                int needed = shiftActive && entry.MaxFallback > 0 ? Mathf.Clamp(entry.headcount - real, 0, entry.MaxFallback) : 0;
+
+                while (workers.Count < needed)
+                {
+                    var generated = Generate(establishment, pool, poolType, shiftType.ID, shiftType, entry.templateID);
+                    if (generated == null) break;
+                    workers.Add(generated);
+                }
+
+                // Stable enabled-first partition, retaining the shuffled order within both groups.
+                Utility.Shuffle(workers);
+                scratch.Ordered.Clear();
+                for (int i = 0; i < workers.Count; i++)
+                    if (pool.AllowWorkFaction(workers[i])) scratch.Ordered.Add(workers[i]);
+                for (int i = 0; i < workers.Count; i++)
+                    if (!pool.AllowWorkFaction(workers[i])) scratch.Ordered.Add(workers[i]);
+                workers = scratch.Ordered;
+                for (int i = 0; i < workers.Count; i++)
+                {
+                    var w = workers[i];
+                    if (i < needed)
+                    {
+                        if (!pool.AllowWorkFaction(w)) pool.SetAllowWork(w, true);
+                        w.SetDormant(false);
+                        pool.strayHours.Remove(w.RefID);
+                    }
+                    else
+                    {
+                        if (pool.AllowWorkFaction(w)) pool.SetAllowWork(w, false);
+                        SendHomeSafety(pool, w);
+                    }
                 }
             }
-        }
 
-        // workers whose shift was dropped from fallbackWorkers (or is unknown) are never reassigned - they are retired
-        foreach (var leftovers in workersByType.Values) retired.AddRange(leftovers);
-        foreach (var w in retired) RetireWorker(pool, w);
+            // Workers whose shift was dropped or is unknown are retired, never reassigned.
+            foreach (var leftovers in workersByType.Values) retired.AddRange(leftovers);
+            foreach (var w in retired) RetireWorker(pool, w);
+        }
+        finally { pool.ReturnStaffingScratch(scratch); }
     }
 
     /// <summary>
@@ -468,11 +569,13 @@ public static class FallbackWorkerManager
         }
         // a shift the hourly staffing manages can't also be lent to events
         var plan = string.IsNullOrEmpty(establishment.mapPlanID) ? null : scr_System_Serializer.current.MasterList.MapPlans.GetByID_MapPlan(establishment.mapPlanID);
-        if (plan?.fallbackWorkers != null && plan.fallbackWorkers.Exists(x => x.memberTypeID == memberTypeID))
-        {
-            Debug.LogError($"FallbackWorkerManager: [{establishment.ID}] [{memberTypeID}] is a staffed fallbackWorkers shift, not requestable");
-            return result;
-        }
+        if (plan?.fallbackWorkers != null)
+            for (int i = 0; i < plan.fallbackWorkers.Count; i++)
+                if (plan.fallbackWorkers[i]?.memberTypeID == memberTypeID)
+                {
+                    Debug.LogError($"FallbackWorkerManager: [{establishment.ID}] [{memberTypeID}] is a staffed fallbackWorkers shift, not requestable");
+                    return result;
+                }
         if (!FactionUtility.TryGetMemberType(MemberTypeID_FallbackWorker, out var poolType))
         {
             Debug.LogError($"FallbackWorkerManager: missing MemberType [{MemberTypeID_FallbackWorker}]");
@@ -486,22 +589,27 @@ public static class FallbackWorkerManager
 
         if (allowReuse)
         {
-            var free = new List<Character_Trainable>();
-            foreach (var w in pool.ManagedChara)
+            var scratch = pool.RentStaffingScratch();
+            try
             {
-                if (!pool.IsPooledWorker(w) || pool.GetAssignedEstablishmentID(w) != establishment.ID || pool.GetAssignedMemberType(w) != memberTypeID) continue;
-                if (exclude != null && exclude.Contains(w)) continue;
-                if (IsFreeForRequest(pool, w)) free.Add(w);
-            }
+                var free = scratch.Workers;
+                foreach (var w in pool.ManagedChara)
+                {
+                    if (!pool.IsPooledWorker(w) || pool.GetAssignedEstablishmentID(w) != establishment.ID || pool.GetAssignedMemberType(w) != memberTypeID) continue;
+                    if (exclude != null && exclude.Contains(w)) continue;
+                    if (IsFreeForRequest(pool, w)) free.Add(w);
+                }
 
-            // parked first: an awake one in the pool room may just have been handed to another event
-            Utility.Shuffle(free);
-            free = free.OrderByDescending(x => x.IsDormant).ToList();
-            foreach (var w in free)
-            {
-                if (result.Count >= count) break;
-                result.Add(w);
+                // parked first: an awake one in the pool room may just have been handed to another event
+                Utility.Shuffle(free);
+                for (int i = 0; i < free.Count; i++)
+                    if (free[i].IsDormant) scratch.Ordered.Add(free[i]);
+                for (int i = 0; i < free.Count; i++)
+                    if (!free[i].IsDormant) scratch.Ordered.Add(free[i]);
+                for (int i = 0; i < scratch.Ordered.Count && result.Count < count; i++)
+                    result.Add(scratch.Ordered[i]);
             }
+            finally { pool.ReturnStaffingScratch(scratch); }
         }
         while (result.Count < count)
         {

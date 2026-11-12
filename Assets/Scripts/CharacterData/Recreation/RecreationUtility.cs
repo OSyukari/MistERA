@@ -6,13 +6,13 @@ using UnityEngine;
 /// <summary>
 /// Recreation booking logic. Stateless: the bookings, attendance and plan progress live on Character_Factions, which
 /// calls through DailyPlan (day update stage 3) and explicit activity-change reconciliation.
-/// <br/>DailyPlan books a character's flexible visits for tomorrow - the activities of their recreation memberships
+    /// <br/>DailyPlan books a character's flexible visits within each activity's advance window - recreation memberships
 /// (MemberType.recreation - RecreationSpec.activities, one activity per visit) and flexible offers (RecreationOfferDef,
 /// Flexible) - into the free time around work and sleep, as RecreationBookings. A visit whose spec has a visibility is
 /// hosted as a shared session instead; fixed offers are sessions posted by the board. Sessions are answered in the
 /// hour's late passes and then resolve themselves (RecreationUtility_Groups.cs). Every activity announces itself
 /// (AnnounceSolo / AnnounceSession) - no per-character booking notices.
-/// The first run for a character also fills the rest of today.
+/// Advance dates are considered before today, reserving important appointments before routine same-day choices.
 /// <br/>Shape of a day's plan: one chain of flexible visits (1-4h each, MaxDailyHours in total with the day's other
 /// bookings) placed as near as fits to an anchor - after the day's last shift (work ->
 /// recreation -> sleep) most often, before a shift otherwise - or a random afternoon/evening start on a day off. Visits
@@ -100,7 +100,7 @@ public static partial class RecreationUtility
     public const string Event_ActivityNotice = "Recreation_ActivityNotice";
 
     /// <summary>Why a booking was cancelled - picks the reason text (ui_recreation_cancel_* keys).</summary>
-    public enum CancelReason { None, Slept, WorkForbidden, LostAccess, NoTime, Displaced, MembershipChanged, ByEvent, ByRequest, GroupCancelled, GroupFailed, NoShow, FacilityRemoved, OfferRemoved, FeeDeclined }
+    public enum CancelReason { None, Slept, WorkForbidden, LostAccess, NoTime, Displaced, MembershipChanged, ByEvent, ByRequest, GroupCancelled, GroupFailed, NoShow, FacilityRemoved, OfferRemoved, FeeDeclined, NotSelected }
 
     /// <summary>What an activity announces about itself.</summary>
     public enum ActivityNoticeKind { Confirmed, Rescheduled, Cancelled }
@@ -223,7 +223,9 @@ public static partial class RecreationUtility
     /// <summary>"activity @ venue, when HH:00-HH:00" - for a session booking with owner given, followed by who else is coming (DescribeCompany).</summary>
     public static string DescribeBooking(RecreationBooking b, Character_Trainable owner = null)
     {
-        string activity = b.workModule != null && !string.IsNullOrEmpty(b.workModule.jobPostID) ? LocalizeDictionary.QueryThenParse(b.workModule.jobPostID) : "";
+        // a session booking: its session's name (a performance's audience names who performs - SessionDisplayName)
+        string activity = b.Session != null ? b.Session.DisplayName
+            : b.workModule != null && !string.IsNullOrEmpty(b.workModule.jobPostID) ? LocalizeDictionary.QueryThenParse(b.workModule.jobPostID) : "";
         string venue = b.Faction != null ? b.Faction.FactionDisplayName : b.factionID;
         string line = LocalizeDictionary.QueryThenParse("ui_recreation_notice_line")
             .Replace("$activity$", activity).Replace("$venue$", venue).Replace("$time$", DescribeTime(b));
@@ -277,16 +279,15 @@ public static partial class RecreationUtility
     // ---------------- daily ---------------- //
 
     /// <summary>
-    /// Character_Factions.OnDayUpdate_Recreation (day update stage 3) - step 1: the board's calendar sessions are posted
-    /// (fixed offers, each its daysInAdvance ahead - whichever character plans first), f's session bookings synced, then
-    /// f's flexible visits planned - booked solo or posted as sessions f hosts (AddPlannedBookings): a day not planned
-    /// yet (tomorrow; today too on the first run) with every activity its daysInAdvance allows, and today - already
-    /// planned last night - once more with the same-day-only ones (daysInAdvance 0). The sessions posted here are
-    /// answered in the hour's late passes (OnLatePass) and resolve themselves after (ResolveSession).
+    /// Daily planning covers every relevant advance window. Pending occurrences prevent duplicates; the old
+    /// last-planned-day watermark must not hide newly eligible activities on an already visited date.
     /// </summary>
     public static void DailyPlan(Character_Factions f)
     {
         if (f == null || scr_System_CampaignManager.current == null || scr_System_Time.current == null) return;
+        planningLateCycle = scr_System_Time.current.HoursLateCycle + 1;
+        dailyDiscoveryClosed = false;
+        automaticPlanningDepth++;
         // the night's solo activities announce themselves on screen for the player's own household
         bool household = FactionUtility.IsPlayerHousehold(f.Owner);
         BeginAnnounceScope(household);
@@ -295,23 +296,33 @@ public static partial class RecreationUtility
             f.ClearInviteMemory();
             int today = scr_System_Time.current.getAbsoluteDay();
             scr_System_CampaignManager.current.RecreationBoard.PostCalendar();
-            // the hour's late passes that follow (the day update runs before them) are the day's one booking round for
-            // sessions (OnLatePass -> SessionPass); every planner re-ranks then, whether or not new sessions were posted
-            planningLateCycle = scr_System_Time.current.HoursLateCycle + 1;
+            DailyPlanOrganizations();
             bool added = false;
             if (ShouldPlan(f))
             {
                 f.RecreationDirty = true;
-                for (int day = today; day <= today + 1; day++)
-                {
-                    if (day > f.LastRecreationPlanDay) added |= PlanDay(f, day, int.MaxValue);
-                    else if (day == today) added |= PlanDay(f, day, 0);
-                }
-                f.LastRecreationPlanDay = Math.Max(f.LastRecreationPlanDay, today + 1);
+                int horizon = PlanningHorizon(f);
+                for (int day = today + horizon; day >= today; day--) added |= PlanDay(f, day, int.MaxValue);
+                f.LastRecreationPlanDay = today + horizon;
             }
             if (added) f.RefreshSchedule();
         }
-        finally { EndAnnounceScope(household); }
+        finally
+        {
+            EndAnnounceScope(household);
+            automaticPlanningDepth--;
+        }
+    }
+
+    static int PlanningHorizon(Character_Factions f)
+    {
+        int horizon = 0;
+        foreach (var source in ActivitySources(f))
+            if (source.spec.activities != null)
+                foreach (var activity in source.spec.activities)
+                    if (activity != null && !IsOvernight(activity)) horizon = Math.Max(horizon, activity.PlanningAdvanceDays);
+        foreach (var offer in FlexibleOffers()) horizon = Math.Max(horizon, offer.PlanningAdvanceDays);
+        return horizon;
     }
 
     static bool ShouldPlan(Character_Factions f)
@@ -416,6 +427,12 @@ public static partial class RecreationUtility
     /// </summary>
     static bool LostAccess(Character_Factions f, RecreationBooking b)
     {
+        // a member's individual activity stands while they are a member (leaving the organization ends it)
+        if (IsIndividualOrganizationBooking(b, out var organizer, out _)) return !IsOrganizationMember(f.Owner, organizer);
+        if (b.source == RecreationBookingSource.Organization)
+            return b.Session == null || !OrganizationSessionAvailable(b.Session)
+                || !b.isOrganizationAudience && (!b.Session.requiredParticipantRefs.Contains(f.Owner.RefID)
+                    || !IsOrganizationMember(f.Owner, Organization(b.organizerFactionID)));
         if (b.source != RecreationBookingSource.Membership) return false;
         if (b.Faction == null) return true;
         if (string.IsNullOrEmpty(b.memberTypeID))
@@ -476,6 +493,9 @@ public static partial class RecreationUtility
     public static RecreationActivity ResolveActivity(Character_Factions f, RecreationBooking b)
     {
         if (b == null) return null;
+        if (b.source == RecreationBookingSource.Organization)
+            return b.Session != null ? OrganizationActivity(b.Session)
+                : ResolveOrganizationActivity(b.organizerFactionID, b.activityID, b.factionID, b.venueOfferID, b.isOrganizationAudience);
         var def = RecreationBoard.FindDef(b.sourceKey);
         if (def != null) return def.AsActivity;
         if (string.IsNullOrEmpty(b.activityID) || f == null) return null;
@@ -627,6 +647,7 @@ public static partial class RecreationUtility
     public static bool ActivitiesConflict(RecreationActivity a, RecreationActivity b)
     {
         if (a == null || b == null) return false;
+        if (a.roomExclusive || b.roomExclusive) return true;
         string left = ActivityTypeID(a), right = ActivityTypeID(b);
         return (!string.IsNullOrEmpty(right) && a.conflictsWith?.Contains(right) == true)
             || (!string.IsNullOrEmpty(left) && b.conflictsWith?.Contains(left) == true)
@@ -636,7 +657,7 @@ public static partial class RecreationUtility
     /// <summary>Definition policy only. Runtime merging must also check the source overload for content, time, room and scope.</summary>
     public static bool CanMergeActivities(RecreationActivity a, RecreationActivity b)
     {
-        if (a == null || b == null || !a.mergeWithSame || !b.mergeWithSame || IsOvernight(a) || IsOvernight(b)) return false;
+        if (a == null || b == null || a.roomExclusive || b.roomExclusive || !a.mergeWithSame || !b.mergeWithSame || IsOvernight(a) || IsOvernight(b)) return false;
         string type = ActivityTypeID(a);
         if (string.IsNullOrEmpty(type) || type != ActivityTypeID(b) || a.launchEventID != b.launchEventID) return false;
         if (a.conflictsWith?.Contains(type) == true || b.conflictsWith?.Contains(type) == true) return false;
@@ -716,50 +737,148 @@ public static partial class RecreationUtility
             && MergeScopeAllows(OccurrenceActivity(right), OccurrenceHost(right), left);
     }
 
-    static List<I_ActivityBooking> PlacementOccurrences(Manageable venue)
+    const int PlacementPoolLimit = 8;
+    const int PlacementRetainedCapacity = 1024;
+    static readonly Stack<List<I_ActivityBooking>> placementOccurrencePool = new Stack<List<I_ActivityBooking>>();
+    static readonly Stack<List<Room_Instance>> activityRoomPool = new Stack<List<Room_Instance>>();
+
+    static List<I_ActivityBooking> RentPlacementOccurrences(Manageable venue)
     {
-        var result = new List<I_ActivityBooking>();
+        var result = placementOccurrencePool.Count > 0 ? placementOccurrencePool.Pop() : new List<I_ActivityBooking>();
+        try { FillPlacementOccurrences(venue, result); return result; }
+        catch { ReturnPlacementOccurrences(result); throw; }
+    }
+
+    static void ReturnPlacementOccurrences(List<I_ActivityBooking> result)
+    {
+        result.Clear();
+        if (placementOccurrencePool.Count < PlacementPoolLimit && result.Capacity <= PlacementRetainedCapacity) placementOccurrencePool.Push(result);
+    }
+
+    static List<Room_Instance> RentActivityRooms(Manageable venue, RecreationActivity activity, Character_Trainable host)
+    {
+        var result = activityRoomPool.Count > 0 ? activityRoomPool.Pop() : new List<Room_Instance>();
+        try { FillActivityRooms(venue, activity, host, result); return result; }
+        catch { ReturnActivityRooms(result); throw; }
+    }
+
+    static void ReturnActivityRooms(List<Room_Instance> result)
+    {
+        result.Clear();
+        if (activityRoomPool.Count < PlacementPoolLimit && result.Capacity <= PlacementRetainedCapacity) activityRoomPool.Push(result);
+    }
+
+    static void FillPlacementOccurrences(Manageable venue, List<I_ActivityBooking> result)
+    {
         var state = Lifecycle;
-        if (state == null || !state.venues.TryGetValue(venue.ID, out var indexed)) return result;
+        if (venue == null || state == null || !state.venues.TryGetValue(venue.ID, out var indexed)) return;
+        int now = NowAbs();
         foreach (var occurrence in indexed.occurrences)
         {
             var g = occurrence.session;
             var b = occurrence.booking;
-            if (g != null && g.IsOpen && g.AbsEnd > NowAbs()) result.Add(g);
-            else if (b != null && !b.isSessionBooking && b.AbsEnd > NowAbs()
+            if (g != null && g.IsOpen && g.AbsEnd > now) result.Add(g);
+            else if (b != null && !b.isSessionBooking && b.AbsEnd > now
                 && b.Owner?.FactionManager.HasBooking(b) == true) result.Add(b);
         }
         result.Sort((a, b) => OccurrenceStart(a).CompareTo(OccurrenceStart(b)));
-        return result;
     }
 
-    static List<Room_Instance> ActivityRooms(Manageable venue, RecreationActivity activity, Character_Trainable host)
+    static void FillActivityRooms(Manageable venue, RecreationActivity activity, Character_Trainable host, List<Room_Instance> result)
     {
-        if (activity?.facility != null) return FacilityRooms(venue, activity, host);
+        if (venue == null) return;
+        if (activity?.facility != null) { FillFacilityRooms(venue, activity, host, result); return; }
+        if (!string.IsNullOrEmpty(activity?.executionRoomID))
+        {
+            foreach (var r in venue.ManagedRooms.Values)
+                if (r?.Base?.ID == activity.executionRoomID && !r.isRoomPrison && !r.isRoomPrivate) result.Add(r);
+            return;
+        }
         if (!string.IsNullOrEmpty(activity?.reserveFurnitureTag))
         {
-            var reservationRooms = new List<Room_Instance>();
-            foreach (var j in ReservationFurniture(venue, activity))
-                if (j.ParentRoom != null && !reservationRooms.Contains(j.ParentRoom)) reservationRooms.Add(j.ParentRoom);
-            return reservationRooms;
+            foreach (var room in venue.ManagedRooms.Values)
+            {
+                if (room == null || room.isRoomPrison || (IsOvernight(activity) && !room.isRoomPrivate)) continue;
+                for (int i = 0, count = room.FurnitureCount; i < count; i++)
+                {
+                    var furniture = room.GetFurniture(i);
+                    if (furniture?.JobGiver is Job_Furniture job && furniture.FurnitureBase.Tags.Contains(activity.reserveFurnitureTag)
+                        && job.ParentRoom != null && !result.Contains(job.ParentRoom)) result.Add(job.ParentRoom);
+                }
+            }
+            return;
         }
-        var executionRooms = new List<Room_Instance>();
         if (activity?.workModule?.workCommands != null)
             foreach (var candidate in venue.ManagedRooms.Values)
             {
                 if (candidate == null || candidate.isRoomPrison || (candidate.isRoomPrivate
                     && (host == null || venue.GetOwnedRooms(host)?.Contains(candidate.RefID) != true))) continue;
-                if (RoomOffersAnyCommand(candidate, activity.workModule.workCommands)) executionRooms.Add(candidate);
+                if (RoomOffersAnyCommand(candidate, activity.workModule.workCommands)) result.Add(candidate);
             }
-        if (executionRooms.Count > 0) return executionRooms;
-        var room = Job_Activity.ResolveGatherRoom(venue, activity);
-        return room == null ? new List<Room_Instance>() : new List<Room_Instance>() { room };
+        if (result.Count > 0) return;
+        var gatherRoom = Job_Activity.ResolveGatherRoom(venue, activity);
+        if (gatherRoom != null) result.Add(gatherRoom);
+    }
+
+    static bool ActivityRoomAllows(Manageable venue, RecreationActivity activity, Character_Trainable host, Room_Instance room)
+    {
+        if (venue == null || room == null) return false;
+        if (activity?.facility != null) return FacilityRoomAllows(venue, activity, host, room);
+        if (!string.IsNullOrEmpty(activity?.executionRoomID))
+            return room.Base?.ID == activity.executionRoomID && !room.isRoomPrison && !room.isRoomPrivate
+                && venue.ManagedRooms.TryGetValue(room.RefID, out var bound) && bound == room;
+        if (!string.IsNullOrEmpty(activity?.reserveFurnitureTag))
+        {
+            foreach (var candidate in venue.ManagedRooms.Values)
+            {
+                if (candidate == null || candidate.isRoomPrison || (IsOvernight(activity) && !candidate.isRoomPrivate)) continue;
+                for (int i = 0, count = candidate.FurnitureCount; i < count; i++)
+                {
+                    var furniture = candidate.GetFurniture(i);
+                    if (furniture?.JobGiver is Job_Furniture job && job.ParentRoom == room
+                        && furniture.FurnitureBase.Tags.Contains(activity.reserveFurnitureTag)) return true;
+                }
+            }
+            return false;
+        }
+        if (activity?.workModule?.workCommands != null)
+        {
+            if (venue.ManagedRooms.TryGetValue(room.RefID, out var managed) && managed == room && !room.isRoomPrison
+                && (!room.isRoomPrivate || host != null && venue.GetOwnedRooms(host)?.Contains(room.RefID) == true)
+                && RoomOffersAnyCommand(room, activity.workModule.workCommands)) return true;
+            // The gather-room fallback is eligible only when no command room qualifies.
+            foreach (var candidate in venue.ManagedRooms.Values)
+            {
+                if (candidate == null || candidate.isRoomPrison || (candidate.isRoomPrivate
+                    && (host == null || venue.GetOwnedRooms(host)?.Contains(candidate.RefID) != true))) continue;
+                if (RoomOffersAnyCommand(candidate, activity.workModule.workCommands)) return false;
+            }
+        }
+        return Job_Activity.ResolveGatherRoom(venue, activity) == room;
+    }
+
+    static Room_Instance FixedActivityRoom(Manageable venue, RecreationActivity activity, Character_Trainable host)
+    {
+        Room_Instance first = null;
+        foreach (var room in venue.ManagedRooms.Values)
+        {
+            if (room?.Base?.ID != activity.executionRoomID) continue;
+            if (activity.facility != null)
+            {
+                if (!FacilityRoomAllows(venue, activity, host, room)) continue;
+                if (!string.IsNullOrEmpty(activity.gatherRoomID) && room.Base.ID == activity.gatherRoomID) first = room;
+                else if (first == null) first = room;
+            }
+            else if (!room.isRoomPrison && !room.isRoomPrivate) return room;
+        }
+        return first;
     }
 
     static bool RoomOffersAnyCommand(Room_Instance room, List<string> commands)
     {
-        foreach (var furniture in room.Furnitures)
+        for (int i = 0, count = room.FurnitureCount; i < count; i++)
         {
+            var furniture = room.GetFurniture(i);
             var job = furniture?.JobGiver;
             if (job == null) continue;
             foreach (var command in commands)
@@ -770,8 +889,13 @@ public static partial class RecreationUtility
 
     static void RememberActivityRoom(I_ActivityBooking source, Room_Instance room)
     {
-        if (source != null) plannedActivityRooms.GetValue(OccurrenceSource(source), _ => new PlannedActivityRoom()).room = room;
+        if (placementPreflightDepth == 0 && source != null)
+            plannedActivityRooms.GetValue(OccurrenceSource(source), _ => new PlannedActivityRoom()).room = room;
     }
+
+    static int placementPreflightDepth;
+    internal static void BeginPlacementPreflight() { placementPreflightDepth++; }
+    internal static void EndPlacementPreflight() { placementPreflightDepth--; }
 
     /// <summary>Logical execution room selected at planning; gathering can remain at a different entrance room.</summary>
     public static Room_Instance GetPlannedActivityRoom(I_ActivityBooking source)
@@ -782,26 +906,139 @@ public static partial class RecreationUtility
         var activity = OccurrenceActivity(source);
         var venue = scr_System_CampaignManager.current?.FindFactionByID(OccurrenceVenue(source));
         if (venue == null) return null;
-        var rooms = ActivityRooms(venue, activity, OccurrenceHost(source));
-        if (job?.ParentRoom != null && rooms.Contains(job.ParentRoom)) return job.ParentRoom;
-        if (plannedActivityRooms.TryGetValue(source, out var selected) && rooms.Contains(selected.room)) return selected.room;
-        foreach (var room in rooms)
+        // A fixed venue binding is the claim itself, even before any runtime assignment cache is rebuilt.
+        if (!string.IsNullOrEmpty(activity?.executionRoomID))
         {
-            bool blocked = false;
-            foreach (var other in PlacementOccurrences(venue))
-            {
-                if (ReferenceEquals(source, other) || OccurrenceStart(source) >= OccurrenceEnd(other) || OccurrenceStart(other) >= OccurrenceEnd(source)) continue;
-                if (plannedActivityRooms.TryGetValue(other, out var assigned) && assigned.room == room
-                    && ActivitiesConflict(activity, OccurrenceActivity(other))
-                    && !(CanMergeActivities(activity, OccurrenceActivity(other), OccurrenceMedia(source), OccurrenceMedia(other))
-                        && (activity.requireMedia == null || (OccurrenceStart(source) == OccurrenceStart(other) && OccurrenceEnd(source) == OccurrenceEnd(other)))
-                        && MergeScopesCompatible(source, other))) { blocked = true; break; }
-            }
-            if (blocked) continue;
-            RememberActivityRoom(source, room);
-            return room;
+            var bound = FixedActivityRoom(venue, activity, OccurrenceHost(source));
+            RememberActivityRoom(source, bound);
+            return bound;
         }
+        if (job?.ParentRoom != null && ActivityRoomAllows(venue, activity, OccurrenceHost(source), job.ParentRoom)) return job.ParentRoom;
+        if (plannedActivityRooms.TryGetValue(source, out var selected)
+            && ActivityRoomAllows(venue, activity, OccurrenceHost(source), selected.room)
+            && !FixedRoomClaimBlocks(source, venue, activity, selected.room)) return selected.room;
+        var rooms = RentActivityRooms(venue, activity, OccurrenceHost(source));
+        try
+        {
+            var occurrences = RentPlacementOccurrences(venue);
+            try
+            {
+                var blockedRooms = RentActivityRooms(null, null, null);
+                try
+                {
+                    foreach (var other in occurrences)
+                    {
+                        var otherActivity = OccurrenceActivity(other);
+                        if (!RoomClaimsConflict(source, activity, other, otherActivity)) continue;
+                        var otherRoom = KnownActivityRoom(other, venue, otherActivity);
+                        if (otherRoom != null) blockedRooms.Add(otherRoom);
+                    }
+                    foreach (var room in rooms)
+                    {
+                        if (blockedRooms.Contains(room)) continue;
+                        RememberActivityRoom(source, room);
+                        return room;
+                    }
+                }
+                finally { ReturnActivityRooms(blockedRooms); }
+            }
+            finally { ReturnPlacementOccurrences(occurrences); }
+        }
+        finally { ReturnActivityRooms(rooms); }
         return null;
+    }
+
+    static bool RoomClaimsConflict(I_ActivityBooking source, RecreationActivity activity, I_ActivityBooking other, RecreationActivity otherActivity)
+    {
+        return !ReferenceEquals(source, other) && OccurrenceStart(source) < OccurrenceEnd(other)
+            && OccurrenceStart(other) < OccurrenceEnd(source) && ActivitiesConflict(activity, otherActivity)
+            && !(CanMergeActivities(activity, otherActivity, OccurrenceMedia(source), OccurrenceMedia(other))
+                && (activity.requireMedia == null || (OccurrenceStart(source) == OccurrenceStart(other) && OccurrenceEnd(source) == OccurrenceEnd(other)))
+                && MergeScopesCompatible(source, other));
+    }
+
+    static bool FixedRoomClaimBlocks(I_ActivityBooking source, Manageable venue, RecreationActivity activity, Room_Instance room)
+    {
+        var state = Lifecycle;
+        if (state == null || !state.venues.TryGetValue(venue.ID, out var indexed)) return false;
+        int now = NowAbs();
+        // Read pinned claims from live sources, not assignment caches or a globally filtered snapshot.
+        foreach (var occurrence in indexed.occurrences)
+        {
+            I_ActivityBooking other = null;
+            var g = occurrence.session;
+            var b = occurrence.booking;
+            if (g != null && g.IsOpen && g.AbsEnd > now) other = g;
+            else if (b != null && !b.isSessionBooking && b.AbsEnd > now && b.Owner?.FactionManager.HasBooking(b) == true) other = b;
+            if (other == null || ReferenceEquals(source, other)
+                || OccurrenceStart(source) >= OccurrenceEnd(other) || OccurrenceStart(other) >= OccurrenceEnd(source)) continue;
+            var otherActivity = OccurrenceActivity(other);
+            if (string.IsNullOrEmpty(otherActivity?.executionRoomID) || room.Base?.ID != otherActivity.executionRoomID) continue;
+            if (RoomClaimsConflict(source, activity, other, otherActivity)
+                && FixedActivityRoom(venue, otherActivity, OccurrenceHost(other)) == room) return true;
+        }
+        return false;
+    }
+
+    static Room_Instance KnownActivityRoom(I_ActivityBooking source, Manageable venue, RecreationActivity activity)
+    {
+        if (activity == null) return null;
+        if (!string.IsNullOrEmpty(activity.executionRoomID)) return FixedActivityRoom(venue, activity, OccurrenceHost(source));
+        var job = source is RecreationGroup group ? group.ActivityJob : ((RecreationBooking)source).ActivityJob;
+        if (job?.ParentRoom != null && ActivityRoomAllows(venue, activity, OccurrenceHost(source), job.ParentRoom)) return job.ParentRoom;
+        return plannedActivityRooms.TryGetValue(source, out var assigned)
+            && ActivityRoomAllows(venue, activity, OccurrenceHost(source), assigned.room) ? assigned.room : null;
+    }
+
+    static int CompareRoomBookingOrder(I_ActivityBooking left, I_ActivityBooking right)
+    {
+        var leftJob = left is RecreationGroup lg ? lg.ActivityJob : ((RecreationBooking)left).ActivityJob;
+        var rightJob = right is RecreationGroup rg ? rg.ActivityJob : ((RecreationBooking)right).ActivityJob;
+        bool leftRunning = leftJob is Job_Activity la && la.Phase == ActivityPhase.Launched;
+        bool rightRunning = rightJob is Job_Activity ra && ra.Phase == ActivityPhase.Launched;
+        if (leftRunning != rightRunning) return leftRunning ? -1 : 1;
+        int serialLeft = left is RecreationGroup a ? a.createdSerial : ((RecreationBooking)left).createdSerial;
+        int serialRight = right is RecreationGroup b ? b.createdSerial : ((RecreationBooking)right).createdSerial;
+        int order = serialLeft.CompareTo(serialRight);
+        if (order != 0) return order;
+        order = OccurrenceStart(left).CompareTo(OccurrenceStart(right));
+        if (order != 0) return order;
+        string keyLeft = left is RecreationGroup gl ? gl.sourceKey : ((RecreationBooking)left).sourceKey;
+        string keyRight = right is RecreationGroup gr ? gr.sourceKey : ((RecreationBooking)right).sourceKey;
+        order = string.CompareOrdinal(keyLeft, keyRight);
+        if (order != 0) return order;
+        int ownerLeft = left is RecreationGroup hl ? hl.hostRef : ((RecreationBooking)left).ownerRef;
+        int ownerRight = right is RecreationGroup hr ? hr.hostRef : ((RecreationBooking)right).ownerRef;
+        return ownerLeft.CompareTo(ownerRight);
+    }
+
+    /// <summary>Defensive setup/launch check for conflicting room claims in loaded or externally changed bookings.</summary>
+    public static bool ActivityRoomBookingAllows(I_ActivityBooking source, Room_Instance executionRoom)
+    {
+        source = OccurrenceSource(source);
+        if (source == null) return false;
+        var activity = OccurrenceActivity(source);
+        if (activity == null) return true; // A plain event visit does not claim an execution room.
+        var venue = scr_System_CampaignManager.current?.FindFactionByID(OccurrenceVenue(source));
+        if (venue == null) return false;
+        bool qualifies = ActivityRoomAllows(venue, activity, OccurrenceHost(source), executionRoom);
+        if (!string.IsNullOrEmpty(activity.executionRoomID) && !qualifies) return false;
+        // Non-facility activities may gather at an entrance distinct from their planned execution room.
+        if (!qualifies) executionRoom = GetPlannedActivityRoom(source);
+        if (executionRoom == null) return !activity.roomExclusive;
+        var occurrences = RentPlacementOccurrences(venue);
+        try
+        {
+            foreach (var other in occurrences)
+            {
+                var otherActivity = OccurrenceActivity(other);
+                if (!RoomClaimsConflict(source, activity, other, otherActivity)) continue;
+                var otherRoom = KnownActivityRoom(other, venue, otherActivity) ?? GetPlannedActivityRoom(other);
+                if (otherRoom == executionRoom && CompareRoomBookingOrder(other, source) <= 0) return false;
+            }
+            return true;
+        }
+        finally { ReturnPlacementOccurrences(occurrences); }
     }
 
     public static bool CanPlaceActivity(RecreationActivity activity, Manageable venue, int start, int end,
@@ -822,50 +1059,71 @@ public static partial class RecreationUtility
     {
         room = null;
         if (venue == null || end <= start) return false;
-        var occurrences = PlacementOccurrences(venue);
-        foreach (var source in occurrences) GetPlannedActivityRoom(source);
-        var rooms = ActivityRooms(venue, activity, host);
-        // No activity definition means an ordinary event visit, not an execution policy to enforce.
-        if (activity == null) { room = rooms.Count > 0 ? rooms[0] : null; return true; }
-        for (int pass = 0; pass < 2; pass++)
-        foreach (var candidateRoom in rooms)
+        var rooms = RentActivityRooms(venue, activity, host);
+        try
         {
-            bool blocked = false, merge = exceptSession != null && candidateRoom == GetPlannedActivityRoom(exceptSession);
-            foreach (var source in occurrences)
+            // No activity definition means an ordinary event visit, not an execution policy to enforce.
+            if (activity == null) { room = rooms.Count > 0 ? rooms[0] : null; return true; }
+            var occurrences = RentPlacementOccurrences(venue);
+            try
             {
-                if (ReferenceEquals(source, exceptSession) || ReferenceEquals(source, exceptBooking)
-                    || OccurrenceEnd(source) <= start || OccurrenceStart(source) >= end
-                    || GetPlannedActivityRoom(source) != candidateRoom) continue;
-                var other = OccurrenceActivity(source);
-                bool compatible = CanMergeActivities(activity, other, mediaItemID ?? "", OccurrenceMedia(source))
-                    && (activity.requireMedia == null || (start == OccurrenceStart(source) && end == OccurrenceEnd(source)))
-                    && MergeScopeAllows(activity, host, source)
-                    && (exceptSession == null || MergeScopesCompatible(exceptSession, source));
-                if (compatible) merge = true;
-                else if (ActivitiesConflict(activity, other)) { blocked = true; break; }
+                var assignedRooms = RentActivityRooms(null, null, null);
+                try
+                {
+                    // Resolve once per overlapping source, not once per candidate room and merge pass.
+                    foreach (var source in occurrences)
+                        assignedRooms.Add(ReferenceEquals(source, exceptSession) || ReferenceEquals(source, exceptBooking)
+                            || OccurrenceEnd(source) <= start || OccurrenceStart(source) >= end ? null : GetPlannedActivityRoom(source));
+                    var mergeRoom = exceptSession == null ? null : GetPlannedActivityRoom(exceptSession);
+                    for (int pass = 0; pass < 2; pass++)
+                    foreach (var candidateRoom in rooms)
+                    {
+                        bool blocked = false, merge = exceptSession != null && candidateRoom == mergeRoom;
+                        for (int i = 0; i < occurrences.Count; i++)
+                        {
+                            if (assignedRooms[i] != candidateRoom) continue;
+                            var source = occurrences[i];
+                            var other = OccurrenceActivity(source);
+                            bool compatible = CanMergeActivities(activity, other, mediaItemID ?? "", OccurrenceMedia(source))
+                                && (activity.requireMedia == null || (start == OccurrenceStart(source) && end == OccurrenceEnd(source)))
+                                && MergeScopeAllows(activity, host, source)
+                                && (exceptSession == null || MergeScopesCompatible(exceptSession, source));
+                            if (compatible) merge = true;
+                            else if (ActivitiesConflict(activity, other)) { blocked = true; break; }
+                        }
+                        if (!blocked && (pass != 0 || merge)) { room = candidateRoom; return true; }
+                    }
+                    return false;
+                }
+                finally { ReturnActivityRooms(assignedRooms); }
             }
-            if (!blocked && (pass != 0 || merge)) { room = candidateRoom; return true; }
+            finally { ReturnPlacementOccurrences(occurrences); }
         }
-        return false;
+        finally { ReturnActivityRooms(rooms); }
     }
 
     static I_ActivityBooking FindCompatibleOccurrence(Character_Factions f, RecreationBooking booking)
     {
         var activity = booking.GetActivity(f);
         if (activity?.mergeWithSame != true || booking.Faction == null) return null;
-        foreach (var source in PlacementOccurrences(booking.Faction))
+        var occurrences = RentPlacementOccurrences(booking.Faction);
+        try
         {
-            if (ReferenceEquals(source, booking) || OccurrenceEnd(source) <= booking.AbsStart || OccurrenceStart(source) >= booking.AbsEnd) continue;
-            if (!CanMergeActivities(activity, OccurrenceActivity(source), booking.mediaItemID, OccurrenceMedia(source))
-                || !MergeScopeAllows(activity, f.Owner, source)) continue;
-            if (activity.requireMedia != null && (booking.AbsStart != OccurrenceStart(source) || booking.AbsEnd != OccurrenceEnd(source))) continue;
-            if (source is RecreationGroup g && (booking.AbsStart < g.AbsStart || booking.AbsEnd > g.AbsEnd
-                || !BookingCheck.For(g).Passes(f.Owner, out _))) continue;
-            var session = source as RecreationGroup;
-            if (TrySelectActivityRoom(activity, booking.Faction, booking.AbsStart, booking.AbsEnd, session?.Host ?? f.Owner,
-                session, booking, booking.mediaItemID, out var room) && room == GetPlannedActivityRoom(source)) return source;
+            foreach (var source in occurrences)
+            {
+                if (ReferenceEquals(source, booking) || OccurrenceEnd(source) <= booking.AbsStart || OccurrenceStart(source) >= booking.AbsEnd) continue;
+                if (!CanMergeActivities(activity, OccurrenceActivity(source), booking.mediaItemID, OccurrenceMedia(source))
+                    || !MergeScopeAllows(activity, f.Owner, source)) continue;
+                if (activity.requireMedia != null && (booking.AbsStart != OccurrenceStart(source) || booking.AbsEnd != OccurrenceEnd(source))) continue;
+                if (source is RecreationGroup g && (booking.AbsStart < g.AbsStart || booking.AbsEnd > g.AbsEnd
+                    || !BookingCheck.For(g).Passes(f.Owner, out _))) continue;
+                var session = source as RecreationGroup;
+                if (TrySelectActivityRoom(activity, booking.Faction, booking.AbsStart, booking.AbsEnd, session?.Host ?? f.Owner,
+                    session, booking, booking.mediaItemID, out var room) && room == GetPlannedActivityRoom(source)) return source;
+            }
+            return null;
         }
-        return null;
+        finally { ReturnPlacementOccurrences(occurrences); }
     }
 
     /// <summary>AddPlannedBookings hook: consumes an eligible shared occurrence without changing the visitor's booked hours.</summary>
@@ -916,13 +1174,21 @@ public static partial class RecreationUtility
         /// <summary>Acting MemberType of the booking (own-faction offer: the offered type; flexible offer: its memberTypeID); "" = the character's own type there (a membership).</summary>
         public string memberTypeID = "";
         public float weight;
-        /// <summary>Membership (an activity) or Offer (a flexible offer - sourceKey = its ID).</summary>
+        /// <summary>Membership (an activity), Offer (a flexible offer - sourceKey = its ID) or Organization (a member's individual activity - CollectIndividualCandidates).</summary>
         public RecreationBookingSource source = RecreationBookingSource.Membership;
+        /// <summary>Organization source: the organization whose individual activity this is ("" otherwise).</summary>
+        public string organizerFactionID = "";
         /// <summary>The media item picked for a media activity (RecreationActivity.requireMedia), "" = none.</summary>
         public string mediaItemID = "";
         /// <summary>A length the visit must have (a media item's runtime in whole hours), 0 = the activity's own range.</summary>
         public int fixedHours = 0;
         public I_ActivityBooking existingSource;
+        public RecreationBooking preview;
+        public RecreationPriority priority;
+        public List<RecreationBooking> exclusions;
+        public HashSet<(int start, int end)> rejectedPlacements;
+        public HostDecision hosting;
+        public RecreationVisibility visibility;
     }
 
     /// <summary>
@@ -984,13 +1250,81 @@ public static partial class RecreationUtility
         /// </summary>
         public List<Span> blocked = new List<Span>();
 
-        /// <summary>b's hours are taken from now on (an existing booking, or an offer just picked for this day) - also counted against the daily cap on its day.</summary>
+        /// <summary>
+        /// b's hours are taken from now on (an existing booking, or an offer just picked for this day) - also counted
+        /// against the daily cap on its day, unless its activity is exempt (RecreationActivity.countsTowardDailyCap).
+        /// </summary>
         public void AddFixed(RecreationBooking b)
         {
             if (b == null) return;
-            bool stay = IsOvernight(b.GetActivity(f));
+            var activity = b.GetActivity(f);
+            bool stay = IsOvernight(activity);
             fixedBookings.Add(new Span(b.AbsStart, b.AbsEnd, b.factionID, stay));
-            if (b.day == day && !stay) bookedToday += b.hours;
+            if (b.day == day && !stay && activity?.countsTowardDailyCap != false) bookedToday += b.hours;
+        }
+
+        /// <summary>Sessions AddPendingClaims already added (one may be both in the inbox and on a posted list).</summary>
+        HashSet<RecreationGroup> pendingClaims;
+
+        /// <summary>
+        /// Picking a time for incoming (PickSessionTime): the hours c already owes to an open session that would beat
+        /// incoming but holds no booking of theirs yet are taken too - added like bookings (AddFixed: overlap, travel
+        /// buffer, daily cap). The sessions c sees exactly as RankSessions does (their inbox, the Faction / World lists
+        /// they see - joining one by its BookingCheck + PickScopeRole), on this day or next to it, not started, minus
+        /// those they said no to or already hold a booking for. "Would beat incoming" = incoming can't displace it
+        /// (CanDisplaceBooking - the real clash rule, ties included). Lower-ranked ones don't count: incoming would win them.
+        /// </summary>
+        public void AddPendingClaims(RecreationBooking incoming)
+        {
+            if (incoming == null || c == null) return;
+            var inbox = f.SessionInbox;
+            for (int i = 0; i < inbox.Count; i++) ConsiderPendingClaim(inbox[i], incoming);
+            var ids = listIDPool.Count > 0 ? listIDPool.Pop() : new List<string>();
+            try
+            {
+                CollectVisibleListIDs(f, ids);
+                for (int i = 0; i < ids.Count; i++)
+                {
+                    var posted = Sessions.PostedTo(ids[i]);
+                    for (int j = 0; j < posted.Count; j++) ConsiderPendingClaim(posted[j], incoming);
+                }
+            }
+            finally
+            {
+                ids.Clear();
+                listIDPool.Push(ids);
+            }
+        }
+
+        void ConsiderPendingClaim(RecreationGroup g, RecreationBooking incoming)
+        {
+            if (g == null || g == incoming.Session || !g.IsOpen || g.concluded || g.AbsStart <= nowAbs) return;
+            if (g.day < day - 1 || g.day > day + 1) return;
+            if (pendingClaims != null && pendingClaims.Contains(g)) return;
+            // committed: already one of fixedBookings (or left out on purpose - incoming may displace it)
+            if (FindSessionBooking(f, g) != null) return;
+            var m = g.FindMember(c.RefID);
+            string role;
+            if (m != null)
+            {
+                if (m.state != RecreationMemberState.Invited && m.state != RecreationMemberState.Attending) return;
+                role = m.roleID;
+            }
+            else
+            {
+                // as RankSessions: reached through a faction / world list (or an organization's inbox push)
+                if (g.visibility != RecreationVisibility.Faction && g.visibility != RecreationVisibility.World) return;
+                if (!BookingCheck.For(g).Passes(c, out _)) return;
+                role = PickScopeRole(g, ResolveSpec(g.specRef), c);
+                if (role == null) return;
+            }
+            var preview = PreviewBooking(g);
+            preview.roleID = role;
+            if (CanDisplaceBooking(f, preview, incoming)) return;
+            if (pendingClaims == null) pendingClaims = new HashSet<RecreationGroup>();
+            pendingClaims.Add(g);
+            AddFixed(preview);
+            if (Traced(incoming.Session)) Trace($"PendingClaim {TraceName(c)}: {g.Label} [{role}] outranks {incoming.Session.Label} - its hours are taken");
         }
 
         void AddPredictedNight(int anchorDay, int anchorHour)
@@ -1069,16 +1403,14 @@ public static partial class RecreationUtility
         /// another place, and - unless ignoreSleep - WakeUpBufferHours awake after a night and no predicted night taken.
         /// </summary>
         public bool CanPlace(int s, int e, RecreationActivity activity, List<Span> chain, string venue,
-            RecreationGroup exceptSession = null, RecreationBooking exceptBooking = null, string mediaItemID = null)
+            RecreationGroup exceptSession = null, RecreationBooking exceptBooking = null, string mediaItemID = null, bool checkPlacement = true)
         {
             if (e <= s || s < dayStart || s >= dayEnd || s <= nowAbs) return false;
             bool stay = IsOvernight(activity);
-            var venueFaction = scr_System_CampaignManager.current.FindFactionByID(venue);
-            if (!HasReservationSpace(venueFaction, activity, s, e, exceptSession, exceptBooking)) return false;
-            if (!CanPlaceActivity(activity, venueFaction, s, e, exceptSession?.Host ?? c, exceptSession, exceptBooking, mediaItemID)) return false;
             int chainHours = 0;
             foreach (var span in chain) chainHours += span.Length;
-            if (!stay && bookedToday + chainHours + (e - s) > MaxDailyHours) return false;
+            // an exempt activity (countsTowardDailyCap false) is squeezed in on top of the day's quota
+            if (!stay && activity?.countsTowardDailyCap != false && bookedToday + chainHours + (e - s) > MaxDailyHours) return false;
 
             for (int t = s; t < e; t++)
             {
@@ -1114,6 +1446,12 @@ public static partial class RecreationUtility
                 // a visit planned by c themselves never takes their sleep
                 foreach (var n in nights) if (n.start < e && s < n.end) return false;
             }
+            if (checkPlacement)
+            {
+                var venueFaction = scr_System_CampaignManager.current.FindFactionByID(venue);
+                if (!HasReservationSpace(venueFaction, activity, s, e, exceptSession, exceptBooking)) return false;
+                if (!CanPlaceActivity(activity, venueFaction, s, e, exceptSession?.Host ?? c, exceptSession, exceptBooking, mediaItemID)) return false;
+            }
             return true;
         }
     }
@@ -1130,21 +1468,91 @@ public static partial class RecreationUtility
         var ctx = new DayContext(f, day);
         if (ctx.dayEnd <= ctx.nowAbs + 1) return false;
         if (Utility.RandomChance(SkipDayChance)) return false;
-
-        var result = new List<RecreationBooking>();
         var candidates = CollectCandidates(ctx, maxAdvance);
-        if (candidates.Count > 0)
+        bool added = false;
+        var anchors = OrderedAnchors(ctx);
+        var weights = new List<float>(candidates.Count);
+        var emptyChain = new List<Span>();
+        while (candidates.Count > 0)
         {
-            foreach (var anchor in OrderedAnchors(ctx))
+            weights.Clear();
+            var best = candidates[0].priority;
+            foreach (var candidate in candidates)
             {
-                var placed = PackChain(ctx, anchor.Key, anchor.Value, candidates);
-                if (placed.Count == 0) continue;
-                result.AddRange(placed);
-                break;
+                var priority = candidate.priority;
+                if (priority.CompareTo(best) > 0) best = priority;
             }
+            foreach (var candidate in candidates)
+                weights.Add(candidate.priority.CompareTo(best) == 0 ? candidate.weight : 0f);
+            int pick = WeightedIndex(weights);
+            var cand = candidates[pick];
+            candidates.RemoveAt(pick);
+            bool committed = false;
+            var excluded = RentBookingList();
+            try
+            {
+                var bookings = f.RecreationBookings;
+                for (int i = 0; i < bookings.Count; i++)
+                    if (CanDisplaceBooking(f, bookings[i], cand.preview)) excluded.Add(bookings[i]);
+                cand.exclusions = excluded;
+                // One context and one exclusion snapshot per anchor search, never per trial hour/duration.
+                DayContext placement = excluded.Count == 0 ? ctx : null;
+                int anchorIndex = 0;
+                Func<RecreationBooking> findPlacement = () =>
+                {
+                    if (placement == null) placement = new DayContext(f, day);
+                    while (anchorIndex < anchors.Count)
+                    {
+                        var anchor = anchors[anchorIndex];
+                        var booking = PlanVisit(placement, anchor.Key, anchor.Value, cand, emptyChain);
+                        if (booking != null) return booking;
+                        anchorIndex++;
+                    }
+                    return null;
+                };
+                while (anchorIndex < anchors.Count)
+                {
+                    var booking = f.WithoutRecreationBookings(excluded, findPlacement);
+                    if (booking == null)
+                    {
+                        if (Traced(cand.activity)) Trace($"{TraceName(ctx.c)} day {day}: no placement left (PlanVisit null for the remaining anchors - CanHost false or no free hours; host {ExplainFreeHours(f, day, cand.activity.MinHours, cand.faction.ID, cand.activity, true)})");
+                        break;
+                    }
+                    if (Traced(cand.activity)) Trace($"{TraceName(ctx.c)} day {day}: placed {booking.startHour:00}:00+{booking.hours}h, hosting {cand.hosting}");
+                    // Actual admission is outside the read-only preflight; a failure preserves fallback candidates.
+                    if (FindBookingConflicts(f, booking).Count == 0 && TryJoinPlannedBooking(f, booking)) committed = true;
+                    else if (cand.hosting == HostDecision.Host)
+                        committed = TryHostSession(f, booking, cand.activity.invite ?? RecreationInviteSpec.Default, cand.visibility, false);
+                    else committed = AddSolo(f, booking);
+                    if (committed) break;
+                    if (cand.rejectedPlacements == null) cand.rejectedPlacements = new HashSet<(int, int)>();
+                    cand.rejectedPlacements.Add((booking.AbsStart, booking.AbsEnd));
+                }
+            }
+            finally
+            {
+                cand.exclusions = null;
+                ReturnBookingList(excluded);
+            }
+            if (!committed && cand.hosting == HostDecision.Host && cand.activity.invite?.IsMandatory != true)
+            {
+                cand.hosting = HostDecision.Solo;
+                cand.preview.Session = null;
+                cand.preview.isSessionBooking = false;
+                cand.priority = PriorityFor(ctx.c, cand.preview);
+                cand.rejectedPlacements?.Clear();
+                candidates.Add(cand); // Re-rank the solo fallback instead of inheriting group priority.
+                continue;
+            }
+            if (!committed) continue;
+            added = true;
+            string key = CooldownKeyOf(cand.sourceKey);
+            for (int i = candidates.Count - 1; i >= 0; i--)
+                if (CooldownKeyOf(candidates[i].sourceKey) == key || SameDailyMainType(f, cand.activity, candidates[i].activity)) candidates.RemoveAt(i);
+            ctx = new DayContext(f, day);
+            if (!Utility.RandomChance(ExtendChainChance)) break;
         }
-
-        return AddPlannedBookings(f, result);
+        return added;
     }
 
     /// <summary>
@@ -1171,10 +1579,19 @@ public static partial class RecreationUtility
             {
                 if (activity == null || IsOvernight(activity) || string.IsNullOrEmpty(activity.ID) || activity.daysInAdvance > maxAdvance) continue;
                 string key = ActivitySourceKey(source.faction, activity);
-                if (!ActivityAllows(ctx.f, ctx.day, key, activity, source.faction)) continue;
+                var preview = CandidatePreview(ctx.f, ctx.day, source.faction.ID, activity, key, source.memberTypeID, RecreationBookingSource.Membership,
+                    out var hosting, out var visibility);
+                if (hosting == HostDecision.Skip || !ActivityAllows(ctx.f, ctx.day, key, activity, source.faction, incoming: preview))
+                {
+                    if (Traced(activity)) Trace($"{TraceName(ctx.c)} day {ctx.day}: no candidate - " + (hosting == HostDecision.Skip
+                        ? "hosting Skip (SelfValidator failed on a mandatory spec)" : "ActivityAllows: " + ExplainActivityAllows(ctx.f, ctx.day, activity, source.faction, null)));
+                    continue;
+                }
                 float weight = CharacterWeight(ctx.c, activity) * WeeklyFactor(ctx, key, activity) * TravelFactor(home, source.faction) * PersonalityFactor(ctx.c, source.faction, activity);
-                if (weight <= 0f) continue;
-                var cand = new Candidate() { faction = source.faction, activity = activity, sourceKey = key, memberTypeID = source.memberTypeID, weight = weight };
+                if (weight <= 0f) { if (Traced(activity)) Trace($"{TraceName(ctx.c)} day {ctx.day}: no candidate - weight {weight}"); continue; }
+                if (Traced(activity)) Trace($"{TraceName(ctx.c)} day {ctx.day}: candidate, hosting {hosting}, weight {weight}");
+                var cand = new Candidate() { faction = source.faction, activity = activity, sourceKey = key, memberTypeID = source.memberTypeID, weight = weight,
+                    preview = preview, priority = PriorityFor(ctx.c, preview), hosting = hosting, visibility = visibility };
                 result.Add(cand);
             }
         }
@@ -1185,12 +1602,42 @@ public static partial class RecreationUtility
             if (IsOvernight(activity)) continue;
             if (activity.daysInAdvance > maxAdvance) continue;
             var venue = scr_System_CampaignManager.current.FindFactionByID(def.factionID);
-            if (!OfferAllows(ctx.f, ctx.day, def) || !activity.AllowsDay(ctx.day - ctx.today, venue)) continue;
+            var preview = CandidatePreview(ctx.f, ctx.day, def.factionID, activity, def.ID, def.memberTypeID, RecreationBookingSource.Offer,
+                out var hosting, out var visibility);
+            if (hosting == HostDecision.Skip || !OfferAllows(ctx.f, ctx.day, def, incoming: preview) || !activity.AllowsDay(ctx.day - ctx.today, venue))
+            {
+                if (Traced(activity)) Trace($"{TraceName(ctx.c)} day {ctx.day}: no candidate - " + (hosting == HostDecision.Skip ? "hosting Skip"
+                    : !activity.AllowsDay(ctx.day - ctx.today, venue) ? "AllowsDay" : "OfferAllows failed"));
+                continue;
+            }
             float weight = CharacterWeight(ctx.c, activity) * WeeklyFactor(ctx, def.CooldownKey, activity) * TravelFactor(home, venue) * PersonalityFactor(ctx.c, venue, activity);
-            if (weight <= 0f) continue;
-            result.Add(new Candidate() { faction = venue, activity = activity, sourceKey = def.ID, memberTypeID = def.memberTypeID, weight = weight, source = RecreationBookingSource.Offer });
+            if (weight <= 0f) { if (Traced(activity)) Trace($"{TraceName(ctx.c)} day {ctx.day}: no candidate - weight {weight}"); continue; }
+            if (Traced(activity)) Trace($"{TraceName(ctx.c)} day {ctx.day}: candidate, hosting {hosting}, weight {weight}");
+            result.Add(new Candidate() { faction = venue, activity = activity, sourceKey = def.ID, memberTypeID = def.memberTypeID, weight = weight, source = RecreationBookingSource.Offer,
+                preview = preview, priority = PriorityFor(ctx.c, preview), hosting = hosting, visibility = visibility });
         }
+
+        // a member's individual organization activities (a band member's own practice) - at any venue that hosts them
+        CollectIndividualCandidates(ctx, maxAdvance, home, result);
         return result;
+    }
+
+    static RecreationBooking CandidatePreview(Character_Factions f, int day, string venueID, RecreationActivity activity, string key,
+        string memberTypeID, RecreationBookingSource source, out HostDecision hosting, out RecreationVisibility visibility, string organizerFactionID = "")
+    {
+        var b = new RecreationBooking { day = day, startHour = 12, hours = activity.MinHours, factionID = venueID,
+            activityID = source == RecreationBookingSource.Membership || source == RecreationBookingSource.Organization ? activity.ID : "",
+            organizerFactionID = organizerFactionID ?? "", sourceKey = key, source = source,
+            memberTypeID = memberTypeID, flexible = true, workModule = activity.workModule };
+        var spec = activity.invite ?? RecreationInviteSpec.Default;
+        hosting = DecideHosting(f, b, spec, out visibility);
+        if (hosting == HostDecision.Host)
+        {
+            b.Session = new RecreationGroup { hostRef = f.Owner.RefID, factionID = venueID, day = day, activityID = b.activityID,
+                sourceKey = key, source = source, memberTypeID = ActingTypeID(f, b), specRef = SpecRefFor(f, b) };
+            b.roleID = HostRoleID;
+        }
+        return b;
     }
 
     /// <summary>Every flexible offer def of the loaded worlds (a later world's entry wins).</summary>
@@ -1253,16 +1700,35 @@ public static partial class RecreationUtility
             cooldownKeyCampaign = campaign;
         }
         if (cooldownKeyCache.TryGetValue(sourceKey, out var key)) return key;
-        key = RecreationBoard.FindDef(sourceKey)?.CooldownKey ?? sourceKey;
+        if (ParseOrganizationSource(sourceKey, out var organizerID, out var activityID, out bool audience))
+        {
+            var organizer = Organization(organizerID);
+            var activity = organizer?.ActivityOrganization?.GetActivity(activityID);
+            if (activity == null) return sourceKey;
+            key = OrganizationCooldown(organizer, activity) + (audience ? ":audience" : "");
+        }
+        else key = RecreationBoard.FindDef(sourceKey)?.CooldownKey ?? sourceKey;
         cooldownKeyCache[sourceKey] = key;
         return key;
     }
 
+    /// <summary>
+    /// While above 0 the player's cooldown never blocks (CooldownAllows) - set only around the player's own
+    /// [支付并加入] from a fee box (PlayerJoinRefusal / PlayerJoinSession: user 2026-11-11, cooldown never greys it out).
+    /// </summary>
+    static int playerCooldownWaiver;
+
     /// <summary>Never twice on one day; with minDays (minDaysBetween), no other visit of key within that many days either side of `day`.</summary>
-    static bool CooldownAllows(Character_Factions f, int day, string key, int minDays)
+    static bool CooldownAllows(Character_Factions f, int day, string key, int minDays, RecreationBooking incoming = null)
     {
+        if (playerCooldownWaiver > 0 && f.Owner == Player) return true;
         int gap = Math.Max(1, minDays);
-        foreach (var d in VisitDays(f, key)) if (Math.Abs(d - day) < gap) return false;
+        foreach (var d in f.GetAttendedDays(key)) if (Math.Abs(d - day) < gap) return false;
+        foreach (var b in f.RecreationBookings)
+        {
+            if (b == null || b == incoming || incoming?.Session != null && b.Session == incoming.Session || CooldownKeyOf(b.sourceKey) != key) continue;
+            if (Math.Abs(b.day - day) < gap && (incoming == null || !CanDisplaceBooking(f, b, incoming))) return false;
+        }
         return true;
     }
 
@@ -1314,24 +1780,44 @@ public static partial class RecreationUtility
     /// day allowed (activeDays), its cooldown clear, and no other reservation of it pending (HasPendingReservation;
     /// except = the session being checked, which doesn't count against itself).
     /// </summary>
-    static bool ActivityAllows(Character_Factions f, int day, string key, RecreationActivity activity, Manageable venue, RecreationGroup except = null)
+    static bool ActivityAllows(Character_Factions f, int day, string key, RecreationActivity activity, Manageable venue, RecreationGroup except = null,
+        RecreationBooking incoming = null)
     {
+        key = ActivitySourceKey(venue, activity);
         int ahead = day - scr_System_Time.current.getAbsoluteDay();
+        incoming = incoming ?? (except != null ? PreviewBooking(except) : new RecreationBooking { day = day, factionID = venue?.ID,
+            sourceKey = key, activityID = activity.ID });
+        if (except != null) incoming.roleID = except.FindMember(f.Owner.RefID)?.roleID ?? incoming.roleID;
         // the provider of a provided activity (a family doctor) serves many - their clients' cooldown / one-at-a-time rules don't bind them
-        bool provider = ProvidesActivity(f.Owner, activity);
-        return activity.AllowsDay(ahead, venue) && activity.AllowsAdvance(ahead) && (provider || CooldownAllows(f, day, key, activity.minDaysBetween))
+        bool provider = !activity.cooldownOnProvider && ProvidesActivity(f.Owner, activity);
+        return activity.AllowsDay(ahead, venue) && activity.AllowsAdvance(ahead) && (provider || CooldownAllows(f, day, key, activity.minDaysBetween, incoming))
             && IsEligible(f.Owner, activity) && FacilityAvailable(venue, activity)
-            && (provider || !HasPendingReservation(f, key, except))
-            && DailyMainTypeAllows(f, day, activity, except)
+            && (provider || !HasPendingReservation(f, key, except, incoming))
+            && DailyMainTypeAllows(f, day, activity, except, incoming: incoming)
             && (except == null || ReservationRefusal(f, PreviewBooking(except)) == "");
     }
 
-    /// <summary>c passes activity's eligibility (its chara_conditions, c as self); no eligibility = anyone.</summary>
+    /// <summary>
+    /// c passes activity's eligibility (its chara_conditions, c as self; none = anyone) and no MemberType c holds forbids
+    /// it (MemberType.forbidActivityTags - an activity c provides themself is exempt).
+    /// </summary>
     public static bool IsEligible(Character_Trainable c, RecreationActivity activity)
     {
         if (c == null) return false;
+        if (ForbiddenByMemberType(c, activity)) return false;
         if (activity?.eligibility == null) return true;
         return EventUtility.isCharaValid(activity.eligibility, ConditionContext(c), c);
+    }
+
+    /// <summary>A MemberType c holds at one of their factions forbids activity (forbidActivityTags), and c doesn't provide it.</summary>
+    static bool ForbiddenByMemberType(Character_Trainable c, RecreationActivity activity)
+    {
+        if (activity == null || c.FactionManager == null) return false;
+        var factions = c.FactionManager.Factions;
+        bool forbidden = false;
+        for (int i = 0; i < factions.Count && !forbidden; i++)
+            if (factions[i]?.GetMemberType(c)?.ForbidsActivity(activity) == true) forbidden = true;
+        return forbidden && !ProvidesActivity(c, activity);
     }
 
     /// <summary>
@@ -1339,13 +1825,16 @@ public static partial class RecreationUtility
     /// reservation of it pending (HasPendingReservation; except = the session being checked), its venue there with no
     /// unpaid visit bill of f's payer (HasUnpaidActivityFee), f eligible (actor tags).
     /// </summary>
-    static bool OfferAllows(Character_Factions f, int day, RecreationOfferDef def, RecreationGroup except = null)
+    static bool OfferAllows(Character_Factions f, int day, RecreationOfferDef def, RecreationGroup except = null, RecreationBooking incoming = null)
     {
         // counted under its cooldown key: offers sharing a cooldownTag (the same kind of activity at one venue) count as one
-        if (def == null || !CooldownAllows(f, day, def.CooldownKey, def.minDaysBetween)) return false;
-        if (!DailyMainTypeAllows(f, day, def.AsActivity, except)) return false;
-        if (day - scr_System_Time.current.getAbsoluteDay() > def.daysInAdvance) return false;
-        if (HasPendingReservation(f, def.CooldownKey, except)) return false;
+        if (def == null) return false;
+        incoming = incoming ?? (except != null ? PreviewBooking(except) : new RecreationBooking { day = day, factionID = def.factionID,
+            source = RecreationBookingSource.Offer, sourceKey = def.ID, memberTypeID = def.memberTypeID });
+        if (!CooldownAllows(f, day, def.CooldownKey, def.minDaysBetween, incoming)) return false;
+        if (!DailyMainTypeAllows(f, day, def.AsActivity, except, incoming: incoming)) return false;
+        if (!def.AllowsAdvance(day - scr_System_Time.current.getAbsoluteDay())) return false;
+        if (HasPendingReservation(f, def.CooldownKey, except, incoming)) return false;
         var venue = scr_System_CampaignManager.current.FindFactionByID(def.factionID);
         if (venue == null || HasUnpaidActivityFee(f, venue)) return false;
         if (!IsEligible(f.Owner, def.AsActivity) || !FacilityAvailable(venue, def.AsActivity)) return false;
@@ -1358,20 +1847,22 @@ public static partial class RecreationUtility
     /// (posted, not booked yet) - except's own booking / except itself not counted. A new one of the same activity waits
     /// until that one is over.
     /// </summary>
-    static bool HasPendingReservation(Character_Factions f, string key, RecreationGroup except)
+    static bool HasPendingReservation(Character_Factions f, string key, RecreationGroup except, RecreationBooking incoming = null)
     {
         int nowAbs = NowAbs();
         var bookings = f.RecreationBookings;
         for (int i = 0; i < bookings.Count; i++)
         {
             var b = bookings[i];
-            if (b != null && b.AbsEnd > nowAbs && (except == null || b.Session != except) && CooldownKeyOf(b.sourceKey) == key) return true;
+            if (b != null && b.AbsEnd > nowAbs && (except == null || b.Session != except) && CooldownKeyOf(b.sourceKey) == key
+                && (incoming == null || !CanDisplaceBooking(f, b, incoming))) return true;
         }
         var inbox = f.SessionInbox;
         for (int i = 0; i < inbox.Count; i++)
         {
             var g = inbox[i];
-            if (g != null && g != except && g.IsOpen && g.AbsEnd > nowAbs && g.hostRef == f.Owner.RefID && CooldownKeyOf(g.sourceKey) == key) return true;
+            if (g != null && g != except && g.IsOpen && g.AbsEnd > nowAbs && g.hostRef == f.Owner.RefID && CooldownKeyOf(g.sourceKey) == key
+                && (incoming == null || !CanDisplaceBooking(f, PreviewBooking(g), incoming))) return true;
         }
         return false;
     }
@@ -1501,95 +1992,65 @@ public static partial class RecreationUtility
     }
 
     /// <summary>
-    /// Grows one chain of visits from anchor: candidates in weighted-random order. The first visit is placed as near the
-    /// anchor as fits (PlaceNear - forward: starting at it, else: ending at it); each further one, only tried with
-    /// ExtendChainChance, joins an end of the chain (TryExtend - its preferred side, forward = after it, else the other).
-    /// Visits at the same venue touch; at another venue they keep TravelBufferHours apart (DayContext.CanPlace).
-    /// Returns the new visits.
+    /// Places one ranked candidate near an anchor. PlanDay commits it before selecting the next candidate.
+    /// The caller has hidden displaceable bookings for this read-only search and reuses the day's context.
     /// </summary>
-    static List<RecreationBooking> PackChain(DayContext ctx, int anchor, bool forward, List<Candidate> candidates)
+    static RecreationBooking PlanVisit(DayContext ctx, int anchor, bool forward, Candidate cand, List<Span> chain)
     {
-        var result = new List<RecreationBooking>();
-        var pool = new List<Candidate>(candidates);
-        var chain = new List<Span>();
-        int chainStart = anchor, chainEnd = anchor;
-        var weights = new List<float>(pool.Count);
-
-        bool Place(Candidate candidate, bool existingOnly, out Span span)
+        Span span = default;
+        bool placed = false;
+        var occurrences = RentPlacementOccurrences(cand.faction);
+        try
         {
-            return chain.Count == 0
-                ? PlaceNear(ctx, candidate, chain, anchor, forward, existingOnly, out span)
-                : TryExtend(ctx, candidate, chain, chainStart, chainEnd, forward, existingOnly, out span);
-        }
-
-        while (pool.Count > 0)
-        {
-            if (chain.Count > 0 && !Utility.RandomChance(ExtendChainChance)) break;
-            weights.Clear();
-            foreach (var x in pool) weights.Add(x.weight);
-            int pick = WeightedIndex(weights);
-            var cand = pool[pick];
-            pool.RemoveAt(pick);
-
-            Span span = default;
-            bool placed = false;
-            foreach (var source in PlacementOccurrences(cand.faction))
+            for (int i = 0; i < occurrences.Count; i++)
             {
+                var source = occurrences[i];
                 if (!CanMergeActivities(cand.activity, OccurrenceActivity(source)) || !MergeScopeAllows(cand.activity, ctx.c, source)) continue;
+                if (source is RecreationGroup eligibleSession && !BookingCheck.For(eligibleSession).Passes(ctx.c, out _)) continue;
                 string media = OccurrenceMedia(source);
                 if (cand.activity.requireMedia != null && !MediaMatches(media, cand.activity.requireMedia)) continue;
                 cand.existingSource = source;
                 cand.mediaItemID = media ?? "";
                 cand.fixedHours = cand.activity.requireMedia == null ? 0 : MediaHours(media);
-                if (Place(cand, true, out span)) { placed = true; break; }
+                if (PlaceNear(ctx, cand, chain, anchor, forward, true, out span)) { placed = true; break; }
             }
-            if (!placed)
-            {
-                cand.existingSource = null;
-                cand.mediaItemID = "";
-                cand.fixedHours = 0;
-                // Only creating a new occurrence needs a host's own room, required invitees and inventory detection.
-                if (cand.activity.facility?.hostPrivateRoom == true && FacilityRooms(cand.faction, cand.activity, ctx.c).Count == 0) continue;
-                var check = cand.source == RecreationBookingSource.Offer
-                    ? BookingCheck.ForOffer(RecreationBoard.FindDef(cand.sourceKey), ctx.day)
-                    : BookingCheck.ForActivity(cand.faction.ID, cand.activity.ID, ctx.day);
-                if (!CanHost(ctx, cand.activity.invite, check)) continue;
-                if (cand.activity.requireMedia != null)
-                {
-                    cand.mediaItemID = PickMedia(cand.faction, cand.activity);
-                    if (string.IsNullOrEmpty(cand.mediaItemID)) continue;
-                    cand.fixedHours = MediaHours(cand.mediaItemID);
-                }
-                placed = Place(cand, false, out span);
-            }
-            if (!placed) continue;
-            var booking = RecreationBooking.Create(span.start / 24, span.start % 24, span.Length, cand.faction.ID, cand.activity.workModule,
-                cand.source, cand.sourceKey, cand.memberTypeID, activityID: cand.source == RecreationBookingSource.Membership ? cand.activity.ID : "",
-                forbidCancel: cand.activity.forbidCancel, flexible: true);
-            if (booking == null) continue;
-            booking.mediaItemID = cand.mediaItemID ?? "";
-            var existingSession = cand.existingSource as RecreationGroup;
-            if (!TrySelectActivityRoom(cand.activity, cand.faction, span.start, span.end, existingSession?.Host ?? ctx.c, existingSession, booking,
-                booking.mediaItemID, out var room)) continue;
-            RememberActivityRoom(booking, room);
-
-            result.Add(booking);
-            // Neither a shared cooldown nor a daily category may follow itself in this chain.
-            string placedKey = CooldownKeyOf(cand.sourceKey);
-            for (int i = pool.Count - 1; i >= 0; i--)
-                if (CooldownKeyOf(pool[i].sourceKey) == placedKey || SameDailyMainType(ctx.f, cand.activity, pool[i].activity)) pool.RemoveAt(i);
-            chainStart = chain.Count == 0 ? span.start : Math.Min(chainStart, span.start);
-            chainEnd = chain.Count == 0 ? span.end : Math.Max(chainEnd, span.end);
-            chain.Add(span);
         }
-        return result;
-    }
-
-    /// <summary>The candidate's lengths to try: its fixed length (a media runtime) only, else the activity's (LengthsToTry(activity)).</summary>
-    static List<int> LengthsToTry(Candidate cand)
-    {
-        if (cand.fixedHours > 0) return new List<int>() { cand.fixedHours };
-        return LengthsToTry(cand.activity);
+        finally { ReturnPlacementOccurrences(occurrences); }
+        if (!placed)
+        {
+            cand.existingSource = null;
+            cand.mediaItemID = "";
+            cand.fixedHours = 0;
+            // Only creating a new occurrence needs the host's room, required invitees and inventory detection.
+            if (cand.activity.facility?.hostPrivateRoom == true && FacilityRooms(cand.faction, cand.activity, ctx.c).Count == 0) return null;
+            var check = cand.source == RecreationBookingSource.Offer
+                ? BookingCheck.ForOffer(RecreationBoard.FindDef(cand.sourceKey), ctx.day)
+                : BookingCheck.ForActivity(cand.faction.ID, cand.activity.ID, ctx.day);
+            if (!CanHost(ctx, cand.activity.invite, check))
+            {
+                if (Traced(cand.activity)) Trace($"{TraceName(ctx.c)} day {ctx.day}: CanHost false (SelfValidator, or a required role finds too few invitable targets - see CollectTargets lines)");
+                return null;
+            }
+            if (cand.activity.requireMedia != null)
+            {
+                cand.mediaItemID = PickMedia(cand.faction, cand.activity);
+                if (string.IsNullOrEmpty(cand.mediaItemID)) return null;
+                cand.fixedHours = MediaHours(cand.mediaItemID);
+            }
+            placed = PlaceNear(ctx, cand, chain, anchor, forward, false, out span);
+        }
+        if (!placed) return null;
+        var booking = RecreationBooking.Create(span.start / 24, span.start % 24, span.Length, cand.faction.ID, cand.activity.workModule,
+            cand.source, cand.sourceKey, cand.memberTypeID,
+            activityID: cand.source == RecreationBookingSource.Membership || cand.source == RecreationBookingSource.Organization ? cand.activity.ID : "",
+            forbidCancel: cand.activity.forbidCancel, flexible: true, organizerFactionID: cand.organizerFactionID);
+        if (booking == null) return null;
+        booking.mediaItemID = cand.mediaItemID ?? "";
+        var existingSession = cand.existingSource as RecreationGroup;
+        if (!TrySelectActivityRoom(cand.activity, cand.faction, span.start, span.end, existingSession?.Host ?? ctx.c, existingSession, booking,
+            booking.mediaItemID, out var room)) return null;
+        RememberActivityRoom(booking, room);
+        return booking;
     }
 
     /// <summary>The activity's lengths to try: a random one in its range first, then the rest longest first.</summary>
@@ -1609,14 +2070,19 @@ public static partial class RecreationUtility
     /// </summary>
     static bool PlaceNear(DayContext ctx, Candidate cand, List<Span> chain, int anchor, bool forward, bool existingOnly, out Span span)
     {
-        var lengths = LengthsToTry(cand);
+        int min = cand.fixedHours > 0 ? cand.fixedHours : cand.activity.MinHours;
+        int max = cand.fixedHours > 0 ? cand.fixedHours : cand.activity.MaxHours;
+        int preferred = UnityEngine.Random.Range(min, max + 1);
         for (int n = 0; n < 24; n++)
         {
-            foreach (int offset in n == 0 ? new[] { 0 } : (forward ? new[] { n, -n } : new[] { -n, n }))
+            for (int side = 0; side < (n == 0 ? 1 : 2); side++)
             {
+                int offset = side == 0 ? (forward ? n : -n) : (forward ? -n : n);
                 int pivot = anchor + offset;
-                foreach (int l in lengths)
+                for (int index = 0; index <= max - min + 1; index++)
                 {
+                    int l = index == 0 ? preferred : max - index + 1;
+                    if (index > 0 && l == preferred) continue;
                     span = forward ? new Span(pivot, pivot + l, cand.faction.ID) : new Span(pivot - l, pivot, cand.faction.ID);
                     if (CandidateFits(ctx, cand, chain, span, existingOnly)) return true;
                 }
@@ -1627,37 +2093,34 @@ public static partial class RecreationUtility
     }
 
     /// <summary>
-    /// A further visit at an end of the chain [chainStart, chainEnd): its preferred side (forward = after) first, then the
-    /// other; right against it, or TravelBufferHours off when the neighbouring visit is at another venue.
+    /// Trial placement against the caller's reusable day context and temporarily excluded bookings.
     /// </summary>
-    static bool TryExtend(DayContext ctx, Candidate cand, List<Span> chain, int chainStart, int chainEnd, bool forward, bool existingOnly, out Span span)
-    {
-        var lengths = LengthsToTry(cand);
-        foreach (bool side in new[] { forward, !forward })
-        {
-            foreach (int l in lengths)
-            {
-                foreach (int gap in new[] { 0, TravelBufferHours })
-                {
-                    span = side ? new Span(chainEnd + gap, chainEnd + gap + l, cand.faction.ID) : new Span(chainStart - gap - l, chainStart - gap, cand.faction.ID);
-                    if (CandidateFits(ctx, cand, chain, span, existingOnly)) return true;
-                }
-            }
-        }
-        span = default;
-        return false;
-    }
-
     static bool CandidateFits(DayContext ctx, Candidate candidate, List<Span> chain, Span span, bool existingOnly)
     {
+        if (candidate.rejectedPlacements?.Contains((span.start, span.end)) == true) return false;
         var source = existingOnly ? candidate.existingSource : null;
         var session = source as RecreationGroup;
         if (existingOnly)
         {
             if (source == null || OccurrenceEnd(source) <= span.start || OccurrenceStart(source) >= span.end) return false;
             if (candidate.activity.requireMedia != null && (span.start != OccurrenceStart(source) || span.end != OccurrenceEnd(source))) return false;
-            if (session != null && (span.start < session.AbsStart || span.end > session.AbsEnd
-                || !BookingCheck.For(session).Passes(ctx.c, out _))) return false;
+            if (session != null && (span.start < session.AbsStart || span.end > session.AbsEnd)) return false;
+        }
+        // The optimistic context omits all lower-ranked visits. Count those this particular interval would retain,
+        // so an over-cap free slot does not hide a later slot that can actually displace a visit.
+        if (!IsOvernight(candidate.activity) && candidate.exclusions != null)
+        {
+            int retainedHours = ctx.bookedToday;
+            for (int i = 0; i < candidate.exclusions.Count; i++)
+            {
+                var b = candidate.exclusions[i];
+                if (b.day != ctx.day || IsOvernight(b.GetActivity(ctx.f)) || BookingClaimConflict(ctx.f, b, candidate.preview)) continue;
+                bool conflict = b.Overlaps(span.start, span.end) || b.factionID != candidate.faction.ID
+                    && ((b.AbsEnd <= span.start && b.AbsEnd > span.start - TravelBufferHours)
+                        || (b.AbsStart >= span.end && b.AbsStart < span.end + TravelBufferHours));
+                if (!conflict) retainedHours += b.hours;
+            }
+            if (retainedHours + span.Length > MaxDailyHours) return false;
         }
         return ctx.CanPlace(span.start, span.end, candidate.activity, chain, candidate.faction.ID,
             exceptSession: session, mediaItemID: candidate.mediaItemID);
@@ -1674,6 +2137,7 @@ public static partial class RecreationUtility
             roll -= Mathf.Max(0f, weights[i]);
             if (roll < 0f) return i;
         }
+        for (int i = weights.Count - 1; i >= 0; i--) if (weights[i] > 0f) return i;
         return weights.Count - 1;
     }
 
@@ -1683,7 +2147,7 @@ public static partial class RecreationUtility
     /// broken can no longer happen as planned (a schedule now claims its hours, or it eats too much of a night - see
     /// triggered reconciliation - or a session needs its time). Re-packs that day's movable bookings (flexible visits not frozen yet -
     /// IsMovableVisit - broken among them) as one chain (TravelBufferHours apart where the venue changes) at the start
-    /// nearest their original one, keeping as many as fit in their original order; those that no longer fit are
+    /// nearest their original one, keeping higher-priority visits first; those that no longer fit are
     /// cancelled. A frozen, locked, event or session booking is never moved - it is just cancelled. unplacedReason = what
     /// a cancellation here is announced as (NoTime; Displaced when an event booking or a session took the time).
     /// </summary>
@@ -1706,20 +2170,31 @@ public static partial class RecreationUtility
         var group = new List<RecreationBooking>();
         var bookings = f.RecreationBookings;
         for (int i = 0; i < bookings.Count; i++) if (Movable(bookings[i]) && bookings[i].day == broken.day) group.Add(bookings[i]);
-        SortStable(group, (a, b) => a.AbsStart.CompareTo(b.AbsStart));
         if (!group.Contains(broken)) group.Add(broken);
+        SortStable(group, (a, b) => CompareActivityPriority(f.Owner, a, null, b, null));
         int origin = int.MaxValue;
         foreach (var b in group) origin = Math.Min(origin, b.AbsStart);
         foreach (var b in group) f.RemoveBooking(b);
 
         var ctx = new DayContext(f, broken.day);
         List<KeyValuePair<RecreationBooking, int>> best = null;
+        bool Better(List<KeyValuePair<RecreationBooking, int>> proposed)
+        {
+            if (best == null) return true;
+            foreach (var booking in group)
+            {
+                bool hasProposed = proposed.Exists(x => x.Key == booking);
+                bool hasBest = best.Exists(x => x.Key == booking);
+                if (hasProposed != hasBest) return hasProposed;
+            }
+            return false;
+        }
         for (int d = 0; d < 24 && (best == null || best.Count < group.Count); d++)
         {
             foreach (int s0 in d == 0 ? new[] { origin } : new[] { origin - d, origin + d })
             {
                 var placed = PlaceInOrder(ctx, group, s0);
-                if (best == null || placed.Count > best.Count) best = placed;
+                if (Better(placed)) best = placed;
             }
         }
 
@@ -1731,7 +2206,8 @@ public static partial class RecreationUtility
                 var old = kv.Key;
                 var moved = old.AbsStart == kv.Value ? old : RecreationBooking.Create(kv.Value / 24, kv.Value % 24, old.hours, old.factionID, old.workModule,
                     old.source, old.sourceKey, old.memberTypeID, old.locked, old.onCancelledEventID, old.overrideWork, old.activityID, old.forbidCancel, old.sourceEventID,
-                    flexible: old.flexible);
+                    flexible: old.flexible, organizerFactionID: old.organizerFactionID, venueOfferID: old.venueOfferID,
+                    isOrganizationAudience: old.isOrganizationAudience);
                 if (moved != null) moved.mediaItemID = old.mediaItemID;
                 if (moved != null && f.AddBooking(moved, false))
                 {
@@ -2271,6 +2747,9 @@ public static partial class RecreationUtility
         }
         switch (b.source)
         {
+            case RecreationBookingSource.Organization:
+                return LocalizeDictionary.QueryThenParse("ui_recreation_arrangedBy_Organization")
+                    .Replace("$organization$", Organization(b.organizerFactionID)?.FactionDisplayName ?? b.organizerFactionID);
             case RecreationBookingSource.Membership:
                 return LocalizeDictionary.QueryThenParse("ui_recreation_arrangedBy_Membership").Replace("$name$", c.FullName);
             case RecreationBookingSource.Offer:

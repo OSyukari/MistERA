@@ -1,7 +1,7 @@
 {
     "_doc": "Host faction for Ekimae Mall's shared physical floor (floor_jp_shopping_street). Tenant rooms are reassigned through subfactionOwnerOverwrite; existing retail rooms remain in place.",
     "_comment_WP2_art": "PLACEHOLDER: food court and single-room salon reuse BGAssets/Generated/shopping_mall_01.webp. The eight original shop positions and hallway connections are preserved: the food court replaces fast food, and the salon replaces the cinema. The multi-screen cinema owns a separate floor. mall_directory.jpg needs updated shop labels.",
-    "_doc_staff": "Every shop shares one shift (membertype_jp_mall_clerk, below): MemberTypes are global and held per faction, so each shop's clerk holds it at that shop only. One all-day shift (10-22, every day) and one fallback front desk clerk per shop (fallbackWorkers) - not realistic shifts on purpose: the post isn't joinable by the player, and a single shift keeps it to 1 clerk per shop.",
+    "_doc_staff": "MemberTypes are global and held per shop faction. membertype_jp_mall_staff groups regular part-time clerks and the preserved membertype_jp_mall_clerk fallback leaf (10-22 daily). Electronics and furniture assign regular staff to six-hour early (10-16) or late (16-22) shifts on complementary 14-day A/B schedules; each keeps minimum coverage 1 and fallback cap 1, counting the regular parent via coversMemberTypes. Other stores and their disabled fallback caps are unchanged. Human joins use membertype_jp_mall_clerk_parttime, never the fallback leaf.",
 
     "MapPlans": {
         "factionInit": [
@@ -193,40 +193,61 @@
         "memberTypes":
         [
             {
-                "ID":"membertype_jp_mall_clerk",
-                "_comment":"The one mall shop post, shared by all shop factions: a single all-day shift (10-22, every day) covered by each shop's one fallback front desk clerk. Deliberately not realistic and not joinable (no part-time/full-time tag, in no shop's joinableMemberTypes) - one shift instead of several keeps it to 1 clerk per shop. Pay: 1150/h daily.",
-                "socialStandingKey":"membertype_jp_mall_clerk",
-                "isMember": true,
-                "isPrisoner": false,
-                "isManager": false,
-                "isHidden": false,
-                "canBeTransferred": true,
-                "canBeLiberated": false,
-                "canBeRescued": false,
-                "skipsJobDispatch": false,
-                "isPurgedOnPartyCleanup": false,
-                "isDisplayableInFactionUI": true,
-                "participatesInCombat": true,
-                "joinHandler": {
-                    "$type": "JoinHandler_WorkPost, Assembly-CSharp",
-                    "optionTextKey": "work_post_joinOption",
-                    "bindTargetKey": "worker"
-                },
-                "leaveHandler": {
-                    "$type": "LeaveHandler_WorkPost, Assembly-CSharp",
-                    "optionTextKey": "work_post_leaveOption",
-                    "bindTargetKey": "worker"
-                },
-                "workModule": {
-                    "jobPostID":"jp_mall_clerk",
-                    "workCommands":["jp_mall_frontDesk"],
-                    "activeHours":[10,11,12,13,14,15,16,17,18,19,20,21],
-                    "activeDays":[],
-                    "hourlyPayout": [ { "itemID":"currency_JPY", "itemCount":"1150" } ],
-                    "paymentCadence":"Daily",
-                    "_comment_holiday": "Shops stay open on holidays (peak days) - holiday shifts pay a 20% allowance.",
-                    "holidayPayoutMultiplier": 1.2
-                }
+                "ID":"membertype_jp_mall_staff",
+                "socialStandingKey":"membertype_jp_mall_staff",
+                "isMember":true,
+                "childMemberTypes":[
+                    {
+                        "ID":"membertype_jp_mall_clerk_parttime",
+                        "socialStandingKey":"membertype_jp_mall_clerk_parttime",
+                        "Tags":["memberType_work_partTime"],
+                        "joinHandler":{"$type":"JoinHandler_WorkPost, Assembly-CSharp","optionTextKey":"work_post_joinOption","bindTargetKey":"worker"},
+                        "leaveHandler":{"$type":"LeaveHandler_WorkPost, Assembly-CSharp","optionTextKey":"work_post_leaveOption","bindTargetKey":"worker"},
+                        "_comment":"Six-hour shifts; A/B are complementary 14-day masks. First child is the regular 10-16 default. A/B share the job post for their shift kind.",
+                        "childMemberTypes":[
+                            {"ID":"membertype_jp_mall_clerk_early_a","socialStandingKey":"membertype_jp_mall_clerk_early_a","workModule":{"jobPostID":"jp_mall_clerk_early","workCommands":["jp_mall_frontDesk"],"activeHours":[10,11,12,13,14,15],"activeDays":[1,1,0,0,1,1,1,0,0,1,1,0,0,0],"hourlyPayout":[{"itemID":"currency_JPY","itemCount":1150}],"paymentCadence":"Daily","holidayPayoutMultiplier":1.2}},
+                            {"ID":"membertype_jp_mall_clerk_late_a","socialStandingKey":"membertype_jp_mall_clerk_late_a","workModule":{"jobPostID":"jp_mall_clerk_late","workCommands":["jp_mall_frontDesk"],"activeHours":[16,17,18,19,20,21],"activeDays":[1,1,0,0,1,1,1,0,0,1,1,0,0,0],"hourlyPayout":[{"itemID":"currency_JPY","itemCount":1150}],"paymentCadence":"Daily","holidayPayoutMultiplier":1.2}},
+                            {"ID":"membertype_jp_mall_clerk_early_b","socialStandingKey":"membertype_jp_mall_clerk_early_b","workModule":{"jobPostID":"jp_mall_clerk_early","workCommands":["jp_mall_frontDesk"],"activeHours":[10,11,12,13,14,15],"activeDays":[0,0,1,1,0,0,0,1,1,0,0,1,1,1],"hourlyPayout":[{"itemID":"currency_JPY","itemCount":1150}],"paymentCadence":"Daily","holidayPayoutMultiplier":1.2}},
+                            {"ID":"membertype_jp_mall_clerk_late_b","socialStandingKey":"membertype_jp_mall_clerk_late_b","workModule":{"jobPostID":"jp_mall_clerk_late","workCommands":["jp_mall_frontDesk"],"activeHours":[16,17,18,19,20,21],"activeDays":[0,0,1,1,0,0,0,1,1,0,0,1,1,1],"hourlyPayout":[{"itemID":"currency_JPY","itemCount":1150}],"paymentCadence":"Daily","holidayPayoutMultiplier":1.2}}
+                        ]
+                    },
+                    {
+                        "ID":"membertype_jp_mall_clerk",
+                        "_comment":"Preserved NPC fallback leaf shared by mall shop factions: 10-22 every day, 1150/h daily. Not a human join target; regular staff use the sibling membertype_jp_mall_clerk_parttime tree. Disabled shops may still reference this globally registered leaf unchanged.",
+                        "socialStandingKey":"membertype_jp_mall_clerk",
+                        "isMember": true,
+                        "isPrisoner": false,
+                        "isManager": false,
+                        "isHidden": false,
+                        "canBeTransferred": true,
+                        "canBeLiberated": false,
+                        "canBeRescued": false,
+                        "skipsJobDispatch": false,
+                        "isPurgedOnPartyCleanup": false,
+                        "isDisplayableInFactionUI": true,
+                        "participatesInCombat": true,
+                        "joinHandler": {
+                            "$type": "JoinHandler_WorkPost, Assembly-CSharp",
+                            "optionTextKey": "work_post_joinOption",
+                            "bindTargetKey": "worker"
+                        },
+                        "leaveHandler": {
+                            "$type": "LeaveHandler_WorkPost, Assembly-CSharp",
+                            "optionTextKey": "work_post_leaveOption",
+                            "bindTargetKey": "worker"
+                        },
+                        "workModule": {
+                            "jobPostID":"jp_mall_clerk",
+                            "workCommands":["jp_mall_frontDesk"],
+                            "activeHours":[10,11,12,13,14,15,16,17,18,19,20,21],
+                            "activeDays":[],
+                            "hourlyPayout": [ { "itemID":"currency_JPY", "itemCount":"1150" } ],
+                            "paymentCadence":"Daily",
+                            "_comment_holiday": "Shops stay open on holidays (peak days) - holiday shifts pay a 20% allowance.",
+                            "holidayPayoutMultiplier": 1.2
+                        }
+                    }
+                ]
             }
         ]
     },
@@ -261,7 +282,7 @@
                     "requirement": {
                         "treatReceiverAsDoer": true,
                         "req_Doers": { "requireJobFaction": "CurrentActive", "requireMemberTypeScope": "JobFaction",
-                            "requireMemberType": ["membertype_jp_mall_clerk"] }
+                            "requireMemberType": ["membertype_jp_mall_staff"] }
                     }
                 },
                 "variants": [
@@ -343,10 +364,28 @@
                 "jp_mall_frontDesk_displayName_2":"一同店面接待",
 
                 "membertype_jp_mall_clerk":"商场店员",
+                "membertype_jp_mall_staff":"商场店面职员",
+                "membertype_jp_mall_clerk_parttime":"商场兼职店员（双周轮班）",
+                "membertype_jp_mall_clerk_early_a":"店员 早班10:00-16:00（双周A）",
+                "membertype_jp_mall_clerk_late_a":"店员 晚班16:00-22:00（双周A）",
+                "membertype_jp_mall_clerk_early_b":"店员 早班10:00-16:00（双周B）",
+                "membertype_jp_mall_clerk_late_b":"店员 晚班16:00-22:00（双周B）",
+                "jp_mall_clerk_early":"店员 早班10:00-16:00",
+                "jp_mall_clerk_late":"店员 晚班16:00-22:00",
                 "jp_mall_clerk":"店员 营业时间"
             },
             "en-us": {
-                "jp_shopping_street_entrance": "Shopping Street Entrance"
+                "jp_shopping_street_entrance": "Shopping Street Entrance",
+                "membertype_jp_mall_staff":"Mall Shop Staff",
+                "membertype_jp_mall_clerk":"Mall Clerk (Fallback)",
+                "membertype_jp_mall_clerk_parttime":"Part-time Mall Clerk (14-day Rotation)",
+                "membertype_jp_mall_clerk_early_a":"Clerk, Early 10:00-16:00 (14-day A)",
+                "membertype_jp_mall_clerk_late_a":"Clerk, Late 16:00-22:00 (14-day A)",
+                "membertype_jp_mall_clerk_early_b":"Clerk, Early 10:00-16:00 (14-day B)",
+                "membertype_jp_mall_clerk_late_b":"Clerk, Late 16:00-22:00 (14-day B)",
+                "jp_mall_clerk_early":"Clerk, Early 10:00-16:00",
+                "jp_mall_clerk_late":"Clerk, Late 16:00-22:00",
+                "jp_mall_clerk":"Clerk, Opening Hours 10:00-22:00"
             }
         }
     }

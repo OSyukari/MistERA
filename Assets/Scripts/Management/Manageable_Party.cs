@@ -66,7 +66,8 @@ public class Manageable_Party : I_IsJobGiver
         string comIDOverride = "",
         string tagoverride = "",
         List<string> s = null,
-        List<int> restrictRoomList = null)
+        List<int> restrictRoomList = null,
+        string preferredBedType = null)
     {
         //Debug.Log("Begin getvalidRecreation");
 
@@ -88,9 +89,11 @@ public class Manageable_Party : I_IsJobGiver
         }
 
 
+        var bedPriority = BedPreferenceUtility.GetEffectivePriority(chara);
         for (int i = possibleJobs.Count - 1; i >= 0; i--)
         {
             var j = possibleJobs[i];
+            if (!BedPreferenceUtility.Allows(bedPriority, j)) { possibleJobs.RemoveAt(i); continue; }
             if (filter.skipPrivateRoom && j.ParentRoom.isRoomPrivate)
             {
                 ss += $"\n{j.DisplayName} removed due to room private {j.ParentRoom.isRoomPrivate} and skipprivate {filter.skipPrivateRoom}";
@@ -120,7 +123,9 @@ public class Manageable_Party : I_IsJobGiver
 
         //bool result = FactionUtility.GetValidPaths(ref possibleJobs, chara, ref ss, !shortestPathOnly);
 
-        if (FactionUtility.GetValidPathsWithHeuristic(ref possibleJobs, chara, heuristic, maxCount, ref ss))
+        if (preferredBedType == null)
+            preferredBedType = FactionUtility.GetPreferredBedTypeForQuery(chara, comIDOverride, tagoverride);
+        if (FactionUtility.GetValidPathsWithHeuristic(ref possibleJobs, chara, heuristic, maxCount, ref ss, preferredBedType))
         {
             if (s != null) s.Add(ss);
             return possibleJobs;

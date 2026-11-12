@@ -1,0 +1,50 @@
+{
+  "baseID": "BocchiRock_Char_Ikuyo_Kita",
+  "_comment": "User-approved non-canon adaptation: Minoru Kita is a doctor and Kuruyo Kita is a homemaker, replacing the source supplement's civil-servant occupations.",
+
+  "Portrait":{
+    "portraitPriorityList":[
+      {
+        "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+
+        "random_portrait_folder":"Kita_Family/portraits_ikuyo",
+            
+        "icon_offset_x":0,            "icon_offset_y":-129,            "icon_offset_size":0.6,
+
+        "icon_path":"Kita_Family/portraits_ikuyo/ComfyUI_0012 (2).webp"
+      }
+    ]
+  },
+  "Template": {
+    "Appearance": "Female",
+    "stat_STR": 8,
+    "stat_CON": 9,
+    "stat_PSY": 12,
+    "stat_WIL": 12,
+    "personalityID": "personality_default",
+    "traits_body_sex": ["trait_Sensitivity_B_default", "trait_Sensitivity_M_default", "trait_Sensitivity_C_default", "trait_Sensitivity_V_default", "trait_Sensitivity_A_default", "trait_Size_B_B", "trait_Size_P_none", "trait_Size_V_1", "trait_Size_A_1"],
+    "traits_body": ["trait_BodyType_slim", "trait_SkinColor_fair", "trait_HairColor_red", "trait_EyeColor_green"],
+    "Height": 158,
+    "Weight": 44,
+    "traits": ["trait_SelfEsteem_low", "trait_EnergyCapacity_high", "trait_MentalFortitude_high"],
+    "initialRelationship": [
+      { "baseID": "BocchiRock_Char_Tsukuyo_Kita", "initialBiologicalRelationship": "relationship_parent", "initialBiologicalRelationship_isA": false, "initialPersonalRelationship": "relationship_housemate" },
+      { "baseID": "BocchiRock_Char_Kuruyo_Kita", "initialBiologicalRelationship": "relationship_parent", "initialBiologicalRelationship_isA": false, "initialPersonalRelationship": "relationship_housemate" },
+      { "baseID": "BocchiRock_Char_Hitori_Gotoh", "initialPersonalRelationship": "relationship_friend" },
+      { "baseID": "BocchiRock_Char_Nijika_Ijichi", "initialPersonalRelationship": "relationship_friend" },
+      { "baseID": "BocchiRock_Char_Ryo_Yamada", "initialPersonalRelationship": "relationship_friend" }
+    ],
+    "initialInventory": [],
+    "defaultHairstyle": { "hairstyleID": "hairstyle_straight_long", "slotSelection": { "front": "hair_front_side_swept" } },
+    "CharacterCard": "<Ikuyo_Kita>\nIdentity: Ikuyo Kita, 16-17-year-old third-year Shuka High student; Kessoku Band lead vocalist and rhythm guitarist.\nCurrent timeline: Performs through the Mikakunin Riot era. Lives with her parents, Kuruyo Kita and Minoru Kita; her mother is cautious about her safety and plans, while her father is more easygoing and follows youth trends. In this user-approved non-canon adaptation, Minoru is a doctor and Kuruyo is a homemaker.\nCharacter: Cheerful, socially fearless, observant, and generous with people. Her bright public confidence covers insecurity about being ordinary beside gifted musicians. She initially ran from the band rather than admit she could not play, then chose to own the mistake and steadily improve. She is especially attentive to Hitori's limits, even when her attempts to draw Hitori out misfire. She dislikes being called by her given name and strongly prefers Kita.\nAppearance: Red hair with grown-out bangs and bright chartreuse eyes.\n</Ikuyo_Kita>",
+    "Skills": null
+  },
+  "firstName": "BocchiRock_Char_Ikuyo_Kita_firstname",
+  "middleName": "",
+  "lastName": "BocchiRock_Char_Kita_lastname",
+  "nameDisplayFormat": "chara_fullname_lastToFirst",
+  "origin": "charOrigin_none",
+  "race": "humanRace_human",
+  "raceTemplate": "humanRaceAddon_standard",
+  "startingGift": "charOriginGift_none"
+}

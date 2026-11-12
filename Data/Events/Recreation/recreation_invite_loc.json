@@ -5,7 +5,11 @@
     "Dictionary": {
         "Entries": {
             "en-us": {
-                "Recreation_Invite_question": "$inviter.name$ invites $self.name$ along:\n$inviteText$$inviteConflictText$",
+                "Recreation_Invite_question": "$inviter.name$ invites $self.name$ to $activityName$:\n$inviteText$$inviteFeeText$$inviteMandatoryText$$inviteConflictText$",
+                "Recreation_OrganizationInvite_question": "$organizationName$ invites $self.name$ to take part in $activityName$:\n$inviteText$$inviteFeeText$$inviteMandatoryText$$inviteConflictText$",
+                "Recreation_PublicInvite_notice": "Upcoming event:\n$publicNoticeText$",
+                "Recreation_PublicInvite_others": "$publicOthers$",
+                "Recreation_PublicInvite_question": "Will $self.name$ go to $activityName$?$inviteFeeText$$inviteMandatoryText$$inviteConflictText$",
                 "Recreation_Invite_decline": "Decline"
             }
         }

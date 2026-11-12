@@ -1864,6 +1864,33 @@ public static class UtilityEX
                 }
 
                 break;
+            case "setFactionMembertype":
+                if (parsed.Count() >= 3)
+                {
+                    var target = scr_System_CampaignManager.current.CurrentTarget;
+                    if (target == null)
+                    {
+                        Debug.LogError("error target null");
+                        break;
+                    }
+                    var factionkey = parsed[1];
+                    var membertypekey = parsed[2];
+                    var faction = scr_System_CampaignManager.current.FindFactionByID(factionkey);
+                    if (faction == null)
+                    {
+                        Debug.LogError("error faction null");
+                        break;
+                    }
+                    var membertype = scr_System_Serializer.current.MasterList.MapPlans.GetByID_MemberType(membertypekey);
+                    if (membertype == null)
+                    {
+                        Debug.LogError("error membertype null");
+                        break;
+                    }
+                    faction.AddToFaction(target, membertype, false);
+                    parsedSuccessful = true;
+                }
+                break;
         }
 
         if (parsedSuccessful)

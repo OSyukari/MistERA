@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Newtonsoft.Json;
 
 /// <summary>
@@ -78,6 +77,9 @@ public class CharaReq
     [JsonConverter(typeof(StringOrListConverter))]
     public List<string> requireActorBaseID = new List<string>();
 
+    // All listed current actor tags are required. Empty = no check.
+    public List<string> requireActorTags = new List<string>();
+
     // race keyword requirement (Trait_Requirement.GetRaceKeywords: race RaceType + race template actorKeyword):
     // requireRaceKeywords = has any of these, forbidRaceKeywords = has none of these. Empty = no check.
     public List<string> requireRaceKeywords = new List<string>();
@@ -104,14 +106,23 @@ public class CharaReq
         this.requireAbsentJobwithCOMTag.AddRange(req.requireAbsentJobwithCOMTag);
         this.requireExistingJobwithCOMTag.AddRange(req.requireExistingJobwithCOMTag);
         this.requireStatusValue.AddRange(req.requireStatusValue);
+        if (req.requireActorTags != null)
+        {
+            for (int i = 0; i < req.requireActorTags.Count; i++)
+            {
+                string tag = req.requireActorTags[i];
+                if (!this.requireActorTags.Contains(tag)) this.requireActorTags.Add(tag);
+            }
+        }
+        Utility.DistinctInPlace(this.requireActorTags);
         if (req.requireRaceKeywords != null) this.requireRaceKeywords.AddRange(req.requireRaceKeywords);
         if (req.forbidRaceKeywords != null) this.forbidRaceKeywords.AddRange(req.forbidRaceKeywords);
-        this.requireRaceKeywords = this.requireRaceKeywords.Distinct().ToList();
-        this.forbidRaceKeywords = this.forbidRaceKeywords.Distinct().ToList();
-        this.BodyTags = this.BodyTags.Distinct().ToList();
+        Utility.DistinctInPlace(this.requireRaceKeywords);
+        Utility.DistinctInPlace(this.forbidRaceKeywords);
+        Utility.DistinctInPlace(this.BodyTags);
         if (req.requireSlots != null) this.requireSlots.AddRange(req.requireSlots);
-        this.requireSlots = this.requireSlots.Distinct().ToList();
-        this.requireUndressedTags = this.requireUndressedTags.Distinct().ToList();
+        Utility.DistinctInPlace(this.requireSlots);
+        Utility.DistinctInPlace(this.requireUndressedTags);
         requireConscious = requireConscious && req.requireConscious;
         requireUnrestrained = requireUnrestrained || req.requireUnrestrained;
         requireMovement = requireMovement || req.requireMovement;

@@ -25,15 +25,15 @@
     ],
                 "activeHoursStart":10,
                 "activeHoursEnd":0,
-    "_comment_assignableMemberTypes": "Existing NPC mall clerk retained. Dedicated ticket staff extend coverage to closing; only usher shifts are player-joinable.",
+    "_comment_assignableMemberTypes": "Existing concession clerk and usher configuration retained. The ticket root includes regular six-hour early/late A/B shifts first, followed by the preserved 10-01 NPC fallback leaf. No recruiting UI is added.",
     "assignableMemberTypes": [ "membertype_jp_mall_clerk", "membertype_jp_mall_cinema_ticket", "membertype_jp_mall_usher" ],
     "_joinableMemberTypes": [
         "membertype_jp_mall_usher"
     ],
-    "_comment_fallbackWorkers": "Existing mall clerk kept at maxFallback 0 (placeholder for future concession sales - salesInventory is still empty, so it's deliberately not fallback-filled). Single fallback ticket clerk covers the whole 10:00-01:00 window, merged from the previous day/Fri-Sat-late split. Usher shifts are left open for other NPCs or the player, with no fallback worker behind them.",
+    "_comment_fallbackWorkers": "Existing mall clerk kept at maxFallback 0 (placeholder for future concession sales - salesInventory is still empty, so it's deliberately not fallback-filled). Ticket minimum coverage 1 counts on-duty regular part-time staff; the preserved 10:00-01:00 fallback leaf fills gaps with cap 1, including after regular shifts end at 22:00. Usher configuration and disabled screenings are unchanged.",
     "fallbackWorkers": [
         { "memberTypeID": "membertype_jp_mall_clerk", "headcount": 1, "maxFallback": 0, "templateID": "jp_store_clerk" },
-        { "memberTypeID": "membertype_jp_mall_cinema_ticket_counter", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }
+        { "memberTypeID": "membertype_jp_mall_cinema_ticket_counter", "coversMemberTypes": ["membertype_jp_mall_cinema_ticket_parttime"], "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }
     ],
     "workHours": [],
     "workAssignment": []
@@ -87,6 +87,19 @@
                 "isMember": true,
                 "Tags": ["jp_mall_cinema_hiring"],
                 "childMemberTypes": [
+                    {
+                        "ID":"membertype_jp_mall_cinema_ticket_parttime","socialStandingKey":"membertype_jp_mall_cinema_ticket_parttime",
+                        "Tags":["memberType_work_partTime","jp_mall_cinema_hiring"],
+                        "joinHandler":{"$type":"JoinHandler_WorkPost, Assembly-CSharp","optionTextKey":"jp_mall_cinema_joinOption","bindTargetKey":"worker"},
+                        "leaveHandler":{"$type":"LeaveHandler_WorkPost, Assembly-CSharp","optionTextKey":"work_post_leaveOption","bindTargetKey":"worker"},
+                        "_comment":"Regular joins resolve to early A (10-16). Every regular leaf has a full workModule; A/B share a job post per shift kind and use complementary 14-day masks.",
+                        "childMemberTypes":[
+                            {"ID":"membertype_jp_mall_cinema_ticket_early_a","socialStandingKey":"membertype_jp_mall_cinema_ticket_early_a","workModule":{"jobPostID":"jp_mall_cinema_ticket_early","workCommands":["jp_mall_cinema_ticket_duty"],"activeHours":[10,11,12,13,14,15],"activeDays":[1,1,0,0,1,1,1,0,0,1,1,0,0,0],"hourlyPayout":[{"itemID":"currency_JPY","itemCount":1150}],"paymentCadence":"Daily","holidayPayoutMultiplier":1.2}},
+                            {"ID":"membertype_jp_mall_cinema_ticket_late_a","socialStandingKey":"membertype_jp_mall_cinema_ticket_late_a","workModule":{"jobPostID":"jp_mall_cinema_ticket_late","workCommands":["jp_mall_cinema_ticket_duty"],"activeHours":[16,17,18,19,20,21],"activeDays":[1,1,0,0,1,1,1,0,0,1,1,0,0,0],"hourlyPayout":[{"itemID":"currency_JPY","itemCount":1150}],"paymentCadence":"Daily","holidayPayoutMultiplier":1.2}},
+                            {"ID":"membertype_jp_mall_cinema_ticket_early_b","socialStandingKey":"membertype_jp_mall_cinema_ticket_early_b","workModule":{"jobPostID":"jp_mall_cinema_ticket_early","workCommands":["jp_mall_cinema_ticket_duty"],"activeHours":[10,11,12,13,14,15],"activeDays":[0,0,1,1,0,0,0,1,1,0,0,1,1,1],"hourlyPayout":[{"itemID":"currency_JPY","itemCount":1150}],"paymentCadence":"Daily","holidayPayoutMultiplier":1.2}},
+                            {"ID":"membertype_jp_mall_cinema_ticket_late_b","socialStandingKey":"membertype_jp_mall_cinema_ticket_late_b","workModule":{"jobPostID":"jp_mall_cinema_ticket_late","workCommands":["jp_mall_cinema_ticket_duty"],"activeHours":[16,17,18,19,20,21],"activeDays":[0,0,1,1,0,0,0,1,1,0,0,1,1,1],"hourlyPayout":[{"itemID":"currency_JPY","itemCount":1150}],"paymentCadence":"Daily","holidayPayoutMultiplier":1.2}}
+                        ]
+                    },
                     { "ID": "membertype_jp_mall_cinema_ticket_counter", "socialStandingKey": "jp_mall_cinema_ticket_counter", "workModule": { "jobPostID": "jp_mall_cinema_ticket_counter", "workCommands": ["jp_mall_cinema_ticket_duty"], "activeHours": [10,11,12,13,14,15,16,17,18,19,20,21,22,23,0], "activeDays": [], "hourlyPayout": [{"itemID":"currency_JPY","itemCount":1150}], "paymentCadence": "Daily" } }
                 ]
             },
@@ -140,7 +153,25 @@
                 "workModule": {"jobPostID":"jp_mall_cinema_show_21","workCommands":["jp_mall_cinema_watch"]},
                 "entranceFee": {"itemID":"currency_JPY","itemCount":1800}, "gatherRoomID":"cinema_lobby", "launchEventID":"Mall_Cinema_Begin",
                 "allowWalkIn":true, "daysInAdvance":3, "participationChance":0.2,
-                "invite": {"visibility":"World","InviteeValidators":[{"refKeys":["companion"],"baseScope":"SelfRelationships","extraScopeArguments":["relationship_friend","relationship_bff","relationship_couple","relationship_marriage"],"maxTargetCount":3,"stopAtMaxTargetCount":true}]}
+                "invite": {
+                    "visibility": "World",
+                    "InviteeValidators": [
+                        {
+                            "refKeys": [
+                                "companion"
+                            ],
+                            "baseScope": "SelfRelationships",
+                            "extraScopeArguments": [
+                                "relationship_friend",
+                                "relationship_bff",
+                                "relationship_couple",
+                                "relationship_marriage"
+                            ],
+                            "maxTargetCount": 3,
+                            "stopAtMaxTargetCount": true
+                        }
+                    ]
+                }
             },
             {
                 "ID": "jp_mall_cinema_show_late", "mode": "Fixed", "factionID": "jp_mall_cinema", "provideAcceptanceBonus": 5, "activityMoodlet": { "stress": 1 }, "cooldownTag": "jp_mall_cinema_screening", "startHour": 23, "hours": 2, "weekdays": [0,0,0,0,1,1,0],
@@ -194,6 +225,13 @@
                 "jp_mall_cinema_seats": "影院座椅",
                 "jp_mall_usher_station": "检票与引导岗",
                 "membertype_jp_mall_cinema_ticket": "影院售票员",
+                "membertype_jp_mall_cinema_ticket_parttime":"影院兼职售票员（双周轮班）",
+                "membertype_jp_mall_cinema_ticket_early_a":"售票员 早班10:00-16:00（双周A）",
+                "membertype_jp_mall_cinema_ticket_late_a":"售票员 晚班16:00-22:00（双周A）",
+                "membertype_jp_mall_cinema_ticket_early_b":"售票员 早班10:00-16:00（双周B）",
+                "membertype_jp_mall_cinema_ticket_late_b":"售票员 晚班16:00-22:00（双周B）",
+                "jp_mall_cinema_ticket_early":"售票员 早班10:00-16:00",
+                "jp_mall_cinema_ticket_late":"售票员 晚班16:00-22:00",
                 "jp_mall_cinema_ticket_counter": "售票员 10—01时",
                 "membertype_jp_mall_usher": "影院兼职引导员",
                 "jp_mall_usher_day": "引导员 日班10—17时",

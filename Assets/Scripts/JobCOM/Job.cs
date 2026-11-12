@@ -1371,7 +1371,15 @@ public class Job : IDisposable, I_Disposable
                     if (scr_System_CentralControl.current.LogPrefs.DLog_AP) Debug.Log("deleting package " + p.DisplayName + $" for {String.Join("|",p.actorRefs)}");
                     //PackageRemoval(p);
                     if (!p.isTemporaryAP) actorJobComplete.AddRange(p.actorRefs);
-                    
+                    else if (p.targetCOM != null)
+                    {
+                        // a transit step that IS the actor's job (e.g. a divider leave stored as their command) completes it -
+                        // otherwise it repeats forever (the enter pre-step and the leave undoing each other every minute)
+                        var refs = p.actorRefs;
+                        for (int a = 0; a < refs.Count; a++)
+                            if (actorRefIDStorage.TryGetValue(refs[a], out var match) && match.comID == p.targetCOM.ID) actorJobComplete.Add(refs[a]);
+                    }
+
                 }
                 RemovePackageAt_Previous(i);
                 packages_completed.Add(p);

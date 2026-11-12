@@ -8,10 +8,10 @@
             "mealHours":[11,12,13,18,19,20],
             "initializers":[{"initClass":"campaign_init_factionInventory","initArguments":["jp_mall_foodcourt","consumable_jp_mall_foodcourt_meal","","1"]}],
             "salesCurrency":"currency_JPY", "salesInventory":[{"matchByID":"consumable_jp_mall_foodcourt_meal"}],
-            "assignableMemberTypes":[], "joinableMemberTypes":[],
-            "_comment_fallbackWorkers": "Single waiter clerk covering the whole 10:00-21:00 opening window - merged from the previous day/evening split, which gave this one post two fallback workers for no operational reason. Not assignable/joinable - a player can't apply.",
+            "assignableMemberTypes":["membertype_jp_mall_waiter_parttime"], "joinableMemberTypes":[],
+            "_comment_fallbackWorkers": "Regular waiters use six-hour early (10-16) / late (16-22) shifts and complementary 14-day A/B masks. The preserved all-day NPC leaf supplies gaps only: headcount 1 is minimum coverage, not a maximum on real staff, and maxFallback stays 1. Independent solo duty packages support multiple real waiters.",
             "fallbackWorkers":[
-                {"memberTypeID":"membertype_jp_mall_waiter_npc","headcount":1,"maxFallback":1,"templateID":"jp_store_clerk"}
+                {"memberTypeID":"membertype_jp_mall_waiter_npc","coversMemberTypes":["membertype_jp_mall_waiter_parttime"],"headcount":1,"maxFallback":1,"templateID":"jp_store_clerk"}
             ],
                 "activeHoursStart":10,
                 "activeHoursEnd":21,
@@ -23,6 +23,16 @@
             "joinHandler":{"$type":"JoinHandler_WorkPost, Assembly-CSharp","optionTextKey":"jp_mall_foodcourt_joinOption","bindTargetKey":"worker"},
             "leaveHandler":{"$type":"LeaveHandler_WorkPost, Assembly-CSharp","optionTextKey":"work_post_leaveOption","bindTargetKey":"worker"},
             "childMemberTypes":[
+                {
+                    "ID":"membertype_jp_mall_waiter_parttime","socialStandingKey":"membertype_jp_mall_waiter_parttime",
+                    "_comment":"Regular staff join this parent, resolving to early A (10-16), never the following NPC fallback leaf. WorkPost join/leave handlers are inherited from the waiter root.",
+                    "childMemberTypes":[
+                        {"ID":"membertype_jp_mall_waiter_early_a","socialStandingKey":"membertype_jp_mall_waiter_early_a","workModule":{"jobPostID":"jp_mall_waiter_early","workCommands":["jp_mall_foodcourt_waiter_duty"],"activeHours":[10,11,12,13,14,15],"activeDays":[1,1,0,0,1,1,1,0,0,1,1,0,0,0],"hourlyPayout":[{"itemID":"currency_JPY","itemCount":1200}],"paymentCadence":"Daily","holidayPayoutMultiplier":1.2}},
+                        {"ID":"membertype_jp_mall_waiter_late_a","socialStandingKey":"membertype_jp_mall_waiter_late_a","workModule":{"jobPostID":"jp_mall_waiter_late","workCommands":["jp_mall_foodcourt_waiter_duty"],"activeHours":[16,17,18,19,20,21],"activeDays":[1,1,0,0,1,1,1,0,0,1,1,0,0,0],"hourlyPayout":[{"itemID":"currency_JPY","itemCount":1200}],"paymentCadence":"Daily","holidayPayoutMultiplier":1.2}},
+                        {"ID":"membertype_jp_mall_waiter_early_b","socialStandingKey":"membertype_jp_mall_waiter_early_b","workModule":{"jobPostID":"jp_mall_waiter_early","workCommands":["jp_mall_foodcourt_waiter_duty"],"activeHours":[10,11,12,13,14,15],"activeDays":[0,0,1,1,0,0,0,1,1,0,0,1,1,1],"hourlyPayout":[{"itemID":"currency_JPY","itemCount":1200}],"paymentCadence":"Daily","holidayPayoutMultiplier":1.2}},
+                        {"ID":"membertype_jp_mall_waiter_late_b","socialStandingKey":"membertype_jp_mall_waiter_late_b","workModule":{"jobPostID":"jp_mall_waiter_late","workCommands":["jp_mall_foodcourt_waiter_duty"],"activeHours":[16,17,18,19,20,21],"activeDays":[0,0,1,1,0,0,0,1,1,0,0,1,1,1],"hourlyPayout":[{"itemID":"currency_JPY","itemCount":1200}],"paymentCadence":"Daily","holidayPayoutMultiplier":1.2}}
+                    ]
+                },
                 {"ID":"membertype_jp_mall_waiter_npc","socialStandingKey":"jp_mall_waiter_npc","workModule":{"jobPostID":"jp_mall_waiter_npc","workCommands":["jp_mall_foodcourt_waiter_duty"],"activeHours":[10,11,12,13,14,15,16,17,18,19,20,21],"activeDays":[],"hourlyPayout":[{"itemID":"currency_JPY","itemCount":1200}],"paymentCadence":"Daily","holidayPayoutMultiplier":1.2}}
             ]
         }],
@@ -54,11 +64,18 @@
         "itemComps_Template":[{"compType":"ItemComponent_Ingestible","comp_Ingestible":{"ingestMethod":[{"bodyTags":"stomach","digestSpeed":-1,"digestDelay":30,"digestDelayVariation":10,"amountMod":8}],"amount":5,"OnUseEffects":[{"effectID":"ModStatValuePercent","arguments":["stats_derived_extended_energy","0.2"]},{"effectID":"ModStatValuePercent","arguments":["stats_derived_extended_stamina","0.1"]}]}}]
     }]},
     "Dictionary":{"Entries":{"zh-cn":{
-        "jp_mall_foodcourt":"站前商场美食广场",
+        "jp_mall_foodcourt":"美食广场",
         "jp_mall_foodcourt_room":"美食广场",
         "jp_mall_foodcourt_tables":"美食广场餐桌",
         "jp_mall_foodcourt_counter":"餐饮服务柜台",
         "membertype_jp_mall_waiter":"美食广场兼职服务员",
+        "membertype_jp_mall_waiter_parttime":"美食广场常规兼职服务员（双周轮班）",
+        "membertype_jp_mall_waiter_early_a":"服务员 早班10:00-16:00（双周A）",
+        "membertype_jp_mall_waiter_late_a":"服务员 晚班16:00-22:00（双周A）",
+        "membertype_jp_mall_waiter_early_b":"服务员 早班10:00-16:00（双周B）",
+        "membertype_jp_mall_waiter_late_b":"服务员 晚班16:00-22:00（双周B）",
+        "jp_mall_waiter_early":"服务员 早班10:00-16:00",
+        "jp_mall_waiter_late":"服务员 晚班16:00-22:00",
         "jp_mall_waiter_npc":"服务员 10—22时",
         "jp_mall_foodcourt_joinOption":"让$name$担任$memberType$",
         "jp_mall_foodcourt_eat_together":"一起外出吃饭（含套餐）",

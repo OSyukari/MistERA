@@ -1,0 +1,71 @@
+{
+    "_doc": "Public outdoor bench + practicing an instrument on it. furniture_public_bench is the furniture that makes a place a valid outdoor practice spot: it offers the ordinary rest commands and every command tagged instrument_practice_outdoor (givesJob comTags). Put it only in public outdoor rooms (riverside lawn, park lawn) - indoor benches (hospital waiting rooms...) use other furniture and never qualify. com_instrument_practice_outdoor is open to anyone; who actively schedules it is decided elsewhere - e.g. an organization's individual activity (doujin_GirlsBandCry faction.json: jp_individual_instrument_practice, facility.comTag instrument_practice_outdoor) finds every venue with such a bench (RecreationUtility.IndividualVenues). A passerby may join a practice as a listener (allowJoining; listener variant with a receiver).",
+    "Furnitures":
+    {
+        "list":
+        [
+            {
+                "ID": "furniture_public_bench",
+                "displayName": "furniture_public_bench",
+                "recipe": [],
+                "furnitureSize": 0,
+                "value": 30000,
+                "Tags": [],
+                "givesJob": [
+                    { "comID": ["com_furniture_takingBreak", "com_furniture_takingLongBreak"] },
+                    { "comTags": ["instrument_practice_outdoor"] }
+                ]
+            }
+        ]
+    },
+    "COMs":
+    {
+        "list":
+        [
+            {
+                "ID": "com_instrument_practice_outdoor",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_instrument_practice_outdoor",
+                "timeScale": 30,
+                "allowJoining": true,
+                "comTags": ["furniture", "recreation", "instrument_practice_outdoor"],
+                "_comment_roles": "The practicing doer pays the practice costs. A passerby may join as a listener (receiver variant) without practicing themselves.",
+                "requirements": {
+                    "requirement": {
+                        "doerCount": 1,
+                        "treatReceiverAsDoer": false,
+                        "joinAlone": true,
+                        "req_Doers": { "cost_ST": 3, "cost_EN": 4 }
+                    }
+                },
+                "variants": [
+                    {
+                        "displayName": "com_instrument_practice_outdoor",
+                        "requirements": { "requirement": { "receiverCount": 0 } }
+                    },
+                    {
+                        "displayName": "com_instrument_practice_outdoor_listener",
+                        "requirements": { "requirement": { "receiverCount": 1 } }
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 },
+                "DifficultyCheck": { "baseD20Check": 5 },
+                "description_begin": { "Entries": [{ "texts": ["com_instrument_practice_outdoor_begin"] }] },
+                "description_ongoing": { "Entries": [{ "texts": ["com_instrument_practice_outdoor_ongoing"] }] },
+                "description_after": { "Entries": [{ "texts": ["com_instrument_practice_outdoor_after"] }] }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "furniture_public_bench": "公共长椅",
+                "com_instrument_practice_outdoor": "坐在长椅上练习乐器",
+                "com_instrument_practice_outdoor_listener": "练习乐器（有人旁听）",
+                "com_instrument_practice_outdoor_begin": "$doer.firstname$在长椅上坐下，取出乐器调好音，试着弹了几个音。",
+                "com_instrument_practice_outdoor_ongoing": "$doer.firstname$专注地反复练习着还不顺手的段落。",
+                "com_instrument_practice_outdoor_after": "$doer.firstname$练完这一段，放松了一下手指。"
+            }
+        }
+    }
+}

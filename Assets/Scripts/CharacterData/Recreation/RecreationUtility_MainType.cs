@@ -7,7 +7,7 @@ public static partial class RecreationUtility
     /// exempt. Pass the occurrence being validated so its own reservation and attendance do not block it.
     /// </summary>
     public static bool DailyMainTypeAllows(Character_Factions f, int day, RecreationActivity activity,
-        RecreationGroup exceptSession = null, RecreationBooking exceptBooking = null)
+        RecreationGroup exceptSession = null, RecreationBooking exceptBooking = null, RecreationBooking incoming = null)
     {
         if (f == null || string.IsNullOrEmpty(activity?.mainTypeTag)) return true;
         var c = f.Owner;
@@ -24,7 +24,7 @@ public static partial class RecreationUtility
             if ((b.Session?.day ?? b.day) != day) continue;
             if (b.Session != null && !b.Session.IsOpen) continue;
             var other = b.Session != null ? ResolveActivity(b.Session) : b.GetActivity(f);
-            if (SameDailyMainType(f, activity, other)) return false;
+            if (SameDailyMainType(f, activity, other) && (incoming == null || !CanDisplaceBooking(f, b, incoming))) return false;
         }
 
         // Hosting posts a reservation without a booking. Ordinary unanswered invitations reserve nothing.
@@ -35,7 +35,8 @@ public static partial class RecreationUtility
             if (g == null || g == exceptSession || !g.IsOpen || g.concluded || g.AbsEnd <= nowAbs || g.day != day || g.hostRef != c.RefID) continue;
             var member = g.FindMember(c.RefID);
             if (member == null || (member.state != RecreationMemberState.Invited && member.state != RecreationMemberState.Attending)) continue;
-            if (SameDailyMainType(f, activity, ResolveActivity(g))) return false;
+            if (SameDailyMainType(f, activity, ResolveActivity(g))
+                && (incoming == null || !CanDisplaceBooking(f, PreviewBooking(g), incoming))) return false;
         }
         return true;
     }
@@ -54,6 +55,6 @@ public static partial class RecreationUtility
         if (b == null || b.source == RecreationBookingSource.Event) return true;
         var g = b.Session;
         var activity = g != null ? ResolveActivity(g) : b.GetActivity(f);
-        return DailyMainTypeAllows(f, g?.day ?? b.day, activity, g, b);
+        return DailyMainTypeAllows(f, g?.day ?? b.day, activity, g, b, f.IsReplacingRecreationBookings ? b : null);
     }
 }

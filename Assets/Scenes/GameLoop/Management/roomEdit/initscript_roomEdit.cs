@@ -77,7 +77,7 @@ public class initscript_roomEdit : MonoBehaviour
     /// Called each time the Room Edit tab is (re)shown - re-derives the starting room/floor rather than
     /// caching a one-shot init, since the player may have moved between visits. Prefers wherever the
     /// player physically is, if that's one of currentFaction's managed rooms, else falls back to the
-    /// faction's MainExit.
+    /// faction's MainExit if managed, then its first managed room.
     /// </summary>
     public void Initialize(Manageable m)
     {
@@ -91,6 +91,15 @@ public class initscript_roomEdit : MonoBehaviour
             ? playerRoom
             : currentFaction.MainExit;
 
+        if (startRoom == null || !currentFaction.ManagedRooms.ContainsKey(startRoom.RefID))
+        {
+            startRoom = null;
+            foreach (var room in currentFaction.ManagedRooms.Values)
+                if (room != null) { startRoom = room; break; }
+        }
+
+        // Rebuild even on the same host floor: the managed household may have changed.
+        LoadFloor(startRoom?.parentFloor);
         SelectRoom(startRoom);
         RefreshFloorsList();
         RefreshInventoryList();
@@ -101,6 +110,7 @@ public class initscript_roomEdit : MonoBehaviour
 
     public void SelectRoom(Room_Instance room)
     {
+        if (room != null && (currentFaction == null || !currentFaction.ManagedRooms.ContainsKey(room.RefID))) return;
         currentRoom = room;
         LoadRoomData();
 
@@ -139,7 +149,6 @@ public class initscript_roomEdit : MonoBehaviour
 
     public void LoadFloor(Floor_Instance floor)
     {
-        if (floor == null || floor == currentFloor) { RefreshFloorsList(); return; }
         if (floorLoadCO != null) StopCoroutine(floorLoadCO);
         floorLoadCO = StartCoroutine(LoadFloorCoroutine(floor));
     }
@@ -152,6 +161,15 @@ public class initscript_roomEdit : MonoBehaviour
         Utility.DestroyAllChildrenFrom(picture.rectTransform, 1);
         parent.UnloadButton(roomButtonHashes);
         roomButtonHashes.Clear();
+
+        if (floor == null)
+        {
+            LoadFloorImage(false);
+            bgpicture.sprite = null;
+            RefreshFloorsList();
+            floorLoadCO = null;
+            yield break;
+        }
 
         // mirrors canvas_RoomDisplay.LoadFloorTex: floor plan on `picture` (sized to the plan, room buttons on
         // it), straight background image on `bgpicture` at its fixed size
@@ -174,8 +192,9 @@ public class initscript_roomEdit : MonoBehaviour
         if (!isFloorPlan) bgpicture.preserveAspect = true;
         else picture.rectTransform.sizeDelta = new Vector2(floor.FloorBase.floorWidth, floor.FloorBase.floorHeight) * floor.FloorBase.resize;
 
-        foreach (Room_Instance ri in floor.rooms)
+        foreach (Room_Instance ri in currentFaction.ManagedRooms.Values)
         {
+            if (ri == null || ri.parentFloor != floor) continue;
             if (!ri.Base.hideOnMap) AddRoomButton(ri, picture.rectTransform, false);
             AddRoomButton(ri, roomsList, true);
         }
@@ -238,8 +257,11 @@ public class initscript_roomEdit : MonoBehaviour
         parent.UnloadButton(floorButtonHashes);
         floorButtonHashes.Clear();
 
-        foreach (var floor in currentFaction.ManagedFloors)
+        var floors = new HashSet<Floor_Instance>();
+        foreach (var room in currentFaction.ManagedRooms.Values)
         {
+            var floor = room?.parentFloor;
+            if (floor == null || !floors.Add(floor)) continue;
             scr_SelectableText btn = Instantiate(prefab_roomButtonlist);
             btn.SelfRect.SetParent(floorsList, false);
             btn.SetTextPreInit(floor.displayName);
@@ -373,12 +395,15 @@ public class initscript_roomEdit : MonoBehaviour
         scr_SelectableText button;
         scr_HoverableText text;
 
+        readonly string residentOnlyTooltip;
+
         public Button_ToggleRoomOwner(initscript_roomEdit script, Character_Trainable chara, scr_SelectableText button, scr_HoverableText text) : base(script.parent)
         {
             this.script = script;
             this.chara = chara;
             this.button = button;
             this.text = text;
+            residentOnlyTooltip = LocalizeDictionary.QueryThenParse("ui_room_owner_requiresHome");
         }
 
         public override bool IsButtonValid()
@@ -396,12 +421,17 @@ public class initscript_roomEdit : MonoBehaviour
 
             var room = script.CurrentRoom;
             if (room == null) { button.Toggle(true, false); tooltip = "no room selected"; return false; }
+            if (script.CurrentFaction == null || !script.CurrentFaction.ManagedRooms.ContainsKey(room.RefID))
+            { button.Toggle(true, false); tooltip = "select a managed room first"; return false; }
 
             var ownerRefs = script.CurrentFaction.RoomOwners(room.RefID);
             bool isOwner = ownerRefs.Contains(chara.RefID);
             button.Toggle(true, isOwner);
             tooltip = "";
             if (isOwner) return true;
+            if (room.Base?.requireHomeMembership == true && !chara.FactionManager.HomeFactions.Contains(script.CurrentFaction))
+            { tooltip = residentOnlyTooltip; return false; }
+            if (!room.CanAssignBedOwnership) { tooltip = "select a room with an assignable bed first"; return false; }
 
             // room has no owner right now (e.g. its sole owner was just unassigned) but someone else
             // is still physically inside - most likely asleep/unconscious in the bed. Block assigning
@@ -440,7 +470,7 @@ public class initscript_roomEdit : MonoBehaviour
         public void OnClickButton()
         {
             var room = script.CurrentRoom;
-            if (room == null) return;
+            if (room == null || !IsButtonValid()) return;
             bool isOwner = script.CurrentFaction.RoomOwners(room.RefID).Contains(chara.RefID);
             if (isOwner) script.CurrentFaction.RemoveRoomOwnership(chara.RefID, room.RefID);
             else script.CurrentFaction.AddRoomOwnership(chara.RefID, room.RefID);
@@ -480,13 +510,17 @@ public class initscript_roomEdit : MonoBehaviour
         public override bool IsButtonValid()
         {
             var room = parent.roomEditScript?.CurrentRoom;
-            if (room == null || !room.isRoomPrivate) { tooltip = "select a private room first"; return false; }
+            if (room != null && (parent.roomEditScript.CurrentFaction == null
+                || !parent.roomEditScript.CurrentFaction.ManagedRooms.ContainsKey(room.RefID)))
+            { tooltip = "select a managed room first"; return false; }
+            if (room == null || !room.CanAssignBedOwnership) { tooltip = "select a room with an assignable bed first"; return false; }
             tooltip = "";
             return true;
         }
 
         public void OnClickButton()
         {
+            if (!IsButtonValid()) return;
             parent.roomEditScript.EditMode = true;
         }
     }

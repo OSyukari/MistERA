@@ -21,6 +21,7 @@
                     { "ID": "to_jp_neon_dispatch", "connectedRoom": "downtown_entrance", "hideOnMap": true },
                     { "ID": "to_jp_karaoke", "connectedRoom": "downtown_entrance", "hideOnMap": true },
                     { "ID": "to_jp_neon_livehouse", "connectedRoom": "downtown_entrance", "hideOnMap": true },
+                    { "ID": "to_jp_band_template", "connectedRoom": "downtown_entrance", "hideOnMap": true },
                     { "ID": "to_jp_neon_lovehotel", "connectedRoom": "downtown_entrance", "hideOnMap": true },
                     { "ID": "to_jp_cosplay_cafe", "connectedRoom": "downtown_entrance", "hideOnMap": true },
                     { "ID": "to_jp_otaku_netcafe", "connectedRoom": "downtown_entrance", "hideOnMap": true }

@@ -64,6 +64,7 @@ public class Job_Furniture : Job
         {
             if (isContainer) return ParentInstance.DisplayName + " : " + (Container == null ? " - " : Container.DisplayName);
             if (!HasOccupancy) return ParentInstance.DisplayName;
+            ParentRoom?.EnsureFurnitureOwnership();
             // "bed : owners" - cached per occupancy revision (the command panel reads it every refresh)
             if (_occupancyNameCache == null || _occupancyNameRev != OccupancyRevision)
             {
@@ -273,7 +274,7 @@ public class Job_Furniture : Job
 
     [JsonIgnore] public List<int> OccupantRefs { get { return occupantRefs; } }
     /// <summary> assigned owners; the room assigns them once after load if needed (Room_Instance.EnsureFurnitureOwnership - flag check) </summary>
-    [JsonIgnore] public List<int> OwnerRefs { get { if (ownerRefs.Count == 0) ParentRoom?.EnsureFurnitureOwnership(); return ownerRefs; } }
+    [JsonIgnore] public List<int> OwnerRefs { get { ParentRoom?.EnsureFurnitureOwnership(); return ownerRefs; } }
     [JsonIgnore] public FurnitureOccupancyDef OccupancyDef { get { var fi = ParentInstance; return fi == null || fi.FurnitureBase == null ? null : fi.FurnitureBase.occupancy; } }
     [JsonIgnore] public bool HasOccupancy { get { return OccupancyDef != null; } }
     [JsonIgnore] public bool HoldsUnconscious { get { var d = OccupancyDef; return d != null && d.holdsUnconscious; } }
@@ -337,6 +338,7 @@ public class Job_Furniture : Job
     {
         get
         {
+            ParentRoom?.EnsureFurnitureOwnership();
             if (_ownerNamesCache == null)
             {
                 _ownerNamesCache = "";
@@ -430,7 +432,7 @@ public class Job_Furniture : Job
 
     /// <summary>
     /// Find-job gate of the soft container (ValidateActor only - the player path never reaches it, so the player is
-    /// never blocked). Sleep on a bed: its owners always pass; an owned bed takes nobody else; an unowned bed takes
+    /// never blocked). Sleep on a bed: its owners pass within capacity; an owned bed takes nobody else; an unowned bed takes
     /// nobody while someone sleeps in it (NPCs join a sleeper only in their own bed - user decision D1), nor once the
     /// actors already heading there fill it.
     /// </summary>
@@ -439,9 +441,10 @@ public class Job_Furniture : Job
         if (com == null || !HasOccupancy) return true;
         if (com.isSleepCOM && HoldsUnconscious)
         {
-            if (AssignsOwnership && HasOwners) return IsOwner(c.RefID);
+            if (occupantRefs.Contains(c.RefID)) return true;
+            if (AssignsOwnership && HasOwners) return IsOwner(c.RefID) && CountSeekers(c.RefID, IsDivider ? null : com) < Capacity;
             if (occupantRefs.Count > 0) return false;
-            return CountSeekers(c.RefID, com) < Capacity;
+            return CountSeekers(c.RefID, IsDivider ? null : com) < Capacity;
         }
         if (IsDivider)
         {
@@ -452,6 +455,22 @@ public class Job_Furniture : Job
             return CountSeekers(c.RefID, null) < Capacity;
         }
         return true;
+    }
+
+    /// <summary>
+    /// Autonomous rest selector only, after its source has ensured ownership. Local checks, no room/world scan;
+    /// command validation still enforces access, reservations and scope. Explicit player actions are unchanged.
+    /// </summary>
+    public bool CanAutonomouslyUseBed(Character_Trainable c)
+    {
+        if (c == null) return false;
+        var bedType = ParentInstance?.FurnitureBase?.BedTypeID;
+        if (string.IsNullOrEmpty(bedType)) return true;
+        if (occupantRefs.Contains(c.RefID)) return true;
+        if (AssignsOwnership && ownerRefs.Count > 0)
+            return ownerRefs.Contains(c.RefID) && CountSeekers(c.RefID, null) < Capacity;
+        if (occupantRefs.Count > 0) return false;
+        return CountSeekers(c.RefID, null) < Capacity;
     }
 
     /// <summary> occupants + actors registered on this job for com (any command when null - heading here), not counting self, no double count </summary>

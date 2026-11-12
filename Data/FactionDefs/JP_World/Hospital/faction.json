@@ -44,7 +44,7 @@
                 "managerBaseIDs": [""],
                 "_comment_assignableMemberTypes": "Explicit team-only list (not parent IDs): only the realistic team_a-d rota is assignable to a player/real staff member. The _npc_day/_npc_night posts added below for fallbackWorkers are deliberately left out, so they can never be assigned/joined - mirrors SunMart's npc_day/npc_night split.",
                 "assignableMemberTypes": [
-                    "membertype_jp_hospital_doctor_team_a", "membertype_jp_hospital_doctor_team_b",
+                    "membertype_jp_hospital_doctor_team_a", "membertype_jp_hospital_doctor_team_b", "membertype_jp_hospital_doctor_team_c", "membertype_jp_hospital_doctor_team_d",
                     "membertype_jp_hospital_nurse_team_a", "membertype_jp_hospital_nurse_team_b", "membertype_jp_hospital_nurse_team_c", "membertype_jp_hospital_nurse_team_d",
                     "membertype_jp_hospital_pharmacy_team_a", "membertype_jp_hospital_pharmacy_team_c",
                     "membertype_jp_hospital_frontdesk_team_a", "membertype_jp_hospital_frontdesk_team_b", "membertype_jp_hospital_frontdesk_team_c", "membertype_jp_hospital_frontdesk_team_d"
@@ -53,8 +53,8 @@
                 "joinableMemberTypes": [ "membertype_jp_hospital_patient", "membertype_jp_hospital_pharmacy" ],
                 "_comment_fallbackWorkers": "Fallback workers are pinned to dedicated _npc_day/_npc_night posts (one pair per role, every day, no rest-day gaps) instead of the realistic team_a-d rota, so fallback staffing and the realistic schedule stay separate - the team_a-d posts are reserved for a future player/real-staff assignment pass and never get a fallback worker. 4 roles x 2 (day/night) = 8 fallback NPCs total, matching the design target. templateIDs = CharaTemplateGenerators from JP_World/Characters/templates.json. Pharmacy/front desk reuse the nurse template until dedicated clerk portrait bases exist.",
                 "fallbackWorkers": [
-                    { "memberTypeID": "membertype_jp_hospital_doctor_npc_day", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_doctor" },
-                    { "memberTypeID": "membertype_jp_hospital_doctor_npc_night", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_doctor" },
+                    { "memberTypeID": "membertype_jp_hospital_doctor_npc_day", "coversMemberTypes": ["membertype_jp_hospital_doctor_team_a", "membertype_jp_hospital_doctor_team_c"], "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_doctor" },
+                    { "memberTypeID": "membertype_jp_hospital_doctor_npc_night", "coversMemberTypes": ["membertype_jp_hospital_doctor_team_b", "membertype_jp_hospital_doctor_team_d"], "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_doctor" },
                     { "memberTypeID": "membertype_jp_hospital_nurse_npc_day", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_nurse" },
                     { "memberTypeID": "membertype_jp_hospital_nurse_npc_night", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_nurse" },
                     { "memberTypeID": "membertype_jp_hospital_pharmacy_npc_day", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_nurse" },
@@ -228,7 +228,7 @@
                             "jobPostID": "jp_hospital_doctor_team_a",
                             "workCommands": ["jp_hospital_triage_exam", "jp_hospital_ward_round"],
                             "activeHours": [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
-                            "activeDays": [1, 1, 1, 1, 1, 1, 1,   1, 1, 1, 1, 1, 1, 1],
+                            "activeDays": [1, 1, 0, 0, 1, 1, 1,   0, 0, 1, 1, 0, 0, 0],
                             "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 6600 } ],
                             "paymentCadence": "Monthly",
                             "_comment_holiday": "Wards are staffed every day - holiday work pays the 35% statutory premium.",
@@ -242,7 +242,35 @@
                             "jobPostID": "jp_hospital_doctor_team_b",
                             "workCommands": ["jp_hospital_triage_exam", "jp_hospital_ward_round"],
                             "activeHours": [19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6],
-                            "activeDays": [1, 1, 1, 1, 1, 1, 1,   1, 1, 1, 1, 1, 1, 1],
+                            "activeDays": [1, 1, 0, 0, 1, 1, 1,   0, 0, 1, 1, 0, 0, 0],
+                            "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 7560 } ],
+                            "paymentCadence": "Monthly",
+                            "_comment_holiday": "Wards are staffed every day - holiday work pays the 35% statutory premium.",
+                            "holidayPayoutMultiplier": 1.35
+                        }
+                    },
+                    {
+                        "ID": "membertype_jp_hospital_doctor_team_c",
+                        "socialStandingKey": "membertype_jp_hospital_doctor_team_c",
+                        "workModule": {
+                            "jobPostID": "jp_hospital_doctor_team_c",
+                            "workCommands": ["jp_hospital_triage_exam", "jp_hospital_ward_round"],
+                            "activeHours": [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
+                            "activeDays": [0, 0, 1, 1, 0, 0, 0,   1, 1, 0, 0, 1, 1, 1],
+                            "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 6600 } ],
+                            "paymentCadence": "Monthly",
+                            "_comment_holiday": "Wards are staffed every day - holiday work pays the 35% statutory premium.",
+                            "holidayPayoutMultiplier": 1.35
+                        }
+                    },
+                    {
+                        "ID": "membertype_jp_hospital_doctor_team_d",
+                        "socialStandingKey": "membertype_jp_hospital_doctor_team_d",
+                        "workModule": {
+                            "jobPostID": "jp_hospital_doctor_team_d",
+                            "workCommands": ["jp_hospital_triage_exam", "jp_hospital_ward_round"],
+                            "activeHours": [19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6],
+                            "activeDays": [0, 0, 1, 1, 0, 0, 0,   1, 1, 0, 0, 1, 1, 1],
                             "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 7560 } ],
                             "paymentCadence": "Monthly",
                             "_comment_holiday": "Wards are staffed every day - holiday work pays the 35% statutory premium.",
@@ -251,7 +279,7 @@
                     },
                     {
                         "ID": "membertype_jp_hospital_doctor_npc_day",
-                        "_comment": "NPC-only day post, every day, always covered by a fallback worker. Not in assignableMemberTypes, so it can't be joined or assigned - team_a/team_b above are reserved for a future player/real-staff assignment pass.",
+                        "_comment": "NPC-only day post, every day, covered by a fallback worker when scheduled team_a/team_c staff do not meet headcount. Not in assignableMemberTypes, so it can't be joined or assigned.",
                         "socialStandingKey": "membertype_jp_hospital_doctor_npc_day",
                         "workModule": {
                             "jobPostID": "jp_hospital_doctor_npc_day",
@@ -265,7 +293,7 @@
                     },
                     {
                         "ID": "membertype_jp_hospital_doctor_npc_night",
-                        "_comment": "NPC-only night post, every day, always covered by a fallback worker. Not in assignableMemberTypes.",
+                        "_comment": "NPC-only night post, every day, covered by a fallback worker when scheduled team_b/team_d staff do not meet headcount. Not in assignableMemberTypes.",
                         "socialStandingKey": "membertype_jp_hospital_doctor_npc_night",
                         "workModule": {
                             "jobPostID": "jp_hospital_doctor_npc_night",

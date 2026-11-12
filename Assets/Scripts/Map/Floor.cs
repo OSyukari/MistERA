@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Newtonsoft.Json;
 using QuikGraph;
 using QuikGraph.Algorithms;
@@ -100,7 +101,29 @@ public class Floor_Instance : IDisposable, I_Disposable
         return exit;
     }
 
-    [JsonProperty] public List<Room_Instance> rooms;
+    internal void RemoveRuntimeExit(string exitID)
+    {
+        runtimeExits?.RemoveAll(exit => exit.ID == exitID);
+    }
+
+    [JsonIgnore] public List<Room_Instance> rooms;
+    // Attached rooms are serialized once by Map_Instance, not again under their host floor.
+    [JsonProperty("rooms", ObjectCreationHandling = ObjectCreationHandling.Replace)] private List<Room_Instance> SerializedRooms
+    {
+        get { return rooms.Where(room => !room.isStandalone).ToList(); }
+        set { rooms = value ?? new List<Room_Instance>(); }
+    }
+
+    internal void AddAttachedRoom(Room_Instance room)
+    {
+        if (!rooms.Contains(room)) rooms.Add(room);
+        // Template IDs repeat between household instances; only native rooms use roomReference.
+    }
+
+    internal void RemoveAttachedRoom(Room_Instance room)
+    {
+        rooms.Remove(room);
+    }
 
     public Room_Instance GetRoomWithRef(int roomRef)
     {
@@ -187,7 +210,7 @@ public class Floor_Instance : IDisposable, I_Disposable
     {
         if (!roomReference.ContainsKey(baseID) && rooms.Count > 0)
         {
-            var temp = rooms.Find(x=>x.Base != null && x.Base.ID == baseID);
+            var temp = rooms.Find(x=>!x.isStandalone && x.Base != null && x.Base.ID == baseID);
             if (temp != null) roomReference.Add(baseID, temp.RefID);
             else
             {
@@ -227,6 +250,46 @@ public class Floor_Instance : IDisposable, I_Disposable
 
     [JsonIgnore] private List<Room_Base> pendingRoomAdditions = new List<Room_Base>();
     [JsonIgnore] private List<Room_Instance> pendingRoomRemovals = new List<Room_Instance>();
+    [JsonIgnore] private Dictionary<Room_Instance, List<string>> pendingTemplateFurniture = new Dictionary<Room_Instance, List<string>>();
+    [JsonIgnore] internal bool migrationWarningReported = false;
+
+    /// <summary>Opt-in template replacement preserving every live room and all instance references.</summary>
+    public bool RetargetTemplateIdentity(Floor_Base template)
+    {
+        if (template == null || !template.isValid) return false;
+        var source = scr_System_Serializer.current.GetByNameOrID_Floor_Base(floorPlanID);
+        if (source == null) return false;
+        // Validate saved IDs, not cached Room.Base values. Never turn an identity migration
+        // into removal of a player's rooms or furniture when the templates are incompatible.
+        foreach (var room in rooms)
+            if (!room.isStandalone && (source.GetRoom(room.TemplateRoomID) == null || template.GetRoom(room.TemplateRoomID) == null))
+                return false;
+
+        pendingTemplateFurniture.Clear();
+        foreach (var room in rooms)
+        {
+            if (room.isStandalone) continue;
+            var oldFurniture = new List<string>(source.GetRoom(room.TemplateRoomID).furnitureIDs);
+            var additions = new List<string>();
+            foreach (var id in template.GetRoom(room.TemplateRoomID).furnitureIDs)
+                if (!oldFurniture.Remove(id)) additions.Add(id);
+            if (additions.Count > 0) pendingTemplateFurniture.Add(room, additions);
+        }
+
+        floorBase = null;
+        floorPlanID = template.ID;
+        foreach (var room in rooms) if (!room.isStandalone) room.ChangeTemplateFloorID(template.ID);
+        pendingRoomRemovals.Clear();
+        pendingRoomAdditions.Clear();
+        for (int i = 0; i < template.rooms.Count; i++)
+        {
+            bool exists = false;
+            for (int j = 0; j < rooms.Count; j++)
+                if (rooms[j].TemplateRoomID == template.rooms[i].ID) { exists = true; break; }
+            if (!exists) pendingRoomAdditions.Add(template.rooms[i]);
+        }
+        return true;
+    }
 
     public bool IsPendingRoomRemoval(Room_Instance room) => pendingRoomRemovals.Contains(room);
 
@@ -234,7 +297,7 @@ public class Floor_Instance : IDisposable, I_Disposable
     {
         if (MapTemplate == null) return null;
         Manageable host = null;
-        foreach (var faction in scr_System_CampaignManager.current.Factions)
+        foreach (var faction in scr_System_CampaignManager.current.ActivityFactions)
         {
             if (string.IsNullOrEmpty(faction.mapPlanID) || !faction.ManagedFloors.Contains(this)) continue;
             var plan = scr_System_Serializer.current.GetByNameOrID_MapPlan(faction.mapPlanID);
@@ -286,14 +349,14 @@ public class Floor_Instance : IDisposable, I_Disposable
         // already be sound (checked below, not just assumed).
         if (!buildpath && MapTemplate != null && FloorBase != null)
         {
-            pendingRoomRemovals = rooms.FindAll(x => x.Base == null);
-            pendingRoomAdditions = FloorBase.rooms.FindAll(rb => rooms.Find(x => x.Base != null && x.Base.ID == rb.ID) == null);
+            pendingRoomRemovals = rooms.FindAll(x => !x.isStandalone && x.Base == null);
+            pendingRoomAdditions = FloorBase.rooms.FindAll(rb => rooms.Find(x => !x.isStandalone && x.Base != null && x.Base.ID == rb.ID) == null);
         }
         else if (!buildpath && IsTemplateRemoved)
         {
             // the whole floor template was removed from the data: every room goes (occupants evacuate to a main exit)
             Debug.LogWarning($"Floor [{refID}] template [{floorPlanID}] no longer exists; removing its {rooms.Count} rooms on load");
-            pendingRoomRemovals = new List<Room_Instance>(rooms);
+            pendingRoomRemovals = rooms.FindAll(room => !room.isStandalone);
             pendingRoomAdditions.Clear();
         }
 
@@ -313,10 +376,21 @@ public class Floor_Instance : IDisposable, I_Disposable
     }
 
     /// <summary>
-    /// Removes obsolete rooms only after Map_Instance has prepared all additions, tenants and exits.
+    /// Applies opt-in template furniture additions, then removes obsolete rooms after additions, tenants and exits are prepared.
     /// </summary>
     public void ApplyPendingRoomChanges()
     {
+        // Only the positive authored delta from an explicit template retarget is applied.
+        // Ordinary loads must not restore furniture that the player deliberately removed.
+        foreach (var entry in pendingTemplateFurniture)
+            foreach (var id in entry.Value)
+            {
+                int authoredCount = entry.Key.Base.furnitureIDs.FindAll(f => f == id).Count;
+                int liveCount = entry.Key.Furnitures.FindAll(f => f.FurnitureBaseID == id).Count;
+                if (liveCount < authoredCount) entry.Key.AddFurniture(id);
+            }
+        pendingTemplateFurniture.Clear();
+
         // Rooms deleted from the template: evacuate anyone inside, then tear the room down.
         foreach (var ri in pendingRoomRemovals)
         {
@@ -346,7 +420,7 @@ public class Floor_Instance : IDisposable, I_Disposable
     Func<TaggedEdge<int, Door_Instance>, double> edgeCost = entry => entry.Tag.Cost;
     AdjacencyGraph<int, TaggedEdge<int, Door_Instance>> graph = null;
     [JsonIgnore] public AdjacencyGraph<int, TaggedEdge<int, Door_Instance>> Graph { get { return graph; } }
-    private void BuildPath(Room_Instance mainExit = null)
+    internal void BuildPath(Room_Instance mainExit = null)
     {
         graph = new AdjacencyGraph<int, TaggedEdge<int, Door_Instance>>();
         foreach (var room in rooms)
@@ -401,6 +475,17 @@ public class Floor_Instance : IDisposable, I_Disposable
 
          */
 
+
+        foreach (var link in scr_System_CampaignManager.current.Map.GetRoomAttachments(this))
+        {
+            var source = FindRoom(link.sourceRoomRef);
+            var target = FindRoom(link.roomRef);
+            if (source == null || target == null) continue;
+            var door = new Door_Instance(link.cost);
+            graph.AddVerticesAndEdge(new TaggedEdge<int, Door_Instance>(source.RefID, target.RefID, door));
+            graph.AddVerticesAndEdge(new TaggedEdge<int, Door_Instance>(target.RefID, source.RefID, door));
+            source.connectedInFloor = target.connectedInFloor = true;
+        }
 
         // Verify if every room is connected. Unconnected room might need to be removed 
         foreach(var i in rooms){

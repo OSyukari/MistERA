@@ -23,8 +23,11 @@ public partial class Job_Activity
     {
         if (room == null || string.IsNullOrEmpty(activity?.reserveFurnitureTag)
             || room.isRoomPrison || (RecreationUtility.IsOvernight(activity) && !room.isRoomPrivate)) return false;
-        foreach (var f in room.Furnitures)
+        for (int i = 0; i < room.FurnitureCount; i++)
+        {
+            var f = room.GetFurniture(i);
             if (f?.JobGiver is Job_Furniture && f.FurnitureBase.Tags.Contains(activity.reserveFurnitureTag)) return true;
+        }
         return false;
     }
 
@@ -40,6 +43,7 @@ public partial class Job_Activity
     /// <summary>Someone other than this stay's own guests owns roomRef.</summary>
     bool HasForeignOwner(int roomRef)
     {
+        if (!Venue.HasRoomOwners(roomRef)) return false;
         foreach (int id in Venue.RoomOwners(roomRef))
             if (!overnightGuestRefs.Contains(id)) return true;
         return false;
@@ -58,7 +62,7 @@ public partial class Job_Activity
         bool overnight = RecreationUtility.IsOvernight(activity);
         Job_Furniture furniture = null;
         foreach (var j in pool)
-            if (!overnight || Venue.RoomOwners(j.ParentRoom.RefID).Count == 0) { furniture = j; break; }
+            if (!overnight || !Venue.HasRoomOwners(j.ParentRoom.RefID)) { furniture = j; break; }
         // before T the previous stay may still own every room until its own end; launch re-selects (CanLaunchReserved)
         if (furniture == null && phase == ActivityPhase.Gathering && MinutesSinceStart < 0 && pool.Count > 0) furniture = pool[0];
         if (furniture == null) return false;
@@ -82,14 +86,15 @@ public partial class Job_Activity
         if (!AllowsReservedVisit(c) || ParentRoom == null) return false;
         var commands = BookingOf(c)?.workModule?.workCommands ?? VisitActivity?.workModule?.workCommands;
         if (commands == null) return false;
-        var furnitures = ParentRoom.Furnitures;
+        var room = ParentRoom;
         foreach (var id in commands)
         {
             if (id == "com_furniture_sleep") continue;
             var com = scr_System_Serializer.current.MasterList.COMs.GetByID(id);
             if (com == null) continue;
-            foreach (var f in furnitures)
+            for (int i = 0; i < room.FurnitureCount; i++)
             {
+                var f = room.GetFurniture(i);
                 if (!(f?.JobGiver is Job_Furniture furniture) || !furniture.ValidateActor(c, com)) continue;
                 if (c.CurrentJob == furniture && (furniture.hasActivePackge(c.RefID, id) || furniture.hasActivePathing(c.RefID))) return true;
                 c.ChangeCurrentJob(furniture, id);

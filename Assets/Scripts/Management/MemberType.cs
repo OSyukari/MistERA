@@ -261,6 +261,9 @@ public class MemberType
 
     // ---------------- data ---------------- //
 
+    /// <summary>Inherited bed preference; empty after FillDefaults means the human fallback.</summary>
+    public string preferredBedTypeID = null;
+
     /// <summary>
     /// Optional shared grouping key for MemberRelations lookups - see GetRelationshipWithType. Lets a
     /// set of otherwise-distinct MemberTypes (e.g. several school-specific student statuses) share a
@@ -450,6 +453,28 @@ public class MemberType
     /// among provided activities (RecreationUtility.ProvidedActivity looks them up by ID). Null = none.
     /// </summary>
     public List<RecreationActivity> providedActivities = null;
+
+    /// <summary>
+    /// Activities a holder of this type never books, joins or is invited to (RecreationUtility.IsEligible): an activity
+    /// whose mainTypeTag or one of its secondaryTags is listed; "*" = every activity. Activities the holder provides
+    /// themself (providedActivities of any type they hold) are exempt - e.g. a house pet forbids "*" and still hosts its
+    /// own walk. Null = none.
+    /// </summary>
+    public List<string> forbidActivityTags = null;
+
+    /// <summary>Whether forbidActivityTags matches activity (the provided-activity exemption is the caller's - RecreationUtility.IsEligible).</summary>
+    public bool ForbidsActivity(RecreationActivity activity)
+    {
+        if (activity == null || forbidActivityTags == null || forbidActivityTags.Count == 0) return false;
+        for (int i = 0; i < forbidActivityTags.Count; i++)
+        {
+            var tag = forbidActivityTags[i];
+            if (string.IsNullOrEmpty(tag)) continue;
+            if (tag == "*" || tag == activity.mainTypeTag) return true;
+            if (activity.secondaryTags != null && activity.secondaryTags.Contains(tag)) return true;
+        }
+        return false;
+    }
 
     /// <summary>
     /// What a character needs before the player may assign them this type in the management job-post tab

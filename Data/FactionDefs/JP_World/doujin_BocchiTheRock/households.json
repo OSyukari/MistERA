@@ -1,0 +1,90 @@
+{
+  "_comment": "Authored households. The Gotoh home uses its own cloned floor for Jimihen's pet house; Futari's room and enrolment are supplied by the optional mod.",
+  "MapPlans": {
+    "factionInit": [
+      {
+        "ID": "btr_home_gotoh",
+        "isPublic": false,
+        "showLockedFloors": true,
+        "isRentingFloor": false,
+        "setPrivateRoomOwner": false,
+        "mainExit": { "roomID": "4ldk_floor_1L_frontDoor", "exitCost": 1 },
+        "floors": [{ "ID": "floor_btr_gotoh_house", "migrateFromFloorID": "house_floor_4ldk", "nameOverwrite": "btr_home_gotoh" }],
+        "activeHoursStart": 7,
+        "activeHoursEnd": 23,
+        "mealHours": [7,12,18],
+        "initializers": [{ "initClass": "campaign_init_factionInventory", "initArguments": ["", "consumable_bento_box", "", "1"] }]
+      },
+      {
+        "ID": "btr_home_kita",
+        "isPublic": false,
+        "showLockedFloors": true,
+        "isRentingFloor": true,
+        "setPrivateRoomOwner": false,
+        "mainExit": { "roomID": "floor_2ldk_2floor_1_1L_frontDoor", "exitCost": 1 },
+        "floors": [{ "ID": "floor_2ldk_2floor_1", "nameOverwrite": "btr_home_kita" }],
+        "activeHoursStart": 7,
+        "activeHoursEnd": 23,
+        "mealHours": [7,12,18],
+        "initializers": [{ "initClass": "campaign_init_factionInventory", "initArguments": ["", "consumable_bento_box", "", "1"] }]
+      },
+      {
+        "ID": "btr_home_ryo",
+        "isPublic": false,
+        "showLockedFloors": true,
+        "isRentingFloor": true,
+        "setPrivateRoomOwner": false,
+        "mainExit": { "roomID": "floor_1ldk_1_frontDoor", "exitCost": 1 },
+        "floors": [{ "ID": "floor_1ldk_1", "nameOverwrite": "btr_home_ryo" }],
+        "activeHoursStart": 7,
+        "activeHoursEnd": 23,
+        "mealHours": [7,12,18],
+        "initializers": [{ "initClass": "campaign_init_factionInventory", "initArguments": ["", "consumable_bento_box", "", "1"] }]
+      },
+      {
+        "ID": "btr_home_pa",
+        "isPublic": false,
+        "showLockedFloors": true,
+        "isRentingFloor": true,
+        "setPrivateRoomOwner": false,
+        "mainExit": { "roomID": "floor_2ldk_2floor_1_1L_frontDoor", "exitCost": 1 },
+        "floors": [{ "ID": "floor_2ldk_2floor_1", "nameOverwrite": "btr_home_pa" }],
+        "activeHoursStart": 7,
+        "activeHoursEnd": 23,
+        "mealHours": [7,12,18],
+        "initializers": [{ "initClass": "campaign_init_factionInventory", "initArguments": ["", "consumable_bento_box", "", "1"] }]
+      },
+      {
+        "ID": "btr_home_kikuri",
+        "isPublic": false,
+        "showLockedFloors": true,
+        "isRentingFloor": true,
+        "setPrivateRoomOwner": false,
+        "mainExit": { "roomID": "floor_1ldk_1_frontDoor", "exitCost": 1 },
+        "floors": [{ "ID": "floor_1ldk_1", "nameOverwrite": "btr_home_kikuri" }],
+        "activeHoursStart": 7,
+        "activeHoursEnd": 23,
+        "mealHours": [7,12,18],
+        "initializers": [{ "initClass": "campaign_init_factionInventory", "initArguments": ["", "consumable_bento_box", "", "1"] }]
+      }
+    ]
+  },
+  "Dictionary": {
+    "Entries": {
+      "zh-cn": {
+        "btr_home_gotoh": "后藤家宅",
+        "btr_home_kita": "喜多家的公寓",
+        "btr_home_ryo": "山田凉的住处",
+        "btr_home_pa": "PA酱的住处",
+        "btr_home_kikuri": "广井菊理的住处"
+      },
+      "en-us": {
+        "btr_home_gotoh": "Gotoh Family Home",
+        "btr_home_kita": "Kita Family Apartment",
+        "btr_home_ryo": "Ryo's Apartment",
+        "btr_home_pa": "PA-san's Apartment",
+        "btr_home_kikuri": "Kikuri's Apartment"
+      }
+    }
+  }
+}

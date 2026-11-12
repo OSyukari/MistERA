@@ -150,7 +150,7 @@ public partial class LLM_WorldState
             string factionStatus = isPlayer
                 ? String.Join(", ", c.FactionManager.Factions.Where(f => f != null).Select(f => $"{f.FactionDisplayName}: {f.GetCharaSocialStandingName(c.RefID)}"))
                 : c.FactionManager.CurrentlyActiveFactionStatus;
-            Description = $"{c.Race.DisplayName} {c.RaceTemplate.DisplayName} {factionStatus}";
+            Description = $"{c.Race.DisplayName} {c.RaceTemplatesDisplayName} {factionStatus}";
             if (isPlayer) Description += ", IS PLAYER CHARACTER";
             CurrentlyDoing = c.GetJobDescription();
             var room = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);

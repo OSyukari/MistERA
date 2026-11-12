@@ -1,0 +1,90 @@
+{
+  "baseID": "GirlsBandCry_Char_Rupa",
+  "Portrait":{
+    "portraitPriorityList":[
+      {
+        "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+
+        "random_portrait_folder":"Rupa/portrait",
+            
+        "icon_offset_x":3,            "icon_offset_y":-121.7,            "icon_offset_size":0.6,
+
+        "icon_path":"Rupa/portrait/ComfyUI_0002 (2).webp"
+      }
+    ]
+  },
+  "Template": {
+    "Appearance": "Female",
+    "stat_STR": 8,
+    "stat_CON": 10,
+    "stat_PSY": 12,
+    "stat_WIL": 12,
+    "personalityID": "personality_default",
+    "traits_body_sex": [
+      "trait_Sensitivity_B_default",
+      "trait_Sensitivity_M_default",
+      "trait_Sensitivity_C_default",
+      "trait_Sensitivity_V_default",
+      "trait_Sensitivity_A_default",
+      "trait_Size_B_B",
+      "trait_Size_P_none",
+      "trait_Size_V_1",
+      "trait_Size_A_1"
+    ],
+    "traits_body": [
+      "trait_BodyType_slim",
+      "trait_SkinColor_tan",
+      "trait_HairColor_brown",
+      "trait_EyeColor_brown"
+    ],
+    "Height": 169,
+    "Weight": 58,
+    "traits": [
+      "trait_AlcoholTolerance_good",
+      "trait_MemoryCapacity_high",
+      "trait_MemoryRetention_high",
+      "trait_EnergyCapacity_high",
+      "trait_MentalFortitude_high"
+    ],
+    "initialRelationship": [
+      {
+        "baseID": "GirlsBandCry_Char_Nina_Iseri",
+        "initialPersonalRelationship": "relationship_friend"
+      },
+      {
+        "baseID": "GirlsBandCry_Char_Momoka_Kawaragi",
+        "initialPersonalRelationship": "relationship_friend"
+      },
+      {
+        "baseID": "GirlsBandCry_Char_Subaru_Awa",
+        "initialPersonalRelationship": "relationship_friend"
+      },
+      {
+        "baseID": "GirlsBandCry_Char_Tomo_Ebizuka",
+        "initialPersonalRelationship": "relationship_housemate"
+      }
+    ],
+      "promptProfile": {
+          "prompts": [ "rupa_(girls_band_cry)" ],
+          "target prompts":"girl, rupa \\(girls band cry\\), girls band cry, short hair, green eyes, hair over one eye, eyes visible through hair, checkered collar shirt, grey jacket, sweater, coat, long sleeves rolled up, black shorts, ribbed socks, sandals",
+          "inheritRulesets": [ "ruleset_character_tag" ]
+      },
+    "initialInventory": [],
+    "defaultHairstyle": {
+      "hairstyleID": "hairstyle_bob",
+      "slotSelection": {
+        "front": "hair_front_side_swept"
+      }
+    },
+    "CharacterCard": "<Rupa>\nIdentity: Rupa, 22-year-old bassist of TOGENASHI TOGEARI. Her father is South Asian and her mother Japanese; the official profile names South Asia as her origin but does not establish a specific country, citizenship, or religion.\nCurrent timeline: The band continues independently after leaving its agency. She shares an apartment with Tomo and has returned with Tomo to their former restaurant work.\nCharacter: Artistically gifted, sharp-minded, reserved, and gentle in speech, with an unusually steady nerve. She enjoys reading and evening drinking, the latter often to excess. She is Tomo’s enduring roommate and musical partner from their former duo beni-shouga; she understands why Tomo learned to hide criticism and helps her risk honesty again when the band can receive it.\nAppearance: Tan complexion, short gray-olive-brown bob with long side-swept bangs, gray-brown eyes, and a small beauty mark beneath the visible eye.\n</Rupa>",
+    "Skills": null
+  },
+  "firstName": "GirlsBandCry_Char_Rupa_firstname",
+  "middleName": "",
+  "lastName": "",
+  "nameDisplayFormat": "chara_fullname_firstToLast",
+  "origin": "charOrigin_none",
+  "race": "humanRace_human",
+  "raceTemplate": "humanRaceAddon_standard",
+  "startingGift": "charOriginGift_none"
+}

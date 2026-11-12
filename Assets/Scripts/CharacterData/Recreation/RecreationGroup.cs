@@ -65,6 +65,19 @@ public class RecreationGroup : I_ActivityBooking
     public int startHour = 0;
     public int hours = 0;
     public string factionID = "";
+    public string organizerFactionID = "";
+    public string venueOfferID = "";
+    public bool isOrganizationAudience = false;
+    /// <summary>Booked rental price; missing fields in older saves remain free.</summary>
+    public ItemEntry rentalFee = new ItemEntry();
+    public bool rentalPaymentCompleted = false;
+    public bool roomExclusive = false;
+    public List<int> requiredParticipantRefs = new List<int>();
+    public RecreationActivityKey parentPerformance = null;
+    [JsonIgnore] internal RecreationActivity organizationActivityCache;
+    [JsonIgnore] internal RecreationGroup organizationParentCache;
+    // A missing parent is cached too. Loading creates fresh groups and therefore fresh runtime links.
+    [JsonIgnore] internal bool organizationParentResolved;
 
     public RecreationBookingSource source = RecreationBookingSource.Membership;
     public string sourceKey = "";
@@ -97,6 +110,8 @@ public class RecreationGroup : I_ActivityBooking
     /// never announces again; RecreationGroupRegistry.Add sets it false for a new one.
     /// </summary>
     public bool resolved = true;
+    /// <summary>Its keepAccepted roles were trimmed at the resolve (RecreationUtility.TrimKeptRoles): they take no one new from then on (RoleCap).</summary>
+    public bool keptRolesTrimmed = false;
     /// <summary>The resolve point was reached while the player's invitation was unanswered: their answer resolves it.</summary>
     [JsonIgnore] internal bool resolveDue;
     /// <summary>The first HoursLateCycle whose resolve pass may resolve it - one registered after an hour's passes began waits for the next hour's answers.</summary>
@@ -177,14 +192,43 @@ public class RecreationGroup : I_ActivityBooking
         }
     }
 
+    /// <summary>
+    /// The player has a member record - asked about it (a public notice, an invitation), answered or not. A posted offer
+    /// holding it is saved (and kept on load) like a held one, so a reload never asks the player again.
+    /// </summary>
+    [JsonIgnore] public bool HoldsPlayerAnswer
+    {
+        get
+        {
+            var player = scr_System_CampaignManager.current?.Player;
+            return player != null && FindMember(player.RefID) != null;
+        }
+    }
+
     // ---------------- I_ActivityBooking ---------------- //
 
-    [JsonIgnore] public string DisplayName { get { return RecreationUtility.ActivityDisplayName(workModule); } }
+    [JsonIgnore] public string DisplayName { get { return RecreationUtility.SessionDisplayName(this); } }
     [JsonIgnore] public System.DateTime StartTime { get { return RecreationUtility.AbsHourToDateTime(AbsStart); } }
     /// <summary>The attending members, the gather floor and room, start and end hour.</summary>
     [JsonIgnore] public string Tooltip
     {
-        get { return RecreationUtility.BuildActivityDetail(AttendingCharas(), factionID, RecreationUtility.ResolveActivity(this), day, startHour, AbsEnd, source, workModule); }
+        get
+        {
+            string text = RecreationUtility.BuildActivityDetail(AttendingCharas(), factionID, RecreationUtility.ResolveActivity(this), day, startHour, AbsEnd, source, workModule);
+            if (source == RecreationBookingSource.Organization)
+            {
+                text += "\n" + LocalizeDictionary.QueryThenParse("ui_recreation_activity_organizer")
+                    .Replace("$organization$", scr_System_CampaignManager.current.FindFactionByID(organizerFactionID)?.FactionDisplayName ?? organizerFactionID);
+                if (!isOrganizationAudience)
+                {
+                    text += "\n" + LocalizeDictionary.QueryThenParse("ui_recreation_activity_rental_price")
+                        .Replace("$price$", (rentalFee ?? new ItemEntry()).Print);
+                    if (rentalPaymentCompleted) text += "\n" + LocalizeDictionary.QueryThenParse("ui_recreation_rental_paid");
+                }
+            }
+            if (roomExclusive) text += "\n" + LocalizeDictionary.QueryThenParse("ui_recreation_activity_room_exclusive");
+            return text;
+        }
     }
 
     public RecreationGroupMember FindMember(int charaRef) { return members.Find(m => m.charaRef == charaRef); }
@@ -241,8 +285,8 @@ public class RecreationGroupRegistry
 
     /// <summary>
     /// What is saved: every session except a posted fixed offer nobody holds (RecreationGroup.IsPostedOffer, not
-    /// HoldsAnyone) - that is world data, rebuilt on load (RecreationBoard.RebuildAfterLoad). Replace: loading sets the
-    /// list, never fills the filtered copy.
+    /// HoldsAnyone, not HoldsPlayerAnswer) - that is world data, rebuilt on load (RecreationBoard.RebuildAfterLoad).
+    /// Replace: loading sets the list, never fills the filtered copy.
     /// </summary>
     [JsonProperty("sessions", ObjectCreationHandling = ObjectCreationHandling.Replace)]
     List<RecreationGroup> SavedSessions
@@ -253,7 +297,7 @@ public class RecreationGroupRegistry
             for (int i = 0; i < Sessions.Count; i++)
             {
                 var s = Sessions[i];
-                if (s != null && (!s.IsPostedOffer || s.HoldsAnyone)) saved.Add(s);
+                if (s != null && (!s.IsPostedOffer || s.HoldsAnyone || s.HoldsPlayerAnswer)) saved.Add(s);
             }
             return saved;
         }

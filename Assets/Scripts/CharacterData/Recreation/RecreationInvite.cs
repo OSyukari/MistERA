@@ -30,6 +30,8 @@ public class RecreationInviteSpec
 
     /// <summary>Never a session - the booking stays solo whatever the visibility.</summary>
     public bool solo = false;
+    /// <summary>Required participation when the booking stays solo; a session's host is always required.</summary>
+    public bool selfRequired = false;
     /// <summary>Sessions without a required role: chance a booking becomes a session at all. Mandatory ones always do.</summary>
     public float inviteChance = 0.3f;
     /// <summary>Attending members (host included) the session needs to stand.</summary>
@@ -117,6 +119,14 @@ public class RecreationInviteTarget : EventScope_Target
     public string guestMemberTypeID = "";
     /// <summary>Most members this role may hold, invited and joined together (-1 = no limit).</summary>
     public int maxParticipants = -1;
+    /// <summary>
+    /// TargetValidators only: a backup invitation - the host invites up to maxTargetCount in priority order (orderBy,
+    /// kept as the members' order), and when the session resolves only the first keepAccepted of the role who accepted
+    /// stay; the others (accepted or unanswered) are released (RecreationUtility.TrimKeptRoles), and the role takes no
+    /// one new afterwards. The NPCs answer first; the player is asked only while they could still be kept (fewer than keepAccepted ranked
+    /// before them accepted). 0 = off.
+    /// </summary>
+    public int keepAccepted = 0;
 
     /// <summary>InviteeValidators only: the roles whose participants may extend with it (empty = any).</summary>
     public List<string> fromRoles = new List<string>();

@@ -29,11 +29,11 @@
     "managerBaseIDs": [
         ""
     ],
-    "_comment_assignableMemberTypes": "Shared mall clerk shift - see _doc_staff. Not in joinableMemberTypes: NPC-only, the player can't join it.",
-    "assignableMemberTypes": [ "membertype_jp_mall_clerk" ],
-    "_comment_fallbackWorkers": "One fallback front desk clerk.",
+    "_comment_assignableMemberTypes": "Regular part-time clerks use six-hour early/late shifts with complementary 14-day A/B schedules. The old all-day leaf is reserved for fallback generation; no recruiting UI is added.",
+    "assignableMemberTypes": [ "membertype_jp_mall_clerk_parttime" ],
+    "_comment_fallbackWorkers": "Minimum coverage 1, fallback cap 1; on-duty regular clerks count toward coverage.",
     "fallbackWorkers": [
-        { "memberTypeID": "membertype_jp_mall_clerk", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }
+        { "memberTypeID": "membertype_jp_mall_clerk", "coversMemberTypes": ["membertype_jp_mall_clerk_parttime"], "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }
     ],
     "workHours": [],
     "workAssignment": [],

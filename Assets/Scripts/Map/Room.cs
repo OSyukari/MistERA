@@ -400,86 +400,226 @@ public class Room_Instance: IDisposable, I_Disposable
     // furniture's job. Nothing per tick.
 
     [NonSerialized][JsonIgnore] bool _furnitureOwnershipChecked = false;
-    static readonly List<Job_Furniture> _ownershipBeds = new List<Job_Furniture>();
-    static readonly List<int> _ownershipBuffer = new List<int>();
+    [NonSerialized][JsonIgnore] bool _furnitureOwnershipAssigning;
+    [NonSerialized][JsonIgnore] bool _furnitureOwnershipPending;
+    [NonSerialized][JsonIgnore] bool _bedOwnershipEligibilityCached;
+    [NonSerialized][JsonIgnore] bool _canAssignBedOwnership;
 
-    /// <summary> First read after load: assign once (older saves have no bed owners). Cheap flag check afterwards. </summary>
+    // Rent a separate workspace for recursive callbacks in another room; retain at most four.
+    sealed class OwnershipWorkspace
+    {
+        public readonly List<Job_Furniture> Beds = new List<Job_Furniture>();
+        public readonly List<List<int>> Ideal = new List<List<int>>();
+        public readonly List<List<int>> Actual = new List<List<int>>();
+        public readonly List<int> Owners = new List<int>();
+        public readonly Dictionary<int, string> Preferences = new Dictionary<int, string>();
+        public readonly HashSet<int> Assigned = new HashSet<int>();
+
+        public void Clear()
+        {
+            Beds.Clear();
+            Owners.Clear();
+            Preferences.Clear();
+            Assigned.Clear();
+            for (int i = 0; i < Ideal.Count; i++) { Ideal[i].Clear(); Actual[i].Clear(); }
+        }
+    }
+    static readonly Stack<OwnershipWorkspace> _ownershipPool = new Stack<OwnershipWorkspace>();
+
+    /// <summary>First read after load: validate even nonempty saved owners once. Cheap flag check afterwards.</summary>
     public void EnsureFurnitureOwnership()
     {
-        if (_furnitureOwnershipChecked) return;
+        if (_furnitureOwnershipChecked || _furnitureOwnershipAssigning) return;
         ReassignFurnitureOwnership();
     }
 
-    /// <summary>
-    /// Stable re-assignment of bed owners from the room's owners: a bed keeps owners that still own the room, owners
-    /// without a bed get a random one among the beds with the fewest owners (unowned first). Party rooms (owners =
-    /// every member, never notified) and unowned rooms leave their beds unowned. Room owner preferences and a player
-    /// facing editor plug in here later.
-    /// </summary>
+    /// <summary>Occupancy removal only: ordinary occupancy changes never initiate an ownership scan.</summary>
+    internal void ReassignPendingFurnitureOwnership()
+    {
+        if (_furnitureOwnershipPending && !_furnitureOwnershipAssigning) ReassignFurnitureOwnership();
+    }
+
+    /// <summary>Event-driven, stable, capacity-limited matching; occupied beds keep their owners until vacated.</summary>
     public void ReassignFurnitureOwnership()
     {
-        _furnitureOwnershipChecked = true;
-        var beds = _ownershipBeds;
-        beds.Clear();
+        if (_furnitureOwnershipAssigning) return;
+        _furnitureOwnershipAssigning = true;
+        var work = _ownershipPool.Count > 0 ? _ownershipPool.Pop() : new OwnershipWorkspace();
+        try
+        {
+            _furnitureOwnershipPending = false;
+            var beds = work.Beds;
+            if (!CollectOwnershipCandidates(work))
+            {
+                _furnitureOwnershipChecked = true;
+                return;
+            }
+
+            MatchFurnitureOwners(work, work.Ideal, false);
+            MatchFurnitureOwners(work, work.Actual, true);
+            bool occupied = false, blocked = false;
+            for (int b = 0; b < beds.Count; b++)
+            {
+                var current = beds[b].OwnerRefs;
+                var actual = work.Actual[b];
+                var ideal = work.Ideal[b];
+                occupied |= beds[b].OccupantRefs.Count > 0;
+                if (ideal.Count != actual.Count) blocked = true;
+                else for (int i = 0; i < ideal.Count; i++) if (!actual.Contains(ideal[i])) blocked = true;
+                bool changed = current.Count != actual.Count;
+                if (!changed)
+                    for (int i = 0; i < current.Count; i++) if (current[i] != actual[i]) { changed = true; break; }
+                if (changed) beds[b].Ownership_Set(actual);
+            }
+            _furnitureOwnershipPending = occupied && blocked;
+            _furnitureOwnershipChecked = true;
+        }
+        finally
+        {
+            _furnitureOwnershipAssigning = false;
+            work.Clear();
+            if (_ownershipPool.Count < 4) _ownershipPool.Push(work);
+        }
+    }
+
+    /// <summary>Fills work with this room's ownership beds and its faction's room owners. False when the room has no such bed.</summary>
+    bool CollectOwnershipCandidates(OwnershipWorkspace work)
+    {
+        var beds = work.Beds;
         if (roomJobFurnitures != null)
         {
             for (int i = 0; i < roomJobFurnitures.Count; i++)
-            {
                 if (roomJobFurnitures[i].JobGiver is Job_Furniture jf && jf.AssignsOwnership) beds.Add(jf);
-            }
         }
-        if (beds.Count < 1) return;
-
-        // Manageable only: a party room (Manageable_Party) lists every member as owner and is never notified
+        if (beds.Count == 0) return false;
+        while (work.Ideal.Count < beds.Count)
+        {
+            work.Ideal.Add(new List<int>());
+            work.Actual.Add(new List<int>());
+        }
+        // Party rooms deliberately have no individual bed owners.
         var faction = FactionOwner as Manageable;
-        List<int> owners = faction == null ? null : faction.RoomOwners(RefID);
-        var buffer = _ownershipBuffer;
-
-        // 1 - keep still-valid owners, drop the rest (and duplicates across beds)
-        for (int b = 0; b < beds.Count; b++)
-        {
-            var bed = beds[b];
-            var current = bed.OwnerRefs;
-            buffer.Clear();
-            for (int i = 0; i < current.Count; i++)
+        var owners = faction?.RoomOwners(RefID);
+        if (owners != null)
+            for (int i = 0; i < owners.Count; i++)
             {
-                int o = current[i];
-                if (owners == null || !owners.Contains(o) || buffer.Contains(o)) continue;
-                bool takenEarlier = false;
-                for (int pb = 0; pb < b && !takenEarlier; pb++) takenEarlier = beds[pb].OwnerRefs.Contains(o);
-                if (!takenEarlier) buffer.Add(o);
+                int actorRef = owners[i];
+                var actor = scr_System_CampaignManager.current.FindInstanceByID(actorRef);
+                if (actor == null || work.Preferences.ContainsKey(actorRef)) continue;
+                work.Owners.Add(actorRef);
+                work.Preferences.Add(actorRef, BedPreferenceUtility.GetEffectiveType(actor, faction));
             }
-            if (buffer.Count != current.Count) bed.Ownership_Set(buffer);
-        }
+        return true;
+    }
 
-        // 2 - owners without a bed: random bed among those with the fewest owners
-        if (owners == null) return;
-        for (int i = 0; i < owners.Count; i++)
+    /// <summary>
+    /// Furniture removal only: a room owner no remaining bed can take (capacity / bed type) loses the room. Matched
+    /// ignoring occupancy, so an owner only kept out by a sleeper stays. A room left without any ownership bed is
+    /// RemoveFurniture's ClearRoomOwnership case, not this one.
+    /// </summary>
+    void ReleaseOwnersWithoutBed()
+    {
+        var faction = FactionOwner as Manageable;
+        if (faction == null || _furnitureOwnershipAssigning) return;
+        List<int> release = null;
+        var work = _ownershipPool.Count > 0 ? _ownershipPool.Pop() : new OwnershipWorkspace();
+        try
         {
-            int o = owners[i];
-            bool hasBed = false;
-            for (int b = 0; b < beds.Count && !hasBed; b++) hasBed = beds[b].OwnerRefs.Contains(o);
-            if (hasBed) continue;
+            if (!CollectOwnershipCandidates(work)) return;
+            MatchFurnitureOwners(work, work.Ideal, false);
+            for (int i = 0; i < work.Owners.Count; i++)
+            {
+                if (work.Assigned.Contains(work.Owners[i])) continue;
+                if (release == null) release = new List<int>();
+                release.Add(work.Owners[i]);
+            }
+        }
+        finally
+        {
+            work.Clear();
+            if (_ownershipPool.Count < 4) _ownershipPool.Push(work);
+        }
+        // after the workspace is returned: each removal re-runs ReassignFurnitureOwnership through NotifyOwnershipChange
+        if (release != null)
+            for (int i = 0; i < release.Count; i++) faction.RemoveRoomOwnership(release[i], RefID);
+    }
 
-            int fewest = int.MaxValue, ties = 0;
-            Job_Furniture pick = null;
+    static void MatchFurnitureOwners(OwnershipWorkspace work, List<List<int>> result, bool preserveOccupied)
+    {
+        var beds = work.Beds;
+        var assigned = work.Assigned;
+        assigned.Clear();
+        if (preserveOccupied)
             for (int b = 0; b < beds.Count; b++)
             {
-                int n = beds[b].OwnerRefs.Count;
-                if (n < fewest) { fewest = n; ties = 1; pick = beds[b]; }
-                else if (n == fewest && UnityEngine.Random.Range(0, ++ties) == 0) pick = beds[b];   // reservoir pick among ties
+                if (beds[b].OccupantRefs.Count == 0) continue;
+                // Freeze the whole occupied bed, including absent co-owners. Never wake or evict anyone.
+                result[b].AddRange(beds[b].OwnerRefs);
+                for (int i = 0; i < result[b].Count; i++) assigned.Add(result[b][i]);
+                for (int i = 0; i < beds[b].OccupantRefs.Count; i++) assigned.Add(beds[b].OccupantRefs[i]);
             }
-            buffer.Clear();
-            buffer.AddRange(pick.OwnerRefs);
-            buffer.Add(o);
-            pick.Ownership_Set(buffer);
+
+        // Keep matching assignments, fill matching slots, keep fallback assignments, fill any legal slot.
+        for (int pass = 0; pass < 4; pass++)
+            for (int i = 0; i < work.Owners.Count; i++)
+            {
+                int actorRef = work.Owners[i];
+                if (assigned.Contains(actorRef)) continue;
+                var bedPriority = BedPreferenceUtility.GetPriority(work.Preferences[actorRef]);
+                int best = -1, fewestOwners = int.MaxValue;
+                for (int b = 0; b < beds.Count; b++)
+                {
+                    var bed = beds[b];
+                    if (!BedPreferenceUtility.Allows(bedPriority, bed)) continue;
+                    if (preserveOccupied && bed.OccupantRefs.Count > 0) continue;
+                    if (result[b].Count >= bed.Capacity) continue;
+                    if ((pass == 0 || pass == 2) && !bed.OwnerRefs.Contains(actorRef)) continue;
+                    if (pass < 2 && bed.ParentInstance.FurnitureBase.BedTypeID != work.Preferences[actorRef]) continue;
+                    if (pass == 0 || pass == 2) { best = b; break; }
+                    if (result[b].Count < fewestOwners) { best = b; fewestOwners = result[b].Count; }
+                }
+                if (best < 0) continue;
+                result[best].Add(actorRef);
+                assigned.Add(actorRef);
+            }
+    }
+
+    /// <summary>Ownership eligibility is not room privacy: a typed pet bed need not make a living room private.</summary>
+    [JsonIgnore] public bool CanAssignBedOwnership
+    {
+        get
+        {
+            if (_bedOwnershipEligibilityCached) return _canAssignBedOwnership;
+            _bedOwnershipEligibilityCached = true;
+            _canAssignBedOwnership = false;
+            if (isRoomPrison) return false;
+            for (int i = 0; i < FurnitureCount; i++)
+            {
+                var furniture = GetFurniture(i);
+                if (furniture?.JobGiver != null && furniture.JobGiver.AssignsOwnership
+                    && !string.IsNullOrEmpty(furniture.FurnitureBase?.BedTypeID)) { _canAssignBedOwnership = true; break; }
+            }
+            return _canAssignBedOwnership;
         }
     }
 
     public Inventory Inventory = new Inventory();
 
     [JsonProperty] string baseFloorID = "";
+    /// <summary>Persisted separately from floor templates; may be attached to a live floor at runtime.</summary>
+    public bool isStandalone = false;
     [JsonProperty] string baseRoomID = "";
+    [JsonIgnore] internal string TemplateRoomID => baseRoomID;
+
+    /// <summary>Rebind only template identity; keep this room's saved furniture, jobs and ownership intact.</summary>
+    internal void ChangeTemplateFloorID(string floorID)
+    {
+        baseRoom = null;
+        baseFloorID = floorID;
+        _displayNameCache = "";
+        _displayNameShortCache = "";
+    }
+
     [JsonIgnore] public Room_Base Base
     {
         get
@@ -799,7 +939,12 @@ public class Room_Instance: IDisposable, I_Disposable
                 {
                     scr_System_CampaignManager.current.FindInstanceByID(charaRef)?.ChangeCurrentJob(null);
                 }
-                if (job is Job_Furniture jf) FurnitureOccupancyUtility.EvictAll(jf, OccupancyReason.FurnitureRemoved);
+                if (job is Job_Furniture jf)
+                {
+                    FurnitureOccupancyUtility.EvictAll(jf, OccupancyReason.FurnitureRemoved);
+                    // a lingering reference to the removed bed must not still name owners
+                    if (jf.AssignsOwnership) jf.Ownership_Set(null);
+                }
 
                 this.FactionOwner?.RemoveJobPost(job);
                 job.DisposeInternal();
@@ -815,12 +960,16 @@ public class Room_Instance: IDisposable, I_Disposable
         if (removed)
         {
             InvalidateFurnitureDependentCache();
-            if (wasOwnedFurniture) ReassignFurnitureOwnership();
+            if (wasOwnedFurniture)
+            {
+                ReassignFurnitureOwnership();
+                ReleaseOwnersWithoutBed();
+            }
 
             if (this.FactionOwner != null)
             {
                 FactionOwner.NotifyFurnitureChange(this);
-                if (!isRoomPrivate) (this.FactionOwner as Manageable)?.ClearRoomOwnership(this.RefID);
+                if (!isRoomPrivate && !CanAssignBedOwnership) (this.FactionOwner as Manageable)?.ClearRoomOwnership(this.RefID);
             }
             displayableFurnitures = null;
         }
@@ -850,6 +999,16 @@ public class Room_Instance: IDisposable, I_Disposable
 
     [JsonProperty] private List<FurnitureInstance> furnitures = new List<FurnitureInstance>();
     private List<FurnitureInstance> roomJobFurnitures = new List<FurnitureInstance>();
+    [JsonIgnore] internal int FurnitureCount => (furnitures?.Count ?? 0) + (roomJobFurnitures?.Count ?? 0);
+
+    // Read-only scans only; callers that mutate furniture still need the Furnitures snapshot.
+    internal FurnitureInstance GetFurniture(int index)
+    {
+        if ((uint)index >= (uint)FurnitureCount) throw new ArgumentOutOfRangeException(nameof(index));
+        int count = furnitures?.Count ?? 0;
+        return index < count ? furnitures[index] : roomJobFurnitures[index - count];
+    }
+
     [JsonIgnore] public List<FurnitureInstance> Furnitures
     {
         get
@@ -923,7 +1082,9 @@ public class Room_Instance: IDisposable, I_Disposable
             if (!_isRoomPrison_cached)
             {
                 _isRoomPrison_cached = true;
-                _isRoomPrison = Furnitures.Find(x => x.FurnitureBase.ID.Contains("furniture_prison")) != null;
+                _isRoomPrison = false;
+                for (int i = 0; i < FurnitureCount; i++)
+                    if (GetFurniture(i)?.FurnitureBase?.ID.Contains("furniture_prison") == true) { _isRoomPrison = true; break; }
             }
             return _isRoomPrison;
         }
@@ -932,7 +1093,7 @@ public class Room_Instance: IDisposable, I_Disposable
 
 
     /// <summary>
-    /// False only for a locked room whose owning faction c has no access to. Locked = Room_Base.requireFactionMembership,
+    /// Public-access rooms bypass membership and residence locks. Otherwise, home-only rooms require actual residence before generic membership/visit checks. Other locked rooms use Room_Base.requireFactionMembership,
     /// Room_Base.residentsOnly, or any room of a generated home (ResidenceUtility.IsGeneratedHome). Access = membership
     /// (home, temporary home, work or recreation) or the residence rules of ResidenceUtility.HasRoomAccess (residents-only
     /// rooms, visit passes, bookings there, the player's followers). Unowned rooms and unlocked rooms are open to everyone.
@@ -940,9 +1101,12 @@ public class Room_Instance: IDisposable, I_Disposable
     public bool CanBeAccessedBy(Character_Trainable c)
     {
         if (c == null || Base == null) return true;
+        if (Base.allowPublicAccess) return true;
         var owner = FactionOwner?.Faction;
-        if (!Base.requireFactionMembership && !Base.residentsOnly && !ResidenceUtility.IsGeneratedHome(owner)) return true;
         if (c == scr_System_CampaignManager.current.Player && scr_System_CampaignManager.current.DebugMode) return true;
+        if (Base.requireHomeMembership)
+            return owner != null && c.FactionManager != null && c.FactionManager.HomeFactions.Contains(owner);
+        if (!Base.requireFactionMembership && !Base.residentsOnly && !ResidenceUtility.IsGeneratedHome(owner)) return true;
         if (owner == null) return true;
         return ResidenceUtility.HasRoomAccess(this, owner, c);
     }
@@ -954,7 +1118,9 @@ public class Room_Instance: IDisposable, I_Disposable
             if (!_isRoomPrivate_cached)
             {
                 _isRoomPrivate_cached = true;
-                _isRoomPrivate = !isRoomPrison && Furnitures.Find(x => x.FurnitureBase.ID.Contains("furniture_bed")) != null;
+                _isRoomPrivate = false;
+                for (int i = 0; i < FurnitureCount; i++)
+                    if (GetFurniture(i)?.FurnitureBase?.BedTypeID == BedPreferenceUtility.HumanType) { _isRoomPrivate = true; break; }
             }
             return _isRoomPrivate; } }
 
@@ -1018,6 +1184,7 @@ public class Room_Instance: IDisposable, I_Disposable
     {
         _isRoomPrison_cached = false;
         _isRoomPrivate_cached = false;
+        _bedOwnershipEligibilityCached = false;
         _genderPreference_cached = false;
         _displayNameCache = "";
         _displayNameShortCache = "";
@@ -1284,6 +1451,8 @@ public class Room_Instance: IDisposable, I_Disposable
     public void SerializationRebuilt()
     {
         ResetActorTagContext();
+        _furnitureOwnershipChecked = false;
+        _furnitureOwnershipPending = false;
         //Debug.LogError("Room SerializationRebuilt");
         for (int n = furnitures.Count - 1; n >= 0; n--)
         {

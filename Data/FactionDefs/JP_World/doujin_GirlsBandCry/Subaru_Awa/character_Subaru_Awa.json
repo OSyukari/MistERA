@@ -1,0 +1,89 @@
+{
+  "baseID": "GirlsBandCry_Char_Subaru_Awa",
+  "Portrait":{
+    "portraitPriorityList":[
+      {
+        "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+
+        "random_portrait_folder":"Subaru_Awa/portrait",
+            
+        "icon_offset_x":-5,            "icon_offset_y":-127.3,            "icon_offset_size":0.6,
+
+        "icon_path":"Subaru_Awa/portrait/ComfyUI_0017 (2).webp"
+      }
+    ]
+  },
+  "Template": {
+    "Appearance": "Female",
+    "stat_STR": 8,
+    "stat_CON": 9,
+    "stat_PSY": 11,
+    "stat_WIL": 12,
+    "personalityID": "personality_default",
+    "traits_body_sex": [
+      "trait_Sensitivity_B_default",
+      "trait_Sensitivity_M_default",
+      "trait_Sensitivity_C_default",
+      "trait_Sensitivity_V_default",
+      "trait_Sensitivity_A_default",
+      "trait_Size_B_B",
+      "trait_Size_P_none",
+      "trait_Size_V_1",
+      "trait_Size_A_1"
+    ],
+    "traits_body": [
+      "trait_BodyType_slim",
+      "trait_SkinColor_fair",
+      "trait_HairColor_black",
+      "trait_EyeColor_purple"
+    ],
+    "Height": 158,
+    "Weight": 49,
+    "traits": [
+      "trait_SelfEsteem_high",
+      "trait_MemoryCapacity_high",
+      "trait_EnergyCapacity_high",
+      "trait_MentalFortitude_high"
+    ],
+    "initialRelationship": [
+      {
+        "baseID": "GirlsBandCry_Char_Nina_Iseri",
+        "initialPersonalRelationship": "relationship_friend"
+      },
+      {
+        "baseID": "GirlsBandCry_Char_Momoka_Kawaragi",
+        "initialPersonalRelationship": "relationship_friend"
+      },
+      {
+        "baseID": "GirlsBandCry_Char_Tomo_Ebizuka",
+        "initialPersonalRelationship": "relationship_friend"
+      },
+      {
+        "baseID": "GirlsBandCry_Char_Rupa",
+        "initialPersonalRelationship": "relationship_friend"
+      }
+    ],
+      "promptProfile": {
+          "prompts": [ "iseri_nina" ],
+          "desired prompt":"girl, awa subaru, girls band cry, long hair, black hair, ribbon, ahoge, purple eyes, white sleeveless shirt, bare arms, black neck ribbon, buttons, long brown skirt, black socks, brown loafers",
+          "inheritRulesets": [ "ruleset_character_tag" ]
+      },
+    "initialInventory": [],
+    "defaultHairstyle": {
+      "hairstyleID": "hairstyle_straight_long",
+      "slotSelection": {
+        "front": "hair_front_straight_bangs"
+      }
+    },
+    "CharacterCard": "<Subaru_Awa>\nIdentity: Subaru Awa, 17-year-old drummer of TOGENASHI TOGEARI. A performing-arts-school student from Kobe who has appeared in commercials and is the granddaughter of actress Tendou Awa.\nCurrent timeline: The band continues independently after leaving its agency. She lives alone in a Tokyo high-rise apartment; prior band sleepovers were temporary.\nCharacter: Socially polished and friendly, but competitive, strong-willed, and unwilling to lose. She knows how to present the well-behaved version of herself when her grandmother is present, yet wants band music rather than an acting career. She can mediate a conflict when it matters, enjoy games and online arguments, and push friends toward saying what they actually want.\nAppearance: Very long near-black hair, gray-violet eyes, a light side ribbon, and a neat, understated style.\n</Subaru_Awa>",
+    "Skills": null
+  },
+  "firstName": "GirlsBandCry_Char_Subaru_Awa_firstname",
+  "middleName": "",
+  "lastName": "GirlsBandCry_Char_Subaru_Awa_lastname",
+  "nameDisplayFormat": "chara_fullname_lastToFirst",
+  "origin": "charOrigin_none",
+  "race": "humanRace_human",
+  "raceTemplate": "humanRaceAddon_standard",
+  "startingGift": "charOriginGift_none"
+}

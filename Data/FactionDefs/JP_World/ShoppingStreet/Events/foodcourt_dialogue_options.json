@@ -1,12 +1,12 @@
 {
-    "_comment":"SunMart join/quit pattern; the player and followers are passed without filtering to JoinActiveFaction so invalid candidates are shown disabled with a reason. Both fallback waiter shifts inherit the hiring tag.",
+    "_comment":"Existing SunMart join/quit pattern; candidates are passed without filtering so invalid candidates are shown disabled with a reason. Human joins explicitly use the regular part-time parent, defaulting to early A (10-16), never the preserved all-day NPC fallback leaf. Waiter descendants inherit the hiring tag.",
     "Events":{"list":[
         {
             "ID":"jp_mall_foodcourt_Opt_Apply","allowDuplicate":false,"trigger":"OnDialogue_Options","UISpec":{"displayMode":"AVG"},
             "SelfValidator":{"chara_conditions":[{"parameters":["exists"]},{"parameters":["isPlayer"]}]},
             "TargetValidators":[{"refkeys":["staff"],"baseScope":"CurrentTarget","chara_conditions":[{"parameters":["exists"]},{"parameters":["excludePlayer"]},{"parameters":["isConscious"]},{"parameters":["isActiveFaction","jp_mall_foodcourt"]},{"parameters":["hasActorTag","jp_mall_foodcourt_hiring"]}],"minTargetCount":1}],
             "events":[
-                {"$type":"Event+EventEntry+EventEntry_Line, Assembly-CSharp","UISpec":{"portraitRefKey":"staff","selfTags":["focused"]},"line":"jp_mall_foodcourt_Opt_Apply_greeting","Results":[{"Type":"JoinActiveFaction","arguments":["applyOptions","selfAndFollowers","staff","membertype_jp_mall_waiter","applyError"]}]},
+                {"$type":"Event+EventEntry+EventEntry_Line, Assembly-CSharp","UISpec":{"portraitRefKey":"staff","selfTags":["focused"]},"line":"jp_mall_foodcourt_Opt_Apply_greeting","Results":[{"Type":"JoinActiveFaction","arguments":["applyOptions","selfAndFollowers","staff","membertype_jp_mall_waiter_parttime","applyError"]}]},
                 {"$type":"Event+EventEntry+EventEntry_Branch, Assembly-CSharp","options":[
                     {"option":"_has_options","Results":[{"Type":"ExistStoredOptions","arguments":["applyOptions"]},{"Type":"JumpToLabel","arguments":["","apply_ask"]}]},
                     {"option":"_no_options","Results":[{"Type":"JumpToLabel","arguments":["","apply_error"]}]}
@@ -36,9 +36,9 @@
     ]},
     "Dictionary":{"Entries":{"zh-cn":{
         "jp_mall_foodcourt_Opt_Apply":"应聘美食广场服务员",
-        "jp_mall_foodcourt_Opt_Apply_greeting":"「这里招兼职服务员，时薪一千二，按天结算。工作是照看柜台、收餐盘和整理餐区，有日班和晚班。」",
+        "jp_mall_foodcourt_Opt_Apply_greeting":"「这里招兼职服务员，时薪一千二，按天结算。工作是照看柜台、收餐盘和整理餐区，早班十点到十六点，晚班十六点到二十二点，每班六小时，按双周A、B两组轮班。」",
         "jp_mall_foodcourt_Opt_Apply_question":"「是哪一位想来做兼职？」",
-        "jp_mall_foodcourt_Opt_Apply_done":"「登记好了，先安排十点到十六点的日班。需要换晚班的话，可以在管理界面的职务页调整。」",
+        "jp_mall_foodcourt_Opt_Apply_done":"「登记好了，先安排十点到十六点的早班A组，按双周排班表出勤。需要换晚班或B组的话，可以在管理界面的职务页调整。」",
         "jp_mall_foodcourt_Opt_Quit":"办理服务员辞职",
         "jp_mall_foodcourt_Opt_Quit_question":"「是哪一位要辞职？」",
         "jp_mall_foodcourt_Opt_Quit_done":"「已经办好了，辛苦了。」",

@@ -56,7 +56,8 @@ public class initScript_basicInfo : MonoBehaviour
             gender.SetText(LocalizeDictionary.QueryThenParse(chara.Appearance.ToString()), false);
         }
         race.SetText(chara.Race.DisplayName, false, chara.Race.ID + "_tooltip");
-        raceTemplate.SetText(chara.RaceTemplate.DisplayName, false, chara.RaceTemplate.ID+"_tooltip");
+        raceTemplate.SetText(chara.RaceTemplatesDisplayName);
+        raceTemplate.SetExternalTooltip(chara.RaceTemplatesTooltip);
 
 
         factionStatus.SetText(chara.FactionManager.CurrentlyActiveFactionStatus);

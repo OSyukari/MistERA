@@ -1,0 +1,45 @@
+{
+  "baseID": "BocchiRock_Char_Kuruyo_Kita",
+  "Portrait":{
+    "portraitPriorityList":[
+      {
+        "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+            
+        "icon_offset_x":8.5,            
+        "icon_offset_y":-76.2,            
+        "icon_offset_size":0.6,
+
+        "portrait_path":"CharaAssets/NPC_mob/mob_ボスママ主婦.png",
+        "icon_path":"CharaAssets/NPC_mob/mob_ボスママ主婦.png"
+      }
+    ]
+  },
+  "_comment": "Sources: user-approved adult mother/homemaker adaptation; family and temperament from Mods/BocchiRock/喜多郁代.md, user-supplied world-card supplement (secondary material, not verified canon). Homemaker is an explicitly approved non-canon occupation replacing that supplement's civil-servant job. Appearance, height, weight, stats and all body traits are generic implementation defaults, not canon looks or measurements. Numeric age is reserved for the mod patch.",
+  "Template": {
+    "Appearance": "Female",
+    "stat_STR": 8,
+    "stat_CON": 10,
+    "stat_PSY": 10,
+    "stat_WIL": 10,
+    "personalityID": "personality_default",
+    "traits_body_sex": ["trait_Sensitivity_B_default", "trait_Sensitivity_M_default", "trait_Sensitivity_C_default", "trait_Sensitivity_V_default", "trait_Sensitivity_A_default", "trait_Size_B_B", "trait_Size_P_none", "trait_Size_V_1", "trait_Size_A_1"],
+    "traits_body": ["trait_BodyType_average", "trait_SkinColor_fair", "trait_HairColor_brown", "trait_EyeColor_brown"],
+    "Height": 160,
+    "Weight": 53,
+    "traits": [],
+    "initialRelationship": [
+      { "baseID": "BocchiRock_Char_Tsukuyo_Kita", "initialPersonalRelationship": "relationship_marriage", "initialPersonalRelationship_isA": true },
+      { "baseID": "BocchiRock_Char_Ikuyo_Kita", "initialBiologicalRelationship": "relationship_parent", "initialBiologicalRelationship_isA": true, "initialPersonalRelationship": "relationship_housemate" }
+    ],
+    "initialInventory": [],
+    "CharacterCard": "<Kuruyo_Kita>\nIdentity: Kuruyo Kita, an adult woman, Ikuyo Kita's mother and Minoru Kita's wife. She lives with her husband and daughter. Her occupation as a homemaker is a user-approved non-canon adaptation.\nLife: Her daughter's schoolwork, guitar and vocal practice, performance plans and visitors share the family's time and home. She has Ikuyo's school friend Tsuguko Sasaki's contact and asks her about Ikuyo.\nCharacter: The supplied family supplement describes her as the stricter parent, cautious about her daughter's safety and plans after misplaced trust caused Ikuyo trouble. Minoru takes a gentler, more easygoing approach. These family descriptions come from secondary material.\nAppearance: The brown hair, brown eyes, fair skin, average build and body measurements used by this implementation are generic defaults. Detailed original appearance and any previous employment remain unspecified.\n</Kuruyo_Kita>"
+  },
+  "firstName": "BocchiRock_Char_Kuruyo_Kita_firstname",
+  "middleName": "",
+  "lastName": "BocchiRock_Char_Kita_lastname",
+  "nameDisplayFormat": "chara_fullname_lastToFirst",
+  "origin": "charOrigin_none",
+  "race": "humanRace_human",
+  "raceTemplate": "humanRaceAddon_standard",
+  "startingGift": "charOriginGift_none"
+}

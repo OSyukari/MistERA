@@ -1,0 +1,17 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for instrument_practice_outdoor.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "furniture_public_bench": "Public Bench",
+                "com_instrument_practice_outdoor": "Practice an Instrument on the Bench",
+                "com_instrument_practice_outdoor_listener": "Practice with a Listener",
+                "com_instrument_practice_outdoor_begin": "$doer.firstname$ sits down on the bench, tunes the instrument, and tries a few notes.",
+                "com_instrument_practice_outdoor_ongoing": "$doer.firstname$ works through a passage that still needs practice, over and over.",
+                "com_instrument_practice_outdoor_after": "$doer.firstname$ finishes the passage and loosens up their fingers."
+            }
+        }
+    }
+}

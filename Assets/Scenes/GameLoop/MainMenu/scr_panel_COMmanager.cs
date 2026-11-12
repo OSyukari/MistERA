@@ -703,6 +703,7 @@ public class scr_panel_COMmanager : scr_Menu
     }
 
     private List<int> tempList = new List<int>();
+    private readonly List<int> staleFurnitureBoxRefs = new List<int>();
 
     public override void ValidateAll()
     {
@@ -782,12 +783,28 @@ public class scr_panel_COMmanager : scr_Menu
             }
         }
 
+        // a furniture removed since its box was made (packed in room edit): its job is unregistered - drop the box
+        staleFurnitureBoxRefs.Clear();
         foreach(var kvpair in furnitureRectList)
         {
             Job_Furniture jf = (scr_System_CampaignManager.current.FindJobInstanceByID(kvpair.Key) as Job_Furniture);
+            if (jf == null) { staleFurnitureBoxRefs.Add(kvpair.Key); continue; }
             kvpair.Value.title.text = jf.DisplayName;
             kvpair.Value.tooltip.text = jf.ContainerTooltip;
         }
+        for (int i = 0; i < staleFurnitureBoxRefs.Count; i++)
+        {
+            int staleRef = staleFurnitureBoxRefs[i];
+            DestroyCOMButton(staleRef);
+            DestroyCOMBox(staleRef);
+            trackedActivityPhases.Remove(staleRef);
+            trackedFurnitureActivityStamps.Remove(staleRef);
+            trackedFurnitureOccupancyStamps.Remove(staleRef);
+            foreach (KeyValuePair<string, Dictionary<int, bool>> kvp in forbidCOMRepeatList)
+                if (kvp.Value.ContainsKey(staleRef)) kvp.Value.Remove(staleRef);
+            trackedJobRefs.Remove(staleRef);
+        }
+        staleFurnitureBoxRefs.Clear();
 
 
         tempList.Clear();
@@ -2271,6 +2288,14 @@ public class scr_panel_COMmanager : scr_Menu
             parent.childCOMPanel.Active = false;
             parent.COMOptionsPanel.Active = false;
             scr_System_CentralControl.current.AutoSave();
+
+            // a room divider move settles its 同行 invite and its followers now, before the minute runs - a refused target
+            // keeps doing what it did (ActionPackage_DividerMove)
+            if (ppp is ActionPackage_DividerMove dividerMove && !dividerMove.ResolveOnLaunch())
+            {
+                tooltip = String.Join("\n", ppp.tooltip);
+                return;
+            }
 
             if (launchJob != null || ppp.IsSexSceneEntry || keepsSexMembership)
             {

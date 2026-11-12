@@ -1,0 +1,75 @@
+{
+    "_comment": "Reusable standalone camp rooms, not initialized homes. Future initializeResidences entries may use mapPlanID jp_home_tpl_camp_single or an authored household plan, districtID jp_campsite, and a registered templateID. floorPlans only contains reusable room definitions; no live camp floor is created. Existing saved floor-backed camps remain unchanged. Independent of furniture_camping_site and party/team camping.",
+    "MapPlans": {
+        "factionInit": [
+            {
+                "ID": "jp_home_tpl_camp_single",
+                "overrideMapFloorDisplay": false,
+                "isPublic": false,
+                "showLockedFloors": true,
+                "isRentingFloor": false,
+                "setPrivateRoomOwner": false,
+                "mainExit": { "roomID": "camp_single_room", "exitCost": 1 },
+                "rooms": [
+                    { "floorID": "floor_jp_camp_single", "roomID": "camp_single_room" }
+                ],
+                "mealHours": []
+            }
+        ],
+        "floorPlans": [
+            {
+                "ID": "floor_jp_camp_single",
+                "_comment_art": "Room definition container, not an instantiated floor. Placeholder background; the camp attaches directly to its district without a separate entrance room.",
+                "imagePath": "Media_UI_Scenario_Background/BG_RiversideRoad.jpg",
+                "isFloorPlan": false,
+                "mapExit": "camp_single_room",
+                "rooms": [
+                    {
+                        "ID": "camp_single_room",
+                        "displayName": "camp_single_room",
+                        "allowPublicAccess": true,
+                        "hideOnMap": true,
+                        "noCleaning": true,
+                        "connects": [],
+                        "furnitureIDs": ["furniture_camp_sleeping_bag", "furniture_marker_camp_rest"],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_RiversideRoad.jpg",
+                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_RiversideRoad.jpg"
+                    }
+                ]
+            }
+        ]
+    },
+    "Furnitures": {
+        "list": [
+            {
+                "ID": "furniture_camp_sleeping_bag",
+                "displayName": "furniture_camp_sleeping_bag",
+                "bedTypeID": "human",
+                "recipe": [],
+                "furnitureSize": 1,
+                "value": 0,
+                "occupancy": { "capacity": 1, "holdsUnconscious": true, "assignOwnership": true },
+                "givesJob": [ { "comTags": ["furniture", "bed"] } ]
+            },
+            {
+                "ID": "furniture_marker_camp_rest",
+                "displayName": "furniture_marker_camp_rest",
+                "noDisplay": true,
+                "recipe": [],
+                "furnitureSize": 0,
+                "value": 0,
+                "givesJob": [ { "comID": ["com_furniture_takingBreak", "com_furniture_takingLongBreak"] } ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "jp_home_tpl_camp_single": "单人营地",
+                "camp_single_room": "营地",
+                "furniture_camp_sleeping_bag": "睡袋",
+                "furniture_marker_camp_rest": "休息处"
+            }
+        }
+    }
+}

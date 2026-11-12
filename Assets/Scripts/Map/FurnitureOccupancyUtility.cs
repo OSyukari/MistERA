@@ -116,40 +116,58 @@ public static class FurnitureOccupancyUtility
         var com = ap.targetCOM;
         bool enter = com.comTags.Contains(Tag_DividerEnter), leave = com.comTags.Contains(Tag_DividerLeave);
         var actors = ap.Actors;
-        string name = furniture.ParentInstance == null ? "" : furniture.ParentInstance.DisplayName;
         for (int i = 0; i < actors.Count; i++)
         {
             var c = actors[i];
             if (c == null) continue;
-            int scope = c.ScopeRef;
-            if (enter)
-            {
-                if (scope == -1) continue;
-                tooltip.Add(LocalizeDictionary.QueryThenParse(scope == furniture.RefID ? "ui_divider_alreadyInside" : "ui_divider_leaveFirst")
-                    .Replace("$name$", c.FirstName).Replace("$furniture$", scope == furniture.RefID ? name : ScopeName(c)));
-                return false;
-            }
-            if (furniture.IsDivider)
-            {
-                if (scope != furniture.RefID)
-                {
-                    tooltip.Add(LocalizeDictionary.QueryThenParse("ui_divider_notInside").Replace("$name$", c.FirstName).Replace("$furniture$", name));
-                    return false;
-                }
-                if (leave && scr_System_CampaignManager.current.FindSexJobForActor(c.RefID) != null)
-                {
-                    tooltip.Add(LocalizeDictionary.QueryThenParse("ui_divider_endSexFirst").Replace("$name$", c.FirstName));
-                    return false;
-                }
-                continue;
-            }
-            if (scope != -1)
-            {
-                tooltip.Add(LocalizeDictionary.QueryThenParse("ui_divider_leaveFirst").Replace("$name$", c.FirstName).Replace("$furniture$", ScopeName(c)));
-                return false;
-            }
+            if (ValidateDividerActor(furniture, c, enter, leave, out var reason)) continue;
+            tooltip.Add(reason);
+            return false;
         }
         return true;
+    }
+
+    /// <summary>
+    /// ValidateDividerRules for one actor (enter / leave: the command's divider tags). Also asked by the player's divider
+    /// move for each follower (ActionPackage_DividerMove) - false = reason holds the tooltip line.
+    /// </summary>
+    public static bool ValidateDividerActor(Job_Furniture furniture, Character_Trainable c, bool enter, bool leave, out string reason)
+    {
+        reason = null;
+        int scope = c.ScopeRef;
+        if (enter)
+        {
+            if (scope == -1) return true;
+            bool inside = scope == furniture.RefID;
+            reason = LocalizeDictionary.QueryThenParse(inside ? "ui_divider_alreadyInside" : "ui_divider_leaveFirst")
+                .Replace("$name$", c.FirstName).Replace("$furniture$", inside ? DividerName(furniture) : ScopeName(c));
+            return false;
+        }
+        if (furniture.IsDivider)
+        {
+            if (scope != furniture.RefID)
+            {
+                reason = LocalizeDictionary.QueryThenParse("ui_divider_notInside").Replace("$name$", c.FirstName).Replace("$furniture$", DividerName(furniture));
+                return false;
+            }
+            if (leave && scr_System_CampaignManager.current.FindSexJobForActor(c.RefID) != null)
+            {
+                reason = LocalizeDictionary.QueryThenParse("ui_divider_endSexFirst").Replace("$name$", c.FirstName);
+                return false;
+            }
+            return true;
+        }
+        if (scope != -1)
+        {
+            reason = LocalizeDictionary.QueryThenParse("ui_divider_leaveFirst").Replace("$name$", c.FirstName).Replace("$furniture$", ScopeName(c));
+            return false;
+        }
+        return true;
+    }
+
+    static string DividerName(Job_Furniture furniture)
+    {
+        return furniture.ParentInstance == null ? "" : furniture.ParentInstance.DisplayName;
     }
 
     // ---- sex scenes per scope (Plan_FurnitureOccupancy.md §4.5) ----
@@ -477,8 +495,8 @@ public static class FurnitureOccupancyUtility
         var current = c.FurnitureLocation;
         if (current == null) return false;
 
-        current.Occupancy_Remove(c.RefID);
         c.SetFurnitureLocation(null);
+        RemoveOccupant(current, c.RefID);
         if (current.IsDivider) MarkDirty(c);
 #if UNITY_EDITOR
         if (scr_System_CentralControl.current.LogPrefs.DLog_Jobs) Debug.Log($"[Occupancy] {c.FirstName} leaves {current.DisplayName} ({why})");
@@ -500,7 +518,7 @@ public static class FurnitureOccupancyUtility
         if (room == null) return;
         var jobs = room.Jobs;
         for (int i = 0; i < jobs.Count; i++)
-            if (jobs[i] is Job_Furniture f && f.Occupancy_Remove(c.RefID) && f.IsDivider) MarkDirty(c);
+            if (jobs[i] is Job_Furniture f && RemoveOccupant(f, c.RefID) && f.IsDivider) MarkDirty(c);
     }
 
     /// <summary> Every occupant leaves (furniture / room being removed). </summary>
@@ -514,13 +532,14 @@ public static class FurnitureOccupancyUtility
             int charaRef = refs[i];
             var c = campaign.FindInstanceByID(charaRef);
             if (c != null && c.FurnitureLocation == furniture) Leave(c, why);
-            else furniture.Occupancy_Remove(charaRef);
+            else RemoveOccupant(furniture, charaRef);
         }
     }
 
     /// <summary>
     /// Drops occupant refs whose character is gone or no longer points back here (old save / missed exit).
-    /// Call before reading occupants for a decision (sleep with, capacity, put down list). No allocation.
+    /// Call before reading occupants for a decision (sleep with, capacity, put down list).
+    /// Removal retries ownership only when an earlier ownership event left this room pending.
     /// </summary>
     public static void PruneStale(Job_Furniture furniture)
     {
@@ -531,8 +550,16 @@ public static class FurnitureOccupancyUtility
         for (int i = refs.Count - 1; i >= 0; i--)
         {
             var c = campaign.FindInstanceByID(refs[i]);
-            if (c == null || c.FurnitureLocationRefRaw != furniture.RefID) furniture.Occupancy_Remove(refs[i]);
+            if (c == null || c.FurnitureLocationRefRaw != furniture.RefID) RemoveOccupant(furniture, refs[i]);
         }
+    }
+
+    // Both sides of a normal leave are coherent before a deferred ownership callback can run.
+    static bool RemoveOccupant(Job_Furniture furniture, int charaRef)
+    {
+        if (!furniture.Occupancy_Remove(charaRef)) return false;
+        furniture.ParentRoom?.ReassignPendingFurnitureOwnership();
+        return true;
     }
 
     /// <summary> Character's room changed (Map.MoveCharaTo) - whatever held it is left behind. </summary>
@@ -550,6 +577,7 @@ public static class FurnitureOccupancyUtility
     {
         var bed = ap.job as Job_Furniture;
         if (bed == null || !bed.HoldsUnconscious) return baseName;
+        bed.ParentRoom?.EnsureFurnitureOwnership();
 
         var receivers = ap.ReceiverRefs;
         int key;

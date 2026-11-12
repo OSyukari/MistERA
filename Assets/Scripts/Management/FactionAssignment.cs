@@ -8,6 +8,8 @@ public class NPCInit
     public string initID = "";
     public List<string> tags = new List<string>();
     public string actorBaseID = "";
+    /// <summary>Opt-in one-time setup/load reconciliation per actor/initID; fills missing assignments without replacing player changes.</summary>
+    public bool reconcileExistingAssignments = false;
     public FactionInit Homefaction = null;
     public FactionInit TempHomefaction = null;
     public List<FactionInit> Workfactions = new List<FactionInit>();
@@ -23,6 +25,8 @@ public class NPCInit
         public string spawnFloorID = "";
         public string spawnRoomID = "";
         public bool setRoomOwnership = false;
+        /// <summary>Optional setup/load correction from an explicitly retired authored home; all other existing homes remain untouched.</summary>
+        public string migrateFromFactionID = "";
 
         /// <summary>
         /// Workfactions entries only: ID of the faction that dispatched this character into factionID's

@@ -15,8 +15,11 @@ public partial class Job_Activity
     {
         MigrateFacilityReservations();
         MigrateReservedFurniture();
+        roomBookingCheckPending = true;
         RefreshActivityRooms();
     }
+
+    [JsonIgnore] bool roomBookingCheckPending;
 
     void MigrateFacilityReservations()
     {
@@ -78,7 +81,8 @@ public partial class Job_Activity
         var activity = VisitActivity;
         var fac = activity?.facility;
         if (fac == null) return;
-        if (RecreationUtility.RoomQualifies(ParentRoom, fac)
+        if ((string.IsNullOrEmpty(activity.executionRoomID) || ParentRoom?.Base?.ID == activity.executionRoomID)
+            && RecreationUtility.RoomQualifies(ParentRoom, fac)
             && (!fac.hostPrivateRoom || FacilityHost != null && Venue.IsRoomOwner(gatherRoomRef, FacilityHost.RefID)))
         {
             RefreshActivityRooms();
@@ -96,6 +100,7 @@ public partial class Job_Activity
     {
         var current = c?.CurrentJob;
         if (current == null || current == this || commands == null) return false;
+        if (!string.IsNullOrEmpty(VisitActivity?.executionRoomID) && current.ParentRoom?.Base?.ID != VisitActivity.executionRoomID) return false;
         foreach (var id in commands)
             if (current.hasActivePackge(c.RefID, id) || (current.allusableCOMStrings.Contains(id) && current.hasActivePathing(c.RefID)))
                 return true;
@@ -117,7 +122,7 @@ public partial class Job_Activity
         bool bestHasPlayer = false;
         int group = GroupOf(c.RefID);
         var fac = VisitActivity?.facility;
-        bool onlyGatherRoom = fac != null && fac.dispatchInRoom;
+        bool onlyGatherRoom = fac != null && fac.dispatchInRoom || !string.IsNullOrEmpty(VisitActivity?.executionRoomID);
         int roomCount = onlyGatherRoom ? 1 : 1 + coveredRoomRefs.Count;
         for (int r = 0; r < roomCount && !bestHasPlayer; r++)
         {
@@ -193,13 +198,14 @@ public partial class Job_Activity
         if (venue == null) return false;
         int hour = scr_System_Time.current.getCurrentTime().Hour;
         var heuristic = FactionUtility.GetHeuristic(PathfindHeuristic.random);
-        var restrict = fac.dispatchInRoom ? new List<int>() { room.RefID } : null;
+        bool roomBound = fac.dispatchInRoom || !string.IsNullOrEmpty(VisitActivity?.executionRoomID);
+        var restrict = roomBound ? new List<int>() { room.RefID } : null;
         if (TryFindScheduledActivityNode.RunVisit(c, venue, false, hour, heuristic, TryFindScheduledActivityNode.VisitFilter, null, restrict)) return true;
 
         // none of the visit's own commands can be done right now (all units busy, too tired for another round...): stay in
         // the room anyway and sandbox there like a stroller at the riverside - any recreation command in it, else a rest
         // (a seat) - rather than leaving the activity
-        if (!fac.dispatchInRoom) return false;
+        if (!roomBound) return false;
         foreach (var tag in new[] { "recreation", "rest" })
         {
             var possible = venue.GetValidJobs_Heuristics(heuristic, 1, c, hour, TryFindScheduledActivityNode.VisitFilter, tagoverride: tag, restrictRoomList: restrict);

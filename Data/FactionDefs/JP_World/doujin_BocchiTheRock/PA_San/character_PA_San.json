@@ -1,0 +1,44 @@
+{
+  "baseID": "BocchiRock_Char_PA_San",
+  "Portrait": {
+    "portraitPriorityList": [
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "random_portrait_folder": "PA_San/portrait_pa_san",
+        "icon_offset_x":3.2,            
+        "icon_offset_y":-129.8,            
+        "icon_offset_size":0.6,
+        "icon_path": "PA_San/portrait_pa_san/ComfyUI_0006 (2).webp"
+      }
+    ]
+  },
+  "Template": {
+    "Appearance": "Female",
+    "stat_STR": 7,
+    "stat_CON": 9,
+    "stat_PSY": 12,
+    "stat_WIL": 10,
+    "personalityID": "personality_default",
+    "traits_body_sex": ["trait_Sensitivity_B_default", "trait_Sensitivity_M_default", "trait_Sensitivity_C_default", "trait_Sensitivity_V_default", "trait_Sensitivity_A_default", "trait_Size_B_B", "trait_Size_P_none", "trait_Size_V_1", "trait_Size_A_1"],
+    "traits_body": ["trait_BodyType_slim", "trait_SkinColor_pale", "trait_HairColor_black", "trait_EyeColor_green"],
+    "Height": 162,
+    "Weight": 48,
+    "traits": ["trait_SleepTiming_verylate", "trait_SleepQuality_deep", "trait_MemoryCapacity_high", "trait_SelfEsteem_low"],
+    "initialRelationship": [
+      { "baseID": "BocchiRock_Char_Seika_Ijichi", "initialPersonalRelationship": "relationship_colleague" },
+      { "baseID": "BocchiRock_Char_Hitori_Gotoh", "initialPersonalRelationship": "relationship_acquaintance" }
+    ],
+    "initialInventory": [],
+    "defaultHairstyle": { "hairstyleID": "hairstyle_straight_long", "slotSelection": { "front": "hair_front_straight_bangs" } },
+    "CharacterCard": "<PA_San>\nIdentity: PA-san, 24-year-old sound engineer at STARRY and system engineer. Her real name is withheld; she is secretly the VTuber Alto Otogi.\nHome: Lives alone. Her night-work rhythm stems from chronic oversleeping that caused her to leave high school.\nCharacter: Her goth presentation initially intimidates people, but she is easygoing, kind, and professional at work. She guards her real name and VTuber identity closely. She is insecure about Alto Otogi's modest audience and can become unexpectedly emotional or jealous around its few devoted viewers. She mixes auditions and lives, records Kessoku Band, and backs Seika when STARRY needs someone removed.\nAppearance: Pale skin, long thick black hime-cut hair, green eyes, lip piercing, choker, and goth clothing.\n</PA_San>",
+    "Skills": null
+  },
+  "firstName": "BocchiRock_Char_PA_San_firstname",
+  "middleName": "",
+  "lastName": "",
+  "nameDisplayFormat": "chara_fullname_firstToLast",
+  "origin": "charOrigin_none",
+  "race": "humanRace_human",
+  "raceTemplate": "humanRaceAddon_standard",
+  "startingGift": "charOriginGift_none"
+}

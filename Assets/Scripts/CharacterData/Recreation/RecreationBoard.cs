@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Newtonsoft.Json;
 
 /// <summary>How an offer reaches characters: Fixed = posted by date at its fixed time; Flexible = planned into free time like a membership activity.</summary>
@@ -124,7 +123,10 @@ public class RecreationOfferDef
     /// How many days ahead it may be booked. Fixed: the calendar posts a date's session this many days before it
     /// (PostCalendar). Flexible: as RecreationActivity.daysInAdvance (0 = only on the day itself).
     /// </summary>
-    public int daysInAdvance = 1;
+    public int daysInAdvance = 0;
+
+    [JsonIgnore] public int PlanningAdvanceDays { get { return AsActivity.PlanningAdvanceDays; } }
+    public bool AllowsAdvance(int daysLookahead) { return AsActivity.AllowsAdvance(daysLookahead); }
 
     [JsonIgnore] RecreationActivity _activity = null;
     /// <summary>
@@ -410,10 +412,18 @@ public class RecreationBoard
         {
             var def = FindDef(id);
             if (def == null || def.mode != RecreationOfferMode.Fixed) continue;
-            for (int ahead = 0; ahead <= Math.Max(0, def.daysInAdvance); ahead++)
+            int advance = def.PlanningAdvanceDays;
+            if (advance < 0) continue;
+            for (int ahead = 0; ahead <= advance; ahead++)
                 if (CalendarPosts(def, today + ahead)) Post(def.ID, today + ahead);
         }
     }
+
+    /// <summary>
+    /// Fixed offer def's calendar falls on absolute day `day` (CalendarPosts) - whether or not it is posted yet. Read by
+    /// the organization planner to keep performances off time-sensitive offers (RecreationUtility.PerformanceSlotConflicts).
+    /// </summary>
+    public static bool PostsOn(RecreationOfferDef def, int day) { return def != null && CalendarPosts(def, day); }
 
     /// <summary>
     /// The calendar posts def on absolute day `day`: its dates / holiday or season tags / weekdays match that date in the
@@ -468,7 +478,8 @@ public class RecreationBoard
         {
             var g = all[i];
             if (g == null || g.concluded || !g.IsPostedOffer) continue;
-            if (!g.HoldsAnyone) { unheld.Add(g); continue; }
+            // the player's answer to its notice keeps it too (RecreationGroup.HoldsPlayerAnswer - never asked again)
+            if (!g.HoldsAnyone && !g.HoldsPlayerAnswer) { unheld.Add(g); continue; }
             var post = MatchingPost(g);
             if (post != null) offers.Add(post);
             else if (g.IsOpen) (removed ?? (removed = new List<RecreationGroup>())).Add(g);

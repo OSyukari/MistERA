@@ -5,8 +5,7 @@
     "Dictionary": {
         "Entries": {
             "en-us": {
-                "Recreation_FeeApproval_question": "Activity fee request:\n$feeRequestText$",
-                "Recreation_FeeApproval_approve": "Approve",
+                "Recreation_FeeApproval_question": "Activity fee request:\n$feeRequestText$$feeConflictText$",
                 "Recreation_FeeApproval_decline": "Decline"
             }
         }

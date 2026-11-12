@@ -52,7 +52,7 @@ public partial class Job_Activity
     }
 
     /// <summary>Reconciles this coordinator only; gathering never claims possible sandbox rooms.</summary>
-    public void RefreshActivityRooms()
+    public virtual void RefreshActivityRooms()
     {
         // setup deferred to T: no room context until it completes
         if (setupPending) { UnregisterActivityRooms(); return; }
@@ -81,7 +81,7 @@ public partial class Job_Activity
         }
     }
 
-    void RegisterActivityRoom(Room_Instance room)
+    protected void RegisterActivityRoom(Room_Instance room)
     {
         if (room == null || activityRooms.Contains(room)) return;
         activityRooms.Add(room);
@@ -94,7 +94,7 @@ public partial class Job_Activity
         activityRooms.Clear();
     }
 
-    public bool AppliesToRoom(Room_Instance room)
+    public virtual bool AppliesToRoom(Room_Instance room)
     {
         if (room == null || setupPending || room.FactionOwner?.Faction != Venue) return false;
         if (phase == ActivityPhase.Gathering) return room.RefID == gatherRoomRef;

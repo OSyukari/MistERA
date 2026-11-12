@@ -13,6 +13,8 @@ public abstract class Character_SerializableBase
     public string title = "";
     public string firstName = "Jane", middleName = "", lastName = "Doe", nameDisplayFormat = "chara_fullname_firstToLast";
     public string origin = "charOrigin_EmissaryoftheTower", race = "humanRace_human", raceTemplate = "humanRaceAddon_Magician", startingGift = "charOriginGift_none";
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public List<string> raceTemplates = null;
     public bool playable = false;
     public PortraitManager Portrait = null;
 

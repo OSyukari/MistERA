@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 
 /// <summary>Where a RecreationBooking came from - decides who may re-plan it (only the planner's own Membership/Offer bookings).</summary>
-public enum RecreationBookingSource { Membership, Offer, Event }
+public enum RecreationBookingSource { Membership, Offer, Event, Organization }
 
 /// <summary>
 /// One planned recreation visit: `hours` hours from startHour of absolute campaign day `day`
@@ -38,6 +38,9 @@ public class RecreationBooking : I_ActivityBooking
     /// <summary>1-24; startHour + hours past 24 continues into the next day.</summary>
     public int hours = 0;
     public string factionID = "";
+    public string organizerFactionID = "";
+    public string venueOfferID = "";
+    public bool isOrganizationAudience = false;
 
     /// <summary>
     /// MemberType the character acts under while this booking is active (behaviorOverrides, Tags, AcceptanceMods - see
@@ -200,6 +203,9 @@ public class RecreationBooking : I_ActivityBooking
             startHour = startHour,
             hours = hours,
             factionID = factionID,
+            organizerFactionID = organizerFactionID,
+            venueOfferID = venueOfferID,
+            isOrganizationAudience = isOrganizationAudience,
             memberTypeID = memberTypeID,
             workModule = workModule,
             activityID = activityID,
@@ -233,7 +239,8 @@ public class RecreationBooking : I_ActivityBooking
     /// </summary>
     public static RecreationBooking Create(int day, int startHour, int hours, string factionID, MapPlan.WorkModuleInit template,
         RecreationBookingSource source, string sourceKey, string memberTypeID = "", bool locked = false, string onCancelledEventID = "", bool overrideWork = false,
-        string activityID = "", bool forbidCancel = false, string sourceEventID = "", RecreationGroup session = null, string roleID = "", bool flexible = false)
+        string activityID = "", bool forbidCancel = false, string sourceEventID = "", RecreationGroup session = null, string roleID = "", bool flexible = false,
+        string organizerFactionID = "", string venueOfferID = "", bool isOrganizationAudience = false)
     {
         if (hours < 1 || hours > 24 || startHour < 0 || startHour > 23 || string.IsNullOrEmpty(factionID)) return null;
 
@@ -253,6 +260,9 @@ public class RecreationBooking : I_ActivityBooking
             startHour = startHour,
             hours = hours,
             factionID = factionID,
+            organizerFactionID = (session != null ? session.organizerFactionID : organizerFactionID) ?? "",
+            venueOfferID = (session != null ? session.venueOfferID : venueOfferID) ?? "",
+            isOrganizationAudience = session != null ? session.isOrganizationAudience : isOrganizationAudience,
             memberTypeID = memberTypeID ?? "",
             activityID = activityID ?? "",
             workModule = module,
