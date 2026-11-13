@@ -1,0 +1,86 @@
+{
+    "_comment": "com_furniture_restroom_fix's result event, self = the doer (Docs/Body/Plan_InternalFluidFlow.md §7). Always runs: optional spit-out of the mouth's contents (NPC auto-accepts via npcDecides, the player chooses), then the face is always washed (every temporary trace on the head off). Every step has its own line; nothing done -> a plain 'freshened up and took a breather' line. Lines stay location-neutral: the COM runs at restrooms and at bedroom dressers (furniture_dresser).",
+    "Events": {
+        "list": [
+            {
+                "ID": "com_furniture_restroom_fix_clean",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "expel_gate",
+                        "options": [
+                            { "option": "mouth contents", "self_chara_conditions": [{ "parameters": ["wouldDeflate", "mouth", "true"] }], "Results": [{ "Type": "JumpToLabel", "arguments": ["", "expel_question"] }] },
+                            { "option": "nothing to spit out", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "wash"] }] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "expel_question", "question": "fixclothes_expel_question", "npcDecides": true,
+                        "options": [
+                            { "option": "fixclothes_expel_yes", "isDefaultAccept": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "expel_mouth"] }] },
+                            { "option": "fixclothes_expel_no", "isDefaultCancel": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "expel_declined"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "expel_declined", "line": "fixclothes_expel_declined", "nextEntryLabel": "wash" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "expel_mouth",
+                        "options": [
+                            { "option": "mouth emptied", "Results": [{ "Type": "DeflateInternal", "arguments": ["mouth", "true", "true", "fixMouthMsg", "fixMouthKojo", "deflateMemory"] }, { "Type": "JumpToLabel", "arguments": ["", "expel_mouth_line"] }] },
+                            { "option": "unchanged", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "wash"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "expel_mouth_line", "line": "fixclothes_expel_mouth", "nextEntryLabel": "expel_kojo" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "expel_kojo",
+                        "options": [
+                            { "option": "reaction", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["fixMouthKojo"] }, { "Type": "FlushAppendStrings", "arguments": ["fixMouthKojo", "true"] }, { "Type": "AlwaysFalse", "arguments": [] }] },
+                            { "option": "continue", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "wash"] }] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "wash",
+                        "options": [
+                            { "option": "face washed", "Results": [{ "Type": "WashTraces", "arguments": ["self", "fixWashReport", "head"] }, { "Type": "JumpToLabel", "arguments": ["", "wash_line"] }] },
+                            { "option": "nothing to wash", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "result"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "wash_line", "line": "fixclothes_wash", "nextEntryLabel": "result" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "result",
+                        "options": [
+                            { "option": "spat out", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["deflateMemory"] }, { "Type": "JumpToLabel", "arguments": ["", "end"] }] },
+                            { "option": "washed", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["fixWashReport"] }, { "Type": "JumpToLabel", "arguments": ["", "end"] }] },
+                            { "option": "nothing happened", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "plain"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "plain", "line": "fixclothes_plain", "nextEntryLabel": "end" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "_comment": "log the spat-out contents into self's memory; no-op when nothing came out",
+                        "label": "end",
+                        "isLast": true,
+                        "line": "",
+                        "Results": [{ "Type": "LogMemoryEntryWithAppend", "arguments": ["self", "", "deflateMemory", "true"] }]
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "fixclothes_expel_question": "$self.name$对着镜子整理仪容，嘴里还残留着东西。要吐掉吗？",
+                "fixclothes_expel_yes": "吐掉",
+                "fixclothes_expel_no": "含着",
+                "fixclothes_expel_declined": "$self.name$没有吐，任由嘴里的东西留着。",
+                "fixclothes_expel_mouth": "$self.name$把嘴里的东西吐了出来，又擦干净了嘴角。$fixMouthMsg$。",
+                "fixclothes_wash": "$self.name$仔细地把脸清理干净，去掉了$fixWashReport$。",
+                "fixclothes_plain": "$self.name$整理好仪容，顺便歇了口气。"
+            }
+        }
+    }
+}

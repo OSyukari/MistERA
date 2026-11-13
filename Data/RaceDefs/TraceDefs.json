@@ -1,10 +1,11 @@
 {
-    "_doc": "Body trace definitions (Docs/Body/Plan_BodyTraces.md). Subclass by $type: TraceDefinition_Permanent (heal timer / permanent) or TraceDefinition_Temporary (Solid: brushed off on fix clothes; Liquid: wiped to driedTraceID, evaporates, into organ contents as liquidItemID when the touched organ is a container; Dried: shower only). leaveKeywords = COM traceKeywords -> chance per round; leaveCondition is checked on the source. Which parts hold / leave them: traceSlots / canLeaveTraces / leaveTraceIDs in the BodyPartDefs / Creature_Race files; a trace sits on one trace slot (the COM side's requireSlots, else random). allowRandomSpread + spreadChance: may land on another slot of the part or of a connected part instead (marks don't spread). displayName / tooltip keys default to <id> / <id>_tooltip and use $name$ $race$ $part$ $holder$ $amount$. All amounts / chances / durations are provisional.",
+    "_doc": "Body trace definitions (Docs/Body/Plan_BodyTraces.md). Subclass by $type: TraceDefinition_Permanent (heal timer / permanent) or TraceDefinition_Temporary (Solid: brushed off on Freshen Up; Liquid: wiped to driedTraceID, evaporates, into organ contents as liquidItemID when the touched organ is a container; Dried: shower only). leaveKeywords = COM traceKeywords -> chance per round; leaveCondition is checked on the source. Which parts hold / leave them: traceSlots / canLeaveTraces / leaveTraceIDs in the BodyPartDefs / Creature_Race files; a trace sits on one trace slot (the COM side's requireSlots, else random). allowRandomSpread + spreadChance: may land on another slot of the part or of a connected part instead (marks don't spread). dirtiness + dirtinessPerAmount * amount: how dirty one instance makes the body (default 1 / 0; liquids per ml; only traces a wash removes count), compared with the owner's cleanliness stats to decide a shower (Character_Body.BodyCleanliness, Docs/Body/Plan_InternalFluidFlow.md). displayName / tooltip keys default to <id> / <id>_tooltip and use $name$ $race$ $part$ $holder$ $amount$. All amounts / chances / durations are provisional.",
     "BodyPartBases": {
         "Traces": [
             {
                 "$type": "TraceDefinition_Temporary, Assembly-CSharp",
                 "id": "trace_saliva",
+                "dirtiness": 0, "dirtinessPerAmount": 0.5,
                 "_comment": "mouth. Into mouth / vagina / anus contents (topped up to Height/100*Weight*0.05 of the source, all sources' saliva counted, 160cm 50kg = 4ml), 20% of that also on the surface (French kiss: face). Surface not capped. Replaces COM.strongLeavesSecretion.",
                 "tags": ["nsfw", "liquid", "saliva"],
                 "leaveKeywords": { "lick": 1, "kiss": 1 },
@@ -21,6 +22,7 @@
             {
                 "$type": "TraceDefinition_Temporary, Assembly-CSharp",
                 "id": "trace_saliva_beast",
+                "dirtiness": 0, "dirtinessPerAmount": 0.5,
                 "_comment": "animal mouths, same as trace_saliva with the old beast secretion cap (0.06).",
                 "displayName": "trace_saliva",
                 "tooltip": "trace_saliva_tooltip",
@@ -61,6 +63,7 @@
             {
                 "$type": "TraceDefinition_Temporary, Assembly-CSharp",
                 "id": "trace_precum",
+                "dirtiness": 0, "dirtinessPerAmount": 1,
                 "_comment": "penis, while aroused. Into mouth / vagina / anus contents, else surface.",
                 "tags": ["nsfw", "liquid", "precum"],
                 "leaveKeywords": { "wet": 1, "insert": 1 },
@@ -77,6 +80,7 @@
             {
                 "$type": "TraceDefinition_Temporary, Assembly-CSharp",
                 "id": "trace_lovejuice",
+                "dirtiness": 0, "dirtinessPerAmount": 1,
                 "_comment": "vagina / clit, while aroused. Into mouth contents, else surface.",
                 "tags": ["nsfw", "liquid", "lovejuice"],
                 "leaveKeywords": { "wet": 1, "insert": 1 },
@@ -93,6 +97,7 @@
             {
                 "$type": "TraceDefinition_Temporary, Assembly-CSharp",
                 "id": "trace_milk",
+                "dirtiness": 0, "dirtinessPerAmount": 0.5,
                 "_comment": "breast, while aroused and pregnant (lactation not implemented, never counts yet). Into mouth contents, else surface.",
                 "tags": ["nsfw", "liquid", "milk"],
                 "leaveKeywords": { "lick": 1, "suck": 1, "wet": 1 },
@@ -109,6 +114,7 @@
             {
                 "$type": "TraceDefinition_Temporary, Assembly-CSharp",
                 "id": "trace_pubes",
+                "dirtiness": 0, "dirtinessPerAmount": 0.2,
                 "_comment": "humanoid penis / vagina / clit. Chance x trait_PubicHair tag tier: pubes_dense 1, pubes_sparse 0.5, else 0.",
                 "tags": ["nsfw", "hair", "pubes"],
                 "leaveKeywords": { "insert": 0.1, "oral": 0.03 },
@@ -122,6 +128,7 @@
             {
                 "$type": "TraceDefinition_Temporary, Assembly-CSharp",
                 "id": "trace_pubes_anal",
+                "dirtiness": 0, "dirtinessPerAmount": 0.2,
                 "_comment": "humanoid anus. Half the front chances. Only a trait tagged pubes_anal_some (natural) leaves it.",
                 "tags": ["nsfw", "hair", "pubes"],
                 "leaveKeywords": { "insert": 0.05, "oral": 0.015 },
@@ -135,6 +142,7 @@
             {
                 "$type": "TraceDefinition_Temporary, Assembly-CSharp",
                 "id": "trace_fur",
+                "dirtiness": 0, "dirtinessPerAmount": 0.2,
                 "_comment": "animal penis / anus, instead of the pubes traces. Same trait group (animals default natural).",
                 "tags": ["nsfw", "hair", "fur"],
                 "leaveKeywords": { "insert": 0.1, "oral": 0.03 },
@@ -148,7 +156,8 @@
             {
                 "$type": "TraceDefinition_Temporary, Assembly-CSharp",
                 "id": "trace_cum",
-                "_comment": "code only (TraceUtility.CumTraceID): ejaculation into a worn condom / vagina / anus leaves some on the penis; a filled condom discarded onto a body part. Wiped or evaporated -> trace_cum_dried.",
+                "_comment": "code only (TraceUtility.CumTraceID, consumable_cum leakTraceID): ejaculation into a worn condom / vagina / anus leaves some on the penis; a filled condom discarded onto a body part; a load spilling out of an organ past max capacity. Wiped or evaporated -> trace_cum_dried.",
+                "dirtiness": 0, "dirtinessPerAmount": 1,
                 "tags": ["nsfw", "liquid", "cum"],
                 "mergeMode": "Merge",
                 "allowRandomSpread": true,
@@ -162,9 +171,22 @@
                 "$type": "TraceDefinition_Temporary, Assembly-CSharp",
                 "id": "trace_cum_dried",
                 "_comment": "only a shower removes it.",
+                "dirtiness": 0, "dirtinessPerAmount": 1,
                 "tags": ["nsfw", "dried", "cum"],
                 "mergeMode": "Merge",
                 "matter": "Dried"
+            },
+            {
+                "$type": "TraceDefinition_Temporary, Assembly-CSharp",
+                "id": "trace_lube",
+                "_comment": "code only (consumable_lube leakTraceID): lube spilling out of an organ. Evaporates without a dried mark; wiping removes it.",
+                "dirtiness": 0, "dirtinessPerAmount": 0.3,
+                "tags": ["nsfw", "liquid", "lube"],
+                "mergeMode": "Merge",
+                "allowRandomSpread": true,
+                "spreadChance": 0.3,
+                "matter": "Liquid",
+                "evaporationPerMinute": 0.05
             }
         ]
     },
@@ -211,7 +233,12 @@
                 "trace_cum": "$name$的精液",
                 "trace_cum_tooltip": "$race$的精液。",
                 "trace_cum_dried": "干涸的$name$的精液",
-                "trace_cum_dried_tooltip": "已经干掉的$race$精液，只能洗掉。"
+                "trace_cum_dried_tooltip": "已经干掉的$race$精液，只能洗掉。",
+                "trace_lube": "润滑液",
+                "trace_lube_tooltip": "黏滑的润滑液。",
+                "trace_clean_removed": "$location$上的$trace$",
+                "trace_clean_dried": "$location$上的$trace$（擦过后干在了皮肤上）",
+                "trace_clean_separator": "、"
             }
         }
     }

@@ -11,6 +11,8 @@ public class ItemComponentTemplate_Ingestible
     public float amount = 0;
     public bool isLiquid = false;
     public bool canExpel = false;
+    /// <summary> body trace left where this liquid spills out of the body (Docs/Body/Plan_InternalFluidFlow.md), "" = none </summary>
+    public string leakTraceID = "";
     // public string giveStatus;
 
     [System.Serializable]
@@ -180,6 +182,7 @@ public class ItemComponent_Ingestible : ItemComponent_Base
 
     [JsonProperty] public float amount = 0;
     [JsonIgnore] public bool isLiquid { get { return CompTemplate.comp_Ingestible.isLiquid; } }
+    [JsonIgnore] public string LeakTraceID { get { return CompTemplate.comp_Ingestible.leakTraceID ?? ""; } }
     List<ItemComponentTemplate_Ingestible.Ingestible_IngestMethod> _ingestMethod = null;
     [JsonIgnore] public List<ItemComponentTemplate_Ingestible.Ingestible_IngestMethod> ingestMethod { get {
             if (_ingestMethod == null)

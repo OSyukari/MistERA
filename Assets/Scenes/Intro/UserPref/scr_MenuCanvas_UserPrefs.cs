@@ -25,6 +25,8 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
     public initScript_prefs_Display initScript_Prefs_Display;
     public TextMeshProUGUI previewText;
 
+    public RectTransform prefab_menuCanvas_Updates;
+
     public override void Initialize()
     {
         base.Initialize();
@@ -252,6 +254,8 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
                         button.Initialize(this, new ButtonValidator_toggleBooleanText(this, button, scr_System_CentralControl.current.DisplaySetting.clearLogs)); break;
                     case 0201: // Expedition toggle: banked expedition events run immediately (label ui_prefs_immediateRunExpeditionEvent)
                         button.Initialize(this, new ButtonValidator_toggleBooleanText(this, button, scr_System_CentralControl.current.DisplaySetting.immediateRunExpeditionEvent)); break;
+                    case 0202: // Logs toggle: player portrait on player command lines (label ui_prefs_logs_playerPortrait, PlayerCommandPortrait)
+                        button.Initialize(this, new ButtonValidator_toggleBooleanText(this, button, scr_System_CentralControl.current.DisplaySetting.displayPlayerPortraitInLogs)); break;
 
                     case 1000: // LLM enable button
                         button.Initialize(this, new buttonValidator_toggleLLM(this, button)); break;
@@ -405,6 +409,9 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
                         //ValidateGenderDemo();
                     }
                     break;*/
+                case 0014: // Updates & Mods
+                    scr_Menu_Updates.Open(prefab_menuCanvas_Updates, this.GetComponent<RectTransform>());
+                    break;
                 case 9999:
                     scr_System_CentralControl.current.SaveUserPref();
                     scr_System_SceneManager.current.UnloadLastCanvasFromScene();

@@ -71,17 +71,23 @@
             
         ],
         "rec":[
+            
+        ],
+        "recreationOffers": [
             {
                 "ID": "recreation_offer_jp_riverside_fireworks",
                 "mainTypeTag": "sightseeing",
                 "secondaryTags": ["outdoor", "seasonal", "fireworks"],
-                "allowWalkIn": true,
+                "_comment_walkIn": "The player may walk in to any group's watching (normal acceptance check); unbooked NPCs may not (npcWalkIn false) - they can still watch on their own through the normal command.",
+                "allowWalkIn": true, "npcWalkIn": false,
                 "trustRewardEligible": true, "provideAcceptanceBonus": 5, "activityMoodlet": { "stress": 1 },
                 "factionID": "jp_tourist_riverside",
                 "startHour": 19,
                 "hours": 2,
+                "_comment_invite": "Group invitations (Docs/Activities/Plan_GroupInvitations.md): everyone who books invites their household, band or best friend / partner - nobody books alone. Trust is paid only within a group.",
+                "invite": { "visibility": "World", "invitationValidator": { "class": "InvitationValidator_BestRelationship" } },
                 "workModule": { "jobPostID": "jp_riverside_fireworks", "workCommands": ["jp_riverside_watch_fireworks"] },
-                "_comment_activityCommands": "Participants watch through the activity's bound copy (activity: watch the fireworks), one package per invitation group (the families each sit together - Plan_ActivityFurnitureCommands step 3); non-participants keep the normal command (no exclusiveUse).",
+                "_comment_activityCommands": "Participants watch through the activity's bound copy (activity: watch the fireworks); a package takes only those sharing an invite group with everyone in it (Plan_GroupInvitations - the families each sit together); non-participants keep the normal command (no exclusiveUse).",
                 "activityCommands": ["jp_riverside_watch_fireworks"],
                 "_comment_activity": "Job_Activity gathers on the embankment lawn and launches at T+5 (World session, no mandatory participants), firing Riverside_Fireworks_Begin (Events/riverside_activity_events.json).",
                 "gatherRoomID": "riverside_promenade",
@@ -99,10 +105,7 @@
                 "_comment_calendar": "Every Saturday of the fireworks season (world.json season_hanabi) - most real hanabi taikai (e.g. Sumida River) are held on summer Saturday evenings.",
                 "seasonTags": ["hanabi"],
                 "weekdays": [0, 0, 0, 0, 0, 1, 0]
-            }
-        ],
-        "recreationOffers": [
-            
+            },
             {
                 "_comment": "Everyday riverside stroll - a flexible offer: never posted, every eligible character may plan it into free time like a membership activity (2h, not two days running). Placement weight = weight.",
                 "ID": "recreation_offer_jp_riverside_stroll",

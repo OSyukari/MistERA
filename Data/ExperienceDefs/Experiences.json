@@ -5,7 +5,6 @@
 {  "ExperienceID":"experience_cooking", "tags":[], "RequiredOwnerTags":[], "RequiredCOMTags":["cooking"] , "ExcludeOwnerTags":[] },
 {  "ExperienceID":"experience_farming", "tags":[], "RequiredOwnerTags":[], "RequiredCOMTags":["farming"] , "ExcludeOwnerTags":[] },
 {  "ExperienceID":"experience_social", "tags":[], "RequiredOwnerTags":[], "RequiredCOMTags":["social", "interaction"] , "ExcludeOwnerTags":[] },
-{  "ExperienceID":"experience_intimacy", "tags":[], "CountTotal":false, "ApplyToDoer":true, "ApplyToReceiver":true, "RequiredCOMTags":["intimacy", "touch", "interaction"], "ExcludeOwnerTags":["unconscious", "timestop"], "ExcludeCOMTags":["sex", "service", "NonInteraction"] },
 {  "ExperienceID":"experience_operating", "tags":[], "RequiredOwnerTags":[], "RequiredCOMTags":["operating"] , "ExcludeOwnerTags":[] }
         ]
     },

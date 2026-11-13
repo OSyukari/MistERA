@@ -440,17 +440,11 @@ public abstract class ActionPackage
                     // join success branch
                     if (!LogMessage_Join(c2, s))
                     {
-                        Debug.LogError("error logmessagejoin failure");
                         var desc = new DescriptionCollector(s);
                         desc.LoadActors(this.job.GetLogRelevantActors(this));
                         desc.LoadActors(c2.RefID, true, true);
                         desc.message_excludeRelated = s;
                         this.job.m.AddMessage_Before(desc, this.RoomKey);
-                    }
-                    else
-                    {
-
-                        Debug.LogError("logmessagejoin");
                     }
                 }
             }
@@ -681,34 +675,34 @@ public abstract class ActionPackage
     [JsonProperty] int activityExecutionRef = -1;
     [JsonIgnore] public int ActivityExecutionRef { get { return job is Job_Activity activity ? activity.RefID : activityExecutionRef; } }
 
-    /// <summary>The group within the bound activity this package belongs to (Job_Activity.GroupOf); Job_Activity.NoGroupCheck = any of its participants may join.</summary>
-    [JsonProperty] int activityGroupKey = Job_Activity.NoGroupCheck;
-    [JsonIgnore] public int ActivityGroupKey { get { return activityGroupKey; } }
-
     /// <summary>
     /// After a successful join: whoever joined this package bound to an activity without taking part in it yet (a walk-in
     /// - the player through the confirm, an NPC sandboxing in, the player's target / follower) is registered by the
-    /// activity (Job_Activity.JoinParticipant - the package's group, entrance fee, begin event as the join). One the
-    /// activity won't take after all (overnight check-in / the begin event refused) leaves again.
+    /// activity (Job_Activity.JoinParticipant - the groups the package's actors share, entrance fee, begin event as the
+    /// join). One the activity won't take after all (overnight check-in / the begin event refused) leaves again. The
+    /// player already taking part takes the package's groups (Job_Activity.AdoptPackageGroups).
     /// </summary>
     void RegisterBoundJoiners(List<Character_Trainable> joined)
     {
         if (activityExecutionRef < 0 || job is Job_Activity || joined == null) return;
         var execution = scr_System_CampaignManager.current.FindJobInstanceByID(activityExecutionRef, false) as Job_Activity;
         if (execution == null) return;
-        for (int i = 0; i < joined.Count; i++)
-        {
-            var c = joined[i];
-            if (c == null || execution.TookPart(c)) continue;
-            if (!execution.JoinParticipant(c, PackageRoom, activityGroupKey, this)) c.ChangeCurrentJob(null);
-        }
+        // the player first: their companions take the groups the package shares with the player counted in
+        for (int pass = 0; pass < 2; pass++)
+            for (int i = 0; i < joined.Count; i++)
+            {
+                var c = joined[i];
+                if (c == null || (c.RefID == 0) != (pass == 0)) continue;
+                // already taking part: the player (or a companion with them) joining another group's package becomes one of its groups
+                if (execution.TookPart(c)) { execution.AdoptPackageGroups(c, this); continue; }
+                if (!execution.JoinParticipant(c, PackageRoom, this)) c.ChangeCurrentJob(null);
+            }
     }
 
-    /// <summary>Binds this package to activity's execution, for groupKey's group of it (Job_Activity.GroupOf of its creator).</summary>
-    public void BindActivityExecution(Job_Activity activity, int groupKey = Job_Activity.NoGroupCheck)
+    /// <summary>Binds this package to activity's execution. Who may join it is decided by its actors' invite groups (Job_Activity.PackageAdmits).</summary>
+    public void BindActivityExecution(Job_Activity activity)
     {
         activityExecutionRef = activity == null ? -1 : activity.RefID;
-        activityGroupKey = activity == null ? Job_Activity.NoGroupCheck : groupKey;
     }
 
     /// <summary>A package bound to an activity's execution (BindActivityExecution) - not Job_Activity's own wait package. The player starts / joins one with the companions it can take (Job_Activity.CompanionsFor); everyone answers for themselves (Request - SettleActivityJoiners).</summary>
@@ -999,7 +993,6 @@ public abstract class ActionPackage
         if (jobRefID != (job?.RefID ?? -1) || targetCOMID != (targetCOM?.ID ?? ""))
         {
             activityExecutionRef = -1;
-            activityGroupKey = Job_Activity.NoGroupCheck;
         }
 
         if (tooltip == null) tooltip = new List<string>();
@@ -1354,15 +1347,15 @@ public abstract class ActionPackage
     }
 
     /// <summary>
-    /// c belongs to this package's bound execution: a participant allowed the command, in the package's group (one group
-    /// per package - Plan_ActivityFurnitureCommands step 3); or an admissible new joiner (Job_Activity.AdmitsWalkIn
-    /// - confirmed late attendees keep their invitation group; outsiders join this package's group).
+    /// c belongs to this package's bound execution: a participant allowed the command who shares an invite group with
+    /// everyone taking part in it (Job_Activity.PackageAdmits - Plan_GroupInvitations); or an admissible new joiner
+    /// (Job_Activity.AdmitsWalkIn - confirmed late attendees by their groups too; outsiders take this package's groups).
     /// </summary>
     bool BelongsToBoundExecution(Job_Activity execution, Character_Trainable c)
     {
         if (!execution.TookPart(c)) return execution.AdmitsWalkIn(c, this);
         if (!execution.AllowsParticipantCommand(c, targetCOM)) return false;
-        return activityGroupKey == Job_Activity.NoGroupCheck || execution.GroupOf(c.RefID) == activityGroupKey;
+        return execution.PackageAdmits(this, c);
     }
 
     protected virtual bool PreEvaluate()
@@ -2085,7 +2078,7 @@ public abstract class ActionPackage
             {
                 if (refusers != null && refusers.Contains(actors[i])) continue;
                 var c = scr_System_CampaignManager.current.FindInstanceByID(actors[i]);
-                if (c == null || execution.TookPart(c) || execution.JoinParticipant(c, PackageRoom, activityGroupKey)) continue;
+                if (c == null || execution.TookPart(c) || execution.JoinParticipant(c, PackageRoom, this)) continue;
                 if (!IsDroppableJoiner(new List<int>() { actors[i] })) return false;
                 if (refusers == null) refusers = new List<int>();
                 refusers.Add(actors[i]);
@@ -2173,7 +2166,15 @@ public abstract class ActionPackage
         bool single = ShortenAPDisplay;
         var desc = new DescriptionCollector();
 
-        desc.message = isPlayerRelatedPackage ? $"{this.checkResults_result}" : "";
+        // player acts in it: the check result line carries the player image, the kojo below stays its own line (NPC image)
+        DescriptionCollector playerDesc = null;
+        if (isPlayerRelatedPackage && !string.IsNullOrEmpty(this.checkResults_result) && PlayerCommandPortrait.Applies(this))
+        {
+            playerDesc = PlayerCommandPortrait.Create(this.checkResults_result, this);
+            playerDesc.tooltip = this.checkResults_tooltips;
+        }
+
+        desc.message = isPlayerRelatedPackage && playerDesc == null ? $"{this.checkResults_result}" : "";
         if (targetCOM != null && COMVariantID >= 0)
         {
             //desc.message = targetCOM.variants[COMVariantID].GetDescription_OnComplete(targetCOM, this);
@@ -2219,6 +2220,11 @@ public abstract class ActionPackage
         //desc.LoadPortraits(this.actorRefs, true);
         // results section: printed after this update's begin texts / kojo, so a package beginning and completing in
         // the same update (1 minute) still reads acceptance -> begin -> result
+        if (playerDesc != null)
+        {
+            playerDesc.LoadActors(this.job.GetLogRelevantActors(this));
+            m.AddMessage_Results(playerDesc, logging ? RecordingRoom : null);
+        }
         m.AddMessage_Results(desc, logging ? RecordingRoom : null);
         if (!logging) packageStateChanged = true;
     }
@@ -2265,6 +2271,7 @@ public abstract class ActionPackage
         // kills the whole message (AddLog falls back to the never-populated message_excludeRelated).
         desc.LoadActors(this.actorRefs);
         desc.LoadActors(this.job.GetLogRelevantActors(this));
+        if (PlayerCommandPortrait.Applies(this)) PlayerCommandPortrait.Load(desc, this);
         m.AddMessage_Checks(desc, logging? RecordingRoom : null);//
         if (!logging) packageStateChanged = true;
 
@@ -3463,6 +3470,17 @@ public abstract class ActionPackage
         s = targetCOM.Replace(s);
         s = keyReplace(s);
 
+        // player acts in it: the COM begin text is its own line with the player image, the kojo below keeps the NPC image
+        bool playerLine = s.Length > 0 && PlayerCommandPortrait.Applies(this);
+        if (playerLine)
+        {
+            var playerDesc = PlayerCommandPortrait.Create(s, this);
+            playerDesc.LoadActors(this.job.GetLogRelevantActors(this));
+            playerDesc.message_excludeRelated = s;
+            m.AddMessage_Before(playerDesc, true, logging ? RecordingRoom : null);
+            if (!logging) packageStateChanged = true;
+            s = "";
+        }
 
         var desc = new DescriptionCollector(s);
         bool exist = s.Length > 0;
@@ -3631,6 +3649,7 @@ public abstract class ActionPackage
                 var desc = new DescriptionCollector(responses);
                 desc.LoadActors(this.job.GetLogRelevantActors(this));
                 desc.message_excludeRelated = responses;
+                if (ep.isPlayerEP && PlayerCommandPortrait.Applies(this)) PlayerCommandPortrait.Load(desc, this);
                 m.AddMessage_Before(desc, true, logging ? RecordingRoom : null);
                 if (!logging) packageStateChanged = true;
             }
@@ -3656,6 +3675,7 @@ public abstract class ActionPackage
                 var desc = new DescriptionCollector(responses);
                 desc.LoadActors(this.job.GetLogRelevantActors(this));
                 desc.message_excludeRelated = responses;
+                if (ep.isPlayerEP && PlayerCommandPortrait.Applies(this)) PlayerCommandPortrait.Load(desc, this);
                 m.AddMessage_Before(desc, true, logging ? RecordingRoom : null);
                 if (!logging) packageStateChanged = true;
 
@@ -3753,6 +3773,8 @@ public abstract class ActionPackage
             desc.LoadActors(this.job.GetLogRelevantActors(this));
             desc.message = $"{s}{(s.Length > 0 ? "\n" : "")}{desc.message}";
             desc.message_excludeRelated = desc.message;
+            // player-related packages load no kojo here - the whole end text is a system line
+            if (PlayerCommandPortrait.Applies(this)) PlayerCommandPortrait.Load(desc, this);
 
             //desc.LoadPortraits(this.actorRefs, true);
             //Debug.Log($"logmessageafter!\n{desc.message}\n{desc.message_excludeRelated}");
@@ -3969,7 +3991,8 @@ public abstract class ActionPackage
     /// After acceptance, before the act begins (Tick): an accepted EP whose granter still misses a SoftEvent permission
     /// with a demandEventID (e.g. permission_sex_unprotected), not pushed past in this scene, stops this act - it ends
     /// without effects or refusal costs, and the demand plays (SendDemandEvent). Forced commands, event-run acts and acts
-    /// already resumed from a demand are never stopped.
+    /// already resumed from a demand are never stopped; nor is any act for a climaxing or low-consciousness granter
+    /// (cannot refuse - its request kojo already played).
     /// </summary>
     bool TryStopForDemand()
     {
@@ -3981,6 +4004,7 @@ public abstract class ActionPackage
             if (ep == null || ep.Response < Memory_Response.Accept) continue;
             foreach (var missing in ep.MissingPermissions)
             {
+                if (missing.Unaware || missing.Granter.Climaxing) continue;
                 if (missing.Definition.mode != PermissionMode.SoftEvent || string.IsNullOrEmpty(missing.Definition.demandEventID)) continue;
                 if (job is Job_Sex_Group scene && scene.HasPermissionPush(missing.Granter.RefID, missing.Holder.RefID, missing.Definition.ID)) continue;
                 demand = missing;
@@ -3999,7 +4023,7 @@ public abstract class ActionPackage
             if (ep == null || ep.Response < Memory_Response.Accept) continue;
             foreach (var missing in ep.MissingPermissions)
             {
-                if (missing.Granter != demand.Granter || missing.Holder != demand.Holder) continue;
+                if (missing.Unaware || missing.Granter != demand.Granter || missing.Holder != demand.Holder) continue;
                 if (missing.Definition.mode != PermissionMode.SoftEvent || string.IsNullOrEmpty(missing.Definition.demandEventID)) continue;
                 if (!pushedIDs.Contains(missing.Definition.ID)) pushedIDs.Add(missing.Definition.ID);
             }
@@ -4014,6 +4038,8 @@ public abstract class ActionPackage
 
     /// <summary>StoredOptions key of the code-built condom answers of a demand event.</summary>
     public const string DemandOptionsKey = "demandOptions";
+    /// <summary>StoredOptions key of the same answers without the safe-day claim (asked again after a refused claim).</summary>
+    public const string DemandOptionsNoClaimKey = "demandOptionsNoClaim";
 
     /// <summary>
     /// One way to answer a condom demand. immediate: the requester puts it on now with their hands (on themselves or on
@@ -4027,13 +4053,16 @@ public abstract class ActionPackage
         public string label;
         public bool immediate;
         public Character_Trainable wearer;
+        /// <summary>The wearer puts it on themselves (takes it off themselves later).</summary>
+        public bool wornBySelf;
         public ActionPackage command;
         public string reason = "";
     }
 
     /// <summary>
     /// The condom answers for this act: the wearer is the owner of the penis organ the demand's EP chose. Requester wears:
-    /// put it on yourself, or let the granter do it by hand / mouth. Granter wears: put it on them. Validated with the
+    /// put it on yourself, or let the granter do it by hand / mouth. Granter wears (a penis owner's demand, e.g.
+    /// permission_sex_unprotected_penis): put it on them, or they put it on themselves. Validated with the
     /// condom commands themselves (arms / mouth, exposed penis, an accessible condom). The granter's answers carry the
     /// demand event's commandAcceptanceBonus for their command, on the granter's side.
     /// </summary>
@@ -4054,13 +4083,17 @@ public abstract class ActionPackage
             answers.Add(MakeCondomAnswer("event_OnAPRefuse_Unprotected_op_targetMouth", "br_condom_partner", mouth, granter, requester, false, wearer, demandEvent));
         }
         else if (wearer == granter)
+        {
             answers.Add(MakeCondomAnswer("event_OnAPRefuse_Unprotected_op_wearTarget", "br_condom_target", hand, requester, granter, true, wearer, null));
+            // the granter asked for it: they put it on themselves now
+            answers.Add(MakeCondomAnswer("event_OnAPRefuse_Unprotected_op_targetSelf", "br_condom_granter_self", self, granter, null, true, wearer, null));
+        }
         return answers;
     }
 
     CondomAnswer MakeCondomAnswer(string textKey, string label, COM com, Character_Trainable doer, Character_Trainable receiver, bool immediate, Character_Trainable wearer, Event bonusEvent)
     {
-        var answer = new CondomAnswer { textKey = textKey, label = label, immediate = immediate, wearer = wearer };
+        var answer = new CondomAnswer { textKey = textKey, label = label, immediate = immediate, wearer = wearer, wornBySelf = doer == wearer };
         if (com == null || doer == null) return answer;
         var receivers = receiver == null ? new List<int>() : new List<int>() { receiver.RefID };
         var ap = com.MakePackage(this.job, new List<int>() { doer.RefID }, receivers, doer.RefID);
@@ -4078,12 +4111,12 @@ public abstract class ActionPackage
     }
 
     /// <summary>Puts the condom on now (immediate answer): taken from the accessible inventory the command found.</summary>
-    static bool ApplyCondomNow(CondomAnswer answer, Character_Trainable requester)
+    static bool ApplyCondomNow(CondomAnswer answer)
     {
         var equipCOM = answer.command?.targetCOM as COM_EquipSingleUseItem;
         if (equipCOM == null) return false;
         var source = equipCOM.ItemRequirement.ResolveFaction(answer.command.job, answer.command.doer, answer.command.receiver, answer.command.Master);
-        return SingleUseEquipUtility.TryEquipFrom(source, equipCOM.itemID, answer.wearer, answer.wearer == requester);
+        return SingleUseEquipUtility.TryEquipFrom(source, equipCOM.itemID, answer.wearer, answer.wornBySelf);
     }
 
     /// <summary>
@@ -4093,12 +4126,18 @@ public abstract class ActionPackage
     ///   command (the act does not resume by itself);<br/>
     /// - "apCallback" ignores the demand: records the scene push (no demand for this pair and permission again in this
     ///   scene) and resumes the act;<br/>
-    /// - "failCallback" gives up.<br/>
+    /// - "failCallback" gives up;<br/>
+    /// - with demandSafeDayClaim: claim a safe day (a lie on the requester's danger day) - the granter's request decision
+    ///   for safeDayClaimDecisionID (else the demand's own permission), no roll; accepted = every pushed ID granted as
+    ///   Temporary and the act resumes (br_claim / br_claim_lie), refused = br_claim_refused,
+    ///   which asks again from StoredOptions[DemandOptionsNoClaimKey]. An NPC requester claims when the condom is not
+    ///   possible and the granter would accept (same lines: br_claim / br_claim_lie carry no callbacks).<br/>
     /// pushedIDs: the permissions the push records - the demand's own plus every other demand-carrying permission the
     /// pair misses in this act (TryStopForDemand), so one ignored demand covers them all.<br/>
     /// A resumed act is a copy with its accepted result kept (acceptOnNextRequest) that is never stopped for a demand
     /// again (demandAnswered). The player chooses in the event (StoredOptions[DemandOptionsKey] + the event's own options);
-    /// an NPC requester decides here - put it on now if possible, else ignore - and the event starts at that answer's line,
+    /// an NPC requester decides here - put it on now if possible, else claim a safe day (if offered and accepted), else
+    /// ignore - and the event starts at that answer's line,
     /// so the act resumes at the end of this minute. Same message handling as SendRefuseEvent.
     /// </summary>
     void SendDemandEvent(MissingPermission demand, EvaluationPackage ep, List<string> pushedIDs)
@@ -4136,12 +4175,40 @@ public abstract class ActionPackage
         Action continueUpdate = () => { if (playerChooses) scr_UpdateHandler.current.ToggleCallbackUpdate(); };
 
         var answers = BuildCondomAnswers(ep, requester, granter, scr_System_Serializer.current.GetEventByID(demand.Definition.demandEventID));
+
+        // safe-day claim (demandSafeDayClaim): the requester says today is safe - a lie on their danger day. The granter's
+        // request decision for this permission decides (AcceptsRequest, no roll); accepted = a Temporary grant, the act resumes
+        // safeDayClaimDecisionID: the granter believes it is safe, so decides as for that permission (e.g. the danger-day one
+        // decides as plain going bare); an accepted claim grants every permission this demand covers (pushedIDs)
+        bool claimOffered = demand.Definition.demandSafeDayClaim && canResume;
+        bool claimLie = claimOffered && ReproductionUtility.IsDangerDay(requester);
+        bool claimAccepted = false;
+        string claimTooltip = "";
+        string claimDecisionID = string.IsNullOrEmpty(demand.Definition.safeDayClaimDecisionID) ? demand.Definition.ID : demand.Definition.safeDayClaimDecisionID;
+        if (claimOffered)
+        {
+            var claimQuery = PermissionService.Query(granter, requester, claimDecisionID);
+            claimAccepted = PermissionService.AcceptsRequest(granter, requester, claimQuery);
+            claimTooltip = PermissionService.RequestTooltip(granter, requester, claimQuery);
+        }
+        Func<bool> grantClaim = () =>
+        {
+            // the decision permission through the request path (re-checks the decision), the others it covers as event grants
+            bool all = true;
+            foreach (var permissionID in pushedIDs)
+                all = PermissionService.TryGrant(granter, requester, permissionID,
+                    permissionID == claimDecisionID ? PermissionGrantSource.Request : PermissionGrantSource.Event,
+                    out _, PermissionGrantType.Temporary) && all;
+            return all;
+        };
+
         string startLabel = "";
         if (!playerChooses)
         {
-            // NPC requester: put it on now if possible, else ignore the demand
+            // NPC requester: put it on now if possible, else claim a safe day if the granter would accept, else ignore the demand
             var wear = answers.Find(x => x.immediate && x.command != null);
-            if (wear != null && ApplyCondomNow(wear, requester)) startLabel = wear.label;
+            if (wear != null && ApplyCondomNow(wear)) startLabel = wear.label;
+            else if (claimAccepted && grantClaim()) startLabel = claimLie ? "br_claim_lie" : "br_claim";
             else
             {
                 recordPush();
@@ -4193,7 +4260,7 @@ public abstract class ActionPackage
                     option.tooltip = a.reason;
                 }
                 else if (a.immediate)
-                    option.onSelect = _ => { if (ApplyCondomNow(a, requester)) resumeAct(); continueUpdate(); };
+                    option.onSelect = _ => { if (ApplyCondomNow(a)) resumeAct(); continueUpdate(); };
                 else
                 {
                     // the granter puts it on: the condom command rolls its own acceptance (like OnAPRefuse's forced retry) -
@@ -4214,6 +4281,25 @@ public abstract class ActionPackage
                         };
                 }
                 options.Add(option);
+            }
+            // after a refused claim the question comes back without it
+            ev.StoredOptions[DemandOptionsNoClaimKey] = new List<Event.EventEntry.Options>(options);
+            if (claimOffered)
+            {
+                // the decision is known now (no roll): the tooltip shows it, and a refusal plays the granter's refusal line
+                var claim = new Event.EventEntry.Options()
+                {
+                    option = claimLie ? "event_OnAPRefuse_safeDayClaim_op_lie" : "event_OnAPRefuse_safeDayClaim_op_truth",
+                    boundTarget = null,
+                    tooltip = claimTooltip,
+                    Results = new List<Event.EventEntry.Executor>()
+                    {
+                        new Event.EventEntry.Executor() { Type = Event.EventEntry.ExecutionType.JumpToLabel,
+                            arguments = new List<string>() { "", !claimAccepted ? "br_claim_refused" : claimLie ? "br_claim_lie" : "br_claim" } }
+                    }
+                };
+                if (claimAccepted) claim.onSelect = _ => { if (grantClaim()) resumeAct(); continueUpdate(); };
+                options.Add(claim);
             }
             ev.StoredOptions[DemandOptionsKey] = options;
         }
@@ -4241,7 +4327,6 @@ public abstract class ActionPackage
             copy.IgnoreStatCost = false;
             copy.roomRefOverride = roomRefOverride;
             copy.activityExecutionRef = activityExecutionRef;
-            copy.activityGroupKey = activityGroupKey;
             copy._room = null;
             copy.AuthoredSexSceneEntry = AuthoredSexSceneEntry;
             copy.sexEntryBound = sexEntryBound;

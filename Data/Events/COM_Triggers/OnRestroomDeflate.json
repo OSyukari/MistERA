@@ -1,148 +1,83 @@
 {
+    "_comment": "com_furniture_restroom's result event, self = the doer (Docs/Body/Plan_InternalFluidFlow.md §7). Always runs: optional expel (anus fully, vagina down to its capacity; NPC auto-accepts via npcDecides, the player chooses), then the lower body and legs are always wiped (solid traces off, liquids dry). Every step has its own line; nothing done -> a plain 'used the restroom' line.",
     "Events": {
         "list": [
             {
                 "ID": "com_furniture_restroom_deflate",
-                "SelfValidator": {
-                    "chara_conditions": [
-                        {
-                            "parameters": [
-                                "canFullyDeflate",
-                                "anus"
-                            ]
-                        }
-                    ]
-                },
                 "events": [
                     {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "_comment": "opening beat before the branch/kojo cascade below",
-                        "isLast": true,
-                        "line": "com_furniture_restroom_deflate_start",
-                        "nextEntryLabel": "attempt"
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "expel_gate",
+                        "_comment": "ask only when something would actually come out",
+                        "options": [
+                            { "option": "anal contents", "self_chara_conditions": [{ "parameters": ["wouldDeflate", "anus", "true"] }], "Results": [{ "Type": "JumpToLabel", "arguments": ["", "expel_question"] }] },
+                            { "option": "vagina above capacity", "self_chara_conditions": [{ "parameters": ["wouldDeflate", "vagina", "false"] }], "Results": [{ "Type": "JumpToLabel", "arguments": ["", "expel_question"] }] },
+                            { "option": "nothing to expel", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "wipe"] }] }
+                        ]
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-                        "_comment": "attempt deflation, silently exit on failure",
-                        "label": "attempt",
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "expel_question", "question": "restroom_expel_question", "npcDecides": true,
                         "options": [
-                            {
-                                "option": "deflate anus",
-                                "Results": [
-                                    {
-                                        "Type": "DeflateInternal",
-                                        "arguments": [
-                                            "anus",
-                                            "true",
-                                            "true",
-                                            "deflateMsg",
-                                            "deflateKojo",
-                                            "deflateMemory"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "print"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "option": "silent exit",
-                                "Results": [
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "end"
-                                        ]
-                                    }
-                                ]
-                            }
+                            { "option": "restroom_expel_yes", "isDefaultAccept": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "expel_anus"] }] },
+                            { "option": "restroom_expel_no", "isDefaultCancel": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "expel_declined"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "expel_declined", "line": "restroom_expel_declined", "nextEntryLabel": "wipe" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "expel_anus",
+                        "options": [
+                            { "option": "anus emptied", "Results": [{ "Type": "DeflateInternal", "arguments": ["anus", "true", "true", "restroomAnusMsg", "restroomAnusKojo", "deflateMemory"] }, { "Type": "JumpToLabel", "arguments": ["", "expel_anus_line"] }] },
+                            { "option": "unchanged", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "expel_vagina"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "expel_anus_line", "line": "restroom_expel_anus", "nextEntryLabel": "expel_vagina" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "expel_vagina",
+                        "options": [
+                            { "option": "vagina down to capacity", "Results": [{ "Type": "DeflateInternal", "arguments": ["vagina", "true", "false", "restroomVaginaMsg", "restroomVaginaKojo", "deflateMemory"] }, { "Type": "JumpToLabel", "arguments": ["", "expel_vagina_line"] }] },
+                            { "option": "unchanged", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "expel_kojo"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "expel_vagina_line", "line": "restroom_expel_vagina", "nextEntryLabel": "expel_kojo" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "expel_kojo",
+                        "_comment": "each print option force-fails via AlwaysFalse after printing so every collected reaction gets its turn",
+                        "options": [
+                            { "option": "anal reaction", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["restroomAnusKojo"] }, { "Type": "FlushAppendStrings", "arguments": ["restroomAnusKojo", "true"] }, { "Type": "AlwaysFalse", "arguments": [] }] },
+                            { "option": "vaginal reaction", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["restroomVaginaKojo"] }, { "Type": "FlushAppendStrings", "arguments": ["restroomVaginaKojo", "true"] }, { "Type": "AlwaysFalse", "arguments": [] }] },
+                            { "option": "continue", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "wipe"] }] }
                         ]
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-                        "_comment": "prefer kojo text if it was collected, else fall back to the plain deflate message; each option force-fails via AlwaysFalse after attempting its print so both get a chance and we always reach end",
-                        "label": "print",
+                        "label": "wipe",
                         "options": [
-                            {
-                                "option": "kojo print attempt",
-                                "Results": [
-                                    {
-                                        "Type": "ExistAppendStrings",
-                                        "arguments": [
-                                            "deflateKojo"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "FlushAppendStrings",
-                                        "arguments": [
-                                            "deflateKojo",
-                                            "true"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "AlwaysFalse",
-                                        "arguments": []
-                                    }
-                                ]
-                            },
-                            {
-                                "option": "plain message print attempt",
-                                "Results": [
-                                    {
-                                        "Type": "ExistAppendStrings",
-                                        "arguments": [
-                                            "deflateMsg"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "FlushAppendStrings",
-                                        "arguments": [
-                                            "deflateMsg",
-                                            "true"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "AlwaysFalse",
-                                        "arguments": []
-                                    }
-                                ]
-                            },
-                            {
-                                "option": "end",
-                                "Results": [
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "end"
-                                        ]
-                                    }
-                                ]
-                            }
+                            { "option": "lower body wiped", "Results": [{ "Type": "WipeTraces", "arguments": ["self", "restroomWipeReport", "lower", "leg"] }, { "Type": "JumpToLabel", "arguments": ["", "wipe_line"] }] },
+                            { "option": "nothing to wipe", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "result"] }] }
                         ]
                     },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "wipe_line", "line": "restroom_wipe", "nextEntryLabel": "result" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "result",
+                        "options": [
+                            { "option": "expelled", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["deflateMemory"] }, { "Type": "JumpToLabel", "arguments": ["", "end"] }] },
+                            { "option": "wiped", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["restroomWipeReport"] }, { "Type": "JumpToLabel", "arguments": ["", "end"] }] },
+                            { "option": "nothing happened", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "plain"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "plain", "line": "restroom_plain", "nextEntryLabel": "end" },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "_comment": "log any accumulated deflateMemory into self's own memory; no-op if the attempt branch above never ran DeflateInternal",
+                        "_comment": "log the expelled contents into self's memory; no-op when nothing was expelled",
                         "label": "end",
                         "isLast": true,
                         "line": "",
-                        "Results": [
-                            {
-                                "Type": "LogMemoryEntryWithAppend",
-                                "arguments": [
-                                    "self",
-                                    "",
-                                    "deflateMemory",
-                                    "true"
-                                ]
-                            }
-                        ]
+                        "Results": [{ "Type": "LogMemoryEntryWithAppend", "arguments": ["self", "", "deflateMemory", "true"] }]
                     }
                 ]
             }
@@ -151,7 +86,14 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "com_furniture_restroom_deflate_start": "$self.name$在卫生间里待得比平时更久了一些。"
+                "restroom_expel_question": "$self.name$坐在马桶上，感觉体内还积着东西。要把它排出来吗？",
+                "restroom_expel_yes": "排出来",
+                "restroom_expel_no": "先留着",
+                "restroom_expel_declined": "$self.name$犹豫了一下，没有去管体内的东西。",
+                "restroom_expel_anus": "$self.name$在马桶上放松后庭，积在肠道口的东西一点点流了出来。$restroomAnusMsg$。",
+                "restroom_expel_vagina": "$self.name$收紧小腹用力，阴道里装不下的部分被挤了出来。$restroomVaginaMsg$。",
+                "restroom_wipe": "$self.name$用纸巾擦拭下身和大腿，擦掉了$restroomWipeReport$。",
+                "restroom_plain": "$self.name$上了个厕所。"
             }
         }
     }

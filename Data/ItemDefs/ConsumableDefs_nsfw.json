@@ -11,7 +11,17 @@
                     "comp_Ingestible":{
                         "isLiquid":true,
                         "canExpel":true,
+                        "leakTraceID":"trace_cum",
+                        "_comment_ingestMethod":"first matching method wins: the womb keeps cum 5x longer (0.12 ml/h) than every other organ (0.6 ml/h); it flows back into the vagina from there (Docs/Body/Plan_InternalFluidFlow.md)",
                         "ingestMethod":[
+                            {
+                                "bodyTags":"womb",
+                                "digestSpeed": -0.002,
+                                "digestDelay":20,
+                                "digestDelayVariation":5,
+                                "amountMod": 0.01,
+                                "giveStatus":""
+                            },
                             {
                                 "bodyTags":"internal",
                                 "digestSpeed": -0.01,
@@ -36,6 +46,7 @@
                     "comp_Ingestible":{
                         "isLiquid":true,
                         "canExpel":true,
+                        "leakTraceID":"trace_lube",
                         "ingestMethod":[
                             {
                                 "bodyTags":"vagina",
@@ -69,6 +80,7 @@
                     "comp_Ingestible":{
                         "isLiquid":true,
                         "canExpel":true,
+                        "leakTraceID":"trace_saliva",
                         "ingestMethod":[
                             {
                                 "bodyTags":"internal",
@@ -93,6 +105,7 @@
                     "comp_Ingestible":{
                         "isLiquid":true,
                         "canExpel":true,
+                        "leakTraceID":"trace_precum",
                         "ingestMethod":[
                             {
                                 "bodyTags":"internal",
@@ -117,6 +130,7 @@
                     "comp_Ingestible":{
                         "isLiquid":true,
                         "canExpel":true,
+                        "leakTraceID":"trace_lovejuice",
                         "ingestMethod":[
                             {
                                 "bodyTags":"internal",
@@ -141,6 +155,7 @@
                     "comp_Ingestible":{
                         "isLiquid":true,
                         "canExpel":true,
+                        "leakTraceID":"trace_milk",
                         "ingestMethod":[
                             {
                                 "bodyTags":"internal",

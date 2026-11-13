@@ -243,10 +243,9 @@ public class Job_MediaSession : Job, I_RequireSpecialTracker, I_EventLaunchedJob
         }
         if (round != null) return JoinPackage(c, round, ref ss);
         var activity = ActivityJob;
-        int group = activity != null ? activity.GroupOf(c.RefID) : Job_Activity.NoGroupCheck;
         var com = SessionCOM;
         var pkg = com?.MakePackage(this, new List<int>() { c.RefID }, new List<int>(), -1, room);
-        if (pkg != null && activity != null) pkg.BindActivityExecution(activity, group);
+        if (pkg != null && activity != null) pkg.BindActivityExecution(activity);
         if (pkg == null || !pkg.Validate()) { ss += $"session command [{commandID}] invalid"; return false; }
         AddPackage(new List<ActionPackage>() { pkg });
         ss += $"running [{commandID}]";

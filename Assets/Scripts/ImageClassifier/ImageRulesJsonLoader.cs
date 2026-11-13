@@ -17,8 +17,8 @@ using Newtonsoft.Json.Linq;
 public static class ImageRulesJsonLoader
 {
     static readonly Regex WeightSuffix = new Regex(@"^(.*)\*([0-9]*\.?[0-9]+)$", RegexOptions.Compiled);
-    static readonly HashSet<string> CategoryKeys = new HashSet<string> { "id", "group", "all", "any", "none", "threshold", "hold", "nameSet", "moveLowConfidence", "rename", "refines", "manual" };
-    static readonly HashSet<string> NameEntryKeys = new HashSet<string> { "tier", "hasVariants", "none", "onlyInCategories", "fallback", "tierMinScore" };
+    static readonly HashSet<string> CategoryKeys = new HashSet<string> { "id", "group", "all", "any", "none", "threshold", "hold", "nameSet", "allowedNames", "moveLowConfidence", "rename", "refines", "manual", "filenameConfirmedNearMisses" };
+    static readonly HashSet<string> NameEntryKeys = new HashSet<string> { "tier", "hasVariants", "defaultVariant", "filenameOnly", "none", "onlyInCategories", "fallback", "tierMinScore" };
     static readonly HashSet<string> EmotionPassKeys = new HashSet<string> { "categories", "labels", "prompt" };
 
     public static ImageRules Load(string path)
@@ -43,6 +43,20 @@ public static class ImageRulesJsonLoader
             foreach (var p in variantObj.Properties())
             {
                 if (IsComment(p.Name)) continue;
+                if (p.Value is JObject compound)
+                {
+                    foreach (var key in compound.Properties())
+                        if (!IsComment(key.Name) && key.Name != "all") rules.loadWarnings.Add($"variant {p.Name}: unknown key [{key.Name}]");
+                    if (!(compound["all"] is JArray all) || all.Count == 0 || all.Any(v => v.Type != JTokenType.String))
+                    {
+                        rules.loadWarnings.Add($"variant {p.Name}: all must be a nonempty list of clauses");
+                        continue;
+                    }
+                    var clauses = ReadClauses(all, parser, $"variant {p.Name}");
+                    clauses[0].requires.AddRange(clauses.Skip(1));
+                    rules.variants[p.Name] = clauses[0];
+                    continue;
+                }
                 var clause = new RuleClause { source = string.Join("|", ((JArray)p.Value).Select(v => (string)v)) };
                 foreach (var part in (JArray)p.Value) clause.tags.AddRange(parser.Parse((string)part, $"variant {p.Name}").tags);
                 rules.variants[p.Name] = clause;
@@ -62,6 +76,21 @@ public static class ImageRulesJsonLoader
             if (root[setName] is JArray setArray) rules.nameSets[setName] = ReadNameSet(setName, setArray, parser, rules.loadWarnings);
             else rules.loadWarnings.Add($"Name set [{setName}] (used by a category) is missing or not a list.");
         }
+
+        if (root["filename_hints"] is JObject hints)
+            foreach (var hint in hints.Properties())
+            {
+                if (IsComment(hint.Name)) continue;
+                if (!rules.nameSets.Values.Any(names => names.Any(n => n.name == hint.Name)))
+                    rules.loadWarnings.Add($"filename_hints: unknown name [{hint.Name}]");
+                if (!(hint.Value is JArray aliasesArray) || aliasesArray.Any(a => a.Type != JTokenType.String || !((string)a).Any(char.IsLetterOrDigit)))
+                {
+                    rules.loadWarnings.Add($"filename_hints {hint.Name}: expected nonempty alphanumeric aliases");
+                    continue;
+                }
+                rules.filenameHints[hint.Name] = aliasesArray.Select(a => (string)a).ToList();
+            }
+        else if (root["filename_hints"] != null) rules.loadWarnings.Add("filename_hints: expected an object");
 
         CheckReferences(rules);
         return rules;
@@ -155,6 +184,8 @@ public static class ImageRulesJsonLoader
             threshold = c["threshold"]?.Value<float>(),
             hold = c["hold"]?.Value<bool>() ?? false,
             nameSet = (string)c["nameSet"] ?? ImageRules.DefaultNameSet,
+            allowedNames = c["allowedNames"] is JArray allowed ? new HashSet<string>(allowed.Select(v => (string)v)) : null,
+            filenameConfirmedNearMisses = new HashSet<string>((c["filenameConfirmedNearMisses"] as JArray)?.Select(v => (string)v) ?? Enumerable.Empty<string>()),
             moveLowConfidence = c["moveLowConfidence"]?.Value<bool>() ?? true,
             rename = c["rename"]?.Value<bool>() ?? true,
             refines = (string)c["refines"],
@@ -183,10 +214,12 @@ public static class ImageRulesJsonLoader
                 index = i,
                 tier = e["tier"]?.Value<float>() ?? 1,
                 fallback = e["fallback"]?.Value<bool>() ?? false,
+                filenameOnly = e["filenameOnly"]?.Value<bool>() ?? false,
                 tierMinScore = e["tierMinScore"]?.Value<float>(),
                 clauses = ReadClauses(nameKeys[0].Value, parser, where),
                 none = ReadClauses(e["none"], parser, where),
                 hasVariants = (e["hasVariants"] as JArray)?.Select(v => (string)v).ToList() ?? new List<string>(),
+                defaultVariant = (string)e["defaultVariant"],
             };
             if (e["onlyInCategories"] is JArray only) rule.onlyInCategories = new HashSet<string>(only.Select(v => (string)v));
             list.Add(rule);
@@ -206,11 +239,16 @@ public static class ImageRulesJsonLoader
     static void CheckReferences(ImageRules rules)
     {
         var categoryIds = new HashSet<string>(rules.categories.Select(c => c.id));
+        foreach (var category in rules.categories)
+            foreach (var id in category.filenameConfirmedNearMisses)
+                if (!categoryIds.Contains(id)) rules.loadWarnings.Add($"category {category.id}: filenameConfirmedNearMisses has unknown category [{id}]");
         foreach (var set in rules.nameSets)
             foreach (var n in set.Value)
             {
                 foreach (var v in n.hasVariants)
                     if (!rules.variants.ContainsKey(v)) rules.loadWarnings.Add($"{set.Key} {n.name}: unknown variant [{v}]");
+                if (n.defaultVariant != null && (!rules.variants.ContainsKey(n.defaultVariant) || !n.hasVariants.Contains(n.defaultVariant)))
+                    rules.loadWarnings.Add($"{set.Key} {n.name}: defaultVariant [{n.defaultVariant}] must be a known hasVariants entry");
                 if (n.onlyInCategories != null)
                     foreach (var c in n.onlyInCategories)
                         if (!categoryIds.Contains(c)) rules.loadWarnings.Add($"{set.Key} {n.name}: onlyInCategories has unknown category [{c}]");
@@ -218,6 +256,10 @@ public static class ImageRulesJsonLoader
         foreach (var c in rules.categories.Where(c => c.refines != null))
             if (!categoryIds.Contains(c.refines)) rules.loadWarnings.Add($"category {c.id} (#{c.index}): refines unknown category [{c.refines}]");
             else if (c.all.Count == 0 && c.none.Count == 0) rules.loadWarnings.Add($"category {c.id} (#{c.index}) refines {c.refines} but has no all/none clauses, so every {c.refines} image would move to it");
+        foreach (var c in rules.categories.Where(c => c.allowedNames != null))
+            foreach (var name in c.allowedNames)
+                if (!rules.nameSets.TryGetValue(c.nameSet, out var names) || !names.Any(n => n.name == name))
+                    rules.loadWarnings.Add($"category {c.id}: allowedNames has unknown name [{name}] in [{c.nameSet}]");
         if (rules.emotionPass != null)
             foreach (var c in rules.emotionPass.categories)
                 if (!categoryIds.Contains(c)) rules.loadWarnings.Add($"emotion_pass: unknown category [{c}]");

@@ -366,9 +366,9 @@
                 "stats_derived_painSensitivity":"疼痛耐受",
                 "stats_derived_painSensitivity_tooltip": "该数值（倍率）决定角色有多容易疼痛，越低疼痛越剧烈\n默认1.0\n该数值为0时，反之不会感到疼痛\n也会影响调教中%%experience_pain%%的获取量",
                 "stats_derived_cleanlinessSensitivity":"脏污耐性",
-                "stats_derived_cleanlinessSensitivity_tooltip": "该数值（倍率）决定角色有多能容忍房间脏乱，越高越无法容忍\n默认1.0",
+                "stats_derived_cleanlinessSensitivity_tooltip": "该数值（倍率）决定角色有多能容忍房间脏乱与身上的痕迹，越高越无法容忍\n默认1.0",
                 "stats_derived_cleaningThreshold":"打扫阈值",
-                "stats_derived_cleaningThreshold_tooltip": "该数值决定角色在房间脏乱到达何程度后会决定打扫，越低打扫越勤奋\n默认3，最低2"
+                "stats_derived_cleaningThreshold_tooltip": "该数值决定角色在房间脏乱（或身上的痕迹）到达何程度后会决定打扫（或在空闲时淋浴），越低越勤奋\n默认3，最低2"
             },
             "en-us": {
 

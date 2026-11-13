@@ -1,0 +1,115 @@
+{
+    "_doc": "口上loose entry文件：许可「危险日内射」（sex_dangerday_creampie_penis，说话者是拥有阴茎的一方：在对方危险日——排卵期——不戴套插入并射在里面，有让对方怀孕的风险）的请求口上，以及性行为中要求戴套的 Demand（OnAPRefuse_DangerDay_Penis）和对方声称安全日（实为谎话）的回应。条目含义与生成规范同 Permission_intimacy_low.json 的 _doc（Request / Granted / Refused，每条目一个variant、3条response，无通用兜底）。女性说话者且拥有阴茎（扶她），是插入的一方，危险日是对方的。文件名含 sex，安全模式不加载。",
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_dangerday_creampie_penis_Request",
+                    "_comment": "玩家想请求危险日内射许可（在玩家的危险日让说话者射在里面），刚开口。女性说话者（扶她，插入一方）察觉话题时的反应，意识到会让对方怀孕。",
+                    "variants": [ { "responses": [
+                        "\"今天是你的危险日吧？……真的要我射在里面？\"",
+                        "\"那样的话……你会怀上的哦？\"",
+                        "\"这种日子还想要……你是认真的？\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_dangerday_creampie_penis_Granted",
+                    "_comment": "答应给予危险日内射许可，接受让对方怀孕的风险。也会在插入过程中被自动请求获准时说出，台词需两种场合都自然。女性说话者（扶她，插入一方）。",
+                    "variants": [ { "responses": [
+                        "\"……就算怀上了，我也会负责的。\"\n%%permission_sex_dangerday_creampie_penis_consent%%",
+                        "\"既然你这么想要……好。\"\n%%permission_sex_dangerday_creampie_penis_consent%%",
+                        "\"……是你的话，我已经做好准备了。\"\n%%permission_sex_dangerday_creampie_penis_consent%%"
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_dangerday_creampie_penis_Refused",
+                    "_comment": "拒绝给予危险日内射许可。女性说话者（扶她，插入一方），可提及怀孕风险，不过度激烈。",
+                    "variants": [ { "responses": [
+                        "\"今天不行……真的会怀上的。\"",
+                        "\"危险日的话，我不想射在里面。\"",
+                        "\"对不起，我还没准备好要孩子。\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_dangerday_creampie_penis_Demand",
+                    "_comment": "性行为进行中，对方想让说话者不戴套插入，而说话者知道今天可能是对方的危险日且未允许——停下并要求戴上避孕套（OnAPRefuse_DangerDay_Penis 的问题文本）。女性说话者（扶她，插入一方），可紧张、提及怀孕风险。",
+                    "variants": [ { "responses": [
+                        "\"等一下！今天是你的危险日吧……先让我戴上。\"",
+                        "\"不戴的话会怀上的……套在哪里？\"",
+                        "\"危险日直接进去不行……拜托，先戴上。\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_dangerday_creampie_penis_Ignored",
+                    "_comment": "说话者要求戴套（OnAPRefuse_DangerDay_Penis），对方无视、继续让她不戴套插入。危险日，退而求其次：一定拔出来。女性说话者（扶她，插入一方），慌张。",
+                    "variants": [ { "responses": [
+                        "\"真、真是的……我一定会拔出来的。\"",
+                        "\"危险日的话……快去的时候我就拔出来……\"",
+                        "\"……不会射在里面的，别乱动哦。\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_dangerday_creampie_penis_SafeDay_Accepted",
+                    "_comment": "对方说今天是安全日（其实是危险日，是谎话，说话者不知道），说话者信了，同意不戴套继续。女性说话者（扶她，插入一方）。",
+                    "variants": [ { "responses": [
+                        "\"诶，是我记错了吗……那好吧。\"",
+                        "\"安全日的话……就这样吧。\"",
+                        "\"……你这么说的话，我就相信你。\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_dangerday_creampie_penis_SafeDay_Refused",
+                    "_comment": "对方说今天是安全日（其实是谎话），说话者不信，仍坚持戴套。女性说话者（扶她，插入一方），委婉但坚持。",
+                    "variants": [ { "responses": [
+                        "\"真的吗……我还是不放心，戴上吧。\"",
+                        "\"不对哦，今天应该是危险日才对。\"",
+                        "\"就算是那样……今天还是戴着比较好。\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_dangerday_creampie_penis_LowConsciousness",
+                    "_comment": "意识模糊时，在对方危险日被让自己不戴套插入（需要危险日内射许可）。不会被请求、也不算答应或拒绝，也不会要求戴套，只是迷迷糊糊地察觉到。女性说话者（扶她，插入一方）。",
+                    "variants": [ { "responses": [
+                        "\"……今天……是危险日……来着……\"",
+                        "\"……没戴……会怀上的……\"",
+                        "\"……唔……日子……想不起来……\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_dangerday_creampie_penis_LowConsciousness_Climax",
+                    "_comment": "意识模糊且正处于高潮时，在对方危险日被让自己不戴套插入，几乎无法组织语言。女性说话者（扶她，插入一方）。",
+                    "variants": [ { "responses": [
+                        "\"……啊……要、要拔出来……\"",
+                        "\"……里、里面……会怀上……啊……\"",
+                        "\"……什么都……不管了……\""
+                    ] } ]
+                }
+            }
+        ]
+    }
+}

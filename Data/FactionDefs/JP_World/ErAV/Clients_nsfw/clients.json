@@ -308,6 +308,7 @@
                 "useNameGen": true, "nameGen_firstName": "japanese", "nameGen_lastName": "japanese",
                 "nameDisplayFormat": "chara_fullname_lastToFirst",
                 "Appearance": "Female",
+                "personalityIDOverride": "personality_default",
                 "setHeight": 158,
                 "setWeight": 52,
                 "heightVariation": 4,

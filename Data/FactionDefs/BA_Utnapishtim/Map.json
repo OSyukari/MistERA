@@ -192,7 +192,6 @@
                         [ { "ID":"lounge2_hallway1", "cost":1.0 }, { "ID":"lounge2_hallway3", "cost":1.0 } ],
                         "furnitureIDs":
                         [   "furniture_bed_single",
-                            "furniture_shower",
                             "furniture_toilet_shower_set","furniture_table_1_chair_1"],
                         "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg",
                         "roomImagePath_Night":"Media_UI_Scenario_Background/BG_LuxuriousRooms_Night.jpg"
@@ -206,7 +205,6 @@
                         [ { "ID":"lounge2_hallway1", "cost":1.0 }, { "ID":"lounge2_hallway3", "cost":1.0 } ],
                         "furnitureIDs":
                         [   "furniture_bed_single",
-                            "furniture_shower",
                             "furniture_toilet_shower_set","furniture_table_1_chair_1"],
                         "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg",
                         "roomImagePath_Night":"Media_UI_Scenario_Background/BG_LuxuriousRooms_Night.jpg"
@@ -220,7 +218,6 @@
                         [ { "ID":"lounge2_hallway1", "cost":1.0 }, { "ID":"lounge2_hallway3", "cost":1.0 } ],
                         "furnitureIDs":
                         [   "furniture_bed_single",
-                            "furniture_shower",
                             "furniture_toilet_shower_set","furniture_table_1_chair_1"],
                         "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg",
                         "roomImagePath_Night":"Media_UI_Scenario_Background/BG_LuxuriousRooms_Night.jpg"
@@ -234,7 +231,6 @@
                         [ { "ID":"lounge2_hallway1", "cost":1.0 }, { "ID":"lounge2_hallway3", "cost":1.0 } ],
                         "furnitureIDs":
                         [   "furniture_bed_single",
-                            "furniture_shower",
                             "furniture_toilet_shower_set","furniture_table_1_chair_1"],
                         "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg",
                         "roomImagePath_Night":"Media_UI_Scenario_Background/BG_LuxuriousRooms_Night.jpg"
@@ -248,7 +244,6 @@
                         [ { "ID":"lounge2_hallway2", "cost":1.0 },{ "ID":"lounge2_hallway4", "cost":1.0 } ],
                         "furnitureIDs":
                         [   "furniture_bed_single",
-                            "furniture_shower",
                             "furniture_toilet_shower_set","furniture_table_1_chair_1"],
                         "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg",
                         "roomImagePath_Night":"Media_UI_Scenario_Background/BG_LuxuriousRooms_Night.jpg"
@@ -262,7 +257,6 @@
                         [ { "ID":"lounge2_hallway2", "cost":1.0 },{ "ID":"lounge2_hallway4", "cost":1.0 } ],
                         "furnitureIDs":
                         [   "furniture_bed_single",
-                            "furniture_shower",
                             "furniture_toilet_shower_set","furniture_table_1_chair_1"],
                         "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg",
                         "roomImagePath_Night":"Media_UI_Scenario_Background/BG_LuxuriousRooms_Night.jpg"
@@ -276,7 +270,6 @@
                         [ { "ID":"lounge2_hallway2", "cost":1.0 },{ "ID":"lounge2_hallway4", "cost":1.0 } ],
                         "furnitureIDs":
                         [   "furniture_bed_single",
-                            "furniture_shower",
                             "furniture_toilet_shower_set","furniture_table_1_chair_1"],
                         "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg",
                         "roomImagePath_Night":"Media_UI_Scenario_Background/BG_LuxuriousRooms_Night.jpg"
@@ -290,7 +283,6 @@
                         [ { "ID":"lounge2_hallway2", "cost":1.0 },{ "ID":"lounge2_hallway4", "cost":1.0 } ],
                         "furnitureIDs":
                         [   "furniture_bed_single",
-                            "furniture_shower",
                             "furniture_toilet_shower_set","furniture_table_1_chair_1"],
                         "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg",
                         "roomImagePath_Night":"Media_UI_Scenario_Background/BG_LuxuriousRooms_Night.jpg"
@@ -304,7 +296,6 @@
                         [ { "ID":"lounge2_hallway3", "cost":1.0 },{ "ID":"lounge2_hallway4", "cost":1.0 } ],
                         "furnitureIDs":
                         [   "furniture_bed_single",
-                            "furniture_shower",
                             "furniture_toilet_shower_set","furniture_table_1_chair_1"],
                         "roomImagePath":"Media_UI_Scenario_Background/BG_StudentRoom.jpg",
                         "roomImagePath_Night":"Media_UI_Scenario_Background/BG_StudentRoom_Night.jpg"
@@ -318,7 +309,6 @@
                         [ { "ID":"lounge2_hallway3", "cost":1.0 },{ "ID":"lounge2_hallway4", "cost":1.0 } ],
                         "furnitureIDs":
                         [   "furniture_bed_single",
-                            "furniture_shower",
                             "furniture_toilet_shower_set","furniture_table_1_chair_1"],
                         "roomImagePath":"Media_UI_Scenario_Background/BG_StudentRoom.jpg",
                         "roomImagePath_Night":"Media_UI_Scenario_Background/BG_StudentRoom_Night.jpg"
@@ -332,7 +322,6 @@
                         [ { "ID":"lounge2_hallway3", "cost":1.0 },{ "ID":"lounge2_hallway4", "cost":1.0 } ],
                         "furnitureIDs":
                         [   "furniture_bed_single",
-                            "furniture_shower",
                             "furniture_toilet_shower_set","furniture_table_1_chair_1"],
                         "roomImagePath":"Media_UI_Scenario_Background/BG_StudentRoom.jpg",
                         "roomImagePath_Night":"Media_UI_Scenario_Background/BG_StudentRoom_Night.jpg"
@@ -346,7 +335,6 @@
                         [ { "ID":"lounge2_hallway3", "cost":1.0 },{ "ID":"lounge2_hallway4", "cost":1.0 } ],
                         "furnitureIDs":
                         [   "furniture_bed_single",
-                            "furniture_shower",
                             "furniture_toilet_shower_set","furniture_table_1_chair_1"],
                         "roomImagePath":"Media_UI_Scenario_Background/BG_StudentRoom.jpg",
                         "roomImagePath_Night":"Media_UI_Scenario_Background/BG_StudentRoom_Night.jpg"
@@ -360,8 +348,7 @@
                         [ { "ID":"lounge2_hallway1", "cost":1.0 } ],
                         "furnitureIDs":["furniture_bed_double",
                         "furniture_round_table_4","furniture_sofa_1","furniture_sofa_1",
-                        "furniture_stove","furniture_shower","furniture_toilet_shower_set","furniture_bathtub",
-                                        "furniture_TV_flatscreen"],
+                        "furniture_stove","furniture_toilet_shower_set", "furniture_TV_flatscreen"],
                         "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg",
                         "roomImagePath_Night":"Media_UI_Scenario_Background/BG_LuxuriousRooms_Night.jpg"
                     },
@@ -374,7 +361,7 @@
                         [ { "ID":"lounge2_hallway2", "cost":1.0 } ],
                         "furnitureIDs":["furniture_bed_double",
                         "furniture_round_table_4","furniture_sofa_1","furniture_sofa_1",
-                        "furniture_stove","furniture_shower","furniture_toilet_shower_set","furniture_bathtub",
+                        "furniture_stove","furniture_toilet_shower_set",
                                         "furniture_TV_flatscreen"],
                         "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg",
                         "roomImagePath_Night":"Media_UI_Scenario_Background/BG_LuxuriousRooms_Night.jpg"
@@ -387,7 +374,7 @@
                         "connects": 
                         [ { "ID":"lounge2_hallway1", "cost":1.0 },{ "ID":"lounge2_hallway2", "cost":1.0 } ],
                         "furnitureIDs":["furniture_bed_single",
-                                    "furniture_shower","furniture_toilet_shower_set",
+                                    "furniture_toilet_shower_set",
                                 "furniture_table_1_chair_1","furniture_stove"],
                         "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg",
                         "roomImagePath_Night":"Media_UI_Scenario_Background/BG_LuxuriousRooms_Night.jpg"
@@ -400,7 +387,7 @@
                         "connects": 
                         [ { "ID":"lounge2_hallway1", "cost":1.0 },{ "ID":"lounge2_hallway2", "cost":1.0 } ],
                         "furnitureIDs":["furniture_bed_single",
-                                    "furniture_shower","furniture_toilet_shower_set",
+                                    "furniture_toilet_shower_set",
                                 "furniture_table_1_chair_1","furniture_stove"],
                         "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg",
                         "roomImagePath_Night":"Media_UI_Scenario_Background/BG_LuxuriousRooms_Night.jpg"
@@ -412,7 +399,7 @@
                         "offsetY":-269.8,
                         "connects": 
                         [ { "ID":"lounge2_hallway3", "cost":1.0 } ],
-                        "furnitureIDs":["furniture_bed_single","furniture_toilet_shower_set","furniture_shower"],
+                        "furnitureIDs":["furniture_bed_single","furniture_toilet_shower_set"],
                         "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms2.jpg"
                     },
                     {
@@ -422,7 +409,7 @@
                         "offsetY":-320,
                         "connects": 
                         [ { "ID":"lounge2_hallway3", "cost":1.0 } ],
-                        "furnitureIDs":["furniture_bed_single_bunk","furniture_toilet_shower_set","furniture_shower"
+                        "furnitureIDs":["furniture_bed_single_bunk","furniture_toilet_shower_set"
                     ,"furniture_stove"],
                         "roomImagePath":"Media_UI_Scenario_Background/BG_Dormitory.jpg",
                         "roomImagePath_Night":"Media_UI_Scenario_Background/BG_Dormitory_Night.jpg"

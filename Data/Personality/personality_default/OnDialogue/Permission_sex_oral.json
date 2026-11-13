@@ -37,6 +37,30 @@
                         "\"不、不要这么突然啦……\""
                     ] } ]
                 }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_oral_LowConsciousness",
+                    "_comment": "意识模糊时被做了需要口交许可（使用自己嘴部）的事。不会被请求、也不算答应或拒绝，只是迷迷糊糊地察觉到。女性说话者。",
+                    "variants": [ { "responses": [
+                        "\"……唔……？嘴里……\"",
+                        "\"……这个……是什么……\"",
+                        "\"……嗯……头好晕……\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_oral_LowConsciousness_Climax",
+                    "_comment": "意识模糊且正处于高潮时被做了需要口交许可的事，几乎无法组织语言。女性说话者。",
+                    "variants": [ { "responses": [
+                        "\"……呜、嗯……\"",
+                        "\"……唔……啊……\"",
+                        "\"……嗯嗯……\""
+                    ] } ]
+                }
             }
         ]
     }

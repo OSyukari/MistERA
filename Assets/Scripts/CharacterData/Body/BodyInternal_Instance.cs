@@ -370,6 +370,167 @@ public class BodyInternal_Instance : I_TraceHolder
     {
         // update from owner main
         //if (this.womb != null) womb.HourTick();
+        if (this.canContain && Base != null) FlowCumHourly();
+    }
+
+    //---- cum flow (Docs/Body/Plan_InternalFluidFlow.md) ----
+    // Only cum flows (sperm moves on its own). In = the deeper organ, Out = toward the outside; the hourly flow never
+    // leaves the body - only a load pushed past max capacity spills out (PushCumOverflowOut).
+
+    const float MinFlowAmount = 0.01f;
+    // FlowCumHourly -> MoveCumTo never recurses, one buffer is enough
+    static readonly List<Item_Instance_Cum> flowBuffer = new List<Item_Instance_Cum>();
+
+    /// <summary> cum held here, ml </summary>
+    [JsonIgnore] public float FlowableCum
+    {
+        get
+        {
+            float sum = 0;
+            var contents = Contains;
+            for (int i = 0; i < contents.Count; i++)
+            {
+                if (contents[i] is Item_Instance_Cum cum && cum.CumAmount > 0) sum += cum.CumAmount;
+            }
+            return sum;
+        }
+    }
+
+    /// <summary> the organ a direction tag leads to; null for none, the outside ("ext") or an organ that holds nothing (clit) </summary>
+    BodyInternal_Instance FlowTarget(string tag)
+    {
+        if (string.IsNullOrEmpty(tag) || tag == "ext" || Owner?.Body == null) return null;
+        var target = Owner.Body.GetRandomInternalWithTag(tag);
+        return target != null && target != this && target.canContain ? target : null;
+    }
+
+    /// <summary> the direction leads out of the body: "ext", or an organ that holds nothing (vagina -> clit) </summary>
+    bool LeadsOutside(string tag)
+    {
+        return !string.IsNullOrEmpty(tag) && FlowTarget(tag) == null;
+    }
+
+    /// <summary> overflow out -> flow back -> seep in, each by its BodyInternal_Base share (0 = off) </summary>
+    void FlowCumHourly()
+    {
+        float self = FlowableCum;
+        if (self < MinFlowAmount) return;
+        var def = Base;
+        var outOrgan = def.overflowShare > 0 || def.backflowShare > 0 ? FlowTarget(def.tag_directionOut) : null;
+
+        if (outOrgan != null && def.overflowShare > 0)
+        {
+            float excess = self - VolumeCapacity;
+            if (excess > 0) self -= MoveCumTo(outOrgan, excess * def.overflowShare);
+        }
+        if (outOrgan != null && def.backflowShare > 0)
+        {
+            float outer = outOrgan.FlowableCum;
+            if (self > outer) self -= MoveCumTo(outOrgan, (self - outer) * def.backflowShare);
+        }
+        if (def.seepTargetRatio > 0 && def.seepMaxStep > 0)
+        {
+            var inOrgan = FlowTarget(def.tag_directionIn);
+            if (inOrgan != null)
+            {
+                float missing = self * def.seepTargetRatio - inOrgan.FlowableCum;
+                if (missing > 0) MoveCumTo(inOrgan, Math.Min(missing, self * def.seepMaxStep));
+            }
+        }
+    }
+
+    /// <summary> moves amount ml of cum (each father's share alike) into target quietly. Returns the ml moved </summary>
+    float MoveCumTo(BodyInternal_Instance target, float amount)
+    {
+        if (target == null || amount < MinFlowAmount) return 0;
+        flowBuffer.Clear();
+        float moved = TakeCum(amount, flowBuffer);
+        for (int i = 0; i < flowBuffer.Count; i++) target.ReceiveFlow(flowBuffer[i]);
+        flowBuffer.Clear();
+        if (moved > 0) Owner?.Body?.NotifyInternalsContentChange();
+        return moved;
+    }
+
+    /// <summary>
+    /// Takes amount ml of cum out of this organ, the same share of every father's cum (like Deflate) so the womb's
+    /// weighted father pick stays fair. A fully taken item leaves as itself, a partly taken one is split into a new
+    /// registered item. Returns the ml taken.
+    /// </summary>
+    float TakeCum(float amount, List<Item_Instance_Cum> result)
+    {
+        float total = FlowableCum;
+        if (amount <= 0 || total <= 0) return 0;
+        float ratio = Math.Min(1f, amount / total);
+        float taken = 0;
+        var contents = Contains;
+        for (int i = contents.Count - 1; i >= 0; i--)
+        {
+            if (!(contents[i] is Item_Instance_Cum cum) || cum.CumAmount <= 0) continue;
+            float part = cum.CumAmount * ratio;
+            if (part <= 0) continue;
+            if (cum.CumAmount - part <= 0.001f)
+            {
+                taken += cum.CumAmount;
+                ExtractContent(cum.RefID);
+                result.Add(cum);
+            }
+            else
+            {
+                cum.CumAmount -= part;
+                result.Add(SplitCum(cum, part));
+                taken += part;
+            }
+        }
+        return taken;
+    }
+
+    /// <summary> a registered copy of source holding amount ml, same father; already counted (no second exp / stimulation) </summary>
+    static Item_Instance_Cum SplitCum(Item_Instance_Cum source, float amount)
+    {
+        var split = WorldManager.Instantiate(source.raceID, source.baseID, source.templateID, source.nameOverwrite);
+        split.ownerRefID = source.ownerRefID;
+        split.CumAmount = amount;
+        split.experienceTicked = true;
+        return split;
+    }
+
+    /// <summary> flowed-in cum: merges into the same father's cum here, else sits with its own digest delay. No exp, message or memory </summary>
+    void ReceiveFlow(Item_Instance_Cum cum)
+    {
+        var contents = Contains;
+        for (int i = 0; i < contents.Count; i++)
+        {
+            if (contents[i] is Item_Instance_Cum existing && existing != cum && existing.Merge(cum))
+            {
+                scr_System_CampaignManager.current.Unregister(cum);
+                return;
+            }
+        }
+        var method = cum.Comp_Ingestible?.GetIngestMethod(this.Base.tags);
+        ContainedRefs_Delays[cum.RefID] = method == null ? 0 : (int)Utility.RandVariation(method.digestDelay, method.digestDelayVariation);
+        contains_cache = null;
+    }
+
+    /// <summary>
+    /// item left the body from this organ: leakTraceRatio of it lands as its leak trace (vagina / anus -> lower body,
+    /// mouth -> face, may spread), the rest goes on the floor
+    /// </summary>
+    void SpillToOutside(Item_Instance item)
+    {
+        var ing = item?.Comp_Ingestible;
+        if (ing == null) return;
+        float amount = ing.amount;
+        float traceAmount = amount * Math.Clamp(Base.leakTraceRatio, 0f, 1f);
+        if (traceAmount > 0 && ing.LeakTraceID != "")
+        {
+            var source = item is Item_Instance_Cum cum ? TraceSource.FromCum(cum) : new TraceSource();
+            if (TraceUtility.Land(this, null, ing.LeakTraceID, traceAmount, source) == null) traceAmount = 0;
+        }
+
+        var room = Owner == null ? null : scr_System_CampaignManager.current.Map.FindRoomByChara(Owner.RefID);
+        ing.amount = amount - traceAmount;
+        if (ing.amount > 0.001f && room != null) room.AddItem(item);
+        else scr_System_CampaignManager.current.Unregister(item);
     }
 
     public void UpdateTimeMinute(TimeSpan t)
@@ -1446,54 +1607,51 @@ public class BodyInternal_Instance : I_TraceHolder
         return true;
     }
 
-    // Extracts amountToPush of existing cum from this organ and routes it outward via
-    // directionOut. Called BEFORE ingesting the new item so the new load is never displaced.
-    // Non-cum contents are never touched.
+    // Extracts amountToPush of existing cum from this organ (each father's share alike) and routes it outward via
+    // directionOut; a direction leading out of the body (ext, or vagina -> clit) spills it (SpillToOutside: trace +
+    // floor). Called BEFORE ingesting the new item so the new load is never displaced. Non-cum contents are never touched.
     private void PushCumOverflowOut(float amountToPush, ExperienceLog m, List<BodyInternal_Instance> fillHistory)
     {
         if (amountToPush <= 0f) return;
 
-        BodyInternal_Instance dirOut = (Base.tag_directionOut == "" || Base.tag_directionOut == "ext")
-            ? null : Owner.Body.GetRandomInternalWithTag(Base.tag_directionOut);
+        BodyInternal_Instance dirOut = FlowTarget(Base.tag_directionOut);
+        bool outside = dirOut == null && LeadsOutside(Base.tag_directionOut);
+        if (dirOut == null && !outside) return;
+        if (dirOut != null && fillHistory != null && fillHistory.Contains(dirOut)) return;
 
-        if (dirOut == null || dirOut == this || !dirOut.canContain
-            || (fillHistory != null && fillHistory.Contains(dirOut))) return;
+        // not the static flow buffer: IngestAtMaxCapacity can come back here for the next organ out
+        var pushed = new List<Item_Instance_Cum>();
+        if (TakeCum(amountToPush, pushed) <= 0f) return;
+
+        if (outside)
+        {
+            for (int i = 0; i < pushed.Count; i++) SpillToOutside(pushed[i]);
+            return;
+        }
 
         if (fillHistory == null) fillHistory = new List<BodyInternal_Instance>();
         fillHistory.Add(dirOut);
+        for (int i = 0; i < pushed.Count; i++) dirOut.IngestAtMaxCapacity(pushed[i], m, fillHistory);
+    }
 
-        float remaining = amountToPush;
-        while (remaining > 0f)
-        {
-            // Only push cum — other item types are never displaced.
-            Item_Instance_Cum sourceCum = null;
-            foreach (var content in Contains)
-            {
-                if (content is Item_Instance_Cum cum && cum.CumAmount > 0f)
-                {
-                    sourceCum = cum;
-                    break;
-                }
-            }
-            if (sourceCum == null) break;
+    /// <summary>
+    /// Pushes the cum above MaxCapacity out through directionOut, organ by organ, until it spills out of the body
+    /// (womb -> vagina -> floor + trace). Ingest alone only pushes out cum that was already here, so one load bigger than
+    /// the organ stays inside whole; call this after it when the overflow should leave (console wombAddSperm* allowExpel).
+    /// </summary>
+    public void SettleOverflow(ExperienceLog m = null, List<BodyInternal_Instance> fillHistory = null)
+    {
+        if (!this.canContain) return;
+        float over = CurrentlyContained - MaxCapacity;
+        if (over <= 0.001f) return;
+        if (fillHistory == null) fillHistory = new List<BodyInternal_Instance>();
+        if (!fillHistory.Contains(this)) fillHistory.Add(this);
 
-            float pushAmount = Math.Min(remaining, (float)sourceCum.CumAmount);
-
-            Item_Instance_Cum overflow_item = WorldManager.Instantiate(sourceCum.Owner, sourceCum.nameOverwrite);
-            overflow_item.CumAmount = pushAmount;
-            overflow_item.experienceTicked = true; // already counted when it first entered
-
-            sourceCum.CumAmount -= pushAmount;
-            if (sourceCum.CumAmount <= 0f)
-            {
-                ContainedRefs_Delays.Remove(sourceCum.RefID);
-                contains_cache = null;
-                scr_System_CampaignManager.current.Unregister(sourceCum);
-            }
-
-            remaining -= pushAmount;
-            dirOut.IngestAtMaxCapacity(overflow_item, m, fillHistory);
-        }
+        var dirOut = FlowTarget(Base.tag_directionOut);
+        bool alreadyVisited = dirOut != null && fillHistory.Contains(dirOut);
+        PushCumOverflowOut(over, m, fillHistory);
+        if (dirOut != null && !alreadyVisited) dirOut.SettleOverflow(m, fillHistory);
+        Owner?.Body?.NotifyInternalsContentChange();
     }
 
     // Used by PushCumOverflowOut to route pushed cum through the directionOut chain.

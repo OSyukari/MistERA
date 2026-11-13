@@ -105,12 +105,53 @@ public static class GeneratedImageClassifierTests
             }
 
             Test("Game-only primary", () => Expect(Scene(false, new[] { "doggy" }, "humanrace"), null, "doggystyle", "human"));
+            Test("Game-only combined rape cum", () => Expect(Scene(false, new[] { "doggy", "raped", "cum" }, "humanrace"), null,
+                "doggystyle_rape_cum", "human"));
+            Test("Game-only leg lock defaults vaginal", () => Expect(Scene(false, new[] { "leg_lock" }, "humanrace"), null,
+                "leg_lock_vaginal", "human"));
+            Test("Game-only anal leg lock overrides vaginal default", () => Expect(Scene(false, new[] { "leg_lock", "anal" }, "humanrace"), null,
+                "leg_lock_anal", "human"));
             Test("Failed tag record uses game data", () => Expect(Scene(false, new[] { "doggy" }, "humanrace"),
                 new ImageTagRecord { error = "test failure" }, "doggystyle", "human"));
             Test("Scored fallback candidate", () => Expect(Scene(false, new[] { "doggy" }, "humanrace"),
                 Tags(("prone_bone", 0.98f), ("vaginal", 1f)), "prone_bone", "human"));
             Test("Empty tag record skips, not generic", () => ExpectSkip(Scene(false, new[] { "doggy" }, "humanrace"), new ImageTagRecord()));
-            Test("Game-only fallback keyword", () => Expect(Scene(true, new[] { "intercrural" }, "humanrace"), null, "thighjob", "human"));
+            Test("Game-only intercrural receiver selects primary spooning", () =>
+                Expect(Scene(false, new[] { "intercrural" }, "humanrace"), null, "spooning", "human"));
+            Test("Game-only intercrural doer selects primary spooning without perform suffix", () =>
+                Expect(Scene(true, new[] { "intercrural" }, "humanrace"), null, "spooning", "human"));
+            foreach (var mainIsDoer in new[] { false, true })
+            {
+                Test("Scored intercrural spooning, mainIsDoer=" + mainIsDoer, () =>
+                    Expect(Scene(mainIsDoer, new[] { "intercrural" }, "humanrace"), Tags(("spooning", 1f)), "spooning", "human"));
+                Test("Scored intercrural retains thighjob fallback, mainIsDoer=" + mainIsDoer, () =>
+                    Expect(Scene(mainIsDoer, new[] { "intercrural" }, "humanrace"), Tags(("thigh_sex", 1f)), "thighjob", "human"));
+                foreach (var variant in new[] {
+                    (suffix: "rape_cum", tags: new[] { "raped", "cum" }),
+                    (suffix: "rape", tags: new[] { "raped" }),
+                    (suffix: "cum", tags: new[] { "cum" }),
+                    (suffix: "sleeping", tags: new[] { "sleeping" }),
+                    (suffix: "pregnant", tags: new[] { "pregnant" }) })
+                    Test("Game-only intercrural variant " + variant.suffix + ", mainIsDoer=" + mainIsDoer, () =>
+                        Expect(Scene(mainIsDoer, new[] { "intercrural" }.Concat(variant.tags).ToArray(), "humanrace"), null,
+                            "spooning_" + variant.suffix, "human"));
+                Test("Intercrural game penetration keywords cannot add spooning suffixes, mainIsDoer=" + mainIsDoer, () =>
+                    Expect(Scene(mainIsDoer, new[] { "intercrural", "anal", "vaginal" }, "humanrace"), null, "spooning", "human"));
+                Test("Scored penetration cannot classify as intercrural spooning, mainIsDoer=" + mainIsDoer, () =>
+                    ExpectSkip(Scene(mainIsDoer, new[] { "intercrural" }, "humanrace"), Tags(("spooning", 1f), ("sex", 1f))));
+            }
+            Test("Outside cowgirl command retains intercrural but not penetrating cowgirl keyword", () =>
+            {
+                var commandPath = Path.Combine(Application.dataPath, "..", "Data", "COM_Defs", "COM_sex", "5_com_sex_P_V_outside_cowgirl.json");
+                var command = JObject.Parse(File.ReadAllText(commandPath))["COMs"]["list"]
+                    .Single(c => (string)c["ID"] == "com_sex_P_V_outside_cowgirl");
+                var keywords = ((JArray)command["portraitTags_Doer"]).Values<string>().ToArray();
+                Require(keywords.Contains("intercrural"), "Outside cowgirl must retain intercrural");
+                Require(!keywords.Contains("cowgirl"), "Outside cowgirl must not offer penetrating cowgirl candidates");
+                Expect(Scene(true, keywords, "humanrace"), null, "spooning", "human");
+            });
+            Test("Scored sideways penetration remains available to doggy receiver", () =>
+                Expect(Scene(false, new[] { "doggy" }, "humanrace"), Tags(("on_side", 1f), ("vaginal", 1f)), "sideways_vaginal", "human"));
             Test("Category priority requires every partner key", () =>
             {
                 Expect(Scene(false, new[] { "doggy" }, "horse", "pov"), null, "doggystyle", "horse_pov");
@@ -163,7 +204,7 @@ public static class GeneratedImageClassifierTests
                 scene.interactions.Add(Interaction(false, new[] { "doggy" }, "dog"));
                 Expect(scene, Tags(("fellatio", 1f), ("doggystyle", 0.6f), ("vaginal", 1f)), "doggystyle", "dog");
             });
-            Test("Game-only primary precedes earlier fallback destination", () =>
+            Test("Game-only primary destinations use configured name order", () =>
             {
                 var scene = Scene(true, new[] { "intercrural" }, "humanrace");
                 scene.interactions.Add(Interaction(false, new[] { "doggy" }, "dog"));

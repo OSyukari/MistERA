@@ -1523,13 +1523,13 @@ public partial class EvaluationPackage : I_ResultStorage
             if (p.ActivityExecutionRef >= 0)
             {
                 var bound = campaign.FindJobInstanceByID(p.ActivityExecutionRef, false) as Job_Activity;
-                return bound != null && bound.SharesLaunchedGroup(requester, decider, p.ActivityGroupKey)
+                return bound != null && bound.SharesLaunchedGroup(requester, decider)
                     ? bound.VisitAcceptanceBonus : 0;
             }
             if (campaign.TemporaryJobRefs != null)
                 foreach (var id in campaign.TemporaryJobRefs)
                     if (campaign.FindJobInstanceByID(id, false) is Job_Activity activity
-                        && activity.SharesLaunchedGroup(requester, decider, Job_Activity.NoGroupCheck))
+                        && activity.SharesLaunchedGroup(requester, decider))
                         return activity.VisitAcceptanceBonus;
             return 0;
         }

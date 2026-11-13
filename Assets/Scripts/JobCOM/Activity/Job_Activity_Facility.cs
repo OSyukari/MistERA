@@ -120,7 +120,6 @@ public partial class Job_Activity
         Job_Furniture best = null;
         string bestCOM = null;
         bool bestHasPlayer = false;
-        int group = GroupOf(c.RefID);
         var fac = VisitActivity?.facility;
         bool onlyGatherRoom = fac != null && fac.dispatchInRoom || !string.IsNullOrEmpty(VisitActivity?.executionRoomID);
         int roomCount = onlyGatherRoom ? 1 : 1 + coveredRoomRefs.Count;
@@ -137,8 +136,8 @@ public partial class Job_Activity
                 {
                     var ap = packages[p];
                     if (ap == null || ap.ActivityExecutionRef != RefID || ap.targetCOM == null || ap.Duration < 2 || ap.isPaused || !ap.AllowJoining) continue;
-                    // only their own group's packages (step 3)
-                    if (ap.ActivityGroupKey != NoGroupCheck && ap.ActivityGroupKey != group) continue;
+                    // only packages of a group of theirs (step 3 - everyone in it shares one with them)
+                    if (!PackageAdmits(ap, c)) continue;
                     if (!MatchesCommand(commands, ap.targetCOM) && !OffersBoundCopy(ap.targetCOM)) continue;
                     var actors = ap.actorRefs;
                     if (actors.Contains(c.RefID) || !furniture.ValidateActor(c, ap.targetCOM)) continue;
@@ -152,7 +151,7 @@ public partial class Job_Activity
             }
         }
         if (best == null) return false;
-        best.SetActivityDispatchHint(c.RefID, RefID, group);
+        best.SetActivityDispatchHint(c.RefID, RefID);
         c.ChangeCurrentJob(best, bestCOM);
         return true;
     }

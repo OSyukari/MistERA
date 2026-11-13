@@ -42,7 +42,12 @@
                 "trace_cum": "$name$'s Semen",
                 "trace_cum_tooltip": "Semen of a $race$.",
                 "trace_cum_dried": "$name$'s Dried Semen",
-                "trace_cum_dried_tooltip": "Dried semen of a $race$. Only washing gets it off."
+                "trace_cum_dried_tooltip": "Dried semen of a $race$. Only washing gets it off.",
+                "trace_lube": "Lube",
+                "trace_lube_tooltip": "Slippery lubricant.",
+                "trace_clean_removed": "$trace$ on the $location$",
+                "trace_clean_dried": "$trace$ on the $location$ (dried onto the skin after wiping)",
+                "trace_clean_separator": ", "
             }
         }
     }

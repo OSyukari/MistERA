@@ -118,11 +118,9 @@
                         }
                     },
                     "behavior_restroom":{
-                        "$type": "TryFindJobByIDNode, Assembly-CSharp",
-                        "Tags": [ "nsfw" ],
-                        "randomChance": 0.5,
-                        "cooldownHours": 4,
-                        "cooldownID": "com_furniture_restroom",
+                        "$type": "TryFindRestroomNode, Assembly-CSharp",
+                        "idleChance": 0.5,
+                        "idleCooldownID": "com_furniture_restroom",
                         "evaluationHeuristic":"closest",
                         "filter": {
                             "matchCOMID":"com_furniture_restroom",

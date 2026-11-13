@@ -57,9 +57,37 @@ public class TryFindRedressNode : TryFindJobByIDNode
     {
 
     }
+    /// <summary> undressed, or a trace on the head to wash off (Freshen Up also washes the face, OnFixClothesDeflate) </summary>
     public override bool TryGetJob(Character_Trainable c, I_IsJobGiver currentJobFaction, I_IsJobGiver currentLocaleFaction, bool resetJob, int currentHour, List<string> s)
     {
-        if (!c.shouldRedress) return false;
+        if (!c.shouldRedress && !c.needsFaceClean) return false;
+        return base.TryGetJob(c, currentJobFaction, currentLocaleFaction, resetJob, currentHour, s);
+    }
+}
+/// <summary>
+/// Restroom trip (Docs/Body/Plan_InternalFluidFlow.md §8): always when lower-body traces need a wipe (needsRestroom),
+/// otherwise the old casual trip - idleChance, and only while idleCooldownID is not in cooldown (the command's result sets
+/// it). Keep the node's own randomChance 1 / cooldownID "" in data: the root applies those before the node runs and would
+/// block the need path.
+/// </summary>
+public class TryFindRestroomNode : TryFindJobByIDNode
+{
+    public double idleChance = 0.5;
+    public string idleCooldownID = "com_furniture_restroom";
+
+    public TryFindRestroomNode() : base("com_furniture_restroom")
+    {
+        behaviorOverrideID = "behavior_restroom";
+        Tags.Add("nsfw");
+    }
+
+    public override bool TryGetJob(Character_Trainable c, I_IsJobGiver currentJobFaction, I_IsJobGiver currentLocaleFaction, bool resetJob, int currentHour, List<string> s)
+    {
+        if (!c.needsRestroom)
+        {
+            if (idleCooldownID != "" && c.Relationships.BehaviorInCooldown(idleCooldownID)) return false;
+            if (idleChance < 1 && !Utility.RandomChance(idleChance)) return false;
+        }
         return base.TryGetJob(c, currentJobFaction, currentLocaleFaction, resetJob, currentHour, s);
     }
 }
@@ -102,16 +130,22 @@ public class TryFindShowerNode : TryFindJobByIDNode
         Tags.Add("nsfw");
     }
 
+    /// <summary>
+    /// body traces past the character's cleanliness tolerance (needsShower), on free time only: no work post this hour,
+    /// no booking (Docs/Body/Plan_InternalFluidFlow.md §8). Contents inside the body alone never send anyone.
+    /// </summary>
     public override bool TryGetJob(Character_Trainable c, I_IsJobGiver currentJobFaction, I_IsJobGiver currentLocaleFaction, bool resetJob, int currentHour, List<string> s)
     {
-        var internals = c.Body.Internals;
-        bool canDeflate = false;
-        for (int i = 0; i < internals.Count; i++)
-        {
-            if (internals[i].canDeflate) { canDeflate = true; break; }
-        }
-        if (!canDeflate) return false;
+        if (!IsFreeTime(c, currentHour) || !c.needsShower) return false;
         return base.TryGetJob(c, currentJobFaction, currentLocaleFaction, resetJob, currentHour, s);
+    }
+
+    static bool IsFreeTime(Character_Trainable c, int currentHour)
+    {
+        var post = c.GetJobPost(currentHour);
+        var com = post == null ? null : post.getRandCOM;
+        if (com != null && com.ID != "com_furniture_sleep") return false;
+        return c.FactionManager == null || c.FactionManager.GetEffectiveBooking(currentHour) == null;
     }
 }
 public class TryFindMealNode : TryFindNonJobByTagNode

@@ -5,7 +5,15 @@
     "Dictionary": {
         "Entries": {
             "en-us": {
-                "com_furniture_takeShower_deflate_start": "$self.name$ washes more thoroughly than usual."
+                "com_furniture_takeShower_deflate_start": "$self.name$ washes more thoroughly than usual.",
+                "shower_bather_expel_question": "The shower is still running. $doer.firstname$ asks whether $bather.firstname$ wants to push out what's inside, too.",
+                "shower_expel_mouth": "Under the water, $bather.firstname$ spits out what was in the mouth and rinses. $deflateMsg1$.",
+                "shower_expel_womb": "$bather.firstname$ presses on the lower belly; what the womb can't hold runs out with the water. $deflateMsg2$.",
+                "shower_expel_vagina": "$bather.firstname$ spreads their legs and flushes the vagina clean with warm water. $deflateMsg3$.",
+                "shower_expel_anus": "$bather.firstname$ squats and relaxes, letting what had pooled inside wash away. $deflateMsg4$.",
+                "shower_expel_rest": "$bather.firstname$ pushes out whatever else the body couldn't hold. $deflateMsg5$.",
+                "shower_self_rinse_changed": "$bather.firstname$ washes off the residue on the body ($showerWashReport$), then rinses carefully.",
+                "shower_assisted_rinse_changed": "$doer.firstname$ helps wash the residue off $bather.firstname$ ($showerWashReport$), then rinses carefully."
             }
         }
     }

@@ -1,5 +1,5 @@
 {
-    "_doc": "口上loose entry文件：许可「友好接触」（intimacy_low，摸头、拥抱、牵手等轻度身体接触）的请求口上。Permission_[id]_Request：玩家在对话菜单选择请求该许可、确认框弹出时（尚未正式提出）；Permission_[id]_Granted：答应给予许可时——对话菜单请求获准，或指令进行中被自动请求并获准（插在该指令接受结果之前）；Permission_[id]_Refused：拒绝时。供 Data/Events/OnDialogue_Permissions 与 EvaluationPackage.RequestMissingPermissions 检索，无通用兜底。\n\n== 口上通用生成规范 ==\n1. 每条response只能是一句被引号包裹的台词，禁止旁白、动作、心理与场景描写。\n2. 不自我介绍、不点名说话者；$self$/$target$仅用于自然称呼，可不使用。\n3. 1~2句自然口语。personality_default为女性口上，personality_base为男性口上，语气应区分。\n4. 每个条目一个variant、3条可选response，语义同向、措辞各异；以后再按关系等条件扩充。",
+    "_doc": "口上loose entry文件：许可「友好接触」（intimacy_low，摸头、拥抱、牵手等轻度身体接触）的请求口上。Permission_[id]_Request：玩家在对话菜单选择请求该许可、确认框弹出时（尚未正式提出）；Permission_[id]_Granted：答应给予许可时——对话菜单请求获准，或指令进行中被自动请求并获准（插在该指令接受结果之前）；Permission_[id]_Refused：拒绝时（含高潮中无法被请求时）；Permission_[id]_LowConsciousness：意识模糊时被做了需要该许可的事——不请求、不答应也不拒绝，只是迷糊地察觉；Permission_[id]_LowConsciousness_Climax：同上且正处于高潮（缺失时退回 _LowConsciousness）。拒绝与意识模糊口上每场性行为对同一对象只说一次。供 Data/Events/OnDialogue_Permissions 与 EvaluationPackage.RequestMissingPermissions 检索，无通用兜底。\n\n== 口上通用生成规范 ==\n1. 每条response只能是一句被引号包裹的台词，禁止旁白、动作、心理与场景描写。\n2. 不自我介绍、不点名说话者；$self$/$target$仅用于自然称呼，可不使用。\n3. 1~2句自然口语。personality_default为女性口上，personality_base为男性口上，语气应区分。\n4. 每个条目一个variant、3条可选response，语义同向、措辞各异；以后再按关系等条件扩充。",
     "Character_Personalities": {
         "looselist": [
             {
@@ -35,6 +35,30 @@
                         "\"抱歉，我还不太习惯这样。\"",
                         "\"别急，我们还没那么熟。\"",
                         "\"这个就算了吧。\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "permission_intimacy_low_LowConsciousness",
+                    "_comment": "意识模糊时被做了需要友好接触许可的事。不会被请求、也不算答应或拒绝，只是迷迷糊糊地察觉到。男性说话者。全年龄。",
+                    "variants": [ { "responses": [
+                        "\"……嗯？……谁啊……\"",
+                        "\"……别闹……让我缓缓……\"",
+                        "\"……手……？……随便吧……\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "permission_intimacy_low_LowConsciousness_Climax",
+                    "_comment": "意识模糊且正处于高潮时被做了需要友好接触许可的事，几乎无法组织语言。男性说话者。全年龄、含蓄。",
+                    "variants": [ { "responses": [
+                        "\"……哈……等……\"",
+                        "\"……现在……别……\"",
+                        "\"……唔……什么……\""
                     ] } ]
                 }
             }

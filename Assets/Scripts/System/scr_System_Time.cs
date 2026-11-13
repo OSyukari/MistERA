@@ -65,8 +65,16 @@ public class scr_System_Time : MonoBehaviour
         this.currentDate = obj.currentDate;
         this.timeStop = obj.timeStop;
 
-        _hour = -1;
-        _day = -1;
+        // snapshot the loaded clock now: a lazy fill on the first tick would read the already-advanced minute and
+        // swallow the hour/day rollover of a save made at XX:59 / 23:59
+        SyncClockCache();
+    }
+
+    /// <summary>Marks the current hour/day as already processed, so the next tick compares against them.</summary>
+    void SyncClockCache()
+    {
+        _hour = currentDate.Hour;
+        _day = currentDate.Day;
     }
 
 
@@ -130,6 +138,7 @@ public class scr_System_Time : MonoBehaviour
     {
         startDate = new DateTime(initYear, initMonth, initDay, initHour, initMinute, initSecond);
         currentDate = startDate;
+        SyncClockCache();
     }
 
     public DateTime getCurrentTime()
@@ -150,8 +159,7 @@ public class scr_System_Time : MonoBehaviour
     {
         var timeOfDay = currentDate.TimeOfDay;
         currentDate = new DateTime(year, month, day) + timeOfDay;
-        _hour = -1;
-        _day = -1;
+        SyncClockCache();
         UpdateSingleDay();
     }
 

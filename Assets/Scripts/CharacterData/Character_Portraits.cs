@@ -264,6 +264,15 @@ public class PortraitManager
         }
     }
 
+    /// <summary>
+    /// Any handler to draw at all - false is GetValidPortraitInner's Transparent fallback. The logs panel only holds a
+    /// player image (scr_panel_logs.holdingPlayerImage) when there is one.
+    /// </summary>
+    [JsonIgnore] public bool HasAnyPortrait
+    {
+        get { return portraitPriorityList.Count > 0 || GeneratedHandlers.Count > 0 || GeneratedAssetHandlers.Count > 0; }
+    }
+
     static string IconPathOf(CharaPortrait p)
     {
         switch (p)

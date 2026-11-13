@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
+using MistEra.Updates;
 using TMPro;
 using UnityEngine;
 
@@ -14,6 +15,7 @@ public class scr_System_CentralControl_Serializable
     public DisplaySettings DisplaySettings;
     public DebugLogSettings DebugLogPref;
     public ModSettings ModSettings;
+    public UpdateSettings UpdateSettings = new UpdateSettings();
 }
 
 [System.Serializable]
@@ -446,6 +448,7 @@ public class scr_System_CentralControl : MonoBehaviour
         } }
 
     protected ModSettings _mods = null;
+    public UpdateSettings UpdateSetting = new UpdateSettings();
     public ModSettings ModSetting { get
         {
             if (_mods == null) _mods = new ModSettings();
@@ -538,6 +541,7 @@ public class scr_System_CentralControl : MonoBehaviour
         this._content = obj.ContentSettings;
         this._display = obj.DisplaySettings;
         this._mods = obj.ModSettings;
+        this.UpdateSetting = obj.UpdateSettings ?? new UpdateSettings();
     }
 
     public Job CurrentInspectJob = null;
@@ -549,6 +553,7 @@ public class scr_System_CentralControl : MonoBehaviour
         obj.DisplaySettings = DisplaySetting;
         obj.DebugLogPref = LogPrefs;
         obj.ModSettings = ModSetting;
+        obj.UpdateSettings = UpdateSetting ?? new UpdateSettings();
         return obj;
     }
 

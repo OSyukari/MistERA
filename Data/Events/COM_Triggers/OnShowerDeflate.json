@@ -117,7 +117,9 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "label": "expel_mode",
+                        "_comment": "npcDecides follows self (the doer): a player bather washed by an NPC gets their own question (Docs/Body/Plan_InternalFluidFlow.md: the involved player chooses, NPCs auto-accept)",
                         "options": [
+                            { "option": "assisted, player bather", "target_chara_conditions": { "receiver": [{ "parameters": ["exists"] }], "bather": [{ "parameters": ["isPlayer"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "expel_question_bather"] }] },
                             { "option": "assisted", "target_chara_conditions": { "receiver": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "expel_question_assisted"] }] },
                             { "option": "solo", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "expel_question_self"] }] }
                         ]
@@ -139,6 +141,14 @@
                         ]
                     },
                     {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "expel_question_bather", "question": "shower_bather_expel_question", "npcDecides": false,
+                        "options": [
+                            { "option": "shower_expel_help_yes", "isDefaultAccept": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "attempt1"] }] },
+                            { "option": "shower_expel_no", "isDefaultCancel": true, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "intimacy_gate"] }] }
+                        ]
+                    },
+                    {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "label": "attempt1",
                         "options": [
@@ -146,7 +156,7 @@
                             { "option": "unchanged", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "attempt2"] }] }
                         ]
                     },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "print1", "line": "$deflateMsg1$", "nextEntryLabel": "attempt2" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "print1", "line": "shower_expel_mouth", "nextEntryLabel": "attempt2" },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "label": "attempt2",
@@ -155,7 +165,7 @@
                             { "option": "unchanged", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "attempt3"] }] }
                         ]
                     },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "print2", "line": "$deflateMsg2$", "nextEntryLabel": "attempt3" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "print2", "line": "shower_expel_womb", "nextEntryLabel": "attempt3" },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "label": "attempt3",
@@ -164,7 +174,7 @@
                             { "option": "unchanged", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "attempt4"] }] }
                         ]
                     },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "print3", "line": "$deflateMsg3$", "nextEntryLabel": "attempt4" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "print3", "line": "shower_expel_vagina", "nextEntryLabel": "attempt4" },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "label": "attempt4",
@@ -173,7 +183,7 @@
                             { "option": "unchanged", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "attempt5"] }] }
                         ]
                     },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "print4", "line": "$deflateMsg4$", "nextEntryLabel": "attempt5" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "print4", "line": "shower_expel_anus", "nextEntryLabel": "attempt5" },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "label": "attempt5",
@@ -182,7 +192,7 @@
                             { "option": "unchanged", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "expel_result"] }] }
                         ]
                     },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "print5", "line": "$deflateMsg5$", "nextEntryLabel": "expel_result" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "print5", "line": "shower_expel_rest", "nextEntryLabel": "expel_result" },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "label": "expel_result",
@@ -266,7 +276,7 @@
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "label": "wash",
                         "options": [
-                            { "option": "washed residue", "Results": [{ "Type": "WashTraces", "arguments": ["bather"] }, { "Type": "JumpToLabel", "arguments": ["", "rinse_changed_mode"] }] },
+                            { "option": "washed residue", "Results": [{ "Type": "WashTraces", "arguments": ["bather", "showerWashReport"] }, { "Type": "JumpToLabel", "arguments": ["", "rinse_changed_mode"] }] },
                             { "option": "no washable traces", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "rinse_plain_mode"] }] }
                         ]
                     },
@@ -368,6 +378,12 @@
                 "shower_assisted_begin": "$doer.firstname$打开淋浴，调好水温，将水流移向$bather.firstname$，开始帮忙清洗。",
                 "shower_self_expel_question": "淋浴还在继续。是否让$bather.firstname$排出体内可排出的内容物？",
                 "shower_assisted_expel_question": "淋浴还在继续。是否让$doer.firstname$协助$bather.firstname$排出体内可排出的内容物？",
+                "shower_bather_expel_question": "淋浴还在继续。$doer.firstname$问$bather.firstname$，要不要顺便把体内的东西排出来？",
+                "shower_expel_mouth": "$bather.firstname$在水流下把嘴里的东西吐掉，漱了漱口。$deflateMsg1$。",
+                "shower_expel_womb": "$bather.firstname$按着小腹用力，子宫里装不下的部分顺着水流淌了出来。$deflateMsg2$。",
+                "shower_expel_vagina": "$bather.firstname$分开双腿，用温水把阴道里的东西冲洗干净。$deflateMsg3$。",
+                "shower_expel_anus": "$bather.firstname$蹲下放松后庭，让积在里面的东西随水流走。$deflateMsg4$。",
+                "shower_expel_rest": "$bather.firstname$又把体内其余装不下的东西排了出来。$deflateMsg5$。",
                 "shower_expel_yes": "排出可排出的内容物",
                 "shower_expel_help_yes": "协助排出可排出的内容物",
                 "shower_expel_no": "不排出，继续清洗",
@@ -375,8 +391,8 @@
                 "shower_intimacy_yes": "继续亲密互动（尚未开放）",
                 "shower_intimacy_unavailable": "淋浴中的亲密互动尚未实装。",
                 "shower_intimacy_no": "只完成清洗",
-                "shower_self_rinse_changed": "$bather.firstname$借着水流洗去了身上可洗掉的残留，随后仔细冲洗。",
-                "shower_assisted_rinse_changed": "$doer.firstname$用水流帮$bather.firstname$洗去身上可洗掉的残留，随后仔细冲洗。",
+                "shower_self_rinse_changed": "$bather.firstname$借着水流洗去了身上的残留：$showerWashReport$，随后仔细冲洗。",
+                "shower_assisted_rinse_changed": "$doer.firstname$用水流帮$bather.firstname$洗去身上的残留：$showerWashReport$，随后仔细冲洗。",
                 "shower_self_rinse_plain": "$bather.firstname$让温水再次流过身体，做最后的冲洗。",
                 "shower_assisted_rinse_plain": "$doer.firstname$将温水缓缓移过$bather.firstname$的身体，帮忙完成最后的冲洗。",
                 "shower_self_end": "$bather.firstname$关掉淋浴，水声渐渐停下。这次清洗结束了。",
@@ -396,8 +412,6 @@
                 "shower_intimacy_yes": "Continue with intimacy (not yet available)",
                 "shower_intimacy_unavailable": "Intimate interactions in the shower have not been implemented yet.",
                 "shower_intimacy_no": "Just finish washing",
-                "shower_self_rinse_changed": "$bather.firstname$ washes away the removable residue on the body, then rinses carefully.",
-                "shower_assisted_rinse_changed": "$doer.firstname$ helps wash the removable residue off $bather.firstname$, then rinses carefully.",
                 "shower_self_rinse_plain": "$bather.firstname$ lets the warm water run over the body once more for a final rinse.",
                 "shower_assisted_rinse_plain": "$doer.firstname$ slowly directs the warm water over $bather.firstname$ for a final rinse.",
                 "shower_self_end": "$bather.firstname$ turns off the shower. The sound of running water fades, and the wash is complete.",

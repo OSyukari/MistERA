@@ -54,7 +54,8 @@ public class tab_dialogue : MonoBehaviour
         }
 
         // unlike OnDialogue_Options, every permission event gets a box: invalid ones stay visible and disabled,
-        // their validator explains why (Button_PermissionEvent). Event ID = permission ID.
+        // their validator explains why (Button_PermissionEvent) - except a permission that does not concern the target's
+        // body, which the validator hides. Event ID = permission ID.
         RectTransform permissionParent = permissionRect != null ? permissionRect : eventRect;
         foreach (var ev in scr_System_Serializer.current.MasterList.Events.list)
         {
@@ -265,7 +266,8 @@ public class tab_dialogue : MonoBehaviour
 
     /// <summary>
     /// OnDialogue_Permissions box (scr_permissionBox): the event ID is the permission ID, read as current target → player.
-    /// Always visible. The state text shows whether the permission is in effect (any source), hover = its sources or the
+    /// Visible unless the permission does not concern the target's body (PermissionService.IsApplicable - hidden, re-checked
+    /// on every ValidateAll). The state text shows whether the permission is in effect (any source), hover = its sources or the
     /// missing relationship tags. The button tooltip starts with the permission's "[id]_tooltip"; the button is
     /// disabled while the permission is already in effect (permissions are on/off), for an unknown permission ID, or when
     /// the event cannot start (EventUtility.Diagnose, EventManager.CanStart) - each reason appended. Validation is read-only
@@ -355,6 +357,20 @@ public class tab_dialogue : MonoBehaviour
 
         public override bool IsButtonValid()
         {
+            // a permission that does not concern the current target's body (PermissionDefinition.charaReq) is hidden, not
+            // disabled: there is nothing the player could meet
+            var cm = scr_System_CampaignManager.current;
+            var definition = scr_System_Serializer.current.MasterList.PermissionDefinitions.GetByID(ev.ID);
+            bool applicable = definition == null || cm.CurrentTarget == null || cm.CurrentTarget == cm.Player
+                || PermissionService.IsApplicable(cm.CurrentTarget, definition);
+            if (box.gameObject.activeSelf != applicable) box.gameObject.SetActive(applicable);
+            if (!applicable)
+            {
+                tooltip = "";
+                state = ButtonValidator_States.Invalid;
+                return false;
+            }
+
             var reasons = new List<string>();
             bool valid = BuildInstance(reasons) != null;
 
@@ -362,7 +378,6 @@ public class tab_dialogue : MonoBehaviour
             string tooltipKey = $"{ev.ID}_tooltip";
             string description = LocalizeDictionary.QueryThenParse(tooltipKey);
             tooltip = description == tooltipKey ? "" : description;
-            var cm = scr_System_CampaignManager.current;
             if (cm.CurrentTarget != null && cm.CurrentTarget != cm.Player)
                 tooltip += "\n" + PermissionService.RequestTooltip(cm.CurrentTarget, cm.Player,
                     PermissionService.Query(cm.CurrentTarget, cm.Player, ev.ID));

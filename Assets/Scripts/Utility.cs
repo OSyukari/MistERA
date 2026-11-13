@@ -1775,6 +1775,9 @@ public static class UtilityEX
                                 if (cum != null)
                                 {
                                     targetwb.source.Ingest(cum, null, true);
+                                    // optional [bool allowExpel]: false (default) keeps the whole amount in; true lets what is
+                                    // past max capacity flow out (womb -> vagina -> floor + body trace)
+                                    if (parsed.Count() >= 5 && bool.TryParse(parsed[4], out var allowExpel) && allowExpel) targetwb.source.SettleOverflow();
                                     parsedSuccessful = true;
                                 }
                                 else Debug.LogError($"error {pp.DisplayNameFull} cannot cum");
@@ -1807,6 +1810,8 @@ public static class UtilityEX
                         Item_Instance_Cum cum = WorldManager.Instantiate(parsed[3], parsed[4], parsed[5]);
                         cum.CumAmount = amount;
                         targetwb.source.Ingest(cum, null, true);
+                        // optional [bool allowExpel], see wombAddSpermByRef
+                        if (parsed.Count() >= 7 && bool.TryParse(parsed[6], out var allowExpelByID) && allowExpelByID) targetwb.source.SettleOverflow();
                         parsedSuccessful = true;
                     }
                     else

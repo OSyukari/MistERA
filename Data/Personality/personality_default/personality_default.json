@@ -466,7 +466,7 @@
                 "Descriptor_Carried_1": "($self$) 动弹不得的$self$被$target$抱在怀里",
                 "Descriptor_Sleeping_1": "($self$) 正在房间里熟睡的$self$呼吸均匀，完全没注意到$target$的靠近",
                 "Descriptor_Timestop_1": "($self$) $target$正在端详着时间停止中一动不动的$self$",
-                "Descriptor_FixingClothes_1": "($self$) $target$不仅看到了衣衫不整的$self$，还目睹了她慌乱整理衣物的样子",
+                "Descriptor_FixingClothes_1": "($self$) $target$不仅看到了衣衫不整的$self$，还目睹了她慌乱整理仪容的样子",
                 "Descriptor_Job_1": "($self$) $target$看到了正全神贯注于工作的$self$",
                 "Descriptor_Rest_1": "($self$) $target$看到了正在享受片刻安宁的$self$",
                 "Descriptor_Recreation_1": "($self$) $target$看到了正在开心地玩耍着的$self$",

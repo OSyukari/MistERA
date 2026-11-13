@@ -144,11 +144,13 @@ public class Job_Sex_Group : Job
             return permissionPushes.Exists(x => x.granterRef == granterRef && x.holderRef == holderRef && x.permissionID == permissionID);
     }
 
-    /// <summary>Permission requests refused in this scene (same record shape as the pushes): the refusal kojo plays once.</summary>
+    /// <summary>Permissions the granter already answered in this scene without granting (refused, or the low-consciousness
+    /// line; same record shape as the pushes): their kojo plays once. Field name kept for saves.</summary>
     [JsonProperty] List<PermissionPush> permissionRefusals = new List<PermissionPush>();
 
-    /// <summary>Records a refused permission request; true only the first time in this scene for the pair and permission.</summary>
-    public bool TryRecordPermissionRefusal(int granterRef, int holderRef, string permissionID)
+    /// <summary>Records an answered permission (EvaluationPackage.TryRecordPermissionAnswer); true only the first time in
+    /// this scene for the pair and permission.</summary>
+    public bool TryRecordPermissionAnswer(int granterRef, int holderRef, string permissionID)
     {
         lock (permissionPushLock)
         {

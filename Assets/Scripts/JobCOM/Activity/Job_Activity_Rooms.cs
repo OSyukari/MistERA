@@ -319,7 +319,7 @@ public partial class Job_Activity
             for (int p = 0; p < results.Count; p++)
                 if (results[p].job == source && results[p].targetCOM == command)
                 {
-                    if (results[p].ActivityExecutionRef < 0) results[p].BindActivityExecution(this, GroupOf(actor.RefID));
+                    if (results[p].ActivityExecutionRef < 0) results[p].BindActivityExecution(this);
                     exists = true;
                     break;
                 }
@@ -328,7 +328,7 @@ public partial class Job_Activity
                 ? media.MakePlayerSessionPackage(actor)
                 : command.MakePackage(source, new List<int> { actor.RefID }, new List<int>(), actor.RefID, furniture.ParentRoom);
             if (package == null) continue;
-            package.BindActivityExecution(this, GroupOf(actor.RefID));
+            package.BindActivityExecution(this);
             if (package.Validate() || allowInvalid) results.Add(package);
         }
     }

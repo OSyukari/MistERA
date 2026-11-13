@@ -51,6 +51,13 @@ public static class CharaReqUtility
             hardlock = true;
             return false;
         }
+        if (q.requireFertileWomb && !ReproductionUtility.HasFertileWomb(c))
+        {
+            if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireFertileWomb")
+                                        .Replace("$name$", c.FirstName));
+            hardlock = true;
+            return false;
+        }
 
         if (q.requireExtremeInflatedBodyTags.Count > 0)
         {

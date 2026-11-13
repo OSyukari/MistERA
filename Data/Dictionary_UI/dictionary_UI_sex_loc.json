@@ -67,7 +67,8 @@
                 "sidePanel_title_body": "Body",
                 "sidePanel_title_sexcom": "Training",
                 "womb_climax_ovulation": "Climax triggered $name$'s ovulation",
-                "ui_debug_tooltip2": "EX1. Global ejaculation volume x5\nEX2. Pregnancy rate ignores race restrictions\nEX3. Training commands that fail can be forced to succeed"
+                "ui_debug_tooltip2": "EX1. Global ejaculation volume x5\nEX2. Pregnancy rate ignores race restrictions\nEX3. Training commands that fail can be forced to succeed",
+                "ui_ap_CharaReqUtility_requireFertileWomb": "Requires $name$ to have a fertile womb"
             }
         }
     }

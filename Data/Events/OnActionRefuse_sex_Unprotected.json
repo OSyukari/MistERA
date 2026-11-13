@@ -203,6 +203,7 @@
                 "event_OnAPRefuse_Unprotected_q": "$kojo_demand$\n\n%%event_OnAPRefuse_Unprotected_q_plain%%",
                 "event_OnAPRefuse_Unprotected_op_wearSelf": "自己戴上避孕套",
                 "event_OnAPRefuse_Unprotected_op_wearTarget": "给$evTarget.name$戴上避孕套",
+                "event_OnAPRefuse_Unprotected_op_targetSelf": "让$evTarget.name$自己戴上",
                 "event_OnAPRefuse_Unprotected_op_targetHand": "让$evTarget.name$用手戴上",
                 "event_OnAPRefuse_Unprotected_op_targetMouth": "让$evTarget.name$用嘴戴上",
                 "event_OnAPRefuse_Unprotected_op_unavailable": "现在无法这样做：",
@@ -213,6 +214,7 @@
                 "event_OnAPRefuse_Unprotected_condom_self": "$self.name$戴上了避孕套。",
                 "event_OnAPRefuse_Unprotected_condom_target": "$self.name$给$evTarget.name$戴上了避孕套。",
                 "event_OnAPRefuse_Unprotected_condom_partner": "$self.name$把避孕套交给了$evTarget.name$。",
+                "event_OnAPRefuse_Unprotected_condom_granterSelf": "$evTarget.name$自己戴上了避孕套。",
                 "event_OnAPRefuse_Unprotected_end": "$self.name$放弃了。",
                 "event_OnAPRefuse_Unprotected_push": "$self.name$不顾$evTarget.name$的要求，继续下去。",
                 "event_OnAPRefuse_Unprotected_push_kojo": "%%event_OnAPRefuse_Unprotected_push%%\n\n$kojo_ignore$"

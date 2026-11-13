@@ -61,6 +61,30 @@
                         "\"最后拔出来，会中的。\""
                     ] } ]
                 }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "permission_sex_dangerday_creampie_LowConsciousness",
+                    "_comment": "意识模糊时，在自己的危险日被不加保护地做了（需要危险日生中出许可）。不会被请求、也不算答应或拒绝，也不会要求戴套，只是迷迷糊糊地察觉到。男性说话者。",
+                    "variants": [ { "responses": [
+                        "\"……今天……好像……不行的……\"",
+                        "\"……里面……？……会中的……吧……\"",
+                        "\"……嗯……想不起来……今天……\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "permission_sex_dangerday_creampie_LowConsciousness_Climax",
+                    "_comment": "意识模糊且正处于高潮时，在自己的危险日被不加保护地做了，几乎无法组织语言。男性说话者。",
+                    "variants": [ { "responses": [
+                        "\"……哈……今天……不……\"",
+                        "\"……里、里面……会……\"",
+                        "\"……唔……顾不上……\""
+                    ] } ]
+                }
             }
         ]
     }

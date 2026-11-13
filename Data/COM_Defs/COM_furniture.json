@@ -941,19 +941,14 @@
                 "ID": "com_furniture_restroom_fix",
                 "ActionPackageClass": "ActionPackage_Interaction",
                 "displayName": "com_furniture_restroom_fix_displayName_1",
+                "_comment":"always usable (Docs/Body/Plan_InternalFluidFlow.md): redresses, then OnFixClothesDeflate offers to spit out the mouth's contents and washes the face; nothing to do -> a plain 'fixed clothes and took a breather' line. NPCs come here when undressed or with traces on the head (TryFindRedressNode).",
                 "timeScale": 10,
-                "HideWhenInvalid":true,
                 "comTags": [
                     "furniture",
                     "bathroom",
                     "fixingClothes",
                     "privacy"
                 ],
-                "requirements":{
-                    "requirement":{
-                        "req_Doers":{
-                            "requireUndressed" :true
-                        }  }  },
                 "variants": [
                     {
                         "requirements": {
@@ -984,7 +979,8 @@
                                 "value": "5"
                             }
                         }
-                    ]
+                    ],
+                    "result_event": { "id_overwrite": "com_furniture_restroom_fix_clean", "requireSuccess": true }
                 },
 
                 "AcceptanceCheck": {
@@ -1468,6 +1464,8 @@
                 "com_furniture_sleep_displayName_1": "睡觉",
                 "com_furniture_sleep_displayName_2": "一起睡觉",                "com_furniture_sleep_withNames": "和$names$一起睡",
                 "com_furniture_divider_enter_displayName": "进入",
+                "com_furniture_divider_enter":"进入隔间，期间只可与隔间内的家具以及角色互动\n随行的角色若无法一起进入，则会解除同行",
+                "com_furniture_divider_leave":"离开隔间，回到房间内\n随行的角色若无法一起离开，则会解除同行",
                 "com_furniture_divider_enter_together_displayName": "一起进入",
                 "com_furniture_divider_leave_together_displayName": "一起离开",
                 "com_furniture_divider_enter_begin_1": "$doer.firstname$走了进去",
@@ -1554,16 +1552,16 @@
                 "com_furniture_prison_begin_1_REMOVE": "$doer.firstname$尝试从监牢将$receiver.firstname$释放",
                 "com_furniture_prison_onComplete_1_REMOVE": "$receiver.firstname$被释放了",
                 
-                "com_furniture_restroom_fix_displayName_1": "整理衣物",
-                "com_furniture_restroom_fix_begin_1": "$doer.firstname$开始换衣物",
-                "com_furniture_restroom_fix_ongoing_1": "$doer.firstname$正在换衣服",
-                "com_furniture_restroom_fix": "当角色有衣物被脱下后可执行。指令结束时角色会穿上所有衣物\nNPC如果衣冠不整，会优先寻找合适的地点（有卫生间的地点）穿衣",
+                "com_furniture_restroom_fix_displayName_1": "整理仪容",
+                "com_furniture_restroom_fix_begin_1": "$doer.firstname$开始整理仪容",
+                "com_furniture_restroom_fix_ongoing_1": "$doer.firstname$正在整理仪容",
+                "com_furniture_restroom_fix": "随时可执行。指令结束时角色会穿上所有衣物\n可选择吐出口腔内的可排出内容物（如精液），并会洗净脸上的痕迹\nNPC如果衣冠不整，或脸上有痕迹，会优先寻找合适的地点（卫生间或卧室的梳妆台）整理",
 
                 "com_furniture_changeOutfit_displayName_1": "更换服装",
                 "com_furniture_changeOutfit_begin_1": "$doer.firstname$开始更换服装",
                 "com_furniture_changeOutfit_ongoing_1": "$doer.firstname$正在更换服装",
                 "com_furniture_changeOutfit_onComplete_1": "$doer.firstname$换好了服装",
-                "com_furniture_changeOutfit": "当角色当前的安排（阵营身份或活动）要求换上另一套服装时可执行。指令结束时角色会换上该安排的服装，或换回默认服装\nNPC会在需要时前往有卫生间的地点换衣",
+                "com_furniture_changeOutfit": "当角色当前的安排（阵营身份或活动）要求换上另一套服装时可执行。指令结束时角色会换上该安排的服装，或换回默认服装\nNPC会在需要时前往卫生间或卧室的梳妆台换衣",
 
                 "com_furniture_getmeal": "用餐",
                 "com_furniture_getmeal_displayName": "用餐",
@@ -1587,7 +1585,7 @@
                 "com_furniture_readBooks_description_variant_onComplete_1": "$doer.firstname$读完了$name$——$result$",
 
                 "com_furniture_takeShower_description_onComplete_1": "$doer.firstname$洗完了澡",
-                "com_furniture_restroom_fix_onComplete_1": "$doer.firstname$整理好了衣物",
+                "com_furniture_restroom_fix_onComplete_1": "$doer.firstname$整理好了仪容",
                 "com_furniture_getmeal_onComplete_1": "$doer.firstname$吃完了饭",
 
                 "com_furniture_training_shooting_displayName_1": "射击训练",
@@ -1661,10 +1659,10 @@
                 "com_furniture_prison_onComplete_1_ADD": "$receiver.firstname$ is being jailed in the cell",
                 "com_furniture_prison_begin_1_REMOVE": "$doer.firstname$ tries releasing $receiver.firstname$ from the holding cell",
                 "com_furniture_prison_onComplete_1_REMOVE": "$receiver.firstname$ is being released",
-                "com_furniture_restroom_fix_displayName_1": "Fix clothes",
-                "com_furniture_restroom_fix_begin_1": "$doer.firstname$ starts changing their clothes",
-                "com_furniture_restroom_fix_ongoing_1": "$doer.firstname$ is changing their clothes",
-                "com_furniture_restroom_fix": "Can be performed when target has removed clothing. Target will redress everything on command completion.\nNPC will try to find a private spot first before attempting to redress.",
+                "com_furniture_restroom_fix_displayName_1": "Freshen Up",
+                "com_furniture_restroom_fix_begin_1": "$doer.firstname$ starts freshening up",
+                "com_furniture_restroom_fix_ongoing_1": "$doer.firstname$ is freshening up",
+                "com_furniture_restroom_fix": "Can always be performed. Target will redress everything on command completion.\nOptionally spits out expellable contents (such as semen) from the mouth, and washes the traces off the face.\nNPC will try to find a suitable spot first (a restroom, or a bedroom dresser) when undressed or with traces on the face.",
                 "com_furniture_getmeal_displayName": "Get meal",
                 "com_furniture_getmeal_begin_1": "$doer.firstname$ sat down at the table, picked up a portion of $name$ and began to eat.",
                 "com_furniture_getmeal_begin_2": "$doer.firstname$ brought the $name$ closer and began eating.",
@@ -1710,7 +1708,7 @@
     "com_furniture_readBooks_description_variant_onComplete_1": "$doer.firstname$ finished reading $name$ — $result$",
 
     "com_furniture_takeShower_description_onComplete_1": "$doer.firstname$ finished taking a shower",
-    "com_furniture_restroom_fix_onComplete_1": "$doer.firstname$ finished fixing their clothes",
+    "com_furniture_restroom_fix_onComplete_1": "$doer.firstname$ finished freshening up",
     "com_furniture_getmeal_onComplete_1": "$doer.firstname$ finished their meal",
 
     "com_furniture_getmeal_displayName_base_2": "Dine Together",

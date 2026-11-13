@@ -21,7 +21,7 @@
     "stat_CON": 15,
     "stat_PSY": 14,
     "stat_WIL": 14,
-    "personalityID": "personality_default",
+    "personalityID": "personality_base",
     "_comment_stats": "Gameplay interpretation: strong trained exorcist, physically below Kana; optimistic emotional drive and generally good resistance to stress, with specific vulnerabilities concerning Kana and childhood memories. Spiritual techniques are described in the card, not assigned as nonexistent legacy skill levels.",
     "traits_body_sex": ["trait_Sensitivity_B_default", "trait_Sensitivity_M_default", "trait_Sensitivity_C_default", "trait_Sensitivity_V_default", "trait_Sensitivity_A_default", "trait_Size_B_AAA", "trait_Size_P_average", "trait_Size_V_none", "trait_Size_A_1"],
     "traits_body": ["trait_BodyType_muscular", "trait_SkinColor_fair", "trait_HairColor_black"],

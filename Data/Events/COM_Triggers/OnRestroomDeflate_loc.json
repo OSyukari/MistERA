@@ -5,7 +5,14 @@
     "Dictionary": {
         "Entries": {
             "en-us": {
-                "com_furniture_restroom_deflate_start": "$self.name$ stays in the restroom a little longer than usual."
+                "restroom_expel_question": "Sitting on the toilet, $self.name$ can still feel something inside. Push it out?",
+                "restroom_expel_yes": "Push it out",
+                "restroom_expel_no": "Leave it",
+                "restroom_expel_declined": "$self.name$ hesitates and leaves what's inside alone.",
+                "restroom_expel_anus": "$self.name$ relaxes on the toilet, and what had pooled inside slowly runs out. $restroomAnusMsg$.",
+                "restroom_expel_vagina": "$self.name$ bears down, squeezing out what the vagina can't hold. $restroomVaginaMsg$.",
+                "restroom_wipe": "$self.name$ wipes down the crotch and thighs with tissue. Wiped: $restroomWipeReport$.",
+                "restroom_plain": "$self.name$ uses the restroom."
             }
         }
     }

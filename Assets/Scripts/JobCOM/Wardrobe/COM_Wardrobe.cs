@@ -11,7 +11,7 @@ public class COM_Wardrobe : COM
     public bool isRedress = false;
     /// <summary> Skin / Inner / Outer - items of any other layer (None) use the Outer command </summary>
     public BodyEquipLayer layer = BodyEquipLayer.Outer;
-    /// <summary> every layer at once (Undress all / Fix clothes) - layer is then not used by the package </summary>
+    /// <summary> every layer at once (Undress all / Freshen Up) - layer is then not used by the package </summary>
     public bool allLayers = false;
 
     /// <summary> layer of the command an item of this equip layer uses </summary>

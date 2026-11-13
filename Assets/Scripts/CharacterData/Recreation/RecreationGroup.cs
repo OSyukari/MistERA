@@ -49,6 +49,25 @@ public class RecreationSessionExtension
 }
 
 /// <summary>
+/// One invite group of a session using group invitations (Docs/Activities/Plan_GroupInvitations.md): a household
+/// ("home:factionID"), an activity organization ("org:factionID") or two characters ("pair:lowRef:highRef"). The key
+/// deduplicates: everyone inviting the same household shares one group. A character may be in several groups of one
+/// session while holding one booking. Membership is memberRefs; whether they come is their member record's state.
+/// </summary>
+public class RecreationInviteGroup
+{
+    /// <summary>Session-local serial (RecreationGroup.nextInviteGroupId).</summary>
+    public int id = -1;
+    public string key = "";
+    /// <summary>Who sent it (tooltip / trace only).</summary>
+    public List<int> inviterRefs = new List<int>();
+    /// <summary>Everyone in it, the inviters included.</summary>
+    public List<int> memberRefs = new List<int>();
+    /// <summary>Count as present for the no-alone rule without being members - a performer inviting to their own show's audience.</summary>
+    public List<int> virtualMemberRefs = new List<int>();
+}
+
+/// <summary>
 /// One shared recreation activity (a session): a venue and a fixed block of time, posted by its host (or by the offer
 /// board - hostless) to the characters its visibility reaches (RecreationInviteSpec.visibility). Every touched character
 /// ranks it with everything else visible to them and confirms in preference order, holding their own RecreationBooking
@@ -150,6 +169,25 @@ public class RecreationGroup : I_ActivityBooking
 
     public List<RecreationGroupMember> members = new List<RecreationGroupMember>();
     public List<RecreationSessionExtension> extensions = new List<RecreationSessionExtension>();
+    /// <summary>Group invitations (RecreationInviteSpec.invitationValidator): the invite groups; empty = one group (every other session, older saves).</summary>
+    public List<RecreationInviteGroup> inviteGroups = new List<RecreationInviteGroup>();
+    public int nextInviteGroupId = 0;
+    /// <summary>Group invitations: who already sent their one invitation.</summary>
+    public List<int> invitationSentRefs = new List<int>();
+
+    /// <summary>The invite group with key, or null.</summary>
+    public RecreationInviteGroup FindInviteGroup(string key)
+    {
+        for (int i = 0; i < inviteGroups.Count; i++) if (inviteGroups[i] != null && inviteGroups[i].key == key) return inviteGroups[i];
+        return null;
+    }
+
+    /// <summary>The member record of charaRef, or null - a plain loop (FindMember's lambda allocates).</summary>
+    public RecreationGroupMember MemberOf(int charaRef)
+    {
+        for (int i = 0; i < members.Count; i++) if (members[i] != null && members[i].charaRef == charaRef) return members[i];
+        return null;
+    }
 
     /// <summary>
     /// The RefID of the Job_Activity coordinating this session (-1 = none yet / no more). Saved, so a loaded save

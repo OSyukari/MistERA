@@ -60,6 +60,19 @@ public abstract class TraceDefinition
     /// <summary> chance (0..1) per landing to spread, with allowRandomSpread </summary>
     public float spreadChance = 0;
 
+    /// <summary>
+    /// body dirtiness of one instance = dirtiness + dirtinessPerAmount * amount (liquids: per ml). Only traces a wash
+    /// removes count; compared with the owner's cleanliness stats like a room (Character_Body.BodyCleanliness)
+    /// </summary>
+    public float dirtiness = 1;
+    public float dirtinessPerAmount = 0;
+
+    public float GetDirtiness(TraceInstance t)
+    {
+        float d = dirtiness + dirtinessPerAmount * (t == null ? 0 : t.amount);
+        return float.IsNaN(d) || float.IsInfinity(d) ? 0 : Math.Max(0, d);
+    }
+
     /// <summary> highest chance of the given keywords, 0 if none matches </summary>
     public float GetKeywordChance(List<string> keywords)
     {

@@ -574,11 +574,12 @@ public static partial class RecreationUtility
             foreach (int l in lengths)
             {
                 // (a media visit doesn't count its own reserved copy against the new time)
-                if (!hostCtx.CanPlace(s, s + l, activity, none, b.factionID, exceptBooking: media != "" ? b : null, mediaItemID: media)) continue;
+                // a time for a shared session: home meal hours don't bind (sharedVisit - DayContext.CanPlace)
+                if (!hostCtx.CanPlace(s, s + l, activity, none, b.factionID, exceptBooking: media != "" ? b : null, mediaItemID: media, sharedVisit: true)) continue;
                 int count = 0;
                 requiredCounts.Clear();
                 foreach (var ic in inviteeCtx)
-                    if (ic.context.CanPlace(s, s + l, null, none, b.factionID, checkPlacement: false))
+                    if (ic.context.CanPlace(s, s + l, null, none, b.factionID, checkPlacement: false, sharedVisit: true))
                     {
                         count++;
                         if (ic.target.role.required)
@@ -768,7 +769,15 @@ public static partial class RecreationUtility
             for (int i = 0; i < posts.Count; i++)
                 if (posts[i] != null && SeesList(f, posts[i].scopeFactionID) && !playerInviteBuffer.Contains(posts[i])) playerInviteBuffer.Add(posts[i]);
         }
-        try { for (int i = 0; i < playerInviteBuffer.Count; i++) NotifyPublicSession(playerInviteBuffer[i]); }
+        try
+        {
+            for (int i = 0; i < playerInviteBuffer.Count; i++)
+            {
+                // a group-invitation session asks nothing - the player is told it takes place (NotifyPublicGroupSession)
+                if (UsesGroupInvites(playerInviteBuffer[i])) NotifyPublicGroupSession(playerInviteBuffer[i]);
+                else NotifyPublicSession(playerInviteBuffer[i]);
+            }
+        }
         finally { playerInviteBuffer.Clear(); }
     }
 
@@ -1365,8 +1374,15 @@ public static partial class RecreationUtility
         if (ReplacementFeeDeclined(c, booking)) return Block(g, m, "feeDeclined");
         var extension = PlanExtension(f, g, m, out bool extensionOk);
         if (!extensionOk) return Block(g, m,"inviteFailed");
+        // group invitations: the one invitation f sends - nobody books alone (RecreationUtility_GroupInvites)
+        var groupInvite = PlanGroupInvitation(f, g, m, out bool groupInviteOk);
+        if (!groupInviteOk) return Block(g, m, AloneReason);
         var conflicts = FindBookingConflicts(f, booking);
-        if (!CanCommitActivityBooking(f, booking, forced, true, conflicts)) return Block(g, m, "conflict");
+        if (!CanCommitActivityBooking(f, booking, forced, true, conflicts))
+        {
+            if (Traced(g)) Trace($"Confirm {g.Label}: {TraceName(f.Owner)} can't commit - {ExplainCommitRefusal(f, booking, forced, conflicts)}");
+            return Block(g, m, "conflict");
+        }
         if (AwaitReplacementFee(f, booking, approved =>
         {
             if (!g.IsOpen || g.AbsStart <= NowAbs()) return;
@@ -1380,7 +1396,11 @@ public static partial class RecreationUtility
             Block(g, m, "conflict");
             ResolveSession(g);
         })) return false;
-        if (!TryCommitActivityBooking(f, booking, forced, true)) return Block(g, m,"conflict");
+        if (!TryCommitActivityBooking(f, booking, forced, true))
+        {
+            if (Traced(g)) Trace($"Confirm {g.Label}: {TraceName(f.Owner)} commit failed on its re-check - {ExplainCommitRefusal(f, booking, forced, FindBookingConflicts(f, booking))}");
+            return Block(g, m, "conflict");
+        }
         // the answer: the session announces itself once it resolves (ResolveSession); joining one already resolved is
         // announced with this update's other newcomers, once the fee is answered (OnJoinedResolvedSession)
         m.state = RecreationMemberState.Attending;
@@ -1390,6 +1410,7 @@ public static partial class RecreationUtility
         // joining one already confirmed: up in time for it (otherwise the session wakes its members as it confirms - ResolveSession)
         if (g.resolved && g.valid) WakeForSessions(c);
         CommitExtension(g, c, extension);
+        if (groupInvite != null) CommitGroupInvitation(g, c, groupInvite);
         RefreshValidity(g);
         return true;
     }
@@ -1728,6 +1749,8 @@ public static partial class RecreationUtility
         g.resolveDue = false;
         g.UnsubscribeLatePass();
         int nowAbs = NowAbs();
+        // group invitations: those whose invitees all said no are left alone - dropped before the resolution counts them
+        DropAloneMembers(g);
         ReconcileSessionAttendance(g, nowAbs);
         TrimKeptRoles(g, ResolveSpec(g.specRef));
         g.valid = IsValid(g, ResolveSpec(g.specRef));
@@ -1894,6 +1917,8 @@ public static partial class RecreationUtility
     static void RefreshValidity(RecreationGroup g, bool checkOrganization = true)
     {
         if (g == null || !g.IsOpen || g.setupDepth > 0 || !g.resolved) return;
+        // group invitations: an NPC left alone is dropped now, not at T-1 (RecreationUtility_GroupInvites)
+        DropAloneMembers(g);
         int nowAbs = NowAbs();
         bool changed = ReconcileSessionAttendance(g, nowAbs);
         bool wasValid = g.valid;
@@ -2407,7 +2432,8 @@ public static partial class RecreationUtility
     /// Starts the player's one question box for prompt p (Plan_ActivityPlayerPrompt.md) - sent from the update's prompt
     /// batch (FlushFees) with the fee requests the player approves for the same activity (p.fees):
     /// Recreation_PublicInvite for a public session's notice (IsPublicSession, reached by its list - no inviter;
-    /// $publicNoticeText$ names the attendees from the player's homes, the others in the line's tooltip $publicOthers$),
+    /// $publicNoticeText$ names the attendees from the player's homes, the others in the line's tooltip $publicOthers$;
+    /// a group-invitation session always uses it, invited or not, with $publicInvitesText$ = who invited them),
     /// Recreation_OrganizationInvite for an organization's call, else Recreation_Invite (Targets["inviter"]).
     /// AppendStrings: inviteText, and - built with the options just before the question shows (callback "buildOptions")
     /// - inviteFeeText, inviteMandatoryText, inviteConflictText. Callback "decline" = refuse. The event carries the
@@ -2425,7 +2451,9 @@ public static partial class RecreationUtility
             StartPromptFeesAlone(p);
             return;
         }
-        bool isPublic = IsPublicSession(g) && m.origin == RecreationMemberOrigin.Scope;
+        // group invitations: always the announcement box - listing the invitations received ($publicInvitesText$)
+        bool groupInvites = IsPublicSession(g) && UsesGroupInvites(g);
+        bool isPublic = IsPublicSession(g) && (m.origin == RecreationMemberOrigin.Scope || groupInvites);
         var inviter = isPublic ? null : InviterOf(g, m);
         bool organizationInvite = !isPublic && g.source == RecreationBookingSource.Organization && inviter == null;
         var ev = new EventInstance(c, isPublic ? Event_PublicInvite : organizationInvite ? "Recreation_OrganizationInvite" : Event_Invite, "");
@@ -2438,6 +2466,7 @@ public static partial class RecreationUtility
         {
             ev.AppendStrings["publicNoticeText"] = new List<string>() { DescribePublicNotice(g, c, pending, out var others) };
             ev.AppendStrings["publicOthers"] = new List<string>() { others };
+            ev.AppendStrings["publicInvitesText"] = new List<string>() { groupInvites ? DescribeReceivedInvites(g, c) : "" };
         }
         ev.AppendStrings["activityName"] = new List<string>() { g.DisplayName };
         ev.AppendStrings["inviteText"] = new List<string>() { DescribeInvite(g, m, pending) };
@@ -2480,9 +2509,12 @@ public static partial class RecreationUtility
         var attending = g.AttendingCharas(player.RefID);
         var named = new List<string>();
         var rest = new List<string>();
+        bool groupInvites = UsesGroupInvites(g);
         for (int i = 0; i < attending.Count; i++)
         {
             var c = attending[i];
+            // group invitations: not confirmed while their only company is the player (they drop out if the player says no)
+            if (groupInvites && IsAloneInGroups(g, c.RefID, player.RefID)) continue;
             bool housemate = false;
             var theirs = c.FactionManager?.HomeFactions;
             if (theirs != null)

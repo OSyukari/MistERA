@@ -40,6 +40,8 @@ public sealed class GeneratedImageClassifier
                     ["name"] = classification.name,
                     ["baseName"] = classification.nameRule?.name,
                     ["variant"] = classification.variant,
+                    ["state"] = classification.state,
+                    ["stateSource"] = classification.stateSource,
                     ["status"] = classification.status.ToString(),
                     ["tier"] = classification.nameRule?.tier,
                     ["score"] = classification.score,
@@ -260,7 +262,7 @@ public sealed class GeneratedImageClassifier
                             candidate = new Candidate { rule = rule, category = category, folder = folder, order = order };
                             candidates.Add(candidate);
                         }
-                        candidate.primary |= k == 0;
+                        candidate.primary |= k == 0 || keyword == (string)pairs[0]["keyword"];
                         candidate.keywords.UnionWith(keywords);
                         mapped = true;
                     }
@@ -293,6 +295,7 @@ public sealed class GeneratedImageClassifier
                     settings = rules.settings,
                     categories = rules.categories,
                     variants = rules.variants,
+                    states = rules.states,
                     emotionPass = rules.emotionPass,
                     nameSets = new Dictionary<string, List<NameRule>>(rules.nameSets),
                 };
@@ -327,7 +330,30 @@ public sealed class GeneratedImageClassifier
             classification.variant = suffix;
             break;
         }
-        classification.name = classification.variant == null ? selected.rule.name : $"{selected.rule.name}_{classification.variant}";
+        if (classification.variant == null) classification.variant = selected.rule.defaultVariant;
+        if (string.IsNullOrEmpty(classification.state))
+        {
+            // Use captured actor/role tags only, never scene-wide or partner tags (or live character state).
+            var mainTags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var actor in scene.actors.Where(a => a.character == scene.mainActor))
+            {
+                mainTags.UnionWith(actor.tags);
+                mainTags.UnionWith(actor.baseTags);
+                mainTags.UnionWith(actor.propertyTags);
+            }
+            foreach (var interaction in scene.interactions)
+            {
+                if (interaction.doer?.character == scene.mainActor) mainTags.UnionWith(interaction.doerTags);
+                if (interaction.receiver?.character == scene.mainActor) mainTags.UnionWith(interaction.receiverTags);
+            }
+            var state = rules.states.FirstOrDefault(s => s.keywords.Any(mainTags.Contains));
+            if (state != null)
+            {
+                classification.state = state.id;
+                classification.stateSource = "game";
+            }
+        }
+        classification.ComposeName();
         result.classification = classification;
         result.folder = selected.folder;
         return result;

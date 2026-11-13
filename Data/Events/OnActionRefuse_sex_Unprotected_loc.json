@@ -9,6 +9,7 @@
                 "event_OnAPRefuse_Unprotected_q": "$kojo_demand$\n\n%%event_OnAPRefuse_Unprotected_q_plain%%",
                 "event_OnAPRefuse_Unprotected_op_wearSelf": "Put on a condom",
                 "event_OnAPRefuse_Unprotected_op_wearTarget": "Put a condom on $evTarget.name$",
+                "event_OnAPRefuse_Unprotected_op_targetSelf": "Let $evTarget.name$ put one on",
                 "event_OnAPRefuse_Unprotected_op_targetHand": "Let $evTarget.name$ put it on by hand",
                 "event_OnAPRefuse_Unprotected_op_targetMouth": "Let $evTarget.name$ put it on with their mouth",
                 "event_OnAPRefuse_Unprotected_op_unavailable": "Not possible right now:",
@@ -19,6 +20,7 @@
                 "event_OnAPRefuse_Unprotected_condom_self": "$self.name$ puts on a condom.",
                 "event_OnAPRefuse_Unprotected_condom_target": "$self.name$ puts a condom on $evTarget.name$.",
                 "event_OnAPRefuse_Unprotected_condom_partner": "$self.name$ hands the condom to $evTarget.name$.",
+                "event_OnAPRefuse_Unprotected_condom_granterSelf": "$evTarget.name$ puts on a condom.",
                 "event_OnAPRefuse_Unprotected_end": "$self.name$ gives up.",
                 "event_OnAPRefuse_Unprotected_push": "$self.name$ ignores $evTarget.name$'s request and keeps going.",
                 "event_OnAPRefuse_Unprotected_push_kojo": "%%event_OnAPRefuse_Unprotected_push%%\n\n$kojo_ignore$"

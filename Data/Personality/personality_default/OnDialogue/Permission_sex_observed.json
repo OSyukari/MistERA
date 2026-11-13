@@ -37,6 +37,30 @@
                         "\"有别人在的时候不可以。\""
                     ] } ]
                 }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_observed_LowConsciousness",
+                    "_comment": "意识模糊时，在有未参与者在场的房间里发生了性行为（需要被旁观的性行为许可）。不会被请求、也不算答应或拒绝，只是迷迷糊糊地察觉到。女性说话者。",
+                    "variants": [ { "responses": [
+                        "\"……有人……在看着……？\"",
+                        "\"……那边……是谁……好丢脸……\"",
+                        "\"……唔……看不清……\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_observed_LowConsciousness_Climax",
+                    "_comment": "意识模糊且正处于高潮时，在有人旁观的房间里发生了性行为，几乎无法组织语言。女性说话者。",
+                    "variants": [ { "responses": [
+                        "\"……啊……别、别看……\"",
+                        "\"……被看着……还……啊……\"",
+                        "\"……不要……看……\""
+                    ] } ]
+                }
             }
         ]
     }

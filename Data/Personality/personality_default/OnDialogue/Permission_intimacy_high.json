@@ -37,6 +37,30 @@
                         "\"不行，至少现在不行。\""
                     ] } ]
                 }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_intimacy_high_LowConsciousness",
+                    "_comment": "意识模糊时被做了需要亲密行为许可的事。不会被请求、也不算答应或拒绝，只是迷迷糊糊地察觉到。女性说话者。安全模式也加载，含蓄、不露骨。",
+                    "variants": [ { "responses": [
+                        "\"……诶……？我们……在做什么……\"",
+                        "\"……没、没力气……推开……\"",
+                        "\"……好奇怪……头好晕……\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_intimacy_high_LowConsciousness_Climax",
+                    "_comment": "意识模糊且正处于高潮时被做了需要亲密行为许可的事，几乎无法组织语言。女性说话者。安全模式也加载，含蓄、不露骨。",
+                    "variants": [ { "responses": [
+                        "\"……啊……脑子……一片空白……\"",
+                        "\"……不……等……啊……\"",
+                        "\"……什么都……想不了……\""
+                    ] } ]
+                }
             }
         ]
     }

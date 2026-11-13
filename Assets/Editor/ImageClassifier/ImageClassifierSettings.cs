@@ -38,6 +38,20 @@ public static class ImageClassifierSettings
         set => EditorPrefs.SetString(Prefix + "LastFolder", value);
     }
 
+    /// <summary>Database root (eg. ClassifierDatabase): every child folder is a standalone classifier folder.</summary>
+    public static string DatabaseFolder
+    {
+        get => EditorPrefs.GetString(Prefix + "DatabaseFolder", "ClassifierDatabase");
+        set => EditorPrefs.SetString(Prefix + "DatabaseFolder", value);
+    }
+
+    /// <summary>Extracted RisuAI chara folder (with card.json) for the asset rename.</summary>
+    public static string RisuFolder
+    {
+        get => EditorPrefs.GetString(Prefix + "RisuFolder", "");
+        set => EditorPrefs.SetString(Prefix + "RisuFolder", value);
+    }
+
     public static string ComfyUrl
     {
         get => EditorPrefs.GetString(Prefix + "ComfyUrl", "http://127.0.0.1:8188");

@@ -8,7 +8,9 @@
         "intimacyTags": "A command can ask for an intimacy tier explicitly with the comTag permission_intimacy_low / _medium / _high (e.g. the condom commands, which carry no 'sex' tag); the lower tiers exclude the higher tags so only the strongest applies.",
         "commandTags": "Commands needing anal permission carry the comTag permission_anal (A positions, finger insert, oral A, anal item insertion), vaginal ones permission_vaginal (V positions, finger insert, oral V, vaginal item insertion). The body_anus / body_vagina owner tag picks which side is the granter. Caress-only commands (legs caress C, P_V outside) carry neither; finger caress A carries permission_anal (2026-11-06). permission_sex_oral needs no command tag: its granter is whoever's own mouth the command uses (owner tag body_mouth) on any sex or condom command - a kiss asks both sides.",
         "dangerDay": "sex_dangerday_creampie (危险日生中出合意): penis-in-vagina while the vagina's owner is on a danger day - actor tag dangerDay from UtilityEX.GetActorTag (ReproductionUtility.IsDangerDay: ovulation phase / estrus, or a released unfertilized egg in a womb). It stacks with sex_vaginal. SoftEvent: an accepted act still missing it plays the condom demand OnAPRefuse_DangerDay (same answers as OnAPRefuse_Unprotected); ignoring it lets the act go on, and a creampie applies the consequences.",
-        "protection": "Context tag condom / partner_condom: the granter's / partner's organ in this act wears an empty condom (EvaluationPackage.IsActOrganProtected, EVP_ActOrgans - the chosen organ, or the one the pick will prefer). sex_unprotected and sex_dangerday_creampie exclude partner_condom; a filled condom is not protection.",
+        "protection": "Context tag condom / partner_condom: the granter's / partner's organ in this act wears an empty condom (EvaluationPackage.IsActOrganProtected, EVP_ActOrgans - the chosen organ, or the one the pick will prefer). sex_unprotected and sex_dangerday_creampie exclude partner_condom, sex_unprotected_penis excludes condom (the granter's own penis); a filled condom is not protection.",
+        "charaReq": "Optional CharaReq: what the granter's body needs for the permission to concern them at all - body-aware, never gender (Docs/Interactions/Plan_PermissionApplicability.md). Not met = the rules never match, no consequences, not requestable, and the dialogue box is hidden for that target (PermissionService.IsApplicable). A futa meets both [vagina] and [penis]; each act only matches the side it uses. Structural fields only (BodyTags, requireSlots, requireFertileWomb, race keywords, actor baseID, allowPlayer / allowNPC): cached per character until its body's parts change (Character_Body.IsPermissionApplicable); requireConscious / requireAction are turned off on load and other live fields are reported. requireFertileWomb = a registered womb that is not Womb_Infertile.",
+        "penisSide": "permission_sex_unprotected_penis: the penis owner's side of going raw (granter = body_penis, partner_body_vagina, own organ without condom). SoftEvent: the demand OnAPRefuse_Unprotected_Penis (granter asks for a condom: put it on them / they put it on themselves, ignore, give up) with demandSafeDayClaim - the requester may claim today is a safe day (a lie on their own danger day); the granter's request decision for this permission decides, no roll; accepted = a Temporary grant (ends with the scene) and the act resumes. permission_sex_dangerday_creampie_penis (危险日内射, same request requirements as the vagina owner's danger-day permission) adds the context tag partner_dangerDay (the partner is on a danger day with a fertile womb - EVP_Permissions.CollectPermissionPartnerTags); listed first so its demand OnAPRefuse_DangerDay_Penis plays when both are missing. Its claim is always a lie (the requester is on a danger day) and decides as permission_sex_unprotected_penis (safeDayClaimDecisionID - he believes it is safe); accepted = every permission the demand covers granted as Temporary. No consequences (fixed penalty only); lie fallout on a later pregnancy is not implemented. Penile acts otherwise stay under intimacy_high.",
         "tuning": "Null or omitted missingPermissionPenalty means unconfigured. The sex_* penalties are provisional. Intimacy -4/-6/-10 (2026-11-03, was -2/-3/-4): raised by the amount each tier's command base AC was lowered (2/3/6), so a held permission is the main way the consensual route becomes reachable while a missing one stays about where it was at High pride. Request Desire raised 2026-11-06 (Desire accumulates fast once intimacy starts; reaching it is the hard part): medium 50, high 100, vaginal 200, anal 250, unprotected 300 (Trust lowered 75 -> 50), danger-day Trust 150 (was 100), observed 1000, group 1500.",
         "skillBypass": "Optional { skillID, minLevel, excludedTraitIDs }: the granter's own skill at that level counts as the permission unless any excluded trait is present (PermissionEffectiveSource.SkillBypass). Nothing stored or requested; the act's own acceptance check still applies. Provisional: sex_anal = skill_sensitivity_A 3, sex_vaginal = skill_sensitivity_V 3; available for all Chastity traits.",
         "requests": "Both menu and automatic requests use PermissionService.CanRequest / AcceptsRequest: live pair, requestable, canAct granter and explicit requiredRelationshipTags, then every adjusted requestRequirements entry, no roll. Shipped intimacy has no requiredRelationshipTags. normalGrantRelationshipTags selects only NEW grant lifetime: sexual_partner = Normal, otherwise Temporary today. Existing Normal grants still use only requiredRelationshipTags for validity. Event/preset grants stay explicit. GrantPermission fourth argument Request opts menu requests into the shared decision and requestGrantType.",
@@ -96,6 +98,7 @@
                 "ID": "permission_sex_oral",
                 "displayName": "permission_sex_oral_displayName",
                 "tags": ["nsfw"],
+                "charaReq": { "BodyTags": ["mouth"] },
                 "normalGrantRelationshipTags": ["sexual_partner"],
                 "requestModifiers": [
                     { "displayName": "permission_request_partner", "relationshipTags": ["sexual_partner"], "thresholdScale": 0.8 },
@@ -120,6 +123,7 @@
                 "ID": "permission_sex_anal",
                 "displayName": "permission_sex_anal_displayName",
                 "tags": ["nsfw"],
+                "charaReq": { "BodyTags": ["anus"] },
                 "normalGrantRelationshipTags": ["sexual_partner"],
                 "requestModifiers": [
                     { "displayName": "permission_request_partner", "relationshipTags": ["sexual_partner"], "thresholdScale": 0.8 },
@@ -144,6 +148,7 @@
                 "ID": "permission_sex_vaginal",
                 "displayName": "permission_sex_vaginal_displayName",
                 "tags": ["nsfw"],
+                "charaReq": { "BodyTags": ["vagina"] },
                 "normalGrantRelationshipTags": ["sexual_partner"],
                 "requestModifiers": [
                     { "displayName": "permission_request_partner", "relationshipTags": ["sexual_partner"], "thresholdScale": 0.8 },
@@ -165,6 +170,7 @@
                 "ID": "permission_sex_dangerday_creampie",
                 "displayName": "permission_sex_dangerday_creampie_displayName",
                 "tags": ["nsfw"],
+                "charaReq": { "BodyTags": ["vagina"], "requireFertileWomb": true },
                 "normalGrantRelationshipTags": ["sexual_partner"],
                 "requestModifiers": [
                     { "displayName": "permission_request_partner", "relationshipTags": ["sexual_partner"], "thresholdScale": 0.8 },
@@ -190,6 +196,7 @@
                 "ID": "permission_sex_unprotected",
                 "displayName": "permission_sex_unprotected_displayName",
                 "tags": ["nsfw"],
+                "charaReq": { "BodyTags": ["vagina"] },
                 "normalGrantRelationshipTags": ["sexual_partner"],
                 "requestModifiers": [
                     { "displayName": "permission_request_partner", "relationshipTags": ["sexual_partner"], "thresholdScale": 0.8 },
@@ -210,6 +217,55 @@
                 "consequences": [
                     { "experienceID": "experience_sex_V_cum_total", "scores": [ { "score": "Trust", "multiplier": -1 }, { "score": "Badwill", "multiplier": 1 }, { "score": "Fear", "multiplier": 1 } ] }
                 ]
+            },
+            {
+                "ID": "permission_sex_dangerday_creampie_penis",
+                "displayName": "permission_sex_dangerday_creampie_penis_displayName",
+                "tags": ["nsfw"],
+                "charaReq": { "BodyTags": ["penis"] },
+                "normalGrantRelationshipTags": ["sexual_partner"],
+                "requestModifiers": [
+                    { "displayName": "permission_request_partner", "relationshipTags": ["sexual_partner"], "thresholdScale": 0.8 },
+                    { "displayName": "permission_request_caring_high", "traitID": "trait_Chastity_caring", "thresholdScale": 1.5 },
+                    { "displayName": "permission_request_indifferent_high", "traitID": "trait_Chastity_indifferent", "thresholdScale": 0.5 },
+                    { "displayName": "permission_request_innocent", "traitID": "trait_Chastity_innocent", "thresholdScale": 0.25 }
+                ],
+                "requestable": true,
+                "requestRequirements": [ {
+                    "requireScore": [ { "requireScoreID": "Trust", "operand": "gte", "value": 150 }, { "requireScoreID": "Goodwill", "operand": "gte", "value": 100 }, { "requireScoreID": "Desire", "operand": "gte", "value": 100 } ],
+                    "requireScoreCompare": [ { "requireScoreID": "Desire", "operand": "gt", "compareScoreID": "Badwill", "compareScoreMult": 1.0 } ],
+                    "requireMood": { "operand": "gte", "value": 0 }
+                } ],
+                "mode": "SoftEvent",
+                "demandEventID": "OnAPRefuse_DangerDay_Penis",
+                "demandSafeDayClaim": true,
+                "safeDayClaimDecisionID": "permission_sex_unprotected_penis",
+                "missingPermissionPenalty": -3,
+                "rules": [ { "RequiredOwnerTags": ["body_penis", "partner_body_vagina", "partner_dangerDay"], "ExcludeOwnerTags": ["condom"], "RequiredCOMTags": ["permission_vaginal", "penetration"] } ]
+            },
+            {
+                "ID": "permission_sex_unprotected_penis",
+                "displayName": "permission_sex_unprotected_penis_displayName",
+                "tags": ["nsfw"],
+                "charaReq": { "BodyTags": ["penis"] },
+                "normalGrantRelationshipTags": ["sexual_partner"],
+                "requestModifiers": [
+                    { "displayName": "permission_request_partner", "relationshipTags": ["sexual_partner"], "thresholdScale": 0.8 },
+                    { "displayName": "permission_request_caring_high", "traitID": "trait_Chastity_caring", "thresholdScale": 1.5 },
+                    { "displayName": "permission_request_indifferent_high", "traitID": "trait_Chastity_indifferent", "thresholdScale": 0.5 },
+                    { "displayName": "permission_request_innocent", "traitID": "trait_Chastity_innocent", "thresholdScale": 0.25 }
+                ],
+                "requestable": true,
+                "requestRequirements": [ {
+                    "requireScore": [ { "requireScoreID": "Trust", "operand": "gte", "value": 40 }, { "requireScoreID": "Desire", "operand": "gte", "value": 250 } ],
+                    "requireScoreCompare": [ { "requireScoreID": "Desire", "operand": "gt", "compareScoreID": "Badwill", "compareScoreMult": 1.0 } ],
+                    "requireMood": { "operand": "gte", "value": 0 }
+                } ],
+                "mode": "SoftEvent",
+                "demandEventID": "OnAPRefuse_Unprotected_Penis",
+                "demandSafeDayClaim": true,
+                "missingPermissionPenalty": -3,
+                "rules": [ { "RequiredOwnerTags": ["body_penis", "partner_body_vagina"], "ExcludeOwnerTags": ["condom"], "RequiredCOMTags": ["permission_vaginal", "penetration"] } ]
             },
             {
                 "ID": "permission_sex_group",

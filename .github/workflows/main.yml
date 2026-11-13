@@ -9,6 +9,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: game-release
+  cancel-in-progress: false
+
 jobs:
   build_and_package:
     runs-on: self-hosted
@@ -17,16 +21,82 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: Tools/MistEra.Updater/global.json
+
+      - name: Publish self-contained updater
+        shell: pwsh
+        env:
+          BUILD_DIR: ${{ secrets.BUILD_DIR }}
+        run: |
+          if (-not (Test-Path -LiteralPath $env:BUILD_DIR -PathType Container)) { throw 'BUILD_DIR does not exist' }
+          ./ci/publish_updater.ps1 -BuildDir $env:BUILD_DIR
+
+      - name: Validate identity and package updater artifact
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BUILD_DIR: ${{ secrets.BUILD_DIR }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          $info = Get-Content -LiteralPath "$env:BUILD_DIR/build-info.json" -Raw | ConvertFrom-Json
+          $pages = gh api --paginate --slurp "repos/$env:GITHUB_REPOSITORY/releases?per_page=100" | ConvertFrom-Json
+          if ($LASTEXITCODE -ne 0) { throw 'Cannot verify previous releases' }
+          $releases = @($pages | ForEach-Object { $_ })
+          $previous = 0L
+          foreach ($release in $releases) {
+            if ($release.draft -or $release.tag_name -eq 'mods') { continue }
+            if (@($release.assets | Where-Object name -eq 'game-update.json').Count -eq 0) { continue }
+            $temp = Join-Path $env:RUNNER_TEMP ([guid]::NewGuid().ToString('N'))
+            New-Item -ItemType Directory -Path $temp | Out-Null
+            try {
+              gh release download $release.tag_name --repo $env:GITHUB_REPOSITORY --pattern game-update.json --dir $temp
+              if ($LASTEXITCODE -ne 0) { throw 'Cannot verify published identity' }
+              $old = Get-Content -LiteralPath "$temp/game-update.json" -Raw | ConvertFrom-Json
+              if ($old.channel -eq $info.channel -and $old.platform -eq $info.platform) { $previous = [Math]::Max($previous, [long]$old.buildNumber) }
+            } finally { Remove-Item -LiteralPath $temp -Recurse -Force }
+          }
+          ./ci/package_updates.ps1 -BuildDir $env:BUILD_DIR -ReleaseTag $env:RELEASE_TAG -Channel $info.channel -PreviousBuildNumber $previous
+
       - name: Zip the build directory
         # leaves out Save/ and Mods/ (except Mods/Assetpacks/Image_Generation_Config.json)
         shell: pwsh
-        run: ./ci/zip_demo.ps1 "${{ secrets.BUILD_DIR }}" "MistEra-${{ github.ref_name }}.7z" "${{ secrets.ZIP_PASSWORD }}"
+        env:
+          BUILD_DIR: ${{ secrets.BUILD_DIR }}
+          RELEASE_TAG: ${{ github.ref_name }}
+          ZIP_PASSWORD: ${{ secrets.ZIP_PASSWORD }}
+        run: ./ci/zip_demo.ps1 $env:BUILD_DIR "MistEra-$env:RELEASE_TAG.7z" $env:ZIP_PASSWORD
 
-      - name: Create GitHub Release and upload artifact
+      - name: Create draft and upload all artifacts
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
           name: MistEra ${{ github.ref_name }}
-          files: MistEra-${{ github.ref_name }}.7z
+          draft: true
+          fail_on_unmatched_files: true
+          files: |
+            MistEra-${{ github.ref_name }}.7z
+            MistEra-*-windows-x64-update.zip
+            game-update.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify uploaded artifacts and publish
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          $manifest = Get-Content game-update.json -Raw | ConvertFrom-Json
+          $verify = Join-Path $env:RUNNER_TEMP ([guid]::NewGuid().ToString('N'))
+          New-Item -ItemType Directory -Path $verify | Out-Null
+          try {
+            gh release download $env:RELEASE_TAG --repo $env:GITHUB_REPOSITORY --dir $verify
+            if ($LASTEXITCODE -ne 0) { throw 'Release download verification failed' }
+            foreach ($file in @($manifest.asset, 'game-update.json', "MistEra-$env:RELEASE_TAG.7z")) {
+              if ((Get-FileHash -LiteralPath $file).Hash -ne (Get-FileHash -LiteralPath (Join-Path $verify $file)).Hash) { throw "Uploaded bytes differ: $file" }
+            }
+            gh release edit $env:RELEASE_TAG --repo $env:GITHUB_REPOSITORY --draft=false
+            if ($LASTEXITCODE -ne 0) { throw 'Release publication failed' }
+          } finally { Remove-Item -LiteralPath $verify -Recurse -Force }

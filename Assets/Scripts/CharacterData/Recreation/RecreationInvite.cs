@@ -43,6 +43,15 @@ public class RecreationInviteSpec
     public List<RecreationInviteTarget> TargetValidators = new List<RecreationInviteTarget>();
     /// <summary>Extending invitations (self = a participant reached by the session's own scope, whose role is in fromRoles). Empty = none.</summary>
     public List<RecreationInviteTarget> InviteeValidators = new List<RecreationInviteTarget>();
+    /// <summary>
+    /// Group invitations (Docs/Activities/Plan_GroupInvitations.md): every NPC who books sends one invitation chosen by
+    /// this class (RecreationInvitationValidator), to a whole household / organization or one person; nobody books alone.
+    /// Null = the InviteeValidators path.
+    /// </summary>
+    public RecreationInvitationValidatorDef invitationValidator = null;
+
+    /// <summary>Sessions of this spec use group invitations (an invitationValidator whose class is known).</summary>
+    [JsonIgnore] public bool UsesGroupInvites { get { return invitationValidator?.Validator != null; } }
 
     [JsonIgnore] public bool IsMandatory { get { return TargetValidators != null && TargetValidators.Exists(t => t != null && t.required); } }
 

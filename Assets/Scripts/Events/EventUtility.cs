@@ -2612,9 +2612,26 @@ public static class EventUtility
                 }
                 return false;
             case Event.EventEntry.ExecutionType.WashTraces:
-                if (exec.arguments.Count != 1 || !TryResolveExecTargets(owner, exec.arguments[0], out var washTargets)
+            case Event.EventEntry.ExecutionType.WipeTraces:
+            {
+                // [scopeKey, optional reportKey, optional bodyTag...]
+                if (exec.arguments.Count < 1 || !TryResolveExecTargets(owner, exec.arguments[0], out var washTargets)
                     || washTargets == null || washTargets.Count != 1 || washTargets[0]?.Body == null) return false;
-                return washTargets[0].Body.WashTraces();
+                string reportKey = exec.arguments.Count >= 2 ? exec.arguments[1] : "";
+                List<string> areaTags = null;
+                for (int ai = 2; ai < exec.arguments.Count; ai++)
+                {
+                    if (string.IsNullOrEmpty(exec.arguments[ai])) continue;
+                    if (areaTags == null) areaTags = new List<string>();
+                    areaTags.Add(exec.arguments[ai]);
+                }
+                var report = reportKey == "" ? null : new List<string>();
+                var action = exec.Type == Event.EventEntry.ExecutionType.WipeTraces ? TraceCleanAction.Wipe : TraceCleanAction.Wash;
+                bool cleaned = action == TraceCleanAction.Wipe ? washTargets[0].Body.WipeTraces(areaTags, report) : washTargets[0].Body.WashTraces(areaTags, report);
+                if (report != null && report.Count > 0)
+                    owner.AppendStrings[reportKey] = new List<string>() { string.Join(LocalizeDictionary.QueryThenParse("trace_clean_separator"), report) };
+                return cleaned;
+            }
             case Event.EventEntry.ExecutionType.SwallowInternal:
                 // [string refkey, string bodyTag, bool fullDeflate, optional string appendKey]
                 if (exec.arguments.Count >= 3 && bool.TryParse(exec.arguments[2], out var swallowFullDeflate))

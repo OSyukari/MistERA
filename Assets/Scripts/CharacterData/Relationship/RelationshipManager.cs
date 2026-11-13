@@ -1091,6 +1091,48 @@ public class RelationshipManager
         if (relationships.TryGetValue(c.RefID, out var rel)) return rel;
         else return MakeRelationshipWith(c);
     }
+    /// <summary>
+    /// Meets every already-spawned character named in Owner's Template.initialRelationship that Owner has no
+    /// relationship with yet, so preset pairs (e.g. a couple living in different factions) start the campaign
+    /// knowing each other instead of waiting for the lazy meet-in-room path. FindRelationshipWith applies the
+    /// preset and propagates it to the other side. "PLAYER" resolves to the campaign player. byBaseID is the
+    /// baseID index built once by WorldManager.MeetPresetRelationships; null (single spawn) falls back to
+    /// FindRefIDByBaseID per preset.
+    /// </summary>
+    public void MeetPresetTargets(Dictionary<string, List<Character_Trainable>> byBaseID = null)
+    {
+        var presets = Owner.Template?.initialRelationship;
+        if (presets == null || presets.Count == 0) return;
+        var campaign = scr_System_CampaignManager.current;
+        for (int i = 0; i < presets.Count; i++)
+        {
+            var baseID = presets[i]?.baseID;
+            if (string.IsNullOrEmpty(baseID)) continue;
+            if (baseID == "PLAYER")
+            {
+                MeetPresetTarget(campaign.Player);
+                continue;
+            }
+            if (byBaseID != null)
+            {
+                if (!byBaseID.TryGetValue(baseID, out var targets)) continue;
+                for (int j = 0; j < targets.Count; j++) MeetPresetTarget(targets[j]);
+            }
+            else
+            {
+                var refs = campaign.FindRefIDByBaseID(baseID);
+                if (refs == null) continue;
+                for (int j = 0; j < refs.Count; j++) MeetPresetTarget(campaign.FindInstanceByID(refs[j]));
+            }
+        }
+    }
+
+    void MeetPresetTarget(Character_Trainable target)
+    {
+        if (target == null || target.RefID < 0 || target.RefID == Owner.RefID || relationships.ContainsKey(target.RefID)) return;
+        FindRelationshipWith(target);
+    }
+
     protected Character_Relationship MakeRelationshipWith(Character_Trainable chara)
     {
         if (chara == null) return null;

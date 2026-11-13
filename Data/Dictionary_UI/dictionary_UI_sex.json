@@ -4,6 +4,7 @@
             "zh-cn": {
                 "relationship_attraction_eligible": "是否会被 $target$ 吸引：是",
                 "relationship_attraction_ineligible": "是否会被 $target$ 吸引：否",
+                "ui_ap_CharaReqUtility_requireFertileWomb": "需要$name$拥有可受孕的子宫",
 "ui_debug_tooltip2":"EX1. 全局射精量X5\nEX2. 怀孕率无视种族限制\nEX3. 调教指令失败后强行要求必定成功",
                 
 "ui_currentSexJob_swapTargets": "< 交换对象 >",

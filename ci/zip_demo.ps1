@@ -20,7 +20,7 @@ $dir = (Resolve-Path -LiteralPath $BuildDir).Path.TrimEnd('\', '/')
 $name = Split-Path $dir -Leaf
 $parent = Split-Path $dir -Parent
 # resolve the archive path before changing directory
-$archivePath = [IO.Path]::GetFullPath((Join-Path (Get-Location) $Archive))
+$archivePath = if ([IO.Path]::IsPathRooted($Archive)) { [IO.Path]::GetFullPath($Archive) } else { [IO.Path]::GetFullPath((Join-Path (Get-Location) $Archive)) }
 if (Test-Path -LiteralPath $archivePath) { Remove-Item -LiteralPath $archivePath -Force }
 
 $pw = @()
@@ -34,7 +34,10 @@ function Invoke-7z([string[]]$arguments) {
 Push-Location $parent
 try {
     # exclusions are paths relative to the archive root, so only the top-level Save/Mods are dropped
-    Invoke-7z (@('a', '-t7z', $archivePath, $name, "-x!$name\Save", "-x!$name\Mods") + $pw)
+    Invoke-7z (@('a', '-t7z', $archivePath, $name, "-x!$name\Save", "-x!$name\Mods", "-x!$name\.updates",
+        '-xr!.git', '-xr!Library', '-xr!Temp', '-xr!Logs', '-xr!obj', '-xr!bin', '-xr!backup', '-xr!backups',
+        '-xr!*_BackUpThisFolder_ButDontShipItWithYourGame', '-xr!*_BurstDebugInformation_DoNotShip',
+        '-xr!*.meta', '-xr!*.pdb', '-xr!*.texcache', '-xr!*.tmp', '-xr!*.bak', '-xr!*.old', '-xr!*.log') + $pw)
 
     $config = "$name\Mods\Assetpacks\Image_Generation_Config.json"
     if (Test-Path -LiteralPath $config) {

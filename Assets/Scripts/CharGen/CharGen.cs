@@ -143,6 +143,8 @@ public class CharaTemplateGenerator : I_CharaGen
         // Appearance left unset keeps whatever gender the picked base/child generator already has,
         // so a generator can mix male and female children without overwriting them.
         if (Appearance.HasValue) template.Template.SetGender(Appearance.Value);
+        // like Appearance: the outermost generator that sets it wins (the personality is read at Initialize)
+        if (!string.IsNullOrEmpty(personalityIDOverride)) template.Template.personalityID = personalityIDOverride;
         if (useNameGen)
         {
             scr_System_Serializer.current.MasterList.Character_Bases.GenerateNamesFor(template, template.Template.Appearance, nameGen_firstName, nameGen_middleName, nameGen_lastName, nameDisplayFormat);
@@ -183,6 +185,9 @@ public class CharaTemplateGenerator : I_CharaGen
     public int str_base = 0, str_var = 0, con_base = 0, con_var = 0, psy_base = 0, psy_var = 0, wil_base = 0, wil_var = 0;
     /// <summary>Forced gender for generated characters; null (omitted in JSON) keeps the base/child's own.</summary>
     public Humanoid_GenderAppearance? Appearance = null;
+    /// <summary>Personality for generated characters (e.g. the gendered voice when a gender-neutral base is shared); empty
+    /// keeps the base/child's own.</summary>
+    public string personalityIDOverride = "";
     public List<presetInventory> inventoryOverride = new List<presetInventory>();
     public List<string> basicExperienceOverride = new List<string>();
     public List<string> experienceOverride = new List<string>();

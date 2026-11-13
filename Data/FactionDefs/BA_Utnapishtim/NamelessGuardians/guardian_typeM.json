@@ -31,7 +31,7 @@
       "stat_CON": 6,
       "stat_PSY": 10,
       "stat_WIL": 10,
-      "personalityID": "personality_default",
+      "personalityID": "personality_base_animal",
       "traits_body_sex": [
           "trait_Sensitivity_B_default", "trait_Sensitivity_M_default", "trait_Sensitivity_C_default",
           "trait_Sensitivity_V_default", "trait_Sensitivity_A_default",

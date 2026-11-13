@@ -181,6 +181,8 @@ public class scr_Menu_Intro : scr_Menu
 
     public RectTransform prefab_menuCanvas_UserPrefs;
 
+    public RectTransform prefab_menuCanvas_Updates;
+
     Dictionary<string, int> dictionary_presetID_path;
 
     public scr_HoverableText version;
@@ -221,6 +223,8 @@ public class scr_Menu_Intro : scr_Menu
                     break;
                 case 5:
                     button.Initialize(this, new ButtonValidator_HoverMessage(this, button));break;
+                case 6:
+                    button.Initialize(this, new ButtonValidator_OpenUpdates(this, button)); break;
                 case 10:
                     button.Initialize(this, new ButtonValidator_ToggleLanguage(this, button, true)); break;
                 case 11:
@@ -242,6 +246,22 @@ public class scr_Menu_Intro : scr_Menu
 
         ValidateAll();
 
+        // the startup check finishes after the intro is shown: re-validate only the updates button on change
+        updateService = MistEra.Updates.UpdateService.EnsureCreated();
+        updateService.Changed += OnUpdateServiceChanged;
+    }
+
+    MistEra.Updates.UpdateService updateService;
+
+    void OnUpdateServiceChanged()
+    {
+        if (buttonsByID != null && buttonsByID.TryGetValue(6, out var button)) button.Validate();
+    }
+
+    protected override void OnDestroy()
+    {
+        if (updateService != null) updateService.Changed -= OnUpdateServiceChanged;
+        base.OnDestroy();
     }
 
     public override void ValidateAll()
@@ -284,6 +304,11 @@ public class scr_Menu_Intro : scr_Menu
         public override bool IsButtonValid()
         {
             this.tooltip = "";
+            if (scr_Menu_Updates.GameplayBlocked)
+            {
+                this.tooltip = scr_Menu_Updates.Text("restart_required");
+                return false;
+            }
             if (!Directory.Exists(scr_System_Serializer.SavePath))
             {
                 this.tooltip = errorMSG;
@@ -297,18 +322,21 @@ public class scr_Menu_Intro : scr_Menu
 
         public void OnClickButton()
         {
+            if (parent.BlockGameplayForUpdate()) return;
             scr_System_SceneManager.current.LoadCanvasIntoScene(parent.prefab_Canvas_LoadSave, parent.m_Canvas.GetComponent<RectTransform>());
         }
     }
 
     public void OpenCharaSelect()
     {
+        if (BlockGameplayForUpdate()) return;
         var cselect = scr_System_SceneManager.current.LoadCanvasIntoScene(prefab_menuCanvas_CharaSelect, this.GetComponent<RectTransform>()).GetComponent<scr_Menu_CharaSelect>();
         cselect.InitializeWithArguments(null, null);
     }
 
     public void OpenNewGame()
     {
+        if (BlockGameplayForUpdate()) return;
         scr_System_SceneManager.current.LoadCanvasIntoScene(prefab_menuCanvas_NewGame, this.GetComponent<RectTransform>()).GetComponent<scr_MenuCanvas_NewGame>();
     }
 
@@ -320,8 +348,57 @@ public class scr_Menu_Intro : scr_Menu
     //ContentSizeFitter fitter;
     //Vector3 worldPointInRectangle;
 
+    /// <summary>
+    /// Updates entry (optionID 6): with automatic launch checks on and an update found (newer game build or new
+    /// revision of an updater-installed mod), the label becomes "Update detected" and the button takes its toggled
+    /// (highlight) color. Always clickable; the click opens the panel through Notify.
+    /// </summary>
+    public class ButtonValidator_OpenUpdates : ButtonValidator
+    {
+        readonly scr_SelectableText button;
+        readonly string label;
+        bool detectedShown;
+
+        public ButtonValidator_OpenUpdates(scr_Menu_Intro parent, scr_SelectableText button) : base(parent)
+        {
+            this.button = button;
+            button.isButtonToggle = true;
+            var hover = button.GetComponent<scr_HoverableText>();
+            label = hover != null && hover.replaceText != "" ? hover.replaceText : "updates_title";
+        }
+
+        public override bool IsButtonValid()
+        {
+            var service = MistEra.Updates.UpdateService.Instance;
+            bool detected = service != null && service.AutomaticChecks && service.UpdatesAvailable;
+            if (detected != detectedShown)
+            {
+                detectedShown = detected;
+                button.SetText(detected ? "updates_entry_detected" : label);
+            }
+            button.Toggle(true, detected);
+            state = ButtonValidator_States.Valid;
+            tooltip = "";
+            return true;
+        }
+    }
+
+    public void OpenUpdates()
+    {
+        scr_Menu_Updates.Open(prefab_menuCanvas_Updates, this.GetComponent<RectTransform>());
+    }
+
+    bool BlockGameplayForUpdate()
+    {
+        if (!scr_Menu_Updates.GameplayBlocked) return false;
+        OpenUpdates();
+        return true;
+    }
+
     public override void Notify(int optionID)
     {
+
+        if ((optionID == 0 || optionID == 1 || optionID == 3) && BlockGameplayForUpdate()) return;
 
         //Debug.Log("Parent Notified ! [" + optionID + "]");
         ButtonValidator validator = validatorsByID[optionID];
@@ -346,6 +423,9 @@ public class scr_Menu_Intro : scr_Menu
                     //panel_EditPreset.gameObject.SetActive(true);  //setactive is disruptive
                     //RebuildPresetList();
                     OpenCharaSelect();                    
+                    break;
+                case 6: // Updates & Mods
+                    OpenUpdates();
                     break;
                 case 4: // Quit
 #if UNITY_EDITOR

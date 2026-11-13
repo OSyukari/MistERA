@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Image database analysis</title>
+<!--
+  Template of <database>/_database_analysis.html (Tools/Image Classifier > Database > Analyze all folders).
+  ImageDatabaseAnalysis.cs only replaces the REPORT_DATA slot below with the merged data as JSON (shape documented on BuildJson);
+  everything else - layout, styling, filters, hover preview - lives here and can be edited without recompiling.
+  Re-run "Analyze all folders" to apply a template change to the report.
+-->
+<style>
+:root {
+  --bg: #f6f6f4; --panel: #ffffff; --text: #1d1d1b; --muted: #6b6b66; --line: #deded8; --accent: #3a6fd8;
+  --low: #e08a00; --unmatched: #d33a3a; --disagree: #3a88ff; --kept: #9a9a9a;
+  --thumb: 72px;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #161615; --panel: #1f1f1e; --text: #e6e6e1; --muted: #9a9a93; --line: #34342f; --accent: #7aa2f7; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+a { color: var(--accent); }
+header { padding: 16px 20px 8px; }
+header h1 { margin: 0 0 4px; font-size: 20px; }
+header .meta { color: var(--muted); font-size: 12px; }
+main { padding: 0 20px 40px; }
+details.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; margin: 8px 0; padding: 6px 12px; }
+details.panel > summary { cursor: pointer; font-weight: 600; padding: 4px 0; }
+table.folders { border-collapse: collapse; margin: 6px 0 4px; font-size: 13px; }
+table.folders th, table.folders td { border-bottom: 1px solid var(--line); padding: 3px 10px; text-align: right; }
+table.folders th:first-child, table.folders td:first-child { text-align: left; }
+table.folders td.skip { text-align: left; color: var(--muted); }
+table.folders tr.total td { font-weight: 600; border-bottom: none; }
+ul.lint { margin: 4px 0; padding-left: 18px; font-size: 13px; }
+
+.toolbar { position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line);
+  display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; padding: 8px 20px; font-size: 13px; }
+.toolbar label { display: inline-flex; gap: 6px; align-items: center; color: var(--muted); }
+.toolbar select, .toolbar input[type=search] { font: inherit; color: var(--text); background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 2px 6px; }
+.toolbar .count { margin-left: auto; color: var(--muted); }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--muted); margin: 6px 0 2px; }
+.legend span::before { content: ""; display: inline-block; width: 12px; height: 12px; margin-right: 5px; vertical-align: -2px; border: 2px solid transparent; border-radius: 2px; }
+.legend .l-low::before { border-color: var(--low); }
+.legend .l-unmatched::before { border-color: var(--unmatched); }
+.legend .l-disagree::before { border: 2px dashed var(--disagree); }
+.legend .l-kept::before { border: 2px dashed var(--kept); }
+
+section.cat { margin-top: 18px; }
+section.cat h2 { font-size: 16px; margin: 0 0 6px; scroll-margin-top: 56px; }
+section.cat h2 .n { color: var(--muted); font-weight: 400; }
+.rows { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; }
+.row { display: flex; border-bottom: 1px solid var(--line); }
+.row:last-child { border-bottom: none; }
+.row .name { flex: 0 0 170px; padding: 6px 10px; border-right: 1px solid var(--line); word-break: break-word; }
+.row .name b { display: block; }
+.row .name small { color: var(--muted); }
+.row .name small .w-low { color: var(--low); }
+.row .name small .w-unmatched { color: var(--unmatched); }
+.row .thumbs { flex: 1; display: flex; flex-wrap: wrap; gap: 4px; padding: 5px; align-content: flex-start; }
+.thumbs a { display: block; width: var(--thumb); height: var(--thumb); border: 2px solid transparent; border-radius: 3px; background: var(--bg); }
+.thumbs a img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.thumbs a.low { border-color: var(--low); }
+.thumbs a.unmatched { border-color: var(--unmatched); }
+.thumbs a.disagree { border: 2px dashed var(--disagree); }
+.thumbs a.kept { border: 2px dashed var(--kept); }
+.thumbs a:hover { outline: 2px solid var(--accent); outline-offset: 1px; }
+.empty { color: var(--muted); padding: 20px 0; }
+
+#preview { position: fixed; z-index: 20; pointer-events: none; display: none; background: var(--panel); border: 1px solid var(--line);
+  border-radius: 6px; box-shadow: 0 6px 24px rgba(0,0,0,.35); padding: 6px; max-width: 92vw; }
+#preview img { display: block; max-width: var(--preview); max-height: var(--preview); width: auto; height: auto; margin: 0 auto; }
+#preview .info { font-size: 12px; white-space: pre-wrap; margin-top: 6px; max-width: var(--preview); color: var(--text); }
+#preview .info .p { font-weight: 600; word-break: break-all; }
+
+@media (max-width: 640px) {
+  header, main, .toolbar { padding-left: 16px; padding-right: 16px; }
+  .row { flex-direction: column; }
+  .row .name { flex: none; border-right: none; border-bottom: 1px solid var(--line); }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1 id="title">Image database analysis</h1>
+  <div class="meta" id="meta"></div>
+</header>
+
+<div class="toolbar">
+  <label>Category <select id="f-cat"><option value="">All</option></select></label>
+  <label>Folder <select id="f-folder"><option value="">All</option></select></label>
+  <label>Show <select id="f-status">
+    <option value="">Everything</option>
+    <option value="flagged">Flagged only</option>
+    <option value="low">Low confidence</option>
+    <option value="unmatched">Unmatched</option>
+    <option value="disagree">Folder vs rules</option>
+    <option value="kept">Moved out by you</option>
+  </select></label>
+  <label>Name <input type="search" id="f-name" placeholder="filter names" size="14"></label>
+  <label>Thumbs <input type="range" id="f-size" min="40" max="160" step="8"></label>
+  <label>Preview <select id="f-preview">
+    <option value="0">Off</option><option value="256">256</option><option value="384">384</option><option value="512">512</option><option value="720">720</option>
+  </select></label>
+  <span class="count" id="count"></span>
+</div>
+
+<main>
+  <details class="panel" id="folders-panel"><summary>Folders</summary><div id="folders"></div></details>
+  <details class="panel" id="lint-panel"><summary id="lint-title">Rule check</summary><ul class="lint" id="lint"></ul></details>
+  <div class="legend">
+    <span>no frame = confident</span><span class="l-low">low confidence</span><span class="l-unmatched">unmatched</span>
+    <span class="l-disagree">folder decided, rules disagree</span><span class="l-kept">moved out by you</span>
+    <span>hover = large preview + details · click = open image</span>
+  </div>
+  <div id="cats"></div>
+  <details class="panel" id="unused-panel"><summary>Rules that matched no image in any folder</summary><ul class="lint" id="unused"></ul></details>
+</main>
+
+<div id="preview"><img alt=""><div class="info"></div></div>
+
+<script>
+window.REPORT = /*__REPORT_DATA__*/null;
+</script>
+<script>
+(function () {
+  "use strict";
+  var R = window.REPORT;
+  var $ = function (id) { return document.getElementById(id); };
+  if (!R) {
+    $("cats").innerHTML = '<p class="empty">No data: this is the report template. Run Tools/Image Classifier &gt; Database &gt; Analyze all folders.</p>';
+    return;
+  }
+
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+  var store = {
+    get: function (k, d) { try { var v = localStorage.getItem("dbreport." + k); return v == null ? d : v; } catch (e) { return d; } },
+    set: function (k, v) { try { localStorage.setItem("dbreport." + k, v); } catch (e) {} }
+  };
+
+  // ---- header + panels
+  document.title = "Image database - " + R.title;
+  $("title").textContent = "Image database analysis - " + R.title;
+  $("meta").innerHTML = "Generated " + esc(R.generated) + " · " + esc(R.root) + " · <a href=\"" + esc(R.mdReport) + "\">markdown version</a>";
+
+  var t = { analyzed: 0, confident: 0, low: 0, unmatched: 0 };
+  var fh = '<table class="folders"><tr><th>Folder</th><th>Analyzed</th><th>Confident</th><th>Low</th><th>Unmatched</th><th>Not tagged</th><th>Report</th></tr>';
+  R.folders.forEach(function (f) {
+    if (f.skipped != null) { fh += "<tr><td>" + esc(f.name) + '</td><td class="skip" colspan="6">' + esc(f.skipped) + "</td></tr>"; return; }
+    t.analyzed += f.analyzed; t.confident += f.confident; t.low += f.low; t.unmatched += f.unmatched;
+    fh += "<tr><td>" + esc(f.name) + "</td><td>" + f.analyzed + "</td><td>" + f.confident + "</td><td>" + f.low + "</td><td>" + f.unmatched +
+          "</td><td>" + f.untagged + '</td><td><a href="' + esc(f.report) + '">report</a></td></tr>';
+  });
+  fh += '<tr class="total"><td>Total</td><td>' + t.analyzed + "</td><td>" + t.confident + "</td><td>" + t.low + "</td><td>" + t.unmatched + "</td><td></td><td></td></tr></table>";
+  $("folders").innerHTML = fh;
+
+  $("lint-title").textContent = "Rule check (" + R.lint.length + ")";
+  $("lint").innerHTML = R.lint.length ? R.lint.map(function (l) { return "<li>" + esc(l) + "</li>"; }).join("") : "<li>No problems found.</li>";
+
+  if (R.unused) {
+    var u = R.unused, list = function (a) { return a.length ? esc(a.join(", ")) : "none"; };
+    var uh = "<li>Categories: " + list(u.categories) + "</li>";
+    u.names.forEach(function (s) { uh += "<li>" + esc(s.set) + ": " + list(s.names) + "</li>"; });
+    uh += "<li>Variants: " + list(u.variants) + "</li>";
+    $("unused").innerHTML = uh;
+  } else {
+    $("unused-panel").style.display = "none";
+  }
+
+  // ---- filters
+  var catSel = $("f-cat"), folderSel = $("f-folder"), statusSel = $("f-status"), nameIn = $("f-name"), sizeIn = $("f-size"), previewSel = $("f-preview");
+  R.categories.forEach(function (c, i) {
+    var o = document.createElement("option"); o.value = String(i); o.textContent = c.id + " (" + c.count + ")"; catSel.appendChild(o);
+  });
+  R.folders.forEach(function (f, i) {
+    if (f.skipped != null) return;
+    var o = document.createElement("option"); o.value = String(i); o.textContent = f.name; folderSel.appendChild(o);
+  });
+  statusSel.value = store.get("status", "");
+  sizeIn.value = store.get("size", "72");
+  previewSel.value = store.get("preview", "384");
+  var savedFolder = store.get("folder", "");
+  if (savedFolder && R.folders[+savedFolder] && R.folders[+savedFolder].skipped == null) folderSel.value = savedFolder;
+
+  function applySize() {
+    document.documentElement.style.setProperty("--thumb", sizeIn.value + "px");
+    document.documentElement.style.setProperty("--preview", previewSel.value + "px");
+  }
+
+  function frameClass(it) {
+    if (it.keptOut) return "kept";
+    if (it.status === "unmatched") return "unmatched";
+    if (it.status === "low") return "low";
+    if (it.disagree) return "disagree";
+    return "";
+  }
+  function passes(it, folder, status) {
+    if (folder !== "" && it.f !== +folder) return false;
+    switch (status) {
+      case "": return true;
+      case "flagged": return frameClass(it) !== "";
+      case "low": return !it.keptOut && it.status === "low";
+      case "unmatched": return !it.keptOut && it.status === "unmatched";
+      case "disagree": return !!it.disagree;
+      case "kept": return !!it.keptOut;
+    }
+    return true;
+  }
+
+  // flat item index for the hover preview (data-i on each thumb)
+  var items = [];
+
+  function render() {
+    var cat = catSel.value, folder = folderSel.value, status = statusSel.value, q = nameIn.value.trim().toLowerCase();
+    var html = "", shown = 0, total = 0;
+    items = [];
+    R.categories.forEach(function (c, ci) {
+      if (cat !== "" && ci !== +cat) return;
+      var rows = "", catShown = 0;
+      c.clusters.forEach(function (cl) {
+        total += cl.items.length;
+        if (q && cl.name.toLowerCase().indexOf(q) < 0) return;
+        var thumbs = "", n = 0, low = 0, un = 0;
+        cl.items.forEach(function (it) {
+          if (!passes(it, folder, status)) return;
+          n++;
+          if (!it.keptOut && it.status === "low") low++;
+          if (!it.keptOut && it.status === "unmatched") un++;
+          var idx = items.length; items.push(it);
+          thumbs += '<a class="' + frameClass(it) + '" href="' + esc(it.src) + '" data-i="' + idx + '" target="_blank">' +
+                    '<img src="' + esc(it.src) + '" loading="lazy" alt=""></a>';
+        });
+        if (!n) return;
+        catShown += n;
+        rows += '<div class="row"><div class="name"><b>' + esc(cl.name) + "</b><small>" + n + (n !== cl.items.length ? " / " + cl.items.length : "") +
+                (low ? ' · <span class="w-low">' + low + " low</span>" : "") + (un ? ' · <span class="w-unmatched">' + un + " unmatched</span>" : "") +
+                '</small></div><div class="thumbs">' + thumbs + "</div></div>";
+      });
+      if (!catShown) return;
+      shown += catShown;
+      html += '<section class="cat"><h2 id="cat-' + ci + '">' + esc(c.id) + ' <span class="n">(' + catShown + (catShown !== c.count ? " / " + c.count : "") +
+              ')</span></h2><div class="rows">' + rows + "</div></section>";
+    });
+    $("cats").innerHTML = html || '<p class="empty">Nothing matches the filters.</p>';
+    if (cat === "") total = R.categories.reduce(function (s, c) { return s + c.count; }, 0);
+    $("count").textContent = shown + " of " + total + " images";
+  }
+
+  [catSel, folderSel, statusSel].forEach(function (el) {
+    el.addEventListener("change", function () {
+      store.set("status", statusSel.value); store.set("folder", folderSel.value);
+      render(); window.scrollTo(0, 0);
+    });
+  });
+  var nameTimer;
+  nameIn.addEventListener("input", function () { clearTimeout(nameTimer); nameTimer = setTimeout(render, 150); });
+  sizeIn.addEventListener("input", function () { store.set("size", sizeIn.value); applySize(); });
+  previewSel.addEventListener("change", function () { store.set("preview", previewSel.value); applySize(); });
+
+  // ---- hover preview
+  var pv = $("preview"), pvImg = pv.querySelector("img"), pvInfo = pv.querySelector(".info"), current = -1;
+  function info(it) {
+    var f = R.folders[it.f].name;
+    var s = '<span class="p">' + esc(f + "/" + it.path) + "</span>";
+    if (it.original) s += "\nOriginal name: " + esc(it.original);
+    s += "\n" + esc(it.status === "low" ? "Low confidence" : it.status === "unmatched" ? "Unmatched" : "Confident") + (it.keptOut ? " (kept out)" : "");
+    if (it.disagree) s += " · rules say " + esc(it.rulesSay);
+    s += "\n" + esc(it.source) + "\n" + esc(it.score);
+    if (it.why) s += "\nWhy: " + esc(it.why);
+    if (it.notes) s += "\nCategory notes: " + esc(it.notes);
+    return s;
+  }
+  function place(e) {
+    var pad = 16, w = pv.offsetWidth, h = pv.offsetHeight, vw = window.innerWidth, vh = window.innerHeight;
+    var x = e.clientX + pad, y = e.clientY + pad;
+    if (x + w > vw - 4) x = Math.max(4, e.clientX - pad - w);
+    if (y + h > vh - 4) y = Math.max(4, vh - h - 4);
+    pv.style.left = x + "px"; pv.style.top = y + "px";
+  }
+  $("cats").addEventListener("mouseover", function (e) {
+    var a = e.target.closest ? e.target.closest("a[data-i]") : null;
+    if (!a || previewSel.value === "0") return;
+    var i = +a.getAttribute("data-i");
+    if (i !== current) {
+      current = i;
+      var it = items[i];
+      pvImg.src = it.src;
+      pvInfo.innerHTML = info(it);
+    }
+    pv.style.display = "block";
+    place(e);
+  });
+  $("cats").addEventListener("mousemove", function (e) { if (pv.style.display === "block") place(e); });
+  $("cats").addEventListener("mouseout", function (e) {
+    var to = e.relatedTarget;
+    if (to && to.closest && to.closest("a[data-i]")) return;
+    pv.style.display = "none"; current = -1;
+  });
+  pvImg.addEventListener("load", function () { if (pv.style.display === "block") { var r = pv.getBoundingClientRect(); if (r.bottom > window.innerHeight) pv.style.top = Math.max(4, window.innerHeight - r.height - 4) + "px"; } });
+
+  applySize();
+  render();
+})();
+</script>
+</body>
+</html>

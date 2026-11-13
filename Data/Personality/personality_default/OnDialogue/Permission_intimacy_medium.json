@@ -37,6 +37,30 @@
                         "\"不行啦，太快了。\""
                     ] } ]
                 }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_intimacy_medium_LowConsciousness",
+                    "_comment": "意识模糊时被做了需要抚摸身体许可的事。不会被请求、也不算答应或拒绝，只是迷迷糊糊地察觉到。女性说话者。含蓄。",
+                    "variants": [ { "responses": [
+                        "\"……嗯……？好近……\"",
+                        "\"……这样……不太……对吧……\"",
+                        "\"……身体……使不上力……\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_intimacy_medium_LowConsciousness_Climax",
+                    "_comment": "意识模糊且正处于高潮时被做了需要抚摸身体许可的事，几乎无法组织语言。女性说话者。含蓄。",
+                    "variants": [ { "responses": [
+                        "\"……啊……不、不行……现在……\"",
+                        "\"……嗯、嗯……什么都……\"",
+                        "\"……别……啊……\""
+                    ] } ]
+                }
             }
         ]
     }

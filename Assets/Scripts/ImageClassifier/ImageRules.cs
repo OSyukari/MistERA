@@ -11,8 +11,10 @@ public class ImageRules
     public List<CategoryRule> categories = new List<CategoryRule>();
     /// <summary>Name lists by their top-level key ("file_names", "portrait_emotions", ...). Categories pick one with nameSet.</summary>
     public Dictionary<string, List<NameRule>> nameSets = new Dictionary<string, List<NameRule>>();
-    /// <summary>Shared variant table (file_name_variants): id -> one clause of tags.</summary>
+    /// <summary>Shared variant table (file_name_variants): id -> a clause, optionally with additional AND requirements.</summary>
     public Dictionary<string, RuleClause> variants = new Dictionary<string, RuleClause>();
+    /// <summary>Additional filename spellings for canonical ids across name sets (editor opt-in).</summary>
+    public Dictionary<string, List<string>> filenameHints = new Dictionary<string, List<string>>();
     /// <summary>Tags the tagger never stores ("excluded_tags"); also stripped from existing records when the tag file is compacted.</summary>
     public HashSet<string> excludedTags = new HashSet<string>();
     /// <summary>Structural problems found while loading (unknown keys, unknown references...). Shown with the lint results.</summary>
@@ -35,7 +37,11 @@ public class ImageRules
         var tags = new HashSet<string>();
         void Add(IEnumerable<RuleClause> clauses)
         {
-            foreach (var c in clauses) foreach (var t in c.tags) tags.Add(t.tag);
+            foreach (var c in clauses)
+            {
+                foreach (var t in c.tags) tags.Add(t.tag);
+                Add(c.requires);
+            }
         }
         foreach (var c in categories) { Add(c.all); Add(c.any); Add(c.none); }
         foreach (var set in nameSets.Values) foreach (var n in set) { Add(n.clauses); Add(n.none); }
@@ -83,6 +89,8 @@ public class RuleClause
 {
     public string source;
     public List<WeightedTag> tags = new List<WeightedTag>();
+    /// <summary>Additional AND clauses for compound variants; ordinary clauses leave this empty.</summary>
+    public List<RuleClause> requires = new List<RuleClause>();
 }
 
 public class CategoryRule
@@ -100,6 +108,10 @@ public class CategoryRule
     /// <summary>A match stops classification: the image stays unmatched (e.g. an animal with no species tag).</summary>
     public bool hold;
     public string nameSet = ImageRules.DefaultNameSet;
+    /// <summary>Optional category-wide allowlist, applied before filenames and tag matching.</summary>
+    public HashSet<string> allowedNames;
+    /// <summary>Category near misses treated as informational only when the filename confirms a name in this category.</summary>
+    public HashSet<string> filenameConfirmedNearMisses = new HashSet<string>();
     /// <summary>False: images are only assigned the category; no name is chosen and Classify keeps the original file name.</summary>
     public bool rename = true;
     /// <summary>Category id this one refines (horse_pov refines horse): an image sorted into that category's folder moves here when this
@@ -123,10 +135,14 @@ public class NameRule
     public List<RuleClause> none = new List<RuleClause>();
     /// <summary>Variant ids in priority order; the first that applies is appended as _&lt;id&gt;.</summary>
     public List<string> hasVariants = new List<string>();
+    /// <summary>Suffix when no evidence-based variant applies; null keeps the unsuffixed name.</summary>
+    public string defaultVariant;
     /// <summary>Null = every category.</summary>
     public HashSet<string> onlyInCategories;
     /// <summary>Only competes when no regular entry matched (other, sfw). Not held to minScore.</summary>
     public bool fallback;
+    /// <summary>Eligible for explicit filename ids only, never automatic tag matching.</summary>
+    public bool filenameOnly;
     /// <summary>Overrides settings.tierMinScore for this entry: the score it needs to claim the image for its tier.</summary>
     public float? tierMinScore;
 }

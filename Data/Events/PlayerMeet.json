@@ -1,0 +1,84 @@
+{
+    "_doc": "Fired from code (PlayerMeetUtility.TryStart), no trigger, the player only: right after the player's own APs of a minute moved them into another room, before any NPC moves in that minute (the minute's NPC half waits for the answer). Self = the player; Targets.evTarget = everyone met; $meetRoom$ = the room, $meetNames$ = everyone met, $meetGreeted$ = the awake ones. PlayerMeet_Passing = the player still has a step to walk (everyone seen), PlayerMeet_Arrival = the walk ended here (those seen who are on their way out). The options before the event's own default-cancel one are built in code (StoredOptions meetOptions): [停下] / [停下并打招呼] (Passing; disabled when everyone met sleeps), [打招呼] (Arrival) - hello holds their movement one more minute and the awake ones greet (DailyGreeting kojo).",
+    "Events": {
+        "list": [
+            {
+                "ID": "PlayerMeet_Passing",
+                "allowDuplicate": true,
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "ask",
+                        "question": "PlayerMeet_Passing_question",
+                        "loadOptionsKey": "meetOptions",
+                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "end" ] } ],
+                        "options": [
+                            {
+                                "option": "PlayerMeet_keepMoving",
+                                "isDefaultCancel": true,
+                                "Results": [
+                                    { "Type": "ExecuteCallbackPermissive", "arguments": [ "goodbye" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "end" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "end",
+                        "line": "",
+                        "isLast": true
+                    }
+                ]
+            },
+            {
+                "ID": "PlayerMeet_Arrival",
+                "allowDuplicate": true,
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "ask",
+                        "question": "PlayerMeet_Arrival_question",
+                        "loadOptionsKey": "meetOptions",
+                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "end" ] } ],
+                        "options": [
+                            {
+                                "option": "PlayerMeet_goodbye",
+                                "line": "PlayerMeet_goodbyeLine",
+                                "isDefaultCancel": true,
+                                "Results": [
+                                    { "Type": "ExecuteCallbackPermissive", "arguments": [ "goodbye" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "end" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "end",
+                        "line": "",
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "PlayerMeet_Passing_question": "$self.name$在$meetRoom$遇到了$meetNames$。",
+                "PlayerMeet_Arrival_question": "$meetNames$正要离开$meetRoom$。",
+                "PlayerMeet_keepMoving": "继续前进",
+                "PlayerMeet_stop": "停下",
+                "PlayerMeet_stopHello": "停下并打招呼",
+                "PlayerMeet_allAsleep": "对方都在睡觉",
+                "PlayerMeet_timeStopped": "时间停止中",
+                "PlayerMeet_goodbye": "道别",
+                "PlayerMeet_hello": "打招呼",
+                "PlayerMeet_helloLine": "$self.name$向$meetGreeted$打了招呼。",
+                "PlayerMeet_helloTooltip": "叫住$meetGreeted$，对方会停下来稍等片刻再离开。",
+                "PlayerMeet_goodbyeLine": "$self.name$与$meetNames$道别。"
+            }
+        }
+    }
+}

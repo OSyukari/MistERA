@@ -10,6 +10,8 @@ using Newtonsoft.Json.Linq;
 public class ImageTagRecord
 {
     public string path;
+    /// <summary>First known basename, including extension; retained even after an explicit manual rename.</summary>
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public string originalName;
     public long size;
     /// <summary>Last write time, unix milliseconds (UTC).</summary>
     public long mtime;
@@ -107,7 +109,7 @@ public class ImageTagStore
                 if (obj.ContainsKey("_header")) { store.Header = obj.ToObject<ImageTagHeader>(); continue; }
                 var record = obj.ToObject<ImageTagRecord>();
                 if (string.IsNullOrEmpty(record?.path)) { store.BadLines++; continue; }
-                store.Records[record.path] = record;
+                store.RememberRecord(record);
             }
             catch (JsonException)
             {
@@ -129,8 +131,18 @@ public class ImageTagStore
 
     public void Append(ImageTagRecord record)
     {
-        Records[record.path] = record;
+        RememberRecord(record);
         AppendLine(JsonConvert.SerializeObject(record, LineSettings));
+    }
+
+    void RememberRecord(ImageTagRecord record)
+    {
+        // Earlier lines/records own the original name, including legacy names inferred on load.
+        if (Records.TryGetValue(record.path, out var previous))
+            record.originalName = string.IsNullOrEmpty(previous.originalName) ? Path.GetFileName(previous.path) : previous.originalName;
+        else if (string.IsNullOrEmpty(record.originalName))
+            record.originalName = Path.GetFileName(record.path);
+        Records[record.path] = record;
     }
 
     void AppendLine(string line)
@@ -240,6 +252,7 @@ public class ImageTagStore
     public void RenameRecord(string oldRelativePath, string newRelativePath)
     {
         if (!Records.TryGetValue(oldRelativePath, out var record)) return;
+        if (string.IsNullOrEmpty(record.originalName)) record.originalName = Path.GetFileName(record.path);
         Records.Remove(oldRelativePath);
         record.path = newRelativePath;
         Records[newRelativePath] = record;

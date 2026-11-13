@@ -1,0 +1,13 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for OnActionRefuse_sex_DangerDay_Penis.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "event_OnAPRefuse_DangerDay_Penis_q_plain": "$evTarget.name$ worries it's $self.name$'s danger day, won't $com_variant_name$ bare and asks for a condom.",
+                "event_OnAPRefuse_DangerDay_Penis_q": "$kojo_demand$\n\n%%event_OnAPRefuse_DangerDay_Penis_q_plain%%"
+            }
+        }
+    }
+}

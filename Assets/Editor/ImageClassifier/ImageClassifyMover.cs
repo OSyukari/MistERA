@@ -23,6 +23,7 @@ public class ImageMove
 /// <summary>One Classify pass in &lt;folder&gt;/_image_moves.jsonl (one JSON object per line).</summary>
 public class ImageMovePass
 {
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public string operation;
     public int pass;
     public string date;
     public bool includeLowConfidence;
@@ -45,9 +46,20 @@ public class ImageMovePlan
     public int keptOut;                 // moved out of a category folder by the user
 }
 
+public class ImageNameRestoreResult
+{
+    public int tagged;
+    public int alreadyOriginal;
+    public int restored;
+    public int relinked;
+    public readonly List<ImageMove> moves = new List<ImageMove>();
+    public readonly List<string> skipped = new List<string>();
+    public readonly List<string> failures = new List<string>();
+}
+
 /// <summary>
 /// Task 3 (Plan_ImageClassifier.md): builds the move plan from an Analyze result, executes it, logs every pass to
-/// &lt;folder&gt;/_image_moves.jsonl and undoes the last pass. The file move itself is injected (the window uses AssetDatabase.MoveAsset
+/// &lt;folder&gt;/_image_moves.jsonl and restores original basenames without moving folders. The file move itself is injected (the window uses AssetDatabase.MoveAsset
 /// inside Assets/ so .meta files follow), so this class has no UnityEditor dependency.
 /// Target: &lt;folder&gt;/&lt;category&gt;/&lt;name&gt;_&lt;parent&gt;_&lt;folder&gt;_&lt;N&gt;.&lt;ext&gt;; rename: false categories keep the file name.
 /// </summary>
@@ -72,18 +84,34 @@ public static class ImageClassifyMover
     {
         var sb = new StringBuilder();
         foreach (var p in passes) sb.Append(JsonConvert.SerializeObject(p, LineSettings)).Append('\n');
-        File.WriteAllText(Path.Combine(folder, LogFileName), sb.ToString(), new UTF8Encoding(false));
+        AtomicWrite(Path.Combine(folder, LogFileName), sb.ToString());
     }
 
     /// <summary>The first pass moves confident images only; every later pass (one not undone exists) also moves low confidence.</summary>
-    public static bool NextPassIncludesLowConfidence(string folder) => LoadLog(folder).Any(p => !p.undone);
+    public static bool NextPassIncludesLowConfidence(string folder) => LoadLog(folder).Any(p => !p.undone && p.operation == null);
 
-    public static int NextPassNumber(string folder) => LoadLog(folder).Count(p => !p.undone) + 1;
+    public static int NextPassNumber(string folder) => LoadLog(folder).Count(p => !p.undone && p.operation == null) + 1;
 
     /// <summary>Every path the tool moved an image to (passes not undone, moves without error).</summary>
-    public static HashSet<string> ToolPlacedPaths(string folder) =>
-        new HashSet<string>(LoadLog(folder).Where(p => !p.undone).SelectMany(p => p.moves).Where(m => m.error == null).Select(m => m.to),
-            StringComparer.OrdinalIgnoreCase);
+    public static HashSet<string> ToolPlacedPaths(string folder)
+    {
+        var paths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var pass in LoadLog(folder).Where(p => !p.undone))
+            foreach (var m in pass.moves)
+            {
+                if (pass.operation == RestoreOperation)
+                {
+                    if (m.error == null || (m.status == "pending" && SafeRelativePath(m.from) && SafeRelativePath(m.to)
+                        && !File.Exists(Path.Combine(folder, m.from)) && File.Exists(Path.Combine(folder, m.to))))
+                    {
+                        paths.Remove(m.from);
+                        paths.Remove(m.to);
+                    }
+                }
+                else if (m.error == null) paths.Add(m.to);
+            }
+        return paths;
+    }
 
     // ---------- plan ----------
 
@@ -177,7 +205,7 @@ public static class ImageClassifyMover
         return candidate;
     }
 
-    // ---------- execute / undo ----------
+    // ---------- execute / restore ----------
 
     /// <summary>Moves an image: (absolute from, absolute to) -> error message or null. The target directory exists when it is called.</summary>
     public delegate string MoveFile(string absoluteFrom, string absoluteTo);
@@ -194,12 +222,14 @@ public static class ImageClassifyMover
     {
         var folder = plan.folder;
         var store = ImageTagStore.Load(folder);
+        if (store.BadLines > 0) throw new InvalidDataException("Tag file contains unreadable lines; repair it before classification so metadata is not discarded.");
+        SaveRestoreStore(store); // Persist legacy original names before any classifier rename can erase them.
         var pass = new ImageMovePass
         {
             pass = plan.passNumber, date = DateTime.Now.ToString("yyyy-MM-dd HH:mm"), includeLowConfidence = plan.includeLowConfidence,
             rules = rules.sourcePath, settings = rules.settings,
         };
-        if (plan.moves.Count == 0) return pass;  // nothing to log: an empty pass would only make Undo undo nothing
+        if (plan.moves.Count == 0) return pass;
         var touchedDirs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         for (int i = 0; i < plan.moves.Count; i++)
         {
@@ -224,36 +254,185 @@ public static class ImageClassifyMover
         return pass;
     }
 
-    /// <summary>Moves every image of the last pass back (newest first), marks the pass undone and restores the tag record paths.
-    /// Returns (moved back, failed) or null when there is nothing to undo.</summary>
-    public static (int back, List<string> failures)? UndoLastPass(string folder, ImageRules rules, MoveFile move)
+    const string RestoreOperation = "restoreOriginalNames";
+
+    static void AtomicWrite(string path, string text)
     {
-        var log = LoadLog(folder);
-        var pass = log.LastOrDefault(p => !p.undone);
-        if (pass == null) return null;
-        var store = ImageTagStore.Load(folder);
-        // catch up with manual changes, so only images still where this pass put them, unchanged, are moved back
-        var reconcile = store.Reconcile(ImageTagTask.ScanImages(folder), ImageAnalysis.CategoryIds(rules), ToolPlacedPaths(folder));
-        int back = 0;
-        var failures = new List<string>();
-        var emptiedDirs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        foreach (var m in Enumerable.Reverse(pass.moves).Where(m => m.error == null))
+        var temp = path + ".tmp";
+        File.WriteAllText(temp, text, new UTF8Encoding(false));
+        if (File.Exists(path)) File.Replace(temp, path, null);
+        else File.Move(temp, path);
+    }
+
+    // Unlike Compact, a restore checkpoint retains missing records and never strips tags or originalName.
+    static void SaveRestoreStore(ImageTagStore store)
+    {
+        var lines = new List<string>();
+        if (store.Header != null) lines.Add(JsonConvert.SerializeObject(store.Header, LineSettings));
+        lines.AddRange(store.Records.Values.Select(r => JsonConvert.SerializeObject(r, LineSettings)));
+        AtomicWrite(store.FilePath, string.Join("\n", lines) + "\n");
+    }
+
+    static bool SafeRelativePath(string path)
+    {
+        return !string.IsNullOrEmpty(path) && !Path.IsPathRooted(path)
+            && path.Replace('\\', '/').Split('/').All(SafeBasename);
+    }
+
+    static bool SafeBasename(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name) || name == "." || name == ".." || name.EndsWith(".") || name.EndsWith(" ")) return false;
+        if (name.Any(c => c < 32 || "<>:\"/\\|?*".Contains(c) || Invalid.Contains(c))) return false;
+        return !Regex.IsMatch(name, @"^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(\.|$)", RegexOptions.IgnoreCase);
+    }
+
+    static List<string> RestoreImages(string folder)
+    {
+        var files = new List<string>();
+        void Scan(string dir)
         {
-            var absFrom = store.AbsolutePath(m.from);
-            var absTo = store.AbsolutePath(m.to);
-            Directory.CreateDirectory(Path.GetDirectoryName(absFrom));
-            // a file at m.to without its record there is not the image this pass moved (it was moved away, another file took the name)
-            var error = !File.Exists(absTo) || !store.Records.ContainsKey(m.to) ? "moved or deleted by hand since the pass - left where it is"
-                      : reconcile.stale.Contains(m.to) ? "the file was changed or replaced by hand since the pass - left where it is"
-                      : File.Exists(absFrom) ? "its original path is taken by another file - left where it is" : move(absTo, absFrom);
-            if (error == null) { store.RenameRecord(m.to, m.from); back++; emptiedDirs.Add(Path.GetDirectoryName(absTo)); }
-            else failures.Add($"{m.to} -> {m.from}: {error}");
+            foreach (var entry in new DirectoryInfo(dir).EnumerateFileSystemInfos())
+            {
+                if ((entry.Attributes & FileAttributes.ReparsePoint) != 0) continue;
+                if ((entry.Attributes & FileAttributes.Directory) != 0) Scan(entry.FullName);
+                else if (ImageTagTask.IsImageFile(entry.Name)) files.Add(entry.FullName);
+            }
         }
-        pass.undone = true;
-        SaveLog(folder, log);
-        store.Compact(rules.excludedTags, out _);
-        DeleteEmptyFolders(folder, emptiedDirs);  // category folders the pass created; folders that still hold files stay
-        return (back, failures);
+        if ((File.GetAttributes(folder) & FileAttributes.ReparsePoint) == 0) Scan(folder);
+        return files;
+    }
+
+    static bool MatchesRecord(string path, ImageTagRecord record)
+    {
+        var info = new FileInfo(path);
+        return info.Exists && info.Length == record.size
+            && new DateTimeOffset(info.LastWriteTimeUtc, TimeSpan.Zero).ToUnixTimeMilliseconds() == record.mtime;
+    }
+
+    static ImageNameRestoreResult RestorePlan(ImageTagStore store, ImageRules rules)
+    {
+        var files = RestoreImages(store.Folder);
+        // Invalid metadata must never be used as an absolute filesystem path, even by Reconcile.
+        var unsafeRecords = store.Records.Values.Where(r => !SafeRelativePath(r.path)).ToList();
+        foreach (var record in unsafeRecords) store.Records.Remove(record.path);
+        var reconcile = store.Reconcile(files, ImageAnalysis.CategoryIds(rules), ToolPlacedPaths(store.Folder));
+        foreach (var record in unsafeRecords) store.Records[record.path] = record;
+        var result = new ImageNameRestoreResult { tagged = store.Records.Count, relinked = reconcile.relinked.Count };
+        var present = files.ToDictionary(store.RelativePath, f => f, StringComparer.OrdinalIgnoreCase);
+        foreach (var record in store.Records.Values.OrderBy(r => r.path, StringComparer.OrdinalIgnoreCase))
+        {
+            string reason = null;
+            if (!SafeRelativePath(record.path)) reason = "unsafe record path";
+            else if (!present.ContainsKey(record.path)) reason = "image missing or unsafe (links are not followed)";
+            else if (!SafeBasename(record.originalName)) reason = "missing or unsafe original basename";
+            else if (reconcile.stale.Contains(record.path)) reason = "image changed since tagging; re-tag first";
+            if (reason != null) { result.skipped.Add($"{record.path}: {reason}"); continue; }
+            var actual = present[record.path];
+            if (Path.GetFileName(actual) == record.originalName) { result.alreadyOriginal++; continue; }
+            var dir = Path.GetDirectoryName(record.path)?.Replace('\\', '/');
+            var to = string.IsNullOrEmpty(dir) ? record.originalName : dir + "/" + record.originalName;
+            var target = store.AbsolutePath(to);
+            bool caseOnly = string.Equals(record.path, to, StringComparison.OrdinalIgnoreCase);
+            if ((!caseOnly && (File.Exists(target) || Directory.Exists(target) || File.Exists(target + ".meta")))
+                || (store.Records.ContainsKey(to) && !caseOnly))
+            { result.skipped.Add($"{record.path} -> {to}: target occupied (including swaps/cycles); left unchanged"); continue; }
+            result.moves.Add(new ImageMove { from = record.path, to = to });
+        }
+        // Multiple images requesting one free name must all stay, rather than arbitrarily choosing a winner.
+        foreach (var group in result.moves.GroupBy(m => m.to, StringComparer.OrdinalIgnoreCase).Where(g => g.Count() > 1).ToList())
+            foreach (var m in group.ToList())
+            {
+                result.moves.Remove(m);
+                result.skipped.Add($"{m.from} -> {m.to}: multiple images request this basename");
+            }
+        return result;
+    }
+
+    /// <summary>Read-only preview; includes failed tags, held/settled images and ignored folders. Does not write reports.</summary>
+    public static ImageNameRestoreResult PreviewRestoreOriginalNames(string folder, ImageRules rules) => RestorePlan(ImageTagStore.Load(folder), rules);
+
+    /// <summary>Replans at execution time. Never overwrites, renumbers, creates or deletes directories.</summary>
+    public static ImageNameRestoreResult RestoreOriginalNames(string folder, ImageRules rules, MoveFile move, Action<int, int> onProgress = null)
+    {
+        var store = ImageTagStore.Load(folder);
+        if (store.BadLines > 0) throw new InvalidDataException("Tag file contains unreadable lines; repair it before restoring names so metadata is not discarded.");
+        var log = LoadLog(folder);
+        var safeFiles = new HashSet<string>(RestoreImages(folder), StringComparer.OrdinalIgnoreCase);
+        // Recover a move that reached disk before its metadata checkpoint. The source record is the write-ahead identity.
+        foreach (var oldPass in log.Where(p => p.operation == RestoreOperation))
+            foreach (var pending in oldPass.moves.Where(m => m.status == "pending"))
+            {
+                if (!SafeRelativePath(pending.from) || !SafeRelativePath(pending.to)) continue;
+                var source = store.AbsolutePath(pending.from);
+                var target = store.AbsolutePath(pending.to);
+                if (!File.Exists(source) && safeFiles.Contains(target) && store.Records.TryGetValue(pending.from, out var record)
+                    && !store.Records.ContainsKey(pending.to) && MatchesRecord(target, record))
+                {
+                    store.RenameRecord(pending.from, pending.to);
+                    record.manual = null;
+                    SaveRestoreStore(store);
+                    pending.status = "restored";
+                    pending.error = null;
+                    SaveLog(folder, log);
+                }
+                else if (!File.Exists(source) && safeFiles.Contains(target) && store.Records.TryGetValue(pending.to, out var updated) && MatchesRecord(target, updated))
+                {
+                    pending.status = "restored";
+                    pending.error = null;
+                    SaveLog(folder, log);
+                }
+            }
+        var result = RestorePlan(store, rules);
+        SaveRestoreStore(store); // Persist inferred original names and reconciliation BEFORE the first rename.
+        var pass = new ImageMovePass { operation = RestoreOperation, date = DateTime.Now.ToString("yyyy-MM-dd HH:mm") };
+        log.Add(pass);
+        string Rename(string from, string to)
+        {
+            var record = store.Records[from];
+            var source = store.AbsolutePath(from);
+            var target = store.AbsolutePath(to);
+            if (!MatchesRecord(source, record)) return "source missing or changed since preview";
+            if (File.Exists(target) || Directory.Exists(target) || File.Exists(target + ".meta")) return "target occupied";
+            var entry = new ImageMove { from = from, to = to, status = "pending", error = "rename not checkpointed" };
+            pass.moves.Add(entry);
+            SaveLog(folder, log);
+            string error;
+            try { error = move(source, target); }
+            catch (Exception e) when (e is IOException || e is UnauthorizedAccessException) { error = e.Message; }
+            if (error != null)
+            {
+                entry.status = "failed";
+                entry.error = error;
+                SaveLog(folder, log);
+                return error;
+            }
+            store.RenameRecord(from, to);
+            record.manual = null;
+            SaveRestoreStore(store);
+            entry.status = "restored";
+            entry.error = null;
+            SaveLog(folder, log);
+            return null;
+        }
+        for (int i = 0; i < result.moves.Count; i++)
+        {
+            var m = result.moves[i];
+            onProgress?.Invoke(i, result.moves.Count);
+            string current = m.from;
+            string error = null;
+            if (string.Equals(m.from, m.to, StringComparison.OrdinalIgnoreCase))
+            {
+                var dir = Path.GetDirectoryName(m.from)?.Replace('\\', '/');
+                var tempName = "restore-" + Guid.NewGuid().ToString("N") + Path.GetExtension(m.from);
+                var temp = string.IsNullOrEmpty(dir) ? tempName : dir + "/" + tempName;
+                error = Rename(current, temp);
+                if (error == null) current = temp;
+            }
+            if (error == null) error = Rename(current, m.to);
+            if (error == null) result.restored++;
+            else result.failures.Add($"{current} -> {m.to}: {error}" + (current != m.from ? "; temporary name retained safely; run Restore again" : ""));
+        }
+        return result;
     }
 
     /// <summary>Deletes folders the pass emptied (and their emptied parents), never the provided folder itself.</summary>

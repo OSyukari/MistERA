@@ -1,0 +1,21 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for OnActionRefuse_sex_Unprotected_Penis.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "event_OnAPRefuse_Unprotected_Penis_q_plain": "$evTarget.name$ won't $com_variant_name$ bare and asks for a condom.",
+                "event_OnAPRefuse_Unprotected_Penis_q": "$kojo_demand$\n\n%%event_OnAPRefuse_Unprotected_Penis_q_plain%%",
+                "event_OnAPRefuse_safeDayClaim_op_truth": "Tell $evTarget.name$ today is a safe day",
+                "event_OnAPRefuse_safeDayClaim_op_lie": "Lie that today is a safe day",
+                "event_OnAPRefuse_Unprotected_Penis_claim": "$self.name$ tells $evTarget.name$ today is a safe day. $evTarget.name$ agrees to go on without a condom.",
+                "event_OnAPRefuse_Unprotected_Penis_claim_kojo": "%%event_OnAPRefuse_Unprotected_Penis_claim%%\n\n$kojo_claim$",
+                "event_OnAPRefuse_Unprotected_Penis_claim_lie": "$self.name$ lies that today is a safe day. $evTarget.name$ believes it and agrees to go on without a condom.",
+                "event_OnAPRefuse_Unprotected_Penis_claim_lie_kojo": "%%event_OnAPRefuse_Unprotected_Penis_claim_lie%%\n\n$kojo_claim$",
+                "event_OnAPRefuse_Unprotected_Penis_claimRefused": "$self.name$ says today is a safe day, but $evTarget.name$ still insists on a condom.",
+                "event_OnAPRefuse_Unprotected_Penis_claimRefused_kojo": "%%event_OnAPRefuse_Unprotected_Penis_claimRefused%%\n\n$kojo_claim$"
+            }
+        }
+    }
+}

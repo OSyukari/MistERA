@@ -17,7 +17,7 @@ using Debug = UnityEngine.Debug;
 /// Asset packs with 2+ subfolders are split into one package per subfolder. The output folder keeps only the latest
 /// archive per package plus manifest.json, which ci/publish_mods.ps1 diffs against the published release.
 /// </summary>
-public static class ModPackager
+public static partial class ModPackager
 {
     public const string AssetPacksFolder = "Assetpacks";
     public const string AboutFolder = "About";
@@ -32,7 +32,7 @@ public static class ModPackager
         { "_image_tags.jsonl", "_image_moves.jsonl", "_image_analysis.md", "_unclassified.md" };
     /// <summary>Same keywords as BuildProcessorExtend.ForbidCopy, matched against the path relative to Mods/.</summary>
     static readonly string[] ForbidKeywords = { "forbidCopy", "forbid", "unused" };
-    static readonly HashSet<string> ExcludedExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".meta" };
+    static readonly HashSet<string> ExcludedExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".meta", ".texcache", ".tmp", ".bak", ".old", ".log" };
 
     public static string ProjectRoot => Directory.GetParent(Application.dataPath).FullName;
     public static string ModsRoot => Path.Combine(ProjectRoot, "Mods");
@@ -68,7 +68,7 @@ public static class ModPackager
             {
                 if (ExcludedPackFolders.Contains(pack.Name)) continue;
                 string packRel = $"{AssetPacksFolder}/{pack.Name}";
-                var subs = pack.GetDirectories().Where(d => !d.Name.Equals(AboutFolder, StringComparison.OrdinalIgnoreCase))
+                var subs = pack.GetDirectories().Where(d => !d.Name.Equals(AboutFolder, StringComparison.OrdinalIgnoreCase) && !IsExcludedFile(d.Name, $"{packRel}/{d.Name}"))
                     .OrderBy(d => d.Name, StringComparer.Ordinal).ToList();
                 bool hasAbout = Directory.Exists(Path.Combine(pack.FullName, AboutFolder));
 
@@ -109,7 +109,13 @@ public static class ModPackager
         foreach (var dup in result.GroupBy(s => s.id, StringComparer.OrdinalIgnoreCase).Where(g => g.Count() > 1))
             foreach (var s in dup) s.errors.Add($"Package id [{s.id}] is used by more than one source ({string.Join(", ", dup.Select(d => d.source))})");
 
-        foreach (var s in result) ScanFiles(s);
+        foreach (var s in result)
+        {
+            try { ScanFiles(s); ReadUpdateMetadata(s); s.sourceFingerprint = SourceFingerprint(s); }
+            catch (Exception e) { s.errors.Add(e.Message); }
+        }
+        foreach (var dup in result.Where(s => !string.IsNullOrEmpty(s.modId)).GroupBy(s => s.modId, StringComparer.Ordinal).Where(g => g.Count() > 1))
+            foreach (var s in dup) s.errors.Add($"Duplicate ModID [{s.modId}]");
         return result;
     }
 
@@ -120,12 +126,15 @@ public static class ModPackager
         src.latestWriteUtc = DateTime.MinValue;
         foreach (var root in src.roots)
         {
+            ValidateUpdatePath(root);
             var dir = new DirectoryInfo(Path.Combine(ModsRoot, root));
             if (!dir.Exists) continue;
-            foreach (var file in dir.GetFiles("*", SearchOption.AllDirectories))
+            foreach (var file in EnumerateUpdateFiles(dir))
             {
                 string rel = ToModsRelative(file.FullName);
                 if (IsExcludedFile(file.Name, rel)) continue;
+                ValidateUpdatePath(rel);
+                if (src.files.Contains(rel, StringComparer.OrdinalIgnoreCase)) throw new InvalidDataException($"Case-colliding file: {rel}");
                 src.files.Add(rel);
                 src.size += file.Length;
                 if (file.LastWriteTimeUtc > src.latestWriteUtc) src.latestWriteUtc = file.LastWriteTimeUtc;
@@ -137,6 +146,7 @@ public static class ModPackager
 
     static bool IsExcludedFile(string name, string relPath)
     {
+        if (relPath.Split('/').Any(p => p.Equals("_generated", StringComparison.OrdinalIgnoreCase) || p.Equals(".git", StringComparison.OrdinalIgnoreCase) || p.Equals("backup", StringComparison.OrdinalIgnoreCase) || p.Equals("backups", StringComparison.OrdinalIgnoreCase))) return true;
         if (ExcludedFileNames.Contains(name)) return true;
         if (ExcludedExtensions.Contains(Path.GetExtension(name))) return true;
         foreach (var k in ForbidKeywords)
@@ -220,6 +230,7 @@ public static class ModPackager
     public static ModPackageStatus GetStatus(ModPackageSource src, ModPackageEntry entry)
     {
         if (entry == null) return ModPackageStatus.New;
+        if (!HasUpdateCompanion(src, entry)) return ModPackageStatus.SourceChanged;
         if (!File.Exists(Path.Combine(ModPackagerSettings.OutputFolder, entry.asset))) return ModPackageStatus.ArchiveMissing;
         if (entry.asset != AssetName(src.id)) return ModPackageStatus.Renamed;
         // copied-in files keep their old write time, so file count and total size catch additions/removals
@@ -258,6 +269,10 @@ public static class ModPackager
         string listPath = Path.Combine(Path.GetTempPath(), $"mistera_pack_{Guid.NewGuid():N}.txt");
         try
         {
+            ScanFiles(src);
+            ReadUpdateMetadata(src);
+            string fingerprint = SourceFingerprint(src);
+            src.sourceFingerprint = fingerprint;
             if (File.Exists(tmpPath)) File.Delete(tmpPath);
             File.WriteAllLines(listPath, src.files.Select(f => f.Replace('/', '\\')), new UTF8Encoding(false));
 
@@ -270,6 +285,9 @@ public static class ModPackager
                 Debug.LogError($"Mod Packager: 7z failed for [{src.id}] (exit {exitCode})\n{output}");
                 return $"7z exit code {exitCode} (see console)";
             }
+
+            BuildUpdateCompanion(src, fingerprint);
+            if (SourceFingerprint(src) != fingerprint) throw new IOException("Source changed while packaging; refresh and rebuild");
 
             var entry = manifest.packages.FirstOrDefault(p => p.id == src.id);
             // a renamed package leaves its old archive behind; remove it so the folder only holds current packages
@@ -296,6 +314,7 @@ public static class ModPackager
             entry.fileCount = src.files.Count;
             entry.sourceSize = src.size;
             entry.sourceLatestWrite = FormatUtc(src.latestWriteUtc);
+            entry.sourceFingerprint = fingerprint;
             SaveManifest(manifest);
             Debug.Log($"Mod Packager: built [{src.id}] -> {finalPath} ({src.files.Count} files, {FormatSize(entry.size)})");
             return null;
@@ -321,6 +340,7 @@ public static class ModPackager
         if (File.Exists(path)) File.Delete(path);
         manifest.packages.Remove(entry);
         SaveManifest(manifest);
+        RetireUpdateCompanion(id);
         Debug.Log($"Mod Packager: retired [{id}]");
     }
 
@@ -374,6 +394,8 @@ public class ModPackageSource
     /// <summary>Main folder, relative to Mods/ with forward slashes.</summary>
     public string source;
     public bool isSplit;
+    public string modId;
+    public string sourceFingerprint;
     /// <summary>Folders packed into the archive, relative to Mods/ (split packages add the pack's About).</summary>
     public List<string> roots = new List<string>();
 
@@ -407,6 +429,7 @@ public class ModPackageEntry
     public int fileCount;
     public long sourceSize;
     public string sourceLatestWrite;    // UTC, yyyy-MM-ddTHH:mm:ssZ
+    public string sourceFingerprint;
 }
 
 /// <summary>Per-machine tool settings in EditorPrefs.</summary>

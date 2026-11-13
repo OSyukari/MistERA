@@ -1,0 +1,18 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for OnFixClothesDeflate.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "fixclothes_expel_question": "Straightening up in front of the mirror, $self.name$ still has something in the mouth. Spit it out?",
+                "fixclothes_expel_yes": "Spit it out",
+                "fixclothes_expel_no": "Keep it in",
+                "fixclothes_expel_declined": "$self.name$ doesn't spit, leaving it in the mouth.",
+                "fixclothes_expel_mouth": "$self.name$ leans over the sink, spits out what was in the mouth and rinses. $fixMouthMsg$.",
+                "fixclothes_wash": "$self.name$ splashes water on the face. Washed off: $fixWashReport$.",
+                "fixclothes_plain": "$self.name$ straightens their clothes and takes a breather."
+            }
+        }
+    }
+}

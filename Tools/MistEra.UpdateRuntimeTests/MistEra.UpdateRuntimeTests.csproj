@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../Assets/Scripts/Updates/Core/*.cs" Link="Production/Core/%(Filename)%(Extension)" />
+    <Compile Include="../../Assets/Scripts/Updates/UpdateService.cs" Link="Production/UpdateService.cs" />
+    <Compile Include="../../Assets/Scripts/Updates/UpdateRuntimeModels.cs" Link="Production/UpdateRuntimeModels.cs" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+</Project>

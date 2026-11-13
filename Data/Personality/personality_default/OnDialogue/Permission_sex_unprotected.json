@@ -61,6 +61,30 @@
                         "\"……最后一定要拔出来哦。\""
                     ] } ]
                 }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_unprotected_LowConsciousness",
+                    "_comment": "意识模糊时被不戴套直接做了（需要无保护性行为许可）。不会被请求、也不算答应或拒绝，也不会要求戴套，只是迷迷糊糊地察觉到。女性说话者。",
+                    "variants": [ { "responses": [
+                        "\"……那个……有戴吗……\"",
+                        "\"……直接……？……不、嗯……\"",
+                        "\"……好烫……是……没戴……？\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_unprotected_LowConsciousness_Climax",
+                    "_comment": "意识模糊且正处于高潮时被不戴套直接做了，几乎无法组织语言。女性说话者。",
+                    "variants": [ { "responses": [
+                        "\"……啊……没、没戴……\"",
+                        "\"……直接……啊……不……\"",
+                        "\"……什么都……想不了……\""
+                    ] } ]
+                }
             }
         ]
     }

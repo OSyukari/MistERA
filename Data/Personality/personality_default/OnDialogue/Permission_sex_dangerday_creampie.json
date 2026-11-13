@@ -61,6 +61,30 @@
                         "\"真的会怀上的……最后一定要拔出来哦。\""
                     ] } ]
                 }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_dangerday_creampie_LowConsciousness",
+                    "_comment": "意识模糊时，在自己的危险日被不加保护地做了（需要危险日生中出许可）。不会被请求、也不算答应或拒绝，也不会要求戴套，只是迷迷糊糊地察觉到。女性说话者。",
+                    "variants": [ { "responses": [
+                        "\"……今天……是危险日……来着……\"",
+                        "\"……里面……不行……会怀上的……\"",
+                        "\"……唔……日子……想不起来……\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_dangerday_creampie_LowConsciousness_Climax",
+                    "_comment": "意识模糊且正处于高潮时，在自己的危险日被不加保护地做了，几乎无法组织语言。女性说话者。",
+                    "variants": [ { "responses": [
+                        "\"……啊……今天……不行的……\"",
+                        "\"……里、里面……会怀上……啊……\"",
+                        "\"……什么都……不管了……\""
+                    ] } ]
+                }
             }
         ]
     }

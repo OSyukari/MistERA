@@ -37,6 +37,30 @@
                         "\"对不起，那种事我做不到。\""
                     ] } ]
                 }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_group_LowConsciousness",
+                    "_comment": "意识模糊时，在多人参与的场景中与对方发生了性行为（需要多人性行为许可）。不会被请求、也不算答应或拒绝，只是迷迷糊糊地察觉到。女性说话者。",
+                    "variants": [ { "responses": [
+                        "\"……好多人……？为什么……\"",
+                        "\"……是谁……又是谁……\"",
+                        "\"……唔……分不清了……\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_group_LowConsciousness_Climax",
+                    "_comment": "意识模糊且正处于高潮时，在多人场景中与对方发生了性行为，几乎无法组织语言。女性说话者。",
+                    "variants": [ { "responses": [
+                        "\"……啊……大家……都……\"",
+                        "\"……太、太多了……啊……\"",
+                        "\"……谁……都分不清……\""
+                    ] } ]
+                }
             }
         ]
     }

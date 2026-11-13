@@ -37,6 +37,30 @@
                         "\"别、别想那里啦！\""
                     ] } ]
                 }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_anal_LowConsciousness",
+                    "_comment": "意识模糊时被做了需要肛交许可的事。不会被请求、也不算答应或拒绝，只是迷迷糊糊地察觉到。女性说话者。",
+                    "variants": [ { "responses": [
+                        "\"……后面……？诶……不是那里……\"",
+                        "\"……那边……好奇怪……\"",
+                        "\"……唔……动不了……\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_anal_LowConsciousness_Climax",
+                    "_comment": "意识模糊且正处于高潮时被做了需要肛交许可的事，几乎无法组织语言。女性说话者。",
+                    "variants": [ { "responses": [
+                        "\"……啊……后、后面……不……\"",
+                        "\"……现在……那里……啊……\"",
+                        "\"……嗯……什么都……\""
+                    ] } ]
+                }
             }
         ]
     }

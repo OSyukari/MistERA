@@ -160,11 +160,20 @@ public static class PermissionService
         return type;
     }
 
+    /// <summary>The permission concerns granter's body at all (definition.charaReq, cached per character - see
+    /// Character_Body.IsPermissionApplicable). Not applicable = never matched, never requestable, box hidden.</summary>
+    public static bool IsApplicable(Character_Trainable granter, PermissionDefinition definition)
+    {
+        if (definition == null) return false;
+        if (definition.charaReq == null) return true;
+        return granter?.Body != null && granter.Body.IsPermissionApplicable(definition);
+    }
+
     public static bool CanRequest(Character_Trainable granter, Character_Trainable holder, PermissionQueryResult query)
     {
         return query != null && query.Error.Length == 0 && query.Definition != null && query.Definition.requestable
             && query.MeetsRelationshipRequirements && IsLivePair(granter, holder)
-            && granter.Stats != null && granter.canAct;
+            && granter.Stats != null && granter.canAct && IsApplicable(granter, query.Definition);
     }
 
     public static bool AcceptsRequest(Character_Trainable granter, Character_Trainable holder, PermissionQueryResult query)

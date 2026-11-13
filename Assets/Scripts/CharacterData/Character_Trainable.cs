@@ -1283,6 +1283,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         if (scr_System_CentralControl.current.isSafeMode) return;
         if (wombs.Contains(wb)) return;
         wombs.Add(wb);
+        // a womb changes requireFertileWomb permissions (registered separately from the body's part list)
+        Body?.ClearPermissionApplicability();
 
         if (ReproCycle == null)
         {
@@ -2753,10 +2755,31 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                 if (comp != null && comp.equipLayer <= lastKnownLayer) return true;
             }
             return false;
-        } 
+        }
     }
 
-    
+    // body traces call for cleaning, not inflation (Docs/Body/Plan_InternalFluidFlow.md §8); same awake / free-to-move
+    // gate as shouldRedress
+    [JsonIgnore] bool canGoClean { get { return Body != null && !FactionManager.isPartyLocked && !isSleeping && !shouldSleep; } }
+    /// <summary> Freshen Up: a trace on the head (face, mouth) a wash removes. Tolerance not checked (short trip) </summary>
+    [JsonIgnore] public bool needsFaceClean { get { return canGoClean && Body.HasCleanableTraces(TraceCleanAction.Wash, Character_Body.HeadTags); } }
+    /// <summary> restroom: a solid / liquid trace on the lower body or legs a wipe changes. Tolerance not checked (short trip) </summary>
+    [JsonIgnore] public bool needsRestroom { get { return canGoClean && Body.HasCleanableTraces(TraceCleanAction.Wipe, Character_Body.LowerBodyTags); } }
+    /// <summary>
+    /// shower: body dirtiness seen through stats_derived_cleanlinessSensitivity reaches stats_derived_cleaningThreshold -
+    /// the same comparison a room gets before this character cleans it (TryFindPrivateRoomCleaning)
+    /// </summary>
+    [JsonIgnore] public bool needsShower
+    {
+        get
+        {
+            if (!canGoClean) return false;
+            float threshold = Stats.GetStatValue("stats_derived_cleaningThreshold");
+            if (threshold < 2) return false;
+            var status = Body.BodyCleanliness(this);
+            return status > Room_Instance.CleaningStatus.Clean && (int)status >= threshold;
+        }
+    }
 
     public SkillInstance GetSkill(string skillID)
     {
@@ -4389,8 +4412,9 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             if (bodyTag != "" && !part.hasTag(bodyTag)) continue;
             if (!(fullDeflate ? part.canFullyDeflate : part.canDeflate)) continue; // nothing swallowable here right now
 
-            var target = (part.overflowOutTag == "" || part.overflowOutTag == "ext")
-                ? null : this.Body.GetRandomInternalWithTag(part.overflowOutTag);
+            // swallowing goes deeper: the In direction (mouth -> stomach)
+            var target = (part.overflowInTag == "" || part.overflowInTag == "ext")
+                ? null : this.Body.GetRandomInternalWithTag(part.overflowInTag);
             if (target == null) continue;
 
             if (part.TransferContentTo(target, fullDeflate, m, swallowedTags)) any = true;

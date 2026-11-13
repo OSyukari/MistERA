@@ -437,7 +437,7 @@ public class Job_ActivityPetWalk : Job_Activity
     {
         var package = command.MakePackage(furniture, new List<int> { c.RefID }, new List<int>(), -1, DestinationRoom);
         if (package == null) return null;
-        package.BindActivityExecution(this, GroupOf(c.RefID));
+        package.BindActivityExecution(this);
         return package.Validate() ? package : null;
     }
 

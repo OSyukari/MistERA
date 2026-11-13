@@ -31,8 +31,11 @@ public class ActivityParticipant
     public bool arrivedLate = false;
     /// <summary>Agreed to take part beforehand (a confirmed attendee, never a walk-in) and was present at the launch - the trust reward's group (Job_Activity.AwardKeptPromiseTrust).</summary>
     public bool keptPromise = false;
-    /// <summary>A walk-in's group: the group of the package they joined (Job_Activity.GroupOf). Job_Activity.NoGroupCheck = derived from the session.</summary>
-    public int groupKey = Job_Activity.NoGroupCheck;
+    /// <summary>
+    /// A walk-in's invite groups (RecreationInviteGroup.id): those shared by everyone in the package they joined
+    /// (Job_Activity.JoinParticipant). Null = none (a confirmed attendee's groups are the session's).
+    /// </summary>
+    public List<int> walkInGroups = null;
 }
 
 /// <summary>
@@ -428,80 +431,68 @@ public partial class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinab
 
     /// <summary>
     /// c - the player or any NPC - joins the launched activity in room (CanJoin): registered (Late, walk-in unless a
-    /// confirmed attendee - a walk-in keeps groupKey, the group of the package they joined), checked in overnight, the
-    /// begin event as the join (isJoin), arrived / attended, the entrance fee, their place in the target snapshot.
-    /// Called once c joined a package bound to this activity (ActionPackage.RegisterBoundJoiners - every join path:
-    /// the walk-in confirm, an NPC sandboxing in, the player's target / follower). Undone and false when the check-in or
-    /// the event fails. No timers or automatic reward settlement. via = the package c joined: an NPC walk-in whose fee
-    /// still needs its payer's approval is held (HoldWalkInFee - normally asked before they join, Job.JoinPackage).
+    /// confirmed attendee - a walk-in takes the invite groups everyone in via shares, WalkInGroupsOf), checked in
+    /// overnight; then the begin event as the join (isJoin) - one for everyone joining in this moment, at the end of the
+    /// minute (QueueArrival - Job_Activity_ArrivalBatch) - and once it ran: arrived / attended, the entrance fee, their
+    /// place in the target snapshot (FinishJoin). Called once c joined a package bound to this activity
+    /// (ActionPackage.RegisterBoundJoiners - every join path: the walk-in confirm, an NPC sandboxing in, the player's
+    /// target / follower). False (undone) when the check-in fails; a join whose event is refused even on its own is
+    /// undone at the flush and leaves the package. No timers or automatic reward settlement. via = the package c joined:
+    /// an NPC walk-in whose fee still needs its payer's approval is held (HoldWalkInFee - normally asked before they
+    /// join, Job.JoinPackage).
     /// </summary>
-    public bool JoinParticipant(Character_Trainable c, Room_Instance room, int groupKey = NoGroupCheck, ActionPackage via = null)
+    public bool JoinParticipant(Character_Trainable c, Room_Instance room, ActionPackage via = null)
     {
         if (!CanJoin(c, room, true, out _)) return false;
         if (HoldWalkInFee(c, via)) return false;
-        bool created = FindParticipant(c.RefID) == null;
-        var rec = RecordFor(c);
-        var oldState = rec.state;
-        int oldGroup = rec.groupKey;
-        bool oldWalkIn = rec.walkIn, oldLate = rec.arrivedLate, oldMandatory = rec.mandatory;
-        string oldRole = rec.roleID;
-        void Restore()
-        {
-            if (created) participants.Remove(rec);
-            else
-            {
-                rec.state = oldState; rec.groupKey = oldGroup; rec.walkIn = oldWalkIn; rec.arrivedLate = oldLate;
-                rec.mandatory = oldMandatory; rec.roleID = oldRole;
-            }
-            NotifyParticipationChanged(c.RefID);
-        }
+        var p = new PendingArrival() { kind = ArrivalKind.Join, chara = c, roomRef = room.RefID, via = via };
+        p.created = FindParticipant(c.RefID) == null;
+        var rec = p.rec = RecordFor(c);
+        p.oldState = rec.state;
+        p.oldGroups = rec.walkInGroups;
+        p.oldWalkIn = rec.walkIn; p.oldLate = rec.arrivedLate; p.oldMandatory = rec.mandatory;
+        p.oldRole = rec.roleID;
 
-        bool confirmed = IsConfirmedAttendee(c);
+        bool confirmed = p.confirmed = IsConfirmedAttendee(c);
         rec.walkIn = !confirmed;
-        if (!confirmed) { rec.mandatory = false; rec.roleID = ""; rec.groupKey = groupKey; }
-        // Set before StartEvent: events may execute immediately and re-enter through callbacks.
+        if (!confirmed) { rec.mandatory = false; rec.roleID = ""; rec.walkInGroups = WalkInGroupsOf(via, c.RefID); }
+        // Set before the join event: events may execute immediately and re-enter through callbacks.
         rec.arrivedLate = true;
         SetParticipantState(rec, ActivityParticipantState.Late);
-        if (!CheckInOvernight(rec)) { Restore(); return false; }
+        if (!CheckInOvernight(rec)) { RestoreJoin(p); return false; }
+        // the begin event as the join: one for everyone joining this moment (Job_Activity_ArrivalBatch), then the rest (FinishJoin)
+        if (string.IsNullOrEmpty(launchEventID)) FinishJoin(p);
+        else QueueArrival(p);
+        return true;
+    }
 
-        var companions = LocalCompanions(room, c.RefID);
-        var companionRefs = new List<int>(companions.Count);
-        var participating = new List<int>(companions.Count + 1);
-        for (int i = 0; i < companions.Count; i++)
-        {
-            companionRefs.Add(companions[i].RefID);
-            participating.Add(companions[i].RefID);
-        }
-        participating.Add(c.RefID);
-        var targets = new Dictionary<string, List<int>>()
-        {
-            ["joining"] = new List<int>() { c.RefID },
-            ["companions"] = companionRefs,
-            ["participants"] = participating,
-            ["player"] = new List<int>() { 0 },
-        };
-        var localRefs = new HashSet<int>(participating);
-        foreach (var pair in BuildEventTargets(c))
-        {
-            if (targets.ContainsKey(pair.Key)) continue;
-            var local = new List<int>();
-            for (int i = 0; i < pair.Value.Count; i++) if (localRefs.Contains(pair.Value[i])) local.Add(pair.Value[i]);
-            targets[pair.Key] = local;
-        }
-        if (!string.IsNullOrEmpty(launchEventID) && FireOutcomeEvent(launchEventID, c, c, targets, isJoin: true) == null)
-        {
-            CheckOutOvernight(c.RefID);
-            Restore();
-            return false;
-        }
+    /// <summary>The rest of a join once its event ran (or there is none): arrived / attended, the entrance fee, the package's groups (a booked player), the target snapshot.</summary>
+    void FinishJoin(PendingArrival p)
+    {
+        var c = p.chara;
+        var rec = p.rec;
         var booking = BookingOf(c);
         RecreationUtility.OnActivityArrived(c, booking);
         RecreationUtility.OnActivityAttended(c, booking);
         ChargeFee(rec);
+        // a booked player arriving late into another group's package takes its groups too
+        if (p.confirmed) AdoptPackageGroups(c, p.via);
         AddToSnapshot("participants", c.RefID);
         AddToSnapshot("optional", c.RefID);
         if (!string.IsNullOrEmpty(rec.roleID) && targetSnapshot != null && targetSnapshot.ContainsKey(rec.roleID)) AddToSnapshot(rec.roleID, c.RefID);
-        return true;
+    }
+
+    /// <summary>A join undone (check-in failed, or its event refused alone too): the participant record as it was.</summary>
+    void RestoreJoin(PendingArrival p)
+    {
+        var rec = p.rec;
+        if (p.created) participants.Remove(rec);
+        else
+        {
+            rec.state = p.oldState; rec.walkInGroups = p.oldGroups; rec.walkIn = p.oldWalkIn; rec.arrivedLate = p.oldLate;
+            rec.mandatory = p.oldMandatory; rec.roleID = p.oldRole;
+        }
+        NotifyParticipationChanged(p.chara.RefID);
     }
 
     /// <summary>
@@ -675,40 +666,129 @@ public partial class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinab
         return null;
     }
 
-    /// <summary>ActionPackage.activityGroupKey / ActivityParticipant.groupKey "unset": no group restriction / derive it.</summary>
-    public const int NoGroupCheck = int.MinValue;
-    /// <summary>The group of a session or solo visit that is not split (everyone together).</summary>
-    public const int SingleGroup = -1;
+    // ---------------- invite groups (Docs/Activities/Plan_GroupInvitations.md) ---------------- //
 
-    /// <summary>
-    /// The group charaRef belongs to within this activity (Plan_ActivityFurnitureCommands step 3): a posted offer
-    /// (a fixed offer - the fireworks: one session for every family) splits by invitation - the extension chain's root
-    /// (the member the session's own scope reached), so everyone a member extended the invite to, and so on, is with
-    /// them. Any other session and a solo visit are one group (SingleGroup). A walk-in keeps the group they joined.
-    /// </summary>
-    public int GroupOf(int charaRef)
+    /// <summary>The session's invite groups when it uses group invitations (RecreationGroup.inviteGroups), else null - everyone is one group.</summary>
+    List<RecreationInviteGroup> InviteGroups
     {
-        var rec = FindParticipant(charaRef);
-        if (rec != null && rec.groupKey != NoGroupCheck) return rec.groupKey;
-        if (key == null || !key.isSession || !TryGetInstance(out var g, out _) || g == null || !g.IsPostedOffer) return SingleGroup;
-        var m = g.FindMember(charaRef);
-        if (m == null) return charaRef;
-        for (int guard = 0; guard < 16 && m.origin == RecreationMemberOrigin.Extension && m.extendedByRef >= 0; guard++)
+        get
         {
-            var up = g.FindMember(m.extendedByRef);
-            if (up == null) break;
-            m = up;
+            if (key == null || !key.isSession || !TryGetInstance(out var g, out _) || g == null) return null;
+            return g.inviteGroups != null && g.inviteGroups.Count > 0 ? g.inviteGroups : null;
         }
-        return m.charaRef;
     }
 
-    /// <summary>Both characters are actual participants of this launched execution and the same invitation group.</summary>
-    public bool SharesLaunchedGroup(Character_Trainable first, Character_Trainable second, int packageGroup)
+    /// <summary>
+    /// charaRef is in invite group: a member of it (a confirmed attendee), or one who joined it at the venue
+    /// (ActivityParticipant.walkInGroups - a walk-in, or the player joining another group's package - AdoptPackageGroups).
+    /// </summary>
+    bool InGroup(int charaRef, RecreationInviteGroup group)
+    {
+        if (group == null) return false;
+        var rec = FindParticipant(charaRef);
+        if (rec != null && rec.walkInGroups != null && rec.walkInGroups.Contains(group.id)) return true;
+        if (rec != null && rec.walkIn) return false;
+        return group.memberRefs.Contains(charaRef);
+    }
+
+    /// <summary>
+    /// a and b share an invite group of this activity (a character may be in several). A session without group
+    /// invitations, and a solo visit, are one group: always true.
+    /// </summary>
+    public bool SharesGroup(int a, int b)
+    {
+        var groups = InviteGroups;
+        if (groups == null) return true;
+        for (int i = 0; i < groups.Count; i++)
+            if (InGroup(a, groups[i]) && InGroup(b, groups[i])) return true;
+        return false;
+    }
+
+    /// <summary>
+    /// Package admission by group (step 3, group invitations): c shares an invite group with everyone in ap who takes
+    /// part - so a package's group narrows to what its actors share. An empty package takes anyone. The player may join
+    /// any group's package, booked or not (user 2026-11-12), and so may their companions joining it with them
+    /// (JoinsWithPlayer) - joining it makes them one of its groups (AdoptPackageGroups).
+    /// </summary>
+    public bool PackageAdmits(ActionPackage ap, Character_Trainable c)
+    {
+        if (ap == null || c == null) return false;
+        if (InviteGroups == null || JoinsWithPlayer(ap, c)) return true;
+        var actors = ap.actorRefs;
+        for (int i = 0; i < actors.Count; i++)
+        {
+            int other = actors[i];
+            if (other == c.RefID) continue;
+            var rec = FindParticipant(other);
+            if (rec == null || (rec.state != ActivityParticipantState.Launched && rec.state != ActivityParticipantState.Late)) continue;
+            if (!SharesGroup(c.RefID, other)) return false;
+        }
+        return true;
+    }
+
+    /// <summary>A walk-in's groups (JoinParticipant): the invite groups everyone taking part in via is in; null without group invitations / a package.</summary>
+    List<int> WalkInGroupsOf(ActionPackage via, int exceptRef)
+    {
+        var groups = InviteGroups;
+        if (groups == null || via == null) return null;
+        var result = new List<int>();
+        for (int i = 0; i < groups.Count; i++)
+        {
+            bool all = true, any = false;
+            var actors = via.actorRefs;
+            for (int a = 0; a < actors.Count && all; a++)
+            {
+                int other = actors[a];
+                if (other == exceptRef) continue;
+                var rec = FindParticipant(other);
+                if (rec == null || (rec.state != ActivityParticipantState.Launched && rec.state != ActivityParticipantState.Late)) continue;
+                any = true;
+                if (!InGroup(other, groups[i])) all = false;
+            }
+            if (all && any) result.Add(groups[i].id);
+        }
+        return result;
+    }
+
+    /// <summary>c is the player, or their companion (current target / party member) joining ap the player is in - group admission doesn't bind them.</summary>
+    static bool JoinsWithPlayer(ActionPackage ap, Character_Trainable c)
+    {
+        return c != null && (c.RefID == 0 || (ap != null && ap.actorRefs.Contains(0) && IsPlayerCompanion(c)));
+    }
+
+    /// <summary>
+    /// A participant already taking part joined ap - the booked player, or their companion joining with them
+    /// (JoinsWithPlayer): the invite groups ap's other actors all share are added to their walkInGroups, so those
+    /// groups' members may join packages they are in later. Any other NPC only ever joins packages of its own groups.
+    /// </summary>
+    public void AdoptPackageGroups(Character_Trainable c, ActionPackage ap)
+    {
+        if (c == null || ap == null || !JoinsWithPlayer(ap, c) || !TookPart(c)) return;
+        var adopted = WalkInGroupsOf(ap, c.RefID);
+        if (adopted == null || adopted.Count == 0) return;
+        var rec = FindParticipant(c.RefID);
+        if (rec.walkInGroups == null) rec.walkInGroups = new List<int>();
+        for (int i = 0; i < adopted.Count; i++) if (!rec.walkInGroups.Contains(adopted[i])) rec.walkInGroups.Add(adopted[i]);
+    }
+
+    /// <summary>
+    /// c (an NPC) is booked for this activity and in an invite group with the player, who takes part or is booked too
+    /// (a session without group invitations is one group) - joining the player's package, c needs no asking
+    /// (Job.JoinPackage: the RequestJoin event from its accept branch).
+    /// </summary>
+    public bool IsBookedGroupmateOfPlayer(Character_Trainable c)
+    {
+        if (c == null || c.RefID == 0 || !IsConfirmedAttendee(c)) return false;
+        var player = scr_System_CampaignManager.current.Player;
+        if (player == null || (!TookPart(player) && !IsConfirmedAttendee(player))) return false;
+        return SharesGroup(c.RefID, player.RefID);
+    }
+
+    /// <summary>Both characters are actual participants of this launched execution and share an invite group.</summary>
+    public bool SharesLaunchedGroup(Character_Trainable first, Character_Trainable second)
     {
         if (first == second || !IsCurrentParticipant(first) || !IsCurrentParticipant(second)) return false;
-        int firstGroup = GroupOf(first.RefID);
-        return firstGroup == GroupOf(second.RefID)
-            && (packageGroup == NoGroupCheck || packageGroup == firstGroup);
+        return SharesGroup(first.RefID, second.RefID);
     }
 
     [JsonIgnore] readonly Dictionary<string, Stat_Modifier> activityMoodletModifiers = new Dictionary<string, Stat_Modifier>();
@@ -1123,7 +1203,8 @@ public partial class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinab
 
     /// <summary>
     /// c reached the gather room after the outcome (an NPC walked there by the job, the player through the join
-    /// command) - once per participant: the same outcome event again, c as self, with isLate.
+    /// command) - once per participant: the same outcome event again with isLate - one for everyone arriving in this
+    /// moment and room (Job_Activity_ArrivalBatch).
     /// <br/>- Launched: c joins late - Late, the entrance fee, their place in the target snapshot (participants /
     ///   optional / their role key only - never the event's own keys), the begin event. True.
     /// <br/>- Failed: c is turned away - Released, the failed event (its Results decide the consequences, e.g. cancelling
@@ -1161,12 +1242,13 @@ public partial class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinab
             }
             ChargeFee(rec);
             RecreationUtility.OnActivityAttended(c, BookingOf(c));
-            if (!string.IsNullOrEmpty(launchEventID)) FireOutcomeEvent(launchEventID, c, c);
+            // the late line: one event for everyone arriving in this moment (Job_Activity_ArrivalBatch)
+            if (!string.IsNullOrEmpty(launchEventID)) QueueArrival(ArrivalKind.Late, c);
             return true;
         }
 
         SetParticipantState(rec, ActivityParticipantState.Released);
-        FireOutcomeEvent(FailedEventID, c, c);
+        QueueArrival(ArrivalKind.LateFailed, c);
         return false;
     }
 
@@ -1360,8 +1442,9 @@ public partial class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinab
 
     /// <summary>
     /// The trust reward of a trustRewardEligible activity, at the launch: everyone who kept their promise
-    /// (ActivityParticipant.keptPromise) gains KeptPromiseTrust Trust towards each other one of them - once per directed
-    /// pair. Latecomers, walk-ins and no-shows get none; a lone keeper has no pair. exp: the begin event's message log
+    /// (ActivityParticipant.keptPromise) gains KeptPromiseTrust Trust towards each other one of them who shares an invite
+    /// group with them (SharesGroup - group invitations; otherwise everyone) - once per directed pair. Latecomers,
+    /// walk-ins and no-shows get none; a lone keeper has no pair. exp: the begin event's message log
     /// (StartBeginEvent) - its FlushMessageExpAll shows the gains; null only when there is no begin event to carry them.
     /// </summary>
     void AwardKeptPromiseTrust(ExperienceLog exp)
@@ -1377,21 +1460,29 @@ public partial class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinab
             {
                 var to = participants[j];
                 if (to == null || !to.keptPromise || to.charaRef == from.charaRef) continue;
+                if (!SharesGroup(from.charaRef, to.charaRef)) continue;
                 if (fromChara.Relationships.FindRelationshipWith(to.charaRef) == null) continue;
                 fromChara.Relationships.IncreaseRelationshipWith(to.charaRef, RelationshipScoreType.Trust, KeptPromiseTrust, exp, silent: false);
             }
         }
     }
 
-    /// <summary>A trustRewardEligible activity with at least two who kept their promise - a pair to reward.</summary>
+    /// <summary>A trustRewardEligible activity with two who kept their promise and share an invite group - a pair to reward.</summary>
     [JsonIgnore] bool HasTrustReward
     {
         get
         {
             if (VisitActivity?.trustRewardEligible != true) return false;
-            int kept = 0;
             for (int i = 0; i < participants.Count; i++)
-                if (participants[i] != null && participants[i].keptPromise && ++kept >= 2) return true;
+            {
+                var a = participants[i];
+                if (a == null || !a.keptPromise) continue;
+                for (int k = i + 1; k < participants.Count; k++)
+                {
+                    var b = participants[k];
+                    if (b != null && b.keptPromise && SharesGroup(a.charaRef, b.charaRef)) return true;
+                }
+            }
             return false;
         }
     }
@@ -1475,11 +1566,18 @@ public partial class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinab
     ///   invite role (roleID) of them;
     /// <br/>- host: the host, when they waited or are this latecomer;
     /// <br/>- waited: who was in the gather room at the launch / failure;
-    /// <br/>- late: the original fire - who was still expected (absent) at the outcome; a late fire - the latecomer;
+    /// <br/>- late: the original fire - who was still expected (absent) at the outcome; a late fire - the latecomer(s);
     /// <br/>- player: the player.
     /// </summary>
     Dictionary<string, List<int>> BuildEventTargets(Character_Trainable latecomer)
     {
+        return BuildEventTargetsFor(latecomer == null ? null : new List<Character_Trainable>(1) { latecomer });
+    }
+
+    /// <summary>BuildEventTargets for a batch of arrivals (null / empty = the original fire) - Job_Activity_ArrivalBatch.</summary>
+    Dictionary<string, List<int>> BuildEventTargetsFor(List<Character_Trainable> arrivals)
+    {
+        bool arriving = arrivals != null && arrivals.Count > 0;
         var targets = new Dictionary<string, List<int>>();
         void Add(string k, int r)
         {
@@ -1498,8 +1596,13 @@ public partial class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinab
             if (p.waited) Add("waited", p.charaRef);
             if (p.charaRef == hostRef && p.waited) hostWaited = true;
         }
-        if (hostRef >= 0 && (hostWaited || (latecomer != null && latecomer.RefID == hostRef))) Add("host", hostRef);
-        if (latecomer != null) Add("late", latecomer.RefID);
+        bool hostArriving = false;
+        if (arriving) for (int i = 0; i < arrivals.Count; i++) if (arrivals[i] != null && arrivals[i].RefID == hostRef) hostArriving = true;
+        if (hostRef >= 0 && (hostWaited || hostArriving)) Add("host", hostRef);
+        if (arriving)
+        {
+            for (int i = 0; i < arrivals.Count; i++) if (arrivals[i] != null) Add("late", arrivals[i].RefID);
+        }
         else
         {
             for (int i = 0; i < participants.Count; i++)
@@ -1521,10 +1624,23 @@ public partial class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinab
     /// </summary>
     EventInstance FireOutcomeEvent(string eventID, Character_Trainable latecomer, Character_Trainable self, Dictionary<string, List<int>> targets = null, bool withInstanceKey = false, bool isJoin = false, Action<EventInstance> beforeStart = null)
     {
+        var arrivals = latecomer == null ? null : new List<Character_Trainable>(1) { latecomer };
+        var room = latecomer == null ? null : scr_System_CampaignManager.current.GetCharaRoomInstance(latecomer.RefID);
+        return FireArrivalEvent(eventID, arrivals, room, self, targets, withInstanceKey, isJoin, beforeStart);
+    }
+
+    /// <summary>
+    /// FireOutcomeEvent for a batch of arrivals in arrivalRoom (Job_Activity_ArrivalBatch - everyone joining / arriving
+    /// late in one moment): joining / late = all of them, companions = the participants already there. Null / empty
+    /// arrivals = the original fire (arrivalRoom unused).
+    /// </summary>
+    EventInstance FireArrivalEvent(string eventID, List<Character_Trainable> arrivals, Room_Instance arrivalRoom, Character_Trainable self, Dictionary<string, List<int>> targets = null, bool withInstanceKey = false, bool isJoin = false, Action<EventInstance> beforeStart = null)
+    {
         if (string.IsNullOrEmpty(eventID) || self == null) return null;
+        bool arriving = arrivals != null && arrivals.Count > 0;
         var ev = new EventInstance(self, eventID, "");
         ev.displayOverride = self.RefID == 0;
-        foreach (var kvp in targets ?? BuildEventTargets(latecomer))
+        foreach (var kvp in targets ?? BuildEventTargetsFor(arrivals))
         {
             var list = new List<Character_Trainable>(kvp.Value.Count);
             for (int i = 0; i < kvp.Value.Count; i++)
@@ -1536,9 +1652,10 @@ public partial class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinab
         }
         if (!isJoin)
         {
-            var room = latecomer == null ? ParentRoom : scr_System_CampaignManager.current.GetCharaRoomInstance(latecomer.RefID);
-            var present = LocalCompanions(room, latecomer?.RefID ?? -1);
-            if (latecomer == null)
+            var room = arriving ? arrivalRoom : ParentRoom;
+            var present = LocalCompanions(room, -1);
+            if (arriving) for (int i = present.Count - 1; i >= 0; i--) if (arrivals.Contains(present[i])) present.RemoveAt(i);
+            if (!arriving)
             {
                 if (present.Count > 0) ev.Targets["attendees"] = present;
                 if (present.Count >= 2) ev.AppendStrings["hasSharedAttendees"] = new List<string>() { "true" };
@@ -1546,11 +1663,11 @@ public partial class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinab
             }
             else
             {
-                ev.Targets["joining"] = new List<Character_Trainable>() { latecomer };
+                ev.Targets["joining"] = new List<Character_Trainable>(arrivals);
                 if (present.Count > 0) ev.Targets["companions"] = present;
-                var participating = new List<Character_Trainable>(present.Count + 1);
+                var participating = new List<Character_Trainable>(present.Count + arrivals.Count);
                 participating.AddRange(present);
-                participating.Add(latecomer);
+                participating.AddRange(arrivals);
                 ev.Targets["participating"] = participating;
             }
         }
@@ -1560,7 +1677,7 @@ public partial class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinab
         if (isJoin) ev.AppendStrings["isJoin"] = new List<string>() { "true" };
         if (phase == ActivityPhase.Launched && VisitActivity?.trustRewardEligible == true)
             ev.AppendStrings["activityTrustEligible"] = new List<string>() { "true" };
-        if (latecomer != null) ev.AppendStrings["isLate"] = new List<string>() { "true" };
+        if (arriving) ev.AppendStrings["isLate"] = new List<string>() { "true" };
         // presence flags of the waited / late targets, so the event can branch on them (ExistAppendStrings)
         if (ev.Targets.ContainsKey("waited")) ev.AppendStrings["hasWaited"] = new List<string>() { "true" };
         if (ev.Targets.ContainsKey("late")) ev.AppendStrings["hasLate"] = new List<string>() { "true" };
@@ -1952,7 +2069,14 @@ public partial class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinab
     /// Per-tick (I_RequireSpecialTracker, specialUpdateJobs): instance liveness (gone / cancelled / over ends the
     /// job), and the gather check while gathering.
     /// </summary>
+    /// <summary>The per-tick coordination (LastUpdateActivity), then this moment's join / late events, one per batch (FlushPendingArrivals).</summary>
     public override void LastUpdate()
+    {
+        try { LastUpdateActivity(); }
+        finally { FlushPendingArrivals(); }
+    }
+
+    void LastUpdateActivity()
     {
         if (scr_System_CampaignManager.current?.ActivityLifecycleLoading == true) return;
         RefreshParticipantMoodlets();

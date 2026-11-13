@@ -15,24 +15,33 @@ public partial class Job_Activity
 {
     public const string WalkInEventID = "Recreation_WalkIn_Confirm";
 
-    /// <summary>ap is a bound join offer to c: not participating yet; confirmed attendees must keep their invitation group.</summary>
+    /// <summary>ap is a bound join offer to c: not participating yet; confirmed attendees only into a package of their invite groups (PackageAdmits - the player into any).</summary>
     public bool IsWalkInOffer(ActionPackage ap, Character_Trainable c)
     {
         return ap != null && c != null && !(ap.job is Job_Activity) && ap.ActivityExecutionRef == RefID && !TookPart(c)
-            && (!IsConfirmedAttendee(c) || ap.ActivityGroupKey == NoGroupCheck || GroupOf(c.RefID) == ap.ActivityGroupKey);
+            && (!IsConfirmedAttendee(c) || PackageAdmits(ap, c));
     }
 
     /// <summary>
     /// c may join ap (a package bound to this activity, or a copy of one) as a walk-in: not part of the activity yet,
     /// someone else in ap already takes part (a walk-in joins an ongoing package, never starts one), admitted by the join
-    /// rules (CanJoin - scope / allowWalkIn, access, unpaid fee, eligibility) in ap's room. ActionPackage
+    /// rules (CanJoin - scope / allowWalkIn, access, unpaid fee, eligibility) in ap's room. An NPC outsider only when the
+    /// activity lets NPCs walk in (npcWalkIn) - the player's companions come with the player regardless. ActionPackage
     /// .ValidateActivityCommandPolicy accepts them on this, so the join validates like any join (canJoinAP / Validate -
-    /// variants, AC, rates); the successful join registers them into ap's group (ActionPackage.RegisterBoundJoiners).
+    /// variants, AC, rates); the successful join registers them into ap's groups (ActionPackage.RegisterBoundJoiners).
     /// </summary>
     public bool AdmitsWalkIn(Character_Trainable c, ActionPackage ap)
     {
         return IsWalkInOffer(ap, c) && HoldsParticipantBesides(ap, c.RefID)
-            && (c.RefID == 0 || IsConfirmedAttendee(c) || IsEligibleNpcWalkIn(c)) && CanJoin(c, ap.PackageRoom, true, out _);
+            && (c.RefID == 0 || IsConfirmedAttendee(c) || IsPlayerCompanion(c) || (VisitActivity?.npcWalkIn != false && IsEligibleNpcWalkIn(c)))
+            && CanJoin(c, ap.PackageRoom, true, out _);
+    }
+
+    /// <summary>The player's current target or a party member - joins along with the player (CompanionsFor), so an activity closed to NPC walk-ins still takes them.</summary>
+    static bool IsPlayerCompanion(Character_Trainable c)
+    {
+        var campaign = scr_System_CampaignManager.current;
+        return c != null && c.RefID > 0 && campaign != null && (campaign.CurrentTargetRef == c.RefID || campaign.PlayerPartyMembers.Contains(c.RefID));
     }
 
     /// <summary>An automatic NPC outsider may only join from sandbox time, outside other live activity commitments.</summary>
@@ -145,7 +154,7 @@ public partial class Job_Activity
         {
             var ap = packages[i];
             if (ap == null || ap.ActivityExecutionRef != RefID || !ap.actorRefs.Contains(0)) continue;
-            if (!JoinParticipant(player, ap.PackageRoom, ap.ActivityGroupKey) && scr_System_CentralControl.current.LogPrefs.DLog_Jobs)
+            if (!JoinParticipant(player, ap.PackageRoom, ap) && scr_System_CentralControl.current.LogPrefs.DLog_Jobs)
                 UnityEngine.Debug.LogWarning($"{DisplayName}: the player is in {ap.DisplayName} without taking part, and could not be registered");
             return;
         }

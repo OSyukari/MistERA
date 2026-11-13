@@ -476,10 +476,17 @@ public static partial class RecreationUtility
         if (!CanPlaceActivity(activity, Organization(audience.factionID), audience.AbsStart, audience.AbsEnd, exceptSession: audience)) return;
         Sessions.Add(audience);
         if (IsPlanningLateCycle) audience.readyCycle = scr_System_Time.current.HoursLateCycle;
+        var spec = ResolveSpec(audience.specRef);
+        // group invitations: each performer sends one invitation and stays a virtual member of its group
+        if (spec.UsesGroupInvites)
+        {
+            InviteAudienceGroups(audience, performance);
+            NotifyActivityChanged(audience);
+            return;
+        }
         // A public listing and personal invitations are separate: let each band member invite their authored
         // optional social targets, without making performers attend the spectator occurrence themselves.
         var skip = new HashSet<int>(performance.requiredParticipantRefs);
-        var spec = ResolveSpec(audience.specRef);
         for (int i = 0; i < performance.requiredParticipantRefs.Count; i++)
         {
             int actor = performance.requiredParticipantRefs[i];

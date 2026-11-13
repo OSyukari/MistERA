@@ -1,0 +1,23 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for PlayerMeet.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "PlayerMeet_Passing_question": "$self.name$ runs into $meetNames$ in $meetRoom$.",
+                "PlayerMeet_Arrival_question": "$meetNames$ is about to leave $meetRoom$.",
+                "PlayerMeet_keepMoving": "Keep moving",
+                "PlayerMeet_stop": "Stop here",
+                "PlayerMeet_stopHello": "Stop and say hello",
+                "PlayerMeet_allAsleep": "Everyone here is asleep",
+                "PlayerMeet_timeStopped": "Time is stopped",
+                "PlayerMeet_goodbye": "Say goodbye",
+                "PlayerMeet_hello": "Say hello",
+                "PlayerMeet_helloLine": "$self.name$ says hello to $meetGreeted$.",
+                "PlayerMeet_helloTooltip": "Call out to $meetGreeted$ - they wait a moment before moving on.",
+                "PlayerMeet_goodbyeLine": "$self.name$ says goodbye to $meetNames$."
+            }
+        }
+    }
+}

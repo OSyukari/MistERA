@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -117,6 +118,16 @@ public class PermissionDefinition
     public string ID = "";
     public string displayName = "";
     public List<string> tags = new List<string>();
+    /// <summary>
+    /// Optional: what the granter's body needs for this permission to concern them at all (e.g. [vagina], [penis], a
+    /// fertile womb) - body-aware, never gender. A granter who does not meet it never matches the rules, cannot be asked
+    /// and its dialogue box is hidden (PermissionService.IsApplicable). Structural fields only (BodyTags, requireSlots,
+    /// requireFertileWomb, race keywords, actor baseID, player / NPC): the result is cached per character until its
+    /// body's parts change (Character_Body.IsPermissionApplicable). null = applies to everyone.
+    /// </summary>
+    public CharaReq charaReq = null;
+    /// <summary>Position in Index_PermissionDefinitions.list (RegisterAllID): the per-character applicability cache slot.</summary>
+    [JsonIgnore] public int Index = -1;
     public List<string> requiredRelationshipTags = new List<string>();
     // Only new grants use these tags; persisted Normal grants keep their previous validity rules.
     public List<string> normalGrantRelationshipTags = new List<string>();
@@ -151,9 +162,54 @@ public class PermissionDefinition
     /// the accepted result kept (e.g. ignoring the demand records a scene push). Empty = no demand, only the penalty.
     /// </summary>
     public string demandEventID = "";
+    /// <summary>
+    /// Demand only: the requester may claim today is a safe day (安全日) - the truth, or a lie on their own danger day
+    /// (ReproductionUtility.IsDangerDay). The granter's request decision for this permission decides (AcceptsRequest, no
+    /// roll); accepted = a Temporary grant (ends with the scene) and the act resumes (ActionPackage.SendDemandEvent).
+    /// </summary>
+    public bool demandSafeDayClaim = false;
+    /// <summary>
+    /// Safe-day claim only: the permission whose request decision the claim uses - the granter believes it is safe, so they
+    /// decide as for that one (e.g. the danger-day permission decides as permission_sex_unprotected_penis). Empty = this
+    /// permission. An accepted claim grants every permission the demand covers (its pushed IDs) as Temporary.
+    /// </summary>
+    public string safeDayClaimDecisionID = "";
 
     /// <summary>Relationship costs when the act happens without this permission (see PermissionConsequence).</summary>
     public List<PermissionConsequence> consequences = new List<PermissionConsequence>();
+
+    /// <summary>
+    /// charaReq is cached per character until the body's parts change, so it may only use fields that depend on the body's
+    /// structure. The live defaults (requireConscious / requireAction) are turned off; any other live field is reported.
+    /// </summary>
+    public void NormalizeCharaReq(List<string> messages)
+    {
+        if (charaReq == null) return;
+        charaReq.requireConscious = false;
+        charaReq.requireAction = false;
+        var q = charaReq;
+        var live = new List<string>();
+        if (q.cost_EN != 0 || q.cost_ST != 0) live.Add("cost_EN/cost_ST");
+        if (q.minRevealingScore != -1) live.Add("minRevealingScore");
+        if (q.requireUndressedTags.Count > 0) live.Add("requireUndressedTags");
+        if (q.requireInflatedBodyTags.Count > 0 || q.requireExtremeInflatedBodyTags.Count > 0) live.Add("requireInflatedBodyTags");
+        if (q.requireUnconscious) live.Add("requireUnconscious");
+        if (q.requireUnrestrained) live.Add("requireUnrestrained");
+        if (q.requireMovement || q.requireMovement_ignoreTimestop) live.Add("requireMovement");
+        if (q.requireNoPrivacyAction) live.Add("requireNoPrivacyAction");
+        if (q.requireUndressed) live.Add("requireUndressed");
+        if (q.requireOutfitChange) live.Add("requireOutfitChange");
+        if (q.requireMale || q.requireFemale) live.Add("requireMale/requireFemale (use BodyTags)");
+        if (q.requireNoTeammate || q.requireFollowing || q.requireNotFollowing || q.addPartyMembers) live.Add("party fields");
+        if (q.requireTimestopped) live.Add("requireTimestopped");
+        if (q.requireCombat || q.requireFullHP || q.requireMissingHP || q.requireBedRest) live.Add("combat/HP/bed rest");
+        if (q.requireMemberType?.Count > 0 || q.requireJobFaction != FactionRelation.None) live.Add("faction fields");
+        if (q.requireActorTags?.Count > 0) live.Add("requireActorTags");
+        if (q.requireAbsentJobwithCOMTag.Count > 0 || q.requireExistingJobwithCOMTag.Count > 0) live.Add("job fields");
+        if (q.requireStatusValue.Count > 0) live.Add("requireStatusValue");
+        if (live.Count > 0)
+            messages?.Add($"PermissionDefinition [{ID}] charaReq uses non-structural fields ({string.Join(", ", live)}): the applicability cache will go stale");
+    }
 
     /// <summary>The granter's relationship toward the holder (rel) meets every requestRequirements entry; no relationship
     /// yet only passes when there is nothing to meet.</summary>
@@ -277,8 +333,14 @@ public class Index_PermissionDefinitions : I_IndexMergeable, I_IndexHasID, I_Rem
         var seen = new HashSet<string>(StringComparer.Ordinal);
         if (list != null)
         {
-            foreach (var definition in list)
+            for (int i = 0; i < list.Count; i++)
             {
+                var definition = list[i];
+                if (definition != null)
+                {
+                    definition.Index = i;
+                    definition.NormalizeCharaReq(messages);
+                }
                 if (definition == null || string.IsNullOrEmpty(definition.ID) ||
                     !Regex.IsMatch(definition.ID, @"\A[a-z][a-z0-9_]*\z"))
                 {

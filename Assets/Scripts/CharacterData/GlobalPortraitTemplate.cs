@@ -20,6 +20,7 @@ public static class GlobalPortraitTemplate
 {
     public const string ConfigFileName = "Image_Generation_Config.json";
     public const string Placeholder = "$foldername$";
+    const string StatePlaceholder = "$imagestate$";
 
     public static string ConfigPath { get { return $"{scr_System_Serializer.AssetPacksPath}/{ConfigFileName}"; } }
 
@@ -222,7 +223,7 @@ public static class GlobalPortraitTemplate
     }
 
     // file_names keys that are not the name (same as the classifier's ImageRulesJsonLoader.NameEntryKeys)
-    static readonly HashSet<string> NameEntryKeys = new HashSet<string> { "tier", "hasVariants", "none", "onlyInCategories", "fallback", "tierMinScore" };
+    static readonly HashSet<string> NameEntryKeys = new HashSet<string> { "tier", "hasVariants", "defaultVariant", "none", "onlyInCategories", "fallback", "tierMinScore", "filenameOnly" };
 
     static List<PortraitManager.CharaPortrait> Build(JObject config, out string debugOutput)
     {
@@ -258,11 +259,11 @@ public static class GlobalPortraitTemplate
                 foreach (var n in names)
                 {
                     // every (keyword, role) pair of the name that belongs in this block (OR: any of them shows these images).
-                    // The first pair is the name's own keyword; later pairs are fallbacks, after the names that have that keyword as their own
+                    // The first keyword is primary across roles; other keywords are fallbacks.
                     for (int k = 0; k < n.keywords.Count; k++)
                     {
                         var (kw, kwRole) = n.keywords[k];
-                        bool primary = k == 0;
+                        bool primary = k == 0 || kw == n.keywords[0].Item1;
                         bool both = kwRole == "both";
                         if (kwRole != block.role && !(both && (block.role == "doer" || block.role == "receiver"))) continue;
                         // a name without keyword (generic) only gets its keyworded variants here (eg. [sleeping]); its base is the unconditional variant
@@ -327,7 +328,115 @@ public static class GlobalPortraitTemplate
                 });
             }
         }
+        AppendMappedPortraits(config, pg, ext, result, "activity", "portrait_activities", "activities", false);
+        AppendMappedPortraits(config, pg, ext, result, "portrait", "portrait_emotions", "emotions", true);
+        ExpandStates(config, result);
         return result;
+    }
+
+    static void ExpandStates(JObject config, List<PortraitManager.CharaPortrait> handlers)
+    {
+        var states = (config["image_states"] as JObject)?.Properties()
+            .Where(p => !IsComment(p.Name) && p.Value is JObject).ToList() ?? new List<JProperty>();
+        var ordinary = states.Count == 0 ? "" : $"(?!(?:{string.Join("|", states.Select(p => Regex.Escape(p.Name)))})_)";
+        foreach (var handler in handlers)
+        {
+            var variants = new List<PortraitManager.PortraitVariant>();
+            // Every alias is an independent alternative, not an additional AND requirement.
+            foreach (var variant in handler.Variants)
+                foreach (var state in states)
+                    foreach (var keyword in (state.Value["keywords"] as JArray)?.Values<string>()
+                        .Where(k => !string.IsNullOrEmpty(k)).Distinct() ?? Enumerable.Empty<string>())
+                    {
+                        var tags = new List<string>(variant.tagsMatch);
+                        if (!tags.Contains(keyword)) tags.Add(keyword);
+                        variants.Add(new PortraitManager.PortraitVariant
+                        {
+                            tagsMatch = tags,
+                            PortraitVariantData = variant.PortraitVariantData.Select(p =>
+                                p.Replace(StatePlaceholder, Regex.Escape(state.Name) + "_")).ToList(),
+                        });
+                    }
+            foreach (var variant in handler.Variants)
+            {
+                variant.PortraitVariantData = variant.PortraitVariantData.Select(p => p.Replace(StatePlaceholder, ordinary)).ToList();
+                variants.Add(variant);
+            }
+            handler.Variants = variants;
+        }
+    }
+
+    static void AppendMappedPortraits(JObject config, JObject pg, string ext, List<PortraitManager.CharaPortrait> result,
+        string folder, string nameSet, string mappingKey, bool neutralFallback)
+    {
+        if (!(pg[mappingKey] is JObject mapping)) return;
+        var names = new List<NameInfo>();
+        foreach (var entry in (config[nameSet] as JArray)?.OfType<JObject>() ?? Enumerable.Empty<JObject>())
+        {
+            var keys = entry.Properties().Where(p => !IsComment(p.Name) && !NameEntryKeys.Contains(p.Name)).ToList();
+            if (keys.Count != 1 || !(keys[0].Value is JArray)) continue;
+            if (!names.Any(n => n.name == keys[0].Name)) names.Add(new NameInfo { name = keys[0].Name });
+        }
+
+        var ids = new HashSet<string>(names.Select(n => n.name));
+        var fallbacks = new List<(string keyword, List<string> files)>();
+        foreach (var p in mapping.Properties())
+        {
+            if (IsComment(p.Name)) continue;
+            if (!(p.Value is JArray array))
+            {
+                Debug.LogWarning($"GlobalPortraitTemplate: portrait_global.{mappingKey} [{p.Name}] must be an ordered array of {nameSet} ids, skipped");
+                continue;
+            }
+            var files = new List<string>();
+            foreach (var value in array)
+            {
+                var id = value.Type == JTokenType.String ? (string)value : null;
+                if (id == null || !ids.Contains(id))
+                {
+                    Debug.LogWarning($"GlobalPortraitTemplate: portrait_global.{mappingKey} [{p.Name}] references unknown {nameSet} id [{value}], skipped");
+                    continue;
+                }
+                if (!files.Contains(id)) files.Add(id);
+            }
+            fallbacks.Add((p.Name, files));
+        }
+
+        var variants = new List<PortraitManager.PortraitVariant>();
+        // Exact expressions (including source-specific ids) precede every cross-expression fallback.
+        foreach (var n in names)
+            variants.Add(new PortraitManager.PortraitVariant
+            {
+                tagsMatch = new List<string> { n.name },
+                PortraitVariantData = new List<string> { Pattern(folder, n.name, "", names, new List<string>(), ext) },
+            });
+        foreach (var pair in fallbacks)
+            foreach (var id in pair.files)
+            {
+                if (id == pair.keyword) continue;
+                // One variant per id: an available earlier expression must not pool with later fallbacks.
+                variants.Add(new PortraitManager.PortraitVariant
+                {
+                    tagsMatch = new List<string> { pair.keyword },
+                    PortraitVariantData = new List<string> { Pattern(folder, id, "", names, new List<string>(), ext) },
+                });
+            }
+        if (neutralFallback && ids.Contains("neutral"))
+            variants.Add(new PortraitManager.PortraitVariant
+            {
+                PortraitVariantData = new List<string> { Pattern(folder, "neutral", "", names, new List<string>(), ext) },
+            });
+        else if (neutralFallback) Debug.LogWarning($"GlobalPortraitTemplate: {nameSet} has no [neutral] id; unconditional emotion fallback unavailable");
+
+        if (variants.Count == 0) return;
+        // Appended after action handlers; no sex/role requirement for activities or expressions.
+        result.Add(new PortraitManager.CharaPortrait_Image
+        {
+            portrait_offset_x = 0, portrait_offset_y = 0, portrait_offset_size = 0,
+            icon_offset_x = 0, icon_offset_y = 0, icon_offset_size = 1,
+            image_orientation = PortraitManager.ImageOrientation.auto,
+            Variants = variants,
+        });
     }
 
     /// <summary>
@@ -389,7 +498,7 @@ public static class GlobalPortraitTemplate
         var s = $"{Placeholder}/{Regex.Escape(folder)}/{Regex.Escape(name)}_";
         if (suffix != "") s += Regex.Escape(suffix) + "_";
         if (excluded.Count > 0) s += $"(?!(?:{string.Join("|", excluded.Distinct())})_)";
-        return s + $"[^/]+_[0-9]+\\.(?:{ext})";
+        return s + StatePlaceholder + $"[^/]+_[0-9]+\\.(?:{ext})";
     }
 
     class VariantInfo
@@ -487,14 +596,14 @@ public static class GlobalPortraitTemplate
     {
         // files_category ids that can be used: no hold, not portrait
         var usable = new HashSet<string>();
-        var blocked = new HashSet<string> { "portrait" };
+        var blocked = new HashSet<string> { "portrait", "activity" };
         if (config["files_category"] is JArray fc)
         {
             foreach (var c in fc.OfType<JObject>())
             {
                 var id = (string)c["id"];
                 if (string.IsNullOrEmpty(id)) continue;
-                if ((c["hold"]?.Value<bool>() ?? false) || id == "portrait") blocked.Add(id);
+                if ((c["hold"]?.Value<bool>() ?? false) || id == "portrait" || id == "activity") blocked.Add(id);
                 else usable.Add(id);
             }
         }

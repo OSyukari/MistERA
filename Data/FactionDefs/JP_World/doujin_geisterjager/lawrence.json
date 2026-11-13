@@ -21,7 +21,7 @@
     "stat_CON": 12,
     "stat_PSY": 13,
     "stat_WIL": 7,
-    "personalityID": "personality_default",
+    "personalityID": "personality_base",
     "_comment_stats": "Gameplay interpretation: gym-trained ordinary human, pleasure-driven and socially practiced, but cowardly under real danger. High self-esteem represents arrogance rather than courage; no spiritual power is implied by PSY.",
     "traits_body_sex": ["trait_Sensitivity_B_default", "trait_Sensitivity_M_default", "trait_Sensitivity_C_default", "trait_Sensitivity_V_default", "trait_Sensitivity_A_default", "trait_Size_B_AAA", "trait_Size_P_big", "trait_Size_V_none", "trait_Size_A_1"],
     "traits_body": ["trait_BodyType_athletic_male", "trait_SkinColor_fair", "trait_HairColor_light_brown", "trait_EyeColor_purple"],

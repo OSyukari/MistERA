@@ -9,14 +9,13 @@
 # Env: GH_TOKEN (contents: write), GITHUB_REPOSITORY (owner/repo), MODS_DIR (folder with manifest.json + archives),
 #      MODS_TAG (optional, default "mods").
 
+param([switch]$ValidateOnly)
 $ErrorActionPreference = 'Stop'
 
 $token = $env:GH_TOKEN
 $repo = $env:GITHUB_REPOSITORY
 $modsDir = $env:MODS_DIR
 $tag = if ($env:MODS_TAG) { $env:MODS_TAG } else { 'mods' }
-if (-not $token) { throw 'GH_TOKEN is not set' }
-if (-not $repo) { throw 'GITHUB_REPOSITORY is not set' }
 if (-not $modsDir) { throw 'MODS_DIR is not set' }
 
 $api = "https://api.github.com/repos/$repo"
@@ -79,11 +78,48 @@ $manifestPath = Join-Path $modsDir 'manifest.json'
 if (-not (Test-Path -LiteralPath $manifestPath)) { throw "No manifest at $manifestPath (build packages with Tools/Mod Packager first)" }
 $manifest = Get-Content -LiteralPath $manifestPath -Raw -Encoding UTF8 | ConvertFrom-Json
 $local = @($manifest.packages)
+if ($manifest.schema -ne 1) { throw 'Expected legacy schema 1 manifest' }
+$legacyIds = @{}; $legacyAssets = @{}
 
 foreach ($p in $local) {
+    if ([string]::IsNullOrWhiteSpace($p.id) -or $legacyIds.ContainsKey($p.id) -or $legacyAssets.ContainsKey($p.asset) -or $p.asset -notmatch '^[A-Za-z0-9_.-]+\.7z$') { throw "Invalid/duplicate legacy package: $($p.id)" }
+    $legacyIds[$p.id] = $true; $legacyAssets[$p.asset] = $true
     $file = Join-Path $modsDir $p.asset
     if (-not (Test-Path -LiteralPath $file)) { throw "Package [$($p.id)]: archive $($p.asset) is missing from $modsDir" }
     if ((Get-Sha256 $file) -ne $p.sha256) { throw "Package [$($p.id)]: $($p.asset) does not match its manifest sha256 (rebuild it)" }
+    if ((Get-Item -LiteralPath $file).Length -ne $p.size) { throw "Legacy size mismatch: $($p.asset)" }
+}
+
+$catalogPath = Join-Path $modsDir 'catalog-v2.json'
+$catalog = $null
+if (Test-Path -LiteralPath $catalogPath -PathType Leaf) {
+    & (Join-Path $PSScriptRoot 'validate_mod_updates.ps1') -ModsDir $modsDir
+    $catalog = Get-Content -LiteralPath $catalogPath -Raw -Encoding UTF8 | ConvertFrom-Json
+} else {
+    # Packages built before the in-game updater have no catalog yet: keep publishing the manual .7z set.
+    # Rebuild every package with Tools/Mod Packager once to create catalog-v2.json and its ZIPs.
+    Write-Warning "No catalog-v2.json in $modsDir; publishing legacy .7z packages only (in-game updater sees no catalog)"
+}
+if ($ValidateOnly) { Write-Host 'Local publication validation passed; no network requests made'; return }
+if (-not $token) { throw 'GH_TOKEN is not set' }
+if (-not $repo) { throw 'GITHUB_REPOSITORY is not set' }
+
+function Get-RemoteHash($asset) {
+    $tmp = New-TemporaryFile
+    try {
+        Invoke-WebRequest -Uri $asset.url -Headers @{ Authorization = "Bearer $token"; Accept = 'application/octet-stream' } -OutFile $tmp.FullName
+        return Get-Sha256 $tmp.FullName
+    } finally { Remove-Item -LiteralPath $tmp.FullName -Force }
+}
+
+function Publish-Metadata($release, [string]$path, [string]$name, $existing) {
+    if ($existing -and (Get-RemoteHash $existing) -eq (Get-Sha256 $path)) { return }
+    $temporaryName = "$name.new"
+    if ($assetByName.ContainsKey($temporaryName)) { Remove-Asset $assetByName[$temporaryName] }
+    $new = Send-Asset $release $path $temporaryName
+    if ((Get-RemoteHash $new) -ne (Get-Sha256 $path)) { throw "Uploaded metadata mismatch: $name" }
+    if ($existing) { Remove-Asset $existing }
+    Invoke-Api PATCH "$api/releases/assets/$($new.id)" @{ name = $name } | Out-Null
 }
 
 # ------------------------------------------------------------------ release
@@ -119,12 +155,23 @@ $toUpload = @($local | Where-Object {
     })
 $localNames = @{}
 foreach ($p in $local) { $localNames[$p.asset] = $true }
-$toRetire = @($assets | Where-Object { $_.name -ne 'manifest.json' -and -not $localNames.ContainsKey($_.name) })
+$toRetire = @($assets | Where-Object { $_.name -like '*.7z' -and -not $localNames.ContainsKey($_.name) })
 $unchanged = $local.Count - $toUpload.Count
 
 Write-Host "Upload: $($toUpload.Count), retire: $($toRetire.Count), unchanged: $unchanged"
 
 # ------------------------------------------------------------------ apply
+
+# Immutable updater archives are uploaded and checked before either catalog is changed.
+# Old ZIP revisions are never retired: cached catalogs may still reference them.
+foreach ($p in @(if ($catalog) { $catalog.packages })) {
+    if ($assetByName.ContainsKey($p.asset)) {
+        if ((Get-RemoteHash $assetByName[$p.asset]) -cne $p.sha256) { throw "Refusing to overwrite immutable asset: $($p.asset)" }
+    } else {
+        $new = Send-Asset $release (Join-Path $modsDir $p.asset) $p.asset
+        if ($new.size -ne $p.size -or (Get-RemoteHash $new) -cne $p.sha256) { throw "Uploaded ZIP verification failed: $($p.asset)" }
+    }
+}
 
 foreach ($p in $toUpload) {
     $file = Join-Path $modsDir $p.asset
@@ -133,6 +180,7 @@ foreach ($p in $toUpload) {
     $tmpName = "$($p.asset).new"
     if ($assetByName.ContainsKey($tmpName)) { Remove-Asset $assetByName[$tmpName] }
     $new = Send-Asset $release $file $tmpName
+    if ((Get-RemoteHash $new) -ne $p.sha256) { throw "Uploaded legacy archive mismatch: $($p.asset)" }
     if ($assetByName.ContainsKey($p.asset)) { Remove-Asset $assetByName[$p.asset] }
     Invoke-Api PATCH "$api/releases/assets/$($new.id)" @{ name = $p.asset } | Out-Null
 }
@@ -142,12 +190,9 @@ foreach ($a in $toRetire) {
     Remove-Asset $a
 }
 
-if ($toUpload.Count -gt 0 -or $toRetire.Count -gt 0 -or -not $publishedManifest) {
-    # manifest last: if anything above failed, the next run still sees the old manifest and redoes the work
-    $newManifest = Send-Asset $release $manifestPath 'manifest.json.new'
-    if ($publishedManifest) { Remove-Asset $publishedManifest }
-    Invoke-Api PATCH "$api/releases/assets/$($newManifest.id)" @{ name = 'manifest.json' } | Out-Null
-}
+# Compare metadata independently: author/version/description changes need no archive diff.
+Publish-Metadata $release $manifestPath 'manifest.json' $publishedManifest
+if ($catalog) { Publish-Metadata $release $catalogPath 'catalog-v2.json' $assetByName['catalog-v2.json'] }
 
 # ------------------------------------------------------------------ release notes
 

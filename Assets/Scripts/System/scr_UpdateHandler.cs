@@ -1220,6 +1220,17 @@ public partial class scr_UpdateHandler : MonoBehaviour
     bool oneLoop;
     public bool halted = false;
 
+    /// <summary>
+    /// A minute stopped between its player half and its NPC half by a meet prompt (PlayerMeetUtility): the next
+    /// SingleUpdate finishes that minute (NPC passes, time, room/job updates) before ticking any new one. Not saved -
+    /// npcPhasePendingTime drops it when the clock no longer matches (a save was loaded in between).
+    /// </summary>
+    bool npcPhasePending = false;
+    DateTime npcPhasePendingTime;
+    /// <summary> this update only finishes the pending minute (no player package to run after it) </summary>
+    bool finishMinuteOnly = false;
+    public bool NpcPhasePending { get { return npcPhasePending && npcPhasePendingTime == scr_System_Time.current.getCurrentTime(); } }
+
 
     public event Action Observer_PreUpdateTime_Hourly;
     public event Action Observer_PreUpdateTime;
@@ -1284,6 +1295,14 @@ public partial class scr_UpdateHandler : MonoBehaviour
         {
             if(scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.Log($"UpdateHandler PlayerPackage StartCoroutine SingleUpdate, Update duration {updateTime} total {totalUpdateTime}, Eventhandler Active? {EventHandler.Active}");
 
+            StartCoroutine(SingleUpdate());
+        }
+        else if (!Updating && !init && NpcPhasePending)
+        {
+            // a meet prompt answered with no walk to resume: only finish the stopped minute
+            updateTime = 1;
+            totalUpdateTime = 1;
+            finishMinuteOnly = true;
             StartCoroutine(SingleUpdate());
         }
         else if (!Updating && init)
@@ -1366,6 +1385,7 @@ public partial class scr_UpdateHandler : MonoBehaviour
 
         Updating = true;
         int loopCount = 0;
+        bool finishMinuteRun = finishMinuteOnly;
         firstLoopCounter = 2;
         float lastDisplayYield = Time.realtimeSinceStartup;
 
@@ -1402,22 +1422,43 @@ public partial class scr_UpdateHandler : MonoBehaviour
             FlushCollectedLogs(true, oneLoop, true);
 
             halted = false;
-            loopCount++;
-            //var time = Clock ? Utility.ReinitStopWatch(stopWatch) : TimeSpan.Zero;
-            //var time2 = time;
-            //foreach (Manageable faction in organizations) faction.Manage();
-            if (firstLoopCounter > 0) firstLoopCounter --;
-            oneLoop = false;
 
-            // if (firstPreUpdate) firstPreUpdate = false;
-            //else
-            PreUpdate();
+            // a minute stopped by a meet prompt: its player half already ran (and was counted) - finish it first, it
+            // doesn't use up this update's minutes
+            bool finishingMinute = NpcPhasePending;
+            npcPhasePending = false;
+            if (!finishingMinute)
+            {
+                loopCount++;
+                //var time = Clock ? Utility.ReinitStopWatch(stopWatch) : TimeSpan.Zero;
+                //var time2 = time;
+                //foreach (Manageable faction in organizations) faction.Manage();
+                if (firstLoopCounter > 0) firstLoopCounter --;
+                oneLoop = false;
 
-            //if (Clock) Debug.Log("Observer_PreUpdateTime complete " + Utility.LogStopwatch(stopWatch, ref time2));
+                // if (firstPreUpdate) firstPreUpdate = false;
+                //else
+                PreUpdate();
 
-            cnManager.FreeUpdateOneStep(ref totalUpdateTime, ref updateTime);
+                //if (Clock) Debug.Log("Observer_PreUpdateTime complete " + Utility.LogStopwatch(stopWatch, ref time2));
 
-            updateTime -= 1;
+                // the player's APs first: moved into a room with someone there -> the meet prompt stops the minute here,
+                // before any NPC moves (PlayerMeetUtility); the loop top runs the prompt and the NPC half waits for it
+                var playerRoomBefore = cnManager.Player.CurrentRoom;
+                cnManager.FreeUpdateOneStep(ref totalUpdateTime, ref updateTime, 3, 3);
+                if (PlayerMeetUtility.TryStart(playerRoomBefore))
+                {
+                    npcPhasePending = true;
+                    npcPhasePendingTime = scr_System_Time.current.getCurrentTime();
+                    continue;
+                }
+            }
+
+            cnManager.FreeUpdateOneStep(ref totalUpdateTime, ref updateTime, 2, 0);
+
+            if (!finishingMinute) updateTime -= 1;
+            else if (finishMinuteOnly) updateTime = 0;
+            finishMinuteOnly = false;
 
             scr_System_Time.current.UpdateTime(0, 0, timestop ? 0 : 1, 0, true);   // if timestop then the value dont really matter
 
@@ -1481,6 +1522,8 @@ public partial class scr_UpdateHandler : MonoBehaviour
         else
         {
             cnManager.ChangeCurrentViewMode(ViewMode.View_Logs, EventHandler.Active);
+            // stopped on a meet prompt with no walk left: answering it still finishes the minute (ExecuteEventCallbacks)
+            if (NpcPhasePending) halted = EventHandler.Active;
         }
 
         // exiting loop. if player is involved in a job, here's when we should display it.
@@ -1502,7 +1545,8 @@ public partial class scr_UpdateHandler : MonoBehaviour
         
         // halted on a waiting event before any minute ticked (e.g. a dialogue event stopping on its first question):
         // the resumed pass logs the real elapsed time, so a "0 minutes" line here would only queue up behind the question
-        bool skipElapsedLog = halted && loopCount == 0;
+        // likewise an update that only finished a minute stopped by a meet prompt (that minute was counted before)
+        bool skipElapsedLog = (halted || finishMinuteRun) && loopCount == 0;
 
         ExecuteEventCallbacks(CallbackResumeUpdate);
         // APs resolved by events after the loop (ExecutePackageOutsideUpdate) settle here, before the player sees the command list
@@ -1592,7 +1636,7 @@ public partial class scr_UpdateHandler : MonoBehaviour
         if (autoResumeUpdate)
         {
             if (log) Debug.LogError($"execute event callbacks, autoresumeupdate {autoResumeUpdate}, {!EventHandler.Active} {halted} {bo}");
-            if (!EventHandler.Active && halted && bo) StartUpdate(false);
+            if (!EventHandler.Active && halted && (bo || NpcPhasePending)) StartUpdate(false);
         }
         this.CallbackResumeUpdate = false;
     }
@@ -1671,6 +1715,11 @@ public partial class scr_UpdateHandler : MonoBehaviour
             Debug.Log("Updatehandler AppendMessageAfter !Updating, flushCollectedLogs");
             FlushCollectedLogs(true, false);
         }
+    }
+    /// <summary> room enter/leave lines (MovementLog) - see MessageCollect.AddMessage_Movement </summary>
+    public void AppendMovementMessage(DescriptionCollector record, Room_Instance room, bool enter, int actorRef, string name, string detail, bool mergeable)
+    {
+        this.Message.AddMessage_Movement(record, room, enter, actorRef, name, detail, mergeable);
     }
     public void AppendMessageAfter(DescriptionCollector desc, Room_Instance room, bool allowFlush = false)
     {

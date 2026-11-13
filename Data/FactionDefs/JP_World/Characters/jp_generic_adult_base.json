@@ -1,6 +1,6 @@
 {
     "baseID": "jp_generic_adult_base",
-    "_comment": "Generic modern-Japan adult. Gender-neutral base: only spawn it through jp_generic_adult_male/female (JP_World/Characters/templates.json), whose Appearance resets gender, genital sizes and sensitivities (CharaTrainableTemplate.GenderAppearance_Set) and whose setHeight/setWeight give the gendered body size. No portrait yet (falls back to transparent).",
+    "_comment": "Generic modern-Japan adult. Gender-neutral base: only spawn it through jp_generic_adult_male/female (JP_World/Characters/templates.json), whose Appearance resets gender, genital sizes and sensitivities (CharaTrainableTemplate.GenderAppearance_Set) and whose setHeight/setWeight give the gendered body size. personalityID is the male voice (personality_base); female generators set personalityIDOverride personality_default. No portrait yet (falls back to transparent).",
     "Portrait": { "portraitPriorityList": [] },
     "Template": {
         "Appearance": "Male",
@@ -9,7 +9,7 @@
         "stat_CON": 10,
         "stat_PSY": 10,
         "stat_WIL": 10,
-        "personalityID": "personality_default",
+        "personalityID": "personality_base",
         "traits_body_sex": [
             "trait_Sensitivity_B_default", "trait_Sensitivity_M_default", "trait_Sensitivity_C_default",
             "trait_Sensitivity_V_default", "trait_Sensitivity_A_default",

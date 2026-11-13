@@ -1,0 +1,115 @@
+{
+    "_doc": "口上loose entry文件：许可「无套插入」（sex_unprotected_penis，说话者是拥有阴茎的一方：允许自己不戴套插入对方阴道）的请求口上，以及性行为中要求戴套的 Demand（OnAPRefuse_Unprotected_Penis）和安全日说法的回应。条目含义与生成规范同 Permission_intimacy_low.json 的 _doc（Request / Granted / Refused，每条目一个variant、3条response，无通用兜底）。女性说话者且拥有阴茎（扶她），是插入的一方，台词不要假定被插入。文件名含 sex，安全模式不加载。",
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_unprotected_penis_Request",
+                    "_comment": "玩家想请求无套插入许可（让说话者不戴套插入玩家），刚开口。女性说话者（扶她，插入一方）察觉话题时的反应。",
+                    "variants": [ { "responses": [
+                        "\"不戴……是想让我直接进去吗？\"",
+                        "\"直接来的话……你是认真的？\"",
+                        "\"那个……不用我戴套的意思？\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_unprotected_penis_Granted",
+                    "_comment": "答应给予无套插入许可。也会在插入过程中被自动请求获准时说出，台词需两种场合都自然。女性说话者（扶她，插入一方）。",
+                    "variants": [ { "responses": [
+                        "\"……好吧，那我就不戴了。\"\n%%permission_sex_unprotected_penis_consent%%",
+                        "\"既然你想要……就这样吧。\"\n%%permission_sex_unprotected_penis_consent%%",
+                        "\"……是你的话，没关系的。\"\n%%permission_sex_unprotected_penis_consent%%"
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_unprotected_penis_Refused",
+                    "_comment": "拒绝给予无套插入许可。女性说话者（扶她，插入一方），可提及怀孕风险，不过度激烈。",
+                    "variants": [ { "responses": [
+                        "\"不戴的话不行……万一怀上了呢。\"",
+                        "\"对不起，我还是想戴着。\"",
+                        "\"这种事……还是算了吧。\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_unprotected_penis_Demand",
+                    "_comment": "性行为进行中，对方想让说话者不戴套直接插入，而说话者未允许——停下并要求戴上避孕套（OnAPRefuse_Unprotected_Penis 的问题文本）。女性说话者（扶她，插入一方），可紧张、坚持。",
+                    "variants": [ { "responses": [
+                        "\"等、等一下！先让我戴上……\"",
+                        "\"不戴套的话，我不进去。\"",
+                        "\"直接进去不可以……套在哪里？\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_unprotected_penis_Ignored",
+                    "_comment": "说话者要求戴套（OnAPRefuse_Unprotected_Penis），对方无视、继续让她不戴套插入。退而求其次：最后拔出来。女性说话者（扶她，插入一方），不满、无奈。",
+                    "variants": [ { "responses": [
+                        "\"真是的……最后我会拔出来的。\"",
+                        "\"等……那、那我快去的时候就拔出来……\"",
+                        "\"……不会射在里面的，你放心。\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_unprotected_penis_SafeDay_Accepted",
+                    "_comment": "对方说今天是安全日（可能是谎话，说话者不知道），说话者被说服，同意不戴套继续。女性说话者（扶她，插入一方）。",
+                    "variants": [ { "responses": [
+                        "\"安全日吗……那、那就这样吧。\"",
+                        "\"……你确定的话，我就相信你。\"",
+                        "\"既然是安全日……好吧。\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_unprotected_penis_SafeDay_Refused",
+                    "_comment": "对方说今天是安全日，说话者不接受，仍坚持戴套。女性说话者（扶她，插入一方），委婉但坚持。",
+                    "variants": [ { "responses": [
+                        "\"就算是安全日……还是戴上比较好。\"",
+                        "\"对不起，我还是不放心。\"",
+                        "\"安全日也不是绝对的哦。\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_unprotected_penis_LowConsciousness",
+                    "_comment": "意识模糊时被对方让自己不戴套插入（需要无套插入许可）。不会被请求、也不算答应或拒绝，也不会要求戴套，只是迷迷糊糊地察觉到。女性说话者（扶她，插入一方）。",
+                    "variants": [ { "responses": [
+                        "\"……那个……没戴……吗……\"",
+                        "\"……直接……进去了……？\"",
+                        "\"……好热……想不清楚……\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_unprotected_penis_LowConsciousness_Climax",
+                    "_comment": "意识模糊且正处于高潮时被对方让自己不戴套插入，几乎无法组织语言。女性说话者（扶她，插入一方）。",
+                    "variants": [ { "responses": [
+                        "\"……啊……要、要拔出来……\"",
+                        "\"……里、里面……不行……啊……\"",
+                        "\"……什么都……不管了……\""
+                    ] } ]
+                }
+            }
+        ]
+    }
+}

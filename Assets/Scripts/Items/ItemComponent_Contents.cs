@@ -108,6 +108,26 @@ public class ItemComponent_Contents : ItemComponent_Base
         contentRefs.Clear();
     }
 
+    /// <summary>
+    /// Load repair: older saves serialized Item_Instance.Comp_Contents next to compInstances, so every load appended
+    /// the refs again (doubling). Keeps the first of each ref, in order.
+    /// </summary>
+    public void RemoveDuplicateRefs()
+    {
+        if (contentRefs == null || contentRefs.Count < 2) return;
+        var seen = new HashSet<int>();
+        int write = 0;
+        for (int read = 0; read < contentRefs.Count; read++)
+        {
+            int refID = contentRefs[read];
+            if (!seen.Add(refID)) continue;
+            contentRefs[write] = refID;
+            write++;
+        }
+        contentRefs.RemoveRange(write, contentRefs.Count - write);
+        contentRefs.TrimExcess();
+    }
+
     /// <summary>The holder is destroyed: its contents go with it.</summary>
     public void UnregisterContents()
     {

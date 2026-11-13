@@ -75,12 +75,10 @@
                         "_comment":"hardcoded job search behavior"
                     },
                     {
-                        "$type": "TryFindJobByIDNode, Assembly-CSharp",
-                        "behaviorOverrideID":"behavior_restroom",
-                        "Tags": [ "nsfw" ],
-                        "randomChance": 0.5,
-                        "cooldownHours": 4,
-                        "cooldownID": "com_furniture_restroom",
+                        "$type": "TryFindRestroomNode, Assembly-CSharp",
+                        "_comment":"always when lower-body traces need a wipe (needsRestroom), else idleChance with idleCooldownID (set by the command's result). behaviorOverrideID/Tags hardcoded in the C# ctor; no randomChance/cooldownID here - the root would apply them before the need check (Docs/Body/Plan_InternalFluidFlow.md §8)",
+                        "idleChance": 0.5,
+                        "idleCooldownID": "com_furniture_restroom",
                         "evaluationHeuristic":"closest",
                         "filter": {
                             "matchCOMID":"com_furniture_restroom",
@@ -99,7 +97,7 @@
                     },
                     {
                         "$type": "TryFindShowerNode, Assembly-CSharp",
-                        "_comment":"behaviorOverrideID/Tags are hardcoded in the C# ctor (behavior_shower / nsfw)",
+                        "_comment":"behaviorOverrideID/Tags are hardcoded in the C# ctor (behavior_shower / nsfw). Free time only, when body traces pass the cleanliness tolerance (needsShower)",
                         "cooldownHours": 3,
                         "cooldownID": "com_furniture_takeShower",
                         "evaluationHeuristic":"closest",

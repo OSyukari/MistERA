@@ -1097,7 +1097,9 @@ public class Job : IDisposable, I_Disposable
     /// <summary>
     /// How an NPC joins an ongoing package (one that passed canJoinAP for them) - every job's NPC join goes through here
     /// (Job_Furniture, Job_MediaSession): the player's package through the RequestJoin event (the player is asked, then
-    /// JoinAP - c's own acceptance) - except the player's followers, who join straight away (logged); anyone else's
+    /// JoinAP - c's own acceptance; an NPC booked for the same activity in the player's invite group is not asked - the
+    /// event starts at its accept branch, Job_Activity.IsBookedGroupmateOfPlayer) - except the player's followers, who
+    /// join straight away (logged); anyone else's
     /// directly through JoinAP (silent), with the join line when it already runs. A failed join is remembered; one into the player's activity package by a follower makes them leave the party
     /// (Job_Activity.OnJoinFailed). True while the join is under way / done (c keeps the job), false = c gets no package.
     /// </summary>
@@ -1116,9 +1118,14 @@ public class Job : IDisposable, I_Disposable
         bool follower = scr_System_CampaignManager.current.PlayerPartyMembers.Contains(c.RefID);
         if (!follower && pl2.actorRefs.Contains(scr_System_CampaignManager.current.Player.RefID))
         {
-            ss += "try join player existing pkg " + pl2.DescriptionText(scr_System_CampaignManager.current.Player.RefID);
+            // booked for the same activity and in the player's invite group: not asked again - the event starts at its
+            // accept branch (br_join_ops: the join, then the joined line with its kojo, logged)
+            bool groupmate = pl2.ActivityExecutionRef >= 0
+                && scr_System_CampaignManager.current.FindJobInstanceByID(pl2.ActivityExecutionRef, false) is Job_Activity bound
+                && bound.IsBookedGroupmateOfPlayer(c);
+            ss += (groupmate ? "groupmate joins player existing pkg " : "try join player existing pkg ") + pl2.DescriptionText(scr_System_CampaignManager.current.Player.RefID);
             if (scr_System_CentralControl.current.LogPrefs.DLog_JoinAP) Debug.LogError($"{c.FirstName} try join player {pl2.DescriptionText(scr_System_CampaignManager.current.Player.RefID)}");
-            var ev = new EventInstance(c, "RequestJoin", "");
+            var ev = new EventInstance(c, "RequestJoin", groupmate ? "br_join_ops" : "");
             ev.Self = c;
             ev.Targets.Add("evTarget", new List<Character_Trainable>() { scr_System_CampaignManager.current.Player });
 
@@ -1163,7 +1170,12 @@ public class Job : IDisposable, I_Disposable
             addMems.Add(() => c.ChangeCurrentJob(null));
             addMems.Add(() => Job_Activity.OnJoinFailed(c, pl2));
 
-            scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
+            if (!scr_UpdateHandler.current.EventHandler.StartEvent(ev, false) && groupmate)
+            {
+                // the event refused (should not happen - its cooldown only follows a refusal): a groupmate still joins, silently
+                if (!pl2.JoinAP(c, Memory_Response.None, true)) Job_Activity.OnJoinFailed(c, pl2);
+                ss += " (event refused - joined directly)";
+            }
             actorJobComplete.Add(c.RefID);
             return true;
         }

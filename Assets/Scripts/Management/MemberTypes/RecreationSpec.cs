@@ -308,6 +308,12 @@ public class RecreationActivity
 
     /// <summary>Allows extra participants to walk in, independently of invitation visibility. Conservative default: false.</summary>
     public bool allowWalkIn = false;
+    /// <summary>
+    /// With allowWalkIn: NPCs not booked may walk in too (Job_Activity.AdmitsWalkIn). False = only the player (and the
+    /// companions with them) - the groups of a group-invitation activity stay closed to strangers; they may still use
+    /// the venue's unbound commands. Default true.
+    /// </summary>
+    public bool npcWalkIn = true;
 
     /// <summary>
     /// Activity-level trust payout (not the generic 0.1 interaction reward): at the launch, everyone who agreed to take

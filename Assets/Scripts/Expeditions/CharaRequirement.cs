@@ -60,6 +60,9 @@ public class CharaReq
     public bool requireFullHP = false;
     public bool requireMissingHP = false;
     public bool requireBedRest = false;
+    /// <summary> has a fertile womb: a registered womb that is not a Womb_Infertile (ReproductionUtility.HasFertileWomb).
+    /// Set when the body part is created, so it only changes with the body's parts. </summary>
+    public bool requireFertileWomb = false;
     //public bool requireAroused = false;
 
     public bool requireMale = false;
@@ -157,6 +160,7 @@ public class CharaReq
         this.requireFullHP = this.requireFullHP || req.requireFullHP;
         this.requireMissingHP = this.requireMissingHP || req.requireMissingHP;
         this.requireBedRest = this.requireBedRest || req.requireBedRest;
+        this.requireFertileWomb = this.requireFertileWomb || req.requireFertileWomb;
 
     }
 }

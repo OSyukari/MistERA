@@ -57,8 +57,9 @@
                         "daysInAdvance": 3, "minHours": 2, "maxHours": 2,
                         "entranceFee": { "itemID": "currency_JPY", "itemCount": 2000 },
                         "provideAcceptanceBonus": 5, "activityMoodlet": { "stress": 1 },
-                        "invite": { "visibility": "World", "inviteChance": 1, "minParticipants": 1, "TargetValidators": [{ "refKeys": ["spectator"], "baseScope": "SelfRelationships", "extraScopeArguments": ["relationship_friend", "relationship_bff", "relationship_couple", "relationship_marriage", "relationship_fwb"], "maxTargetCount": 3, "stopAtMaxTargetCount": true, "required": false }] },
-                        "allowWalkIn": false, "trustRewardEligible": false
+                        "_comment_invite": "Group invitations (Docs/Activities/Plan_GroupInvitations.md): each performer and everyone who books invites their household, another band or best friend / partner (the performing band excluded) - nobody books alone; a performer's invitees may come without other company (the performer counts as present).",
+                        "invite": { "visibility": "World", "inviteChance": 1, "minParticipants": 1, "invitationValidator": { "class": "InvitationValidator_BestRelationship" } },
+                        "allowWalkIn": false, "npcWalkIn": false, "trustRewardEligible": false
                     }
                 }
             ]

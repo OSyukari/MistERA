@@ -241,43 +241,109 @@ public class Character_Body
         return false;
     }
 
-    /// <summary> fix clothes: solid traces off </summary>
-    public bool BrushTraces(List<string> bodyTags = null) { return CleanTraces(TraceCleanAction.Brush, bodyTags); }
-    /// <summary> liquids -> dried marks, solid off </summary>
-    public bool WipeTraces(List<string> bodyTags = null) { return CleanTraces(TraceCleanAction.Wipe, bodyTags); }
-    /// <summary> shower: every temporary trace off </summary>
-    public bool WashTraces(List<string> bodyTags = null) { return CleanTraces(TraceCleanAction.Wash, bodyTags); }
+    /// <summary> restroom wipe area: lower body + legs (thighs), with their organs </summary>
+    public static readonly List<string> LowerBodyTags = new List<string>() { "lower", "leg" };
+    /// <summary> Freshen Up wash area: head, with the mouth </summary>
+    public static readonly List<string> HeadTags = new List<string>() { "head" };
 
-    /// <summary> bodyTags: only holders with any of these tags (a part's own tags or its organs'), null / empty = all </summary>
-    bool CleanTraces(TraceCleanAction action, List<string> bodyTags)
+    /// <summary> Freshen Up: solid traces off </summary>
+    public bool BrushTraces(List<string> bodyTags = null, List<string> report = null) { return CleanTraces(TraceCleanAction.Brush, bodyTags, report); }
+    /// <summary> restroom: liquids -> dried marks, solid off </summary>
+    public bool WipeTraces(List<string> bodyTags = null, List<string> report = null) { return CleanTraces(TraceCleanAction.Wipe, bodyTags, report); }
+    /// <summary> shower: every temporary trace off </summary>
+    public bool WashTraces(List<string> bodyTags = null, List<string> report = null) { return CleanTraces(TraceCleanAction.Wash, bodyTags, report); }
+
+    /// <summary> bodyTags filter: a part by its own tags; an organ by its own tags or its part's (lower -> penis / vagina / clit) </summary>
+    static bool InArea(BodyPart_Instance part, List<string> bodyTags)
+    {
+        return part.Base != null && Utility.ListContainsLoose(part.Base.tags, bodyTags);
+    }
+
+    /// <summary> bodyTags: only holders in that area (InArea), null / empty = all. report: one line per removed / dried trace </summary>
+    bool CleanTraces(TraceCleanAction action, List<string> bodyTags, List<string> report = null)
     {
         bool filter = bodyTags != null && bodyTags.Count > 0;
         bool changed = false;
         foreach (var part in Body)
         {
-            if (part.HasTraces && (!filter || bodyTags.Exists(part.hasTag))) changed = TraceUtility.Clean(part, action) || changed;
+            bool partInArea = !filter || InArea(part, bodyTags);
+            if (part.HasTraces && partInArea) changed = TraceUtility.Clean(part, action, report) || changed;
             foreach (var organ in part.internals)
             {
-                if (organ.HasTraces && (!filter || bodyTags.Exists(organ.hasTag))) changed = TraceUtility.Clean(organ, action) || changed;
+                if (organ.HasTraces && (partInArea || bodyTags.Exists(organ.hasTag))) changed = TraceUtility.Clean(organ, action, report) || changed;
             }
         }
         return changed;
     }
+
+    /// <summary> any trace in the area (CleanTraces filter) that this action would remove or dry. Changes nothing </summary>
+    public bool HasCleanableTraces(TraceCleanAction action, List<string> bodyTags)
+    {
+        bool filter = bodyTags != null && bodyTags.Count > 0;
+        foreach (var part in Body)
+        {
+            bool partInArea = !filter || InArea(part, bodyTags);
+            if (part.HasTraces && partInArea && AnyCleanable(part, action)) return true;
+            foreach (var organ in part.internals)
+            {
+                if (organ.HasTraces && (partInArea || bodyTags.Exists(organ.hasTag)) && AnyCleanable(organ, action)) return true;
+            }
+        }
+        return false;
+    }
+
+    static bool AnyCleanable(I_TraceHolder holder, TraceCleanAction action)
+    {
+        var list = holder.Traces;
+        for (int i = 0; i < list.Count; i++)
+        {
+            var def = list[i].Base;
+            if (def != null && def.OnClean(list[i], action) != TraceCleanResult.Keep) return true;
+        }
+        return false;
+    }
+
+    /// <summary> summed TraceDefinition.GetDirtiness of every trace a wash would remove (Docs/Body/Plan_InternalFluidFlow.md §8.1) </summary>
+    public float BodyDirtiness()
+    {
+        float sum = 0;
+        foreach (var part in Body)
+        {
+            if (part.HasTraces) sum += Dirtiness(part);
+            foreach (var organ in part.internals) if (organ.HasTraces) sum += Dirtiness(organ);
+        }
+        return sum;
+    }
+
+    static float Dirtiness(I_TraceHolder holder)
+    {
+        float sum = 0;
+        var list = holder.Traces;
+        for (int i = 0; i < list.Count; i++)
+        {
+            var def = list[i].Base;
+            if (def != null && def.OnClean(list[i], TraceCleanAction.Wash) != TraceCleanResult.Keep) sum += def.GetDirtiness(list[i]);
+        }
+        return sum;
+    }
+
+    /// <summary>
+    /// body dirtiness as a room cleaning status, seen by c (Room_Instance.RoomCleanliness's bands): dirtiness *
+    /// stats_derived_cleanlinessSensitivity, &lt;= 0 Clean, &lt;= 3 Normal, &lt;= 6 Dirty, else Very_Dirty
+    /// </summary>
+    public Room_Instance.CleaningStatus BodyCleanliness(Character_Trainable c)
+    {
+        float sensitivity = c == null ? 1f : c.Stats.GetStatValue("stats_derived_cleanlinessSensitivity");
+        // truncated like the room score
+        int score = (int)(BodyDirtiness() * sensitivity);
+        if (score <= 0) return Room_Instance.CleaningStatus.Clean;
+        if (score <= 3) return Room_Instance.CleaningStatus.Normal;
+        if (score <= 6) return Room_Instance.CleaningStatus.Dirty;
+        return Room_Instance.CleaningStatus.Very_Dirty;
+    }
+    /// <summary> hourly cum flow between organs (BodyInternal_Instance.FlowCumHourly); runs before the owner's TickWomb </summary>
     public void UpdateTimeHour(TimeSpan t)
     {
-        /*
-        foreach(var inte in this.Internals)
-        {
-            if (inte.canContain && inte.Contains.Count > 0 && inte.canOverflowOut && inte.overflowOutTag != "ext")
-            {
-                var target = GetRandomInternalWithTag(inte.overflowOutTag);
-
-                if (target != null)
-                {
-                    inte.TransferContentTo(target);
-                }
-            }
-        }*/
         foreach (BodyInternal_Instance i in Internals) i.UpdateTimeHour();
     }
     public void UpdateTimeDay(TimeSpan t)
@@ -922,6 +988,41 @@ public class Character_Body
         internals = null;
         _bodyTagCache?.Clear();
         ClearEquipCaches();
+        ClearPermissionApplicability();
+    }
+
+    /// <summary>
+    /// Per permission (PermissionDefinition.Index): 0 = not checked yet, 1 = its charaReq is met, 2 = not met. Its charaReq is
+    /// structural only, so a result holds until the body's parts change (ClearBodyCaches) or a womb registers
+    /// (Character_Trainable.RegisterWomb). Not saved.
+    /// </summary>
+    [NonSerialized][JsonIgnore] byte[] _permissionApplicable = null;
+
+    public void ClearPermissionApplicability()
+    {
+        if (_permissionApplicable != null) Array.Clear(_permissionApplicable, 0, _permissionApplicable.Length);
+    }
+
+    /// <summary>The owner meets definition.charaReq (the permission concerns this body at all). Lazily cached.</summary>
+    public bool IsPermissionApplicable(PermissionDefinition definition)
+    {
+        if (definition == null) return false;
+        if (definition.charaReq == null) return true;
+        if (Owner == null) return false;
+        int index = definition.Index;
+        int count = scr_System_Serializer.current?.MasterList?.PermissionDefinitions?.list?.Count ?? 0;
+        if (index < 0 || index >= count)
+        {
+            List<string> none = null;
+            return CharaReqUtility.Validate(definition.charaReq, ref none, Owner, out _);
+        }
+        if (_permissionApplicable == null || _permissionApplicable.Length != count) _permissionApplicable = new byte[count];
+        if (_permissionApplicable[index] == 0)
+        {
+            List<string> none = null;
+            _permissionApplicable[index] = CharaReqUtility.Validate(definition.charaReq, ref none, Owner, out _) ? (byte)1 : (byte)2;
+        }
+        return _permissionApplicable[index] == 1;
     }
 
 

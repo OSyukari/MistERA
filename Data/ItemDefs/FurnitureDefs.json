@@ -230,6 +230,18 @@
             [ { "comID":["com_furniture_changeOutfit"] } ]
         },
         {
+            "ID":"furniture_dresser",
+            "displayName":"梳妆台",
+            "recipe":[],
+            "furnitureSize":1,
+            "value":30000,
+            "Tags":["rarity_common"],
+            "_comment":"bedroom dresser with mirror: freshen up (redress + clean face) and outfit change without walking to the floor toilet. Homes whose rooms lack an in-room bathroom (JP world 2LDK/4LDK)",
+            "givesJob":
+            [ { "comID":["com_furniture_restroom_fix"] },
+            { "comID":["com_furniture_changeOutfit"] } ]
+        },
+        {
             "ID":"furniture_table_1_chair_1",
             "displayName":"单人桌椅",
             "recipe":[],
@@ -437,6 +449,7 @@
 "furniture_bathtub":"浴缸",
 "furniture_bathroom_set":"卫生间",
 "furniture_toilet_shower_set":"卫生单间",
+"furniture_toilet_shower_set_tooltip":"独立的卫生隔间，提供淋浴，允许整理仪容",
 "furniture_toilet_stall":"厕所隔间",
 "furniture_table_1_chair_1":"单人桌椅",
 "furniture_dining_table_10":"长餐桌",

@@ -63,8 +63,21 @@ public class BodyInternal_Base
         return value;
     }
 
+    /// <summary> In = the deeper organ (vagina -> womb, mouth -> stomach), Out = toward the outside; "ext" / a tag of an organ that holds nothing (clit) = the outside </summary>
     public string tag_directionIn = "";
     public string tag_directionOut = "";
+
+    // hourly cum flow (Docs/Body/Plan_InternalFluidFlow.md), 0 = off
+    /// <summary> seep in: the In organ is kept at this share of the cum held here </summary>
+    public float seepTargetRatio = 0;
+    /// <summary> seep in: at most this share of the cum held here moves in per hour </summary>
+    public float seepMaxStep = 0;
+    /// <summary> flow back: holding more cum than the Out organ, this share of the difference flows out per hour </summary>
+    public float backflowShare = 0;
+    /// <summary> overflow: this share of the cum above VolumeCapacity flows into the Out organ per hour (never to the outside) </summary>
+    public float overflowShare = 0;
+    /// <summary> a load pushed out of the body past max capacity: this share lands as the liquid's leak trace, the rest on the floor </summary>
+    public float leakTraceRatio = 0;
 
     [JsonIgnore] public bool canOverflowIn { get { return tag_directionIn != ""; } }
     [JsonIgnore] public bool canOverflowOut { get { return tag_directionOut != ""; } }

@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
+using System.Text.RegularExpressions;
 
 public enum ClassificationStatus { Confident, LowConfidence, Unmatched }
 
@@ -14,12 +16,16 @@ public class ImageClassification
     public string variant;
     public string name;
     public float score;
+    /// <summary>Matched filename text, when editor filename-first naming selected this rule.</summary>
+    public string filenameHint;
     public NameRule runnerUp;
     public float runnerUpScore;
     /// <summary>Every matching entry of the tier that decided, best first (for the score breakdown in the reports).</summary>
     public readonly List<(NameRule rule, float score)> tierCandidates = new List<(NameRule rule, float score)>();
     /// <summary>Why the result is low confidence or unmatched (empty when confident).</summary>
     public readonly List<string> reasons = new List<string>();
+    /// <summary>Diagnostic evidence that does not lower classification confidence.</summary>
+    public readonly List<string> notes = new List<string>();
 
     public string CategoryId => category?.id;
 
@@ -66,6 +72,8 @@ public class ImageClassifierEngine
     /// <summary>Sum of score * weight over the clause's tags that reach the threshold. 0 = clause not satisfied.</summary>
     static float ClauseScore(ImageTagRecord r, RuleClause clause, float threshold)
     {
+        foreach (var requirement in clause.requires)
+            if (ClauseScore(r, requirement, threshold) <= 0f) return 0f;
         float sum = 0f;
         foreach (var t in clause.tags)
         {
@@ -108,14 +116,15 @@ public class ImageClassifierEngine
         return anyScore;
     }
 
-    public ImageClassification Classify(ImageTagRecord r)
+    public ImageClassification Classify(ImageTagRecord r, bool useFilenameHints = false)
     {
         var result = new ImageClassification { record = r };
         int matchedIndex = ClassifyCategory(r, result);
         if (matchedIndex < 0) return result;
 
+        NameInCategory(r, result, useFilenameHints);
         AddCategoryNearMisses(r, result, matchedIndex);
-        return NameInCategory(r, result);
+        return result;
     }
 
     /// <summary>Whether a refining category (refines: X) applies to an image sorted into X: its all and none clauses, not its any
@@ -129,12 +138,12 @@ public class ImageClassifierEngine
     }
 
     /// <summary>Classification with the category already decided (by the folder the image is in): only the name is chosen.</summary>
-    public ImageClassification ClassifyInCategory(ImageTagRecord r, CategoryRule category)
+    public ImageClassification ClassifyInCategory(ImageTagRecord r, CategoryRule category, bool useFilenameHints = false)
     {
-        return NameInCategory(r, new ImageClassification { record = r, category = category });
+        return NameInCategory(r, new ImageClassification { record = r, category = category }, useFilenameHints);
     }
 
-    ImageClassification NameInCategory(ImageTagRecord r, ImageClassification result)
+    ImageClassification NameInCategory(ImageTagRecord r, ImageClassification result, bool useFilenameHints)
     {
         if (!result.category.rename)
         {
@@ -148,8 +157,44 @@ public class ImageClassifierEngine
             result.reasons.Add($"name set [{result.category.nameSet}] missing");
             return result;
         }
-        ClassifyName(r, result, nameSet);
+        if (result.category.allowedNames != null) nameSet = nameSet.Where(n => result.category.allowedNames.Contains(n.name)).ToList();
+        if (!useFilenameHints || result.category.hold
+            || !NameFromFilename(r, result, nameSet)) ClassifyName(r, result, nameSet);
         return result;
+    }
+
+    bool NameFromFilename(ImageTagRecord r, ImageClassification result, List<NameRule> nameSet)
+    {
+        var sourceName = string.IsNullOrEmpty(r.originalName) ? r.path : r.originalName;
+        var stem = Path.GetFileNameWithoutExtension((sourceName ?? "").Replace('\\', '/'));
+        var matches = new List<(NameRule rule, Match match)>();
+        foreach (var n in nameSet)
+        {
+            if (n.fallback || (n.onlyInCategories != null && !n.onlyInCategories.Contains(result.CategoryId))) continue;
+            IEnumerable<string> aliases = new[] { n.name };
+            if (rules.filenameHints.TryGetValue(n.name, out var extra)) aliases = aliases.Concat(extra);
+            foreach (var alias in aliases)
+            {
+                var tokens = Regex.Matches(alias, @"[\p{L}\p{N}]+").Cast<Match>().Select(m => Regex.Escape(m.Value));
+                var body = string.Join(@"[^\p{L}\p{N}]*", tokens);
+                if (body.Length == 0) continue;
+                foreach (Match match in Regex.Matches(stem, @"(?<![\p{L}\p{N}])" + body + @"(?![\p{L}\p{N}])", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+                    matches.Add((n, match));
+            }
+        }
+        // Prefer a complete id over a contained id (reverse_cowgirl vs cowgirl), not over an unrelated conflicting id.
+        var specific = matches.Where(m => !matches.Any(other => other.rule.name != m.rule.name
+            && other.match.Index <= m.match.Index && other.match.Index + other.match.Length >= m.match.Index + m.match.Length
+            && other.match.Length > m.match.Length)).ToList();
+        if (specific.Select(m => m.rule.name).Distinct().Count() != 1) return false;
+        var chosen = specific[0];
+        result.nameRule = chosen.rule;
+        result.filenameHint = chosen.match.Value;
+        result.score = 1f;
+        result.variant = PickVariant(r, chosen.rule, result);
+        result.name = result.variant == null ? chosen.rule.name : $"{chosen.rule.name}_{result.variant}";
+        result.status = result.reasons.Count == 0 ? ClassificationStatus.Confident : ClassificationStatus.LowConfidence;
+        return true;
     }
 
     /// <summary>Sets result.category, or marks the result unmatched. Returns the index of the rule that decided, or -1.</summary>
@@ -196,7 +241,7 @@ public class ImageClassifierEngine
         return -1;
     }
 
-    /// <summary>Earlier categories that would have matched at the near-miss threshold make the category choice uncertain.</summary>
+    /// <summary>Earlier near-matching categories lower confidence unless a filename-confirmed name opts into informational notes.</summary>
     void AddCategoryNearMisses(ImageTagRecord r, ImageClassification result, int matchedIndex)
     {
         for (int i = 0; i < matchedIndex; i++)
@@ -211,7 +256,14 @@ public class ImageClassifierEngine
                 var nm = NearMiss(r, clause, low, ThresholdOf(c));
                 if (nm != null) { evidence = $" ({nm.Value.tag} {nm.Value.score:0.00})"; break; }
             }
-            result.reasons.Add($"near-miss category {c.id}{evidence}");
+            string message = $"near-miss category {c.id}{evidence}";
+            if (result.filenameHint != null && result.category.filenameConfirmedNearMisses.Contains(c.id))
+                result.notes.Add(message + " (informational: name confirmed by filename)");
+            else
+            {
+                result.reasons.Add(message);
+                if (result.status == ClassificationStatus.Confident) result.status = ClassificationStatus.LowConfidence;
+            }
         }
     }
 
@@ -223,6 +275,7 @@ public class ImageClassifierEngine
         var matches = new List<(NameRule rule, float score)>();
         foreach (var n in nameSet)
         {
+            if (n.filenameOnly) continue;
             if (n.onlyInCategories != null && !n.onlyInCategories.Contains(result.category.id)) continue;
             var score = MatchName(r, n);
             if (score != null) matches.Add((n, score.Value));
@@ -308,9 +361,17 @@ public class ImageClassifierEngine
         {
             if (!rules.variants.TryGetValue(id, out var clause)) continue;
             if (ClauseScore(r, clause, s.variantThreshold) > 0f) return id;
-            var nm = NearMiss(r, clause, s.variantThreshold - s.nearMissBand, s.variantThreshold);
-            if (nm != null) result.reasons.Add($"near-miss variant {id} ({nm.Value.tag} {nm.Value.score:0.00})");
+            if (id == n.defaultVariant) continue;
+            float low = s.variantThreshold - s.nearMissBand;
+            if (ClauseScore(r, clause, low) <= 0f) continue;
+            foreach (var part in new[] { clause }.Concat(clause.requires))
+            {
+                var nm = NearMiss(r, part, low, s.variantThreshold);
+                if (nm == null) continue;
+                result.reasons.Add($"near-miss variant {id} ({nm.Value.tag} {nm.Value.score:0.00})");
+                break;
+            }
         }
-        return null;
+        return n.defaultVariant;
     }
 }

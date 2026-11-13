@@ -344,8 +344,11 @@ public static class TraceUtility
         return changed;
     }
 
-    /// <summary> brush / wipe / wash one holder. Returns true if anything changed </summary>
-    public static bool Clean(I_TraceHolder holder, TraceCleanAction action)
+    /// <summary>
+    /// brush / wipe / wash one holder. Returns true if anything changed. report: one line per removed / dried trace
+    /// ("大腿上的X的精液", trace_clean_removed / trace_clean_dried)
+    /// </summary>
+    public static bool Clean(I_TraceHolder holder, TraceCleanAction action, List<string> report = null)
     {
         if (holder == null) return false;
         var list = holder.Traces;
@@ -359,6 +362,12 @@ public static class TraceUtility
             if (def == null) continue;
             var result = def.OnClean(t, action);
             if (result == TraceCleanResult.Keep) continue;
+            if (report != null)
+            {
+                report.Add(LocalizeDictionary.QueryThenParse(result == TraceCleanResult.Replace ? "trace_clean_dried" : "trace_clean_removed")
+                    .Replace("$location$", LocationName(holder, t.slot))
+                    .Replace("$trace$", GetDisplayName(t, holder)));
+            }
             list.RemoveAt(i);
             changed = true;
             if (result == TraceCleanResult.Replace)

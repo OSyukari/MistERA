@@ -29,7 +29,6 @@ public class ImageClassifierWindow : EditorWindow
     bool includeLowConfidence;
     bool deleteEmptyFolders = true;
     bool reclassifySorted;
-    int lastPassNumber;
     Vector2 planScroll;
     const int PlanRowsShown = 300;
 
@@ -38,6 +37,16 @@ public class ImageClassifierWindow : EditorWindow
     int tagErrorCount;
     ImageTagHeader tagHeader;
     int excludedTagCount = -1;
+
+    // database (every child folder of the root is a standalone classifier folder)
+    bool showDatabase;
+    bool databaseForceRetag;
+    string databaseStatus;
+    readonly List<string> databaseLog = new List<string>();
+    ImageDatabaseResult databaseResult;
+
+    // RisuAI .charx asset rename
+    bool showRisu;
 
     [MenuItem("Tools/Image Classifier")]
     static void Open()
@@ -110,6 +119,9 @@ public class ImageClassifierWindow : EditorWindow
         DrawSettings();
         EditorGUILayout.Space();
         DrawTasks();
+        EditorGUILayout.Space();
+        DrawDatabase();
+        DrawRisuRename();
         DrawStatus();
         EditorGUILayout.EndScrollView();
     }
@@ -227,7 +239,7 @@ public class ImageClassifierWindow : EditorWindow
             {
                 var analyzeTip = tagRecordCount <= 0
                     ? "Run Tag first: Analyze reads _image_tags.jsonl."
-                    : "Classify every tagged image without moving anything; writes _image_analysis.md and _unclassified.md into the folder.";
+                    : "Classify every tagged image without moving anything; writes one report, _image_analysis.md, including unclassified images.";
                 if (GUILayout.Button(new GUIContent("2. Analyze", analyzeTip), GUILayout.Height(28))) RunAnalyze();
             }
         }
@@ -253,8 +265,7 @@ public class ImageClassifierWindow : EditorWindow
                 "Off (default): an image inside a category folder (your sort or an earlier pass) keeps that category; the rules only name it. " +
                 "On: the rules decide every image's category again and may move images you sorted by hand. Images you moved out of a category folder are never moved either way."),
                 reclassifySorted);
-            using (new EditorGUI.DisabledScope(lastPassNumber <= 0))
-                if (GUILayout.Button(new GUIContent(lastPassNumber > 0 ? $"Undo last pass (pass {lastPassNumber})" : "Undo last pass", "Moves every image of the last Classify pass back"))) UndoLastPass();
+            if (GUILayout.Button(new GUIContent("Restore every file's original name", "Restore recorded original basenames, keeping every image in its current folder. Conflicts are skipped, never overwritten."))) RestoreOriginalNames();
         }
         DrawPlan();
     }
@@ -290,12 +301,8 @@ public class ImageClassifierWindow : EditorWindow
 
     void RefreshPassState()
     {
-        lastPassNumber = 0;
         if (!Directory.Exists(folder)) return;
-        var log = ImageClassifyMover.LoadLog(folder);
-        var last = log.LastOrDefault(x => !x.undone);
-        lastPassNumber = last?.pass ?? 0;
-        includeLowConfidence = last != null;
+        includeLowConfidence = ImageClassifyMover.NextPassIncludesLowConfidence(folder);
     }
 
     void PreviewClassify()
@@ -317,7 +324,7 @@ public class ImageClassifierWindow : EditorWindow
 
     void ExecutePlan()
     {
-        if (!EditorUtility.DisplayDialog("Image Classifier", $"Move {plan.moves.Count} images in\n{folder}?\n\nThis pass can be undone with \"Undo last pass\".", "Move", "Cancel")) return;
+        if (!EditorUtility.DisplayDialog("Image Classifier", $"Move {plan.moves.Count} images in\n{folder}?\n\nRestore original names can later restore filenames, but does NOT move images back to their previous folders.", "Move", "Cancel")) return;
         lastError = null;
         bool inAssets = IsUnderAssets(folder);
         try
@@ -350,21 +357,41 @@ public class ImageClassifierWindow : EditorWindow
         }
     }
 
-    void UndoLastPass()
+    void RestoreOriginalNames()
     {
-        if (!EditorUtility.DisplayDialog("Image Classifier", $"Move every image of pass {lastPassNumber} back to where it was?", "Undo", "Cancel")) return;
         lastError = null;
         bool inAssets = IsUnderAssets(folder);
+        bool editing = false;
         try
         {
-            if (inAssets) { AssetDatabase.Refresh(); AssetDatabase.StartAssetEditing(); }
             var rules = ImageRulesJsonLoader.Load(ImageClassifierSettings.RulesPath);
-            var result = ImageClassifyMover.UndoLastPass(folder, rules, inAssets ? (ImageClassifyMover.MoveFile)AssetMove : ImageClassifyMover.FileSystemMove);
-            if (result != null)
+            var preview = ImageClassifyMover.PreviewRestoreOriginalNames(folder, rules);
+            var details = string.Join("\n", preview.moves.Take(8).Select(m => $"{m.from} -> {m.to}"));
+            if (!EditorUtility.DisplayDialog("Restore original names",
+                $"{preview.tagged} tagged records: {preview.moves.Count} filenames to restore, {preview.alreadyOriginal} already original, {preview.skipped.Count} skipped.\n\n" +
+                "Keep CURRENT folders, including manual relocations. No folders are deleted. All tagged images are considered, including failed tags and settled names.\n" +
+                "Occupied names (including swaps/cycles), missing or changed images, and unsafe names are skipped. No overwrites or numbered approximations.\n\n" +
+                details + (preview.moves.Count > 8 ? "\n..." : "") +
+                (preview.skipped.Count > 0 ? "\n\nSkipped:\n" + string.Join("\n", preview.skipped.Take(5)) : ""), "Restore Names", "Cancel")) return;
+            if (inAssets)
             {
-                if (result.Value.failures.Count > 0) lastError = $"{result.Value.failures.Count} images could not be moved back: " + string.Join("; ", result.Value.failures.Take(5));
-                ShowNotification(new GUIContent($"Moved {result.Value.back} back"));
+                AssetDatabase.Refresh();
+                AssetDatabase.StartAssetEditing();
+                editing = true;
             }
+            // A partial restore or a checkpoint failure also invalidates the old classification preview.
+            plan = null;
+            analysis = null;
+            var result = ImageClassifyMover.RestoreOriginalNames(folder, rules,
+                inAssets ? (ImageClassifyMover.MoveFile)AssetMove : ImageClassifyMover.FileSystemMove,
+                (i, n) => EditorUtility.DisplayProgressBar("Restore original names", $"Renaming {i + 1}/{n}", n == 0 ? 1 : i / (float)n));
+            var summary = $"Restored {result.restored}; already original {result.alreadyOriginal}; skipped {result.skipped.Count}; failed {result.failures.Count}; manually relocated records followed {result.relinked}. Folders unchanged.";
+            if (result.failures.Count > 0) lastError = summary + "\n" + string.Join("\n", result.failures.Take(5));
+            EditorUtility.DisplayDialog("Restore original names", summary + "\n\n" + string.Join("\n", result.failures.Concat(result.skipped).Take(12)), "Close");
+            ShowNotification(new GUIContent($"Restored {result.restored} original names"));
+            // Do not run Analyze here: it creates category folders and would make Restore change the folder structure.
+            RefreshTagSummary();
+            RefreshPassState();
         }
         catch (Exception e)
         {
@@ -373,8 +400,8 @@ public class ImageClassifierWindow : EditorWindow
         }
         finally
         {
-            if (inAssets) { AssetDatabase.StopAssetEditing(); AssetDatabase.Refresh(); }
-            AfterMoves();
+            if (editing) { AssetDatabase.StopAssetEditing(); AssetDatabase.Refresh(); }
+            EditorUtility.ClearProgressBar();
         }
     }
 
@@ -412,6 +439,204 @@ public class ImageClassifierWindow : EditorWindow
     {
         var error = AssetDatabase.MoveAsset(ToAssetPath(absoluteFrom), ToAssetPath(absoluteTo));
         return string.IsNullOrEmpty(error) ? null : error;
+    }
+
+    /// <summary>Absolute database root, or null when the setting does not name an existing folder (relative = to the project root).</summary>
+    static string DatabaseRoot()
+    {
+        var path = ImageClassifierSettings.DatabaseFolder;
+        if (string.IsNullOrEmpty(path)) return null;
+        try
+        {
+            var full = Path.GetFullPath(path).TrimEnd('\\', '/');
+            return Directory.Exists(full) ? full : null;
+        }
+        catch (Exception) { return null; }
+    }
+
+    void DrawDatabase()
+    {
+        showDatabase = EditorGUILayout.Foldout(showDatabase, "Database (each child folder is one classifier folder)", true);
+        if (!showDatabase) return;
+        EditorGUI.indentLevel++;
+        using (new EditorGUI.DisabledScope(running))
+        using (new EditorGUILayout.HorizontalScope())
+        {
+            var edited = EditorGUILayout.DelayedTextField(new GUIContent("Database folder", "Relative to the project root or absolute, eg. ClassifierDatabase"), ImageClassifierSettings.DatabaseFolder);
+            if (edited != ImageClassifierSettings.DatabaseFolder) { ImageClassifierSettings.DatabaseFolder = edited; databaseResult = null; }
+            if (GUILayout.Button("Browse...", GUILayout.Width(80)))
+            {
+                var picked = EditorUtility.OpenFolderPanel("Image Classifier - choose the database folder", DatabaseRoot() ?? "", "");
+                if (!string.IsNullOrEmpty(picked)) { ImageClassifierSettings.DatabaseFolder = picked; databaseResult = null; }
+            }
+        }
+        var root = DatabaseRoot();
+        if (root == null)
+        {
+            EditorGUILayout.HelpBox("Choose an existing database folder.", MessageType.Warning);
+            EditorGUI.indentLevel--;
+            return;
+        }
+
+        using (new EditorGUI.DisabledScope(running))
+        {
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                if (GUILayout.Button(new GUIContent("Tag all folders",
+                        "Run Tag on every child folder in turn (each gets its own _image_tags.jsonl). Up-to-date images are skipped unless \"Re-tag all\" is ticked."),
+                        GUILayout.Height(24))) StartDatabaseTag(root);
+                databaseForceRetag = GUILayout.Toggle(databaseForceRetag, new GUIContent("Re-tag all",
+                    "Also re-tag images that are already up to date in every folder (eg. after changing the tagger / emotion workflow or model)"), GUILayout.Width(80));
+                if (GUILayout.Button(new GUIContent("Analyze all folders",
+                        "Run Analyze on every tagged child folder (each writes its own _image_analysis.md), then merge them into " +
+                        ImageDatabaseAnalysis.ReportFileName + " in the database folder: per category, one row of previews per name / emotion. " +
+                        "Uses \"Re-classify images in category folders\" like Analyze."), GUILayout.Height(24))) RunDatabaseAnalyze(root);
+            }
+        }
+        if (!string.IsNullOrEmpty(databaseStatus)) EditorGUILayout.LabelField(databaseStatus, EditorStyles.wordWrappedMiniLabel);
+        foreach (var line in databaseLog) EditorGUILayout.LabelField(line, EditorStyles.miniLabel);
+
+        var d = databaseResult;
+        if (d != null)
+        {
+            EditorGUILayout.LabelField($"Analyzed {d.AnalyzedFolders} of {d.folders.Count} folders.", EditorStyles.miniLabel);
+            foreach (var f in d.folders)
+                if (f.analysis == null) EditorGUILayout.LabelField($"  {f.name}: {f.skipped}", EditorStyles.miniLabel);
+            if (d.htmlError != null) EditorGUILayout.HelpBox("HTML report not written: " + d.htmlError, MessageType.Warning);
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                using (new EditorGUI.DisabledScope(d.htmlPath == null))
+                    if (GUILayout.Button(new GUIContent("Open merged report (HTML)", d.htmlPath ?? "")))
+                        Application.OpenURL(new Uri(d.htmlPath).AbsoluteUri);
+                if (GUILayout.Button(new GUIContent("Markdown", d.reportPath), GUILayout.Width(90))) EditorUtility.OpenWithDefaultApp(d.reportPath);
+            }
+        }
+        EditorGUI.indentLevel--;
+    }
+
+    async void StartDatabaseTag(string root)
+    {
+        running = true;
+        lastError = null;
+        databaseResult = null;
+        databaseLog.Clear();
+        cts = new CancellationTokenSource();
+        var folders = ImageDatabaseAnalysis.ChildFolders(root);
+        try
+        {
+            for (int i = 0; i < folders.Count; i++)
+            {
+                var name = Path.GetFileName(folders[i]);
+                databaseStatus = $"Tagging folder {i + 1}/{folders.Count}: {name}";
+                if (ImageTagTask.ScanImages(folders[i]).Count == 0) { databaseLog.Add($"{name}: no images, skipped"); continue; }
+                tagProgress = new ImageTagProgress();
+                Repaint();
+                try
+                {
+                    await ImageTagTask.RunAsync(folders[i], databaseForceRetag, tagProgress, Repaint, cts.Token);
+                    var p = tagProgress;
+                    databaseLog.Add($"{name}: {p.total} images, tagged {p.tagged}, up to date {p.skipped}" + (p.failed > 0 ? $", failed {p.failed}" : "")
+                                    + (p.emotionNote != null ? " - emotion pass: " + p.emotionNote : ""));
+                }
+                catch (OperationCanceledException) when (cts.Token.IsCancellationRequested) { throw; }
+                catch (Exception e)
+                {
+                    // one folder failing (eg. ComfyUI error) does not stop the others; its tags so far are saved
+                    databaseLog.Add($"{name}: stopped - {e.Message}");
+                    Debug.LogException(e);
+                }
+            }
+            databaseStatus = $"Tagged {folders.Count} folders. Run \"Analyze all folders\" next.";
+        }
+        catch (OperationCanceledException)
+        {
+            databaseStatus = "Cancelled. Images tagged so far are saved; run Tag all folders again to continue.";
+            if (tagProgress != null) tagProgress.status = "Cancelled.";
+        }
+        finally
+        {
+            running = false;
+            cts.Dispose();
+            cts = null;
+            RefreshTagSummary();
+            RefreshExcludedCount();
+            Repaint();
+        }
+    }
+
+    void RunDatabaseAnalyze(string root)
+    {
+        lastError = null;
+        databaseResult = null;
+        databaseLog.Clear();
+        databaseStatus = null;
+        try
+        {
+            databaseResult = ImageDatabaseAnalysis.Run(root, ImageClassifierSettings.RulesPath, ImageClassifierSettings.ModelsFolder, ImageClassifierSettings.Model,
+                !reclassifySorted, (i, n, name) => EditorUtility.DisplayProgressBar("Image Classifier", $"Analyzing {name} ({i + 1}/{n})", n == 0 ? 1 : i / (float)n));
+        }
+        catch (Exception e)
+        {
+            lastError = e.Message;
+            Debug.LogException(e);
+        }
+        finally
+        {
+            EditorUtility.ClearProgressBar();
+            // Analyze creates category folders; the chosen folder may be one of the children
+            RefreshTagSummary();
+            RefreshExcludedCount();
+        }
+    }
+
+    void DrawRisuRename()
+    {
+        showRisu = EditorGUILayout.Foldout(showRisu, "RisuAI card: name the image assets", true);
+        if (!showRisu) return;
+        EditorGUI.indentLevel++;
+        using (new EditorGUI.DisabledScope(running))
+        {
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                var edited = EditorGUILayout.DelayedTextField(new GUIContent("Chara folder", "The extracted .charx folder containing card.json"), ImageClassifierSettings.RisuFolder);
+                if (edited != ImageClassifierSettings.RisuFolder) ImageClassifierSettings.RisuFolder = edited.Trim().Trim('"');
+                if (GUILayout.Button("Browse...", GUILayout.Width(80)))
+                {
+                    var current = ImageClassifierSettings.RisuFolder;
+                    var picked = EditorUtility.OpenFolderPanel("Choose the extracted chara folder (with card.json)", Directory.Exists(current) ? current : "", "");
+                    if (!string.IsNullOrEmpty(picked)) ImageClassifierSettings.RisuFolder = picked;
+                }
+            }
+            var problem = RisuCardRenamer.Check(ImageClassifierSettings.RisuFolder);
+            if (problem != null) EditorGUILayout.HelpBox(problem, MessageType.Info);
+            using (new EditorGUI.DisabledScope(problem != null))
+                if (GUILayout.Button(new GUIContent("Rename images from card.json",
+                        "Rename assets/other/image/<n>.<ext> to each asset's name in card.json (data.assets). Same as risu_rename.py; existing names get _1, _2, ..."))) RunRisuRename();
+        }
+        EditorGUI.indentLevel--;
+    }
+
+    void RunRisuRename()
+    {
+        var folder = Path.GetFullPath(ImageClassifierSettings.RisuFolder);
+        if (!EditorUtility.DisplayDialog("Rename Risu image assets",
+                $"Rename the images in\n{RisuCardRenamer.ImageFolder(folder)}\nto their asset names from card.json?", "Rename", "Cancel")) return;
+        lastError = null;
+        try
+        {
+            var result = RisuCardRenamer.Run(folder);
+            if (IsUnderAssets(folder)) AssetDatabase.Refresh();
+            var summary = $"{result.renamed} images renamed. Skipped: {result.notImageAsset} not image assets, {result.noName} without a name, " +
+                          $"{result.missing} files not found (already renamed?)." + (result.errors.Count > 0 ? $" {result.errors.Count} failed." : "");
+            if (result.renames.Count > 0) Debug.Log("Risu rename in " + folder + ":\n" + string.Join("\n", result.renames));
+            if (result.errors.Count > 0) lastError = "Risu rename: " + string.Join("; ", result.errors);
+            EditorUtility.DisplayDialog("Rename Risu image assets", summary, "Close");
+        }
+        catch (Exception e)
+        {
+            lastError = e.Message;
+            Debug.LogException(e);
+        }
     }
 
     void DrawStatus()
@@ -459,7 +684,6 @@ public class ImageClassifierWindow : EditorWindow
         using (new EditorGUILayout.HorizontalScope())
         {
             if (GUILayout.Button(new GUIContent("Open report", a.analysisPath))) EditorUtility.OpenWithDefaultApp(a.analysisPath);
-            if (GUILayout.Button(new GUIContent("Open unclassified list", a.unclassifiedPath))) EditorUtility.OpenWithDefaultApp(a.unclassifiedPath);
         }
     }
 

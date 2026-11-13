@@ -470,6 +470,9 @@ public class scr_System_CampaignManager : MonoBehaviour
         WorldManager.ProcessPlayerInit(GetLoadedWorldPlans());
         foreach (var world in GetLoadedWorldPlans()) WorldManager.ProcessNPCInit(world);
 
+        // preset pairs not met yet (older saves, or a preset added to the data after the save was made)
+        WorldManager.MeetPresetRelationships(Index_referenceID);
+
         this.party = obj.Party;
         this.party.Clear();
 
@@ -1806,7 +1809,12 @@ public class scr_System_CampaignManager : MonoBehaviour
         }
     }
 
-    public void FreeUpdateOneStep(ref int totalUpdateTime, ref int updateTime)
+    /// <summary>
+    /// Ticks the registered APs of one minute in priority passes, from firstPass down to lastPass: 3 = the player's
+    /// (pathing and interactions), 2 = npc interactions, 1 = npc pathing, 0 = npc actions. SingleUpdate runs pass 3
+    /// on its own first, so a meet prompt (PlayerMeetUtility) can stop the minute before any NPC moves.
+    /// </summary>
+    public void FreeUpdateOneStep(ref int totalUpdateTime, ref int updateTime, int firstPass = 3, int lastPass = 0)
     {
         List<ActionPackage> detachedAPs = new List<ActionPackage>();
 
@@ -1819,7 +1827,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         // 2nd pass 2 3 4
         // 3rd pass 1
         // 4th pass 0
-        for(int currentpass = 3; currentpass >= 0; currentpass--)
+        for(int currentpass = firstPass; currentpass >= lastPass; currentpass--)
         {
             foreach (var kvpair_list in registeredPackagesByRoom)
             {
@@ -2718,6 +2726,10 @@ public class scr_System_CampaignManager : MonoBehaviour
             foreach (var world in GetLoadedWorldPlans()) WorldManager.ProcessNPCInit(world);
         }
 
+        // after every spawn and faction join (which seeds faction-mate relationships): preset pairs that share
+        // no faction (e.g. a couple living apart) start the campaign already knowing each other
+        WorldManager.MeetPresetRelationships(Index_referenceID);
+
 #if UNITY_EDITOR
         // editor-only convenience: jp_debug_store is normally only brought in by world_kivotos_debug
         // (campaign1_start_debug's campaign_init_world). Force it in for every other start option too,
@@ -3519,6 +3531,10 @@ public class scr_System_CampaignManager : MonoBehaviour
         // the equips above can add stat modifiers that raise max values after
         // InitializeWithRefID's RestoreAll; fill statbars to their settled maxes
         c.RestoreAll();
+
+        // meet the already-spawned characters this one's template presets a relationship with; characters
+        // spawned later are met by WorldManager.MeetPresetRelationships at campaign start / load
+        c.Relationships?.MeetPresetTargets();
         return c;
     }
 
@@ -4397,6 +4413,26 @@ public static class WorldManager
     {
         if (world == null || world.npcInit == null) return;
         foreach (var init in world.npcInit) InitializeNPC(init);
+    }
+
+    /// <summary>
+    /// One pass at campaign start / load, after every npcInit: each character meets the characters its own
+    /// Template.initialRelationship names (RelationshipManager.MeetPresetTargets). Pairs already met are left
+    /// untouched, so re-running on load only fills pairs that never met. The baseID index is built once here
+    /// so each preset is a dictionary hit instead of a FindRefIDByBaseID walk.
+    /// </summary>
+    public static void MeetPresetRelationships(Dictionary<int, Character_Trainable> characters)
+    {
+        if (characters == null || characters.Count == 0) return;
+        var byBaseID = new Dictionary<string, List<Character_Trainable>>();
+        foreach (var chara in characters.Values)
+        {
+            if (chara == null || string.IsNullOrEmpty(chara.BaseID)) continue;
+            if (!byBaseID.TryGetValue(chara.BaseID, out var list)) byBaseID[chara.BaseID] = list = new List<Character_Trainable>(1);
+            list.Add(chara);
+        }
+        // MeetPresetTargets never adds characters, so iterating the dictionary while relationships are created is safe
+        foreach (var chara in characters.Values) chara?.Relationships?.MeetPresetTargets(byBaseID);
     }
 
     /// <summary>

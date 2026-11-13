@@ -1,8 +1,10 @@
 {
 "Experiences":{
 "list":[
-    {  "ExperienceID":"experience_sex_male", "tags":["nsfw"], "RequiredOwnerTags":["human"], "RequiredCOMTags":["human","unsafe","male"] , "ExcludeOwnerTags":["unconscious"], "ExcludeCOMTags":["masturbate"] },
-    {  "ExperienceID":"experience_sex_female", "tags":["nsfw"], "RequiredOwnerTags":["human"], "RequiredCOMTags":["human","unsafe","female"], "ExcludeOwnerTags":["unconscious"], "ExcludeCOMTags":["masturbate"] },
+{  "ExperienceID":"experience_intimacy", "tags":[], "CountTotal":false, "ApplyToDoer":true, "ApplyToReceiver":true, "RequiredCOMTags":["intimacy", "touch", "interaction"], "ExcludeOwnerTags":["unconscious", "timestop"], "ExcludeCOMTags":["sex", "service", "NonInteraction"] },
+
+    {  "ExperienceID":"experience_sex_male", "tags":["nsfw"], "RequiredOwnerTags":["human"], "RequiredCOMTags":["human","unsafe","male"] , "ExcludeOwnerTags":["unconscious", "timestop"], "ExcludeCOMTags":["masturbate"] },
+    {  "ExperienceID":"experience_sex_female", "tags":["nsfw"], "RequiredOwnerTags":["human"], "RequiredCOMTags":["human","unsafe","female"], "ExcludeOwnerTags":["unconscious", "timestop"], "ExcludeCOMTags":["masturbate"] },
     {  "ExperienceID":"experience_sex_masturbate", "tags":["nsfw"], "applyToReceiver":false, "RequiredOwnerTags":["human"], "RequiredCOMTags":["unsafe","masturbate"] },
     {  "ExperienceID":"experience_sex_masturbate_climax", "tags":["nsfw"], "RequiredOwnerTags":["masturbate","climax"] },
     {  "ExperienceID":"experience_sex_exposure", "tags":["nsfw"], "RequiredOwnerTags":["human"], "RequiredCOMTags":["unsafe","naked"] },
@@ -13,14 +15,14 @@
     {  "ExperienceID":"experience_sex_service", "tags":["nsfw"], "applyToReceiver":false, "RequiredOwnerTags":["human"], "RequiredCOMTags":["unsafe","service","interaction"]  },
     {  "ExperienceID":"experience_sex_maso", "tags":["nsfw"], "ApplyToDoer":false, "RequiredOwnerTags":["human","pain"], "RequiredCOMTags":["unsafe"]  },
     {  "ExperienceID":"experience_sex_sado", "tags":["nsfw"], "applyToReceiver":false,"RequiredOwnerTags":["human"], "RequiredCOMTags":["unsafe","pain"] },
-    {  "ExperienceID":"experience_sex_raped", "tags":["nsfw"], "RequiredOwnerTags":["human","raped","experience_raped_penile"], "ExcludeOwnerTags":["unconscious"], "RequiredCOMTags":["unsafe"]  },
-    {  "ExperienceID":"experience_sex_raped_climax", "tags":["nsfw"], "RequiredOwnerTags":["raped","climax","experience_raped_penile"] , "ExcludeOwnerTags":["unconscious"] },
-    {  "ExperienceID":"experience_sex_molested", "tags":["nsfw"], "RequiredOwnerTags":["human","raped","experience_raped_nonpenile"], "ExcludeOwnerTags":["unconscious"], "RequiredCOMTags":["unsafe"] },
-    {  "ExperienceID":"experience_sex_molested_climax", "tags":["nsfw"], "RequiredOwnerTags":["raped","climax","experience_raped_nonpenile"], "ExcludeOwnerTags":["unconscious"] },
-    {  "ExperienceID":"experience_sex_rape", "tags":["nsfw"], "RequiredOwnerTags":["human","rape","experience_rape_penile"], "ExcludeOwnerTags":["unconscious"], "RequiredCOMTags":["unsafe"] },
-    {  "ExperienceID":"experience_sex_rape_climax", "tags":["nsfw"], "RequiredOwnerTags":["rape","climax","experience_rape_penile"], "ExcludeOwnerTags":["unconscious"] },
-    {  "ExperienceID":"experience_sex_molest", "tags":["nsfw"], "RequiredOwnerTags":["human","rape","experience_rape_nonpenile"], "ExcludeOwnerTags":["unconscious"], "RequiredCOMTags":["unsafe"] },
-    {  "ExperienceID":"experience_sex_molest_climax", "tags":["nsfw"], "RequiredOwnerTags":["rape","climax","experience_rape_nonpenile"], "ExcludeOwnerTags":["unconscious"] },
+    {  "ExperienceID":"experience_sex_raped", "tags":["nsfw"], "RequiredOwnerTags":["human","raped","experience_raped_penile"], "ExcludeOwnerTags":["unconscious", "timestop"], "RequiredCOMTags":["unsafe"]  },
+    {  "ExperienceID":"experience_sex_raped_climax", "tags":["nsfw"], "RequiredOwnerTags":["raped","climax","experience_raped_penile"] , "ExcludeOwnerTags":["unconscious", "timestop"] },
+    {  "ExperienceID":"experience_sex_molested", "tags":["nsfw"], "RequiredOwnerTags":["human","raped","experience_raped_nonpenile"], "ExcludeOwnerTags":["unconscious", "timestop"], "RequiredCOMTags":["unsafe"] },
+    {  "ExperienceID":"experience_sex_molested_climax", "tags":["nsfw"], "RequiredOwnerTags":["raped","climax","experience_raped_nonpenile"], "ExcludeOwnerTags":["unconscious", "timestop"] },
+    {  "ExperienceID":"experience_sex_rape", "tags":["nsfw"], "RequiredOwnerTags":["human","rape","experience_rape_penile"], "ExcludeOwnerTags":["unconscious", "timestop"], "RequiredCOMTags":["unsafe"] },
+    {  "ExperienceID":"experience_sex_rape_climax", "tags":["nsfw"], "RequiredOwnerTags":["rape","climax","experience_rape_penile"], "ExcludeOwnerTags":["unconscious", "timestop"] },
+    {  "ExperienceID":"experience_sex_molest", "tags":["nsfw"], "RequiredOwnerTags":["human","rape","experience_rape_nonpenile"], "ExcludeOwnerTags":["unconscious", "timestop"], "RequiredCOMTags":["unsafe"] },
+    {  "ExperienceID":"experience_sex_molest_climax", "tags":["nsfw"], "RequiredOwnerTags":["rape","climax","experience_rape_nonpenile"], "ExcludeOwnerTags":["unconscious", "timestop"] },
     {  "ExperienceID":"experience_sex_necro", "tags":["nsfw"], "applyToReceiver":false, "RequiredOwnerTags":[], "RequiredCOMTags":["unsafe","corpse"] },
 
     {  "ExperienceID":"experience_sex_milking", "tags":["nsfw"], "ApplyToDoer":false, "RequiredOwnerTags":["human","female"], "RequiredCOMTags":["unsafe","milking"] },

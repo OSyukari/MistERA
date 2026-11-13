@@ -4,6 +4,10 @@
             {
                 "ID": "RequestJoin",
                 "cooldownTime": 15,
+                "_comment_cooldown": "Only a refusal starts the cooldown (manualCooldown + AddCooldown in br_refuse_ops), and only for the refused NPC (cooldownRestrictSelf) - an accepted or auto-accepted join (a groupmate - Job.JoinPackage) never holds anyone back, and several NPCs may ask / join the same target in one minute (the target restriction would refuse a second request while the first is still running - EventInstance.ConflictWith).",
+                "manualCooldown": true,
+                "cooldownRestrictSelf": true,
+                "cooldownRestrictTarget": false,
                 "_comment": [
                     "this event requires code to inject valid event target prior to event start, the most complex validation [target has a joinable AP] should already be validated beforehand, and since this events only targets chara.currentjob and a job instance (unless its sex) only have 1 executing package per actor... no need to validate more.",
                     "There are 2 path that calls for this event: Kojo Interrupt direct calls, and furniture job assign join"
@@ -208,6 +212,7 @@
                             {
                                 "option": "silent branch event, this shouldnt be displayed",
                                 "Results": [
+                                    { "Type": "AddCooldown", "arguments": [ "RequestJoin", "self", "evTarget" ] },
                                     {
                                         "Type": "ExecuteCallbackPermissive",
                                         "arguments": [

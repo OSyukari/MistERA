@@ -123,48 +123,22 @@ public class ActionPackage_TeleportTo : ActionPackage
 
         scr_System_CampaignManager.current.MoveCharacterTo(doerRef, targetRoomRef);
 
-        var s_prev = LocalizeDictionary.QueryThenParse("ui_movement_leavesRoom").Replace("$self$", Doer.FirstName).Replace("$room$", prev == null ? "null" : prev.DisplayNameShort);
-        var s_next = LocalizeDictionary.QueryThenParse("ui_movement_entersRoom").Replace("$self$", Doer.FirstName).Replace("$room$", Doer.CurrentRoom == null ? "null" : Doer.CurrentRoom.DisplayNameShort);
-        var desc_prev = new DescriptionCollector("");
-        desc_prev.message_excludeRelated = s_prev;
-        desc_prev.LoadActors(Doer.RefID, true, false);
-        desc_prev.tooltip = s_next;
-        desc_prev.autoAnimate = true;
-        scr_UpdateHandler.current.AppendMessageBefore(desc_prev, prev);
-        //scr_System_CampaignManager.current.AddLog(desc_prev, prev, true);
-
-
-        Room_Instance room = Doer.CurrentRoom;
-        string s = LocalizeDictionary.QueryThenParse("ui_movement_playerEntersRoom").Replace("$self$", Doer.FirstName).Replace("$room$", room.DisplayName);
-        var desc = new DescriptionCollector(s);
-
-        desc.LoadActors(Doer.RefID, true, false);
-        desc.message_excludeRelated = s_next;
-        desc.tooltip = s_prev;
-        desc.autoAnimate = true;
-        List<string> s2 = new List<string>();
-        //string msg = "Entering room " + scr_System_CampaignManager.current.Map.Rooms[e.Target].DisplayName;
-
-        foreach (var c in room.RoomChara)
-        {
-            // came along with the player: teammates or the carried (TravelsWithPlayer - both mechanisms)
-            if (Doer.RefID == 0 && scr_System_CampaignManager.current.TravelsWithPlayer(c.RefID)) continue;
-            if (Doer == c) continue;
-            if (c == null) continue;
-            s2.Add(c.FirstName);// += ", " + c.FirstName;
-                                //scr_System_CampaignManager.current.AddLog(charaRef, c.FirstName + " is in room" + room.DisplayName + ", currently " + c.GetJobDescription(), true);
-        }
-        if (s2.Count > 0) desc.message += $"\n{LocalizeDictionary.QueryThenParse("ui_movement_charaInRoom").Replace("$names$", String.Join(", ", s2))}";
-
-        scr_UpdateHandler.current.AppendMessageBefore(desc, room);
-       // scr_System_CampaignManager.current.AddLog(desc, room, true);
-        //scr_System_CampaignManager.current.AddLog( scr_System_CentralControl.current.DisplaySetting.displayPlayerPortraitInLogs.value ? 0 : -1 , s + (s2.Count > 0 ? $"\n{LocalizeDictionary.QueryThenParse("ui_movement_charaInRoom").Replace("$names$", String.Join(", ",s2))}":""), true);
-        //if (askBreak && scr_UpdateHandler.current.PlayerQuery(QueryInitializer) == 0)  { }
+        // enter/leave lines (merged per room per minute, none for world transit rooms)
+        MovementLog.Append(Doer, prev, Doer.CurrentRoom, true);
 
     }
 
     public override void DisablePackage(bool extraTick = false)
     {
         base.DisablePackage(extraTick);
+    }
+
+    /// <summary> still travelling: time left and not at the target room yet (PlayerMeetUtility) </summary>
+    [JsonIgnore] public bool IsEnRoute { get { return Duration > 0 && TargetRoom != null && Doer != null && Doer.CurrentRoom != TargetRoom; } }
+
+    /// <summary> arrives minutes later - the doer stays in its room that much longer (PlayerMeetUtility, say hello) </summary>
+    public void DelayStep(int minutes)
+    {
+        if (duration > 0 && minutes > 0) duration += minutes;
     }
 }

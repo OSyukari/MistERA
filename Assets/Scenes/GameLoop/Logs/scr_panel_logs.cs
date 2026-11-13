@@ -76,6 +76,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler, IScrollHandler
     {
         inLogsView = vm == ViewMode.View_Logs;
         if (inLogsView) this.lockView = lockView;
+        else holdingPlayerImage = false;
         // hide/show via CanvasGroup instead of toggling the GameObject, so the panel keeps processing
         // messages (and stays in sync with its sibling) even while the logs view isn't shown
         RefreshVisibility();
@@ -107,7 +108,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler, IScrollHandler
         var cm = scr_System_CampaignManager.current;
         if (cm.LogSection != 0) messageSections[msg] = new LogSectionStamp { section = cm.LogSection, isFlushStart = cm.LogSectionIsFlushStart };
         todo.Add(msg);
-        var immediate = automaticMessages.Contains(todo[0]) && !WaitingForInput && CanAutoContinue(todo[0], true);
+        var immediate = automaticMessages.Contains(todo[0]) && !WaitingForInput && CanAutoContinue(todo[0], true) && !HeldByPlayerImage(todo[0]);
         UpdateAnimatingStatus();
         //Debug.Log($"onLogsAdd firstline? {firstLine} or animate? {animate} canAnimate? {canAnimate}");
         if (scr_System_CentralControl.current.LogPrefs.DLog_LogsMenu) Debug.Log($"OnLogsadd, waiting? {waiting} displayPortrait? {msg.DisplaPortrait} waitForPortrait? {msg.WaitForPortrait} portraitRef {(msg.Display.PortraitRef == null ? "null" : msg.Display.PortraitRef.Owner.CallName)} multiple? {msg.Display.MultipleChara.Count} animate? {animate} count? {todo.Count} firstline? {firstLine} immediate? {immediate}");
@@ -1083,6 +1084,26 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler, IScrollHandler
     readonly Dictionary<MessageLog, LogSectionStamp> messageSections = new Dictionary<MessageLog, LogSectionStamp>();
     int lastShownSection = 0;
 
+    /// <summary>
+    /// A player image is on screen (PlayerCommandPortrait: the player has no kojo, its command lines carry the image) -
+    /// no auto-print replaces it: the next message drawing someone else's portrait waits for a click. Text-only lines
+    /// and further player lines keep flowing. Cleared by any click, leaving the logs view, or clearing the logs.
+    /// </summary>
+    bool holdingPlayerImage = false;
+
+    bool HeldByPlayerImage(MessageLog next)
+    {
+        return holdingPlayerImage && next != null && !next.ShowsPlayer && next.DisplaPortrait && next.WaitForPortrait;
+    }
+
+    /// <summary> after drawing current (not skipping): a portrait switch decides the hold, text-only lines leave it as is </summary>
+    void UpdatePlayerImageHold(MessageLog current)
+    {
+        if (!current.DisplaPortrait || !current.WaitForPortrait) return;
+        var player = scr_System_CampaignManager.current.Player;
+        holdingPlayerImage = current.ShowsPlayer && player != null && player.PortraitManager != null && player.PortraitManager.HasAnyPortrait;
+    }
+
     /// <summary> next may auto-print after the message shown last (unsectioned messages keep the plain animate rule) </summary>
     bool CanAutoContinue(MessageLog next, bool arriving)
     {
@@ -1232,6 +1253,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler, IScrollHandler
         automaticMessages.Clear();
         messageSections.Clear();
         lastShownSection = 0;
+        holdingPlayerImage = false;
         activePrompt = null;
         scr_System_CampaignManager.current.Logs.Clear();
     }
@@ -1302,6 +1324,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler, IScrollHandler
                     waiting = text.Draw(skipImage, msgbox_ERA.GetComponent<scr_MessageLogBox>(), this.prefab_LogLine, msgbox_AVG.GetComponent<scr_MessageLogBox>(), this.prefab_LogLine) || waiting;
                 }
                 finally { text.animateAllOverride = previousAnimateAll; }
+                if (!skipImage) UpdatePlayerImageHold(current);
                 drawnNew = true;
             }
             else if (current is Message_Question)
@@ -1355,7 +1378,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler, IScrollHandler
 
             // auto advance check - animated messages only within the shown message's section
             var next = todo.Count > 0 ? todo[0] : null;
-            if (next != null && !WaitingForInput && (next.autoAnimate || (automaticMessages.Contains(next) && CanAutoContinue(next, false))))
+            if (next != null && !WaitingForInput && !HeldByPlayerImage(next) && (next.autoAnimate || (automaticMessages.Contains(next) && CanAutoContinue(next, false))))
             {
                 AnimateOneStep();
             }
@@ -1521,6 +1544,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler, IScrollHandler
     public void OnPointerClick(PointerEventData eventData)
     {
         waiting = false;
+        holdingPlayerImage = false;
 
         if (currentMode == LogsDisplayMode.LLM)
         {

@@ -1193,7 +1193,8 @@ public class Character_Factions
     /// </summary>
     [JsonIgnore] protected HashSet<int> inviteRefusedBy = new HashSet<int>();
 
-    public bool HasRefusedInvite(int charaRef) { return inviteRefusedBy != null && inviteRefusedBy.Contains(charaRef); }
+    /// <summary>Disabled for now (user 2026-11-12): a refusal was remembered for every activity of the day (a refused walk blocked the fireworks invitation). Refusals are still recorded.</summary>
+    public bool HasRefusedInvite(int charaRef) { return false; }
     public void AddInviteRefusal(int charaRef) { if (inviteRefusedBy == null) inviteRefusedBy = new HashSet<int>(); inviteRefusedBy.Add(charaRef); }
     public void ClearInviteMemory() { inviteRefusedBy?.Clear(); }
 

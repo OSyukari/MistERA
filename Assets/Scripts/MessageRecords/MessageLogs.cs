@@ -488,10 +488,26 @@ public abstract class MessageLog : I_hasPortrait
     {
         get
         {
-            if (Display.PortraitRef != null && Display.PortraitRef.Owner.RefID != 0) return true;
-            if (Display.MultipleChara != null && Display.MultipleChara.Count >= 1 && Display.MultipleChara[0] != null && Display.MultipleChara[0].RefID != 0) return true;
+            if (Display.PortraitRef != null && Drawable(Display.PortraitRef.Owner)) return true;
+            if (Display.MultipleChara != null && Display.MultipleChara.Count >= 1 && Drawable(Display.MultipleChara[0])) return true;
             return false;
         }
+    }
+
+    /// <summary>
+    /// Characters a log line may switch the portrait to: anyone but the player, and the player too while
+    /// displayPlayerPortraitInLogs is on (PlayerCommandPortrait - the player has no kojo, its system lines carry the image).
+    /// </summary>
+    public static bool Drawable(Character_Trainable c)
+    {
+        if (c == null || c.RefID < 0) return false;
+        return c.RefID != 0 || PlayerCommandPortrait.Enabled;
+    }
+
+    /// <summary> the portrait this line draws is the player's (single ref only - a MultipleChara pick is decided at draw time) </summary>
+    public bool ShowsPlayer
+    {
+        get { return Display.PortraitRef != null && Display.PortraitRef.Owner != null && Display.PortraitRef.Owner.RefID == 0; }
     }
     public DateTime time;
 
@@ -545,15 +561,27 @@ public abstract class MessageLog : I_hasPortrait
 
         }
 
-        if (Display.PortraitRef != null && Display.PortraitRef.Owner.RefID > 0) scr_System_CampaignManager.current.Log_TrySetChara(this.Display.PortraitRef, this);
+        if (Display.PortraitRef != null && Drawable(Display.PortraitRef.Owner)) scr_System_CampaignManager.current.Log_TrySetChara(this.Display.PortraitRef, this);
         else if (this.Display.MultipleChara.Count > 0)
         {
-            var result = scr_System_CampaignManager.current.Log_TrySetChara(this.Display.MultipleChara, this);
+            var result = scr_System_CampaignManager.current.Log_TrySetChara(DrawableCharas(this.Display.MultipleChara), this);
             if (result == null) return false;
-            else return result.Owner.RefID != 0;
+            else return Drawable(result.Owner);
         }
 
         if (Display.PortraitRef == null) return false;
-        else return Display.PortraitRef.Owner.RefID != 0;
+        else return Drawable(Display.PortraitRef.Owner);
+    }
+
+    /// <summary> MultipleChara without the player while player portraits are off (the list itself is left as is) </summary>
+    static List<Character_Trainable> DrawableCharas(List<Character_Trainable> list)
+    {
+        if (PlayerCommandPortrait.Enabled) return list;
+        bool hasPlayer = false;
+        for (int i = 0; i < list.Count; i++) if (list[i] != null && list[i].RefID == 0) { hasPlayer = true; break; }
+        if (!hasPlayer) return list;
+        var filtered = new List<Character_Trainable>(list.Count);
+        for (int i = 0; i < list.Count; i++) if (list[i] != null && list[i].RefID != 0) filtered.Add(list[i]);
+        return filtered;
     }
 }

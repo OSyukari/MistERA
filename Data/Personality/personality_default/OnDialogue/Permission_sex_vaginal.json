@@ -37,6 +37,30 @@
                         "\"不、不可以啦……\""
                     ] } ]
                 }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_vaginal_LowConsciousness",
+                    "_comment": "意识模糊时被做了需要阴道性行为许可的事。不会被请求、也不算答应或拒绝，只是迷迷糊糊地察觉到。女性说话者。",
+                    "variants": [ { "responses": [
+                        "\"……那里……？……诶……\"",
+                        "\"……下面……怎么了……好奇怪……\"",
+                        "\"……不……嗯……想不清楚……\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "permission_sex_vaginal_LowConsciousness_Climax",
+                    "_comment": "意识模糊且正处于高潮时被做了需要阴道性行为许可的事，几乎无法组织语言。女性说话者。",
+                    "variants": [ { "responses": [
+                        "\"……啊……那里……现在、不……\"",
+                        "\"……正在……去……啊……\"",
+                        "\"……嗯、嗯……停不下……\""
+                    ] } ]
+                }
             }
         ]
     }

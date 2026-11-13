@@ -10,11 +10,12 @@ public class Job_Furniture : Job
 {
     // Set by an activity dispatch after it selected an exact running package. It survives pathing/undressing, then
     // constrains this actor's next joinable-package selection before the player-preference heuristic runs.
-    readonly Dictionary<int, (int executionRef, int groupKey)> activityDispatchHints = new Dictionary<int, (int executionRef, int groupKey)>();
+    // Group admission is checked by the join itself (ActionPackage.BelongsToBoundExecution - Job_Activity.PackageAdmits).
+    readonly Dictionary<int, int> activityDispatchHints = new Dictionary<int, int>();
 
-    public void SetActivityDispatchHint(int charaRef, int executionRef, int groupKey)
+    public void SetActivityDispatchHint(int charaRef, int executionRef)
     {
-        if (charaRef >= 0 && executionRef >= 0) activityDispatchHints[charaRef] = (executionRef, groupKey);
+        if (charaRef >= 0 && executionRef >= 0) activityDispatchHints[charaRef] = executionRef;
     }
     /*
      make job capacity check (set capacity in furniturebase jobgiver config)
@@ -546,9 +547,7 @@ public class Job_Furniture : Job
         bool debug = scr_System_CentralControl.current.LogPrefs.DLog_JoinAP;
         foreach(var pkg in this.ActivePackages)
         {
-            if (activityDispatchHints.TryGetValue(c.RefID, out var hint)
-                && (pkg.ActivityExecutionRef != hint.executionRef
-                    || (hint.groupKey != Job_Activity.NoGroupCheck && pkg.ActivityGroupKey != hint.groupKey))) continue;
+            if (activityDispatchHints.TryGetValue(c.RefID, out var hintExecutionRef) && pkg.ActivityExecutionRef != hintExecutionRef) continue;
             if (!AllowsActivityCommand(c, pkg.targetCOM)) continue;
             if (!FurnitureOccupancyUtility.ScopeAllowsCommand(this, c, pkg.targetCOM)) continue;
             if (pkg.isTemporaryAP)

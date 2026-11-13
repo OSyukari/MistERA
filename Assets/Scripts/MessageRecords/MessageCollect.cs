@@ -74,6 +74,8 @@ public class MessageCollect
             i += messages_results.Count;
             i += messages_exp.Count;
             i += messages_kojo_after.Count;
+            i += messages_enter.Count;
+            i += messages_leave.Count;
             return i;
         } }
 
@@ -92,6 +94,8 @@ public class MessageCollect
         messages_results.Remove(rec);
         messages_exp.Remove(rec);
         messages_kojo_after.Remove(rec as KojoCollector);
+        messages_enter.Remove(rec);
+        messages_leave.Remove(rec);
 
         foreach (var ap in this.apRecords)
         {
@@ -112,6 +116,26 @@ public class MessageCollect
     public ExperienceLog exp = new ExperienceLog();
     public List<I_Records> messages_exp = new List<I_Records>();
     public List<KojoCollector> messages_kojo_after = new List<KojoCollector>();
+    /// <summary>
+    /// Room enter/leave lines (MovementLog, AddMessage_Movement). Enter lines print first in a flush, leave lines last
+    /// (at the end of the last section that prints, never a section of their own).
+    /// </summary>
+    [JsonProperty] protected List<I_Records> messages_enter = new List<I_Records>();
+    [JsonProperty] protected List<I_Records> messages_leave = new List<I_Records>();
+
+    /// <summary> one merged enter (per target room) or leave (per source room) line of the current flush </summary>
+    class MovementMerge
+    {
+        public bool enter;
+        public int roomRef;
+        public string roomName;
+        public DescriptionCollector desc;
+        public readonly List<string> names = new List<string>();
+        public readonly List<string> details = new List<string>();
+    }
+    /// <summary> pooled: the first movementMergeCount entries are live, reset in Clear() </summary>
+    [JsonIgnore] readonly List<MovementMerge> movementMerges = new List<MovementMerge>();
+    [JsonIgnore] int movementMergeCount = 0;
 
     /// <summary>
     /// message loadactor and ap loadactor behaves differently, beware!
@@ -119,6 +143,8 @@ public class MessageCollect
     /// <param name="recTable"></param>
     public void ReadActorRecord(Dictionary<string,ActorRecord> recTable)
     {
+        foreach (var m in messages_enter) m.ReadActorRecord(recTable);
+        foreach (var m in messages_leave) m.ReadActorRecord(recTable);
         foreach (var m in messages_checks) m.ReadActorRecord(recTable);
         foreach (var m in messages_before) m.ReadActorRecord(recTable);
         foreach (var m in messages_after) m.ReadActorRecord(recTable);
@@ -157,11 +183,13 @@ public class MessageCollect
             }
         }
 
+        Scan(messages_enter);
         Scan(messages_checks);
         Scan(messages_before);
         Scan(messages_results);
         Scan(messages_after);
         Scan(messages_exp);
+        Scan(messages_leave);
 
         foreach (var k in messages_kojo) k.CollectPortraitRefs(refs, requireOverride);
         foreach (var k in messages_kojo_after) k.CollectPortraitRefs(refs, requireOverride);
@@ -200,11 +228,13 @@ public class MessageCollect
             }
         }
 
+        Scan(messages_enter);
         Scan(messages_checks);
         Scan(messages_before);
         Scan(messages_results);
         Scan(messages_exp);
         Scan(messages_after);
+        Scan(messages_leave);
 
         foreach (var k in messages_kojo) k.CollectPortraitTags(selfTags, targetTags);
         foreach (var k in messages_kojo_after) k.CollectPortraitTags(selfTags, targetTags);
@@ -239,6 +269,8 @@ public class MessageCollect
         foreach (var m in messages_results) m.RecordActor(recTable);
         foreach (var m in messages_exp) m.RecordActor(recTable);
         foreach (var m in messages_kojo_after) m.RecordActor(recTable);
+        foreach (var m in messages_enter) m.RecordActor(recTable);
+        foreach (var m in messages_leave) m.RecordActor(recTable);
 
         foreach (var ap in this.apRecords) { ap.RecordActor(recTable); }
     }
@@ -279,6 +311,55 @@ public class MessageCollect
         if (visible) this.messages_before.Add(desc);
         if (sendRecording && recording != null && recording.HasRecording) recording.NotifyDescCollect(desc, MessageCollect_Type.before);
     }
+
+    /// <summary>
+    /// Room enter/leave line (MovementLog). The recording always gets the single-character record; for display, a visible
+    /// mergeable record joins this flush's line for the same room (enter: target room, leave: source room) - names on the
+    /// line (capped, MovementLog.JoinNames), one tooltip line per character (detail). Not mergeable (the player's own line):
+    /// added as is.
+    /// </summary>
+    public void AddMessage_Movement(DescriptionCollector record, Room_Instance room, bool enter, int actorRef, string name, string detail, bool mergeable)
+    {
+        if (PresentationSuppressed || record == null || room == null) return;
+        var player = scr_System_CampaignManager.current.Player;
+        bool visible = record.VisibleTo(player, room);
+        if (sendRecording && room.HasRecording) room.NotifyDescCollect(record, MessageCollect_Type.before);
+        if (!visible) return;
+
+        var list = enter ? messages_enter : messages_leave;
+        if (!mergeable)
+        {
+            list.Add(record);
+            return;
+        }
+
+        MovementMerge merge = null;
+        for (int i = 0; i < movementMergeCount; i++)
+        {
+            var m = movementMerges[i];
+            if (m.enter == enter && m.roomRef == room.RefID) { merge = m; break; }
+        }
+        if (merge == null)
+        {
+            if (movementMergeCount == movementMerges.Count) movementMerges.Add(new MovementMerge());
+            merge = movementMerges[movementMergeCount++];
+            merge.enter = enter;
+            merge.roomRef = room.RefID;
+            merge.roomName = room.DisplayNameShort;
+            merge.names.Clear();
+            merge.details.Clear();
+            merge.desc = new DescriptionCollector("");
+            merge.desc.autoAnimate = true;
+            list.Add(merge.desc);
+        }
+
+        merge.names.Add(name);
+        if (!string.IsNullOrEmpty(detail)) merge.details.Add(detail);
+        merge.desc.LoadActors(actorRef, true, false);
+        merge.desc.message_excludeRelated = MovementLog.FormatLine(enter, merge.names, merge.roomName);
+        merge.desc.tooltip = string.Join("\n", merge.details);
+    }
+
     public void AddMessage_EXP(I_Records desc, Room_Instance recording = null)
     {
         if (PresentationSuppressed) return;
@@ -377,31 +458,39 @@ public class MessageCollect
         if (desc != null) this.messages_exp.Add(desc);
 
         // sections (accept / result / after): the logs panel auto-prints within a section, each later one waits for a click
+        // enter lines open the first section, leave lines close the last one (LeaveSection)
         bool firstSection = true;
-        if (BeginSection(cnManager, AcceptSectionCount, ref firstSection))
+        int leaveSection = LeaveSection;
+        if (BeginSection(cnManager, AcceptSectionCount + (leaveSection == 0 ? messages_leave.Count : 0), ref firstSection))
         {
+            foreach (var msg in messages_enter) cnManager.AddLog(msg, visible, true, replaceStrings);
             foreach (var check in messages_checks) cnManager.AddLog(check, visible, true, replaceStrings);
             foreach (var msg in messages_before) cnManager.AddLog(msg, visible, true, replaceStrings);
             foreach (var kvp in messages_kojo) cnManager.AddLog(kvp, false, kvp.RightAlign(visible), kvp.tooltip, replaceStrings);
+            if (leaveSection == 0) foreach (var msg in messages_leave) cnManager.AddLog(msg, visible, true, replaceStrings);
         }
         if (BeginSection(cnManager, ResultSectionCount, ref firstSection))
         {
             foreach (var msg in messages_results) cnManager.AddLog(msg, visible, true, replaceStrings);
             foreach (var msg in messages_exp) cnManager.AddLog(msg, visible, true, replaceStrings);
+            if (leaveSection == 1) foreach (var msg in messages_leave) cnManager.AddLog(msg, visible, true, replaceStrings);
         }
         if (BeginSection(cnManager, AfterSectionCount, ref firstSection))
         {
             foreach (var kvp in messages_kojo_after) cnManager.AddLog(kvp, false, kvp.RightAlign(visible), kvp.tooltip, replaceStrings);
             foreach (var msg in messages_after) cnManager.AddLog(msg, visible, true, replaceStrings);
+            if (leaveSection == 2) foreach (var msg in messages_leave) cnManager.AddLog(msg, visible, true, replaceStrings);
         }
         cnManager.EndLogSections();
         //cnManager.AddLog(-1, String.Join("\n", messages_after), true);
         Clear();
     }
 
-    int AcceptSectionCount { get { return messages_checks.Count + messages_before.Count + messages_kojo.Count; } }
+    int AcceptSectionCount { get { return messages_enter.Count + messages_checks.Count + messages_before.Count + messages_kojo.Count; } }
     int ResultSectionCount { get { return messages_results.Count + messages_exp.Count; } }
     int AfterSectionCount { get { return messages_kojo_after.Count + messages_after.Count; } }
+    /// <summary> section the leave lines print at the end of: the last one that prints anything (0 accept, 1 result, 2 after) </summary>
+    int LeaveSection { get { return AfterSectionCount > 0 ? 2 : ResultSectionCount > 0 ? 1 : 0; } }
 
     /// <summary> starts a log section when it has messages (scr_System_CampaignManager.BeginLogSection) </summary>
     static bool BeginSection(scr_System_CampaignManager cnManager, int count, ref bool firstSection)
@@ -460,7 +549,17 @@ public class MessageCollect
             scr_UpdateHandler.current.AddEventCallback(() => cnManager.BeginLogSection(isFirst));
         }
 
-        QueueSection(AcceptSectionCount);
+        int leaveSection = LeaveSection;
+        void QueueLeaves(int section)
+        {
+            if (leaveSection != section) return;
+            foreach (var m in messages_leave)
+                scr_UpdateHandler.current.AddEventCallback(() => cnManager.AddLog(m, visible, true, null, displaySnapshot));
+        }
+
+        QueueSection(AcceptSectionCount + (leaveSection == 0 ? messages_leave.Count : 0));
+        foreach (var m in messages_enter)
+            scr_UpdateHandler.current.AddEventCallback(() => cnManager.AddLog(m, visible, true, null, displaySnapshot));
         foreach (var check in messages_checks)
             scr_UpdateHandler.current.AddEventCallback(() => cnManager.AddLog(check, visible, true, null, displaySnapshot));
 
@@ -468,6 +567,7 @@ public class MessageCollect
             scr_UpdateHandler.current.AddEventCallback(() => cnManager.AddLog(m, visible, true, null, displaySnapshot));
 
         foreach (var kvp in messages_kojo)  scr_UpdateHandler.current.AddEventCallback(() => cnManager.AddLog(kvp, false, kvp.RightAlign(visible), kvp.tooltip));
+        QueueLeaves(0);
 
         QueueSection(ResultSectionCount);
         foreach (var r in messages_results)
@@ -475,6 +575,7 @@ public class MessageCollect
 
         foreach(var kvp in messages_exp)
             scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(kvp, visible, true, null, displaySnapshot));
+        QueueLeaves(1);
 
 
         QueueSection(AfterSectionCount);
@@ -484,6 +585,7 @@ public class MessageCollect
         //var s = String.Join("\n", messages_after);
         foreach (var m in messages_after)
             scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(m, visible, true, null, displaySnapshot));
+        QueueLeaves(2);
         // scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, s, true));
         scr_UpdateHandler.current.AddEventCallback(() => cnManager.EndLogSections());
         Clear();
@@ -501,6 +603,7 @@ public class MessageCollect
         exp.Finalize(out var exps);
         if (exps != null) messages_exp.Add(exps);
 
+        foreach (var m in messages_enter) RecordText(m, perspective, into);
         foreach (var m in messages_checks) RecordText(m, perspective, into);
         foreach (var m in messages_before) RecordText(m, perspective, into);
         foreach (var m in messages_kojo) RecordText(m, perspective, into);
@@ -508,6 +611,7 @@ public class MessageCollect
         foreach (var m in messages_exp) RecordText(m, perspective, into);
         foreach (var m in messages_kojo_after) RecordText(m, perspective, into);
         foreach (var m in messages_after) RecordText(m, perspective, into);
+        foreach (var m in messages_leave) RecordText(m, perspective, into);
         Clear();
     }
 
@@ -552,6 +656,7 @@ public class MessageCollect
             canvas.RegisterAPRecord2(ap, timestamp, this, rect);
             if (ap.mcol != null) ap.mcol.FlushCollectedLogsIntoUI(timestamp, canvas, replaceStrings, rect);
         }
+        foreach (var msg in messages_enter) canvas.PrintEntry_1(msg, replaceStrings, rect);
         foreach (var check in messages_checks) canvas.PrintEntry_1(check, replaceStrings, rect);
         foreach (var msg in messages_before) canvas.PrintEntry_1(msg, replaceStrings, rect);
         foreach (var kvp in messages_kojo) canvas.PrintEntry_1(kvp,   replaceStrings, rect);
@@ -560,6 +665,7 @@ public class MessageCollect
         foreach (var msg in messages_exp) canvas.PrintEntry_1(msg,   replaceStrings, rect);
         foreach (var kvp in messages_kojo_after) canvas.PrintEntry_1(kvp,   replaceStrings, rect);
         foreach (var msg in messages_after) canvas.PrintEntry_1(msg,   replaceStrings, rect);
+        foreach (var msg in messages_leave) canvas.PrintEntry_1(msg, replaceStrings, rect);
     }
 
 
@@ -578,6 +684,9 @@ public class MessageCollect
         messages_results.Clear();
         messages_kojo_after.Clear();
         messages_exp.Clear();
+        messages_enter.Clear();
+        messages_leave.Clear();
+        movementMergeCount = 0;
         exp.Clear();
         apRecords.Clear();
         replaceStrings.Clear();
@@ -689,6 +798,14 @@ public class MessageCollect
             }
             else if (debug) Debug.LogError($"dropping nonvisible check {mm.Dump}");
         }
+        foreach (var mm in m.messages_enter)
+        {
+            if (mm.VisibleTo(c)) { this.messages_enter.Add(mm); added = true; }
+        }
+        foreach (var mm in m.messages_leave)
+        {
+            if (mm.VisibleTo(c)) { this.messages_leave.Add(mm); added = true; }
+        }
         foreach(var apCollect in m.apRecords)
         {
             if (apCollect.mcol == null) continue;
@@ -713,6 +830,7 @@ public class MessageCollect
     public List<string> DumpMessages()
     {
         var lines = new List<string>();
+        foreach (var m in messages_enter) lines.Add(m.Dump);
         foreach (var m in messages_checks) lines.Add(m.Dump);
         foreach (var m in messages_before) lines.Add(m.Dump);
         foreach (var m in messages_kojo) lines.Add(m.Dump);
@@ -720,6 +838,7 @@ public class MessageCollect
         foreach (var m in messages_exp) lines.Add(m.Dump);
         foreach (var m in messages_kojo_after) lines.Add(m.Dump);
         foreach (var m in messages_after) lines.Add(m.Dump);
+        foreach (var m in messages_leave) lines.Add(m.Dump);
         return lines;
     }
 
@@ -747,6 +866,9 @@ public class MessageCollect
             messages_before.AddRange(m.messages_before);
         }
         if (m.messages_after != null && m.messages_after.Count > 0) messages_after.AddRange(m.messages_after);
+        // movement lines come in already merged per collect; lines from different collects are not re-merged
+        this.messages_enter.AddRange(m.messages_enter);
+        this.messages_leave.AddRange(m.messages_leave);
 
         this.messages_kojo.AddRange(m.messages_kojo);
         this.messages_results.AddRange(m.messages_results);

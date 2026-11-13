@@ -6,8 +6,78 @@ using WebP;
 using System.Linq;
 using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 public class AssetsLoader
 {
+    // Update IO gate (Plans/GameAndModUpdater.md): the mod installer closes admission, then polls until every
+    // in-flight content read (UnityWebRequest) and texture cache write (Task) has finished before replacing files.
+    // The IO itself is tracked, not the coroutine that started it, so a coroutine stopped mid-load (its
+    // MonoBehaviour destroyed on a scene change) can never hold the gate open. All callers run on the main thread.
+    private static readonly object updateIOLock = new object();
+    private static bool updateQuiescence;
+    private static readonly List<UnityWebRequest> pendingContentReads = new List<UnityWebRequest>();
+    private static readonly List<Task> pendingCacheWrites = new List<Task>();
+
+    /// <summary>Closes admission immediately. Poll until true before replacing content files.
+    /// The gate stays closed until EndUpdateQuiescence, including after a successful drain.</summary>
+    public static bool BeginUpdateQuiescence()
+    {
+        lock (updateIOLock)
+        {
+            updateQuiescence = true;
+            PrunePendingContentIO();
+            return pendingContentReads.Count == 0 && pendingCacheWrites.Count == 0;
+        }
+    }
+
+    /// <summary>Reopens content IO; only call when no update can still replace files.</summary>
+    public static void EndUpdateQuiescence()
+    {
+        lock (updateIOLock) updateQuiescence = false;
+    }
+
+    /// <summary>False while an update holds the gate. Synchronous reads check it before touching content files.</summary>
+    private static bool ContentIOOpen
+    {
+        get { lock (updateIOLock) return !updateQuiescence; }
+    }
+
+    /// <summary>Admits and tracks one content read; call right before SendWebRequest. False while an update holds the gate.</summary>
+    private static bool TryTrackContentRead(UnityWebRequest request)
+    {
+        lock (updateIOLock)
+        {
+            if (updateQuiescence) return false;
+            if (pendingContentReads.Count >= 32) PrunePendingContentIO();
+            pendingContentReads.Add(request);
+            return true;
+        }
+    }
+
+    /// <summary>Tracks one background cache write, admitted by the caller through ContentIOOpen on the same frame.</summary>
+    private static void TrackCacheWrite(Task write)
+    {
+        lock (updateIOLock)
+        {
+            if (pendingCacheWrites.Count >= 32) PrunePendingContentIO();
+            pendingCacheWrites.Add(write);
+        }
+    }
+
+    private static void PrunePendingContentIO()
+    {
+        for (int i = pendingContentReads.Count - 1; i >= 0; i--)
+        {
+            bool done;
+            // a request already disposed by its finished coroutine throws here; either way it no longer reads
+            try { done = pendingContentReads[i].isDone; }
+            catch (Exception) { done = true; }
+            if (done) pendingContentReads.RemoveAt(i);
+        }
+        for (int i = pendingCacheWrites.Count - 1; i >= 0; i--)
+            if (pendingCacheWrites[i].IsCompleted) pendingCacheWrites.RemoveAt(i);
+    }
+
     private static Texture2D _placeholderTexture = null;
     /// <summary>
     /// Solid-color placeholder returned whenever a texture fails to load (null/empty path, failed web request,
@@ -131,6 +201,12 @@ public class AssetsLoader
 
         using (UnityWebRequest uwr = UnityWebRequest.Get(fullPath))
         {
+            // an update is replacing content files: treat as a failed load
+            if (!TryTrackContentRead(uwr))
+            {
+                onComplete?.Invoke(PlaceholderTexture);
+                yield break;
+            }
             yield return uwr.SendWebRequest();
 
             if (uwr.result != UnityWebRequest.Result.Success)
@@ -235,6 +311,12 @@ public class AssetsLoader
 
         using (UnityWebRequest uwr = UnityWebRequest.Get(fullPath))
         {
+            // an update is replacing content files: treat as a failed load
+            if (!TryTrackContentRead(uwr))
+            {
+                onComplete?.Invoke(PlaceholderTextAsset);
+                yield break;
+            }
             yield return uwr.SendWebRequest();
 
             if (uwr.result != UnityWebRequest.Result.Success)
@@ -264,6 +346,12 @@ public class AssetsLoader
         using (UnityWebRequest uwr = UnityWebRequest.Get(fullPath))
         {
             uwr.downloadHandler = new DownloadHandlerBuffer();
+            // an update is replacing content files: treat as a failed load
+            if (!TryTrackContentRead(uwr))
+            {
+                onComplete?.Invoke(PlaceholderSkelBytes);
+                yield break;
+            }
             yield return uwr.SendWebRequest();
 
             if (uwr.result != UnityWebRequest.Result.Success)
@@ -291,6 +379,14 @@ public class AssetsLoader
     public static IEnumerator LoadCachedAtlasTextureCoroutine(string path, System.Action<Texture2D> onComplete)
     {
         if (string.IsNullOrEmpty(path))
+        {
+            onComplete?.Invoke(PlaceholderTexture);
+            yield break;
+        }
+
+        // an update is replacing content files: treat as a failed load (the synchronous cache read below is
+        // admitted here; the source read is tracked by LoadSkelCoroutine)
+        if (!ContentIOOpen)
         {
             onComplete?.Invoke(PlaceholderTexture);
             yield break;
@@ -363,6 +459,9 @@ public class AssetsLoader
 
     private static void WriteTextureCacheAsync(string fullPath, string cachePath, Texture2D tex)
     {
+        // admission and tracking happen on this frame, so an update can never start replacing files between them
+        if (!ContentIOOpen) return;
+
         FileInfo srcInfo;
         byte[] data;
         try
@@ -382,7 +481,7 @@ public class AssetsLoader
         int height = tex.height;
         int format = (int)tex.format;
 
-        Task.Run(() =>
+        TrackCacheWrite(Task.Run(() =>
         {
             try
             {
@@ -401,6 +500,6 @@ public class AssetsLoader
             {
                 Debug.LogWarning($"AssetsLoader texture cache write failed for [{cachePath}]: {e.Message}");
             }
-        });
+        }));
     }
 }

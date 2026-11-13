@@ -323,6 +323,9 @@ public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
     }
 
     ItemComponent_Ingestible _ingestible = null;
+    // [JsonIgnore] on the Comp_ getters: serialized, the load would populate the live component (already read from
+    // compInstances) a second time, appending its lists again (condom contentRefs doubled every load)
+    [JsonIgnore]
     public ItemComponent_Ingestible Comp_Ingestible
     {
         get
@@ -335,6 +338,7 @@ public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
         }
     }
     ItemComponent_Equippable _equippable = null;
+    [JsonIgnore]
     public ItemComponent_Equippable Comp_Equippable
     {
         get
@@ -349,6 +353,7 @@ public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
 
 
     ItemComponent_Contents _contents = null;
+    [JsonIgnore]
     public ItemComponent_Contents Comp_Contents
     {
         get
@@ -499,6 +504,8 @@ public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
             else compInstances.Add(c);
 
         }
+        // saves made while Comp_Contents was serialized carry doubled contentRefs
+        Comp_Contents?.RemoveDuplicateRefs();
         InvalidateTagsCache();
     }
 

@@ -13,6 +13,9 @@ public sealed class MissingPermission
     /// <summary>This missing permission set the check to 0: a Hard gate (see PermissionMode). SoftEvent never refuses.</summary>
     public bool Refuses { get; internal set; }
     public PermissionQueryResult Query { get; internal set; }
+    /// <summary>The granter has low consciousness: noticed only for its [id]_LowConsciousness kojo - no penalty, no
+    /// refusal, no request and no demand.</summary>
+    public bool Unaware { get; internal set; }
 }
 
 /// <summary>
@@ -33,7 +36,8 @@ public partial class EvaluationPackage
         CollectPermissionBaseTags,
         CollectPermissionBodyTags,
         CollectPermissionSceneTags,
-        CollectPermissionProtectionTags
+        CollectPermissionProtectionTags,
+        CollectPermissionPartnerTags
     };
 
     List<MissingPermission> missingPermissions = new List<MissingPermission>();
@@ -44,11 +48,14 @@ public partial class EvaluationPackage
     /// <summary>
     /// Matches every permission's rules against this check (granter = self) and, for each matched permission the holder
     /// does not have, adds its penalty or sets the check to 0, per PermissionMode. Each permission counts once per check.
-    /// Unconscious / reduced-consciousness granters are not checked, as before.
+    /// Unconscious / time-stopped granters are not checked. A low-consciousness granter's missing permissions are only
+    /// noted (MissingPermission.Unaware) for its kojo - the check itself is untouched. A climaxing granter cannot refuse:
+    /// a Hard permission counts as missing without setting the check to 0.
     /// </summary>
     void ApplyPermissionRules(Modifiers result, bool isDoer, Character_Trainable self, Character_Trainable checkTarget)
     {
-        if (self == null || targetCOM == null || self.Stats.isConsciousnessUnconscious || self.Stats.isConsciousnessReduced) return;
+        if (self == null || targetCOM == null || self.Stats.isConsciousnessUnconscious || self.isTimeStopped) return;
+        bool unaware = self.Stats.isConsciousnessReduced;
         var index = scr_System_Serializer.current?.MasterList?.PermissionDefinitions;
         if (index?.list == null) return;
         var partner = isDoer ? Receiver : Doer;
@@ -62,6 +69,8 @@ public partial class EvaluationPackage
 
             var holder = definition.holderRole == PermissionHolderRole.CheckTarget ? checkTarget : partner;
             if (holder == null || holder == self) continue;
+            // the permission does not concern this granter's body (charaReq, e.g. no vagina / no fertile womb)
+            if (!PermissionService.IsApplicable(self, definition)) continue;
 
             if (ownerTags == null) BuildPermissionContext(isDoer, self, out ownerTags, out comTags);
             PermissionRule matched = null;
@@ -75,6 +84,13 @@ public partial class EvaluationPackage
             var query = PermissionService.Query(self, holder, definition.ID);
             if (query.Error.Length == 0 && query.HasPermission) continue;
 
+            if (unaware)
+            {
+                if (!missingPermissions.Exists(x => x.Definition == definition && x.Granter == self && x.Holder == holder))
+                    missingPermissions.Add(new MissingPermission { Definition = definition, Granter = self, Holder = holder, Query = query, Unaware = true });
+                continue;
+            }
+
             string label = definition.missingTooltip != ""
                 ? LocalizeDictionary.QueryThenParse(definition.missingTooltip)
                 : LocalizeDictionary.QueryThenParse("ui_permission_missing").Replace("$permission$", LocalizeDictionary.QueryThenParse(definition.displayName));
@@ -83,18 +99,18 @@ public partial class EvaluationPackage
             switch (definition.mode)
             {
                 case PermissionMode.Hard:
-                    // true gate: previews included, forcing cannot override it
-                    refuses = true;
+                    // true gate: previews included, forcing cannot override it - only a climax can (cannot refuse)
+                    refuses = !self.Climaxing;
                     break;
                 case PermissionMode.SoftEvent:
                     // only the soft penalty, previews and real turns alike - the acceptance check decides. An act accepted
                     // while it is still missing is stopped before it begins and the granter's demand plays instead
                     // (ActionPackage.TryStopForDemand, demandEventID). A pushed ("forced") command, or any later act of a
-                    // pair already pushed past in this scene, gets no demand.
+                    // pair already pushed past in this scene, gets no demand - nor does a climaxing granter.
                     refuses = false;
                     bool pushedInScene = job is Job_Sex_Group scene && scene.HasPermissionPush(self.RefID, holder.RefID, definition.ID);
                     // preview: say on the tooltip line that the granter will make a demand
-                    if (!permissionRequestsAsked && !Package.isForced && !pushedInScene)
+                    if (!permissionRequestsAsked && !Package.isForced && !pushedInScene && !self.Climaxing)
                         label += LocalizeDictionary.QueryThenParse("ui_permission_missing_softEvent");
                     break;
                 default:
@@ -138,7 +154,10 @@ public partial class EvaluationPackage
     /// decides, no roll (adjusted requestRequirements, shared with the dialogue menu): granted -> [id]_Granted kojo,
     /// a normal grant with normalGrantRelationshipTags and today's temporary one without; refused -> [id]_Refused kojo,
     /// once per scene for the pair and permission (later rounds ask again silently). Force-accepted requests (forceAccept), event-run commands (SourceEvent) and LLM-injected
-    /// results never create a voluntary grant; "forced"-tagged commands (isForced) still request. Once per EP: Request(false) re-runs on the same EPs do not ask twice.
+    /// results never create a voluntary grant; "forced"-tagged commands (isForced) still request. Once per EP: Request(false) re-runs on the same EPs do not ask twice.<br/>
+    /// A low-consciousness granter (MissingPermission.Unaware) is not asked: it says [id]_LowConsciousness_Climax while
+    /// climaxing (else / missing: [id]_LowConsciousness). A climaxing granter that cannot be asked says [id]_Refused.
+    /// Every kojo here except the granted one shares the once-per-scene record (TryRecordPermissionAnswer).
     /// </summary>
     internal void RequestMissingPermissions(Memory_Response forceAccept)
     {
@@ -154,11 +173,29 @@ public partial class EvaluationPackage
         if (missingPermissions.Count == 0) return;
         foreach (var missing in missingPermissions.ToArray())
         {
-            if (!PermissionService.CanRequest(missing.Granter, missing.Holder, missing.Query)) continue;
+            if (missing.Unaware)
+            {
+                // low consciousness: never asked, never granted - only the hazy kojo, once per scene
+                if (missing.Granter.canAct && TryRecordPermissionAnswer(missing))
+                {
+                    var kojoID = PermissionLowConsciousnessKojoID(missing.Definition.ID);
+                    if (!missing.Granter.Climaxing || !LogPermissionKojo(missing.Granter, missing.Holder, kojoID + "_Climax", PermissionGrantType.Normal))
+                        LogPermissionKojo(missing.Granter, missing.Holder, kojoID, PermissionGrantType.Normal);
+                }
+                continue;
+            }
+            if (!PermissionService.CanRequest(missing.Granter, missing.Holder, missing.Query))
+            {
+                // a climaxing granter cannot refuse the act, but still says no to what it could not be asked for
+                if (missing.Granter.Climaxing && missing.Granter.canAct && missing.Query != null && missing.Query.Error.Length == 0
+                    && TryRecordPermissionAnswer(missing))
+                    LogPermissionKojo(missing.Granter, missing.Holder, PermissionRefusedKojoID(missing.Definition.ID), PermissionGrantType.Normal);
+                continue;
+            }
             if (!PermissionService.AcceptsRequest(missing.Granter, missing.Holder, missing.Query))
             {
                 // refusal kojo once per scene for the pair and permission; the next rounds ask again silently
-                if (!(job is Job_Sex_Group scene) || scene.TryRecordPermissionRefusal(missing.Granter.RefID, missing.Holder.RefID, missing.Definition.ID))
+                if (TryRecordPermissionAnswer(missing))
                     LogPermissionKojo(missing.Granter, missing.Holder, PermissionRefusedKojoID(missing.Definition.ID), PermissionGrantType.Normal);
                 continue;
             }
@@ -174,26 +211,39 @@ public partial class EvaluationPackage
     /// OnDialogue_Permissions events. No shared fallback.</summary>
     public static string PermissionRefusedKojoID(string permissionID) { return $"{permissionID}_Refused"; }
 
+    /// <summary>Kojo a low-consciousness granter says instead of being asked ([id]_LowConsciousness; while climaxing
+    /// [id]_LowConsciousness_Climax is tried first).</summary>
+    public static string PermissionLowConsciousnessKojoID(string permissionID) { return $"{permissionID}_LowConsciousness"; }
+
+    /// <summary>Once per sex scene for the pair and permission (outside a scene: always true). Shared by the refused and
+    /// low-consciousness kojo so an answered permission does not repeat its line every round.</summary>
+    bool TryRecordPermissionAnswer(MissingPermission missing)
+    {
+        return !(job is Job_Sex_Group scene) || scene.TryRecordPermissionAnswer(missing.Granter.RefID, missing.Holder.RefID, missing.Definition.ID);
+    }
+
     /// <summary>The granter's [id]_Granted / _Refused kojo into the job's messages, ahead of this round's acceptance
     /// result. Fetched from the personality directly: RelationshipManager's kojo getters skip the player, who answers
-    /// here too. grantType fills the $permission_grant_type$ token of the granted kojo's consent line.</summary>
-    void LogPermissionKojo(Character_Trainable granter, Character_Trainable holder, string kojoID, PermissionGrantType grantType)
+    /// here too. grantType fills the $permission_grant_type$ token of the granted kojo's consent line. False when the
+    /// personality has no valid entry.</summary>
+    bool LogPermissionKojo(Character_Trainable granter, Character_Trainable holder, string kojoID, PermissionGrantType grantType)
     {
         var m = job?.m;
         var personality = granter.Relationships?.Personality;
-        if (m == null || personality == null) return;
+        if (m == null || personality == null) return false;
 
         var kol = new KojoCollector(granter, kojoID);
         kol.LoadRel(granter.Relationships.FindRelationshipWith(holder));
         var message = personality.GetKOJOMessage(kol);
-        if (message == null) return;
+        if (message == null) return false;
         kol.collect = message;
-        if (!kol.isValid) return;
+        if (!kol.isValid) return false;
         // the [id]_Granted kojo itself carries the 【从$self$那获得了「…」的合意$permission_grant_type$】 line
         kol.ReplaceString("$self$", granter.FirstName);
         kol.ReplaceString("$target$", holder.FirstName);
         kol.ReplaceString("$permission_grant_type$", PermissionService.GrantTypeLabel(grantType));
         m.AddKojo(kol);
+        return true;
     }
 
     void BuildPermissionContext(bool isDoer, Character_Trainable granter, out HashSet<string> ownerTags, out HashSet<string> comTags)
@@ -260,6 +310,18 @@ public partial class EvaluationPackage
     }
 
     /// <summary>
+    /// partner_dangerDay: the act partner can conceive right now - a danger day (ReproductionUtility.IsDangerDay) with a
+    /// fertile womb (e.g. permission_sex_dangerday_creampie_penis, the penis owner's side).
+    /// </summary>
+    static void CollectPermissionPartnerTags(EvaluationPackage ep, bool isDoer, Character_Trainable granter,
+        HashSet<string> ownerTags, HashSet<string> comTags)
+    {
+        var partner = isDoer ? ep.Receiver : ep.Doer;
+        if (partner == null || partner == granter) return;
+        if (ReproductionUtility.IsDangerDay(partner) && ReproductionUtility.HasFertileWomb(partner)) ownerTags.Add("partner_dangerDay");
+    }
+
+    /// <summary>
     /// scene_group: the sex job has more than 2 actors. scene_observed: someone awake and conscious who is not taking
     /// part (sex job actors, or this command's actors outside a sex job) is in the room.
     /// </summary>
@@ -280,7 +342,7 @@ public partial class EvaluationPackage
         foreach (var c in room.RoomChara)
         {
             if (c == null || participants.Contains(c.RefID) || c == granter) continue;
-            if (c.isSleeping || c.Stats.isConsciousnessUnconscious) continue;
+            if (c.isSleeping || c.Stats.isConsciousnessUnconscious || c.isTimeStopped) continue;
             // a stall's door hides the scene (room dividers blocking visibility)
             if (!(ep.Package != null ? MapUtility.CanSee(c, ep.Package) : MapUtility.CanSee(c, granter))) continue;
             ownerTags.Add("scene_observed");

@@ -103,6 +103,8 @@ public class RecreationOfferDef
 
     /// <summary>Allows extra participants to walk in, independently of invitation visibility. Conservative default: false.</summary>
     public bool allowWalkIn = false;
+    /// <summary>See RecreationActivity.npcWalkIn - with allowWalkIn, whether NPCs not booked may walk in too. Default true.</summary>
+    public bool npcWalkIn = true;
 
     /// <summary>See RecreationActivity.trustRewardEligible - Trust between those who promised and showed up on time. Conservative default: false.</summary>
     public bool trustRewardEligible = false;
@@ -160,6 +162,7 @@ public class RecreationOfferDef
                     daysInAdvance = daysInAdvance,
                     forbidCancel = forbidCancel,
                     allowWalkIn = allowWalkIn,
+                    npcWalkIn = npcWalkIn,
                     trustRewardEligible = trustRewardEligible,
                     invite = invite,
                     entranceFee = entranceFee,

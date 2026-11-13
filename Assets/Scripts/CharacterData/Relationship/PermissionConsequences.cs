@@ -11,12 +11,14 @@ public static class PermissionConsequences
     /// granter gained gainedExperienceIDs from holder (experience tags = ownerTags). For every registered permission the
     /// granter has not given the holder, each consequence whose experience was gained and whose owner-tag conditions
     /// match changes its scores by amount x multiplier (amount = countTotalAmount for CountTotal experiences, else 1),
-    /// granter → holder, logged into exp. True if any consequence applied.
+    /// granter → holder, logged into exp. True if any consequence applied. A time-stopped, unconscious or low-consciousness
+    /// granter takes no consequence at all.
     /// </summary>
     public static bool Apply(Character_Trainable granter, Character_Trainable holder, IEnumerable<string> gainedExperienceIDs,
         float countTotalAmount, ICollection<string> ownerTags, ExperienceLog exp)
     {
         if (granter == null || holder == null || granter == holder || gainedExperienceIDs == null) return false;
+        if (granter.isTimeStopped || (granter.Stats != null && granter.Stats.isConsciousnessReduced)) return false;
         var index = scr_System_Serializer.current?.MasterList?.PermissionDefinitions;
         if (index?.list == null) return false;
         var gained = new HashSet<string>(gainedExperienceIDs);
@@ -28,6 +30,8 @@ public static class PermissionConsequences
         {
             if (definition?.consequences == null || definition.consequences.Count == 0) continue;
             if (!ReferenceEquals(index.GetByID(definition.ID), definition)) continue;
+            // a permission that does not concern the granter's body has no cost either (charaReq)
+            if (!PermissionService.IsApplicable(granter, definition)) continue;
 
             PermissionQueryResult query = null;
             foreach (var consequence in definition.consequences)

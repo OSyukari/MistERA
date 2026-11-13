@@ -113,4 +113,33 @@ public static partial class RecreationUtility
         }
         return $"bookedToday {ctx.bookedToday}/{MaxDailyHours}, free starts [{free.ToString().Trim()}]";
     }
+
+    /// <summary>Why CanCommitActivityBooking refuses incoming (same checks, same order): the clashing bookings / hosted claims, then the first inner check that fails.</summary>
+    static string ExplainCommitRefusal(Character_Factions f, RecreationBooking incoming, bool forced, System.Collections.Generic.List<RecreationBooking> conflicts)
+    {
+        int now = NowAbs();
+        var parts = new System.Collections.Generic.List<string>();
+        foreach (var old in conflicts)
+            parts.Add($"{old.sourceKey} day{old.day} {old.startHour:00}:00+{old.hours}h protected {IsProtectedBooking(old, now)} displaceable {forced || CanDisplaceBooking(f, old, incoming)}");
+        foreach (var hosted in ConflictingHostedClaims(f, incoming))
+        {
+            var preview = PreviewBooking(hosted);
+            parts.Add($"hosted {hosted.Label} protected {IsProtectedBooking(preview, now)} displaceable {forced || CanDisplaceBooking(f, preview, incoming)}");
+        }
+        string inner = f.WithoutRecreationBookings(conflicts, () =>
+        {
+            var activity = incoming.GetActivity(f);
+            if (incoming.source != RecreationBookingSource.Event
+                && !DailyMainTypeAllows(f, incoming.day, activity, incoming.Session, incoming, incoming)) return "DailyMainType(" + activity?.mainTypeTag + ")";
+            string refusal = ReservationRefusal(f, incoming);
+            if (refusal != "") return "ReservationRefusal(" + refusal + ")";
+            if (forced || f.Owner == Player) return "";
+            var ctx = new DayContext(f, incoming.day, ignoreSleep: true);
+            if (!ctx.CanPlace(incoming.AbsStart, incoming.AbsEnd, activity, new System.Collections.Generic.List<Span>(), incoming.factionID,
+                incoming.Session, incoming, MediaItemOf(incoming)))
+                return "DayContext.CanPlace false (" + ExplainFreeHours(f, incoming.day, incoming.hours, incoming.factionID, null, false) + ")";
+            return "";
+        });
+        return $"conflicts [{string.Join("; ", parts)}]; {(inner == "" ? "inner checks pass" : inner)}";
+    }
 }

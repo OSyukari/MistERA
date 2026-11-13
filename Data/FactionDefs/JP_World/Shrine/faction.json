@@ -73,13 +73,18 @@
             {
                 "ID": "recreation_offer_jp_shrine_hatsumode",
                 "mainTypeTag": "worship", "secondaryTags": ["outdoor", "shrine", "seasonal", "newyear"],
-                "allowWalkIn": true,
+                "_comment_walkIn": "The player may walk in to any group's prayer / omikuji (normal acceptance check); unbooked NPCs may not (npcWalkIn false) - they can still pray on their own through the normal commands.",
+                "allowWalkIn": true, "npcWalkIn": false,
                 "trustRewardEligible": true, "provideAcceptanceBonus": 5, "activityMoodlet": { "stress": 1 },
                 "factionID": "jp_tourist_shrine",
                 "startHour": 10,
                 "hours": 2,
+                "_comment_invite": "Group invitations (Docs/Activities/Plan_GroupInvitations.md): everyone who books invites their household, band or best friend / partner - nobody books alone. Trust is paid only within a group.",
+                "invite": { "visibility": "World", "invitationValidator": { "class": "InvitationValidator_BestRelationship" } },
                 "_comment_workModule": "The default behavior tree sandboxes workCommands for the whole visit.",
                 "workModule": { "jobPostID": "jp_shrine_hatsumode", "workCommands": ["jp_shrine_pray", "jp_shrine_omikuji"] },
+                "_comment_activityCommands": "Participants pray / draw through the activity's bound copies; a package takes only those sharing an invite group with everyone in it (each family prays together); non-participants keep the normal commands.",
+                "activityCommands": ["jp_shrine_pray", "jp_shrine_omikuji"],
                 "_comment_entranceFee": "Offering money + omikuji: charged once per visit, on its first hour at the shrine, to the visitor's home, settled at the end of the day (Obligation_ActivityFee - player households only).",
                 "entranceFee": { "itemID": "currency_JPY", "itemCount": 1000 },
                 "_comment_Tags": "Actor tag while the visit is under way (Utility.GetActorTag).",
@@ -133,6 +138,10 @@
                     {
                         "requirements": { "requirement": { "doerCount": 1 } },
                         "displayName": "jp_shrine_pray_displayName"
+                    },
+                    {
+                        "requirements": { "requirement": { "doerCount": 99 } },
+                        "displayName": "jp_shrine_pray_displayName_2"
                     }
                 ],
                 "AcceptanceCheck": { "baseAcceptanceValue": 10 },
@@ -153,6 +162,10 @@
                     {
                         "requirements": { "requirement": { "doerCount": 1 } },
                         "displayName": "jp_shrine_omikuji_displayName"
+                    },
+                    {
+                        "requirements": { "requirement": { "doerCount": 99 } },
+                        "displayName": "jp_shrine_omikuji_displayName_2"
                     }
                 ],
                 "AcceptanceCheck": { "baseAcceptanceValue": 10 },
@@ -175,7 +188,9 @@
                 "jp_shrine_omikuji_stand": "求签处",
 
                 "jp_shrine_pray_displayName": "参拜",
+                "jp_shrine_pray_displayName_2": "一起参拜",
                 "jp_shrine_omikuji_displayName": "求签",
+                "jp_shrine_omikuji_displayName_2": "一起求签",
 
                 "jp_shrine_hatsumode": "初诣"
             }

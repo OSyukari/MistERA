@@ -511,6 +511,17 @@ public class Map_Instance
         return worldTransitRoomRefs.TryGetValue(worldID, out int refID) ? GetRoomByRef(refID) : null;
     }
 
+    /// <summary> true when room is some world's map-transit holding room (CreateWorldTransitRoom) - MovementLog prints no line for it </summary>
+    public bool IsWorldTransitRoom(Room_Instance room)
+    {
+        if (room == null) return false;
+        foreach (var kvp in worldTransitRoomRefs)
+        {
+            if (kvp.Value == room.RefID) return true;
+        }
+        return false;
+    }
+
     /// <summary>
     /// Builds (once) or returns worldFaction's map-transit holding room + hidden center door. Called only
     /// from Manageable_World.MainExit - every other place that needs "the transit room of world X" should

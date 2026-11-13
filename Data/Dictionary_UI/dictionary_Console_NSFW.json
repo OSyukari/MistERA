@@ -3,8 +3,8 @@
         "Entries": {
             "default": {
 "console_advReproCycle_tooltip":"advReproCycle [int value in year] [int value in month] [int value in day]\nrequire target\nadvance target cycle days and notify womb\nwill also call 24 * days times hour tick",
-"console_wombAddSpermByID_tooltip":"wombAddSpermByID [int amount] [int wombIndex] [str raceID] [str baseID] [str templateID]\nrequire target",
-"console_wombAddSpermByRef_tooltip":"wombAddSpermByRef [int amount] [int wombIndex] [int refID]\nrequire target",
+"console_wombAddSpermByID_tooltip":"wombAddSpermByID [int amount] [int wombIndex] [str raceID] [str baseID] [str templateID] [optional bool allowExpel]\nrequire target\nallowExpel false (default): the whole amount stays in the womb (test hourly flow)\nallowExpel true: what is past max capacity flows out, womb -> vagina -> floor + body traces (test cleaning behavior)",
+"console_wombAddSpermByRef_tooltip":"wombAddSpermByRef [int amount] [int wombIndex] [int refID] [optional bool allowExpel]\nrequire target\nallowExpel false (default): the whole amount stays in the womb (test hourly flow)\nallowExpel true: what is past max capacity flows out, womb -> vagina -> floor + body traces (test cleaning behavior)",
 "console_ovulate_tooltip":"require target\nthis command will force and guarantee ovulation regardless of racial ovulation rate.",
 "console_forceBirth_tooltip": "require target"
             }

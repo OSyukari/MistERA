@@ -1,7 +1,7 @@
 name: Publish Mods
 
 # Publishes packages from the Unity Mod Packager (MistEra_Mods folder on the self-hosted runner) to the rolling
-# "mods" release. Runs next to the game release on every tag, or by hand; does nothing when no package changed.
+# "mods" release. Catalogs are compared independently, including metadata-only changes.
 # Plan: Docs/Mods/Plan_ModPackaging.md
 
 on:
@@ -26,7 +26,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Publish changed packages
+      - name: Validate packages without publishing
+        shell: pwsh
+        run: ./ci/publish_mods.ps1 -ValidateOnly
+        env:
+          MODS_DIR: ${{ vars.MODS_DIR || 'E:\UnityProjects\MistEra_Mods' }}
+
+      - name: Publish changed packages and catalogs
         shell: pwsh
         run: ./ci/publish_mods.ps1
         env:

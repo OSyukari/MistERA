@@ -1,0 +1,319 @@
+{
+    "_doc": "Demand of permission_sex_dangerday_creampie_penis (its demandEventID, Docs/Interactions/Plan_PermissionApplicability.md): the penis owner's danger-day demand - started by ActionPackage.TryStopForDemand when the granter (penis owner) ACCEPTED putting their bare penis into the requester's vagina while the requester is on a danger day with a fertile womb (partner_dangerDay) and has not allowed it. Listed before permission_sex_unprotected_penis, so when both are missing this demand plays and covers both (pushed IDs). Same flow as OnAPRefuse_Unprotected_Penis (see its _doc): condom answers (put it on $evTarget$ / $evTarget$ puts it on themselves), ignore, give up, and the safe-day claim - here always a lie (self is on a danger day). The claim decides as permission_sex_unprotected_penis (safeDayClaimDecisionID: the granter believes it is safe); accepted = every covered permission granted as Temporary (ends with the scene) and the act resumes. Kojo (speaker = evTarget): permission_sex_dangerday_creampie_penis_Demand / _Ignored / _SafeDay_Accepted / _SafeDay_Refused. Claim / push / condom lines are shared with OnAPRefuse_Unprotected(_Penis). File name contains sex: safe mode skips it.",
+    "Events": {
+        "list": [
+            {
+                "ID": "OnAPRefuse_DangerDay_Penis",
+                "SelfValidator": { "chara_conditions": [ { "parameters": [ "exists" ] } ] },
+                "commandAcceptanceBonus": [
+                    { "comIDs": [ "com_condom_onTarget_hand", "com_condom_onTarget_mouth" ], "value": 2, "explanation": "event_OnAPRefuse_Unprotected_bonus" }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment": "player requester: show this round's logs, then the demand (an NPC requester starts at its answer's line)",
+                        "options": [
+                            {
+                                "self_chara_conditions": [ { "parameters": [ "isPlayer" ] } ],
+                                "target_chara_conditions": { "evTarget": [ { "parameters": [ "exists" ] } ] },
+                                "option": "player branch",
+                                "Results": [
+                                    { "Type": "ExecuteCallback", "arguments": [ "eventStart" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "br_kojo" ] }
+                                ]
+                            },
+                            {
+                                "option": "silent fail branch",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "br_end" ] } ]
+                            }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment": "fetch the granter's danger-day condom demand; missing kojo -> question without it",
+                        "label": "br_kojo",
+                        "options": [
+                            {
+                                "option": "_kojo",
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "evTarget", "self", "permission_sex_dangerday_creampie_penis_Demand", "kojo_demand" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "br_choice" ] }
+                                ]
+                            },
+                            { "option": "_plain", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "br_choice_plain" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "br_choice",
+                        "UISpec": { "portraitRefKey": "evTarget", "selfTags": [ "worry" ] },
+                        "question": "event_OnAPRefuse_DangerDay_Penis_q",
+                        "loadOptionsKey": "demandOptions",
+                        "options": [
+                            {
+                                "option": "event_OnAPRefuse_Unprotected_op_ignore",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "br_push" ] } ]
+                            },
+                            {
+                                "option": "event_OnAPRefuse_Unprotected_op_giveup",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "br_end" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "br_choice_plain",
+                        "UISpec": { "portraitRefKey": "evTarget", "selfTags": [ "worry" ] },
+                        "question": "event_OnAPRefuse_DangerDay_Penis_q_plain",
+                        "loadOptionsKey": "demandOptions",
+                        "options": [
+                            {
+                                "option": "event_OnAPRefuse_Unprotected_op_ignore",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "br_push" ] } ]
+                            },
+                            {
+                                "option": "event_OnAPRefuse_Unprotected_op_giveup",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "br_end" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "_comment": "after a refused safe-day claim: the same answers without the claim",
+                        "label": "br_choice_noclaim",
+                        "UISpec": { "portraitRefKey": "evTarget", "selfTags": [ "worry" ] },
+                        "question": "event_OnAPRefuse_DangerDay_Penis_q_plain",
+                        "loadOptionsKey": "demandOptionsNoClaim",
+                        "options": [
+                            {
+                                "option": "event_OnAPRefuse_Unprotected_op_ignore",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "br_push" ] } ]
+                            },
+                            {
+                                "option": "event_OnAPRefuse_Unprotected_op_giveup",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "br_end" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_condom_target",
+                        "UISpec": { "portraitRefKey": "evTarget", "selfTags": [ "relieved" ] },
+                        "isLast": true,
+                        "line": "event_OnAPRefuse_Unprotected_condom_target"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_condom_granter_self",
+                        "UISpec": { "portraitRefKey": "evTarget", "selfTags": [ "relieved" ] },
+                        "isLast": true,
+                        "line": "event_OnAPRefuse_Unprotected_condom_granterSelf"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_condom_self",
+                        "UISpec": { "portraitRefKey": "evTarget", "selfTags": [ "relieved" ] },
+                        "isLast": true,
+                        "line": "event_OnAPRefuse_Unprotected_condom_self"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_condom_partner",
+                        "UISpec": { "portraitRefKey": "evTarget", "selfTags": [ "shy" ] },
+                        "isLast": true,
+                        "line": "event_OnAPRefuse_Unprotected_condom_partner"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment": "safe-day claim accepted (truthful - not reachable here, kept for the shared code path): lines only",
+                        "label": "br_claim",
+                        "options": [
+                            {
+                                "option": "_kojo",
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "evTarget", "self", "permission_sex_dangerday_creampie_penis_SafeDay_Accepted", "kojo_claim" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "br_claim_kojo" ] }
+                                ]
+                            },
+                            { "option": "_plain", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "br_claim_plain" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_claim_kojo",
+                        "UISpec": { "portraitRefKey": "evTarget", "selfTags": [ "shy" ] },
+                        "isLast": true,
+                        "line": "event_OnAPRefuse_Unprotected_Penis_claim_kojo"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_claim_plain",
+                        "UISpec": { "portraitRefKey": "evTarget", "selfTags": [ "shy" ] },
+                        "isLast": true,
+                        "line": "event_OnAPRefuse_Unprotected_Penis_claim"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment": "safe-day lie believed: already granted and resumed in code (onSelect / NPC decision) - lines only",
+                        "label": "br_claim_lie",
+                        "options": [
+                            {
+                                "option": "_kojo",
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "evTarget", "self", "permission_sex_dangerday_creampie_penis_SafeDay_Accepted", "kojo_claim" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "br_claim_lie_kojo" ] }
+                                ]
+                            },
+                            { "option": "_plain", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "br_claim_lie_plain" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_claim_lie_kojo",
+                        "UISpec": { "portraitRefKey": "evTarget", "selfTags": [ "shy" ] },
+                        "isLast": true,
+                        "line": "event_OnAPRefuse_Unprotected_Penis_claim_lie_kojo"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_claim_lie_plain",
+                        "UISpec": { "portraitRefKey": "evTarget", "selfTags": [ "shy" ] },
+                        "isLast": true,
+                        "line": "event_OnAPRefuse_Unprotected_Penis_claim_lie"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment": "safe-day claim refused: the granter's refusal, then the question again without the claim",
+                        "label": "br_claim_refused",
+                        "options": [
+                            {
+                                "option": "_kojo",
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "evTarget", "self", "permission_sex_dangerday_creampie_penis_SafeDay_Refused", "kojo_claim" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "br_claim_refused_kojo" ] }
+                                ]
+                            },
+                            { "option": "_plain", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "br_claim_refused_plain" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_claim_refused_kojo",
+                        "UISpec": { "portraitRefKey": "evTarget", "selfTags": [ "worry" ] },
+                        "line": "event_OnAPRefuse_Unprotected_Penis_claimRefused_kojo",
+                        "nextEntryLabel": "br_choice_noclaim"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_claim_refused_plain",
+                        "UISpec": { "portraitRefKey": "evTarget", "selfTags": [ "worry" ] },
+                        "line": "event_OnAPRefuse_Unprotected_Penis_claimRefused",
+                        "nextEntryLabel": "br_choice_noclaim"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_end",
+                        "UISpec": { "portraitRefKey": "evTarget", "selfTags": [ "sorry", "awkward" ] },
+                        "isLast": true,
+                        "line": "event_OnAPRefuse_Unprotected_end",
+                        "Results": [ { "Type": "ExecuteCallback", "arguments": [ "failCallback" ] } ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment": "ignore the demand: the granter's 'then I'll pull out' (permission_sex_dangerday_creampie_penis_Ignored); missing kojo -> plain push line",
+                        "label": "br_push",
+                        "options": [
+                            {
+                                "option": "_kojo",
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "evTarget", "self", "permission_sex_dangerday_creampie_penis_Ignored", "kojo_ignore" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "br_push_kojo" ] }
+                                ]
+                            },
+                            { "option": "_plain", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "br_push_plain" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_push_kojo",
+                        "line": "event_OnAPRefuse_Unprotected_push_kojo",
+                        "UISpec": { "portraitRefKey": "evTarget", "selfTags": [ "surprised", "worry" ] },
+                        "nextEntryLabel": "br_push_ops"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_push_plain",
+                        "line": "event_OnAPRefuse_Unprotected_push",
+                        "UISpec": { "portraitRefKey": "evTarget", "selfTags": [ "surprised", "worry" ] },
+                        "nextEntryLabel": "br_push_ops"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment": "ignore the demand: record the scene push and resume the act (apCallback)",
+                        "label": "br_push_ops",
+                        "options": [
+                            {
+                                "option": "ignoring the demand, this shouldnt be displayed",
+                                "Results": [
+                                    { "Type": "ExecuteCallback", "arguments": [ "apCallback" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "end" ] }
+                                ]
+                            },
+                            {
+                                "option": "nothing to resume, this shouldnt be displayed",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "end" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment": "NPC requester ignored the demand - already done in code, lines only (same kojo as br_push)",
+                        "label": "br_npc_push",
+                        "options": [
+                            {
+                                "option": "_kojo",
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "evTarget", "self", "permission_sex_dangerday_creampie_penis_Ignored", "kojo_ignore" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "br_npc_push_kojo" ] }
+                                ]
+                            },
+                            { "option": "_plain", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "br_npc_push_plain" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_npc_push_kojo",
+                        "line": "event_OnAPRefuse_Unprotected_push_kojo",
+                        "UISpec": { "portraitRefKey": "evTarget", "selfTags": [ "surprised", "worry" ] },
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_npc_push_plain",
+                        "line": "event_OnAPRefuse_Unprotected_push",
+                        "UISpec": { "portraitRefKey": "evTarget", "selfTags": [ "surprised", "worry" ] },
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "end",
+                        "isLast": true,
+                        "line": ""
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "event_OnAPRefuse_DangerDay_Penis_q_plain": "$evTarget.name$担心今天是$self.name$的危险日，不愿意不戴套就$com_variant_name$，要求戴上避孕套。",
+                "event_OnAPRefuse_DangerDay_Penis_q": "$kojo_demand$\n\n%%event_OnAPRefuse_DangerDay_Penis_q_plain%%"
+            }
+        }
+    }
+}

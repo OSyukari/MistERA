@@ -942,7 +942,7 @@ public class Event : I_SerializationCallbackReceiver
             /// [string refkey, string bodyTag, bool fullDeflate, optional string appendKey] <br/>
             /// resolves refkey against owner.Self ("self") or owner.Targets[refkey] (e.g. "doer"/"receiver"), then calls
             /// each resolved character's SwallowInternal(fullDeflate, bodyTag, owner.message.exp) — moving swallowable
-            /// contents from that body part into wherever its tag_directionOut chain leads (e.g. mouth -> stomach),
+            /// contents from that body part into the deeper organ its tag_directionIn leads to (e.g. mouth -> stomach),
             /// logging any experience gained from a successful swallow into owner.message.exp. fullDeflate mirrors
             /// DeflateInternal's own argument: true drains everything swallowable (gated by canFullyDeflate), false
             /// only swallows down to the visibly-expanded threshold (gated by canDeflate). Returns true if anyone
@@ -1552,13 +1552,24 @@ public class Event : I_SerializationCallbackReceiver
             /// </summary>
             CheckOutHotelGuest,
 
-            /// <summary>[scopeKey]. Washes the single non-null character's body traces; true only when traces were removed.</summary>
+            /// <summary>
+            /// [scopeKey, optional reportKey, optional bodyTag...]. Washes the single non-null character's body traces (every
+            /// temporary trace off); true only when traces were removed. bodyTags: only that area (a part by its own tags, an
+            /// organ by its own or its part's: "head" = face + mouth), none = whole body. reportKey: AppendStrings[reportKey]
+            /// gets one string listing what came off ("脸上的X的唾液、…", trace_clean_*), not created when nothing changed.
+            /// </summary>
             WashTraces,
 
             /// <summary>[scopeKey, optional changedKey]. Conscious actors only; wardrobe sleep policy for NPCs,
             /// outer/inner undressing for the player. Returns true only when equipment changed.
             /// changedKey, when supplied, receives only the actors whose equipment changed.</summary>
-            PrepareForSleep
+            PrepareForSleep,
+
+            /// <summary>
+            /// [scopeKey, optional reportKey, optional bodyTag...]. Same as WashTraces, but wipes: solid traces off, liquids
+            /// dry into their dried mark (no dried mark = off), dried marks stay. Restroom: ["self", key, "lower", "leg"].
+            /// </summary>
+            WipeTraces
 
         }
     }

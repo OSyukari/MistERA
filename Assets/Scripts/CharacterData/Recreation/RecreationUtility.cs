@@ -1399,14 +1399,19 @@ public static partial class RecreationUtility
         /// Whether [s, e) at venue (faction ID) can be booked for activity (null = no hour limit, e.g. an offer) next to the
         /// chain's own spans: starts on this day and after now, free of schedules and other bookings, allowed hours, the
         /// venue open (VenueOpen), daily
-        /// cap, home meal hours only where the venue feeds c (MealAllows), TravelBufferHours free to anything nearby at
+        /// cap, home meal hours only where the venue feeds c (MealAllows - solo visits only: not for a session or sharedVisit), TravelBufferHours free to anything nearby at
         /// another place, and - unless ignoreSleep - WakeUpBufferHours awake after a night and no predicted night taken.
         /// </summary>
         public bool CanPlace(int s, int e, RecreationActivity activity, List<Span> chain, string venue,
-            RecreationGroup exceptSession = null, RecreationBooking exceptBooking = null, string mediaItemID = null, bool checkPlacement = true)
+            RecreationGroup exceptSession = null, RecreationBooking exceptBooking = null, string mediaItemID = null, bool checkPlacement = true,
+            bool sharedVisit = false)
         {
             if (e <= s || s < dayStart || s >= dayEnd || s <= nowAbs) return false;
             bool stay = IsOvernight(activity);
+            // home meal hours bind solo visits only (user 2026-11-12): a shared activity - a session, or a time being
+            // picked for one (sharedVisit) - may take them
+            bool skipMeals = sharedVisit || exceptSession != null
+                || (exceptBooking != null && (exceptBooking.Session != null || exceptBooking.isSessionBooking));
             int chainHours = 0;
             foreach (var span in chain) chainHours += span.Length;
             // an exempt activity (countsTowardDailyCap false) is squeezed in on top of the day's quota
@@ -1417,7 +1422,7 @@ public static partial class RecreationUtility
                 if (Occupied(t)) return false;
                 if (activity != null && !activity.AllowsHour(((t % 24) + 24) % 24)) return false;
                 if (!stay && !VenueOpen(((t % 24) + 24) % 24, venue)) return false;
-                if (!stay && !MealAllows(((t % 24) + 24) % 24, venue)) return false;
+                if (!stay && !skipMeals && !MealAllows(((t % 24) + 24) % 24, venue)) return false;
                 foreach (var span in fixedBookings) if (span.Contains(t)) return false;
                 foreach (var span in chain) if (span.Contains(t)) return false;
                 foreach (var span in blocked) if (span.Contains(t)) return false;

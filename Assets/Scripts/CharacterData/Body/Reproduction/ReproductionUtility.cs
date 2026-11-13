@@ -167,6 +167,16 @@ public static class ReproductionUtility
         return FindOvum(c, OvumState.Default) != null;
     }
 
+    /// <summary>c has a registered womb that can conceive (not a Womb_Infertile). Womb types are set when the body part is
+    /// created, so this only changes with the body's parts (CharaReq.requireFertileWomb).</summary>
+    public static bool HasFertileWomb(Character_Trainable c)
+    {
+        if (c == null || c.wombs == null) return false;
+        for (int i = 0; i < c.wombs.Count; i++)
+            if (c.wombs[i] != null && !(c.wombs[i] is Womb_Infertile)) return true;
+        return false;
+    }
+
     public static Ovum FindOvum(Character_Trainable c, OvumState state)
     {
         if (c == null || c.wombs == null) return null;

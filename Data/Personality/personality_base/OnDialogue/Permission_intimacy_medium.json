@@ -37,6 +37,30 @@
                         "\"现在不行，别勉强。\""
                     ] } ]
                 }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "permission_intimacy_medium_LowConsciousness",
+                    "_comment": "意识模糊时被做了需要抚摸身体许可的事。不会被请求、也不算答应或拒绝，只是迷迷糊糊地察觉到。男性说话者。含蓄。",
+                    "variants": [ { "responses": [
+                        "\"……嗯……你在……干什么……\"",
+                        "\"……脑子……转不过来……\"",
+                        "\"……随你……吧……\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "permission_intimacy_medium_LowConsciousness_Climax",
+                    "_comment": "意识模糊且正处于高潮时被做了需要抚摸身体许可的事，几乎无法组织语言。男性说话者。含蓄。",
+                    "variants": [ { "responses": [
+                        "\"……哈……别……现在……\"",
+                        "\"……唔……等……\"",
+                        "\"……顾不上……了……\""
+                    ] } ]
+                }
             }
         ]
     }

@@ -136,7 +136,8 @@
                             "furniture_bed_single",
                             "furniture_table_1_chair_1",
                             "furniture_bookshelves",
-                            "furniture_computer_terminal"
+                            "furniture_computer_terminal",
+                            "furniture_dresser"
                         ],
                         "roomImagePath": "BGAssets/House_Jitaku/bgi-jk112自室d.png",
                         "roomImagePath_Night": "BGAssets/House_Jitaku/bgi-jk112自室b.png",
@@ -193,7 +194,8 @@
                         "furnitureIDs": [
                             "furniture_bed_single",
                             "furniture_table_1_chair_1",
-                            "furniture_bookshelves"
+                            "furniture_bookshelves",
+                            "furniture_dresser"
                         ],
                         "roomImagePath": "BGAssets/House_Jitaku/bgi-jk114妹の部屋d.png",
                         "roomImagePath_Night": "BGAssets/House_Jitaku/bgi-jk114妹の部屋b.png",
@@ -218,7 +220,8 @@
                         "furnitureIDs": [
                             "furniture_bed_single",
                             "furniture_table_1_chair_1",
-                            "furniture_bookshelves"
+                            "furniture_bookshelves",
+                            "furniture_dresser"
                         ],
                         "roomImagePath": "BGAssets/House_Jitaku/bgi-jk113姉の部屋d.png",
                         "roomImagePath_Night": "BGAssets/House_Jitaku/bgi-jk113姉の部屋b.png",
@@ -243,7 +246,8 @@
                         "furnitureIDs": [
                             "furniture_bed_double",
                             "furniture_table_1_chair_1",
-                            "furniture_TV_flatscreen"
+                            "furniture_TV_flatscreen",
+                            "furniture_dresser"
                         ],
                         "roomImagePath": "BGAssets/House_Jitaku/bgi-jk115夫婦部屋d.png",
                         "roomImagePath_Night": "BGAssets/House_Jitaku/bgi-jk115夫婦部屋b.png",

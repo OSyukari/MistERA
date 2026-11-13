@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <DefineConstants>$(DefineConstants);IMAGE_CLASSIFIER_PORTRAIT_TEST_STUBS</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../Assets/Scripts/ImageClassifier/ImageClassifierEngine.cs" Link="Production/ImageClassifierEngine.cs" />
+    <Compile Include="../../Assets/Scripts/ImageClassifier/ImageRules.cs" Link="Production/ImageRules.cs" />
+    <Compile Include="../../Assets/Scripts/ImageClassifier/ImageRulesJsonLoader.cs" Link="Production/ImageRulesJsonLoader.cs" />
+    <Compile Include="../../Assets/Scripts/ImageClassifier/ImageTagStore.cs" Link="Production/ImageTagStore.cs" />
+    <Compile Include="../../Assets/Editor/ImageClassifier/ImageAnalysis.cs" Link="Production/ImageAnalysis.cs" />
+    <Compile Include="../../Assets/Editor/ImageClassifier/ImageClassifyMover.cs" Link="Production/ImageClassifyMover.cs" />
+    <Compile Include="../../Assets/Editor/ImageClassifier/ImageRuleLinter.cs" Link="Production/ImageRuleLinter.cs" />
+    <Compile Include="../../Assets/Scripts/CharacterData/GlobalPortraitTemplate.cs" Link="Production/GlobalPortraitTemplate.cs" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+</Project>

@@ -5,8 +5,8 @@
     "Dictionary": {
         "Entries": {
             "en-us": {
-                "com_furniture_restroom": "The character goes to the restroom to use the toilet and puts their lower garments back on when the command ends\nExpels any expellable contents (such as semen) from the character's anus",
-                "com_furniture_takeShower": "The character takes a shower, restoring Stamina and Energy\nExpels any expellable contents (such as semen) from the character's mouth, womb and vagina"
+                "com_furniture_restroom": "The character goes to the restroom to use the toilet and puts their lower garments back on when the command ends\nOptionally expels expellable contents (such as semen) from the anus, and whatever the vagina holds above its capacity\nWipes the traces on the lower body and legs: solid traces come off, liquid traces dry into dried marks\nNPCs go when their lower body has traces to wipe",
+                "com_furniture_takeShower": "The character takes a shower, restoring Stamina and Energy\nOptionally expels expellable contents (such as semen) from the mouth, vagina and anus, and whatever the womb and other organs hold above their capacity\nWashes off every temporary trace on the body, dried marks included\nNPCs shower only in their free time, once the traces on their body pass their cleanliness tolerance"
             }
         }
     }

@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using System.IO;
 using Newtonsoft.Json;
+using MistEra.Updates;
 
 
 public class scr_System_Serializer : MonoBehaviour
@@ -347,6 +348,22 @@ public class scr_System_Serializer : MonoBehaviour
     public event Action<float, string> Observer_LoadProgress;
     public event Action Observer_LoadComplete;
 
+    private string bootRecoveryError;
+
+    private void OnGUI()
+    {
+        if (string.IsNullOrEmpty(bootRecoveryError)) return;
+        // Recovery can fail before localization or the update screen is available.
+        GUI.ModalWindow(GetInstanceID(), new Rect(20, 20, Mathf.Max(1, Screen.width - 40),
+            Mathf.Max(1, Screen.height - 40)), DrawBootRecoveryError, "Update recovery failed");
+    }
+
+    private void DrawBootRecoveryError(int windowID)
+    {
+        GUILayout.Label(bootRecoveryError);
+        if (GUILayout.Button("Quit")) Application.Quit();
+    }
+
     private void Start()
     {
         StartCoroutine(BootSequence());
@@ -361,6 +378,25 @@ public class scr_System_Serializer : MonoBehaviour
 
         yield return null;
         // user prefs are loaded by now (CentralControl.Start), so pack toggles are readable
+#if !UNITY_EDITOR
+        bool recovered = false;
+        try
+        {
+            recovered = UpdateService.EnsureCreated().RecoverBeforeBoot();
+        }
+        catch (Exception e)
+        {
+            Debug.LogException(e);
+        }
+        if (!recovered)
+        {
+            bootRecoveryError = "Update recovery failed. Startup has been blocked to protect game files. "
+                + "Close the game and restore or repair the installation before restarting. See the player log for details.";
+            Debug.LogError(bootRecoveryError);
+            Observer_LoadProgress?.Invoke(0.00f, bootRecoveryError);
+            yield break;
+        }
+#endif
         AssetPacks = AssetPackLoader.Scan(AssetPacksPath);
         Mods = ModLoader.Scan(ModsPath, Path.GetFileName(AssetPacksPath));
         // pass 1: collect patches of enabled mods; they are applied to def json text in LoadDefs / LoadCharactersFoldersJSON
@@ -507,6 +543,9 @@ public class scr_System_Serializer : MonoBehaviour
         Observer_LoadProgress?.Invoke(1.00f, "Ready");
         scr_System_CentralControl.current.NotifyLoadComplete();
         Observer_LoadComplete?.Invoke();
+#if !UNITY_EDITOR
+        UpdateService.EnsureCreated().NotifyBootReady();
+#endif
     }
 
     // Font phase occupies the [0.60, 0.95) slice of overall boot progress.

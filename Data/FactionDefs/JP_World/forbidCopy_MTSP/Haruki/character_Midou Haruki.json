@@ -7,7 +7,7 @@
     "stat_CON": 10,
     "stat_PSY": 11,
     "stat_WIL": 12,
-    "personalityID": "personality_default",
+    "personalityID": "personality_base",
     "traits_body_sex": [
         "trait_Sensitivity_B_default", "trait_Sensitivity_M_default", "trait_Sensitivity_C_sensitive",
         "trait_Sensitivity_V_none", "trait_Sensitivity_A_default",
