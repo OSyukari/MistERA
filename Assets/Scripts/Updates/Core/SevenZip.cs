@@ -11,6 +11,7 @@ namespace MistEra.Updates
 {
     // Game builds ship as the release's password-protected 7z. 7z.exe (+ 7z.dll, which it needs) and the password file
     // are published into UpdateTools by the Unity build (UpdaterPublisher), so the game and the helper read them from there.
+    // Mod packages are unencrypted 7z archives rooted at Mods/ (InspectPackage / ExtractPackage).
     public static class SevenZip
     {
         public const string ToolName = "7z.exe";
@@ -29,20 +30,51 @@ namespace MistEra.Updates
             long maximumExpandedSize = UpdateValidation.MaximumExpandedSize, int maximumFiles = UpdateValidation.MaximumFiles,
             long maximumFileSize = UpdateValidation.MaximumFileSize)
         {
-            UpdateValidation.NoLinks(archive);
-            string listing = Run(toolsFolder, "l -slt -sccUTF-8 -p\"" + Password(toolsFolder) + "\" \"" + archive + "\"", cancellation);
-            return Validate(ParseListing(listing), payloadRoot, maximumExpandedSize, maximumFiles, maximumFileSize);
+            return Validate(List(toolsFolder, archive, PasswordArgument(toolsFolder), cancellation), payloadRoot, maximumExpandedSize, maximumFiles, maximumFileSize);
         }
 
         public static void Extract(string toolsFolder, string archive, string destination, string payloadRoot, CancellationToken cancellation = default,
             long maximumExpandedSize = UpdateValidation.MaximumExpandedSize)
         {
+            PrepareDestination(destination);
+            Inspect(toolsFolder, archive, payloadRoot, cancellation, maximumExpandedSize);
+            ExtractAll(toolsFolder, archive, destination, PasswordArgument(toolsFolder), cancellation);
+        }
+
+        /// <summary>Lists and validates an unencrypted package archive: every entry must pass allowed (package-relative
+        /// path). Returns the expanded size.</summary>
+        public static long InspectPackage(string toolsFolder, string archive, Func<string, bool> allowed, CancellationToken cancellation = default,
+            long maximumExpandedSize = UpdateValidation.MaximumExpandedSize)
+        {
+            return ValidateEntries(List(toolsFolder, archive, "", cancellation), allowed, maximumExpandedSize,
+                UpdateValidation.MaximumFiles, UpdateValidation.MaximumFileSize);
+        }
+
+        public static void ExtractPackage(string toolsFolder, string archive, string destination, Func<string, bool> allowed,
+            CancellationToken cancellation = default, long maximumExpandedSize = UpdateValidation.MaximumExpandedSize)
+        {
+            PrepareDestination(destination);
+            InspectPackage(toolsFolder, archive, allowed, cancellation, maximumExpandedSize);
+            ExtractAll(toolsFolder, archive, destination, "", cancellation);
+        }
+
+        private static List<Entry> List(string toolsFolder, string archive, string passwordArgument, CancellationToken cancellation)
+        {
+            UpdateValidation.NoLinks(archive);
+            return ParseListing(Run(toolsFolder, "l -slt -sccUTF-8 " + passwordArgument + "\"" + archive + "\"", cancellation));
+        }
+
+        private static void PrepareDestination(string destination)
+        {
             UpdateValidation.NoLinks(destination);
             UpdateValidation.Require(!Directory.Exists(destination) && !File.Exists(destination), "Extraction requires a new destination");
-            Inspect(toolsFolder, archive, payloadRoot, cancellation, maximumExpandedSize);
+        }
+
+        private static void ExtractAll(string toolsFolder, string archive, string destination, string passwordArgument, CancellationToken cancellation)
+        {
             Directory.CreateDirectory(destination);
             // links are never created: -snl is not passed
-            Run(toolsFolder, "x -y -bd -bso0 -bsp0 -p\"" + Password(toolsFolder) + "\" -o\"" + destination + "\" \"" + archive + "\"", cancellation);
+            Run(toolsFolder, "x -y -bd -bso0 -bsp0 " + passwordArgument + "-o\"" + destination + "\" \"" + archive + "\"", cancellation);
         }
 
         // Parses `7z l -slt` output: archive properties end at the "----------" line, then one block per entry.
@@ -86,8 +118,14 @@ namespace MistEra.Updates
         public static long Validate(List<Entry> listing, string payloadRoot, long maximumExpandedSize = UpdateValidation.MaximumExpandedSize,
             int maximumFiles = UpdateValidation.MaximumFiles, long maximumFileSize = UpdateValidation.MaximumFileSize)
         {
-            UpdateValidation.Require(maximumExpandedSize >= 0 && maximumExpandedSize <= UpdateValidation.MaximumExpandedSize && maximumFiles >= 0 && maximumFiles <= UpdateValidation.MaximumFiles && maximumFileSize >= 0 && maximumFileSize <= UpdateValidation.MaximumFileSize, "Invalid extraction limits");
             UpdateValidation.RelativePath(payloadRoot);
+            return ValidateEntries(listing, name => name == payloadRoot || name.StartsWith(payloadRoot + "/", StringComparison.Ordinal),
+                maximumExpandedSize, maximumFiles, maximumFileSize);
+        }
+
+        private static long ValidateEntries(List<Entry> listing, Func<string, bool> allowed, long maximumExpandedSize, int maximumFiles, long maximumFileSize)
+        {
+            UpdateValidation.Require(maximumExpandedSize >= 0 && maximumExpandedSize <= UpdateValidation.MaximumExpandedSize && maximumFiles >= 0 && maximumFiles <= UpdateValidation.MaximumFiles && maximumFileSize >= 0 && maximumFileSize <= UpdateValidation.MaximumFileSize, "Invalid extraction limits");
             UpdateValidation.Require(listing.Count <= maximumFiles, "Too many archive entries");
             var entries = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             var files = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -97,7 +135,7 @@ namespace MistEra.Updates
             {
                 string name = entry.path.Replace('\\', '/');
                 UpdateValidation.RelativePath(name);
-                UpdateValidation.Require(entries.Add(name) && (name == payloadRoot || name.StartsWith(payloadRoot + "/", StringComparison.Ordinal)), "Duplicate/disallowed archive path: " + name);
+                UpdateValidation.Require(entries.Add(name) && allowed(name), "Duplicate/disallowed archive path: " + name);
                 string prefix = "";
                 foreach (string part in name.Split('/'))
                 {
@@ -118,11 +156,11 @@ namespace MistEra.Updates
             return total;
         }
 
-        private static string Password(string toolsFolder)
+        private static string PasswordArgument(string toolsFolder)
         {
             string password = File.ReadAllText(UpdateValidation.Resolve(toolsFolder, PasswordName)).Trim();
             UpdateValidation.Require(password.Length > 0 && password.IndexOf('"') < 0, "Invalid archive password");
-            return password;
+            return "-p\"" + password + "\" ";
         }
 
         private static string Run(string toolsFolder, string arguments, CancellationToken cancellation)
@@ -131,6 +169,7 @@ namespace MistEra.Updates
             {
                 UseShellExecute = false,
                 CreateNoWindow = true,
+                RedirectStandardInput = true,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 StandardOutputEncoding = Encoding.UTF8,
@@ -138,6 +177,8 @@ namespace MistEra.Updates
             };
             using var process = Process.Start(info);
             UpdateValidation.Require(process != null, "Could not start " + ToolName);
+            // an encrypted archive without -p makes 7z ask for a password: closed input fails it instead of hanging
+            process.StandardInput.Close();
             Task<string> output = process.StandardOutput.ReadToEndAsync();
             Task<string> error = process.StandardError.ReadToEndAsync();
             while (!process.WaitForExit(200))

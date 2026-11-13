@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -671,16 +670,20 @@ namespace MistEra.Updates
             {
                 cancellation.Token.ThrowIfCancellationRequested();
                 Require(assetUrls.TryGetValue(PackageKey(package), out string url), "Package URL is unavailable; check releases again.");
-                string archive = UpdateValidation.Resolve(transaction, "downloads/" + IdHash(package.id) + ".zip");
+                string archive = UpdateValidation.Resolve(transaction, "downloads/" + IdHash(package.id) + "." + package.archiveFormat);
                 Status = "Downloading " + (package.name ?? package.id) + "..."; Publish();
                 yield return Download(url, archive, package.size, package.size);
                 Status = "Verifying and staging " + package.id + "..."; Progress = 0; Publish();
                 yield return Worker(token =>
                 {
                     VerifyArchive(archive, package.size, package.sha256, token);
-                    PreflightArchive(archive, package.size, token);
+                    // 7z.exe from UpdateTools (shipped for game builds) extracts the package; every entry must be inside
+                    // the package's roots or a parent folder of them
+                    string tools = Local("UpdateTools");
+                    Func<string, bool> allowed = p => AllowedArchivePath(package, p);
+                    DiskSpace(checked(SevenZip.InspectPackage(tools, archive, allowed, token, ExpandedLimit(package.size)) * 3));
                     string extracted = UpdateValidation.Resolve(transaction, "unpacked/" + IdHash(package.id));
-                    UpdateFiles.ExtractZip(archive, extracted, p => AllowedArchivePath(package, p), token, ExpandedLimit(package.size));
+                    SevenZip.ExtractPackage(tools, archive, extracted, allowed, token, ExpandedLimit(package.size));
                     var inventory = UpdateFiles.Inventory(extracted);
                     Require(inventory.files.Count > 0, "Package is empty.");
                     foreach (var file in inventory.files)
@@ -1174,19 +1177,6 @@ namespace MistEra.Updates
             while ((read = stream.Read(buffer, 0, buffer.Length)) > 0) { token.ThrowIfCancellationRequested(); hash.TransformBlock(buffer, 0, read, buffer, 0); }
             hash.TransformFinalBlock(Array.Empty<byte>(), 0, 0); token.ThrowIfCancellationRequested();
             Require(Paths.Equals(BitConverter.ToString(hash.Hash).Replace("-", ""), expected), "Archive SHA-256 mismatch.");
-        }
-
-        private void PreflightArchive(string archive, long archiveSize, CancellationToken token)
-        {
-            long expanded = 0;
-            using var zip = ZipFile.OpenRead(archive);
-            foreach (var entry in zip.Entries)
-            {
-                token.ThrowIfCancellationRequested();
-                expanded = checked(expanded + entry.Length);
-                Require(expanded <= ExpandedLimit(archiveSize), "Archive expanded size limit exceeded.");
-            }
-            DiskSpace(checked(expanded * 3));
         }
 
         private static void ValidatePackageAbout(string extracted, ModPackage package)

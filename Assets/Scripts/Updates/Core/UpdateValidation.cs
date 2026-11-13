@@ -67,10 +67,10 @@ namespace MistEra.Updates
             return result;
         }
 
-        private static void Asset(string asset, long size, string hash, string format, string expectedFormat)
+        private static void Asset(string asset, long size, string hash, string format, string expectedFormat, string legacyFormat = null)
         {
             RelativePath(asset);
-            Require(!asset.Contains('/') && format == expectedFormat && size > 0 && size <= MaximumExpandedSize, "Invalid archive metadata");
+            Require(!asset.Contains('/') && (format == expectedFormat || (legacyFormat != null && format == legacyFormat)) && size > 0 && size <= MaximumExpandedSize, "Invalid archive metadata");
             Digest(hash);
         }
 
@@ -100,7 +100,8 @@ namespace MistEra.Updates
             Require(package.kind == "mod" || package.kind == "assetpack", "Unsupported package kind");
             if (package.kind == "mod") Text(package.modId, "modId");
             else Text(package.group, "group");
-            Asset(package.asset, package.size, package.sha256, package.archiveFormat, "zip");
+            // "zip": receipts of packages installed before packages moved to 7z (7z.exe extracts either format)
+            Asset(package.asset, package.size, package.sha256, package.archiveFormat, "7z", "zip");
             Require(package.minimumBuild >= 0 && package.maximumBuild >= 0 && (package.maximumBuild == 0 || package.maximumBuild >= package.minimumBuild), "Invalid build bounds");
             Require(string.IsNullOrEmpty(package.channel) || package.channel == "full" || package.channel == "safe", "Invalid channel");
             Require(package.roots != null && package.roots.Count > 0 && package.roots.Count <= 1000, "Missing/excessive roots");

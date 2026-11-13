@@ -88,7 +88,6 @@ public class ModPackagerWindow : EditorWindow
                 ModPackagerSettings.OutputFolder = output;
             }
             ModPackagerSettings.SevenZipPath = EditorGUILayout.TextField("7z.exe", ModPackagerSettings.SevenZipPath);
-            ModPackagerSettings.Password = EditorGUILayout.TextField("Archive password", ModPackagerSettings.Password);
             editNames = EditorGUILayout.Toggle(new GUIContent("Edit archive names", "Set an alias per package; empty = automatic ASCII name"), editNames);
             if (EditorGUI.EndChangeCheck()) manifest = ModPackager.LoadManifest();
         }

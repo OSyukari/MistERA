@@ -1,9 +1,10 @@
 # Publishes the packages built by the Unity Mod Packager (Tools/Mod Packager) to one rolling GitHub release.
 # Plan: Docs/Mods/Plan_ModPackaging.md
 #
-# - Uploads packages that are new or whose sha256 differs from the published manifest.json.
-# - Deletes release assets that are no longer in the local manifest (retired / renamed packages).
-# - Replaces manifest.json and regenerates the release notes.
+# - Uploads packages (unencrypted .7z) that are new or whose sha256 differs from the published manifest.json.
+# - Replaces manifest.json (manual downloads) and catalog-v2.json (in-game updater); both point at the same .7z files.
+# - Then deletes release assets no longer referenced: retired / renamed .7z packages and the .zip files of older catalogs.
+# - Regenerates the release notes.
 # Re-running is safe: anything left half done is picked up again by the next diff.
 #
 # Env: GH_TOKEN (contents: write), GITHUB_REPOSITORY (owner/repo), MODS_DIR (folder with manifest.json + archives),
@@ -97,7 +98,7 @@ if (Test-Path -LiteralPath $catalogPath -PathType Leaf) {
     $catalog = Get-Content -LiteralPath $catalogPath -Raw -Encoding UTF8 | ConvertFrom-Json
 } else {
     # Packages built before the in-game updater have no catalog yet: keep publishing the manual .7z set.
-    # Rebuild every package with Tools/Mod Packager once to create catalog-v2.json and its ZIPs.
+    # Rebuild every package with Tools/Mod Packager once to create catalog-v2.json.
     Write-Warning "No catalog-v2.json in $modsDir; publishing legacy .7z packages only (in-game updater sees no catalog)"
 }
 if ($ValidateOnly) { Write-Host 'Local publication validation passed; no network requests made'; return }
@@ -155,23 +156,13 @@ $toUpload = @($local | Where-Object {
     })
 $localNames = @{}
 foreach ($p in $local) { $localNames[$p.asset] = $true }
-$toRetire = @($assets | Where-Object { $_.name -like '*.7z' -and -not $localNames.ContainsKey($_.name) })
+# .zip assets belong to catalogs from before packages moved to .7z; nothing references them once catalog-v2.json is replaced
+$toRetire = @($assets | Where-Object { ($_.name -like '*.7z' -and -not $localNames.ContainsKey($_.name)) -or ($catalog -and $_.name -like '*.zip') })
 $unchanged = $local.Count - $toUpload.Count
 
 Write-Host "Upload: $($toUpload.Count), retire: $($toRetire.Count), unchanged: $unchanged"
 
 # ------------------------------------------------------------------ apply
-
-# Immutable updater archives are uploaded and checked before either catalog is changed.
-# Old ZIP revisions are never retired: cached catalogs may still reference them.
-foreach ($p in @(if ($catalog) { $catalog.packages })) {
-    if ($assetByName.ContainsKey($p.asset)) {
-        if ((Get-RemoteHash $assetByName[$p.asset]) -cne $p.sha256) { throw "Refusing to overwrite immutable asset: $($p.asset)" }
-    } else {
-        $new = Send-Asset $release (Join-Path $modsDir $p.asset) $p.asset
-        if ($new.size -ne $p.size -or (Get-RemoteHash $new) -cne $p.sha256) { throw "Uploaded ZIP verification failed: $($p.asset)" }
-    }
-}
 
 foreach ($p in $toUpload) {
     $file = Join-Path $modsDir $p.asset
@@ -185,14 +176,15 @@ foreach ($p in $toUpload) {
     Invoke-Api PATCH "$api/releases/assets/$($new.id)" @{ name = $p.asset } | Out-Null
 }
 
+# Compare metadata independently: author/version/description changes need no archive diff.
+Publish-Metadata $release $manifestPath 'manifest.json' $publishedManifest
+if ($catalog) { Publish-Metadata $release $catalogPath 'catalog-v2.json' $assetByName['catalog-v2.json'] }
+
+# retire only after both catalogs stopped referencing the assets
 foreach ($a in $toRetire) {
     Write-Host "Retiring $($a.name)"
     Remove-Asset $a
 }
-
-# Compare metadata independently: author/version/description changes need no archive diff.
-Publish-Metadata $release $manifestPath 'manifest.json' $publishedManifest
-if ($catalog) { Publish-Metadata $release $catalogPath 'catalog-v2.json' $assetByName['catalog-v2.json'] }
 
 # ------------------------------------------------------------------ release notes
 
@@ -201,7 +193,8 @@ $lines = @(
     '## 安装 / Install'
     ''
     '1. 下载需要的 `.7z`，放进游戏目录的 `Mods/` 文件夹。 / Download the `.7z` you want into the game''s `Mods/` folder.'
-    '2. 右键 → **解压到当前文件夹 / Extract here**。解压密码 / password: `era`'
+    '2. 右键 → **解压到当前文件夹 / Extract here**。 / Right-click → **Extract here**.'
+    '   也可以在游戏内「更新」面板直接下载安装。 / Or install them from the in-game Updates panel.'
     '3. 立绘包会解压到 `Mods/Assetpacks/<包名>/`，Mod 会解压到 `Mods/<Mod名>/`。 / Asset packs land in `Mods/Assetpacks/<pack>/`, mods in `Mods/<mod>/`.'
     ''
     '拆分的立绘包（例如 `you1069_ako`）会解压回同一个包文件夹，可以只下载需要的角色。 / Split packs (e.g. `you1069_ako`) extract into the same pack folder, so you can pick only the characters you want.'

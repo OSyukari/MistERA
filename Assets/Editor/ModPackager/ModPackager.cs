@@ -12,10 +12,11 @@ using UnityEngine;
 using Debug = UnityEngine.Debug;
 
 /// <summary>
-/// Packages data mods and asset packs from &lt;project&gt;/Mods into password-protected .7z files in the output folder
+/// Packages data mods and asset packs from &lt;project&gt;/Mods into unencrypted .7z files in the output folder
 /// (Docs/Mods/Plan_ModPackaging.md). Archive paths are relative to Mods/, so players extract them inside their Mods folder.
 /// Asset packs with 2+ subfolders are split into one package per subfolder. The output folder keeps only the latest
-/// archive per package plus manifest.json, which ci/publish_mods.ps1 diffs against the published release.
+/// archive per package plus manifest.json, which ci/publish_mods.ps1 diffs against the published release, and
+/// catalog-v2.json, the in-game updater's catalog pointing at the same archives.
 /// </summary>
 public static partial class ModPackager
 {
@@ -249,9 +250,23 @@ public static partial class ModPackager
 
     // ---------------------------------------------------------------- build
 
-    /// <summary>Builds one package into the output folder and updates its manifest entry (saved immediately).
-    /// On failure the previous archive and entry are kept. Returns null on success, else the error.</summary>
+    /// <summary>Builds one package into the output folder, updates its manifest entry (saved immediately) and its
+    /// updater catalog entry. On failure the previous archive and entries are kept. Returns null on success, else the error.</summary>
     public static string Build(ModPackageSource src, ModPackageManifest manifest)
+    {
+        string error = BuildArchive(src, manifest);
+        if (error != null) return error;
+        try { UpdateCatalog(src, manifest); }
+        catch (Exception e)
+        {
+            Debug.LogException(e);
+            return e.Message;
+        }
+        return null;
+    }
+
+    /// <summary>Builds the package's 7z and saves its manifest entry; the updater catalog is left to the caller.</summary>
+    static string BuildArchive(ModPackageSource src, ModPackageManifest manifest)
     {
         if (src.errors.Count > 0) return string.Join("; ", src.errors);
         string sevenZip = ModPackagerSettings.SevenZipPath;
@@ -260,7 +275,7 @@ public static partial class ModPackager
         string outDir = ModPackagerSettings.OutputFolder;
         Directory.CreateDirectory(outDir);
         string asset = AssetName(src.id);
-        if (asset.Equals(ManifestFile, StringComparison.OrdinalIgnoreCase)) return $"Asset name [{asset}] is reserved";
+        if (asset.Equals(ManifestFile, StringComparison.OrdinalIgnoreCase) || asset.Equals(UpdateCatalogFile, StringComparison.OrdinalIgnoreCase)) return $"Asset name [{asset}] is reserved";
         var clash = manifest.packages.FirstOrDefault(p => p.id != src.id && p.asset.Equals(asset, StringComparison.OrdinalIgnoreCase));
         if (clash != null) return $"Asset name [{asset}] is already used by package [{clash.id}]";
 
@@ -276,8 +291,8 @@ public static partial class ModPackager
             if (File.Exists(tmpPath)) File.Delete(tmpPath);
             File.WriteAllLines(listPath, src.files.Select(f => f.Replace('/', '\\')), new UTF8Encoding(false));
 
-            string password = ModPackagerSettings.Password;
-            string args = $"a -t7z -mx=1 -scsUTF-8 -y {(string.IsNullOrEmpty(password) ? "" : $"\"-p{password}\" ")}\"{tmpPath}\" \"@{listPath}\"";
+            // no password: the in-game updater installs this same archive
+            string args = $"a -t7z -mx=1 -scsUTF-8 -y \"{tmpPath}\" \"@{listPath}\"";
             var (exitCode, output) = Run(sevenZip, args, ModsRoot);
             // 7z exit 1 = warning (e.g. a file could not be opened), which would ship an incomplete archive
             if (exitCode != 0 || !File.Exists(tmpPath))
@@ -286,7 +301,6 @@ public static partial class ModPackager
                 return $"7z exit code {exitCode} (see console)";
             }
 
-            BuildUpdateCompanion(src, fingerprint);
             if (SourceFingerprint(src) != fingerprint) throw new IOException("Source changed while packaging; refresh and rebuild");
 
             var entry = manifest.packages.FirstOrDefault(p => p.id == src.id);
@@ -449,12 +463,6 @@ public static class ModPackagerSettings
     {
         get => EditorPrefs.GetString(Prefix + "SevenZipPath", @"C:\Program Files\7-Zip\7z.exe");
         set => EditorPrefs.SetString(Prefix + "SevenZipPath", value);
-    }
-
-    public static string Password
-    {
-        get => EditorPrefs.GetString(Prefix + "Password", "era");
-        set => EditorPrefs.SetString(Prefix + "Password", value);
     }
 
     static Dictionary<string, string> aliases;

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -112,6 +111,8 @@ public static partial class ModPackager
         return statusCatalog;
     }
 
+    /// <summary>True when the catalog entry points at this manifest entry's current 7z (older catalogs pointed at
+    /// separate ZIPs; such packages show as changed until rebuilt).</summary>
     static bool HasUpdateCompanion(ModPackageSource src, ModPackageEntry legacy)
     {
         try
@@ -119,7 +120,8 @@ public static partial class ModPackager
             if (string.IsNullOrEmpty(legacy.sourceFingerprint) || legacy.sourceFingerprint != src.sourceFingerprint) return false;
             var packages = StatusCatalog().packages;
             for (int i = 0; i < packages.Count; i++)
-                if (packages[i].id == src.id) return File.Exists(Path.Combine(ModPackagerSettings.OutputFolder, packages[i].asset));
+                if (packages[i].id == src.id)
+                    return packages[i].archiveFormat == "7z" && packages[i].asset == legacy.asset && packages[i].sha256 == legacy.sha256 && packages[i].size == legacy.size;
             return false;
         }
         catch { return false; }
@@ -134,12 +136,13 @@ public static partial class ModPackager
         else File.Move(temporary, UpdateCatalogPath);
     }
 
-    static void BuildUpdateCompanion(ModPackageSource src, string fingerprint)
+    /// <summary>Points the package's catalog entry at the 7z BuildArchive just made (same file as the manual download).</summary>
+    static void UpdateCatalog(ModPackageSource src, ModPackageManifest manifest)
     {
         var catalog = LoadUpdateCatalog();
-        var package = CreateUpdatePackage(src, fingerprint);
-        catalog.packages.RemoveAll(p => p.id == src.id);
-        catalog.packages.Add(package);
+        var stale = new List<string>();
+        var package = CatalogPackage(src, manifest);
+        ReplaceCatalogPackage(catalog, package, stale);
         // Shared metadata changes must publish as one coordinated group, not last-writer-wins.
         var conflicting = catalog.packages.Where(p => p.id != src.id && package.sharedFiles.Any(shared =>
             p.sharedFiles.Any(existing => existing.path.Equals(shared.path, StringComparison.OrdinalIgnoreCase) &&
@@ -151,54 +154,55 @@ public static partial class ModPackager
             {
                 var sibling = sources.FirstOrDefault(s => s.id == other.id && s.group == src.group && s.isSplit);
                 if (sibling == null || sibling.errors.Count > 0) throw new InvalidDataException($"Cannot coordinate shared metadata for {other.id}; restore its source or retire its catalog entry");
-                var replacement = CreateUpdatePackage(sibling, SourceFingerprint(sibling));
-                catalog.packages.RemoveAll(p => p.id == other.id);
-                catalog.packages.Add(replacement);
+                string error = BuildArchive(sibling, manifest);
+                if (error != null) throw new InvalidDataException($"Cannot rebuild {other.id} for shared metadata: {error}");
+                ReplaceCatalogPackage(catalog, CatalogPackage(sibling, manifest), stale);
             }
         }
         UpdateValidation.ValidateCatalog(catalog);
         SaveUpdateCatalog(catalog);
+        DeleteStaleAssets(stale, catalog, manifest);
     }
 
-    static ModPackage CreateUpdatePackage(ModPackageSource src, string fingerprint)
+    static ModPackage CatalogPackage(ModPackageSource src, ModPackageManifest manifest)
     {
+        var entry = manifest.packages.First(p => p.id == src.id);
         var package = ReadUpdateMetadata(src);
-        string temporary = Path.Combine(ModPackagerSettings.OutputFolder, ".update-" + Guid.NewGuid().ToString("N") + ".tmp");
-        try
+        package.asset = entry.asset;
+        package.size = entry.size;
+        package.sha256 = entry.sha256;
+        package.archiveFormat = "7z";
+        UpdateValidation.ValidatePackage(package);
+        return package;
+    }
+
+    static void ReplaceCatalogPackage(ModCatalog catalog, ModPackage package, List<string> stale)
+    {
+        var old = catalog.packages.FirstOrDefault(p => p.id == package.id);
+        if (old != null && old.asset != package.asset) stale.Add(old.asset);
+        catalog.packages.RemoveAll(p => p.id == package.id);
+        catalog.packages.Add(package);
+    }
+
+    /// <summary>Deletes output files of replaced catalog entries (e.g. the ZIPs of older catalogs) that nothing references.</summary>
+    static void DeleteStaleAssets(List<string> stale, ModCatalog catalog, ModPackageManifest manifest)
+    {
+        foreach (string asset in stale)
         {
-            using (var archive = ZipFile.Open(temporary, ZipArchiveMode.Create))
-            {
-                foreach (string file in src.files)
-                {
-                    ValidateUpdatePath(file);
-                    var entry = archive.CreateEntry(file, CompressionLevel.Optimal);
-                    entry.LastWriteTime = new DateTimeOffset(1980, 1, 1, 0, 0, 0, TimeSpan.Zero);
-                    using var input = File.OpenRead(Path.Combine(ModsRoot, file));
-                    using var output = entry.Open();
-                    input.CopyTo(output);
-                }
-            }
-            if (SourceFingerprint(src) != fingerprint) throw new IOException("Source changed while packaging; refresh and rebuild");
-            package.sha256 = Sha256(temporary);
-            package.size = new FileInfo(temporary).Length;
-            package.asset = Path.GetFileNameWithoutExtension(AssetName(src.id)) + "-" + package.sha256 + ".zip";
-            string final = Path.Combine(ModPackagerSettings.OutputFolder, package.asset);
-            if (File.Exists(final))
-            {
-                if (Sha256(final) != package.sha256) throw new IOException($"Immutable asset mismatch: {final}");
-            }
-            else File.Move(temporary, final);
-            UpdateValidation.ValidatePackage(package);
-            return package;
+            if (string.IsNullOrEmpty(asset) || asset.Contains('/') || asset.Contains('\\')) continue;
+            if (catalog.packages.Any(p => p.asset == asset) || manifest.packages.Any(p => p.asset == asset)) continue;
+            string path = Path.Combine(ModPackagerSettings.OutputFolder, asset);
+            if (File.Exists(path)) File.Delete(path);
         }
-        finally { if (File.Exists(temporary)) File.Delete(temporary); }
     }
 
     static void RetireUpdateCompanion(string id)
     {
         var catalog = LoadUpdateCatalog();
+        var stale = catalog.packages.Where(p => p.id == id).Select(p => p.asset).ToList();
         catalog.packages.RemoveAll(p => p.id == id);
         SaveUpdateCatalog(catalog);
-        // Immutable ZIP revisions are intentionally retained for cached catalogs.
+        // the package's 7z is deleted by Retire; this removes a leftover ZIP of an older catalog
+        DeleteStaleAssets(stale, catalog, LoadManifest() ?? new ModPackageManifest());
     }
 }

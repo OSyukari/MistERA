@@ -44,7 +44,8 @@ namespace MistEra.Updates
         public string asset;
         public long size;
         public string sha256;
-        public string archiveFormat = "zip";
+        // the package's unencrypted 7z, rooted at Mods/ ("zip" only in receipts installed before 7z packages)
+        public string archiveFormat = "7z";
         public long minimumBuild, maximumBuild;
         public string channel;
     }

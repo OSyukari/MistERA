@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using MistEra.Updates;
 using Newtonsoft.Json;
@@ -64,15 +63,26 @@ static class PackagingHarness
         var first = Catalog();
         UpdateValidation.ValidateCatalog(first);
         Assert(first.packages.Single(p => p.id == "Child").dependencies.Single() == "mist.base", "Dependency metadata");
+        string tools = Path.GetDirectoryName(args[1]);
+        foreach (var package in first.packages)
+        {
+            var entry = manifest.packages.Single(p => p.id == package.id);
+            Assert(package.archiveFormat == "7z" && package.asset == entry.asset && package.sha256 == entry.sha256 && package.size == entry.size, "Catalog points at the manual 7z");
+        }
         foreach (var package in first.packages.Where(p => p.kind == "assetpack"))
         {
             Assert(package.roots.Count == 1 && package.sharedFiles.Count == 1, "Split ownership/shared metadata");
-            using var zip = ZipFile.OpenRead(Path.Combine(ModPackagerSettings.OutputFolder, package.asset));
-            Assert(zip.Entries.Count == 2 && zip.Entries.All(e => !e.FullName.EndsWith(".texcache")), "ZIP payload exclusions");
+            // the updater's own extraction path: unencrypted, every entry inside the package's roots/shared files
+            string extracted = Path.Combine(root, "Extracted", package.id);
+            SevenZip.ExtractPackage(tools, Path.Combine(ModPackagerSettings.OutputFolder, package.asset), extracted, path =>
+                package.roots.Concat(package.sharedFiles.Select(f => f.path)).Any(r => path == r || path.StartsWith(r + "/") || r.StartsWith(path + "/")));
+            var files = Directory.GetFiles(extracted, "*", SearchOption.AllDirectories);
+            Assert(files.Length == 2 && files.All(f => !f.EndsWith(".texcache")), "7z payload exclusions");
         }
         var baseSource = sources.Single(s => s.id == "Base");
         string oldAsset = first.packages.Single(p => p.id == "Base").asset;
-        Assert(ModPackager.Build(baseSource, manifest) == null && Catalog().packages.Single(p => p.id == "Base").asset == oldAsset, "Deterministic immutable ZIP");
+        string oldHash = first.packages.Single(p => p.id == "Base").sha256;
+        Assert(ModPackager.Build(baseSource, manifest) == null && Catalog().packages.Single(p => p.id == "Base").asset == oldAsset, "Stable package asset name");
         string about = Path.Combine(ModPackager.ModsRoot, "Base/About/About.json");
         // the fingerprint is path/size/write time (no content reads), so a real same-size edit is detected by its new write time
         var time = File.GetLastWriteTimeUtc(about);
@@ -80,7 +90,9 @@ static class PackagingHarness
         baseSource = ModPackager.Discover().Single(s => s.id == "Base");
         Assert(ModPackager.GetStatus(baseSource, manifest.packages.Single(p => p.id == "Base")) == ModPackageStatus.SourceChanged, "Detect same-size content change");
         Assert(ModPackager.Build(baseSource, manifest) == null, "Rebuild data metadata");
-        Assert(Catalog().packages.Single(p => p.id == "Base").asset != oldAsset && File.Exists(Path.Combine(ModPackagerSettings.OutputFolder, oldAsset)), "Retain old immutable revision");
+        var rebuilt = Catalog().packages.Single(p => p.id == "Base");
+        Assert(rebuilt.asset == oldAsset && rebuilt.sha256 != oldHash && rebuilt.sha256 == manifest.packages.Single(p => p.id == "Base").sha256, "Catalog follows the rebuilt 7z");
+        Assert(Directory.GetFiles(ModPackagerSettings.OutputFolder, "*.zip").Length == 0, "No ZIP packages");
         string sharedAbout = Path.Combine(ModPackager.ModsRoot, "Assetpacks/Pack/About/About.json");
         File.WriteAllText(sharedAbout, "{\"name\":\"Art2\",\"author\":\"Author\"}");
         Assert(ModPackager.Build(ModPackager.Discover().Single(s => s.id == "Pack_A"), manifest) == null, "Coordinated shared group rebuild");
