@@ -3,7 +3,10 @@
         "Entries": {
             "default": {
                 "updates_title": "Updates",
-                "updates_entry_detected": "Update detected",
+                "updates_entry_detected": "New version detected",
+                "updates_entry_latest": "Up to date",
+                "updates_entry_offline": "Cannot check for updates",
+                "updates_tooltip_offline": "No internet access.",
                 "updates_entry_available": "(Update available)",
                 "updates_entry_restart": "(Ready to restart)",
                 "updates_entry_staged": "(Mods staged)",
@@ -40,7 +43,10 @@
             },
             "zh-cn": {
                 "updates_title": "更新",
-                "updates_entry_detected": "检测到更新",
+                "updates_entry_detected": "检测到新版本",
+                "updates_entry_latest": "已是最新版",
+                "updates_entry_offline": "无法检查更新",
+                "updates_tooltip_offline": "无网络连接。",
                 "updates_entry_available": "（有可用更新）",
                 "updates_entry_restart": "（已准备好重启）",
                 "updates_entry_staged": "（模组已暂存）",

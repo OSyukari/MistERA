@@ -90,10 +90,17 @@ namespace MistEra.Updates
         public IReadOnlyList<PackageReceipt> StagedPackages => stagedMods.SelectMany(r => r.packages).ToList().AsReadOnly();
         public event Action Changed;
         public bool AutomaticChecks => Settings != null && Settings.automaticChecks;
+        /// <summary>No internet: the OS reports no network, or (automatic checks on) the last check could not connect.
+        /// Never probes the network by itself; with automatic checks on, a failed connection is retried periodically.</summary>
+        public bool Offline => Application.internetReachability == NetworkReachability.NotReachable || (connectionFailed && AutomaticChecks);
 
         private UpdateSettings Settings => scr_System_CentralControl.current == null ? null : scr_System_CentralControl.current.UpdateSetting;
         private string root;
         private bool recovered, recoveryFailed, automaticStarted, handoffStarted, gameplayHold;
+        private const float ConnectionRetrySeconds = 60f;
+        private bool connectionFailed;
+        private float connectionRetryAt;
+        private NetworkReachability reachability;
         private ModUpdateScope pendingScope;
         private CancellationTokenSource cancellation;
         private readonly List<PackageReceipt> receipts = new List<PackageReceipt>();
@@ -111,7 +118,8 @@ namespace MistEra.Updates
             if (Instance != null && Instance != this) { Destroy(gameObject); return; }
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            root = Path.GetFullPath(Path.Combine(Application.dataPath, "..")).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            reachability = Application.internetReachability;
+            root =Path.GetFullPath(Path.Combine(Application.dataPath, "..")).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
         }
 
         private void OnDestroy()
@@ -123,7 +131,16 @@ namespace MistEra.Updates
 
         private void Update()
         {
-            if (!BootReady || recoveryFailed || IsBusy || automaticStarted || !AutomaticChecks) return;
+            var current = Application.internetReachability;
+            if (current != reachability)
+            {
+                // network came back or dropped: retry a failed automatic check right away
+                reachability = current;
+                connectionRetryAt = 0;
+                Publish();
+            }
+            if (!BootReady || recoveryFailed || IsBusy || !AutomaticChecks || current == NetworkReachability.NotReachable) return;
+            if (automaticStarted && !(connectionFailed && Time.realtimeSinceStartup >= connectionRetryAt)) return;
             automaticStarted = true;
             CheckForUpdates();
         }
@@ -396,6 +413,11 @@ namespace MistEra.Updates
                 else { Error = failure.Message; Status = "Update operation failed."; }
                 Progress = 0;
             }
+            if (Operation == UpdateOperation.Check)
+            {
+                connectionFailed = failure is ConnectionFailure;
+                if (connectionFailed) connectionRetryAt = Time.realtimeSinceStartup + ConnectionRetrySeconds;
+            }
             IsBusy = false; handoffStarted = false; gameplayHold = false;
             Operation = UpdateOperation.None; pendingScope = ModUpdateScope.None;
             cancellation.Dispose(); cancellation = null;
@@ -531,6 +553,8 @@ namespace MistEra.Updates
                         ValidateNetworkUri(current, api);
                         continue;
                     }
+                    if (request.result == UnityWebRequest.Result.ConnectionError)
+                        throw new ConnectionFailure("Could not connect to GitHub: " + request.error);
                     Require(request.result == UnityWebRequest.Result.Success && request.responseCode == 200,
                         "GitHub download failed (HTTP " + request.responseCode + "): " + request.error);
                     long length = new FileInfo(path).Length;
@@ -1230,6 +1254,8 @@ namespace MistEra.Updates
             return "\"" + value + "\"";
         }
         private static void Require(bool condition, string message) { if (!condition) throw new InvalidDataException(message); }
+        /// <summary>The request never reached the server (no internet, DNS failure, timeout).</summary>
+        private sealed class ConnectionFailure : IOException { public ConnectionFailure(string message) : base(message) { } }
         private void Fail(string error) { Error = error; Status = "Update operation unavailable."; Progress = 0; Publish(); }
         private void Publish()
         {

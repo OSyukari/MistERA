@@ -349,37 +349,57 @@ public class scr_Menu_Intro : scr_Menu
     //Vector3 worldPointInRectangle;
 
     /// <summary>
-    /// Updates entry (optionID 6): with automatic launch checks on and an update found (newer game build or new
-    /// revision of an updater-installed mod), the label becomes "Update detected" and the button takes its toggled
-    /// (highlight) color. Always clickable; the click opens the panel through Notify.
+    /// Updates entry (optionID 6), labelled by update state; the click opens the panel through Notify.
+    /// No internet: "Cannot check for updates", disabled (still clickable while restart/staged work is pending,
+    /// which needs no network). Automatic checks off: "Check for updates". Automatic checks on: "New version
+    /// detected" (toggled highlight color) when a newer build or mod revision is found, "Up to date" after a
+    /// successful check, "Checking..." while the first check runs, "Check for updates" if it failed.
     /// </summary>
     public class ButtonValidator_OpenUpdates : ButtonValidator
     {
         readonly scr_SelectableText button;
-        readonly string label;
-        bool detectedShown;
+        string shownKey;
 
         public ButtonValidator_OpenUpdates(scr_Menu_Intro parent, scr_SelectableText button) : base(parent)
         {
             this.button = button;
             button.isButtonToggle = true;
-            var hover = button.GetComponent<scr_HoverableText>();
-            label = hover != null && hover.replaceText != "" ? hover.replaceText : "updates_title";
         }
 
         public override bool IsButtonValid()
         {
             var service = MistEra.Updates.UpdateService.Instance;
-            bool detected = service != null && service.AutomaticChecks && service.UpdatesAvailable;
-            if (detected != detectedShown)
+            bool valid = true;
+            bool detected = false;
+            string key;
+            tooltip = "";
+            if (service == null) key = "updates_check";
+            else
             {
-                detectedShown = detected;
-                button.SetText(detected ? "updates_entry_detected" : label);
+                bool auto = service.AutomaticChecks;
+                detected = auto && service.UpdatesAvailable;
+                bool localWork = service.HasPendingBuild || service.HasStagedMods || service.RestartRequired;
+                if (service.Offline && !localWork)
+                {
+                    key = "updates_entry_offline";
+                    valid = false;
+                    detected = false;
+                    tooltip = scr_Menu_Updates.Text("tooltip_offline");
+                }
+                else if (detected) key = "updates_entry_detected";
+                else if (!auto) key = "updates_check";
+                else if (service.Checked) key = "updates_entry_latest";
+                else if (service.IsBusy && service.Operation == MistEra.Updates.UpdateOperation.Check) key = "updates_checking";
+                else key = "updates_check";
+            }
+            if (key != shownKey)
+            {
+                shownKey = key;
+                button.SetText(key);
             }
             button.Toggle(true, detected);
-            state = ButtonValidator_States.Valid;
-            tooltip = "";
-            return true;
+            state = valid ? ButtonValidator_States.Valid : ButtonValidator_States.Invalid;
+            return valid;
         }
     }
 
