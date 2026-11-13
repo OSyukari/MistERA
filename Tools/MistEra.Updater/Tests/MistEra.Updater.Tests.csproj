@@ -9,5 +9,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../MistEra.Updater.csproj" />
+    <!-- the archive tests pack and unpack real 7z fixtures with the shipped 7z.exe -->
+    <None Include="../../7z/7z.exe;../../7z/7z.dll" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

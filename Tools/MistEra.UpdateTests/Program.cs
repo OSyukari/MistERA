@@ -72,7 +72,7 @@ internal static class Program
             });
             Test("build/receipt roundtrip and shared-file consistency", () =>
             {
-                var release = new GameRelease { buildId = "immutable", buildNumber = 1, version = "v1", executable = "MistEra.exe", releaseTag = "v1", asset = "game.zip", size = 1, sha256 = new string('a', 64) };
+                var release = new GameRelease { buildId = "immutable", buildNumber = 1, version = "v1", executable = "MistEra.exe", releaseTag = "v1", asset = "game.7z", size = 1, sha256 = new string('a', 64), payloadRoot = "game" };
                 string path = Path.Combine(temp, "release.json"); UpdateJson.Write(path, release);
                 Assert(UpdateJson.Read<GameRelease>(path).buildId == "immutable", "release roundtrip");
                 release.minimumUpdaterProtocol = 2; Reject(() => UpdateValidation.ValidateBuild(release));

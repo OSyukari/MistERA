@@ -32,6 +32,7 @@ namespace UnityEditor
 namespace UnityEditor.Build
 {
     public interface IPostprocessBuildWithReport { int callbackOrder { get; } void OnPostprocessBuild(UnityEditor.Build.Reporting.BuildReport report); }
+    public class BuildFailedException : Exception { public BuildFailedException(string message) : base(message) { } }
 }
 namespace UnityEditor.Build.Reporting
 {
@@ -89,6 +90,9 @@ static class PackagingHarness
 
         string build = Path.Combine(root, "Game"); Directory.CreateDirectory(build);
         Put(Path.Combine(build, "Actual Game.exe"), "player");
+        // The fixture project has no updater sources; the real publish is covered by UpdaterPublisher itself.
+        string publishedInto = null;
+        UpdateBuildIdentity.PublishHelper = buildRoot => publishedInto = buildRoot;
         var report = new UnityEditor.Build.Reporting.BuildReport();
         report.summary.platform = UnityEditor.BuildTarget.StandaloneWindows64; report.summary.outputPath = Path.Combine(build, "Actual Game.exe");
         new UpdateBuildIdentity().OnPostprocessBuild(report);
@@ -98,12 +102,11 @@ static class PackagingHarness
         new UpdateBuildIdentity().OnPostprocessBuild(report);
         var safe = JsonConvert.DeserializeObject<BuildInfo>(File.ReadAllText(Path.Combine(build, "build-info.json")));
         Assert(safe.channel == "safe" && safe.buildId != identity.buildId, "Safe channel and unique build identity");
-        string publishedHelper = Path.Combine(ModPackager.ProjectRoot, "Tools/MistEra.Updater/bin/publish/win-x64");
-        Put(Path.Combine(publishedHelper, "MistEra.Updater.exe"), "fixture-only-helper");
-        Put(Path.Combine(publishedHelper, "nested/runtime.dll"), "fixture-only-runtime");
-        Put(Path.Combine(build, "UpdateTools/stale.dll"), "stale");
-        new UpdateBuildIdentity().OnPostprocessBuild(report);
-        Assert(File.Exists(Path.Combine(build, "UpdateTools/nested/runtime.dll")) && !File.Exists(Path.Combine(build, "UpdateTools/stale.dll")), "Copy complete helper publish and remove stale files");
+        Assert(publishedInto == build, "Build hook publishes the updater helper into the build folder");
+        UpdateBuildIdentity.PublishHelper = buildRoot => throw new Exception("fixture publish failure");
+        bool failed = false;
+        try { new UpdateBuildIdentity().OnPostprocessBuild(report); } catch (UnityEditor.Build.BuildFailedException) { failed = true; }
+        Assert(failed, "Updater publish failure fails the build");
         Console.WriteLine("Editor packaging and build identity harness passed");
     }
 }

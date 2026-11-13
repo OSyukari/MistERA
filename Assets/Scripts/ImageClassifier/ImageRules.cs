@@ -15,6 +15,8 @@ public class ImageRules
     public Dictionary<string, RuleClause> variants = new Dictionary<string, RuleClause>();
     /// <summary>Additional filename spellings for canonical ids across name sets (editor opt-in).</summary>
     public Dictionary<string, List<string>> filenameHints = new Dictionary<string, List<string>>();
+    public Dictionary<string, List<string>> filenameVariantHints = new Dictionary<string, List<string>>();
+    public List<ImageStateRule> states = new List<ImageStateRule>();
     /// <summary>Tags the tagger never stores ("excluded_tags"); also stripped from existing records when the tag file is compacted.</summary>
     public HashSet<string> excludedTags = new HashSet<string>();
     /// <summary>Structural problems found while loading (unknown keys, unknown references...). Shown with the lint results.</summary>
@@ -45,6 +47,7 @@ public class ImageRules
         }
         foreach (var c in categories) { Add(c.all); Add(c.any); Add(c.none); }
         foreach (var set in nameSets.Values) foreach (var n in set) { Add(n.clauses); Add(n.none); }
+        foreach (var state in states) Add(state.any);
         Add(variants.Values);
         return tags;
     }
@@ -112,6 +115,8 @@ public class CategoryRule
     public HashSet<string> allowedNames;
     /// <summary>Category near misses treated as informational only when the filename confirms a name in this category.</summary>
     public HashSet<string> filenameConfirmedNearMisses = new HashSet<string>();
+    /// <summary>A uniquely recognized source name can select this category before tag-based routing (editor opt-in).</summary>
+    public bool filenameFirst;
     /// <summary>False: images are only assigned the category; no name is chosen and Classify keeps the original file name.</summary>
     public bool rename = true;
     /// <summary>Category id this one refines (horse_pov refines horse): an image sorted into that category's folder moves here when this
@@ -122,6 +127,15 @@ public class CategoryRule
     /// <summary>True: hand-sorted only (human_female). The rules never choose it (its clauses are ignored), but its folder is a category
     /// folder: images put there keep the category - even when re-classifying images in category folders - and only get a name.</summary>
     public bool manual;
+}
+
+/// <summary>Independent image state, appended after the normal action variant.</summary>
+public class ImageStateRule
+{
+    public string id;
+    public List<string> filenameHints = new List<string>();
+    public List<string> keywords = new List<string>();
+    public List<RuleClause> any = new List<RuleClause>();
 }
 
 public class NameRule

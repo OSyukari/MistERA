@@ -99,7 +99,7 @@ static class FolderEmotionTests
 
         checks.Test("portrait naming and no-low-confidence-movement policy load", () =>
         {
-            checks.Check(portrait.rename && portrait.nameSet == "portrait_emotions", "Portrait must use emotion naming.");
+            checks.Check(portrait.rename && portrait.nameSet == "portrait_emotions" && portrait.filenameFirst, "Portrait must use filename-first emotion naming.");
             checks.Check(!portrait.moveLowConfidence, "Uncertain portraits must stay in place.");
             checks.Check(rules.emotionPass != null && rules.emotionPass.categories.Count == 0, "Optional emotion pass should remain disabled.");
         });
@@ -109,6 +109,9 @@ static class FolderEmotionTests
             (text: "forced smile", name: "forced_smile"), (text: "full-face blush", name: "full_face_blush"),
             (text: "anger smile", name: "anger_smile"), (text: "angry smile", name: "anger_smile"),
             (text: "fake smile", name: "forced_smile"), (text: "nervous smile", name: "nervous_smile"),
+            (text: "smiling", name: "smile"), (text: "forced smiling", name: "forced_smile"),
+            (text: "nervous smiling", name: "nervous_smile"), (text: "seductive smiling", name: "seductive_smile"),
+            (text: "evil smiling", name: "evil_smile"), (text: "crazy smiling", name: "crazy_smile"),
             (text: "default", name: "neutral"), (text: "expressionless", name: "neutral"),
             (text: "shocked", name: "shocked"), (text: "blushing shyly", name: "shy"),
             (text: "fidgeting shyly", name: "shy"), (text: "looking away shyly", name: "shy"),

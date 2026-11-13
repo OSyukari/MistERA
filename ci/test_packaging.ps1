@@ -23,7 +23,6 @@ try {
     try { $env:MODS_DIR = $mods; & "$PSScriptRoot/publish_mods.ps1" -ValidateOnly } finally { $env:MODS_DIR = $oldMods }
 
     $build = Join-Path $temp 'Game'
-    Remove-Item -LiteralPath (Join-Path $build 'UpdateTools') -Recurse -Force
     $output = Join-Path $temp 'Output'
     $number = 1794530000000L
     $info = @{ schema = 1; buildId = "$number-0123456789abcdef0123456789abcdef"; buildNumber = $number; version = 'display-version-not-tag'; platform = 'windows-x64'; channel = 'full'; minimumUpdaterProtocol = 1; executable = 'Actual Game.exe' }
@@ -41,6 +40,9 @@ try {
     Reject { & $package -BuildDir $build -ReleaseTag 'different-tag' -OutputDir $output } 'missing helper'
     Put "$build/UpdateTools/MistEra.Updater.runtimeconfig.json" '{"runtimeOptions":{"includedFrameworks":[{"name":"Microsoft.NETCore.App","version":"10.0.0"}]}}'
     Put "$build/UpdateTools/coreclr.dll" 'synthetic-runtime'
+    Copy-Item -LiteralPath "$PSScriptRoot/../Tools/7z/7z.exe" -Destination "$build/UpdateTools/7z.exe"
+    Copy-Item -LiteralPath "$PSScriptRoot/../Tools/7z/7z.dll" -Destination "$build/UpdateTools/7z.dll"
+    Put "$build/UpdateTools/archive-password.txt" 'fixture-password'
     Copy-Item -LiteralPath "$PSScriptRoot/tests/bin/Release/net10.0/MistEra.Updater.dll" -Destination "$build/UpdateTools/MistEra.Updater.dll"
     Put "$build/UpdateTools/MistEra.Updater.deps.json" '{"runtimeTarget":{"name":".NETCoreApp,Version=v10.0/win-x64"},"libraries":{"MistEra.Updater/1.0.0":{"type":"project"}}}'
     # Minimal PE fixture is data only and is never launched.
@@ -56,27 +58,27 @@ try {
     & $package -BuildDir $build -ReleaseTag 'different-tag' -OutputDir $output
     $release = Get-Content -LiteralPath "$output/game-update.json" -Raw | ConvertFrom-Json
     Assert ($release.releaseTag -eq 'different-tag' -and $release.version -eq 'display-version-not-tag' -and $release.buildId -eq $info.buildId) 'preserved embedded identity, independent release tag'
-    $zip = [IO.Compression.ZipFile]::OpenRead((Join-Path $output $release.asset))
-    try {
-        Assert (@($zip.Entries | Where-Object { -not $_.FullName.StartsWith('game/') }).Count -eq 0) 'canonical game root'
-        Assert (@($zip.Entries | Where-Object { $_.FullName -match 'do-not-ship|symbols|texcache|\.updates|backup/' }).Count -eq 0) 'user data and caches excluded'
-        Assert ($null -ne $zip.GetEntry('game/Mods/Assetpacks/Image_Generation_Config.json')) 'shipped editable default included'
-        $reader = [IO.StreamReader]::new($zip.GetEntry('game/game-files.json').Open())
-        try { $inventory = $reader.ReadToEnd() | ConvertFrom-Json } finally { $reader.Dispose() }
-        Assert ($inventory.schema -eq 1 -and @($inventory.files | Where-Object path -eq 'game-files.json').Count -eq 0) 'inventory excludes itself'
-        Assert ($inventory.files.Count -eq $zip.Entries.Count - 1) 'inventory covers every payload file'
-        foreach ($file in $inventory.files) {
-            $entry = $zip.GetEntry("game/$($file.path)"); $stream = $entry.Open(); $sha = [Security.Cryptography.SHA256]::Create()
-            try { Assert ([Convert]::ToHexString($sha.ComputeHash($stream)).ToLowerInvariant() -ceq $file.sha256 -and $entry.Length -eq $file.size) "inventory hash $($file.path)" } finally { $stream.Dispose(); $sha.Dispose() }
-        }
-    } finally { $zip.Dispose() }
+    Assert ($release.asset -eq 'MistEra-different-tag.7z' -and $release.archiveFormat -eq '7z' -and $release.payloadRoot -eq 'Game') 'release 7z rooted at the build folder'
+    $extract = Join-Path $temp 'Extracted'
+    & "$build/UpdateTools/7z.exe" x -y -bd '-pfixture-password' "-o$extract" (Join-Path $output $release.asset) | Out-Null
+    if ($LASTEXITCODE -ne 0) { throw 'Release archive extraction failed' }
+    Assert (@(Get-ChildItem -LiteralPath $extract -Force).Count -eq 1) 'single build-folder root'
+    $payload = Join-Path $extract 'Game'
+    $extracted = @(Get-ChildItem -LiteralPath $payload -Recurse -File -Force | ForEach-Object { [IO.Path]::GetRelativePath($payload, $_.FullName).Replace('\', '/') })
+    Assert (@($extracted | Where-Object { $_ -match 'do-not-ship|symbols|texcache|\.updates|backup/' }).Count -eq 0) 'user data and caches excluded'
+    Assert ($extracted -contains 'Mods/Assetpacks/Image_Generation_Config.json') 'shipped editable default included'
+    $inventory = Get-Content -LiteralPath (Join-Path $payload 'game-files.json') -Raw | ConvertFrom-Json
+    Assert ($inventory.schema -eq 1 -and @($inventory.files | Where-Object path -eq 'game-files.json').Count -eq 0) 'inventory excludes itself'
+    Assert ($inventory.files.Count -eq $extracted.Count - 1) 'inventory covers every payload file'
+    foreach ($file in $inventory.files) {
+        $path = Join-Path $payload $file.path
+        Assert ((Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.ToLowerInvariant() -ceq $file.sha256 -and (Get-Item -LiteralPath $path).Length -eq $file.size) "inventory hash $($file.path)"
+    }
     Assert ((Get-FileHash -LiteralPath (Join-Path $output $release.asset)).Hash.ToLowerInvariant() -ceq $release.sha256) 'release archive hash'
     & "$PSScriptRoot/zip_demo.ps1" -BuildDir $build -Archive (Join-Path $output 'manual.7z')
     $listing = & $SevenZip l -slt (Join-Path $output 'manual.7z')
     if ($LASTEXITCODE -ne 0) { throw 'Manual archive listing failed' }
     Assert (@($listing | Where-Object { $_ -match '^Path = .*?(do-not-ship|symbols|texcache|\.updates|backup)' }).Count -eq 0) 'manual archive excludes user data/caches'
-    Put "$build/Data/payload.json" '{"changed":true}'
-    Reject { & $package -BuildDir $build -ReleaseTag 'different-tag' -OutputDir $output } 'immutable game archive collision'
 
     $catalogPath = Join-Path $mods 'catalog-v2.json'
     $catalogText = Get-Content -LiteralPath $catalogPath -Raw

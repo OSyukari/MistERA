@@ -134,7 +134,7 @@ static class FilenameHintTests
             var fixture = new ImageRules
             {
                 settings = rules.settings, categories = rules.categories, variants = rules.variants,
-                filenameHints = rules.filenameHints,
+                filenameHints = rules.filenameHints, states = rules.states,
                 nameSets = new Dictionary<string, List<NameRule>>(rules.nameSets)
             };
             fixture.nameSets[ImageRules.DefaultNameSet] = rules.nameSets[ImageRules.DefaultNameSet]
@@ -204,18 +204,27 @@ static class FilenameHintTests
             checks.Check(baseline.reasons.Any(n => n.StartsWith("near-miss category human", StringComparison.Ordinal)), "Without filename confirmation human uncertainty must remain.");
 
             record.general["1boy"] = 0.36f;
-            checks.Equal("human", engine.Classify(record, true).CategoryId, "actual actor evidence cannot be overridden");
+            var aboveThreshold = engine.Classify(record, true);
+            checks.Equal("human", engine.Classify(record, false).CategoryId, "actor tags still route without hints");
+            checks.Equal("portrait", aboveThreshold.CategoryId, "explicit portrait filename overrides actor routing");
+            Hint(checks, aboveThreshold, "determined", "determined");
+            checks.Equal("determined", aboveThreshold.categoryFilenameHint, "category filename provenance");
+            checks.Equal(ClassificationStatus.Confident, aboveThreshold.status, "actor evidence is informational");
+            checks.Equal(0, aboveThreshold.reasons.Count, "no actor confidence downgrade");
+            checks.Check(aboveThreshold.notes.Any(n => n.Contains("tags suggested human", StringComparison.Ordinal)), "Actor routing remains visible.");
         });
 
-        checks.Test("named portrait retains other category uncertainty", () =>
+        checks.Test("explicit portrait filename makes POV and actor warnings informational", () =>
         {
             var record = RegressionTests.Record(("1girl", 0.99f), ("1boy", 0.3024f), ("pov", 0.22f));
             record.path = "yerin.nude.determined.webp";
             var result = engine.Classify(record, true);
             checks.Equal("portrait", result.CategoryId, "portrait category");
-            checks.Equal(ClassificationStatus.LowConfidence, result.status, "unconfigured near miss remains uncertain");
-            checks.Check(result.reasons.Any(n => n.StartsWith("near-miss category pov", StringComparison.Ordinal)), "POV warning must remain.");
-            checks.Check(result.notes.Count > 0, "Human note must remain alongside other uncertainty.");
+            checks.Equal(ClassificationStatus.Confident, result.status, "explicit filename category priority");
+            checks.Equal(0, result.reasons.Count, "no confidence warnings");
+            checks.Equal("determined", result.categoryFilenameHint, "category provenance");
+            checks.Check(result.notes.Any(n => n.StartsWith("near-miss category pov", StringComparison.Ordinal)), "POV evidence must remain informational.");
+            checks.Check(result.notes.Any(n => n.StartsWith("near-miss category human", StringComparison.Ordinal)), "Actor evidence must remain informational.");
         });
 
         checks.Test("filename certainty retains category near-miss uncertainty", () =>
@@ -305,8 +314,9 @@ static class FilenameHintTests
     {
         string Signature(ImageClassification r) => JsonConvert.SerializeObject(new
         {
-            r.CategoryId, r.name, rule = r.nameRule?.index, r.variant, r.status, r.score, r.filenameHint,
-            runnerUp = r.runnerUp?.index, r.runnerUpScore, r.reasons,
+            r.CategoryId, r.name, rule = r.nameRule?.index, r.variant, r.state, r.stateSource,
+            r.status, r.score, r.filenameHint, r.categoryFilenameHint,
+            runnerUp = r.runnerUp?.index, r.runnerUpScore, r.reasons, r.notes,
             candidates = r.tierCandidates.Select(c => new { c.rule.index, c.score }),
             r.byFolder, r.rulesCategoryId, r.keptOut
         });

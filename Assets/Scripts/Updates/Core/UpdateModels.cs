@@ -22,8 +22,9 @@ namespace MistEra.Updates
         public string asset;
         public long size;
         public string sha256;
-        public string archiveFormat = "zip";
-        public string payloadRoot = "game";
+        // the release's password-protected 7z; payloadRoot is the build folder name at the archive root
+        public string archiveFormat = "7z";
+        public string payloadRoot;
     }
 
     [System.Serializable]

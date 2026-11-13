@@ -299,8 +299,9 @@ public static class ImageAnalysis
         (r.status == ClassificationStatus.LowConfidence ? "Low confidence" : r.status.ToString()) + (r.keptOut ? " (kept out)" : "");
 
     internal static string SourceLabel(ImageClassification r) =>
-        "Category source: " + (r.byFolder ? "folder" : "rules/tags") + "; name source: " +
-        (r.filenameHint != null ? "filename ID " + r.filenameHint + " (name confirmed)" : r.name != null ? "rules/tags" : "none (original filename kept or unmatched)");
+        "Category source: " + (r.byFolder ? "folder" : r.categoryFilenameHint != null ? "filename ID " + r.categoryFilenameHint : "rules/tags") + "; name source: " +
+        (r.filenameHint != null ? "filename ID " + r.filenameHint + " (name confirmed)" : r.name != null ? "rules/tags" : "none (original filename kept or unmatched)") +
+        (r.state != null ? "; state: " + r.state + " (" + r.stateSource + ")" : "");
 
     internal static string ScoreLabel(ImageClassification r) => r.filenameHint != null
         ? "Score: n/a (filename ID, not a tag score)"

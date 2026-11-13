@@ -549,18 +549,18 @@ namespace MistEra.Updates
             var manifest = UpdateJson.Parse<GameRelease>(JsonConvert.SerializeObject(AvailableBuild, ApiSettings));
             string id = Guid.NewGuid().ToString("D");
             string transaction = Local(".updates/transactions/" + id);
-            string archive = UpdateValidation.Resolve(transaction, "archive.zip");
+            string archive = UpdateValidation.Resolve(transaction, "archive.7z");
             Status = "Downloading game build..."; Publish();
             yield return Download(url, archive, manifest.size, manifest.size);
             Status = "Verifying and extracting game build..."; Progress = 0; Publish();
             yield return Worker(token =>
             {
                 VerifyArchive(archive, manifest.size, manifest.sha256, token);
-                PreflightArchive(archive, manifest.size, token);
+                string tools = Local("UpdateTools");
+                DiskSpace(checked(SevenZip.Inspect(tools, archive, manifest.payloadRoot, token, ExpandedLimit(manifest.size)) * 3));
                 string extraction = UpdateValidation.Resolve(transaction, "extracted");
-                UpdateFiles.ExtractZip(archive, extraction, p => p == "game" || p.StartsWith("game/", StringComparison.Ordinal), token,
-                    ExpandedLimit(manifest.size));
-                ValidateBuildTree(UpdateValidation.Resolve(extraction, "game"), manifest, token);
+                SevenZip.Extract(tools, archive, extraction, manifest.payloadRoot, token, ExpandedLimit(manifest.size));
+                ValidateBuildTree(UpdateValidation.Resolve(extraction, manifest.payloadRoot), manifest, token);
                 token.ThrowIfCancellationRequested();
                 UpdateJson.Write(UpdateValidation.Resolve(transaction, "staged-build.json"), new StagedBuildRecord { approved = 1, transaction = id, manifest = manifest });
             });
@@ -899,8 +899,8 @@ namespace MistEra.Updates
                 }
                 if (build)
                 {
-                    VerifyArchive(UpdateValidation.Resolve(transaction, "archive.zip"), pendingBuild.manifest.size, pendingBuild.manifest.sha256, token);
-                    ValidateBuildTree(UpdateValidation.Resolve(transaction, "extracted/game"), pendingBuild.manifest, token);
+                    VerifyArchive(UpdateValidation.Resolve(transaction, "archive.7z"), pendingBuild.manifest.size, pendingBuild.manifest.sha256, token);
+                    ValidateBuildTree(UpdateValidation.Resolve(transaction, "extracted/" + pendingBuild.manifest.payloadRoot), pendingBuild.manifest, token);
                 }
             });
             cancellation.Token.ThrowIfCancellationRequested();
@@ -912,8 +912,8 @@ namespace MistEra.Updates
                 approved = true, mode = build ? "build" : "restart", nonce = id, root = root,
                 executable = InstalledBuild.executable, createdUtc = DateTime.UtcNow.ToString("O"), parentStartedTicks = started,
                 manifest = build ? pendingBuild.manifest : null,
-                archive = build ? relative + "/archive.zip" : null,
-                stagedRoot = build ? relative + "/extracted/game" : null
+                archive = build ? relative + "/archive.7z" : null,
+                stagedRoot = build ? relative + "/extracted/" + pendingBuild.manifest.payloadRoot : null
             };
             string readyPath = UpdateValidation.Resolve(transaction, "ready.json");
             if (File.Exists(readyPath)) File.Delete(readyPath);

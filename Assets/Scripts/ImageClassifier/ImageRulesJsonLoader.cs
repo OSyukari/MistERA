@@ -17,7 +17,7 @@ using Newtonsoft.Json.Linq;
 public static class ImageRulesJsonLoader
 {
     static readonly Regex WeightSuffix = new Regex(@"^(.*)\*([0-9]*\.?[0-9]+)$", RegexOptions.Compiled);
-    static readonly HashSet<string> CategoryKeys = new HashSet<string> { "id", "group", "all", "any", "none", "threshold", "hold", "nameSet", "allowedNames", "moveLowConfidence", "rename", "refines", "manual", "filenameConfirmedNearMisses" };
+    static readonly HashSet<string> CategoryKeys = new HashSet<string> { "id", "group", "all", "any", "none", "threshold", "hold", "nameSet", "allowedNames", "moveLowConfidence", "rename", "refines", "manual", "filenameConfirmedNearMisses", "filenameFirst" };
     static readonly HashSet<string> NameEntryKeys = new HashSet<string> { "tier", "hasVariants", "defaultVariant", "filenameOnly", "none", "onlyInCategories", "fallback", "tierMinScore" };
     static readonly HashSet<string> EmotionPassKeys = new HashSet<string> { "categories", "labels", "prompt" };
 
@@ -38,6 +38,25 @@ public static class ImageRulesJsonLoader
         ReadSettings(root["settings"] as JObject, rules);
         rules.excludedTags = ReadExcludedTags(root);
         rules.emotionPass = ReadEmotionPass(root["emotion_pass"] as JObject, rules.loadWarnings);
+        if (root["image_states"] is JObject states)
+            foreach (var state in states.Properties().Where(p => !IsComment(p.Name)))
+            {
+                if (!(state.Value is JObject entry))
+                {
+                    rules.loadWarnings.Add($"image_states {state.Name}: expected an object");
+                    continue;
+                }
+                foreach (var key in entry.Properties())
+                    if (!IsComment(key.Name) && key.Name != "filenameHints" && key.Name != "keywords" && key.Name != "any")
+                        rules.loadWarnings.Add($"image_states {state.Name}: unknown key [{key.Name}]");
+                rules.states.Add(new ImageStateRule
+                {
+                    id = state.Name,
+                    filenameHints = (entry["filenameHints"] as JArray)?.Values<string>().ToList() ?? new List<string>(),
+                    keywords = (entry["keywords"] as JArray)?.Values<string>().ToList() ?? new List<string>(),
+                    any = ReadClauses(entry["any"], parser, $"image_states {state.Name}"),
+                });
+            }
 
         if (root["file_name_variants"] is JObject variantObj)
             foreach (var p in variantObj.Properties())
@@ -91,6 +110,19 @@ public static class ImageRulesJsonLoader
                 rules.filenameHints[hint.Name] = aliasesArray.Select(a => (string)a).ToList();
             }
         else if (root["filename_hints"] != null) rules.loadWarnings.Add("filename_hints: expected an object");
+
+        if (root["filename_variant_hints"] is JObject variantHints)
+            foreach (var hint in variantHints.Properties().Where(p => !IsComment(p.Name)))
+            {
+                if (!rules.variants.ContainsKey(hint.Name)) rules.loadWarnings.Add($"filename_variant_hints: unknown variant [{hint.Name}]");
+                if (!(hint.Value is JArray array) || array.Any(v => v.Type != JTokenType.String || !((string)v).Any(char.IsLetterOrDigit)))
+                {
+                    rules.loadWarnings.Add($"filename_variant_hints {hint.Name}: expected alphanumeric aliases");
+                    continue;
+                }
+                rules.filenameVariantHints[hint.Name] = array.Values<string>().ToList();
+            }
+        else if (root["filename_variant_hints"] != null) rules.loadWarnings.Add("filename_variant_hints: expected an object");
 
         CheckReferences(rules);
         return rules;
@@ -186,6 +218,7 @@ public static class ImageRulesJsonLoader
             nameSet = (string)c["nameSet"] ?? ImageRules.DefaultNameSet,
             allowedNames = c["allowedNames"] is JArray allowed ? new HashSet<string>(allowed.Select(v => (string)v)) : null,
             filenameConfirmedNearMisses = new HashSet<string>((c["filenameConfirmedNearMisses"] as JArray)?.Select(v => (string)v) ?? Enumerable.Empty<string>()),
+            filenameFirst = c["filenameFirst"]?.Value<bool>() ?? false,
             moveLowConfidence = c["moveLowConfidence"]?.Value<bool>() ?? true,
             rename = c["rename"]?.Value<bool>() ?? true,
             refines = (string)c["refines"],

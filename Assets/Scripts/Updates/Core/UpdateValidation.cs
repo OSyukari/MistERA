@@ -67,10 +67,10 @@ namespace MistEra.Updates
             return result;
         }
 
-        private static void Asset(string asset, long size, string hash, string format)
+        private static void Asset(string asset, long size, string hash, string format, string expectedFormat)
         {
             RelativePath(asset);
-            Require(!asset.Contains('/') && format == "zip" && size > 0 && size <= MaximumExpandedSize, "Invalid archive metadata");
+            Require(!asset.Contains('/') && format == expectedFormat && size > 0 && size <= MaximumExpandedSize, "Invalid archive metadata");
             Digest(hash);
         }
 
@@ -78,8 +78,9 @@ namespace MistEra.Updates
         {
             ValidateBuildInfo(build);
             Text(build.releaseTag, "releaseTag");
-            Asset(build.asset, build.size, build.sha256, build.archiveFormat);
-            Require(build.payloadRoot == "game", "Unsupported game payload root");
+            Asset(build.asset, build.size, build.sha256, build.archiveFormat, "7z");
+            Require(build.payloadRoot != null && !build.payloadRoot.Contains('/'), "Unsupported game payload root");
+            RelativePath(build.payloadRoot);
         }
 
         public static void ValidateBuildInfo(BuildInfo build)
@@ -99,7 +100,7 @@ namespace MistEra.Updates
             Require(package.kind == "mod" || package.kind == "assetpack", "Unsupported package kind");
             if (package.kind == "mod") Text(package.modId, "modId");
             else Text(package.group, "group");
-            Asset(package.asset, package.size, package.sha256, package.archiveFormat);
+            Asset(package.asset, package.size, package.sha256, package.archiveFormat, "zip");
             Require(package.minimumBuild >= 0 && package.maximumBuild >= 0 && (package.maximumBuild == 0 || package.maximumBuild >= package.minimumBuild), "Invalid build bounds");
             Require(string.IsNullOrEmpty(package.channel) || package.channel == "full" || package.channel == "safe", "Invalid channel");
             Require(package.roots != null && package.roots.Count > 0 && package.roots.Count <= 1000, "Missing/excessive roots");

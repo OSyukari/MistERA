@@ -1,4 +1,3 @@
-using System.IO.Compression;
 using System.Reflection;
 using System.Diagnostics;
 using MistEra.Updates;
@@ -58,7 +57,7 @@ internal static class Tests
         string nonce = Guid.NewGuid().ToString("D");
         string transaction = Helper.Resolve(root, ".updates/transactions/" + nonce);
         Directory.CreateDirectory(transaction);
-        var manifest = new GameRelease { buildId = "new-build", buildNumber = 2, version = "2", executable = "MistEra.exe", releaseTag = "test", asset = "game.zip", size = 1, sha256 = new string('a', 64) };
+        var manifest = new GameRelease { buildId = "new-build", buildNumber = 2, version = "2", executable = "MistEra.exe", releaseTag = "test", asset = "game.7z", size = 1, sha256 = new string('a', 64), payloadRoot = "game" };
         Write(root, "MistEra.exe", "old game");
         Write(root, "obsolete.dat", "old data");
         Write(root, "Presets/custom.json", "old default");
@@ -75,19 +74,20 @@ internal static class Tests
         return (root, transaction, new Handoff { schema = 1, mode = "build", nonce = nonce, root = root, executable = "MistEra.exe", approved = true, manifest = manifest });
     }
 
-    private static void Archive(string[] names, Action<string, string> assertion)
+    // Packs <parent>/<rootName> into a password-protected 7z with the shipped 7z.exe, like ci/package_updates.ps1.
+    private static void Make7z(string parent, string rootName, string archive)
     {
-        string folder = Path.Combine(SuiteRoot, Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(folder);
-        string archive = Path.Combine(folder, "payload.zip");
-        using (var zip = ZipFile.Open(archive, ZipArchiveMode.Create))
-            foreach (string name in names)
-            {
-                using var writer = new StreamWriter(zip.CreateEntry(name).Open());
-                writer.Write("payload");
-            }
-        assertion(archive, Path.Combine(folder, "extract"));
+        var start = new ProcessStartInfo(Path.Combine(AppContext.BaseDirectory, SevenZip.ToolName)) { UseShellExecute = false, WorkingDirectory = parent, RedirectStandardOutput = true };
+        foreach (string arg in new[] { "a", "-t7z", "-bd", archive, rootName, "-p" + File.ReadAllText(Path.Combine(AppContext.BaseDirectory, SevenZip.PasswordName)) })
+            start.ArgumentList.Add(arg);
+        using var process = Process.Start(start);
+        process.StandardOutput.ReadToEnd();
+        process.WaitForExit();
+        Check(process.ExitCode == 0, "7z could not build the fixture archive.");
     }
+
+    private static List<SevenZip.Entry> Listing(params string[] files) =>
+        files.Select(path => new SevenZip.Entry { path = path, size = 7 }).ToList();
 
     private static void PrepareArchive(string root, string transaction, Handoff ticket)
     {
@@ -98,10 +98,8 @@ internal static class Tests
         UpdateJson.Write(Helper.Resolve(staged, "game-files.json"), Inventory(staged, "MistEra.exe", "added.dat", "build-info.json", "Presets/custom.json", "Mods/Assetpacks/Image_Generation_Config.json"));
         Directory.Move(Helper.Resolve(transaction, "verified"), Helper.Resolve(transaction, "staged"));
         staged = Helper.Resolve(transaction, "staged/game");
-        string archive = Helper.Resolve(transaction, "build.zip");
-        using (var zip = ZipFile.Open(archive, ZipArchiveMode.Create))
-            foreach (string file in Directory.EnumerateFiles(staged, "*", SearchOption.AllDirectories))
-                zip.CreateEntryFromFile(file, "game/" + Path.GetRelativePath(staged, file).Replace('\\', '/'));
+        string archive = Helper.Resolve(transaction, "build.7z");
+        Make7z(Helper.Resolve(transaction, "staged"), "game", archive);
         ticket.archive = Path.GetRelativePath(root, archive).Replace('\\', '/');
         ticket.stagedRoot = Path.GetRelativePath(root, staged).Replace('\\', '/');
         ticket.manifest.size = new FileInfo(archive).Length;
@@ -166,15 +164,13 @@ internal static class Tests
             UpdateJson.Write(Helper.Resolve(staged, "build-info.json"), next);
             Write(staged, "added.dat", "new data");
             UpdateJson.Write(Helper.Resolve(staged, "game-files.json"), Inventory(staged, "MistEra.exe", "build-info.json", "added.dat"));
-            string archive = Helper.Resolve(transaction, "build.zip");
-            using (var zip = ZipFile.Open(archive, ZipArchiveMode.Create))
-                foreach (string file in Directory.EnumerateFiles(staged))
-                    zip.CreateEntryFromFile(file, "game/" + Path.GetFileName(file));
+            string archive = Helper.Resolve(transaction, "build.7z");
+            Make7z(Helper.Resolve(transaction, "staged"), "game", archive);
             handoff.mode = "build";
-            handoff.archive = ".updates/transactions/" + nonce + "/build.zip";
+            handoff.archive = ".updates/transactions/" + nonce + "/build.7z";
             handoff.stagedRoot = ".updates/transactions/" + nonce + "/staged/game";
             handoff.manifest = new GameRelease { buildId = next.buildId, buildNumber = next.buildNumber, version = next.version,
-                executable = next.executable, releaseTag = "test", asset = "build.zip", size = new FileInfo(archive).Length, sha256 = Helper.Hash(archive) };
+                executable = next.executable, releaseTag = "test", asset = "build.7z", size = new FileInfo(archive).Length, sha256 = Helper.Hash(archive), payloadRoot = "game" };
         }
         string ticket = ".updates/transactions/" + nonce + "/handoff.json";
         UpdateJson.Write(Helper.Resolve(root, ticket), handoff);
@@ -200,6 +196,7 @@ internal static class Tests
     {
         if (args.Length > 0) return ProcessFixture(args);
         Directory.CreateDirectory(SuiteRoot);
+        File.WriteAllText(Path.Combine(AppContext.BaseDirectory, SevenZip.PasswordName), "fixture-password");
         try
         {
             Test("unsafe Windows paths", () =>
@@ -216,21 +213,23 @@ internal static class Tests
                 File.WriteAllText(path, "{\"schema\":1}");
                 Reject(() => Helper.ReadHandoff(path));
             });
-            Test("ZIP traversal rejected", () => Archive(new[] { "game/../escape" }, (a, d) => Reject(() => Helper.Extract(a, d, new FileInfo(a).Length))));
-            Test("ZIP foreign root rejected", () => Archive(new[] { "foreign/file" }, (a, d) => Reject(() => Helper.Extract(a, d, new FileInfo(a).Length))));
-            Test("ZIP duplicate case rejected", () => Archive(new[] { "game/File", "game/file" }, (a, d) => Reject(() => Helper.Extract(a, d, new FileInfo(a).Length))));
-            Test("ZIP directory case collision rejected", () => Archive(new[] { "game/Data/a", "game/data/b" }, (a, d) => Reject(() => Helper.Extract(a, d, new FileInfo(a).Length))));
-            Test("ZIP file directory collision rejected", () => Archive(new[] { "game/Data", "game/Data/a" }, (a, d) => Reject(() => Helper.Extract(a, d, new FileInfo(a).Length))));
-            Test("valid ZIP extracts", () => Archive(new[] { "game/Data/file" }, (a, d) => { Helper.Extract(a, d, new FileInfo(a).Length); Check(File.Exists(Path.Combine(d, "game/Data/file")), "Extraction failed."); }));
-            Test("ZIP symbolic links rejected", () =>
+            // 7z cannot author hostile archives, so entry validation is checked on synthetic listings.
+            Test("7z traversal rejected", () => Reject(() => SevenZip.Validate(Listing("game\\..\\escape"), "game")));
+            Test("7z foreign root rejected", () => Reject(() => SevenZip.Validate(Listing("foreign\\file"), "game")));
+            Test("7z duplicate case rejected", () => Reject(() => SevenZip.Validate(Listing("game\\File", "game\\file"), "game")));
+            Test("7z directory case collision rejected", () => Reject(() => SevenZip.Validate(Listing("game\\Data\\a", "game\\data\\b"), "game")));
+            Test("7z file directory collision rejected", () => Reject(() => SevenZip.Validate(Listing("game\\Data", "game\\Data\\a"), "game")));
+            Test("7z symbolic links rejected", () => Reject(() => SevenZip.ParseListing("--\nPath = a.7z\n----------\nPath = game\\link\nSize = 0\nAttributes = A_ lrwxrwxrwx\n")));
+            Test("valid 7z extracts", () =>
             {
-                string archive = Path.Combine(SuiteRoot, "link.zip");
-                using (var zip = ZipFile.Open(archive, ZipArchiveMode.Create))
-                {
-                    var link = zip.CreateEntry("game/link");
-                    link.ExternalAttributes = unchecked((int)0xa1ff0000);
-                }
-                Reject(() => Helper.Extract(archive, Path.Combine(SuiteRoot, "link-extract"), new FileInfo(archive).Length));
+                string folder = Path.Combine(SuiteRoot, Guid.NewGuid().ToString("N"));
+                Write(folder, "game/Data/file", "payload");
+                string archive = Path.Combine(folder, "payload.7z");
+                Make7z(folder, "game", archive);
+                string destination = Path.Combine(folder, "extract");
+                Helper.Extract(AppContext.BaseDirectory, archive, destination, new FileInfo(archive).Length, "game");
+                Check(File.ReadAllText(Path.Combine(destination, "game/Data/file")) == "payload", "Extraction failed.");
+                Reject(() => Helper.Extract(AppContext.BaseDirectory, archive, Path.Combine(folder, "foreign"), new FileInfo(archive).Length, "other"));
             });
             Test("payload hashes and embedded identity are independently checked", () =>
             {

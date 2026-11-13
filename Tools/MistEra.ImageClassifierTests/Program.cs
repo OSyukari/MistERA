@@ -66,8 +66,8 @@ static class Program
                 var categories = JObject.Parse(File.ReadAllText(config))["portrait_global"]?["categories"] as JArray;
                 checks.Check(categories != null, "Missing portrait_global.categories array.");
                 var mapped = categories.Select(c => (string)c["id"]).ToHashSet(StringComparer.Ordinal);
-                var missing = rules.categories.Where(c => c.id != "portrait" && !c.hold && !c.manual).Select(c => c.id)
-                    .Concat(results.Where(r => r.category != null && r.CategoryId != "portrait" && !r.category.hold && !r.category.manual).Select(r => r.CategoryId))
+                var missing = rules.categories.Where(c => c.nameSet == ImageRules.DefaultNameSet && !c.hold && !c.manual).Select(c => c.id)
+                    .Concat(results.Where(r => r.category != null && r.category.nameSet == ImageRules.DefaultNameSet && !r.category.hold && !r.category.manual).Select(r => r.CategoryId))
                     .Distinct().Where(id => !mapped.Contains(id)).ToArray();
                 checks.Equal(0, missing.Length, "Missing category mappings: " + string.Join(", ", missing));
             });
@@ -83,6 +83,7 @@ static class Program
             });
             RegressionTests.Run(engine, checks, store);
             FilenameHintTests.Run(engine, rules, store, checks);
+            FilenameCategoryStateTests.Run(engine, rules, checks);
             VariantPolicyTests.Run(engine, rules, store, checks);
             CompoundVariantTests.Run(engine, rules, store, checks);
             FolderEmotionTests.Run(engine, rules, store, checks);
@@ -106,7 +107,7 @@ static class Program
     }
 
     static string Signature(ImageClassification result) =>
-        $"{result.CategoryId}|{result.name}|{result.variant}|{result.status}|{result.score:R}|{result.runnerUp?.name}|{result.runnerUpScore:R}|{string.Join(";", result.reasons)}|{string.Join(";", result.tierCandidates.Select(c => $"{c.rule.index}:{c.score:R}"))}";
+        $"{result.CategoryId}|{result.name}|{result.variant}|{result.state}|{result.stateSource}|{result.status}|{result.score:R}|{result.runnerUp?.name}|{result.runnerUpScore:R}|{string.Join(";", result.reasons)}|{string.Join(";", result.tierCandidates.Select(c => $"{c.rule.index}:{c.score:R}"))}";
 
     static string Hash(string path)
     {

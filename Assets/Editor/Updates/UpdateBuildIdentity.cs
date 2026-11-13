@@ -6,7 +6,6 @@ using Newtonsoft.Json;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
-using UnityEngine;
 
 public sealed class UpdateBuildIdentity : IPostprocessBuildWithReport
 {
@@ -27,19 +26,10 @@ public sealed class UpdateBuildIdentity : IPostprocessBuildWithReport
         };
         File.WriteAllText(Path.Combine(root, "build-info.json"), JsonConvert.SerializeObject(info, Formatting.Indented), new UTF8Encoding(false));
 
-        string source = Path.GetFullPath(Path.Combine(Application.dataPath, "../Tools/MistEra.Updater/bin/publish/win-x64"));
-        if (!File.Exists(Path.Combine(source, "MistEra.Updater.exe")))
-        {
-            Debug.LogWarning("Updater helper unavailable. Build remains usable, but release packaging will fail. Run: dotnet publish Tools/MistEra.Updater/MistEra.Updater.csproj -c Release -r win-x64 --self-contained true -o Tools/MistEra.Updater/bin/publish/win-x64");
-            return;
-        }
-        string destination = Path.Combine(root, "UpdateTools");
-        if (Directory.Exists(destination)) Directory.Delete(destination, true);
-        foreach (string file in Directory.GetFiles(source, "*", SearchOption.AllDirectories))
-        {
-            string target = Path.Combine(destination, file.Substring(source.Length + 1));
-            Directory.CreateDirectory(Path.GetDirectoryName(target));
-            File.Copy(file, target, true);
-        }
+        try { PublishHelper(root); }
+        catch (Exception e) { throw new BuildFailedException("Updater helper publish failed. Fix it, then use Tools/Updater/Publish Updater Into Build... on this build.\n" + e.Message); }
     }
+
+    // Swapped by the packaging harness, which has no real updater project to publish.
+    internal static Action<string> PublishHelper = UpdaterPublisher.PublishInto;
 }

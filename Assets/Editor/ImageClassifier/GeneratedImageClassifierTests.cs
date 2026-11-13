@@ -192,6 +192,62 @@ public static class GeneratedImageClassifierTests
                 Tags(("doggystyle", 1f), ("vaginal", 1f), ("cum", 1f)), "doggystyle_cum", "human"));
             Test("Partner state does not become main-actor variant", () =>
                 Expect(Scene(false, new[] { "doggy" }, "humanrace", "sleeping"), null, "doggystyle", "human"));
+            foreach (var alias in new[] { "mindcontrolled", "mind_control", "hypnotized", "hypnotised", "hypnosis", "soulless", "timestopped", "timestop" })
+                Test("Main actor captured state alias " + alias, () =>
+                {
+                    var scene = Scene(false, new[] { "doggy", "anal" }, "humanrace");
+                    scene.actors.First(a => a.character == main).tags.Add(alias);
+                    var result = Expect(scene, null, "doggystyle_anal_mindcontrolled", "human");
+                    Require(result.classification.variant == "anal" && result.classification.state == "mindcontrolled",
+                        "State must not replace the ordinary variant");
+                    Require(result.classification.stateSource == "game", "Expected game state provenance");
+                    var json = result.ToJson()["classification"];
+                    Require((string)json["state"] == "mindcontrolled" && (string)json["stateSource"] == "game",
+                        "Sidecar must retain state and source");
+                });
+            Test("Main actor interaction state applies without actor-list snapshot", () =>
+            {
+                var scene = Scene(false, new[] { "doggy", "timestopped" }, "humanrace");
+                scene.actors.Clear();
+                Expect(scene, new ImageTagRecord { error = "test failure" }, "doggystyle_mindcontrolled", "human");
+            });
+            Test("Partner and scene-wide states cannot leak into main actor", () =>
+            {
+                var scene = Scene(false, new[] { "doggy" }, "humanrace", "mindcontrolled", "timestopped");
+                scene.scene.UnionWith(new[] { "mindcontrolled", "hypnosis" });
+                scene.interactions[0].tags.Add("mindcontrolled");
+                scene.interactions[0].doerTags.Add("timestop");
+                var result = Expect(scene, null, "doggystyle", "human");
+                Require(string.IsNullOrEmpty(result.classification.state) && string.IsNullOrEmpty(result.classification.stateSource),
+                    "Partner/scene tags must not set state");
+                Expect(scene, Tags(("doggystyle", 1f), ("vaginal", 1f)), "doggystyle", "human");
+            });
+            Test("State in another main-actor interaction still belongs to main actor", () =>
+            {
+                var scene = Scene(false, new[] { "doggy" }, "humanrace");
+                scene.interactions.Add(Interaction(true, new[] { "unmapped_test_action", "timestop" }, "humanrace"));
+                Expect(scene, null, "doggystyle_mindcontrolled", "human");
+            });
+            Test("Game variant override preserves engine state and provenance", () =>
+            {
+                var record = Tags(("doggystyle", 1f), ("vaginal", 1f), ("cum", 1f), ("mind_control", 1f));
+                var baseline = new ImageClassifierEngine(rules).ClassifyInCategory(record, rules.categories.First(c => c.id == "human"));
+                Require(baseline.state == "mindcontrolled" && !string.IsNullOrEmpty(baseline.stateSource), "Expected scored engine state");
+                var result = Expect(Scene(false, new[] { "doggy", "sleeping" }, "humanrace"), record,
+                    "doggystyle_sleeping_mindcontrolled", "human");
+                Require(result.classification.state == baseline.state && result.classification.stateSource == baseline.stateSource,
+                    "Variant override must preserve engine state/source");
+            });
+            Test("Game state supplements scored classification", () =>
+                Expect(Scene(false, new[] { "doggy", "timestop" }, "humanrace"),
+                    Tags(("doggystyle", 1f), ("vaginal", 1f)), "doggystyle_mindcontrolled", "human"));
+            Test("Generated state handling uses configured ids and keywords", () =>
+            {
+                var custom = ImageRulesJsonLoader.Load(path);
+                custom.states.Add(new ImageStateRule { id = "enchanted", keywords = new List<string> { "custom_actor_state" } });
+                var engine = new GeneratedImageClassifier(custom, config);
+                Expect(Scene(false, new[] { "doggy", "custom_actor_state" }, "humanrace"), null, "doggystyle_enchanted", "human", engine);
+            });
             Test("Multiple destinations choose best winning score, not first interaction", () =>
             {
                 var scene = Scene(false, new[] { "missionary" }, "humanrace");

@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using System.Globalization;
-using System.IO.Compression;
 using System.Runtime.InteropServices;
 using MistEra.Updates;
 using Newtonsoft.Json;
@@ -272,26 +271,19 @@ internal static class Program
         if (!extract) return null;
         // Retrying preparation must not overwrite staging or extraction referenced by recovery data.
         string extraction = Resolve(transaction, "verified-" + Guid.NewGuid().ToString("N"));
-        Extract(archive, extraction, ticket.manifest.size);
-        string payload = Resolve(extraction, "game");
+        Extract(AppContext.BaseDirectory, archive, extraction, ticket.manifest.size, ticket.manifest.payloadRoot);
+        string payload = Resolve(extraction, ticket.manifest.payloadRoot);
         ValidateTree(payload, ticket.manifest);
         return payload;
     }
 
-    internal static void Extract(string archive, string destination, long archiveSize)
+    // tools = the folder holding 7z.exe/7z.dll and the archive password: this helper's own transaction-local copy of UpdateTools
+    internal static void Extract(string tools, string archive, string destination, long archiveSize, string payloadRoot)
     {
-        long total = 0;
         long limit = Math.Min(UpdateValidation.MaximumExpandedSize, Math.Max(1024L * 1024 * 1024, archiveSize > long.MaxValue / 200 ? long.MaxValue : archiveSize * 200));
-        using (var zip = ZipFile.OpenRead(archive))
-        {
-            foreach (var entry in zip.Entries)
-            {
-                total = checked(total + entry.Length);
-                Require(total <= limit, "Archive output limit exceeded.");
-            }
-        }
+        long total = SevenZip.Inspect(tools, archive, payloadRoot, default, limit);
         Require(new DriveInfo(Path.GetPathRoot(destination)).AvailableFreeSpace > total + 64L * 1024 * 1024, "Insufficient disk space for extraction.");
-        UpdateFiles.ExtractZip(archive, destination, path => path == "game" || path.StartsWith("game/", StringComparison.Ordinal));
+        SevenZip.Extract(tools, archive, destination, payloadRoot, default, limit);
     }
 
     private static Dictionary<string, UpdateFile> Inventory(string root, FileInventory inventory)

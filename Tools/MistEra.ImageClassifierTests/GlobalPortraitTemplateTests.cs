@@ -228,6 +228,18 @@ static class GlobalPortraitTemplateTests
             var original = TentacleHandler(Build(config), "receiver");
             checks.Equal(Select(original, new[] { "double_penetration", "raped", "cum" }, plain, normal),
                 Select(receiver, new[] { "double_penetration", "raped", "cum" }, plain, normal), "Ordinary priority is unchanged");
+            var human = stateHandlers.First(h => h.RequireSelfContextKeys.Contains("receiver")
+                && h.RequireTargetContextKeys.SequenceEqual(new[] { "humanrace" }));
+            var anal = Image("human", "doggystyle_anal_mindcontrolled");
+            checks.Equal(anal, Select(human, new[] { "doggy", "anal", "timestop" }, Image("human", "doggystyle_anal"), anal),
+                "State follows normal anal variant");
+            checks.Equal<string>(null, Select(human, new[] { "doggy", "timestop" }, anal), "Stateful base excludes normal anal variant");
+            var generic = stateHandlers.First(h => h.RequireSelfContextKeys.SequenceEqual(new[] { "sex" })
+                && h.RequireTargetContextKeys.SequenceEqual(new[] { "humanrace" }));
+            var genericState = Image("human", "generic_mindcontrolled");
+            checks.Equal(genericState, Select(generic, new[] { "timestopped" }, Image("human", "generic"), genericState),
+                "Stateful unconditional action");
+            checks.Equal<string>(null, Select(generic, new string[0], genericState), "Unconditional action state isolation");
 
             var stateEmotion = stateHandlers.Last();
             checks.Equal(Image("portrait", "happy_mindcontrolled"), Select(stateEmotion, new[] { "happy", "timestop" },

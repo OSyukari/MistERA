@@ -327,6 +327,19 @@ public sealed class GeneratedImageClassifier
             var suffix = (variant["files"] as JArray)?.Values<string>()
                 .FirstOrDefault(f => !string.IsNullOrEmpty(f) && selected.rule.hasVariants.Contains(f));
             if (suffix == null) continue;
+            // Only the own suffix establishes keywords; a display fallback like anal inside anal_rape does not prove rape.
+            var established = variants.FirstOrDefault(v => (v["files"] as JArray)?.Values<string>().FirstOrDefault() == classification.variant);
+            if (established != null)
+            {
+                var imageKeys = ((JArray)established["keywords"]).Values<string>().ToList();
+                var gameKeys = ((JArray)variant["keywords"]).Values<string>().ToList();
+                if (gameKeys.All(imageKeys.Contains)) break;
+                var combinedKeys = new HashSet<string>(imageKeys.Concat(gameKeys));
+                var combined = variants.FirstOrDefault(v => new HashSet<string>(((JArray)v["keywords"]).Values<string>()).SetEquals(combinedKeys)
+                    && selected.rule.hasVariants.Contains((v["files"] as JArray)?.Values<string>().FirstOrDefault()));
+                if (combined != null)
+                    suffix = ((JArray)combined["files"]).Values<string>().First();
+            }
             classification.variant = suffix;
             break;
         }
