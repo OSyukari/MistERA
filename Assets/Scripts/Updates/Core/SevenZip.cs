@@ -33,12 +33,13 @@ namespace MistEra.Updates
             return Validate(List(toolsFolder, archive, PasswordArgument(toolsFolder), cancellation), payloadRoot, maximumExpandedSize, maximumFiles, maximumFileSize);
         }
 
+        /// <param name="progress">Optional: called with 7z's extraction percent (0-100), from a background thread.</param>
         public static void Extract(string toolsFolder, string archive, string destination, string payloadRoot, CancellationToken cancellation = default,
-            long maximumExpandedSize = UpdateValidation.MaximumExpandedSize)
+            long maximumExpandedSize = UpdateValidation.MaximumExpandedSize, Action<int> progress = null)
         {
             PrepareDestination(destination);
             Inspect(toolsFolder, archive, payloadRoot, cancellation, maximumExpandedSize);
-            ExtractAll(toolsFolder, archive, destination, PasswordArgument(toolsFolder), cancellation);
+            ExtractAll(toolsFolder, archive, destination, PasswordArgument(toolsFolder), cancellation, progress);
         }
 
         /// <summary>Lists and validates an unencrypted package archive: every entry must pass allowed (package-relative
@@ -70,11 +71,13 @@ namespace MistEra.Updates
             UpdateValidation.Require(!Directory.Exists(destination) && !File.Exists(destination), "Extraction requires a new destination");
         }
 
-        private static void ExtractAll(string toolsFolder, string archive, string destination, string passwordArgument, CancellationToken cancellation)
+        private static void ExtractAll(string toolsFolder, string archive, string destination, string passwordArgument, CancellationToken cancellation,
+            Action<int> progress = null)
         {
             Directory.CreateDirectory(destination);
-            // links are never created: -snl is not passed
-            Run(toolsFolder, "x -y -bd -bso0 -bsp0 " + passwordArgument + "-o\"" + destination + "\" \"" + archive + "\"", cancellation);
+            // links are never created: -snl is not passed. -bsp1 sends the percent indicator to stdout for the progress reader
+            Run(toolsFolder, "x -y -bso0 " + (progress != null ? "-bsp1 " : "-bd -bsp0 ") + passwordArgument + "-o\"" + destination + "\" \"" + archive + "\"",
+                cancellation, progress);
         }
 
         // Parses `7z l -slt` output: archive properties end at the "----------" line, then one block per entry.
@@ -163,7 +166,20 @@ namespace MistEra.Updates
             return "-p\"" + password + "\" ";
         }
 
-        private static string Run(string toolsFolder, string arguments, CancellationToken cancellation)
+        // 7z rewrites its percent indicator in place (backspaces, no newlines): report every number followed by '%'
+        private static string ReadProgress(StreamReader reader, Action<int> progress)
+        {
+            int number = -1, last = -1, c;
+            while ((c = reader.Read()) >= 0)
+            {
+                if (c >= '0' && c <= '9') { number = number < 0 ? c - '0' : Math.Min(1000, number * 10 + (c - '0')); continue; }
+                if (c == '%' && number >= 0 && number <= 100 && number != last) { last = number; progress(number); }
+                number = -1;
+            }
+            return "";
+        }
+
+        private static string Run(string toolsFolder, string arguments, CancellationToken cancellation, Action<int> progress = null)
         {
             var info = new ProcessStartInfo(UpdateValidation.Resolve(toolsFolder, ToolName), arguments)
             {
@@ -179,7 +195,8 @@ namespace MistEra.Updates
             UpdateValidation.Require(process != null, "Could not start " + ToolName);
             // an encrypted archive without -p makes 7z ask for a password: closed input fails it instead of hanging
             process.StandardInput.Close();
-            Task<string> output = process.StandardOutput.ReadToEndAsync();
+            Task<string> output = progress == null ? process.StandardOutput.ReadToEndAsync()
+                : Task.Run(() => ReadProgress(process.StandardOutput, progress));
             Task<string> error = process.StandardError.ReadToEndAsync();
             while (!process.WaitForExit(200))
             {

@@ -84,6 +84,26 @@ internal static class Program
     }
 
     private static bool Matches(string path, UpdateFile file) => File.Exists(path) && new FileInfo(path).Length == file.size && Paths.Equals(Hash(path), file.sha256);
+    private static bool SameSize(string path, UpdateFile file) => File.Exists(path) && new FileInfo(path).Length == file.size;
+    private static bool SameFile(UpdateFile a, UpdateFile b) => a.size == b.size && Paths.Equals(a.sha256, b.sha256);
+
+    // Progress for the player: the helper runs in its own console window while the game is closed.
+    private static void Say(string message)
+    {
+        Console.WriteLine(message);
+        try { if (logPath != null) File.AppendAllText(logPath, DateTime.UtcNow.ToString("O") + " " + message + Environment.NewLine); }
+        catch { }
+    }
+
+    private static readonly Stopwatch progressClock = Stopwatch.StartNew();
+    private static long nextProgress;
+
+    private static void Progress(string stage, int done, int total)
+    {
+        if (done < total && progressClock.ElapsedMilliseconds < nextProgress) return;
+        nextProgress = progressClock.ElapsedMilliseconds + 500;
+        Console.WriteLine(stage + " " + done + "/" + total + (total > 0 ? " (" + (done * 100 / total) + "%)" : ""));
+    }
 
     private static void AtomicJson(string path, object value)
     {
@@ -133,6 +153,7 @@ internal static class Program
     private static void Run(string[] args)
     {
         Require(OperatingSystem.IsWindows(), "This helper requires Windows.");
+        try { Console.Title = "MistEra updater"; } catch { }
         var options = Arguments(args);
         Require(options.ContainsKey("--root") && options.ContainsKey("--ticket"), "--root and --ticket are required.");
         string root = Path.GetFullPath(options["--root"]).TrimEnd(Path.DirectorySeparatorChar);
@@ -168,16 +189,20 @@ internal static class Program
         Require(parent.Id != Environment.ProcessId && parent.StartTime.ToUniversalTime().Ticks == started &&
             Paths.Equals(parent.MainModule.FileName, executable), "Parent process identity does not match handoff.");
         Require(DateTimeOffset.UtcNow - created < TimeSpan.FromHours(24), "Handoff expired; prepare it again in-game.");
-        ValidatePayload(root, transaction, ticket, false);
+        Say(ticket.mode == "build" ? "Preparing to install " + ticket.manifest?.version + "..." : "Preparing to restart...");
+        // cheap completeness check while the game is still open, so a broken staging fails before the game quits
+        ValidatePayload(root, transaction, ticket);
         AtomicJson(Resolve(transaction, "ready.json"), new { nonce = ticket.nonce, pid = Environment.ProcessId });
+        Say("Waiting for the game to close...");
         Require(parent.WaitForExit(120000), "The game did not exit within 120 seconds. No files were installed.");
         using (var installationLock = UpdateFiles.AcquireLock(root))
         {
             NoGameProcesses(root);
             NoPendingTransactions(root, transaction);
-            string payload = ValidatePayload(root, transaction, ticket, true);
+            string payload = ValidatePayload(root, transaction, ticket);
             if (ticket.mode == "build") Install(root, transaction, ticket, payload);
         }
+        Say("Starting the game...");
         var launch = new ProcessStartInfo(executable) { UseShellExecute = false, WorkingDirectory = root };
         launch.ArgumentList.Add("--update-ack");
         launch.ArgumentList.Add(ticket.nonce);
@@ -197,7 +222,7 @@ internal static class Program
             }
             Thread.Sleep(500);
         }
-        Console.WriteLine("Game launched. Recovery data retained in " + transaction);
+        Say("Game launched. Recovery data retained in " + transaction);
     }
 
     private sealed class Acknowledgement
@@ -247,7 +272,12 @@ internal static class Program
         }
     }
 
-    private static string ValidatePayload(string root, string transaction, Handoff ticket, bool extract)
+    /// <summary>
+    /// Checks the handoff and returns the staged build folder to install (null for a plain restart). The game hashed the
+    /// archive against the release manifest and extracted it right after the download (7z checks each file's CRC), so
+    /// this only checks the staged tree is complete: listed files at their sizes, nothing unlisted, matching identity.
+    /// </summary>
+    private static string ValidatePayload(string root, string transaction, Handoff ticket)
     {
         if (ticket.mode == "restart")
         {
@@ -265,16 +295,11 @@ internal static class Program
         string staged = Resolve(root, ticket.stagedRoot);
         Require(archive.StartsWith(transaction + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase) &&
             staged.StartsWith(transaction + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase), "Build data must be transaction-local.");
-        Require(new FileInfo(archive).Length == ticket.manifest.size && Paths.Equals(Hash(archive), ticket.manifest.sha256), "Archive size/hash mismatch.");
-        ValidateTree(staged, ticket.manifest);
+        Require(File.Exists(archive) && new FileInfo(archive).Length == ticket.manifest.size, "Archive size mismatch.");
         Require(!File.Exists(Resolve(transaction, "build-journal.json")), "Transaction was already applied; use explicit recovery.");
-        if (!extract) return null;
-        // Retrying preparation must not overwrite staging or extraction referenced by recovery data.
-        string extraction = Resolve(transaction, "verified-" + Guid.NewGuid().ToString("N"));
-        Extract(AppContext.BaseDirectory, archive, extraction, ticket.manifest.size, ticket.manifest.payloadRoot);
-        string payload = Resolve(extraction, ticket.manifest.payloadRoot);
-        ValidateTree(payload, ticket.manifest);
-        return payload;
+        Say("Checking the downloaded files...");
+        ValidateTree(staged, ticket.manifest);
+        return staged;
     }
 
     // tools = the folder holding 7z.exe/7z.dll and the archive password: this helper's own transaction-local copy of UpdateTools
@@ -304,7 +329,7 @@ internal static class Program
     private static void ValidateTree(string tree, GameRelease manifest)
     {
         var files = Inventory(tree, UpdateJson.Read<FileInventory>(Resolve(tree, "game-files.json")));
-        foreach (var item in files.Values) Require(Matches(Resolve(tree, item.path), item), "Payload hash mismatch: " + item.path);
+        foreach (var item in files.Values) Require(SameSize(Resolve(tree, item.path), item), "Payload file missing or incomplete: " + item.path);
         foreach (string path in EnumerateSafe(tree))
         {
             string relative = Path.GetRelativePath(tree, path).Replace('\\', '/');
@@ -356,25 +381,35 @@ internal static class Program
         var merged = new Dictionary<string, UpdateFile>(Paths);
         var journal = new Journal { nonce = ticket.nonce, state = "prepared" };
         var targets = new HashSet<string>(Paths);
-        void Add(string path, string source, bool createOnly = false)
+        // after: the incoming file's listed size/hash (from game-files.json), so staged sources are not hashed again
+        void Add(string path, string source, bool createOnly = false, UpdateFile after = null)
         {
             Require(targets.Add(path), "Conflicting installation targets: " + path);
             string target = Resolve(root, path);
             Require(!Directory.Exists(target), "File target is a directory: " + path);
             UpdateFile Describe(string file) => new UpdateFile { path = path, size = new FileInfo(file).Length, sha256 = Hash(file) };
+            // the replaced file is hashed once: its backup and rollback are checked against this
             var before = File.Exists(target) ? Describe(target) : null;
             Require(!createOnly || before == null, "Incoming default appeared during preparation: " + path);
-            journal.changes.Add(new Change { path = path, source = source,
-                before = before, after = source != null ? Describe(source) : null });
+            journal.changes.Add(new Change { path = path, source = source, before = before,
+                after = source == null ? null : after != null ? new UpdateFile { path = path, size = after.size, sha256 = after.sha256 } : Describe(source) });
         }
+        Say("Comparing game files...");
+        int compared = 0;
         foreach (var pair in incoming)
         {
+            Progress("Comparing", ++compared, incoming.Count);
             string path = pair.Key;
             string target = Resolve(root, path);
+            bool editable = Editable(path);
+            old.TryGetValue(path, out var prior);
+            // Unchanged between builds and still its shipped size: nothing to install, nothing to hash. Edited defaults
+            // (Presets, image config) always take the hash path below so a local edit is never overwritten.
+            if (!editable && prior != null && SameFile(prior, pair.Value) && SameSize(target, pair.Value)) { merged.Add(path, pair.Value); continue; }
             if (Matches(target, pair.Value)) { merged.Add(path, pair.Value); continue; }
-            if (File.Exists(target) && (!old.TryGetValue(path, out var prior) || !Matches(target, prior)))
+            // Only editable defaults are protected from local edits; any other game file is replaced (and backed up).
+            if (editable && File.Exists(target) && (prior == null || !Matches(target, prior)))
             {
-                Require(Editable(path), "Locally modified or unowned game file blocks installation: " + path);
                 string alternate = path + ".incoming";
                 int collision = 0;
                 while (File.Exists(Resolve(root, alternate)) || Directory.Exists(Resolve(root, alternate)))
@@ -389,10 +424,10 @@ internal static class Program
                 string notice = "Preserved local default; incoming version saved as " + alternate;
                 journal.notices.Add(notice);
                 Console.WriteLine(notice);
-                if (old.TryGetValue(path, out var previousDefault)) merged.Add(path, previousDefault);
+                if (prior != null) merged.Add(path, prior);
                 continue;
             }
-            Add(path, Resolve(payload, path));
+            Add(path, Resolve(payload, path), after: pair.Value);
             merged.Add(path, pair.Value);
         }
         foreach (var pair in old)
@@ -423,28 +458,37 @@ internal static class Program
         long copySize = journal.changes.Where(c => c.source != null).Sum(c => new FileInfo(c.source).Length);
         Require(new DriveInfo(Path.GetPathRoot(root)).AvailableFreeSpace > checked(backupSize + copySize + 64L * 1024 * 1024), "Insufficient free space for backups and installation.");
         // All backups are durable before publishing a journal that permits live mutations.
-        foreach (var change in journal.changes.Where(c => c.before != null))
+        var backups = journal.changes.Where(c => c.before != null).ToList();
+        Say("Backing up " + backups.Count + " files...");
+        for (int i = 0; i < backups.Count; i++)
         {
+            Progress("Backing up", i + 1, backups.Count);
+            var change = backups[i];
             string backup = Resolve(transaction, "backup/" + change.path);
             CopyDurable(Resolve(root, change.path), backup);
-            Require(Matches(backup, change.before), "Backup hash mismatch: " + change.path);
+            Require(SameSize(backup, change.before), "Backup copy is incomplete: " + change.path);
         }
         AtomicJson(journalPath, journal);
+        Say("Installing " + journal.changes.Count + " changes...");
         try
         {
-            foreach (var change in journal.changes)
+            for (int i = 0; i < journal.changes.Count; i++)
             {
+                Progress("Installing", i + 1, journal.changes.Count);
+                var change = journal.changes[i];
                 string target = Resolve(root, change.path);
-                Require(change.before == null ? !File.Exists(target) : Matches(target, change.before), "Installation target changed during preparation: " + change.path);
+                Require(change.before == null ? !File.Exists(target) : SameSize(target, change.before), "Installation target changed during preparation: " + change.path);
                 if (change.source == null) File.Delete(target);
                 else
                 {
-                    Require(Matches(change.source, change.after), "Staged source changed during installation: " + change.path);
-                    Replace(change.source, target, ticket.nonce);
+                    Require(SameSize(change.source, change.after), "Staged source changed during installation: " + change.path);
+                    // installed copies need no per-file flush: a power cut mid-install is recovered from the durable backups
+                    Replace(change.source, target, ticket.nonce, durable: false);
                 }
             }
             journal.state = "committed";
             AtomicJson(journalPath, journal);
+            Say("Installation complete.");
         }
         catch
         {
@@ -453,7 +497,7 @@ internal static class Program
         }
     }
 
-    private static void CopyDurable(string source, string target)
+    private static void CopyDurable(string source, string target, bool durable = true)
     {
         NoLinks(source);
         NoLinks(target);
@@ -461,15 +505,15 @@ internal static class Program
         using var input = File.OpenRead(source);
         using var output = new FileStream(target, FileMode.CreateNew, FileAccess.Write, FileShare.None);
         input.CopyTo(output);
-        output.Flush(true);
+        output.Flush(durable);
     }
 
-    private static void Replace(string source, string target, string nonce)
+    private static void Replace(string source, string target, string nonce, bool durable = true)
     {
         string temporary = target + "." + nonce + ".tmp";
         NoLinks(temporary);
         Require(!File.Exists(temporary), "Replacement temporary file already exists: " + temporary);
-        CopyDurable(source, temporary);
+        CopyDurable(source, temporary, durable);
         File.Move(temporary, target, true);
     }
 

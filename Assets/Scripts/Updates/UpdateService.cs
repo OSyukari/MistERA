@@ -45,6 +45,8 @@ namespace MistEra.Updates
         public bool BlocksGameplay => RestartRequired || gameplayHold;
         /// <summary>What the running operation is (None when idle); lets the update panel label the right button.</summary>
         public UpdateOperation Operation { get; private set; }
+        /// <summary>Stage of a game build download / restart handoff, for the panel's button label (Progress is per stage).</summary>
+        public BuildStep Step { get; private set; }
         /// <summary>True after a check succeeded this session.</summary>
         public bool Checked { get; private set; }
         /// <summary>Bumped whenever the catalog or installed receipts change; consumers recompute update lists on change.</summary>
@@ -418,7 +420,7 @@ namespace MistEra.Updates
                 if (connectionFailed) connectionRetryAt = Time.realtimeSinceStartup + ConnectionRetrySeconds;
             }
             IsBusy = false; handoffStarted = false; gameplayHold = false;
-            Operation = UpdateOperation.None; pendingScope = ModUpdateScope.None;
+            Operation = UpdateOperation.None; Step = BuildStep.None; pendingScope = ModUpdateScope.None;
             cancellation.Dispose(); cancellation = null;
             Publish();
         }
@@ -427,7 +429,13 @@ namespace MistEra.Updates
         {
             var token = cancellation.Token;
             Task task = Task.Run(() => action(token), token);
-            while (!task.IsCompleted) yield return null;
+            // the worker writes Progress from its thread; listeners are notified from here (main thread), throttled
+            float nextPublish = 0;
+            while (!task.IsCompleted)
+            {
+                if (Time.realtimeSinceStartup >= nextPublish) { nextPublish = Time.realtimeSinceStartup + 0.1f; Publish(); }
+                yield return null;
+            }
             task.GetAwaiter().GetResult();
         }
 
@@ -573,16 +581,19 @@ namespace MistEra.Updates
             string id = Guid.NewGuid().ToString("D");
             string transaction = Local(".updates/transactions/" + id);
             string archive = UpdateValidation.Resolve(transaction, "archive.7z");
-            Status = "Downloading game build..."; Publish();
+            Step = BuildStep.Downloading; Status = "Downloading game build..."; Publish();
             yield return Download(url, archive, manifest.size, manifest.size);
-            Status = "Verifying and extracting game build..."; Progress = 0; Publish();
+            // The one integrity check: the archive hash against the release manifest. 7z checks each file's CRC while
+            // extracting, so the extracted tree is only checked for completeness (sizes), never hashed again.
+            Step = BuildStep.Verifying; Status = "Verifying game build..."; Progress = 0; Publish();
+            yield return Worker(token => VerifyArchive(archive, manifest.size, manifest.sha256, token, p => Progress = p));
+            Step = BuildStep.Extracting; Status = "Extracting game build..."; Progress = 0; Publish();
             yield return Worker(token =>
             {
-                VerifyArchive(archive, manifest.size, manifest.sha256, token);
                 string tools = Local("UpdateTools");
                 DiskSpace(checked(SevenZip.Inspect(tools, archive, manifest.payloadRoot, token, ExpandedLimit(manifest.size)) * 3));
                 string extraction = UpdateValidation.Resolve(transaction, "extracted");
-                SevenZip.Extract(tools, archive, extraction, manifest.payloadRoot, token, ExpandedLimit(manifest.size));
+                SevenZip.Extract(tools, archive, extraction, manifest.payloadRoot, token, ExpandedLimit(manifest.size), percent => Progress = percent / 100f);
                 ValidateBuildTree(UpdateValidation.Resolve(extraction, manifest.payloadRoot), manifest, token);
                 token.ThrowIfCancellationRequested();
                 UpdateJson.Write(UpdateValidation.Resolve(transaction, "staged-build.json"), new StagedBuildRecord { approved = 1, transaction = id, manifest = manifest });
@@ -912,7 +923,7 @@ namespace MistEra.Updates
             string relative = ".updates/transactions/" + id;
             string transaction = Local(relative);
             Directory.CreateDirectory(transaction);
-            Status = "Preparing updater helper..."; Progress = 0; Publish();
+            Step = BuildStep.PreparingRestart; Status = "Preparing updater helper..."; Progress = 0; Publish();
             yield return Worker(token =>
             {
                 string source = Local("UpdateTools");
@@ -924,11 +935,8 @@ namespace MistEra.Updates
                     token.ThrowIfCancellationRequested();
                     CopyOrMatch(UpdateValidation.Resolve(source, file.path), UpdateValidation.Resolve(transaction, "helper/" + file.path), file);
                 }
-                if (build)
-                {
-                    VerifyArchive(UpdateValidation.Resolve(transaction, "archive.7z"), pendingBuild.manifest.size, pendingBuild.manifest.sha256, token);
-                    ValidateBuildTree(UpdateValidation.Resolve(transaction, "extracted/" + pendingBuild.manifest.payloadRoot), pendingBuild.manifest, token);
-                }
+                // verified and extracted right after the download: only check the staged tree is still complete
+                if (build) ValidateBuildTree(UpdateValidation.Resolve(transaction, "extracted/" + pendingBuild.manifest.payloadRoot), pendingBuild.manifest, token);
             });
             cancellation.Token.ThrowIfCancellationRequested();
             using var parent = Process.GetCurrentProcess();
@@ -1167,14 +1175,20 @@ namespace MistEra.Updates
             UpdateFiles.Verify(target, file.size, file.sha256);
         }
 
-        private static void VerifyArchive(string path, long size, string expected, CancellationToken token)
+        private static void VerifyArchive(string path, long size, string expected, CancellationToken token, Action<float> progress = null)
         {
             UpdateValidation.NoLinks(path);
             Require(new FileInfo(path).Length == size, "Archive size mismatch.");
             using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
             using var hash = SHA256.Create();
-            var buffer = new byte[81920]; int read;
-            while ((read = stream.Read(buffer, 0, buffer.Length)) > 0) { token.ThrowIfCancellationRequested(); hash.TransformBlock(buffer, 0, read, buffer, 0); }
+            var buffer = new byte[1024 * 1024]; int read; long done = 0;
+            while ((read = stream.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                token.ThrowIfCancellationRequested();
+                hash.TransformBlock(buffer, 0, read, buffer, 0);
+                done += read;
+                progress?.Invoke(size > 0 ? (float)done / size : 1f);
+            }
             hash.TransformFinalBlock(Array.Empty<byte>(), 0, 0); token.ThrowIfCancellationRequested();
             Require(Paths.Equals(BitConverter.ToString(hash.Hash).Replace("-", ""), expected), "Archive SHA-256 mismatch.");
         }
@@ -1192,18 +1206,35 @@ namespace MistEra.Updates
             Require(dependencies.SetEquals(package.dependencies), "Staged dependencies differ from confirmed catalog batch.");
         }
 
+        /// <summary>Completeness check of an extracted build (no hashing: the archive hash and 7z's per-file CRCs already
+        /// cover content): every listed file exists with its listed size, nothing unlisted, identity matches the manifest.</summary>
         private static void ValidateBuildTree(string tree, GameRelease manifest, CancellationToken token)
         {
             UpdateValidation.ValidateBuild(manifest);
             var inventory = UpdateJson.Read<FileInventory>(UpdateValidation.Resolve(tree, "game-files.json"));
+            UpdateValidation.ValidateFiles(inventory.files);
+            var listed = new HashSet<string>(Paths);
             foreach (var file in inventory.files)
             {
                 token.ThrowIfCancellationRequested();
                 Require(!BuildProtected(file.path) && file.path != "game-files.json", "Build inventory targets protected content: " + file.path);
-                VerifyArchive(UpdateValidation.Resolve(tree, file.path), file.size, file.sha256, token);
+                string path = UpdateValidation.Resolve(tree, file.path);
+                Require(File.Exists(path) && new FileInfo(path).Length == file.size, "Extracted build file is missing or incomplete: " + file.path);
+                listed.Add(file.path);
             }
-            var actual = UpdateFiles.Inventory(tree);
-            Require(actual.files.Count == inventory.files.Count + 1 && actual.files.All(f => f.path == "game-files.json" || inventory.files.Any(expected => Same(f, expected))), "Build payload has unlisted files.");
+            int count = 0;
+            var directories = new Stack<string>();
+            directories.Push(tree);
+            while (directories.Count > 0)
+                foreach (string entry in Directory.EnumerateFileSystemEntries(directories.Pop()))
+                {
+                    UpdateValidation.NoLinks(entry);
+                    if (Directory.Exists(entry)) { directories.Push(entry); continue; }
+                    string relative = entry.Substring(tree.TrimEnd(Path.DirectorySeparatorChar).Length + 1).Replace(Path.DirectorySeparatorChar, '/');
+                    Require(relative == "game-files.json" || listed.Contains(relative), "Build payload has unlisted files: " + relative);
+                    count++;
+                }
+            Require(count == inventory.files.Count + 1, "Build payload has unlisted files.");
             Require(inventory.files.Any(f => f.path == manifest.executable) && inventory.files.Any(f => f.path == "build-info.json"), "Build payload lacks executable/identity.");
             var embedded = UpdateJson.Read<BuildInfo>(UpdateValidation.Resolve(tree, "build-info.json"));
             Require(embedded.schema == manifest.schema && embedded.buildId == manifest.buildId && embedded.buildNumber == manifest.buildNumber && embedded.version == manifest.version &&

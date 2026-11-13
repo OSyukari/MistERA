@@ -227,12 +227,16 @@ public class scr_Menu_Updates : scr_Menu
             labels[Game] = Text("game_update");
             reasons[Game] = Text("tooltip_not_ready");
         }
-        else if (op == UpdateOperation.DownloadBuild)
+        else if (op == UpdateOperation.DownloadBuild || op == UpdateOperation.Restart)
         {
-            labels[Game] = Text("game_downloading") + " " + Percent();
+            // each stage reports its own 0-100%: name the stage so a restarting percent never reads as a stalled download
+            string stage = service.Step == BuildStep.Verifying ? "game_verifying"
+                : service.Step == BuildStep.Extracting ? "game_extracting"
+                : op == UpdateOperation.Restart ? "game_preparing" : "game_downloading";
+            labels[Game] = Text(stage) + (op == UpdateOperation.Restart ? "" : " " + Percent());
             reasons[Game] = Text("tooltip_busy");
         }
-        else if (service.HasPendingBuild || op == UpdateOperation.Restart)
+        else if (service.HasPendingBuild)
         {
             labels[Game] = Text("game_install");
             reasons[Game] = service.IsBusy ? Text("tooltip_busy") : !IsIntro() ? Text("title_only") : null;

@@ -231,7 +231,7 @@ internal static class Tests
                 Check(File.ReadAllText(Path.Combine(destination, "game/Data/file")) == "payload", "Extraction failed.");
                 Reject(() => Helper.Extract(AppContext.BaseDirectory, archive, Path.Combine(folder, "foreign"), new FileInfo(archive).Length, "other"));
             });
-            Test("payload hashes and embedded identity are independently checked", () =>
+            Test("staged payload completeness and embedded identity are checked", () =>
             {
                 var f = Fixture();
                 string payload = Helper.Resolve(f.transaction, "verified/game");
@@ -240,8 +240,13 @@ internal static class Tests
                 void Receipt() => UpdateJson.Write(Helper.Resolve(payload, "game-files.json"), Inventory(payload, "MistEra.exe", "added.dat", "build-info.json", "Presets/custom.json", "Mods/Assetpacks/Image_Generation_Config.json"));
                 Receipt();
                 Invoke("ValidateTree", payload, f.ticket.manifest);
-                Write(payload, "added.dat", "tampered");
+                // content is covered by the archive hash + 7z CRCs in-game; the helper catches truncated or extra files
+                Write(payload, "added.dat", "truncated");
                 Reject(() => Invoke("ValidateTree", payload, f.ticket.manifest));
+                Receipt();
+                Write(payload, "unlisted.dat", "extra");
+                Reject(() => Invoke("ValidateTree", payload, f.ticket.manifest));
+                File.Delete(Helper.Resolve(payload, "unlisted.dat"));
                 info.buildId = "foreign";
                 UpdateJson.Write(Helper.Resolve(payload, "build-info.json"), info);
                 Receipt();
@@ -346,55 +351,49 @@ internal static class Tests
                 Invoke("Rollback", f.root, f.transaction, f.ticket.nonce);
                 Check(File.ReadAllText(Helper.Resolve(f.root, "Presets/custom.json.incoming")) == "new default", "Rollback removed a user's identical sidecar.");
             });
-            Test("same staged transaction retries after an install preflight conflict", () =>
+            Test("install uses the staged build in place and leaves it intact", () =>
             {
                 var f = Fixture();
                 PrepareArchive(f.root, f.transaction, f.ticket);
-                Write(f.transaction, "verified/partial.dat", "retain old extraction");
-                Invoke("ValidatePayload", f.root, f.transaction, f.ticket, false);
-                string first = (string)Invoke("ValidatePayload", f.root, f.transaction, f.ticket, true);
-                Write(f.root, "MistEra.exe", "temporary local conflict");
-                Reject(() => Install(f.root, f.transaction, f.ticket, first));
-                Check(!File.Exists(Helper.Resolve(f.transaction, "build-journal.json")), "Preflight conflict created a live journal.");
-                Write(first, "added.dat", "tampered old extraction");
-                string archive = Helper.Resolve(f.root, f.ticket.archive);
-                byte[] originalArchive = File.ReadAllBytes(archive);
-                using (var append = new FileStream(archive, FileMode.Append)) append.WriteByte(0);
-                Reject(() => Invoke("ValidatePayload", f.root, f.transaction, f.ticket, true));
-                File.WriteAllBytes(archive, originalArchive);
-                Write(f.root, "MistEra.exe", "old game");
-                Invoke("ValidatePayload", f.root, f.transaction, f.ticket, false);
-                string retry = (string)Invoke("ValidatePayload", f.root, f.transaction, f.ticket, true);
-                Check(first != retry, "Retry reused the previous extraction.");
-                Check(File.ReadAllText(Helper.Resolve(first, "added.dat")) == "tampered old extraction", "Retry overwrote a previous extraction.");
-                Check(File.ReadAllText(Helper.Resolve(retry, "added.dat")) == "new file", "Retry did not extract verified archive bytes.");
-                Check(File.ReadAllText(Helper.Resolve(f.transaction, "verified/partial.dat")) == "retain old extraction", "Retry deleted a legacy extraction.");
-                Check(File.ReadAllText(Helper.Resolve(f.root, f.ticket.stagedRoot + "/added.dat")) == "new file", "Retry changed the staged payload.");
-                Install(f.root, f.transaction, f.ticket, retry);
-                Check(UpdateJson.Read<Journal>(Helper.Resolve(f.transaction, "build-journal.json")).state == "committed", "Retried transaction did not commit.");
+                string payload = (string)Invoke("ValidatePayload", f.root, f.transaction, f.ticket);
+                Check(payload == Helper.Resolve(f.root, f.ticket.stagedRoot), "Helper did not install from the staged build.");
+                Check(Directory.GetDirectories(f.transaction, "verified-*").Length == 0, "Helper extracted the archive again.");
+                Install(f.root, f.transaction, f.ticket, payload);
+                Check(UpdateJson.Read<Journal>(Helper.Resolve(f.transaction, "build-journal.json")).state == "committed", "Staged transaction did not commit.");
+                Check(File.ReadAllText(Helper.Resolve(payload, "added.dat")) == "new file", "Install changed the staged payload.");
                 Invoke("Rollback", f.root, f.transaction, f.ticket.nonce);
-                Check(File.ReadAllText(Helper.Resolve(f.root, "MistEra.exe")) == "old game", "Retried transaction recovery failed.");
+                Check(File.ReadAllText(Helper.Resolve(f.root, "MistEra.exe")) == "old game", "Staged transaction recovery failed.");
             });
-            Test("payload retry never bypasses a live recovery journal", () =>
+            Test("incomplete staging or archive is rejected before the game quits", () =>
             {
                 var f = Fixture();
                 PrepareArchive(f.root, f.transaction, f.ticket);
-                string payload = (string)Invoke("ValidatePayload", f.root, f.transaction, f.ticket, true);
+                string staged = Helper.Resolve(f.root, f.ticket.stagedRoot);
+                Write(staged, "added.dat", "cut");
+                Reject(() => Invoke("ValidatePayload", f.root, f.transaction, f.ticket));
+                Write(staged, "added.dat", "new file");
+                string archive = Helper.Resolve(f.root, f.ticket.archive);
+                using (var append = new FileStream(archive, FileMode.Append)) append.WriteByte(0);
+                Reject(() => Invoke("ValidatePayload", f.root, f.transaction, f.ticket));
+            });
+            Test("payload never bypasses a live recovery journal", () =>
+            {
+                var f = Fixture();
+                PrepareArchive(f.root, f.transaction, f.ticket);
                 string journalPath = Helper.Resolve(f.transaction, "build-journal.json");
                 UpdateJson.Write(journalPath, new Journal { nonce = f.ticket.nonce, state = "prepared" });
                 string journal = File.ReadAllText(journalPath);
-                int extractions = Directory.GetDirectories(f.transaction, "verified-*").Length;
-                Reject(() => Invoke("ValidatePayload", f.root, f.transaction, f.ticket, false));
-                Reject(() => Invoke("ValidatePayload", f.root, f.transaction, f.ticket, true));
-                Check(Directory.GetDirectories(f.transaction, "verified-*").Length == extractions, "Retry extracted while a recovery journal exists.");
-                Check(File.ReadAllText(journalPath) == journal && File.Exists(Helper.Resolve(payload, "added.dat")), "Retry changed recovery data.");
+                Reject(() => Invoke("ValidatePayload", f.root, f.transaction, f.ticket));
+                Check(File.ReadAllText(journalPath) == journal, "Validation changed recovery data.");
             });
-            Test("modified noneditable owned file blocks all writes", () =>
+            Test("modified noneditable game file is replaced and restored by rollback", () =>
             {
                 var f = Fixture();
                 Write(f.root, "MistEra.exe", "local change");
-                Reject(() => Install(f.root, f.transaction, f.ticket));
-                Check(!File.Exists(Helper.Resolve(f.root, "added.dat")), "Conflict mutated installation.");
+                Install(f.root, f.transaction, f.ticket);
+                Check(File.ReadAllText(Helper.Resolve(f.root, "MistEra.exe")) == "new game", "Modified game file was not updated.");
+                Invoke("Rollback", f.root, f.transaction, f.ticket.nonce);
+                Check(File.ReadAllText(Helper.Resolve(f.root, "MistEra.exe")) == "local change", "Rollback did not restore the replaced file.");
             });
             Test("modified obsolete files preserved", () =>
             {
@@ -403,12 +402,13 @@ internal static class Tests
                 Install(f.root, f.transaction, f.ticket);
                 Check(File.ReadAllText(Helper.Resolve(f.root, "obsolete.dat")) == "local edit", "Modified obsolete file deleted.");
             });
-            Test("unknown ownership never deletes or overwrites", () =>
+            Test("unknown ownership never deletes", () =>
             {
                 var f = Fixture();
                 File.Delete(Helper.Resolve(f.root, "game-files.json"));
-                Reject(() => Install(f.root, f.transaction, f.ticket));
+                Install(f.root, f.transaction, f.ticket);
                 Check(File.Exists(Helper.Resolve(f.root, "obsolete.dat")), "Unknown file deleted.");
+                Check(File.ReadAllText(Helper.Resolve(f.root, "MistEra.exe")) == "new game", "Shipped file was not installed.");
             });
             Test("protected payload rejected", () =>
             {
