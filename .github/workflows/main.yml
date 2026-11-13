@@ -21,8 +21,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # BUILD_DIR comes from a Unity build: build-info.json and UpdateTools/ are written by its post-build step.
-      - name: Package updater artifact
+      # BUILD_DIR comes from a Unity build: build-info.json and UpdateTools/ (updater, 7z.exe, archive password)
+      # are written by its post-build step. Produces the password-protected MistEra-<tag>.7z (also the auto-update
+      # payload; leaves out Save/ and Mods/ except Mods/Assetpacks/Image_Generation_Config.json) and game-update.json.
+      - name: Package the build
         shell: pwsh
         env:
           BUILD_DIR: ${{ secrets.BUILD_DIR }}
@@ -30,15 +32,6 @@ jobs:
         run: |
           $info = Get-Content -LiteralPath "$env:BUILD_DIR/build-info.json" -Raw | ConvertFrom-Json
           ./ci/package_updates.ps1 -BuildDir $env:BUILD_DIR -ReleaseTag $env:RELEASE_TAG -Channel $info.channel
-
-      - name: Zip the build directory
-        # leaves out Save/ and Mods/ (except Mods/Assetpacks/Image_Generation_Config.json)
-        shell: pwsh
-        env:
-          BUILD_DIR: ${{ secrets.BUILD_DIR }}
-          RELEASE_TAG: ${{ github.ref_name }}
-          ZIP_PASSWORD: ${{ secrets.ZIP_PASSWORD }}
-        run: ./ci/zip_demo.ps1 $env:BUILD_DIR "MistEra-$env:RELEASE_TAG.7z" $env:ZIP_PASSWORD
 
       - name: Create GitHub Release and upload artifacts
         uses: softprops/action-gh-release@v2
@@ -48,7 +41,6 @@ jobs:
           fail_on_unmatched_files: true
           files: |
             MistEra-${{ github.ref_name }}.7z
-            MistEra-*-windows-x64-update.zip
             game-update.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
