@@ -35,10 +35,18 @@ try {
     $stream.Position = 0x3c; $pe = $reader.ReadInt32(); $stream.Position = $pe
     if ($reader.ReadUInt32() -ne 0x4550 -or $reader.ReadUInt16() -ne 0x8664) { throw 'Updater helper must be Windows x64' }
 } finally { $stream.Dispose() }
+# The release 7z is the update payload: 7z.exe (+ 7z.dll) and its password are shipped in UpdateTools by the Unity build.
+$sevenZip = Join-Path $root 'UpdateTools/7z.exe'
+$passwordPath = Join-Path $root 'UpdateTools/archive-password.txt'
+if (-not (Test-Path -LiteralPath $sevenZip -PathType Leaf) -or -not (Test-Path -LiteralPath (Join-Path $root 'UpdateTools/7z.dll') -PathType Leaf) -or
+    -not (Test-Path -LiteralPath $passwordPath -PathType Leaf)) { throw 'Missing UpdateTools/7z.exe, 7z.dll or archive-password.txt. Rebuild in Unity.' }
+$password = (Get-Content -LiteralPath $passwordPath -Raw).Trim()
+if (-not $password -or $password.Contains('"')) { throw 'Invalid archive password in UpdateTools/archive-password.txt' }
 New-Item -ItemType Directory -Force -Path $output | Out-Null
-$asset = "MistEra-$($info.buildId)-windows-x64-update.zip"
+$asset = "MistEra-$ReleaseTag.7z"
 $archive = Join-Path $output $asset
-$temporary = Join-Path $output ('.package-' + [guid]::NewGuid().ToString('N') + '.zip')
+$payloadRoot = Split-Path $root -Leaf
+if ($payloadRoot -match '[<>:"|?*]|[. ]$') { throw "Build folder name is not a safe archive root: $payloadRoot" }
 $files = [Collections.Generic.List[object]]::new()
 $seen = [Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
 function Add-Payload($directory, [string]$relative = '') {
@@ -57,30 +65,26 @@ Add-Payload $root
 $inventory = [ordered]@{ schema = 1; files = @($files.ToArray()) } | ConvertTo-Json -Depth 10
 # This inventory is also shipped with the manual artifact for first-install ownership tracking.
 [IO.File]::WriteAllText((Join-Path $root 'game-files.json'), $inventory, [Text.UTF8Encoding]::new($false))
+# The archive holds exactly the inventory plus game-files.json, under the build folder name (players extract it as before).
+$list = Join-Path $output ('.package-' + [guid]::NewGuid().ToString('N') + '.txt')
 try {
-    $zip = [IO.Compression.ZipFile]::Open($temporary, [IO.Compression.ZipArchiveMode]::Create)
+    $lines = [Collections.Generic.List[string]]::new()
+    foreach ($file in $files) { $lines.Add("$payloadRoot\$($file.path.Replace('/', '\'))") }
+    $lines.Add("$payloadRoot\game-files.json")
+    [IO.File]::WriteAllLines($list, $lines, [Text.UTF8Encoding]::new($false))
+    if (Test-Path -LiteralPath $archive) { Remove-Item -LiteralPath $archive -Force }
+    Push-Location (Split-Path $root -Parent)
     try {
-        foreach ($file in $files) {
-            $source = Join-Path $root $file.path
-            $entry = $zip.CreateEntry("game/$($file.path)", [IO.Compression.CompressionLevel]::Optimal)
-            $entry.LastWriteTime = [DateTimeOffset]::new(1980, 1, 1, 0, 0, 0, [TimeSpan]::Zero)
-            $input = [IO.File]::OpenRead($source); $destination = $entry.Open()
-            try { $input.CopyTo($destination) } finally { $destination.Dispose(); $input.Dispose() }
-            if ((Get-FileHash -LiteralPath $source -Algorithm SHA256).Hash.ToLowerInvariant() -ne $file.sha256) { throw "Build changed while packaging: $($file.path)" }
-        }
-        $entry = $zip.CreateEntry('game/game-files.json', [IO.Compression.CompressionLevel]::Optimal)
-        $entry.LastWriteTime = [DateTimeOffset]::new(1980, 1, 1, 0, 0, 0, [TimeSpan]::Zero)
-        $writer = [IO.StreamWriter]::new($entry.Open(), [Text.UTF8Encoding]::new($false))
-        try { $writer.Write($inventory) } finally { $writer.Dispose() }
-    } finally { $zip.Dispose() }
-    $hash = (Get-FileHash -LiteralPath $temporary -Algorithm SHA256).Hash.ToLowerInvariant()
-    if (Test-Path -LiteralPath $archive) {
-        if ((Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant() -ne $hash) { throw "Immutable artifact already exists with different bytes: $archive" }
-    } else { Move-Item -LiteralPath $temporary -Destination $archive }
+        & $sevenZip a -t7z -bd $archive "@$list" -scsUTF-8 "-p$password" | Out-Null
+        if ($LASTEXITCODE -ne 0) { throw "7z failed with exit code $LASTEXITCODE" }
+    } finally { Pop-Location }
+    foreach ($file in $files) {
+        if ((Get-FileHash -LiteralPath (Join-Path $root $file.path) -Algorithm SHA256).Hash.ToLowerInvariant() -ne $file.sha256) { throw "Build changed while packaging: $($file.path)" }
+    }
     $manifest = [ordered]@{}
     foreach ($field in @('schema','buildId','buildNumber','version','platform','channel','minimumUpdaterProtocol','executable')) { $manifest[$field] = $info.$field }
     $manifest.releaseTag = $ReleaseTag; $manifest.asset = $asset; $manifest.size = (Get-Item -LiteralPath $archive).Length
-    $manifest.sha256 = $hash; $manifest.archiveFormat = 'zip'; $manifest.payloadRoot = 'game'
+    $manifest.sha256 = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant(); $manifest.archiveFormat = '7z'; $manifest.payloadRoot = $payloadRoot
     [IO.File]::WriteAllText((Join-Path $output 'game-update.json'), ($manifest | ConvertTo-Json -Depth 10), [Text.UTF8Encoding]::new($false))
     Write-Host "Packaged $archive"
-} finally { if (Test-Path -LiteralPath $temporary) { Remove-Item -LiteralPath $temporary -Force } }
+} finally { if (Test-Path -LiteralPath $list) { Remove-Item -LiteralPath $list -Force } }
