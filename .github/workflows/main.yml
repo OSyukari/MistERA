@@ -21,14 +21,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Publish self-contained updater
-        shell: pwsh
-        env:
-          BUILD_DIR: ${{ secrets.BUILD_DIR }}
-        run: |
-          if (-not (Test-Path -LiteralPath $env:BUILD_DIR -PathType Container)) { throw 'BUILD_DIR does not exist' }
-          ./ci/publish_updater.ps1 -BuildDir $env:BUILD_DIR
-
+      # BUILD_DIR/UpdateTools is published by the Unity build (UpdateBuildIdentity → UpdaterPublisher);
+      # package_updates.ps1 rejects a build without it.
       - name: Validate identity and package updater artifact
         shell: pwsh
         env:

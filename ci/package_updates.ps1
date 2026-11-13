@@ -17,7 +17,7 @@ if ($info.schema -ne 1 -or $info.buildId -notmatch '^[0-9]+-[a-f0-9]{32}$' -or $
 if ($info.buildId.Split('-')[0] -ne [string]$info.buildNumber) { throw 'buildId timestamp does not match buildNumber' }
 if ($info.executable -notmatch '^[^\\/:*?"<>|]+\.exe$' -or -not (Test-Path -LiteralPath (Join-Path $root $info.executable) -PathType Leaf)) { throw 'Embedded executable must name the actual Windows player at build root' }
 $helper = Join-Path $root 'UpdateTools/MistEra.Updater.exe'
-if (-not (Test-Path -LiteralPath $helper -PathType Leaf)) { throw 'Missing helper. Publish the self-contained win-x64 updater into BUILD_DIR/UpdateTools before packaging.' }
+if (-not (Test-Path -LiteralPath $helper -PathType Leaf)) { throw 'Missing helper. Rebuild in Unity, or run Tools/Updater/Publish Updater Into Build... on this build.' }
 $runtimeConfig = Join-Path $root 'UpdateTools/MistEra.Updater.runtimeconfig.json'
 if (-not (Test-Path -LiteralPath $runtimeConfig)) { throw 'Missing helper runtime configuration; publish self-contained win-x64, not a framework-dependent executable' }
 $runtime = Get-Content -LiteralPath $runtimeConfig -Raw | ConvertFrom-Json
