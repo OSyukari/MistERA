@@ -27,7 +27,7 @@ namespace MistEra.Updates
             using var gate = UpdateFiles.AcquireLock(installRoot);
             RecoverLocked(installRoot);
             UpdateValidation.Require(incoming != null && incoming.schema == 1 && previous != null && previous.schema == 1, "Invalid transaction inventories");
-            UpdateValidation.ValidateFiles(incoming.files); UpdateValidation.ValidateFiles(previous.files);
+            UpdateValidation.ValidateFiles(incoming.files, true); UpdateValidation.ValidateFiles(previous.files, true);
             var old = previous.files.ToDictionary(f => f.path, StringComparer.OrdinalIgnoreCase);
             var next = incoming.files.ToDictionary(f => f.path, StringComparer.OrdinalIgnoreCase);
             var journal = new TransactionJournal { id = Guid.NewGuid().ToString("N"), installRoot = Path.GetFullPath(installRoot), state = "prepared" };
@@ -38,34 +38,35 @@ namespace MistEra.Updates
                 UpdateValidation.Require((before == null || before.path == path) && (after == null || after.path == path), "Case-only ownership changes are unsupported");
                 string target = UpdateValidation.Resolve(installRoot, path);
                 UpdateValidation.Require(!Directory.Exists(target), "Target is a directory: " + path);
+                // Owned files are always overwritten (or removed), edited or not: the backup keeps what was there. Only a
+                // file no record owns blocks the install. Content was covered by the archive hash and 7z's checksums.
                 if (File.Exists(target))
                 {
                     UpdateValidation.Require(before != null, "Unmanaged file conflict: " + path);
-                    UpdateFiles.Verify(target, before.size, before.sha256);
+                    // edited by the player: journal what is actually there, so backup and rollback restore the edit
+                    if (!UpdateFiles.SameSize(target, before)) before = new UpdateFile { path = path, size = new FileInfo(target).Length };
                 }
-                else UpdateValidation.Require(before == null, "Owned file is missing: " + path);
-                if (after != null) UpdateFiles.Verify(UpdateValidation.Resolve(stagedRoot, after.path), after.size, after.sha256);
+                else
+                {
+                    // an owned file the player deleted: nothing to back up or remove
+                    before = null;
+                    if (after == null) continue;
+                }
+                if (after != null) UpdateValidation.Require(UpdateFiles.SameSize(UpdateValidation.Resolve(stagedRoot, after.path), after), "Staged file is missing or incomplete: " + path);
                 journal.entries.Add(new TransactionEntry { path = path, before = before, after = after });
             }
             UpdateValidation.Require(journal.entries.Count <= UpdateValidation.MaximumFiles, "Too many transaction operations");
             string transaction = TransactionRoot(installRoot, journal.id);
             Directory.CreateDirectory(transaction);
-            // No live file changes occur until every backup/payload and the complete journal are durable.
+            // No live file changes occur until every backup and the complete journal are durable. Incoming files are
+            // copied straight from the staged batch: after a crash the transaction is restored from backups, never replayed.
             for (int i = 0; i < journal.entries.Count; i++)
             {
                 TransactionEntry entry = journal.entries[i];
-                if (entry.before != null)
-                {
-                    string backup = Slot(transaction, "backup", i);
-                    UpdateFiles.CopyDurable(UpdateValidation.Resolve(installRoot, entry.path), backup);
-                    UpdateFiles.Verify(backup, entry.before.size, entry.before.sha256);
-                }
-                if (entry.after != null)
-                {
-                    string payload = Slot(transaction, "payload", i);
-                    UpdateFiles.CopyDurable(UpdateValidation.Resolve(stagedRoot, entry.after.path), payload);
-                    UpdateFiles.Verify(payload, entry.after.size, entry.after.sha256);
-                }
+                if (entry.before == null) continue;
+                string backup = Slot(transaction, "backup", i);
+                UpdateFiles.CopyDurable(UpdateValidation.Resolve(installRoot, entry.path), backup);
+                UpdateValidation.Require(UpdateFiles.SameSize(backup, entry.before), "Backup copy is incomplete: " + entry.path);
             }
             Save(transaction, journal);
             UpdateValidation.Require(new FileInfo(UpdateValidation.Resolve(transaction, "journal.json")).Length <= 31L * 1024 * 1024, "Transaction journal too large for recovery");
@@ -76,9 +77,10 @@ namespace MistEra.Updates
                 {
                     TransactionEntry entry = journal.entries[i];
                     string target = UpdateValidation.Resolve(installRoot, entry.path);
-                    CheckCurrent(target, entry.before);
+                    if (entry.before == null) UpdateValidation.Require(!File.Exists(target) && !Directory.Exists(target), "New file conflict: " + target);
+                    else UpdateValidation.Require(UpdateFiles.SameSize(target, entry.before), "Installed file changed during installation: " + entry.path);
                     if (entry.after == null) File.Delete(target);
-                    else Replace(Slot(transaction, "payload", i), target, entry.after);
+                    else Replace(UpdateValidation.Resolve(stagedRoot, entry.after.path), target, entry.after, false);
                     checkpoint?.Invoke("applied:" + i);
                 }
                 journal.state = "committed"; Save(transaction, journal);
@@ -115,9 +117,9 @@ namespace MistEra.Updates
             {
                 UpdateValidation.NoLinks(transaction);
                 string id = Path.GetFileName(transaction);
-                UpdateValidation.Require(Guid.TryParseExact(id, "N", out _) || Guid.TryParseExact(id, "D", out _), "Invalid transaction ID");
+                UpdateValidation.Require(UpdateValidation.TransactionId(id), "Invalid transaction ID");
                 string journalPath = UpdateValidation.Resolve(transaction, "journal.json");
-                // Helper build/restart directories use D IDs and have no mod journal.
+                // Helper build/restart directories use D IDs and mod staging uses short IDs; neither has a mod journal.
                 if (!File.Exists(journalPath)) continue;
                 TransactionRoot(root, id);
                 TransactionJournal journal = Load(root, transaction, id);
@@ -140,7 +142,7 @@ namespace MistEra.Updates
                 if (entry.before != null) { UpdateValidation.Require(entry.before.path == entry.path, "Journal path mismatch"); before.Add(entry.before); }
                 if (entry.after != null) { UpdateValidation.Require(entry.after.path == entry.path, "Journal path mismatch"); after.Add(entry.after); }
             }
-            UpdateValidation.ValidateFiles(before); UpdateValidation.ValidateFiles(after);
+            UpdateValidation.ValidateFiles(before, true); UpdateValidation.ValidateFiles(after, true);
             return journal;
         }
 
@@ -152,41 +154,33 @@ namespace MistEra.Updates
                 TransactionEntry entry = journal.entries[i];
                 string target = UpdateValidation.Resolve(root, entry.path);
                 UpdateValidation.Require(!Directory.Exists(target), "Rollback directory conflict");
+                // size, plus the hash when the record has one (older records, shared files)
                 if (File.Exists(target))
-                {
-                    string hash = UpdateFiles.Hash(target);
-                    UpdateValidation.Require(Matches(target, hash, entry.before) || Matches(target, hash, entry.after), "Rollback blocked by local edit: " + entry.path);
-                }
-                if (entry.before != null) UpdateFiles.Verify(Slot(transaction, "backup", i), entry.before.size, entry.before.sha256);
+                    UpdateValidation.Require(UpdateFiles.Fits(target, entry.before) || UpdateFiles.Fits(target, entry.after), "Rollback blocked by local edit: " + entry.path);
+                if (entry.before != null) UpdateValidation.Require(UpdateFiles.Fits(Slot(transaction, "backup", i), entry.before), "Rollback backup is missing or corrupt: " + entry.path);
             }
             journal.state = "rollingBack"; Save(transaction, journal);
             for (int i = journal.entries.Count - 1; i >= 0; i--)
             {
                 TransactionEntry entry = journal.entries[i];
                 string target = UpdateValidation.Resolve(root, entry.path);
-                if (File.Exists(target) && entry.before != null && Matches(target, UpdateFiles.Hash(target), entry.before)) continue;
-                if (entry.before == null) { if (File.Exists(target)) { CheckCurrent(target, entry.after); File.Delete(target); } }
-                else Replace(Slot(transaction, "backup", i), target, entry.before);
+                // a backup equal to the live file is already restored (sizes differ or hashes are compared when known)
+                if (entry.before != null && UpdateFiles.Fits(target, entry.before) && (entry.before.sha256 != null || entry.after == null || !UpdateFiles.Fits(target, entry.after))) continue;
+                if (entry.before == null) { if (File.Exists(target)) { UpdateValidation.Require(UpdateFiles.Fits(target, entry.after), "Rollback blocked by local edit: " + entry.path); File.Delete(target); } }
+                else Replace(Slot(transaction, "backup", i), target, entry.before, true);
             }
             journal.state = "rolledBack"; Save(transaction, journal);
         }
 
-        private static bool Matches(string path, string hash, UpdateFile file) => file != null && new FileInfo(path).Length == file.size && hash.Equals(file.sha256, StringComparison.OrdinalIgnoreCase);
-        private static void CheckCurrent(string path, UpdateFile expected)
-        {
-            UpdateValidation.NoLinks(path);
-            if (expected == null) UpdateValidation.Require(!File.Exists(path) && !Directory.Exists(path), "New file conflict: " + path);
-            else UpdateFiles.Verify(path, expected.size, expected.sha256);
-        }
-
-        private static void Replace(string source, string target, UpdateFile expected)
+        private static void Replace(string source, string target, UpdateFile expected, bool durable)
         {
             UpdateValidation.NoLinks(target);
             Directory.CreateDirectory(Path.GetDirectoryName(target));
             string temporary = target + "." + Guid.NewGuid().ToString("N") + ".update-tmp";
             try
             {
-                UpdateFiles.CopyDurable(source, temporary); UpdateFiles.Verify(temporary, expected.size, expected.sha256);
+                UpdateFiles.CopyDurable(source, temporary, durable);
+                UpdateValidation.Require(UpdateFiles.SameSize(temporary, expected), "Copy is incomplete: " + target);
                 UpdateValidation.NoLinks(target);
                 if (File.Exists(target)) File.Replace(temporary, target, null);
                 else File.Move(temporary, target);

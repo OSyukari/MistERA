@@ -127,7 +127,7 @@ namespace MistEra.Updates
             else if (value is ModCatalog catalog) UpdateValidation.ValidateCatalog(catalog);
             else if (value is ModPackage package) UpdateValidation.ValidatePackage(package);
             else if (value is FileInventory inventory) { UpdateValidation.Require(inventory.schema == 1, "Unsupported inventory"); UpdateValidation.ValidateFiles(inventory.files); }
-            else if (value is PackageReceipt receipt) { UpdateValidation.ValidatePackage(receipt.package); UpdateValidation.ValidateFiles(receipt.files); }
+            else if (value is PackageReceipt receipt) { UpdateValidation.ValidatePackage(receipt.package); UpdateValidation.ValidateFiles(receipt.files, true); }
         }
 
         public static void Write<T>(string path, T value)

@@ -22,6 +22,8 @@ namespace MistEra.Updates
         private const string Repository = "https://api.github.com/repos/OSyukari/MistERA/releases";
         private const string OfficialPrefix = "https://github.com/OSyukari/MistERA/releases/download/";
         private const long JsonLimit = 32L * 1024 * 1024;
+        /// <summary>Windows MAX_PATH (260 including the terminator): Unity's runtime cannot open longer paths.</summary>
+        private const int MaxPath = 260;
         private static readonly StringComparer Paths = StringComparer.OrdinalIgnoreCase;
         private static readonly JsonSerializerSettings ApiSettings = new JsonSerializerSettings
         {
@@ -224,7 +226,7 @@ namespace MistEra.Updates
             foreach (string directory in Directory.EnumerateDirectories(transactions).OrderBy(p => p, StringComparer.Ordinal))
             {
                 string id = Path.GetFileName(directory);
-                Require(Guid.TryParseExact(id, "N", out _) || Guid.TryParseExact(id, "D", out _), "Invalid transaction directory.");
+                Require(UpdateValidation.TransactionId(id), "Invalid transaction directory.");
                 string journalPath = UpdateValidation.Resolve(directory, "build-journal.json");
                 if (File.Exists(journalPath))
                 {
@@ -410,6 +412,9 @@ namespace MistEra.Updates
             while (stack.Count > 0) { try { (stack.Pop() as IDisposable)?.Dispose(); } catch { } }
             if (failure != null)
             {
+                // the panel shows only the message; Player.log keeps the operation, stage and stack trace for diagnosis
+                Debug.LogWarning("UpdateService: " + Operation + (Step != BuildStep.None ? " (" + Step + ")" : "") + " " +
+                    (failure is OperationCanceledException ? "cancelled" : "failed") + " after status [" + Status + "]\n" + failure);
                 if (failure is OperationCanceledException) { Status = "Cancelled. No uncommitted files were activated."; Error = ""; }
                 else { Error = failure.Message; Status = "Update operation failed."; }
                 Progress = 0;
@@ -655,7 +660,7 @@ namespace MistEra.Updates
             foreach (var record in stagedMods.ToArray())
             {
                 cancellation.Token.ThrowIfCancellationRequested();
-                Require(Guid.TryParseExact(record.transaction, "N", out _) || Guid.TryParseExact(record.transaction, "D", out _), "Invalid staged transaction identity.");
+                Require(UpdateValidation.TransactionId(record.transaction), "Invalid staged transaction identity.");
                 // Removing only this approval makes the payload inert on future boots. Never
                 // recursively delete a transaction: it may contain recovery journals/backups.
                 string approval = Local(".updates/transactions/" + record.transaction + "/staged-mods.json");
@@ -674,14 +679,20 @@ namespace MistEra.Updates
             // drop its approval (files and receipts untouched) instead of blocking the update.
             if (stagedMods.Count > 0) yield return DiscardStagedRoutine();
             var plan = PlanBatch(ids).Select(p => UpdateJson.Parse<ModPackage>(JsonConvert.SerializeObject(p, ApiSettings))).ToList();
-            var record = new StagedModRecord { approved = 1, transaction = Guid.NewGuid().ToString("N") };
+            // Short names throughout (12-digit batch id, numbered downloads): staged paths are this prefix + Mods/<package path>,
+            // and the game's runtime cannot open paths over Windows' 260-character limit.
+            string batchId;
+            do batchId = Guid.NewGuid().ToString("N").Substring(0, 12);
+            while (Directory.Exists(Local(".updates/transactions/" + batchId)) || File.Exists(Local(".updates/completed-batches/" + batchId + ".json")));
+            var record = new StagedModRecord { approved = 1, transaction = batchId };
             string transaction = Local(".updates/transactions/" + record.transaction);
             string payload = UpdateValidation.Resolve(transaction, "batch");
-            foreach (var package in plan)
+            for (int index = 0; index < plan.Count; index++)
             {
+                var package = plan[index];
                 cancellation.Token.ThrowIfCancellationRequested();
                 Require(assetUrls.TryGetValue(PackageKey(package), out string url), "Package URL is unavailable; check releases again.");
-                string archive = UpdateValidation.Resolve(transaction, "downloads/" + IdHash(package.id) + "." + package.archiveFormat);
+                string archive = UpdateValidation.Resolve(transaction, "downloads/" + index + "." + package.archiveFormat);
                 Status = "Downloading " + (package.name ?? package.id) + "..."; Publish();
                 yield return Download(url, archive, package.size, package.size);
                 Status = "Verifying and staging " + package.id + "..."; Progress = 0; Publish();
@@ -691,24 +702,48 @@ namespace MistEra.Updates
                     // 7z.exe from UpdateTools (shipped for game builds) extracts the package; every entry must be inside
                     // the package's roots or a parent folder of them
                     string tools = Local("UpdateTools");
-                    Func<string, bool> allowed = p => AllowedArchivePath(package, p);
-                    DiskSpace(checked(SevenZip.InspectPackage(tools, archive, allowed, token, ExpandedLimit(package.size)) * 3));
-                    string extracted = UpdateValidation.Resolve(transaction, "unpacked/" + IdHash(package.id));
-                    SevenZip.ExtractPackage(tools, archive, extracted, allowed, token, ExpandedLimit(package.size));
-                    var inventory = UpdateFiles.Inventory(extracted);
-                    Require(inventory.files.Count > 0, "Package is empty.");
-                    foreach (var file in inventory.files)
+                    var entries = SevenZip.ListPackage(tools, archive, p => AllowedArchivePath(package, p), token, ExpandedLimit(package.size));
+                    long expanded = 0;
+                    var files = new List<SevenZip.Entry>(entries.Count);
+                    foreach (var entry in entries)
+                    {
+                        if (entry.directory) continue;
+                        Require(Owned(package, entry.path), "Package contains an undeclared file: " + entry.path);
+                        Require(!GeneratedFile(entry.path), "Package contains a generated/cache file: " + entry.path);
+                        files.Add(entry);
+                        expanded = checked(expanded + entry.size);
+                    }
+                    Require(files.Count > 0, "Package is empty.");
+                    // the game's runtime cannot open paths over Windows' 260-character limit: fail with the file named
+                    // instead of "could not find a part of the path" halfway through
+                    string mods = UpdateValidation.Resolve(payload, "Mods");
+                    foreach (var file in files)
+                    {
+                        string staged = Path.Combine(mods, file.path.Replace('/', Path.DirectorySeparatorChar));
+                        string installed = Path.Combine(root, "Mods", file.path.Replace('/', Path.DirectorySeparatorChar));
+                        Require(Math.Max(staged.Length, installed.Length) < MaxPath,
+                            "Path too long for Windows (" + Math.Max(staged.Length, installed.Length) + " characters): Mods/" + file.path +
+                            ". Move the game to a shorter folder, e.g. C:\\Games\\MistEra.");
+                    }
+                    DiskSpace(checked(expanded * 2));
+                    // extracted straight into the batch (no separate unpack + copy); checked file by file before the batch is approved
+                    Directory.CreateDirectory(mods);
+                    SevenZip.ExtractPackageInto(tools, archive, mods, token);
+                    // No per-file hashing: the archive hash matched the catalog and 7z checked every file's checksum while
+                    // extracting. The record tracks path + size; shared About files carry the catalog's hash.
+                    var receipt = new PackageReceipt { package = package };
+                    foreach (var file in files)
                     {
                         token.ThrowIfCancellationRequested();
-                        Require(Owned(package, file.path), "Package contains an undeclared file: " + file.path);
-                        Require(!GeneratedFile(file.path), "Package contains a generated/cache file: " + file.path);
+                        string path = UpdateValidation.Resolve(mods, file.path);
+                        Require(File.Exists(path) && new FileInfo(path).Length == file.size, "Package file was not extracted: " + file.path);
                         var shared = package.sharedFiles.FirstOrDefault(f => Paths.Equals(f.path, file.path));
-                        if (shared != null) Require(Same(file, shared), "Shared file hash differs from catalog: " + file.path);
-                        CopyOrMatch(UpdateValidation.Resolve(extracted, file.path), UpdateValidation.Resolve(payload, "Mods/" + file.path), file);
+                        if (shared != null) Require(shared.size == file.size, "Shared file differs from catalog: " + file.path);
+                        receipt.files.Add(new UpdateFile { path = "Mods/" + file.path, size = file.size, sha256 = shared?.sha256 });
                     }
-                    foreach (var shared in package.sharedFiles) Require(inventory.files.Any(f => Same(f, shared)), "Package lacks declared shared file: " + shared.path);
-                    ValidatePackageAbout(extracted, package);
-                    record.packages.Add(new PackageReceipt { package = package, files = inventory.files.Select(f => new UpdateFile { path = "Mods/" + f.path, size = f.size, sha256 = f.sha256 }).ToList() });
+                    foreach (var shared in package.sharedFiles) Require(receipt.files.Any(f => f.path == "Mods/" + shared.path), "Package lacks declared shared file: " + shared.path);
+                    ValidatePackageAbout(mods, package);
+                    record.packages.Add(receipt);
                 });
             }
             yield return Worker(token =>
@@ -808,7 +843,7 @@ namespace MistEra.Updates
                 foreach (var file in receipt.files)
                 {
                     token.ThrowIfCancellationRequested();
-                    UpdateFiles.Verify(UpdateValidation.Resolve(payload, file.path), file.size, file.sha256);
+                    Require(UpdateFiles.SameSize(UpdateValidation.Resolve(payload, file.path), file), "Staged mod file is missing or incomplete: " + file.path);
                     AddConsistent(next, file);
                 }
                 string path = ReceiptPath(receipt.package.id);
@@ -825,7 +860,7 @@ namespace MistEra.Updates
                         Require(Same(file, incoming) && SharedOwner(receipt, file) && record.packages.Where(r => r.files.Any(f => Paths.Equals(f.path, file.path))).All(r => SharedOwner(r, file)),
                             "Another package owns incompatible content: " + file.path);
                         // Unaffected owners stay outside this transaction, including identical shared files.
-                        UpdateFiles.Verify(Local(file.path), file.size, file.sha256);
+                        Require(UpdateFiles.Fits(Local(file.path), file), "Shared file was changed on disk: " + file.path);
                         sharedTargets.Add(file.path);
                     }
                     else old.Remove(file.path);
@@ -835,8 +870,9 @@ namespace MistEra.Updates
             string completedSource = UpdateValidation.Resolve(payload, completedPath);
             UpdateJson.Write(completedSource, new UpdateAcknowledgement { nonce = record.transaction });
             AddConsistent(next, new UpdateFile { path = completedPath, size = new FileInfo(completedSource).Length, sha256 = UpdateFiles.Hash(completedSource) });
-            UpdateValidation.ValidateFiles(next.Values.ToList()); UpdateValidation.ValidateFiles(old.Values.ToList());
-            DiskSpace(checked(next.Values.Sum(f => f.size) * 2 + old.Values.Sum(f => f.size)));
+            UpdateValidation.ValidateFiles(next.Values.ToList(), true); UpdateValidation.ValidateFiles(old.Values.ToList(), true);
+            // installed straight from the staged batch: new files once, plus backups of the replaced ones
+            DiskSpace(checked(next.Values.Sum(f => f.size) + old.Values.Sum(f => f.size)));
             token.ThrowIfCancellationRequested();
             ValidateRootOwnership(record.packages.Select(r => r.package).ToList(), installed);
             Require(RestartRequired || !BatchRequiresTitle(record.packages.Select(r => r.package)), "Cannot commit boot-active content without blocking gameplay.");
@@ -1134,7 +1170,7 @@ namespace MistEra.Updates
         private static void ValidateReceipt(PackageReceipt receipt)
         {
             Require(receipt != null, "Missing package receipt.");
-            ValidatePackagePaths(receipt.package); UpdateValidation.ValidateFiles(receipt.files);
+            ValidatePackagePaths(receipt.package); UpdateValidation.ValidateFiles(receipt.files, true);
             Require(receipt.files.Count > 0 && receipt.files.All(f => f.path.StartsWith("Mods/", StringComparison.Ordinal) && Owned(receipt.package, f.path.Substring(5))), "Receipt contains unowned paths.");
             foreach (var shared in receipt.package.sharedFiles) Require(receipt.files.Any(f => SameInstalledShared(f, shared)), "Receipt shared-file mismatch.");
         }
@@ -1277,7 +1313,11 @@ namespace MistEra.Updates
         private static void Require(bool condition, string message) { if (!condition) throw new InvalidDataException(message); }
         /// <summary>The request never reached the server (no internet, DNS failure, timeout).</summary>
         private sealed class ConnectionFailure : IOException { public ConnectionFailure(string message) : base(message) { } }
-        private void Fail(string error) { Error = error; Status = "Update operation unavailable."; Progress = 0; Publish(); }
+        private void Fail(string error)
+        {
+            Debug.LogWarning("UpdateService: " + error);
+            Error = error; Status = "Update operation unavailable."; Progress = 0; Publish();
+        }
         private void Publish()
         {
             if (Changed == null) return;

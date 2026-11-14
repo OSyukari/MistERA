@@ -59,6 +59,30 @@ namespace MistEra.Updates
             ExtractAll(toolsFolder, archive, destination, "", cancellation);
         }
 
+        /// <summary>Lists and validates an unencrypted package archive (as InspectPackage) and returns its entries,
+        /// paths with '/' separators.</summary>
+        public static List<Entry> ListPackage(string toolsFolder, string archive, Func<string, bool> allowed, CancellationToken cancellation = default,
+            long maximumExpandedSize = UpdateValidation.MaximumExpandedSize)
+        {
+            var entries = List(toolsFolder, archive, "", cancellation);
+            ValidateEntries(entries, allowed, maximumExpandedSize, UpdateValidation.MaximumFiles, UpdateValidation.MaximumFileSize);
+            for (int i = 0; i < entries.Count; i++)
+            {
+                var entry = entries[i];
+                entry.path = entry.path.Replace('\\', '/');
+                entries[i] = entry;
+            }
+            return entries;
+        }
+
+        /// <summary>Extracts a package archive already checked with ListPackage into a folder that may hold other
+        /// packages of the same batch (existing files are overwritten; roots never overlap, shared files are identical).</summary>
+        public static void ExtractPackageInto(string toolsFolder, string archive, string destination, CancellationToken cancellation = default)
+        {
+            UpdateValidation.NoLinks(destination);
+            ExtractAll(toolsFolder, archive, destination, "", cancellation);
+        }
+
         private static List<Entry> List(string toolsFolder, string archive, string passwordArgument, CancellationToken cancellation)
         {
             UpdateValidation.NoLinks(archive);

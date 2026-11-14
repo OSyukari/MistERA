@@ -57,6 +57,13 @@ namespace MistEra.Updates
             }
         }
 
+        /// <summary>Folder name under .updates/transactions: a GUID ("N"/"D" form), or the 12-hex-digit id of a mod batch
+        /// (short to keep staged mod paths under Windows' 260-character limit).</summary>
+        public static bool TransactionId(string id)
+        {
+            return id != null && (Guid.TryParseExact(id, "N", out _) || Guid.TryParseExact(id, "D", out _) || Regex.IsMatch(id, "\\A[0-9a-f]{12}\\z"));
+        }
+
         public static string Resolve(string root, string relative)
         {
             RelativePath(relative);
@@ -143,7 +150,9 @@ namespace MistEra.Updates
             ValidateFiles(shared.Values.ToList());
         }
 
-        public static void ValidateFiles(List<UpdateFile> files)
+        /// <param name="hashOptional">Mod install records and transactions: files are tracked by path and size, a hash
+        /// only where one is known (shared About files from the catalog, records written by older builds).</param>
+        public static void ValidateFiles(List<UpdateFile> files, bool hashOptional = false)
         {
             Require(files != null && files.Count <= MaximumFiles, "Invalid file inventory");
             var paths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -151,7 +160,8 @@ namespace MistEra.Updates
             long total = 0;
             foreach (UpdateFile file in files)
             {
-                Require(file != null, "Null inventory file"); RelativePath(file.path); Digest(file.sha256);
+                Require(file != null, "Null inventory file"); RelativePath(file.path);
+                if (!hashOptional || file.sha256 != null) Digest(file.sha256);
                 Require(file.size >= 0 && file.size <= MaximumFileSize && paths.Add(file.path), "Invalid/duplicate inventory file");
                 string prefix = "";
                 foreach (string part in file.path.Split('/'))

@@ -24,6 +24,21 @@ namespace MistEra.Updates
             UpdateValidation.Require(size >= 0 && new FileInfo(path).Length == size && Hash(path).Equals(hash, StringComparison.OrdinalIgnoreCase), "File verification failed: " + path);
         }
 
+        /// <summary>Exists with the expected size; the hash is compared only when one is known (mod files are tracked by
+        /// path and size: the archive hash and 7z's per-file checksums already covered their content).</summary>
+        public static bool Fits(string path, UpdateFile expected)
+        {
+            UpdateValidation.NoLinks(path);
+            if (expected == null || !File.Exists(path) || new FileInfo(path).Length != expected.size) return false;
+            return expected.sha256 == null || Hash(path).Equals(expected.sha256, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public static bool SameSize(string path, UpdateFile expected)
+        {
+            UpdateValidation.NoLinks(path);
+            return expected != null && File.Exists(path) && new FileInfo(path).Length == expected.size;
+        }
+
         public static IDisposable AcquireLock(string installRoot)
         {
             string path = UpdateValidation.Resolve(installRoot, ".updates/install.lock");
@@ -125,13 +140,14 @@ namespace MistEra.Updates
             }
         }
 
-        internal static void CopyDurable(string source, string target)
+        /// <param name="durable">Flush to disk before returning: backups only; installed copies are recovered from backups.</param>
+        internal static void CopyDurable(string source, string target, bool durable = true)
         {
             UpdateValidation.NoLinks(source); UpdateValidation.NoLinks(target);
             Directory.CreateDirectory(Path.GetDirectoryName(target));
             using var input = new FileStream(source, FileMode.Open, FileAccess.Read, FileShare.Read);
             using var output = new FileStream(target, FileMode.CreateNew, FileAccess.Write, FileShare.None);
-            input.CopyTo(output); output.Flush(true);
+            input.CopyTo(output); output.Flush(durable);
         }
     }
 }

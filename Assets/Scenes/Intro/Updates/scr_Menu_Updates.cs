@@ -20,13 +20,10 @@ public class scr_Menu_Updates : scr_Menu
     public const int ID_Check = 5;          // check for updates
     public const int ID_Exit = 9999;        // exit / cancel and exit
 
-    /// <summary>Optional container for one status line (current step, progress, last error).</summary>
-    public RectTransform box_status;
-
     static scr_Menu_Updates openMenu;
 
     UpdateService service;
-    scr_HoverableText text_status;
+    public scr_HoverableText text_status;
     bool dirty = true;
     float nextRefresh;
 
@@ -108,12 +105,6 @@ public class scr_Menu_Updates : scr_Menu
                 buttonsByID.Add(button.optionID, button);
                 validatorsByID.Add(button.optionID, button.Validator);
             }
-        }
-
-        if (box_status != null)
-        {
-            text_status = Instantiate(prefab_text_link).GetComponent<scr_HoverableText>();
-            text_status.transform.SetParent(box_status, false);
         }
 
         Refresh();
@@ -301,8 +292,7 @@ public class scr_Menu_Updates : scr_Menu
             for (int r = 0; r < receipts.Count; r++)
                 if (string.Equals(receipts[r].package.id, package.id, StringComparison.OrdinalIgnoreCase)) { receipt = receipts[r]; break; }
             if (text.Length > 0) text.Append('\n');
-            text.Append(Text(receipt == null ? "mod_new" : "mod_update")).Append(' ')
-                .Append(Plain(string.IsNullOrEmpty(package.name) ? package.id : package.name));
+            text.Append(Text(receipt == null ? "mod_new" : "mod_update")).Append(' ').Append(Plain(PackageLabel(package)));
             if (receipt != null && receipt.package.version != package.version)
                 text.Append("  ").Append(Plain(receipt.package.version)).Append(" → ").Append(Plain(package.version));
             else text.Append("  ").Append(Plain(package.version));
@@ -322,6 +312,14 @@ public class scr_Menu_Updates : scr_Menu
     }
 
     // ------------------------------------------------------------------ text helpers
+
+    /// <summary>Package name for lists; split asset packs without their own name share the group's, so show the id.</summary>
+    static string PackageLabel(ModPackage package)
+    {
+        if (string.IsNullOrEmpty(package.name)) return package.id;
+        if (package.kind == "assetpack" && package.name == package.group && package.id != package.group) return package.id;
+        return package.name;
+    }
 
     string Percent()
     {
