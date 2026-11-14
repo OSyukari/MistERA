@@ -9,11 +9,11 @@ static class RegressionTests
             ("1boy", 0.95f), ("penis", 0.98f), ("fellatio", 0.98f), ("all_fours", 0.9f), ("on_back", 0.8f));
         Expect(engine, checks, "weak posture evidence cannot claim the tier ahead of oral", "human", "oral",
             ("1boy", 0.95f), ("sex", 0.9f), ("all_fours", 0.42f), ("fellatio", 0.98f));
-        Expect(engine, checks, "reverse hint without riding posture cannot steal rear position", "human", "doggystyle",
+        Expect(engine, checks, "reverse hint without riding posture cannot steal rear position", "human", "doggystyle_vaginal",
             ("1boy", 0.99f), ("sex", 0.99f), ("sex_from_behind", 0.92f), ("reverse_cowgirl_position", 0.71f), ("straddling", 0.28f));
         Expect(engine, checks, "ongoing position uses cum variant instead of aftermath", "human", "doggystyle_cum",
             ("1boy", 0.95f), ("sex", 0.99f), ("doggystyle", 0.95f), ("cum", 0.9f));
-        Expect(engine, checks, "strong aftermath precedes posture evidence and prioritizes combined variant", "pov", "after_sex_rape_cum",
+        Expect(engine, checks, "dedicated after-rape aftermath precedes posture evidence and uses simple cum variant", "pov", "after_rape_cum",
             ("after_sex", 0.96f), ("cum_in_pussy", 0.92f), ("on_side", 0.86f), ("sleeping", 0.66f), ("after_rape", 0.95f));
         Expect(engine, checks, "animal actor group uses stronger evidence", "dog", "generic",
             ("horse_penis", 0.63f), ("dog_penis", 0.97f));
@@ -23,14 +23,34 @@ static class RegressionTests
             ("yuri", 0.99f), ("1girl", 0.99f));
         Expect(engine, checks, "tentacle dual penetration outranks single act", "tentacle", "double_penetration",
             ("tentacles", 0.99f), ("vaginal", 0.9f), ("anal", 0.9f));
+        foreach (var tag in new[] { "orgasm", "female_orgasm", "squirting" })
+        {
+            Expect(engine, checks, "standalone climax establishes pov context: " + tag, "pov", "climax", (tag, 0.99f));
+            Expect(engine, checks, "climax cannot steal ongoing masturbation: " + tag, "pov", "masturbation",
+                (tag, 0.99f), ("masturbation", 0.99f));
+            Expect(engine, checks, "climax cannot steal ongoing position: " + tag, "pov", "doggystyle_vaginal",
+                (tag, 0.99f), ("doggystyle", 0.99f));
+        }
+        Expect(engine, checks, "standalone climax has no cum or rape suffix", "pov", "climax",
+            ("orgasm", 0.99f), ("cum", 0.99f), ("rape", 0.99f));
+        Expect(engine, checks, "after-sex evidence excludes standalone climax", "pov", "after_sex",
+            ("orgasm", 0.99f), ("after_sex", 0.99f));
+        Expect(engine, checks, "after-rape evidence excludes standalone climax", "pov", "after_rape",
+            ("orgasm", 0.99f), ("after_rape", 0.99f));
+        checks.Test("standalone climax cannot name a partnered human category", () =>
+        {
+            var result = engine.Classify(Record(("1boy", 0.99f), ("orgasm", 0.99f)));
+            checks.Equal("human", result.CategoryId, "actor category retained");
+            checks.Equal("generic", result.name, "pov-only climax excluded");
+        });
         foreach (var position in new[] {
             (tag: "leg_lock", parent: "suspended_congress", name: "leg_lock"),
             (tag: "reverse_cowgirl_position", parent: "cowgirl_position", name: "reverse_cowgirl"),
             (tag: "reverse_upright_straddle", parent: "sitting_on_person", name: "reverse_cowgirl") })
         {
-            Expect(engine, checks, position.tag + " at specificity cutoff beats stronger parent", "human", position.name == "leg_lock" ? "leg_lock_vaginal" : position.name,
+            Expect(engine, checks, position.tag + " at specificity cutoff beats stronger parent", "human", position.name + "_vaginal",
                 ("1boy", 0.95f), ("sex", 0.99f), (position.tag, 0.6f), (position.parent, 0.99f));
-            Expect(engine, checks, position.tag + " below specificity cutoff defers to parent", "human", position.parent == "cowgirl_position" ? "cowgirl" : position.parent,
+            Expect(engine, checks, position.tag + " below specificity cutoff defers to parent", "human", (position.parent == "cowgirl_position" ? "cowgirl" : position.parent) + "_vaginal",
                 ("1boy", 0.95f), ("sex", 0.99f), (position.tag, 0.59f), (position.parent, 0.99f));
         }
         foreach (var tag in new[] { "irrumatio", "deepthroat" })
@@ -58,9 +78,9 @@ static class RegressionTests
             ("1boy", 0.99f), ("penis", 0.99f), ("spooning", 0.99f));
         foreach (var penetration in new[] { "sex", "vaginal", "anal" })
             Expect(engine, checks, "penetration excludes spooning but preserves sideways: " + penetration, "human",
-                penetration == "sex" ? "sideways" : "sideways_" + penetration,
+                "sideways_" + (penetration == "anal" ? "anal" : "vaginal"),
                 ("1boy", 0.99f), ("spooning", 0.99f), ("on_side", 0.99f), (penetration, 0.99f));
-        Expect(engine, checks, "pig species bypasses unknown bestiality hold", "pig", "doggystyle",
+        Expect(engine, checks, "pig species bypasses unknown bestiality hold", "pig", "doggystyle_vaginal",
             ("pig", 0.95f), ("bestiality", 0.99f), ("sex", 0.99f), ("doggystyle", 0.95f));
         Expect(engine, checks, "pig pov refinement wins same-evidence tie", "pig_pov", "generic",
             ("pig", 0.95f), ("pov", 0.9f));
@@ -78,7 +98,7 @@ static class RegressionTests
                 ("1girl", 0.99f), ("solo", 0.99f), (activity, 0.95f));
         foreach (var activity in new[] {
             (tag: "deepthroat", name: "irrumatio"),
-            (tag: "cum_in_mouth", name: "oral"),
+            (tag: "cum_in_mouth", name: "oral_cum"),
             (tag: "penis_on_face", name: "oral"),
             (tag: "anal_fingering", name: "anal_masturbation"),
             (tag: "clitoral_stimulation", name: "masturbation"),

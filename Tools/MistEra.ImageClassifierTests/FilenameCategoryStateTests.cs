@@ -27,6 +27,57 @@ static class FilenameCategoryStateTests
                 "State must not compete as an action or emotion name.");
         });
 
+        checks.Test("cough is filename-only portrait and climax is unsuffixed pov-only with exclusions", () =>
+        {
+            var cough = rules.nameSets[portrait.nameSet].Single(n => n.name == "cough");
+            checks.Check(cough.filenameOnly && cough.clauses.Count == 0, "Cough cannot be inferred from tags.");
+            var climax = rules.nameSets[ImageRules.DefaultNameSet].Single(n => n.name == "climax");
+            checks.Equal(1.45f, climax.tier, "climax tier");
+            checks.Check(climax.onlyInCategories.SetEquals(new[] { "pov" }), "Climax is pov-only.");
+            checks.Check(climax.hasVariants.Count == 0 && climax.defaultVariant == null, "Climax has no suffixes.");
+            checks.Check(climax.clauses.Single().tags.Select(t => t.tag).ToHashSet(StringComparer.Ordinal)
+                .SetEquals(new[] { "orgasm", "female_orgasm", "squirting" }), "Climax tag alternatives remain OR.");
+            checks.Check(climax.none.Select(c => c.source).SequenceEqual(new[] { "$ongoing_action", "after_sex|after_rape" }),
+                "Climax excludes ongoing actions and aftermath.");
+        });
+
+        foreach (var source in new[] { "cough", "coughing" })
+            checks.Test("explicit cough filename selects portrait without tag inference: " + source, () =>
+            {
+                var record = RegressionTests.Record(("cough", 0.99f), ("coughing", 0.99f), ("lactation", 0.99f));
+                record.path = "source." + source + ".webp";
+                Named(checks, engine.Classify(record), "pov", "breast_masturbation");
+                var result = engine.Classify(record, true);
+                Named(checks, result, "portrait", "cough");
+                checks.Equal(source, result.filenameHint, "cough filename provenance");
+                checks.Equal(source, result.categoryFilenameHint, "cough category provenance");
+                checks.Equal<string>(null, result.variant, "no cough suffix");
+            });
+
+        foreach (var source in new[] { "dogeza", "showing nude", "shaking ass" })
+            checks.Test("explicit pose alias selects activity: " + source, () =>
+            {
+                var record = RegressionTests.Record(("masturbation", 0.99f));
+                record.path = "source." + source + ".webp";
+                Named(checks, engine.Classify(record), "pov", "masturbation");
+                var result = engine.Classify(record, true);
+                Named(checks, result, "activity", "pose");
+                checks.Equal(source, result.categoryFilenameHint, "pose category provenance");
+            });
+
+        foreach (var source in new[] { "climax", "orgasm", "orgasms", "orgams", "shiofuki", "squirting" })
+            checks.Test("explicit climax alias selects unsuffixed pov action: " + source, () =>
+            {
+                var record = RegressionTests.Record(("masturbation", 0.99f), ("cum", 0.99f), ("rape", 0.99f));
+                record.path = "source." + source + ".cumshot.webp";
+                checks.Equal("masturbation_cum", engine.Classify(record).name, "ongoing tag action without filename hints");
+                var result = engine.Classify(record, true);
+                Named(checks, result, "pov", "climax");
+                checks.Equal("climax", result.name, "no climax suffix even with tag and filename variant evidence");
+                checks.Equal<string>(null, result.variant, "no climax variant");
+                checks.Equal(source, result.filenameHint, "climax filename provenance");
+            });
+
         foreach (var source in new[] { "Serena.Emotion_smiling.webp", "Serena.smiling.webp", "smiling.webp" })
             checks.Test("Serena lactation tags cannot override smiling filename: " + source, () =>
             {
@@ -138,66 +189,82 @@ static class FilenameCategoryStateTests
                 checks.Equal("Spanking", result.filenameHint, "explicit action provenance");
             });
 
-        var controlled = rules.states.Single(s => s.id == "mindcontrolled");
-        foreach (var alias in new[] { controlled.id }.Concat(controlled.filenameHints))
-            checks.Test("independent state filename alias preserves normal action: " + alias, () =>
+        checks.Test("folder state policy has canonical priority and no action variants", () =>
+        {
+            checks.Check(rules.states.Select(s => s.id).SequenceEqual(new[] { "sleeping", "pregnant", "mindcontrolled" }),
+                "State priority must be sleeping, pregnant, mindcontrolled.");
+            checks.Check(rules.states.All(s => !rules.variants.ContainsKey(s.id)), "Folder states cannot be action suffixes.");
+        });
+
+        foreach (var stateRule in rules.states)
+        foreach (var alias in new[] { stateRule.id }.Concat(stateRule.filenameHints).Distinct(StringComparer.OrdinalIgnoreCase))
+            checks.Test("independent state filename alias preserves normal action: " + stateRule.id + "/" + alias, () =>
             {
                 var record = RegressionTests.Record(("1boy", 0.99f), ("handjob", 0.99f));
                 record.path = "source." + alias + ".handjob.webp";
                 checks.Equal<string>(null, engine.Classify(record).state, "filename states opt-in");
                 var result = engine.Classify(record, true);
                 Named(checks, result, "human", "handjob");
-                checks.Equal("mindcontrolled", result.state, "canonical state");
-                checks.Equal("filename ID " + alias, result.stateSource, "state provenance");
-                checks.Equal("handjob_mindcontrolled", result.name, "state suffix");
+                checks.Equal(stateRule.id, result.state, "canonical folder state metadata");
+                checks.Equal("filename ID " + (alias == "sleeping upright" ? "sleeping" : alias), result.stateSource,
+                    "first matching bounded alias supplies state provenance");
+                checks.Equal("handjob", result.name, "state excluded from action stem");
                 checks.Equal("handjob", result.filenameHint, "state alias cannot collide with action hint");
                 checks.Equal<string>(null, result.categoryFilenameHint, "state cannot choose category");
             });
 
-        foreach (var tag in new[] { "mind_control", "hypnosis", "time_stop" })
+        foreach (var fixture in new[] {
+            (tag: "sleeping", state: "sleeping"), (tag: "sleep_molestation", state: "sleeping"),
+            (tag: "unconscious", state: "sleeping"), (tag: "sleeping_upright", state: "sleeping"),
+            (tag: "pregnant", state: "pregnant"), (tag: "mind_control", state: "mindcontrolled"),
+            (tag: "hypnosis", state: "mindcontrolled"), (tag: "time_stop", state: "mindcontrolled") })
         foreach (var hints in new[] { false, true })
         foreach (var score in new[] { rules.settings.tagThreshold - 0.001f, rules.settings.tagThreshold })
-            checks.Test($"state tag threshold: {tag}/{score}, hints={hints}", () =>
+            checks.Test($"state tag threshold: {fixture.tag}/{score}, hints={hints}", () =>
             {
-                var record = RegressionTests.Record(("1boy", 0.99f), ("handjob", 0.99f), (tag, score));
+                var record = RegressionTests.Record(("1boy", 0.99f), ("handjob", 0.99f), (fixture.tag, score));
                 var result = engine.Classify(record, hints);
-                var state = score >= rules.settings.tagThreshold ? "mindcontrolled" : null;
+                var state = score >= rules.settings.tagThreshold ? fixture.state : null;
                 Named(checks, result, "human", "handjob");
                 checks.Equal(state, result.state, "tag state threshold");
                 checks.Equal(state == null ? null : "rules/tags", result.stateSource, "tag provenance");
-                checks.Equal(state == null ? "handjob" : "handjob_mindcontrolled", result.name, "state stem");
+                checks.Equal("handjob", result.name, "state excluded from action stem");
             });
 
         foreach (var fixture in new[] {
-            (tag: (string)null, variant: (string)null), (tag: "sleeping", variant: "sleeping"),
-            (tag: "cum", variant: "cum"), (tag: "anal", variant: "anal"),
-            (tag: "pregnant", variant: "pregnant"), (tag: "rape", variant: "rape_cum") })
+            (tag: (string)null, variant: "vaginal", state: "mindcontrolled"),
+            (tag: "sleeping", variant: "vaginal", state: "sleeping"),
+            (tag: "cum", variant: "cum", state: "mindcontrolled"),
+            (tag: "anal", variant: "anal", state: "mindcontrolled"),
+            (tag: "pregnant", variant: "vaginal", state: "pregnant"),
+            (tag: "rape", variant: "rape", state: "mindcontrolled") })
         foreach (var hints in new[] { false, true })
-            checks.Test($"state appends after normal variant: {fixture.variant ?? "base"}, hints={hints}", () =>
+            checks.Test($"folder state is independent of normal variant: {fixture.tag ?? "base"}, hints={hints}", () =>
             {
                 var record = RegressionTests.Record(("1boy", 0.99f), ("missionary", 0.99f), ("mind_control", 0.99f));
                 record.path = "source.Missionary.Soulless.webp";
                 if (fixture.tag != null) record.general[fixture.tag] = 0.99f;
-                if (fixture.tag == "rape") record.general["cum"] = 0.99f;
                 var before = JsonConvert.SerializeObject(record);
                 var result = engine.Classify(record, hints);
                 Named(checks, result, "human", "missionary");
                 checks.Equal(fixture.variant, result.variant, "existing variant preserved");
-                checks.Equal("mindcontrolled", result.state, "state preserved alongside variant");
-                checks.Equal(hints ? "filename ID soulless" : "rules/tags", result.stateSource, "filename state precedes tag provenance");
-                checks.Equal("missionary" + (fixture.variant == null ? "" : "_" + fixture.variant) + "_mindcontrolled", result.name, "suffix order");
+                checks.Equal(fixture.state, result.state, "state priority alongside variant");
+                checks.Equal(hints && fixture.state == "mindcontrolled" ? "filename ID soulless" : "rules/tags", result.stateSource,
+                    "state priority precedes provenance preference");
+                checks.Equal("missionary_" + fixture.variant, result.name, "only action variant in stem");
                 checks.Equal(before, JsonConvert.SerializeObject(record), "classification immutable");
             });
 
         foreach (var source in new[] { "smiling", "using_phone" })
-            checks.Test("state composes with explicit non-action category: " + source, () =>
+            checks.Test("state metadata preserves explicit non-action category: " + source, () =>
             {
                 var record = RegressionTests.Record(("lactation", 0.99f));
                 record.path = source + ".Hypnotized.webp";
                 var result = engine.Classify(record, true);
                 var name = source == "smiling" ? "smile" : "using_phone";
                 Named(checks, result, source == "smiling" ? "portrait" : "activity", name);
-                checks.Equal(name + "_mindcontrolled", result.name, "non-action state stem");
+                checks.Equal("mindcontrolled", result.state, "canonical folder state");
+                checks.Equal(name, result.name, "state excluded from non-action stem");
                 checks.Equal("filename ID hypnotized", result.stateSource, "state source");
                 checks.Equal(source, result.categoryFilenameHint, "category source independent of state");
             });
@@ -215,7 +282,59 @@ static class FilenameCategoryStateTests
                 checks.Equal(original.StartsWith("source.", StringComparison.Ordinal) ? "mindcontrolled" : null, result.state, "original-only state evidence");
                 checks.Equal(before, JsonConvert.SerializeObject(restored), "source unchanged after classification");
                 restored.path = "portrait/smiling_Timestopped_99.webp";
-                checks.Equal(result.name, engine.Classify(restored, true).name, "later rename cannot affect action or state");
+                var renamed = engine.Classify(restored, true);
+                checks.Equal(result.name, renamed.name, "later rename cannot affect action");
+                checks.Equal(result.state, renamed.state, "later rename cannot affect state metadata");
+                checks.Equal(result.stateSource, renamed.stateSource, "later rename cannot affect state provenance");
+            });
+
+        foreach (var fixture in new[] {
+            (tags: new[] { "sleeping", "pregnant", "mind_control" }, state: "sleeping"),
+            (tags: new[] { "sleeping", "pregnant" }, state: "sleeping"),
+            (tags: new[] { "sleeping", "mind_control" }, state: "sleeping"),
+            (tags: new[] { "pregnant", "mind_control" }, state: "pregnant") })
+        foreach (var hints in new[] { false, true })
+            checks.Test($"folder state tag priority {string.Join(",", fixture.tags)}, hints={hints}", () =>
+            {
+                var record = RegressionTests.Record(("1boy", 0.99f), ("handjob", 0.99f), ("cum", 0.99f));
+                foreach (var tag in fixture.tags) record.general[tag] = 0.99f;
+                var result = engine.Classify(record, hints);
+                Named(checks, result, "human", "handjob");
+                checks.Equal(fixture.state, result.state, "highest-priority canonical state");
+                checks.Equal("rules/tags", result.stateSource, "tag state provenance");
+                checks.Equal("cum", result.variant, "state does not replace action variant");
+                checks.Equal("handjob_cum", result.name, "state is not a suffix");
+            });
+
+        foreach (var fixture in new[] {
+            (source: "sleeping.pregnant.Soulless", tag: "mind_control", state: "sleeping", provenance: "filename ID sleeping"),
+            (source: "pregnant.Soulless", tag: "mind_control", state: "pregnant", provenance: "filename ID pregnant"),
+            (source: "sleeping", tag: "pregnant", state: "sleeping", provenance: "filename ID sleeping"),
+            (source: "pregnant", tag: "sleeping", state: "sleeping", provenance: "rules/tags"),
+            (source: "Soulless", tag: "pregnant", state: "pregnant", provenance: "rules/tags") })
+            checks.Test("folder state priority across filename and tag evidence: " + fixture.source + "/" + fixture.tag, () =>
+            {
+                var record = RegressionTests.Record(("1boy", 0.99f), ("handjob", 0.99f), (fixture.tag, 0.99f));
+                record.path = "source." + fixture.source + ".handjob.webp";
+                var result = engine.Classify(record, true);
+                checks.Equal(fixture.state, result.state, "priority independent of evidence source");
+                checks.Equal(fixture.provenance, result.stateSource, "winning state provenance");
+                checks.Equal("handjob", result.name, "state excluded from stem");
+            });
+
+        foreach (var state in new[] { "sleeping", "pregnant", "mindcontrolled" })
+        foreach (var variant in new[] { (string)null, "cum", "rape", "anal", "vaginal" })
+            checks.Test($"ComposeName excludes folder metadata: {state}/{variant ?? "base"}", () =>
+            {
+                var result = new ImageClassification { nameRule = new NameRule { name = "action" }, variant = variant,
+                    state = state, stateSource = "folder" };
+                result.ComposeName();
+                checks.Equal("action" + (variant == null ? "" : "_" + variant), result.name, "action-only composition");
+                checks.Equal(state, result.state, "canonical folder state retained");
+                checks.Equal("folder", result.stateSource, "folder provenance retained");
+                result.nameRule = null;
+                result.ComposeName();
+                checks.Equal<string>(null, result.name, "state alone cannot invent a name");
             });
 
         foreach (var source in new[] {

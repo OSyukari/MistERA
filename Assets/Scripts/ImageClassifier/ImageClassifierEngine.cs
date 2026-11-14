@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 public enum ClassificationStatus { Confident, LowConfidence, Unmatched }
 
-/// <summary>Result for one image. "name" is the file name stem (entry name + _variant), e.g. doggystyle_sleeping.</summary>
+/// <summary>Result for one image. "name" is the action stem; state selects a separate folder set.</summary>
 public class ImageClassification
 {
     public ImageTagRecord record;
@@ -19,14 +19,15 @@ public class ImageClassification
     /// <summary>Matched filename text, when editor filename-first naming selected this rule.</summary>
     public string filenameHint;
     public string categoryFilenameHint;
+    /// <summary>Filename alias that picked the variant directly (filename_variant_hints), null when tags picked it.</summary>
+    public string variantFilenameHint;
     public string state;
     public string stateSource;
 
     public void ComposeName()
     {
         name = nameRule == null ? null : nameRule.name
-            + (variant == null ? "" : "_" + variant)
-            + (state == null ? "" : "_" + state);
+            + (variant == null ? "" : "_" + variant);
     }
     public NameRule runnerUp;
     public float runnerUpScore;
@@ -215,6 +216,7 @@ public class ImageClassifierEngine
         {
             // category only (e.g. portrait): no name, the original file name is kept; confidence comes from the category alone
             result.status = result.reasons.Count == 0 ? ClassificationStatus.Confident : ClassificationStatus.LowConfidence;
+            ApplyState(r, result, useFilenameHints);
             return result;
         }
         if (!rules.nameSets.TryGetValue(result.category.nameSet, out var nameSet))
@@ -454,11 +456,18 @@ public class ImageClassifierEngine
         bool Matches(RuleClause clause, float threshold) => filenameClauses.Contains(clause.source)
             || (clause.requires.All(part => Matches(part, threshold))
                 && clause.tags.Any(t => t.weight > 0f && TagScore(r, t.tag) >= threshold));
+        result.variantFilenameHint = null;
         foreach (var id in n.hasVariants)
         {
+            if (!result.category.AllowsVariant(id)) continue;
             if (!rules.variants.TryGetValue(id, out var clause)) continue;
-            if (useFilenameHints && rules.filenameVariantHints.TryGetValue(id, out var aliases)
-                && aliases.Any(a => FilenameMatches(r, a).Count > 0)) return id;
+            if (useFilenameHints && rules.filenameVariantHints.TryGetValue(id, out var aliases))
+                for (int i = 0; i < aliases.Count; i++)
+                    if (FilenameMatches(r, aliases[i]).Count > 0)
+                    {
+                        result.variantFilenameHint = aliases[i];
+                        return id;
+                    }
             if (Matches(clause, s.variantThreshold)) return id;
             if (id == n.defaultVariant) continue;
             float low = s.variantThreshold - s.nearMissBand;
@@ -471,6 +480,6 @@ public class ImageClassifierEngine
                 break;
             }
         }
-        return n.defaultVariant;
+        return result.category.AllowsVariant(n.defaultVariant) ? n.defaultVariant : null;
     }
 }

@@ -2,7 +2,7 @@
     "baseID": "Campaign1_Char_Himari",
     "Portrait":{
         "useGlobalHandler": [
-            { "path": "ba_himari/himari" }
+            { "path": "ba_himari/default" }
         ],
         "portraitPriorityList":[
             {

@@ -3,7 +3,7 @@
     "baseID": "Campaign1_Char_Ayane",
     "Portrait":{
         "useGlobalHandler": [
-            { "path": "ba_ayane/ayane" }
+            { "path": "ba_ayane/default" }
         ],
         "portraitPriorityList":[
 {

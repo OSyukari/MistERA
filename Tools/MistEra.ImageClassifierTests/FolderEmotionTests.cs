@@ -14,6 +14,22 @@ static class FolderEmotionTests
         var rulesBefore = JsonConvert.SerializeObject(rules);
         var storeBefore = JsonConvert.SerializeObject(store.Records);
 
+        // State sets are sorted by hand into their own work folder (user decision 2026-11-13): a detected state never selects a folder.
+        foreach (var state in new[] { "sleeping", "pregnant", "mindcontrolled" })
+            checks.Test("detected state does not select a destination folder: " + state, () =>
+            {
+                var folder = Path.GetFullPath("character");
+                var result = new ImageClassification { category = rules.categories.Single(c => c.id == "human"),
+                    nameRule = new NameRule { name = "handjob" }, variant = "cum", state = state, stateSource = "rules/tags" };
+                result.ComposeName();
+                checks.Equal("human", ImageClassifyMover.DestinationDirectory(folder, result), "category folder only");
+                checks.Equal("handjob_cum", result.name, "state never enters action stem");
+            });
+
+        foreach (var path in new[] { "human/source.webp", "character_sleeping/human/source.webp", "sleeping/human/source.webp" })
+            checks.Test("category folder is the top folder, state-looking folders included: " + path, () =>
+                checks.Equal(path.Split('/')[0], ImageAnalysis.CategoryFolder(path), "top-level folder"));
+
         checks.Test("folder tentacle allowlist and vaginal fallback load", () =>
         {
             checks.Check(tentacle.allowedNames != null && tentacle.allowedNames.SetEquals(new[] {
@@ -76,15 +92,15 @@ static class FolderEmotionTests
             (tags: new[] { "oral", "vaginal" }, name: "double_penetration"),
             (tags: new[] { "oral", "anal", "vaginal" }, name: "triple_penetration") })
         foreach (var hints in new[] { false, true })
-            checks.Test($"tentacle compound preserved for {fixture.name}, hints={hints}", () =>
+            checks.Test($"tentacle cum outranks rape without compound for {fixture.name}, hints={hints}", () =>
             {
                 var record = RegressionTests.Record(fixture.tags.Select(t => (t, 0.99f)).ToArray());
                 record.path = "tentacle/source.missionary.webp";
                 record.general["rape"] = record.general["cum"] = 0.99f;
                 var result = engine.ClassifyInCategory(record, tentacle, hints);
                 Named(checks, result, "tentacle", fixture.name);
-                checks.Equal("rape_cum", result.variant, "compound variant");
-                checks.Equal(fixture.name + "_rape_cum", result.name, "compound stem");
+                checks.Equal("cum", result.variant, "simple variant");
+                checks.Equal(fixture.name + "_cum", result.name, "simple stem");
             });
 
         foreach (var position in new[] { "missionary", "doggystyle", "full_nelson" })
@@ -95,6 +111,7 @@ static class FolderEmotionTests
                 record.path = "source." + position + ".webp";
                 Named(checks, engine.Classify(record, hints), "human", position);
                 Named(checks, engine.ClassifyInCategory(record, rules.categories.Single(c => c.id == "human"), hints), "human", position);
+                checks.Equal(position + "_vaginal", engine.Classify(record, hints).name, "default penetration suffix");
             });
 
         checks.Test("portrait naming and no-low-confidence-movement policy load", () =>

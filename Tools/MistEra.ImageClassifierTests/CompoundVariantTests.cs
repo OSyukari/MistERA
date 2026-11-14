@@ -12,57 +12,87 @@ static class CompoundVariantTests
         var below = threshold - 0.001f;
         var above = threshold + 0.001f;
 
-        checks.Test("compound near-miss confidence is independent of clause order", () =>
+        checks.Test("only higher-priority near misses lower confidence", () =>
         {
             var weakRape = engine.Classify(RegressionTests.Record(("1boy", 0.99f), ("handjob", 0.99f), ("rape", below), ("cum", 0.99f)));
             var weakCum = engine.Classify(RegressionTests.Record(("1boy", 0.99f), ("handjob", 0.99f), ("rape", 0.99f), ("cum", below)));
-            checks.Equal(ClassificationStatus.LowConfidence, weakRape.status, "weak first clause");
-            checks.Equal(weakRape.status, weakCum.status, "weak second clause");
+            checks.Equal("handjob_cum", weakRape.name, "strong cum ignores weaker rape");
+            checks.Equal(ClassificationStatus.Confident, weakRape.status, "lower-priority near miss is irrelevant");
+            checks.Equal("handjob_rape", weakCum.name, "weak cum falls through to rape");
+            checks.Equal(ClassificationStatus.LowConfidence, weakCum.status, "higher-priority cum near miss");
+            checks.Check(weakCum.reasons.Any(r => r.StartsWith("near-miss variant cum", StringComparison.Ordinal)), "Missing cum near-miss reason.");
         });
 
-        checks.Test("compound loader retains first clause and AND requirements", () =>
+        checks.Test("configured action variants are simple and exclude compounds and states", () =>
         {
-            var compound = rules.variants["rape_cum"];
-            checks.Equal("$rape_context", compound.source, "first clause source");
-            checks.Equal(1, compound.requires.Count, "additional AND clause count");
-            checks.Equal("$cum_context", compound.requires[0].source, "required clause source");
-            checks.Check(compound.tags.Any(t => t.tag == "rape"), "First alias was not expanded.");
-            checks.Check(compound.requires[0].tags.Any(t => t.tag == "cum"), "Required alias was not expanded.");
+            checks.Check(new HashSet<string>(rules.variants.Keys).SetEquals(new[] { "cum", "rape", "anal", "vaginal" }),
+                "Only simple action variants may be configured.");
+            checks.Check(rules.variants.Values.All(v => v.requires.Count == 0), "Action variants must not require compound AND clauses.");
+            checks.Equal("$rape_context", rules.variants["rape"].source, "rape alias source");
+            checks.Equal("$cum_context", rules.variants["cum"].source, "cum alias source");
+            checks.Check(rules.variants["rape"].tags.Any(t => t.tag == "rape"), "Rape alias was not expanded.");
+            checks.Check(rules.variants["cum"].tags.Any(t => t.tag == "cum"), "Cum alias was not expanded.");
         });
 
-        checks.Test("CollectTags includes every compound-only alias tag", () =>
+        checks.Test("production tentacle alone disables every category variant", () =>
         {
-            // No categories, names or standalone variants may supply otherwise missing tags.
+            var tentacle = rules.categories.Single(c => c.id == "tentacle");
+            checks.Check(tentacle.allowedVariants != null && tentacle.allowedVariants.Count == 0,
+                "Tentacle must have an explicit empty allowlist, not unrestricted null.");
+            checks.Check(rules.variants.Keys.All(v => !tentacle.AllowsVariant(v)), "All tentacle suffixes must be blocked.");
+            checks.Check(rules.categories.Where(c => c.id != "tentacle").All(c => c.allowedVariants == null),
+                "Other production categories remain unrestricted.");
+        });
+        foreach (var name in new[] { "triple_penetration", "double_penetration", "anal", "vaginal" })
+        foreach (var hints in new[] { false, true })
+            checks.Test($"production tentacle stays unsuffixed: {name}, hints={hints}", () =>
+            {
+                var record = RegressionTests.Record(("tentacles", 0.99f), (name, 0.99f), ("rape", 0.99f), ("cum", 0.99f));
+                record.path = "source." + name + ".cumshot.webp";
+                var result = engine.Classify(record, hints);
+                checks.Equal("tentacle", result.CategoryId, "category");
+                checks.Equal(name, result.name, "no action suffix");
+                checks.Equal<string>(null, result.variant, "blocked variant");
+                checks.Equal<string>(null, result.variantFilenameHint, "blocked filename variant provenance");
+                if (hints) checks.Equal(name, result.filenameHint, "explicit base filename still recognized");
+                var fixedFolder = engine.ClassifyInCategory(record, rules.categories.Single(c => c.id == "tentacle"), hints);
+                checks.Equal(name, fixedFolder.name, "fixed tentacle folder also blocks suffixes");
+            });
+
+        checks.Test("CollectTags includes every standalone action alias tag", () =>
+        {
+            // No categories or names may supply otherwise missing alias tags.
             var isolated = new ImageRules();
-            isolated.variants.Add("rape_cum", rules.variants["rape_cum"]);
+            isolated.variants.Add("rape", rules.variants["rape"]);
+            isolated.variants.Add("cum", rules.variants["cum"]);
             var config = JObject.Parse(File.ReadAllText(rules.sourcePath));
             var expected = new HashSet<string>(new[] { "rape_context", "cum_context" }
                 .SelectMany(alias => ((string)config["clause_aliases"][alias]).Split('|')), StringComparer.Ordinal);
             var actual = isolated.CollectTags();
-            checks.Check(expected.SetEquals(actual), "Compound tags differ: expected "
+            checks.Check(expected.SetEquals(actual), "Action alias tags differ: expected "
                 + string.Join(", ", expected.OrderBy(t => t)) + "; actual " + string.Join(", ", actual.OrderBy(t => t)));
         });
 
-        checks.Test("every rape-capable name puts compound first", () =>
+        checks.Test("every name restricts suffixes to the simple action hierarchy", () =>
         {
-            var capable = rules.nameSets.Values.SelectMany(set => set).Where(n => n.hasVariants.Contains("rape")).ToArray();
-            checks.Check(capable.Length > 0, "No rape-capable names found.");
-            foreach (var name in capable)
-                checks.Equal("rape_cum", name.hasVariants[0], name.name + " first variant");
+            var priority = new[] { "cum", "rape", "anal", "vaginal" };
+            foreach (var name in rules.nameSets.Values.SelectMany(set => set))
+                checks.Check(name.hasVariants.SequenceEqual(priority.Where(name.hasVariants.Contains)),
+                    name.name + " must use only applicable simple suffixes in priority order.");
         });
 
         foreach (var fixture in new[] {
-            (label: "neither signal", rape: 0f, cum: 0f, suffix: ""),
+            (label: "neither signal", rape: 0f, cum: 0f, suffix: "_vaginal"),
             (label: "rape only", rape: 0.99f, cum: 0f, suffix: "_rape"),
             (label: "cum only", rape: 0f, cum: 0.99f, suffix: "_cum"),
-            (label: "both signals", rape: 0.99f, cum: 0.99f, suffix: "_rape_cum"),
+            (label: "both signals", rape: 0.99f, cum: 0.99f, suffix: "_cum"),
             (label: "weak rape", rape: below, cum: 0.99f, suffix: "_cum"),
             (label: "weak cum", rape: 0.99f, cum: below, suffix: "_rape"),
-            (label: "both weak", rape: below, cum: below, suffix: ""),
-            (label: "both exactly at threshold", rape: threshold, cum: threshold, suffix: "_rape_cum"),
-            (label: "both above threshold", rape: above, cum: above, suffix: "_rape_cum") })
+            (label: "both weak", rape: below, cum: below, suffix: "_vaginal"),
+            (label: "both exactly at threshold", rape: threshold, cum: threshold, suffix: "_cum"),
+            (label: "both above threshold", rape: above, cum: above, suffix: "_cum") })
         foreach (var filenameFirst in new[] { false, true })
-            checks.Test("compound requires both signals: " + fixture.label + ", filenameFirst=" + filenameFirst, () =>
+            checks.Test("cum precedes rape without compound: " + fixture.label + ", filenameFirst=" + filenameFirst, () =>
             {
                 var record = RegressionTests.Record(("1boy", 0.99f), ("sex", 0.99f), ("missionary", 0.99f),
                     ("rape", fixture.rape), ("cum", fixture.cum));
@@ -70,19 +100,19 @@ static class CompoundVariantTests
                 checks.Equal("missionary" + fixture.suffix, engine.Classify(record, filenameFirst).name, "name");
             });
 
-        checks.Test("handjob supports compound without a cum-only variant", () =>
+        checks.Test("handjob supports simple cum and rape variants without penetration default", () =>
         {
             var handjob = rules.nameSets[ImageRules.DefaultNameSet].Single(n => n.name == "handjob");
-            checks.Check(handjob.hasVariants.Contains("rape_cum"), "Missing compound variant.");
-            checks.Check(!handjob.hasVariants.Contains("cum"), "Fixture must not support standalone cum.");
+            checks.Check(handjob.hasVariants.SequenceEqual(new[] { "cum", "rape" }), "Unexpected manual action suffixes.");
+            checks.Equal<string>(null, handjob.defaultVariant, "Manual actions have no penetration default");
         });
         foreach (var fixture in new[] {
-            (rape: 0f, cum: 0.99f, name: "handjob"),
+            (rape: 0f, cum: 0.99f, name: "handjob_cum"),
             (rape: 0.99f, cum: 0f, name: "handjob_rape"),
-            (rape: 0.99f, cum: 0.99f, name: "handjob_rape_cum"),
-            (rape: below, cum: 0.99f, name: "handjob"),
+            (rape: 0.99f, cum: 0.99f, name: "handjob_cum"),
+            (rape: below, cum: 0.99f, name: "handjob_cum"),
             (rape: 0.99f, cum: below, name: "handjob_rape") })
-            RegressionTests.Expect(engine, checks, "manual compound: " + fixture.name + " rape=" + fixture.rape + " cum=" + fixture.cum,
+            RegressionTests.Expect(engine, checks, "manual suffix hierarchy: " + fixture.name + " rape=" + fixture.rape + " cum=" + fixture.cum,
                 "human", fixture.name, ("1boy", 0.99f), ("handjob", 0.99f), ("rape", fixture.rape), ("cum", fixture.cum));
 
         checks.Test("legacy variant arrays retain OR semantics for every alternative", () =>
@@ -136,11 +166,23 @@ static class CompoundVariantTests
                 if (filenameFirst) checks.Check(result.filenameHint != null, "LegLock must be selected by filename.");
             });
 
-        foreach (var modifier in new[] { "rape", "cum", "sleeping", "pregnant" })
+        foreach (var modifier in new[] { "rape", "cum" })
             RegressionTests.Expect(engine, checks, "leg-lock modifier overrides default: " + modifier, "human", "leg_lock_" + modifier,
                 ("1boy", 0.99f), ("sex", 0.99f), ("leg_lock", 0.99f), (modifier, 0.99f));
-        RegressionTests.Expect(engine, checks, "leg-lock compound overrides default", "human", "leg_lock_rape_cum",
+        RegressionTests.Expect(engine, checks, "leg-lock cum overrides rape and default without compound", "human", "leg_lock_cum",
             ("1boy", 0.99f), ("sex", 0.99f), ("leg_lock", 0.99f), ("rape", 0.99f), ("cum", 0.99f));
+
+        foreach (var state in new[] { "sleeping", "pregnant" })
+        foreach (var hints in new[] { false, true })
+            checks.Test($"leg-lock folder state preserves vaginal default: {state}, hints={hints}", () =>
+            {
+                var record = RegressionTests.Record(("1boy", 0.99f), ("sex", 0.99f), ("leg_lock", 0.99f), (state, 0.99f));
+                record.path = "source.LegLock.webp";
+                var result = engine.Classify(record, hints);
+                checks.Equal("leg_lock_vaginal", result.name, "state cannot override action default");
+                checks.Equal("vaginal", result.variant, "default variant");
+                checks.Equal(state, result.state, "canonical folder state");
+            });
 
         foreach (var savedOriginal in new[] { false, true })
             checks.Test("filename-only LegLock defaults using " + (savedOriginal ? "saved originalName" : "current path"), () =>
@@ -155,27 +197,59 @@ static class CompoundVariantTests
             });
 
         foreach (var filenameFirst in new[] { false, true })
-            checks.Test("leg-lock default does not leak into missionary, filenameFirst=" + filenameFirst, () =>
+            checks.Test("missionary shares the vaginal default, filenameFirst=" + filenameFirst, () =>
             {
                 var record = RegressionTests.Record(("1boy", 0.99f), ("sex", 0.99f), ("missionary", 0.99f));
                 record.path = "source.Missionary.webp";
                 var result = engine.Classify(record, filenameFirst);
-                checks.Equal("missionary", result.name, "name");
-                checks.Equal<string>(null, result.variant, "variant");
-                checks.Equal<string>(null, result.nameRule.defaultVariant, "defaultVariant");
+                checks.Equal("missionary_vaginal", result.name, "name");
+                checks.Equal("vaginal", result.variant, "variant");
+                checks.Equal("vaginal", result.nameRule.defaultVariant, "defaultVariant");
             });
 
-        checks.Test("portrait global mappings expose compound suffix and leg-lock subtypes", () =>
+        checks.Test("portrait global mappings separate simple suffix pools and expose leg-lock subtypes", () =>
         {
             var global = JObject.Parse(File.ReadAllText(rules.sourcePath))["portrait_global"];
-            var compound = global["variants"]["rape_cum"];
-            checks.Check(new HashSet<string>(compound["keywords"].Values<string>()).SetEquals(new[] { "raped", "cum" }),
-                "rape_cum must map to both raped and cum.");
-            checks.Check(compound["files"].Values<string>().Contains("rape_cum"), "Missing compound file suffix.");
-            checks.Check(global["variants"]["base"]["files"].Values<string>().Contains("vaginal"), "Base mapping must include vaginal suffix.");
-            checks.Check(global["variants"]["anal"]["files"].Values<string>().Contains("anal"), "Anal mapping must include anal suffix.");
+            var variants = (JObject)global["variants"];
+            checks.Check(variants.Properties().Select(p => p.Name).SequenceEqual(new[] { "cum", "rape", "anal", "base" }),
+                "Global priority must exclude compounds and folder states.");
+            foreach (var fixture in new[] { (id: "cum", keyword: "cum"), (id: "rape", keyword: "raped"), (id: "anal", keyword: "anal") })
+            {
+                checks.Check(variants[fixture.id]["keywords"].Values<string>().SequenceEqual(new[] { fixture.keyword }), "Unexpected keywords: " + fixture.id);
+                checks.Check(variants[fixture.id]["files"].Values<string>().SequenceEqual(new[] { fixture.id }), "Suffix pools must not overlap: " + fixture.id);
+            }
+            checks.Check(variants["base"]["keywords"].Values<string>().Count() == 0, "Base has no extra keyword.");
+            checks.Check(variants["base"]["files"].Values<string>().SequenceEqual(new[] { "", "vaginal" }), "Base contains only unsuffixed and vaginal files.");
             checks.Check(global["names"]["leg_lock"]["keywords"].Any(k => (string)k["keyword"] == "leg_lock"), "Missing leg-lock name mapping.");
         });
+
+        checks.Test("all penetration-suffix names declare vaginal fallback", () =>
+        {
+            var eligible = rules.nameSets.Values.SelectMany(set => set)
+                .Where(n => n.hasVariants.Contains("anal") || n.hasVariants.Contains("vaginal")).ToArray();
+            checks.Check(eligible.Length > 0, "No penetration-suffix names found.");
+            foreach (var name in eligible)
+            {
+                checks.Check(name.hasVariants.Contains("anal") && name.hasVariants.Contains("vaginal"), name.name + " must support both subtypes.");
+                checks.Equal("vaginal", name.defaultVariant, name.name + " fallback");
+            }
+        });
+
+        foreach (var fixture in new[] {
+            (cum: 0.99f, rape: 0.99f, anal: 0.99f, vaginal: 0.99f, variant: "cum"),
+            (cum: below, rape: 0.99f, anal: 0.99f, vaginal: 0.99f, variant: "rape"),
+            (cum: 0f, rape: below, anal: 0.99f, vaginal: 0.99f, variant: "anal"),
+            (cum: 0f, rape: 0f, anal: below, vaginal: 0.99f, variant: "vaginal") })
+        foreach (var hints in new[] { false, true })
+            checks.Test($"full simple suffix hierarchy chooses {fixture.variant}, hints={hints}", () =>
+            {
+                var record = RegressionTests.Record(("1boy", 0.99f), ("missionary", 0.99f),
+                    ("cum", fixture.cum), ("rape", fixture.rape), ("anal", fixture.anal), ("vaginal", fixture.vaginal));
+                record.path = "source.Missionary.webp";
+                var result = engine.Classify(record, hints);
+                checks.Equal(fixture.variant, result.variant, "single winning variant");
+                checks.Equal("missionary_" + fixture.variant, result.name, "no compound suffix");
+            });
 
         if (store.Header?.root == null || store.Header.root.IndexOf("yerin_nude", StringComparison.OrdinalIgnoreCase) < 0) return;
         checks.Test("stored Yerin leg-lock receives vaginal default without dataset changes", () =>

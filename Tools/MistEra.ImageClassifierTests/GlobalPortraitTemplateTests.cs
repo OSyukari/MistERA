@@ -19,6 +19,19 @@ static class GlobalPortraitTemplateTests
         var mappings = ((JObject)config["portrait_global"]["emotions"]).Properties()
             .Where(p => !p.Name.StartsWith("_", StringComparison.Ordinal)).ToArray();
 
+        checks.Test("standalone climax needs no sex tag and follows ongoing action handlers", () =>
+        {
+            var climax = Image("pov", "climax");
+            var standalone = SelectHandler(handlers, new[] { "climax" }, new string[0], climax);
+            checks.Check(standalone != null, "Standalone climax must be selectable without sex/role context.");
+            checks.Equal(0, standalone.RequireSelfContextKeys.Count, "No sex requirement");
+            checks.Equal(climax, Select(standalone, new[] { "climax" }, climax), "Climax image");
+            checks.Equal<string>(null, Select(standalone, new[] { "neutral" }, climax), "Climax is not an unconditional fallback");
+            var action = Image("pov", "doggystyle_vaginal");
+            var selected = SelectHandler(handlers, new[] { "sex", "receiver", "doggy", "climax" }, new string[0], climax, action);
+            checks.Check(selected != null && !ReferenceEquals(standalone, selected), "Specific ongoing action precedes standalone climax.");
+        });
+
         checks.Test("global portraits append emotions without changing action handler priority", () =>
         {
             var actionsConfig = (JObject)config.DeepClone();
@@ -145,13 +158,16 @@ static class GlobalPortraitTemplateTests
                 checks.Equal<string>(null, Select(handler, new[] { role == "receiver" ? "doggy" : "cowgirl" }, spooning),
                     "Spooning must not leak into penetrating position pools: " + role);
                 checks.Equal(spooning, Select(handler, new[] { "intercrural" }, thighjob, spooning), "Primary spooning beats thighjob fallback for " + role);
-                foreach (var suffix in new[] { "rape_cum", "rape", "cum", "sleeping", "pregnant" })
+                foreach (var suffix in new[] { "rape", "cum" })
                 {
-                    var tags = new List<string> { "intercrural" };
-                    tags.AddRange(suffix == "rape_cum" ? new[] { "raped", "cum" } : new[] { suffix == "rape" ? "raped" : suffix });
+                    var tags = new[] { "intercrural", suffix == "rape" ? "raped" : suffix };
                     var image = Image("human", "spooning_" + suffix);
-                    checks.Equal(image, Select(handler, tags.ToArray(), image), role + " spooning variant " + suffix);
+                    checks.Equal(image, Select(handler, tags, image), role + " spooning variant " + suffix);
                 }
+                foreach (var state in new[] { "sleeping", "pregnant" })
+                    checks.Equal(spooning, Select(handler, new[] { "intercrural", state }, spooning), role + " state leaves action unchanged: " + state);
+                checks.Equal(Image("human", "spooning_cum"), Select(handler, new[] { "intercrural", "raped", "cum" },
+                    spooning, Image("human", "spooning_rape"), Image("human", "spooning_cum")), role + " cum precedes rape");
             }
         });
 
@@ -182,71 +198,102 @@ static class GlobalPortraitTemplateTests
             checks.Equal(primary, Select(receiver, new[] { "missionary" }, vaginal, primary), "Existing primary action images beat vaginal fallback");
         });
 
-        checks.Test("global compound rape cum patterns stay distinct from rape and base", () =>
+        checks.Test("global variants use cum rape anal base priority with separate pools", () =>
         {
-            var receiver = TentacleHandler(handlers, "receiver");
-            var combined = Image("tentacle", "triple_penetration_rape_cum");
+            checks.Check(((JObject)config["portrait_global"]["variants"]).Properties()
+                .Where(p => !p.Name.StartsWith("_", StringComparison.Ordinal)).Select(p => p.Name)
+                .SequenceEqual(new[] { "cum", "rape", "anal", "base" }), "Approved variant order");
+            // Exercise generic suffix policy independently of production tentacle's empty allowlist.
+            var unrestricted = (JObject)config.DeepClone();
+            ((JObject)unrestricted["files_category"].Single(c => (string)c["id"] == "tentacle")).Remove("allowedVariants");
+            var receiver = TentacleHandler(Build(unrestricted), "receiver");
+            var cum = Image("tentacle", "triple_penetration_cum");
             var rape = Image("tentacle", "triple_penetration_rape");
             var plain = Image("tentacle", "triple_penetration");
-            var compound = receiver.Variants.First(v => v.tagsMatch.SequenceEqual(new[] { "double_penetration", "raped", "cum" }));
-            checks.Check(Matches(compound, combined), "Compound suffix pattern missing.");
-            checks.Check(!Matches(compound, rape) && !Matches(compound, plain), "Compound suffix must not match rape-only or base files.");
+            var cumOnly = receiver.Variants.First(v => v.tagsMatch.SequenceEqual(new[] { "double_penetration", "cum" }));
             var rapeOnly = receiver.Variants.First(v => v.tagsMatch.SequenceEqual(new[] { "double_penetration", "raped" }));
             var baseVariant = receiver.Variants.First(v => v.tagsMatch.SequenceEqual(new[] { "double_penetration" }));
-            checks.Check(Matches(rapeOnly, rape) && !Matches(rapeOnly, combined), "Rape-only prefix must exclude rape_cum.");
-            checks.Check(Matches(baseVariant, plain) && !Matches(baseVariant, rape) && !Matches(baseVariant, combined), "Base pattern must exclude suffix variants.");
-            checks.Equal(combined, Select(receiver, new[] { "double_penetration", "raped", "cum" }, plain, rape, combined), "Specific compound variant must win");
+            checks.Check(Matches(cumOnly, cum) && !Matches(cumOnly, rape) && !Matches(cumOnly, plain), "Separate cum pool");
+            checks.Check(Matches(rapeOnly, rape) && !Matches(rapeOnly, cum) && !Matches(rapeOnly, plain), "Separate rape pool");
+            checks.Check(Matches(baseVariant, plain) && !Matches(baseVariant, rape) && !Matches(baseVariant, cum), "Base excludes action variants");
+            checks.Equal(cum, Select(receiver, new[] { "double_penetration", "raped", "cum" }, plain, rape, cum), "Cum beats rape");
+            checks.Equal(rape, Select(receiver, new[] { "double_penetration", "raped", "cum" }, plain, rape), "Missing cum falls back to rape");
+            checks.Equal(plain, Select(receiver, new[] { "double_penetration", "raped", "cum" }, plain), "Missing variants fall back to base");
+            checks.Equal<string>(null, Select(receiver, new[] { "double_penetration" }, rape, cum), "Base cannot consume rape or cum");
+
+            var human = handlers.First(h => h.RequireSelfContextKeys.Contains("receiver")
+                && h.RequireTargetContextKeys.SequenceEqual(new[] { "humanrace" }));
+            var images = new[] { Image("human", "doggystyle_vaginal"), Image("human", "doggystyle_anal"),
+                Image("human", "doggystyle_rape"), Image("human", "doggystyle_cum") };
+            checks.Equal(images[3], Select(human, new[] { "doggy", "cum", "raped", "anal" }, images), "Cum before rape and anal");
+            checks.Equal(images[2], Select(human, new[] { "doggy", "raped", "anal" }, images), "Rape before anal");
+            checks.Equal(images[1], Select(human, new[] { "doggy", "anal" }, images), "Separate anal pool");
+            checks.Equal(images[0], Select(human, new[] { "doggy" }, images), "Base vaginal pool");
+            checks.Equal<string>(null, Select(human, new[] { "doggy" }, images.Skip(1).ToArray()), "Base cannot consume anal rape or cum");
         });
 
-        checks.Test("global states are independent alternatives and preserve normal variants and fallback", () =>
+        checks.Test("global production tentacle handlers select only unsuffixed images despite variant keywords", () =>
         {
-            var stateConfig = (JObject)config.DeepClone();
-            stateConfig["image_states"] = JObject.Parse(@"{
-                'mindcontrolled': {'keywords':['mindcontrolled','timestop','timestopped']},
-                'enchanted': {'keywords':['enchanted_alias']}
-            }");
-            var stateHandlers = Build(stateConfig);
-            var receiver = TentacleHandler(stateHandlers, "receiver");
-            var plain = Image("tentacle", "triple_penetration");
-            var normal = Image("tentacle", "triple_penetration_rape_cum");
-            var controlled = Image("tentacle", "triple_penetration_rape_cum_mindcontrolled");
-            var controlledBase = Image("tentacle", "triple_penetration_mindcontrolled");
-            foreach (var alias in new[] { "mindcontrolled", "timestop", "timestopped" })
+            var tentacle = handlers.Where(h => h.RequireTargetContextKeys.SequenceEqual(new[] { "tentacle" })).ToArray();
+            checks.Check(tentacle.Length > 0, "Missing tentacle handlers.");
+            foreach (var handler in tentacle)
             {
-                var tags = new[] { "double_penetration", "raped", "cum", alias };
-                checks.Equal(controlled, Select(receiver, tags, plain, normal, controlledBase, controlled), "State alias " + alias);
-                checks.Equal(normal, Select(receiver, tags, normal), "Ordinary fallback " + alias);
+                checks.Check(handler.Variants.All(v => !v.tagsMatch.Contains("cum") && !v.tagsMatch.Contains("raped")),
+                    "Tentacle must not add cum or rape variant tags.");
+                foreach (var name in new[] { "triple_penetration", "double_penetration", "anal", "vaginal" })
+                foreach (var suffix in rules.variants.Keys)
+                    checks.Check(!handler.Variants.Any(v => Matches(v, Image("tentacle", name + "_" + suffix))),
+                        "Tentacle pattern must reject suffix: " + name + "_" + suffix);
             }
-            checks.Equal<string>(null, Select(receiver, new[] { "double_penetration", "raped", "cum" }, controlled), "State isolation without state tags");
-            checks.Equal<string>(null, Select(receiver, new[] { "double_penetration", "mindcontrolled" }, controlled), "Stateful base cannot swallow rape_cum");
-            checks.Equal(controlledBase, Select(receiver, new[] { "double_penetration", "mindcontrolled" }, plain, controlledBase), "Stateful base priority");
-            var enchanted = Image("tentacle", "triple_penetration_enchanted");
-            checks.Equal(enchanted, Select(receiver, new[] { "double_penetration", "enchanted_alias" }, plain, enchanted), "Generic additional state");
-            checks.Equal<string>(null, Select(receiver, new[] { "double_penetration", "mindcontrolled" }, enchanted), "States cannot consume each other's files");
-            var ordinary = receiver.Variants.Where(v => !v.tagsMatch.Any(t => new[] { "mindcontrolled", "timestop", "timestopped", "enchanted_alias" }.Contains(t)));
-            checks.Check(ordinary.All(v => !Matches(v, controlled) && !Matches(v, controlledBase) && !Matches(v, enchanted)), "All ordinary patterns exclude state suffixes");
-            var original = TentacleHandler(Build(config), "receiver");
-            checks.Equal(Select(original, new[] { "double_penetration", "raped", "cum" }, plain, normal),
-                Select(receiver, new[] { "double_penetration", "raped", "cum" }, plain, normal), "Ordinary priority is unchanged");
-            var human = stateHandlers.First(h => h.RequireSelfContextKeys.Contains("receiver")
-                && h.RequireTargetContextKeys.SequenceEqual(new[] { "humanrace" }));
-            var anal = Image("human", "doggystyle_anal_mindcontrolled");
-            checks.Equal(anal, Select(human, new[] { "doggy", "anal", "timestop" }, Image("human", "doggystyle_anal"), anal),
-                "State follows normal anal variant");
-            checks.Equal<string>(null, Select(human, new[] { "doggy", "timestop" }, anal), "Stateful base excludes normal anal variant");
-            var generic = stateHandlers.First(h => h.RequireSelfContextKeys.SequenceEqual(new[] { "sex" })
-                && h.RequireTargetContextKeys.SequenceEqual(new[] { "humanrace" }));
-            var genericState = Image("human", "generic_mindcontrolled");
-            checks.Equal(genericState, Select(generic, new[] { "timestopped" }, Image("human", "generic"), genericState),
-                "Stateful unconditional action");
-            checks.Equal<string>(null, Select(generic, new string[0], genericState), "Unconditional action state isolation");
+            foreach (var fixture in new[] {
+                (role: "receiver", keyword: "double_penetration", name: "triple_penetration"),
+                (role: "receiver", keyword: "double_penetration", name: "double_penetration"),
+                (role: "receiver", keyword: "doggy", name: "vaginal"),
+                (role: "doer", keyword: "cowgirl", name: "vaginal"),
+                (role: "", keyword: "anal", name: "anal") })
+            {
+                var handler = fixture.role == ""
+                    ? tentacle.Single(h => h.RequireSelfContextKeys.SequenceEqual(new[] { "sex" }))
+                    : TentacleHandler(handlers, fixture.role);
+                var plain = Image("tentacle", fixture.name);
+                checks.Equal(plain, Select(handler, new[] { fixture.keyword, "raped", "cum" },
+                    Image("tentacle", fixture.name + "_cum"), Image("tentacle", fixture.name + "_rape"), plain),
+                    "Unsuffixed tentacle selection: " + fixture.role + "/" + fixture.name);
+            }
+        });
 
-            var stateEmotion = stateHandlers.Last();
-            checks.Equal(Image("portrait", "happy_mindcontrolled"), Select(stateEmotion, new[] { "happy", "timestop" },
-                Image("portrait", "happy"), Image("portrait", "happy_mindcontrolled")), "Stateful emotion without Emotion_ prefix");
-            checks.Equal(Image("portrait", "neutral_mindcontrolled"), Select(stateEmotion, new[] { "timestopped" },
-                Image("portrait", "neutral"), Image("portrait", "neutral_mindcontrolled")), "Stateful unconditional neutral");
-            checks.Equal(Image("portrait", "neutral"), Select(stateEmotion, new[] { "timestop" }, Image("portrait", "neutral")), "Neutral ordinary fallback");
+        checks.Test("global image states never expand or change the built handler graph", () =>
+        {
+            var withoutStates = (JObject)config.DeepClone();
+            withoutStates.Remove("image_states");
+            var baseline = Build(withoutStates);
+            var serialized = JsonConvert.SerializeObject(baseline);
+            var stateDefinitions = new[] { new JObject(), config["image_states"].DeepClone(), JObject.Parse(@"{
+                'test_controlled': {'keywords':['test_controlled','test_stop','test_stopped']},
+                'test_enchanted': {'keywords':['test_enchanted_alias','test_stop']}
+            }"), JObject.Parse(@"{
+                'test_controlled': {'keywords':['test_stop','test_stop','test_other_alias']}
+            }"), JObject.Parse(@"{
+                'test_controlled': {'keywords':['doggy','cum','happy','using_phone']}
+            }") };
+            foreach (var states in stateDefinitions)
+            {
+                var stateConfig = (JObject)config.DeepClone();
+                stateConfig["image_states"] = states;
+                var built = Build(stateConfig);
+                checks.Equal(baseline.Count, built.Count, "States do not add handlers");
+                checks.Equal(baseline.Sum(h => h.Variants.Count), built.Sum(h => h.Variants.Count), "Aliases do not add variants");
+                checks.Equal(serialized, JsonConvert.SerializeObject(built), "States do not change guards, keywords, patterns or ordering");
+                foreach (var variant in built.SelectMany(h => h.Variants))
+                {
+                    checks.Check(!variant.tagsMatch.Any(t => t.StartsWith("test_", StringComparison.Ordinal)), "No state keywords in variants");
+                    foreach (var pattern in variant.PortraitVariantData)
+                    {
+                        checks.Check(!pattern.Contains("test_"), "No state ids or aliases in patterns");
+                        checks.Check(!pattern.Replace(GlobalPortraitTemplate.Placeholder, "").Contains("$"), "No state pattern placeholders");
+                    }
+                }
+            }
         });
 
         checks.Test("global phone activities precede emotions without role guards or unconditional fallback", () =>
@@ -261,12 +308,13 @@ static class GlobalPortraitTemplateTests
             checks.Equal(0, activity.RequireTargetContextKeys.Count, "Activity target guards");
             checks.Check(activity.Variants.All(v => v.tagsMatch.Contains("using_phone")), "Activities have no unconditional fallback");
             var phone = Image("activity", "using_phone");
-            var controlled = Image("activity", "using_phone_mindcontrolled");
             checks.Check(ReferenceEquals(activity, SelectHandler(activityHandlers, new[] { "using_phone", "happy" }, new string[0],
                 Image("portrait", "happy"), phone)), "Activity must beat emotion");
-            checks.Equal(controlled, Select(activity, new[] { "using_phone", "timestopped" }, phone, controlled), "Stateful phone");
-            checks.Equal(phone, Select(activity, new[] { "using_phone", "timestop" }, phone), "Ordinary phone fallback");
-            checks.Equal<string>(null, Select(activity, new[] { "using_phone" }, controlled), "Ordinary activity excludes state");
+            checks.Equal(phone, Select(activity, new[] { "using_phone", "timestopped" }, phone), "State alias does not change phone selection");
+            var withoutStates = (JObject)activityConfig.DeepClone();
+            withoutStates.Remove("image_states");
+            checks.Equal(JsonConvert.SerializeObject(Build(withoutStates)), JsonConvert.SerializeObject(activityHandlers),
+                "States do not expand activity or emotion handlers");
             checks.Equal<string>(null, Select(activity, new string[0], phone), "No unrequested phone");
             checks.Equal<string>(null, Select(activity, new[] { "using_phone" }, Image("portrait", "using_phone")), "Activity folder isolation");
         });

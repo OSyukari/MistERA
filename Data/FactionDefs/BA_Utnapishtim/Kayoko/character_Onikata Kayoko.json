@@ -3,7 +3,7 @@
     "baseID": "Campaign1_Char_Kayoko",
     "Portrait":{
         "useGlobalHandler": [
-            { "path": "ba_kayoko/kayoko" }
+            { "path": "ba_kayoko/default" }
         ],
         "portraitPriorityList":[
 {

@@ -3,7 +3,7 @@
   "baseID": "Campaign1_Char_Hanako",
   "Portrait":{
         "useGlobalHandler": [
-            { "path": "ba_hanako/hanako" }
+            { "path": "ba_hanako/default" }
         ],
       "portraitPriorityList":[
       {

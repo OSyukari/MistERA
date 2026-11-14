@@ -551,6 +551,80 @@ public static class RelationshipReachabilityTests
             pride = pride.Substring(0, pride.IndexOf("private static void AddMemberServiceSources", StringComparison.Ordinal));
             Require(pride.Contains("case \"permission_follow\"") && !pride.Contains("permission_intimacy_"), "Pride intimacy source remains or Follow lost");
         });
+        test("Permissions: ordinary unprotected penis demand does not offer a safe-day claim", () =>
+        {
+            var ordinary = permissions["permission_sex_unprotected_penis"];
+            Require(!ordinary.demandSafeDayClaim, "Ordinary condom demand must not offer a safe-day claim");
+            Require(ordinary.demandEventID == "OnAPRefuse_Unprotected_Penis", "Ordinary condom demand event changed");
+        });
+        test("Permissions: danger-day penis claim still decides as ordinary unprotected permission", () =>
+        {
+            var dangerDay = permissions["permission_sex_dangerday_creampie_penis"];
+            Require(dangerDay.demandSafeDayClaim, "Danger-day demand lost its safe-day claim");
+            Require(dangerDay.demandEventID == "OnAPRefuse_DangerDay_Penis", "Danger-day demand event changed");
+            Require(dangerDay.safeDayClaimDecisionID == "permission_sex_unprotected_penis"
+                && permissions.ContainsKey(dangerDay.safeDayClaimDecisionID), "Danger-day claim must use the ordinary permission decision");
+        });
+        // Source contracts deliberately inspect only SendDemandEvent, not unrelated permission callers.
+        // Whitespace is ignored; these checks do not execute queries, callbacks or tooltip rendering.
+        string DemandSource()
+        {
+            string action = File.ReadAllText(Path.Combine(root, "Assets/Scripts/JobCOM/ActionPackage.cs"));
+            int start = action.IndexOf("void SendDemandEvent(", StringComparison.Ordinal);
+            Require(start >= 0, "Cannot locate SendDemandEvent source contract");
+            int end = action.IndexOf("public bool executeSuccessful", start, StringComparison.Ordinal);
+            Require(end > start, "Cannot locate end of SendDemandEvent source contract");
+            return System.Text.RegularExpressions.Regex.Replace(action.Substring(start, end - start), @"\s+", "");
+        }
+        test("Permissions: held claim decision requires a different valid applicable permission (static)", () =>
+        {
+            string demand = DemandSource();
+            Require(demand.Contains("boolclaimOffered=demand.Definition.demandSafeDayClaim&&canResume;"),
+                "Claim must remain definition-gated and require a resumable act");
+            Require(demand.Contains("stringclaimDecisionID=string.IsNullOrEmpty(demand.Definition.safeDayClaimDecisionID)?demand.Definition.ID:demand.Definition.safeDayClaimDecisionID;"),
+                "Claim decision override/default changed");
+            Require(demand.Contains("if(claimOffered){varclaimQuery=PermissionService.Query(granter,requester,claimDecisionID);"),
+                "Claim must query the decision permission in the granter-to-requester direction");
+            Require(demand.Contains("boolclaimAlreadyPermitted=claimDecisionID!=demand.Definition.ID&&claimQuery.Error.Length==0&&PermissionService.IsApplicable(granter,claimQuery.Definition)&&claimQuery.HasPermission;"),
+                "Held decision shortcut must exclude the demand itself, query errors, inapplicable definitions and missing permission");
+            Require(demand.Contains("claimAccepted=claimAlreadyPermitted||PermissionService.AcceptsRequest(granter,requester,claimQuery);"),
+                "Held decision must short-circuit a fresh request; otherwise use the shared acceptance decision");
+        });
+        test("Permissions: held claim tooltip describes sources instead of fresh request requirements (static)", () =>
+        {
+            string demand = DemandSource();
+            int start = demand.IndexOf("claimTooltip=claimAlreadyPermitted?", StringComparison.Ordinal);
+            Require(start >= 0, "Claim tooltip must branch on the same held-decision guard as acceptance");
+            int end = demand.IndexOf(";", start, StringComparison.Ordinal);
+            Require(end > start, "Cannot locate claim tooltip assignment");
+            string tooltip = demand.Substring(start, end - start);
+            int fallback = tooltip.IndexOf(":PermissionService.RequestTooltip(granter,requester,claimQuery)", StringComparison.Ordinal);
+            Require(fallback > 0, "Unheld decision tooltip must retain RequestTooltip for the same directed query");
+            string held = tooltip.Substring(0, fallback);
+            Require(held.Contains("\"ui_permissionBox_alreadyGranted\"")
+                && held.Contains("EventUtility.DescribePermissionSources(claimQuery)"),
+                "Held decision tooltip must use the existing already-granted label and actual permission sources");
+            Require(demand.Contains("tooltip=claimTooltip,"), "Player claim option does not show the shared decision tooltip");
+        });
+        test("Permissions: player and NPC claims share unchanged temporary grant policy (static)", () =>
+        {
+            string demand = DemandSource();
+            int start = demand.IndexOf("Func<bool>grantClaim=()=>{", StringComparison.Ordinal);
+            int end = start < 0 ? -1 : demand.IndexOf("stringstartLabel=", start, StringComparison.Ordinal);
+            Require(start >= 0 && end > start, "Cannot locate shared claim grant callback");
+            string grant = demand.Substring(start, end - start);
+            Require(grant.Contains("foreach(varpermissionIDinpushedIDs)all=PermissionService.TryGrant(granter,requester,permissionID,permissionID==claimDecisionID?PermissionGrantSource.Request:PermissionGrantSource.Event,out_,PermissionGrantType.Temporary)&&all;")
+                && grant.Contains("returnall;"),
+                "Claim must attempt every covered ID as Temporary, retaining Request for the decision ID and Event for others");
+            Require(demand.Contains("if(!playerChooses){")
+                && demand.Contains("elseif(claimAccepted&&grantClaim())startLabel=claimLie?\"br_claim_lie\":\"br_claim\";"),
+                "NPC claim must use shared acceptance and grant callback");
+            Require(demand.Contains("if(playerChooses){")
+                && demand.Contains("if(claimAccepted)claim.onSelect=_=>{if(grantClaim())resumeAct();continueUpdate();};"),
+                "Player claim must use shared acceptance and resume only after the shared grant succeeds");
+            Require(demand.Contains("!claimAccepted?\"br_claim_refused\":claimLie?\"br_claim_lie\":\"br_claim\""),
+                "Player refusal/result label must follow the same claim decision");
+        });
         Debug.Log($"{Prefix} permission checks are definition/numeric/static only. Live directed sources, caring skill eligibility, " +
             "consciousness/time-stop availability, dialogue/action equivalence, tooltip rendering and legacy grant activation " +
             "still require a disposable initialized campaign; no runtime integration is claimed.");

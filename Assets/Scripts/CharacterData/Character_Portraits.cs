@@ -463,6 +463,7 @@ public class PortraitManager
 
     protected void GetValidPortraitInner(List<string> keywords, List<string> keywords_target, out CharaPortrait handler, out string portrait, out string icon, scr_CharPortraitBox box = null)
     {
+        keywords = GlobalPortraitTemplate.WithStateKeys(keywords);
         handler = null;
         portrait = "";
         icon = "";
@@ -529,6 +530,7 @@ public class PortraitManager
 
     protected void GetValidPortraitWithHandler(List<string> keywords, List<string> target, in CharaPortrait handler, out string portrait, out string icon, scr_CharPortraitBox box = null)
     {
+        keywords = GlobalPortraitTemplate.WithStateKeys(keywords);
         if (handler == null || handler == Transparent || !handler.isValid() || !handler.isValidForBox(box) 
             || (keywords.Count < 1 && handler.RequireSelfContextKeys.Count > 0)
             || !Utility.ListContainsStrict(keywords, handler.RequireSelfContextKeys)

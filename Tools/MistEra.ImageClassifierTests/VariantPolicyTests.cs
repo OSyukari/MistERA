@@ -7,13 +7,15 @@ static class VariantPolicyTests
     {
         foreach (var evidence in new[] { "strangling", "asphyxiation", "bondage" })
         foreach (var filenameFirst in new[] { false, true })
-            checks.Test(evidence + " with cum selects combined suffix ahead of sleeping, filenameFirst=" + filenameFirst, () =>
+            checks.Test(evidence + " with cum selects simple suffix and independent sleeping state, filenameFirst=" + filenameFirst, () =>
             {
                 var record = RegressionTests.Record(("1boy", 0.99f), ("sex", 0.99f), ("missionary", 0.99f),
                     (evidence, 0.95f), ("cum", 0.99f), ("sleeping", 0.99f));
                 record.path = "source.missionary.webp";
                 var result = engine.Classify(record, filenameFirst);
-                checks.Equal("missionary_rape_cum", result.name, "name");
+                checks.Equal("missionary_cum", result.name, "name");
+                checks.Equal("cum", result.variant, "variant");
+                checks.Equal("sleeping", result.state, "folder state");
             });
 
         foreach (var evidence in new[] { "strangling", "asphyxiation", "bondage" })
@@ -31,15 +33,15 @@ static class VariantPolicyTests
                 record.path = "source." + spelling + ".webp";
                 checks.Equal("reverse_standing", engine.Classify(record, true).nameRule?.name, "filename base name");
             });
-        RegressionTests.Expect(engine, checks, "strong standing and rear evidence identifies reverse standing", "human", "reverse_standing",
+        RegressionTests.Expect(engine, checks, "strong standing and rear evidence identifies reverse standing", "human", "reverse_standing_vaginal",
             ("1boy", 0.99f), ("standing_sex", 0.9f), ("sex_from_behind", 0.95f));
-        RegressionTests.Expect(engine, checks, "standing alone is not reverse standing", "human", "standing",
+        RegressionTests.Expect(engine, checks, "standing alone is not reverse standing", "human", "standing_vaginal",
             ("1boy", 0.99f), ("standing_sex", 0.9f));
-        checks.Test("rape-capable names consistently prioritize the combined suffix", () =>
+        checks.Test("rape-capable names consistently prioritize cum over rape", () =>
         {
             foreach (var rule in rules.nameSets[ImageRules.DefaultNameSet].Where(n => n.hasVariants.Contains("rape")))
             {
-                checks.Equal("rape_cum", rule.hasVariants[0], rule.name + " first variant");
+                checks.Equal("cum", rule.hasVariants[0], rule.name + " first variant");
                 checks.Equal("rape", rule.hasVariants[1], rule.name + " second variant");
             }
         });
@@ -47,7 +49,7 @@ static class VariantPolicyTests
         checks.Test("spooning has only nonpenetrative variants and is not a sideways alias", () =>
         {
             var spooning = rules.nameSets[ImageRules.DefaultNameSet].Single(n => n.name == "spooning");
-            checks.Check(spooning.hasVariants.SequenceEqual(new[] { "rape_cum", "rape", "cum", "sleeping", "pregnant" }),
+            checks.Check(spooning.hasVariants.SequenceEqual(new[] { "cum", "rape" }),
                 "Unexpected spooning variant list or priority.");
             checks.Equal<string>(null, spooning.defaultVariant, "No default penetration suffix");
             checks.Check(spooning.none.Any(c => c.source == "$penetration"), "Missing penetration exclusion.");
@@ -56,12 +58,12 @@ static class VariantPolicyTests
         });
         foreach (var filenameFirst in new[] { false, true })
         foreach (var fixture in new[] {
-            (variant: (string)null, tags: new string[0]),
-            (variant: "rape_cum", tags: new[] { "rape", "cum", "sleeping", "pregnant" }),
-            (variant: "rape", tags: new[] { "rape" }),
-            (variant: "cum", tags: new[] { "cum" }),
-            (variant: "sleeping", tags: new[] { "sleeping" }),
-            (variant: "pregnant", tags: new[] { "pregnant" }) })
+            (variant: (string)null, state: (string)null, tags: new string[0]),
+            (variant: "cum", state: "sleeping", tags: new[] { "rape", "cum", "sleeping", "pregnant" }),
+            (variant: "rape", state: (string)null, tags: new[] { "rape" }),
+            (variant: "cum", state: (string)null, tags: new[] { "cum" }),
+            (variant: (string)null, state: "sleeping", tags: new[] { "sleeping" }),
+            (variant: (string)null, state: "pregnant", tags: new[] { "pregnant" }) })
             checks.Test("spooning variants, filenameFirst=" + filenameFirst + ": " + (fixture.variant ?? "base"), () =>
             {
                 var record = RegressionTests.Record(("1boy", 0.99f), ("spooning", 0.99f), ("penis", 0.99f));
@@ -71,6 +73,7 @@ static class VariantPolicyTests
                 checks.Equal("human", result.CategoryId, "category");
                 checks.Equal("spooning", result.nameRule?.name, "base name");
                 checks.Equal(fixture.variant, result.variant, "variant");
+                checks.Equal(fixture.state, result.state, "folder state");
                 checks.Equal(fixture.variant == null ? "spooning" : "spooning_" + fixture.variant, result.name, "name");
             });
 
@@ -80,9 +83,9 @@ static class VariantPolicyTests
             (path: "human/yerin.nude.spooning.webp", name: "spooning"),
             (path: "yerin.nude.Spooning (2).webp", name: "spooning"),
             (path: "yerin.nude.Spooning cumshot.webp", name: "spooning_cum"),
-            (path: "yerin.nude.choking sex.webp", name: "missionary_rape_cum"),
-            (path: "yerin.nude.headlock sex.webp", name: "doggystyle_rape_cum"),
-            (path: "yerin.nude.headlock sex cumshot.webp", name: "doggystyle_rape_cum"),
+            (path: "yerin.nude.choking sex.webp", name: "missionary_cum"),
+            (path: "yerin.nude.headlock sex.webp", name: "doggystyle_cum"),
+            (path: "yerin.nude.headlock sex cumshot.webp", name: "doggystyle_cum"),
             (path: "yerin.nude.Bondage sex.webp", name: "missionary_rape") })
             checks.Test("stored naming and variant policy: " + fixture.path, () =>
             {

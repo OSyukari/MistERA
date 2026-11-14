@@ -742,7 +742,7 @@ public class scr_System_CentralControl : MonoBehaviour
             FillGlobalPortraitHandlers(template, lists[0]);
             // Variants are shared with the folder cache, which receives new image paths in place.
             if (GeneratedPortraitRegistry.TryGetVersion(templateID, out _))
-                lists[1].AddRange(GlobalPortraitTemplate.GetHandlers($"{ComfyUISceneImage.OutputFolderName}/{templateID}"));
+                FillGeneratedPortraitHandlers(templateID, lists[1]);
             globalPortraitHandlers.Add(templateID, lists);
             // TEMP debug: first-time per-template build cost
             if (LogPrefs.DLog_Portrait_Spine) Debug.Log($"[SpineTEMP] GlobalPortraitHandlers build [{templateID}] took {(Time.realtimeSinceStartup - tempStart) * 1000f:F1}ms global {lists[0].Count} generated {lists[1].Count} useGlobalHandler {(entries == null ? 0 : entries.Count)} frame {Time.frameCount}");
@@ -761,15 +761,18 @@ public class scr_System_CentralControl : MonoBehaviour
         foreach (var entry in entries)
         {
             if (entry == null || string.IsNullOrEmpty(entry.path)) continue;
-            foreach (var handler in GlobalPortraitTemplate.GetHandlers(entry.path))
-            {
-                var copy = handler.Copy();
-                if (copy == null) continue;
-                copy.isGenerated = true;
-                if (entry.selfKeys != null && entry.selfKeys.Count > 0)
-                    copy.RequireSelfContextKeys = copy.RequireSelfContextKeys.Concat(entry.selfKeys).Distinct().ToList();
-                list.Add(copy);
-            }
+            foreach (var set in GlobalPortraitTemplate.GetStateSets(entry.path))
+                foreach (var handler in GlobalPortraitTemplate.GetHandlers(set.Key))
+                {
+                    var copy = handler.Copy();
+                    if (copy == null) continue;
+                    copy.isGenerated = true;
+                    if (entry.selfKeys != null && entry.selfKeys.Count > 0)
+                        copy.RequireSelfContextKeys = copy.RequireSelfContextKeys.Concat(entry.selfKeys).Distinct().ToList();
+                    if (!string.IsNullOrEmpty(set.Value))
+                        copy.RequireSelfContextKeys = copy.RequireSelfContextKeys.Concat(new[] { set.Value }).Distinct().ToList();
+                    list.Add(copy);
+                }
         }
 
         foreach (var handler in list)
@@ -798,9 +801,24 @@ public class scr_System_CentralControl : MonoBehaviour
 
     public void AddGeneratedPortraitHandlers(string templateID)
     {
-        // First publication can populate a previously returned empty list without replacing it.
-        if (globalPortraitHandlers.TryGetValue(templateID, out var lists) && lists[1].Count == 0)
-            lists[1].AddRange(GlobalPortraitTemplate.GetHandlers($"{ComfyUISceneImage.OutputFolderName}/{templateID}"));
+        // A newly published root can populate an empty list or precede an existing base set, in place.
+        if (!globalPortraitHandlers.TryGetValue(templateID, out var lists)) return;
+        lists[1].Clear();
+        FillGeneratedPortraitHandlers(templateID, lists[1]);
+    }
+
+    void FillGeneratedPortraitHandlers(string templateID, List<PortraitManager.CharaPortrait> list)
+    {
+        foreach (var root in GeneratedPortraitRegistry.GetRoots(templateID))
+            foreach (var handler in GlobalPortraitTemplate.GetHandlers(root.Key))
+            {
+                var copy = handler.Copy();
+                if (copy == null) continue;
+                copy.isGenerated = true;
+                if (!string.IsNullOrEmpty(root.Value))
+                    copy.RequireSelfContextKeys = copy.RequireSelfContextKeys.Concat(new[] { root.Value }).Distinct().ToList();
+                list.Add(copy);
+            }
     }
 
     public void ClearGlobalPortraitHandlers() => globalPortraitHandlers.Clear();

@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-/// <summary>Outcome of an Analyze run, shown in the window and written to the analysis report.</summary>
+/// <summary>Outcome of an Analyze run, shown in the window and written to the folder's analysis cache (ImageReport).</summary>
 public class ImageAnalysisResult
 {
     public string folder;
@@ -33,18 +33,26 @@ public class ImageAnalysisResult
 }
 
 /// <summary>
-/// Task 2 (Plan_ImageClassifier.md): classifies every tag record without touching any image, then writes
-/// &lt;folder&gt;/_image_analysis.md (totals, clusters with previews, lint, unused rules and full diagnostics).
+/// Task 2 (Plan_ImageClassifier.md): classifies every tag record without touching any image, then writes the folder's analysis cache
+/// &lt;folder&gt;/_image_analysis.jsonl (ImageReport.FolderCache: totals, lint, every image with its tags and diagnostics). The HTML reports
+/// (one folder, or every Mods work folder) are rendered from these caches by ImageReport.
 /// </summary>
 public static class ImageAnalysis
 {
-    public const string AnalysisFileName = "_image_analysis.md";
-    const int TagFrequencyRows = 60;
-    const int ThumbnailWidth = 112;
+    /// <summary>Not .json: mod folders are scanned for *.json def files (scr_System_Serializer.GetDefJsonFiles).</summary>
+    public const string AnalysisFileName = "_image_analysis.jsonl";
+    /// <summary>The markdown report earlier versions wrote; deleted by the next Analyze of that folder.</summary>
+    public const string LegacyReportFileName = "_image_analysis.md";
 
     /// <summary>The category ids an image's first folder can mean (holds excluded).</summary>
     public static HashSet<string> CategoryIds(ImageRules rules) =>
         new HashSet<string>(rules.categories.Where(c => !c.hold).Select(c => c.id), StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>The image's category folder = its top folder in the work folder (state sets are separate work folders, sorted by hand).</summary>
+    internal static string CategoryFolder(string path) => ImageTagStore.TopFolder(path);
+
+    internal static ImageReconcileResult Reconcile(ImageTagStore store, IEnumerable<string> files, ImageRules rules) =>
+        store.Reconcile(files, CategoryIds(rules), ImageClassifyMover.ToolPlacedPaths(store.Folder));
 
     /// <param name="folderDecides">True (default): an image inside a category folder keeps that category and only gets a name;
     /// false: the rules decide every image's category again ("Re-classify images in category folders").</param>
@@ -59,7 +67,7 @@ public static class ImageAnalysis
 
         // catch up with manual changes first (moved/renamed/deleted images, images moved out of a category folder) and save them
         var categoryIds = CategoryIds(rules);
-        result.reconcile = store.Reconcile(ImageTagTask.ScanImages(folder), categoryIds, ImageClassifyMover.ToolPlacedPaths(folder));
+        result.reconcile = Reconcile(store, ImageTagTask.ScanImages(folder), rules);
         if (result.reconcile.Changed) store.Compact(rules.excludedTags, out _);
 
         var engine = new ImageClassifierEngine(rules);
@@ -71,7 +79,7 @@ public static class ImageAnalysis
             if (!File.Exists(store.AbsolutePath(record.path))) { result.missingFiles++; continue; }
             if (result.reconcile.stale.Contains(record.path)) { result.staleFiles++; continue; }  // tags describe the old picture
             var c = engine.Classify(record, useFilenameHints: true);
-            var top = ImageTagStore.TopFolder(record.path);
+            var top = CategoryFolder(record.path);
             bool settledName = finalName.IsMatch(Path.GetFileName(record.path));
             // a manual (hand-sorted only) category folder decides even when re-classifying: the rules can never choose it again
             bool manualFolder = top != null && rules.categories.Any(x => x.manual && !x.hold && string.Equals(x.id, top, StringComparison.OrdinalIgnoreCase));
@@ -98,8 +106,10 @@ public static class ImageAnalysis
         result.lowConfidencePassMoves = ImageClassifyMover.BuildPlan(result, true).moves.Count;
 
         result.analysisPath = Path.Combine(folder, AnalysisFileName);
-        // Leave any legacy/user-authored _unclassified.md untouched; this is the only report we write.
-        File.WriteAllText(result.analysisPath, BuildAnalysis(result), new UTF8Encoding(false));
+        // Leave any legacy/user-authored _unclassified.md untouched; the old markdown report is replaced by the cache.
+        ImageReport.WriteFolderCache(result, rulesPath);
+        var legacy = Path.Combine(folder, LegacyReportFileName);
+        if (File.Exists(legacy)) File.Delete(legacy);
         return result;
     }
 
@@ -142,6 +152,8 @@ public static class ImageAnalysis
         }
 
         Ensure(result, Path.Combine(result.folder, ImageTagTask.UnsortedFolder));   // ignored by the tool (ImageTagTask.ScanImages)
+        // Only the work folder's own category folders. State sets (<folder>_<state>/<category>/) are not created ahead of time (user decision
+        // 2026-11-13): Classify creates the folder it moves an image into.
         var ids = result.rules.categories.Where(c => !c.hold && !string.IsNullOrEmpty(c.id)).Select(c => c.id).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
         foreach (var id in ids)
         {
@@ -159,139 +171,7 @@ public static class ImageAnalysis
 
     static string F(float v) => v.ToString("0.00", CultureInfo.InvariantCulture);
 
-    /// <summary>Builds the complete report without reading/writing files or changing classification results.</summary>
-    public static string BuildAnalysis(ImageAnalysisResult a)
-    {
-        var sb = new StringBuilder();
-        sb.AppendLine($"# Image analysis - {Path.GetFileName(a.folder)}");
-        sb.AppendLine();
-        sb.AppendLine($"Generated {DateTime.Now:yyyy-MM-dd HH:mm} by Tools/Image Classifier. Nothing was moved. Rewritten by every Analyze run.");
-        sb.AppendLine();
-        var newFolders = a.createdFolders.Where(x => x.created).Select(x => Path.GetFileName(x.folder)).ToList();
-        if (newFolders.Count > 0)
-        {
-            sb.AppendLine($"Folders created by this run: {string.Join(", ", newFolders.Select(f => $"`{f}`"))}. " +
-                          "Into a `<category>_perform` folder go, by hand, the images of a role \"both\" name (portrait_global.names, eg. cunnilingus) where the character performs the act; keep the file name.");
-            sb.AppendLine();
-        }
-        sb.AppendLine($"- Folder: `{a.folder}`");
-        sb.AppendLine($"- Rules: `{a.rules.sourcePath}`");
-        if (a.tagHeader != null) sb.AppendLine($"- Tag file: {a.tagHeader.model}, threshold {F(a.tagHeader.threshold)}, tagged {a.tagHeader.date}");
-        var s = a.rules.settings;
-        sb.AppendLine($"- Settings: tagThreshold {F(s.tagThreshold)}, variantThreshold {F(s.variantThreshold)}, nearMissBand {F(s.nearMissBand)}, tierMinScore {F(s.tierMinScore)}, minScore {F(s.minScore)}, margin {F(s.margin)}");
-        sb.AppendLine($"- Filename-first names: {a.results.Count(r => r.filenameHint != null)} (original filename IDs before tag-based naming; actor categories and variants still use tags/folders).");
-        sb.AppendLine();
-
-        sb.AppendLine("## Summary");
-        sb.AppendLine();
-        sb.AppendLine("| | Images |");
-        sb.AppendLine("|---|---|");
-        sb.AppendLine($"| Analyzed (all previewed below) | {a.results.Count} |");
-        sb.AppendLine($"| Confident | {a.Count(ClassificationStatus.Confident)} |");
-        sb.AppendLine($"| Low confidence | {a.Count(ClassificationStatus.LowConfidence)} |");
-        sb.AppendLine($"| Unmatched | {a.Count(ClassificationStatus.Unmatched)} |");
-        if (a.failedRecords > 0) sb.AppendLine($"| Tagging failed (run Tag again) | {a.failedRecords} |");
-        if (a.untagged > 0) sb.AppendLine($"| Not tagged yet (run Tag) | {a.untagged} |");
-        if (a.missingFiles > 0) sb.AppendLine($"| Tag record without image (deleted?) | {a.missingFiles} |");
-        if (a.staleFiles > 0) sb.AppendLine($"| Changed since tagging, left out (run Tag) | {a.staleFiles} |");
-        if (a.ByFolder > 0) sb.AppendLine($"| In a category folder (category kept{(a.folderDecides ? "" : " - off for this run")}) | {a.ByFolder} |");
-        if (a.KeptOut > 0) sb.AppendLine($"| Moved out of a category folder by you (never moved again) | {a.KeptOut} |");
-        if (a.reconcile != null && a.reconcile.relinked.Count > 0) sb.AppendLine($"| Moved/renamed by hand, record followed (no re-tag) | {a.reconcile.relinked.Count} |");
-        sb.AppendLine();
-        sb.AppendLine($"Classify preview: a confident-only pass would move or rename **{a.firstPassMoves}** images; a pass that includes low confidence **{a.lowConfidencePassMoves}**.");
-        sb.AppendLine();
-        var disagree = a.results.Where(r => r.FolderDisagrees).OrderBy(r => r.record.path, StringComparer.OrdinalIgnoreCase).ToList();
-        if (disagree.Count > 0)
-        {
-            sb.AppendLine($"## Your folders vs the rules ({disagree.Count})");
-            sb.AppendLine();
-            sb.AppendLine("Images whose category folder (your sort, or an earlier pass you kept) differs from what the rules alone would choose. " +
-                          "The folder wins; these rows are where the rules need work.");
-            sb.AppendLine();
-            sb.AppendLine("| Image | Folder | Rules say |");
-            sb.AppendLine("|---|---|---|");
-            foreach (var r in disagree) sb.AppendLine($"| [{Md(r.record.path)}](<{UrlPath(r.record.path)}>) | {Md(r.CategoryId)} | {Md(r.rulesCategoryId ?? "(no category)")} |");
-            sb.AppendLine();
-        }
-        var kept = a.results.Where(r => r.keptOut).ToList();
-        if (kept.Count > 0)
-        {
-            sb.AppendLine($"## Moved out by you ({kept.Count})");
-            sb.AppendLine();
-            sb.AppendLine("The tool had put these in a category folder and you moved them out, so Classify leaves them alone. " +
-                          "Put one into a category folder to sort it yourself. \"Rules say\" is what the rules still think.");
-            sb.AppendLine();
-            sb.AppendLine("| Image | Rules say |");
-            sb.AppendLine("|---|---|");
-            foreach (var r in kept) sb.AppendLine($"| [{Md(r.record.path)}](<{UrlPath(r.record.path)}>) | {Md(r.CategoryId ?? "(no category)")} / {Md(r.name ?? "-")} |");
-            sb.AppendLine();
-        }
-        sb.AppendLine("Everything not confidently classified, with all its tags: [diagnostics](#diagnostics).");
-        sb.AppendLine();
-
-        sb.AppendLine($"## Rule check ({a.lint.Count})");
-        sb.AppendLine();
-        if (a.lint.Count == 0) sb.AppendLine("No problems found.");
-        foreach (var w in a.lint) sb.AppendLine($"- {Md(w)}");
-        sb.AppendLine();
-
-        sb.AppendLine("## Results by category");
-        sb.AppendLine();
-        sb.AppendLine("Every analyzed image is previewed below, including low confidence, unmatched and manually kept-out images. Click a thumbnail or path to open the original. Scores are rule scores, not probabilities; filename IDs are not tag scores.");
-        sb.AppendLine();
-        foreach (var cat in a.results.GroupBy(r => r.CategoryId).OrderByDescending(g => g.Count()).ThenBy(g => g.Key, StringComparer.Ordinal))
-        {
-            sb.AppendLine($"### {Md(cat.Key ?? "(no category)")} ({cat.Count()})");
-            sb.AppendLine();
-            foreach (var cluster in cat.GroupBy(ClusterKey)
-                         .OrderByDescending(g => g.Count()).ThenBy(g => g.Key, StringComparer.Ordinal))
-            {
-                sb.AppendLine($"#### Name / emotion: {Md(cluster.Key)} ({cluster.Count()})");
-                sb.AppendLine();
-                sb.AppendLine($"Confident: {cluster.Count(r => r.status == ClassificationStatus.Confident)}; low confidence: {cluster.Count(r => r.status == ClassificationStatus.LowConfidence)}; unmatched: {cluster.Count(r => r.status == ClassificationStatus.Unmatched)}; kept out: {cluster.Count(r => r.keptOut)}.");
-                sb.AppendLine();
-                sb.AppendLine("<table>");
-                sb.AppendLine("<tr><th>Preview</th><th>Image / provenance</th><th>Confidence / source / score</th></tr>");
-                foreach (var r in cluster.OrderBy(r => r.record.path, StringComparer.OrdinalIgnoreCase))
-                {
-                    sb.AppendLine("<tr>");
-                    sb.AppendLine($"<td>{Thumbnail(r.record.path)}</td>");
-                    sb.AppendLine($"<td><a href=\"{Html(UrlPath(r.record.path))}\">{Html(r.record.path)}</a>" +
-                                  (r.record.originalName != null ? $"<br>Original name: {Html(r.record.originalName)}" : "") + "</td>");
-                    sb.AppendLine($"<td>{Html(StatusLabel(r))}<br>{Html(SourceLabel(r))}<br>{Html(ScoreLabel(r))}" +
-                                  (r.notes.Count > 0 ? "<br>Category notes: " + Html(string.Join("; ", r.notes)) : "") +
-                                  (r.status != ClassificationStatus.Confident || r.keptOut ? "<br><a href=\"#diagnostics\">Full diagnostics</a>" : "") + "</td>");
-                    sb.AppendLine("</tr>");
-                }
-                sb.AppendLine("</table>");
-                sb.AppendLine();
-            }
-        }
-
-        sb.AppendLine("## Rules that matched no image");
-        sb.AppendLine();
-        sb.AppendLine("Normal for a small folder; across many folders these are candidates for fixing or removing.");
-        sb.AppendLine();
-        var usedCategories = new HashSet<CategoryRule>(a.results.Where(r => r.category != null).Select(r => r.category));
-        var unusedCategories = a.rules.categories.Where(c => !c.hold && !c.manual && !usedCategories.Contains(c)).Select(c => c.id).Distinct().ToList();
-        sb.AppendLine($"- Categories: {(unusedCategories.Count == 0 ? "none" : string.Join(", ", unusedCategories))}");
-        var usedNames = new HashSet<NameRule>(a.results.Where(r => r.nameRule != null).Select(r => r.nameRule));
-        foreach (var set in a.rules.nameSets)
-        {
-            var duplicated = new HashSet<string>(set.Value.GroupBy(n => n.name).Where(g => g.Count() > 1).Select(g => g.Key));
-            var unused = set.Value.Where(n => !usedNames.Contains(n))
-                .Select(n => duplicated.Contains(n.name) ? $"{n.name} (entry #{n.index})" : n.name).ToList();
-            sb.AppendLine($"- {set.Key}: {(unused.Count == 0 ? "none" : string.Join(", ", unused))}");
-        }
-        var usedVariants = new HashSet<string>(a.results.Where(r => r.variant != null).Select(r => r.variant));
-        var unusedVariants = a.rules.variants.Keys.Where(v => !usedVariants.Contains(v)).ToList();
-        sb.AppendLine($"- Variants: {(unusedVariants.Count == 0 ? "none" : string.Join(", ", unusedVariants))}");
-        sb.AppendLine();
-        AppendDiagnostics(sb, a, new ImageClassifierEngine(a.rules));
-        return sb.ToString();
-    }
-
-    /// <summary>The "Name / emotion" cluster an image is listed under in the reports.</summary>
+    /// <summary>The "class name" (name / emotion) cluster an image is listed under in the reports.</summary>
     internal static string ClusterKey(ImageClassification r) =>
         r.name ?? (r.category != null && !r.category.rename ? "(original file names kept)" : "(no name matched)");
 
@@ -300,146 +180,80 @@ public static class ImageAnalysis
 
     internal static string SourceLabel(ImageClassification r) =>
         "Category source: " + (r.byFolder ? "folder" : r.categoryFilenameHint != null ? "filename ID " + r.categoryFilenameHint : "rules/tags") + "; name source: " +
-        (r.filenameHint != null ? "filename ID " + r.filenameHint + " (name confirmed)" : r.name != null ? "rules/tags" : "none (original filename kept or unmatched)") +
-        (r.state != null ? "; state: " + r.state + " (" + r.stateSource + ")" : "");
+        (r.filenameHint != null ? "filename ID " + r.filenameHint + " (name confirmed)" : r.name != null ? "rules/tags" : "none (original filename kept or unmatched)");
 
     internal static string ScoreLabel(ImageClassification r) => r.filenameHint != null
         ? "Score: n/a (filename ID, not a tag score)"
         : r.name != null ? "Rule score: " + F(r.score) : "Name score: n/a";
 
-    static string Thumbnail(string path) =>
-        $"<a href=\"{Html(UrlPath(path))}\"><img src=\"{Html(UrlPath(path))}\" alt=\"{Html(path)}\" width=\"{ThumbnailWidth}\" height=\"{ThumbnailWidth}\" style=\"object-fit:contain\" loading=\"lazy\"></a>";
+    /// <summary>The original file name gave the category, name or variant (filename IDs from the rules), so the name was "used in analysis".</summary>
+    internal static bool NameUsed(ImageClassification r) =>
+        r.filenameHint != null || r.categoryFilenameHint != null || r.variantFilenameHint != null;
 
-    static string GroupLabel(ImageClassification r)
+    /// <summary>Which filename IDs were used, eg. "name cowgirl; variant cum" (null when none).</summary>
+    internal static string NameHints(ImageClassification r)
     {
-        if (r.category != null) return r.byFolder ? r.CategoryId + " (your folder)" : r.CategoryId;
-        return r.reasons.Any(x => x.StartsWith("held", StringComparison.Ordinal)) ? "(held: unknown actor)" : "(no category)";
+        if (!NameUsed(r)) return null;
+        var sb = new StringBuilder();
+        if (r.categoryFilenameHint != null) sb.Append("category ").Append(r.categoryFilenameHint);
+        if (r.filenameHint != null) sb.Append(sb.Length > 0 ? "; " : "").Append("name ").Append(r.filenameHint);
+        if (r.variantFilenameHint != null) sb.Append(sb.Length > 0 ? "; " : "").Append("variant ").Append(r.variantFilenameHint);
+        return sb.ToString();
     }
 
-    static void AppendDiagnostics(StringBuilder sb, ImageAnalysisResult a, ImageClassifierEngine engine)
+    /// <summary>"cowgirl / missionary_cum (0.63), runner-up doggy (0.41)": what the rules still say (for low confidence, unmatched and kept-out images).</summary>
+    internal static string BestGuess(ImageClassification r)
     {
-        var used = a.rules.CollectTags();
-        float th = a.rules.settings.tagThreshold;
-        var unmatched = a.results.Where(r => r.status == ClassificationStatus.Unmatched && !r.keptOut).ToList();
-        var low = a.results.Where(r => r.status == ClassificationStatus.LowConfidence && !r.keptOut).ToList();
-        var keptOut = a.results.Where(r => r.keptOut).ToList();
-        var all = unmatched.Concat(low).Concat(keptOut).ToList();
-
-        sb.AppendLine("<a id=\"diagnostics\"></a>");
-        sb.AppendLine();
-        sb.AppendLine("## Diagnostics");
-        sb.AppendLine();
-        sb.AppendLine("Every image that is not confidently classified, with all its tags. " +
-                      "These images are never moved by a confident-only pass; unmatched images are never moved at all. " +
-                      $"Edit the rules (`{a.rules.sourcePath}`) and run Analyze again to see what a change catches. " +
-                      "**Bold** tags are used by some rule.");
-        sb.AppendLine();
-        sb.AppendLine($"Unmatched: **{unmatched.Count}** · Low confidence: **{low.Count}**" + (keptOut.Count > 0 ? $" · Moved out by you: **{keptOut.Count}**" : "")
-                      + ".");
-        sb.AppendLine();
-        if (all.Count == 0) { sb.AppendLine("Nothing left - every image is confidently classified."); return; }
-
-        sb.AppendLine("| Group | Unmatched | Low confidence |");
-        sb.AppendLine("|---|---|---|");
-        foreach (var g in all.GroupBy(GroupLabel).OrderBy(g => g.Key.StartsWith("(") ? 0 : 1).ThenByDescending(g => g.Count()))
-            sb.AppendLine($"| {Md(g.Key)} | {g.Count(r => r.status == ClassificationStatus.Unmatched)} | {g.Count(r => r.status == ClassificationStatus.LowConfidence)} |");
-        sb.AppendLine();
-
-        sb.AppendLine($"### Tag frequency in these images (score ≥ {F(th)})");
-        sb.AppendLine();
-        sb.AppendLine("Tags that recur here but are not bold are candidates for a new rule or for the excluded tags list.");
-        sb.AppendLine();
-        sb.AppendLine("| Tag | Images | Used by a rule |");
-        sb.AppendLine("|---|---|---|");
-        var freq = new Dictionary<string, int>();
-        foreach (var r in all)
-            foreach (var kv in r.record.general.Concat(r.record.character))
-                if (kv.Value >= th) freq[kv.Key] = freq.TryGetValue(kv.Key, out var n) ? n + 1 : 1;
-        foreach (var kv in freq.OrderByDescending(kv => kv.Value).ThenBy(kv => kv.Key, StringComparer.Ordinal).Take(TagFrequencyRows))
-            sb.AppendLine($"| {Md(kv.Key)} | {kv.Value} | {(used.Contains(kv.Key) ? "yes" : "")} |");
-        sb.AppendLine();
-
-        AppendImages(sb, "Unmatched (never moved)", unmatched, used, engine);
-        AppendImages(sb, "Low confidence", low, used, engine);
-        AppendImages(sb, "Moved out by you (never moved automatically; \"best guess\" = what the rules still say)", keptOut, used, engine);
+        if (r.category == null) return null;
+        var s = r.CategoryId + " / " + (r.name ?? "-");
+        if (r.name != null && r.filenameHint == null) s += " (" + F(r.score) + ")";
+        if (r.runnerUp != null) s += ", runner-up " + r.runnerUp.name + " (" + F(r.runnerUpScore) + ")";
+        return s;
     }
 
     const int ScoreCandidates = 4;
 
-    /// <summary>"surprised 0.57 = hand_on_own_chest 0.39×0.8 + open_mouth 0.87×0.3": how the rule weights produced each score.</summary>
-    static string ScoreBreakdown(ImageClassification r, ImageClassifierEngine engine)
+    /// <summary>"[surprised 0.57] = hand_on_own_chest 0.39×0.8 + open_mouth 0.87×0.3": how the rule weights produced each score; the chosen entry in brackets.</summary>
+    internal static string ScoreBreakdown(ImageClassification r, ImageClassifierEngine engine)
     {
-        var parts = new List<string>();
-        foreach (var (rule, score) in r.tierCandidates.Take(ScoreCandidates))
+        if (r.tierCandidates.Count == 0) return null;
+        var sb = new StringBuilder();
+        int shown = Math.Min(ScoreCandidates, r.tierCandidates.Count);
+        for (int i = 0; i < shown; i++)
         {
-            var terms = engine.Contributions(r.record, rule)
-                .Select(c => Md(c.tag) + " " + F(c.score) + (Math.Abs(c.weight - 1f) < 1e-4f ? "" : "×" + c.weight.ToString("0.##", CultureInfo.InvariantCulture)));
-            var label = $"{Md(rule.name)} {F(score)}";
-            if (rule == r.nameRule) label = $"**{label}**";
-            var body = string.Join(" + ", terms);
-            parts.Add(body.Length == 0 ? label + " (fallback)" : $"{label} = {body}");
-        }
-        if (r.tierCandidates.Count > ScoreCandidates) parts.Add($"+{r.tierCandidates.Count - ScoreCandidates} more");
-        return string.Join(" · ", parts);
-    }
-
-    static void AppendImages(StringBuilder sb, string title, List<ImageClassification> list, HashSet<string> used, ImageClassifierEngine engine)
-    {
-        if (list.Count == 0) return;
-        sb.AppendLine($"### {title} ({list.Count})");
-        sb.AppendLine();
-        foreach (var g in list.GroupBy(GroupLabel).OrderBy(g => g.Key.StartsWith("(") ? 0 : 1).ThenByDescending(g => g.Count()))
-        {
-            sb.AppendLine($"#### {Md(g.Key)} ({g.Count()})");
-            sb.AppendLine();
-            foreach (var r in g)
+            var (rule, score) = r.tierCandidates[i];
+            if (i > 0) sb.Append(" · ");
+            var label = rule.name + " " + F(score);
+            sb.Append(rule == r.nameRule ? "[" + label + "]" : label);
+            var terms = engine.Contributions(r.record, rule);
+            if (terms.Count == 0) { sb.Append(" (fallback)"); continue; }
+            sb.Append(" = ");
+            for (int j = 0; j < terms.Count; j++)
             {
-                var path = r.record.path;
-                sb.AppendLine($"##### [{Md(path)}](<{UrlPath(path)}>)");
-                sb.AppendLine();
-                sb.AppendLine(Thumbnail(path));
-                sb.AppendLine();
-                sb.AppendLine($"- Confidence: {Md(StatusLabel(r))}; {Md(ScoreLabel(r))}");
-                sb.AppendLine($"- Source: {Md(SourceLabel(r))}");
-                if (r.record.originalName != null) sb.AppendLine($"- Original name: {Md(r.record.originalName)}");
-                sb.AppendLine($"- Why: {Md(string.Join("; ", r.reasons))}");
-                if (r.category != null)
-                    sb.AppendLine($"- Best guess: {Md(r.CategoryId)} / {Md(r.name ?? "-")}" + (r.name != null && r.filenameHint == null ? $" ({F(r.score)})" : "")
-                                  + (r.runnerUp != null ? $", runner-up {Md(r.runnerUp.name)} ({F(r.runnerUpScore)})" : ""));
-                if (r.tierCandidates.Count > 0)
-                    sb.AppendLine($"- Scores (tier {r.nameRule?.tier.ToString("0.##", CultureInfo.InvariantCulture) ?? "n/a"}, tag score×rule weight): {ScoreBreakdown(r, engine)}");
-                if (r.filenameHint != null)
-                    sb.AppendLine($"- Name source: filename ID `{Md(r.filenameHint)}` in `{Md(r.record.originalName ?? Path.GetFileName(r.record.path))}` (not a tag score).");
-                sb.AppendLine($"- Rating: {string.Join(" · ", r.record.rating.OrderByDescending(kv => kv.Value).Select(kv => $"{Md(kv.Key)} {F(kv.Value)}"))}");
-                if (r.record.character.Count > 0)
-                    sb.AppendLine($"- Character: {string.Join(" · ", r.record.character.OrderByDescending(kv => kv.Value).Select(kv => $"{Md(kv.Key)} {F(kv.Value)}"))}");
-                sb.AppendLine($"- Tags: {string.Join(" · ", r.record.general.OrderByDescending(kv => kv.Value).Select(kv => (used.Contains(kv.Key) ? $"**{Md(kv.Key)}**" : Md(kv.Key)) + " " + F(kv.Value)))}");
-                if (r.record.emotionError != null) sb.AppendLine($"- Face crop: emotion pass failed ({Md(r.record.emotionError)})");
-                else if (r.record.face == false) sb.AppendLine("- Face crop: no face found");
-                else if (r.record.face == true)
-                    sb.AppendLine($"- Face crop: VLM **{Md(r.record.vlm ?? "(off-list: " + r.record.vlmRaw + ")")}** · tags: " +
-                                  string.Join(" · ", (r.record.faceTags ?? new Dictionary<string, float>()).OrderByDescending(kv => kv.Value)
-                                      .Select(kv => (used.Contains(ImageRules.FacePrefix + kv.Key) ? $"**{Md(kv.Key)}**" : Md(kv.Key)) + " " + F(kv.Value))));
-                sb.AppendLine();
+                if (j > 0) sb.Append(" + ");
+                sb.Append(terms[j].tag).Append(' ').Append(F(terms[j].score));
+                if (Math.Abs(terms[j].weight - 1f) >= 1e-4f) sb.Append('×').Append(terms[j].weight.ToString("0.##", CultureInfo.InvariantCulture));
             }
         }
+        if (r.tierCandidates.Count > ScoreCandidates) sb.Append(" · +").Append(r.tierCandidates.Count - ScoreCandidates).Append(" more");
+        var tier = r.nameRule != null ? r.nameRule.tier.ToString("0.##", CultureInfo.InvariantCulture) : "n/a";
+        return "tier " + tier + ": " + sb;
     }
 
-    /// <summary>Escapes Markdown control characters that occur in tags (_ * ` | and the emoticon tags).</summary>
-    internal static string Md(string text)
+    /// <summary>The emotion pass result for the details panel (null when the image never went through it).</summary>
+    internal static string FaceLabel(ImageTagRecord record)
     {
-        text = (text ?? "").Replace("&", "&amp;").Replace("\r", " ").Replace("\n", " ");
-        var sb = new StringBuilder(text.Length + 8);
-        foreach (var ch in text)
+        if (record.emotionError != null) return "emotion pass failed (" + record.emotionError + ")";
+        if (record.face == false) return "no face found";
+        if (record.face != true) return null;
+        var sb = new StringBuilder("VLM ").Append(record.vlm ?? "(off-list: " + record.vlmRaw + ")");
+        if (record.faceTags != null && record.faceTags.Count > 0)
         {
-            if ("\\`*_[]<>|#".IndexOf(ch) >= 0) sb.Append('\\');
-            sb.Append(ch);
+            var tags = new List<KeyValuePair<string, float>>(record.faceTags);
+            tags.Sort((x, y) => y.Value.CompareTo(x.Value));
+            sb.Append(" · tags: ");
+            for (int i = 0; i < tags.Count; i++) sb.Append(i == 0 ? "" : " · ").Append(tags[i].Key).Append(' ').Append(F(tags[i].Value));
         }
         return sb.ToString();
     }
-
-    internal static string Html(string text) => (text ?? "").Replace("&", "&amp;").Replace("\"", "&quot;")
-        .Replace("'", "&#39;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\r", "&#13;").Replace("\n", "&#10;");
-
-    internal static string UrlPath(string relativePath) => "./" + string.Join("/", relativePath.Replace('\\', '/').Split('/').Select(Uri.EscapeDataString));
 }

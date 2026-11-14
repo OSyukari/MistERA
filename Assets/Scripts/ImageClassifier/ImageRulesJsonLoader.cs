@@ -17,7 +17,7 @@ using Newtonsoft.Json.Linq;
 public static class ImageRulesJsonLoader
 {
     static readonly Regex WeightSuffix = new Regex(@"^(.*)\*([0-9]*\.?[0-9]+)$", RegexOptions.Compiled);
-    static readonly HashSet<string> CategoryKeys = new HashSet<string> { "id", "group", "all", "any", "none", "threshold", "hold", "nameSet", "allowedNames", "moveLowConfidence", "rename", "refines", "manual", "filenameConfirmedNearMisses", "filenameFirst" };
+    static readonly HashSet<string> CategoryKeys = new HashSet<string> { "id", "group", "all", "any", "none", "threshold", "hold", "nameSet", "allowedNames", "allowedVariants", "moveLowConfidence", "rename", "refines", "manual", "filenameConfirmedNearMisses", "filenameFirst" };
     static readonly HashSet<string> NameEntryKeys = new HashSet<string> { "tier", "hasVariants", "defaultVariant", "filenameOnly", "none", "onlyInCategories", "fallback", "tierMinScore" };
     static readonly HashSet<string> EmotionPassKeys = new HashSet<string> { "categories", "labels", "prompt" };
 
@@ -217,6 +217,7 @@ public static class ImageRulesJsonLoader
             hold = c["hold"]?.Value<bool>() ?? false,
             nameSet = (string)c["nameSet"] ?? ImageRules.DefaultNameSet,
             allowedNames = c["allowedNames"] is JArray allowed ? new HashSet<string>(allowed.Select(v => (string)v)) : null,
+            allowedVariants = c["allowedVariants"] is JArray variants ? new HashSet<string>(variants.Values<string>()) : null,
             filenameConfirmedNearMisses = new HashSet<string>((c["filenameConfirmedNearMisses"] as JArray)?.Select(v => (string)v) ?? Enumerable.Empty<string>()),
             filenameFirst = c["filenameFirst"]?.Value<bool>() ?? false,
             moveLowConfidence = c["moveLowConfidence"]?.Value<bool>() ?? true,

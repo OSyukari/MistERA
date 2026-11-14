@@ -3708,7 +3708,7 @@ public abstract class ActionPackage
 
         string s = "";// targetCOM != null && COMVariantID >= 0 ? targetCOM.variants[COMVariantID].GetDescription_After(targetCOM, this) : "";
 
-        if (targetCOM != null && COMVariantID >= 0)
+        if (executeSuccessful && targetCOM != null && COMVariantID >= 0)
         {
             s = targetCOM.variants[COMVariantID].GetDescription_After(targetCOM, this);
             if (s.Contains("$DEFAULT$")) s = s.Replace("$DEFAULT$", "");
@@ -4177,7 +4177,7 @@ public abstract class ActionPackage
         var answers = BuildCondomAnswers(ep, requester, granter, scr_System_Serializer.current.GetEventByID(demand.Definition.demandEventID));
 
         // safe-day claim (demandSafeDayClaim): the requester says today is safe - a lie on their danger day. The granter's
-        // request decision for this permission decides (AcceptsRequest, no roll); accepted = a Temporary grant, the act resumes
+        // held decision permission or its request decision decides (AcceptsRequest, no roll); accepted = a Temporary grant
         // safeDayClaimDecisionID: the granter believes it is safe, so decides as for that permission (e.g. the danger-day one
         // decides as plain going bare); an accepted claim grants every permission this demand covers (pushedIDs)
         bool claimOffered = demand.Definition.demandSafeDayClaim && canResume;
@@ -4188,8 +4188,14 @@ public abstract class ActionPackage
         if (claimOffered)
         {
             var claimQuery = PermissionService.Query(granter, requester, claimDecisionID);
-            claimAccepted = PermissionService.AcceptsRequest(granter, requester, claimQuery);
-            claimTooltip = PermissionService.RequestTooltip(granter, requester, claimQuery);
+            // A substituted decision honors existing permission, even if a fresh request would now fail.
+            bool claimAlreadyPermitted = claimDecisionID != demand.Definition.ID && claimQuery.Error.Length == 0
+                && PermissionService.IsApplicable(granter, claimQuery.Definition) && claimQuery.HasPermission;
+            claimAccepted = claimAlreadyPermitted || PermissionService.AcceptsRequest(granter, requester, claimQuery);
+            claimTooltip = claimAlreadyPermitted
+                ? LocalizeDictionary.QueryThenParse("ui_permissionBox_alreadyGranted")
+                    .Replace("$sources$", EventUtility.DescribePermissionSources(claimQuery))
+                : PermissionService.RequestTooltip(granter, requester, claimQuery);
         }
         Func<bool> grantClaim = () =>
         {

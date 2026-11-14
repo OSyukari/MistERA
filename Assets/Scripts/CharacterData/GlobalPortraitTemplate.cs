@@ -20,7 +20,8 @@ public static class GlobalPortraitTemplate
 {
     public const string ConfigFileName = "Image_Generation_Config.json";
     public const string Placeholder = "$foldername$";
-    const string StatePlaceholder = "$imagestate$";
+    static readonly Dictionary<string, List<string>> stateKeywords = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
+    static readonly List<string> stateOrder = new List<string>();
 
     public static string ConfigPath { get { return $"{scr_System_Serializer.AssetPacksPath}/{ConfigFileName}"; } }
 
@@ -36,6 +37,8 @@ public static class GlobalPortraitTemplate
         if (serializer == null) return;
         serializer.GlobalPortraitTemplateJson = null;
         serializer.GlobalPortraitByFolder.Clear();
+        stateKeywords.Clear();
+        stateOrder.Clear();
         scr_System_CentralControl.current?.ClearGlobalPortraitHandlers();
         Revision++;
         if (scr_System_CentralControl.current != null && scr_System_CentralControl.current.isSafeMode) return;
@@ -49,6 +52,12 @@ public static class GlobalPortraitTemplate
         try
         {
             var config = JObject.Parse(File.ReadAllText(path));
+            if (config["image_states"] is JObject states)
+                foreach (var state in states.Properties().Where(p => !IsComment(p.Name) && p.Value is JObject))
+                {
+                    stateKeywords[state.Name] = (state.Value["keywords"] as JArray)?.Values<string>().ToList() ?? new List<string>();
+                    stateOrder.Add(state.Name);
+                }
             var handlers = Build(config, out var debugOutput);
             serializer.GlobalPortraitTemplateJson = JsonConvert.SerializeObject(handlers, Formatting.Indented, UtilityEX.SerializerSettings);
             Debug.Log($"GlobalPortraitTemplate: built {handlers.Count} handlers / {handlers.Sum(h => h.Variants == null ? 0 : h.Variants.Count)} variants from [{path}]");
@@ -68,12 +77,50 @@ public static class GlobalPortraitTemplate
     }
 
     /// <summary>
-    /// Expanded, resolved handlers of one character folder, in priority order. Shared: callers Copy() them (see PortraitManager.GeneratedHandlers).
-    /// Empty in safe mode, before Initialize, or when the template could not be built.
+    /// Registered nested state roots in configured priority order, followed by the ordinary root.
+    /// Missing state sets never allocate a handler graph. Values are canonical state gates, or null for the ordinary root.
     /// </summary>
-    /// <param name="path">The folder holding the category folders: its name (eg. "Aemeath") or a longer path ending in it
-    /// (eg. "cinderella/cinderella_after"). $foldername$ becomes its last segment (asset keys are parent/dir/name = folder/category/file);
-    /// the whole path must appear in the image's full path.</param>
+    public static IEnumerable<KeyValuePair<string, string>> GetStateSets(string path)
+    {
+        path = NormalizePath(path);
+        if (string.IsNullOrEmpty(path)) yield break;
+        var folder = path.Substring(path.LastIndexOf('/') + 1);
+        var available = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var serializer = scr_System_Serializer.current;
+        if (serializer != null)
+            foreach (var pair in serializer.ShortFileAddress)
+            {
+                if (pair.Key.Count(ch => ch == '/') != 2) continue;
+                var root = pair.Key.Substring(0, pair.Key.IndexOf('/'));
+                if (!root.StartsWith(folder + "_", StringComparison.OrdinalIgnoreCase)) continue;
+                var state = root.Substring(folder.Length + 1);
+                if (!stateKeywords.ContainsKey(state) || !serializer.ImageFileExists(pair.Key)) continue;
+                if (pair.Value.Replace('\\', '/').IndexOf("/" + path + "/" + root + "/", StringComparison.OrdinalIgnoreCase) >= 0)
+                    available.Add(state);
+            }
+        foreach (var state in stateOrder)
+            if (available.Contains(state))
+                yield return new KeyValuePair<string, string>(path + "/" + folder + "_" + state, state);
+        yield return new KeyValuePair<string, string>(path, null);
+    }
+
+    // Normalize OR aliases once per request rather than cloning every variant for each alias.
+    public static List<string> WithStateKeys(List<string> keywords)
+    {
+        if (keywords == null) return null;
+        var result = keywords;
+        foreach (var state in stateKeywords)
+        {
+            if (result.Contains(state.Key) || !state.Value.Any(k => keywords.Contains(k))) continue;
+            if (ReferenceEquals(result, keywords)) result = new List<string>(keywords);
+            result.Add(state.Key);
+        }
+        return result;
+    }
+
+    /// <summary>Resolved handlers shared by folder; callers Copy() them before adding set-specific gates.</summary>
+    /// <param name="path">Folder containing category folders, e.g. cinderella/cinderella_after.
+    /// Its last segment supplies the folder/category/file asset-key prefix; the full path must match the image path.</param>
     public static List<PortraitManager.CharaPortrait> GetHandlers(string path)
     {
         path = NormalizePath(path);
@@ -200,6 +247,7 @@ public static class GlobalPortraitTemplate
     class Category
     {
         public string id;
+        public HashSet<string> allowedVariants;
         public List<string> targetKeys = new List<string>();
         public List<string> alsoUseFolders = new List<string>();
     }
@@ -219,6 +267,7 @@ public static class GlobalPortraitTemplate
         public bool primary;        // false = a later keyword of the name (fallback): after the images of names that have it as their first keyword
         public float tier;
         public int order;
+        public int variantOrder = int.MaxValue;
         public string key => (primary ? "own|" : "fb|") + string.Join("+", tags);
     }
 
@@ -252,6 +301,7 @@ public static class GlobalPortraitTemplate
         {
             var folders = new List<string> { cat.id };
             folders.AddRange(cat.alsoUseFolders);
+            var categoryBaseFiles = baseFiles.Where(f => f == "" || cat.allowedVariants == null || cat.allowedVariants.Contains(f)).ToList();
 
             foreach (var block in blocks)
             {
@@ -266,7 +316,7 @@ public static class GlobalPortraitTemplate
                         bool primary = k == 0 || kw == n.keywords[0].Item1;
                         bool both = kwRole == "both";
                         if (kwRole != block.role && !(both && (block.role == "doer" || block.role == "receiver"))) continue;
-                        // a name without keyword (generic) only gets its keyworded variants here (eg. [sleeping]); its base is the unconditional variant
+                        // A name without keyword (generic) only gets action variants here; its base is the unconditional variant.
 
                         var nameFolders = NameFolders(n, folders, both && block.role == "doer");
                         if (nameFolders.Count < 1) continue;
@@ -275,14 +325,15 @@ public static class GlobalPortraitTemplate
                         // writes: named by hand, eg. anal_rape); the unspecified files ("") only add to it
                         foreach (var v in portraitVariants)
                         {
-                            if (!v.files.Any(f => f != "" && (n.hasVariants.Contains(f) || !classifierIds.Contains(f)))) continue;
+                            var files = v.files.Where(f => f == "" || cat.allowedVariants == null || cat.allowedVariants.Contains(f)).ToList();
+                            if (!files.Any(f => f != "" && (n.hasVariants.Contains(f) || !classifierIds.Contains(f)))) continue;
                             var tags = new List<string>();
                             if (kw != null) tags.Add(kw);
                             tags.AddRange(v.keywords);
-                            entries.Add(new Entry { tags = tags, primary = primary, tier = n.tier, order = n.order, patterns = Patterns(nameFolders, n, v.files, names, suffixIds, classifierIds, ext) });
+                            entries.Add(new Entry { tags = tags, primary = primary, tier = n.tier, order = n.order, variantOrder = portraitVariants.IndexOf(v), patterns = Patterns(nameFolders, n, files, names, suffixIds, classifierIds, ext) });
                         }
                         if (kw != null)
-                            entries.Add(new Entry { tags = new List<string> { kw }, primary = primary, tier = n.tier, order = n.order, patterns = Patterns(nameFolders, n, baseFiles, names, suffixIds, classifierIds, ext) });
+                            entries.Add(new Entry { tags = new List<string> { kw }, primary = primary, tier = n.tier, order = n.order, patterns = Patterns(nameFolders, n, categoryBaseFiles, names, suffixIds, classifierIds, ext) });
                     }
                 }
 
@@ -296,12 +347,13 @@ public static class GlobalPortraitTemplate
                         foreach (var p in e.patterns) if (!m.patterns.Contains(p)) m.patterns.Add(p);
                         m.tier = Math.Min(m.tier, e.tier);
                         m.order = Math.Min(m.order, e.order);
+                        m.variantOrder = Math.Min(m.variantOrder, e.variantOrder);
                     }
                     else { byKey[e.key] = e; merged.Add(e); }
                 }
 
-                // more specific first, then a keyword's primary images before fallbacks, then file_names tier / listed order
-                var sorted = merged.OrderByDescending(e => e.tags.Count).ThenBy(e => e.primary ? 0 : 1).ThenBy(e => e.tier).ThenBy(e => e.order).ToList();
+                // Action variant priority precedes name/position fallbacks among equally specific requests.
+                var sorted = merged.OrderByDescending(e => e.tags.Count).ThenBy(e => e.variantOrder).ThenBy(e => e.primary ? 0 : 1).ThenBy(e => e.tier).ThenBy(e => e.order).ToList();
 
                 var variants = sorted.Select(e => new PortraitManager.PortraitVariant { tagsMatch = e.tags, PortraitVariantData = e.patterns }).ToList();
 
@@ -310,7 +362,7 @@ public static class GlobalPortraitTemplate
                 foreach (var un in block.unconditional)
                 {
                     foreach (var n in names.Where(x => x.name == un))
-                        foreach (var p in Patterns(NameFolders(n, folders, false), n, baseFiles, names, suffixIds, classifierIds, ext))
+                        foreach (var p in Patterns(NameFolders(n, folders, false), n, categoryBaseFiles, names, suffixIds, classifierIds, ext))
                             if (!uncond.Contains(p)) uncond.Add(p);
                 }
                 if (uncond.Count > 0) variants.Add(new PortraitManager.PortraitVariant { PortraitVariantData = uncond });
@@ -328,46 +380,14 @@ public static class GlobalPortraitTemplate
                 });
             }
         }
+        AppendMappedPortraits(config, pg, ext, result, "pov", "file_names", "standalone", false, true);
         AppendMappedPortraits(config, pg, ext, result, "activity", "portrait_activities", "activities", false);
         AppendMappedPortraits(config, pg, ext, result, "portrait", "portrait_emotions", "emotions", true);
-        ExpandStates(config, result);
         return result;
     }
 
-    static void ExpandStates(JObject config, List<PortraitManager.CharaPortrait> handlers)
-    {
-        var states = (config["image_states"] as JObject)?.Properties()
-            .Where(p => !IsComment(p.Name) && p.Value is JObject).ToList() ?? new List<JProperty>();
-        var ordinary = states.Count == 0 ? "" : $"(?!(?:{string.Join("|", states.Select(p => Regex.Escape(p.Name)))})_)";
-        foreach (var handler in handlers)
-        {
-            var variants = new List<PortraitManager.PortraitVariant>();
-            // Every alias is an independent alternative, not an additional AND requirement.
-            foreach (var variant in handler.Variants)
-                foreach (var state in states)
-                    foreach (var keyword in (state.Value["keywords"] as JArray)?.Values<string>()
-                        .Where(k => !string.IsNullOrEmpty(k)).Distinct() ?? Enumerable.Empty<string>())
-                    {
-                        var tags = new List<string>(variant.tagsMatch);
-                        if (!tags.Contains(keyword)) tags.Add(keyword);
-                        variants.Add(new PortraitManager.PortraitVariant
-                        {
-                            tagsMatch = tags,
-                            PortraitVariantData = variant.PortraitVariantData.Select(p =>
-                                p.Replace(StatePlaceholder, Regex.Escape(state.Name) + "_")).ToList(),
-                        });
-                    }
-            foreach (var variant in handler.Variants)
-            {
-                variant.PortraitVariantData = variant.PortraitVariantData.Select(p => p.Replace(StatePlaceholder, ordinary)).ToList();
-                variants.Add(variant);
-            }
-            handler.Variants = variants;
-        }
-    }
-
     static void AppendMappedPortraits(JObject config, JObject pg, string ext, List<PortraitManager.CharaPortrait> result,
-        string folder, string nameSet, string mappingKey, bool neutralFallback)
+        string folder, string nameSet, string mappingKey, bool neutralFallback, bool mappedOnly = false)
     {
         if (!(pg[mappingKey] is JObject mapping)) return;
         var names = new List<NameInfo>();
@@ -402,6 +422,7 @@ public static class GlobalPortraitTemplate
             fallbacks.Add((p.Name, files));
         }
 
+        if (mappedOnly) names = names.Where(n => fallbacks.Any(f => f.files.Contains(n.name))).ToList();
         var variants = new List<PortraitManager.PortraitVariant>();
         // Exact expressions (including source-specific ids) precede every cross-expression fallback.
         foreach (var n in names)
@@ -498,7 +519,7 @@ public static class GlobalPortraitTemplate
         var s = $"{Placeholder}/{Regex.Escape(folder)}/{Regex.Escape(name)}_";
         if (suffix != "") s += Regex.Escape(suffix) + "_";
         if (excluded.Count > 0) s += $"(?!(?:{string.Join("|", excluded.Distinct())})_)";
-        return s + StatePlaceholder + $"[^/]+_[0-9]+\\.(?:{ext})";
+        return s + $"[^/]+_[0-9]+\\.(?:{ext})";
     }
 
     class VariantInfo
@@ -596,6 +617,7 @@ public static class GlobalPortraitTemplate
     {
         // files_category ids that can be used: no hold, not portrait
         var usable = new HashSet<string>();
+        var allowedVariants = new Dictionary<string, HashSet<string>>();
         var blocked = new HashSet<string> { "portrait", "activity" };
         if (config["files_category"] is JArray fc)
         {
@@ -603,6 +625,7 @@ public static class GlobalPortraitTemplate
             {
                 var id = (string)c["id"];
                 if (string.IsNullOrEmpty(id)) continue;
+                if (c["allowedVariants"] is JArray variants) allowedVariants[id] = new HashSet<string>(variants.Values<string>());
                 if ((c["hold"]?.Value<bool>() ?? false) || id == "portrait" || id == "activity") blocked.Add(id);
                 else usable.Add(id);
             }
@@ -622,6 +645,7 @@ public static class GlobalPortraitTemplate
             list.Add(new Category
             {
                 id = id,
+                allowedVariants = allowedVariants.TryGetValue(id, out var allowed) ? allowed : null,
                 targetKeys = (c["targetKeys"] as JArray)?.Select(v => (string)v).ToList() ?? new List<string>(),
                 alsoUseFolders = (c["alsoUseFolders"] as JArray)?.Select(v => (string)v).ToList() ?? new List<string>(),
             });

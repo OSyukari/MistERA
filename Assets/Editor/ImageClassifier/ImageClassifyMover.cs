@@ -13,7 +13,7 @@ public class ImageMove
     public string from;
     public string to;
     public string category;
-    /// <summary>Entry name with variant (doggystyle_sleeping), or null for rename: false categories.</summary>
+    /// <summary>Entry name with action variant, or null for rename: false categories. State selects the destination root.</summary>
     public string name;
     public string status;
     /// <summary>Set when this move failed; the image stayed at "from".</summary>
@@ -33,13 +33,24 @@ public class ImageMovePass
     public List<ImageMove> moves = new List<ImageMove>();
 }
 
+/// <summary>
+/// Classify in two steps (user decision 2026-11-13): Move puts images into their category folder keeping the file name, so a wrong folder
+/// is easy to fix by hand; Rename then gives the images in their category folder the final name. Both = the old single step (one plan
+/// that moves and renames; used for the Analyze preview counts).
+/// </summary>
+public enum ImageClassifyStep { Both, Move, Rename }
+
 public class ImageMovePlan
 {
     public string folder;
+    public ImageClassifyStep step;
     public int passNumber;
     public bool includeLowConfidence;
     public readonly List<ImageMove> moves = new List<ImageMove>();
+    /// <summary>Move: already in its category folder. Rename: already has its final name (or keeps its name: rename false).</summary>
     public int alreadyInPlace;
+    /// <summary>Rename only: not in its category folder yet (run Move first), left alone.</summary>
+    public int notInCategoryFolder;
     public int lowConfidenceHeldBack;   // low confidence, not moved by this pass
     public int lowConfidenceNeverMoved; // low confidence in a moveLowConfidence: false category
     public int unmatched;
@@ -62,6 +73,7 @@ public class ImageNameRestoreResult
 /// &lt;folder&gt;/_image_moves.jsonl and restores original basenames without moving folders. The file move itself is injected (the window uses AssetDatabase.MoveAsset
 /// inside Assets/ so .meta files follow), so this class has no UnityEditor dependency.
 /// Target: &lt;folder&gt;/&lt;category&gt;/&lt;name&gt;_&lt;parent&gt;_&lt;folder&gt;_&lt;N&gt;.&lt;ext&gt;; rename: false categories keep the file name.
+/// Done in two steps (ImageClassifyStep): Move (folder only, file name kept), then Rename (in the category folder).
 /// </summary>
 public static class ImageClassifyMover
 {
@@ -87,10 +99,28 @@ public static class ImageClassifyMover
         AtomicWrite(Path.Combine(folder, LogFileName), sb.ToString());
     }
 
-    /// <summary>The first pass moves confident images only; every later pass (one not undone exists) also moves low confidence.</summary>
-    public static bool NextPassIncludesLowConfidence(string folder) => LoadLog(folder).Any(p => !p.undone && p.operation == null);
+    const string MoveOperation = "move";
+    const string RenameOperation = "rename";
 
-    public static int NextPassNumber(string folder) => LoadLog(folder).Count(p => !p.undone && p.operation == null) + 1;
+    static string OperationOf(ImageClassifyStep step) => step == ImageClassifyStep.Move ? MoveOperation : step == ImageClassifyStep.Rename ? RenameOperation : null;
+
+    static bool IsClassifyPass(ImageMovePass p) => p.operation == null || p.operation == MoveOperation || p.operation == RenameOperation;
+
+    /// <summary>The first pass of a step handles confident images only; once that step (or an old single-step Classify) ran, low confidence too.</summary>
+    public static bool NextPassIncludesLowConfidence(string folder, ImageClassifyStep step = ImageClassifyStep.Both)
+    {
+        var op = OperationOf(step);
+        foreach (var p in LoadLog(folder))
+            if (!p.undone && IsClassifyPass(p) && (step == ImageClassifyStep.Both || p.operation == null || p.operation == op)) return true;
+        return false;
+    }
+
+    public static int NextPassNumber(string folder)
+    {
+        int n = 0;
+        foreach (var p in LoadLog(folder)) if (!p.undone && IsClassifyPass(p)) n++;
+        return n + 1;
+    }
 
     /// <summary>Every path the tool moved an image to (passes not undone, moves without error).</summary>
     public static HashSet<string> ToolPlacedPaths(string folder)
@@ -118,6 +148,12 @@ public static class ImageClassifyMover
     static readonly char[] Invalid = Path.GetInvalidFileNameChars();
     static string Sanitize(string part) => new string(part.Where(c => !Invalid.Contains(c)).ToArray()).Trim();
 
+    /// <summary>
+    /// &lt;category&gt;/ inside the work folder. A detected state (sleeping, pregnant, ...) never selects a folder: state sets are sorted by hand
+    /// into their own folder, which is then classified on its own (user decision 2026-11-13).
+    /// </summary>
+    internal static string DestinationDirectory(string folder, ImageClassification result) => Sanitize(result.CategoryId);
+
     /// <summary>The final naming convention for this folder: &lt;name&gt;_&lt;parent&gt;_&lt;folder&gt;_&lt;N&gt;.&lt;ext&gt;. A file named like this is settled:
     /// the tool never moves or renames it. Renaming it by hand to anything else asks the tool to classify it again.</summary>
     public static Regex FinalNamePattern(string folder)
@@ -127,10 +163,13 @@ public static class ImageClassifyMover
         return new Regex("^.+_" + Regex.Escape(parent) + "_" + Regex.Escape(self) + @"_\d+\.[^.]+$", RegexOptions.IgnoreCase);
     }
 
-    public static ImageMovePlan BuildPlan(ImageAnalysisResult analysis, bool includeLowConfidence)
+    public static ImageMovePlan BuildPlan(ImageAnalysisResult analysis, bool includeLowConfidence) =>
+        BuildPlan(analysis, includeLowConfidence, ImageClassifyStep.Both);
+
+    public static ImageMovePlan BuildPlan(ImageAnalysisResult analysis, bool includeLowConfidence, ImageClassifyStep step)
     {
         var folder = analysis.folder;
-        var plan = new ImageMovePlan { folder = folder, includeLowConfidence = includeLowConfidence, passNumber = NextPassNumber(folder) };
+        var plan = new ImageMovePlan { folder = folder, step = step, includeLowConfidence = includeLowConfidence, passNumber = NextPassNumber(folder) };
         string parent = Sanitize(Path.GetFileName(Path.GetDirectoryName(folder)) ?? "");
         string self = Sanitize(Path.GetFileName(folder));
         var nextNumber = new Dictionary<string, long>(StringComparer.OrdinalIgnoreCase);       // "<category>/<name>" -> next N
@@ -153,14 +192,17 @@ public static class ImageClassifyMover
             }
 
             string from = r.record.path;
-            string category = Sanitize(r.CategoryId);
+            string category = DestinationDirectory(folder, r);
             string ext = Path.GetExtension(from);
             string fileName = Path.GetFileName(from);
             string currentDir = Path.GetDirectoryName(from)?.Replace('\\', '/') ?? "";
+            bool inCategoryFolder = string.Equals(currentDir, category, StringComparison.OrdinalIgnoreCase);
+            if (step == ImageClassifyStep.Rename && !inCategoryFolder) { plan.notInCategoryFolder++; continue; }
             string to;
-            if (!r.category.rename)
+            if (!r.category.rename || step == ImageClassifyStep.Move)
             {
-                if (string.Equals(currentDir, category, StringComparison.OrdinalIgnoreCase)) { plan.alreadyInPlace++; continue; }
+                // Move keeps the file name (only the folder changes); rename: false categories never get a new name
+                if (inCategoryFolder) { plan.alreadyInPlace++; continue; }
                 to = FreeName(folder, category, Path.GetFileNameWithoutExtension(fileName), ext, reserved);
             }
             else
@@ -226,7 +268,7 @@ public static class ImageClassifyMover
         SaveRestoreStore(store); // Persist legacy original names before any classifier rename can erase them.
         var pass = new ImageMovePass
         {
-            pass = plan.passNumber, date = DateTime.Now.ToString("yyyy-MM-dd HH:mm"), includeLowConfidence = plan.includeLowConfidence,
+            operation = OperationOf(plan.step), pass = plan.passNumber, date = DateTime.Now.ToString("yyyy-MM-dd HH:mm"), includeLowConfidence = plan.includeLowConfidence,
             rules = rules.sourcePath, settings = rules.settings,
         };
         if (plan.moves.Count == 0) return pass;
@@ -315,7 +357,7 @@ public static class ImageClassifyMover
         // Invalid metadata must never be used as an absolute filesystem path, even by Reconcile.
         var unsafeRecords = store.Records.Values.Where(r => !SafeRelativePath(r.path)).ToList();
         foreach (var record in unsafeRecords) store.Records.Remove(record.path);
-        var reconcile = store.Reconcile(files, ImageAnalysis.CategoryIds(rules), ToolPlacedPaths(store.Folder));
+        var reconcile = ImageAnalysis.Reconcile(store, files, rules);
         foreach (var record in unsafeRecords) store.Records[record.path] = record;
         var result = new ImageNameRestoreResult { tagged = store.Records.Count, relinked = reconcile.relinked.Count };
         var present = files.ToDictionary(store.RelativePath, f => f, StringComparer.OrdinalIgnoreCase);

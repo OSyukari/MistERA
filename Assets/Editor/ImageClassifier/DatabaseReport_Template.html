@@ -3,42 +3,48 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Image database analysis</title>
+<title>Image analysis</title>
 <!--
-  Template of <database>/_database_analysis.html (Tools/Image Classifier > Database > Analyze all folders).
-  ImageDatabaseAnalysis.cs only replaces the REPORT_DATA slot below with the merged data as JSON (shape documented on BuildJson);
-  everything else - layout, styling, filters, hover preview - lives here and can be edited without recompiling.
-  Re-run "Analyze all folders" to apply a template change to the report.
+  Template of Mods/_image_database.html (Tools/Image Classifier > Mods asset packs) and <folder>/_image_analysis.html (single folder).
+  ImageReport.cs only replaces the REPORT_DATA slot below with the data as JSON (shape documented on ImageReport.BuildReportJson);
+  everything else - layout, styling, filters, hover preview, details panel - lives here and can be edited without recompiling.
+  Apply a template change with "Update report only (no analysis)".
 -->
 <style>
 :root {
   --bg: #f6f6f4; --panel: #ffffff; --text: #1d1d1b; --muted: #6b6b66; --line: #deded8; --accent: #3a6fd8;
-  --low: #e08a00; --unmatched: #d33a3a; --disagree: #3a88ff; --kept: #9a9a9a;
+  --low: #e08a00; --unmatched: #d33a3a; --disagree: #3a88ff; --kept: #9a9a9a; --stale: #b06a00;
   --thumb: 72px;
 }
 @media (prefers-color-scheme: dark) {
-  :root { --bg: #161615; --panel: #1f1f1e; --text: #e6e6e1; --muted: #9a9a93; --line: #34342f; --accent: #7aa2f7; }
+  :root { --bg: #161615; --panel: #1f1f1e; --text: #e6e6e1; --muted: #9a9a93; --line: #34342f; --accent: #7aa2f7; --stale: #e0a040; }
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
 a { color: var(--accent); }
 header { padding: 16px 20px 8px; }
 header h1 { margin: 0 0 4px; font-size: 20px; }
-header .meta { color: var(--muted); font-size: 12px; }
+header .meta { color: var(--muted); font-size: 12px; word-break: break-all; }
 main { padding: 0 20px 40px; }
 details.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; margin: 8px 0; padding: 6px 12px; }
 details.panel > summary { cursor: pointer; font-weight: 600; padding: 4px 0; }
-table.folders { border-collapse: collapse; margin: 6px 0 4px; font-size: 13px; }
-table.folders th, table.folders td { border-bottom: 1px solid var(--line); padding: 3px 10px; text-align: right; }
-table.folders th:first-child, table.folders td:first-child { text-align: left; }
-table.folders td.skip { text-align: left; color: var(--muted); }
-table.folders tr.total td { font-weight: 600; border-bottom: none; }
+.scrollx { overflow-x: auto; }
+table.grid { border-collapse: collapse; margin: 6px 0 4px; font-size: 13px; }
+table.grid th, table.grid td { border-bottom: 1px solid var(--line); padding: 3px 10px; text-align: right; white-space: nowrap; }
+table.grid th:first-child, table.grid td:first-child { text-align: left; }
+table.grid td.text { text-align: left; color: var(--muted); white-space: normal; }
+table.grid td.stale { text-align: left; color: var(--stale); white-space: normal; }
+table.grid tr.total td { font-weight: 600; border-bottom: none; }
 ul.lint { margin: 4px 0; padding-left: 18px; font-size: 13px; }
+.tagfreq { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13px; margin: 4px 0; }
+.tagfreq b, .tags b { font-weight: 700; }
+.tagfreq span { color: var(--muted); }
+.hint { color: var(--muted); font-size: 12px; margin: 2px 0 6px; }
 
 .toolbar { position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line);
   display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; padding: 8px 20px; font-size: 13px; }
 .toolbar label { display: inline-flex; gap: 6px; align-items: center; color: var(--muted); }
-.toolbar select, .toolbar input[type=search] { font: inherit; color: var(--text); background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 2px 6px; }
+.toolbar select, .toolbar input[type=search] { font: inherit; color: var(--text); background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 2px 6px; max-width: 260px; }
 .toolbar .count { margin-left: auto; color: var(--muted); }
 .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--muted); margin: 6px 0 2px; }
 .legend span::before { content: ""; display: inline-block; width: 12px; height: 12px; margin-right: 5px; vertical-align: -2px; border: 2px solid transparent; border-radius: 2px; }
@@ -46,6 +52,7 @@ ul.lint { margin: 4px 0; padding-left: 18px; font-size: 13px; }
 .legend .l-unmatched::before { border-color: var(--unmatched); }
 .legend .l-disagree::before { border: 2px dashed var(--disagree); }
 .legend .l-kept::before { border: 2px dashed var(--kept); }
+.legend .l-name::before { border: none; content: "✎"; width: auto; height: auto; margin-right: 3px; }
 
 section.cat { margin-top: 18px; }
 section.cat h2 { font-size: 16px; margin: 0 0 6px; scroll-margin-top: 56px; }
@@ -58,14 +65,16 @@ section.cat h2 .n { color: var(--muted); font-weight: 400; }
 .row .name small { color: var(--muted); }
 .row .name small .w-low { color: var(--low); }
 .row .name small .w-unmatched { color: var(--unmatched); }
-.row .thumbs { flex: 1; display: flex; flex-wrap: wrap; gap: 4px; padding: 5px; align-content: flex-start; }
-.thumbs a { display: block; width: var(--thumb); height: var(--thumb); border: 2px solid transparent; border-radius: 3px; background: var(--bg); }
+.row .thumbs { flex: 1; display: flex; flex-wrap: wrap; gap: 4px; padding: 5px; align-content: flex-start; min-width: 0; }
+.thumbs a { position: relative; display: block; width: var(--thumb); height: var(--thumb); border: 2px solid transparent; border-radius: 3px; background: var(--bg); }
 .thumbs a img { width: 100%; height: 100%; object-fit: contain; display: block; }
 .thumbs a.low { border-color: var(--low); }
 .thumbs a.unmatched { border-color: var(--unmatched); }
 .thumbs a.disagree { border: 2px dashed var(--disagree); }
 .thumbs a.kept { border: 2px dashed var(--kept); }
-.thumbs a:hover { outline: 2px solid var(--accent); outline-offset: 1px; }
+.thumbs a.named::after { content: "✎"; position: absolute; right: 1px; bottom: 0; font-size: 11px; line-height: 1; padding: 1px 2px; border-radius: 2px;
+  background: var(--panel); color: var(--text); opacity: .85; }
+.thumbs a:hover, .thumbs a.sel { outline: 2px solid var(--accent); outline-offset: 1px; }
 .empty { color: var(--muted); padding: 20px 0; }
 
 #preview { position: fixed; z-index: 20; pointer-events: none; display: none; background: var(--panel); border: 1px solid var(--line);
@@ -73,6 +82,17 @@ section.cat h2 .n { color: var(--muted); font-weight: 400; }
 #preview img { display: block; max-width: var(--preview); max-height: var(--preview); width: auto; height: auto; margin: 0 auto; }
 #preview .info { font-size: 12px; white-space: pre-wrap; margin-top: 6px; max-width: var(--preview); color: var(--text); }
 #preview .info .p { font-weight: 600; word-break: break-all; }
+
+#details { position: fixed; z-index: 30; top: 0; right: 0; bottom: 0; width: min(460px, 100vw); background: var(--panel); border-left: 1px solid var(--line);
+  box-shadow: -6px 0 24px rgba(0,0,0,.25); overflow-y: auto; padding: 12px 16px 24px; display: none; font-size: 13px; }
+#details.open { display: block; }
+#details .close { float: right; font: inherit; background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: 4px; padding: 2px 10px; cursor: pointer; }
+#details img { display: block; max-width: 100%; max-height: 50vh; margin: 8px auto; }
+#details h3 { font-size: 14px; margin: 0 60px 4px 0; word-break: break-all; }
+#details dl { margin: 6px 0; }
+#details dt { color: var(--muted); font-size: 12px; margin-top: 6px; }
+#details dd { margin: 0; word-break: break-word; }
+#details .tags { line-height: 1.7; }
 
 @media (max-width: 640px) {
   header, main, .toolbar { padding-left: 16px; padding-right: 16px; }
@@ -83,7 +103,7 @@ section.cat h2 .n { color: var(--muted); font-weight: 400; }
 </head>
 <body>
 <header>
-  <h1 id="title">Image database analysis</h1>
+  <h1 id="title">Image analysis</h1>
   <div class="meta" id="meta"></div>
 </header>
 
@@ -98,7 +118,13 @@ section.cat h2 .n { color: var(--muted); font-weight: 400; }
     <option value="disagree">Folder vs rules</option>
     <option value="kept">Moved out by you</option>
   </select></label>
-  <label>Name <input type="search" id="f-name" placeholder="filter names" size="14"></label>
+  <label title="Whether the image's original file name gave its category, name, variant or state (filename IDs in the rules)">File names <select id="f-named">
+    <option value="">All images</option>
+    <option value="used">Name used in analysis</option>
+    <option value="unused">Name not used in analysis</option>
+  </select></label>
+  <label title="Filter the rows by class name (name / emotion), eg. cowgirl or smile">Class name <input type="search" id="f-class" placeholder="eg. cowgirl" size="12"></label>
+  <label title="Match the file path: work folder, sub folders, current and original file name. Several words must all match.">File name <input type="search" id="f-file" placeholder="folder or file name" size="16"></label>
   <label>Thumbs <input type="range" id="f-size" min="40" max="160" step="8"></label>
   <label>Preview <select id="f-preview">
     <option value="0">Off</option><option value="256">256</option><option value="384">384</option><option value="512">512</option><option value="720">720</option>
@@ -107,18 +133,23 @@ section.cat h2 .n { color: var(--muted); font-weight: 400; }
 </div>
 
 <main>
-  <details class="panel" id="folders-panel"><summary>Folders</summary><div id="folders"></div></details>
+  <details class="panel" id="folders-panel"><summary id="folders-title">Folders</summary><div class="scrollx" id="folders"></div></details>
   <details class="panel" id="lint-panel"><summary id="lint-title">Rule check</summary><ul class="lint" id="lint"></ul></details>
+  <details class="panel" id="freq-panel"><summary>Tag frequency in the shown images that are not confidently placed</summary>
+    <p class="hint">Recurring tags that are not bold (not used by any rule) are candidates for a new rule or for excluded_tags. Follows the filters above.</p>
+    <div class="tagfreq" id="freq"></div></details>
   <div class="legend">
     <span>no frame = confident</span><span class="l-low">low confidence</span><span class="l-unmatched">unmatched</span>
     <span class="l-disagree">folder decided, rules disagree</span><span class="l-kept">moved out by you</span>
-    <span>hover = large preview + details · click = open image</span>
+    <span class="l-name">file name used in analysis</span>
+    <span>hover = large preview · click = details · ctrl/middle click = open image</span>
   </div>
   <div id="cats"></div>
-  <details class="panel" id="unused-panel"><summary>Rules that matched no image in any folder</summary><ul class="lint" id="unused"></ul></details>
+  <details class="panel" id="unused-panel"><summary>Rules that matched no image in any analyzed folder</summary><ul class="lint" id="unused"></ul></details>
 </main>
 
 <div id="preview"><img alt=""><div class="info"></div></div>
+<aside id="details" aria-label="Image details"></aside>
 
 <script>
 window.REPORT = /*__REPORT_DATA__*/null;
@@ -129,7 +160,7 @@ window.REPORT = /*__REPORT_DATA__*/null;
   var R = window.REPORT;
   var $ = function (id) { return document.getElementById(id); };
   if (!R) {
-    $("cats").innerHTML = '<p class="empty">No data: this is the report template. Run Tools/Image Classifier &gt; Database &gt; Analyze all folders.</p>';
+    $("cats").innerHTML = '<p class="empty">No data: this is the report template. Run Tools/Image Classifier &gt; 2. Analyze.</p>';
     return;
   }
 
@@ -137,25 +168,73 @@ window.REPORT = /*__REPORT_DATA__*/null;
     return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   }
   var store = {
-    get: function (k, d) { try { var v = localStorage.getItem("dbreport." + k); return v == null ? d : v; } catch (e) { return d; } },
-    set: function (k, v) { try { localStorage.setItem("dbreport." + k, v); } catch (e) {} }
+    get: function (k, d) { try { var v = localStorage.getItem("imgreport." + k); return v == null ? d : v; } catch (e) { return d; } },
+    set: function (k, v) { try { localStorage.setItem("imgreport." + k, v); } catch (e) {} }
   };
+  var usedTags = {};
+  (R.usedTags || []).forEach(function (t) { usedTags[t] = true; });
+
+  // ---- flatten: every item knows its folder (f), image URL (src) and search text
+  var all = [];
+  R.folders.forEach(function (f, fi) {
+    (f.items || []).forEach(function (it) {
+      it.f = fi;
+      it.src = f.base + it.path.split("/").map(encodeURIComponent).join("/");
+      it.search = (f.name + "/" + it.path + " " + (it.original || "")).toLowerCase();
+      it.cat = it.category == null ? "(no category)" : it.category;
+      all.push(it);
+    });
+  });
+
+  // ---- group: categories by size, class names alphabetically, images by folder then path
+  var catByKey = {}, cats = [];
+  all.forEach(function (it) {
+    var c = catByKey[it.cat];
+    if (!c) { c = catByKey[it.cat] = { id: it.cat, count: 0, clusters: [], byName: {} }; cats.push(c); }
+    var cl = c.byName[it.cls];
+    if (!cl) { cl = c.byName[it.cls] = { name: it.cls, items: [] }; c.clusters.push(cl); }
+    cl.items.push(it);
+    c.count++;
+  });
+  function cmp(a, b) { return a < b ? -1 : a > b ? 1 : 0; }
+  cats.sort(function (a, b) { return b.count - a.count || cmp(a.id, b.id); });
+  cats.forEach(function (c) {
+    c.clusters.sort(function (a, b) { return cmp(a.name, b.name); });
+    c.clusters.forEach(function (cl) {
+      cl.items.sort(function (a, b) { return cmp(R.folders[a.f].name.toLowerCase(), R.folders[b.f].name.toLowerCase()) || cmp(a.path.toLowerCase(), b.path.toLowerCase()); });
+    });
+  });
 
   // ---- header + panels
-  document.title = "Image database - " + R.title;
-  $("title").textContent = "Image database analysis - " + R.title;
-  $("meta").innerHTML = "Generated " + esc(R.generated) + " · " + esc(R.root) + " · <a href=\"" + esc(R.mdReport) + "\">markdown version</a>";
+  document.title = "Image analysis - " + R.title;
+  $("title").textContent = "Image analysis - " + R.title;
+  $("meta").innerHTML = "Generated " + esc(R.generated) + " · rules " + esc(R.rules);
 
-  var t = { analyzed: 0, confident: 0, low: 0, unmatched: 0 };
-  var fh = '<table class="folders"><tr><th>Folder</th><th>Analyzed</th><th>Confident</th><th>Low</th><th>Unmatched</th><th>Not tagged</th><th>Report</th></tr>';
+  var t = { count: 0, confident: 0, low: 0, unmatched: 0, keptOut: 0, untagged: 0 }, analyzed = 0, stale = 0;
+  var fh = '<table class="grid"><tr><th>Folder</th><th>Analyzed</th><th>Images</th><th>Confident</th><th>Low</th><th>Unmatched</th><th>Kept out</th><th>Not tagged</th>' +
+           '<th title="Images that steps Move + Rename would still change (confident only / with low confidence)">Still to move or rename</th><th>State</th></tr>';
   R.folders.forEach(function (f) {
-    if (f.skipped != null) { fh += "<tr><td>" + esc(f.name) + '</td><td class="skip" colspan="6">' + esc(f.skipped) + "</td></tr>"; return; }
-    t.analyzed += f.analyzed; t.confident += f.confident; t.low += f.low; t.unmatched += f.unmatched;
-    fh += "<tr><td>" + esc(f.name) + "</td><td>" + f.analyzed + "</td><td>" + f.confident + "</td><td>" + f.low + "</td><td>" + f.unmatched +
-          "</td><td>" + f.untagged + '</td><td><a href="' + esc(f.report) + '">report</a></td></tr>';
+    if (f.analyzed == null) {
+      fh += "<tr><td>" + esc(f.name) + '</td><td class="text" colspan="9">' + (f.hasTags ? "tagged, not analyzed (run 2. Analyze)" : "not tagged (run 1. Tag)") + "</td></tr>";
+      return;
+    }
+    analyzed++;
+    if (f.stale) stale++;
+    ["count", "confident", "low", "unmatched", "keptOut", "untagged"].forEach(function (k) { t[k] += f[k]; });
+    fh += "<tr><td>" + esc(f.name) + "</td><td>" + esc(f.analyzed) + "</td><td>" + f.count + "</td><td>" + f.confident + "</td><td>" + f.low + "</td><td>" + f.unmatched +
+          "</td><td>" + f.keptOut + "</td><td>" + f.untagged + "</td><td>" + f.firstPass + (f.lowPass !== f.firstPass ? " / " + f.lowPass + " with low" : "") + "</td>" +
+          (f.stale ? '<td class="stale">out of date: ' + esc(f.stale) + "</td>" : '<td class="text">up to date</td>') + "</tr>";
   });
-  fh += '<tr class="total"><td>Total</td><td>' + t.analyzed + "</td><td>" + t.confident + "</td><td>" + t.low + "</td><td>" + t.unmatched + "</td><td></td><td></td></tr></table>";
+  fh += '<tr class="total"><td>Total</td><td></td><td>' + t.count + "</td><td>" + t.confident + "</td><td>" + t.low + "</td><td>" + t.unmatched + "</td><td>" + t.keptOut +
+        "</td><td>" + t.untagged + "</td><td></td><td></td></tr></table>";
+  var created = [];
+  R.folders.forEach(function (f) { (f.created || []).forEach(function (c) { created.push(f.name + "/" + c); }); });
+  if (created.length)
+    fh += '<p class="hint">Folders created by the last analysis: ' + esc(created.join(", ")) + ". Into a &lt;category&gt;_perform folder go, by hand, the images of a " +
+          'role "both" name (portrait_global.names, eg. cunnilingus) where the character performs the act; keep the file name.</p>';
   $("folders").innerHTML = fh;
+  $("folders-title").textContent = "Folders (" + analyzed + " of " + R.folders.length + " analyzed" + (stale ? ", " + stale + " out of date" : "") + ")";
+  if (stale) $("folders-panel").open = true;
 
   $("lint-title").textContent = "Rule check (" + R.lint.length + ")";
   $("lint").innerHTML = R.lint.length ? R.lint.map(function (l) { return "<li>" + esc(l) + "</li>"; }).join("") : "<li>No problems found.</li>";
@@ -171,19 +250,21 @@ window.REPORT = /*__REPORT_DATA__*/null;
   }
 
   // ---- filters
-  var catSel = $("f-cat"), folderSel = $("f-folder"), statusSel = $("f-status"), nameIn = $("f-name"), sizeIn = $("f-size"), previewSel = $("f-preview");
-  R.categories.forEach(function (c, i) {
-    var o = document.createElement("option"); o.value = String(i); o.textContent = c.id + " (" + c.count + ")"; catSel.appendChild(o);
+  var catSel = $("f-cat"), folderSel = $("f-folder"), statusSel = $("f-status"), namedSel = $("f-named"),
+      classIn = $("f-class"), fileIn = $("f-file"), sizeIn = $("f-size"), previewSel = $("f-preview");
+  cats.forEach(function (c, i) {
+    var o = document.createElement("option"); o.value = c.id; o.textContent = c.id + " (" + c.count + ")"; catSel.appendChild(o);
   });
   R.folders.forEach(function (f, i) {
-    if (f.skipped != null) return;
-    var o = document.createElement("option"); o.value = String(i); o.textContent = f.name; folderSel.appendChild(o);
+    if (f.analyzed == null) return;
+    var o = document.createElement("option"); o.value = String(i); o.textContent = f.name + (f.stale ? " (out of date)" : ""); folderSel.appendChild(o);
   });
   statusSel.value = store.get("status", "");
+  namedSel.value = store.get("named", "");
   sizeIn.value = store.get("size", "72");
   previewSel.value = store.get("preview", "384");
   var savedFolder = store.get("folder", "");
-  if (savedFolder && R.folders[+savedFolder] && R.folders[+savedFolder].skipped == null) folderSel.value = savedFolder;
+  if (savedFolder && R.folders[+savedFolder] && R.folders[+savedFolder].analyzed != null) folderSel.value = savedFolder;
 
   function applySize() {
     document.documentElement.style.setProperty("--thumb", sizeIn.value + "px");
@@ -197,8 +278,12 @@ window.REPORT = /*__REPORT_DATA__*/null;
     if (it.disagree) return "disagree";
     return "";
   }
-  function passes(it, folder, status) {
+  function terms(s) { return s.trim().toLowerCase().split(/\s+/).filter(function (x) { return x; }); }
+  function passes(it, folder, status, named, fileTerms) {
     if (folder !== "" && it.f !== +folder) return false;
+    if (named === "used" && !it.nameUsed) return false;
+    if (named === "unused" && it.nameUsed) return false;
+    for (var i = 0; i < fileTerms.length; i++) if (it.search.indexOf(fileTerms[i]) < 0) return false;
     switch (status) {
       case "": return true;
       case "flagged": return frameClass(it) !== "";
@@ -210,27 +295,27 @@ window.REPORT = /*__REPORT_DATA__*/null;
     return true;
   }
 
-  // flat item index for the hover preview (data-i on each thumb)
+  // items in the order they are shown (data-i on each thumb)
   var items = [];
 
   function render() {
-    var cat = catSel.value, folder = folderSel.value, status = statusSel.value, q = nameIn.value.trim().toLowerCase();
-    var html = "", shown = 0, total = 0;
+    var cat = catSel.value, folder = folderSel.value, status = statusSel.value, named = namedSel.value;
+    var q = classIn.value.trim().toLowerCase(), fileTerms = terms(fileIn.value);
+    var html = "", shown = 0;
     items = [];
-    R.categories.forEach(function (c, ci) {
-      if (cat !== "" && ci !== +cat) return;
+    cats.forEach(function (c, ci) {
+      if (cat !== "" && c.id !== cat) return;
       var rows = "", catShown = 0;
       c.clusters.forEach(function (cl) {
-        total += cl.items.length;
         if (q && cl.name.toLowerCase().indexOf(q) < 0) return;
         var thumbs = "", n = 0, low = 0, un = 0;
         cl.items.forEach(function (it) {
-          if (!passes(it, folder, status)) return;
+          if (!passes(it, folder, status, named, fileTerms)) return;
           n++;
           if (!it.keptOut && it.status === "low") low++;
           if (!it.keptOut && it.status === "unmatched") un++;
           var idx = items.length; items.push(it);
-          thumbs += '<a class="' + frameClass(it) + '" href="' + esc(it.src) + '" data-i="' + idx + '" target="_blank">' +
+          thumbs += '<a class="' + frameClass(it) + (it.nameUsed ? " named" : "") + '" href="' + esc(it.src) + '" data-i="' + idx + '" target="_blank">' +
                     '<img src="' + esc(it.src) + '" loading="lazy" alt=""></a>';
         });
         if (!n) return;
@@ -245,32 +330,49 @@ window.REPORT = /*__REPORT_DATA__*/null;
               ')</span></h2><div class="rows">' + rows + "</div></section>";
     });
     $("cats").innerHTML = html || '<p class="empty">Nothing matches the filters.</p>';
-    if (cat === "") total = R.categories.reduce(function (s, c) { return s + c.count; }, 0);
-    $("count").textContent = shown + " of " + total + " images";
+    $("count").textContent = shown + " of " + all.length + " images";
+    if ($("freq-panel").open) renderFreq();
   }
 
-  [catSel, folderSel, statusSel].forEach(function (el) {
+  function renderFreq() {
+    var freq = {}, n = 0;
+    items.forEach(function (it) {
+      if (it.status === "confident" && !it.keptOut) return;
+      n++;
+      (it.tags || []).concat(it.chars || []).forEach(function (p) { freq[p[0]] = (freq[p[0]] || 0) + 1; });
+    });
+    var list = Object.keys(freq).sort(function (a, b) { return freq[b] - freq[a] || cmp(a, b); }).slice(0, 80);
+    $("freq").innerHTML = n === 0 ? '<span>No shown image is low confidence, unmatched or kept out.</span>' :
+      list.map(function (tag) { return (usedTags[tag] ? "<b>" + esc(tag) + "</b>" : esc(tag)) + " <span>" + freq[tag] + "</span>"; }).join(" · ");
+  }
+
+  [catSel, folderSel, statusSel, namedSel].forEach(function (el) {
     el.addEventListener("change", function () {
-      store.set("status", statusSel.value); store.set("folder", folderSel.value);
+      store.set("status", statusSel.value); store.set("folder", folderSel.value); store.set("named", namedSel.value);
       render(); window.scrollTo(0, 0);
     });
   });
-  var nameTimer;
-  nameIn.addEventListener("input", function () { clearTimeout(nameTimer); nameTimer = setTimeout(render, 150); });
+  var typeTimer;
+  [classIn, fileIn].forEach(function (el) {
+    el.addEventListener("input", function () { clearTimeout(typeTimer); typeTimer = setTimeout(render, 150); });
+  });
   sizeIn.addEventListener("input", function () { store.set("size", sizeIn.value); applySize(); });
   previewSel.addEventListener("change", function () { store.set("preview", previewSel.value); applySize(); });
+  $("freq-panel").addEventListener("toggle", function () { if ($("freq-panel").open) renderFreq(); });
 
   // ---- hover preview
   var pv = $("preview"), pvImg = pv.querySelector("img"), pvInfo = pv.querySelector(".info"), current = -1;
+  function statusText(it) {
+    return (it.status === "low" ? "Low confidence" : it.status === "unmatched" ? "Unmatched" : "Confident") + (it.keptOut ? " (kept out)" : "");
+  }
   function info(it) {
-    var f = R.folders[it.f].name;
-    var s = '<span class="p">' + esc(f + "/" + it.path) + "</span>";
+    var s = '<span class="p">' + esc(R.folders[it.f].name + "/" + it.path) + "</span>";
     if (it.original) s += "\nOriginal name: " + esc(it.original);
-    s += "\n" + esc(it.status === "low" ? "Low confidence" : it.status === "unmatched" ? "Unmatched" : "Confident") + (it.keptOut ? " (kept out)" : "");
+    s += "\n" + esc(it.cat) + " / " + esc(it.cls);
+    s += "\n" + esc(statusText(it));
     if (it.disagree) s += " · rules say " + esc(it.rulesSay);
     s += "\n" + esc(it.source) + "\n" + esc(it.score);
     if (it.why) s += "\nWhy: " + esc(it.why);
-    if (it.notes) s += "\nCategory notes: " + esc(it.notes);
     return s;
   }
   function place(e) {
@@ -280,6 +382,7 @@ window.REPORT = /*__REPORT_DATA__*/null;
     if (y + h > vh - 4) y = Math.max(4, vh - h - 4);
     pv.style.left = x + "px"; pv.style.top = y + "px";
   }
+  function hidePreview() { pv.style.display = "none"; current = -1; }
   $("cats").addEventListener("mouseover", function (e) {
     var a = e.target.closest ? e.target.closest("a[data-i]") : null;
     if (!a || previewSel.value === "0") return;
@@ -297,9 +400,57 @@ window.REPORT = /*__REPORT_DATA__*/null;
   $("cats").addEventListener("mouseout", function (e) {
     var to = e.relatedTarget;
     if (to && to.closest && to.closest("a[data-i]")) return;
-    pv.style.display = "none"; current = -1;
+    hidePreview();
   });
   pvImg.addEventListener("load", function () { if (pv.style.display === "block") { var r = pv.getBoundingClientRect(); if (r.bottom > window.innerHeight) pv.style.top = Math.max(4, window.innerHeight - r.height - 4) + "px"; } });
+
+  // ---- details panel (click); ctrl / shift / middle click keeps the browser's "open image"
+  var det = $("details"), selected = null;
+  function tagList(pairs) {
+    return (pairs || []).map(function (p) { return (usedTags[p[0]] ? "<b>" + esc(p[0]) + "</b>" : esc(p[0])) + " " + Number(p[1]).toFixed(2); }).join(" · ");
+  }
+  function row(label, value, raw) { return value == null || value === "" ? "" : "<dt>" + esc(label) + "</dt><dd>" + (raw ? value : esc(value)) + "</dd>"; }
+  function showDetails(a) {
+    var it = items[+a.getAttribute("data-i")], f = R.folders[it.f];
+    if (selected) selected.classList.remove("sel");
+    selected = a; a.classList.add("sel");
+    det.innerHTML = '<button class="close" type="button">Close</button>' +
+      "<h3>" + esc(f.name + "/" + it.path) + "</h3>" +
+      '<a href="' + esc(it.src) + '" target="_blank"><img src="' + esc(it.src) + '" alt=""></a>' +
+      "<dl>" +
+      row("Original name", it.original) +
+      row("File name used in analysis", it.nameUsed ? "yes: " + it.nameHints : "no") +
+      row("Category / class name", it.cat + " / " + it.cls) +
+      row("Confidence", statusText(it) + (it.disagree ? " · the folder decided; rules say " + it.rulesSay : "")) +
+      row("Source", it.source) +
+      row("Score", it.score) +
+      row("Classify puts it in", it.dest) +
+      row("Why", it.why) +
+      row("Category notes", it.notes) +
+      row("Best guess", it.guess) +
+      row("Scores (tag score × rule weight; chosen in [ ])", it.breakdown) +
+      row("Rating", it.rating) +
+      row("Character", it.chars ? tagList(it.chars) : null, true) +
+      row("Tags (bold = used by a rule)", it.tags ? '<span class="tags">' + tagList(it.tags) + "</span>" : null, true) +
+      row("Face crop", it.face) +
+      row("Folder analyzed", f.analyzed + (f.stale ? " (out of date: " + f.stale + ")" : "")) +
+      "</dl>";
+    det.classList.add("open");
+    det.scrollTop = 0;
+    hidePreview();
+  }
+  function closeDetails() {
+    det.classList.remove("open");
+    if (selected) { selected.classList.remove("sel"); selected = null; }
+  }
+  $("cats").addEventListener("click", function (e) {
+    var a = e.target.closest ? e.target.closest("a[data-i]") : null;
+    if (!a || e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) return;
+    e.preventDefault();
+    showDetails(a);
+  });
+  det.addEventListener("click", function (e) { if (e.target.classList.contains("close")) closeDetails(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeDetails(); });
 
   applySize();
   render();

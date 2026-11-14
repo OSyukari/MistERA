@@ -133,7 +133,9 @@ public sealed class GeneratedImageClassifier
             if (extension != ".png" && extension != ".jpg" && extension != ".jpeg" && extension != ".webp")
                 throw new InvalidDataException($"unsupported generated image extension [{extension}]");
 
-            var folder = Path.Combine(ComfyUISceneImage.OutputFolder, result.templateID, result.folder);
+            var root = GeneratedPortraitRegistry.GetRootFolder(result.templateID, result.classification.state);
+            var templateFolder = Path.Combine(ComfyUISceneImage.OutputFolder, result.templateID);
+            var folder = Path.Combine(root == result.templateID ? templateFolder : Path.Combine(templateFolder, root), result.folder);
             Directory.CreateDirectory(folder);
             int next = 1;
             foreach (var file in Directory.EnumerateFiles(folder))
@@ -168,7 +170,7 @@ public sealed class GeneratedImageClassifier
             }
             if (!scr_System_Serializer.current.RegisterRuntimeFile(result.finalPath))
                 throw new InvalidOperationException("generated image could not be registered at runtime");
-            GeneratedPortraitRegistry.Add(result.templateID, $"{result.templateID}/{Path.GetFileName(folder)}/{Path.GetFileName(imagePath)}");
+            GeneratedPortraitRegistry.Add(result.templateID, $"{root}/{Path.GetFileName(folder)}/{Path.GetFileName(imagePath)}");
             actor.PortraitManager.InvalidateGeneratedAssetCache();
         }
         catch (Exception e)
@@ -321,30 +323,17 @@ public sealed class GeneratedImageClassifier
             classification = best.classification;
         }
 
-        foreach (var variant in variants)
-        {
-            if (!((JArray)variant["keywords"]).Values<string>().All(selected.keywords.Contains)) continue;
-            var suffix = (variant["files"] as JArray)?.Values<string>()
-                .FirstOrDefault(f => !string.IsNullOrEmpty(f) && selected.rule.hasVariants.Contains(f));
-            if (suffix == null) continue;
-            // Only the own suffix establishes keywords; a display fallback like anal inside anal_rape does not prove rape.
-            var established = variants.FirstOrDefault(v => (v["files"] as JArray)?.Values<string>().FirstOrDefault() == classification.variant);
-            if (established != null)
-            {
-                var imageKeys = ((JArray)established["keywords"]).Values<string>().ToList();
-                var gameKeys = ((JArray)variant["keywords"]).Values<string>().ToList();
-                if (gameKeys.All(imageKeys.Contains)) break;
-                var combinedKeys = new HashSet<string>(imageKeys.Concat(gameKeys));
-                var combined = variants.FirstOrDefault(v => new HashSet<string>(((JArray)v["keywords"]).Values<string>()).SetEquals(combinedKeys)
-                    && selected.rule.hasVariants.Contains((v["files"] as JArray)?.Values<string>().FirstOrDefault()));
-                if (combined != null)
-                    suffix = ((JArray)combined["files"]).Values<string>().First();
-            }
-            classification.variant = suffix;
-            break;
-        }
-        if (classification.variant == null) classification.variant = selected.rule.defaultVariant;
-        if (string.IsNullOrEmpty(classification.state))
+        var confirmedKeys = new HashSet<string>(selected.keywords, StringComparer.OrdinalIgnoreCase);
+        // Image and game evidence share the same single-suffix priority.
+        var established = variants.FirstOrDefault(v => (v["files"] as JArray)?.Values<string>().FirstOrDefault() == classification.variant);
+        if (established != null) confirmedKeys.UnionWith(((JArray)established["keywords"]).Values<string>());
+        var supported = new HashSet<string>(variants.Where(v => ((JArray)v["keywords"]).Values<string>().All(confirmedKeys.Contains))
+            .Select(v => (v["files"] as JArray)?.Values<string>().FirstOrDefault()).Where(f => !string.IsNullOrEmpty(f)));
+        if (!string.IsNullOrEmpty(classification.variant)) supported.Add(classification.variant);
+        // The classifier's action priority (cum, rape, anal, vaginal/base) also governs game evidence.
+        classification.variant = selected.rule.hasVariants.FirstOrDefault(v => selected.category.AllowsVariant(v) && supported.Contains(v));
+        if (classification.variant == null && selected.category.AllowsVariant(selected.rule.defaultVariant))
+            classification.variant = selected.rule.defaultVariant;
         {
             // Use captured actor/role tags only, never scene-wide or partner tags (or live character state).
             var mainTags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);

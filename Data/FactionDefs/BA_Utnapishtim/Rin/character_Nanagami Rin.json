@@ -3,7 +3,7 @@
     "baseID": "Campaign1_Char_Rin",
     "Portrait":{
         "useGlobalHandler": [
-            { "path": "ba_rin/rin" }
+            { "path": "ba_rin/default" }
         ],
         "portraitPriorityList":[
 {

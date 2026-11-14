@@ -10,6 +10,7 @@
         "stat_WIL": 7,
         "Height":173,
         "Weight":500,
+        "traits": ["trait_Chastity_innocent"],
         "personalityID": "personality_base_animal",
         "traits_body_sex": [
             "trait_Sensitivity_B_default", "trait_Sensitivity_M_default", "trait_Sensitivity_C_default",

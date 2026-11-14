@@ -113,6 +113,9 @@ public class CategoryRule
     public string nameSet = ImageRules.DefaultNameSet;
     /// <summary>Optional category-wide allowlist, applied before filenames and tag matching.</summary>
     public HashSet<string> allowedNames;
+    /// <summary>Null = unrestricted action suffixes; empty = no action suffix, including defaultVariant.</summary>
+    public HashSet<string> allowedVariants;
+    public bool AllowsVariant(string variant) => allowedVariants == null || allowedVariants.Contains(variant);
     /// <summary>Category near misses treated as informational only when the filename confirms a name in this category.</summary>
     public HashSet<string> filenameConfirmedNearMisses = new HashSet<string>();
     /// <summary>A uniquely recognized source name can select this category before tag-based routing (editor opt-in).</summary>

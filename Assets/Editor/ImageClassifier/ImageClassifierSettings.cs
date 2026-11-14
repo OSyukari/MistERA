@@ -38,11 +38,11 @@ public static class ImageClassifierSettings
         set => EditorPrefs.SetString(Prefix + "LastFolder", value);
     }
 
-    /// <summary>Database root (eg. ClassifierDatabase): every child folder is a standalone classifier folder.</summary>
-    public static string DatabaseFolder
+    /// <summary>Mods work folders NOT ticked in the window (paths relative to Mods/, one per line), so newly found folders start ticked.</summary>
+    public static string ModsUnselected
     {
-        get => EditorPrefs.GetString(Prefix + "DatabaseFolder", "ClassifierDatabase");
-        set => EditorPrefs.SetString(Prefix + "DatabaseFolder", value);
+        get => EditorPrefs.GetString(Prefix + "ModsUnselected", "");
+        set => EditorPrefs.SetString(Prefix + "ModsUnselected", value);
     }
 
     /// <summary>Extracted RisuAI chara folder (with card.json) for the asset rename.</summary>

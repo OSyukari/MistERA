@@ -30,7 +30,7 @@ public static partial class ModPackager
     static readonly HashSet<string> ExcludedPackFolders = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "_generated" };
     /// <summary>Image classifier work files left inside art folders.</summary>
     static readonly HashSet<string> ExcludedFileNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-        { "_image_tags.jsonl", "_image_moves.jsonl", "_image_analysis.md", "_unclassified.md" };
+        { "_image_tags.jsonl", "_image_moves.jsonl", "_image_analysis.md", "_image_analysis.jsonl", "_image_analysis.html", "_unclassified.md" };
     /// <summary>Same keywords as BuildProcessorExtend.ForbidCopy, matched against the path relative to Mods/.</summary>
     static readonly string[] ForbidKeywords = { "forbidCopy", "forbid", "unused" };
     static readonly HashSet<string> ExcludedExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".meta", ".texcache", ".tmp", ".bak", ".old", ".log" };

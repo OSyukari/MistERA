@@ -4,7 +4,8 @@
     "portraitBaseIDOverride":"creature_animal_dog_template_1"
   },
   "Template": {
-    "Appearance": "Inhuman",
+      "Appearance": "Male",
+        "BodyType": "Default",
     "stat_STR": 7,
     "stat_CON": 10,
     "stat_PSY": 7,
@@ -12,7 +13,12 @@
     "personalityID": "personality_base_animal",
     "Height": 38,
     "Weight": 10,
-    "traits": ["trait_EnergyCapacity_high", "trait_MentalFortitude_high"],
+    "traits": ["trait_EnergyCapacity_high", "trait_MentalFortitude_high", "trait_Chastity_innocent"],
+      "traits_body_sex": [
+          "trait_Sensitivity_B_default", "trait_Sensitivity_M_default", "trait_Sensitivity_C_default",
+          "trait_Sensitivity_V_default", "trait_Sensitivity_A_default",
+          "trait_Size_B_AAA", "trait_Size_P_big", "trait_Size_V_none", "trait_Size_A_1"
+      ],
     "initialRelationship": [
       { "baseID": "BocchiRock_Char_Hitori_Gotoh", "initialPersonalRelationship": "relationship_housemate" },
       { "baseID": "BocchiRock_Char_Naoki_Gotoh", "initialPersonalRelationship": "relationship_housemate" },

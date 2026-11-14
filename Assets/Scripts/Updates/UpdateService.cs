@@ -1177,7 +1177,7 @@ namespace MistEra.Updates
 
         // Files the game or editor tools generate inside mod folders; never publisher payload. Matches the
         // ModPackager exclusions: _generated folders, spine .texcache sidecars, image classifier output.
-        private static readonly string[] GeneratedFileNames = { "_image_tags.jsonl", "_image_moves.jsonl", "_image_analysis.md", "_unclassified.md" };
+        private static readonly string[] GeneratedFileNames = { "_image_tags.jsonl", "_image_moves.jsonl", "_image_analysis.md", "_image_analysis.jsonl", "_image_analysis.html", "_unclassified.md" };
         private static bool GeneratedFile(string relative)
         {
             string[] parts = relative.Split('/');

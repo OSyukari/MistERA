@@ -77,10 +77,10 @@ public static class ImageTagTask
         progress.total = files.Count;
 
         // images moved or renamed by hand keep their record (no re-tag); the rules only tell which folders are category folders
-        HashSet<string> categoryIds;
-        try { categoryIds = ImageAnalysis.CategoryIds(ImageRulesJsonLoader.Load(ImageClassifierSettings.RulesPath)); }
-        catch (InvalidDataException) { categoryIds = new HashSet<string>(); }
-        var reconcile = store.Reconcile(files, categoryIds, ImageClassifyMover.ToolPlacedPaths(folder));
+        ImageRules rules;
+        try { rules = ImageRulesJsonLoader.Load(ImageClassifierSettings.RulesPath); }
+        catch (InvalidDataException) { rules = new ImageRules(); }
+        var reconcile = ImageAnalysis.Reconcile(store, files, rules);
         progress.relinked = reconcile.relinked.Count;
 
         var pending = new List<(string abs, string rel, long size, long mtime)>();

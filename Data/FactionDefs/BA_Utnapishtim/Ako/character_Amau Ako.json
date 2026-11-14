@@ -2,9 +2,8 @@
     "baseID": "Campaign1_Char_Ako",
     "Portrait":{
         "useGlobalHandler": [
-            { "path": "ako/ako_dress", "selfKeys": ["dress"] },
-            { "path": "ako/ako" },
-            { "path": "ba_ako/ako" }
+            { "path": "ba_ako/dress", "selfKeys": ["dress"] },
+            { "path": "ba_ako/default" }
         ],
         "portraitPriorityList":[
             {
