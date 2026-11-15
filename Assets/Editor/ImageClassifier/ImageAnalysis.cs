@@ -24,7 +24,7 @@ public class ImageAnalysisResult
     public ImageReconcileResult reconcile;
     /// <summary>What a confident-only pass and a pass with low confidence would move (computed from the move plans).</summary>
     public int firstPassMoves, lowConfidencePassMoves;
-    /// <summary>Category folders + &lt;category&gt;_perform folders (doer side of role "both" names, hand-sorted): (folder, created by this run)</summary>
+    /// <summary>Category folders and hand-sorted performer companions: (folder, created by this run).</summary>
     public readonly List<(string folder, bool created)> createdFolders = new List<(string folder, bool created)>();
 
     public int Count(ClassificationStatus s) => results.Count(r => r.status == s && !r.keptOut);
@@ -44,9 +44,14 @@ public static class ImageAnalysis
     /// <summary>The markdown report earlier versions wrote; deleted by the next Analyze of that folder.</summary>
     public const string LegacyReportFileName = "_image_analysis.md";
 
-    /// <summary>The category ids an image's first folder can mean (holds excluded).</summary>
+    /// <summary>Recognized physical category folders, including performer companions of action categories (holds excluded).</summary>
     public static HashSet<string> CategoryIds(ImageRules rules) =>
-        new HashSet<string>(rules.categories.Where(c => !c.hold).Select(c => c.id), StringComparer.OrdinalIgnoreCase);
+        new HashSet<string>(rules.categories.Where(c => !c.hold).SelectMany(c => c.nameSet == ImageRules.DefaultNameSet
+            ? new[] { c.id, c.id + "_perform" } : new[] { c.id }), StringComparer.OrdinalIgnoreCase);
+
+    internal static bool IsPerformerFolder(string folder, CategoryRule category) =>
+        category != null && category.nameSet == ImageRules.DefaultNameSet
+        && string.Equals(folder, category.id + "_perform", StringComparison.OrdinalIgnoreCase);
 
     /// <summary>The image's category folder = its top folder in the work folder (state sets are separate work folders, sorted by hand).</summary>
     internal static string CategoryFolder(string path) => ImageTagStore.TopFolder(path);
@@ -81,14 +86,15 @@ public static class ImageAnalysis
             var c = engine.Classify(record, useFilenameHints: true);
             var top = CategoryFolder(record.path);
             bool settledName = finalName.IsMatch(Path.GetFileName(record.path));
-            // a manual (hand-sorted only) category folder decides even when re-classifying: the rules can never choose it again
-            bool manualFolder = top != null && rules.categories.Any(x => x.manual && !x.hold && string.Equals(x.id, top, StringComparison.OrdinalIgnoreCase));
-            if ((folderDecides || manualFolder) && top != null && categoryIds.Contains(top))
+            var folderRule = top == null ? null : rules.categories.FirstOrDefault(x => !x.hold
+                && (string.Equals(x.id, top, StringComparison.OrdinalIgnoreCase) || IsPerformerFolder(top, x)));
+            bool performerFolder = IsPerformerFolder(top, folderRule);
+            // Hand-sorted actor and performer decisions remain authoritative even when re-classifying.
+            if (folderRule != null && (folderDecides || folderRule.manual || performerFolder))
             {
                 // the folder is a decision (manual sort or an earlier pass): keep its category, the rules only pick the name.
                 // A not-yet-settled image may still be refined within it (horse -> horse_pov), never moved to another actor.
-                var folderRule = rules.categories.First(x => !x.hold && string.Equals(x.id, top, StringComparison.OrdinalIgnoreCase));
-                if (!settledName)
+                if (!settledName && !performerFolder)
                     folderRule = rules.categories.FirstOrDefault(x => !x.hold && string.Equals(x.refines, folderRule.id, StringComparison.OrdinalIgnoreCase)
                                                                       && engine.MatchesRefinement(record, x)) ?? folderRule;
                 var byFolder = engine.ClassifyInCategory(record, folderRule, useFilenameHints: true);
@@ -96,8 +102,9 @@ public static class ImageAnalysis
                 byFolder.rulesCategoryId = c.CategoryId;
                 c = byFolder;
             }
-            // outside the category folders a final-convention name (or the "out" mark) means the user took it out: leave it alone
-            else if ((top == null || !categoryIds.Contains(top)) && (settledName || record.manual == "out")) c.keptOut = true;
+            // in a non-category folder a final-convention name (or the "out" mark) means the user put it there: leave it alone.
+            // Directly in the work folder it is classified again (the user moved it there to have it reclassified).
+            else if (top != null && !categoryIds.Contains(top) && (settledName || record.manual == "out")) c.keptOut = true;
             result.results.Add(c);
         }
         result.untagged = result.reconcile.untracked;
@@ -115,9 +122,8 @@ public static class ImageAnalysis
 
     /// <summary>
     /// Creates every category folder (holds excluded), plus &lt;category&gt;_perform where the game can read it: the category is read by
-    /// portrait_global.categories (as id or alsoUseFolders) and a role "both" name of portrait_global.names (eg. cunnilingus) may be filed
-    /// in it (file_names onlyInCategories). The game reads the performing side of such names from there (hand-sorted, see
-    /// Plan_GlobalPortraitHandler.md). Images moved there keep their final-convention name, so Classify leaves them alone (kept out).
+    /// portrait_global.categories (as id or alsoUseFolders) and a doer/both name of portrait_global.names may be filed
+    /// in it (file_names onlyInCategories). Performer placement is hand-sorted and protected; Rename can name its files in place.
     /// </summary>
     static void EnsureCategoryFolders(ImageAnalysisResult result, string rulesPath)
     {
@@ -132,16 +138,18 @@ public static class ImageAnalysis
                     if ((string)c["id"] is string cid) readByGame.Add(cid);
                     if (c["alsoUseFolders"] is Newtonsoft.Json.Linq.JArray also) foreach (var f in also) readByGame.Add((string)f);
                 }
-            var bothNames = new HashSet<string>(StringComparer.Ordinal);
+            var performNames = new HashSet<string>(StringComparer.Ordinal);
             if (root["portrait_global"]?["names"] is Newtonsoft.Json.Linq.JObject names)
                 foreach (var p in names.Properties())
                     if (p.Value is Newtonsoft.Json.Linq.JObject o && o["keywords"] is Newtonsoft.Json.Linq.JArray kws
-                        && kws.OfType<Newtonsoft.Json.Linq.JObject>().Any(k => (string)k["role"] == "both")) bothNames.Add(p.Name);
+                        && ((bool?)o["alsoUsePerformFolders"] == true
+                            || kws.OfType<Newtonsoft.Json.Linq.JObject>().Any(k => (string)k["role"] == "both" || (string)k["role"] == "doer"))) performNames.Add(p.Name);
             result.rules.nameSets.TryGetValue(ImageRules.DefaultNameSet, out var fileNames);
+            if (fileNames != null) performNames.UnionWith(fileNames.Where(n => n.isperform).Select(n => n.name));
             foreach (var id in readByGame)
             {
-                // a both name allowed in this category (no onlyInCategories = every category)
-                if (fileNames != null && fileNames.Any(n => bothNames.Contains(n.name) && (n.onlyInCategories == null || n.onlyInCategories.Count == 0
+                // A performer-capable name allowed in this category (no onlyInCategories = every category).
+                if (fileNames != null && fileNames.Any(n => performNames.Contains(n.name) && (n.onlyInCategories == null || n.onlyInCategories.Count == 0
                         || n.onlyInCategories.Contains(id, StringComparer.OrdinalIgnoreCase))))
                     performIds.Add(id);
             }

@@ -46,7 +46,7 @@ public class ImageRules
             }
         }
         foreach (var c in categories) { Add(c.all); Add(c.any); Add(c.none); }
-        foreach (var set in nameSets.Values) foreach (var n in set) { Add(n.clauses); Add(n.none); }
+        foreach (var set in nameSets.Values) foreach (var n in set) { Add(n.clauses); Add(n.none); Add(n.noneAll); }
         foreach (var state in states) Add(state.any);
         Add(variants.Values);
         return tags;
@@ -69,6 +69,9 @@ public class ImageRuleSettings
     public float tagThreshold = 0.35f;
     /// <summary>A variant (sleeping, rape, ...) applies when one of its tags reaches this.</summary>
     public float variantThreshold = 0.35f;
+    /// <summary>Per-variant overrides of variantThreshold (eg. vaginal needs stronger evidence than the global bar);
+    /// variants not listed use variantThreshold.</summary>
+    public Dictionary<string, float> variantMinScore = new Dictionary<string, float>();
     /// <summary>A tag within this distance below the threshold that applies (category, tag or variant threshold) is a near miss
     /// and makes the result low confidence. Relative, so a strict category threshold (0.6) does not widen the band.</summary>
     public float nearMissBand = 0.15f;
@@ -110,6 +113,8 @@ public class CategoryRule
     public float? threshold;
     /// <summary>A match stops classification: the image stays unmatched (e.g. an animal with no species tag).</summary>
     public bool hold;
+    /// <summary>Editor-only original-filename aliases that independently trigger a hold rule.</summary>
+    public List<string> holdFilenameHints = new List<string>();
     public string nameSet = ImageRules.DefaultNameSet;
     /// <summary>Optional category-wide allowlist, applied before filenames and tag matching.</summary>
     public HashSet<string> allowedNames;
@@ -150,6 +155,8 @@ public class NameRule
     /// <summary>AND over clauses; the first clause gives the score. No clauses = always matches with score 0 (fallbacks like sfw).</summary>
     public List<RuleClause> clauses = new List<RuleClause>();
     public List<RuleClause> none = new List<RuleClause>();
+    /// <summary>Reject when every clause matches; an empty list imposes no grouped exclusion.</summary>
+    public List<RuleClause> noneAll = new List<RuleClause>();
     /// <summary>Variant ids in priority order; the first that applies is appended as _&lt;id&gt;.</summary>
     public List<string> hasVariants = new List<string>();
     /// <summary>Suffix when no evidence-based variant applies; null keeps the unsuffixed name.</summary>
@@ -160,6 +167,12 @@ public class NameRule
     public bool fallback;
     /// <summary>Eligible for explicit filename ids only, never automatic tag matching.</summary>
     public bool filenameOnly;
+    /// <summary>Automatic action placement uses the category's performer folder; manual folder decisions remain authoritative.</summary>
+    public bool isperform;
     /// <summary>Overrides settings.tierMinScore for this entry: the score it needs to claim the image for its tier.</summary>
     public float? tierMinScore;
+    /// <summary>Hard tag-evidence threshold for this name; null uses settings.tagThreshold.</summary>
+    public float? threshold;
+    /// <summary>Explicit none/noneAll threshold; these exclusions also veto filename matches when configured.</summary>
+    public float? noneThreshold;
 }

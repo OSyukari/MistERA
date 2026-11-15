@@ -143,9 +143,26 @@
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": ["sex", "receiver", "cunnilingus", "spread_pussy", "sleeping", "relaxed"],
+                            "useActiveTags": false,
+                            "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
+                            "responses": [
+                                "com_sex_oral_V_Begin_Sleep_1",
+                                "com_sex_oral_V_Begin_Sleep_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
                                     "timestop"
                                 ]
                             },
+                            "extraSelfPortraitTags": ["sex", "receiver", "cunnilingus", "spread_pussy", "doll", "empty", "silence", "idle"],
+                            "useActiveTags": false,
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_sex_oral_V_Begin_Timestop_1",
@@ -790,6 +807,8 @@
                 "com_sex_oral_V_76": "$self$没发出什么声音，时不时低头看眼$target$，显得心不在焉。\n\"这技术……还需要练练啊。\"",
                 "com_sex_oral_V_77": "$self$干巴巴地叹了口气，稍微合拢了双腿。\n\"只有舌头在动吗？感觉有点无聊了。\"",
                 "com_sex_oral_V_78": "$self$脸上没有任何享受的表情，尴尬地擦了擦被口水沾湿的腿根。\n\"抱歉，$target$……我真的很难投入。\"",
+                "com_sex_oral_V_Begin_Sleep_1": "$target$分开她熟睡中的双腿埋头进去，舌尖碾上阴蒂轻轻打转，$self$在梦里哼了声，腰轻轻扭了扭，没醒。",
+                "com_sex_oral_V_Begin_Sleep_2": "穴口被舔得发亮，津水混着爱液越积越多，$self$只是难耐地夹了夹腿，又在梦里松开，睡得依旧很沉。",
                 "com_sex_oral_V_Begin_Timestop_1": "$target$掰开她定格的双腿埋头进去，舌尖碾上阴蒂打转，被舔弄得发亮的穴口不受控地收缩，津水混着爱液越积越多。",
                 "com_sex_oral_V_Begin_Timestop_2": "快感只到肉体为止——穴水顺着$self$的腿根淌出亮痕，她的脚踝还搭在$target$肩上，姿势纹丝未变。",
 

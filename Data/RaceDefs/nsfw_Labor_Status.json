@@ -3,8 +3,8 @@
     "Status": {
         "list": [
             {
-                "statusID": "chara_status_labor",
-                "_comment": "Early labor progress, set by code (ReproductionUtility.UpdateLaborStatus) whenever labor progresses: severity = % of early labor elapsed (0-100), duration = minutes left (-1 once early labor has run its length and she waits to rest). Removed when active labor starts (chara_status_labor_intense labels that stage) or labor ends. Display only.",
+                "statusID": "chara_status_labor_early",
+                "_comment": "Early labor progress (renamed from chara_status_labor: expiry removal is a substring match, so that ID also removed the other labor statuses), set by code (ReproductionUtility.UpdateLaborStatus) whenever labor progresses: severity = % of early labor elapsed (0-100), duration = minutes left (-1 once early labor has run its length and she waits to rest). Removed when active labor starts (chara_status_labor_intense labels that stage) or labor ends. Display only.",
                 "allowNaturalRemoval": true,
                 "stringFormat": "N0",
                 "variationMode": { },
@@ -39,7 +39,7 @@
         "Entries": {
             "zh-cn": {
                 "chara_status_labor_active": "临产",
-                "chara_status_labor_tooltip": "临产会随时间推进\n临产结束后，只有在清醒并卧床静养（或其他休息指令）时才会进入分娩",
+                "chara_status_labor_early_tooltip": "临产会随时间推进\n临产结束后，只有在清醒并卧床静养（或其他休息指令）时才会进入分娩",
                 "chara_status_labor_intense_active": "分娩中",
                 "chara_status_labor_intense_tooltip": "只有在清醒并卧床静养（或其他休息指令）时，分娩才会推进",
                 "chara_status_labor_obstructed_active": "难产",
@@ -47,7 +47,7 @@
             },
             "en-us": {
                 "chara_status_labor_active": "In Labor",
-                "chara_status_labor_tooltip": "Early labor advances over time.\nOnce it has run its course, active labor only begins while awake and resting (Bed Rest or another rest command).",
+                "chara_status_labor_early_tooltip": "Early labor advances over time.\nOnce it has run its course, active labor only begins while awake and resting (Bed Rest or another rest command).",
                 "chara_status_labor_intense_active": "In Active Labor",
                 "chara_status_labor_intense_tooltip": "Labor only progresses toward birth while awake and resting (Bed Rest or another rest command).",
                 "chara_status_labor_obstructed_active": "Obstructed Labor (cannot deliver naturally)"

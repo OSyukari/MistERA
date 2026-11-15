@@ -43,6 +43,8 @@ public class ImageClassifierWindow : EditorWindow
     // Mods asset packs: every work folder (ImageWorkFolders), ticked ones are processed
     bool showMods = true;
     List<ImageReportFolder> modsFolders;
+    ModsFolderNode modsTree;
+    readonly HashSet<string> modsCollapsed = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
     readonly Dictionary<string, int> modsImageCounts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
     readonly HashSet<string> modsUnselected = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
     Vector2 modsScroll;
@@ -55,6 +57,15 @@ public class ImageClassifierWindow : EditorWindow
     Vector2 modsPlanScroll;
     string modsReportError;
     static readonly string[] LowConfidenceModes = { "Low confidence: per folder (2nd pass on)", "Confident only", "Include low confidence" };
+
+    class ModsFolderNode
+    {
+        public string name;
+        public string relativePath;
+        public ImageReportFolder folder;
+        public readonly List<ModsFolderNode> children = new List<ModsFolderNode>();
+        public readonly List<ImageReportFolder> descendants = new List<ImageReportFolder>();
+    }
 
     // RisuAI .charx asset rename
     bool showRisu;
@@ -286,7 +297,9 @@ public class ImageClassifierWindow : EditorWindow
             deleteEmptyFolders = EditorGUILayout.ToggleLeft(new GUIContent("Delete subfolders the move empties", "Never the chosen folder itself"), deleteEmptyFolders);
             reclassifySorted = EditorGUILayout.ToggleLeft(new GUIContent("Re-classify images in category folders",
                 "Off (default): an image inside a category folder (your sort or an earlier pass) keeps that category; the rules only name it. " +
-                "On: the rules decide every image's category again and may move images you sorted by hand. Images you moved out of a category folder are never moved either way."),
+                "On: the rules decide categories and isperform destinations again. Hand-sorted manual categories and performer folders remain protected. " +
+                "Images you moved out of a category folder into another folder are never moved either way; " +
+                "images you moved back into the chosen folder itself are classified (and renamed) again."),
                 reclassifySorted);
             if (GUILayout.Button(new GUIContent("Restore every file's original name", "Restore recorded original basenames, keeping every image in its current folder. Conflicts are skipped, never overwritten."))) RestoreOriginalNames();
         }
@@ -497,6 +510,25 @@ public class ImageClassifierWindow : EditorWindow
     void RefreshMods()
     {
         modsFolders = DescribeModsFolders();
+        modsTree = new ModsFolderNode();
+        foreach (var f in modsFolders)
+        {
+            var node = modsTree;
+            string relativePath = "";
+            foreach (var part in f.name.Split('/'))
+            {
+                relativePath = relativePath.Length == 0 ? part : relativePath + "/" + part;
+                var child = node.children.Find(n => string.Equals(n.name, part, StringComparison.OrdinalIgnoreCase));
+                if (child == null)
+                {
+                    child = new ModsFolderNode { name = part, relativePath = relativePath };
+                    node.children.Add(child);
+                }
+                node = child;
+                node.descendants.Add(f);
+            }
+            node.folder = f;
+        }
         modsImageCounts.Clear();
         foreach (var f in modsFolders) modsImageCounts[f.name] = ImageTagTask.ScanImages(f.path).Count;
         modsUnselected.Clear();
@@ -534,6 +566,51 @@ public class ImageClassifierWindow : EditorWindow
         return f.stale != null ? "(!) " + state + " · out of date" : state;
     }
 
+    void DrawModsFolder(ModsFolderNode node, int depth)
+    {
+        using (new EditorGUILayout.HorizontalScope())
+        {
+            GUILayout.Space(depth * 16);
+            bool expanded = !modsCollapsed.Contains(node.relativePath);
+            if (node.children.Count > 0)
+            {
+                var rect = EditorGUILayout.GetControlRect(false, EditorGUIUtility.singleLineHeight, GUILayout.Width(16));
+                bool now = EditorGUI.Foldout(rect, expanded, GUIContent.none);
+                if (now) modsCollapsed.Remove(node.relativePath);
+                else modsCollapsed.Add(node.relativePath);
+            }
+            else GUILayout.Space(16);
+
+            int selectedCount = node.descendants.Count(f => !modsUnselected.Contains(f.name));
+            bool allSelected = selectedCount == node.descendants.Count;
+            bool previousMixed = EditorGUI.showMixedValue;
+            EditorGUI.showMixedValue = selectedCount > 0 && !allSelected;
+            EditorGUI.BeginChangeCheck();
+            bool selected = EditorGUILayout.ToggleLeft(new GUIContent(node.name, Path.Combine(ModsRoot, node.relativePath)), allSelected, GUILayout.MinWidth(100));
+            bool changed = EditorGUI.EndChangeCheck();
+            EditorGUI.showMixedValue = previousMixed;
+            if (changed)
+            {
+                foreach (var f in node.descendants)
+                {
+                    if (selected) modsUnselected.Remove(f.name);
+                    else modsUnselected.Add(f.name);
+                }
+                SaveModsSelection();
+            }
+
+            if (node.folder != null)
+            {
+                var f = node.folder;
+                EditorGUILayout.LabelField(new GUIContent(ModsRowState(f), f.stale ?? ""), EditorStyles.miniLabel, GUILayout.Width(250));
+                if (GUILayout.Button(new GUIContent("Use", "Load this folder into \"Single folder\" below"), EditorStyles.miniButton, GUILayout.Width(36))) SetFolder(f.path);
+            }
+            else EditorGUILayout.LabelField($"{selectedCount} of {node.descendants.Count} selected", EditorStyles.miniLabel, GUILayout.Width(290));
+        }
+        if (!modsCollapsed.Contains(node.relativePath))
+            foreach (var child in node.children) DrawModsFolder(child, depth + 1);
+    }
+
     void DrawMods()
     {
         showMods = EditorGUILayout.Foldout(showMods, "Mods asset packs (Mods/Assetpacks, Mods/<mod>/Assetpacks)", true);
@@ -562,27 +639,13 @@ public class ImageClassifierWindow : EditorWindow
                 EditorGUILayout.LabelField($"{selected.Count} of {modsFolders.Count} selected", EditorStyles.miniLabel, GUILayout.Width(120));
             }
 
-            modsScroll = EditorGUILayout.BeginScrollView(modsScroll, GUILayout.Height(Mathf.Clamp(modsFolders.Count * 20 + 6, 26, 280)));
-            foreach (var f in modsFolders)
-            {
-                using (new EditorGUILayout.HorizontalScope())
-                {
-                    bool on = !modsUnselected.Contains(f.name);
-                    bool now = EditorGUILayout.ToggleLeft(new GUIContent(f.name, f.path), on, GUILayout.MinWidth(180));
-                    if (now != on)
-                    {
-                        if (now) modsUnselected.Remove(f.name);
-                        else modsUnselected.Add(f.name);
-                        SaveModsSelection();
-                    }
-                    EditorGUILayout.LabelField(new GUIContent(ModsRowState(f), f.stale ?? ""), EditorStyles.miniLabel, GUILayout.Width(250));
-                    if (GUILayout.Button(new GUIContent("Use", "Load this folder into \"Single folder\" below"), EditorStyles.miniButton, GUILayout.Width(36))) SetFolder(f.path);
-                }
-            }
+            modsScroll = EditorGUILayout.BeginScrollView(modsScroll, GUILayout.Height(Mathf.Clamp(modsFolders.Count * 20 + 46, 26, 280)));
+            foreach (var node in modsTree.children) DrawModsFolder(node, 0);
             if (modsFolders.Count == 0) EditorGUILayout.LabelField("No work folders found under " + ModsRoot, EditorStyles.miniLabel);
             EditorGUILayout.EndScrollView();
         }
 
+        selected = SelectedMods();
         int n = selected.Count;
         using (new EditorGUI.DisabledScope(running || n == 0))
         {
@@ -593,9 +656,20 @@ public class ImageClassifierWindow : EditorWindow
                         "Up-to-date images are skipped unless \"Re-tag all images\" is ticked. Then updates the report."), GUILayout.Height(24))) StartModsTag(selected);
                 modsForceRetag = GUILayout.Toggle(modsForceRetag, new GUIContent("Re-tag all images", "Also re-tag images that are already up to date (eg. after changing the tagger model)"), GUILayout.Width(120));
             }
-            if (GUILayout.Button(new GUIContent($"2. Analyze {n} selected folders + update report",
+        }
+        using (new EditorGUILayout.HorizontalScope())
+        {
+            using (new EditorGUI.DisabledScope(running || n == 0))
+                if (GUILayout.Button(new GUIContent($"2. Analyze {n} selected folders + update report",
                     "Classify every tagged image of each selected folder without moving anything (creates the category folders, writes _image_analysis.jsonl), " +
                     "then rebuilds Mods/" + ImageWorkFolders.ReportFileName + " from every folder's latest analysis."), GUILayout.Height(24))) RunModsAnalyze(selected);
+            using (new EditorGUI.DisabledScope(running))
+                if (GUILayout.Button(new GUIContent("Analyze all outdated",
+                        "Refresh the folder state and analyze every tagged folder with stale or missing analysis, regardless of checkbox selection. Then update the report."), GUILayout.Height(24)))
+                    RunModsAnalyze(DescribeModsFolders().Where(f => f.hasTagFile && (f.cache == null || f.stale != null)).ToList());
+        }
+        using (new EditorGUI.DisabledScope(running || n == 0))
+        {
             if (GUILayout.Button(new GUIContent($"3. Move images of {n} selected folders to category folders (preview)",
                     "Analyze each selected folder and show which images would move into which category folder. File names are kept, so a wrong folder " +
                     "is easy to fix by hand before step 4. Nothing moves until you confirm."), GUILayout.Height(24)))
@@ -609,7 +683,8 @@ public class ImageClassifierWindow : EditorWindow
                 modsLowConfidenceMode, LowConfidenceModes);
             deleteEmptyFolders = EditorGUILayout.ToggleLeft(new GUIContent("Delete subfolders the move empties (shared with Single folder)", "Never the work folder itself"), deleteEmptyFolders);
             reclassifySorted = EditorGUILayout.ToggleLeft(new GUIContent("Re-classify images in category folders (shared with Single folder)",
-                "Off (default): an image inside a category folder keeps that category; the rules only name it. On: the rules decide every image's category again."), reclassifySorted);
+                "Off (default): category folders keep their normal/perform placement; the rules only name images. " +
+                "On: rules and isperform choose the destination again, except protected manual categories and performer folders."), reclassifySorted);
             if (GUILayout.Button(new GUIContent($"5. Restore original names in {n} selected folders",
                     "Rename every tagged image back to its recorded original file name, keeping it in its current folder (conflicts are skipped, never overwritten). " +
                     "Folders that had an analysis are analyzed again so the report shows the restored names."), GUILayout.Height(24))) RestoreModsNames(selected);

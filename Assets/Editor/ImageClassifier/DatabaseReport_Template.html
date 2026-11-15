@@ -181,7 +181,10 @@ window.REPORT = /*__REPORT_DATA__*/null;
       it.f = fi;
       it.src = f.base + it.path.split("/").map(encodeURIComponent).join("/");
       it.search = (f.name + "/" + it.path + " " + (it.original || "")).toLowerCase();
-      it.cat = it.category == null ? "(no category)" : it.category;
+      // Hand-sorted performer folders are separate report groups, not separate classifier categories.
+      var folder = it.path.replace(/\\/g, "/").split("/");
+      it.cat = folder.length > 1 && /_perform$/i.test(folder[0])
+        ? folder[0] : it.category == null ? "(no category)" : it.category;
       all.push(it);
     });
   });

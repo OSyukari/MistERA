@@ -38,6 +38,8 @@ static class FilenameHintTests
 
         foreach (var path in new[] {
             "arbitrary.webp", "123456789.webp", "coral.webp", "oral2.webp", "2oral.webp",
+            "oral.webp", "anal.webp", "vaginal.webp", "prefellatio.webp", "fellatio2.webp",
+            "2blowjob.webp", "blowjobpost.webp", "fellatio/arbitrary.webp",
             "prefullnelson.webp", "fullnelsonpost.webp", "1full_nelson.webp", "full_nelson2.webp",
             "fullnelson/arbitrary.webp", @"C:\fullnelson\arbitrary.webp",
             "fullnelson missionary.webp", "missionary fullnelson.webp",
@@ -66,6 +68,9 @@ static class FilenameHintTests
             (text: "deepthroat", name: "irrumatio"),
             (text: "sumata", name: "thighjob"),
             (text: "boobjob", name: "paizuri"),
+            (text: "kiss", name: "kissing_oral_tongue"),
+            (text: "kissing", name: "kissing_oral_tongue"),
+            (text: "anal kiss", name: "anal_kiss"),
             (text: "fullnelson Full_Nelson", name: "full_nelson") })
             checks.Test("canonical and alias filename match: " + fixture.text, () =>
             {
@@ -242,11 +247,11 @@ static class FilenameHintTests
         });
 
         foreach (var fixture in new[] {
-            (filename: "FullNelson sleeping.webp", tag: "cum", baseline: "cum", variant: "cum"),
-            (filename: "FullNelson cum.webp", tag: "sleeping", baseline: "sleeping", variant: "sleeping"),
-            (filename: "handjob.webp", tag: "cum", baseline: "cum", variant: (string)null),
-            (filename: "handjob.webp", tag: "sleeping", baseline: "sleeping", variant: "sleeping"),
-            (filename: "FullNelson sleeping.webp", tag: (string)null, baseline: (string)null, variant: (string)null) })
+            (filename: "FullNelson sleeping.webp", tag: "cum", baseline: "vaginal", variant: "cum"),
+            (filename: "FullNelson cum.webp", tag: "sleeping", baseline: "vaginal", variant: "cum"),
+            (filename: "handjob.webp", tag: "cum", baseline: "vaginal", variant: (string)null),
+            (filename: "handjob.webp", tag: "sleeping", baseline: "vaginal", variant: (string)null),
+            (filename: "FullNelson sleeping.webp", tag: (string)null, baseline: "vaginal", variant: "vaginal") })
             checks.Test("chosen name recomputes tag-picked variants: " + fixture.filename + " / " + (fixture.tag ?? "none"), () =>
             {
                 var record = RegressionTests.Record(("1boy", 0.99f), ("sex", 0.99f), ("doggystyle", 0.99f));
@@ -262,6 +267,80 @@ static class FilenameHintTests
                 checks.Equal(fixture.variant == null ? expectedName : expectedName + "_" + fixture.variant, result.name, "composed stem");
                 checks.Equal(1f, result.score, "filename score");
             });
+
+        foreach (var fixture in new[] {
+            (alias: "FeLlAtIo", tag: "lactation", baseline: "breast_masturbation"),
+            (alias: "BLOWJOB", tag: "paizuri", baseline: "paizuri"),
+            (alias: "blowjob", tag: "after_sex", baseline: "after_sex") })
+            checks.Test("explicit fallback alias overrides regular tags: " + fixture.alias + "/" + fixture.tag, () =>
+            {
+                var record = RegressionTests.Record(("1boy", 0.99f), (fixture.tag, 0.99f), ("cum", 0.99f));
+                record.path = "source_" + fixture.alias + "-1.cumshot.png";
+                checks.Equal(fixture.baseline, engine.Classify(record, false).nameRule?.name, "tag-only regular name");
+                var result = engine.Classify(record, true);
+                Hint(checks, result, "oral", fixture.alias);
+                checks.Check(result.nameRule.fallback, "Explicit alias must not change oral's fallback policy.");
+                checks.Equal("oral", result.name, "oral does not accept cum from tags or filename");
+                checks.Equal<string>(null, result.variantFilenameHint, "no disallowed cum provenance");
+                checks.Equal("human", result.CategoryId, "category unchanged");
+            });
+
+        foreach (var source in new[] { "fellatio_goodnight", "fellatio good night", "fellatio_goodmorning", "fellatio good morning" })
+            checks.Test("complete filename subtype beats contained fellatio alias: " + source, () =>
+            {
+                var result = engine.Classify(OralRecord("source." + source + ".png"), true);
+                Hint(checks, result, source.Contains("night") ? "fellatio_goodnight" : "fellatio_goodmorning", source);
+            });
+
+        checks.Test("oral alias uses immutable originalName rather than generated path", () =>
+        {
+            var record = RegressionTests.Record(("1boy", 0.99f), ("lactation", 0.99f));
+            record.originalName = "source.FeLlAtIo_2.png";
+            record.path = "human/paizuri_pack_42.png";
+            var before = JsonConvert.SerializeObject(record);
+            var restored = JsonConvert.DeserializeObject<ImageTagRecord>(before);
+            Hint(checks, engine.Classify(restored, true), "oral", "FeLlAtIo");
+            checks.Equal(before, JsonConvert.SerializeObject(restored), "original record immutable");
+            restored.originalName = "anonymous.png";
+            restored.path = "human/blowjob_42.png";
+            SameResult(checks, engine.Classify(restored, false), engine.Classify(restored, true));
+        });
+
+        checks.Test("oral aliases retain fixed animal categories and respect name allowlists", () =>
+        {
+            var record = RegressionTests.Record(("1boy", 0.99f), ("lactation", 0.99f), ("rape", 0.99f));
+            record.path = "source.blowjob.cumshot.png";
+            foreach (var id in new[] { "dog_pov", "horse" })
+            {
+                var category = rules.categories.Single(c => c.id == id);
+                var result = engine.ClassifyInCategory(record, category, true);
+                checks.Equal(category, result.category, "fixed animal category retained");
+                Hint(checks, result, "oral", "blowjob");
+                checks.Equal("oral_rape", result.name, "allowed rape survives disallowed cum");
+            }
+            var tentacle = rules.categories.Single(c => c.id == "tentacle");
+            SameResult(checks, engine.ClassifyInCategory(record, tentacle, false), engine.ClassifyInCategory(record, tentacle, true));
+            checks.Check(engine.ClassifyInCategory(record, tentacle, true).nameRule?.name != "oral",
+                "Alias must not bypass tentacle name allowlist.");
+        });
+
+        if (store.Header?.root?.IndexOf("ba_ako", StringComparison.OrdinalIgnoreCase) >= 0)
+            foreach (var path in new[] {
+                "dog_pov/c_nsfw_bestiality fellatio_1.png", "dog_pov/c_nsfw_bestiality fellatio_2.png",
+                "pov/c_nsfw_fellatio_1.png", "pov/c_nsfw_fellatio_2.png", "pov/c_nsfw_fellatio_3.png" })
+                checks.Test("stored Ako explicit fellatio alias: " + path, () =>
+                {
+                    checks.Check(store.Records.TryGetValue(path, out var record), "Missing stored fixture: " + path);
+                    var before = JsonConvert.SerializeObject(record);
+                    var baseline = engine.Classify(record, false);
+                    var result = engine.Classify(record, true);
+                    Hint(checks, result, "oral", "fellatio");
+                    checks.Equal("oral", result.name, "no cum suffix");
+                    checks.Equal(baseline.CategoryId, result.CategoryId, "tag-selected category preserved");
+                    if (path.StartsWith("dog_pov/", StringComparison.Ordinal))
+                        checks.Equal("dog_pov", result.CategoryId, "actual dog POV routing");
+                    checks.Equal(before, JsonConvert.SerializeObject(record), "stored record immutable");
+                });
 
         RunStored(engine, store, checks);
     }

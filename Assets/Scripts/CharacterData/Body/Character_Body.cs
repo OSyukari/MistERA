@@ -16,6 +16,38 @@ public class Character_Body
     List<string> _cached_bodyDescriptions = new List<string>();
     List<string> _cached_internalTags = new List<string>();
     bool _cached_internals_description = false;
+
+    // null = rebuild on next read; cleared by EquipItem / UnequipItem / ClearBodyCaches
+    List<string> _cached_exposedPortraitKeys = null;
+    /// <summary>
+    /// Portrait display only: exposedKeyword of every part whose exposed slots carry no coverage (BodyPart_Instance.IsFullyExposed)
+    /// and of every organ whose cover slots carry none (organs exist only when the body has them, e.g. penis needs HasMaleParts).
+    /// Shared cached list - callers copy (AddRange), never modify.
+    /// </summary>
+    [JsonIgnore] public List<string> ExposedPortraitKeys
+    {
+        get
+        {
+            if (_cached_exposedPortraitKeys == null)
+            {
+                var keys = new List<string>();
+                foreach (var part in Body)
+                {
+                    var keyword = part.Base?.exposedKeyword;
+                    if (!string.IsNullOrEmpty(keyword) && !keys.Contains(keyword) && part.IsFullyExposed()) keys.Add(keyword);
+                    foreach (var organ in part.internals)
+                    {
+                        keyword = organ.Base?.exposedKeyword;
+                        if (string.IsNullOrEmpty(keyword) || keys.Contains(keyword)) continue;
+                        if (organ.GetRevealingScore(BodyEquipLayer.None) <= 0) keys.Add(keyword);
+                    }
+                }
+                _cached_exposedPortraitKeys = keys;
+            }
+            return _cached_exposedPortraitKeys;
+        }
+    }
+
     public void NotifyInternalsContentChange()
     {
         _cached_internals_description = false;
@@ -850,6 +882,7 @@ public class Character_Body
                 }
             }
             _cached_internals_description = false;
+            _cached_exposedPortraitKeys = null;
             return true;
         }
         else
@@ -987,6 +1020,7 @@ public class Character_Body
     {
         internals = null;
         _bodyTagCache?.Clear();
+        _cached_exposedPortraitKeys = null;
         ClearEquipCaches();
         ClearPermissionApplicability();
     }
@@ -1114,6 +1148,7 @@ public class Character_Body
             //if (returnVal) break;
         }
         _cached_internals_description = false;
+        _cached_exposedPortraitKeys = null;
         return returnVal;
 
     }

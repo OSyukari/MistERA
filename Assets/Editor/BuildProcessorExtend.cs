@@ -16,8 +16,9 @@ class BuildProcessorExtend : IPostprocessBuildWithReport, IPreprocessBuildWithRe
 
     public List<string> nsfwKeywords = new List<string>() { "nsfw", "unsafe", "sex", "initSex", "endSex", "massage", "do_not_use" };
     public List<string> sfwKeywords = new List<string>() { "safeOnly" };
-    public List<string> safeExtensiosn = new List<string>() { ".meta", ".json", ".asset", ".mat", ".md" };
-    public List<string> allExtensiosn = new List<string>() { ".meta", ".asset", ".mat", ".md" };
+    // .texcache: spine atlas decode caches (AssetsLoader) - generated on the player's machine, never shipped
+    public List<string> safeExtensiosn = new List<string>() { ".meta", ".json", ".asset", ".mat", ".md", ".texcache" };
+    public List<string> allExtensiosn = new List<string>() { ".meta", ".asset", ".mat", ".md", ".texcache" };
 
     public List<string> ForbidCopy = new List<string>() { "forbidCopy", "forbid", "unused" };
 

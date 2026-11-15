@@ -17,8 +17,10 @@ public class Result_Event
     /// Agnostic to call path: pass the current EvaluationPackage for EP-scoped targets (this pairing only), or
     /// null for AP-scoped targets (the whole ActionPackage's own doer/receiver). Either way, the doer/receiver/actor
     /// targets are read directly off the AP/EP's own already-resolved Doer/Receiver/Actors — no re-derivation.
+    /// prepareSleepEvent (deferSleepUntilEnd): gets the bedtime event and its start - the sleep transition starts it, at
+    /// once or once the player has chosen how long to sleep (PlayerSleepChoice); null start = a silent run, started here.
     /// </summary>
-    public void Apply(ActionPackage p, EvaluationPackage evp, System.Action<EventInstance> prepareSleepEvent = null)
+    public void Apply(ActionPackage p, EvaluationPackage evp, System.Action<EventInstance, System.Action> prepareSleepEvent = null)
     {
         if (p == null || p.targetCOM == null) return;
 
@@ -73,8 +75,8 @@ public class Result_Event
         ev.Targets.Add("doer", doerTargets);
         ev.Targets.Add("receiver", receiverTargets);
         ev.Targets.Add("actor", actorTargets);
-        if (deferSleepUntilEnd && evp == null && p.executeSuccessful && p.targetCOM.comTags.Contains("sleep"))
-            prepareSleepEvent?.Invoke(ev);
+        bool sleepTransition = prepareSleepEvent != null && deferSleepUntilEnd && evp == null && p.executeSuccessful
+            && p.targetCOM.comTags.Contains("sleep");
 
         // standby: AP-wide actors assigned to no EvaluationPackage at all (e.g. leftover unpaired
         // doer/receiver in a multi-actor AP whose random-match pairing didn't cover everyone)
@@ -103,11 +105,18 @@ public class Result_Event
         // (e.g. group scenes) can correctly read ev.Targets["doer"/"receiver"/etc.]
         if (ev.silent)
         {
+            if (sleepTransition) prepareSleepEvent(ev, null);
             try { ExpeditionSilentRunner.RunChild(parent, ev, finalID, eventLabel); }
             finally { ev.CompleteCallbacks(); }
             return;
         }
 
+        if (sleepTransition) prepareSleepEvent(ev, () => Start(ev, finalID));
+        else Start(ev, finalID);
+    }
+
+    void Start(EventInstance ev, string finalID)
+    {
         try
         {
             ev.LoadNext(finalID, eventLabel);

@@ -1171,8 +1171,19 @@ public static class UtilityEX
     }
 
     /// <summary>
+    /// Portrait display only: the partner's portrait template ID (portraitBaseIDOverride, else BaseID) as a target tag,
+    /// matched by useGlobalHandler entries' targetKeys (pair folders, eg. Cinderella with Campaign1_Nikke_Cinderella_corrupted).
+    /// </summary>
+    public static void AddPortraitTargetID(List<string> tags, Character_Trainable partner)
+    {
+        if (tags == null || partner == null || partner.PortraitManager == null) return;
+        var id = partner.PortraitManager.PortraitTemplateID;
+        if (!string.IsNullOrEmpty(id) && !tags.Contains(id)) tags.Add(id);
+    }
+
+    /// <summary>
     /// Portrait display only: owner's action tags in this EP (COM tags + EP extra tags + COM portraitTags) + portrait role
-    /// (global portrait role blocks require doer/receiver; solo acts have none) + AddPortraitDisplayTags.
+    /// (global portrait role blocks require doer/receiver; solo acts have none) + bare part keys (Character_Body.ExposedPortraitKeys) + AddPortraitDisplayTags.
     /// Empty when owner is not this EP's doer/receiver (eg. a _Joined observer) - callers fall back to live action tags.
     /// </summary>
     public static List<string> GetEPPortraitActionTags(EvaluationPackage ep, Character_Trainable owner)
@@ -1185,6 +1196,8 @@ public static class UtilityEX
         if (ep.Receiver == owner && ep.Doer != owner) role = "receiver";
         else if (ep.Doer == owner && ep.Receiver != null && ep.Receiver != owner) role = "doer";
         if (role != "") tags.Add(role);
+        if (owner.isRestrained) tags.Add("restrained");
+        if (owner.Body != null) tags.AddRange(owner.Body.ExposedPortraitKeys);
         if (ep.targetCOM != null) ep.targetCOM.AddPortraitTags(tags, role);
         AddPortraitDisplayTags(tags);
         Utility.DistinctInPlace(tags);

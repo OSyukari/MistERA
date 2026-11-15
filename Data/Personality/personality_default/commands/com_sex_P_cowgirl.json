@@ -133,9 +133,26 @@
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": ["sex", "doer", "cowgirl", "sleeping", "relaxed"],
+                            "useActiveTags": false,
+                            "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
+                            "responses": [
+                                "com_sex_P_cowgirl_Begin_Sleep_1",
+                                "com_sex_P_cowgirl_Begin_Sleep_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
                                     "timestop"
                                 ]
                             },
+                            "extraSelfPortraitTags": ["sex", "doer", "cowgirl", "doll", "empty", "silence", "idle"],
+                            "useActiveTags": false,
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_sex_P_cowgirl_Begin_Timestop_1",
@@ -632,6 +649,8 @@
                 "com_sex_P_cowgirl_29": "$self$有气无力地坐在他身上，腰懒得动。\n\n\"……要不你来动吧？我没什么劲了。\"\n\n她兴致缺缺，干脆趴在他身上由着他从底下顶，自己只当省力气。",
                 "com_sex_P_cowgirl_30": "$self$皱着眉停下动作，下身被撑得生疼。\n\n\"……太大了……你别顶那么深。\"\n\n她完全是强忍着不适在骑，小穴被磨得火辣辣的，每坐下去都疼得蹙眉。",
                 "com_sex_P_cowgirl_31": "$self$强忍着难受，机械地起伏着，脸上没什么享受的表情。\n\n\"……够了吧。\"\n\n她完全是被动地挨着，小穴被磨得发酸，巴不得这阵赶紧翻篇。",
+                "com_sex_P_cowgirl_Begin_Sleep_1": "$self$被扶着跨坐上去，睡软的身子顺着重心往下沉，小穴把肉棒一点点吞到根部，她只是皱了皱眉，脸伏在$target$胸口没醒。",
+                "com_sex_P_cowgirl_Begin_Sleep_2": "$target$托着她的腰慢慢放下，龟头撑开穴口没入时$self$在梦里溢出一声含糊的嘤咛，穴肉本能地收紧，呼吸却依旧平稳。",
                 "com_sex_P_cowgirl_Begin_Timestop_1": "$self$被扶正跨坐上去，肉棒顺着重心没进小穴，穴肉缓缓吞到根部自己收拢吮住，她垂着的眼睫停在半阖的位置。",
                 "com_sex_P_cowgirl_Begin_Timestop_2": "$target$按着她的腰抬起又放下，乳晃出弧度又定住，只剩交合处的水声在静止的空气里响着。",
 

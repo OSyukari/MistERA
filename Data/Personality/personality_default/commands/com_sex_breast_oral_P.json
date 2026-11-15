@@ -135,9 +135,26 @@
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": ["sex", "doer", "blowjob", "boobjob", "sleeping", "relaxed"],
+                            "useActiveTags": false,
+                            "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
+                            "responses": [
+                                "com_sex_breast_oral_P_Begin_Sleep_1",
+                                "com_sex_breast_oral_P_Begin_Sleep_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
                                     "timestop"
                                 ]
                             },
+                            "extraSelfPortraitTags": ["sex", "doer", "blowjob", "boobjob", "doll", "empty", "silence", "idle"],
+                            "useActiveTags": false,
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_sex_breast_oral_P_Begin_Timestop_1",
@@ -648,6 +665,8 @@
                 "com_sex_breast_oral_P_35": "$self$维持着姿势，眼神时不时飘向别处。\n\"还有多久才结束……脖子好酸。\"",
                 "com_sex_breast_oral_P_36": "$self$微微皱眉，吞吐的动作渐渐机械。\n\"唔……嘴巴有点麻了。\"",
                 "com_sex_breast_oral_P_37": "$self$还在继续，却不再有眼神交流，只是单纯完成着差事。\n\"……快些完事吧，胳膊也酸了。\"",
+                "com_sex_breast_oral_P_Begin_Sleep_1": "肉棒埋进$self$熟睡中的乳缝抽送，探出的龟头抵上她微张的唇，她在梦里无意识地抿了抿，把那东西当成了什么含住了一点。",
+                "com_sex_breast_oral_P_Begin_Sleep_2": "$self$睡得很沉，乳间被挤着抽动，唇边被顶开渡进腥热的气味，她只是皱了皱眉，喉咙里溢出一句含糊的梦呓。",
                 "com_sex_breast_oral_P_Begin_Timestop_1": "肉棒埋进她并拢的乳缝抽送，探出的龟头又抵开$self$微张的唇，渡进来的津液满到从嘴角溢出，也不见她咽。",
                 "com_sex_breast_oral_P_Begin_Timestop_2": "$self$的舌面被龟头碾着顶了几下，软腭蹭得发红，瞳孔停在原来的位置，乳缝里的水声照旧响着。",
 

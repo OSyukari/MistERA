@@ -22,6 +22,7 @@
                 "childID":["lower_android_base", "arm_android_base_L", "arm_android_base_R"],
                 "internalID":[],
                 "tags":["torso"],
+                "exposedKeyword":"naked_torso", "exposedSlots":["Torso"],
                 "traceSlots":["Neck","Torso"],
                 "sortOrder":1
             },
@@ -57,6 +58,7 @@
                 "childID":["leg_android_base_L","leg_android_base_R"],
                 "internalID":[],
                 "tags":["lower"],
+                "exposedKeyword":"naked_lower",
                 "traceSlots":["Lower"],
                 "sortOrder":4
             },

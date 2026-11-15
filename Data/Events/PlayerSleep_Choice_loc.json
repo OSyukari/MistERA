@@ -1,0 +1,41 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for PlayerSleep_Choice.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "PlayerSleep_Choice_question": "$self.name$ needs $sleepNeedText$ of sleep to be fully rested (until $sleepNaturalWake$).\n$sleepReasonText$\nHow long will you sleep?",
+                "PlayerSleep_Choice_stayAwake": "Stay awake",
+                "PlayerSleep_Choice_redress": "$self.name$ decides not to sleep after all, gets up from beside $sleepBedName$ and puts the clothes back on.",
+                "PlayerSleep_Choice_stayAwakeLine": "$self.name$ decides not to sleep after all and gets up from beside $sleepBedName$.",
+                "PlayerSleep_Choice_companionsSleep": "$sleep_newCompanions.name$ doesn't wait any longer, lies down on $sleepBedName$, pulls up the covers and soon falls asleep.",
+                "PlayerSleep_Choice_companionsAsleep": "$sleep_asleepCompanions.name$ sleeps on in $sleepBedName$, undisturbed.",
+                "ui_sleepChoice_companion_asleep": "$target$ is already asleep and should wake at $wake$.",
+                "ui_sleepChoice_scheduled": "Sleep until the next commitment",
+                "ui_sleepChoice_natural": "Sleep until rested",
+                "ui_sleepChoice_scheduled_tooltip": "Wake at $wake$, $missing$ short of a full rest.",
+                "ui_sleepChoice_scheduled_blocked": "$sleepBlockedText$",
+                "ui_sleepChoice_natural_tooltip": "Sleep until fully rested, waking at $wake$.",
+                "ui_sleepChoice_natural_missHeader": "May miss or be late for:",
+                "ui_sleepChoice_natural_missLine": "· $commitment$ (up by $ready$)",
+                "ui_sleepChoice_reason_window": "Your sleep hours end at $wake$.",
+                "ui_sleepChoice_reason_commitment": "Your schedule only allows sleep until $wake$ - you need to be up by $ready$ for: $commitment$",
+                "ui_sleepChoice_reason_tooLate": "Your schedule leaves no time to sleep - you need to be up by $ready$ for: $commitment$",
+                "ui_sleepChoice_reason_rested": "Your schedule lets you sleep until fully rested, waking at $wake$.",
+                "ui_sleepChoice_scheduled_tooltip_rested": "Wake at $wake$, fully rested.",
+                "ui_sleepChoice_companion": "Sleep until $target$'s commitment",
+                "ui_sleepChoice_companion_tooltip": "Wake at $wake$.\n$reason$",
+                "ui_sleepChoice_companion_blocked": "$sleepCompanionBlockedText$",
+                "ui_sleepChoice_companion_window": "$target$'s sleep hours end at $wake$.",
+                "ui_sleepChoice_companion_commitment": "$target$ needs to be up by $ready$ for: $commitment$",
+                "ui_sleepChoice_companion_tooLate": "$target$ has no time to sleep - they need to be up by $ready$ for: $commitment$",
+                "ui_sleepChoice_commitment_party": "$party$'s itinerary (from $start$)",
+                "ui_sleepChoice_commitment_expedition": "$party$ departs ($start$)",
+                "ui_sleepChoice_duration_hm": "$h$h $m$min",
+                "ui_sleepChoice_duration_h": "$h$h",
+                "ui_sleepChoice_duration_m": "$m$min"
+            }
+        }
+    }
+}

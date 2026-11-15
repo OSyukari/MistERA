@@ -387,6 +387,14 @@ public partial class EvaluationPackage : I_ResultStorage
     [JsonIgnore] public int ReceiverRef { get { return receiverRef; } }
     [JsonIgnore] public ActionPackage Package { get { return p; } }
 
+    /// <summary>Move an accepted evaluation out of a stopped demand AP without rerolling it.</summary>
+    internal void TransferAcceptedDemand(ActionPackage source, ActionPackage continuation)
+    {
+        if (p != source || continuation == null || !source.requestAccepted)
+            throw new InvalidOperationException("Invalid accepted demand continuation");
+        p = continuation;
+    }
+
     [JsonIgnore]
     public bool isStrongP
     {
@@ -479,7 +487,7 @@ public partial class EvaluationPackage : I_ResultStorage
         }
 
         this.modifiers.Reset(null, reset);
-        missingPermissions.Clear();
+        ResetPermissionResults();
         extraDoerTags = new List<string>();
         extraCOMTags = new List<string>();
         extraReceiverTags = new List<string>();

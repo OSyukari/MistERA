@@ -227,6 +227,11 @@ public class BodyPart_Base
 
     /// <summary> part tag -> the slots whose coverage decides that tag's visibility (e.g. "feet" -> Feet). A tag not listed = all slots </summary>
     public Dictionary<string, List<BodyPartEquipSlot>> tagCoverSlots = new Dictionary<string, List<BodyPartEquipSlot>>();
+    /// <summary> optional portrait-only self key (naked_torso), added while exposedSlots carry no coverage at all - see-through counts as covered (Character_Body.ExposedPortraitKeys) </summary>
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public string exposedKeyword = null;
+    /// <summary> slots that must be bare for exposedKeyword, empty = all AvailableSlots </summary>
+    public List<BodyPartEquipSlot> exposedSlots = new List<BodyPartEquipSlot>();
     /// <summary> optional image prompt layer of every body that has this part, between race and race template (ActorPromptProfileUtility) </summary>
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public ActorPromptProfile promptProfile = null;

@@ -38,6 +38,19 @@ public class BodyPart_Instance : I_CombatItem, I_TraceHolder
         return false;
     }
 
+    /// <summary> Base.exposedSlots (empty = every slot) carry no coverage at all; see-through counts as covered </summary>
+    public bool IsFullyExposed()
+    {
+        if (Base == null) return false;
+        var slots = Base.exposedSlots != null && Base.exposedSlots.Count > 0 ? Base.exposedSlots : availableSlots;
+        for (int i = 0; i < slots.Count; i++)
+        {
+            if (!availableSlots.Contains(slots[i])) continue;
+            if (GetSlotRevealingScore(slots[i], BodyEquipLayer.None) > 0) return false;
+        }
+        return true;
+    }
+
     /// <summary> this part's traces and its organs' (a part's description asks its internals). visibleOnly: per slot coverage </summary>
     public void GetTraces(List<(I_TraceHolder holder, TraceInstance trace)> result, bool visibleOnly = false)
     {

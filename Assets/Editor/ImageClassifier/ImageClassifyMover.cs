@@ -54,7 +54,7 @@ public class ImageMovePlan
     public int lowConfidenceHeldBack;   // low confidence, not moved by this pass
     public int lowConfidenceNeverMoved; // low confidence in a moveLowConfidence: false category
     public int unmatched;
-    public int keptOut;                 // moved out of a category folder by the user
+    public int keptOut;                 // moved out of a category folder into another folder by the user
 }
 
 public class ImageNameRestoreResult
@@ -143,16 +143,38 @@ public static class ImageClassifyMover
         return paths;
     }
 
+    /// <summary>Paths where a Move pass put an image (name kept) and no later pass moved it on: a final-convention name there is
+    /// from before the tool reclassified it (moved back into the work folder by the user), so it is not settled for Rename.</summary>
+    static HashSet<string> MovedKeepingNamePaths(string folder)
+    {
+        var paths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var pass in LoadLog(folder))
+        {
+            if (pass.undone) continue;
+            foreach (var m in pass.moves)
+            {
+                if (m.error != null) continue;
+                paths.Remove(m.from);
+                if (pass.operation == MoveOperation) paths.Add(m.to);
+            }
+        }
+        return paths;
+    }
+
     // ---------- plan ----------
 
     static readonly char[] Invalid = Path.GetInvalidFileNameChars();
     static string Sanitize(string part) => new string(part.Where(c => !Invalid.Contains(c)).ToArray()).Trim();
 
     /// <summary>
-    /// &lt;category&gt;/ inside the work folder. A detected state (sleeping, pregnant, ...) never selects a folder: state sets are sorted by hand
-    /// into their own folder, which is then classified on its own (user decision 2026-11-13).
+    /// Automatic placement uses &lt;category&gt;[_perform]/; authoritative folder decisions keep their role placement.
+    /// A detected state never selects a folder: state sets remain hand-sorted.
     /// </summary>
-    internal static string DestinationDirectory(string folder, ImageClassification result) => Sanitize(result.CategoryId);
+    internal static string DestinationDirectory(string folder, ImageClassification result) =>
+        result.byFolder && ImageAnalysis.IsPerformerFolder(ImageAnalysis.CategoryFolder(result.record.path), result.category)
+            ? Path.GetDirectoryName(result.record.path)?.Replace('\\', '/') ?? ""
+            : Sanitize(result.CategoryId + (!result.byFolder && result.category?.nameSet == ImageRules.DefaultNameSet
+                && result.nameRule?.isperform == true ? "_perform" : ""));
 
     /// <summary>The final naming convention for this folder: &lt;name&gt;_&lt;parent&gt;_&lt;folder&gt;_&lt;N&gt;.&lt;ext&gt;. A file named like this is settled:
     /// the tool never moves or renames it. Renaming it by hand to anything else asks the tool to classify it again.</summary>
@@ -177,14 +199,16 @@ public static class ImageClassifyMover
 
         // any final-convention name (<name>_<parent>_<folder>_<N>): settled, never renamed again (renaming it by hand re-triggers)
         var toolName = FinalNamePattern(folder);
+        var movedKeepingName = MovedKeepingNamePaths(folder);
 
         foreach (var r in analysis.results.OrderBy(r => r.record.path, StringComparer.OrdinalIgnoreCase))
         {
             if (r.keptOut) { plan.keptOut++; continue; }
             if (r.status == ClassificationStatus.Unmatched) { plan.unmatched++; continue; }
-            // a manual (hand-sorted only) category folder: the category is the user's decision and the image is only renamed in place,
+            // A manual category or performer folder is the user's decision and the image is only renamed in place,
             // so a low-confidence name is applied on every pass - every image there gets named
-            bool manualInPlace = r.byFolder && r.category != null && r.category.manual;
+            bool manualInPlace = r.byFolder && r.category != null
+                && (r.category.manual || ImageAnalysis.IsPerformerFolder(ImageAnalysis.CategoryFolder(r.record.path), r.category));
             if (r.status == ClassificationStatus.LowConfidence && !manualInPlace)
             {
                 if (!r.MovableWhenLowConfidence) { plan.lowConfidenceNeverMoved++; continue; }
@@ -210,9 +234,10 @@ public static class ImageClassifyMover
                 string stem = $"{Sanitize(r.name)}_{parent}_{self}";
                 bool inItsFolder = string.Equals(currentDir, category, StringComparison.OrdinalIgnoreCase);
                 // already classified under this name: do not renumber on every pass. In a folder that decided the category
-                // (manual sort / kept pass), any tool-format name stays: the user may have moved a named image there on purpose.
+                // (manual sort / kept pass), any tool-format name stays: the user may have moved a named image there on purpose -
+                // unless the tool's Move put it there (reclassified from the work folder), then the old name is renamed too.
                 if (inItsFolder && (Regex.IsMatch(fileName, "^" + Regex.Escape(stem) + @"_\d+\.[^.]+$", RegexOptions.IgnoreCase)
-                                    || (r.byFolder && toolName.IsMatch(fileName)))) { plan.alreadyInPlace++; continue; }
+                                    || (r.byFolder && toolName.IsMatch(fileName) && !movedKeepingName.Contains(from)))) { plan.alreadyInPlace++; continue; }
                 string key = category + "/" + stem;
                 if (!nextNumber.TryGetValue(key, out long n)) n = HighestNumber(Path.Combine(folder, category), stem) + 1;
                 while (reserved.Contains($"{category}/{stem}_{n}{ext}") || File.Exists(Path.Combine(folder, category, $"{stem}_{n}{ext}"))) n++;

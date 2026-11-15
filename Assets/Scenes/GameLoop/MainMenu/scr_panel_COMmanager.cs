@@ -1591,7 +1591,7 @@ public class scr_panel_COMmanager : scr_Menu
                         tooltip += package.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_comInvalid"))
                             .Replace("$tooltips$", String.Join("\n", package.tooltip));
                     }
-                    else if (package.ComTags.Contains("sleep") && !scr_System_CampaignManager.current.Player.shouldSleep && !parent.GetCOMFilter(COMFilter.Debug))
+                    else if (package.ComTags.Contains("sleep") && !scr_System_CampaignManager.current.Player.canChooseSleep && !parent.GetCOMFilter(COMFilter.Debug))
                     {
                         returnVal = false;
                         tooltip += package.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_comInvalid"))
@@ -2063,7 +2063,7 @@ public class scr_panel_COMmanager : scr_Menu
                         returnVal = false;
                         tooltip += "target furniture cannot accept new packages\n";
                     }*/
-                    else if (package.ComTags.Contains("sleep") && !scr_System_CampaignManager.current.Player.shouldSleep && !parent.GetCOMFilter(COMFilter.Debug))
+                    else if (package.ComTags.Contains("sleep") && !scr_System_CampaignManager.current.Player.canChooseSleep && !parent.GetCOMFilter(COMFilter.Debug))
                     {
                         returnVal = false;
                         tooltip += package.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_comInvalid"))
@@ -3091,7 +3091,7 @@ public class scr_panel_COMmanager : scr_Menu
                 returnVal = false;
                 tooltip += "target furniture cannot accept new packages\n";
             }*/
-            if (ap.ComTags.Contains("sleep") && !scr_System_CampaignManager.current.Player.shouldSleep && !parent.GetCOMFilter(COMFilter.Debug))
+            if (ap.ComTags.Contains("sleep") && !scr_System_CampaignManager.current.Player.canChooseSleep && !parent.GetCOMFilter(COMFilter.Debug))
             {
                 returnVal = false;
                 tooltip += ap.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_comInvalid"))

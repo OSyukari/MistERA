@@ -10,9 +10,26 @@
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": ["sleeping", "relaxed"],
+                            "useActiveTags": false,
+                            "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
+                            "responses": [
+                                "com_touch_ears_Begin_Sleep_1",
+                                "com_touch_ears_Begin_Sleep_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
                                     "timestop"
                                 ]
                             },
+                            "extraSelfPortraitTags": ["doll", "empty", "silence", "idle"],
+                            "useActiveTags": false,
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_touch_ears_Begin_Timestop_1",
@@ -304,6 +321,8 @@
                 "com_touch_ears_Bad_NoAllow_1": "$self$忍无可忍地爆发了，用力推开$target$转身就跑。\"变态！离我远点！\"",
                 "com_touch_ears_Bad_NoAllow_2": "$self$的眼泪终于夺眶而出，用袖子拼命擦拭着耳朵上残留的触感。\"恶心……太恶心了……\"",
                 "com_touch_ears_Bad_NoAllow_3": "$self$浑身颤抖地缩在角落里，看向$target$的眼神里充满了深深的恐惧和憎恨。",
+                "com_touch_ears_Begin_Sleep_1": "$target$捻住她熟睡中的耳垂轻轻揉搓，$self$在梦里不满地蹙起眉，耳朵往枕头里缩了缩，却没醒。",
+                "com_touch_ears_Begin_Sleep_2": "耳廓被指腹碾着慢慢透红，$self$原本平稳的呼吸乱了一拍，睫毛颤了颤，又沉回梦里。",
                 "com_touch_ears_Begin_Timestop_1": "$target$捻住她定格的耳垂揉搓，指腹碾着软骨打转，耳廓被搓得透红发热，$self$的脖颈没有缩。",
                 "com_touch_ears_Begin_Timestop_2": "耳垂被捏着轻轻拉扯，耳环被拨得晃到半途停住，$self$垂在颊侧的头发纹丝没乱。"
             },

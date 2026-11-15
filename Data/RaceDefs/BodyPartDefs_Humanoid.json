@@ -23,6 +23,7 @@
                 "internalID":["stomach_humanoid_base","breasts_humanoid_base"],
                 "tags":["torso"],
                 "tagCoverSlots":{"torso":["Torso"]},
+                "exposedKeyword":"naked_torso", "exposedSlots":["Torso"],
                 "traceSlots":["Neck","Torso"],
                 "sortOrder":1
             },
@@ -58,6 +59,7 @@
                 "childID":["leg_humanoid_base_L","leg_humanoid_base_R"],
                 "internalID":["anus_humanoid_base","guts_humanoid_base","penis_humanoid_base","vagina_humanoid_base","womb_humanoid_base","clit_humanoid_base"],
                 "tags":["lower"],
+                "exposedKeyword":"naked_lower",
                 "traceSlots":["Lower"],
                 "sortOrder":4
             },
@@ -217,6 +219,7 @@
                 "volumeRatio":0.0284,
 
                 "exposedKojoID":"Exposed_Penis",
+                "exposedKeyword":"naked_penis",
                 "firstExperienceDesc":"%%bodyPart_internal_virgin%%",
                 "virginityLossTags":["penetration"]
             },

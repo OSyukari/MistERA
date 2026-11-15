@@ -26,6 +26,9 @@ public abstract class JsonPatchOp
     public string file;         // suffix filter on the data file's relative path
     public bool optional;
 
+    string fileSuffix;          // file with '/' separators
+    string pathNeedle;          // "name" (quoted) of the last property of a simple $.a.b path, null = path not simple
+
     /// <summary>
     /// Applies the op to root (the file root, or a sequence's working clone). Returns false if it failed.
     /// </summary>
@@ -33,8 +36,67 @@ public abstract class JsonPatchOp
 
     public bool AppliesToFile(string relativePath)
     {
-        if (string.IsNullOrEmpty(file)) return true;
-        return relativePath.EndsWith(file.Replace('\\', '/'), StringComparison.OrdinalIgnoreCase);
+        if (string.IsNullOrEmpty(fileSuffix)) return true;
+        return relativePath.EndsWith(fileSuffix, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// True if Apply on this unpatched file text would edit nothing and report no error, decided by substring checks without parsing.
+    /// Only valid against the text before any op ran: an earlier edit can create what this op selects.
+    /// </summary>
+    public virtual bool CannotEdit(string text) { return SurelyFails(text); }
+
+    /// <summary>
+    /// True if Apply on this unpatched file text would return false without edits or errors (default: path selects nothing).
+    /// </summary>
+    public virtual bool SurelyFails(string text) { return PathAbsent(text); }
+
+    /// <summary>
+    /// True if the path is a simple $.a.b path whose last property name doesn't occur in text, so it selects nothing.
+    /// </summary>
+    protected bool PathAbsent(string text)
+    {
+        return pathNeedle != null && text.IndexOf(pathNeedle, StringComparison.Ordinal) < 0;
+    }
+
+    static bool IsAsciiIdentChar(char c)
+    {
+        return c == '_' || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9');
+    }
+
+    /// <summary>
+    /// "name" (quoted) of the last property of a $.a.b path of plain identifiers, null for anything else ($, .., [], wildcards, filters).
+    /// </summary>
+    static string SimplePathNeedle(string path)
+    {
+        if (string.IsNullOrEmpty(path) || path.Length < 3 || path[0] != '$' || path[1] != '.') return null;
+        int start = 2;
+        for (int i = 2; i < path.Length; i++)
+        {
+            char c = path[i];
+            if (c == '.')
+            {
+                if (i == start) return null;
+                start = i + 1;
+            }
+            else if (!IsAsciiIdentChar(c)) return null;
+        }
+        if (start >= path.Length) return null;
+        return "\"" + path.Substring(start) + "\"";
+    }
+
+    /// <summary>
+    /// s as it appears in json text ("s", quoted), null if s contains characters json must escape.
+    /// </summary>
+    protected static string PlainStringNeedle(string s)
+    {
+        if (s == null) return null;
+        for (int i = 0; i < s.Length; i++)
+        {
+            char c = s[i];
+            if (c < ' ' || c == '"' || c == '\\') return null;
+        }
+        return "\"" + s + "\"";
     }
 
     protected List<JToken> Select(JToken root)
@@ -63,6 +125,8 @@ public abstract class JsonPatchOp
         op.source = source;
         op.path = (string)o["path"];
         op.file = (string)o["file"];
+        op.fileSuffix = op.file?.Replace('\\', '/');
+        op.pathNeedle = SimplePathNeedle(op.path);
         op.optional = (bool?)o["optional"] ?? false;
         if (op is not JsonPatchOp_Sequence && string.IsNullOrEmpty(op.path)) throw new FormatException($"op [{opName}] requires path");
         op.ParseFields(o);
@@ -222,11 +286,32 @@ public class JsonPatchOp_Conditional : JsonPatchOp
     public JToken equals;     // null = path only needs to select something
     public JsonPatchOp match;
     public JsonPatchOp nomatch;
+    string equalsNeedle;      // equals as it appears in json text, null = not a plain string
     protected override void ParseFields(JObject o)
     {
         o.TryGetValue("equals", out equals);
+        if (equals != null && equals.Type == JTokenType.String) equalsNeedle = PlainStringNeedle((string)equals);
         if (o["match"] != null) match = Parse(o["match"], source);
         if (o["nomatch"] != null) nomatch = Parse(o["nomatch"], source);
+    }
+
+    bool CannotMatch(string text)
+    {
+        return PathAbsent(text) || (equalsNeedle != null && text.IndexOf(equalsNeedle, StringComparison.Ordinal) < 0);
+    }
+
+    public override bool CannotEdit(string text)
+    {
+        bool matchMayEdit = match != null && !CannotMatch(text) && !match.CannotEdit(text);
+        bool nomatchMayEdit = nomatch != null && !nomatch.CannotEdit(text);
+        return !matchMayEdit && !nomatchMayEdit;
+    }
+
+    // a missing branch returns true, so failing needs both branches present and failing (or no match possible)
+    public override bool SurelyFails(string text)
+    {
+        if (nomatch == null || !nomatch.SurelyFails(text)) return false;
+        return CannotMatch(text) || (match != null && match.SurelyFails(text));
     }
 
     public override bool Apply(JToken root, JsonPatchContext ctx)
@@ -245,6 +330,17 @@ public class JsonPatchOp_Sequence : JsonPatchOp
     {
         if (o["operations"] is not JArray arr) throw new FormatException("op [sequence] requires operations array");
         foreach (var child in arr) operations.Add(Parse(child, source));
+    }
+
+    // only the first op sees the unpatched text; if it fails, the sequence aborts with no edits
+    public override bool SurelyFails(string text)
+    {
+        return operations.Count > 0 && operations[0].SurelyFails(text);
+    }
+
+    public override bool CannotEdit(string text)
+    {
+        return operations.Count == 0 || SurelyFails(text);
     }
 
     /// <summary>

@@ -130,7 +130,7 @@ public class ImageClassifierEngine
     public ImageClassification Classify(ImageTagRecord r, bool useFilenameHints = false)
     {
         var result = new ImageClassification { record = r };
-        int matchedIndex = ClassifyCategory(r, result);
+        int matchedIndex = ClassifyCategory(r, result, useFilenameHints);
         if (matchedIndex < 0 && (result.category?.hold == true || result.reasons.Any(x => x.StartsWith("held by rule", StringComparison.Ordinal)))) return result;
 
         if (useFilenameHints)
@@ -263,8 +263,11 @@ public class ImageClassifierEngine
         var matches = new List<(NameRule rule, Match match)>();
         foreach (var n in nameSet)
         {
-            if (n.fallback || (n.onlyInCategories != null && !n.onlyInCategories.Contains(result.CategoryId))) continue;
-            IEnumerable<string> aliases = new[] { n.name };
+            if (n.onlyInCategories != null && !n.onlyInCategories.Contains(result.CategoryId)) continue;
+            // Opt-in hard exclusions veto filename overrides without changing other names' filename-first behavior.
+            if (n.noneThreshold.HasValue && NameExcluded(r, n)) continue;
+            // Fallback labels are too generic for filename evidence; explicit configured aliases still identify an act.
+            IEnumerable<string> aliases = n.fallback ? Enumerable.Empty<string>() : new[] { n.name };
             if (rules.filenameHints.TryGetValue(n.name, out var extra)) aliases = aliases.Concat(extra);
             foreach (var alias in aliases)
             {
@@ -288,13 +291,14 @@ public class ImageClassifierEngine
     }
 
     /// <summary>Sets result.category, or marks the result unmatched. Returns the index of the rule that decided, or -1.</summary>
-    int ClassifyCategory(ImageTagRecord r, ImageClassification result)
+    int ClassifyCategory(ImageTagRecord r, ImageClassification result, bool useFilenameHints)
     {
         var cats = rules.categories;
         for (int i = 0; i < cats.Count; i++)
         {
             if (cats[i].manual) continue;   // hand-sorted only
-            var score = MatchCategory(r, cats[i]);
+            var score = useFilenameHints && cats[i].hold && cats[i].holdFilenameHints.Any(h => FilenameMatches(r, h).Count > 0)
+                ? (float?)0f : MatchCategory(r, cats[i]);
             if (score == null) continue;
 
             var chosen = cats[i];
@@ -426,20 +430,28 @@ public class ImageClassifierEngine
         foreach (var t in n.clauses[0].tags)
         {
             float v = TagScore(r, t.tag);
-            if (v >= s.tagThreshold) list.Add((t.tag, v, t.weight));
+            if (v >= (n.threshold ?? s.tagThreshold)) list.Add((t.tag, v, t.weight));
         }
         list.Sort((a, b) => (b.score * b.weight).CompareTo(a.score * a.weight));
         return list;
     }
 
-    /// <summary>First-clause score, or null when an AND clause is unmet or a none clause hits.</summary>
+    bool NameExcluded(ImageTagRecord r, NameRule n)
+    {
+        float threshold = n.noneThreshold ?? n.threshold ?? s.tagThreshold;
+        return n.none.Any(c => ClauseScore(r, c, threshold) > 0f)
+            || (n.noneAll.Count > 0 && n.noneAll.All(c => ClauseScore(r, c, threshold) > 0f));
+    }
+
+    /// <summary>First-clause score, or null when an AND clause is unmet or a configured exclusion hits.</summary>
     float? MatchName(ImageTagRecord r, NameRule n)
     {
-        foreach (var clause in n.none) if (ClauseScore(r, clause, s.tagThreshold) > 0f) return null;
+        float threshold = n.threshold ?? s.tagThreshold;
+        if (NameExcluded(r, n)) return null;
         if (n.clauses.Count == 0) return 0f;
-        float first = ClauseScore(r, n.clauses[0], s.tagThreshold);
+        float first = ClauseScore(r, n.clauses[0], threshold);
         if (first <= 0f) return null;
-        for (int i = 1; i < n.clauses.Count; i++) if (ClauseScore(r, n.clauses[i], s.tagThreshold) <= 0f) return null;
+        for (int i = 1; i < n.clauses.Count; i++) if (ClauseScore(r, n.clauses[i], threshold) <= 0f) return null;
         return first;
     }
 
@@ -468,13 +480,15 @@ public class ImageClassifierEngine
                         result.variantFilenameHint = aliases[i];
                         return id;
                     }
-            if (Matches(clause, s.variantThreshold)) return id;
+            // variants can demand stronger evidence than the global bar (settings.variantMinScore, eg. vaginal)
+            float variantThreshold = s.variantMinScore.TryGetValue(id, out var minScore) ? minScore : s.variantThreshold;
+            if (Matches(clause, variantThreshold)) return id;
             if (id == n.defaultVariant) continue;
-            float low = s.variantThreshold - s.nearMissBand;
+            float low = variantThreshold - s.nearMissBand;
             if (!Matches(clause, low)) continue;
             foreach (var part in new[] { clause }.Concat(clause.requires))
             {
-                var nm = NearMiss(r, part, low, s.variantThreshold);
+                var nm = NearMiss(r, part, low, variantThreshold);
                 if (nm == null) continue;
                 result.reasons.Add($"near-miss variant {id} ({nm.Value.tag} {nm.Value.score:0.00})");
                 break;

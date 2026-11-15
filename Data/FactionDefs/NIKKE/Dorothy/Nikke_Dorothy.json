@@ -2,9 +2,9 @@
     "baseID": "Campaign1_Nikke_Dorothy",
     "Portrait":{
         "useGlobalHandler": [
-            { "path": "dorothy/dorothy_after_futa", "selfKeys": ["corrupted", "futanari"] },
-            { "path": "dorothy/dorothy_after", "selfKeys": ["corrupted"] },
-            { "path": "dorothy/dorothy" }
+            { "path": "nikke_dorothy/dorothy_after_futa", "selfKeys": ["corrupted", "naked_penis"] },
+            { "path": "nikke_dorothy/dorothy_after", "selfKeys": ["corrupted"]},
+            { "path": "nikke_dorothy/dorothy" }
         ],
         "portraitPriorityList":[
 {
@@ -62,6 +62,16 @@
     "materialTexturePaths":["c233/c233_00.png","c233/c233_00_2.png"],
     "atlasJSON_path":"c233/c233_00.atlas", "skeletonJSON_path":"c233/c233_00.skel",
     "idleAnimName":""
+},
+{
+    "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+    "_comment":"fallback when the spine assets (mod mist.nikke.spine) are not loaded",
+
+    "random_portrait_folder":"Dorothy/portrait_dorothy",
+
+    "icon_offset_x":0.0, "icon_offset_y":0.0, "icon_offset_size":1.13,
+
+    "icon_path":"Dorothy/si_c233_00_s.png"
 }
         ]
     },

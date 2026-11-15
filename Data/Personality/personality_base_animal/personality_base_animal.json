@@ -208,5 +208,12 @@
                 ]
             }
         ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "personality_base_animal":"默认动物"
+            }
+        }
     }
 }

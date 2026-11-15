@@ -461,6 +461,7 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
+                "personality_default":"默认女性",
 
                 "Descriptor_Carried_Unconscious_1": "($self$) $self$在$target$怀里一动不动",
                 "Descriptor_Carried_1": "($self$) 动弹不得的$self$被$target$抱在怀里",

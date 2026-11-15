@@ -144,10 +144,12 @@ public class RelationshipManager
 
     public void HourlyRefresh()
     {
+        // Cooldown end never triggers a natural relationship check by itself: checks come only from a relationship
+        // score change (Character_Relationship.ModRelationValue non-silent, or an interaction - see
+        // MarkRelationshipCheckPending), and are dropped while in cooldown.
         foreach(var i in this.relationships.Values)
         {
             if (i.RelationshipCooldown > 0) i.RelationshipCooldown--;
-            if (i.RelationshipCooldown == 0) i.QueueRelationshipCheck();
         }
 
 
@@ -341,6 +343,30 @@ public class RelationshipManager
     public void ClearLastInteractedRelationships()
     {
         lastInteractedRelationships.Clear();
+    }
+
+    // Relationships whose scores an interaction changed (ActionPackage.CheckRelationshipChange). Their natural
+    // relationship check is queued once Owner has finished interacting - see FlushPendingRelationshipChecks.
+    [JsonIgnore] List<Character_Relationship> pendingRelationshipChecks = new List<Character_Relationship>();
+
+    public void MarkRelationshipCheckPending(Character_Relationship rel)
+    {
+        if (rel == null) return;
+        if (!pendingRelationshipChecks.Contains(rel)) pendingRelationshipChecks.Add(rel);
+    }
+
+    /// <summary>
+    /// Called from Owner's own PostUpdateTimeFinalize. Waits while Owner is still in an uninterruptible job (e.g. a
+    /// sex scene), then queues the natural relationship check of every relationship an interaction changed.
+    /// A relationship still in cooldown drops its check (QueueRelationshipCheck).
+    /// </summary>
+    public void FlushPendingRelationshipChecks()
+    {
+        if (pendingRelationshipChecks.Count == 0) return;
+        var job = Owner.CurrentJob;
+        if (job != null && !job.CanBeInterrupted) return;
+        for (int i = 0; i < pendingRelationshipChecks.Count; i++) pendingRelationshipChecks[i].QueueRelationshipCheck();
+        pendingRelationshipChecks.Clear();
     }
 
     // ------------------------

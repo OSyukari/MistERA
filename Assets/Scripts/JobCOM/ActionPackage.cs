@@ -564,7 +564,9 @@ public abstract class ActionPackage
     }
 
     // Per execution, not per AP: repeat rounds must not share continuation state or actor lists.
-    Action SnapshotSleepTransition(out Action<EventInstance> prepareEvent)
+    // The player falling asleep short of their sleep need is first asked how long to sleep (PlayerSleepChoice): the
+    // bedtime events wait for the answer; staying awake leaves the player out and drops them, the others still sleep.
+    Action SnapshotSleepTransition(out Action<EventInstance, Action> prepareEvent)
     {
         var doers = new List<Character_Trainable>(doer);
         var receivers = new List<Character_Trainable>(receiver);
@@ -590,10 +592,62 @@ public abstract class ActionPackage
         int pending = 0;
         bool ready = false, completed = false;
 
+        var player = scr_System_CampaignManager.current.Player;
+        // those falling asleep with the player now, and those already asleep beside them (their sleep stays as it is)
+        var newSleepers = new List<Character_Trainable>();
+        foreach (var c in actors)
+            if (c != player && !undisturbed.Contains(c) && c.hasSleepNeed && !c.Stats.isSleeping) newSleepers.Add(c);
+        var asleepCompanions = new List<Character_Trainable>();
+        foreach (var c in sleeping) if (c != player) asleepCompanions.Add(c);
+        var sleepCompanions = new List<Character_Trainable>(newSleepers);
+        sleepCompanions.AddRange(asleepCompanions);
+        bool asks = player != null && actors.Contains(player) && !undisturbed.Contains(player) && PlayerSleepChoice.ShouldAsk(player, sleepCompanions);
+        bool asking = false, abandoned = false;
+        var playerLength = Character_Trainable.SleepLength.Scheduled;
+        Character_Trainable playerWakeWith = null;
+        var heldEvents = new List<EventInstance>();
+        var heldStarts = new List<Action>();
+
+        void ReleaseHeld()
+        {
+            for (int i = 0; i < heldEvents.Count; i++)
+            {
+                if (abandoned) heldEvents[i].CompleteCallbacks();
+                else heldStarts[i]();
+            }
+            heldEvents.Clear();
+            heldStarts.Clear();
+        }
+
+        void AskOnce()
+        {
+            if (!asks) return;
+            asks = false;
+            asking = true;
+            pending++;
+            PlayerSleepChoice.Ask(player, newSleepers, asleepCompanions, bedName, (answer, companion) =>
+            {
+                asking = false;
+                if (answer == PlayerSleepChoice.Answer.StayAwake)
+                {
+                    abandoned = true;
+                    actors.Remove(player);
+                }
+                else if (answer == PlayerSleepChoice.Answer.UntilRested) playerLength = Character_Trainable.SleepLength.UntilRested;
+                else if (answer == PlayerSleepChoice.Answer.WithCompanion) playerWakeWith = companion;
+                ReleaseHeld();
+                pending--;
+                Finish();
+            });
+        }
+
         void Finish()
         {
             if (!ready || pending != 0 || completed) return;
             completed = true;
+            // getting up with a companion: their length planned now, before anyone's Sleep - not when the question was
+            // built (time may have passed since), so both sleeps end in the same minute
+            int playerMinutes = PlayerSleepChoice.CompanionMinutes(playerWakeWith);
             // Preserve the receiver sleeper's original timing; Enter itself is idempotent.
             foreach (var c in actors)
             {
@@ -604,7 +658,8 @@ public abstract class ActionPackage
                 }
                 if (c.hasSleepNeed && !c.Stats.isSleeping)
                 {
-                    c.Sleep();
+                    if (c == player) c.Sleep(playerLength, playerMinutes);
+                    else c.Sleep();
                     if (bed != null && c.Stats.isConsciousnessUnconscious) FurnitureOccupancyUtility.Enter(c, bed, OccupancyReason.Sleep);
                     if (receivers.Contains(c)) Debug.Log($"{c.FirstName} is being set to sleep, current command {commandName}");
                 }
@@ -612,7 +667,7 @@ public abstract class ActionPackage
             }
         }
 
-        prepareEvent = ev =>
+        prepareEvent = (ev, start) =>
         {
             ev.Targets["bedtime_awake"] = new List<Character_Trainable>(awake);
             ev.Targets["bedtime_sleeping"] = new List<Character_Trainable>(sleeping);
@@ -620,8 +675,14 @@ public abstract class ActionPackage
             ev.AppendStrings["sleepBedName"] = new List<string> { bedName };
             pending++;
             ev.OnCompleted(() => { pending--; Finish(); });
+            // a silent run (no start) is never held
+            if (start == null) return;
+            AskOnce();
+            heldEvents.Add(ev);
+            heldStarts.Add(start);
+            if (!asking) ReleaseHeld();
         };
-        return () => { ready = true; Finish(); };
+        return () => { AskOnce(); ready = true; Finish(); };
     }
 
     // furniture command name ("sleep (A's bed)" / "sleep with A" / "put down on X") - rebuilt only when its inputs change
@@ -1216,7 +1277,13 @@ public abstract class ActionPackage
             }
             else
             {
-                internalState = AP_Status.running;
+                if (acceptedDemandPendingBegin)
+                {
+                    acceptedDemandPendingBegin = false;
+                    internalState = AP_Status.accepted;
+                    PackageBegin(m);
+                }
+                else internalState = AP_Status.running;
             }
             PackageTick(m);
         }
@@ -1830,6 +1897,7 @@ public abstract class ActionPackage
         {
             this.requested = false;
             this.requestAccepted = false;
+            this.acceptedDemandPendingBegin = false;
         }
 
         receiver.Remove(-1);
@@ -2671,6 +2739,7 @@ public abstract class ActionPackage
             ep.Execute(m, injectResult, pairDC);
             bool executed = ep.Response >= Memory_Response.Accept;
             executeSuccessful = executed && executeSuccessful;
+            if (executed) ep.GrantRequesterPermissions();
             if (ep.Actors.Count > 1)
             {
                 // get EP relationship
@@ -2723,7 +2792,7 @@ public abstract class ActionPackage
         // result_event, and Result_Event.Apply's own requireSuccess/requireFailure fields (checking
         // p.executeSuccessful directly, since this is the AP-scoped/evp==null path) decide per-event
         // whether a given result_event actually fires on this particular outcome.
-        Action<EventInstance> prepareSleepEvent = null;
+        Action<EventInstance, Action> prepareSleepEvent = null;
         var sleepVariant = targetCOM != null && COMVariantID >= 0 && COMVariantID < targetCOM.variants.Count
             ? targetCOM.variants[COMVariantID] : null;
         bool deferSleep = ((sleepVariant == null || sleepVariant.useDefaultEventResult_AP)
@@ -3275,11 +3344,14 @@ public abstract class ActionPackage
                 else interactionDesire = lust >= 1 ? 0.2f : 0f; // Normal also covers existing characters without the new trait.
             }
 
-            if (trust != 0) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Trust, trust, m.exp, !job.CanBeInterrupted);
-            if (goodwill != 0) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Goodwill, goodwill, m.exp, !job.CanBeInterrupted);
-            if (badwill > 0 || (badwill < 0 && (B.Stats.Mood == null || B.Stats.Mood.Severity >= 2))) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Badwill, badwill, m.exp, false);
-            if (desire != 0 || interactionDesire != 0) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Desire, desire, m.exp, additiveUnscaledAmount: interactionDesire);
-            if (fear != 0) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Fear, fear, m.exp);
+            bool scoreChanged = false;
+            if (trust != 0) { B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Trust, trust, m.exp, !job.CanBeInterrupted); scoreChanged = true; }
+            if (goodwill != 0) { B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Goodwill, goodwill, m.exp, !job.CanBeInterrupted); scoreChanged = true; }
+            if (badwill > 0 || (badwill < 0 && (B.Stats.Mood == null || B.Stats.Mood.Severity >= 2))) { B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Badwill, badwill, m.exp, false); scoreChanged = true; }
+            if (desire != 0 || interactionDesire != 0) { B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Desire, desire, m.exp, additiveUnscaledAmount: interactionDesire); scoreChanged = true; }
+            if (fear != 0) { B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Fear, fear, m.exp); scoreChanged = true; }
+            // the natural relationship check follows the finished interaction (also covers the silent changes above)
+            if (scoreChanged) B.Relationships.MarkRelationshipCheckPending(relBA);
         }
     }
 
@@ -3965,9 +4037,10 @@ public abstract class ActionPackage
 
     /// <summary>This act was resumed from its demand (TryStopForDemand): it is never stopped for one again.</summary>
     [JsonProperty] public bool demandAnswered = false;
-    /// <summary>The next Request keeps the accepted result (forceAccept Accept: no new roll, no permission requests) -
-    /// set on the copy a demand resumes.</summary>
+    /// <summary>Legacy demand continuations in existing saves use a forced next Request. New continuations retain EPs.</summary>
     [JsonProperty] public bool acceptOnNextRequest = false;
+    /// <summary>An accepted demand continuation still needs its begin phase, but no second Request or AC log.</summary>
+    [JsonProperty] bool acceptedDemandPendingBegin = false;
 
     /// <summary>
     /// An acceptance bonus a source outside the command gives this package (an event's commandAcceptanceBonus, e.g. the
@@ -4029,9 +4102,6 @@ public abstract class ActionPackage
             }
         }
 
-        duration = 0;
-        toggleRepeat = false;
-        internalState = AP_Status.refused;
         SendDemandEvent(demand, demandEP, pushedIDs);
         return true;
     }
@@ -4134,11 +4204,11 @@ public abstract class ActionPackage
     ///   possible and the granter would accept (same lines: br_claim / br_claim_lie carry no callbacks).<br/>
     /// pushedIDs: the permissions the push records - the demand's own plus every other demand-carrying permission the
     /// pair misses in this act (TryStopForDemand), so one ignored demand covers them all.<br/>
-    /// A resumed act is a copy with its accepted result kept (acceptOnNextRequest) that is never stopped for a demand
-    /// again (demandAnswered). The player chooses in the event (StoredOptions[DemandOptionsKey] + the event's own options);
+    /// A continuation takes ownership of the accepted EPs and begins without another Request. It is never stopped
+    /// for a demand again (demandAnswered). The player chooses in the event (StoredOptions[DemandOptionsKey] + the event's own options);
     /// an NPC requester decides here - put it on now if possible, else claim a safe day (if offered and accepted), else
-    /// ignore - and the event starts at that answer's line,
-    /// so the act resumes at the end of this minute. Same message handling as SendRefuseEvent.
+    /// ignore - and the event starts at that answer's line. Both paths stop before begin; an NPC continuation is queued
+    /// only when its demand event completes, after its response display callbacks and outside the current tick pass.
     /// </summary>
     void SendDemandEvent(MissingPermission demand, EvaluationPackage ep, List<string> pushedIDs)
     {
@@ -4154,19 +4224,46 @@ public abstract class ActionPackage
         mm.exp.AddRelevantChara(job.actorJobComplete);
         mm.exp.AddRelevantChara(job.actorRemove);
         this.job.m.Clear();
-        this.LoggedBegin = true;
+        scr_UpdateHandler.current.NotifyJobDescriptions(mm);
+        scr_UpdateHandler.current.FlushCollectedLogs(true, false);
 
-        // the resumed act: same command, variant and actors, accepted result kept, never stopped for a demand again
+        // Even an automatic NPC answer must finish its event before the accepted act begins.
+        int acceptedVariant = COMVariantID;
+        bool repeatAfterDemand = toggleRepeat;
         ActionPackage resume = this.Copy();
-        resume.temporaryM = mm;
-        resume.ReInitializeCOM(this.job, this.targetCOM, this.DoerRefs, this.ReceiverRefs, this.masterRef, true);
         resume.Reset(true);
         resume.demandAnswered = true;
-        resume.acceptOnNextRequest = true;
-        bool canResume = resume.Validate();
+        bool canResume = resume.Validate() && resume.COMVariantID == acceptedVariant;
+        duration = 0;
+        toggleRepeat = false;
+        internalState = AP_Status.refused;
+        LoggedBegin = true;
+
         var resumeJob = this.job;
         int granterRef = granter.RefID, holderRef = requester.RefID;
-        Action resumeAct = () => { if (canResume) resumeJob.InjectPackage(resume, true); };
+        bool resumed = false;
+        Action resumeAct = () =>
+        {
+            if (!canResume || resume == null || resumed) return;
+            if (resumeJob is Job_Sex_Group && actorRefs.Any(actor => !resumeJob.actorRefID.Contains(actor))) return;
+            if (!resume.Validate() || resume.COMVariantID != acceptedVariant) return;
+
+            // Move, do not share or rebuild: retain the actual pairs, organs, attitudes and acceptance result.
+            resume.packages = packages;
+            packages = new List<EvaluationPackage>();
+            foreach (var accepted in resume.packages)
+            {
+                accepted.TransferAcceptedDemand(this, resume);
+                accepted.Evaluate(true);
+                accepted.ApplyPersonalityMods();
+            }
+            resume.requested = true;
+            resume.requestAccepted = true;
+            resume.acceptedDemandPendingBegin = true;
+            resume.toggleRepeat = repeatAfterDemand;
+            resumed = true;
+            resumeJob.InjectPackage(resume, true);
+        };
         Action recordPush = () =>
         {
             if (!(resumeJob is Job_Sex_Group pushScene)) return;
@@ -4220,9 +4317,6 @@ public abstract class ActionPackage
                 recordPush();
                 startLabel = canResume ? "br_npc_push" : "br_end";
             }
-            // injected after this minute's ticks: mid-tick the scene's acts are split between ticked and not yet ticked,
-            // so Job_Sex.InjectPackage could not read the running round's remaining time
-            if (canResume) scr_UpdateHandler.current.AddEventCallback(resumeAct);
         }
 
         var ev = new EventInstance(requester, demand.Definition.demandEventID, startLabel);
@@ -4235,8 +4329,8 @@ public abstract class ActionPackage
         ev.AppendStrings.Add("apTooltip", new List<string>());
         ev.AppendStrings.Add("com_variant_name", new List<string>() { this.DisplayName });
         ev.Targets.Add("evTarget", new List<Character_Trainable>() { granter });
-        eventStart.Add(() => scr_UpdateHandler.current.NotifyJobDescriptions(mm));
-        failCallbacks.Add(() => scr_UpdateHandler.current.NotifyJobDescriptions(mm));
+        eventStart.Add(() => scr_UpdateHandler.current.FlushCollectedLogs(true, false));
+        failCallbacks.Add(() => scr_UpdateHandler.current.FlushCollectedLogs(true, false));
 
         if (playerChooses)
         {
@@ -4281,7 +4375,6 @@ public abstract class ActionPackage
                         option.onSelect = _ =>
                         {
                             // a refusal plays the ordinary OnAPRefuse; the stopped act does not resume by itself either way
-                            a.command.temporaryM = mm;
                             resumeJob.InjectPackage(a.command, true);
                             continueUpdate();
                         };
@@ -4309,6 +4402,11 @@ public abstract class ActionPackage
             }
             ev.StoredOptions[DemandOptionsKey] = options;
         }
+
+        // StartEvent can leave this demand behind another waiting event. Do not resume merely because the minute ends.
+        // Completion queues after the demand's lines; the callback drain also makes InjectPackage's round alignment safe.
+        if (!playerChooses && canResume && ev.isValid)
+            ev.OnCompleted(() => scr_UpdateHandler.current.AddEventCallback(resumeAct));
 
         if (!scr_UpdateHandler.current.EventHandler.StartEvent(ev, false))
             Debug.LogWarning($"SendDemandEvent: [{demand.Definition.demandEventID}] for {DisplayName} did not start");

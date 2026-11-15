@@ -10,9 +10,26 @@
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": ["sleeping", "relaxed"],
+                            "useActiveTags": false,
+                            "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
+                            "responses": [
+                                "com_touch_hair_Begin_Sleep_1",
+                                "com_touch_hair_Begin_Sleep_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
                                     "timestop"
                                 ]
                             },
+                            "extraSelfPortraitTags": ["doll", "empty", "silence", "idle"],
+                            "useActiveTags": false,
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_touch_hair_Begin_Timestop_1",
@@ -328,6 +345,8 @@
                 "com_touch_hair_succ_neg_noallow_2": "$self$脸色苍白，仿佛接触了什么脏东西般剧烈颤抖。\"别碰我……求你了，别再碰我了……\"",
                 "com_touch_hair_succ_neg_noallow_3": "$self$眼中的厌恶几乎溢出，冷冷地转身就走。\"令人作呕。\"",
                 "com_touch_hair_succ_neg_noallow_4": "$self$捂着头蹲了下去，声音里夹杂着哭腔与极度的愤怒。\"滚开！都说了不要碰我！\"",
+                "com_touch_hair_Begin_Sleep_1": "$target$把她散在枕上的头发拢进掌心，从发根缓缓捋到发梢，$self$在梦里轻轻哼了声，往枕头里蹭了蹭，没醒。",
+                "com_touch_hair_Begin_Sleep_2": "发丝被绕上手指慢慢把玩，$self$的呼吸乱了一拍又平稳下来，似乎把这份触碰融进了梦里。",
                 "com_touch_hair_Begin_Timestop_1": "$target$把她的头发拢进掌心，从发根顺滑地捋到发梢，松手时$self$的发丝贴回原位，纹丝没乱。",
                 "com_touch_hair_Begin_Timestop_2": "$self$维持着回头的姿势定住，半缕头发还悬在半空没落下，$target$捻起发梢绕上手指，打着圈慢慢把玩。"
             },

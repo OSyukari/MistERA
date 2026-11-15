@@ -3,13 +3,30 @@ using System.Collections.Generic;
 
 namespace MistEra.Updates
 {
-    public enum UpdateOperation { None, Check, DownloadBuild, InstallMods, Restart }
+    public enum UpdateOperation { None, Check, DownloadBuild, InstallMods, Restart, DeleteMods }
 
     /// <summary>Stage of a game build download (DownloadBuild) or restart handoff (Restart).</summary>
     public enum BuildStep { None, Downloading, Verifying, Extracting, PreparingRestart }
 
     /// <summary>One-click mod update scopes of the update panel.</summary>
     public enum ModUpdateScope { None, All, Active }
+
+    /// <summary>State of one official catalog package for the mod manager's list (UpdateService.CollectCatalogRows).</summary>
+    public enum CatalogState { NotInstalled, Installed, UpdateAvailable, Missing, Occupied, Staged, InstalledThisBoot, RemovedThisBoot }
+
+    /// <summary>One row of the mod manager's official list. Package strings are untrusted (display through the panel's Plain()).</summary>
+    public sealed class CatalogRow
+    {
+        public ModPackage package;
+        public PackageReceipt receipt;      // installed receipt with the same id, or null
+        public CatalogState state;
+        public string occupiedBy;           // "Mods/<folder>" local copy in the package root (Occupied)
+        public bool active;                 // the receipted copy loads this boot
+        public string planError;            // why Download/Update/Redownload cannot be planned, or null
+        public long downloadSize;           // whole planned batch
+        public bool requiresTitle;          // planned batch touches boot-active content
+        public readonly List<string> batch = new List<string>();   // other packages the plan pulls in (names or ids)
+    }
 
     [Serializable]
     public sealed class UpdateSettings

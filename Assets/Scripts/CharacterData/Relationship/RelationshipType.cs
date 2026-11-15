@@ -112,6 +112,7 @@ public class RelationshipType
         if (isA ? !(candidate.isEqualRelationship || candidate.requireTargetValidation(false)) : candidate.isEqualRelationship)
             return false;
         if (!candidate.canPropose(!isA) || !candidate.isValid(sourceRel, !isA)) return false;
+        if (!sourceRel.SupportsPersonalRelationship(candidate, isA)) return false;
         var reverse = sourceRel.Target.Relationships.FindRelationshipWith(sourceRel.Owner);
         return candidate.CanMaintain(reverse, isA);
     }
@@ -228,6 +229,33 @@ public class RelationshipType
     {
         return  this.allowNaturalProposition;
     }
+
+    /// <summary>
+    /// Whether personality authors the kojo this relationship needs on the side isA (the owner's side, as in
+    /// SetPersonalRelationship): {ID}_set, plus {ID}_propose when that side can propose naturally - a missing
+    /// propose line ends the RequestRelationshipChange event before its question (GetKojoEntryFromAppendStrings).
+    /// Inequal types use the _A/_B suffix of the owner's side. Lazily cached per personality and side (kojo data
+    /// is fixed once loaded).
+    /// </summary>
+    public bool IsSupportedBy(Character_Personality personality, bool isA)
+    {
+        if (personality == null) return false;
+        if (_supportCache == null) _supportCache = new Dictionary<Character_Personality, byte>();
+        _supportCache.TryGetValue(personality, out var bits);
+        byte computed = isA ? SupportBit_A_Computed : SupportBit_B_Computed;
+        byte supported = isA ? SupportBit_A_Supported : SupportBit_B_Supported;
+        if ((bits & computed) != 0) return (bits & supported) != 0;
+
+        var suffix = isEqualRelationship ? "" : isA ? "_A" : "_B";
+        bool result = personality.HasKojoEntry($"{ID}_set{suffix}")
+            && (!canPropose(!isA) || personality.HasKojoEntry($"{ID}_propose{suffix}"));
+        bits |= computed;
+        if (result) bits |= supported;
+        _supportCache[personality] = bits;
+        return result;
+    }
+    const byte SupportBit_A_Computed = 1, SupportBit_A_Supported = 2, SupportBit_B_Computed = 4, SupportBit_B_Supported = 8;
+    [JsonIgnore] Dictionary<Character_Personality, byte> _supportCache = null;
 
     /// <summary>
     /// Raises stored (indexed by RelationshipScoreType) so stored+bonus meets both Requirements (entry) and

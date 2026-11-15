@@ -10,9 +10,26 @@
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": ["sleeping", "relaxed"],
+                            "useActiveTags": false,
+                            "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
+                            "responses": [
+                                "com_touch_thigh_Begin_Sleep_1",
+                                "com_touch_thigh_Begin_Sleep_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
                                     "timestop"
                                 ]
                             },
+                            "extraSelfPortraitTags": ["doll", "empty", "silence", "idle"],
+                            "useActiveTags": false,
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_touch_thigh_Begin_Timestop_1",
@@ -334,6 +351,8 @@
                 "com_touch_thigh_37": "$self$的眼神彻底死寂下去，如同看着一团死肉。\"你摸够了吗？摸够了就滚。\"",
                 "com_touch_thigh_38": "$self$虽然还在被触摸，但整个人散发出一种令人窒息的冰冷气息。\"我会记住今天的……每一秒。\"",
                 "com_touch_thigh_39": "$self$不再颤抖，取而代之的是极度的愤怒和屈辱。\"把你的手拿开！立刻！马上！\"",
+                "com_touch_thigh_Begin_Sleep_1": "$target$的手掌抚上她熟睡中的大腿慢慢揉按，$self$在梦里缩了缩腿，迷迷糊糊地哼了一声，没醒。",
+                "com_touch_thigh_Begin_Sleep_2": "腿根被指腹压出浅浅的指印，$self$只是吧唧了一下嘴，翻个身继续睡，完全不知道自己的腿正被人把玩。",
                 "com_touch_thigh_Begin_Timestop_1": "$target$的手掌抚上她定格的大腿揉按，指腹压进软肉又松开，陷下的指印慢慢弹回，$self$的膝盖没有并拢。",
                 "com_touch_thigh_Begin_Timestop_2": "腿根被捏着推拿，蹭热的皮肤洇出浅红，$self$裙摆下的腿保持着原本交叠的姿势，任由那只手来回拿捏。"
             },

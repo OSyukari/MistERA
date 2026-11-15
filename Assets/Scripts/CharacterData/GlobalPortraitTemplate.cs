@@ -37,6 +37,7 @@ public static class GlobalPortraitTemplate
         if (serializer == null) return;
         serializer.GlobalPortraitTemplateJson = null;
         serializer.GlobalPortraitByFolder.Clear();
+        mergedByPair.Clear();
         stateKeywords.Clear();
         stateOrder.Clear();
         scr_System_CentralControl.current?.ClearGlobalPortraitHandlers();
@@ -84,6 +85,49 @@ public static class GlobalPortraitTemplate
     {
         path = NormalizePath(path);
         if (string.IsNullOrEmpty(path)) yield break;
+        var available = AvailableStates(path);
+        foreach (var state in stateOrder)
+            if (available.Contains(state))
+                yield return new KeyValuePair<string, string>(StateRoot(path, state), state);
+        yield return new KeyValuePair<string, string>(path, null);
+    }
+
+    /// <summary>
+    /// One useGlobalHandler entry's handler sets (handlers, canonical state gate or null) in GetStateSets order. With a fallback folder:
+    /// every state either folder has, then the ordinary roots, each set = GetMergedHandlers(path's root, fallback's root) - a state only
+    /// the fallback has still shows under this entry's keys. Handler lists are shared caches: callers Copy() them.
+    /// </summary>
+    public static IEnumerable<KeyValuePair<List<PortraitManager.CharaPortrait>, string>> GetEntrySets(string path, string fallback)
+    {
+        path = NormalizePath(path);
+        fallback = NormalizePath(fallback);
+        if (string.IsNullOrEmpty(path)) yield break;
+        if (string.IsNullOrEmpty(fallback) || string.Equals(path, fallback, StringComparison.OrdinalIgnoreCase))
+        {
+            foreach (var set in GetStateSets(path))
+                yield return new KeyValuePair<List<PortraitManager.CharaPortrait>, string>(GetHandlers(set.Key, true), set.Value);
+            yield break;
+        }
+        var own = AvailableStates(path);
+        var other = AvailableStates(fallback);
+        foreach (var state in stateOrder)
+        {
+            bool hasOwn = own.Contains(state), hasOther = other.Contains(state);
+            if (!hasOwn && !hasOther) continue;
+            yield return new KeyValuePair<List<PortraitManager.CharaPortrait>, string>(
+                GetMergedHandlers(hasOwn ? StateRoot(path, state) : null, hasOther ? StateRoot(fallback, state) : null), state);
+        }
+        yield return new KeyValuePair<List<PortraitManager.CharaPortrait>, string>(GetMergedHandlers(path, fallback), null);
+    }
+
+    static string StateRoot(string path, string state)
+    {
+        return path + "/" + path.Substring(path.LastIndexOf('/') + 1) + "_" + state;
+    }
+
+    /// <summary> registered image states with a nested root (path/folder_state/category/file) holding at least one image </summary>
+    static HashSet<string> AvailableStates(string path)
+    {
         var folder = path.Substring(path.LastIndexOf('/') + 1);
         var available = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var serializer = scr_System_Serializer.current;
@@ -98,10 +142,66 @@ public static class GlobalPortraitTemplate
                 if (pair.Value.Replace('\\', '/').IndexOf("/" + path + "/" + root + "/", StringComparison.OrdinalIgnoreCase) >= 0)
                     available.Add(state);
             }
-        foreach (var state in stateOrder)
-            if (available.Contains(state))
-                yield return new KeyValuePair<string, string>(path + "/" + folder + "_" + state, state);
-        yield return new KeyValuePair<string, string>(path, null);
+        return available;
+    }
+
+    // primary + "|" + fallback -> merged handlers; cleared with the folder cache (Initialize)
+    static readonly Dictionary<string, List<PortraitManager.CharaPortrait>> mergedByPair =
+        new Dictionary<string, List<PortraitManager.CharaPortrait>>(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// primary U fallback, both pruned useGlobalHandler folders of the same template: handlers merge-joined by templateIndex; a handler
+    /// both have gets one variant list in template order where each variant's primary instance precedes the fallback's. Variants are
+    /// the folders' own (shared, nothing re-resolved); handlers only one side has are reused as is. Either path may be null (= the other).
+    /// </summary>
+    public static List<PortraitManager.CharaPortrait> GetMergedHandlers(string primary, string fallback)
+    {
+        if (string.IsNullOrEmpty(fallback)) return GetHandlers(primary, true);
+        if (string.IsNullOrEmpty(primary)) return GetHandlers(fallback, true);
+        var key = primary + "|" + fallback;
+        if (mergedByPair.TryGetValue(key, out var cached)) return cached;
+
+        var a = GetHandlers(primary, true);
+        var b = GetHandlers(fallback, true);
+        // safe mode / no template: GetHandlers returned the shared empty list, don't cache
+        if (a.Count == 0) return b;
+        if (b.Count == 0) return a;
+        var merged = new List<PortraitManager.CharaPortrait>(a.Count + b.Count);
+        int i = 0, j = 0;
+        while (i < a.Count || j < b.Count)
+        {
+            if (j >= b.Count || (i < a.Count && a[i].templateIndex < b[j].templateIndex)) merged.Add(a[i++]);
+            else if (i >= a.Count || b[j].templateIndex < a[i].templateIndex) merged.Add(b[j++]);
+            else
+            {
+                var both = a[i].Copy();
+                if (both == null) { merged.Add(a[i]); merged.Add(b[j]); }
+                else
+                {
+                    both.isGenerated = true;
+                    both.Variants = MergeVariants(a[i].Variants, b[j].Variants);
+                    merged.Add(both);
+                }
+                i++;
+                j++;
+            }
+        }
+        mergedByPair[key] = merged;
+        return merged;
+    }
+
+    static List<PortraitManager.PortraitVariant> MergeVariants(List<PortraitManager.PortraitVariant> a, List<PortraitManager.PortraitVariant> b)
+    {
+        int countA = a == null ? 0 : a.Count, countB = b == null ? 0 : b.Count;
+        var result = new List<PortraitManager.PortraitVariant>(countA + countB);
+        int i = 0, j = 0;
+        while (i < countA || j < countB)
+        {
+            // ties: primary first
+            if (j >= countB || (i < countA && a[i].templateIndex <= b[j].templateIndex)) result.Add(a[i++]);
+            else result.Add(b[j++]);
+        }
+        return result;
     }
 
     // Normalize OR aliases once per request rather than cloning every variant for each alias.
@@ -121,7 +221,10 @@ public static class GlobalPortraitTemplate
     /// <summary>Resolved handlers shared by folder; callers Copy() them before adding set-specific gates.</summary>
     /// <param name="path">Folder containing category folders, e.g. cinderella/cinderella_after.
     /// Its last segment supplies the folder/category/file asset-key prefix; the full path must match the image path.</param>
-    public static List<PortraitManager.CharaPortrait> GetHandlers(string path)
+    /// <param name="pruneEmpty">drop variants / handlers without images (PruneEmpty). Only for folders that never receive images
+    /// later (useGlobalHandler asset folders); generated roots stay whole for AddImage. Applied when the folder is first built:
+    /// paths are cached per path and the two callers' paths never overlap (generated roots live under _generated/).</param>
+    public static List<PortraitManager.CharaPortrait> GetHandlers(string path, bool pruneEmpty = false)
     {
         path = NormalizePath(path);
         if (string.IsNullOrEmpty(path)) return _empty;
@@ -136,8 +239,16 @@ public static class GlobalPortraitTemplate
         escaped = escaped.Substring(1, escaped.Length - 2);
         var list = JsonConvert.DeserializeObject<List<PortraitManager.CharaPortrait>>(serializer.GlobalPortraitTemplateJson.Replace(Placeholder, escaped), UtilityEX.SerializerSettings)
             ?? new List<PortraitManager.CharaPortrait>();
+        // template positions before pruning: every folder of the template lines up for GetMergedHandlers
+        for (int h = 0; h < list.Count; h++)
+        {
+            list[h].templateIndex = h;
+            var variants = list[h].Variants;
+            if (variants != null) for (int v = 0; v < variants.Count; v++) variants[v].templateIndex = v;
+        }
 
         ResolveImages(path, folder, list);
+        if (pruneEmpty) PruneEmpty(list);
         foreach (var h in list) h.isGenerated = true;
         serializer.GlobalPortraitByFolder[path] = list;
         return list;
@@ -167,6 +278,34 @@ public static class GlobalPortraitTemplate
                     }
         }
         Revision++;
+    }
+
+    /// <summary>
+    /// Drop resolved variants without images, then image handlers left without variants (and no fixed / random path).
+    /// Selection already skips both (empty ImagePaths, "" path), so the pick is unchanged; per-character copies and every
+    /// portrait pick just touch less. Not for folders AddImage may still fill: it only adds into existing variants.
+    /// </summary>
+    static void PruneEmpty(List<PortraitManager.CharaPortrait> handlers)
+    {
+        int keptHandlers = 0;
+        for (int h = 0; h < handlers.Count; h++)
+        {
+            var handler = handlers[h];
+            var variants = handler.Variants;
+            if (variants != null)
+            {
+                int kept = 0;
+                for (int v = 0; v < variants.Count; v++)
+                    if (variants[v].ImagePaths.Count > 0) variants[kept++] = variants[v];
+                variants.RemoveRange(kept, variants.Count - kept);
+            }
+            bool empty = (variants == null || variants.Count == 0)
+                && handler is PortraitManager.CharaPortrait_Image image
+                && string.IsNullOrEmpty(image.portrait_path)
+                && (image.random_portrait_path == null || image.random_portrait_path.Count == 0);
+            if (!empty) handlers[keptHandlers++] = handler;
+        }
+        handlers.RemoveRange(keptHandlers, handlers.Count - keptHandlers);
     }
 
     static string NormalizePath(string path)
@@ -236,6 +375,7 @@ public static class GlobalPortraitTemplate
         public float tier;
         public List<string> hasVariants = new List<string>();
         public List<string> onlyInCategories = new List<string>();
+        public bool alsoUsePerformFolders;
         /// <summary>
         /// portrait_global.names[].keywords: OR list of (keyword, role block). Eg. oral: [(blowjob, doer), (irrumatio, receiver)] - the same
         /// picture is the doer of a blowjob and the receiver of irrumatio; reverse_cowgirl: [(reverse_cowgirl, doer), (cowgirl, doer)].
@@ -259,20 +399,30 @@ public static class GlobalPortraitTemplate
         public List<string> unconditional = new List<string>();
     }
 
-    /// <summary> one variant before merging: tagsMatch + regexes </summary>
+    /// <summary>One variant before merging: required/excluded tags and regexes.</summary>
     class Entry
     {
         public List<string> tags;
+        public List<string> tagsExclude = new List<string>();
         public List<string> patterns = new List<string>();
         public bool primary;        // false = a later keyword of the name (fallback): after the images of names that have it as their first keyword
         public float tier;
         public int order;
         public int variantOrder = int.MaxValue;
-        public string key => (primary ? "own|" : "fb|") + string.Join("+", tags);
+        public string key => (primary ? "own|" : "fb|") + string.Join("+", tags)
+            + "|not:" + string.Join("+", tagsExclude.OrderBy(t => t, StringComparer.Ordinal));
     }
 
     // file_names keys that are not the name (same as the classifier's ImageRulesJsonLoader.NameEntryKeys)
-    static readonly HashSet<string> NameEntryKeys = new HashSet<string> { "tier", "hasVariants", "defaultVariant", "none", "onlyInCategories", "fallback", "tierMinScore", "filenameOnly" };
+    static readonly HashSet<string> NameEntryKeys = new HashSet<string> { "tier", "hasVariants", "defaultVariant", "none", "noneAll", "onlyInCategories", "fallback", "tierMinScore", "filenameOnly", "isperform", "threshold", "noneThreshold" };
+
+    /// <summary>Portrait-only role guards, shared by handler construction and generated-image candidate selection.</summary>
+    public static List<string> KeywordExclusions(JObject portraitConfig, string keyword, string role)
+    {
+        if (string.IsNullOrEmpty(keyword) || string.IsNullOrEmpty(role)) return new List<string>();
+        return (portraitConfig?["keywordRoleExclusions"]?[role]?[keyword] as JArray)?.Values<string>()
+            .Where(t => !string.IsNullOrEmpty(t)).Distinct(StringComparer.Ordinal).ToList() ?? new List<string>();
+    }
 
     static List<PortraitManager.CharaPortrait> Build(JObject config, out string debugOutput)
     {
@@ -316,9 +466,11 @@ public static class GlobalPortraitTemplate
                         bool primary = k == 0 || kw == n.keywords[0].Item1;
                         bool both = kwRole == "both";
                         if (kwRole != block.role && !(both && (block.role == "doer" || block.role == "receiver"))) continue;
+                        var excludedTags = KeywordExclusions(pg, kw, block.role);
                         // A name without keyword (generic) only gets action variants here; its base is the unconditional variant.
 
-                        var nameFolders = NameFolders(n, folders, both && block.role == "doer");
+                        var nameFolders = NameFolders(n, folders, both && block.role == "doer",
+                            !both && (kwRole == "doer" || (n.alsoUsePerformFolders && kwRole == "receiver")));
                         if (nameFolders.Count < 1) continue;
 
                         // a variant applies when the name can have one of its suffixed files (in hasVariants, or a suffix the classifier never
@@ -330,14 +482,14 @@ public static class GlobalPortraitTemplate
                             var tags = new List<string>();
                             if (kw != null) tags.Add(kw);
                             tags.AddRange(v.keywords);
-                            entries.Add(new Entry { tags = tags, primary = primary, tier = n.tier, order = n.order, variantOrder = portraitVariants.IndexOf(v), patterns = Patterns(nameFolders, n, files, names, suffixIds, classifierIds, ext) });
+                            entries.Add(new Entry { tags = tags, tagsExclude = excludedTags, primary = primary, tier = n.tier, order = n.order, variantOrder = portraitVariants.IndexOf(v), patterns = Patterns(nameFolders, n, files, names, suffixIds, classifierIds, ext) });
                         }
                         if (kw != null)
-                            entries.Add(new Entry { tags = new List<string> { kw }, primary = primary, tier = n.tier, order = n.order, patterns = Patterns(nameFolders, n, categoryBaseFiles, names, suffixIds, classifierIds, ext) });
+                            entries.Add(new Entry { tags = new List<string> { kw }, tagsExclude = excludedTags, primary = primary, tier = n.tier, order = n.order, patterns = Patterns(nameFolders, n, categoryBaseFiles, names, suffixIds, classifierIds, ext) });
                     }
                 }
 
-                // merge entries with the same tagsMatch (eg. every masturbation name -> masturbate); primary and fallback kept apart
+                // Merge only equivalent positive/negative guards; primary and fallback entries remain separate.
                 var merged = new List<Entry>();
                 var byKey = new Dictionary<string, Entry>();
                 foreach (var e in entries)
@@ -355,7 +507,7 @@ public static class GlobalPortraitTemplate
                 // Action variant priority precedes name/position fallbacks among equally specific requests.
                 var sorted = merged.OrderByDescending(e => e.tags.Count).ThenBy(e => e.variantOrder).ThenBy(e => e.primary ? 0 : 1).ThenBy(e => e.tier).ThenBy(e => e.order).ToList();
 
-                var variants = sorted.Select(e => new PortraitManager.PortraitVariant { tagsMatch = e.tags, PortraitVariantData = e.patterns }).ToList();
+                var variants = sorted.Select(e => new PortraitManager.PortraitVariant { tagsMatch = e.tags, tagsExclude = e.tagsExclude, PortraitVariantData = e.patterns }).ToList();
 
                 // unconditional variant (no tagsMatch): base files of the listed names (generic)
                 var uncond = new List<string>();
@@ -380,7 +532,7 @@ public static class GlobalPortraitTemplate
                 });
             }
         }
-        AppendMappedPortraits(config, pg, ext, result, "pov", "file_names", "standalone", false, true);
+        AppendMappedPortraits(config, pg, ext, result, "human", "file_names", "standalone", false, true);
         AppendMappedPortraits(config, pg, ext, result, "activity", "portrait_activities", "activities", false);
         AppendMappedPortraits(config, pg, ext, result, "portrait", "portrait_emotions", "emotions", true);
         return result;
@@ -462,15 +614,17 @@ public static class GlobalPortraitTemplate
 
     /// <summary>
     /// Folders this name's files live in for one block: category folders filtered by onlyInCategories,
-    /// with "_perform" appended on the doer side of a "both" name
+    /// with "_perform" exclusive for the doer side of a "both" name. Explicit doers read ordinary and performer
+    /// folders; receiver aliases may opt into the same perspective with alsoUsePerformFolders (forced oral).
     /// </summary>
-    static List<string> NameFolders(NameInfo n, List<string> folders, bool perform)
+    static List<string> NameFolders(NameInfo n, List<string> folders, bool perform, bool includePerform = false)
     {
         var list = new List<string>();
         foreach (var f in folders)
         {
             if (n.onlyInCategories.Count > 0 && !n.onlyInCategories.Contains(f)) continue;
             list.Add(perform ? f + "_perform" : f);
+            if (!perform && includePerform) list.Add(f + "_perform");
         }
         return list;
     }
@@ -569,12 +723,18 @@ public static class GlobalPortraitTemplate
             if (nameKeys.Count != 1) continue;
             var name = nameKeys[0].Name;
             var hasVariants = (e["hasVariants"] as JArray)?.Select(v => (string)v).ToList() ?? new List<string>();
+            var onlyInCategories = (e["onlyInCategories"] as JArray)?.Select(v => (string)v).ToList() ?? new List<string>();
 
-            // same name listed twice (alternative definitions): one NameInfo, first tier, variants merged
+            // Alternative definitions share one name: union their scopes; an unrestricted definition covers every category.
             var existing = list.FirstOrDefault(x => x.name == name);
             if (existing != null)
             {
                 foreach (var v in hasVariants) if (!existing.hasVariants.Contains(v)) existing.hasVariants.Add(v);
+                if (existing.onlyInCategories.Count == 0 || onlyInCategories.Count == 0)
+                    existing.onlyInCategories.Clear();
+                else
+                    foreach (var category in onlyInCategories)
+                        if (!existing.onlyInCategories.Contains(category)) existing.onlyInCategories.Add(category);
                 continue;
             }
 
@@ -606,8 +766,9 @@ public static class GlobalPortraitTemplate
                 order = i,
                 tier = e["tier"]?.Value<float>() ?? 1,
                 hasVariants = hasVariants,
-                onlyInCategories = (e["onlyInCategories"] as JArray)?.Select(v => (string)v).ToList() ?? new List<string>(),
+                onlyInCategories = onlyInCategories,
                 keywords = keywords,
+                alsoUsePerformFolders = m["alsoUsePerformFolders"]?.Value<bool>() ?? false,
             });
         }
         return list;

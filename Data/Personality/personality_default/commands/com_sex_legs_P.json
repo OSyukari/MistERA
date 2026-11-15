@@ -67,9 +67,26 @@
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": ["sex", "doer", "footjob", "sleeping", "relaxed"],
+                            "useActiveTags": false,
+                            "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
+                            "responses": [
+                                "com_sex_legs_P_Begin_Sleep_1",
+                                "com_sex_legs_P_Begin_Sleep_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
                                     "timestop"
                                 ]
                             },
+                            "extraSelfPortraitTags": ["sex", "doer", "footjob", "doll", "empty", "silence", "idle"],
+                            "useActiveTags": false,
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_sex_legs_P_Begin_Timestop_1",
@@ -516,6 +533,8 @@
                 "com_sex_legs_P_32": "$self$皱着眉换了个姿势，小腿肚都在发颤。\n\"好累……腿要抽筋了，还没好吗？\"",
                 "com_sex_legs_P_33": "$self$的动作机械又敷衍，眼神飘向了别处。\n\"还要多久啊……脚踝好酸。\"",
                 "com_sex_legs_P_34": "$self$嫌弃地想把脚抽回来。\n\"啧……脚上全是这种味道……不想弄了。\"",
+                "com_sex_legs_P_Begin_Sleep_1": "$target$握住$self$熟睡中的双脚贴上肉棒，按着脚心来回磨蹭，她痒得在梦里缩了缩脚趾，又软软地松开，没醒。",
+                "com_sex_legs_P_Begin_Sleep_2": "肉棒被她的脚底板夹着慢慢套弄，前液蹭在脚心拉出亮痕，$self$只是含糊地呓语了一句，翻个身继续睡。",
                 "com_sex_legs_P_Begin_Timestop_1": "$target$抬起她悬在半空的脚贴上肉棒，按着脚心来回磨蹭，脚趾僵在蜷着的弧度上，$self$的腿没有挣动。",
                 "com_sex_legs_P_Begin_Timestop_2": "肉棒被$self$的脚底板碾得胀大，前液蹭在脚心上拉出亮痕，定格的房间里只剩皮肤摩擦的沙沙声。"
             }

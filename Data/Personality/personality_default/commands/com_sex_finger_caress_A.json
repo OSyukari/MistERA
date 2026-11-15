@@ -113,9 +113,42 @@
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": ["sex", "receiver", "spread_pussy", "spread_ass", "sleeping", "relaxed"],
+                            "useActiveTags": false,
+                            "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
+                            "responses": [
+                                "com_sex_finger_caress_A_Begin_Sleep_1",
+                                "com_sex_finger_caress_A_Begin_Sleep_2"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": ["sex", "doer", "spread_pussy", "spread_ass", "sleeping", "relaxed"],
+                            "useActiveTags": false,
+                            "_comment": "2.5.7 开始 睡眠中 独自A自慰 口上文（睡梦中自己开始）",
+                            "responses": [
+                                "com_sex_finger_caress_A_Begin_Self_Sleep_1",
+                                "com_sex_finger_caress_A_Begin_Self_Sleep_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
                                     "timestop"
                                 ]
                             },
+                            "extraSelfPortraitTags": ["sex", "receiver", "spread_pussy", "spread_ass", "doll", "empty", "silence", "idle"],
+                            "useActiveTags": false,
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_sex_finger_caress_A_Begin_Timestop_1",
@@ -547,6 +580,7 @@
                                     "sleeping"
                                 ]
                             },
+                            "extraSelfPortraitTags": ["sex", "doer", "spread_pussy", "spread_ass", "sleeping", "relaxed"],
                             "useActiveTags": false,
                             "_comment": "2.5.5 睡眠中 独自A自慰 口上文",
                             "responses": [
@@ -562,6 +596,7 @@
                                     "timestop"
                                 ]
                             },
+                            "extraSelfPortraitTags": ["sex", "doer", "spread_pussy", "spread_ass", "doll", "idle"],
                             "useActiveTags": false,
                             "_comment": "2.5.6 时停中 独自A自慰 口上文",
                             "responses": [
@@ -773,6 +808,10 @@
                 "com_sex_finger_caress_A_Self_M_16": "$self$的手指停在穴口，僵着不肯再动。\n\"够了没有……够了吧……我不想再碰自己了。\"",
                 "com_sex_finger_caress_A_Self_15": "$self$麻木地抠弄着自己，穴口干干的，脸上没什么表情。\n\"……怎么弄都没感觉。\"",
                 "com_sex_finger_caress_A_Self_16": "$self$的手指从穴口移开，身子僵着不想继续。\n\"……不弄了，没意思。\"",
+                "com_sex_finger_caress_A_Begin_Sleep_1": "$target$掰开她熟睡中松软的臀肉，指腹绕上穴口轻轻画圈，$self$在梦里哼出含糊的鼻音，腰无意识地扭了扭，没醒。",
+                "com_sex_finger_caress_A_Begin_Sleep_2": "褶皱被揉得渐渐泛红张开，$self$的穴口随着指尖不受控地收缩，她皱着眉把脸往枕头里埋了埋，睡得依旧很沉。",
+                "com_sex_finger_caress_A_Begin_Self_Sleep_1": "$self$在睡梦中翻了个身，手无意识地探进臀缝，指尖贴上穴口轻轻蹭动起来，呼吸也跟着变沉。",
+                "com_sex_finger_caress_A_Begin_Self_Sleep_2": "梦里不知想到了什么，$self$的指尖沿着臀缝摸到穴口，绕着褶皱缓缓画圈，她始终没醒。",
                 "com_sex_finger_caress_A_Begin_Timestop_1": "$target$掰开她定格的臀肉揉按，指腹绕上穴口画圈，褶皱被碾得渐渐泛红张开，$self$的腰没有跟着躲。",
                 "com_sex_finger_caress_A_Begin_Timestop_2": "$self$的穴口被揉得不受控地收缩吮住指尖，臀肉被搓出指印又弹回原状，房间里只有皮肉被拿捏的轻响。"
             }

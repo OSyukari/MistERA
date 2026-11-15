@@ -98,7 +98,7 @@
                 "ID": "permission_sex_oral",
                 "displayName": "permission_sex_oral_displayName",
                 "tags": ["nsfw"],
-                "charaReq": { "BodyTags": ["mouth"] },
+                "charaReq": { "BodyTags": ["mouth"], "forbidRaceKeywords": ["animal"] },
                 "normalGrantRelationshipTags": ["sexual_partner"],
                 "requestModifiers": [
                     { "displayName": "permission_request_partner", "relationshipTags": ["sexual_partner"], "thresholdScale": 0.8 },
@@ -170,7 +170,7 @@
                 "ID": "permission_sex_dangerday_creampie",
                 "displayName": "permission_sex_dangerday_creampie_displayName",
                 "tags": ["nsfw"],
-                "charaReq": { "BodyTags": ["vagina"], "requireFertileWomb": true },
+                "charaReq": { "BodyTags": ["vagina"], "requireFertileWomb": true, "forbidRaceKeywords": ["animal"] },
                 "normalGrantRelationshipTags": ["sexual_partner"],
                 "requestModifiers": [
                     { "displayName": "permission_request_partner", "relationshipTags": ["sexual_partner"], "thresholdScale": 0.8 },
@@ -196,7 +196,7 @@
                 "ID": "permission_sex_unprotected",
                 "displayName": "permission_sex_unprotected_displayName",
                 "tags": ["nsfw"],
-                "charaReq": { "BodyTags": ["vagina"] },
+                "charaReq": { "BodyTags": ["vagina"], "forbidRaceKeywords": ["animal"] },
                 "normalGrantRelationshipTags": ["sexual_partner"],
                 "requestModifiers": [
                     { "displayName": "permission_request_partner", "relationshipTags": ["sexual_partner"], "thresholdScale": 0.8 },
@@ -222,7 +222,7 @@
                 "ID": "permission_sex_dangerday_creampie_penis",
                 "displayName": "permission_sex_dangerday_creampie_penis_displayName",
                 "tags": ["nsfw"],
-                "charaReq": { "BodyTags": ["penis"] },
+                "charaReq": { "BodyTags": ["penis"], "forbidRaceKeywords": ["animal"] },
                 "normalGrantRelationshipTags": ["sexual_partner"],
                 "requestModifiers": [
                     { "displayName": "permission_request_partner", "relationshipTags": ["sexual_partner"], "thresholdScale": 0.8 },
@@ -247,7 +247,7 @@
                 "ID": "permission_sex_unprotected_penis",
                 "displayName": "permission_sex_unprotected_penis_displayName",
                 "tags": ["nsfw"],
-                "charaReq": { "BodyTags": ["penis"] },
+                "charaReq": { "BodyTags": ["penis"], "forbidRaceKeywords": ["animal"] },
                 "normalGrantRelationshipTags": ["sexual_partner"],
                 "requestModifiers": [
                     { "displayName": "permission_request_partner", "relationshipTags": ["sexual_partner"], "thresholdScale": 0.8 },
@@ -270,6 +270,7 @@
                 "ID": "permission_sex_group",
                 "displayName": "permission_sex_group_displayName",
                 "tags": ["nsfw"],
+                "charaReq": { "forbidRaceKeywords": ["animal"] },
                 "normalGrantRelationshipTags": ["sexual_partner"],
                 "requestModifiers": [
                     { "displayName": "permission_request_partner", "relationshipTags": ["sexual_partner"], "thresholdScale": 0.8 },
@@ -290,6 +291,7 @@
                 "ID": "permission_sex_observed",
                 "displayName": "permission_sex_observed_displayName",
                 "tags": ["nsfw"],
+                "charaReq": { "forbidRaceKeywords": ["animal"] },
                 "normalGrantRelationshipTags": ["sexual_partner"],
                 "requestModifiers": [
                     { "displayName": "permission_request_partner", "relationshipTags": ["sexual_partner"], "thresholdScale": 0.8 },

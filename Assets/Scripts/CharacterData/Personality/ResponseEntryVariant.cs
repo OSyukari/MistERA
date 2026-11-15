@@ -56,6 +56,12 @@ public partial class ResponseEntry
 
         public List<Variant> variants = new List<Variant>();
 
+        public bool HasResponses()
+        {
+            for (int i = 0; i < responses.Count; i++) if (!string.IsNullOrEmpty(responses[i])) return true;
+            for (int i = 0; i < variants.Count; i++) if (variants[i].HasResponses()) return true;
+            return false;
+        }
 
         public void ValidateIntegrity()
         {
@@ -142,6 +148,7 @@ public partial class ResponseEntry
                         returnV2.targetPortraitTag.AddRange(extraTargetPortraitTags);
                         returnV2.selfPortraitTag.AddRange(kol.SelfTags);
                         returnV2.targetPortraitTag.AddRange(kol.TargetTags);
+                        UtilityEX.AddPortraitTargetID(returnV2.targetPortraitTag, kol.Target);
                         // EP action tags when the kojo's EP has the owner as doer/receiver, else live action tags
                         if (useActiveTags) returnV2.selfPortraitTag.AddRange(kol.ActionTags.Count > 0 ? kol.ActionTags : kol.Owner.PortraitManager.GetOwnerActionTagsByPriority());
                         Utility.DistinctInPlace(returnV2.selfPortraitTag);
@@ -224,6 +231,7 @@ public partial class ResponseEntry
                         returnV2.targetPortraitTag.AddRange(extraTargetPortraitTags);
                         returnV2.selfPortraitTag.AddRange(selfTags);
                         returnV2.targetPortraitTag.AddRange(targetTags);
+                        UtilityEX.AddPortraitTargetID(returnV2.targetPortraitTag, rel.Target);
 
                         // EP action tags when the EP has the owner as doer/receiver, else live action tags
                         if (useActiveTags)

@@ -133,9 +133,26 @@
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": ["sex", "receiver", "doggy", "sleeping", "relaxed"],
+                            "useActiveTags": false,
+                            "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
+                            "responses": [
+                                "com_sex_P_doggy_Begin_Sleep_1",
+                                "com_sex_P_doggy_Begin_Sleep_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
                                     "timestop"
                                 ]
                             },
+                            "extraSelfPortraitTags": ["sex", "receiver", "doggy", "doll", "empty", "silence", "idle"],
+                            "useActiveTags": false,
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_sex_P_doggy_Begin_Timestop_1",
@@ -632,6 +649,8 @@
                 "com_sex_P_doggy_32": "$self$的身子随着顶撞前后晃，眼神空洞。\n\"随便你吧……反正我也没有拒绝的权利。\"",
                 "com_sex_P_doggy_29": "$self$皱着眉往前缩了缩，额上渗出冷汗。\n\"停停……太深了……撞得好疼……\"",
                 "com_sex_P_doggy_30": "$self$有气无力地随着撞击晃动，腰懒得迎合。\n\"……你只顾着自己舒服。\"",
+                "com_sex_P_doggy_Begin_Sleep_1": "$target$把熟睡的$self$摆成趴跪的姿势，掰开臀瓣从后方抵入，穴口被龟头缓缓撑开，她只是把脸往枕头里埋了埋，没醒。",
+                "com_sex_P_doggy_Begin_Sleep_2": "肉棒整根没入时$self$在梦里皱了皱眉，喉咙里哼出一声含糊的鼻音，穴肉本能地裹紧入侵者，呼吸却始终平稳。",
                 "com_sex_P_doggy_Begin_Timestop_1": "$target$掰开她定格的臀瓣从后方抵入，穴口被龟头缓缓撑开，含住的软肉不受控地收缩吮紧，$self$的眼神停在半空没动。",
                 "com_sex_P_doggy_Begin_Timestop_2": "肉棒整根没入时，$self$垂在身侧的手还悬在离地半寸的地方，定格的房间里只剩穴肉吞吐的水声在响。",
 

@@ -141,9 +141,26 @@
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": ["sex", "kiss", "sleeping", "relaxed", "slightly_frowning", "unconscious"],
+                            "useActiveTags": false,
+                            "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
+                            "responses": [
+                                "com_sex_oral_kiss_Begin_Sleep_1",
+                                "com_sex_oral_kiss_Begin_Sleep_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
                                     "timestop"
                                 ]
                             },
+                            "extraSelfPortraitTags": ["sex", "kiss", "doll", "empty", "silence", "idle", "frozen_mid_motion", "unaware", "still"],
+                            "useActiveTags": false,
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_sex_oral_kiss_Begin_Timestop_1",
@@ -1046,6 +1063,8 @@
                 "com_sex_oral_kiss_160": "$self$按着$target$的胸口拉开距离。\n\"今天状态不行……亲得我脸皮疼。\"",
                 "com_sex_oral_kiss_161": "$self$失笑，抹掉唇上的水。\n\"哈……这是亲嘴还是洗脸，全是口水。\"",
                 "com_sex_oral_kiss_162": "$self$的眼神已经飘走，唇敷衍地贴着。\n\"……差不多得了，我嘴都木了。\"",
+                "com_sex_oral_kiss_Begin_Sleep_1": "$target$俯身贴上$self$熟睡中的唇，轻轻含住下唇吮了吮，她在梦里咂了咂嘴，呼吸依旧绵长，没醒。",
+                "com_sex_oral_kiss_Begin_Sleep_2": "舌尖撬开她松软的齿关探进去，$self$从喉咙里哼出一声含糊的鼻音，头往$target$那边偏了偏，仍沉在梦乡。",
                 "com_sex_oral_kiss_Begin_Timestop_1": "$target$捏着她的下巴贴上唇，舌尖撬开齿关探进去搅弄，渡进来的津液满到从$self$的嘴角溢出，也不见她咽。",
                 "com_sex_oral_kiss_Begin_Timestop_2": "$self$的眼睛还睁着，瞳孔停在原来的位置，软舌被含住拽出唇外，垂着不动。",
 

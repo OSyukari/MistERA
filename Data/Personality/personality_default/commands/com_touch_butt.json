@@ -10,9 +10,26 @@
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": ["sleeping", "relaxed"],
+                            "useActiveTags": false,
+                            "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
+                            "responses": [
+                                "com_touch_butt_Begin_Sleep_1",
+                                "com_touch_butt_Begin_Sleep_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
                                     "timestop"
                                 ]
                             },
+                            "extraSelfPortraitTags": ["doll", "empty", "silence", "idle"],
+                            "useActiveTags": false,
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_touch_butt_Begin_Timestop_1",
@@ -326,6 +343,8 @@
                 "com_touch_butt_34": "$self$蹲在地上崩溃大哭，充满恨意地瞪着$target$。\"你会遭报应的……你这个人渣！\"",
                 "com_touch_butt_35": "$self$此时已经完全冷静下来，面无表情地整理好衣服。\"闹够了吗？这三分钟我会记一辈子的。\"",
                 "com_touch_butt_36": "$self$趁$target$放松警惕，狠狠地踩了一脚他的脚背，趁机逃跑。",
+                "com_touch_butt_Begin_Sleep_1": "$target$的手掌覆上她熟睡中的臀肉轻轻揉捏，$self$在梦里不满地哼了声，翻身时反倒把屁股送得更近，没醒。",
+                "com_touch_butt_Begin_Sleep_2": "臀肉被揉出指印又慢慢弹回，$self$的双腿在被窝里无意识地磨蹭了两下，喉咙里嘟囔着含糊的梦话。",
                 "com_touch_butt_Begin_Timestop_1": "$target$的双手捧住她定格的臀肉揉捏，指印陷下去又慢慢弹回来，$self$的重心没有晃动。",
                 "com_touch_butt_Begin_Timestop_2": "臀肉被拍了两下又揉开，荡出的波纹停在半途，$self$的裙摆被掀起的弧度也定在空气里。"
             },

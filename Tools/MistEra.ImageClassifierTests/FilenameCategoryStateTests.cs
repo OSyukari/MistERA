@@ -54,7 +54,7 @@ static class FilenameCategoryStateTests
                 checks.Equal<string>(null, result.variant, "no cough suffix");
             });
 
-        foreach (var source in new[] { "dogeza", "showing nude", "shaking ass" })
+        foreach (var source in new[] { "dogeza", "showing nude", "shaking ass", "dogwalk", "dog walk", "dogwalking", "dog walking", "dogwalkl" })
             checks.Test("explicit pose alias selects activity: " + source, () =>
             {
                 var record = RegressionTests.Record(("masturbation", 0.99f));
@@ -241,17 +241,17 @@ static class FilenameCategoryStateTests
         foreach (var hints in new[] { false, true })
             checks.Test($"folder state is independent of normal variant: {fixture.tag ?? "base"}, hints={hints}", () =>
             {
-                var record = RegressionTests.Record(("1boy", 0.99f), ("missionary", 0.99f), ("mind_control", 0.99f));
-                record.path = "source.Missionary.Soulless.webp";
+                var record = RegressionTests.Record(("1boy", 0.99f), ("full_nelson", 0.99f), ("mind_control", 0.99f));
+                record.path = "source.FullNelson.Soulless.webp";
                 if (fixture.tag != null) record.general[fixture.tag] = 0.99f;
                 var before = JsonConvert.SerializeObject(record);
                 var result = engine.Classify(record, hints);
-                Named(checks, result, "human", "missionary");
+                Named(checks, result, "human", "full_nelson");
                 checks.Equal(fixture.variant, result.variant, "existing variant preserved");
                 checks.Equal(fixture.state, result.state, "state priority alongside variant");
                 checks.Equal(hints && fixture.state == "mindcontrolled" ? "filename ID soulless" : "rules/tags", result.stateSource,
                     "state priority precedes provenance preference");
-                checks.Equal("missionary_" + fixture.variant, result.name, "only action variant in stem");
+                checks.Equal("full_nelson_" + fixture.variant, result.name, "only action variant in stem");
                 checks.Equal(before, JsonConvert.SerializeObject(record), "classification immutable");
             });
 
@@ -296,14 +296,14 @@ static class FilenameCategoryStateTests
         foreach (var hints in new[] { false, true })
             checks.Test($"folder state tag priority {string.Join(",", fixture.tags)}, hints={hints}", () =>
             {
-                var record = RegressionTests.Record(("1boy", 0.99f), ("handjob", 0.99f), ("cum", 0.99f));
+                var record = RegressionTests.Record(("1boy", 0.99f), ("sex", 0.99f), ("full_nelson", 0.99f), ("cum", 0.99f));
                 foreach (var tag in fixture.tags) record.general[tag] = 0.99f;
                 var result = engine.Classify(record, hints);
-                Named(checks, result, "human", "handjob");
+                Named(checks, result, "human", "full_nelson");
                 checks.Equal(fixture.state, result.state, "highest-priority canonical state");
                 checks.Equal("rules/tags", result.stateSource, "tag state provenance");
                 checks.Equal("cum", result.variant, "state does not replace action variant");
-                checks.Equal("handjob_cum", result.name, "state is not a suffix");
+                checks.Equal("full_nelson_cum", result.name, "state is not a suffix");
             });
 
         foreach (var fixture in new[] {

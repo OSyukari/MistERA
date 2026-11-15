@@ -397,6 +397,14 @@ public class scr_Menu_Intro : scr_Menu
                 shownKey = key;
                 button.SetText(key);
             }
+            // dependency cycles dropped mods at boot: highlight the entry and name the cycles (the mod manager shows them too)
+            if (ModLoader.Cycles.Count > 0)
+            {
+                detected = true;
+                var warning = new System.Text.StringBuilder(tooltip);
+                scr_Menu_Updates.AppendCycles(warning);
+                tooltip = warning.ToString();
+            }
             button.Toggle(true, detected);
             state = valid ? ButtonValidator_States.Valid : ButtonValidator_States.Invalid;
             return valid;

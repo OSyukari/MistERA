@@ -45,6 +45,42 @@ public partial class EvaluationPackage
     /// granter / holder / permission). Separate from the legacy hasPermission flag.</summary>
     [JsonIgnore] public IReadOnlyList<MissingPermission> MissingPermissions { get { return missingPermissions; } }
 
+    /// <summary>Permissions the pair's requester (PairRequester) has not given yet: kept out of MissingPermissions - the
+    /// requester is never penalized, asked or demanded for their own act - and granted when it runs (GrantRequesterPermissions).</summary>
+    List<MissingPermission> requesterPermissions = new List<MissingPermission>();
+
+    /// <summary>Clears what the latest Evaluate found (Evaluate, before the willingness checks).</summary>
+    void ResetPermissionResults()
+    {
+        missingPermissions.Clear();
+        requesterPermissions.Clear();
+    }
+
+    /// <summary>
+    /// Who asked for this pair's act: the doer without a master or as their own master; a master who is someone else
+    /// only as this pair's receiver (A orders B to do X on A). A orders B to do X on C: nobody - B and C are both asked.
+    /// </summary>
+    Character_Trainable PairRequester
+    {
+        get
+        {
+            var master = Package?.Master;
+            if (master == null || master == Doer) return Doer;
+            return master == Receiver ? master : null;
+        }
+    }
+
+    /// <summary>
+    /// The act ran (accepted pair, ActionPackage execution): the requester's own missing permissions are granted to
+    /// the partner (PermissionGrantSource.Initiated), silently. Normal for a sexual partner, else Temporary (ResolveGrantType).
+    /// </summary>
+    internal void GrantRequesterPermissions()
+    {
+        if (requesterPermissions.Count == 0 || Response < Memory_Response.Accept) return;
+        foreach (var granted in requesterPermissions)
+            PermissionService.TryGrant(granted.Granter, granted.Holder, granted.Definition.ID, PermissionGrantSource.Initiated, out _);
+    }
+
     /// <summary>
     /// Matches every permission's rules against this check (granter = self) and, for each matched permission the holder
     /// does not have, adds its penalty or sets the check to 0, per PermissionMode. Each permission counts once per check.
@@ -60,6 +96,7 @@ public partial class EvaluationPackage
         if (index?.list == null) return;
         var partner = isDoer ? Receiver : Doer;
 
+        var requester = PairRequester;
         HashSet<string> ownerTags = null, comTags = null;
         foreach (var definition in index.list)
         {
@@ -83,6 +120,14 @@ public partial class EvaluationPackage
             // an unusable pair counts as missing, as the legacy HasPermission_* wrappers did
             var query = PermissionService.Query(self, holder, definition.ID);
             if (query.Error.Length == 0 && query.HasPermission) continue;
+
+            // the requester asked for this act: never penalized, asked or demanded - granted when the act runs
+            if (self == requester)
+            {
+                if (query.Error.Length == 0 && !requesterPermissions.Exists(x => x.Definition == definition && x.Holder == holder))
+                    requesterPermissions.Add(new MissingPermission { Definition = definition, Granter = self, Holder = holder, Query = query });
+                continue;
+            }
 
             if (unaware)
             {

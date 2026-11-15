@@ -176,6 +176,7 @@ static class UnifiedReportTests
 
         WorkFolderTests(checks);
         SplitClassifyTests(knownName, checks);
+        PerformPlanTests(checks);
     }
 
     /// <summary>Classify in two steps: Move keeps the file name, Rename only touches images already in their category folder.</summary>
@@ -222,6 +223,50 @@ static class UnifiedReportTests
             var plan = ImageClassifyMover.BuildPlan(analysis, false);
             checks.Check(plan.moves.Any(m => m.from == "loose/a.png" && m.to.StartsWith("human/" + knownName.name + "_pack_chara_")), "Moved and renamed");
         });
+    }
+
+    static void PerformPlanTests(Assertions checks)
+    {
+        foreach (var step in new[] { ImageClassifyStep.Move, ImageClassifyStep.Rename, ImageClassifyStep.Both })
+        foreach (var includeLow in new[] { false, true })
+        foreach (var nested in new[] { "", "/nested/deeper" })
+            checks.Test($"perform plan preserves current directory: {step}, low={includeLow}, nested={nested}", () =>
+            {
+                // No directories or images are created and no plan is executed.
+                var folder = Path.Combine(Path.GetTempPath(), "mistera_perform_plan_" + Guid.NewGuid().ToString("N"), "pack", "chara_sleeping");
+                var category = new CategoryRule { id = "human", moveLowConfidence = false };
+                var currentDir = "human_perform" + nested;
+                var name = new NameRule { name = "handjob" };
+                var analysis = new ImageAnalysisResult { folder = folder, rules = new ImageRules(), folderDecides = false };
+                foreach (var path in new[] { currentDir + "/source.webp", currentDir + "/different_action_pack_chara_sleeping_7.webp" })
+                    analysis.results.Add(new ImageClassification {
+                        record = new ImageTagRecord { path = path, originalName = "first.webp" },
+                        category = category, nameRule = name, name = name.name, byFolder = true,
+                        status = ClassificationStatus.LowConfidence, state = "mindcontrolled", stateSource = "rules/tags"
+                    });
+                var before = Newtonsoft.Json.JsonConvert.SerializeObject(analysis);
+                var plan = ImageClassifyMover.BuildPlan(analysis, includeLow, step);
+                checks.Equal(0, plan.lowConfidenceHeldBack, "Folder-authoritative naming bypasses first-pass confidence hold");
+                checks.Equal(0, plan.lowConfidenceNeverMoved, "In-place naming bypasses moveLowConfidence false");
+                checks.Equal(0, plan.notInCategoryFolder, "Perform alias counts as in-category for Rename");
+                checks.Equal(step == ImageClassifyStep.Move ? 2 : 1, plan.alreadyInPlace, "Settled names remain settled");
+                checks.Equal(step == ImageClassifyStep.Move ? 0 : 1, plan.moves.Count, "Move skips same-directory images; other steps rename only raw name");
+                if (step != ImageClassifyStep.Move)
+                {
+                    var move = plan.moves.Single();
+                    checks.Equal(currentDir + "/source.webp", move.from, "Original relative source");
+                    checks.Equal(currentDir + "/handjob_pack_chara_sleeping_1.webp", move.to, "No flattening, role removal or detected-state relocation");
+                    checks.Equal("human", move.category, "Plan metadata retains base category");
+                }
+                checks.Equal(before, Newtonsoft.Json.JsonConvert.SerializeObject(analysis), "Planning leaves source analysis unchanged");
+
+                var row = analysis.results[0];
+                row.byFolder = false;
+                checks.Equal("human", ImageClassifyMover.DestinationDirectory(folder, row), "Non-authoritative perform path cannot control destination");
+                row.byFolder = true;
+                row.record.path = "foo_perform/nested/source.webp";
+                checks.Equal("human", ImageClassifyMover.DestinationDirectory(folder, row), "Unrelated perform-looking folder cannot control destination");
+            });
     }
 
     static void WorkFolderTests(Assertions checks)

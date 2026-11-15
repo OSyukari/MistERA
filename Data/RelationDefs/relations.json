@@ -552,6 +552,7 @@
                 "menu_changeRel_tooltip_currentActive":"这是二人当前维持的关系",
                 "menu_changeRel_tooltip_forbidPlayer":"该关系无法由玩家提出",
                 "menu_changeRel_tooltip_cooldown":"二人才刚刚改变过关系！",
+                "menu_changeRel_tooltip_unsupported":"$target$不支持该关系",
                 "menu_changeRel_tooltip_satistisfied":"前置条件已满足",
                 "menu_changeRel_tooltip_invalid":"不满足该关系的前置条件",
 
@@ -748,6 +749,7 @@
       "menu_changeRel_title_social": "<link=menu_changeRel_title_tooltip>The faction relationship between the two is...</link>",
       "menu_changeRel_title_tooltip": "This displays the identity of the target from the player's perspective",
       "menu_changeRel_tooltip_cooldown": "These two just changed their relationship recently!",
+      "menu_changeRel_tooltip_unsupported": "$target$ does not support this relationship",
       "menu_changeRel_tooltip_currentActive": "This is the relationship currently maintained by the two",
       "menu_changeRel_tooltip_forbidPlayer": "This relationship cannot be proposed by the player",
       "menu_changeRel_tooltip_invalid": "Prerequisites for this relationship are not met",

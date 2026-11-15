@@ -42,8 +42,9 @@ public static class AssetPackLoader
     static readonly string[] imageExtensions = { ".png", ".jpg", ".jpeg", ".webp" };
 
     /// <summary>
-    /// Scans Mods/Assetpacks (creating it if missing), registers new folders as enabled in user prefs,
-    /// and reads each pack's optional About. Returned in load order (folder name, ordinal).
+    /// Scans Mods/Assetpacks (creating it if missing), registers new folders in user prefs, and reads each pack's
+    /// optional About. Returned in load order (folder name, ordinal). Top-level asset packs are retired as a publishing
+    /// format and cannot be disabled: every pack loads, stored false toggles are ignored (kept in prefs untouched).
     /// </summary>
     public static List<AssetPackInfo> Scan(string assetPacksPath)
     {
@@ -71,7 +72,7 @@ public static class AssetPackLoader
                 id = dir.Name,
                 folderPath = dir.FullName,
                 aboutPath = Path.Combine(dir.FullName, AboutFolder),
-                enabled = toggles[dir.Name],
+                enabled = true,
             };
             ReadAbout(info);
             results.Add(info);

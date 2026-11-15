@@ -1,0 +1,238 @@
+{
+    "_doc": "口上loose entry文件：个人关系变更口上（动物，personality_base_animal）。条目含义与personality_base/relationships.json相同：_propose提出（RequestRelationshipChange事件的请求台词，缺失会使事件中断、提案静默失败，故必须提供）、_set建立、_refuse拒绝对方、_refused被对方拒绝、_break结束；bully带_A（欺凌方）/_B（被欺凌方）后缀，其propose不会自然触发。只提供友情/敌对类关系，不提供恋人/婚姻/炮友。\n\n== 动物口上规范 ==\n1. 动物不会说话：每条response只能是一句被引号包裹的叫声或拟声，禁止旁白与人类语言。\n2. 本人格被狗、猪、守卫兽等多种动物共用，不使用特定物种的叫声（如汪、哼哼）。\n3. 每个条目一个variant、3条可选response。",
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_base_animal",
+                "Entry": {
+                    "ID": "relationship_friend_propose",
+                    "_comment": "$self$亲近$target$、想与其做朋友。亲昵的叫声。",
+                    "variants": [ { "responses": [
+                        "\"呜～呜～\"",
+                        "\"咕噜……咕噜……\"",
+                        "\"嗷呜？\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base_animal",
+                "Entry": {
+                    "ID": "relationship_friend_set",
+                    "_comment": "与$target$成为朋友。欢快的叫声。",
+                    "variants": [ { "responses": [
+                        "\"嗷呜！\"",
+                        "\"呜呜～！\"",
+                        "\"咕噜咕噜～\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base_animal",
+                "Entry": {
+                    "ID": "relationship_friend_refuse",
+                    "_comment": "$self$不愿亲近$target$。冷淡或警惕的叫声。",
+                    "variants": [ { "responses": [
+                        "\"……呼。\"",
+                        "\"嗯——\"",
+                        "\"呜……\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base_animal",
+                "Entry": {
+                    "ID": "relationship_friend_refused",
+                    "_comment": "$self$的亲近被$target$拒绝。失落的叫声。",
+                    "variants": [ { "responses": [
+                        "\"呜嗯……\"",
+                        "\"呜……呜……\"",
+                        "\"……咕。\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base_animal",
+                "Entry": {
+                    "ID": "relationship_friend_break",
+                    "_comment": "与$target$的朋友关系结束。疏远的叫声。",
+                    "variants": [ { "responses": [
+                        "\"呼——\"",
+                        "\"……\"",
+                        "\"嗯……！\""
+                    ] } ]
+                }
+            },
+
+            {
+                "ID": "personality_base_animal",
+                "Entry": {
+                    "ID": "relationship_bff_propose",
+                    "_comment": "$self$极度依恋$target$。撒娇的叫声。",
+                    "variants": [ { "responses": [
+                        "\"呜呜呜～～\"",
+                        "\"嗷呜～嗷呜～\"",
+                        "\"咕噜咕噜咕噜……\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base_animal",
+                "Entry": {
+                    "ID": "relationship_bff_set",
+                    "_comment": "与$target$成为挚友。兴奋的叫声。",
+                    "variants": [ { "responses": [
+                        "\"嗷呜——！\"",
+                        "\"呜呜！呜呜！\"",
+                        "\"咕噜～咕噜～！\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base_animal",
+                "Entry": {
+                    "ID": "relationship_bff_refuse",
+                    "_comment": "$self$对$target$的过度亲近保持距离。",
+                    "variants": [ { "responses": [
+                        "\"呼……\"",
+                        "\"嗯？\"",
+                        "\"……呜。\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base_animal",
+                "Entry": {
+                    "ID": "relationship_bff_refused",
+                    "_comment": "$self$的依恋被$target$拒绝。委屈的叫声。",
+                    "variants": [ { "responses": [
+                        "\"呜嗯……呜……\"",
+                        "\"呜呜……\"",
+                        "\"……咕呜。\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base_animal",
+                "Entry": {
+                    "ID": "relationship_bff_break",
+                    "_comment": "与$target$的挚友关系结束。伤心或警惕的叫声。",
+                    "variants": [ { "responses": [
+                        "\"呜————\"",
+                        "\"嗯……！\"",
+                        "\"……\""
+                    ] } ]
+                }
+            },
+
+            {
+                "ID": "personality_base_animal",
+                "Entry": {
+                    "ID": "relationship_rival_propose",
+                    "_comment": "$self$向$target$示威、视其为对手。低吼。",
+                    "variants": [ { "responses": [
+                        "\"呜噜噜噜……\"",
+                        "\"嗷！\"",
+                        "\"咕噜噜——！\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base_animal",
+                "Entry": {
+                    "ID": "relationship_rival_set",
+                    "_comment": "与$target$成为对手。挑衅的吼声。",
+                    "variants": [ { "responses": [
+                        "\"嗷呜——！\"",
+                        "\"呜噜噜……！\"",
+                        "\"嗷！嗷！\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base_animal",
+                "Entry": {
+                    "ID": "relationship_rival_refuse",
+                    "_comment": "$self$无视$target$的示威。",
+                    "variants": [ { "responses": [
+                        "\"呼……\"",
+                        "\"哈——\"",
+                        "\"……\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base_animal",
+                "Entry": {
+                    "ID": "relationship_rival_refused",
+                    "_comment": "$self$的示威被$target$无视。不满的低吼。",
+                    "variants": [ { "responses": [
+                        "\"呜噜噜……\"",
+                        "\"嗷！\"",
+                        "\"咕噜……！\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base_animal",
+                "Entry": {
+                    "ID": "relationship_rival_break",
+                    "_comment": "与$target$的对手关系结束。",
+                    "variants": [ { "responses": [
+                        "\"呼……\"",
+                        "\"……嗯。\"",
+                        "\"哈——\""
+                    ] } ]
+                }
+            },
+
+            {
+                "ID": "personality_base_animal",
+                "Entry": {
+                    "ID": "relationship_bully_set_A",
+                    "_comment": "$self$对$target$占据压制地位。威吓的吼声。",
+                    "variants": [ { "responses": [
+                        "\"呜噜噜噜噜……！\"",
+                        "\"嗷——！\"",
+                        "\"哈——！\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base_animal",
+                "Entry": {
+                    "ID": "relationship_bully_break_A",
+                    "_comment": "$self$对$target$的压制关系结束。",
+                    "variants": [ { "responses": [
+                        "\"呼……\"",
+                        "\"……哼嗯。\"",
+                        "\"……\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base_animal",
+                "Entry": {
+                    "ID": "relationship_bully_set_B",
+                    "_comment": "$self$被$target$压制、畏惧对方。害怕的叫声。",
+                    "variants": [ { "responses": [
+                        "\"呜……呜……\"",
+                        "\"呜咿……\"",
+                        "\"……呜嗯。\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base_animal",
+                "Entry": {
+                    "ID": "relationship_bully_break_B",
+                    "_comment": "$self$摆脱了被$target$压制的关系。",
+                    "variants": [ { "responses": [
+                        "\"呼——\"",
+                        "\"嗷！\"",
+                        "\"……呼。\""
+                    ] } ]
+                }
+            }
+        ]
+    }
+}

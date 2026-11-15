@@ -73,6 +73,18 @@
                 "skeletonJSON_path":"Momoka/Momoka_weekdungeon.skel",
                 "idleAnimName":"Idle_01", "addonAnimName":"Idle_01"
 
+            },
+            {
+                "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+                "_comment":"fallback when the spine textures (mod mist.ba.utnapishtim.spine) are not loaded",
+
+                "random_portrait_folder":"Momoka/portrait_momoka",
+
+                "icon_offset_x":0.0,
+                "icon_offset_y":0.0,
+                "icon_offset_size":0.8,
+
+                "icon_path":"Momoka/Momoka_Ark_Uniform_Icon.png"
             }
         ],
         "CharaBanner":

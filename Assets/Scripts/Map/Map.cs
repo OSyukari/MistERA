@@ -647,17 +647,21 @@ public class Map_Instance
     [JsonIgnore] public List<ActionPackage> dirtyCharaAPRef = new List<ActionPackage>();
 
     /// <summary>
-    /// Rooms whose occupants need RefreshMoodlets: someone entered / left, an action started / ended, a divider or the
-    /// room's cleanliness changed. Unlike the dirty lists above it survives NotifyEventEnd (event-driven moves still
-    /// refresh), and is consumed by UpdateAllRoom. Orphan rooms are never consumed (frozen on purpose).
+    /// Sets Room_Instance.MoodletsDirty. Unlike the dirty lists above it survives NotifyEventEnd (event-driven moves
+    /// still refresh), and is consumed by UpdateAllRoom.
     /// </summary>
-    [JsonIgnore] HashSet<int> moodletDirtyRooms = new HashSet<int>();
-    [JsonIgnore] HashSet<int> moodletDirtyRooms_processing = new HashSet<int>();
-
     public void MarkMoodletsDirty(int roomRef)
     {
-        if (roomRef >= 0) moodletDirtyRooms.Add(roomRef);
+        if (roomRef < 0) return;
+        var room = GetRoomByRef(roomRef);
+        if (room != null) room.MoodletsDirty = true;
     }
+    public void MarkMoodletsDirty(Room_Instance room)
+    {
+        if (room == null) return;
+        room.MoodletsDirty = true;
+    }
+
     /// <summary>Marks the rooms the given characters currently stand in.</summary>
     public void MarkMoodletsDirtyForChara(List<int> charaRefs)
     {
@@ -665,7 +669,7 @@ public class Map_Instance
     }
     public void MarkMoodletsDirtyForChara(int charaRef)
     {
-        if (charaRoomRef.TryGetValue(charaRef, out var roomRef)) moodletDirtyRooms.Add(roomRef);
+        if (charaRoomRef.TryGetValue(charaRef, out var roomRef)) MarkMoodletsDirty(roomRef);
     }
     public bool IsActiveRoom(int roomRef)
     {
@@ -1007,21 +1011,21 @@ public class Map_Instance
             Debug.Log($"UpdateAllRoom, check interrupt\nDirtyCharaRefs {dirtyCharaRef.Count}: {String.Join("|",names)}\nDirtyAPRefs {dirtyCharaAPRef.Count}: {String.Join("|", names2)}");
         }
 
-        // rooms marked from here on (events fired by UpdateRoom) wait for the next pass instead of being dropped
-        var moodletRooms = moodletDirtyRooms;
-        moodletDirtyRooms = moodletDirtyRooms_processing;
-        moodletDirtyRooms_processing = moodletRooms;
-
         bool timeResume = scr_System_Time.current.TimeResume;
         foreach (var i in Rooms)
         {
             var ri = i.Value;
+            // read before UpdateRoom: marks from its events wait for the next pass instead of being dropped
+            //bool moodletsDirty = ri.MoodletsDirty;
             if (RoomNeedsInterruptCheck(ri, timeResume)) UpdateRoom(ri);
             else ri.Tick();
             // each from the characters they see (room dividers)
-            if (moodletRooms.Contains(ri.RefID)) MapUtility.RefreshMoodletsVisible(ri.RoomChara);
+            if (ri.MoodletsDirty)
+            {
+                MapUtility.RefreshMoodletsVisible(ri.RoomChara);
+                ri.MoodletsDirty = false;
+            }
         }
-        moodletRooms.Clear();
         //System.Threading.Tasks.Parallel.ForEach(roomCharaRef, entry => UpdateRoom(entry));
 
 
@@ -1138,8 +1142,8 @@ public class Map_Instance
         dirtyCharaRef.Add(charaRef.RefID);
         Utility.DistinctInPlace(dirtyCharaRef);
         // who is present changed in both rooms
-        if (oldRoom != null) MarkMoodletsDirty(oldRoom.RefID);
-        MarkMoodletsDirty(newRoom.RefID);
+        if (oldRoom != null) MarkMoodletsDirty(oldRoom);
+        MarkMoodletsDirty(newRoom);
 
         if (charaRef.CanActInTimeStop && scr_System_Time.current.TimeStop) charaRef.MovedInTimeStop = true;
 

@@ -34,6 +34,13 @@ public partial class ResponseEntry
         }
     }
 
+    /// <summary>Whether any variant (nested included) authors at least one response - requirements are not evaluated.</summary>
+    public bool HasResponses()
+    {
+        for (int i = 0; i < variants.Count; i++) if (variants[i].HasResponses()) return true;
+        return false;
+    }
+
     public bool Validate(Character_Trainable owner, Character_Trainable target = null)
     {
         if (interruptSelfJob && owner.CurrentJob != null && (owner.CurrentJob is Job_Sex_Group)) return false;

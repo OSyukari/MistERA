@@ -113,6 +113,37 @@
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": ["sex", "receiver", "fingering", "spread_pussy", "sleeping", "relaxed"],
+                            "useActiveTags": false,
+                            "_comment": "2.3.4 开始被V指入 睡眠中 口上文（开工时已睡着）",
+                            "responses": [
+                                "com_sex_finger_insert_V_Begin_Sleep_1",
+                                "com_sex_finger_insert_V_Begin_Sleep_2"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": ["sex", "doer", "fingering", "spread_pussy", "sleeping", "relaxed"],
+                            "useActiveTags": false,
+                            "_comment": "2.5.7 开始 睡眠中 独自V指入自慰 口上文（睡梦中自己开始）",
+                            "responses": [
+                                "com_sex_finger_insert_V_Begin_Self_Sleep_1",
+                                "com_sex_finger_insert_V_Begin_Self_Sleep_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
                                     "timestop"
                                 ]
                             },
@@ -563,6 +594,7 @@
                                     "sleeping"
                                 ]
                             },
+                            "extraSelfPortraitTags": ["sex", "doer", "fingering", "spread_pussy", "sleeping", "relaxed"],
                             "useActiveTags": false,
                             "_comment": "2.5.5 睡眠中 独自V指入自慰 口上文",
                             "responses": [
@@ -578,6 +610,7 @@
                                     "timestop"
                                 ]
                             },
+                            "extraSelfPortraitTags": ["sex", "doer", "fingering", "spread_pussy", "doll", "idle"],
                             "useActiveTags": false,
                             "_comment": "2.5.6 时停中 独自V指入自慰 口上文",
                             "responses": [
@@ -731,6 +764,10 @@
                 "com_sex_finger_insert_V_Climax_Self_M_4": "$self$泄身的瞬间腿根猛地并拢，把手指夹在穴里抽不出来。\n\"被逼着弄自己……居然也到了……呜呜……好丢脸……\"",
                 "com_sex_finger_insert_V_Climax_Self_3": "$self$的手指捣得又急又乱，忽然僵住，整个人蜷起来发抖。\n\"到、到了……呜……好丢脸……\"",
                 "com_sex_finger_insert_V_Climax_Self_4": "$self$泄身的瞬间腿根猛地并拢，把手指夹在穴里抽不出来。\n\"自己弄到去了……呜呜……好丢脸……\"",
+                "com_sex_finger_insert_V_Begin_Sleep_1": "$target$的手指从她熟睡中微张的腿间探进来，缓缓挤开小穴没入，$self$在梦里皱了皱眉，穴肉本能地夹紧，却没醒。",
+                "com_sex_finger_insert_V_Begin_Sleep_2": "指尖一点点没到指根，$self$哼出一声含糊的鼻音，腰随着手指轻轻起伏，意识还沉在梦乡里。",
+                "com_sex_finger_insert_V_Begin_Self_Sleep_1": "$self$在睡梦中翻了个身，手无意识地探进腿间，指尖抵开小穴慢慢没了进去，呼吸也跟着变沉。",
+                "com_sex_finger_insert_V_Begin_Self_Sleep_2": "梦里不知想到了什么，$self$的手指在自己的小穴里浅浅抽动，腿缝渐渐湿了，她始终没醒。",
                 "com_sex_finger_insert_V_Begin_Timestop_1": "$self$僵立在原地，$target$的手指从腿间探进来，缓缓挤开小穴没入，她从头到尾没能给出任何反应。",
                 "com_sex_finger_insert_V_Begin_Timestop_2": "$self$定格在被摆好的姿势里，指尖抵开穴口慢慢没进去，穴肉被撑开也只会本能地含着，她毫无知觉。",
                 "com_sex_finger_insert_V_Begin_1": "$self$顺从地分开双腿，把$target$的手引到腿间。\n\"如果是$target$的话……没关系的，进来吧。\"",

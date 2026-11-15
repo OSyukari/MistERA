@@ -29,7 +29,7 @@ public sealed class UpdateEntryBadge : MonoBehaviour
     {
         if (label == null || service == null) return;
         string key = service.HasPendingBuild || service.RestartRequired || service.ContentAvailableAfterRestart
-            ? "entry_restart" : service.HasStagedMods ? "entry_staged" :
+            ? "entry_restart" : ModLoader.Cycles.Count > 0 ? "entry_mod_cycle" : service.HasStagedMods ? "entry_staged" :
             service.AvailableBuild != null ? "entry_available" : null;
         label.SetText(key == null ? "" : scr_Menu_Updates.Text(key));
     }

@@ -2,8 +2,9 @@
     "baseID": "Campaign1_Char_Ako",
     "Portrait":{
         "useGlobalHandler": [
-            { "path": "ba_ako/dress", "selfKeys": ["dress"] },
-            { "path": "ba_ako/default" }
+            { "path": "ba_ako/naked", "selfKeys": ["naked_torso", "naked_lower"], "fallback": "ba_ako/default" },
+            { "path": "ba_ako/dress", "selfKeys": ["dress"], "fallback": "ba_ako/naked" },
+            { "path": "ba_ako/default", "fallback": "ba_ako/naked" }
         ],
         "portraitPriorityList":[
             {
@@ -60,6 +61,18 @@
                 "atlasJSON_path":"Ako/NP0111_spr.atlas",
                 "skeletonJSON_path":"Ako/NP0111_spr.skel",
                 "idleAnimName":"Idle_01", "addonAnimName":"00"
+            },
+            {
+                "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+                "_comment":"fallback when the spine textures (mod mist.ba.utnapishtim.spine) are not loaded",
+
+                "random_portrait_folder":"Ako/portrait_ako",
+
+                "icon_offset_x":0.0,
+                "icon_offset_y":0.0,
+                "icon_offset_size":0.8,
+
+                "icon_path":"Ako/Ako_Ark_Uniform_Icon.png"
             }
         ],
         "CharaBanner":

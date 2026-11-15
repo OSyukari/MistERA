@@ -220,5 +220,12 @@
                 ]
             }
         ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "personality_base":"默认男性"
+            }
+        }
     }
 }

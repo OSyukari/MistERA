@@ -17,8 +17,8 @@ using Newtonsoft.Json.Linq;
 public static class ImageRulesJsonLoader
 {
     static readonly Regex WeightSuffix = new Regex(@"^(.*)\*([0-9]*\.?[0-9]+)$", RegexOptions.Compiled);
-    static readonly HashSet<string> CategoryKeys = new HashSet<string> { "id", "group", "all", "any", "none", "threshold", "hold", "nameSet", "allowedNames", "allowedVariants", "moveLowConfidence", "rename", "refines", "manual", "filenameConfirmedNearMisses", "filenameFirst" };
-    static readonly HashSet<string> NameEntryKeys = new HashSet<string> { "tier", "hasVariants", "defaultVariant", "filenameOnly", "none", "onlyInCategories", "fallback", "tierMinScore" };
+    static readonly HashSet<string> CategoryKeys = new HashSet<string> { "id", "group", "all", "any", "none", "threshold", "hold", "holdFilenameHints", "nameSet", "allowedNames", "allowedVariants", "moveLowConfidence", "rename", "refines", "manual", "filenameConfirmedNearMisses", "filenameFirst" };
+    static readonly HashSet<string> NameEntryKeys = new HashSet<string> { "tier", "hasVariants", "defaultVariant", "filenameOnly", "isperform", "none", "noneAll", "onlyInCategories", "fallback", "tierMinScore", "threshold", "noneThreshold" };
     static readonly HashSet<string> EmotionPassKeys = new HashSet<string> { "categories", "labels", "prompt" };
 
     public static ImageRules Load(string path)
@@ -184,6 +184,18 @@ public static class ImageRulesJsonLoader
         foreach (var p in obj.Properties())
         {
             if (IsComment(p.Name)) continue;
+            if (p.Name == "variantMinScore")
+            {
+                if (!(p.Value is JObject overrides)) { rules.loadWarnings.Add("settings: variantMinScore must be an object { variant id: minimum score }"); continue; }
+                foreach (var o in overrides.Properties())
+                {
+                    if (IsComment(o.Name)) continue;
+                    var min = o.Value.Value<float>();
+                    if (min <= 0f || min > 1f) { rules.loadWarnings.Add($"settings: variantMinScore [{o.Name}] must be in (0, 1], got {min}"); continue; }
+                    s.variantMinScore[o.Name] = min;
+                }
+                continue;
+            }
             float v = p.Value.Value<float>();
             switch (p.Name)
             {
@@ -215,6 +227,7 @@ public static class ImageRulesJsonLoader
             none = ReadClauses(c["none"], parser, where),
             threshold = c["threshold"]?.Value<float>(),
             hold = c["hold"]?.Value<bool>() ?? false,
+            holdFilenameHints = (c["holdFilenameHints"] as JArray)?.Values<string>().ToList() ?? new List<string>(),
             nameSet = (string)c["nameSet"] ?? ImageRules.DefaultNameSet,
             allowedNames = c["allowedNames"] is JArray allowed ? new HashSet<string>(allowed.Select(v => (string)v)) : null,
             allowedVariants = c["allowedVariants"] is JArray variants ? new HashSet<string>(variants.Values<string>()) : null,
@@ -249,9 +262,13 @@ public static class ImageRulesJsonLoader
                 tier = e["tier"]?.Value<float>() ?? 1,
                 fallback = e["fallback"]?.Value<bool>() ?? false,
                 filenameOnly = e["filenameOnly"]?.Value<bool>() ?? false,
+                isperform = e["isperform"]?.Value<bool>() ?? false,
                 tierMinScore = e["tierMinScore"]?.Value<float>(),
+                threshold = e["threshold"]?.Value<float>(),
+                noneThreshold = e["noneThreshold"]?.Value<float>(),
                 clauses = ReadClauses(nameKeys[0].Value, parser, where),
                 none = ReadClauses(e["none"], parser, where),
+                noneAll = ReadClauses(e["noneAll"], parser, where),
                 hasVariants = (e["hasVariants"] as JArray)?.Select(v => (string)v).ToList() ?? new List<string>(),
                 defaultVariant = (string)e["defaultVariant"],
             };

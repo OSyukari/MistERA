@@ -21,6 +21,18 @@
                 "atlasJSON_path":"char063401/char063401.atlas",
                 "skeletonJSON_path":"char063401/char063401.skel",
                 "idleAnimName":"idle"
+            },
+            {
+                "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+                "_comment":"fallback when the spine assets (mod mist.bd2.spine) are not loaded",
+
+                "random_portrait_folder":"Others/Generated_Adventurers",
+
+                "icon_offset_x":0.0,
+                "icon_offset_y":0.0,
+                "icon_offset_size":1.0,
+
+                "icon_path":"Templates/illust_inven_char063401_64.png"
             }
         ]
     },

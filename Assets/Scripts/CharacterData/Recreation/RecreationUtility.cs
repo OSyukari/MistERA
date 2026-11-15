@@ -2518,10 +2518,13 @@ public static partial class RecreationUtility
         return true;
     }
 
-    /// <summary>If c is asleep past booking's start, the sleep now ends at it (at least a minute from now); the cut is missed sleep.</summary>
+    /// <summary>
+    /// If c is asleep past booking's start, the sleep now ends at it (at least a minute from now); the cut is missed sleep.
+    /// Not a sleep the player chose to take until rested (Character_Trainable.SleepUntilRested).
+    /// </summary>
     static void CutSleepFor(Character_Trainable c, RecreationBooking booking)
     {
-        if (!c.isSleeping) return;
+        if (!c.isSleeping || c.SleepUntilRested) return;
         var sleeping = c.Stats.GetStatusByStringMatch(StatsUtility.Status_Sleeping);
         if (sleeping == null || sleeping.duration < 0) return;   // no running timer to cut
 
@@ -2559,12 +2562,7 @@ public static partial class RecreationUtility
             if (b == null || !b.isSessionBooking || !IsSessionBookingLive(b, c)) continue;
             int untilStart = b.AbsStart * 60 - nowMinutes;
             if (untilStart <= 0 || untilStart > SessionWakeLookaheadMinutes) continue;
-            if (from == null)
-            {
-                var locale = f.CurrentLocaleFaction;
-                from = (locale == null ? null : scr_System_CampaignManager.current.FindFactionByID(locale.FactionID))
-                    ?? (f.HomeFactions.Count > 0 ? f.HomeFactions[0] : null);
-            }
+            if (from == null) from = WakeOrigin(f);
             result = Math.Min(result, untilStart - WakeUpBufferHours(from, b.factionID) * 60);
         }
         return result;
@@ -2573,11 +2571,11 @@ public static partial class RecreationUtility
     /// <summary>
     /// A session c attends was confirmed (ResolveSession, or c joined one already confirmed): a sleep running past MinutesUntilSessionWake now ends there (at
     /// least a minute from now) - the cut counted as missed sleep, as CutSleepFor. A sleep started later is capped the
-    /// same way by Character_Trainable.Sleep.
+    /// same way by Character_Trainable.Sleep. Not a sleep the player chose to take until rested (SleepUntilRested).
     /// </summary>
     static void WakeForSessions(Character_Trainable c)
     {
-        if (!c.isSleeping) return;
+        if (!c.isSleeping || c.SleepUntilRested) return;
         var sleeping = c.Stats.GetStatusByStringMatch(StatsUtility.Status_Sleeping);
         if (sleeping == null || sleeping.duration < 0) return;   // no running timer to cut
 

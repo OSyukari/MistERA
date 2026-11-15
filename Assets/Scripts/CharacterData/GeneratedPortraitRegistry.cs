@@ -42,7 +42,8 @@ public static class GeneratedPortraitRegistry
             if (serializer == null || (control != null && control.isSafeMode)) return false;
             var pack = serializer.AssetPacks.Find(p => string.Equals(p.id, ComfyUISceneImage.OutputFolderName, StringComparison.OrdinalIgnoreCase));
             if (pack != null) return pack.enabled;
-            return control == null || !control.ModSetting.AssetPacks.TryGetValue(ComfyUISceneImage.OutputFolderName, out var enabled) || enabled;
+            // top-level asset packs cannot be disabled (stored toggles are ignored, see AssetPackLoader.Scan)
+            return true;
         }
     }
 

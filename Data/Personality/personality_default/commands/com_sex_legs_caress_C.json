@@ -65,9 +65,26 @@
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": ["sex", "receiver", "spread_pussy", "sleeping", "relaxed"],
+                            "useActiveTags": false,
+                            "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
+                            "responses": [
+                                "UID_com_sex_legs_caress_C_Begin_Sleep_1",
+                                "UID_com_sex_legs_caress_C_Begin_Sleep_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
                                     "timestop"
                                 ]
                             },
+                            "extraSelfPortraitTags": ["sex", "receiver", "spread_pussy", "doll", "empty", "silence", "idle"],
+                            "useActiveTags": false,
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "UID_com_sex_legs_caress_C_Begin_Timestop_1",
@@ -476,6 +493,8 @@
                 "UID_com_sex_legs_caress_C_22": "$self$眼神空洞地望着前方，身子随着$target$的动作晃动，再没有别的反应。\n\"……随便你。\"",
                 "UID_com_sex_legs_caress_C_19": "$self$不适地挪了挪臀，眉头微蹙。\n\"这种姿势……摩擦得皮肉好痛……还没结束吗？\"",
                 "UID_com_sex_legs_caress_C_20": "$self$望着上方叹了口气，身子发僵。\n\"没什么感觉啊……要不直接算了吧。\"",
+                "UID_com_sex_legs_caress_C_Begin_Sleep_1": "$target$的大腿压进她熟睡中的腿间抵住腿缝慢慢研磨，$self$在梦里哼唧了一声，腿根无意识地夹了夹，却没醒。",
+                "UID_com_sex_legs_caress_C_Begin_Sleep_2": "股间被膝盖顶着按揉，被碾得发热的穴口渐渐渗出水，$self$皱着眉翻了个身，梦话里都带了鼻音。",
                 "UID_com_sex_legs_caress_C_Begin_Timestop_1": "$target$的大腿压进她定格的腿间抵住腿缝研磨，被碾得发热的穴口不受控地渗水，$self$张着的腰没有迎合。",
                 "UID_com_sex_legs_caress_C_Begin_Timestop_2": "股间被膝盖顶着按揉，爱液顺着腿根淌出亮痕，$self$搭在身侧的手悬着，指尖离地板还差半寸。"
             }

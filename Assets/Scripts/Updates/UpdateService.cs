@@ -113,6 +113,8 @@ namespace MistEra.Updates
         private readonly HashSet<string> activePacks = new HashSet<string>(Paths);
         private readonly HashSet<string> activeContentRoots = new HashSet<string>(Paths);
         private readonly HashSet<string> installedThisBoot = new HashSet<string>(Paths);
+        private readonly HashSet<string> removedThisBoot = new HashSet<string>(Paths);
+        private string runningPackage;  // package id of a single-package install/delete running now (mod manager row progress)
         private bool bootSnapshotComplete;
         private StagedBuildRecord pendingBuild;
 
@@ -259,7 +261,11 @@ namespace MistEra.Updates
 
         public void CheckForUpdates() => StartOperation(CheckRoutine, false, UpdateOperation.Check);
         public void DownloadBuild() => StartOperation(DownloadBuildRoutine, true, UpdateOperation.DownloadBuild);
-        public void InstallPackage(string id) => StartOperation(() => InstallPackageRoutine(new List<string> { id }, ModUpdateScope.None), true, UpdateOperation.InstallMods);
+        public void InstallPackage(string id) => StartOperation(() => { runningPackage = id; return InstallPackageRoutine(new List<string> { id }, ModUpdateScope.None); }, true, UpdateOperation.InstallMods);
+        /// <summary>Deletes an installed official package (mod manager). Same title + restart rule as replacing active content.</summary>
+        public void DeletePackage(string id) => StartOperation(() => { runningPackage = id; return DeleteRoutine(id); }, true, UpdateOperation.DeleteMods);
+        /// <summary>True while a single-package install or delete of this id runs.</summary>
+        public bool IsRunningFor(string id) => IsBusy && runningPackage != null && Paths.Equals(runningPackage, id);
         /// <summary>One-click update of the given catalog packages (from CollectModUpdates) as one dependency batch.</summary>
         public void InstallPackages(List<ModPackage> packages, ModUpdateScope scope)
         {
@@ -275,26 +281,28 @@ namespace MistEra.Updates
         /// <summary>
         /// Catalog packages a one-click update installs. activeOnly: installed packages active this boot whose published
         /// revision changed. Otherwise also every published package not installed yet. Hand-installed copies of a
-        /// published package are local mods and never touched: a package with a local conflicting copy (untracked folder
-        /// at its root, or another mod folder with its ModID) is left out and the copy's folder ("Mods/...") is added to
-        /// conflicts; activeOnly lists only conflicts of content active this boot. Packages that cannot be planned
-        /// (disabled dependency, incompatible build, foreign files) are left out, with their reason added to skipped.
+        /// published package are local mods and never touched: a package whose root is occupied by an untracked local
+        /// copy (real files, not only generated ones) is left out and the copy's folder ("Mods/...") is added to
+        /// conflicts; activeOnly lists only conflicts of content active this boot. A local copy with the same ModID in
+        /// another folder is not a conflict (the player picks which copy loads). An installed package the player deleted
+        /// by hand (IsMissing) with an unchanged revision, and a package deleted this boot, are not offered (the mod
+        /// manager offers Redownload). Packages that cannot be planned (disabled dependency, incompatible build, foreign
+        /// files) are left out, with their reason added to skipped.
         /// </summary>
         public void CollectModUpdates(bool activeOnly, List<ModPackage> result, List<string> skipped = null, List<string> conflicts = null)
         {
             result.Clear();
             if (Catalog == null || InstalledBuild == null || RestartRequired) return;
-            var localMods = LocalModFolders();
             var packages = Catalog.packages;
             for (int i = 0; i < packages.Count; i++)
             {
                 var package = packages[i];
-                if (package == null) continue;
+                if (package == null || removedThisBoot.Contains(package.id)) continue;
                 PackageReceipt receipt = null;
                 for (int r = 0; r < receipts.Count; r++)
                     if (Paths.Equals(receipts[r].package.id, package.id)) { receipt = receipts[r]; break; }
                 if (receipt != null && Paths.Equals(receipt.package.sha256, package.sha256)) continue;
-                string conflict = LocalConflict(package, receipt, localMods);
+                string conflict = receipt == null ? OccupyingCopy(package) : null;
                 if (conflict != null)
                 {
                     if (!activeOnly || IsPackageActive(package)) conflicts?.Add(conflict);
@@ -315,57 +323,179 @@ namespace MistEra.Updates
         }
 
         /// <summary>
-        /// Local copy blocking this package's update, as "Mods/<folder>", or null. Untracked package: any existing root.
-        /// Data mod: any Mods/ folder with the package's ModID that is not one of its receipted roots.
+        /// Local copy blocking the install of a package that has no receipt, as "Mods/<root>", or null: a root that exists
+        /// as a file, or as a folder holding at least one non-generated file. Empty folders and folders with only generated
+        /// files (leftovers of a deleted package: .texcache, _generated, classifier output) never block a (re)download.
         /// </summary>
-        private string LocalConflict(ModPackage package, PackageReceipt receipt, List<KeyValuePair<string, string>> localMods)
+        public string OccupyingCopy(ModPackage package)
         {
-            if (receipt == null)
+            if (package == null) return null;
+            try
             {
-                try
-                {
-                    for (int i = 0; i < package.roots.Count; i++)
-                    {
-                        string path = Local("Mods/" + package.roots[i]);
-                        if (Directory.Exists(path) || File.Exists(path)) return "Mods/" + package.roots[i];
-                    }
-                }
-                catch (Exception) { return "Mods/" + (package.roots.Count > 0 ? package.roots[0] : package.id); }
+                for (int i = 0; i < package.roots.Count; i++)
+                    if (HasRealFiles(package.roots[i])) return "Mods/" + package.roots[i];
             }
-            if (package.kind != "mod" || string.IsNullOrEmpty(package.modId)) return null;
-            for (int i = 0; i < localMods.Count; i++)
+            catch (Exception) { return "Mods/" + (package.roots.Count > 0 ? package.roots[0] : package.id); }
+            return null;
+        }
+
+        /// <summary>True if Mods/relative is a file, or a folder containing a file that is not generated. Stops at the first one.</summary>
+        private bool HasRealFiles(string relative)
+        {
+            string path = Local("Mods/" + relative);
+            if (File.Exists(path)) return true;
+            if (!Directory.Exists(path)) return false;
+            var directories = new Stack<string>();
+            directories.Push(path);
+            while (directories.Count > 0)
+                foreach (string entry in Directory.EnumerateFileSystemEntries(directories.Pop()))
+                {
+                    UpdateValidation.NoLinks(entry);
+                    if (Directory.Exists(entry)) { directories.Push(entry); continue; }
+                    if (!GeneratedFile(entry.Substring(root.Length + 1).Replace(Path.DirectorySeparatorChar, '/'))) return true;
+                }
+            return false;
+        }
+
+        // ------------------------------------------------------------------ mod manager queries
+
+        /// <summary>Top-level folders of installed data mod packages (receipts of kind "mod"). ModLoader uses them to pick
+        /// the default copy of a duplicated ModID; receipts are loaded by RecoverBeforeBoot, before the mod scan.</summary>
+        public HashSet<string> ManagedModFolders()
+        {
+            var result = new HashSet<string>(Paths);
+            for (int r = 0; r < receipts.Count; r++)
             {
-                if (!string.Equals(localMods[i].Key, package.modId, StringComparison.Ordinal)) continue;
-                string folder = localMods[i].Value;
-                bool managed = false;
-                if (receipt != null)
-                    for (int r = 0; r < receipt.package.roots.Count; r++)
-                        if (Paths.Equals(receipt.package.roots[r], folder)) { managed = true; break; }
-                if (!managed) return "Mods/" + folder;
+                var package = receipts[r].package;
+                if (package.kind != "mod") continue;
+                for (int i = 0; i < package.roots.Count; i++) result.Add(package.roots[i]);
+            }
+            return result;
+        }
+
+        /// <summary>Receipt of the installed data mod package whose root is Mods/folder, or null (local mod).</summary>
+        public PackageReceipt ReceiptForFolder(string folder)
+        {
+            if (string.IsNullOrEmpty(folder)) return null;
+            for (int r = 0; r < receipts.Count; r++)
+            {
+                var package = receipts[r].package;
+                if (package.kind != "mod") continue;
+                for (int i = 0; i < package.roots.Count; i++)
+                    if (Paths.Equals(package.roots[i], folder)) return receipts[r];
             }
             return null;
         }
 
-        /// <summary>(ModID, folder name) of every data mod folder under Mods/ with a readable About.json.</summary>
-        private List<KeyValuePair<string, string>> LocalModFolders()
+        /// <summary>Catalog package by id, or null (not checked yet, or no longer published).</summary>
+        public ModPackage CatalogPackage(string id)
         {
-            var result = new List<KeyValuePair<string, string>>();
-            string mods = Local("Mods");
-            if (!Directory.Exists(mods)) return result;
-            foreach (string directory in Directory.EnumerateDirectories(mods))
+            if (Catalog == null || string.IsNullOrEmpty(id)) return null;
+            var packages = Catalog.packages;
+            for (int i = 0; i < packages.Count; i++)
+                if (packages[i] != null && Paths.Equals(packages[i].id, id)) return packages[i];
+            return null;
+        }
+
+        /// <summary>An installed package the player deleted by hand: a root folder is gone, or a data mod's About.json is.</summary>
+        public bool IsMissing(PackageReceipt receipt)
+        {
+            if (receipt == null) return false;
+            try
             {
-                string name = Path.GetFileName(directory);
-                if (Paths.Equals(name, "Assetpacks")) continue;
-                try
+                var package = receipt.package;
+                for (int i = 0; i < package.roots.Count; i++)
                 {
-                    string about = Local("Mods/" + name + "/About/About.json");
-                    if (!File.Exists(about) || new FileInfo(about).Length > JsonLimit) continue;
-                    var info = JsonConvert.DeserializeObject<ModAbout>(File.ReadAllText(about), ApiSettings);
-                    if (!string.IsNullOrWhiteSpace(info?.ModID)) result.Add(new KeyValuePair<string, string>(info.ModID, name));
+                    string path = Local("Mods/" + package.roots[i]);
+                    if (!Directory.Exists(path)) return true;
+                    if (package.kind == "mod" && !File.Exists(Local("Mods/" + package.roots[i] + "/About/About.json"))) return true;
                 }
-                catch (Exception) { /* unreadable About: not a mod the loader would load */ }
             }
-            return result;
+            catch (Exception) { return true; }
+            return false;
+        }
+
+        /// <summary>Package deleted this session: files and receipt are gone, its content stays loaded until restart.</summary>
+        public bool RemovedThisBoot(string id) => !string.IsNullOrEmpty(id) && removedThisBoot.Contains(id);
+        /// <summary>Any package was deleted this session (a restart unloads it).</summary>
+        public bool RemovedContentThisBoot => removedThisBoot.Count > 0;
+
+        /// <summary>Package installed this session (takes effect next boot).</summary>
+        public bool InstalledThisBoot(string id) => !string.IsNullOrEmpty(id) && installedThisBoot.Contains(id);
+
+        /// <summary>True if a staged (approved, not committed) batch contains this package.</summary>
+        public bool IsStaged(string id)
+        {
+            for (int s = 0; s < stagedMods.Count; s++)
+                for (int p = 0; p < stagedMods[s].packages.Count; p++)
+                    if (Paths.Equals(stagedMods[s].packages[p].package.id, id)) return true;
+            return false;
+        }
+
+        /// <summary>
+        /// Rows of the mod manager's official list: every catalog package of kind "mod" (pure asset packs are no longer
+        /// published), in catalog order. Disk checks and planning per package: call only when the catalog, receipts or
+        /// restart state changed, never per frame. result is cleared; its rows are new objects.
+        /// </summary>
+        public void CollectCatalogRows(List<CatalogRow> result)
+        {
+            result.Clear();
+            if (Catalog == null) return;
+            var packages = Catalog.packages;
+            for (int i = 0; i < packages.Count; i++)
+            {
+                var package = packages[i];
+                if (package == null || package.kind != "mod") continue;
+                var row = new CatalogRow { package = package };
+                for (int r = 0; r < receipts.Count; r++)
+                    if (Paths.Equals(receipts[r].package.id, package.id)) { row.receipt = receipts[r]; break; }
+                row.active = row.receipt != null && IsPackageActive(row.receipt.package);
+                if (IsStaged(package.id)) row.state = CatalogState.Staged;
+                else if (removedThisBoot.Contains(package.id) && row.receipt == null) row.state = CatalogState.RemovedThisBoot;
+                else if (row.receipt == null)
+                {
+                    row.occupiedBy = OccupyingCopy(package);
+                    row.state = row.occupiedBy != null ? CatalogState.Occupied : CatalogState.NotInstalled;
+                }
+                else if (installedThisBoot.Contains(package.id)) row.state = CatalogState.InstalledThisBoot;
+                else if (IsMissing(row.receipt)) row.state = CatalogState.Missing;
+                else row.state = Paths.Equals(row.receipt.package.sha256, package.sha256) ? CatalogState.Installed : CatalogState.UpdateAvailable;
+
+                if (row.state == CatalogState.NotInstalled || row.state == CatalogState.UpdateAvailable || row.state == CatalogState.Missing)
+                {
+                    try
+                    {
+                        var plan = Plan(package.id);
+                        for (int p = 0; p < plan.Count; p++)
+                        {
+                            row.downloadSize += plan[p].size;
+                            if (!Paths.Equals(plan[p].id, package.id)) row.batch.Add(string.IsNullOrEmpty(plan[p].name) ? plan[p].id : plan[p].name);
+                        }
+                        row.requiresTitle = BatchRequiresTitle(plan);
+                    }
+                    catch (Exception ex) { row.planError = ex.Message; }
+                }
+                result.Add(row);
+            }
+        }
+
+        /// <summary>ModIDs of mods scanned this boot (loaded or not, inactive copies included) that depend on modId. Adds to result.</summary>
+        public static void Dependents(string modId, List<string> result)
+        {
+            var serializer = scr_System_Serializer.current;
+            if (serializer == null || string.IsNullOrEmpty(modId)) return;
+            AddDependents(serializer.Mods, modId, result);
+            AddDependents(ModLoader.InactiveCopies, modId, result);
+        }
+
+        private static void AddDependents(List<ModInfo> mods, string modId, List<string> result)
+        {
+            for (int i = 0; i < mods.Count; i++)
+            {
+                var mod = mods[i];
+                if (!mod.dependencies.Contains(modId) || result.Contains(mod.id)) continue;
+                result.Add(mod.id);
+            }
         }
 
         public void Cancel()
@@ -425,7 +555,7 @@ namespace MistEra.Updates
                 if (connectionFailed) connectionRetryAt = Time.realtimeSinceStartup + ConnectionRetrySeconds;
             }
             IsBusy = false; handoffStarted = false; gameplayHold = false;
-            Operation = UpdateOperation.None; Step = BuildStep.None; pendingScope = ModUpdateScope.None;
+            Operation = UpdateOperation.None; Step = BuildStep.None; pendingScope = ModUpdateScope.None; runningPackage = null;
             cancellation.Dispose(); cancellation = null;
             Publish();
         }
@@ -459,21 +589,23 @@ namespace MistEra.Updates
             }
             var urls = new Dictionary<string, string>(StringComparer.Ordinal);
             GameRelease selected = null;
+            bool buildChecked = false;  // one cached game-update.json: only the newest release with a valid manifest is read
             ModCatalog catalog = null;
             foreach (var release in releases.Where(r => !r.prerelease || (Settings?.prereleases ?? false)).OrderByDescending(r => r.published_at, StringComparer.Ordinal))
             {
                 cancellation.Token.ThrowIfCancellationRequested();
                 if (release.assets == null) continue;
-                if ((Settings?.checkGame ?? true) && InstalledBuild != null)
+                if (!buildChecked && (Settings?.checkGame ?? true) && InstalledBuild != null)
                 {
                     var asset = release.assets.FirstOrDefault(a => a.name == "game-update.json");
                     if (asset != null)
                     {
                         string json = null;
-                        yield return FetchText(Official(asset.browser_download_url), false, text => json = text);
+                        yield return FetchAsset(asset, text => json = text);
                         var shape = JsonConvert.DeserializeObject<JObject>(json, ApiSettings);
                         if (shape != null && (int?)shape["schema"] == 1 && (string)shape["platform"] == "windows-x64" && (int?)shape["minimumUpdaterProtocol"] == 1)
                         {
+                            buildChecked = true;
                             var manifest = UpdateJson.Parse<GameRelease>(json);
                             Require(manifest.releaseTag == release.tag_name, "Build manifest tag differs from its GitHub release.");
                             var archive = FindAsset(release, manifest.asset, manifest.size);
@@ -488,7 +620,7 @@ namespace MistEra.Updates
                     if (asset != null)
                     {
                         string json = null;
-                        yield return FetchText(Official(asset.browser_download_url), false, text => json = text);
+                        yield return FetchAsset(asset, text => json = text);
                         var shape = JsonConvert.DeserializeObject<JObject>(json, ApiSettings);
                         if (shape == null || (int?)shape["schema"] != 2) continue;
                         var candidate = UpdateJson.Parse<ModCatalog>(json);
@@ -521,6 +653,41 @@ namespace MistEra.Updates
                 receive(File.ReadAllText(path, new UTF8Encoding(false, true)));
             }
             finally { if (File.Exists(path)) File.Delete(path); }
+        }
+
+        private static string AssetCacheDirectory => Path.Combine(Application.persistentDataPath, "UpdateCache");
+
+        /// <summary>
+        /// Release manifest (game-update.json / catalog-v2.json) text, downloaded only when it changed: one cached copy per
+        /// file name, compared by sha256 with the asset's "digest" from the GitHub release list (fetched on every check).
+        /// Without a digest it is always downloaded. A download is checked against the digest before it replaces the copy.
+        /// </summary>
+        private IEnumerator FetchAsset(ApiAsset asset, Action<string> receive)
+        {
+            string url = Official(asset.browser_download_url);
+            const string prefix = "sha256:";
+            string sha256 = asset.digest != null && asset.digest.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) ? asset.digest.Substring(prefix.Length) : null;
+            if (sha256 == null || asset.size <= 0 || asset.size > JsonLimit)
+            {
+                yield return FetchText(url, false, receive);
+                yield break;
+            }
+            string directory = AssetCacheDirectory;
+            UpdateValidation.NoLinks(directory); Directory.CreateDirectory(directory);
+            string path = UpdateValidation.Resolve(directory, asset.name);
+            if (File.Exists(path) && new FileInfo(path).Length == asset.size && Paths.Equals(UpdateFiles.Hash(path), sha256))
+            {
+                receive(File.ReadAllText(path, new UTF8Encoding(false, true)));
+                yield break;
+            }
+            string partial = path + ".part";
+            if (File.Exists(partial)) File.Delete(partial);
+            yield return Download(url, partial, asset.size, JsonLimit);
+            UpdateFiles.Verify(partial, asset.size, sha256);
+            string text = File.ReadAllText(partial, new UTF8Encoding(false, true));
+            if (File.Exists(path)) File.Delete(path);
+            File.Move(partial, path);
+            receive(text);
         }
 
         private IEnumerator Download(string url, string path, long expectedSize, long limit, bool api = false)
@@ -880,6 +1047,141 @@ namespace MistEra.Updates
             FileTransaction.Install(root, payload, new FileInventory { files = next.Values.ToList() }, new FileInventory { files = old.Values.ToList() });
         }
 
+        /// <summary>
+        /// Deletes an installed official package: its receipted files and receipt are removed through a FileTransaction
+        /// (journaled, backed up, rolled back on failure; files the player already deleted are skipped, so this also drops
+        /// the receipt of a Missing package), then each package root folder is removed with whatever is left (generated
+        /// and player files), best effort. Content active this boot needs the title screen, drained asset IO and sets the
+        /// restart latch, like replacing active content. Prefs are untouched; mods depending on it are blocked at next boot.
+        /// </summary>
+        private IEnumerator DeleteRoutine(string id)
+        {
+            Require(!RestartRequired, "Restart before deleting another mod.");
+            Require(BootReady && !recoveryFailed, "Updates are unavailable until safe startup has completed.");
+            PackageReceipt receipt = null;
+            for (int r = 0; r < receipts.Count; r++)
+                if (Paths.Equals(receipts[r].package.id, id)) { receipt = receipts[r]; break; }
+            Require(receipt != null, "This package was not installed by the updater: " + id);
+            Require(!IsStaged(id), "An installation of this package is staged; install or discard it first.");
+            ValidateReceipt(receipt);
+            bool requiresTitle = !bootSnapshotComplete || IsPackageActive(receipt.package);
+            Require(!requiresTitle || SafeTitle(), "This package is in use this session and can be deleted only at the title screen.");
+            var others = new List<PackageReceipt>(receipts.Count);
+            for (int r = 0; r < receipts.Count; r++) if (receipts[r] != receipt) others.Add(receipts[r]);
+            string name = string.IsNullOrEmpty(receipt.package.name) ? receipt.package.id : receipt.package.name;
+            bool gateRequested = false;
+            try
+            {
+                if (requiresTitle)
+                {
+                    gameplayHold = true;
+                    Status = "Waiting for asset reads to finish..."; Progress = 0; Publish();
+                    float deadline = Time.realtimeSinceStartup + 30f;
+                    while (true)
+                    {
+                        cancellation.Token.ThrowIfCancellationRequested();
+                        Require(SafeTitle(), "Title screen changed while waiting to delete.");
+                        gateRequested = true;
+                        if (AssetsLoader.BeginUpdateQuiescence()) break;
+                        Require(Time.realtimeSinceStartup < deadline, "Asset reads did not become idle within 30 seconds; nothing was deleted.");
+                        yield return null;
+                    }
+                    Require(SafeTitle(), "Title screen changed before deleting active content.");
+                    // latch before dispatch, as for active installs: loaded content must never read from a half-deleted folder
+                    RestartRequired = true;
+                }
+                Status = "Deleting " + name + "..."; Publish();
+                string leftover = null;
+                yield return Worker(token =>
+                {
+                    DeleteFiles(receipt, others, token);
+                    leftover = RemoveRoots(receipt.package);
+                });
+                receipts.Remove(receipt);
+                installedThisBoot.Remove(id);
+                removedThisBoot.Add(id);
+                InventoryVersion++;
+                Status = (requiresTitle ? "Deleted " + name + ". Restart is required before gameplay." : "Deleted " + name + ". The current session is unchanged.") +
+                    (leftover != null ? " Some files could not be removed: " + leftover : "");
+                Progress = 1; Publish();
+            }
+            finally
+            {
+                if (gateRequested && !RestartRequired) AssetsLoader.EndUpdateQuiescence();
+                gameplayHold = false;
+            }
+        }
+
+        /// <summary>Removes the receipt's files and the receipt itself in one FileTransaction. Shared About files another
+        /// installed package still owns with the same content stay.</summary>
+        private void DeleteFiles(PackageReceipt receipt, List<PackageReceipt> others, CancellationToken token)
+        {
+            var old = new Dictionary<string, UpdateFile>(Paths);
+            foreach (var file in receipt.files)
+            {
+                token.ThrowIfCancellationRequested();
+                bool sharedElsewhere = false;
+                for (int r = 0; r < others.Count && !sharedElsewhere; r++)
+                    if (SharedOwner(others[r], file))
+                        for (int f = 0; f < others[r].files.Count; f++)
+                            if (Same(others[r].files[f], file)) { sharedElsewhere = true; break; }
+                if (!sharedElsewhere) AddConsistent(old, file);
+            }
+            string receiptPath = ReceiptPath(receipt.package.id);
+            string receiptSource = Local(receiptPath);
+            if (File.Exists(receiptSource))
+                AddConsistent(old, new UpdateFile { path = receiptPath, size = new FileInfo(receiptSource).Length, sha256 = UpdateFiles.Hash(receiptSource) });
+            var files = new List<UpdateFile>(old.Values);
+            UpdateValidation.ValidateFiles(files, true);
+            long backup = 0;
+            for (int i = 0; i < files.Count; i++) backup = checked(backup + files[i].size);
+            DiskSpace(backup);
+            token.ThrowIfCancellationRequested();
+            // nothing incoming: the staged root is never read, so the install root stands in for it
+            FileTransaction.Install(root, root, new FileInventory(), new FileInventory { files = files });
+        }
+
+        /// <summary>Deletes each package root folder with everything left in it (never following links). Best effort after
+        /// the committed transaction: returns the first folder that could not be removed completely, or null.</summary>
+        private string RemoveRoots(ModPackage package)
+        {
+            string failed = null;
+            for (int i = 0; i < package.roots.Count; i++)
+            {
+                string relative = "Mods/" + package.roots[i];
+                try
+                {
+                    string path = Local(relative);
+                    if (File.Exists(path)) continue;    // a file root is never created by packages; leave it alone
+                    if (!Directory.Exists(path)) continue;
+                    UpdateValidation.NoLinks(path);
+                    DeleteTree(path);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogWarning("UpdateService: could not remove " + relative + ": " + ex.Message);
+                    if (failed == null) failed = relative;
+                }
+            }
+            return failed;
+        }
+
+        /// <summary>Recursive delete that refuses links (a junction inside a mod folder must never lead outside it).</summary>
+        private static void DeleteTree(string directory)
+        {
+            foreach (string entry in Directory.EnumerateFileSystemEntries(directory))
+            {
+                UpdateValidation.NoLinks(entry);
+                if (Directory.Exists(entry)) DeleteTree(entry);
+                else
+                {
+                    File.SetAttributes(entry, FileAttributes.Normal);
+                    File.Delete(entry);
+                }
+            }
+            Directory.Delete(directory, false);
+        }
+
         private void ValidateRootOwnership(List<ModPackage> incoming, List<PackageReceipt> installed)
         {
             var affected = new HashSet<string>(incoming.Select(p => p.id), Paths);
@@ -895,8 +1197,16 @@ namespace MistEra.Updates
                 string path = Local("Mods/" + relative);
                 Require(!File.Exists(path), "Exclusive package root is occupied by a file: " + relative);
                 if (!Directory.Exists(path)) continue;
-                Require(managedRoots.Any(r => Paths.Equals(r, relative) || relative.StartsWith(r + "/", StringComparison.OrdinalIgnoreCase)),
-                    "Exclusive package root is unmanaged; existing folders will not be adopted: " + relative);
+                bool managed = false;
+                for (int m = 0; m < managedRoots.Count; m++)
+                    if (Paths.Equals(managedRoots[m], relative) || relative.StartsWith(managedRoots[m] + "/", StringComparison.OrdinalIgnoreCase)) { managed = true; break; }
+                // an unmanaged folder holding only generated files (or nothing), e.g. left by a deleted package, never blocks
+                // a (re)download: package files cannot collide with generated ones, which stay in place unmanaged
+                if (!managed)
+                {
+                    Require(!HasRealFiles(relative), "Exclusive package root is unmanaged; existing folders will not be adopted: " + relative);
+                    continue;
+                }
                 var directories = new Stack<string>();
                 directories.Push(path);
                 while (directories.Count > 0)
@@ -914,21 +1224,7 @@ namespace MistEra.Updates
                         }
                     }
             }
-            var modIds = new HashSet<string>(incoming.Where(p => p.kind == "mod").Select(p => p.modId), StringComparer.Ordinal);
-            string mods = Local("Mods");
-            if (modIds.Count == 0 || !Directory.Exists(mods)) return;
-            foreach (string directory in Directory.EnumerateDirectories(mods))
-            {
-                string name = Path.GetFileName(directory);
-                if (Paths.Equals(name, "Assetpacks") || managedRoots.Any(r => Paths.Equals(r, name))) continue;
-                string about = Local("Mods/" + name + "/About/About.json");
-                if (!File.Exists(about)) continue;
-                Require(new FileInfo(about).Length <= JsonLimit, "Cannot safely inspect manual ModID; About metadata is too large: " + name);
-                ModAbout info;
-                try { info = JsonConvert.DeserializeObject<ModAbout>(File.ReadAllText(about), ApiSettings); }
-                catch (JsonException) { continue; }
-                Require(info == null || !modIds.Contains(info.ModID ?? ""), "ModID already exists outside affected managed roots; manual mods will not be adopted: " + info?.ModID + " in " + name);
-            }
+            // A local mod folder with the same ModID elsewhere is allowed: the player picks which copy loads (ModLoader.Scan).
         }
 
         private void ValidateStagedDependencies(StagedModRecord record)
@@ -1077,8 +1373,8 @@ namespace MistEra.Updates
         public bool IsPackageActive(ModPackage package)
         {
             if (package == null) return false;
-            if (package.kind == "mod" ? activeMods.Contains(package.modId ?? "") :
-                package.kind == "assetpack" && (activePacks.Contains(package.group ?? "") || PackFolders(package).Any(activePacks.Contains))) return true;
+            // data mods: decided by the folder path alone (below), since another copy with the same ModID may be the one loaded
+            if (package.kind == "assetpack" && (activePacks.Contains(package.group ?? "") || PackFolders(package).Any(activePacks.Contains))) return true;
             return package.roots.Concat(package.sharedFiles.Select(f => f.path)).Any(relative =>
             {
                 UpdateValidation.RelativePath(relative);
@@ -1135,9 +1431,8 @@ namespace MistEra.Updates
 
         private bool IsDisabled(ModPackage package)
         {
-            if (package.kind == "mod") return ModDisabled(package.modId);
-            var settings = scr_System_CentralControl.current?.ModSetting;
-            return settings != null && PackFolders(package).Any(p => settings.AssetPacks.TryGetValue(p, out bool enabled) && !enabled);
+            // top-level asset packs cannot be disabled (AssetPackLoader.Scan)
+            return package.kind == "mod" && ModDisabled(package.modId);
         }
 
         private static IEnumerable<string> PackFolders(ModPackage package) => package.roots.Where(p => p.StartsWith("Assetpacks/", StringComparison.Ordinal)).Select(p => p.Split('/')[1]).Distinct(StringComparer.Ordinal);
@@ -1335,7 +1630,7 @@ namespace MistEra.Updates
         [Serializable]
         private sealed class ApiAsset
         {
-            public string name, browser_download_url;
+            public string name, browser_download_url, digest;   // digest: "sha256:<hex>"
             public long size;
         }
     }

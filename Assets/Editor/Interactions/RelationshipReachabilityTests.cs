@@ -565,7 +565,7 @@ public static class RelationshipReachabilityTests
             Require(dangerDay.safeDayClaimDecisionID == "permission_sex_unprotected_penis"
                 && permissions.ContainsKey(dangerDay.safeDayClaimDecisionID), "Danger-day claim must use the ordinary permission decision");
         });
-        // Source contracts deliberately inspect only SendDemandEvent, not unrelated permission callers.
+        // Claim contracts inspect SendDemandEvent; lifecycle contracts also inspect its Tick/begin boundaries.
         // Whitespace is ignored; these checks do not execute queries, callbacks or tooltip rendering.
         string DemandSource()
         {
@@ -624,6 +624,46 @@ public static class RelationshipReachabilityTests
                 "Player claim must use shared acceptance and resume only after the shared grant succeeds");
             Require(demand.Contains("!claimAccepted?\"br_claim_refused\":claimLie?\"br_claim_lie\":\"br_claim\""),
                 "Player refusal/result label must follow the same claim decision");
+        });
+        test("Permissions: all demands stop before begin and retain the accepted evaluations (static)", () =>
+        {
+            string demand = DemandSource();
+            Require(!demand.Contains("resume.acceptOnNextRequest=true;") && !demand.Contains("returnplayerChooses;"),
+                "Demands must neither reroll acceptance nor allow NPCs to continue the original Tick");
+            int suspended = demand.IndexOf("duration=0;toggleRepeat=false;internalState=AP_Status.refused;LoggedBegin=true;", StringComparison.Ordinal);
+            int continuation = demand.IndexOf("ActionresumeAct=", StringComparison.Ordinal);
+            int playerBranch = demand.IndexOf("if(playerChooses)", StringComparison.Ordinal);
+            Require(demand.Contains("ActionPackageresume=this.Copy();") && demand.Contains("resume.demandAnswered=true;")
+                && suspended >= 0 && continuation > suspended && playerBranch > continuation,
+                "Both requester paths must prepare a continuation and stop before branching to the event answers");
+            Require(demand.Contains("resume.packages=packages;packages=newList<EvaluationPackage>();")
+                && demand.Contains("accepted.TransferAcceptedDemand(this,resume);")
+                && demand.Contains("accepted.Evaluate(true);") && demand.Contains("accepted.ApplyPersonalityMods();")
+                && demand.Contains("resume.requested=true;") && demand.Contains("resume.requestAccepted=true;")
+                && demand.Contains("resume.acceptedDemandPendingBegin=true;") && demand.Contains("if(!canResume||resume==null||resumed)return;"),
+                "Continuation must own and refresh the accepted evaluations, then begin once without another Request");
+            string action = System.Text.RegularExpressions.Regex.Replace(
+                File.ReadAllText(Path.Combine(root, "Assets/Scripts/JobCOM/ActionPackage.cs")), @"\s+", "");
+            Require(action.Contains("SendDemandEvent(demand,demandEP,pushedIDs);returntrue;")
+                && action.Contains("if(TryStopForDemand()){Ticked=true;returntrue;}"),
+                "A selected demand must end Tick before PackageBegin, PackageTick or ExecutePackage");
+            Require(action.Contains("if(acceptedDemandPendingBegin){acceptedDemandPendingBegin=false;internalState=AP_Status.accepted;PackageBegin(m);}"),
+                "An accepted continuation must run its begin phase exactly once");
+        });
+        test("Permissions: NPC continuation waits for its event and queued response display (static)", () =>
+        {
+            string demand = DemandSource();
+            const string defer = "if(!playerChooses&&canResume&&ev.isValid)ev.OnCompleted(()=>scr_UpdateHandler.current.AddEventCallback(resumeAct));";
+            int completed = demand.IndexOf(defer, StringComparison.Ordinal);
+            int startEvent = demand.IndexOf("EventHandler.StartEvent", StringComparison.Ordinal);
+            Require(completed >= 0 && startEvent > completed,
+                "NPC resumption must be registered on the valid demand's completion before StartEvent can run it");
+            Require(demand.IndexOf("AddEventCallback(resumeAct)", StringComparison.Ordinal)
+                == demand.LastIndexOf("AddEventCallback(resumeAct)", StringComparison.Ordinal),
+                "NPC continuation must not also be queued before its demand completes");
+            int flush = demand.IndexOf("FlushCollectedLogs(true,false)", StringComparison.Ordinal);
+            Require(flush >= 0 && flush < startEvent,
+                "AC must be flushed before demand narration");
         });
         Debug.Log($"{Prefix} permission checks are definition/numeric/static only. Live directed sources, caring skill eligibility, " +
             "consciousness/time-stop availability, dialogue/action equivalence, tooltip rendering and legacy grant activation " +

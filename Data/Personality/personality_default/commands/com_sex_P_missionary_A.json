@@ -134,9 +134,26 @@
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": ["sex", "receiver", "missionary", "anal", "sleeping", "relaxed"],
+                            "useActiveTags": false,
+                            "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
+                            "responses": [
+                                "com_sex_P_missionary_A_Begin_Sleep_1",
+                                "com_sex_P_missionary_A_Begin_Sleep_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
                                     "timestop"
                                 ]
                             },
+                            "extraSelfPortraitTags": ["sex", "receiver", "missionary", "anal", "doll", "empty", "silence", "idle"],
+                            "useActiveTags": false,
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_sex_P_missionary_A_Begin_Timestop_1",
@@ -637,6 +654,8 @@
                 "com_sex_P_missionary_A_26": "$self$敷衍地随着节奏晃，神色淡淡的。\n\n\"……还行吧，就是有点……胀……\"\n\n这段对她来说没什么滋味，菊穴被磨得发酸，她甚至悄悄分了神。",
                 "com_sex_P_missionary_A_27": "$self$皱着眉把脸埋进手臂，身子随着撞击被动地前后晃。\n\n\"……你别顶那么深……好难受……\"\n\n干涩紧绷的菊穴被反复碾磨，她咬着下唇忍着，巴不得这段赶紧翻篇。",
                 "com_sex_P_missionary_A_28": "$self$面无表情地承受着撞击，眼神冷得发寒。\n\n\"……你要干就快点。\"\n\n这段她连哼都懒得哼，菊穴被磨得难受，由着身子被撞，心思早飞到别处去了。",
+                "com_sex_P_missionary_A_Begin_Sleep_1": "$target$把熟睡的$self$腰下垫高，龟头抵着菊穴缓缓碾开，她在梦里难受地低吟了一声，腰往后缩了缩，却没醒。",
+                "com_sex_P_missionary_A_Begin_Sleep_2": "后穴被一点点撑开吞到最深处，$self$皱着眉哼出几声梦呓，菊穴本能地夹紧了入侵的肉棒，人还沉在梦乡。",
                 "com_sex_P_missionary_A_Begin_Timestop_1": "$target$把定格的腰垫高，龟头抵着菊穴缓缓碾开，穴口的软肉含住棒身不受控地吮紧，$self$的手还搭在身侧没动。",
                 "com_sex_P_missionary_A_Begin_Timestop_2": "后穴吞到最深处时，$self$垂在颈侧的头发悬着不落，静止的房间里只剩穴肉吞吐的黏腻声响。",
 

@@ -75,9 +75,26 @@
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": ["sex", "doer", "cowgirl", "intercrural", "sleeping", "relaxed"],
+                            "useActiveTags": false,
+                            "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
+                            "responses": [
+                                "com_sex_P_V_outside_cowgirl_Begin_Sleep_1",
+                                "com_sex_P_V_outside_cowgirl_Begin_Sleep_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
                                     "timestop"
                                 ]
                             },
+                            "extraSelfPortraitTags": ["sex", "doer", "cowgirl", "intercrural", "doll", "empty", "silence", "idle"],
+                            "useActiveTags": false,
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_sex_P_V_outside_cowgirl_Begin_Timestop_1",
@@ -654,6 +671,8 @@
                 "com_sex_P_V_outside_cowgirl_76": "$self$的动作变得僵硬，发出疲惫的闷哼。\n\"停停……腿酸得不行了，想下来……\"",
                 "com_sex_P_V_outside_cowgirl_77": "$self$无力地垂下头，身子甚至微微发抖。\n\"还是没感觉……能不能结束了？\"",
                 "com_sex_P_V_outside_cowgirl_78": "$self$始终没回头，声音听起来很压抑。\n\"……除了累什么感觉都没有。\"",
+                "com_sex_P_V_outside_cowgirl_Begin_Sleep_1": "$self$被轻轻抱起跨放到$target$腿上，软绵绵地伏在他胸口，腿缝贴住肉棒被扶着腰前后摆磨，她的呼吸始终绵长平稳。",
+                "com_sex_P_V_outside_cowgirl_Begin_Sleep_2": "熟睡的$self$被摆成跨坐的姿势，腿根贴着那根滚烫的东西来回蹭，她在梦里不安地哼唧了两声，脸蹭了蹭$target$的肩又睡了过去。",
                 "com_sex_P_V_outside_cowgirl_Begin_Timestop_1": "$self$被抬起跨放到$target$腿上，腿缝贴住肉棒被扶着腰前后摆磨，交合的水声越磨越响，她偏着的头颈角度纹丝未动。",
                 "com_sex_P_V_outside_cowgirl_Begin_Timestop_2": "静止的房间里只有腿缝摩擦的黏腻水声，$self$垂着的头颈保持着偏转的角度，被磨得发红的腿缝自己渗着水。"
             }

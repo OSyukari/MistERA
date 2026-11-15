@@ -153,6 +153,12 @@ public class tab_changerel : MonoBehaviour
                 tooltip += $"\n\n{Utility.WrapTextColor(LocalizeDictionary.QueryThenParse("menu_changeRel_tooltip_forbidPlayer"), alert)}";
                 return false;
             }
+            // OnClickButton sets CurrentRel (owned by CurrentTarget) to side !validateB
+            if (!parent.CurrentRel.SupportsPersonalRelationship(rel, !validateB))
+            {
+                tooltip += $"\n\n{Utility.WrapTextColor(LocalizeDictionary.QueryThenParse("menu_changeRel_tooltip_unsupported").Replace("$target$", parent.CurrentTarget.FirstName), alert)}";
+                return false;
+            }
             if (parent.CurrentRel.RelationshipCooldown > 0)
             {
                 tooltip += $"\n\n{Utility.WrapTextColor(LocalizeDictionary.QueryThenParse("menu_changeRel_tooltip_cooldown"), alert)}";

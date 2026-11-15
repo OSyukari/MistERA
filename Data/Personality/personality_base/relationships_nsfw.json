@@ -1,0 +1,67 @@
+{
+    "_doc": "口上loose entry文件：炮友关系（relationship_fwb，nsfw）变更口上（男性，personality_base）。条目含义与relationships.json相同：_propose提出、_set建立、_refuse拒绝对方、_refused被对方拒绝、_break结束。propose缺失会使RequestRelationshipChange事件中断、提案静默失败，故必须提供。文件名含nsfw，安全模式下不加载（关系本身也随之移除）。\n\n== 口上通用生成规范 ==\n1. 每条response只能是一句被引号包裹的台词，禁止旁白、动作、心理与场景描写。\n2. 不自我介绍、不点名说话者；$self$/$target$仅用于自然称呼，可不使用。\n3. 1~2句自然口语。personality_default为女性口上，personality_base为男性口上，语气应区分。\n4. 每个条目一个variant、3条可选response，语义同向、措辞各异；以后再按关系等条件扩充。",
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "relationship_fwb_propose",
+                    "_comment": "$self$向$target$提出只谈身体、不谈感情的炮友关系。男性说话者，直白但不粗俗。",
+                    "variants": [ { "responses": [
+                        "\"我们身体这么合拍，不如就保持这种关系？不谈感情，想要的时候就来。\"",
+                        "\"恋爱就免了，不过……那方面我还想继续。你觉得呢？\"",
+                        "\"别想太复杂，各取所需而已。要不要试试？\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "relationship_fwb_set",
+                    "_comment": "与$target$成为炮友。",
+                    "variants": [ { "responses": [
+                        "\"那就说好了，想要的时候随时找我。\"",
+                        "\"爽快。规矩只有一条——别动真感情。\"",
+                        "\"成交。今晚有空吗？\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "relationship_fwb_refuse",
+                    "_comment": "$self$拒绝$target$提出的炮友关系。",
+                    "variants": [ { "responses": [
+                        "\"这种关系我不想要，算了吧。\"",
+                        "\"抱歉，我没那么随便。\"",
+                        "\"就当没发生过吧。\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "relationship_fwb_refused",
+                    "_comment": "$self$提出的炮友关系被$target$拒绝。",
+                    "variants": [ { "responses": [
+                        "\"行，不勉强你。\"",
+                        "\"……可惜了。\"",
+                        "\"随你，当我没提。\""
+                    ] } ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "relationship_fwb_break",
+                    "_comment": "与$target$的炮友关系结束。",
+                    "variants": [ { "responses": [
+                        "\"这种关系，就到此为止吧。\"",
+                        "\"以后别再来找我了。\"",
+                        "\"玩够了，散了吧。\""
+                    ] } ]
+                }
+            }
+        ]
+    }
+}

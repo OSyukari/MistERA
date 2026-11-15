@@ -318,7 +318,9 @@ public class Character_Relationship
                 // Requirements gate (e.g. Fear-based), while the isA=true side may have no Requirements
                 // of its own and would otherwise trivially match first regardless of which party
                 // actually qualifies, reversing which side becomes which role.
-                if (!rel.isEqualRelationship && rel.isValid(this, true) && rel.CanMaintain(reverse, false))
+                // SupportsPersonalRelationship: a proposal without the kojo it needs would end before its question
+                if (!rel.isEqualRelationship && rel.isValid(this, true) && rel.CanMaintain(reverse, false)
+                    && SupportsPersonalRelationship(rel, false))
                 {
                     relation = rel;
                     isA = false;
@@ -331,7 +333,8 @@ public class Character_Relationship
                 // wrongly win over the isA=false branch above whenever that branch's stricter Requirements
                 // (e.g. mood/stress) momentarily aren't all satisfied. isA=true should only ever be reached
                 // via propagation from the other party's isA=false formation in that case.
-                else if ((rel.isEqualRelationship || rel.requireTargetValidation(false)) && rel.isValid(this, false) && rel.CanMaintain(reverse, true))
+                else if ((rel.isEqualRelationship || rel.requireTargetValidation(false)) && rel.isValid(this, false) && rel.CanMaintain(reverse, true)
+                    && SupportsPersonalRelationship(rel, true))
                 {
                     // whether this goes through the ask-permission event or sets directly is decided in TryChangeRelationship
                     relation = rel;
@@ -342,6 +345,18 @@ public class Character_Relationship
 
             TryChangeRelationship(relation, isA);
         }
+    }
+
+    /// <summary>
+    /// Whether both characters' personalities author the kojo relation needs (RelationshipType.IsSupportedBy):
+    /// Owner on side isA, Target on side !isA. The player never speaks relationship kojo, so the player side passes.
+    /// </summary>
+    public bool SupportsPersonalRelationship(RelationshipType relation, bool isA)
+    {
+        if (relation == null) return false;
+        if (Owner.RefID != 0 && !relation.IsSupportedBy(Owner.Relationships.Personality, isA)) return false;
+        var target = Target;
+        return target == null || target.RefID == 0 || relation.IsSupportedBy(target.Relationships.Personality, !isA);
     }
 
     protected void TryChangeRelationship(RelationshipType relation, bool isA, bool isUpgrade = false)

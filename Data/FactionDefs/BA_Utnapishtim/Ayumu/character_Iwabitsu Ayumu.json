@@ -75,6 +75,18 @@
                 "skeletonJSON_path":"Ayumu/NP0013_quest.skel",
                 "idleAnimName":"Idle_01", "addonAnimName":"Idle_01"
 
+            },
+            {
+                "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+                "_comment":"fallback when the spine textures (mod mist.ba.utnapishtim.spine) are not loaded",
+
+                "random_portrait_folder":"Ayumu/portrait_ayumu",
+
+                "icon_offset_x":0.0,
+                "icon_offset_y":0.0,
+                "icon_offset_size":0.8,
+
+                "icon_path":"Ayumu/Ayumu_Ark_Uniform_Icon.png"
             }
         ],
         "CharaBanner":

@@ -1,0 +1,134 @@
+{
+    "_doc": "Fired from code (PlayerSleepChoice.Ask), no trigger - only ever for the player: the player's sleep command resolves and the schedule / bookings would let them sleep less than their sleep need, or someone falling asleep with them (never one already asleep) would get up at another time - asked before the bedtime event (OnSleepComplete), which waits for the answer. Self = the player. ExecuteCallback buildOptions = the texts and loaded options from the sleeps starting now: [睡到预定的事件] (the schedule's length; disabled with $sleepBlockedText$ when it leaves no sleep at all), [睡到$target$预定的事件] (sleeping together only: until the companion who gets up first does - one already asleep when their current sleep runs out, one falling asleep now by their own schedule / bookings; disabled with $sleepCompanionBlockedText$ when theirs leaves no sleep; their own sleep is unchanged) and [睡到自然醒] (the full sleep need, nothing schedule- or booking-driven cuts it short; tooltip = the commitments it may miss). The event's own [不睡了] (default cancel; ExecuteCallback stayAwake) = no sleep - the command resolves without it; closing the event without an answer counts as this too. Staying awake puts back on what the command had the player take off (AppendStrings sleepRedressed when anything) and tells that sleep_newCompanions (came to bed with the player) still go to sleep and sleep_asleepCompanions (already asleep there) sleep on; $sleepBedName$ = the bed. AppendStrings: sleepNeedText, sleepNaturalWake, sleepReasonText, sleepScheduledTooltip, sleepBlockedText, sleepNaturalTooltip. Plans/PlayerSleepCommitmentConfirmation.md",
+    "Events": {
+        "list": [
+            {
+                "ID": "PlayerSleep_Choice",
+                "allowDuplicate": true,
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_build",
+                                "Results": [
+                                    { "Type": "ExecuteCallbackPermissive", "arguments": [ "buildOptions" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "ask" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "ask",
+                        "question": "PlayerSleep_Choice_question",
+                        "npcDecides": false,
+                        "loadOptionsKey": "sleepOptions",
+                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "end" ] } ],
+                        "options": [
+                            {
+                                "option": "PlayerSleep_Choice_stayAwake",
+                                "isDefaultCancel": true,
+                                "Results": [
+                                    { "Type": "ExecuteCallbackPermissive", "arguments": [ "stayAwake" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "stay_awake" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "stay_awake",
+                        "_comment": "The player gets dressed again when the command had them take something off (stayAwake sets sleepRedressed).",
+                        "options": [
+                            { "option": "redressed", "Results": [ { "Type": "ExistAppendStrings", "arguments": [ "sleepRedressed" ] }, { "Type": "JumpToLabel", "arguments": [ "", "redress" ] } ] },
+                            { "option": "nothing to put on", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "stay_awake_line" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "redress",
+                        "line": "PlayerSleep_Choice_redress",
+                        "nextEntryLabel": "companions_new"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "stay_awake_line",
+                        "line": "PlayerSleep_Choice_stayAwakeLine"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "companions_new",
+                        "_comment": "Those who came to bed with the player go to sleep anyway.",
+                        "options": [
+                            { "option": "companions still go to sleep", "target_chara_conditions": { "sleep_newCompanions": [ { "parameters": [ "exists" ] } ] }, "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "new_sleep_line" ] } ] },
+                            { "option": "none", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "companions_asleep" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "new_sleep_line",
+                        "line": "PlayerSleep_Choice_companionsSleep"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "companions_asleep",
+                        "_comment": "Those already asleep in the bed sleep on, undisturbed.",
+                        "options": [
+                            { "option": "already asleep", "target_chara_conditions": { "sleep_asleepCompanions": [ { "parameters": [ "exists" ] } ] }, "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "asleep_line" ] } ] },
+                            { "option": "none", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "end" ] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "asleep_line",
+                        "line": "PlayerSleep_Choice_companionsAsleep",
+                        "nextEntryLabel": "end"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "end",
+                        "line": "",
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "PlayerSleep_Choice_question": "$self.name$还需要睡$sleepNeedText$才能睡足（到$sleepNaturalWake$）。\n$sleepReasonText$\n要睡多久？",
+                "PlayerSleep_Choice_stayAwake": "不睡了",
+                "PlayerSleep_Choice_redress": "$self.name$打消了睡意，从$sleepBedName$边起身，把脱下的衣服重新穿好。",
+                "PlayerSleep_Choice_stayAwakeLine": "$self.name$打消了睡意，从$sleepBedName$边起身。",
+                "PlayerSleep_Choice_companionsSleep": "$sleep_newCompanions.name$没有再等，在$sleepBedName$上躺下，拉好被子，不久便睡着了。",
+                "PlayerSleep_Choice_companionsAsleep": "$sleep_asleepCompanions.name$仍在$sleepBedName$上熟睡，没有被惊动。",
+                "ui_sleepChoice_companion_asleep": "$target$已经睡着了，预计$wake$醒来。",
+                "ui_sleepChoice_scheduled": "睡到预定的事件",
+                "ui_sleepChoice_natural": "睡到自然醒",
+                "ui_sleepChoice_scheduled_tooltip": "睡到$wake$，比睡足少睡$missing$。",
+                "ui_sleepChoice_scheduled_blocked": "$sleepBlockedText$",
+                "ui_sleepChoice_natural_tooltip": "一直睡到睡足，$wake$醒来。",
+                "ui_sleepChoice_natural_missHeader": "可能会错过或迟到：",
+                "ui_sleepChoice_natural_missLine": "· $commitment$（需在$ready$前起床）",
+                "ui_sleepChoice_reason_window": "按作息安排，睡眠时间到$wake$结束。",
+                "ui_sleepChoice_reason_commitment": "按目前的安排只能睡到$wake$——需在$ready$前起床：$commitment$",
+                "ui_sleepChoice_reason_tooLate": "按目前的安排已经没有时间睡觉了——需在$ready$前起床：$commitment$",
+                "ui_sleepChoice_reason_rested": "按目前的安排可以睡足，$wake$醒来。",
+                "ui_sleepChoice_scheduled_tooltip_rested": "睡到$wake$，可以睡足。",
+                "ui_sleepChoice_companion": "睡到$target$预定的事件",
+                "ui_sleepChoice_companion_tooltip": "睡到$wake$。\n$reason$",
+                "ui_sleepChoice_companion_blocked": "$sleepCompanionBlockedText$",
+                "ui_sleepChoice_companion_window": "$target$的睡眠时间到$wake$结束。",
+                "ui_sleepChoice_companion_commitment": "$target$需在$ready$前起床：$commitment$",
+                "ui_sleepChoice_companion_tooLate": "$target$已经没有时间睡觉了——需在$ready$前起床：$commitment$",
+                "ui_sleepChoice_commitment_party": "$party$的行程（$start$起）",
+                "ui_sleepChoice_commitment_expedition": "$party$出发（$start$）",
+                "ui_sleepChoice_duration_hm": "$h$小时$m$分钟",
+                "ui_sleepChoice_duration_h": "$h$小时",
+                "ui_sleepChoice_duration_m": "$m$分钟"
+            }
+        }
+    }
+}

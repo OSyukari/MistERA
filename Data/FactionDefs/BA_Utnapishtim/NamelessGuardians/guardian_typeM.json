@@ -21,6 +21,18 @@
                 "skeletonJSON_path":"NamelessGuardians/NP0091_spr.skel",
                 "idleAnimName":"00"
 
+            },
+            {
+                "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+                "_comment":"fallback when the spine textures (mod mist.ba.utnapishtim.spine) are not loaded",
+
+                "random_portrait_folder":"NamelessGuardians/portrait_guardian_typeM",
+
+                "icon_offset_x":0.0,
+                "icon_offset_y":-30,
+                "icon_offset_size":0.6,
+
+                "icon_path":"NamelessGuardians/Nameless_Guardian_Middle_Sprite.png"
             }
         ]
     },

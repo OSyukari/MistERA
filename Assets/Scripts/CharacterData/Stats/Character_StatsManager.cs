@@ -454,6 +454,18 @@ public class StatsManager : I_StatsManager
             if (!_statusInstances.ContainsKey("chara_status_climax_count")) AddStatus("chara_status_climax_count");
         }
 
+        // Save migration (saves up to v0.2-20261113): chara_status_labor was renamed to chara_status_labor_early - its
+        // expiry removal is a substring match, which also removed chara_status_labor_obstructed / _intense. Must run
+        // before the orphan drop below; reads only the stored fields (the old definition is gone).
+        if (this._statusInstances != null && SaveFile.LoadingSaveAtOrBefore(20261113)
+            && _statusInstances.TryGetValue("chara_status_labor", out var oldLabor))
+        {
+            _statusInstances.Remove("chara_status_labor");
+            ClearStatusInstanceCache();
+            if (!_statusInstances.ContainsKey(ReproductionUtility.status_labor))
+                AddStatus(ReproductionUtility.status_labor, oldLabor.StoredSeverity, oldLabor.duration);
+        }
+
         // Save migration: status definitions can move between the Status and StatusEX lists
         // across versions (e.g. chara_status_pain), but instances are serialized per save.
         if (this._statusInstances != null)
@@ -1149,7 +1161,8 @@ public class StatsManager : I_StatsManager
             var key = keys[k];
             // TotalMinutes, not Minutes: the Minutes component is 0 for whole-hour spans (EndDormantState catch-up)
             int time = (int)(Owner.isTimeStopped ? t.TotalMinutes : t_real.TotalMinutes);
-            var curr = _statusInstances[key];
+            // removed earlier in this loop (string-match removal of an expired status, wake-up, removal events)
+            if (!_statusInstances.TryGetValue(key, out var curr)) continue;
 
             // Sex-type statuses have their decay and duration paused while either timer is active:
             // - curr.pauseXMinAfterMod: per-instance, refreshed when THIS status is stimulated

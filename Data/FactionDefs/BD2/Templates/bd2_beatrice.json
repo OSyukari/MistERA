@@ -1,26 +1,38 @@
 {
-    "baseID": "BD2_cynthia",
+    "baseID": "BD2_beatrice",
     "Portrait":{
         "portraitPriorityList":[
             {
                 "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
 
-                "portrait_offset_x": 1.509969,
-                "portrait_offset_y": -119.6971,
-                "portrait_offset_size": 1.15,
+                "portrait_offset_x": 27.70512,
+                "portrait_offset_y": -70.21329,
+                "portrait_offset_size": 1.05,
 
                 "icon_offset_x":0.0,
                 "icon_offset_y":0.0,
                 "icon_offset_size":1.0,
-              "straightAlpha": true,
+                "straightAlpha": true,
 
 
-                "icon_path":"Templates/illust_inven_char063301_63.png",
+                "icon_path":"Templates/illust_inven_char103501_34.png",
 
-                "materialTexturePaths":["char063301/char063301.png"],
-                "atlasJSON_path":"char063301/char063301.atlas",
-                "skeletonJSON_path":"char063301/char063301.skel",
+                "materialTexturePaths":["char103501/char103501.png"],
+                "atlasJSON_path":"char103501/char103501.atlas",
+                "skeletonJSON_path":"char103501/char103501.skel",
                 "idleAnimName":"idle"
+            },
+            {
+                "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+                "_comment":"fallback when the spine assets (mod mist.bd2.spine) are not loaded",
+
+                "random_portrait_folder":"Others/Generated_Adventurers",
+
+                "icon_offset_x":0.0,
+                "icon_offset_y":0.0,
+                "icon_offset_size":1.0,
+
+                "icon_path":"Templates/illust_inven_char103501_34.png"
             }
         ]
     },
@@ -37,21 +49,21 @@
           "trait_Sensitivity_V_default", "trait_Sensitivity_A_default",
           "trait_Size_B_A", "trait_Size_P_none", "trait_Size_V_1", "trait_Size_A_1"
       ],
-      "traits_body": [ "trait_HairColor_blonde" ],
-      "_comment_defaultHairstyle": "Long wavy blonde hair with a side braid (Spine portrait).",
+      "traits_body": [ "trait_HairColor_brown" ],
+      "_comment_defaultHairstyle": "Grey-brown hair with a long single braid (Spine portrait).",
       "defaultHairstyle": {
-          "hairstyleID": "hairstyle_wavy_long",
-          "slotSelection": { "accent_side": "hair_accent_side_braid" }
+          "hairstyleID": "hairstyle_braid",
+          "subCategoryID": "hairstyle_braid_single"
       },
       "Height":145,
       "initialRelationship":[        ],
       "initialInventory":[        ],
       "Skills": null
     },
-    "firstName": "Cynthia",
+    "firstName": "Beatrice",
     "middleName": "",
     "lastName": "",
-    "title":"BD2_cynthia_title",
+    "title":"BD2_beatrice_title",
     "nameDisplayFormat": "chara_fullname_firstToLast",
     "origin": "charOrigin_none",
     "race": "humanRace_human",

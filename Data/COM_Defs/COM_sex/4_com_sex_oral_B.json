@@ -14,6 +14,7 @@
                     "position_face",
                     "position_equal"
                 ],
+                "portraitTags": ["breast_suck"],
                 "portraitTags_Receiver": ["breasts"],
                 "_comment_traces": "Body traces (Data/RaceDefs/TraceDefs.json): normal licking leaves saliva on the breast; strong rounds (NPC SetForced) by doer race: suck (humanoid, teeth mark 30%) / bite (others, teeth mark 100% + saliva). Milk (aroused + pregnant) into the doer's mouth on all of them. The suck / bite versions are the upgrade com_sex_oral_B_force.",
                 "traceKeywords": ["lick"],
@@ -167,6 +168,7 @@
                     "position_face",
                     "position_equal"
                 ],
+                "portraitTags": ["breast_suck"],
                 "portraitTags_Receiver": ["breasts"],
                 "_comment_traces": "Body traces (Data/RaceDefs/TraceDefs.json): by doer race: suck (humanoid, teeth mark 30%) / bite (others, teeth mark 100% + saliva). Milk (aroused + pregnant) into the doer's mouth.",
                 "traceKeywords": ["lick"],

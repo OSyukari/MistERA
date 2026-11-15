@@ -1,0 +1,98 @@
+{
+    "COMs": {
+        "list": [
+            {
+                "parentCOMID": "com_sex_base",
+                "ID": "com_sex_tribadism",
+                "ActionPackageClass": "ActionPackage_Sex",
+                "categoryTags": ["com_category_c"],
+                "displayName": "com_sex_tribadism_displayName",
+                "timeScale": 3,
+                "comTags": ["sex", "position_equal", "permission_intimacy_high"],
+                "portraitTags": ["tribadism"],
+                "_comment_contact": "External clitoral contact on both sides, not vaginal insertion or oral service. Explicit act tags keep both picked organs clitoral; the non-penetration sex resolver stimulates each with the other as its source. Uses high intimacy permission, like other external caresses, not permission_vaginal.",
+                "doerActTags": ["clit"],
+                "receiverActTags": ["clit"],
+                "traceKeywords": ["wet"],
+                "requirements": {
+                    "requirement": {
+                        "doerCount": 1,
+                        "receiverCount": 1,
+                        "req_Doers": {
+                            "BodyTags": ["clit"],
+                            "minRevealingScore": 1,
+                            "requireConscious": true,
+                            "requireAction": true,
+                            "cost_ST": 1
+                        },
+                        "req_Receivers": {
+                            "BodyTags": ["clit"],
+                            "minRevealingScore": 1,
+                            "requireConscious": true,
+                            "requireAction": true,
+                            "cost_ST": 1
+                        }
+                    }
+                },
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 24,
+                    "SkillBonus_Doer": ["skill_sensitivity_C"],
+                    "SkillBonus_Receiver": ["skill_sensitivity_C"],
+                    "actModifiers": {
+                        "enabled": true,
+                        "totalMin": 0,
+                        "totalMax": 13,
+                        "terms": [
+                            {"source": "PartnerGoodwill", "appliesTo": "BothDeciders", "scale": 0.05, "offset": -2.5, "min": 0, "max": 2},
+                            {"source": "PartnerTrust", "appliesTo": "BothDeciders", "scale": 0.05, "offset": -1.5, "min": 0, "max": 3},
+                            {"source": "PartnerDesire", "appliesTo": "BothDeciders", "scale": 0.04, "offset": -4, "min": 0, "max": 10}
+                        ]
+                    }
+                },
+                "DifficultyCheck": {
+                    "baseD20Check": 5,
+                    "SkillBonus_Doer": ["skill_sensitivity_C"],
+                    "SkillBonus_Receiver": ["skill_sensitivity_C"]
+                },
+                "variants": [
+                    {
+                        "displayName": "com_sex_tribadism_displayName",
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "receiverCount": 1
+                            }
+                        }
+                    }
+                ],
+                "description_begin": {
+                    "Entries": [{"texts": ["com_sex_tribadism_begin"]}]
+                },
+                "description_ongoing": {
+                    "Entries": [{"texts": ["com_sex_tribadism_ongoing"]}]
+                },
+                "description_remove": {
+                    "Entries": [{"texts": ["com_sex_tribadism_remove"]}]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_sex_tribadism": "双方以外阴相互摩擦，刺激彼此的阴蒂。需要双方都有可接触的阴蒂；仅限一对一，不进行插入。",
+                "com_sex_tribadism_displayName": "磨镜",
+                "com_sex_tribadism_begin": "$doer.firstname$与$receiver.firstname$开始磨镜",
+                "com_sex_tribadism_ongoing": "$doer.firstname$与$receiver.firstname$正在磨镜",
+                "com_sex_tribadism_remove": "$doer.firstname$与$receiver.firstname$结束了磨镜"
+            },
+            "en-us": {
+                "com_sex_tribadism": "Mutual external genital contact stimulates both actors' clitorises. Requires an accessible clitoris on both actors; one pair only, without penetration.",
+                "com_sex_tribadism_displayName": "Tribadism",
+                "com_sex_tribadism_begin": "$doer.firstname$ and $receiver.firstname$ begin tribadism",
+                "com_sex_tribadism_ongoing": "$doer.firstname$ and $receiver.firstname$ are engaged in tribadism",
+                "com_sex_tribadism_remove": "$doer.firstname$ and $receiver.firstname$ stop tribadism"
+            }
+        }
+    }
+}

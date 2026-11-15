@@ -2,11 +2,14 @@
     "baseID": "Campaign1_Nikke_Cinderella",
     "Portrait":{
         "useGlobalHandler": [
-            { "path": "cinderella/cinderella_after_futa", "selfKeys": ["corrupted", "futanari"] },
-            { "path": "cinderella/cinderella_after", "selfKeys": ["corrupted"] },
-            { "path": "cinderella/cinderella" }
+            { "path": "nikke_cinderella/cinderella_after_futa", "selfKeys": ["naked_penis", "corrupted"] },
+            { "path": "nikke_cinderella/cinderella_after", "selfKeys": ["corrupted"] },
+            { "path": "nikke_cinderella/cinderella_selfcest", "targetKeys": ["Campaign1_Nikke_Cinderella_corrupted"] },
+            { "path": "nikke_cinderella/cinderella" }
         ],
         "portraitPriorityList":[
+
+
 {
     "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
 
@@ -18,7 +21,7 @@
     "icon_offset_y":0.0,
 "icon_offset_size":1.13,
 
-    "RequireSelfContextKeys":["combat"],
+    "RequireSelfContextKeys":["combat", "corrupted"],
     "icon_path":"Cinderella/si_c511_00_s.png",
   "Variants":
   [  
@@ -34,6 +37,40 @@
     {  "tagsMatch":["sad"], "PortraitVariantData":["sad_02","pain_02","etc_02"] },   
     {  "tagsMatch":["broken"], "PortraitVariantData":["special_02"] },     
     { "PortraitVariantData":["idle_02"] }
+  ],
+    "materialTexturePaths":["c511/c511_00.png","c511/c511_00_2.png"],
+    "atlasJSON_path":"c511/c511_00.atlas",
+    "skeletonJSON_path":"c511/c511_00.skel",
+    "idleAnimName":""
+},
+
+{
+    "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
+
+    "portrait_offset_x": 29.53345,
+    "portrait_offset_y": -978.0911,
+    "portrait_offset_size": 0.65,
+
+    "icon_offset_x":0.0,
+    "icon_offset_y":0.0,
+"icon_offset_size":1.13,
+
+    "RequireSelfContextKeys":["combat"],
+    "icon_path":"Cinderella/si_c511_00_s.png",
+  "Variants":
+  [  
+    {  "tagsMatch":["surprised"], "PortraitVariantData":["surprise_blue_02"] },    
+    {  "tagsMatch":["happy"], "PortraitVariantData":["smile_blue_02"] },    
+    {  "tagsMatch":["happy"], "PortraitVariantData":["delight_blue_02"] },    
+    {  "tagsMatch":["sorry"], "PortraitVariantData":["void_blue_02"] },  
+    {  "tagsMatch":["relaxed"], "PortraitVariantData":["delight_blue_02"] },    
+    {  "tagsMatch":["angry"], "PortraitVariantData":["rage_blue_02","angry_blue_02"] },    
+    {  "tagsMatch":["hostile"], "PortraitVariantData":["rage_blue_02"] },    
+    {  "tagsMatch":["disappointed"], "PortraitVariantData":["void_blue_02"] },    
+    {  "tagsMatch":["fear"], "PortraitVariantData":["etc_blue_02"] },    
+    {  "tagsMatch":["sad"], "PortraitVariantData":["sad_blue_02","pain_blue_02","etc_blue_02"] },   
+    {  "tagsMatch":["broken"], "PortraitVariantData":["special_blue_02"] },     
+    { "PortraitVariantData":["idle_blue_02"] }
   ],
     "materialTexturePaths":["c511/c511_00.png","c511/c511_00_2.png"],
     "atlasJSON_path":"c511/c511_00.atlas",
@@ -62,11 +99,50 @@
     { "PortraitVariantData":["idle"] }
   ],
 
+    "RequireSelfContextKeys":["corrupted"],
                 "icon_path":"Cinderella/si_c511_00_s.png",
 
                 "materialTexturePaths":["c511/c511_00.png","c511/c511_00_2.png"],
                 "atlasJSON_path":"c511/c511_00.atlas", "skeletonJSON_path":"c511/c511_00.skel",
                 "idleAnimName":""
+            },
+            {
+                "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
+                "portrait_offset_x": 29.53345, "portrait_offset_y": -978.0911, "portrait_offset_size": 0.65,
+                "icon_offset_x":0.0, "icon_offset_y":0.0, "icon_offset_size":1.13,
+  "Variants":
+  [    
+    {  "tagsMatch":["happy"], "PortraitVariantData":["smile_blue","delight_blue"] },
+    {  "tagsMatch":["surprised"], "PortraitVariantData":["surprise_blue"] },  
+    {  "tagsMatch":["sorry"], "PortraitVariantData":["void_blue"] },  
+    {  "tagsMatch":["relaxed"], "PortraitVariantData":["delight_blue"] },    
+    {  "tagsMatch":["angry"], "PortraitVariantData":["rage","angry_blue"] },    
+    {  "tagsMatch":["hostile"], "PortraitVariantData":["rage_blue"] },    
+    {  "tagsMatch":["disappointed"], "PortraitVariantData":["void_blue"] },    
+    {  "tagsMatch":["fear"], "PortraitVariantData":["etc_blue"] },    
+    {  "tagsMatch":["sad"], "PortraitVariantData":["sad_blue","pain_blue","etc_blue"] },  
+    {  "tagsMatch":["broken"], "PortraitVariantData":["special_blue"] },    
+    {  "Enable":false, "_comment":"transition into combat, then back to neutral -> click animation", "PortraitVariantData":["action"] },
+    {  "Enable":false, "_comment":"transition into combat", "PortraitVariantData":["expression_0"] },
+    {  "Enable":false, "_comment":"transition into neutral", "PortraitVariantData":["expression_0_alt"] },
+    { "PortraitVariantData":["idle_blue"] }
+  ],
+
+                "icon_path":"Cinderella/si_c511_00_s.png",
+
+                "materialTexturePaths":["c511/c511_00.png","c511/c511_00_2.png"],
+                "atlasJSON_path":"c511/c511_00.atlas", "skeletonJSON_path":"c511/c511_00.skel",
+                "idleAnimName":""
+            },
+            {
+                "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+                "_comment":"fallback when the spine assets (mod mist.nikke.spine) are not loaded",
+
+                "random_portrait_folder":"Cinderella/portrait_cinderella",
+
+                "icon_offset_x":0.0, "icon_offset_y":0.0, "icon_offset_size":1.13,
+
+                "icon_path":"Cinderella/si_c511_00_s.png"
             }
         ]
     },

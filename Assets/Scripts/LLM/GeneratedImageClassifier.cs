@@ -65,6 +65,7 @@ public sealed class GeneratedImageClassifier
     }
 
     readonly ImageRules rules;
+    readonly JObject portraitConfig;
     readonly List<JObject> categories;
     readonly List<JProperty> names;
     readonly List<JObject> variants;
@@ -198,6 +199,7 @@ public sealed class GeneratedImageClassifier
         var pg = config?["portrait_global"] as JObject;
         if (!(pg?["categories"] is JArray categoryList) || !(pg["names"] is JObject nameMap))
             throw new InvalidDataException("missing portrait_global.categories or portrait_global.names");
+        portraitConfig = pg;
         categories = categoryList.OfType<JObject>().Where(c => rules.categories.Any(r => r.id == (string)c["id"]
             && r.id != "portrait" && !r.hold && r.rename && r.nameSet == ImageRules.DefaultNameSet)).ToList();
         names = nameMap.Properties().Where(p => !p.Name.StartsWith("_", StringComparison.Ordinal) && p.Value is JObject).ToList();
@@ -254,10 +256,11 @@ public sealed class GeneratedImageClassifier
                     var pairRole = ((string)pair["role"] ?? "").Trim();
                     bool both = pairRole == "both" && (role == "doer" || role == "receiver");
                     if (string.IsNullOrEmpty(keyword) || !keywords.Contains(keyword) || (pairRole != role && !both)) continue;
-                    string folder = category.id + (both && role == "doer" ? "_perform" : "");
+                    if (GlobalPortraitTemplate.KeywordExclusions(portraitConfig, keyword, role).Any(keywords.Contains)) continue;
                     foreach (var rule in nameRules.Where(n => n.name == names[order].Name
                         && (n.onlyInCategories == null || n.onlyInCategories.Contains(category.id))))
                     {
+                        string folder = category.id + (rule.isperform || (both && role == "doer") ? "_perform" : "");
                         var candidate = candidates.Find(c => c.rule == rule && c.folder == folder);
                         if (candidate == null)
                         {
@@ -330,7 +333,7 @@ public sealed class GeneratedImageClassifier
         var supported = new HashSet<string>(variants.Where(v => ((JArray)v["keywords"]).Values<string>().All(confirmedKeys.Contains))
             .Select(v => (v["files"] as JArray)?.Values<string>().FirstOrDefault()).Where(f => !string.IsNullOrEmpty(f)));
         if (!string.IsNullOrEmpty(classification.variant)) supported.Add(classification.variant);
-        // The classifier's action priority (cum, rape, anal, vaginal/base) also governs game evidence.
+        // The configured action-suffix priority also governs game evidence.
         classification.variant = selected.rule.hasVariants.FirstOrDefault(v => selected.category.AllowsVariant(v) && supported.Contains(v));
         if (classification.variant == null && selected.category.AllowsVariant(selected.rule.defaultVariant))
             classification.variant = selected.rule.defaultVariant;

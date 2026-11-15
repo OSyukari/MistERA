@@ -1304,6 +1304,13 @@ public class Room_Instance: IDisposable, I_Disposable
 
     bool _cachedCleanliness = false;
 
+    /// <summary>
+    /// Occupants need RefreshMoodlets (someone entered / left, an action started / ended, a divider or the cleanliness
+    /// changed); consumed by Map_Instance.UpdateAllRoom. A plain flag, so Job.PostUpdateTime may set it from
+    /// Parallel.ForEach worker threads. Orphan rooms are never consumed (frozen on purpose).
+    /// </summary>
+    [JsonIgnore] public bool MoodletsDirty = false;
+
     string cleanlinessStringRef = string.Empty;
 
     Dictionary<CleaningStatus, Stat_Modifier> cleanlinessMod_cache = new Dictionary<CleaningStatus, Stat_Modifier>();
@@ -1358,7 +1365,7 @@ public class Room_Instance: IDisposable, I_Disposable
         _cachedCleanliness = false;
 
         // the cleanliness moodlet: refreshed with the room's next update
-        scr_System_CampaignManager.current?.Map?.MarkMoodletsDirty(RefID);
+        MoodletsDirty = true;
     }
 
     public CleaningStatus RoomCleanliness(Character_Trainable c) 

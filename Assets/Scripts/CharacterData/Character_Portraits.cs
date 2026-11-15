@@ -42,9 +42,19 @@ public class PortraitManager
     [JsonProperty("portraitPriorityList")] protected List<CharaPortrait> serializedData = null;
 
     /// <summary>
-    /// Banners are not customizable: resolved from the portraitBaseIDOverride template unless serializedBanner exists (template data, legacy saves)
+    /// Banners are not customizable: resolved from the portraitBaseIDOverride template unless serializedBanner exists (template data, legacy saves).
+    /// Null when the banner is a spine whose assets are not loaded (optional asset mod): drawn directly, there is no selection to fall back from.
     /// </summary>
     [JsonIgnore] public CharaPortrait CharaBanner
+    {
+        get
+        {
+            var banner = BannerHandler;
+            if (banner is CharaPortrait_Spine spine && !spine.AssetsAvailable) return null;
+            return banner;
+        }
+    }
+    CharaPortrait BannerHandler
     {
         get
         {
@@ -148,6 +158,18 @@ public class PortraitManager
         public string path = "";
         /// <summary> added to RequireSelfContextKeys of every handler generated from this folder (eg. ["corrupted"]) </summary>
         public List<string> selfKeys = new List<string>();
+        /// <summary>
+        /// added to RequireTargetContextKeys of every handler generated from this folder. Target tags carry each interaction
+        /// partner's portrait template ID (UtilityEX.AddPortraitTargetID), so ["Campaign1_Nikke_Cinderella_corrupted"] = a pair
+        /// folder used while that character is (one of) the target(s)
+        /// </summary>
+        public List<string> targetKeys = new List<string>();
+        /// <summary>
+        /// optional second folder (same path rules) merged into this entry, one layer: per variant, this folder's images first, then the
+        /// fallback's for the same variant, so a fitting fallback image beats a less specific own one. Gated by this entry's keys.
+        /// eg. dress + fallback naked = dress U naked
+        /// </summary>
+        public string fallback = "";
     }
 
     /// <summary>
@@ -512,13 +534,18 @@ public class PortraitManager
                 handler = i;
                 break;
             }
-            if (handler == null && portraitPriorityList.Count > 0)
-            {   // fallback: the last original handler (generated handlers are never the fallback)
-                handler = portraitPriorityList[portraitPriorityList.Count - 1];
-                portrait = handler.PortraitPath(keywords, box);
-                icon = handler.IconPath(keywords) != "" ? handler.IconPath(keywords) : portrait;
+            if (handler == null)
+            {   // fallback: the last valid original handler (generated handlers are never the fallback)
+                for (int n = portraitPriorityList.Count - 1; n >= 0; n--)
+                {
+                    if (portraitPriorityList[n] == null || !portraitPriorityList[n].isValid()) continue;
+                    handler = portraitPriorityList[n];
+                    portrait = handler.PortraitPath(keywords, box);
+                    icon = handler.IconPath(keywords) != "" ? handler.IconPath(keywords) : portrait;
+                    break;
+                }
             }
-            else if (handler == null)
+            if (handler == null)
             {
                 handler = Transparent;
                 portrait = "";
@@ -753,6 +780,8 @@ public class PortraitManager
         if (Owner == null) return result;
 
         UtilityEX.GetActorTag(ref result, Owner);
+        // portrait-only bare part keys (naked_torso, naked_lower)
+        if (Owner.Body != null) result.AddRange(Owner.Body.ExposedPortraitKeys);
         var packages = new List<ActionPackage>();
         if (Owner.InteractionJob != null && Owner.InteractionJob.isActive)
         {
@@ -812,7 +841,11 @@ public class PortraitManager
             {
                 if (ep == null) continue;
                 var partner = ep.Doer == Owner ? ep.Receiver : ep.Receiver == Owner ? ep.Doer : null;
-                if (partner != null && partner != Owner && partners.Add(partner)) UtilityEX.GetActorTag(ref result, partner);
+                if (partner != null && partner != Owner && partners.Add(partner))
+                {
+                    UtilityEX.GetActorTag(ref result, partner);
+                    UtilityEX.AddPortraitTargetID(result, partner);
+                }
             }
         }
         result = result.Distinct().ToList();
@@ -885,7 +918,10 @@ public class PortraitManager
         public string IconVariantData = "";
         public bool Enable = true;
         public List<string> tagsMatch = new List<string>();
+        public List<string> tagsExclude = new List<string>();
         public CharaReq charaReq = null;
+        /// <summary> global portrait template only: position in its template handler, aligns the same variant of two folders (GlobalPortraitTemplate.GetMergedHandlers) </summary>
+        [JsonIgnore] public int templateIndex = -1;
 
         /// <summary>
         /// Image handlers only (Image / LandscapeImage): PortraitVariantData resolved into image paths.
@@ -990,6 +1026,7 @@ public class PortraitManager
         public bool Validate(List<string> tags)
         {
             if (!Enable) return false;
+            if (tagsExclude != null && tags != null && tagsExclude.Any(tags.Contains)) return false;
             if (tagsMatch.Count < 1) return true;
             if (Utility.ListContainsStrict(tags, tagsMatch)) return true;
             return false;
@@ -1026,6 +1063,8 @@ public class PortraitManager
         /// Built from the global portrait template (PortraitManager.GeneratedHandlers): never saved, offsets never overridden
         /// </summary>
         [JsonIgnore] public bool isGenerated = false;
+        /// <summary> global portrait template only: position in the template, aligns the same handler of two folders (GlobalPortraitTemplate.GetMergedHandlers) </summary>
+        [JsonIgnore] public int templateIndex = -1;
 
         public float portrait_offset_x;
         public float portrait_offset_y;
@@ -1459,6 +1498,7 @@ public class PortraitManager
 
         private IEnumerator PreCacheCoroutine()
         {
+            if (!AssetsAvailable) yield break;
             if (scr_System_CentralControl.current != null &&
                 scr_System_CentralControl.current.TryGetSpineCache(skeletonJSON_path, out var cached))
             {
@@ -1514,7 +1554,37 @@ public class PortraitManager
             if (scr_System_CentralControl.current.LogPrefs.DLog_Portrait_Spine) Debug.Log($"[SpineTEMP] PreCache {version} {(dataHolder != null && dataHolder.initialized ? "REGISTERED" : "FAILED (not initialized)")} skel [{skeletonJSON_path}] owner [{Owner?.Owner?.CallName}] handler #{GetHashCode()} data #{dataHolder?.GetHashCode()} frame {Time.frameCount}");
         }
 
-        public override bool isValid() { return !Disable; }
+        public override bool isValid() { return !Disable && AssetsAvailable; }
+
+        bool _assetsChecked = false;
+        bool _assetsAvailable = false;
+        /// <summary>
+        /// Skeleton, atlas and every texture are registered short addresses (Data, mods or asset packs). Spine files can ship in an
+        /// optional asset pack: without them the handler is invalid, so selection moves on to the handlers after it. Cached per handler.
+        /// </summary>
+        [JsonIgnore] public bool AssetsAvailable
+        {
+            get
+            {
+                if (_assetsChecked) return _assetsAvailable;
+                var serializer = scr_System_Serializer.current;
+                if (serializer == null) return true;
+                _assetsChecked = true;
+                _assetsAvailable = serializer.ShortFileAddress.ContainsKey(skeletonJSON_path) && serializer.ShortFileAddress.ContainsKey(atlasJSON_path);
+                if (_assetsAvailable && materialTexturePaths != null)
+                {
+                    foreach (var i in materialTexturePaths)
+                    {
+                        if (serializer.ShortFileAddress.ContainsKey(i)) continue;
+                        _assetsAvailable = false;
+                        break;
+                    }
+                }
+                if (!_assetsAvailable && scr_System_CentralControl.current != null && scr_System_CentralControl.current.LogPrefs.DLog_Portrait_Spine) Debug.Log($"[Spine] assets missing, handler disabled. skel [{skeletonJSON_path}] owner [{Owner?.Owner?.CallName}]");
+                return _assetsAvailable;
+            }
+        }
+
         public override IEnumerator DrawIcon(scr_CharIconBox iconBox, string pathOverride )
         {
             if (pathOverride == "") yield return base.DrawIcon(iconBox, pathOverride);

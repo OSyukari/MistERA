@@ -3,7 +3,8 @@
   "baseID": "Campaign1_Char_Hanako",
   "Portrait":{
         "useGlobalHandler": [
-            { "path": "ba_hanako/default" }
+            { "path": "ba_hanako/naked", "selfKeys": ["naked_torso", "naked_lower"], "fallback": "ba_hanako/default" },
+            { "path": "ba_hanako/default", "fallback": "ba_hanako/naked" }
         ],
       "portraitPriorityList":[
       {
@@ -59,6 +60,18 @@
             "skeletonJSON_path":"Hanako/NP0110_spr.skel",
                 "idleAnimName":"Idle_01", "addonAnimName":"00"
 
+        },
+        {
+            "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+            "_comment":"fallback when the spine textures (mod mist.ba.utnapishtim.spine) are not loaded",
+
+            "random_portrait_folder":"Hanako/portrait_hanako",
+
+            "icon_offset_x":0.0,
+            "icon_offset_y":0.0,
+            "icon_offset_size":0.8,
+
+            "icon_path":"Hanako/Hanako_Ark_Uniform_Icon.png"
         }
       ],
         "CharaBanner":

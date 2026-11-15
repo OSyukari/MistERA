@@ -110,6 +110,10 @@
             },
             {
                 "ID": "Labor_Start",
+                "_comment_cooldown": "Refusing the hospital (or no hospital reachable) puts this event on a 6h cooldown for that mother - otherwise it repeats every hour as each further baby enters early labor. manualCooldown: only those outcomes register it (AddCooldown results).",
+                "cooldownTime": 360,
+                "manualCooldown": true,
+                "cooldownRestrictTarget": true,
                 "_comment": "Fired from code when labor begins (Character_Trainable.NotifyLaborStart), no trigger. Target 'mother' = the woman in labor; self = the player when the player decides (her own labor, or the mother shares the player's permanent home faction), else the mother herself. The hospital admission options are built by code (FactionJoinUtility.InsertJoinOptions) into StoredOptions 'hospitalOptions' - this event only loads them, same pattern as jp_hospital_Opt_Admit. Player: the question waits for the player. NPC: npcDecides - a random default-accept hospital, else 'do not go'.",
                 "events": [
                     {
@@ -133,7 +137,10 @@
                             },
                             {
                                 "option": "_no_options",
-                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "no_hospital" ] } ]
+                                "Results": [
+                                    { "Type": "AddCooldown", "arguments": [ "Labor_Start", "self", "mother" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "no_hospital" ] }
+                                ]
                             }
                         ]
                     },
@@ -162,7 +169,10 @@
                             {
                                 "option": "Labor_Start_DontGo",
                                 "isDefaultCancel": true,
-                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "end" ] } ]
+                                "Results": [
+                                    { "Type": "AddCooldown", "arguments": [ "Labor_Start", "self", "mother" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "end" ] }
+                                ]
                             }
                         ]
                     },
@@ -177,7 +187,10 @@
                             {
                                 "option": "Labor_Start_DontGo",
                                 "isDefaultCancel": true,
-                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "end" ] } ]
+                                "Results": [
+                                    { "Type": "AddCooldown", "arguments": [ "Labor_Start", "self", "mother" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "end" ] }
+                                ]
                             }
                         ]
                     },

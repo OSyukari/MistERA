@@ -321,6 +321,21 @@ public class Character_Personality
         return message;
     }
 
+    /// <summary>
+    /// Whether this personality (or its fallback chain) authors at least one response for key, following RedirectID.
+    /// Static check: variant requirements are not evaluated. An entry with only empty responses counts as missing.
+    /// </summary>
+    public bool HasKojoEntry(string key)
+    {
+        if (entries.TryGetValue(key, out var entry))
+        {
+            var redirect = entry.CheckRedirect(key);
+            if (redirect != key && !entries.TryGetValue(redirect, out entry)) return false;
+            return entry.HasResponses();
+        }
+        return Fallback != null && Fallback.HasKojoEntry(key);
+    }
+
     static bool HasKojoText(MessageCollect_KojoEntry message)
     {
         if (message == null) return false;

@@ -23,6 +23,18 @@
                 "skeletonJSON_path":"Aemeath/Portraits_Aimisi.skel",
                 "idleAnimName":"idle"
 
+            },
+            {
+                "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+                "_comment":"fallback when the spine assets (mod mist.wuwa.spine) are not loaded",
+
+                "random_portrait_folder":"Aemeath/portrait_aemeath",
+
+                "icon_offset_x":0.0,
+                "icon_offset_y":0.0,
+                "icon_offset_size":0.56,
+
+                "icon_path":"Aemeath/T_IconRoleHead256_53_UI.png"
             }
         ],
         "CharaBannerBGColor":"#000000FF",

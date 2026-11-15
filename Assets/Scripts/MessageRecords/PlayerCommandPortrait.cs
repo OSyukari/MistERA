@@ -53,6 +53,7 @@ public static class PlayerCommandPortrait
             if (partner != null && partner != player)
             {
                 UtilityEX.GetActorTag(ref target, partner);
+                UtilityEX.AddPortraitTargetID(target, partner);
                 target.AddRange(UtilityEX.GetEPPortraitActionTags(ep, partner));
             }
         }

@@ -616,7 +616,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         }
     }
 
-    public void ApplyResults_AP(ActionPackage p, System.Action<EventInstance> prepareSleepEvent = null)
+    public void ApplyResults_AP(ActionPackage p, System.Action<EventInstance, System.Action> prepareSleepEvent = null)
     {
         var variant = (p.COMVariantID >= 0 && p.COMVariantID < variants.Count) ? variants[p.COMVariantID] : null;
         if ((variant == null || variant.useDefaultEventResult_AP) && results_AP.result_event != null) results_AP.result_event.Apply(p, null, prepareSleepEvent);

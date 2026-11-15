@@ -7,11 +7,11 @@ static class RegressionTests
     {
         Expect(engine, checks, "oral evidence is not intercourse despite posture hints", "human", "oral",
             ("1boy", 0.95f), ("penis", 0.98f), ("fellatio", 0.98f), ("all_fours", 0.9f), ("on_back", 0.8f));
-        Expect(engine, checks, "weak posture evidence cannot claim the tier ahead of oral", "human", "oral",
+        Expect(engine, checks, "weak regular posture still outranks generic oral fallback", "human", "doggystyle_vaginal",
             ("1boy", 0.95f), ("sex", 0.9f), ("all_fours", 0.42f), ("fellatio", 0.98f));
         Expect(engine, checks, "reverse hint without riding posture cannot steal rear position", "human", "doggystyle_vaginal",
             ("1boy", 0.99f), ("sex", 0.99f), ("sex_from_behind", 0.92f), ("reverse_cowgirl_position", 0.71f), ("straddling", 0.28f));
-        Expect(engine, checks, "ongoing position uses cum variant instead of aftermath", "human", "doggystyle_cum",
+        Expect(engine, checks, "doggystyle ignores cum and retains penetration default instead of aftermath", "human", "doggystyle_vaginal",
             ("1boy", 0.95f), ("sex", 0.99f), ("doggystyle", 0.95f), ("cum", 0.9f));
         Expect(engine, checks, "dedicated after-rape aftermath precedes posture evidence and uses simple cum variant", "pov", "after_rape_cum",
             ("after_sex", 0.96f), ("cum_in_pussy", 0.92f), ("on_side", 0.86f), ("sleeping", 0.66f), ("after_rape", 0.95f));
@@ -57,7 +57,7 @@ static class RegressionTests
         {
             Expect(engine, checks, tag + " at specificity cutoff beats generic oral", "human", "irrumatio",
                 ("1boy", 0.95f), (tag, 0.5f), ("fellatio", 0.99f), ("oral", 0.99f));
-            Expect(engine, checks, tag + " below specificity cutoff defers to generic oral", "human", "oral",
+            Expect(engine, checks, tag + " below specificity cutoff still beats generic oral fallback", "human", "irrumatio",
                 ("1boy", 0.95f), (tag, 0.49f), ("fellatio", 0.99f), ("oral", 0.99f));
         }
         Expect(engine, checks, "thighjob at specificity cutoff beats incidental manual evidence", "human", "thighjob",

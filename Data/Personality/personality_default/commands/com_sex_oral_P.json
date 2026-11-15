@@ -133,6 +133,36 @@
                         },
                         {
                             "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": ["sex", "doer", "blowjob", "sleeping", "relaxed"],
+                            "useActiveTags": false,
+                            "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
+                            "responses": [
+                                "com_sex_oral_P_Begin_Sleep_1",
+                                "com_sex_oral_P_Begin_Sleep_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraSelfPortraitTags": ["sex", "doer", "blowjob", "doll", "empty", "silence", "idle"],
+                            "useActiveTags": false,
+                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
+                            "responses": [
+                                "com_sex_oral_P_Begin_Timestop_1",
+                                "com_sex_oral_P_Begin_Timestop_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
                                 "requirePermission": true
                             },
                             "extraSelfPortraitTags": [
@@ -282,7 +312,11 @@
                             ],
                             "useActiveTags": false,
                             "_comment": "2.3.2 睡眠中 口交 口上文",
-                            "responses": []
+                            "responses": [
+                                "com_sex_oral_P_Sleep_1",
+                                "com_sex_oral_P_Sleep_2",
+                                "com_sex_oral_P_Sleep_3"
+                            ]
                         },
                         {
                             "requirement": {
@@ -302,7 +336,11 @@
                             ],
                             "useActiveTags": false,
                             "_comment": "2.3.1 时停中 口交 口上文",
-                            "responses": []
+                            "responses": [
+                                "com_sex_oral_P_Timestop_1",
+                                "com_sex_oral_P_Timestop_2",
+                                "com_sex_oral_P_Timestop_3"
+                            ]
                         },
                         {
                             "requirement": {
@@ -590,6 +628,16 @@
                 "com_sex_oral_P_Climax_2": "$self$猛地颤了颤，喉咙深处溢出呜咽，双手紧紧抓住$target$的大腿。\n\"呜……嗯哼！！脑子……全是你这根东西的味道……！\"",
                 "com_sex_oral_P_Climax_3": "$self$眼睛猛地翻白，吞咽的动作变得杂乱，整个人瘫在$target$胯下。\n\"哈啊……哈啊……这种感觉……太棒了……！\"",
                 "com_sex_oral_P_Climax_4": "$self$身子剧烈痉挛着，却舍不得松开嘴，更加用力地吸吮。\n\"去了……我也要……被你弄去了……！\"",
+                "com_sex_oral_P_Begin_Sleep_1": "$target$托起$self$熟睡中的脸，龟头抵开她微张的唇慢慢送进去，她在梦里无意识地抿了抿，把那东西含住了一点，没醒。",
+                "com_sex_oral_P_Begin_Sleep_2": "肉棒压着舌面滑进温热的口腔，$self$皱了皱眉，喉咙轻轻滚动着咽下涌出的津液，呼吸依旧平稳。",
+                "com_sex_oral_P_Begin_Timestop_1": "$target$捏开她定格的下巴，龟头抵着微张的唇缓缓送进去，舌面被压住也没退缩，$self$的瞳孔停在原来的落点上纹丝没动。",
+                "com_sex_oral_P_Begin_Timestop_2": "肉棒没进温热的口腔深处，津液积满下唇从嘴角溢出来，悬在静止的空气里不落，$self$连睫毛都没颤。",
+                "com_sex_oral_P_Sleep_1": "$self$睡得很沉，嘴被肉棒撑开也没醒，只是在梦里无意识地吮了吮，口水顺着嘴角淌下来。",
+                "com_sex_oral_P_Sleep_2": "$self$发出含糊的鼻音，温热的口腔随着呼吸被动地裹着棒身，眉头偶尔因为顶得太深轻轻皱起。",
+                "com_sex_oral_P_Sleep_3": "$self$毫无防备地张着嘴，任由$target$在她唇间进出，喉咙本能地吞咽着，睡颜依旧安稳。",
+                "com_sex_oral_P_Timestop_1": "$self$保持着原本的姿势定住，嘴被肉棒撑开停在半途，口水顺着定格的嘴角淌下来，她毫无知觉。",
+                "com_sex_oral_P_Timestop_2": "$self$僵着不动，任由$target$在她嘴里随意抽送，舌头被顶得变形，连吞咽的动作都凝固了。",
+                "com_sex_oral_P_Timestop_3": "$self$的眼神停在原来的落点上，脸颊被撑得鼓起一块，对口中进出的东西没有任何反应。",
                 "com_sex_oral_P_Begin_1": "$self$自然地跪到$target$双腿间，伸手解开了腰带。\n\"既然你想要，那我就不客气了。\"",
                 "com_sex_oral_P_Begin_2": "$self$嘴角含笑，轻轻推了推$target$的肩膀示意坐下，随后把长发撩到耳后。\n\"乖乖坐好别动，让我来帮你放松。\"",
                 "com_sex_oral_P_Begin_3": "$self$低下头，眼神有些迷离地盯着$target$的胯下，伸出舌尖轻轻舔过嘴唇。\n\"虽然有点累，但如果是你的话……好吧。\"",

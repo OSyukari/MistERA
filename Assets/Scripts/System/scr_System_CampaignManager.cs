@@ -1347,7 +1347,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     public void RegisterExecutedAP(ActionPackage ap)
     {
         Map.dirtyCharaAPRef.Add(ap);
-        Map.MarkMoodletsDirty(ap.RoomKey);
+        Map.MarkMoodletsDirty(ap.Room);
         executedPackagesByRoom.Add(ap, ap.RoomKey);
     }
 
@@ -1442,7 +1442,7 @@ public class scr_System_CampaignManager : MonoBehaviour
             else registeredPackagesByRoom[p.RoomKey].Insert(validInsertIndex, p);
         }
         Map.dirtyCharaAPRef.Add(p);
-        Map.MarkMoodletsDirty(p.RoomKey);   // an action starts
+        Map.MarkMoodletsDirty(p.Room);   // an action starts
     }
     public bool Unregister(ActionPackage p)
     {

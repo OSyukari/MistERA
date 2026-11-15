@@ -65,7 +65,8 @@ public static class ReproductionUtility
     }
 
     /// <summary>Early labor progress: severity = % of early labor elapsed (0-100), duration = minutes left (-1 once it has run its length).</summary>
-    public static string status_labor = "chara_status_labor";
+    /// Not "chara_status_labor": expiry removal is a substring match and that ID would also remove the _obstructed / _intense statuses.
+    public static string status_labor = "chara_status_labor_early";
 
     /// <summary>
     /// Sets status_labor from the most advanced baby in early labor (Final); removes it when nobody is in early labor or

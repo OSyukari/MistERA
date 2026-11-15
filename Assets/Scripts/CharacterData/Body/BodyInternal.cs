@@ -104,6 +104,9 @@ public class BodyInternal_Base
     public string maxSensitivityStatString = "";
 
     public string exposedKojoID = "";
+    /// <summary> optional portrait-only self key (naked_penis), added while the organ's cover slots carry no coverage at all - see-through counts as covered (Character_Body.ExposedPortraitKeys) </summary>
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public string exposedKeyword = null;
     public string deflateEventID = "";
 
     public bool needLubrication = false;

@@ -32,6 +32,10 @@ public class ModSettingEntry
 {
     public string ModID;        // from Mods/<folder>/About/About.json
     public bool enabled = true;
+    // chosen copy when several Mods/<folder> share this ModID (null/empty = default: receipted copy, else folder name order). See ModLoader.Scan
+    public string folder;
+    // About "AssetLoaderOptions" values by key ("true"/"false"), seeded with defaults at boot. See ModLoader.ResolveAssetLoaderOptions
+    public Dictionary<string, string> assetLoaderOptions = new Dictionary<string, string>();
 }
 
 [System.Serializable]
@@ -761,25 +765,25 @@ public class scr_System_CentralControl : MonoBehaviour
         foreach (var entry in entries)
         {
             if (entry == null || string.IsNullOrEmpty(entry.path)) continue;
-            foreach (var set in GlobalPortraitTemplate.GetStateSets(entry.path))
-                foreach (var handler in GlobalPortraitTemplate.GetHandlers(set.Key))
+            // set.Key = the entry's handlers for one state (merged with entry.fallback when given), set.Value = the state gate
+            foreach (var set in GlobalPortraitTemplate.GetEntrySets(entry.path, entry.fallback))
+                foreach (var handler in set.Key)
                 {
                     var copy = handler.Copy();
                     if (copy == null) continue;
                     copy.isGenerated = true;
                     if (entry.selfKeys != null && entry.selfKeys.Count > 0)
                         copy.RequireSelfContextKeys = copy.RequireSelfContextKeys.Concat(entry.selfKeys).Distinct().ToList();
+                    if (entry.targetKeys != null && entry.targetKeys.Count > 0)
+                        copy.RequireTargetContextKeys = copy.RequireTargetContextKeys.Concat(entry.targetKeys).Distinct().ToList();
                     if (!string.IsNullOrEmpty(set.Value))
                         copy.RequireSelfContextKeys = copy.RequireSelfContextKeys.Concat(new[] { set.Value }).Distinct().ToList();
                     list.Add(copy);
                 }
         }
 
-        foreach (var handler in list)
-            foreach (var variant in handler.Variants)
-                if (variant.ImagePaths.Count > 0) { template.globalHandlerNoAssets = false; return; }
-        list.Clear();
-        template.globalHandlerNoAssets = true;
+        // GetHandlers(pruneEmpty) keeps only handlers with images: any left = assets
+        template.globalHandlerNoAssets = list.Count == 0;
     }
 
     /// <summary>
@@ -1335,14 +1339,34 @@ public class SaveFile
         this.SafeMode = scr_System_CentralControl.current.isSafeMode;
         this.Mods = ModLoader.CurrentModList();
     }
+    /// <summary>Version of the save being loaded, set only for the duration of LoadSave (null otherwise) - for save migrations.</summary>
+    public static string LoadingVersion = null;
+
+    /// <summary>
+    /// True while loading a save whose build number (the part after the last '-', e.g. v0.2-20261113) is at or below
+    /// <paramref name="build"/>. A missing or unparseable version counts as older. False outside a save load.
+    /// </summary>
+    public static bool LoadingSaveAtOrBefore(int build)
+    {
+        if (LoadingVersion == null) return false;
+        int dash = LoadingVersion.LastIndexOf('-');
+        if (dash < 0 || !int.TryParse(LoadingVersion.Substring(dash + 1), out int saveBuild)) return true;
+        return saveBuild <= build;
+    }
+
     public void LoadSave()
     {   // external call to updatehandler notifySL
-        scr_System_Time.current.LoadSerializable(Time);
-        scr_System_CampaignManager.current.LoadSerializable(Campaign);
-        scr_UpdateHandler.current.EventHandler.eventCooldowns =
-            EventCooldowns ?? new Dictionary<string, EventManager.EventCooldown>();
-        scr_UpdateHandler.current.EventHandler.activeChains =
-            EventChains ?? new List<EventManager.ActiveEventChain>();
+        LoadingVersion = Version ?? "";
+        try
+        {
+            scr_System_Time.current.LoadSerializable(Time);
+            scr_System_CampaignManager.current.LoadSerializable(Campaign);
+            scr_UpdateHandler.current.EventHandler.eventCooldowns =
+                EventCooldowns ?? new Dictionary<string, EventManager.EventCooldown>();
+            scr_UpdateHandler.current.EventHandler.activeChains =
+                EventChains ?? new List<EventManager.ActiveEventChain>();
+        }
+        finally { LoadingVersion = null; }
     }
 
 }

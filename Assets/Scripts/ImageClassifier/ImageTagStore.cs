@@ -36,9 +36,9 @@ public class ImageTagRecord
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public string emotionError;
 
     /// <summary>A decision made by hand that Classify respects. "out": the tool had placed the image in a category folder and the user
-    /// moved it out of every category folder without renaming it - it is never moved automatically again. Cleared when the image is
-    /// put back into a category folder or renamed (a rename is the user's "classify this again" signal).
-    /// Images with a final-convention name need no mark: that name alone means "settled".</summary>
+    /// moved it into another (non-category) folder without renaming it - it is never moved automatically again. Cleared when the image
+    /// is put back into a category folder, moved back into the work folder itself or renamed (both are the user's "classify this
+    /// again" signal). Images with a final-convention name need no mark: that name alone means "settled" (except directly in the work folder).</summary>
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public string manual;
 }
 
@@ -56,7 +56,8 @@ public class ImageReconcileResult
     /// <summary>Images whose file changed since tagging (edited, or replaced by another file of the same name): their tags describe
     /// the old picture, so Analyze/Classify leave them out until Tag re-tags them.</summary>
     public readonly HashSet<string> stale = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-    public bool Changed => relinked.Count > 0 || movedOut.Count > 0;
+    public int clearedManualMarks;
+    public bool Changed => relinked.Count > 0 || movedOut.Count > 0 || clearedManualMarks > 0;
 }
 
 /// <summary>First line of the tag file: how the records below were produced.</summary>
@@ -191,8 +192,9 @@ public class ImageTagStore
     /// <summary>
     /// Catches up with changes made by hand: an image without a record that matches exactly one record whose image is gone
     /// (same size, last write time and extension - a move or rename keeps both) gets that record, so it is not tagged again.
-    /// If the tool had placed the old path (toolPlacedPaths, from the move log) and the image was moved, not renamed, out of every
-    /// category folder, the record is marked manual "out"; a rename clears the mark, and so does a category folder. Records whose
+    /// If the tool had placed the old path (toolPlacedPaths, from the move log) and the image was moved, not renamed, into a
+    /// non-category folder, the record is marked manual "out"; a rename clears the mark, and so do a category folder and the work
+    /// folder itself (moved there = classify again). Records whose
     /// file changed since tagging are listed as stale. Call Compact to save.
     /// </summary>
     public ImageReconcileResult Reconcile(IEnumerable<string> absoluteImageFiles, ICollection<string> categoryIds, ICollection<string> toolPlacedPaths)
@@ -221,12 +223,12 @@ public class ImageTagStore
             bool wasPlaced = (toolPlacedPaths != null && toolPlacedPaths.Contains(from)) || record.manual == "out";
             RenameRecord(from, to);
             result.relinked.Add((from, to));
-            // a rename by hand is the user's "classify this again" signal; otherwise moving a placed image out of the category
-            // folders means "leave it out" (needed for rename: false categories, whose names cannot say "settled")
+            // a rename by hand, or a move back into the work folder itself, is the user's "classify this again" signal; moving a
+            // placed image into another (non-category) folder means "leave it out" (needed for rename: false categories, whose
+            // names cannot say "settled")
             var toFolder = TopFolder(to);
-            bool outside = toFolder == null || !categoryIds.Contains(toFolder);
-            if (renamed) record.manual = null;
-            else if (wasPlaced && outside)
+            if (renamed || toFolder == null) record.manual = null;
+            else if (wasPlaced && !categoryIds.Contains(toFolder))
             {
                 record.manual = "out";
                 result.movedOut.Add(to);
@@ -235,7 +237,11 @@ public class ImageTagStore
         foreach (var r in Records.Values)
         {
             var top = TopFolder(r.path);
-            if (r.manual == "out" && top != null && categoryIds.Contains(top)) r.manual = null;
+            if (r.manual == "out" && (top == null || categoryIds.Contains(top)))
+            {
+                r.manual = null;
+                result.clearedManualMarks++;
+            }
         }
         result.missing = Records.Values.Count(r => !present.Contains(r.path));
         result.untracked = onDisk.Count(p => !Records.ContainsKey(p));

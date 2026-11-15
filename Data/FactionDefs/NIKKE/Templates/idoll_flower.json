@@ -20,6 +20,18 @@
                 "atlasJSON_path":"c304/c304_00.atlas",
                 "skeletonJSON_path":"c304/c304_00.skel",
                 "idleAnimName":"idle"
+            },
+            {
+                "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+                "_comment":"fallback when the spine assets (mod mist.nikke.spine) are not loaded",
+
+                "random_portrait_folder":"Templates/portrait_mass_produced",
+
+                "icon_offset_x":0.0,
+                "icon_offset_y":0.0,
+                "icon_offset_size":1.0,
+
+                "icon_path":"Templates/si_c304_00_s.png"
             }
         ]
     },

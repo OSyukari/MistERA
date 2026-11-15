@@ -56,6 +56,7 @@ public class PortraitManager
     public class PortraitVariant
     {
         public List<string> tagsMatch = new List<string>();
+        public List<string> tagsExclude = new List<string>();
         public List<string> PortraitVariantData = new List<string>();
         public void AddImagePath(string path) { throw new InvalidOperationException("Portrait Build tests must not register images."); }
         public void SetImagePaths(List<string> paths) { throw new InvalidOperationException("Portrait Build tests must not resolve images."); }

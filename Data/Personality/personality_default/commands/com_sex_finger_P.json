@@ -139,9 +139,42 @@
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": ["sex", "doer", "handjob", "sleeping", "relaxed"],
+                            "useActiveTags": false,
+                            "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
+                            "responses": [
+                                "com_sex_finger_P_Begin_Sleep_1",
+                                "com_sex_finger_P_Begin_Sleep_2"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": ["sex", "doer", "handjob", "sleeping", "relaxed"],
+                            "useActiveTags": false,
+                            "_comment": "2.5.7 开始 睡眠中 独自撸管 口上文（睡梦中自己开始）",
+                            "responses": [
+                                "com_sex_finger_P_Begin_Self_Sleep_1",
+                                "com_sex_finger_P_Begin_Self_Sleep_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
                                     "timestop"
                                 ]
                             },
+                            "extraSelfPortraitTags": ["sex", "doer", "handjob", "doll", "empty", "silence", "idle"],
+                            "useActiveTags": false,
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_sex_finger_P_Begin_Timestop_1",
@@ -941,6 +974,10 @@
                 "com_sex_finger_P_Self_M_16": "$self$的手停在肉棒上，僵着不肯再动。\n\"够了没有……够了吧……我不想再撸了。\"",
                 "com_sex_finger_P_Self_15": "$self$麻木地撸动着，脸上没什么表情。\n\"……没感觉，白撸了。\"",
                 "com_sex_finger_P_Self_16": "$self$放开自己的肉棒，懒得再动。\n\"……不撸了，没意思。\"",
+                "com_sex_finger_P_Begin_Sleep_1": "$target$的手握住$self$睡梦中软垂的肉棒慢慢套弄，没几下就搓得硬挺起来，她在梦里哼了声，腿根绷了绷，没醒。",
+                "com_sex_finger_P_Begin_Sleep_2": "掌心裹着棒身上下撸动，龟头渗出的前液拉出亮丝，$self$只是翻了个身，呼吸稍稍乱了些，人还沉在梦乡。",
+                "com_sex_finger_P_Begin_Self_Sleep_1": "$self$在睡梦中翻了个身，手无意识地探进腿间握住了自己的肉棒，慢慢撸动起来，呼吸也跟着变沉。",
+                "com_sex_finger_P_Begin_Self_Sleep_2": "梦里不知想到了什么，$self$的手掌贴上自己腿间缓缓收紧，软着的肉棒在掌心一点点挺起来，她始终没醒。",
                 "com_sex_finger_P_Begin_Timestop_1": "$target$握住她腿间软垂的肉棒套弄，几下就搓得硬挺，龟头渗出的前液拉出丝，$self$的手还搭在膝上没挪。",
                 "com_sex_finger_P_Begin_Timestop_2": "肉棒在掌心里胀大发烫，$self$定格的腿间大开任人摆弄，只有棒身不受控地跳了两下。"
             }

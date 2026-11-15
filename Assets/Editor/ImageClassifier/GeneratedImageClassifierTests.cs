@@ -110,8 +110,8 @@ public static class GeneratedImageClassifierTests
                 Require(names.Length > 0 && names.All(n => n.defaultVariant == "vaginal"), "Every penetration name must default vaginal");
             });
             Test("Game-only primary defaults vaginal", () => Expect(Scene(false, new[] { "doggy" }, "humanrace"), null, "doggystyle_vaginal", "human"));
-            Test("Game-only cum takes priority over rape", () => Expect(Scene(false, new[] { "doggy", "raped", "cum" }, "humanrace"), null,
-                "doggystyle_cum", "human"));
+            Test("Game-only supported cum takes priority over rape", () => Expect(Scene(false, new[] { "full_nelson", "raped", "cum" }, "humanrace"), null,
+                "full_nelson_cum", "human"));
             foreach (var name in new[] { "triple_penetration", "double_penetration" })
             {
                 Test("Game-only tentacle blocks cum and rape: " + name, () =>
@@ -183,6 +183,42 @@ public static class GeneratedImageClassifierTests
             });
             Test("Manual category can be chosen from game context", () =>
                 Expect(Scene(false, new[] { "doggy" }, "humanrace", "female"), null, "doggystyle_vaginal", "human_female"));
+            Test("Forced irrumatio doer cannot generate mouth-performer images from shared blowjob keyword", () =>
+                ExpectSkip(Scene(true, new[] { "blowjob", "irrumatio", "forced" }, "humanrace"), Tags(("fellatio", 1f))));
+            Test("Forced irrumatio receiver retains oral fallback with unchanged shared command tags", () =>
+                Expect(Scene(false, new[] { "blowjob", "irrumatio", "forced" }, "humanrace"), Tags(("fellatio", 1f)), "oral", "human_perform"));
+            Test("Forced normal blowjob doer without irrumatio retains mouth-performer perspective", () =>
+                Expect(Scene(true, new[] { "blowjob", "forced" }, "humanrace"), Tags(("fellatio", 1f)), "oral", "human_perform"));
+            foreach (var fixture in new[] {
+                (keyword: "blowjob", tag: "fellatio", name: "oral"),
+                (keyword: "boobjob", tag: "paizuri", name: "paizuri"),
+                (keyword: "handjob", tag: "handjob", name: "handjob"),
+                (keyword: "cowgirl", tag: "cowgirl_position", name: "cowgirl_vaginal"),
+                (keyword: "rimjob", tag: "anilingus", name: "rimjob") })
+            // Without image evidence blowjob's earlier sixty_nine mapping wins; do not change that selection policy.
+            foreach (var scored in fixture.keyword == "blowjob" ? new[] { true } : new[] { false, true })
+                Test($"Flagged generated action routes to perform: {fixture.keyword}, scored={scored}", () =>
+                {
+                    var record = scored ? Tags((fixture.tag, 1f), ("sex", fixture.keyword == "cowgirl" ? 1f : 0f)) : null;
+                    var result = Expect(Scene(true, new[] { fixture.keyword }, "humanrace"), record, fixture.name, "human_perform");
+                    Require(result.classification.CategoryId == "human" && result.classification.nameRule.isperform,
+                        "The per-rule flag changes the folder, not the category or action stem");
+                    Require((string)result.ToJson()["folder"] == "human_perform", "Sidecar must retain the computed folder");
+                    ExpectSkip(Scene(false, new[] { fixture.keyword }, "humanrace"), record);
+                });
+            foreach (var flag in new[] { false, true })
+            foreach (var mainIsDoer in new[] { false, true })
+                Test($"Per-rule flag combines with both-role doer: flag={flag}, doer={mainIsDoer}", () =>
+                {
+                    var custom = ImageRulesJsonLoader.Load(path);
+                    custom.nameSets[ImageRules.DefaultNameSet].Single(n => n.name == "cunnilingus").isperform = flag;
+                    var engine = new GeneratedImageClassifier(custom, config);
+                    var folder = flag || mainIsDoer ? "human_perform" : "human";
+                    Expect(Scene(mainIsDoer, new[] { "cunnilingus" }, "humanrace"), null, "cunnilingus", folder, engine);
+                    Expect(Scene(mainIsDoer, new[] { "cunnilingus" }, "humanrace"), Tags(("cunnilingus", 1f)), "cunnilingus", folder, engine);
+                    var unmapped = engine.Classify(Scene(mainIsDoer, new[] { "unmapped_test_action" }, "humanrace"), Tags(("cunnilingus", 1f)));
+                    Require(unmapped.classification == null && !string.IsNullOrEmpty(unmapped.skipReason), "Flag must not bypass the keyword guard");
+                });
             Test("Both-role doer stores in perform folder, keeps base category", () =>
             {
                 var result = Expect(Scene(true, new[] { "cunnilingus" }, "humanrace"), Tags(("cunnilingus", 1f)), "cunnilingus", "human_perform");
@@ -208,26 +244,26 @@ public static class GeneratedImageClassifierTests
                 Require(result.classification.nameRule.tier == 8 && result.classification.status == ClassificationStatus.LowConfidence,
                     "Expected the tier-8 after_sex alternative with low confidence");
             });
-            Test("Specific game variant uses first supported suffix", () =>
-                Expect(Scene(false, new[] { "doggy", "anal", "raped", "cum" }, "dog"), null, "doggystyle_cum", "dog"));
+            Test("Unsupported game cum falls through to first supported suffix", () =>
+                Expect(Scene(false, new[] { "doggy", "anal", "raped", "cum" }, "dog"), null, "doggystyle_rape", "dog"));
             Test("Game rape precedes game anal", () =>
                 Expect(Scene(false, new[] { "doggy", "anal", "raped" }, "humanrace"), null, "doggystyle_rape", "human"));
-            Test("Scored cum precedes game anal and rape", () => Expect(Scene(false, new[] { "doggy", "anal", "raped" }, "humanrace"),
-                Tags(("doggystyle", 1f), ("vaginal", 1f), ("cum", 1f)), "doggystyle_cum", "human"));
-            Test("Game cum precedes scored anal", () => Expect(Scene(false, new[] { "doggy", "cum" }, "humanrace"),
-                Tags(("doggystyle", 1f), ("anal", 1f)), "doggystyle_cum", "human"));
+            Test("Supported scored cum precedes game anal and rape", () => Expect(Scene(false, new[] { "full_nelson", "anal", "raped" }, "humanrace"),
+                Tags(("full_nelson", 1f), ("vaginal", 1f), ("cum", 1f)), "full_nelson_cum", "human"));
+            Test("Supported game cum precedes scored anal", () => Expect(Scene(false, new[] { "full_nelson", "cum" }, "humanrace"),
+                Tags(("full_nelson", 1f), ("anal", 1f)), "full_nelson_cum", "human"));
             Test("Game rape precedes scored anal", () => Expect(Scene(false, new[] { "doggy", "raped" }, "humanrace"),
                 Tags(("doggystyle", 1f), ("anal", 1f)), "doggystyle_rape", "human"));
             Test("Scored rape precedes game anal", () => Expect(Scene(false, new[] { "doggy", "anal" }, "humanrace"),
                 Tags(("doggystyle", 1f), ("vaginal", 1f), ("rape", 1f)), "doggystyle_rape", "human"));
-            Test("Scored variant when no game variant applies", () => Expect(Scene(false, new[] { "doggy" }, "humanrace"),
-                Tags(("doggystyle", 1f), ("vaginal", 1f), ("cum", 1f)), "doggystyle_cum", "human"));
+            Test("Unsupported scored cum retains supported vaginal variant", () => Expect(Scene(false, new[] { "doggy" }, "humanrace"),
+                Tags(("doggystyle", 1f), ("vaginal", 1f), ("cum", 1f)), "doggystyle_vaginal", "human"));
             foreach (var state in new[] { "sleeping", "pregnant" })
             {
                 Test("Game state is independent of scored variant: " + state, () =>
                 {
-                    var result = Expect(Scene(false, new[] { "doggy", state }, "humanrace"),
-                        Tags(("doggystyle", 1f), ("vaginal", 1f), ("cum", 1f), ("mind_control", 1f)), "doggystyle_cum", "human");
+                    var result = Expect(Scene(false, new[] { "full_nelson", state }, "humanrace"),
+                        Tags(("full_nelson", 1f), ("vaginal", 1f), ("cum", 1f), ("mind_control", 1f)), "full_nelson_cum", "human");
                     Require(result.classification.variant == "cum" && result.classification.state == state
                         && result.classification.stateSource == "game", "State must not replace the action variant");
                     Require(GeneratedPortraitRegistry.GetRootFolder("TestActor", result.classification.state) == "TestActor_" + state,
@@ -279,11 +315,11 @@ public static class GeneratedImageClassifierTests
             });
             Test("Higher-priority game variant preserves engine state and provenance", () =>
             {
-                var record = Tags(("doggystyle", 1f), ("anal", 1f), ("mind_control", 1f));
+                var record = Tags(("full_nelson", 1f), ("anal", 1f), ("mind_control", 1f));
                 var baseline = new ImageClassifierEngine(rules).ClassifyInCategory(record, rules.categories.First(c => c.id == "human"));
                 Require(baseline.state == "mindcontrolled" && !string.IsNullOrEmpty(baseline.stateSource), "Expected scored engine state");
-                var result = Expect(Scene(false, new[] { "doggy", "cum" }, "humanrace"), record,
-                    "doggystyle_cum", "human");
+                var result = Expect(Scene(false, new[] { "full_nelson", "cum" }, "humanrace"), record,
+                    "full_nelson_cum", "human");
                 Require(result.classification.state == baseline.state && result.classification.stateSource == baseline.stateSource,
                     "Variant override must preserve engine state/source");
             });

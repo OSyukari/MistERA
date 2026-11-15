@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-public enum PermissionGrantSource { Request, Event, Preset }
+/// <summary>Initiated: the act's requester's own side, granted when the act runs (EvaluationPackage.GrantRequesterPermissions).</summary>
+public enum PermissionGrantSource { Request, Event, Preset, Initiated }
 
 [JsonObject(MemberSerialization.OptIn)]
 public sealed class PermissionGrant

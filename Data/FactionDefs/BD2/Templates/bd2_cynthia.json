@@ -1,5 +1,5 @@
 {
-    "baseID": "BD2_emma",
+    "baseID": "BD2_cynthia",
     "Portrait":{
         "portraitPriorityList":[
             {
@@ -15,12 +15,24 @@
               "straightAlpha": true,
 
 
-                "icon_path":"Templates/illust_inven_char101301_61.png",
+                "icon_path":"Templates/illust_inven_char063301_63.png",
 
-                "materialTexturePaths":["char101301/char101301.png"],
-                "atlasJSON_path":"char101301/char101301.atlas",
-                "skeletonJSON_path":"char101301/char101301.skel",
+                "materialTexturePaths":["char063301/char063301.png"],
+                "atlasJSON_path":"char063301/char063301.atlas",
+                "skeletonJSON_path":"char063301/char063301.skel",
                 "idleAnimName":"idle"
+            },
+            {
+                "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+                "_comment":"fallback when the spine assets (mod mist.bd2.spine) are not loaded",
+
+                "random_portrait_folder":"Others/Generated_Adventurers",
+
+                "icon_offset_x":0.0,
+                "icon_offset_y":0.0,
+                "icon_offset_size":1.0,
+
+                "icon_path":"Templates/illust_inven_char063301_63.png"
             }
         ]
     },
@@ -38,19 +50,20 @@
           "trait_Size_B_A", "trait_Size_P_none", "trait_Size_V_1", "trait_Size_A_1"
       ],
       "traits_body": [ "trait_HairColor_blonde" ],
-      "_comment_defaultHairstyle": "Blonde bob (Spine portrait).",
+      "_comment_defaultHairstyle": "Long wavy blonde hair with a side braid (Spine portrait).",
       "defaultHairstyle": {
-          "hairstyleID": "hairstyle_bob"
+          "hairstyleID": "hairstyle_wavy_long",
+          "slotSelection": { "accent_side": "hair_accent_side_braid" }
       },
       "Height":145,
       "initialRelationship":[        ],
       "initialInventory":[        ],
       "Skills": null
     },
-    "firstName": "Emma",
+    "firstName": "Cynthia",
     "middleName": "",
     "lastName": "",
-    "title":"BD2_emma_title",
+    "title":"BD2_cynthia_title",
     "nameDisplayFormat": "chara_fullname_firstToLast",
     "origin": "charOrigin_none",
     "race": "humanRace_human",

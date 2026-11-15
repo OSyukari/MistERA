@@ -3,7 +3,8 @@
     "baseID": "Campaign1_Char_Ayane",
     "Portrait":{
         "useGlobalHandler": [
-            { "path": "ba_ayane/default" }
+            { "path": "ba_ayane/naked", "selfKeys": ["naked_torso", "naked_lower"], "fallback": "ba_ayane/default" },
+            { "path": "ba_ayane/default", "fallback": "ba_ayane/naked" }
         ],
         "portraitPriorityList":[
 {
@@ -70,6 +71,18 @@
                 "skeletonJSON_path":"Ayane/NP0108_spr.skel",
                 "idleAnimName":"Idle_01", "addonAnimName":"00"
 
+            },
+            {
+                "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+                "_comment":"fallback when the spine textures (mod mist.ba.utnapishtim.spine) are not loaded",
+
+                "random_portrait_folder":"Ayane/portrait_ayane",
+
+                "icon_offset_x":0.0,
+                "icon_offset_y":0.0,
+                "icon_offset_size":0.8,
+
+                "icon_path":"Ayane/Ayane_Ark_Uniform_Icon.png"
             }
         ],
         "CharaBanner":

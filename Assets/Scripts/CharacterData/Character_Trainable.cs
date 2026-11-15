@@ -643,6 +643,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     private void PostUpdateTimeFinalize()
     {
         Relationships.FinalizeAttitudeRound();
+        Relationships.FlushPendingRelationshipChecks();
         // a relationship change outside any room trigger (events) - no-op when this update's UpdateAllRoom already refreshed
         Relationships.RefreshMoodletsIfDirty();
     }
@@ -1437,6 +1438,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         internal readonly List<string> MinuteTags = new List<string>(16);
         internal readonly List<string> Tags = new List<string>(16);
         internal long Minute = long.MinValue;
+        // the clock does not advance during timestop, so the state change alone must rebuild the minute tags
+        internal TimestopState TimeStop;
         internal int ContextOffset, ConsciousnessOffset;
         internal ActorTagContext Context;
         internal ulong ContextRevision;
@@ -1465,7 +1468,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         if (actorTagCache == null) actorTagCache = new ActorTagCache();
         var cache = actorTagCache;
         long minute = scr_System_Time.current.getCurrentTime().Ticks / TimeSpan.TicksPerMinute;
-        if (cache.Minute != minute)
+        var timeStop = scr_System_Time.current.timeStop;
+        if (cache.Minute != minute || cache.TimeStop != timeStop)
         {
             var tags = cache.MinuteTags;
             tags.Clear();
@@ -1499,6 +1503,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                 }
             }
             cache.Minute = minute;
+            cache.TimeStop = timeStop;
             cache.Valid = false;
         }
 
@@ -2657,45 +2662,53 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     /// <summary>Any active status (regular or EX) whose current variant carries the forceSleep tag.</summary>
     bool HasForceSleepTag { get { return Stats.hasStatusTag(StatsUtility.Stat_Tag_ForceSleep) || Stats.hasStatusEXTag(StatsUtility.Stat_Tag_ForceSleep); } }
 
-    [JsonIgnore] public bool shouldSleep { get
-        {
-            if (forceSleep) return true;
-            // active labor: stay on bed rest instead of leaving for scheduled sleep (forced sleep above still applies)
-            if (ReproductionUtility.IsInIntenseLabor(this)) return false;
-            if (!canSleep) return false;
+    [JsonIgnore] public bool shouldSleep { get { return SleepAllowedNow(true); } }
 
-            // check schedule
-            //var returnval = hasSleepNeed && sleephours > 0 && timeSinceLastSleep > sleephours;
-            //if (!returnval && RefID > 0) Debug.LogError($"{FirstName} cannot sleep! hasSleepNeed {hasSleepNeed}, sleephours > 0 {sleephours > 0}, timeSinceLastSleep {timeSinceLastSleep} > sleephours {sleephours} = {timeSinceLastSleep > sleephours}");
-            //return hasSleepNeed && sleephours > 0 && timeSinceLastSleep > sleephours;
+    /// <summary>
+    /// The player's sleep command gate: shouldSleep, except that the hours kept awake before an accepted session don't
+    /// forbid it - the player is asked how long to sleep instead (PlayerSleepChoice). NPCs keep shouldSleep.
+    /// </summary>
+    [JsonIgnore] public bool canChooseSleep { get { return SleepAllowedNow(false); } }
 
-            // Party override: while in an ongoing expedition, the party sleep window is authoritative.
-            // Personal schedule is bypassed; NPC sleeps iff the party window says so (and canSleep).
-            return isScheduleSleep;
-        } }
-
-    [JsonIgnore] public bool isScheduleSleep
+    bool SleepAllowedNow(bool keepSessionWake)
     {
-        get
-        {
-            var party = this.FactionManager.CurrentParty;
+        if (forceSleep) return true;
+        // active labor: stay on bed rest instead of leaving for scheduled sleep (forced sleep above still applies)
+        if (ReproductionUtility.IsInIntenseLabor(this)) return false;
+        if (!canSleep) return false;
 
-            if (party != null && (party.isActive || party.Room.RoomChara.Contains(this)))
-            {
-                int currentHour = scr_System_Time.current.getCurrentTime().Hour;
-                // if (RefID > 0) Debug.Log($"{FirstName} should sleep in party? {party.SleepHours.Contains(currentHour)} = current {currentHour} in [{String.Join(" ", party.SleepHours)}]");
-                return party.SleepHours.Contains(currentHour);
-            }
-            else if (this.FactionManager.HasSleepSchedule)
-            {
-                var v = GetJobPost();
-                // if (RefID > 0) Debug.Log($"{FirstName} should sleep in schedule? {v != null && v.comIDs.Contains("com_furniture_sleep")}");
-                if (v == null || !v.comIDs.Contains("com_furniture_sleep")) return false;
-                // the hours kept awake before an accepted recreation session (trip + getting up) are not slept in
-                return RecreationUtility.MinutesUntilSessionWake(this) > 0;
-            }
-            else return false;
+        // check schedule
+        //var returnval = hasSleepNeed && sleephours > 0 && timeSinceLastSleep > sleephours;
+        //if (!returnval && RefID > 0) Debug.LogError($"{FirstName} cannot sleep! hasSleepNeed {hasSleepNeed}, sleephours > 0 {sleephours > 0}, timeSinceLastSleep {timeSinceLastSleep} > sleephours {sleephours} = {timeSinceLastSleep > sleephours}");
+        //return hasSleepNeed && sleephours > 0 && timeSinceLastSleep > sleephours;
+
+        // Party override: while in an ongoing expedition, the party sleep window is authoritative.
+        // Personal schedule is bypassed; NPC sleeps iff the party window says so (and canSleep).
+        return IsScheduleSleep(keepSessionWake);
+    }
+
+    [JsonIgnore] public bool isScheduleSleep { get { return IsScheduleSleep(true); } }
+
+    /// <summary>The current hour is a sleep hour (party / own schedule); keepSessionWake: not within the wake-up time of an accepted session.</summary>
+    bool IsScheduleSleep(bool keepSessionWake)
+    {
+        var party = this.FactionManager.CurrentParty;
+
+        if (party != null && (party.isActive || party.Room.RoomChara.Contains(this)))
+        {
+            int currentHour = scr_System_Time.current.getCurrentTime().Hour;
+            // if (RefID > 0) Debug.Log($"{FirstName} should sleep in party? {party.SleepHours.Contains(currentHour)} = current {currentHour} in [{String.Join(" ", party.SleepHours)}]");
+            return party.SleepHours.Contains(currentHour);
         }
+        else if (this.FactionManager.HasSleepSchedule)
+        {
+            var v = GetJobPost();
+            // if (RefID > 0) Debug.Log($"{FirstName} should sleep in schedule? {v != null && v.comIDs.Contains("com_furniture_sleep")}");
+            if (v == null || !v.comIDs.Contains("com_furniture_sleep")) return false;
+            // the hours kept awake before an accepted recreation session (trip + getting up) are not slept in
+            return !keepSessionWake || RecreationUtility.MinutesUntilSessionWake(this) > 0;
+        }
+        else return false;
     }
 
 
@@ -3435,6 +3448,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             //Debug.LogError("Wakeup immediate!");
             // IF SLEEP DEPRIVED, IT IS ALREADY ADDED PRIOR TO THIS POINT (ON CALLING WakeupPrep)        
             this.Stats.RemoveStatusByStringMatch("chara_status_sleeping");
+            SleepUntilRested = false;
             // Debug.Log($"Chara wake up at conscious {this.Stats.Consciousness.Severity}");
             List<Character_Relationship> accepted = new List<Character_Relationship>();
             List<Character_Relationship> refused = new List<Character_Relationship>();
@@ -3709,7 +3723,24 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         }
     }
 
-    public int Sleep()
+    /// <summary>How long a sleep starting now lasts (Character_Trainable.Sleep): Scheduled = clipped by the schedule and
+    /// bookings; UntilRested = the full sleep need (the player's PlayerSleepChoice).</summary>
+    public enum SleepLength { Scheduled, UntilRested }
+
+    /// <summary>A sleep starting now, in minutes (PlanSleep) - one calculation for the player's question and Sleep itself.</summary>
+    public struct SleepPlan
+    {
+        /// <summary>Minutes of sleep needed to be rested.</summary>
+        public int needMinutes;
+        /// <summary>SleepLength.Scheduled: clipped by the sleep window and the wake-up time of an accepted session.</summary>
+        public int scheduledMinutes;
+        /// <summary>SleepLength.UntilRested: the full need.</summary>
+        public int naturalMinutes;
+        /// <summary>False when a session's wake-up time has already passed - the schedule leaves no sleep at all.</summary>
+        public bool scheduleAllowsSleep;
+    }
+
+    public SleepPlan PlanSleep()
     {
         var tired = Stats.GetStatusSeverityByStringMatch("chara_status_sleep_deprived");
         int windowMinutes = ComputeSleepWindowMinutes();
@@ -3732,23 +3763,63 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         }
 
         // up in time for an accepted recreation session: its start minus the trip + getting-up time
+        bool allowsSleep = true;
         int sessionWake = RecreationUtility.MinutesUntilSessionWake(this);
-        if (sessionWake != int.MaxValue) sleepHour = Math.Min(sleepHour, Math.Max(1, sessionWake));
+        if (sessionWake != int.MaxValue)
+        {
+            allowsSleep = sessionWake > 0;
+            sleepHour = Math.Min(sleepHour, Math.Max(1, sessionWake));
+        }
 
         // Player only: while a forceSleep status (e.g. postpartum/post-op recovery) is active, sleep straight
         // through its remaining duration instead of being capped at the usual sleep need. NPCs don't need
         // this - their sleep node keeps re-sleeping them while shouldSleep stays true.
+        int forceSleepMinutes = 0;
         if (scr_System_CampaignManager.current.Player == this)
         {
-            int forceSleepMinutes = 0;
             foreach (var status in Stats.StatusInstances)
             {
                 if (status.duration > 0 && status.Tags.Contains(StatsUtility.Stat_Tag_ForceSleep))
                     forceSleepMinutes = Math.Max(forceSleepMinutes, status.duration);
             }
-            sleepHour = Math.Max(sleepHour, forceSleepMinutes);
         }
-        ScheduledSleepMissingMinutes = Math.Max(0, personalNeedMinutes - sleepHour);
+        return new SleepPlan()
+        {
+            needMinutes = personalNeedMinutes,
+            scheduledMinutes = Math.Max(sleepHour, forceSleepMinutes),
+            naturalMinutes = Math.Max(personalNeedMinutes, forceSleepMinutes),
+            scheduleAllowsSleep = allowsSleep,
+        };
+    }
+
+    /// <summary>
+    /// The player falling asleep now may be asked how long to sleep (PlayerSleepChoice.ShouldAsk): the player, conscious,
+    /// not already asleep, no forced sleep. NPCs never are.
+    /// </summary>
+    public bool CanChooseSleepLength
+    {
+        get
+        {
+            if (scr_System_CampaignManager.current.Player != this) return false;
+            return !forceSleep && !Stats.isConsciousnessUnconscious && !Stats.isSleeping && hasSleepNeed;
+        }
+    }
+
+    /// <summary>
+    /// The current sleep was chosen to last until rested (PlayerSleepChoice): no schedule or booking cuts it short
+    /// (RecreationUtility.WakeForSessions / CutSleepFor). Set by every Sleep, cleared on waking.
+    /// </summary>
+    [JsonProperty] public bool SleepUntilRested = false;
+
+    /// <param name="fixedMinutes">above 0: sleep exactly this long (the player sleeping until a companion's commitment -
+    /// PlayerSleepChoice); wake-ups for sessions still apply unless length is UntilRested</param>
+    public int Sleep(SleepLength length = SleepLength.Scheduled, int fixedMinutes = 0)
+    {
+        var plan = PlanSleep();
+        int sleepHour = fixedMinutes > 0 ? fixedMinutes
+            : length == SleepLength.UntilRested ? plan.naturalMinutes : plan.scheduledMinutes;
+        SleepUntilRested = length == SleepLength.UntilRested;
+        ScheduledSleepMissingMinutes = Math.Max(0, plan.needMinutes - sleepHour);
 
         Stats.AddOrModStatus("chara_status_sleeping", Stats.SleepDepth, sleepHour);
         Stats.RemoveStatusByStringMatch("chara_status_sleep_deprived");

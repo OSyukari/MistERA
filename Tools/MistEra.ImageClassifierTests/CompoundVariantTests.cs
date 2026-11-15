@@ -14,11 +14,11 @@ static class CompoundVariantTests
 
         checks.Test("only higher-priority near misses lower confidence", () =>
         {
-            var weakRape = engine.Classify(RegressionTests.Record(("1boy", 0.99f), ("handjob", 0.99f), ("rape", below), ("cum", 0.99f)));
-            var weakCum = engine.Classify(RegressionTests.Record(("1boy", 0.99f), ("handjob", 0.99f), ("rape", 0.99f), ("cum", below)));
-            checks.Equal("handjob_cum", weakRape.name, "strong cum ignores weaker rape");
+            var weakRape = engine.Classify(RegressionTests.Record(("1boy", 0.99f), ("sex", 0.99f), ("full_nelson", 0.99f), ("rape", below), ("cum", 0.99f)));
+            var weakCum = engine.Classify(RegressionTests.Record(("1boy", 0.99f), ("sex", 0.99f), ("full_nelson", 0.99f), ("rape", 0.99f), ("cum", below)));
+            checks.Equal("full_nelson_cum", weakRape.name, "strong cum ignores weaker rape");
             checks.Equal(ClassificationStatus.Confident, weakRape.status, "lower-priority near miss is irrelevant");
-            checks.Equal("handjob_rape", weakCum.name, "weak cum falls through to rape");
+            checks.Equal("full_nelson_rape", weakCum.name, "weak cum falls through to rape");
             checks.Equal(ClassificationStatus.LowConfidence, weakCum.status, "higher-priority cum near miss");
             checks.Check(weakCum.reasons.Any(r => r.StartsWith("near-miss variant cum", StringComparison.Ordinal)), "Missing cum near-miss reason.");
         });
@@ -54,9 +54,11 @@ static class CompoundVariantTests
                 checks.Equal(name, result.name, "no action suffix");
                 checks.Equal<string>(null, result.variant, "blocked variant");
                 checks.Equal<string>(null, result.variantFilenameHint, "blocked filename variant provenance");
-                if (hints) checks.Equal(name, result.filenameHint, "explicit base filename still recognized");
+                checks.Equal(hints && !result.nameRule.fallback ? name : null, result.filenameHint,
+                    "only regular base names provide filename provenance");
                 var fixedFolder = engine.ClassifyInCategory(record, rules.categories.Single(c => c.id == "tentacle"), hints);
                 checks.Equal(name, fixedFolder.name, "fixed tentacle folder also blocks suffixes");
+                checks.Equal(result.filenameHint, fixedFolder.filenameHint, "fixed folder filename provenance");
             });
 
         checks.Test("CollectTags includes every standalone action alias tag", () =>
@@ -94,23 +96,23 @@ static class CompoundVariantTests
         foreach (var filenameFirst in new[] { false, true })
             checks.Test("cum precedes rape without compound: " + fixture.label + ", filenameFirst=" + filenameFirst, () =>
             {
-                var record = RegressionTests.Record(("1boy", 0.99f), ("sex", 0.99f), ("missionary", 0.99f),
+                var record = RegressionTests.Record(("1boy", 0.99f), ("sex", 0.99f), ("full_nelson", 0.99f),
                     ("rape", fixture.rape), ("cum", fixture.cum));
-                record.path = "source.Missionary.webp";
-                checks.Equal("missionary" + fixture.suffix, engine.Classify(record, filenameFirst).name, "name");
+                record.path = "source.FullNelson.webp";
+                checks.Equal("full_nelson" + fixture.suffix, engine.Classify(record, filenameFirst).name, "name");
             });
 
-        checks.Test("handjob supports simple cum and rape variants without penetration default", () =>
+        checks.Test("handjob supports only the rape variant without penetration default", () =>
         {
             var handjob = rules.nameSets[ImageRules.DefaultNameSet].Single(n => n.name == "handjob");
-            checks.Check(handjob.hasVariants.SequenceEqual(new[] { "cum", "rape" }), "Unexpected manual action suffixes.");
+            checks.Check(handjob.hasVariants.SequenceEqual(new[] { "rape" }), "Unexpected manual action suffixes.");
             checks.Equal<string>(null, handjob.defaultVariant, "Manual actions have no penetration default");
         });
         foreach (var fixture in new[] {
-            (rape: 0f, cum: 0.99f, name: "handjob_cum"),
+            (rape: 0f, cum: 0.99f, name: "handjob"),
             (rape: 0.99f, cum: 0f, name: "handjob_rape"),
-            (rape: 0.99f, cum: 0.99f, name: "handjob_cum"),
-            (rape: below, cum: 0.99f, name: "handjob_cum"),
+            (rape: 0.99f, cum: 0.99f, name: "handjob_rape"),
+            (rape: below, cum: 0.99f, name: "handjob"),
             (rape: 0.99f, cum: below, name: "handjob_rape") })
             RegressionTests.Expect(engine, checks, "manual suffix hierarchy: " + fixture.name + " rape=" + fixture.rape + " cum=" + fixture.cum,
                 "human", fixture.name, ("1boy", 0.99f), ("handjob", 0.99f), ("rape", fixture.rape), ("cum", fixture.cum));
@@ -243,12 +245,12 @@ static class CompoundVariantTests
         foreach (var hints in new[] { false, true })
             checks.Test($"full simple suffix hierarchy chooses {fixture.variant}, hints={hints}", () =>
             {
-                var record = RegressionTests.Record(("1boy", 0.99f), ("missionary", 0.99f),
+                var record = RegressionTests.Record(("1boy", 0.99f), ("full_nelson", 0.99f),
                     ("cum", fixture.cum), ("rape", fixture.rape), ("anal", fixture.anal), ("vaginal", fixture.vaginal));
-                record.path = "source.Missionary.webp";
+                record.path = "source.FullNelson.webp";
                 var result = engine.Classify(record, hints);
                 checks.Equal(fixture.variant, result.variant, "single winning variant");
-                checks.Equal("missionary_" + fixture.variant, result.name, "no compound suffix");
+                checks.Equal("full_nelson_" + fixture.variant, result.name, "no compound suffix");
             });
 
         if (store.Header?.root == null || store.Header.root.IndexOf("yerin_nude", StringComparison.OrdinalIgnoreCase) < 0) return;

@@ -14,6 +14,8 @@ static class FolderEmotionTests
         var rulesBefore = JsonConvert.SerializeObject(rules);
         var storeBefore = JsonConvert.SerializeObject(store.Records);
 
+        PerformFolderTests(rules, checks);
+
         // State sets are sorted by hand into their own work folder (user decision 2026-11-13): a detected state never selects a folder.
         foreach (var state in new[] { "sleeping", "pregnant", "mindcontrolled" })
             checks.Test("detected state does not select a destination folder: " + state, () =>
@@ -292,6 +294,248 @@ static class FolderEmotionTests
             checks.Equal(rulesBefore, JsonConvert.SerializeObject(rules), "shared rules unchanged");
             checks.Equal(storeBefore, JsonConvert.SerializeObject(store.Records), "stored records unchanged");
         });
+    }
+
+    static void PerformFolderTests(ImageRules rules, Assertions checks)
+    {
+        checks.Test("isperform config opts in exactly the approved action definitions", () =>
+        {
+            checks.Check(!new NameRule().isperform, "New name rules default to ordinary folders.");
+            var approved = new HashSet<string> { "cowgirl", "handjob", "oral", "paizuri", "rimjob",
+                "reverse_cowgirl", "sitting_on_person", "lotus", "footjob", "hairjob", "anal_kiss",
+                "fellatio_goodnight", "fellatio_goodmorning" };
+            var names = rules.nameSets[ImageRules.DefaultNameSet];
+            checks.Check(approved.SetEquals(names.Where(n => n.isperform).Select(n => n.name)), "Exact opted-in action ids");
+            foreach (var name in names)
+            {
+                bool tentacleOral = name.name == "oral" && name.onlyInCategories?.SetEquals(new[] { "tentacle" }) == true;
+                checks.Equal(approved.Contains(name.name) && !tentacleOral, name.isperform,
+                    name.name + " definition at index " + name.index);
+            }
+            checks.Check(names.Any(n => n.name == "oral" && n.onlyInCategories?.SetEquals(new[] { "tentacle" }) == true),
+                "Dedicated tentacle oral receives tentacles and must remain unflagged.");
+            var config = JObject.Parse(File.ReadAllText(rules.sourcePath));
+            var missionary = ((JArray)config["file_names"]).OfType<JObject>().Single(n => n.Property("missionary") != null);
+            checks.Equal(false, (bool?)missionary["isperform"], "Missionary explicitly opts out in config");
+        });
+
+        foreach (var flag in new bool?[] { null, false, true })
+            checks.Test("classifier loader recognizes isperform metadata: " + flag, () =>
+            {
+                var root = Path.Combine(Path.GetTempPath(), "mistera_perform_loader_" + Guid.NewGuid().ToString("N"));
+                Directory.CreateDirectory(root);
+                try
+                {
+                    var config = JObject.Parse(@"{'files_category':[{'id':'human'}],
+                        'file_names':[{'runtimeName':['handjob'], 'tier':2}]} ");
+                    if (flag.HasValue) config["file_names"][0]["isperform"] = flag.Value;
+                    var path = Path.Combine(root, "rules.json");
+                    File.WriteAllText(path, config.ToString());
+                    var loaded = ImageRulesJsonLoader.Load(path);
+                    checks.Equal(0, loaded.loadWarnings.Count, string.Join("; ", loaded.loadWarnings));
+                    var name = loaded.nameSets[ImageRules.DefaultNameSet].Single();
+                    checks.Equal("runtimeName", name.name, "Metadata cannot cause a skipped name entry");
+                    checks.Equal(flag ?? false, name.isperform, "Parsed flag or default");
+                    checks.Equal("handjob", name.clauses.Single().tags.Single().tag, "Action evidence preserved");
+                }
+                finally { Directory.Delete(root, true); }
+            });
+
+        foreach (var flag in new[] { false, true })
+        foreach (var byFolder in new[] { false, true })
+        foreach (var state in new[] { "sleeping", "pregnant", "mindcontrolled" })
+        foreach (var includeLow in new[] { false, true })
+        foreach (var step in new[] { ImageClassifyStep.Move, ImageClassifyStep.Rename, ImageClassifyStep.Both })
+        foreach (var fixture in new[] {
+            (path: "source.webp", category: "human", nameSet: ImageRules.DefaultNameSet),
+            (path: "human/source.webp", category: "human", nameSet: ImageRules.DefaultNameSet),
+            (path: "human/nested/source.webp", category: "human", nameSet: ImageRules.DefaultNameSet),
+            (path: "human_perform/nested/source.webp", category: "human", nameSet: ImageRules.DefaultNameSet),
+            (path: "human_female/source.webp", category: "human_female", nameSet: ImageRules.DefaultNameSet),
+            (path: "human_female_perform/nested/source.webp", category: "human_female", nameSet: ImageRules.DefaultNameSet),
+            (path: "portrait/source.webp", category: "portrait", nameSet: "portrait_emotions") })
+            checks.Test($"perform plan flag={flag}, byFolder={byFolder}, {state}, low={includeLow}, {step}, {fixture.path}", () =>
+            {
+                var folder = Path.Combine(Path.GetTempPath(), "mistera_perform_plan_" + Guid.NewGuid().ToString("N"), "pack", "chara_" + state);
+                var row = new ImageClassification {
+                    record = new ImageTagRecord { path = fixture.path, originalName = "original.webp" },
+                    category = new CategoryRule { id = fixture.category, nameSet = fixture.nameSet, manual = fixture.category == "human_female" },
+                    nameRule = new NameRule { name = "action", isperform = flag }, variant = "rape",
+                    state = state, stateSource = "rules/tags", byFolder = byFolder, status = ClassificationStatus.Confident
+                };
+                row.ComposeName();
+                var before = JsonConvert.SerializeObject(row);
+                var current = Path.GetDirectoryName(fixture.path)?.Replace('\\', '/') ?? "";
+                bool protectedPerform = byFolder && fixture.path.StartsWith(fixture.category + "_perform/", StringComparison.Ordinal);
+                string destination = protectedPerform ? current : fixture.category
+                    + (!byFolder && flag && fixture.nameSet == ImageRules.DefaultNameSet ? "_perform" : "");
+                checks.Equal(destination, ImageClassifyMover.DestinationDirectory(folder, row), "Computed relative directory");
+                var analysis = new ImageAnalysisResult { folder = folder, rules = rules };
+                analysis.results.Add(row);
+                var plan = ImageClassifyMover.BuildPlan(analysis, includeLow, step);
+                bool outside = current != destination;
+                bool skip = step == ImageClassifyStep.Rename && outside;
+                checks.Equal(skip ? 1 : 0, plan.notInCategoryFolder, "Rename only skips outside its computed folder");
+                checks.Equal(skip || (step == ImageClassifyStep.Move && !outside) ? 0 : 1, plan.moves.Count, "Planned moves");
+                if (plan.moves.Count > 0)
+                {
+                    var move = plan.moves.Single();
+                    checks.Equal(destination + "/" + (step == ImageClassifyStep.Move ? "source.webp" : "action_rape_pack_chara_" + state + "_1.webp"),
+                        move.to, "Only variant enters stem; work-root naming remains unchanged");
+                    checks.Equal(fixture.path, move.from, "Source unchanged");
+                    checks.Equal(fixture.category, move.category, "Base category has no perform suffix");
+                    checks.Equal("action_rape", move.name, "Perform flag never enters action name");
+                }
+                checks.Equal(folder, plan.folder, "Detected state cannot change work root");
+                checks.Equal(before, JsonConvert.SerializeObject(row), "Planning leaves classification and source immutable");
+                checks.Check(!Directory.Exists(folder), "Planning must not create the work root");
+            });
+
+        foreach (var flag in new[] { false, true })
+        foreach (var folderDecides in new[] { false, true })
+            checks.Test($"perform analysis preserves manual authority: flag={flag}, folderDecides={folderDecides}", () =>
+            {
+                var root = Path.Combine(Path.GetTempPath(), "mistera_perform_authority_" + Guid.NewGuid().ToString("N"));
+                var folder = Path.Combine(root, "pack", "chara_sleeping");
+                Directory.CreateDirectory(folder);
+                try
+                {
+                    var config = JObject.Parse(@"{'files_category':[
+                        {'id':'human_female','manual':true}, {'id':'human','all':['1boy']}],
+                        'file_names':[{'handjob':['handjob']}]} ");
+                    config["file_names"][0]["isperform"] = flag;
+                    var path = Path.Combine(root, "rules.json");
+                    File.WriteAllText(path, config.ToString());
+                    var fixtureRules = ImageRulesJsonLoader.Load(path);
+                    var store = new ImageTagStore(folder);
+                    foreach (var directory in new[] { "human", "human_female", "human_perform/nested", "human_female_perform/nested" })
+                    {
+                        var relative = directory + "/source.webp";
+                        var absolute = Path.Combine(folder, relative);
+                        Directory.CreateDirectory(Path.GetDirectoryName(absolute));
+                        File.WriteAllText(absolute, "isolated dummy");
+                        var info = new FileInfo(absolute);
+                        var record = RegressionTests.Record(("1boy", 0.99f), ("handjob", 0.99f));
+                        record.path = relative;
+                        record.originalName = "original.webp";
+                        record.size = info.Length;
+                        record.mtime = new DateTimeOffset(info.LastWriteTimeUtc, TimeSpan.Zero).ToUnixTimeMilliseconds();
+                        store.Append(record);
+                    }
+                    var analysis = ImageAnalysis.Run(folder, path, fixtureRules.CollectTags(), folderDecides);
+                    checks.Equal(4, analysis.results.Count, "All isolated records analyzed");
+                    foreach (var row in analysis.results)
+                    {
+                        bool female = row.record.path.StartsWith("human_female", StringComparison.Ordinal);
+                        bool perform = row.record.path.Contains("_perform/", StringComparison.Ordinal);
+                        var category = female ? "human_female" : "human";
+                        checks.Equal(category, row.CategoryId, "Manual category never becomes automatic human");
+                        checks.Equal(folderDecides || female || perform, row.byFolder, "Manual actor/perform placement always authoritative");
+                        var expected = perform ? Path.GetDirectoryName(row.record.path).Replace('\\', '/')
+                            : category + (!row.byFolder && flag ? "_perform" : "");
+                        checks.Equal(expected, ImageClassifyMover.DestinationDirectory(folder, row), "Only ordinary automatic reclassification opts into perform");
+                        checks.Equal("handjob", row.name, "Flag does not enter filename");
+                        checks.Equal("original.webp", row.record.originalName, "Original source preserved");
+                    }
+                    checks.Equal(folder, analysis.folder, "Hand-sorted state work root preserved");
+                }
+                finally { Directory.Delete(root, true); }
+            });
+
+        checks.Test("category folder ids include only valid action-category perform aliases", () =>
+        {
+            var synthetic = new ImageRules();
+            synthetic.categories.AddRange(new[] {
+                new CategoryRule { id = "human" },
+                new CategoryRule { id = "human_female", manual = true },
+                new CategoryRule { id = "portrait", nameSet = "portrait_emotions" },
+                new CategoryRule { id = "activity", nameSet = "portrait_activities" },
+                new CategoryRule { id = "_hold_actor", hold = true }
+            });
+            var ids = ImageAnalysis.CategoryIds(synthetic);
+            checks.Check(ids.SetEquals(new[] { "human", "human_female", "portrait", "activity",
+                "human_perform", "human_female_perform" }), "Only non-held default-name-set categories gain aliases.");
+            checks.Check(ids.Contains("HUMAN_FEMALE_PERFORM"), "Folder recognition remains case-insensitive.");
+            foreach (var invalid in new[] { "foo_perform", "portrait_perform", "activity_perform", "_hold_actor_perform", "human_perform_perform" })
+                checks.Check(!ids.Contains(invalid), "Invalid perform alias: " + invalid);
+        });
+
+        // Run writes its cache only inside this isolated fixture, never beside the selected config or stored images.
+        foreach (var folderDecides in new[] { false, true })
+            checks.Test("perform folders remain authoritative during analysis, folderDecides=" + folderDecides, () =>
+            {
+                var root = Path.Combine(Path.GetTempPath(), "mistera_perform_" + Guid.NewGuid().ToString("N"));
+                var folder = Path.Combine(root, "pack", "chara_mindcontrolled");
+                Directory.CreateDirectory(folder);
+                try
+                {
+                    var fixtureConfig = JObject.Parse(File.ReadAllText(rules.sourcePath));
+                    ((JArray)fixtureConfig["files_category"]).Add(JObject.Parse(
+                        "{'id':'human_refined','refines':'human','all':['handjob']}"));
+                    var fixtureRulesPath = Path.Combine(root, "fixture-rules.json");
+                    File.WriteAllText(fixtureRulesPath, fixtureConfig.ToString());
+                    var fixtureRules = ImageRulesJsonLoader.Load(fixtureRulesPath);
+                    checks.Check(new ImageClassifierEngine(fixtureRules).MatchesRefinement(
+                        RegressionTests.Record(("handjob", 0.99f)), fixtureRules.categories.Single(c => c.id == "human_refined")),
+                        "Fixture supplies matching refinement that must not remove perform role");
+                    var fixtureStore = new ImageTagStore(folder);
+                    foreach (var categoryFolder in new[] { "human_perform", "human_female_perform", "human_female", "foo_perform" })
+                    foreach (var settled in new[] { false, true })
+                    {
+                        var path = categoryFolder + "/nested/" + (settled
+                            ? "different_action_pack_chara_mindcontrolled_7.webp" : "source.webp");
+                        var absolute = Path.Combine(folder, path);
+                        Directory.CreateDirectory(Path.GetDirectoryName(absolute));
+                        File.WriteAllText(absolute, "isolated dummy");
+                        var info = new FileInfo(absolute);
+                        var record = RegressionTests.Record(("1boy", 0.99f), ("handjob", 0.99f), ("mind_control", 0.99f));
+                        record.path = path;
+                        record.originalName = "first.webp";
+                        record.manual = "out";
+                        record.size = info.Length;
+                        record.mtime = new DateTimeOffset(info.LastWriteTimeUtc, TimeSpan.Zero).ToUnixTimeMilliseconds();
+                        fixtureStore.Append(record);
+                    }
+                    var files = fixtureStore.Records.Keys.Select(fixtureStore.AbsolutePath).ToArray();
+                    var reconciled = fixtureStore.Reconcile(files, ImageAnalysis.CategoryIds(fixtureRules), null);
+                    checks.Equal(0, reconciled.stale.Count, "Fixture records match dummy files");
+                    checks.Check(reconciled.Changed, "Clearing stale out marks must trigger cache compaction");
+                    checks.Equal(6, reconciled.clearedManualMarks, "Only the six recognized-folder marks are cleared");
+                    foreach (var record in fixtureStore.Records.Values)
+                    {
+                        checks.Equal(record.path.StartsWith("foo_perform/", StringComparison.Ordinal) ? "out" : null,
+                            record.manual, "Only recognized category folders clear stale out mark");
+                        checks.Equal("first.webp", record.originalName, "Reconciliation preserves immutable original name");
+                        checks.Equal(0.99f, record.general["handjob"], "Reconciliation preserves tag evidence");
+                    }
+                    // The persisted records still contain the stale out mark, exercising Run's own reconciliation too.
+                    var result = ImageAnalysis.Run(folder, fixtureRulesPath, fixtureRules.CollectTags(), folderDecides);
+                    checks.Equal(8, result.results.Count, "Every fixture record analyzed");
+                    foreach (var row in result.results)
+                    {
+                        var top = ImageAnalysis.CategoryFolder(row.record.path);
+                        if (top == "foo_perform")
+                        {
+                            checks.Check(row.keptOut && !row.byFolder, "Arbitrary perform-looking folder stays outside category folders.");
+                            checks.Equal("out", row.record.manual, "Unrecognized folder preserves deliberate out mark");
+                            continue;
+                        }
+                        var expected = top.EndsWith("_perform", StringComparison.Ordinal)
+                            ? top.Substring(0, top.Length - "_perform".Length) : top;
+                        checks.Equal(expected, row.CategoryId, "Base category retains female/perform-folder ownership");
+                        checks.Check(row.byFolder && !row.keptOut, "Perform folder overrides tags even when folderDecides is false.");
+                        checks.Equal("human", row.rulesCategoryId, "Conflicting automatic category remains diagnostic");
+                        checks.Equal<string>(null, row.record.manual, "Analysis clears stale out mark");
+                        checks.Equal("first.webp", row.record.originalName, "Analysis preserves original name");
+                        checks.Equal("handjob", row.nameRule?.name, "Base rule supplies action naming");
+                        checks.Equal("mindcontrolled", row.state, "Independent detected state retained");
+                        checks.Equal(top.EndsWith("_perform", StringComparison.Ordinal)
+                                ? Path.GetDirectoryName(row.record.path).Replace('\\', '/') : expected,
+                            ImageClassifyMover.DestinationDirectory(folder, row), "Only perform folders preserve entire nested directory");
+                    }
+                }
+                finally { Directory.Delete(root, true); }
+            });
     }
 
     static void Named(Assertions checks, ImageClassification result, string category, string name)

@@ -109,9 +109,42 @@
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": ["sex", "receiver", "breasts", "sleeping", "relaxed"],
+                            "useActiveTags": false,
+                            "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
+                            "responses": [
+                                "com_sex_finger_caress_B_Begin_Sleep_1",
+                                "com_sex_finger_caress_B_Begin_Sleep_2"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": ["sex", "doer", "breasts", "sleeping", "relaxed"],
+                            "useActiveTags": false,
+                            "_comment": "2.5.7 开始 睡眠中 独自B自慰 口上文（睡梦中自己开始）",
+                            "responses": [
+                                "com_sex_finger_caress_B_Begin_Self_Sleep_1",
+                                "com_sex_finger_caress_B_Begin_Self_Sleep_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
                                     "timestop"
                                 ]
                             },
+                            "extraSelfPortraitTags": ["sex", "receiver", "breasts", "doll", "empty", "silence", "idle"],
+                            "useActiveTags": false,
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_sex_finger_caress_B_Begin_Timestop_1",
@@ -524,6 +557,7 @@
                                     "sleeping"
                                 ]
                             },
+                            "extraSelfPortraitTags": ["sex", "doer", "breasts", "sleeping", "relaxed"],
                             "useActiveTags": false,
                             "_comment": "2.5.5 睡眠中 独自B自慰 口上文",
                             "responses": [
@@ -539,6 +573,7 @@
                                     "timestop"
                                 ]
                             },
+                            "extraSelfPortraitTags": ["sex", "doer", "breasts", "doll", "idle"],
                             "useActiveTags": false,
                             "_comment": "2.5.6 时停中 独自B自慰 口上文",
                             "responses": [
@@ -741,6 +776,10 @@
                 "com_sex_finger_caress_B_Self_M_16": "$self$的手停在胸口，僵着不肯再动。\n\"够了没有……够了吧……我不想再揉了。\"",
                 "com_sex_finger_caress_B_Self_15": "$self$机械地揉着奶子，胸口毫无波澜。\n\"……没感觉，白揉了。\"",
                 "com_sex_finger_caress_B_Self_16": "$self$放开自己的奶子，没了兴致。\n\"……不揉了。\"",
+                "com_sex_finger_caress_B_Begin_Sleep_1": "$target$的手掌覆上她熟睡中起伏的奶子轻轻揉捏，指腹捻上乳头搓弄，$self$在梦里哼了声，眉头轻皱，却没醒。",
+                "com_sex_finger_caress_B_Begin_Sleep_2": "乳头被捻得渐渐发挺，乳肉在掌心里被揉出指印，$self$只是蜷了蜷指头，呼吸依旧绵长平稳。",
+                "com_sex_finger_caress_B_Begin_Self_Sleep_1": "$self$在睡梦中翻了个身，手无意识地覆上自己的奶子，慢慢揉捏起来，呼吸也跟着变沉。",
+                "com_sex_finger_caress_B_Begin_Self_Sleep_2": "梦里不知想到了什么，$self$的指尖摸到自己的乳头轻轻捻弄，乳珠一点点挺立，她始终没醒。",
                 "com_sex_finger_caress_B_Begin_Timestop_1": "$target$捧起她定格的奶子揉捏，指腹捻上乳头搓弄，被捻硬的乳珠自己立在指缝间，$self$的呼吸没乱分毫。",
                 "com_sex_finger_caress_B_Begin_Timestop_2": "$self$的乳肉被搓热泛红，指印陷下去又慢慢弹回来，她垂着的手悬在半空，离胸口还差着距离。"
             }

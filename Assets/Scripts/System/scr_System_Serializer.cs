@@ -223,10 +223,10 @@ public class scr_System_Serializer : MonoBehaviour
             int count = 0;
             foreach (var file in new DirectoryInfo(mod.folderPath).GetFiles("*.*", SearchOption.AllDirectories))
             {
-                if (!mod.IsDataFile(file)) continue;
+                if (!mod.IsDataFile(file) || mod.IsExcluded(file)) continue;
                 if (RegisterAddressableFile(file, safeMode, mod.id, skippedFiles, errors)) count++;
             }
-            packSummary.Add($"[mod {mod.id}] {mod.DisplayName}: {count} files");
+            packSummary.Add($"[mod {mod.id}] {mod.folderName}: {count} files");
         }
 
         // asset packs: registered after Data and mods, in load order. Conflicting keys are logged and ignored (first registration wins)
@@ -398,8 +398,9 @@ public class scr_System_Serializer : MonoBehaviour
         }
 #endif
         AssetPacks = AssetPackLoader.Scan(AssetPacksPath);
-        Mods = ModLoader.Scan(ModsPath, Path.GetFileName(AssetPacksPath));
-        // pass 1: collect patches of enabled mods; they are applied to def json text in LoadDefs / LoadCharactersFoldersJSON
+        // receipted mod folders decide the default copy of a duplicated ModID (none in the editor: receipts load only in players)
+        Mods = ModLoader.Scan(ModsPath, Path.GetFileName(AssetPacksPath), UpdateService.Instance != null ? UpdateService.Instance.ManagedModFolders() : null);
+        // pass 1: collect patches of enabled mods; they are applied to def json text in LoadDefs (characters reuse that text)
         bool bootSafeMode = scr_System_CentralControl.current.isSafeMode;
         ModLoader.LoadPatches(Mods, file => IsDefFileFiltered(file, bootSafeMode, out _));
         BuildAddressables(scr_System_CentralControl.current.isSafeMode);
@@ -638,7 +639,7 @@ public class scr_System_Serializer : MonoBehaviour
         bool safeMode = scr_System_CentralControl.current.isSafeMode;
         if (Directory.Exists(path))
         {
-            // Data + enabled mods; text is patched once (ModLoader cache) and shared by both passes
+            // Data + enabled mods; only the candidate files LoadDefs collected, with the patched text it already read
             // a mod character re-declaring an existing baseID keeps the existing one (replace via patches instead)
             bool ModClash(ModInfo mod, string baseID, FileInfo file)
             {
@@ -648,9 +649,8 @@ public class scr_System_Serializer : MonoBehaviour
                 return true;
             }
 
-            foreach (var (file, relativePath, mod) in GetDefJsonFiles())
+            foreach (var (file, text, mod) in characterFiles)
             {
-                string text = ModLoader.ReadPatched(file, relativePath);
                 if (safeMode)
                 {
                     var i = JsonConvert.DeserializeObject<Character_SerializableSafe>(text, UtilityEX.SerializerSettings);
@@ -689,6 +689,7 @@ public class scr_System_Serializer : MonoBehaviour
 
             }
         }
+        characterFiles.Clear();
 
         Debug.Log($"LoadCharactersFoldersJSON Complete! \n-- Loaded Files Count {loadedFiles.Count} --\n{String.Join("\n", loadedFiles)}\n-- Skipped Files Count {skippedFiles.Count} --\n{String.Join("\n", skippedFiles)}");
         //Debug.Log("Adding "+newIndex.baseCharacters.Count+" characters to masterlist");
@@ -759,6 +760,11 @@ public class scr_System_Serializer : MonoBehaviour
 
     MasterList SafeList = new MasterList();
 
+    /// <summary>
+    /// Def files that may hold a character (patched text), collected by LoadDefs in load order, consumed and cleared by LoadCharactersFoldersJSON
+    /// </summary>
+    readonly List<(FileInfo file, string text, ModInfo mod)> characterFiles = new List<(FileInfo, string, ModInfo)>();
+
     protected void LoadDefs(bool safeMode)
     {
         List<string> skippedFiles = new List<string>();
@@ -768,8 +774,14 @@ public class scr_System_Serializer : MonoBehaviour
         MasterList.InitializeLists(true);
         if (!Directory.Exists(path)) { Debug.LogError($"Error in LoadDefs, path [{path}] do not exist"); return; }
 
-        foreach (var (file, relativePath, _) in GetDefJsonFiles())
+        characterFiles.Clear();
+        foreach (var (file, relativePath, mod) in GetDefJsonFiles())
         {   // all files must be index_com files
+            string text = ModLoader.ReadPatched(file, relativePath);
+            // character candidates for LoadCharactersFoldersJSON, which applies its own filters (filtered files included).
+            // Newtonsoft matches property names case-insensitively, so a file without "baseid" can't yield a baseID
+            if (text.IndexOf("baseid", StringComparison.OrdinalIgnoreCase) >= 0) characterFiles.Add((file, text, mod));
+
             if (IsDefFileFiltered(file, safeMode, out var reason))
             {
                 skippedFiles.Add($"Skipping file {file.Name} due to {reason}");
@@ -779,7 +791,7 @@ public class scr_System_Serializer : MonoBehaviour
             MasterList l;
             try
             {
-                l = JsonConvert.DeserializeObject<MasterList>(ModLoader.ReadPatched(file, relativePath), UtilityEX.SerializerSettings);
+                l = JsonConvert.DeserializeObject<MasterList>(text, UtilityEX.SerializerSettings);
             }
             catch (Exception e)
             {
@@ -792,6 +804,14 @@ public class scr_System_Serializer : MonoBehaviour
                 MasterList.MergeWith(l);
                 loadedFiles.Add($"Reading json file {file.FullName}");
             }
+        }
+        // About.json "Dictionary" of every installed mod, enabled or not (display text only, the mod manager needs disabled
+        // mods' names too), in load order. Localization without def files, so art-only mods stay art-only
+        foreach (var mod in Mods)
+        {
+            if (mod.about?.Dictionary == null) continue;
+            MasterList.Dictionary.MergeWith(mod.about.Dictionary);
+            loadedFiles.Add($"Reading About dictionary of mod [{mod.id}]");
         }
         Debug.Log($"LoadDefs Complete! \n-- Loaded Files Count {loadedFiles.Count} --\n{String.Join("\n", loadedFiles)}\n-- Skipped Files Count {skippedFiles.Count} --\n{String.Join("\n", skippedFiles)}");
     }
@@ -813,7 +833,8 @@ public class scr_System_Serializer : MonoBehaviour
             if (!mod.enabled) continue;
             foreach (var file in new DirectoryInfo(mod.folderPath).GetFiles("*.json", SearchOption.AllDirectories))
             {
-                if (!mod.IsDataFile(file)) continue;
+                // json inside the mod's Assetpacks/ is never loaded (art only there)
+                if (!mod.IsDataFile(file) || mod.IsInAssetPacks(file)) continue;
                 results.Add((file, ModLoader.RelativePath(mod.folderPath, file), mod));
             }
         }
