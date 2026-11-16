@@ -4,7 +4,7 @@
 
             { "ID": "personality_base", "Entry": { "ID": "com_furniture_takeShower", "interruptSelfJob": true, "variants": [
                 { "requirement": { "requireEPFailure": true }, "variants": [
-                    { "requirement": { "requireSelfAttitudeGTE": "Neutral" }, "extraSelfPortraitTags": ["apology","shy"], "useActiveTags": false, "responses": [] }
+                    { "requirement": { "requireSelfAttitudeGTE": "Neutral", "requireEPSuccess": false }, "extraSelfPortraitTags": ["apology","shy"], "useActiveTags": false, "responses": [] }
                 ], "extraSelfPortraitTags": ["troubled","angry","disgust"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireEPSuccessGTE": "Success" }, "extraSelfPortraitTags": ["happy","excited","surprised"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireSelfAction": true }, "extraSelfPortraitTags": ["pouting","doubt"], "useActiveTags": false, "responses": [] }
@@ -37,7 +37,7 @@
 
             { "ID": "personality_base", "Entry": { "ID": "com_furniture_takingBreak", "variants": [
                 { "requirement": { "requireEPFailure": true }, "variants": [
-                    { "requirement": { "requireSelfAttitudeGTE": "Neutral" }, "extraSelfPortraitTags": ["apology","shy"], "useActiveTags": false, "responses": [] }
+                    { "requirement": { "requireSelfAttitudeGTE": "Neutral", "requireEPSuccess": false }, "extraSelfPortraitTags": ["apology","shy"], "useActiveTags": false, "responses": [] }
                 ], "extraSelfPortraitTags": ["troubled","angry","disgust"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireEPSuccessGTE": "Success" }, "extraSelfPortraitTags": ["thinking","happy","resting"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireSelfAction": true }, "extraSelfPortraitTags": ["pouting","doubt"], "useActiveTags": false, "responses": [] }
@@ -78,7 +78,7 @@
 
             { "ID": "personality_base", "Entry": { "ID": "com_furniture_watchVideo", "variants": [
                 { "requirement": { "requireEPFailure": true }, "variants": [
-                    { "requirement": { "requireSelfAttitudeGTE": "Neutral" }, "extraSelfPortraitTags": ["apology","shy"], "useActiveTags": false, "responses": [] }
+                    { "requirement": { "requireSelfAttitudeGTE": "Neutral", "requireEPSuccess": false }, "extraSelfPortraitTags": ["apology","shy"], "useActiveTags": false, "responses": [] }
                 ], "extraSelfPortraitTags": ["troubled","angry","disgust"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireEPSuccessGTE": "Success" }, "extraSelfPortraitTags": ["happy","excited","surprised"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireSelfAction": true }, "extraSelfPortraitTags": ["pouting","doubt"], "useActiveTags": false, "responses": [] }
@@ -111,7 +111,7 @@
 
             { "ID": "personality_base", "Entry": { "ID": "com_furniture_playVideoGames", "variants": [
                 { "requirement": { "requireEPFailure": true }, "variants": [
-                    { "requirement": { "requireSelfAttitudeGTE": "Neutral" }, "extraSelfPortraitTags": ["apology","shy"], "useActiveTags": false, "responses": [] }
+                    { "requirement": { "requireSelfAttitudeGTE": "Neutral", "requireEPSuccess": false }, "extraSelfPortraitTags": ["apology","shy"], "useActiveTags": false, "responses": [] }
                 ], "extraSelfPortraitTags": ["troubled","angry","disgust"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireEPSuccessGTE": "Success" }, "extraSelfPortraitTags": ["happy","excited","surprised"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireSelfAction": true }, "extraSelfPortraitTags": ["pouting","doubt"], "useActiveTags": false, "responses": [] }

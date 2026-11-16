@@ -13,7 +13,8 @@
                             "variants": [
                                 {
                                     "requirement": {
-                                        "requireSelfAttitudeGTE": "Neutral"
+                                        "requireSelfAttitudeGTE": "Neutral",
+                                        "requireEPSuccess": false
                                     },
                                     "extraSelfPortraitTags": [
                                         "apology",

@@ -264,18 +264,28 @@ public class TA_JsonEdit
         if (obj.props.Count > 0)
         {
             var last = obj.props[obj.props.Count - 1];
-            Splice(last.value.end, last.value.end, "," + newline + IndentAt(last.keyStart) + Str(name) + ": " + json);
+            // one-line objects ({ "a": 1 }, the data's usual requirement style) stay on one line
+            Splice(last.value.end, last.value.end, (IsInline(obj) ? ", " : "," + newline + IndentAt(last.keyStart)) + Str(name) + ": " + json);
         }
-        else
-        {
-            var outer = IndentAt(obj.start);
-            Splice(obj.start, obj.end, "{" + newline + outer + indentUnit + Str(name) + ": " + json + newline + outer + "}");
-        }
+        else Splice(obj.start, obj.end, "{ " + Str(name) + ": " + json + " }");
     }
 
-    /// <summary>A new object value laid out like the file, for a property whose key starts at keyIndent.</summary>
-    public string ObjectJson(string keyIndent, string name, string json)
+    public bool IsInline(Node n) { return Text.IndexOf('\n', n.start, n.end - n.start) < 0; }
+
+    /// <summary>Whether the value at path is written on one line.</summary>
+    public bool IsInline(string path)
     {
+        var n = Find(path);
+        return n != null && IsInline(n);
+    }
+
+    /// <summary>
+    /// A new object value laid out like the file: one line ({ "name": value }) inside a one-line parent, else one
+    /// property per line for a key that starts at keyIndent.
+    /// </summary>
+    public string ObjectJson(string keyIndent, string name, string json, bool inline)
+    {
+        if (inline) return "{ " + Str(name) + ": " + json + " }";
         return "{" + newline + keyIndent + indentUnit + Str(name) + ": " + json + newline + keyIndent + "}";
     }
 

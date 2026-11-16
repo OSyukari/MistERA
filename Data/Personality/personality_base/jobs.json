@@ -29,7 +29,7 @@
             ] } },
             { "ID": "personality_base", "Entry": { "ID": "com_job_cleaning", "interruptSelfJob": true, "variants": [
                 { "requirement": { "requireEPFailure": true }, "variants": [
-                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraSelfPortraitTags": ["apology","shy","gentle"], "useActiveTags": false, "responses": [] }
+                    { "requirement": { "requireSelfAttitudeGTE": "Like", "requireEPSuccess": false }, "extraSelfPortraitTags": ["apology","shy","gentle"], "useActiveTags": false, "responses": [] }
                 ], "extraSelfPortraitTags": ["apology","awkward","busy","uninterested","cold","tired","distant"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireEPSuccessGTE": "Success" }, "variants": [
                     { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraSelfPortraitTags": ["happy","excited","surprised","intrigued","relaxed"], "useActiveTags": false, "responses": [] }
@@ -66,7 +66,7 @@
             ] } },
             { "ID": "personality_base", "Entry": { "ID": "com_job_farm_cultivate_crop", "interruptSelfJob": true, "variants": [
                 { "requirement": { "requireEPFailure": true }, "variants": [
-                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraSelfPortraitTags": ["apology","shy","gentle"], "useActiveTags": false, "responses": [] }
+                    { "requirement": { "requireSelfAttitudeGTE": "Like", "requireEPSuccess": false }, "extraSelfPortraitTags": ["apology","shy","gentle"], "useActiveTags": false, "responses": [] }
                 ], "extraSelfPortraitTags": ["apology","awkward","busy","uninterested","cold","tired","distant"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireEPSuccessGTE": "Success" }, "variants": [
                     { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraSelfPortraitTags": ["happy","excited","surprised","intrigued","relaxed"], "useActiveTags": false, "responses": [] }
@@ -103,7 +103,7 @@
             ] } },
             { "ID": "personality_base", "Entry": { "ID": "com_job_farm_maintain", "interruptSelfJob": true, "variants": [
                 { "requirement": { "requireEPFailure": true }, "variants": [
-                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraSelfPortraitTags": ["apology","shy","gentle"], "useActiveTags": false, "responses": [] }
+                    { "requirement": { "requireSelfAttitudeGTE": "Like", "requireEPSuccess": false }, "extraSelfPortraitTags": ["apology","shy","gentle"], "useActiveTags": false, "responses": [] }
                 ], "extraSelfPortraitTags": ["apology","awkward","busy","uninterested","cold","tired","distant"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireEPSuccessGTE": "Success" }, "variants": [
                     { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraSelfPortraitTags": ["happy","excited","surprised","intrigued","relaxed"], "useActiveTags": false, "responses": [] }
@@ -140,7 +140,7 @@
             ] } },
             { "ID": "personality_base", "Entry": { "ID": "com_job_production_cooking", "interruptSelfJob": true, "variants": [
                 { "requirement": { "requireEPFailure": true }, "variants": [
-                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraSelfPortraitTags": ["apology","shy","gentle"], "useActiveTags": false, "responses": [] }
+                    { "requirement": { "requireSelfAttitudeGTE": "Like", "requireEPSuccess": false }, "extraSelfPortraitTags": ["apology","shy","gentle"], "useActiveTags": false, "responses": [] }
                 ], "extraSelfPortraitTags": ["apology","awkward","busy","uninterested","cold","tired","distant"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireEPSuccessGTE": "Success" }, "variants": [
                     { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraSelfPortraitTags": ["happy","excited","surprised","intrigued","relaxed"], "useActiveTags": false, "responses": [] }

@@ -38,13 +38,13 @@
                             "requirement": { "requireEPFailure": true },
                             "variants": [
                                 {
-                                    "requirement": { "requirePermission": true },
+                                    "requirement": { "requirePermission": true, "requireEPSuccess": false },
                                     "extraSelfPortraitTags": ["troubled", "smile"],
                                     "useActiveTags": false,
                                     "responses": ["pb_com_undress_outer_F_1", "pb_com_undress_outer_F_2"]
                                 },
                                 {
-                                    "requirement": { "requireSelfAttitudeGTE": "Like" },
+                                    "requirement": { "requireSelfAttitudeGTE": "Like", "requireEPSuccess": false },
                                     "extraSelfPortraitTags": ["troubled", "surprised"],
                                     "useActiveTags": false,
                                     "responses": ["pb_com_undress_outer_G_1", "pb_com_undress_outer_G_2"]
@@ -122,13 +122,13 @@
                             "requirement": { "requireEPFailure": true },
                             "variants": [
                                 {
-                                    "requirement": { "requirePermission": true },
+                                    "requirement": { "requirePermission": true, "requireEPSuccess": false },
                                     "extraSelfPortraitTags": ["troubled", "smile"],
                                     "useActiveTags": false,
                                     "responses": ["pb_com_undress_inner_F_1", "pb_com_undress_inner_F_2"]
                                 },
                                 {
-                                    "requirement": { "requireSelfAttitudeGTE": "Like" },
+                                    "requirement": { "requireSelfAttitudeGTE": "Like", "requireEPSuccess": false },
                                     "extraSelfPortraitTags": ["blush", "surprised"],
                                     "useActiveTags": false,
                                     "responses": ["pb_com_undress_inner_G_1", "pb_com_undress_inner_G_2"]
@@ -206,13 +206,13 @@
                             "requirement": { "requireEPFailure": true },
                             "variants": [
                                 {
-                                    "requirement": { "requirePermission": true },
+                                    "requirement": { "requirePermission": true, "requireEPSuccess": false },
                                     "extraSelfPortraitTags": ["troubled", "apology"],
                                     "useActiveTags": false,
                                     "responses": ["pb_com_undress_skin_F_1", "pb_com_undress_skin_F_2"]
                                 },
                                 {
-                                    "requirement": { "requireSelfAttitudeGTE": "Like" },
+                                    "requirement": { "requireSelfAttitudeGTE": "Like", "requireEPSuccess": false },
                                     "extraSelfPortraitTags": ["blush", "angry"],
                                     "useActiveTags": false,
                                     "responses": ["pb_com_undress_skin_G_1", "pb_com_undress_skin_G_2"]

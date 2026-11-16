@@ -550,9 +550,10 @@ public static class TA_Apply
                 {
                     // build the missing levels as nested objects laid out like the file
                     var keyIndent = doc.IndentOf(parentPath) + doc.indentUnit;
+                    bool inline = doc.IsInline(parentPath);
                     var value = json;
                     for (int s = segs.Length - 1; s > missingAt; s--)
-                        value = doc.ObjectJson(keyIndent + Repeat(doc.indentUnit, s - missingAt - 1), segs[s], value);
+                        value = doc.ObjectJson(keyIndent + Repeat(doc.indentUnit, s - missingAt - 1), segs[s], value, inline);
                     doc.SetProperty(parentPath, segs[missingAt], value);
                     Change(p, file, fieldPath, "set " + op["field"], "", json);
                 }

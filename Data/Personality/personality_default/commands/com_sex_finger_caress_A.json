@@ -208,7 +208,8 @@
                             "_comment": "2.2.2 开始被A抚摸 未允许 敌意 口上文",
                             "responses": [
                                 "com_sex_finger_caress_A_Begin_5",
-                                "com_sex_finger_caress_A_Begin_6"
+                                "com_sex_finger_caress_A_Begin_6",
+                                "com_sex_finger_caress_A_Begin_7"
                             ]
                         },
                         {
@@ -323,7 +324,8 @@
                                     "requirement": {
                                         "selfTags": [
                                             "justWokenUp"
-                                        ]
+                                        ],
+                                        "requireEPSuccess": false
                                     },
                                     "extraSelfPortraitTags": [
                                         "sorry",
@@ -338,7 +340,8 @@
                                     "variants": [
                                         {
                                             "requirement": {
-                                                "requirePermission": true
+                                                "requirePermission": true,
+                                                "requireEPSuccess": false
                                             },
                                             "extraSelfPortraitTags": [
                                                 "sorry",
@@ -363,7 +366,8 @@
                                 },
                                 {
                                     "requirement": {
-                                        "requirePermission": true
+                                        "requirePermission": true,
+                                        "requireEPSuccess": false
                                     },
                                     "extraSelfPortraitTags": [
                                         "troubled",
@@ -383,7 +387,8 @@
                                 },
                                 {
                                     "requirement": {
-                                        "requireSelfAttitudeGTE": "Like"
+                                        "requireSelfAttitudeGTE": "Like",
+                                        "requireEPSuccess": false
                                     },
                                     "extraSelfPortraitTags": [
                                         "troubled",
@@ -813,7 +818,8 @@
                 "com_sex_finger_caress_A_Begin_Self_Sleep_1": "$self$在睡梦中翻了个身，手无意识地探进臀缝，指尖贴上穴口轻轻蹭动起来，呼吸也跟着变沉。",
                 "com_sex_finger_caress_A_Begin_Self_Sleep_2": "梦里不知想到了什么，$self$的指尖沿着臀缝摸到穴口，绕着褶皱缓缓画圈，她始终没醒。",
                 "com_sex_finger_caress_A_Begin_Timestop_1": "$target$掰开她定格的臀肉揉按，指腹绕上穴口画圈，褶皱被碾得渐渐泛红张开，$self$的腰没有跟着躲。",
-                "com_sex_finger_caress_A_Begin_Timestop_2": "$self$的穴口被揉得不受控地收缩吮住指尖，臀肉被搓出指印又弹回原状，房间里只有皮肉被拿捏的轻响。"
+                "com_sex_finger_caress_A_Begin_Timestop_2": "$self$的穴口被揉得不受控地收缩吮住指尖，臀肉被搓出指印又弹回原状，房间里只有皮肉被拿捏的轻响。",
+                "com_sex_finger_caress_A_Begin_7": "$self$浑身僵硬，眼泪在眼眶里打转，只能把哀求压进喉咙。\n\"求、求你轻一点……我什么都听你的……\""
             }
         }
     }

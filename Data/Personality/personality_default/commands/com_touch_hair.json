@@ -142,7 +142,8 @@
                             "variants": [
                                 {
                                     "requirement": {
-                                        "requirePermission": true
+                                        "requirePermission": true,
+                                        "requireEPSuccess": false
                                     },
                                     "extraSelfPortraitTags": [
                                         "troubled",
@@ -164,7 +165,8 @@
                                 },
                                 {
                                     "requirement": {
-                                        "requireSelfAttitudeGTE": "Like"
+                                        "requireSelfAttitudeGTE": "Like",
+                                        "requireEPSuccess": false
                                     },
                                     "extraSelfPortraitTags": [
                                         "troubled",

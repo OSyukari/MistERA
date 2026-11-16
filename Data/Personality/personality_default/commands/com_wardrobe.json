@@ -41,14 +41,14 @@
                             "requirement": { "requireEPFailure": true },
                             "variants": [
                                 {
-                                    "requirement": { "requirePermission": true },
+                                    "requirement": { "requirePermission": true, "requireEPSuccess": false },
                                     "extraSelfPortraitTags": ["troubled", "shy", "smile"],
                                     "useActiveTags": false,
                                     "_comment": "拒绝 被脱外衣 有允许",
                                     "responses": ["com_undress_outer_F_1", "com_undress_outer_F_2"]
                                 },
                                 {
-                                    "requirement": { "requireSelfAttitudeGTE": "Like" },
+                                    "requirement": { "requireSelfAttitudeGTE": "Like", "requireEPSuccess": false },
                                     "extraSelfPortraitTags": ["troubled", "surprised", "shy"],
                                     "useActiveTags": false,
                                     "_comment": "拒绝 被脱外衣 无允许 善意",
@@ -136,14 +136,14 @@
                             "requirement": { "requireEPFailure": true },
                             "variants": [
                                 {
-                                    "requirement": { "requirePermission": true },
+                                    "requirement": { "requirePermission": true, "requireEPSuccess": false },
                                     "extraSelfPortraitTags": ["shy", "troubled", "blush"],
                                     "useActiveTags": false,
                                     "_comment": "拒绝 被脱衣物 有允许",
                                     "responses": ["com_undress_inner_F_1", "com_undress_inner_F_2"]
                                 },
                                 {
-                                    "requirement": { "requireSelfAttitudeGTE": "Like" },
+                                    "requirement": { "requireSelfAttitudeGTE": "Like", "requireEPSuccess": false },
                                     "extraSelfPortraitTags": ["surprised", "blush", "troubled"],
                                     "useActiveTags": false,
                                     "_comment": "拒绝 被脱衣物 无允许 善意",
@@ -231,14 +231,14 @@
                             "requirement": { "requireEPFailure": true },
                             "variants": [
                                 {
-                                    "requirement": { "requirePermission": true },
+                                    "requirement": { "requirePermission": true, "requireEPSuccess": false },
                                     "extraSelfPortraitTags": ["shy", "blush", "apology"],
                                     "useActiveTags": false,
                                     "_comment": "拒绝 被脱贴身衣物 有允许",
                                     "responses": ["com_undress_skin_F_1", "com_undress_skin_F_2"]
                                 },
                                 {
-                                    "requirement": { "requireSelfAttitudeGTE": "Like" },
+                                    "requirement": { "requireSelfAttitudeGTE": "Like", "requireEPSuccess": false },
                                     "extraSelfPortraitTags": ["surprised", "blush", "angry"],
                                     "useActiveTags": false,
                                     "_comment": "拒绝 被脱贴身衣物 无允许 善意",

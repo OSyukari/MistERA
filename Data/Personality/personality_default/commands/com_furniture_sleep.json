@@ -46,7 +46,7 @@
                             "requirement": { "requireEPFailure": true },
                             "variants": [
                                 {
-                                    "requirement": { "requireSelfAttitudeGTE": "Neutral" },
+                                    "requirement": { "requireSelfAttitudeGTE": "Neutral", "requireEPSuccess": false },
                                     "extraSelfPortraitTags": ["apology", "troubled"],
                                     "useActiveTags": false,
                                     "responses": ["kojo_sleep_refuse_polite_1", "kojo_sleep_refuse_polite_2", "kojo_sleep_refuse_polite_3"]

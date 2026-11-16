@@ -348,7 +348,8 @@
                                     "requirement": {
                                         "selfTags": [
                                             "justWokenUp"
-                                        ]
+                                        ],
+                                        "requireEPSuccess": false
                                     },
                                     "extraSelfPortraitTags": [
                                         "sorry",
@@ -363,7 +364,8 @@
                                     "variants": [
                                         {
                                             "requirement": {
-                                                "requirePermission": true
+                                                "requirePermission": true,
+                                                "requireEPSuccess": false
                                             },
                                             "extraSelfPortraitTags": [
                                                 "sorry",
@@ -390,7 +392,8 @@
                                 },
                                 {
                                     "requirement": {
-                                        "requirePermission": true
+                                        "requirePermission": true,
+                                        "requireEPSuccess": false
                                     },
                                     "extraSelfPortraitTags": [
                                         "troubled",
@@ -410,7 +413,8 @@
                                 },
                                 {
                                     "requirement": {
-                                        "requireSelfAttitudeGTE": "Like"
+                                        "requireSelfAttitudeGTE": "Like",
+                                        "requireEPSuccess": false
                                     },
                                     "extraSelfPortraitTags": [
                                         "troubled",
