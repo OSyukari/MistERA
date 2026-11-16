@@ -1,47 +1,38 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Linq;
 using Newtonsoft.Json;
 
+/// <summary>
+/// "Put a character into this furniture" (cryosleep, prison): generated per furniture from a template command's
+/// GenerateForFurniture (Docs/Interactions/Plan_GeneratedCommands.md §4.6). ID, text and furniture are set by the
+/// generator; this only turns the template's mechanics into the add action.
+/// </summary>
 [System.Serializable]
 public class COM_Character_Insert : COM
 {
-    public string parentCOMID;
-
-    public void Initialize()
+    public override void InitializeGenerated()
     {
-        this.parentCOMID = ID;
-        this.ID = this.ID + "_ADD";
-        comTags.AddRange(this.requirements.requireContaining.allowPlanting);
-
-        foreach(var i in variants) i.displayName = this.displayName + "_ADD";
+        // furniture offer commands by tags: the container kind (character_trainable, cryo / prison) becomes a tag
+        if (requirements.requireContaining.allowPlanting != null)
+            foreach (var tag in requirements.requireContaining.allowPlanting) if (!comTags.Contains(tag)) comTags.Add(tag);
         this.requirements.requireContaining.allowPlanting = null;
         // entry results class still WIP
-
-        if (description_begin.Entries != null) foreach (var i in description_begin.Entries) i.AppendToText("_ADD");
-        if (description_ongoing.Entries != null) foreach (var i in description_ongoing.Entries) i.AppendToText("_ADD");
-        if (description_onComplete.Entries != null) foreach (var i in description_onComplete.Entries) i.AppendToText("_ADD");
-        if (description_after.Entries != null) foreach (var i in description_after.Entries) i.AppendToText("_ADD");
-
     }
     //public override string ID { get { return ParentCOM.ID + "_" + comp.growType + "_" + comp.yieldItemID; } }
-
-
 }
 
 
+/// <summary> "Take characters out of this furniture": the remove action generated next to COM_Character_Insert. </summary>
 public class COM_Character_Remove : COM
 {
-    public string parentCOMID;
-
-    public void Initialize()
+    public override void InitializeGenerated()
     {
-        this.parentCOMID = ID;
-        this.ID = parentCOMID + "_REMOVE";
         HideWhenInvalid = false;
-        comTags.AddRange(this.requirements.requireContaining.allowPlanting);
+        if (requirements.requireContaining.allowPlanting != null)
+            foreach (var tag in requirements.requireContaining.allowPlanting) if (!comTags.Contains(tag)) comTags.Add(tag);
         this.requirements.requireContaining.allowPlanting = null;
 
         requirements.requirement.receiverCount = -1;
@@ -65,22 +56,15 @@ public class COM_Character_Remove : COM
         foreach (var variant in variants)
         {
             variant.requirements.requirement.receiverCount = 0;
-            variant.displayName = this.displayName + "_REMOVE";
             break;
         }
 
-        COM_Variant newVar = new COM_Variant(this.displayName + "_REMOVE", this);
+        // the "release everyone" variant: named like the command (the template's name)
+        COM_Variant newVar = new COM_Variant(this.displayName, this);
         newVar.Read(this);
         newVar.requirements.requirement.receiverCount = 99;
         variants.Add(newVar);
         // entry results class still WIP
-        if (description_begin.Entries != null) foreach (var i in description_begin.Entries) i.AppendToText("_REMOVE");
-        if (description_ongoing.Entries != null) foreach (var i in description_ongoing.Entries) i.AppendToText("_REMOVE");
-        if (description_onComplete.Entries != null) foreach (var i in description_onComplete.Entries) i.AppendToText("_REMOVE");
-        if (description_after.Entries != null) foreach (var i in description_after.Entries) i.AppendToText("_REMOVE");
-
-        this.displayName += "_REMOVE";
-
     }
 
     //public override string ID { get { return ParentCOM.ID + "_" + comp.growType + "_" + comp.yieldItemID; } }

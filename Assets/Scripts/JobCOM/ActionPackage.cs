@@ -4468,6 +4468,8 @@ public abstract class ActionPackage
     {
         this.jobRefID = j.RefID;
         this.job_cached = j;
+        // save migration: a replaced command ID (restraint add / remove) becomes this furniture's own command
+        if (COM_LegacyIDs.Migrate(ref targetCOMID, (j as Job_Furniture)?.FurnitureBaseID)) targetCOMCache = null;
 
         foreach(var ep in this.packages)
         {

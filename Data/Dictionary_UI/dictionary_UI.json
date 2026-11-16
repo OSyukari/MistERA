@@ -1220,6 +1220,8 @@
 "ui_ap_PreEvaluate_requireSameRoom":"$name$（当前位置 $location$）不在为可执行该指令的位置 $room$",
 
 "ui_COM_Requirements_doerCountInvalid":"执行者数量过多：当前执行者数[$count$]，该指令上限[$req$]",
+"ui_COM_Requirements_tooFewDoers":"执行者数量不足：当前执行者数[$count$]，该指令至少需要[$req$]",
+"ui_COM_Requirements_tooFewReceivers":"对象数量不足：当前对象数[$count$]，该指令至少需要[$req$]",
 "ui_COM_Requirements_requireReceiver":"该指令需要对象",
 "ui_COM_Requirements_requireNoReceiver":"该指令无法在有对象时执行",
 "ui_COM_Requirements_requireSameFaction":"需要是[$faction$]的成员",
@@ -1973,6 +1975,8 @@
 "ui_ap_PreEvaluate_requireSameRoom":"$name$ (Current Location $location$) is not in the room $room$ required to execute this command",
 
 "ui_COM_Requirements_doerCountInvalid":"Too many performers: Current [$count$], Limit for this command [$req$]",
+"ui_COM_Requirements_tooFewDoers":"Not enough performers: Current [$count$], this command requires at least [$req$]",
+"ui_COM_Requirements_tooFewReceivers":"Not enough targets: Current [$count$], this command requires at least [$req$]",
 "ui_COM_Requirements_requireReceiver":"This command requires a target",
 "ui_COM_Requirements_requireNoReceiver":"This command cannot be executed with a target",
 "ui_COM_Requirements_requireSameFaction":"Requires being a member of [$faction$]",

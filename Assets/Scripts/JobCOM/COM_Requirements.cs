@@ -54,6 +54,12 @@ public class COM_Requirements
     {
         public int doerCount = -1;
         public int receiverCount = -1;
+        /// <summary>
+        /// Optional lower bounds (0 = none). doerCount 2..8 / receiverCount > 1 are upper bounds only, so without these a
+        /// group variant also accepts a single actor. minDoerCount counts receivers too when treatReceiverAsDoer.
+        /// </summary>
+        public int minDoerCount = 0;
+        public int minReceiverCount = 0;
 
         public CharaReq req_Doers = new CharaReq();
         public CharaReq req_Receivers = new CharaReq();
@@ -92,6 +98,8 @@ public class COM_Requirements
         {
             if (this.doerCount == -1 && req.doerCount != -1) this.doerCount = req.doerCount;
             if (this.receiverCount == -1 && req.receiverCount != -1) this.receiverCount = req.receiverCount;
+            if (this.minDoerCount == 0 && req.minDoerCount != 0) this.minDoerCount = req.minDoerCount;
+            if (this.minReceiverCount == 0 && req.minReceiverCount != 0) this.minReceiverCount = req.minReceiverCount;
             req_Doers.Read(req.req_Doers);
             req_Receivers.Read(req.req_Receivers);
             treatDoerAsReceiver = treatDoerAsReceiver || req.treatDoerAsReceiver;
@@ -122,8 +130,15 @@ public class COM_Requirements
                 //if (logging) _tooltip.Add("Command invalid: command doer number below requirement : treatRasD[" + treatReceiverAsDoer + "] dCount[" + 1 + "] rCount[" + 0 + "] finalEval[" + (treatReceiverAsDoer && ((doerRefIDs.Count + receiverRefIDs.Count) <= doerCount)) + "]");
                 return false;
             }
+            if (minDoerCount > actorCount)
+            {
+                if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_COM_Requirements_tooFewDoers")
+                    .Replace("$count$", $"{actorCount}")
+                    .Replace("$req$", $"{minDoerCount}"));
+                return false;
+            }
 
-            if (receiverCount > 0)
+            if (receiverCount > 0 || minReceiverCount > 0)
             {
                 if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_COM_Requirements_requireReceiver"));
                 hardlock = true;
@@ -195,6 +210,20 @@ public class COM_Requirements
             }
             else if (doerCount > 9) { }
 
+            if (minDoerCount > actorCount)
+            {
+                if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_COM_Requirements_tooFewDoers")
+                    .Replace("$count$", $"{actorCount}")
+                    .Replace("$req$", $"{minDoerCount}"));
+                return false;
+            }
+            if (minReceiverCount > receiverRefIDs.Count)
+            {
+                if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_COM_Requirements_tooFewReceivers")
+                    .Replace("$count$", $"{receiverRefIDs.Count}")
+                    .Replace("$req$", $"{minReceiverCount}"));
+                return false;
+            }
 
             if (receiverCount == 0 && receiverRefIDs.Count != 0)
             {

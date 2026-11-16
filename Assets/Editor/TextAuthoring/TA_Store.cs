@@ -8,9 +8,9 @@ using UnityEngine;
 
 /// <summary>
 /// Text authoring export store (Docs/TextAuthoring/Plan_ExportStore.md §3, §5, §6): Docs/TextAuthoring/Store/
-/// store.json (one row per unit: status, outdated, analysis, hashes) + units/&lt;unit&gt;.json (shared layer) +
-/// units/&lt;unit&gt;/&lt;personality&gt;.json (kojo layers). Hashes cover the extracted snapshot, split into structure and
-/// text so a write-back (text only) doesn't invalidate an analysis.
+/// store.json (one row per unit: status, outdated, kojo unimplemented flag, hashes) + units/&lt;unit&gt;.json (shared layer)
+/// + units/&lt;unit&gt;/&lt;personality&gt;.json (kojo layers). Hashes cover the extracted snapshot, split into structure and
+/// text (Scan reports which changed).
 /// </summary>
 public static class TA_Store
 {
@@ -26,7 +26,6 @@ public static class TA_Store
 
     static string IndexPath { get { return Path.Combine(Root, "store.json"); } }
     static string UnitsDir { get { return Path.Combine(Root, "units"); } }
-    public static string AnalysisDir { get { return Path.Combine(Root, "analysis"); } }
 
     // ---------------------------------------------------------------- index
 
@@ -59,6 +58,19 @@ public static class TA_Store
         var results = new List<string>();
         if (row?["personalities"] is JArray a) for (int i = 0; i < a.Count; i++) results.Add((string)a[i]);
         return results;
+    }
+
+    /// <summary>
+    /// Drops a unit from the store: its row and its snapshot files (units/&lt;unit&gt;.json + units/&lt;unit&gt;/). Change
+    /// records stay (they target data locations, not units). Caller saves the index.
+    /// </summary>
+    public static void RemoveUnit(JObject index, string unit)
+    {
+        Units(index).Remove(unit);
+        var shared = Path.Combine(UnitsDir, unit + ".json");
+        if (File.Exists(shared)) File.Delete(shared);
+        var layers = Path.Combine(UnitsDir, unit);
+        if (Directory.Exists(layers)) Directory.Delete(layers, true);
     }
 
     // ---------------------------------------------------------------- snapshots
@@ -115,7 +127,9 @@ public static class TA_Store
         for (int i = 0; i < layerIDs.Count; i++) AddSlotHashes(s.layers[layerIDs[i]]["slots"] as JObject, slots);
 
         var st = new StringBuilder();
-        st.Append(Str(s.shared["ops"])).Append(Str(s.shared["findings"])).Append(Str(s.shared["unreachable"])).Append(Str(s.shared["flags"]));
+        st.Append(Str(s.shared["ops"])).Append(Str(s.shared["findings"])).Append(Str(s.shared["unreachable"])).Append(Str(s.shared["flags"]))
+            // command cases (Plan_CommandCases.md): a template edit or new kojo elsewhere changes them -> Scan reports it
+            .Append(Str(s.shared["cases"]));
         for (int i = 0; i < layerIDs.Count; i++)
         {
             var l = s.layers[layerIDs[i]];
@@ -178,8 +192,8 @@ public static class TA_Store
     // ---------------------------------------------------------------- commit
 
     /// <summary>
-    /// Saves a fresh extraction and updates its row: status extracted when new or the structure changed (an existing
-    /// analysis turns stale), outdated cleared. Returns a one-line log.
+    /// Saves a fresh extraction and updates its row: status extracted when new or the structure changed, outdated
+    /// cleared, the kojo unimplemented flag recounted. Returns a one-line log.
     /// </summary>
     public static string Commit(JObject index, TA_Snapshot s)
     {
@@ -196,7 +210,6 @@ public static class TA_Store
                 ["unitID"] = s.shared["unitID"],
                 ["kind"] = s.shared["kind"],
                 ["status"] = StatusExtracted,
-                ["analysis"] = new JObject { ["state"] = "none" },
                 ["tasks"] = new JArray()
             };
             Units(index)[unit] = row;
@@ -208,13 +221,9 @@ public static class TA_Store
             bool structChanged = oldHashes == null || (string)oldHashes["struct"] != (string)hashes["struct"]
                 || (int?)row["extractorVersion"] != TA_DocBuilderBase.ExtractorVersion;
             bool changed = oldHashes == null || (string)oldHashes["unit"] != (string)hashes["unit"];
-            if (structChanged)
-            {
-                row["status"] = StatusExtracted;
-                var analysis = row["analysis"] as JObject;
-                var state = (string)analysis?["state"];
-                if (state == "clean" || state == "blocking") analysis["state"] = "stale";
-            }
+            if (structChanged) row["status"] = StatusExtracted;
+            // analysis state of the former analysis task (removed, Plan_TaskReorg.md)
+            row.Remove("analysis");
             log = structChanged ? "structure changed" : changed ? "text changed" : "unchanged";
         }
         row["extractorVersion"] = TA_DocBuilderBase.ExtractorVersion;
@@ -224,8 +233,45 @@ public static class TA_Store
         row["outdated"] = false;
         row.Remove("changedSlots");
         row.Remove("missing");
+        row["kojo"] = KojoFlag(s.shared["ops"] as JArray, s.shared["cases"] as JArray);
         SaveSnapshot(s);
         return log;
+    }
+
+    /// <summary>
+    /// The unit's "kojo unimplemented" flag from the kojo positions' implementation counts (kp `cov`, every personality):
+    /// positions = all kojo positions; unimplemented = positions where at least one personality shows no kojo (no entry
+    /// on its chain, or no branch for the context); none = positions where no personality has kojo.
+    /// </summary>
+    static JObject KojoFlag(JArray ops, JArray cases)
+    {
+        int positions = 0, unimplemented = 0, none = 0;
+        for (int i = 0; ops != null && i < ops.Count; i++)
+        {
+            if (!(ops[i] is JObject op) || op["kp"] == null || !(op["cov"] is JObject cov)) continue;
+            positions++;
+            int gaps = ((cov["missing"] as JArray)?.Count ?? 0) + ((cov["noBranch"] as JArray)?.Count ?? 0);
+            int has = ((cov["own"] as JArray)?.Count ?? 0) + ((cov["inherited"] as JArray)?.Count ?? 0);
+            if (gaps > 0) unimplemented++;
+            if (has == 0) none++;
+        }
+        var flag = new JObject { ["positions"] = positions, ["unimplemented"] = unimplemented, ["none"] = none };
+        if (cases == null) return flag;
+        // with command cases (Plan_CommandCases.md Q8) the flag counts required cases nothing covers: narration without an
+        // entry, kojo no personality has a branch for
+        int required = 0, missingNarr = 0, missingKojo = 0;
+        for (int i = 0; i < cases.Count; i++)
+        {
+            var c = cases[i] as JObject;
+            if (c == null || !((bool?)c["required"] ?? false)) continue;
+            required++;
+            if ((string)c["layer"] == "narration") { if (!((bool?)c["covered"] ?? false)) missingNarr++; continue; }
+            var cv = c["cov"] as JObject;
+            if (((cv?["own"] as JArray)?.Count ?? 0) + ((cv?["inherited"] as JArray)?.Count ?? 0) == 0) missingKojo++;
+        }
+        flag["cases"] = new JObject { ["required"] = required, ["missingNarration"] = missingNarr, ["missingKojo"] = missingKojo };
+        flag["unimplemented"] = missingNarr + missingKojo;
+        return flag;
     }
 
     public static void AddTask(JObject row, string taskFolder, string newStatus)

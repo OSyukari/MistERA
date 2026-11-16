@@ -1039,13 +1039,17 @@
                 "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_changeOutfit_onComplete_1"]}] }
             },
             {
-                "ID": "com_furniture_cryosleep",
+                "ID": "com_furniture_cryosleep_ADD",
+                "_comment": "put a character into cryosleep. Not offered itself: every cryo furniture gets its own child <ID>_<furniture> (COM_Character_Insert adds the cryo tags), which prints this command's text ($furniture$ = that furniture) and tries its own kojo first, then this command's",
                 "ActionPackageClass": "ActionPackage_Interaction",
                 "COMRepeat": true,
-                "displayName": "com_furniture_cryosleep_displayName",
+                "displayName": "com_furniture_cryosleep_displayName_ADD",
                 "timeScale": 30,
                 "comTags": [
                     "furniture"
+                ],
+                "GenerateForFurniture": [
+                    { "comClass": "COM_Character_Insert, Assembly-CSharp", "useOwnText": false, "useOwnKojo": true, "legacyIDs": [ "com_furniture_cryosleep_ADD" ] }
                 ],
                 "requirements": {
                     "requirement": {
@@ -1086,33 +1090,81 @@
                 },
                 "variants": [
                     {
-                        "requirements": {}
+                        "requirements": {},
+                        "displayName": "com_furniture_cryosleep_displayName_ADD"
                     }
                 ],
                 "AcceptanceCheck": {
                     "baseAcceptanceValue": 20
                 },
                 "DifficultyCheck": { "baseD20Check": 0 },
-                "description_onComplete":
-                {
-                    "Entries":[
+                "description_begin": { "Entries": [ { "keepLooking": true, "texts": [ "com_furniture_cryosleep_add_begin_1" ] } ] },
+                "description_ongoing": { "Entries": [ { "texts": [ "com_furniture_cryosleep_add_ongoing_1" ] } ] },
+                "description_after": { "Entries": [ { "keepLooking": true, "texts": [ "com_furniture_cryosleep_add_onComplete_1" ] } ] }
+            },
+            {
+                "ID": "com_furniture_cryosleep_REMOVE",
+                "_comment": "wake a character from cryosleep. Not offered itself: every cryo furniture gets its own child <ID>_<furniture> (COM_Character_Remove turns these add mechanics into the release: content must exist, lock undone, a 'release all' variant), which prints this command's text and tries its own kojo first, then this command's",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "COMRepeat": true,
+                "displayName": "com_furniture_cryosleep_displayName_REMOVE",
+                "timeScale": 30,
+                "comTags": [
+                    "furniture"
+                ],
+                "GenerateForFurniture": [
+                    { "comClass": "COM_Character_Remove, Assembly-CSharp", "useOwnText": false, "useOwnKojo": true, "legacyIDs": [ "com_furniture_cryosleep_REMOVE" ] }
+                ],
+                "requirements": {
+                    "requirement": {
+                        "doerCount": 1,
+                        "receiverCount": 1,
+                        "req_Doers": {
+                            "allowNPC": false
+                        },
+                        "req_Receivers": {
+                            "requireConscious": false,
+                            "requireUnrestrained": true
+                        }
+                    },
+                    "requireContaining": {
+                        "requireContentAbsent": true,
+                        "allowPlanting": [
+                            "character_trainable",
+                            "cryo"
+                        ]
+                    }
+                },
+                "results_EP": {
+                    "results_jobContainer": [
                         {
-                            "keepLooking":true,
-                            "texts":[ "com_furniture_cryosleep_onComplete_1" ]
+                            "entry_conditions": {
+                                "applyToReceiver": true
+                            },
+                            "entry_results": {
+                                "isCharaContainer": true,
+                                "lockChara": {
+                                    "statusID": "chara_status_cryosleep",
+                                    "statusSeverity": 1.0,
+                                    "locationLock": true
+                                }
+                            }
                         }
                     ]
                 },
-                "description_begin":
-                {
-                    "Entries":[ 
-                        {
-                            "keepLooking":true,
-                            "texts": ["com_furniture_cryosleep_begin_1"]
-                        }
-                    ]
-                    
+                "variants": [
+                    {
+                        "requirements": {},
+                        "displayName": "com_furniture_cryosleep_displayName_REMOVE"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 20
                 },
-                "description_ongoing":{ "Entries":[{"texts":["com_furniture_cryosleep_description_ongoing_1"]}], "keepLooking":false }
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "description_begin": { "Entries": [ { "keepLooking": true, "texts": [ "com_furniture_cryosleep_remove_begin_1" ] } ] },
+                "description_ongoing": { "Entries": [ { "texts": [ "com_furniture_cryosleep_remove_ongoing_1" ] } ] },
+                "description_after": { "Entries": [ { "keepLooking": true, "texts": [ "com_furniture_cryosleep_remove_onComplete_1" ] } ] }
             },
             {
                 "ID": "com_furniture_getmeal",
@@ -1192,13 +1244,17 @@
                 "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_getmeal_onComplete_1"]}] }
             },
             {
-                "ID": "com_furniture_prison",
+                "ID": "com_furniture_prison_ADD",
+                "_comment": "imprison a character. Not offered itself: every prison furniture gets its own child <ID>_<furniture> (COM_Character_Insert adds the prison tags), which prints this command's text ($furniture$ = that furniture) and tries its own kojo first, then this command's",
                 "ActionPackageClass": "ActionPackage_Interaction",
                 "COMRepeat": true,
-                "displayName": "com_furniture_prison_displayname",
+                "displayName": "com_furniture_prison_displayname_ADD",
                 "timeScale": 30,
                 "comTags": [
                     "furniture"
+                ],
+                "GenerateForFurniture": [
+                    { "comClass": "COM_Character_Insert, Assembly-CSharp", "useOwnText": false, "useOwnKojo": true, "legacyIDs": [ "com_furniture_prison_ADD" ] }
                 ],
                 "requirements": {
                     "requirement": {
@@ -1238,33 +1294,78 @@
                 },
                 "variants": [
                     {
-                        "requirements": {}
+                        "requirements": {},
+                        "displayName": "com_furniture_prison_displayname_ADD"
                     }
                 ],
                 "AcceptanceCheck": {
                     "baseAcceptanceValue": 30
                 },
                 "DifficultyCheck": { "baseD20Check": 0 },
-                "description_onComplete":
-                {
-                    "Entries":[
+                "description_begin": { "Entries": [ { "keepLooking": true, "texts": [ "com_furniture_prison_add_begin_1" ] } ] },
+                "description_after": { "Entries": [ { "keepLooking": true, "texts": [ "com_furniture_prison_add_onComplete_1" ] } ] }
+            },
+            {
+                "ID": "com_furniture_prison_REMOVE",
+                "_comment": "release an imprisoned character. Not offered itself: every prison furniture gets its own child <ID>_<furniture> (COM_Character_Remove turns these add mechanics into the release: content must exist, lock undone, a 'release all' variant), which prints this command's text and tries its own kojo first, then this command's",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "COMRepeat": true,
+                "displayName": "com_furniture_prison_displayname_REMOVE",
+                "timeScale": 30,
+                "comTags": [
+                    "furniture"
+                ],
+                "GenerateForFurniture": [
+                    { "comClass": "COM_Character_Remove, Assembly-CSharp", "useOwnText": false, "useOwnKojo": true, "legacyIDs": [ "com_furniture_prison_REMOVE" ] }
+                ],
+                "requirements": {
+                    "requirement": {
+                        "doerCount": 1,
+                        "receiverCount": 1,
+                        "req_Doers": {
+                            "allowNPC": false
+                        },
+                        "req_Receivers": {
+                            "requireConscious": false,
+                            "requireUnrestrained": true,
+                            "requireAction": false
+                        }
+                    },
+                    "requireContaining": {
+                        "requireContentAbsent": true,
+                        "allowPlanting": [
+                            "character_trainable",
+                            "prison"
+                        ]
+                    }
+                },
+                "results_EP": {
+                    "results_jobContainer": [
                         {
-                            "keepLooking":true,
-                            "texts":[ "com_furniture_prison_onComplete_1" ]
+                            "entry_conditions": {
+                                "applyToReceiver": true
+                            },
+                            "entry_results": {
+                                "isCharaContainer": true,
+                                "lockChara": {
+                                    "locationLock": true
+                                }
+                            }
                         }
                     ]
                 },
-                "description_begin":
-                {
-                    "Entries":[ 
-                        {
-
-                            "keepLooking":true,
-                            "texts": ["com_furniture_prison_begin_1"]
-                        }
-                    ]
-
-                }
+                "variants": [
+                    {
+                        "requirements": {},
+                        "displayName": "com_furniture_prison_displayname_REMOVE"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 30
+                },
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "description_begin": { "Entries": [ { "keepLooking": true, "texts": [ "com_furniture_prison_remove_begin_1" ] } ] },
+                "description_after": { "Entries": [ { "keepLooking": true, "texts": [ "com_furniture_prison_remove_onComplete_1" ] } ] }
             },
             {
                 "_comment": "Revived from the stripped placeholder com_job_training_shooting (do_not_use, COM_job.json) as a location-agnostic recreation command (Docs/Utnapishtim_Activities/Plan_UtnapishtimActivities.md §6): any furniture giving comTags [furniture, training_shooting] offers it (furniture_shooting_range_spot), usable in normal sandbox anywhere; the house activity 'shooting_training' finds its lanes by this tag (RecreationFacility.comTag). Solo or pair. No experience yet: experience_combat has no ExperienceClass entry (ExperienceDefs/Experiences.json).",
@@ -1534,23 +1635,21 @@
 
                 "com_furniture_cryosleep_displayName_REMOVE": "解除休眠",
                 "com_furniture_cryosleep_displayName_ADD": "冷冻休眠",
-                "com_furniture_cryosleep_displayName": "冷冻休眠",
-                "com_furniture_cryosleep_description_ongoing_1_ADD": "$doer.firstname$正在冷冻休眠",
-                "com_furniture_cryosleep_description_ongoing_1_REMOVE": "$doer.firstname$正在解除冷冻休眠",
-                "com_furniture_cryosleep_begin_1_ADD": "$doer.firstname$将$receiver.firstname$安置在冷冻休眠装置中",
-                "com_furniture_cryosleep_onComplete_1_ADD": "$receiver.firstname$陷入了冷冻休眠中",
-                "com_furniture_cryosleep_begin_1_REMOVE": "$doer.firstname$开始解除$receiver.firstname$的冷冻休眠",
-                "com_furniture_cryosleep_onComplete_1_REMOVE": "$receiver.firstname$从冷冻休眠中醒来了",
+                "com_furniture_cryosleep_add_begin_1": "$doer.firstname$将$receiver.firstname$安置在$furniture$中冷冻休眠",
+                "com_furniture_cryosleep_add_ongoing_1": "$doer.firstname$正在将$receiver.firstname$送入$furniture$",
+                "com_furniture_cryosleep_add_onComplete_1": "$receiver.firstname$在$furniture$中陷入了冷冻休眠",
+                "com_furniture_cryosleep_remove_begin_1": "$doer.firstname$开始解除$furniture$中$receiver.firstname$的冷冻休眠",
+                "com_furniture_cryosleep_remove_ongoing_1": "$doer.firstname$正在解除$furniture$中的冷冻休眠",
+                "com_furniture_cryosleep_remove_onComplete_1": "$receiver.firstname$从$furniture$中醒来了",
 
-                "com_furniture_prison_displayname": "监禁",
                 "com_furniture_prison_ADD": "将对象监禁在此处（无法自由行动），且只能与此处的家具互动",
                 "com_furniture_prison_REMOVE": "将监禁于此处的对象释放",
                 "com_furniture_prison_displayname_ADD": "监禁对象",
                 "com_furniture_prison_displayname_REMOVE": "移出监牢",
-                "com_furniture_prison_begin_1_ADD": "$doer.firstname$将$receiver.firstname$关押在监牢中",
-                "com_furniture_prison_onComplete_1_ADD": "$receiver.firstname$被关押了起来",
-                "com_furniture_prison_begin_1_REMOVE": "$doer.firstname$尝试从监牢将$receiver.firstname$释放",
-                "com_furniture_prison_onComplete_1_REMOVE": "$receiver.firstname$被释放了",
+                "com_furniture_prison_add_begin_1": "$doer.firstname$将$receiver.firstname$关押进$furniture$",
+                "com_furniture_prison_add_onComplete_1": "$receiver.firstname$被关押在了$furniture$中",
+                "com_furniture_prison_remove_begin_1": "$doer.firstname$尝试将$receiver.firstname$从$furniture$中释放",
+                "com_furniture_prison_remove_onComplete_1": "$receiver.firstname$从$furniture$中被释放了",
                 
                 "com_furniture_restroom_fix_displayName_1": "整理仪容",
                 "com_furniture_restroom_fix_begin_1": "$doer.firstname$开始整理仪容",
@@ -1644,21 +1743,20 @@
                 "com_furniture_takeShower_displayName_1": "Take shower",
                 "com_furniture_takeShower_displayName_2": "Help wash",
                 "com_furniture_takeShower_displayName_3": "Take shower",
-                "com_furniture_cryosleep": "Crypsleep",
                 "com_furniture_cryosleep_displayName_REMOVE": "Terminate cryosleep",
                 "com_furniture_cryosleep_displayName_ADD": "Cryosleep",
-                "com_furniture_cryosleep_displayName": "Cryosleep",
-                "com_furniture_cryosleep_begin_1_ADD": "$doer.firstname$ starts putting $receiver.firstname$ into the cryosleep device",
-                "com_furniture_cryosleep_onComplete_1_ADD": "$receiver.firstname$ is being put into cryosleep",
-                "com_furniture_cryosleep_begin_1_REMOVE": "$doer.firstname$ begins releasing $receiver.firstname$ from cryosleep",
-                "com_furniture_cryosleep_onComplete_1_REMOVE": "$receiver.firstname$ wakes up from cryosleep",
-                "com_furniture_prison_displayname": "Imprison",
+                "com_furniture_cryosleep_add_begin_1": "$doer.firstname$ places $receiver.firstname$ into cryosleep in the $furniture$",
+                "com_furniture_cryosleep_add_ongoing_1": "$doer.firstname$ is putting $receiver.firstname$ into the $furniture$",
+                "com_furniture_cryosleep_add_onComplete_1": "$receiver.firstname$ falls into cryosleep in the $furniture$",
+                "com_furniture_cryosleep_remove_begin_1": "$doer.firstname$ begins waking $receiver.firstname$ from cryosleep in the $furniture$",
+                "com_furniture_cryosleep_remove_ongoing_1": "$doer.firstname$ is ending the cryosleep in the $furniture$",
+                "com_furniture_cryosleep_remove_onComplete_1": "$receiver.firstname$ wakes up in the $furniture$",
                 "com_furniture_prison_displayname_ADD": "Imprison target",
                 "com_furniture_prison_displayname_REMOVE": "Release target",
-                "com_furniture_prison_begin_1_ADD": "$doer.firstname$ starts imprisoning $receiver.firstname$ into the holding cell",
-                "com_furniture_prison_onComplete_1_ADD": "$receiver.firstname$ is being jailed in the cell",
-                "com_furniture_prison_begin_1_REMOVE": "$doer.firstname$ tries releasing $receiver.firstname$ from the holding cell",
-                "com_furniture_prison_onComplete_1_REMOVE": "$receiver.firstname$ is being released",
+                "com_furniture_prison_add_begin_1": "$doer.firstname$ locks $receiver.firstname$ in the $furniture$",
+                "com_furniture_prison_add_onComplete_1": "$receiver.firstname$ is held in the $furniture$",
+                "com_furniture_prison_remove_begin_1": "$doer.firstname$ tries to release $receiver.firstname$ from the $furniture$",
+                "com_furniture_prison_remove_onComplete_1": "$receiver.firstname$ is released from the $furniture$",
                 "com_furniture_restroom_fix_displayName_1": "Freshen Up",
                 "com_furniture_restroom_fix_begin_1": "$doer.firstname$ starts freshening up",
                 "com_furniture_restroom_fix_ongoing_1": "$doer.firstname$ is freshening up",
@@ -1686,8 +1784,6 @@
     "com_furniture_takeShower_description_ongoing_1": "$doer.firstname$ is taking a shower",
     "com_furniture_takeShower_description_ongoing_2": "$doer.firstname$ is helping $receiver.firstname$ wash",
 
-    "com_furniture_cryosleep_description_ongoing_1_ADD": "$doer.firstname$ is in cryosleep",
-    "com_furniture_cryosleep_description_ongoing_1_REMOVE": "$doer.firstname$ is waking up from cryosleep",
     "com_furniture_prison_ADD": "Imprison the target here (unable to move freely), can only interact with furniture in this location",
     "com_furniture_prison_REMOVE": "Release the target imprisoned here",
 

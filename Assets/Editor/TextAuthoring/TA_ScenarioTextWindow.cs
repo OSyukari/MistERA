@@ -21,6 +21,8 @@ public class TA_ScenarioTextWindow : EditorWindow
         public string label;
         /// <summary>Store unit name (com_… / event_…); null for group rows.</summary>
         public string unit;
+        /// <summary>A generated item command listed under its generator group (its own unit, Plan_ItemVariantText.md).</summary>
+        public bool member;
         public bool selected;
         public bool expanded;
         /// <summary>Collapsed by the user while a filter auto-opens the tree (reset when the filter changes).</summary>
@@ -28,7 +30,8 @@ public class TA_ScenarioTextWindow : EditorWindow
         public List<Node> children = new List<Node>();
     }
 
-    TA_Mode mode = TA_Mode.Audit;
+    /// <summary>Task type (Plan_TaskReorg.md): completion (commands / events) or kojo (one personality).</summary>
+    TA_Mode mode = TA_Mode.Completion;
     string runFolder = "";
     Vector2 scroll;
     string lastResult = "";
@@ -46,13 +49,10 @@ public class TA_ScenarioTextWindow : EditorWindow
 
     JObject storeIndex;
     int statusFilter;
-    enum TaskType { Writer, Analysis }
-    TaskType taskType = TaskType.Writer;
-    static readonly string[] statusFilters = { "all", "not extracted", "extracted", "outdated", "analyzed-clean", "analyzed-blocking", "writing", "written", "validated", "silent kojo gaps" };
+    static readonly string[] statusFilters = { "all", "not extracted", "extracted", "outdated", "writing", "written", "validated", "kojo unimplemented" };
 
-    /// <summary>Machine-readable mode / task lines in _index.md (Assemble handoff picks the handoff by them).</summary>
+    /// <summary>Machine-readable task line in _index.md.</summary>
     const string ModeMarker = "<!-- mode: {0} -->";
-    const string TaskMarker = "<!-- task: {0} -->";
 
     [MenuItem("Tools/Text Authoring/Scenario Text Tool")]
     static void Open() { GetWindow<TA_ScenarioTextWindow>("Scenario Text"); }
@@ -99,8 +99,6 @@ public class TA_ScenarioTextWindow : EditorWindow
     void ReloadStore()
     {
         storeIndex = TA_Store.LoadIndex();
-        coverage = TA_Coverage.Load();
-        coverageLoaded = true;
         // review decisions made in store_viewer.html (Store/review.json) are merged on every reload
         int reviewed = TA_Changes.MergeReview((StringBuilder)null);
         changesSummary = TA_Changes.Summary(TA_Changes.LoadIndex()) + (reviewed > 0 ? $" · merged {reviewed} review decision(s)" : "");
@@ -116,8 +114,8 @@ public class TA_ScenarioTextWindow : EditorWindow
     static string SelectionPath { get { return Path.Combine(TA_Store.Root, "selection.json"); } }
 
     /// <summary>
-    /// Applies Store/selection.json { units, mode, task, personalities, targetPersonality } to the trees, the personality
-    /// checks / target, the mode and the task type, so every button acts on the viewer's selection.
+    /// Applies Store/selection.json { units, task: completion | kojo, personalities, targetPersonality } to the trees, the
+    /// personality checks / target and the task type, so every button acts on the viewer's selection.
     /// </summary>
     string ApplySelection()
     {
@@ -131,8 +129,7 @@ public class TA_ScenarioTextWindow : EditorWindow
         var matched = new HashSet<string>();
         SelectUnits(comRoots, units, matched);
         SelectUnits(eventGroups, units, matched);
-        if (Enum.TryParse((string)sel["mode"], out TA_Mode m)) mode = m;
-        if (Enum.TryParse((string)sel["task"], out TaskType t)) taskType = t;
+        if (Enum.TryParse((string)sel["task"], true, out TA_Mode m)) mode = m;
         var pids = new HashSet<string>();
         if (sel["personalities"] is JArray pa) for (int i = 0; i < pa.Count; i++) pids.Add((string)pa[i]);
         if (pids.Count > 0) for (int i = 0; i < personalityNodes.Count; i++) personalityNodes[i].selected = pids.Contains(personalityNodes[i].id);
@@ -141,8 +138,8 @@ public class TA_ScenarioTextWindow : EditorWindow
         var missing = new List<string>();
         foreach (var u in units) if (!matched.Contains(u)) missing.Add(u);
         Repaint();
-        return $"Selection applied ({(string)sel["updatedAt"]}): {matched.Count} unit(s), {mode}, task {taskType}, " +
-            (mode == TA_Mode.Audit ? $"{pids.Count} personalities" : $"target {target}") +
+        return $"Selection applied ({(string)sel["updatedAt"]}): {matched.Count} unit(s), task {mode}" +
+            (mode == TA_Mode.Kojo ? $", personality {target}" : "") +
             (missing.Count > 0 ? $"\n  not in the lists: {string.Join(", ", missing)}" : "");
     }
 
@@ -171,41 +168,29 @@ public class TA_ScenarioTextWindow : EditorWindow
     /// <summary>Change-record counts per state (Store/changes/index.json), refreshed with the store.</summary>
     string changesSummary;
 
-    JObject coverage;
-    bool coverageLoaded;
-
-    JObject Coverage
-    {
-        get
-        {
-            if (!coverageLoaded) { coverage = TA_Coverage.Load(); coverageLoaded = true; }
-            return coverage;
-        }
-    }
-
     // ---------------------------------------------------------------- GUI
 
     void OnGUI()
     {
         scroll = EditorGUILayout.BeginScrollView(scroll);
 
-        EditorGUILayout.HelpBox("Extract / Scan read the loaded masterlist (play mode, mod-patched) into Docs/TextAuthoring/Store/. Render task, Import analysis, Assemble handoff and Re-validate work any time. Tasks: Docs/TextAuthoring/Generated/<time>_<type>/", MessageType.Info);
+        EditorGUILayout.HelpBox("Extract / Update store read the loaded masterlist (play mode, mod-patched) into Docs/TextAuthoring/Store/. Render task works any time for units already extracted. Tasks: Docs/TextAuthoring/Generated/<time>_<task>/. Selection and review: store_viewer.html.", MessageType.Info);
         using (new EditorGUILayout.HorizontalScope())
         {
-            mode = (TA_Mode)EditorGUILayout.EnumPopup("Mode", mode);
+            mode = (TA_Mode)EditorGUILayout.EnumPopup(new GUIContent("Task", "Completion: commands / events (coder agent: structure + generic narration, kojo left blank). Kojo: one personality's kojo in the selected units."), mode);
             using (new EditorGUI.DisabledScope(!GameReady))
                 if (GUILayout.Button("Refresh lists", GUILayout.Width(100))) Refresh();
         }
         if (!loaded) EditorGUILayout.HelpBox(GameReady ? "Loading..." : "Enter play mode and load the game once to list personalities, commands and events (the lists are kept in Store/tree.json for later).", MessageType.None);
-        else if (fromCache) EditorGUILayout.HelpBox("Lists from the last play session (Store/tree.json). Render task, Import analysis and Re-validate work; Extract / Scan need play mode.", MessageType.None);
+        else if (fromCache) EditorGUILayout.HelpBox("Lists from the last play session (Store/tree.json). Render task (extracted units), Import run and Apply work; Extract / Update store need play mode.", MessageType.None);
 
         if (loaded)
         {
             using (new EditorGUILayout.HorizontalScope())
             {
                 followSelection = EditorGUILayout.ToggleLeft(new GUIContent("Follow selection.json",
-                    "Re-apply Store/selection.json (units, mode, task, personalities from store_viewer.html) whenever the viewer saves it"), followSelection, GUILayout.Width(160));
-                if (GUILayout.Button(new GUIContent("Apply selection.json", "Units, mode, task type and personalities picked in store_viewer.html"), GUILayout.Width(150)))
+                    "Re-apply Store/selection.json (units, task, personalities from store_viewer.html) whenever the viewer saves it"), followSelection, GUILayout.Width(160));
+                if (GUILayout.Button(new GUIContent("Apply selection.json", "Units, task and personalities picked in store_viewer.html"), GUILayout.Width(150)))
                     lastResult = ApplySelection();
             }
             DrawPersonalities();
@@ -221,55 +206,32 @@ public class TA_ScenarioTextWindow : EditorWindow
             int selected = CountSelected(comRoots) + CountSelected(eventGroups);
             var count = $"{CountSelected(comRoots)} commands, {CountSelected(eventGroups)} events";
             EditorGUILayout.Space();
-            using (new EditorGUI.DisabledScope(!GameReady))
-            {
-                using (new EditorGUILayout.HorizontalScope())
-                {
-                    if (GUILayout.Button($"Extract to store ({count})", GUILayout.Height(24))) lastResult = ExtractSelected(false);
-                    if (GUILayout.Button("Generate (extract + writer task)", GUILayout.Height(24))) lastResult = ExtractSelected(true);
-                }
-                using (new EditorGUILayout.HorizontalScope())
-                {
-                    if (GUILayout.Button(new GUIContent(selected > 0 ? $"Scan selected ({selected})" : "Scan whole store",
-                        "Re-extract in memory and compare with the store; marks outdated units"))) lastResult = Scan();
-                    if (GUILayout.Button("Re-extract outdated")) lastResult = ReExtractOutdated();
-                    if (GUILayout.Button(new GUIContent("Coverage scan (all personalities)",
-                        "Every personality's kojo at every lookup of the selected units (none selected = the whole store). Store/_coverage.md lists the gaps, silent event failures first.")))
-                        lastResult = CoverageScan();
-                }
-            }
             using (new EditorGUILayout.HorizontalScope())
             {
-                taskType = (TaskType)EditorGUILayout.EnumPopup("Task", taskType);
+                using (new EditorGUI.DisabledScope(!GameReady))
+                {
+                    if (GUILayout.Button(new GUIContent($"Extract selected ({count})", "Into the store, with the checked personalities' kojo layers (+ the kojo target)"), GUILayout.Height(24)))
+                        lastResult = ExtractSelected();
+                    if (GUILayout.Button(new GUIContent(selected > 0 ? $"Update store ({selected} selected)" : "Update store",
+                        "Scan (selected units, none = the whole store) → re-extract what changed → remove units that no longer exist (asks first)"), GUILayout.Height(24)))
+                        lastResult = UpdateStore();
+                }
                 using (new EditorGUI.DisabledScope(selected < 1))
-                    if (GUILayout.Button(new GUIContent($"Render {taskType} task ({count})",
-                        "From the store. Audit/analysis: the checked personalities that were extracted (none checked = all extracted). Kojo fill: the target.")))
-                        lastResult = RenderTask(taskType, SelectedUnits(), RenderPersonalities());
+                    if (GUILayout.Button(new GUIContent($"Render {mode} task ({count})",
+                        mode == TA_Mode.Kojo ? "The target personality's kojo; outdated units and a missing layer are extracted first (play mode)."
+                            : "Completion docs (no kojo content); outdated units are re-extracted first (play mode)."), GUILayout.Height(24)))
+                        lastResult = RenderTask(mode, SelectedUnits());
             }
         }
 
         EditorGUILayout.Space();
-        EditorGUILayout.LabelField("Handoff / validation", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("Import / apply", EditorStyles.boldLabel);
         runFolder = EditorGUILayout.TextField("Run folder (empty = latest)", runFolder);
         if (changesSummary == null) changesSummary = TA_Changes.Summary(TA_Changes.LoadIndex());
         EditorGUILayout.LabelField("Change records", changesSummary);
         using (new EditorGUILayout.HorizontalScope())
         {
-            if (GUILayout.Button("Assemble handoff")) lastResult = AssembleHandoff();
-            if (GUILayout.Button(new GUIContent("Import run", "Filled writer docs, analysis reports and the coder report of the run folder -> change records (Store/changes/)"))) lastResult = ImportRun();
-            if (GUILayout.Button(new GUIContent("Sync findings", "Tool findings of every stored snapshot (lint, coverage, structure) -> change records; runs after Extract / Re-extract too"))) lastResult = TA_Changes.SyncFindings();
-            if (GUILayout.Button("Re-validate run"))
-            {
-                var dir = ResolveRunFolder(out string err);
-                lastResult = dir == null ? err : TA_Revalidator.Run(dir);
-                ReloadStore();
-            }
-        }
-
-        EditorGUILayout.Space();
-        EditorGUILayout.LabelField("Apply approved changes to game data", EditorStyles.boldLabel);
-        using (new EditorGUILayout.HorizontalScope())
-        {
+            if (GUILayout.Button(new GUIContent("Import run", "Filled docs and the coder report of the run folder -> change records (Store/changes/), then tool findings are synced"))) lastResult = ImportRun();
             if (GUILayout.Button(new GUIContent("Preview apply", "Plan every approved record without writing anything -> Store/apply_preview.json (Apply tab in store_viewer.html)")))
             {
                 lastResult = TA_Apply.Preview();
@@ -303,20 +265,24 @@ public class TA_ScenarioTextWindow : EditorWindow
 
     JObject RowOf(Node n) { return n.unit == null ? null : TA_Store.Row(Store, n.unit); }
 
-    /// <summary>Right-hand status column: store status, outdated flag, analysis state, extracted personality layers.</summary>
+    /// <summary>Kojo positions where some personality shows no kojo (store row `kojo`, TA_Store.KojoFlag); 0 when not counted.</summary>
+    static int KojoUnimplemented(JObject row) { return (int?)row?["kojo"]?["unimplemented"] ?? 0; }
+
+    /// <summary>Right-hand status column: store status, outdated flag, kojo unimplemented flag, extracted personality layers.</summary>
     GUIContent StatusContent(Node n)
     {
-        int silent = 0;
-        var cov = n.unit == null ? null : TA_Coverage.UnitSummary(Coverage, n.unit, out silent);
-        var covText = cov == null ? "" : silent > 0 ? $" · ⚠ {silent} silent" : "";
-        var covTip = cov == null ? "" : $"\nKojo coverage (all personalities, {(string)Coverage["scannedAt"]}): {cov} - see Store/_coverage.md";
         var row = RowOf(n);
-        if (row == null) return new GUIContent("—" + covText, "Not in the store" + covTip);
+        if (row == null) return new GUIContent("—", "Not in the store");
         bool outdated = (bool?)row["outdated"] ?? false;
-        var analysis = (string)row["analysis"]?["state"] ?? "none";
         var pids = TA_Store.Personalities(row);
-        var text = $"{(outdated ? "(!) " : "")}{(string)row["status"]}{(analysis != "none" ? " · analysis " + analysis : "")} · {pids.Count}p{covText}";
-        var tip = $"Personalities: {string.Join(", ", pids)}\nExtracted: {(string)row["extractedAt"]}{covTip}";
+        int gaps = KojoUnimplemented(row);
+        var kojo = row["kojo"] as JObject;
+        var text = $"{(outdated ? "(!) " : "")}{(string)row["status"]}{(gaps > 0 ? $" · kojo ⚠{gaps}" : "")} · {pids.Count}p";
+        var tip = $"Personalities: {string.Join(", ", pids)}\nExtracted: {(string)row["extractedAt"]}"
+            + (kojo == null ? "\nKojo: not counted (extracted before version 9)"
+                : kojo["cases"] is JObject cs
+                    ? $"\nCases: {(int?)cs["required"] ?? 0} required, uncovered: {(int?)cs["missingNarration"] ?? 0} narration, {(int?)cs["missingKojo"] ?? 0} kojo (no personality)"
+                    : $"\nKojo: {(int?)kojo["positions"] ?? 0} position(s), {gaps} where some personality shows none, {(int?)kojo["none"] ?? 0} where no personality has any");
         if (outdated)
         {
             var changes = row["changedSlots"] as JArray;
@@ -330,14 +296,10 @@ public class TA_ScenarioTextWindow : EditorWindow
         var f = statusFilters[statusFilter];
         if (f == "all") return true;
         if (n.id == null) return false;
-        if (f == "silent kojo gaps")
-        {
-            TA_Coverage.UnitSummary(Coverage, n.unit, out int silent);
-            return silent > 0;
-        }
         var row = RowOf(n);
         if (f == "not extracted") return row == null;
         if (row == null) return false;
+        if (f == "kojo unimplemented") return KojoUnimplemented(row) > 0;
         if (f == "outdated") return (bool?)row["outdated"] ?? false;
         return (string)row["status"] == f;
     }
@@ -362,26 +324,24 @@ public class TA_ScenarioTextWindow : EditorWindow
         }
     }
 
-    /// <summary>Render personalities: kojo fill = the target; audit = the checked ones (empty = every extracted layer).</summary>
-    List<string> RenderPersonalities()
+    /// <summary>The kojo task's personality; null outside a kojo task or when none is loaded.</summary>
+    string TargetPersonality
     {
-        return PickedPersonalities();
+        get { return mode == TA_Mode.Kojo && targetPersonality >= 0 && targetPersonality < personalityNodes.Count ? personalityNodes[targetPersonality].id : null; }
     }
 
     void DrawPersonalities()
     {
-        EditorGUILayout.Space();
-        showPersonalities = EditorGUILayout.Foldout(showPersonalities, mode == TA_Mode.Audit
-            ? $"Personalities ({CountSelectedFlat(personalityNodes)} selected)" : "Target personality", true, EditorStyles.foldoutHeader);
-        if (!showPersonalities) return;
-
-        if (mode == TA_Mode.KojoFill)
+        if (mode == TA_Mode.Kojo)
         {
             var names = new string[personalityNodes.Count];
             for (int i = 0; i < names.Length; i++) names[i] = personalityNodes[i].label;
-            if (names.Length > 0) targetPersonality = EditorGUILayout.Popup("Target", Mathf.Clamp(targetPersonality, 0, names.Length - 1), names);
-            return;
+            if (names.Length > 0) targetPersonality = EditorGUILayout.Popup("Kojo task personality", Mathf.Clamp(targetPersonality, 0, names.Length - 1), names);
         }
+        EditorGUILayout.Space();
+        // kojo layers stored per unit (the viewer shows them); completion docs show no kojo content
+        showPersonalities = EditorGUILayout.Foldout(showPersonalities, $"Kojo layers to extract ({CountSelectedFlat(personalityNodes)} selected)", true, EditorStyles.foldoutHeader);
+        if (!showPersonalities) return;
 
         using (new EditorGUILayout.HorizontalScope())
         {
@@ -620,12 +580,43 @@ public class TA_ScenarioTextWindow : EditorWindow
         comRoots.Clear();
         var coms = ml.COMs.LIST;
         var byID = new Dictionary<string, Node>();
+        // generated commands (Docs/Interactions/Plan_GeneratedCommands.md §5): noSex copies are no units (their text and
+        // kojo are their source's); the commands of one generator template are one node / unit (id = generator key)
+        var generatorGroups = new Dictionary<string, Node>();
+        var groupSizes = new Dictionary<string, int>();
         for (int i = 0; i < coms.Count; i++)
         {
             var c = coms[i];
-            if (c == null || string.IsNullOrEmpty(c.ID) || byID.ContainsKey(c.ID)) continue;
+            if (c == null || string.IsNullOrEmpty(c.generatorKey)) continue;
+            groupSizes.TryGetValue(c.generatorKey, out int n);
+            groupSizes[c.generatorKey] = n + 1;
+        }
+        for (int i = 0; i < coms.Count; i++)
+        {
+            var c = coms[i];
+            if (c == null || string.IsNullOrEmpty(c.ID) || byID.ContainsKey(c.ID) || TA_CommandDocBuilder.IsAlias(c)) continue;
             string name;
             try { name = c.DisplayName(-1); } catch { name = ""; }
+            var key = c.generatorKey;
+            if (!string.IsNullOrEmpty(key))
+            {
+                if (!generatorGroups.TryGetValue(key, out var gn))
+                {
+                    gn = new Node { id = key, unit = TA_CommandDocBuilder.UnitName(key), label = $"{key}  （{groupSizes[key]} 个生成指令{(string.IsNullOrEmpty(name) ? "" : "：" + name)}）" };
+                    generatorGroups[key] = gn;
+                }
+                // an item command is also a unit of its own: its per-item text (Docs/TextAuthoring/Plan_ItemVariantText.md)
+                if (TA_CommandDocBuilder.IsItemMember(c))
+                    gn.children.Add(new Node
+                    {
+                        id = c.ID,
+                        unit = TA_CommandDocBuilder.UnitName(c.ID),
+                        member = true,
+                        label = (string.IsNullOrEmpty(name) || name == c.ID ? c.ID : $"{c.ID}  {name}") + (TA_CommandDocBuilder.HasItemOverride(c) ? "  （有专用文本）" : "")
+                    });
+                byID[c.ID] = gn;
+                continue;
+            }
             byID[c.ID] = new Node
             {
                 id = c.ID,
@@ -633,12 +624,14 @@ public class TA_ScenarioTextWindow : EditorWindow
                 label = string.IsNullOrEmpty(name) || name == c.ID ? c.ID : $"{c.ID}  {name}"
             };
         }
+        var placed = new HashSet<Node>();
         for (int i = 0; i < coms.Count; i++)
         {
             var c = coms[i];
-            if (c == null || !byID.TryGetValue(c.ID, out var node)) continue;
-            var parent = c.ParentCOM;
-            if (parent != null && parent != c && byID.TryGetValue(parent.ID, out var pnode) && !IsAncestor(node, pnode)) pnode.children.Add(node);
+            if (c == null || !byID.TryGetValue(c.ID, out var node) || !placed.Add(node)) continue;
+            // a group sits under its generator / template command (its members' folder parents can differ, e.g. per item)
+            var parent = string.IsNullOrEmpty(c.generatorKey) ? c.ParentCOM : c.TextSource;
+            if (parent != null && parent != c && byID.TryGetValue(parent.ID, out var pnode) && pnode != node && !IsAncestor(node, pnode)) pnode.children.Add(node);
             else comRoots.Add(node);
         }
 
@@ -700,6 +693,7 @@ public class TA_ScenarioTextWindow : EditorWindow
             var o = new JObject { ["label"] = n.label };
             if (n.id != null) o["id"] = n.id;
             if (n.unit != null) o["unit"] = n.unit;
+            if (n.member) o["member"] = true;
             if (n.children.Count > 0) o["children"] = NodesToJson(n.children);
             a.Add(o);
         }
@@ -714,7 +708,7 @@ public class TA_ScenarioTextWindow : EditorWindow
         {
             var o = a[i] as JObject;
             if (o == null) continue;
-            nodes.Add(new Node { id = (string)o["id"], unit = (string)o["unit"], label = (string)o["label"], children = NodesFromJson(o["children"] as JArray) });
+            nodes.Add(new Node { id = (string)o["id"], unit = (string)o["unit"], label = (string)o["label"], member = (bool?)o["member"] ?? false, children = NodesFromJson(o["children"] as JArray) });
         }
         return nodes;
     }
@@ -807,19 +801,19 @@ public class TA_ScenarioTextWindow : EditorWindow
 
         /// <summary>
         /// Extracts one unit (kind command/event) with the given personality layers; null + reason when it can't.
-        /// coverageOnly: lookups only (coverage scan), not a renderable snapshot.
         /// </summary>
-        public TA_Snapshot Extract(string kind, string id, List<string> pids, out string skip, bool coverageOnly = false)
+        public TA_Snapshot Extract(string kind, string id, List<string> pids, out string skip)
         {
             skip = null;
             try
             {
                 if (kind == "command")
                 {
-                    var b = new TA_CommandDocBuilder { index = index, personalities = pids, modList = modList, coverageOnly = coverageOnly };
-                    return b.Build(scr_System_Serializer.current.GetByNameOrID_COM(id), out skip);
+                    var b = new TA_CommandDocBuilder { index = index, personalities = pids, modList = modList };
+                    // a command ID or a generator group key; noSex copies and group members are no units (skip)
+                    return b.BuildUnit(id, out skip);
                 }
-                var eb = new TA_EventDocBuilder { index = index, personalities = pids, modList = modList, coverageOnly = coverageOnly };
+                var eb = new TA_EventDocBuilder { index = index, personalities = pids, modList = modList };
                 return eb.Build(scr_System_Serializer.current.MasterList.Events.GetByID(id), out skip);
             }
             catch (Exception e)
@@ -831,12 +825,13 @@ public class TA_ScenarioTextWindow : EditorWindow
         }
     }
 
-    /// <summary>The personalities picked in the window: audit = the checked ones, kojo fill = the target.</summary>
+    /// <summary>Layers to extract: the checked personalities, plus the kojo task's personality.</summary>
     List<string> PickedPersonalities()
     {
         var personalities = new List<string>();
-        if (mode == TA_Mode.Audit) CollectSelected(personalityNodes, personalities);
-        else if (targetPersonality >= 0 && targetPersonality < personalityNodes.Count) personalities.Add(personalityNodes[targetPersonality].id);
+        CollectSelected(personalityNodes, personalities);
+        var target = TargetPersonality;
+        if (target != null && !personalities.Contains(target)) personalities.Add(target);
         return personalities;
     }
 
@@ -848,8 +843,8 @@ public class TA_ScenarioTextWindow : EditorWindow
         return results;
     }
 
-    /// <summary>Extract (play mode) the tree selection into the store; generate = also render a writer task for them.</summary>
-    string ExtractSelected(bool renderWriterTask)
+    /// <summary>Extract (play mode) the tree selection into the store.</summary>
+    string ExtractSelected()
     {
         var picked = PickedPersonalities();
         if (picked.Count < 1) return "No personality selected.";
@@ -875,9 +870,9 @@ public class TA_ScenarioTextWindow : EditorWindow
         }
         TA_Store.SaveIndex(index);
         if (x.index.errors.Count > 0) log.AppendLine("Source index errors: " + string.Join("; ", x.index.errors));
+        if (TA_CaseTemplate.warnings.Count > 0) log.AppendLine("Case template: " + string.Join("; ", TA_CaseTemplate.warnings));
         var result = $"Extracted {units.Count} unit(s) -> {TA_Store.Root}\n{log}";
         if (units.Count > 0) result += "\n" + TA_Changes.SyncFindings();
-        if (renderWriterTask && units.Count > 0) result += "\n" + RenderTask(TaskType.Writer, units, picked);
         ReloadStore();
         return result;
     }
@@ -934,45 +929,41 @@ public class TA_ScenarioTextWindow : EditorWindow
     }
 
     /// <summary>
-    /// Coverage scan (play mode, §7.1): every personality's kojo resolution at every lookup of the selected units (none
-    /// selected = every unit in the store), lookups only. Writes Store/coverage.json + Store/_coverage.md.
+    /// Update store (play mode, Plan_TaskReorg.md §7): Scan the selected units (none = the whole store), re-extract every
+    /// outdated one, then remove the units that no longer exist (one confirm). Per-position kojo counts over every
+    /// personality come with each extraction (kp `cov`), so there is no separate coverage scan.
     /// </summary>
-    string CoverageScan()
+    string UpdateStore()
     {
-        var textError = TA_Text.Load();
-        if (textError != null) return textError;
-        var pids = new List<string>();
-        for (int i = 0; i < personalityNodes.Count; i++) pids.Add(personalityNodes[i].id);
-        if (pids.Count < 1) return "No personalities loaded.";
-
-        // (unit, kind, id): the tree selection, else the store
-        var targets = new List<string[]>();
-        var nodes = new List<Node>();
-        CollectSelectedNodes(comRoots, nodes);
-        int comCount = nodes.Count;
-        CollectSelectedNodes(eventGroups, nodes);
-        for (int i = 0; i < nodes.Count; i++) targets.Add(new[] { nodes[i].unit, i < comCount ? "command" : "event", nodes[i].id });
-        if (targets.Count < 1)
-            foreach (var prop in TA_Store.Units(Store).Properties())
-                targets.Add(new[] { prop.Name, (string)prop.Value["kind"], (string)prop.Value["unitID"] });
-        if (targets.Count < 1) return "Nothing selected and the store is empty.";
-
-        var x = Extraction.Start();
-        var gaps = new Dictionary<string, JObject>();
         var log = new StringBuilder();
-        int totalGaps = 0, silent = 0;
-        for (int i = 0; i < targets.Count; i++)
-        {
-            var snap = x.Extract(targets[i][1], targets[i][2], pids, out string skip, true);
-            if (snap == null) { log.AppendLine($"  skipped {targets[i][0]}: {skip}"); continue; }
-            var g = TA_Coverage.UnitGaps(snap);
-            gaps[targets[i][0]] = g;
-            totalGaps += ((JArray)g["gaps"]).Count;
-            silent += (int)g["silent"];
-        }
-        var report = TA_Coverage.Save(gaps, pids);
-        coverage = TA_Coverage.Load();
-        return $"Coverage: {gaps.Count} unit(s) × {pids.Count} personalities - {totalGaps} gap(s), {silent} silent event failure(s) -> {report}\n{log}{TA_Text.MissingReport()}";
+        log.AppendLine(Scan());
+        log.AppendLine(ReExtractOutdated());
+        bool anyMissing = false;
+        foreach (var prop in TA_Store.Units(TA_Store.LoadIndex()).Properties())
+            if ((bool?)prop.Value["missing"] ?? false) { anyMissing = true; break; }
+        if (anyMissing) log.AppendLine(RemoveMissingUnits());
+        return log.ToString();
+    }
+
+    /// <summary>
+    /// Removes the units the last Scan marked missing (row `missing`): commands / events that no longer exist or are no
+    /// units any more (generated commands, Plan_GeneratedCommands.md §5). Snapshot files go too; change records stay.
+    /// </summary>
+    string RemoveMissingUnits()
+    {
+        var index = TA_Store.LoadIndex();
+        var missing = new List<string>();
+        foreach (var prop in TA_Store.Units(index).Properties())
+            if ((bool?)prop.Value["missing"] ?? false) missing.Add(prop.Name);
+        if (missing.Count < 1) return "No unit is marked missing - run Scan (whole store) first.";
+        var sample = string.Join("\n", missing.GetRange(0, Math.Min(15, missing.Count)));
+        if (!EditorUtility.DisplayDialog("Remove missing units",
+            $"Remove {missing.Count} unit(s) and their snapshot files from the store?\n\n{sample}{(missing.Count > 15 ? "\n…" : "")}", "Remove", "Cancel"))
+            return "Remove missing units: cancelled.";
+        for (int i = 0; i < missing.Count; i++) TA_Store.RemoveUnit(index, missing[i]);
+        TA_Store.SaveIndex(index);
+        ReloadStore();
+        return $"Removed {missing.Count} unit(s):\n  {string.Join("\n  ", missing)}";
     }
 
     /// <summary>Re-extract (play mode) every outdated row with its stored layers.</summary>
@@ -998,22 +989,23 @@ public class TA_ScenarioTextWindow : EditorWindow
     }
 
     /// <summary>
-    /// Render a task (any time) from stored snapshots into Generated/&lt;time&gt;_&lt;type&gt;/: writer docs + manifests (+
-    /// pre-filled &lt;unit&gt;.analysis.json for analysis tasks), _index.md, the task's handoff(s) and, for writer tasks,
-    /// the game-text-rules skill. Outdated units are refused until re-extracted.
+    /// Render a task from stored snapshots into Generated/&lt;time&gt;_&lt;completion|kojo&gt;/: docs + manifests, _index.md,
+    /// the task's handoffs and the game-text-rules skill (Plan_TaskReorg.md). In play mode, outdated units and (kojo) a
+    /// missing target layer are extracted first; outside play mode they are skipped.
     /// </summary>
-    string RenderTask(TaskType type, List<string> units, List<string> wantedPersonalities)
+    string RenderTask(TA_Mode renderMode, List<string> units)
     {
         var textError = TA_Text.Load();
         if (textError != null) return textError;
-        var renderMode = type == TaskType.Analysis ? TA_Mode.Audit : mode;
-        if (renderMode == TA_Mode.KojoFill && wantedPersonalities.Count < 1) return "Kojo fill: name the target personality (Personalities field, or pick it before Extract).";
+        var target = TargetPersonality;
+        if (renderMode == TA_Mode.Kojo && target == null) return "Kojo task: pick the personality first.";
 
+        var extracted = PrepareUnits(renderMode, units, target);
         var index = TA_Store.LoadIndex();
         // latest review decisions first, then the open change records the docs show (pending text, notes, proposals)
         TA_Changes.MergeReview((StringBuilder)null);
         var overlay = TA_Changes.Overlay.Load();
-        var taskName = $"{DateTime.Now.ToString(RunFolderFormat)}_{(type == TaskType.Analysis ? "analysis" : "writer")}";
+        var taskName = $"{DateTime.Now.ToString(RunFolderFormat)}_{(renderMode == TA_Mode.Kojo ? "kojo" : "completion")}";
         var outDir = Path.Combine(GeneratedRoot, taskName);
         Directory.CreateDirectory(outDir);
 
@@ -1027,37 +1019,28 @@ public class TA_ScenarioTextWindow : EditorWindow
             var unit = units[i];
             var row = TA_Store.Row(index, unit);
             if (row == null) { skipped.Add($"{unit}：不在 store 中"); continue; }
-            if ((bool?)row["outdated"] ?? false) { skipped.Add($"{unit}：数据已变（outdated），请先在运行模式中重新提取"); continue; }
+            if ((bool?)row["outdated"] ?? false) { skipped.Add($"{unit}：数据已变（outdated），请在运行模式中渲染（会先重新提取）"); continue; }
 
-            // kojo fill: the target must be extracted; audit/analysis: the checked personalities this unit has (none checked = all)
-            var stored = TA_Store.Personalities(row);
+            // completion: no kojo layers (D31); kojo: exactly the target's layer
             var pids = new List<string>();
-            if (renderMode == TA_Mode.KojoFill)
+            if (renderMode == TA_Mode.Kojo)
             {
-                if (!stored.Contains(wantedPersonalities[0])) { skipped.Add($"{unit}：没有 {wantedPersonalities[0]} 的口上层，请先提取该人格"); continue; }
-                pids.Add(wantedPersonalities[0]);
+                if (!TA_Store.Personalities(row).Contains(target)) { skipped.Add($"{unit}：没有 {target} 的口上层，请在运行模式中渲染（会先提取）"); continue; }
+                pids.Add(target);
             }
-            else if (wantedPersonalities.Count > 0)
-            {
-                for (int p = 0; p < wantedPersonalities.Count; p++) if (stored.Contains(wantedPersonalities[p])) pids.Add(wantedPersonalities[p]);
-                if (pids.Count < 1) { skipped.Add($"{unit}：所选人格都未提取（已提取：{string.Join("、", stored)}）"); continue; }
-            }
-            else pids.AddRange(stored);
 
             var snap = TA_Store.LoadSnapshot(unit, pids, out string loadError);
             if (snap == null) { skipped.Add($"{unit}：{loadError}"); continue; }
-            var doc = TA_Renderer.Render(snap, renderMode, row["hashes"] as JObject, overlay, out JObject manifest, out JObject prefill, out string skip);
+            var doc = TA_Renderer.Render(snap, renderMode, row["hashes"] as JObject, overlay, out JObject manifest, out string skip);
             if (doc == null) { skipped.Add($"{unit}：{skip}"); continue; }
 
             File.WriteAllText(Path.Combine(outDir, unit + ".writer.md"), doc, new UTF8Encoding(false));
             File.WriteAllText(Path.Combine(outDir, unit + ".manifest.json"), manifest.ToString(Formatting.Indented), new UTF8Encoding(false));
-            if (type == TaskType.Analysis)
-                File.WriteAllText(Path.Combine(outDir, unit + ".analysis.json"), prefill.ToString(Formatting.Indented), new UTF8Encoding(false));
             var title = (string)row["kind"] == "event" ? "事件 " + (string)row["unitID"] : (string)row["unitID"];
             body.AppendLine($"- [{title}]({unit}.writer.md)");
             for (int p = 0; p < pids.Count; p++) if (!shown.Contains(pids[p])) shown.Add(pids[p]);
             if (modList == null) modList = snap.shared["modList"] as JArray;
-            TA_Store.AddTask(row, taskName, type == TaskType.Writer ? TA_Store.StatusWriting : null);
+            TA_Store.AddTask(row, taskName, TA_Store.StatusWriting);
             rendered++;
         }
         TA_Store.SaveIndex(index);
@@ -1065,9 +1048,8 @@ public class TA_ScenarioTextWindow : EditorWindow
         var indexDoc = new StringBuilder();
         indexDoc.AppendLine(TA_Text.Get("index.title"));
         indexDoc.AppendLine(string.Format(ModeMarker, renderMode));
-        indexDoc.AppendLine(string.Format(TaskMarker, type == TaskType.Analysis ? "analysis" : "writer"));
         indexDoc.AppendLine();
-        indexDoc.AppendLine(TA_Text.F("index.header", "mode", type == TaskType.Analysis ? "Analysis" : renderMode.ToString(), "personalities", string.Join("、", shown), "time", DateTime.Now.ToString("yyyy-MM-dd HH:mm")));
+        indexDoc.AppendLine(TA_Text.F("index.header", "mode", renderMode.ToString(), "personalities", shown.Count > 0 ? string.Join("、", shown) : "—", "time", DateTime.Now.ToString("yyyy-MM-dd HH:mm")));
         indexDoc.AppendLine();
         indexDoc.AppendLine(TA_Renderer.ModListBlock(modList));
         indexDoc.AppendLine();
@@ -1080,12 +1062,43 @@ public class TA_ScenarioTextWindow : EditorWindow
         File.WriteAllText(Path.Combine(outDir, "_index.md"), indexDoc.ToString(), new UTF8Encoding(false));
 
         var log = new StringBuilder();
-        log.AppendLine($"Rendered {type} task: {rendered} unit(s), skipped {skipped.Count} -> {outDir}");
+        if (extracted != "") log.AppendLine(extracted);
+        log.AppendLine($"Rendered {renderMode} task: {rendered} unit(s), skipped {skipped.Count} -> {outDir}");
         for (int i = 0; i < skipped.Count; i++) log.AppendLine("  skipped " + skipped[i]);
-        log.Append(WriteTaskHandoffs(outDir, type == TaskType.Analysis, renderMode == TA_Mode.KojoFill));
+        log.Append(WriteTaskHandoffs(outDir, renderMode));
         log.Append(TA_Text.MissingReport());
         ReloadStore();
         return log.ToString();
+    }
+
+    /// <summary>
+    /// Before rendering (play mode only): re-extract outdated units, and for a kojo task add the target's layer where the
+    /// unit doesn't have it. Returns the log ("" when nothing was extracted).
+    /// </summary>
+    string PrepareUnits(TA_Mode renderMode, List<string> units, string target)
+    {
+        if (!GameReady) return "";
+        var index = TA_Store.LoadIndex();
+        Extraction x = null;
+        var log = new StringBuilder();
+        int n = 0;
+        for (int i = 0; i < units.Count; i++)
+        {
+            var row = TA_Store.Row(index, units[i]);
+            if (row == null) continue;
+            var layers = TA_Store.Personalities(row);
+            bool needLayer = renderMode == TA_Mode.Kojo && !layers.Contains(target);
+            if (!((bool?)row["outdated"] ?? false) && !needLayer) continue;
+            if (needLayer) layers.Add(target);
+            if (x == null) x = Extraction.Start();
+            var snap = x.Extract((string)row["kind"], (string)row["unitID"], layers, out string skip);
+            if (snap == null) { log.AppendLine($"  not extracted {units[i]}: {skip}"); continue; }
+            log.AppendLine($"  {units[i]}: {TA_Store.Commit(index, snap)}");
+            n++;
+        }
+        if (n == 0 && log.Length == 0) return "";
+        TA_Store.SaveIndex(index);
+        return $"Extracted {n} unit(s) before rendering\n{log}{(n > 0 ? TA_Changes.SyncFindings() : "")}";
     }
 
     static string GeneratedRoot
@@ -1094,15 +1107,14 @@ public class TA_ScenarioTextWindow : EditorWindow
     }
 
     /// <summary>
-    /// Import run (any time, Plan_ChangeStore.md §6): the run folder's filled writer docs, analysis reports (checked against
-    /// the unit's structure hash, copied to Store/analysis/, unit status analyzed-clean / -blocking) and coder report
-    /// become change records in Store/changes/.
+    /// Import run (any time, Plan_ChangeStore.md §6): the run folder's filled task docs and coder report become change
+    /// records in Store/changes/; tool findings are synced after.
     /// </summary>
     string ImportRun()
     {
         var run = ResolveRunFolder(out string err);
         if (run == null) return err;
-        var result = TA_Changes.ImportRun(run);
+        var result = TA_Changes.ImportRun(run) + "\n" + TA_Changes.SyncFindings();
         ReloadStore();
         return result;
     }
@@ -1140,38 +1152,13 @@ public class TA_ScenarioTextWindow : EditorWindow
 
     /// <summary>
     /// Handoff = parts from the text database (TA_Text, `handoff.<kind>.parts` → `parts.<name>`) + the run's unit index.
-    /// Writer handoff per the run's mode, coder handoff always; both written into the run folder.
+    /// Completion: the completion handoff (coder agent). Kojo: the kojo writer handoff. Both: the game-text-rules skill.
     /// </summary>
-    string AssembleHandoff()
-    {
-        var run = ResolveRunFolder(out string err);
-        if (run == null) return err;
-        var indexPath = Path.Combine(run, "_index.md");
-        if (!File.Exists(indexPath)) return "No _index.md in " + run;
-        var textError = TA_Text.Load();
-        if (textError != null) return textError;
-
-        var index = File.ReadAllText(indexPath);
-        // runs generated before the mode marker only have the human-readable mode line
-        bool kojoFill = index.IndexOf(string.Format(ModeMarker, TA_Mode.KojoFill), StringComparison.Ordinal) >= 0
-            || index.IndexOf("模式：KojoFill", StringComparison.Ordinal) >= 0;
-        bool analysis = index.IndexOf(string.Format(TaskMarker, "analysis"), StringComparison.Ordinal) >= 0;
-        var log = WriteTaskHandoffs(run, analysis, kojoFill);
-        return TA_Text.MissingReport() + log;
-    }
-
-    /// <summary>Analysis task: the analysis handoff. Writer task: writer handoff (per mode) + coder handoff + game-text-rules skill.</summary>
-    static string WriteTaskHandoffs(string run, bool analysis, bool kojoFill)
+    static string WriteTaskHandoffs(string run, TA_Mode renderMode)
     {
         var units = StripIndexTitle(File.ReadAllText(Path.Combine(run, "_index.md")));
         var log = new StringBuilder();
-        if (analysis)
-        {
-            log.AppendLine("Written: " + WriteHandoff(run, "handoff.analysis", units));
-            return log.ToString();
-        }
-        log.AppendLine("Written: " + WriteHandoff(run, kojoFill ? "handoff.writerKojoFill" : "handoff.writerAudit", units));
-        log.AppendLine("Written: " + WriteHandoff(run, "handoff.coder", units));
+        log.AppendLine("Written: " + WriteHandoff(run, renderMode == TA_Mode.Kojo ? "handoff.writerKojo" : "handoff.completion", units));
         log.AppendLine(WriteSkill("skills.gameTextRules"));
         return log.ToString();
     }

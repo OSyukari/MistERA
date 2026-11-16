@@ -262,8 +262,14 @@ public static class TA_Apply
                 int vi = (int?)loc["variantIndex"] ?? -1;
                 var owner = vi < 0 ? src.path : src.path + $".variants[{vi}]";
                 var field = (string)loc["field"];
+                // an item command's own text: written into its generator's itemOverrides (Plan_ItemVariantText.md)
+                if (loc["override"] is JObject ov) { PlanItemOverride(p, src, loc, ov, vi, field, oldLines, newLines); break; }
                 var node = owner + "." + field + "." + (string)loc["entryPath"];
-                var baseName = (string)loc["com"] + "_" + (field.StartsWith("description_", StringComparison.Ordinal) ? field.Substring(12) : field);
+                // a generator group unit ("<generator>@item") names new keys after its generator
+                var comName = (string)loc["com"] ?? "";
+                int at = comName.IndexOf('@');
+                if (at > 0) comName = comName.Substring(0, at);
+                var baseName = comName + "_" + (field.StartsWith("description_", StringComparison.Ordinal) ? field.Substring(12) : field);
                 PlanList(p, src.file, node, "texts", oldLines, newLines, baseName);
                 break;
             }
@@ -369,6 +375,129 @@ public static class TA_Apply
             Change(p, file, $"{listPath}[{i}]", "line removed", current[i], "");
             if (IsKey(p, items[i])) p.current.orphanKeys.Add(items[i]);
         }
+    }
+
+    /// <summary>
+    /// A narration slot of an item command (Docs/TextAuthoring/Plan_ItemVariantText.md): the text goes into
+    /// `GenerateCOM.itemOverrides[item]` of the generator. The first write of a field copies the template's whole field
+    /// block there (conditions and nesting stay the template's); an entry that still lists the template's keys gets new
+    /// keys `&lt;command&gt;_[v&lt;i&gt;_]&lt;field&gt;_&lt;n&gt;`, the other entries keep the shared text. An entry with keys of its own is
+    /// edited like any list.
+    /// </summary>
+    static void PlanItemOverride(Planner p, Src src, JObject loc, JObject ov, int vi, string field, List<string> oldLines, List<string> newLines)
+    {
+        var item = (string)ov["item"];
+        if (string.IsNullOrEmpty(item)) throw new Skip(ActError, "item override without item");
+        // src.path: <definition>.GenerateCOM.targetCOMClass, or <definition>.GenerateCOM.itemOverrides['<item>'] once overridden
+        int g = src.path.LastIndexOf(".GenerateCOM.", StringComparison.Ordinal);
+        if (g < 0) throw new Skip(ActError, "item text is not inside a GenerateCOM block: " + src.path);
+        var gen = src.path.Substring(0, g) + ".GenerateCOM";
+        var templateField = gen + ".targetCOMClass" + (vi < 0 ? "" : $".variants[{vi}]") + "." + field;
+        var ovPath = gen + ".itemOverrides" + PropPath(item);
+        var ownerPath = vi < 0 ? ovPath : ovPath + $".variants[{vi}]";
+        var fieldPath = ownerPath + "." + field;
+        var entryRel = (string)loc["entryPath"];
+        var doc = p.files.Get(src.file);
+
+        if (doc.Find(fieldPath) == null)
+        {
+            var tf = doc.Find(templateField) ?? throw new Skip(ActStale, $"{templateField} is no longer in {src.file}");
+            var block = doc.Text.Substring(tf.start, tf.end - tf.start);
+            var overrides = doc.Find(gen + ".itemOverrides");
+            if (overrides != null && overrides.type != 'o') throw new Skip(ActError, gen + ".itemOverrides is not an object");
+            var itemNode = doc.Find(ovPath);
+            if (itemNode != null && itemNode.type != 'o') throw new Skip(ActError, ovPath + " is not an object");
+            if (itemNode == null)
+            {
+                // a new item object holding just this field, one property per line like the file
+                var innerName = vi < 0 ? field : "variants";
+                var inner = vi < 0 ? block : VariantsJson(vi, field, block);
+                if (overrides == null)
+                {
+                    var genNode = doc.Find(gen);
+                    var indent = genNode.props.Count > 0 ? doc.IndentOf(gen + PropPath(genNode.props[0].name)) : "";
+                    doc.SetProperty(gen, "itemOverrides", doc.ObjectJson(indent, item, doc.ObjectJson(indent + doc.indentUnit, innerName, inner, false), false));
+                }
+                else
+                {
+                    var indent = doc.IndentOf(gen + ".itemOverrides") + doc.indentUnit;
+                    doc.SetProperty(gen + ".itemOverrides", item, doc.ObjectJson(indent, innerName, inner, false));
+                }
+            }
+            else if (vi < 0) doc.SetProperty(ovPath, field, block);
+            else
+            {
+                var vp = ovPath + ".variants";
+                if (doc.Find(vp) == null)
+                {
+                    doc.SetProperty(ovPath, "variants", "[]");
+                    Change(p, src.file, vp, "list created", "", "[]");
+                }
+                if (doc.Find(vp).type != 'a') throw new Skip(ActError, vp + " is not a list");
+                // earlier variants stay the template's ({} merges nothing, Index_COM.MergeTemplate)
+                while (doc.Find(vp).items.Count <= vi)
+                {
+                    doc.Append(vp, "{}");
+                    Change(p, src.file, vp, "variant placeholder added", "", "{}");
+                }
+                doc.SetProperty(ownerPath, field, block);
+            }
+            Change(p, src.file, fieldPath, "item override: field copied from the template", "", block);
+        }
+
+        var entryPath = fieldPath + "." + entryRel;
+        var entry = doc.Find(entryPath);
+        if (entry == null || entry.type != 'o') throw new Skip(ActStale, $"{entryPath} is not in {src.file}");
+        var baseName = (string)loc["com"] + "_" + (vi < 0 ? "" : $"v{vi}_") + (field.StartsWith("description_", StringComparison.Ordinal) ? field.Substring(12) : field);
+        var listPath = entryPath + ".texts";
+        var list = doc.Find(listPath);
+        var tList = doc.Find(templateField + "." + entryRel + ".texts");
+        if (!SameStrings(list, tList)) { PlanList(p, src.file, entryPath, "texts", oldLines, newLines, baseName); return; }
+
+        // still the template's keys: the written lines become the item's own keys
+        var items = new List<string>();
+        var current = new List<string>();
+        for (int i = 0; i < list.items.Count; i++)
+        {
+            items.Add(list.items[i].str);
+            current.Add(IsKey(p, items[i]) ? ReadDict(p, items[i]) : items[i]);
+        }
+        CheckBase(current, oldLines, newLines);
+        string dictFile = null;
+        for (int i = items.Count - 1; i >= 0 && dictFile == null; i--) if (IsKey(p, items[i])) dictFile = DictRef(p, items[i]).file;
+        if (dictFile == null) dictFile = src.file;
+        var keys = new JArray();
+        for (int i = 0; i < newLines.Count; i++)
+        {
+            var key = NewKey(p, baseName);
+            AddDict(p, dictFile, key, newLines[i]);
+            keys.Add(key);
+        }
+        doc.Replace(listPath, keys.ToString(Formatting.None).Replace("\",\"", "\", \""));
+        Change(p, src.file, listPath, "item's own keys (were the template's)", string.Join(", ", items), string.Join(", ", keys));
+    }
+
+    /// <summary>Both nodes are string lists with the same items in the same order.</summary>
+    static bool SameStrings(TA_JsonEdit.Node a, TA_JsonEdit.Node b)
+    {
+        if (a == null || b == null || a.type != 'a' || b.type != 'a' || a.items.Count != b.items.Count) return false;
+        for (int i = 0; i < a.items.Count; i++)
+            if (a.items[i].type != 's' || b.items[i].type != 's' || a.items[i].str != b.items[i].str) return false;
+        return true;
+    }
+
+    /// <summary>A variants list for an override: {} up to vi (they merge nothing, Index_COM.MergeTemplate), then { field: block }.</summary>
+    static string VariantsJson(int vi, string field, string block)
+    {
+        var sb = new StringBuilder("[");
+        for (int i = 0; i < vi; i++) sb.Append("{}, ");
+        return sb.Append("{ ").Append(TA_JsonEdit.Str(field)).Append(": ").Append(block).Append(" }]").ToString();
+    }
+
+    /// <summary>".name", or "['name']" for a name a plain path segment can't hold.</summary>
+    static string PropPath(string name)
+    {
+        return Regex.IsMatch(name, "^[A-Za-z0-9_$-]+$") ? "." + name : "['" + name.Replace("\\", "\\\\").Replace("'", "\\'") + "']";
     }
 
     static void PlanEventText(Planner p, JObject loc, List<string> oldLines, List<string> newLines)

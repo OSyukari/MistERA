@@ -58,6 +58,8 @@ public class Memory_Entry
         foreach(var entry in this.interactions)
         {
             Utility.DistinctInPlace(entry.tags);
+            // save migration: memory code looks the command up without a null check
+            COM_LegacyIDs.Migrate(ref entry.comID);
         }
 
         InternalUpdate();

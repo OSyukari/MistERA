@@ -951,7 +951,8 @@ public class RelationshipManager
         }
 
         var overrideEventID = ep.GetForcedKojoEventID(isDoer);
-        KojoCollector kol = new KojoCollector(Owner, string.IsNullOrEmpty(overrideEventID) ? ep.targetCOM.tooltipID : overrideEventID);
+        // the command ID: Character_Personality.GetKOJOMessage_Command builds its kojo keys (own, kojo source, folder parent)
+        KojoCollector kol = new KojoCollector(Owner, string.IsNullOrEmpty(overrideEventID) ? ep.targetCOM.ID : overrideEventID);
         kol.LoadEP(ep, injectRel);
 
         MessageCollect_KojoEntry message = Personality.GetKOJOMessage(kol);
@@ -973,7 +974,7 @@ public class RelationshipManager
             var fallbackCOM = scr_System_Serializer.current.GetByNameOrID_COM(ep.targetCOM.fallbackCOMID);
             if (fallbackCOM != null)
             {
-                kol.eventID = fallbackCOM.tooltipID;
+                kol.eventID = fallbackCOM.ID;
                 message = Personality.GetKOJOMessage(kol);
                 kol.collect = message;
             }
@@ -1032,7 +1033,7 @@ public class RelationshipManager
     {
         if (Owner.RefID == 0) return null;
 
-        KojoCollector kol = new KojoCollector(Owner, ep.targetCOM.tooltipID, suffix);
+        KojoCollector kol = new KojoCollector(Owner, ep.targetCOM.ID, suffix);
         kol.LoadEP(ep, injectRel);
 
         MessageCollect_KojoEntry message = Personality.GetKOJOMessage(kol);

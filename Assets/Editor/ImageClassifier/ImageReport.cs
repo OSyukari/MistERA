@@ -295,7 +295,8 @@ public static class ImageReport
     /// { title, generated, rules, selectionFile (only when the page may save a selection), usedTags: [string],
     ///   folders: [{ name, base (URL prefix of the folder, relative to the report), hasTags, stale, analyzed, model, counts...,
     ///               created: [folders the last analysis created], items: [ImageReportItem] }],
-    ///   lint: [string], unused: null | { categories: [string], names: [{ set, names: [string] }], variants: [string] } }
+    ///   lint: [string], unused: null | { categories: [string], names: [{ set, names: [string] }], variants: [string] },
+    ///   portrait (with selectionFile only): the portrait handler view, shape on PortraitUsage.Write }
     /// </summary>
     public static string BuildReportJson(string reportDir, string title, List<ImageReportFolder> folders, ImageRules rules, string rulesPath, DateTime generated,
         string selectionFile = null)
@@ -361,6 +362,13 @@ public static class ImageReport
 
             w.WritePropertyName("unused");
             WriteUnused(w, folders, rules);
+
+            // portrait handler view (Mods report only, with the selection: the same "Mods report" switch)
+            if (selectionFile != null)
+            {
+                w.WritePropertyName("portrait");
+                PortraitUsage.Write(w, folders, rulesPath);
+            }
             w.WriteEndObject();
         }
         // inside <script>: a "</script>" in a file name or reason must not close the tag

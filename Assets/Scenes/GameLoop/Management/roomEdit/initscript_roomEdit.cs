@@ -119,6 +119,19 @@ public class initscript_roomEdit : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// Furniture packed / unpacked (canvas_furniturePacking Apply): rebuild the room's furniture list, the faction's
+    /// furniture inventory, and the room data (name / owners can depend on furniture).
+    /// </summary>
+    public void OnFurnitureChanged()
+    {
+        if (currentFaction == null) return;
+        LoadRoomData();
+        RefreshFurnitureList();
+        RefreshInventoryList();
+        parent.ValidateAll();
+    }
+
     void LoadRoomData()
     {
         Utility.DestroyAllChildrenFrom(currentRoomTagRect);
@@ -498,6 +511,7 @@ public class initscript_roomEdit : MonoBehaviour
         public void OnClickButton()
         {
             canvas_furniturePacking cvs = scr_System_SceneManager.current.LoadCanvasIntoScene(parent, parent.roomEditScript.prefab_furnitureEditUI).GetComponent<canvas_furniturePacking>();
+            cvs.OnApplied = parent.roomEditScript.OnFurnitureChanged;
             cvs.InitializeWithArgument(parent.roomEditScript.CurrentRoom);
         }
     }

@@ -1646,7 +1646,7 @@ public partial class EvaluationPackage : I_ResultStorage
             //var rel = Doer.Relationships.FindRelationshipWith(injectChara);
             //else if (Receiver != null && Receiver != Doer) rel = Doer.Relationships.FindRelationshipWith(Receiver);
             //Doer.Relationships.GetKOJOMessage_Join(true, rightAlign, this, m, rel);
-            var kol = new KojoCollector(Doer, targetCOM.tooltipID, "_Join");
+            var kol = new KojoCollector(Doer, targetCOM.ID, "_Join");
             kol.LoadEP(this, injectChara);
             var mm = Doer.Relationships.GetKOJOMessage_Suffix(kol, m);
             //var mm = Doer.Relationships.GetKOJOMessage_Suffix(targetCOM.tooltipID, "_Join", injectChara, m);
@@ -1668,7 +1668,7 @@ public partial class EvaluationPackage : I_ResultStorage
                 //Receiver.Relationships.GetKOJOMessage_Join(false, rightAlign, this, m, rel);
                 //var mm = Receiver.Relationships.GetKOJOMessage_Suffix(targetCOM.tooltipID, "_Join", injectChara, m);
                 //if (mm != null) m.messages_before.Add(mm.message);
-                var kol = new KojoCollector(Receiver, targetCOM.tooltipID, "_Join");
+                var kol = new KojoCollector(Receiver, targetCOM.ID, "_Join");
                 kol.LoadEP(this, injectChara);
                 var mm = Doer.Relationships.GetKOJOMessage_Suffix(kol, m);
                 if (mm != null) responses.Add(mm);
@@ -1682,7 +1682,7 @@ public partial class EvaluationPackage : I_ResultStorage
         {   // if contains playerref, then player join event already printed _joined kojo
             if (Doer != null && Doer.RefID != 0 && Doer != injectChara)
             {
-                var kol = new KojoCollector(injectChara, targetCOM.tooltipID, "_Joined");
+                var kol = new KojoCollector(injectChara, targetCOM.ID, "_Joined");
                 kol.LoadEP(this, Doer);
                 var mm = injectChara.Relationships.GetKOJOMessage_Suffix(kol, m);
                 if (mm != null) responses.Add(mm);
@@ -1701,7 +1701,7 @@ public partial class EvaluationPackage : I_ResultStorage
                 //var mm = injectChara.Relationships.GetKOJOMessage_Suffix(targetCOM.tooltipID, "_Joined", Receiver, m);
                 //if (mm != null) m.messages_before.Add(mm.message);
                 
-                var kol = new KojoCollector(injectChara, targetCOM.tooltipID, "_Joined");
+                var kol = new KojoCollector(injectChara, targetCOM.ID, "_Joined");
                 kol.LoadEP(this, Receiver);
                 var mm = injectChara.Relationships.GetKOJOMessage_Suffix(kol, m);
                 if (mm != null) responses.Add(mm);

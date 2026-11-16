@@ -19,14 +19,6 @@ public class COM_Recording : COM
     bool isvalid = true;
 
     Item_Base targetItem = null;
-    [JsonIgnore]
-    public override string tooltipID
-    {
-        get
-        {
-            return parentCOMID;
-        }
-    }
 
 
     [JsonIgnore]

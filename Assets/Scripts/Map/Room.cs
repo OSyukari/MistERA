@@ -817,11 +817,13 @@ public class Room_Instance: IDisposable, I_Disposable
         }
         else this.furnitures.Add(inst);
 
-        if (this.FactionOwner != null) FactionOwner.NotifyFurnitureChange(this);
-
+        // caches first: NotifyFurnitureChange -> RefreshRoomJobs reads Jobs to set the new job's FactionOwner
         roomJobs = null;
         displayableFurnitures = null;
         InvalidateFurnitureDependentCache();
+
+        if (this.FactionOwner != null) FactionOwner.NotifyFurnitureChange(this);
+
         if (inst.JobGiver != null && inst.JobGiver.AssignsOwnership) ReassignFurnitureOwnership();
 
         return inst;

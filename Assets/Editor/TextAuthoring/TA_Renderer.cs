@@ -3,9 +3,10 @@ using System.Text;
 using Newtonsoft.Json.Linq;
 
 /// <summary>
-/// Text authoring tool: turns a stored snapshot (TA_Snapshot) + the text database (TA_Text) into a writer doc, its
-/// manifest and a pre-filled analysis report (Docs/TextAuthoring/Plan_ExportStore.md D10, D15). Needs no running game:
-/// the mode (audit / kojo fill) and the personalities shown are render-time choices.
+/// Text authoring tool: turns a stored snapshot (TA_Snapshot) + the text database (TA_Text) into a task doc and its
+/// manifest (Docs/TextAuthoring/Plan_ExportStore.md D10, D15). Needs no running game. Task types
+/// (Plan_TaskReorg.md): completion = narration / event text + new narration entries, kojo only as positions with their
+/// personality counts; kojo = one personality's kojo (own, blank, inherited) around read-only narration.
 /// </summary>
 public class TA_Renderer
 {
@@ -27,32 +28,41 @@ public class TA_Renderer
     }
 
     /// <summary>
-    /// Null + skipReason when the unit has nothing to do in this mode (kojo fill: events that don't query kojo). The
-    /// snapshot's layers are the personalities shown, in order; kojo fill expects exactly the target layer.
+    /// Null + skipReason when the unit has nothing to do in this task (kojo: events that don't query kojo). Kojo expects
+    /// exactly the target personality's layer; completion uses no layers.
     /// </summary>
-    public static string Render(TA_Snapshot snap, TA_Mode mode, JObject storeHashes, TA_Changes.Overlay overlay, out JObject manifest, out JObject analysisPrefill, out string skipReason)
+    public static string Render(TA_Snapshot snap, TA_Mode mode, JObject storeHashes, TA_Changes.Overlay overlay, out JObject manifest, out string skipReason)
     {
         manifest = null;
-        analysisPrefill = null;
         skipReason = null;
-        if (mode == TA_Mode.KojoFill && (string)snap.shared["kind"] == "event" && !((bool?)snap.shared["flags"]?["queriesKojo"] ?? false))
+        if (mode == TA_Mode.Kojo && (string)snap.shared["kind"] == "event" && !((bool?)snap.shared["flags"]?["queriesKojo"] ?? false))
         {
-            skipReason = "事件不取口上（无 GetKojoEntry，文本中也没有代码注入的 $kojo…$），口上填写模式跳过";
+            skipReason = "事件不取口上（无 GetKojoEntry，文本中也没有代码注入的 $kojo…$），口上任务跳过";
             return null;
         }
         var r = new TA_Renderer(snap, mode, overlay);
-        var doc = r.Build(storeHashes, out manifest, out analysisPrefill);
-        return doc;
+        return r.Build(storeHashes, out manifest);
     }
 
-    string Build(JObject storeHashes, out JObject manifest, out JObject prefill)
+    /// <summary>Kojo task: the target personality (its layer is the only one).</summary>
+    string Target { get { return snap.layerOrder.Count > 0 ? snap.layerOrder[0] : null; } }
+
+    string Build(JObject storeHashes, out JObject manifest)
     {
         this.storeHashes = storeHashes;
         RenderOps(snap.shared["ops"] as JArray);
 
+        // each task lists the findings its owner fixes (Plan_TaskReorg.md §4): completion the unit's, kojo the target's
         var findings = new List<JObject>();
-        AddAll(findings, snap.shared["findings"] as JArray);
-        for (int i = 0; i < snap.layerOrder.Count; i++) AddAll(findings, snap.layers[snap.layerOrder[i]]["findings"] as JArray);
+        var unit = (string)snap.shared["unit"];
+        if (mode == TA_Mode.Completion) AddAll(findings, snap.shared["findings"] as JArray);
+        else
+        {
+            var all = new List<JObject>();
+            AddAll(all, snap.layers[Target]["findings"] as JArray);
+            for (int i = 0; i < all.Count; i++)
+                if (TA_Changes.FindingOwner(all[i], (string)all[i]["targetKey"], unit) == "personality|" + Target) findings.Add(all[i]);
+        }
 
         sb.AppendLine("---");
         sb.AppendLine(TA_Text.Get("doc.footer.structureHeading"));
@@ -108,8 +118,6 @@ public class TA_Renderer
             ["slots"] = manifestSlots,
             ["unreachable"] = unreachable
         };
-
-        prefill = Prefill(findings, storeHashes);
         return sb.ToString();
     }
 
@@ -135,10 +143,12 @@ public class TA_Renderer
             if (op["hdr"] != null) Header((string)op["hdr"]);
             else if (op["kp"] != null)
             {
+                if (mode == TA_Mode.Completion) { ImplementedLine(op["cov"] as JObject); continue; }
                 var pos = op["kp"].ToString();
-                for (int l = 0; l < snap.layerOrder.Count; l++)
-                    RenderOps(snap.layers[snap.layerOrder[l]]["positions"]?[pos] as JArray);
+                RenderOps(snap.layers[Target]["positions"]?[pos] as JArray);
+                BlankKojo(pos);
             }
+            else if (op["newEntry"] != null) { if (mode == TA_Mode.Completion) NewEntry((JObject)op["newEntry"]); }
             else if (op["slot"] != null) Slot((string)op["slot"]);
             else if (op["k"] != null) sb.AppendLine((string)op["p"] + TA_Text.F((string)op["k"], Args(op["a"] as JArray)));
             else sb.AppendLine((string)op["l"] ?? "");
@@ -162,8 +172,8 @@ public class TA_Renderer
     {
         if (kind == "common")
         {
-            var target = snap.layerOrder.Count > 0 ? snap.layerOrder[0] : "?";
-            sb.AppendLine(mode == TA_Mode.Audit ? TA_Text.Get("doc.header.modeAudit") : TA_Text.F("doc.header.modeKojoFill", "target", target));
+            if (mode == TA_Mode.Completion) { sb.AppendLine(TA_Text.Get("doc.header.modeCompletion")); return; }
+            sb.AppendLine(TA_Text.F("doc.header.modeKojo", "target", Target ?? "?"));
             sb.AppendLine(TA_Text.Get("doc.header.personalities"));
             for (int i = 0; i < snap.layerOrder.Count; i++)
             {
@@ -222,7 +232,7 @@ public class TA_Renderer
             var indent = (string)s["indent"] ?? "";
             sb.AppendLine($"{indent}【{h}】旁白 ｜ 条件：{(string)s["cond"]}{again}");
             if (!first) return;
-            bool readOnly = mode == TA_Mode.KojoFill;
+            bool readOnly = mode == TA_Mode.Kojo;
             var m = (JObject)s.DeepClone();
             m["readOnly"] = readOnly;
             var texts = Pending(s, m, indent, false, null, !readOnly);
@@ -247,7 +257,8 @@ public class TA_Renderer
 
             var pid = (string)s["personality"];
             bool inherited = (bool?)s["inherited"] ?? false;
-            bool create = mode == TA_Mode.KojoFill && inherited;
+            // inherited (from a fallback personality): covered - the target's own lines here are optional (D33, D34)
+            bool create = inherited;
             var m = (JObject)s.DeepClone();
             m["readOnly"] = false;
             m["writeTo"] = create ? $"create in {pid} (mirror {(string)s["provider"]} {(string)s["entry"]} {(string)s["variantPath"]})" : "existing";
@@ -256,8 +267,9 @@ public class TA_Renderer
                 var inheritedTexts = s["texts"] as JArray ?? new JArray();
                 sb.AppendLine(TA_Text.F("doc.kojo.inheritedRef", "provider", (string)s["provider"]));
                 for (int t = 0; t < inheritedTexts.Count; t++) sb.AppendLine($"  · {(string)inheritedTexts[t]}");
-                sb.AppendLine(TA_Text.F("doc.kojo.fillFor", "pid", pid));
+                sb.AppendLine(TA_Text.F("doc.kojo.optionalFor", "pid", pid));
                 m["texts"] = new JArray();
+                m["optional"] = true;
             }
             var texts = Pending(s, m, "", create, pid, true);
             if (texts.Count < 1) FillLines();
@@ -270,7 +282,7 @@ public class TA_Renderer
             sb.AppendLine($"【{h}】{(string)s["what"]}{(label != "" ? $"（{label}）" : "")}{again}");
             if (!first) return;
             bool placeholderOnly = (bool?)s["placeholderOnly"] ?? false;
-            bool readOnly = mode == TA_Mode.KojoFill || placeholderOnly;
+            bool readOnly = mode == TA_Mode.Kojo || placeholderOnly;
             var m = (JObject)s.DeepClone();
             m["readOnly"] = readOnly;
             var shown = Pending(s, m, "", false, null, !readOnly);
@@ -325,6 +337,92 @@ public class TA_Renderer
             m["baseRecord"] = r["id"];
         }
         return lines;
+    }
+
+    // ---------------------------------------------------------------- task-specific blocks (Plan_TaskReorg.md §3)
+
+    /// <summary>Completion: how many personalities have kojo at this position (no kojo content - D31).</summary>
+    void ImplementedLine(JObject cov)
+    {
+        if (cov == null) { sb.AppendLine(TA_Text.Get("doc.kojo.implementedUnknown")); sb.AppendLine(); return; }
+        int own = (cov["own"] as JArray)?.Count ?? 0, inherited = (cov["inherited"] as JArray)?.Count ?? 0;
+        int noBranch = (cov["noBranch"] as JArray)?.Count ?? 0, missing = (cov["missing"] as JArray)?.Count ?? 0;
+        sb.AppendLine(TA_Text.F("doc.kojo.implemented", "own", own.ToString(), "inherited", inherited.ToString(),
+            "noBranch", noBranch.ToString(), "missing", missing.ToString(), "total", (own + inherited + noBranch + missing).ToString()));
+        sb.AppendLine();
+    }
+
+    /// <summary>
+    /// Kojo task: a position where the target has nothing (no entry on its whole chain, or an entry without a branch for
+    /// this context) gets a blank slot to fill (D33). Imported as a "create" record; Apply hands it to the coder task.
+    /// </summary>
+    void BlankKojo(string pos)
+    {
+        var pid = Target;
+        JObject lookup = null;
+        if (snap.layers[pid]["lookups"] is JArray lookups)
+            for (int i = 0; i < lookups.Count && lookup == null; i++)
+                if (lookups[i]["pos"]?.ToString() == pos) lookup = (JObject)lookups[i];
+        var state = (string)lookup?["state"];
+        if (state != "missing" && state != "noBranch") return;
+        var key = (string)lookup["key"];
+        var entry = state == "missing" ? key : (string)lookup["entry"];
+        var h = "K-" + TA_DocBuilderBase.Sha1Hex($"KB|{pid}|{entry}|{(string)lookup["speaker"]}|{(string)lookup["listener"]}").Substring(0, 6);
+        bool first = printed.Add(h);
+        if (first) kCount++;
+        sb.AppendLine($"【{h}】{TA_Text.F(state == "missing" ? "doc.kojo.blankEntry" : "doc.kojo.blankBranch", "pid", pid, "entry", entry)}{(first ? "" : " ｜ 同上，见前文")}");
+        if (!first) { sb.AppendLine(); return; }
+        var targetKey = $"kojo|{pid}|{entry}|new|{(string)lookup["speaker"]}|{(string)lookup["listener"]}";
+        var m = new JObject
+        {
+            ["kind"] = "kojo",
+            ["multiLine"] = true,
+            ["readOnly"] = false,
+            ["personality"] = pid,
+            ["provider"] = pid,
+            ["entry"] = entry,
+            ["variantPath"] = "new",
+            ["cond"] = $"{(string)lookup["speaker"]} → {(string)lookup["listener"]}",
+            ["targetKey"] = targetKey,
+            ["target"] = TA_DocBuilderBase.TargetId(targetKey),
+            ["texts"] = new JArray(),
+            ["writeTo"] = state == "missing" ? $"create entry {entry} in {pid}" : $"create branch in {pid} {entry} for {(string)lookup["speaker"]} → {(string)lookup["listener"]}"
+        };
+        var texts = Pending(m, m, "", true, pid, true);
+        if (texts.Count < 1) FillLines();
+        else for (int t = 0; t < texts.Count; t++) sb.AppendLine($"- {(string)texts[t]}");
+        Manifest(h, m);
+        sb.AppendLine();
+    }
+
+    /// <summary>
+    /// Completion: where a new narration entry may be proposed for a command field (once per field per unit). Lines
+    /// `条件：` / `位置：` describe it, the rest are its random lines; left as 待写 = none. Imported as a newEntry record
+    /// (Plan_TaskReorg.md §9.1).
+    /// </summary>
+    void NewEntry(JObject ne)
+    {
+        var unit = (string)ne["com"];
+        var field = (string)ne["field"];
+        var h = "N-" + TA_DocBuilderBase.Sha1Hex($"NEW|{unit}|{field}").Substring(0, 6);
+        if (!printed.Add(h)) return;
+        sb.AppendLine($"【{h}】{TA_Text.F("doc.narration.newEntry", "field", "description_" + field)}");
+        sb.AppendLine(TA_Text.Get("doc.narration.newEntryHelp"));
+        sb.AppendLine("- 待写");
+        sb.AppendLine();
+        var targetKey = $"newnarr|{unit}|description_{field}";
+        Manifest(h, new JObject
+        {
+            ["kind"] = "newEntry",
+            ["multiLine"] = true,
+            ["readOnly"] = false,
+            ["optional"] = true,
+            ["com"] = unit,
+            ["field"] = "description_" + field,
+            ["targetKey"] = targetKey,
+            ["target"] = TA_DocBuilderBase.TargetId(targetKey),
+            ["texts"] = new JArray()
+        });
     }
 
     void Manifest(string h, JObject m)
@@ -437,85 +535,4 @@ public class TA_Renderer
         return "other";
     }
 
-    /// <summary>Analysis report pre-filled with the tool's findings and kojo coverage (skill structure-review fills in the rest).</summary>
-    JObject Prefill(List<JObject> findings, JObject storeHashes)
-    {
-        var issues = new JArray();
-        for (int i = 0; i < findings.Count; i++)
-        {
-            var f = findings[i];
-            var issue = new JObject
-            {
-                ["id"] = "T" + (i + 1),
-                ["source"] = "tool",
-                ["slot"] = (string)f["handle"],
-                ["personality"] = (string)f["pid"],
-                ["type"] = AnalysisType((string)f["type"]),
-                // tool-graded runtime failures start as blocking; everything else is the analyst's call
-                ["blocking"] = (string)f["type"] == "silentEventFailure" ? (JToken)true : JValue.CreateNull(),
-                ["evidence"] = "",
-                ["problem"] = FindingText(f),
-                ["proposal"] = ""
-            };
-            // lint: rule, change-record target and exact fix ops (Plan_ChangeStore.md §4-§5)
-            if (f["rule"] != null) issue["rule"] = f["rule"];
-            if (f["target"] != null) { issue["target"] = f["target"]; issue["targetKey"] = f["targetKey"]; }
-            if (f["ops"] is JArray ops && ops.Count > 0) issue["ops"] = ops.DeepClone();
-            issues.Add(issue);
-        }
-        var coverage = new JArray();
-        var seen = new HashSet<string>();
-        for (int l = 0; l < snap.layerOrder.Count; l++)
-        {
-            var pid = snap.layerOrder[l];
-            if (!(snap.layers[pid]["lookups"] is JArray lookups)) continue;
-            for (int i = 0; i < lookups.Count; i++)
-            {
-                var lk = lookups[i];
-                var key = $"{pid}|{(string)lk["key"]}|{(string)lk["consumer"]}|{(string)lk["state"]}";
-                if (!seen.Add(key)) continue;
-                var state = (string)lk["state"];
-                var severity = (string)lk["severity"];
-                coverage.Add(new JObject
-                {
-                    ["lookup"] = lk["key"],
-                    ["personality"] = pid,
-                    ["state"] = state,
-                    ["entry"] = lk["entry"],
-                    ["consumer"] = lk["consumer"],
-                    ["severity"] = severity,
-                    // the tool's grading of a gap; the analyst confirms or corrects it
-                    ["effect"] = TA_Coverage.IsGap(state) ? TA_Coverage.Effect(severity) : ""
-                });
-            }
-        }
-        return new JObject
-        {
-            ["unit"] = snap.shared["unit"],
-            ["structHash"] = storeHashes?["struct"],
-            ["verdict"] = null,
-            ["issues"] = issues,
-            ["coverage"] = coverage,
-            ["openRecords"] = OpenRecords()
-        };
-    }
-
-    /// <summary>Structural changes already proposed for this unit (open change records): the analyst doesn't re-report them.</summary>
-    JArray OpenRecords()
-    {
-        var a = new JArray();
-        if (overlay == null) return a;
-        var list = overlay.Structural((string)snap.shared["unit"]);
-        for (int i = 0; i < list.Count; i++)
-        {
-            var r = list[i];
-            a.Add(new JObject
-            {
-                ["id"] = r["id"], ["state"] = r["state"], ["batch"] = r["batch"], ["slot"] = r["handle"], ["target"] = r["target"],
-                ["type"] = r["issue"]?["type"], ["problem"] = r["issue"]?["problem"], ["proposal"] = r["issue"]?["proposal"],
-                ["notes"] = r["notes"]?.DeepClone() ?? new JArray()
-            });
-        }
-        return a;
-    }
 }

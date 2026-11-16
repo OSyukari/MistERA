@@ -318,11 +318,27 @@ public static class TA_Revalidator
         return null;
     }
 
+    /// <summary>The raw object at the last non-patch source ref of a slot (file + JSON path); null when none is readable.</summary>
+    static JToken SourceObject(TA_SourceIndex data, JArray refs)
+    {
+        if (refs == null) return null;
+        for (int i = refs.Count - 1; i >= 0; i--)
+        {
+            if ((bool?)refs[i]["patch"] ?? false) continue;
+            var file = (string)refs[i]["file"];
+            if (string.IsNullOrEmpty(file)) continue;
+            var t = data.GetRaw(new TA_SourceRef { file = file, jsonPath = (string)refs[i]["path"] ?? "" });
+            if (t != null) return t;
+        }
+        return null;
+    }
+
     static List<string> LiveNarration(JObject slot, TA_SourceIndex data, out string error)
     {
         error = null;
         var comID = (string)slot["com"];
-        var com = Definition(data, data.coms, comID);
+        // the slot's own write-back location first (a generated command's text lives in its generator template)
+        var com = SourceObject(data, slot["comSources"] as JArray) ?? Definition(data, data.coms, comID);
         if (com == null) { error = $"指令 {comID} 不在数据文件中（运行时生成的指令无法离线读取）"; return new List<string>(); }
         int vi = slot.Value<int>("variantIndex");
         var owner = vi < 0 ? com : com.SelectToken($"variants[{vi}]");

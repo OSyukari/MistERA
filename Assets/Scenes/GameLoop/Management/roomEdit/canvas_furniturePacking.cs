@@ -14,6 +14,8 @@ public class canvas_furniturePacking : scr_Menu
     public itemEntryScript prefab_furnitureEntry;
 
     Room_Instance room;
+    /// <summary> Raised after Apply changed the room (the opener refreshes its furniture / inventory lists). </summary>
+    public System.Action OnApplied;
     List<Button_PackFurniture> packEntries = new List<Button_PackFurniture>();
     List<Button_UnpackFurniture> unpackEntries = new List<Button_UnpackFurniture>();
 
@@ -114,6 +116,7 @@ public class canvas_furniturePacking : scr_Menu
         }
         deactivate = true;
         scr_System_CampaignManager.current.NotifyUpdate();
+        OnApplied?.Invoke();
     }
 
 

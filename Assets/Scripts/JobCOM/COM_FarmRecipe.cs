@@ -10,14 +10,6 @@ public class COM_FarmRecipe : COM
 
     Item_Base yieldItem = null;
     ItemComponentTemplate_Harvestable comp = null;
-    [JsonIgnore]
-    public override string tooltipID
-    {
-        get
-        {
-            return parentCOMID;
-        }
-    }
 
 
     public override void InitializeChildCOM(COM baseCOM, Item_Base item)

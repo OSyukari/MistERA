@@ -121,6 +121,156 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
         }
     }
 
+    /// <summary>
+    /// One generated command (Docs/Interactions/Plan_GeneratedCommands.md §4.4): the template json read as type, linked to
+    /// source for text and kojo. The caller runs the kind's own initialization (item child, ...) and registers it.
+    /// </summary>
+    static COM Generate(COM source, string templateJson, Type type, bool ownText, bool ownKojo)
+    {
+        var generated = JsonConvert.DeserializeObject(templateJson, type, UtilityEX.SerializerSettings) as COM;
+        generated.SetGeneratedFrom(source, ownText, ownKojo);
+        return generated;
+    }
+
+    /// <summary>
+    /// The GenerateForChildren generators of declaring for source - source is declaring itself (self = true, only
+    /// includeSelf generators) or one of its children. A child of the declaring folder keeps the generated folder as its
+    /// parent (`parent + idSuffix`, generated from the folder by includeSelf).
+    /// </summary>
+    static void GenerateDeclared(COM declaring, COM source, List<COM> into, bool self)
+    {
+        var defs = declaring.GenerateForChildren;
+        if (defs == null) return;
+        for (int d = 0; d < defs.Count; d++)
+        {
+            var def = defs[d];
+            if (def == null || string.IsNullOrEmpty(def.idSuffix)) continue;
+            if (self && !def.includeSelf) continue;
+            if (def.skipUpgrades && source.IsUpgrade) continue;
+
+            var generated = Generate(source, JsonConvert.SerializeObject(source, UtilityEX.SerializerSettings), source.GetType(), def.useOwnText, def.useOwnKojo);
+            generated.ID = source.ID + def.idSuffix;
+            if (!self && def.includeSelf) generated.AppendParentID(def.idSuffix);
+            Transform(def.transform, generated);
+            into.Add(generated);
+        }
+    }
+
+    /// <summary>
+    /// The GenerateForFurniture generators of declaring (Plan_GeneratedCommands.md §4.6): a copy of declaring with the
+    /// def's template laid over it, read as comClass and set up by its InitializeGenerated - first once without furniture
+    /// to learn its tags, then for every furniture whose job givers offer it (giver comID names declaring, or all giver
+    /// comTags are on the command - MapUtility.GetFurnitureCOMs). ID `declaring + idSuffix + "_" + furnitureID`.
+    /// </summary>
+    static void GenerateForFurnitureDeclared(COM declaring, List<COM> into)
+    {
+        var defs = declaring.GenerateForFurniture;
+        if (defs == null) return;
+        var furnitures = scr_System_Serializer.current.MasterList.Furnitures.list;
+        for (int d = 0; d < defs.Count; d++)
+        {
+            var def = defs[d];
+            if (def == null) continue;
+            // idSuffix may be "" (the declaring command is the action itself: com_furniture_cryosleep_ADD → _ADD_<furniture>)
+            if (def.idSuffix == null) def.idSuffix = "";
+            var type = string.IsNullOrEmpty(def.comClass) ? declaring.GetType() : Type.GetType(def.comClass);
+            if (type == null || !typeof(COM).IsAssignableFrom(type))
+            {
+                Debug.LogError($"Index_COM: {declaring.ID} GenerateForFurniture [{def.idSuffix}] comClass [{def.comClass}] is not a command class");
+                continue;
+            }
+            var root = Newtonsoft.Json.Linq.JObject.Parse(JsonConvert.SerializeObject(declaring, UtilityEX.SerializerSettings));
+            root.Remove("$type");
+            if (def.template != null) MergeTemplate(root, def.template);
+            var json = root.ToString(Formatting.None);
+
+            var probe = MakeFurnitureChild(declaring, def, type, json, "", d);
+            string first = null;
+            for (int f = 0; f < furnitures.Count; f++)
+            {
+                var furniture = furnitures[f];
+                if (furniture == null || string.IsNullOrEmpty(furniture.ID) || !Offers(furniture, declaring, probe)) continue;
+                var generated = MakeFurnitureChild(declaring, def, type, json, furniture.ID, d);
+                if (into.Find(x => x.ID == generated.ID) != null) continue;
+                into.Add(generated);
+                if (first == null) first = generated.ID;
+            }
+            if (first == null) { Debug.Log($"Index_COM: {declaring.ID} GenerateForFurniture [{def.idSuffix}]: no furniture offers it"); continue; }
+            if (def.legacyIDs != null)
+                for (int l = 0; l < def.legacyIDs.Count; l++) COM_LegacyIDs.Register(def.legacyIDs[l], declaring.ID + def.idSuffix + "_", first);
+        }
+    }
+
+    static COM MakeFurnitureChild(COM declaring, COM.GenerateForFurnitureDef def, Type type, string json, string furnitureID, int defIndex)
+    {
+        var generated = Generate(declaring, json.Replace("$furnitureID$", furnitureID), type, def.useOwnText, def.useOwnKojo);
+        generated.ID = declaring.ID + def.idSuffix + (furnitureID == "" ? "" : "_" + furnitureID);
+        generated.targetFurnitureID = furnitureID;
+        generated.generatorKey = declaring.ID + def.idSuffix + "@furniture";
+        generated.generatorTemplatePath = $"GenerateForFurniture[{defIndex}].template";
+        generated.InitializeGenerated();
+        return generated;
+    }
+
+    /// <summary> Whether a furniture's job givers offer the command (same test as MapUtility.GetFurnitureCOMs: comID, or all tags). </summary>
+    static bool Offers(FurnitureBase furniture, COM declaring, COM command)
+    {
+        if (furniture.givesJob == null) return false;
+        for (int g = 0; g < furniture.givesJob.Count; g++)
+        {
+            var giver = furniture.givesJob[g];
+            if (giver == null) continue;
+            if (giver.comID != null && giver.comID.Contains(declaring.ID)) return true;
+            if (giver.comTags != null && giver.comTags.Count > 0 && Utility.ListContainsStrict(command.comTags, giver.comTags)) return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// A generator template over a copy of the declaring command: "variants" merge element by element (the template's
+    /// fields win, nested lists are replaced), every other field is replaced as a whole (so text blocks never mix).
+    /// </summary>
+    static void MergeTemplate(Newtonsoft.Json.Linq.JObject target, Newtonsoft.Json.Linq.JObject template)
+    {
+        foreach (var prop in template.Properties())
+        {
+            if (prop.Name == "variants" && prop.Value is Newtonsoft.Json.Linq.JArray tv && target["variants"] is Newtonsoft.Json.Linq.JArray bv)
+            {
+                for (int v = 0; v < tv.Count; v++)
+                {
+                    if (v >= bv.Count) { bv.Add(tv[v].DeepClone()); continue; }
+                    if (bv[v] is Newtonsoft.Json.Linq.JObject bo && tv[v] is Newtonsoft.Json.Linq.JObject to)
+                        bo.Merge(to, new Newtonsoft.Json.Linq.JsonMergeSettings { MergeArrayHandling = Newtonsoft.Json.Linq.MergeArrayHandling.Replace });
+                    else bv[v] = tv[v].DeepClone();
+                }
+                continue;
+            }
+            target[prop.Name] = prop.Value.DeepClone();
+        }
+    }
+
+    /// <summary> Kind-specific edits a declared generator names (GenerateForChildrenDef.transform). </summary>
+    static void Transform(string transform, COM generated)
+    {
+        switch (transform)
+        {
+            case "":
+            case null:
+                return;
+            case "noSex":
+                // offered outside a sex scene: not a sex act, and the receiver must not be in one
+                generated.comTags.Remove("sex");
+                // losing "sex" would drop the clone to Medium intimacy (permissions.json rules); a sexual act stays High outside a scene
+                if (!generated.comTags.Contains("permission_intimacy_low") && !generated.comTags.Contains("permission_intimacy_medium") && !generated.comTags.Contains("permission_intimacy_high"))
+                    generated.comTags.Add("permission_intimacy_high");
+                generated.requirements.requirement.req_Receivers.requireAbsentJobwithCOMTag.Add("sex");
+                return;
+            default:
+                Debug.LogError($"Index_COM: unknown generator transform [{transform}] on {generated.ID}");
+                return;
+        }
+    }
+
     public void LateInitialize()
     {
         List<COM> newCOMs = new List<COM>();
@@ -137,7 +287,18 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
                 {
                     if (item.Tags.Contains(com.GenerateCOM.itemTag))
                     {
-                        COM newCOM1 = JsonConvert.DeserializeObject(serializedParent.Replace("$itemID$", item.ID), type, UtilityEX.SerializerSettings) as COM;
+                        var itemJson = serializedParent;
+                        // this item's own text etc. laid over the template (Docs/TextAuthoring/Plan_ItemVariantText.md)
+                        if (com.GenerateCOM.itemOverrides != null && com.GenerateCOM.itemOverrides.TryGetValue(item.ID, out var itemOverride) && itemOverride != null)
+                        {
+                            var root = Newtonsoft.Json.Linq.JObject.Parse(serializedParent);
+                            MergeTemplate(root, itemOverride);
+                            itemJson = root.ToString(Formatting.None);
+                        }
+                        COM newCOM1 = Generate(com, itemJson.Replace("$itemID$", item.ID), type, com.GenerateCOM.useOwnText, com.GenerateCOM.useOwnKojo);
+                        newCOM1.generatorKey = com.ID + "@item";
+                        newCOM1.generatorTemplatePath = "GenerateCOM.targetCOMClass";
+                        newCOM1.generatorItemID = item.ID;
                         newCOM1.InitializeChildCOM(com, item);
 
                         if (hideChild) newCOM1.isHiddenChild = true;
@@ -161,23 +322,7 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
             }
             else if (com.requirements.requireContaining != null && com.requirements.requireContaining.allowPlanting != null)
             {
-                // make restraint furniture stuff
-                if (com.requirements.requireContaining.allowPlanting.Contains("character_trainable"))
-                {
-
-                    var serializedParent = JsonConvert.SerializeObject(list[i], UtilityEX.SerializerSettings);
-                    COM_Character_Insert newCOM1 = JsonConvert.DeserializeObject<COM_Character_Insert>(serializedParent, UtilityEX.SerializerSettings);
-                    COM_Character_Remove newCOM2 = JsonConvert.DeserializeObject<COM_Character_Remove>(serializedParent, UtilityEX.SerializerSettings);
-                    // COM_FarmRecipe rcp = new COM_FarmRecipe(list[i], recipe);
-                    newCOM1.Initialize();
-                    newCOM2.Initialize();
-                    //newCOM3.Initialize();
-
-
-                    if (newCOMs.Find(x => x.ID == newCOM1.ID) == null) newCOMs.Add(newCOM1);
-                    if (newCOMs.Find(x => x.ID == newCOM2.ID) == null) newCOMs.Add(newCOM2);
-                    //if (newCOMs.Find(x => x.ID == newCOM3.ID) == null) newCOMs.Add(newCOM3);
-                }
+                // restraint furniture (character_trainable): declared with GenerateForFurniture on the template command
                 /*
                 else if (list[i].requirements.requireContaining.allowPlanting.Count == 1 && list[i].requirements.requireContaining.allowPlanting[0] == "")
                 {   // this is a special case just to handle/initialize com_job_farm_remove
@@ -210,26 +355,20 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
                     }
                 }*/
             }
+            // one generated command per furniture that offers it - e.g. the restraint add / remove commands
+            GenerateForFurnitureDeclared(com, newCOMs);
+
             if (list[i].comTags.Contains("service") || list[i].comTags.Contains("sex") || (list[i].comTags.Contains("touch") && !list[i].comTags.Contains("safe")))
             {
                 list[i].comTags.Add("unsafe");
             }
 
 
-            // upgrades run only inside a sex scene (Job_Sex_Group), so they get no _noSex clone
-            if (list[i].comTags.Contains("sex") && !list[i].IsUpgrade && (list[i].comTags.Contains("service") || list[i].comTags.Contains("nosexvariant")))
-            {
-                var serializedParent = JsonConvert.SerializeObject(list[i], UtilityEX.SerializerSettings);
-                var newCOM = JsonConvert.DeserializeObject<COM_Sex>(serializedParent, UtilityEX.SerializerSettings);
-                newCOM.comTags.Remove("sex");
-                // losing "sex" would drop the clone to Medium intimacy (permissions.json rules); a sexual act stays High outside a scene
-                if (!newCOM.comTags.Contains("permission_intimacy_low") && !newCOM.comTags.Contains("permission_intimacy_medium") && !newCOM.comTags.Contains("permission_intimacy_high"))
-                    newCOM.comTags.Add("permission_intimacy_high");
-                newCOM.requirements.requirement.req_Receivers.requireAbsentJobwithCOMTag.Add("sex");
-                newCOM.ID += "_noSex";
-                newCOM.AppendParentID("_noSex");
-                newCOMs.Add(newCOM);
-            }
+            // generators declared on this command (includeSelf) and on its folder parent (every child) - e.g. the noSex
+            // copies of the service acts, declared on com_sex_service_base
+            GenerateDeclared(list[i], list[i], newCOMs, true);
+            var folder = list[i].ParentCOM;
+            if (folder != null && folder != list[i]) GenerateDeclared(folder, list[i], newCOMs, false);
         }
 
         List<string> generatedCOMs = new List<string>();

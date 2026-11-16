@@ -73,6 +73,92 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         upgrades.Add(upgrade);
     }
 
+    /// <summary>
+    /// Command whose text (descriptions, display names) this one falls back to when its own yields nothing - a generated
+    /// command names its source (Docs/Interactions/Plan_GeneratedCommands.md §4.1). "" = none.
+    /// </summary>
+    public string textSourceID = "";
+    /// <summary> false: own text is never used, always the text source's (a noSex clone). Ignored without a source. </summary>
+    public bool useOwnText = true;
+    /// <summary> Command whose kojo is tried after this one's own ID (Character_Personality.GetKOJOMessage_Command). "" = none. </summary>
+    public string kojoSourceID = "";
+    /// <summary> false: own ID is never looked up, kojo starts at the source (a noSex clone). Ignored without a source. </summary>
+    public bool useOwnKojo = true;
+
+    COM _textSource = null, _kojoSource = null;
+    [JsonIgnore]
+    public COM TextSource
+    {
+        get
+        {
+            if (_textSource == null && !string.IsNullOrEmpty(textSourceID) && textSourceID != ID) _textSource = scr_System_Serializer.current.MasterList.COMs.GetByID(textSourceID);
+            return _textSource;
+        }
+    }
+    [JsonIgnore]
+    public COM KojoSource
+    {
+        get
+        {
+            if (_kojoSource == null && !string.IsNullOrEmpty(kojoSourceID) && kojoSourceID != ID) _kojoSource = scr_System_Serializer.current.MasterList.COMs.GetByID(kojoSourceID);
+            return _kojoSource;
+        }
+    }
+
+    /// <summary> Own text is read (useOwnText, or no source to read instead). </summary>
+    [JsonIgnore] public bool ReadsOwnText { get { return useOwnText || TextSource == null; } }
+
+    /// <summary> Text that counts as "nothing authored": empty, or only the engine-default marker. </summary>
+    public static bool IsNoText(string s)
+    {
+        return string.IsNullOrWhiteSpace(s) || s.Trim() == "$DEFAULT$";
+    }
+
+    /// <summary> Source chains are followed at most this deep (guards a source cycle in data). </summary>
+    const int MaxSourceDepth = 8;
+    [ThreadStatic] static int textSourceDepth;
+
+    /// <summary>
+    /// Enters the text source for variant variantID of this command: the source and the variant index to read there (the
+    /// same index when the source has it, else -1 = the source's command-level text). Call ExitTextSource after use.
+    /// </summary>
+    public bool EnterTextSource(int variantID, out COM source, out int sourceVariant)
+    {
+        source = TextSource;
+        sourceVariant = -1;
+        if (source == null || textSourceDepth >= MaxSourceDepth) return false;
+        if (variantID >= 0 && variantID < source.variants.Count) sourceVariant = variantID;
+        textSourceDepth++;
+        return true;
+    }
+    public static void ExitTextSource() { textSourceDepth--; }
+
+    /// <summary>
+    /// Kojo IDs tried for this command, in order (Plan_GeneratedCommands.md §4.3): own ID unless useOwnKojo is off, then
+    /// the kojo source's list. The caller adds the suffix.
+    /// </summary>
+    public void GetKojoKeys(List<string> into)
+    {
+        int depth = 0;
+        for (var c = this; c != null && depth <= MaxSourceDepth; c = c.KojoSource, depth++)
+            if (c.useOwnKojo || c.KojoSource == null) into.Add(c.ID);
+    }
+
+    /// <summary>
+    /// The folder parent whose kojo is tried after the key list: this command's own parent, or with useOwnKojo off the
+    /// source's (a noSex clone speaks like its source, whose folder is the authored one).
+    /// </summary>
+    [JsonIgnore]
+    public COM KojoFolderParent
+    {
+        get
+        {
+            var c = this;
+            for (int depth = 0; !c.useOwnKojo && c.KojoSource != null && depth < MaxSourceDepth; depth++) c = c.KojoSource;
+            return c.ParentCOM;
+        }
+    }
+
     [JsonIgnore] public bool isHiddenChild = false;
     /// <summary>
     /// The doer acts on themselves only: receivers are never attached (ActionPackage.ResetRequest drops them), so the
@@ -240,9 +326,22 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
     public bool COMRepeat = false;
     public bool HideWhenInvalid = false;
     public string ID = "";
+    /// <summary>
+    /// Dictionary key of the hover tooltip (command panel / management link text): the `tooltip` key when set, else the
+    /// ID when the dictionary has an entry for it; without either - or with own text off - the text source's
+    /// (Plan_GeneratedCommands.md §4.2: item children show their generator's tooltip). Not a kojo key any more.
+    /// </summary>
     [JsonIgnore] public virtual string tooltipID { get
         {
-            return ID;
+            if (ReadsOwnText)
+            {
+                if (!string.IsNullOrEmpty(tooltip)) return tooltip;
+                // QueryThenParse returns the ID itself when the dictionary has no entry
+                if (TextSource == null || LocalizeDictionary.QueryThenParse(ID) != ID) return ID;
+            }
+            if (!EnterTextSource(-1, out var source, out _)) return ID;
+            try { return source.tooltipID; }
+            finally { ExitTextSource(); }
         } }
 
     public GenerateCOMWithItemTag GenerateCOM = null;
@@ -252,6 +351,138 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         public string itemTag = "";
         public COM targetCOMClass = null;
         public bool hideChild = true;
+        /// <summary> Generated children read their own text / kojo first, then this generator's (Plan_GeneratedCommands.md §4.4). </summary>
+        public bool useOwnText = true;
+        public bool useOwnKojo = true;
+        /// <summary>
+        /// Per item (key = ID of the item carrying itemTag): COM fields laid over targetCOMClass for that item's command only,
+        /// with the GenerateForFurniture template rule (variants merge by index, other fields replace whole) - one item's own
+        /// text (Docs/TextAuthoring/Plan_ItemVariantText.md). Null = every item uses the template as is.
+        /// </summary>
+        public Dictionary<string, Newtonsoft.Json.Linq.JObject> itemOverrides = null;
+    }
+
+    /// <summary>
+    /// Generators declared on a folder parent: every child (and with includeSelf this command) gets a generated command
+    /// `ID + idSuffix` that falls back to it for text and kojo (Docs/Interactions/Plan_GeneratedCommands.md §4.4). Built in
+    /// Index_COM.LateInitialize.
+    /// </summary>
+    public List<GenerateForChildrenDef> GenerateForChildren = null;
+
+    /// <summary>
+    /// Generators declared on a template command: one generated command `ID + idSuffix + "_" + furnitureID` per
+    /// furniture that offers it (Plan_GeneratedCommands.md §4.6) - e.g. the restraint add / remove commands. Built in
+    /// Index_COM.LateInitialize.
+    /// </summary>
+    public List<GenerateForFurnitureDef> GenerateForFurniture = null;
+
+    public class GenerateForFurnitureDef
+    {
+        public string idSuffix = "";
+        /// <summary> Class of the generated command, "$type" style ("COM_Character_Insert, Assembly-CSharp"). </summary>
+        public string comClass = "";
+        /// <summary>
+        /// Laid over a copy of the declaring command: fields replace the copy's, "variants" merge by index. Its text is the
+        /// generated command's own; "$furnitureID$" is replaced with the furniture's ID, "$furniture$" in text is the
+        /// furniture's name at print time.
+        /// </summary>
+        public Newtonsoft.Json.Linq.JObject template = null;
+        public bool useOwnText = true;
+        public bool useOwnKojo = true;
+        /// <summary> IDs of the commands these replace, for old saves (COM_LegacyIDs, Plan_GeneratedCommands.md §4.7). </summary>
+        public List<string> legacyIDs = null;
+    }
+
+    /// <summary>
+    /// Commands made from the same generator template share this key (Index_COM: `&lt;generator&gt;@item`,
+    /// `&lt;template&gt;&lt;suffix&gt;@furniture`); "" = authored or generated alone. Authoring tools treat a key as one unit.
+    /// </summary>
+    [JsonIgnore][NonSerialized] public string generatorKey = "";
+    /// <summary>
+    /// JSON path of the template inside the text source's definition ("GenerateCOM.targetCOMClass",
+    /// "GenerateForFurniture[0].template"); "" = the text source's definition itself. Authoring tools write text back there.
+    /// </summary>
+    [JsonIgnore][NonSerialized] public string generatorTemplatePath = "";
+    /// <summary>
+    /// An item generator's command: the ID of the item it was made for (the GenerateCOM.itemOverrides key - not always the ID
+    /// suffix, e.g. farm recipes are named after the yield item). "" otherwise.
+    /// </summary>
+    [JsonIgnore][NonSerialized] public string generatorItemID = "";
+
+    /// <summary>
+    /// The furniture a generated command belongs to (GenerateForFurniture): offered only by that furniture
+    /// (Job_Furniture.UpdateAllUsableCOMs), "$furniture$" in its text and name is that furniture's name. "" = any.
+    /// </summary>
+    public string targetFurnitureID = "";
+
+    /// <summary> "$furniture$" → the name of targetFurnitureID. </summary>
+    protected string ReplaceFurniture(string s)
+    {
+        if (string.IsNullOrEmpty(targetFurnitureID) || string.IsNullOrEmpty(s) || s.IndexOf("$furniture$", StringComparison.Ordinal) < 0) return s;
+        var furniture = scr_System_Serializer.current.MasterList.Furnitures.GetByID(targetFurnitureID);
+        return furniture == null ? s : s.Replace("$furniture$", furniture.DisplayName);
+    }
+
+    /// <summary> Kind-specific setup of a command made by a generator, after its template is read (e.g. the restraint commands). </summary>
+    public virtual void InitializeGenerated() { }
+
+    public class GenerateForChildrenDef
+    {
+        public string idSuffix = "";
+        /// <summary> Kind-specific edits of the generated command (Index_COM.Transform): "noSex". "" = none. </summary>
+        public string transform = "";
+        public bool includeSelf = false;
+        /// <summary> Upgrades run only inside the parent act, so they usually get no generated command. </summary>
+        public bool skipUpgrades = true;
+        public bool useOwnText = true;
+        public bool useOwnKojo = true;
+    }
+
+    /// <summary>
+    /// Links a generated command to the command it was generated from: text and kojo fall back to source, and with
+    /// ownText / ownKojo off they are never read from the generated command itself (Plan_GeneratedCommands.md §4.1).
+    /// </summary>
+    public void SetGeneratedFrom(COM source, bool ownText, bool ownKojo)
+    {
+        textSourceID = source.ID;
+        kojoSourceID = source.ID;
+        useOwnText = ownText;
+        useOwnKojo = ownKojo;
+        _textSource = null;
+        _kojoSource = null;
+        // a generated command declares no generators of its own (the copy of a declaring command would carry them)
+        GenerateForChildren = null;
+        GenerateForFurniture = null;
+        if (!ownText) ClearOwnText();
+    }
+
+    /// <summary>
+    /// Empties the text a copy carried over (descriptions, names): a command that doesn't use its own text reads its
+    /// source's, never a copy (D3). Variants stay - they hold the requirements.
+    /// </summary>
+    void ClearOwnText()
+    {
+        displayName = "";
+        tooltip = "";
+        description_begin = new COM_Descriptions();
+        description_remove = new COM_Descriptions();
+        description_ongoing = new COM_Descriptions();
+        description_after = new COM_Descriptions();
+        description_onComplete = new COM_Descriptions();
+        for (int i = 0; i < variants.Count; i++)
+        {
+            var v = variants[i];
+            v.displayName = "";
+            v.description_doer_1_0 = v.description_doer_n_0 = v.description_doer_1_n = v.description_doer_n_n = "";
+            v.description_receiver_n_1 = v.description_receiver_n_n = "";
+            v.description_begin = new COM_Descriptions();
+            v.description_remove = new COM_Descriptions();
+            v.description_ongoing = new COM_Descriptions();
+            v.description_after = new COM_Descriptions();
+            v.description_execution_success = new COM_Descriptions();
+            v.description_execution_failure = new COM_Descriptions();
+            v.description_onComplete = new COM_Descriptions();
+        }
     }
 
     public GenerateAPWithTemplate GenerateAP = null;
@@ -700,8 +931,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         // Display-only - no Master actor available here, so requireInventory's checkMaster role is
         // simply skipped (same as passing master: null into GetValidVariant).
         int index = GetValidVariant(sourceJob, doerRefIDs, receiverRefIDs, excludeRequireExisting, actorCountMult);
-        if (index < 0) return LocalizeDictionary.QueryThenParse(this.displayName);
-        else return LocalizeDictionary.QueryThenParse(variants[index].displayName);
+        return ReplaceFurniture(LocalizeDictionary.QueryThenParse(DisplayNameKey(index)));
     }
 
     Dictionary<int, string> _cachedDisplayNames = new Dictionary<int, string>();
@@ -711,10 +941,23 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         if (_cachedDisplayNames.TryGetValue(index, out var name)) return name;
         else
         {
-            var n = index < 0 || index >= variants.Count ? LocalizeDictionary.QueryThenParse(this.displayName) : LocalizeDictionary.QueryThenParse(variants[index].displayName);
+            var n = ReplaceFurniture(LocalizeDictionary.QueryThenParse(DisplayNameKey(index)));
             _cachedDisplayNames.TryAdd(index, n);
             return n;
         }
+    }
+
+    /// <summary>
+    /// Dictionary key of the name of variant index (-1 / out of range = the command's): own key, or the text source's
+    /// when own text is off or the own key is empty (Plan_GeneratedCommands.md §4.2).
+    /// </summary>
+    public string DisplayNameKey(int index)
+    {
+        string own = "";
+        if (ReadsOwnText) own = index < 0 || index >= variants.Count ? this.displayName : variants[index].displayName;
+        if (!string.IsNullOrEmpty(own) || !EnterTextSource(index, out var source, out int sourceVariant)) return own;
+        try { return source.DisplayNameKey(sourceVariant); }
+        finally { ExitTextSource(); }
     }
 
     [JsonIgnore] public bool isJobCOM { get { return !isSleepCOM && comTags.Contains("job"); } }
@@ -1123,7 +1366,13 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
 
     public virtual string GetVariantDescription(int variantID, bool isDoer, int charaRef, string roomName, List<int> DoerRefs, List<int> ReceiverRefs, int masterRef)
     {
-        return variants[variantID].GetVariantDescription(false, isDoer, charaRef, roomName, DoerRefs, ReceiverRefs, masterRef);
+        // own text off: the source's variant line (same index; the source must have that variant)
+        if (!ReadsOwnText && variantID < TextSource.variants.Count && EnterTextSource(variantID, out var source, out _))
+        {
+            try { return ReplaceFurniture(source.GetVariantDescription(variantID, isDoer, charaRef, roomName, DoerRefs, ReceiverRefs, masterRef)); }
+            finally { ExitTextSource(); }
+        }
+        return ReplaceFurniture(variants[variantID].GetVariantDescription(this, false, isDoer, charaRef, roomName, DoerRefs, ReceiverRefs, masterRef));
     }
 
     [System.Serializable]
@@ -1166,7 +1415,81 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         public bool useDefaultEventResult_AP = true;
         public bool useDefaultEventResult_EP = true;
 
+        // Entry points (ActionPackage / EvaluationPackage call these): own text first, then the owner's text source - the
+        // source's variant of the same index, else its command-level text (Plan_GeneratedCommands.md §4.2).
         public string GetDescription_Begin(COM ownerCOM, EvaluationPackage evp)
+        {
+            var s = ownerCOM.ReadsOwnText ? OwnDescription_Begin(ownerCOM, evp) : "";
+            if (!IsNoText(s) || !ownerCOM.EnterTextSource(ownerCOM.variants.IndexOf(this), out var src, out int sv)) return s;
+            try { return sv >= 0 ? src.variants[sv].GetDescription_Begin(src, evp) : src.GetDescription_Begin(evp, -1); }
+            finally { ExitTextSource(); }
+        }
+        public string GetDescription_Begin(COM ownerCOM, ActionPackage ap)
+        {
+            var s = ownerCOM.ReadsOwnText ? OwnDescription_Begin(ownerCOM, ap) : "";
+            if (!IsNoText(s) || !ownerCOM.EnterTextSource(ownerCOM.variants.IndexOf(this), out var src, out int sv)) return s;
+            try { return sv >= 0 ? src.variants[sv].GetDescription_Begin(src, ap) : src.GetDescription_Begin(ap, -1); }
+            finally { ExitTextSource(); }
+        }
+        public string GetDescription_Remove(COM ownerCOM, EvaluationPackage evp)
+        {
+            var s = ownerCOM.ReadsOwnText ? OwnDescription_Remove(ownerCOM, evp) : "";
+            if (!IsNoText(s) || !ownerCOM.EnterTextSource(ownerCOM.variants.IndexOf(this), out var src, out int sv)) return s;
+            try { return sv >= 0 ? src.variants[sv].GetDescription_Remove(src, evp) : src.GetDescription_Remove(evp, -1); }
+            finally { ExitTextSource(); }
+        }
+        public string GetDescription_Ongoing(COM ownerCOM, EvaluationPackage evp)
+        {
+            var s = ownerCOM.ReadsOwnText ? OwnDescription_Ongoing(ownerCOM, evp) : "";
+            if (!IsNoText(s) || !ownerCOM.EnterTextSource(ownerCOM.variants.IndexOf(this), out var src, out int sv)) return s;
+            try { return sv >= 0 ? src.variants[sv].GetDescription_Ongoing(src, evp) : src.GetDescription_Ongoing(evp, -1); }
+            finally { ExitTextSource(); }
+        }
+        public string GetDescription_Ongoing(COM ownerCOM, ActionPackage ap)
+        {
+            var s = ownerCOM.ReadsOwnText ? OwnDescription_Ongoing(ownerCOM, ap) : "";
+            if (!IsNoText(s) || !ownerCOM.EnterTextSource(ownerCOM.variants.IndexOf(this), out var src, out int sv)) return s;
+            try { return sv >= 0 ? src.variants[sv].GetDescription_Ongoing(src, ap) : src.GetDescription_Ongoing(ap, -1); }
+            finally { ExitTextSource(); }
+        }
+        public string GetDescription_After(COM ownerCOM, ActionPackage ap)
+        {
+            var s = ownerCOM.ReadsOwnText ? OwnDescription_After(ownerCOM, ap) : "";
+            if (!IsNoText(s) || !ownerCOM.EnterTextSource(ownerCOM.variants.IndexOf(this), out var src, out int sv)) return s;
+            try { return sv >= 0 ? src.variants[sv].GetDescription_After(src, ap) : src.GetDescription_After(ap, -1); }
+            finally { ExitTextSource(); }
+        }
+        public string GetDescription_After(COM ownerCOM, EvaluationPackage evp)
+        {
+            var s = ownerCOM.ReadsOwnText ? OwnDescription_After(ownerCOM, evp) : "";
+            if (!IsNoText(s) || !ownerCOM.EnterTextSource(ownerCOM.variants.IndexOf(this), out var src, out int sv)) return s;
+            try { return sv >= 0 ? src.variants[sv].GetDescription_After(src, evp) : src.GetDescription_After(evp, -1); }
+            finally { ExitTextSource(); }
+        }
+        public string GetDescription_OnComplete(COM ownerCOM, ActionPackage ap)
+        {
+            var s = ownerCOM.ReadsOwnText ? OwnDescription_OnComplete(ownerCOM, ap) : "";
+            if (IsNoText(s) && ownerCOM.EnterTextSource(ownerCOM.variants.IndexOf(this), out var src, out int sv))
+            {
+                try { s = sv >= 0 ? src.variants[sv].GetDescription_OnComplete(src, ap) : src.GetDescription_OnComplete(ap, -1); }
+                finally { ExitTextSource(); }
+            }
+            // nothing authored anywhere: the generic "(command: result)" line
+            return IsNoText(s) ? $"({ap.targetCOM.DisplayName(ap.COMVariantID)}: {ap.GetResultText(null, true)})" : s;
+        }
+        public string GetDescription_OnComplete(COM ownerCOM, EvaluationPackage evp)
+        {
+            var s = ownerCOM.ReadsOwnText ? OwnDescription_OnComplete(ownerCOM, evp) : "";
+            if (IsNoText(s) && ownerCOM.EnterTextSource(ownerCOM.variants.IndexOf(this), out var src, out int sv))
+            {
+                try { s = sv >= 0 ? src.variants[sv].GetDescription_OnComplete(src, evp) : src.GetDescription_OnComplete(evp, -1); }
+                finally { ExitTextSource(); }
+            }
+            return IsNoText(s) ? $"({evp.targetCOM.DisplayName(evp.Package.COMVariantID)}: {evp.Response})" : s;
+        }
+
+        // Own text of this variant: its block, then useAnothersDescription's, then the command-level text (useBaseDescription).
+        string OwnDescription_Begin(COM ownerCOM, EvaluationPackage evp)
         {
             //Debug.LogError("GetDescription_Begin Variant isOwnerNull?["+ (ownerCOM == null )+ "] useAnotherDesc?["+ useAnothersDescription + "]");
             //if (ownerCOM == null) Debug.LogError("ownerCOM is null");
@@ -1183,7 +1506,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             //Debug.LogError($"GetDescription_Begin: {s2} 2");
             return s2;
         }
-        public string GetDescription_Begin(COM ownerCOM, ActionPackage ap)
+        string OwnDescription_Begin(COM ownerCOM, ActionPackage ap)
         {
             //Debug.LogError("GetDescription_Begin Variant isOwnerNull?["+ (ownerCOM == null )+ "] useAnotherDesc?["+ useAnothersDescription + "]");
             //if (ownerCOM == null) Debug.LogError("ownerCOM is null");
@@ -1201,9 +1524,9 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             return s2;
         }
 
-        public string GetDescription_Remove(COM ownerCOM, EvaluationPackage evp)
+        string OwnDescription_Remove(COM ownerCOM, EvaluationPackage evp)
         {
-            
+
             List<string> s = new List<string>();
             s.Add(description_remove.GetText(ref evp));
             // prevent infinite loop
@@ -1217,7 +1540,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             return s2;
         }
 
-        public string GetDescription_Ongoing(COM ownerCOM, EvaluationPackage evp)
+        string OwnDescription_Ongoing(COM ownerCOM, EvaluationPackage evp)
         {
             List<string> s = new List<string>();
             s.Add(description_ongoing.GetText(ref evp));
@@ -1232,7 +1555,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             //s2 = Utility.StringReplace(ref evp, s2);
             return s2;
         }
-        public string GetDescription_Ongoing(COM ownerCOM, ActionPackage ap)
+        string OwnDescription_Ongoing(COM ownerCOM, ActionPackage ap)
         {
             List<string> s = new List<string>();
             s.Add(description_ongoing.GetText(ap));
@@ -1248,7 +1571,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             return s2;
         }
 
-        public string GetDescription_After(COM ownerCOM, ActionPackage ap)
+        string OwnDescription_After(COM ownerCOM, ActionPackage ap)
         {
             List<string> s = new List<string>();
             s.Add(description_after.GetText(ap));
@@ -1263,7 +1586,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             return s2;
         }
 
-        public string GetDescription_After(COM ownerCOM, EvaluationPackage evp)
+        string OwnDescription_After(COM ownerCOM, EvaluationPackage evp)
         {
             List<string> s = new List<string>();
             s.Add(description_after.GetText(ref evp));
@@ -1278,7 +1601,8 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             return s2;
         }
 
-        public string GetDescription_OnComplete(COM ownerCOM, ActionPackage ap)
+        // the generic "(command: result)" line for nothing authored is added by the entry point, after the source fallback
+        string OwnDescription_OnComplete(COM ownerCOM, ActionPackage ap)
         {
             List<string> s = new List<string>();
             s.Add(description_onComplete.GetText(ap));
@@ -1288,15 +1612,11 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
 
             s.RemoveAll(x => x == "$DEFAULT$");
             s.RemoveAll(x => x.Length < 1);
-            if (s.Count < 1)
-            {
-                s.Add($"({ap.targetCOM.DisplayName(ap.COMVariantID)}: {ap.GetResultText(null, true)})");
-            }
             string s2 = String.Join("\n", s);
             return s2;
         }
 
-        public string GetDescription_OnComplete(COM ownerCOM, EvaluationPackage evp)
+        string OwnDescription_OnComplete(COM ownerCOM, EvaluationPackage evp)
         {
             List<string> s = new List<string>();
             s.Add(description_onComplete.GetText(ref evp));
@@ -1306,12 +1626,17 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
 
             s.RemoveAll(x => x == "$DEFAULT$");
             s.RemoveAll(x => x.Length < 1);
-            if (s.Count < 1) s.Add($"({evp.targetCOM.DisplayName(evp.Package.COMVariantID)}: {evp.Response})");
             string s2 = String.Join("\n", s);
             return s2;
         }
 
         public string GetVariantDescription(bool withSelfDescription, bool isDoer, int charaRef, string roomName, List<int> doers, List<int> receivers, int masterRef)
+        {
+            return GetVariantDescription(null, withSelfDescription, isDoer, charaRef, roomName, doers, receivers, masterRef);
+        }
+
+        /// <summary> ownerCOM (optional): $comdesc$ uses its resolved name for this variant (text source fallback). </summary>
+        public string GetVariantDescription(COM ownerCOM, bool withSelfDescription, bool isDoer, int charaRef, string roomName, List<int> doers, List<int> receivers, int masterRef)
         {
             string baseDesc = "";
 
@@ -1345,7 +1670,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             UtilityEX.GetActorNames(receivers, out List<string> names_receiver, out List<string> names_receiver_other, charaRef);
 
             baseDesc = LocalizeDictionary.QueryThenParse(baseDesc)
-                .Replace("$comdesc$", LocalizeDictionary.QueryThenParse(this.displayName))
+                .Replace("$comdesc$", LocalizeDictionary.QueryThenParse(ownerCOM != null ? ownerCOM.DisplayNameKey(ownerCOM.variants.IndexOf(this)) : this.displayName))
                 //.Replace("$room$",roomName)
                 .Replace("$other_doers$", String.Join(",", names_doers_other))
                 .Replace("$doers$", String.Join(",", names_doers))
@@ -1502,7 +1827,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
                 // error
 
             }
-            else
+            else if (job != null && job.FactionOwner != null && job.FactionOwner.Inventory != null)
             {
                 var items = job.FactionOwner.Inventory.GetItemByTag(this.GenerateAP.itemTag);
                 foreach (var item in items)
@@ -1581,6 +1906,6 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
 
    public virtual string Replace(string s)
     {
-        return s;
+        return ReplaceFurniture(s);
     }
 }

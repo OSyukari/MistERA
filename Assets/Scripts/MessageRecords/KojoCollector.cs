@@ -178,8 +178,8 @@ public class KojoCollector : I_ResultStorage, I_Records
         }
         set
         {
+            // a noSex command speaks with its source's kojo through COM.useOwnKojo / kojoSourceID (Character_Personality.GetKOJOMessage_Command)
             if (value == null || value.Length < 1) _eventID = "";
-            else if (value.Length > 0 && value.Contains("_noSex")) _eventID = value.Substring(0, value.Length - 6);
             else _eventID = value;
         }
     }

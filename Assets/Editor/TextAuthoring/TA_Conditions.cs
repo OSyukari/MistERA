@@ -13,6 +13,19 @@ public class TA_KojoContext
     public bool playerInvolved = true;
     /// <summary>Kojo fetched without an action package (events): the EP checks (accepted/refused/result) don't run.</summary>
     public bool noEP;
+
+    // ---- case mode (Docs/TextAuthoring/Plan_CommandCases.md §5): null = not modelled, the check is skipped as before
+
+    /// <summary>The speaker's / listener's tags in this case (sleeping, unconscious, timestop, justWokenUp, …).</summary>
+    public List<string> selfTags, targetTags;
+    /// <summary>Whether the speaker / listener can act (Character_Trainable.canAct: conscious and not time-stopped).</summary>
+    public bool? selfCanAct, targetCanAct;
+    /// <summary>The listener is the player (targetBaseID PLAYER).</summary>
+    public bool? listenerIsPlayer;
+    /// <summary>D20 result of an accepted act (Success / Failure …); null = no result split.</summary>
+    public Memory_Response? result;
+    /// <summary>The act is the strong (setForce) variant.</summary>
+    public bool? strong;
 }
 
 /// <summary>
@@ -229,6 +242,35 @@ public static class TA_Conditions
             if (!r.requireEPFailure && r.requireEPSuccess && !ctx.accepted) return false;
             if (r.requireEPSuccessGTE != Memory_Response.None && !ctx.accepted) return false;
             if (!string.IsNullOrEmpty(r.targetBaseID) && r.targetBaseID == "PLAYER" && !ctx.playerInvolved) return false;
+            // case mode: the D20 result level (Memory_Response order: Failure < Success < CriticalSuccess)
+            if (ctx.result.HasValue && r.requireEPSuccessGTE > Memory_Response.Accept && ctx.result.Value < r.requireEPSuccessGTE) return false;
+        }
+        return AppliesCase(v, r, ctx);
+    }
+
+    /// <summary>
+    /// Case-mode checks (Plan_CommandCases.md §5), mirroring ResponseEntryVariant.Requirement.Validate: requireSelfAction /
+    /// requireTargetAction (default true) against who can act, self / target tags (all required present, excluded absent),
+    /// targetBaseID PLAYER against the listener, requireCOMStrongVariant. Each check runs only when the case sets it.
+    /// </summary>
+    static bool AppliesCase(ResponseEntry.Variant v, ResponseEntry.Variant.Requirement r, TA_KojoContext ctx)
+    {
+        if (ctx.strong.HasValue && v.requireCOMStrongVariant && !ctx.strong.Value) return false;
+        bool requireSelfAction = r == null || r.requireSelfAction;
+        bool requireTargetAction = r == null || r.requireTargetAction;
+        if (ctx.selfCanAct.HasValue && requireSelfAction && !ctx.selfCanAct.Value) return false;
+        if (ctx.targetCanAct.HasValue && requireTargetAction && !ctx.targetCanAct.Value) return false;
+        if (r == null) return true;
+        if (ctx.listenerIsPlayer.HasValue && r.targetBaseID == "PLAYER" && !ctx.listenerIsPlayer.Value) return false;
+        if (ctx.selfTags != null)
+        {
+            if (r.selfTags != null && r.selfTags.Count > 0 && !Utility.ListContainsStrict(ctx.selfTags, r.selfTags)) return false;
+            if (r.excludeSelfTags != null && r.excludeSelfTags.Count > 0 && Utility.ListContainsLoose(ctx.selfTags, r.excludeSelfTags)) return false;
+        }
+        if (ctx.targetTags != null)
+        {
+            if (r.targetTags != null && r.targetTags.Count > 0 && !Utility.ListContainsStrict(ctx.targetTags, r.targetTags)) return false;
+            if (r.excludeTargetTags != null && r.excludeTargetTags.Count > 0 && Utility.ListContainsLoose(ctx.targetTags, r.excludeTargetTags)) return false;
         }
         return true;
     }

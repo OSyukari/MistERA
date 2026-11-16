@@ -9,14 +9,6 @@ public class COM_UseItemCOM : COM
 {
 
     Item_Base targetItem = null;
-    [JsonIgnore]
-    public override string tooltipID
-    {
-        get
-        {
-            return parentCOMID;
-        }
-    }
 
     [JsonIgnore]
     public Item_Base InnerItem { get { return targetItem; } }

@@ -344,23 +344,42 @@ public class Character_Personality
         return texts.Count > 0;
     }
 
+    /// <summary> Reused by GetKOJOMessage_Command (consumed before any recursive lookup). </summary>
+    static readonly List<string> kojoKeyBuffer = new List<string>();
+
     MessageCollect_KojoEntry GetKOJOMessage_Command(KojoCollector kol)
     { if (kol.Owner.RefID == 0) return null;
-        var key = $"{kol.eventID}{kol.suffix}";
 
         if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Character_Personality GetKOJOMessage evID[{kol.eventID}{kol.suffix}] [{(kol.Owner.FirstName)}{(kol.Target == null ? "" : $" -> {kol.Target.FirstName}")}]\nSelftags: {String.Join(" ", kol.SelfTags)}\nTargetTags: {String.Join(" ", kol.TargetTags)}");
 
-        if (!entries.ContainsKey(key))
+        // a command tries its own ID, then its kojo source's (Docs/Interactions/Plan_GeneratedCommands.md §4.3);
+        // anything that isn't a command (events, triggers) is the one key
+        var com = scr_System_Serializer.current.MasterList.COMs.GetByID(kol.eventID);
+        string key = null;
+        if (com != null)
         {
-            // command fallback
-            var com = scr_System_Serializer.current.MasterList.COMs.GetByID(kol.eventID);
+            kojoKeyBuffer.Clear();
+            com.GetKojoKeys(kojoKeyBuffer);
+            for (int i = 0; i < kojoKeyBuffer.Count && key == null; i++)
+            {
+                var k = kojoKeyBuffer[i] + kol.suffix;
+                if (entries.ContainsKey(k)) key = k;
+            }
+            kojoKeyBuffer.Clear();
+        }
+        else if (entries.ContainsKey(kol.eventID + kol.suffix)) key = kol.eventID + kol.suffix;
+
+        if (key == null)
+        {
+            // command fallback: the folder parent (the source's, for a command that doesn't use its own kojo)
+            var parent = com?.KojoFolderParent;
             // an upgrade without its own lines falls back to its parent's in GetKOJOMessage, not to its folder parent
-            if (com != null && com.ParentCOM != null && !com.IsUpgrade)
+            if (com != null && parent != null && !com.IsUpgrade)
             {
                 var backup = kol.eventID;
-                kol.eventID = com.ParentCOM.ID;
+                kol.eventID = parent.ID;
                 var parentkey = $"{kol.eventID}{kol.suffix}";
-                if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojomessage miss on com {key}, hasparent, checking has [{parentkey}] {entries.ContainsKey(parentkey)}");
+                if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojomessage miss on com {backup}{kol.suffix}, hasparent, checking has [{parentkey}] {entries.ContainsKey(parentkey)}");
 
                 if (entries.ContainsKey(parentkey))
                 {

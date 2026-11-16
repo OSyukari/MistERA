@@ -406,6 +406,25 @@ public static class TA_Changes
     }
 
     /// <summary>
+    /// Whose task fixes a finding (Docs/TextAuthoring/Plan_TaskReorg.md §4): a kojo variant / entry finding belongs to the
+    /// personality providing it, a lookup gap (missingEntry, silentEventFailure) to the personality looking it up, the
+    /// rest (narration, event structure) to the unit. "personality|&lt;pid&gt;" or "unit|&lt;unit&gt;".
+    /// </summary>
+    public static string FindingOwner(JObject f, string targetKey, string unit)
+    {
+        var provider = (string)f["provider"];
+        if (string.IsNullOrEmpty(provider) && targetKey != null && (targetKey.StartsWith("kojo|", StringComparison.Ordinal) || targetKey.StartsWith("entry|", StringComparison.Ordinal)))
+        {
+            var parts = targetKey.Split('|');
+            if (parts.Length > 1) provider = parts[1];
+        }
+        if (!string.IsNullOrEmpty(provider)) return "personality|" + provider;
+        var pid = (string)f["pid"];
+        if (!string.IsNullOrEmpty(pid)) return "personality|" + pid;
+        return "unit|" + unit;
+    }
+
+    /// <summary>
     /// Rebuilds changes/findings.json from every stored snapshot (shared + personality layers) and merges it into the
     /// index: one record per (finding type, rule, target) with the units it appears in. Findings no longer extracted
     /// become resolved. Runs after Extract / Re-extract; nothing here needs play mode.
@@ -474,6 +493,7 @@ public static class TA_Changes
                 ["targetKey"] = targetKey,
                 ["handle"] = f["handle"],
                 ["personality"] = f["pid"],
+                ["owner"] = FindingOwner(f, targetKey, unit),
                 ["units"] = new JArray(unit),
                 ["issue"] = new JObject
                 {
@@ -503,9 +523,9 @@ public static class TA_Changes
     // ---------------------------------------------------------------- import run
 
     /// <summary>
-    /// Import run (§6): every output a run folder holds - filled writer docs (*.writer.md + *.manifest.json → text
-    /// records), analysis reports (*.analysis.json → unit analysis state + structural records), a coder report
-    /// (_coder_report.json → handed-off records applied / back to approved). Re-importing the same folder is idempotent.
+    /// Import run (§6): every output a run folder holds - filled task docs (*.writer.md + *.manifest.json → text and
+    /// new-entry records, 待补场景 notes), a coder report (_coder_report.json → handed-off records applied / back to
+    /// approved). Re-importing the same folder is idempotent.
     /// </summary>
     public static string ImportRun(string runDir)
     {
@@ -522,13 +542,12 @@ public static class TA_Changes
         var stale = new Dictionary<string, bool>();
 
         int writerDocs = ImportWriterDocs(runDir, batch, store, records, byId, stale, log);
-        int reports = ImportAnalysis(runDir, batch, store, records, byId, log);
         int coder = ImportCoderReport(runDir, index, log);
 
-        if (writerDocs + reports + coder == 0)
+        if (writerDocs + coder == 0)
         {
             if (reviewed > 0) SaveIndex(index);
-            return $"Nothing to import in {runDir} (no filled *.writer.md, *.analysis.json or _coder_report.json)\n{log}";
+            return $"Nothing to import in {runDir} (no filled *.writer.md or _coder_report.json)\n{log}";
         }
 
         int added = 0, reopened = 0;
@@ -543,9 +562,8 @@ public static class TA_Changes
             SaveBatch(batch, "run", records);
             Merge(index, records, stale, ref added, ref reopened);
         }
-        if (reports > 0) TA_Store.SaveIndex(store);
         SaveIndex(index);
-        return $"Imported {batch}: {writerDocs} writer doc(s), {reports} analysis report(s){(coder > 0 ? $", coder report ({coder} record(s))" : "")} → {records.Count} record(s) in the batch, {added} new, {reopened} reopened\n{Summary(index)}\n{log}";
+        return $"Imported {batch}: {writerDocs} doc(s){(coder > 0 ? $", coder report ({coder} record(s))" : "")} → {records.Count} record(s) in the batch, {added} new, {reopened} reopened\n{Summary(index)}\n{log}";
     }
 
     // -------- writer docs
@@ -583,7 +601,14 @@ public static class TA_Changes
                 var liveTexts = slot["liveTexts"] as JArray ?? slot["texts"] as JArray ?? new JArray();
                 bool pending = false;
                 for (int i = 0; i < lines.Count; i++) if (lines[i] == "待写") pending = true;
+                // optional slots (an inherited kojo, a new narration entry) left as they were: nothing to import
+                if (pending && ((bool?)slot["optional"] ?? false)) continue;
                 if (pending) { log.AppendLine($"  {unit} 【{h}】 still has 待写 - skipped"); skipped++; continue; }
+                if ((string)slot["kind"] == "newEntry")
+                {
+                    if (NewEntryRecord(slot, lines, unit, batch, h, records, byId)) changed++;
+                    continue;
+                }
                 bool multiLine = slot.Value<bool?>("multiLine") ?? (string)slot["kind"] != "event_text";
                 if (!multiLine && lines.Count > 1) { log.AppendLine($"  {unit} 【{h}】 single-line slot has {lines.Count} lines - skipped"); skipped++; continue; }
                 // manifests rendered before rev 10 have no target: rebuilt from the slot's location fields
@@ -650,6 +675,53 @@ public static class TA_Changes
     }
 
     /// <summary>
+    /// A filled new-entry slot of a completion doc (Plan_TaskReorg.md §9.1): `条件：` / `位置：` lines describe the entry,
+    /// the rest are its lines. One structural record (issue newEntry) - approved, Apply hands it to the coder task.
+    /// </summary>
+    static bool NewEntryRecord(JObject slot, List<string> lines, string unit, string batch, string h, List<JObject> records, Dictionary<string, JObject> byId)
+    {
+        string condition = "", position = "";
+        var texts = new JArray();
+        for (int i = 0; i < lines.Count; i++)
+        {
+            var l = lines[i];
+            if (l.StartsWith("条件：", StringComparison.Ordinal)) condition = l.Substring(3).Trim();
+            else if (l.StartsWith("位置：", StringComparison.Ordinal)) position = l.Substring(3).Trim();
+            else if (l != "") texts.Add(l);
+        }
+        if (texts.Count < 1) return false;
+        var targetKey = (string)slot["targetKey"];
+        var id = RecordId($"{batch}|{targetKey}|{condition}|{texts.ToString(Formatting.None)}");
+        if (byId.ContainsKey(id)) return false;
+        var field = (string)slot["field"];
+        var record = new JObject
+        {
+            ["id"] = id,
+            ["batch"] = batch,
+            ["origin"] = "completion",
+            ["kind"] = "structural",
+            ["target"] = slot["target"],
+            ["targetKey"] = targetKey,
+            ["handle"] = h,
+            ["personality"] = null,
+            ["units"] = new JArray(unit),
+            ["new"] = texts,
+            ["entry"] = new JObject { ["com"] = slot["com"], ["field"] = field, ["condition"] = condition, ["position"] = position },
+            ["issue"] = new JObject
+            {
+                ["type"] = "newEntry",
+                ["problem"] = $"新增旁白条目 {slot["com"]} {field}",
+                ["evidence"] = "",
+                ["proposal"] = $"条件：{(condition == "" ? "（未写）" : condition)} ｜ 位置：{(position == "" ? "（未写）" : position)}"
+            },
+            ["createdAt"] = Now()
+        };
+        records.Add(record);
+        byId[id] = record;
+        return true;
+    }
+
+    /// <summary>
     /// The writer's `## 待补场景` notes (missing branches, scenes, condition doubts): one structural record per bullet on
     /// the unit, so they reach review and later docs (已提出) instead of staying in the run folder.
     /// </summary>
@@ -692,116 +764,9 @@ public static class TA_Changes
         return n;
     }
 
-    // -------- analysis reports
-
-    /// <summary>
-    /// Analysis reports: the unit's analysis state as before (verdict, structHash check, Store/analysis/ copy), plus one
-    /// structural record per issue. A tool issue the analyst left as it was is already a findings record and is skipped.
-    /// </summary>
-    static int ImportAnalysis(string runDir, string batch, JObject store, List<JObject> records, Dictionary<string, JObject> byId, StringBuilder log)
-    {
-        var files = Directory.GetFiles(runDir, "*.analysis.json");
-        Array.Sort(files, StringComparer.Ordinal);
-        int imported = 0;
-        for (int i = 0; i < files.Length; i++)
-        {
-            var unit = Path.GetFileName(files[i]);
-            unit = unit.Substring(0, unit.Length - ".analysis.json".Length);
-            var row = TA_Store.Row(store, unit);
-            if (row == null) { log.AppendLine($"  {unit}: not in store"); continue; }
-            JObject report;
-            try { report = ParseJson(File.ReadAllText(files[i])); }
-            catch (Exception e) { log.AppendLine($"  {unit}: unreadable ({e.Message})"); continue; }
-            var verdict = (string)report["verdict"];
-            if (verdict != "clean" && verdict != "blocking") { log.AppendLine($"  {unit}: no verdict yet (clean / blocking)"); continue; }
-            var reportHash = (string)report["structHash"];
-            var currentHash = (string)row["hashes"]?["struct"];
-            if (!string.IsNullOrEmpty(reportHash) && reportHash != currentHash) { log.AppendLine($"  {unit}: stale report (structure changed since the analysis task) - re-render and re-analyze"); continue; }
-            // a report without structHash comes from a run rendered before the store: its issues become records,
-            // but it can't vouch for the current structure, so the unit's analysis state stays as it is
-            bool legacy = string.IsNullOrEmpty(reportHash);
-            if (legacy)
-            {
-                // kept for reference (coverage tables, wording) apart from the current reports
-                var keep = Path.Combine(TA_Store.AnalysisDir, "legacy", TA_Store.Safe(batch));
-                Directory.CreateDirectory(keep);
-                File.Copy(files[i], Path.Combine(keep, unit + ".analysis.json"), true);
-            }
-            else
-            {
-                Directory.CreateDirectory(TA_Store.AnalysisDir);
-                File.Copy(files[i], Path.Combine(TA_Store.AnalysisDir, unit + ".analysis.json"), true);
-                row["analysis"] = new JObject
-                {
-                    ["state"] = verdict,
-                    ["structHash"] = currentHash,
-                    ["report"] = "analysis/" + unit + ".analysis.json",
-                    ["importedAt"] = Now(),
-                    ["from"] = batch
-                };
-                row["status"] = "analyzed-" + verdict;
-            }
-            imported++;
-
-            int n = 0;
-            if (report["issues"] is JArray issues)
-            {
-                // handles of this run's docs (legacy numbered ones too) → targets via the run's manifest, else the store
-                Dictionary<string, string> targets = ManifestTargets(Path.Combine(runDir, unit + ".manifest.json"));
-                StoreSlots stored = null;
-                for (int k = 0; k < issues.Count; k++)
-                {
-                    if (!(issues[k] is JObject issue)) continue;
-                    bool tool = (string)issue["source"] == "tool";
-                    var proposal = (string)issue["proposal"] ?? "";
-                    var evidence = (string)issue["evidence"] ?? "";
-                    if (tool && proposal == "" && evidence == "" && issue["blocking"]?.Type != JTokenType.Boolean) continue;
-                    var target = (string)issue["target"];
-                    var targetKey = (string)issue["targetKey"];
-                    var slot = (string)issue["slot"];
-                    if (target == null && !string.IsNullOrEmpty(slot))
-                    {
-                        if (!targets.TryGetValue(slot, out var tk))
-                        {
-                            if (stored == null) stored = StoreSlots.Load(unit, row);
-                            stored.handles.TryGetValue(slot, out tk);
-                        }
-                        if (tk != null) { targetKey = tk; target = TA_DocBuilderBase.TargetId(tk); }
-                    }
-                    if (target == null) { targetKey = $"unit|{unit}"; target = TA_DocBuilderBase.TargetId(targetKey); }
-                    var id = RecordId($"{batch}|{unit}|{(string)issue["id"]}");
-                    var ops = issue["ops"] as JArray;
-                    var record = new JObject
-                    {
-                        ["id"] = id,
-                        ["batch"] = batch,
-                        ["origin"] = tool ? "tool+analyst" : "analyst",
-                        ["kind"] = "structural",
-                        ["target"] = target,
-                        ["targetKey"] = targetKey,
-                        ["handle"] = slot,
-                        ["personality"] = issue["personality"],
-                        ["units"] = new JArray(unit),
-                        ["base"] = new JObject { ["structHash"] = legacy ? null : currentHash },
-                        ["issue"] = issue.DeepClone(),
-                        ["createdAt"] = Now()
-                    };
-                    if (ops != null && ops.Count > 0) record["ops"] = ops.DeepClone();
-                    if (byId.ContainsKey(id)) continue;
-                    records.Add(record);
-                    byId[id] = record;
-                    n++;
-                }
-            }
-            log.AppendLine($"  {unit}: {verdict}, {n} issue record(s){(legacy ? " (report without structHash: unit analysis state unchanged)" : "")}");
-        }
-        return imported;
-    }
-
-    /// <summary>A unit's slots in the store (last extraction): handle → target key, target key → current texts.</summary>
+    /// <summary>A unit's slots in the store (last extraction): target key → current texts.</summary>
     class StoreSlots
     {
-        public readonly Dictionary<string, string> handles = new Dictionary<string, string>();
         public readonly Dictionary<string, JArray> texts = new Dictionary<string, JArray>();
 
         public static StoreSlots Load(string unit, JObject row)
@@ -826,32 +791,11 @@ public static class TA_Changes
                 {
                     var tk = (string)p.Value["targetKey"];
                     if (tk == null) continue;
-                    handles[p.Name] = tk;
                     if (p.Value["texts"] is JArray t) texts[tk] = t;
                 }
             }
             catch (Exception) { }
         }
-    }
-
-    /// <summary>handle → target key from a run's manifest (stored targets, or rebuilt for manifests from before rev 10).</summary>
-    static Dictionary<string, string> ManifestTargets(string manifestPath)
-    {
-        var map = new Dictionary<string, string>();
-        if (!File.Exists(manifestPath)) return map;
-        try
-        {
-            var m = ParseJson(File.ReadAllText(manifestPath));
-            if (m["slots"] is JObject slots)
-                foreach (var p in slots.Properties())
-                {
-                    if (!(p.Value is JObject slot)) continue;
-                    var tk = (string)slot["targetKey"] ?? LegacyTargetKey(slot);
-                    if (tk != null) map[p.Name] = tk;
-                }
-        }
-        catch (Exception) { }
-        return map;
     }
 
     /// <summary>

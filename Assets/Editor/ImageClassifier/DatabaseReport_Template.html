@@ -65,7 +65,7 @@ section.cat h2 .n { color: var(--muted); font-weight: 400; }
 .row:last-child { border-bottom: none; }
 .row .name { flex: 0 0 170px; padding: 6px 10px; border-right: 1px solid var(--line); word-break: break-word; }
 .row .name b { display: block; }
-.row .name small { color: var(--muted); }
+.row .name small { color: var(--muted); display: block; }
 .row .name small .w-low { color: var(--low); }
 .row .name small .w-unmatched { color: var(--unmatched); }
 .row .thumbs { flex: 1; display: flex; flex-wrap: wrap; gap: 4px; padding: 5px; align-content: flex-start; min-width: 0; }
@@ -78,6 +78,18 @@ section.cat h2 .n { color: var(--muted); font-weight: 400; }
 .thumbs a.named::after { content: "✎"; position: absolute; right: 1px; bottom: 0; font-size: 11px; line-height: 1; padding: 1px 2px; border-radius: 2px;
   background: var(--panel); color: var(--text); opacity: .85; }
 .thumbs a:hover, .thumbs a.sel { outline: 2px solid var(--accent); outline-offset: 1px; }
+.thumbs a .uses { position: absolute; left: 1px; top: 1px; font-size: 10px; line-height: 1; padding: 1px 3px; border-radius: 2px;
+  background: var(--panel); color: var(--text); opacity: .85; pointer-events: none; }
+.thumbs a .uses.none { color: var(--unmatched); font-weight: 700; }
+.thumbs a .uses.part { color: var(--low); font-weight: 700; }
+section.cat h3.handler { font-size: 13px; font-weight: 600; margin: 10px 0 4px; color: var(--muted); }
+section.cat h3.handler b { color: var(--text); }
+.thumbs a.shadowed img { opacity: .35; }
+.row.empty-variant .name { color: var(--muted); }
+.row.empty-variant .name b { font-weight: 400; }
+section.cat h2.handler-title { font-weight: 400; }
+section.cat h2.handler-title b { font-weight: 700; }
+.row .name small.shadow { color: var(--low); display: block; }
 .thumbs a.picked { outline: 3px solid var(--pick); outline-offset: 1px; }
 .thumbs a.picked::before { content: ""; position: absolute; inset: 0; background: var(--pick-bg); pointer-events: none; }
 .thumbs a img { -webkit-user-drag: none; user-select: none; }
@@ -105,6 +117,7 @@ section.cat h2 .n { color: var(--muted); font-weight: 400; }
 #details dt { color: var(--muted); font-size: 12px; margin-top: 6px; }
 #details dd { margin: 0; word-break: break-word; }
 #details .tags { line-height: 1.7; }
+#details .w-low { color: var(--low); }
 
 @media (max-width: 640px) {
   header, main, .toolbar { padding-left: 16px; padding-right: 16px; }
@@ -120,6 +133,18 @@ section.cat h2 .n { color: var(--muted); font-weight: 400; }
 </header>
 
 <div class="toolbar">
+  <label id="view-label" hidden title="Classification: how each image was classified. Portrait handler: the global portrait handler template applied to every folder root, in its priority order; an image is shown once per variant that holds it">View <select id="f-view">
+    <option value="class">Classification</option>
+    <option value="handler">Portrait handler</option>
+  </select></label>
+  <label id="empty-label" hidden title="Portrait handler view: also list every handler variant of the template that holds no image (in any folder, or none that passes the filters)"><input type="checkbox" id="f-empty"> Show empty variants</label>
+  <label id="use-label" hidden title="Variants of the portrait handler holding the image. Shadowed = an earlier variant of the same handler always matches first">Handler use <select id="f-use">
+    <option value="">All images</option>
+    <option value="none">In no variant</option>
+    <option value="reach">In a reachable variant</option>
+    <option value="never">Only in shadowed variants</option>
+    <option value="shadow">In a shadowed variant</option>
+  </select></label>
   <label>Category <select id="f-cat"><option value="">All</option></select></label>
   <label>Folder <select id="f-folder"><option value="">All</option></select></label>
   <label>Show <select id="f-status">
@@ -161,6 +186,7 @@ section.cat h2 .n { color: var(--muted); font-weight: 400; }
     <span>no frame = confident</span><span class="l-low">low confidence</span><span class="l-unmatched">unmatched</span>
     <span class="l-disagree">folder decided, rules disagree</span><span class="l-kept">moved out by you</span>
     <span class="l-name">file name used in analysis</span>
+    <span id="uses-help" hidden>corner number = reachable / all portrait handler variants holding the image</span>
     <span>hover = large preview · click = details · ctrl/middle click = open image</span>
     <span id="sel-help" hidden>drag = select images · shift+drag = add · alt+drag = remove · alt+click = toggle one</span>
   </div>
@@ -209,6 +235,33 @@ window.REPORT = /*__REPORT_DATA__*/null;
       all.push(it);
     });
   });
+
+  // ---- portrait handler use (R.portrait, PortraitUsage.cs): every item's variants; all[] index = the global item index there
+  var P = R.portrait && !R.portrait.error ? R.portrait : null;
+  if (P) {
+    P.roots.forEach(function (root, ri) {
+      root.slots.forEach(function (s) {
+        s.items.forEach(function (g) {
+          var it = all[g];
+          if (!it) return;
+          (it.slots || (it.slots = [])).push({ root: ri, slot: s });
+          it.nSlots = (it.nSlots || 0) + 1;
+          if (s.shadow < 0) it.nReach = (it.nReach || 0) + 1;
+        });
+      });
+    });
+    P.unplaced.forEach(function (u) { if (all[u[0]]) all[u[0]].unplaced = u[1]; });
+    all.forEach(function (it) { it.nSlots = it.nSlots || 0; it.nReach = it.nReach || 0; });
+  }
+  function handlerLabel(h) {
+    var x = P.handlers[h];
+    return "<b>" + esc(x.folders.join(", ")) + "</b> · self " + esc(x.self.length ? x.self.join(" + ") : "(any)") +
+           " · target " + esc(x.target.length ? x.target.join(" + ") : "(any)");
+  }
+  function variantLabel(v) {
+    var x = P.variants[v];
+    return (x.tags.length ? x.tags.join(" + ") : "(no tags: always)") + (x.excl.length ? " · not " + x.excl.join(", ") : "");
+  }
 
   // ---- group: categories by size, class names alphabetically, images by folder then path
   var catByKey = {}, cats = [];
@@ -275,7 +328,19 @@ window.REPORT = /*__REPORT_DATA__*/null;
 
   // ---- filters
   var catSel = $("f-cat"), folderSel = $("f-folder"), statusSel = $("f-status"), namedSel = $("f-named"),
-      classIn = $("f-class"), fileIn = $("f-file"), sizeIn = $("f-size"), previewSel = $("f-preview");
+      classIn = $("f-class"), fileIn = $("f-file"), sizeIn = $("f-size"), previewSel = $("f-preview"),
+      viewSel = $("f-view"), useSel = $("f-use"), emptyIn = $("f-empty");
+  if (P) {
+    $("view-label").hidden = false;
+    $("empty-label").hidden = false;
+    emptyIn.checked = store.get("empty", "0") === "1";
+    $("use-label").hidden = false;
+    $("uses-help").hidden = false;
+    viewSel.value = store.get("view", "class");
+    useSel.value = store.get("use", "");
+  } else if (R.portrait && R.portrait.error) {
+    $("meta").innerHTML += " · " + esc(R.portrait.error);
+  }
   cats.forEach(function (c, i) {
     var o = document.createElement("option"); o.value = c.id; o.textContent = c.id + " (" + c.count + ")"; catSel.appendChild(o);
   });
@@ -308,6 +373,14 @@ window.REPORT = /*__REPORT_DATA__*/null;
     if (named === "used" && !it.nameUsed) return false;
     if (named === "unused" && it.nameUsed) return false;
     for (var i = 0; i < fileTerms.length; i++) if (it.search.indexOf(fileTerms[i]) < 0) return false;
+    if (P) {
+      switch (useSel.value) {
+        case "none": if (it.nSlots) return false; break;
+        case "reach": if (!it.nReach) return false; break;
+        case "never": if (!it.nSlots || it.nReach) return false; break;
+        case "shadow": if (it.nSlots <= it.nReach) return false; break;
+      }
+    }
     switch (status) {
       case "": return true;
       case "flagged": return frameClass(it) !== "";
@@ -322,7 +395,18 @@ window.REPORT = /*__REPORT_DATA__*/null;
   // items in the order they are shown (data-i on each thumb)
   var items = [];
 
+  // one thumbnail; an item may be drawn several times (handler view), each drawing has its own data-i
+  function thumb(it, shadowedBy) {
+    var idx = items.length; items.push(it);
+    var uses = "", shadowed = shadowedBy != null && shadowedBy >= 0;
+    if (P) uses = '<span class="uses' + (!it.nReach ? " none" : it.nReach < it.nSlots ? " part" : "") + '">' + it.nReach + "/" + it.nSlots + "</span>";
+    return '<a class="' + frameClass(it) + (it.nameUsed ? " named" : "") + (it.picked ? " picked" : "") + (shadowed ? " shadowed" : "") + '" href="' + esc(it.src) +
+           '" data-i="' + idx + '"' + (shadowed ? ' title="shadowed in its folder by ' + esc(variantLabel(shadowedBy)) + '"' : "") +
+           ' target="_blank" draggable="false"><img src="' + esc(it.src) + '" loading="lazy" alt="" draggable="false">' + uses + "</a>";
+  }
+
   function render() {
+    if (P && viewSel.value === "handler") { renderHandlers(); return; }
     var cat = catSel.value, folder = folderSel.value, status = statusSel.value, named = namedSel.value;
     var q = classIn.value.trim().toLowerCase(), fileTerms = terms(fileIn.value);
     var html = "", shown = 0;
@@ -338,9 +422,7 @@ window.REPORT = /*__REPORT_DATA__*/null;
           n++;
           if (!it.keptOut && it.status === "low") low++;
           if (!it.keptOut && it.status === "unmatched") un++;
-          var idx = items.length; items.push(it);
-          thumbs += '<a class="' + frameClass(it) + (it.nameUsed ? " named" : "") + (it.picked ? " picked" : "") + '" href="' + esc(it.src) + '" data-i="' + idx +
-                    '" target="_blank" draggable="false"><img src="' + esc(it.src) + '" loading="lazy" alt="" draggable="false"></a>';
+          thumbs += thumb(it);
         });
         if (!n) return;
         catShown += n;
@@ -358,6 +440,91 @@ window.REPORT = /*__REPORT_DATA__*/null;
     if ($("freq-panel").open) renderFreq();
   }
 
+  // Portrait handler view: the filtered images of every folder, laid out like the classification view but by the global portrait
+  // handler (PortraitUsage.cs): one section per handler in template order, one row per variant in priority order. An image is drawn
+  // once per variant holding it; shadowing is per folder (the variant's pool in that folder), so it is marked on the thumbnail.
+  // Then the images no variant holds, by reason. Same filters as the classification view.
+  function renderHandlers() {
+    var cat = catSel.value, folder = folderSel.value, status = statusSel.value, named = namedSel.value;
+    var q = classIn.value.trim().toLowerCase(), fileTerms = terms(fileIn.value);
+    function ok(it) {
+      if (cat !== "" && it.cat !== cat) return false;
+      if (q && String(it.cls).toLowerCase().indexOf(q) < 0) return false;
+      return passes(it, folder, status, named, fileTerms);
+    }
+    var html = "", drawn = 0, distinct = {}, nDistinct = 0;
+    items = [];
+    function count(it) { drawn++; var k = it.f + "|" + it.path; if (!distinct[k]) { distinct[k] = true; nDistinct++; } }
+
+    // pool (first variant reading the same files) -> [{ it, shadow }] over all folders. Variants of one pool hold the same images in
+    // every folder (eg. the activity keywords pose / dogeza / dancing all read the pose files), so the pool is one row; an image there
+    // counts as shadowed only when every variant of the pool is shadowed in its folder.
+    var byPool = {}, members = {}, poolTotal = {}, showEmpty = emptyIn.checked;
+    P.variants.forEach(function (pv, v) { (members[pv.pool] || (members[pv.pool] = [])).push(v); });
+    P.roots.forEach(function (root, ri) {
+      root.slots.forEach(function (s) {
+        var pool = P.variants[s.v].pool, entries = byPool[pool] || (byPool[pool] = { list: [], at: {}, total: {} });
+        s.items.forEach(function (g) {
+          var it = all[g];
+          if (!it) return;
+          if (!entries.total[ri + "|" + g]) { entries.total[ri + "|" + g] = true; poolTotal[pool] = (poolTotal[pool] || 0) + 1; }
+          if (!ok(it)) return;
+          var key = ri + "|" + g, e = entries.at[key];
+          if (!e) { e = entries.at[key] = { it: it, shadow: s.shadow }; entries.list.push(e); }
+          else if (s.shadow < 0) e.shadow = -1;
+        });
+      });
+    });
+    var h = -1, rows = "", hDrawn = 0;
+    function flush() {
+      if (rows) html += '<section class="cat"><h2 class="handler-title">' + handlerLabel(h) + ' <span class="n">(' + hDrawn + ")</span></h2><div class=\"rows\">" + rows + "</div></section>";
+      rows = ""; hDrawn = 0;
+    }
+    P.variants.forEach(function (pv, v) {
+      if (pv.h !== h) { flush(); h = pv.h; }
+      if (pv.pool !== v) return;   // a pool is drawn once, where it first appears
+      var list = byPool[v] ? byPool[v].list : [];
+      if (!list.length) {
+        if (!showEmpty) return;
+        var mm = members[v], total = poolTotal[v] || 0;
+        rows += '<div class="row empty-variant"><div class="name"><b>' + esc(variantLabel(v)) + "</b>" +
+                (mm.length > 1 ? "<small>" + mm.length + " keywords: " + esc(mm.map(variantLabel).join(" · ")) + "</small>" : "") +
+                "<small>" + (total ? "0 of " + total + " images pass the filters" : "0 images in any folder") + '</small></div><div class="thumbs"></div></div>';
+        return;
+      }
+      list.sort(function (a, b) { return cmp(R.folders[a.it.f].name.toLowerCase(), R.folders[b.it.f].name.toLowerCase()) || cmp(a.it.path.toLowerCase(), b.it.path.toLowerCase()); });
+      var thumbs = "", shadowed = 0;
+      list.forEach(function (e) { count(e.it); if (e.shadow >= 0) shadowed++; thumbs += thumb(e.it, e.shadow); });
+      hDrawn += list.length;
+      var m = members[v], also = "";
+      if (m.length > 1) also = "<small>" + m.length + " keywords: " + esc(m.map(variantLabel).join(" · ")) + "</small>";
+      rows += '<div class="row"><div class="name"><b>' + esc(variantLabel(v)) + "</b>" + also + "<small>" + list.length + " images</small>" +
+              (shadowed ? '<small class="shadow">' + shadowed + " shadowed in their folder</small>" : "") +
+              '</div><div class="thumbs">' + thumbs + "</div></div>";
+    });
+    flush();
+
+    var byReason = {}, reasons = [];
+    all.forEach(function (it) {
+      if (!it.unplaced || !ok(it)) return;
+      if (!byReason[it.unplaced]) { byReason[it.unplaced] = []; reasons.push(it.unplaced); }
+      byReason[it.unplaced].push(it);
+    });
+    if (reasons.length) {
+      var rows2 = "", total = 0;
+      reasons.forEach(function (r) {
+        var thumbs = "";
+        byReason[r].forEach(function (it) { count(it); thumbs += thumb(it); });
+        total += byReason[r].length;
+        rows2 += '<div class="row"><div class="name"><b>' + esc(r) + "</b><small>" + byReason[r].length + '</small></div><div class="thumbs">' + thumbs + "</div></div>";
+      });
+      html += '<section class="cat"><h2>In no portrait handler variant <span class="n">(' + total + ')</span></h2><div class="rows">' + rows2 + "</div></section>";
+    }
+    $("cats").innerHTML = html || '<p class="empty">Nothing matches the filters.</p>';
+    $("count").textContent = drawn + " thumbnails · " + nDistinct + " of " + all.length + " images";
+    if ($("freq-panel").open) renderFreq();
+  }
+
   function renderFreq() {
     var freq = {}, n = 0;
     items.forEach(function (it) {
@@ -370,9 +537,10 @@ window.REPORT = /*__REPORT_DATA__*/null;
       list.map(function (tag) { return (usedTags[tag] ? "<b>" + esc(tag) + "</b>" : esc(tag)) + " <span>" + freq[tag] + "</span>"; }).join(" · ");
   }
 
-  [catSel, folderSel, statusSel, namedSel].forEach(function (el) {
+  [catSel, folderSel, statusSel, namedSel, viewSel, useSel, emptyIn].forEach(function (el) {
     el.addEventListener("change", function () {
       store.set("status", statusSel.value); store.set("folder", folderSel.value); store.set("named", namedSel.value);
+      store.set("view", viewSel.value); store.set("use", useSel.value); store.set("empty", emptyIn.checked ? "1" : "0");
       render(); window.scrollTo(0, 0);
     });
   });
@@ -449,6 +617,12 @@ window.REPORT = /*__REPORT_DATA__*/null;
       row("Source", it.source) +
       row("Score", it.score) +
       row("Classify puts it in", it.dest) +
+      (P ? row("Portrait handler (" + it.nReach + " reachable of " + it.nSlots + " variants)", it.unplaced ? esc(it.unplaced) :
+        (it.slots || []).map(function (u) {
+          var s = u.slot;
+          return esc(P.roots[u.root].name) + "<br>" + handlerLabel(P.variants[s.v].h) + " → " + esc(variantLabel(s.v)) + " (pool " + s.items.length + ")" +
+                 (s.shadow >= 0 ? ' · <span class="w-low">shadowed by ' + esc(variantLabel(s.shadow)) + "</span>" : "");
+        }).join("<br><br>"), true) : "") +
       row("Why", it.why) +
       row("Category notes", it.notes) +
       row("Best guess", it.guess) +

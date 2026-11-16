@@ -78,6 +78,25 @@ public static class GlobalPortraitTemplate
     }
 
     /// <summary>
+    /// The template handlers built from a parsed config, in priority order, without the serializer or the debug file. Variant regexes
+    /// still hold Placeholder (see KeyRegex). For editor tools (image classifier report, portrait handler view); the game uses Initialize.
+    /// </summary>
+    public static List<PortraitManager.CharaPortrait> BuildTemplate(JObject config)
+    {
+        return Build(config, out _);
+    }
+
+    /// <summary>
+    /// The regex a variant pattern is matched with (ResolveImages): the whole image key folder/category/file, case-insensitive.
+    /// folder != null replaces Placeholder first (as GetHandlers does), for template patterns.
+    /// </summary>
+    public static Regex KeyRegex(string pattern, string folder = null)
+    {
+        if (folder != null) pattern = pattern.Replace(Placeholder, Regex.Escape(folder));
+        return new Regex($"^(?:{pattern})$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+    }
+
+    /// <summary>
     /// Registered nested state roots in configured priority order, followed by the ordinary root.
     /// Missing state sets never allocate a handler graph. Values are canonical state gates, or null for the ordinary root.
     /// </summary>
@@ -352,7 +371,7 @@ public static class GlobalPortraitTemplate
                         matches = new List<string>();
                         try
                         {
-                            var regex = new Regex($"^(?:{pattern})$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+                            var regex = KeyRegex(pattern);
                             foreach (var k in keys) if (regex.IsMatch(k)) matches.Add(k);
                         }
                         catch (ArgumentException e) { Debug.LogWarning($"GlobalPortraitTemplate: invalid regex [{pattern}]: {e.Message}"); }

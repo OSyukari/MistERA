@@ -146,7 +146,7 @@ public static class MapUtility
 
             foreach(var ep in eps)
             {
-                var kol2 = new KojoCollector(self, ep.targetCOM.tooltipID, "_Interrupt");
+                var kol2 = new KojoCollector(self, ep.targetCOM.ID, "_Interrupt");
                 kol2.LoadEP(ep, target);
                 var kol4 = self.Relationships.GetKOJOMessage_Suffix(kol2, null);
                 if (kol4 != null)

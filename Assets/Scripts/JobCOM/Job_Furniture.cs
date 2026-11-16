@@ -205,6 +205,9 @@ public class Job_Furniture : Job
         {
             list.AddRange(MapUtility.GetFurnitureCOMs(comGiver));
         }
+        // commands generated for one furniture (COM.targetFurnitureID) match other furniture's tags too - only this one's stay
+        var furnitureID = ParentInstance.FurnitureBase.ID;
+        list.RemoveAll(x => !string.IsNullOrEmpty(x.targetFurnitureID) && x.targetFurnitureID != furnitureID);
         // a room divider (stall, private bathroom) is entered and left explicitly - its own Enter / Leave commands
         if (ParentInstance.FurnitureBase.occupancy != null && ParentInstance.FurnitureBase.occupancy.isRoomDivider)
         {
@@ -828,7 +831,7 @@ public class Job_Furniture : Job
             JobContainer_Chara jChara = Container as JobContainer_Chara;
             if (isContainer && jChara != null && jChara.hasContent(charaRef))
             {
-                var containername = allusableCOMs.Find(x => x.comTags.Contains("character_trainable")).displayName;
+                var containername = allusableCOMs.Find(x => x.comTags.Contains("character_trainable")).DisplayName();
                 if (containername != "") return containername;
             }
         }

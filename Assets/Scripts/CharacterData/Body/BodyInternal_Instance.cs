@@ -659,6 +659,8 @@ public class BodyInternal_Instance : I_TraceHolder
 
         this.Parent = c;
         if (HasTraces) TraceUtility.FixSlots(this);
+        // save migration: a replaced command ID would drop the unaware-experience text
+        COM_LegacyIDs.Migrate(ref unawareComID);
 
         if (this.womb != null)
         {

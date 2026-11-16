@@ -8,6 +8,10 @@
             "displayName":"com_sex_service_base",
             "timeScale":3,
             "comTags":["sex","service"],
+            "_comment_GenerateForChildren":"every service act (and this folder) is also offered outside a sex scene as <ID>_noSex, with this act's text and kojo",
+            "GenerateForChildren":[
+                { "idSuffix":"_noSex", "transform":"noSex", "includeSelf":true, "skipUpgrades":true, "useOwnText":false, "useOwnKojo":false }
+            ],
             "requirements":{
                 "requirement":{
                     "req_Receivers":{

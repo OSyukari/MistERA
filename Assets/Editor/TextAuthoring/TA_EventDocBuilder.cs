@@ -28,7 +28,7 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
         public bool fromAppendStrings;
         /// <summary>Where the fetch runs - decides what a failed lookup does (Plan_ExportStore.md §7.1).</summary>
         public string consumer;
-        /// <summary>TA_Coverage severity of a failed lookup at this place.</summary>
+        /// <summary>TA_KojoSeverity of a failed lookup at this place.</summary>
         public string severity;
     }
 
@@ -233,15 +233,15 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
     /// </summary>
     static string SeverityOf(Event.EventEntry e, int optionIndex)
     {
-        if (e is Event.EventEntry.EventEntry_Line) return TA_Coverage.RawPlaceholder;
-        if (e is Event.EventEntry.EventEntry_Question && optionIndex >= 0) return TA_Coverage.SilentEventFailure;
+        if (e is Event.EventEntry.EventEntry_Line) return TA_KojoSeverity.RawPlaceholder;
+        if (e is Event.EventEntry.EventEntry_Question && optionIndex >= 0) return TA_KojoSeverity.SilentEventFailure;
         if (e is Event.EventEntry.EventEntry_Branch b && optionIndex >= 0)
         {
             for (int o = optionIndex + 1; o < b.options.Count; o++)
-                if (b.options[o] != null && !FetchesKojo(b.options[o].Results)) return TA_Coverage.FallsThrough;
-            return TA_Coverage.SilentEventFailure;
+                if (b.options[o] != null && !FetchesKojo(b.options[o].Results)) return TA_KojoSeverity.FallsThrough;
+            return TA_KojoSeverity.SilentEventFailure;
         }
-        return TA_Coverage.Unknown;
+        return TA_KojoSeverity.Unknown;
     }
 
     static void CollectFetches(List<Event.EventEntry.Executor> list, PathResult p, string consumer, string severity, bool accumulate = false)
