@@ -8,36 +8,25 @@ using UnityEngine;
 
 /// <summary>
 /// Image classifier tool (Docs/ImagePortraits/Plan_ImageClassifier.md). Runs Tag (ComfyUI WD14 scores into &lt;folder&gt;/_image_tags.jsonl),
-/// Analyze (cache + HTML report only), Classify (move + rename) and Restore original names, either on the ticked work folders of the
-/// mod asset packs (ImageWorkFolders; merged report Mods/_image_database.html) or on one folder anywhere.
+/// Analyze (cache + HTML report only), Classify (move + rename) and Restore original names on the ticked work folders of the
+/// mod asset packs (ImageWorkFolders; merged report Mods/_image_database.html).
 /// </summary>
 public class ImageClassifierWindow : EditorWindow
 {
-    string folder = "";
     bool showSettings;
-    bool forceRetag;
     List<string> installedModels;
 
     bool running;
     CancellationTokenSource cts;
     ImageTagProgress tagProgress;
-    ImageAnalysisResult analysis;
     string lastError;
     Vector2 scroll;
 
     // classify
-    ImageMovePlan plan;
-    bool includeLowConfidence;          // step 3a Move
-    bool includeLowConfidenceRename;    // step 3b Rename
     bool deleteEmptyFolders = true;
     bool reclassifySorted;
-    Vector2 planScroll;
     const int PlanRowsShown = 300;
 
-    // refreshed on folder change and after a run (not every OnGUI)
-    int tagRecordCount = -1;
-    int tagErrorCount;
-    ImageTagHeader tagHeader;
     int excludedTagCount = -1;
 
     // Mods asset packs: every work folder (ImageWorkFolders), ticked ones are processed
@@ -45,11 +34,15 @@ public class ImageClassifierWindow : EditorWindow
     List<ImageReportFolder> modsFolders;
     ModsFolderNode modsTree;
     readonly HashSet<string> modsCollapsed = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+    /// <summary>Path search above the folder tree: space separated words that must all appear in the Mods-relative path.</summary>
+    string modsSearch = "";
+    /// <summary>Work folders matching modsSearch; null = no search (every folder shown).</summary>
+    HashSet<string> modsMatches;
     readonly Dictionary<string, int> modsImageCounts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
     readonly HashSet<string> modsUnselected = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
     Vector2 modsScroll;
     bool modsForceRetag;
-    /// <summary>0 = per folder (low confidence from its second pass on, like the single-folder default), 1 = confident only, 2 = include low confidence.</summary>
+    /// <summary>0 = per folder (low confidence from its second pass on), 1 = confident only, 2 = include low confidence.</summary>
     int modsLowConfidenceMode;
     string modsStatus;
     readonly List<string> modsLog = new List<string>();
@@ -75,12 +68,10 @@ public class ImageClassifierWindow : EditorWindow
     {
         var window = GetWindow<ImageClassifierWindow>("Image Classifier");
         window.minSize = new Vector2(420, 360);
-        window.PickFolder();
     }
 
     void OnEnable()
     {
-        if (string.IsNullOrEmpty(folder)) SetFolder(ImageClassifierSettings.LastFolder);
         RefreshExcludedCount();
     }
 
@@ -93,38 +84,6 @@ public class ImageClassifierWindow : EditorWindow
     {
         // the rules JSON is edited outside Unity; pick up a changed excluded_tags list when coming back
         RefreshExcludedCount();
-    }
-
-    void PickFolder()
-    {
-        var start = Directory.Exists(folder) ? folder : ImageClassifierSettings.LastFolder;
-        var picked = EditorUtility.OpenFolderPanel("Image Classifier - choose the folder to process", start, "");
-        if (!string.IsNullOrEmpty(picked)) SetFolder(picked);
-    }
-
-    void SetFolder(string path)
-    {
-        folder = string.IsNullOrEmpty(path) ? "" : Path.GetFullPath(path).TrimEnd('\\', '/');
-        if (folder != "") ImageClassifierSettings.LastFolder = folder;
-        tagProgress = null;
-        analysis = null;
-        plan = null;
-        lastError = null;
-        RefreshTagSummary();
-        RefreshPassState();
-    }
-
-    void RefreshTagSummary()
-    {
-        tagRecordCount = -1;
-        tagErrorCount = 0;
-        tagHeader = null;
-        if (!Directory.Exists(folder)) return;
-        var store = ImageTagStore.Load(folder);
-        if (!File.Exists(store.FilePath)) return;
-        tagHeader = store.Header;
-        tagRecordCount = store.Records.Count;
-        foreach (var r in store.Records.Values) if (r.error != null) tagErrorCount++;
     }
 
     void RefreshExcludedCount()
@@ -140,47 +99,9 @@ public class ImageClassifierWindow : EditorWindow
         EditorGUILayout.Space();
         DrawMods();
         EditorGUILayout.Space();
-        DrawFolder();
-        EditorGUILayout.Space();
-        DrawTasks();
-        EditorGUILayout.Space();
         DrawRisuRename();
         DrawStatus();
         EditorGUILayout.EndScrollView();
-    }
-
-    void DrawFolder()
-    {
-        EditorGUILayout.LabelField("Single folder (any path)", EditorStyles.boldLabel);
-        using (new EditorGUI.DisabledScope(running))
-        using (new EditorGUILayout.HorizontalScope())
-        {
-            var edited = EditorGUILayout.DelayedTextField(folder);
-            if (edited != folder) SetFolder(edited);
-            if (GUILayout.Button("Browse...", GUILayout.Width(80))) PickFolder();
-        }
-
-        if (!Directory.Exists(folder))
-        {
-            EditorGUILayout.HelpBox("Choose an existing folder.", MessageType.Warning);
-            return;
-        }
-        var parentName = Path.GetFileName(Path.GetDirectoryName(folder) ?? "");
-        var folderName = Path.GetFileName(folder);
-        EditorGUILayout.LabelField("File names", $"<category>/<name>_{parentName}_{folderName}_<N>.<ext>", EditorStyles.miniLabel);
-        EditorGUILayout.LabelField("State sets", "sorted by hand into their own folder, then classified there (a detected state never selects a folder)", EditorStyles.wordWrappedMiniLabel);
-
-        string tagInfo = tagRecordCount < 0
-            ? "No tag file yet."
-            : $"{tagRecordCount} images tagged" + (tagErrorCount > 0 ? $" ({tagErrorCount} failed)" : "")
-              + (tagHeader != null ? $" - {tagHeader.model}, threshold {tagHeader.threshold:0.##}, {tagHeader.date}" : "");
-        using (new EditorGUILayout.HorizontalScope())
-        {
-            EditorGUILayout.LabelField("Tag file", tagInfo, EditorStyles.miniLabel);
-            using (new EditorGUI.DisabledScope(tagRecordCount < 0))
-                if (GUILayout.Button(new GUIContent("Open", "Open _image_tags.jsonl"), EditorStyles.miniButton, GUILayout.Width(50)))
-                    EditorUtility.OpenWithDefaultApp(Path.Combine(folder, ImageTagStore.FileName));
-        }
     }
 
     void DrawSettings()
@@ -243,96 +164,6 @@ public class ImageClassifierWindow : EditorWindow
         else lastError = $"Rules file not found: {path}";
     }
 
-    void DrawTasks()
-    {
-        EditorGUILayout.LabelField("Tasks", EditorStyles.boldLabel);
-        bool folderOk = Directory.Exists(folder);
-        using (new EditorGUI.DisabledScope(running || !folderOk))
-        {
-            using (new EditorGUILayout.HorizontalScope())
-            {
-                var tagTip = "Tag every image under the folder with ComfyUI and store the scores in _image_tags.jsonl, then run the emotion pass " +
-                             "(face crop + VLM) for images in an emotion_pass category. Images whose file did not change since the last run are skipped.";
-                if (GUILayout.Button(new GUIContent("1. Tag", tagTip), GUILayout.Height(28))) StartTag();
-                forceRetag = GUILayout.Toggle(forceRetag, new GUIContent("Re-tag all", "Also re-tag images that are already up to date"), GUILayout.Width(80));
-            }
-            if (tagHeader != null && tagHeader.model != ImageClassifierSettings.Model && tagRecordCount > 0 && !forceRetag)
-                EditorGUILayout.HelpBox($"The tag file was made with {tagHeader.model}; tagging now with {ImageClassifierSettings.Model} would mix models. Tick \"Re-tag all\".", MessageType.Warning);
-
-            using (new EditorGUI.DisabledScope(tagRecordCount <= 0))
-            {
-                var analyzeTip = tagRecordCount <= 0
-                    ? "Run Tag first: Analyze reads _image_tags.jsonl."
-                    : "Classify every tagged image without moving anything; writes the analysis cache (_image_analysis.jsonl) and the report " +
-                      ImageReport.SingleFolderHtmlName + ", including unclassified images.";
-                if (GUILayout.Button(new GUIContent("2. Analyze", analyzeTip), GUILayout.Height(28))) RunAnalyze();
-            }
-        }
-        DrawClassify(folderOk);
-    }
-
-    void DrawClassify(bool folderOk)
-    {
-        bool canClassify = folderOk && tagRecordCount > 0 && !running;
-        using (new EditorGUI.DisabledScope(!canClassify))
-        {
-            var lowTip = "First pass of this step on a folder: off (confident only). After one it defaults to on, so the next pass also takes the low-confidence images " +
-                         "(except in categories with moveLowConfidence: false, e.g. portrait). Unmatched images are never moved or renamed.";
-            using (new EditorGUILayout.HorizontalScope())
-            {
-                var tip = tagRecordCount <= 0 ? "Run Tag first." :
-                    "Analyze, then show which images would move into which category folder. File names are kept, so a wrong folder is easy to fix by hand " +
-                    "before step 3b. Nothing moves until you confirm.";
-                if (GUILayout.Button(new GUIContent("3a. Move to category folders (preview)", tip), GUILayout.Height(28))) PreviewClassify(ImageClassifyStep.Move);
-                includeLowConfidence = GUILayout.Toggle(includeLowConfidence, new GUIContent("Include low confidence", lowTip), GUILayout.Width(150));
-            }
-            using (new EditorGUILayout.HorizontalScope())
-            {
-                var tip = tagRecordCount <= 0 ? "Run Tag first." :
-                    "Analyze, then show the final names for the images that are in their category folder (the folder decides the category, including " +
-                    "folders you fixed by hand). Images outside the category folders are left alone. Nothing is renamed until you confirm.";
-                if (GUILayout.Button(new GUIContent("3b. Rename files in category folders (preview)", tip), GUILayout.Height(28))) PreviewClassify(ImageClassifyStep.Rename);
-                includeLowConfidenceRename = GUILayout.Toggle(includeLowConfidenceRename, new GUIContent("Include low confidence", lowTip), GUILayout.Width(150));
-            }
-            deleteEmptyFolders = EditorGUILayout.ToggleLeft(new GUIContent("Delete subfolders the move empties", "Never the chosen folder itself"), deleteEmptyFolders);
-            reclassifySorted = EditorGUILayout.ToggleLeft(new GUIContent("Re-classify images in category folders",
-                "Off (default): an image inside a category folder (your sort or an earlier pass) keeps that category; the rules only name it. " +
-                "On: the rules decide categories and isperform destinations again. Hand-sorted manual categories and performer folders remain protected. " +
-                "Images you moved out of a category folder into another folder are never moved either way; " +
-                "images you moved back into the chosen folder itself are classified (and renamed) again."),
-                reclassifySorted);
-            if (GUILayout.Button(new GUIContent("Restore every file's original name", "Restore recorded original basenames, keeping every image in its current folder. Conflicts are skipped, never overwritten."))) RestoreOriginalNames();
-        }
-        DrawPlan();
-    }
-
-    void DrawPlan()
-    {
-        if (plan == null) return;
-        var p = plan;
-        EditorGUILayout.Space();
-        EditorGUILayout.LabelField($"{StepTitle(p.step)} preview - pass {p.passNumber} ({(p.includeLowConfidence ? "confident + low confidence" : "confident only")})", EditorStyles.boldLabel);
-        EditorGUILayout.LabelField(PlanSummary(p), EditorStyles.wordWrappedMiniLabel);
-        if (analysis?.reconcile != null && analysis.reconcile.relinked.Count > 0)
-            EditorGUILayout.LabelField($"Caught up with {analysis.reconcile.relinked.Count} images you moved or renamed (records followed them).", EditorStyles.wordWrappedMiniLabel);
-        int disagreements = analysis?.results.Count(r => r.FolderDisagrees) ?? 0;
-        if (disagreements > 0)
-            EditorGUILayout.LabelField($"{disagreements} images are in a folder the rules disagree with; the folder wins (list in the report).", EditorStyles.wordWrappedMiniLabel);
-        foreach (var g in p.moves.GroupBy(m => m.category).OrderByDescending(g => g.Count()))
-            EditorGUILayout.LabelField($"  {g.Key}: {g.Count()}", EditorStyles.miniLabel);
-        planScroll = EditorGUILayout.BeginScrollView(planScroll, GUILayout.MaxHeight(200));
-        foreach (var m in p.moves.Take(PlanRowsShown))
-            EditorGUILayout.SelectableLabel($"{m.from}  →  {m.to}{(m.status == nameof(ClassificationStatus.LowConfidence) ? "  (low)" : "")}", EditorStyles.miniLabel, GUILayout.Height(15));
-        if (p.moves.Count > PlanRowsShown) EditorGUILayout.LabelField($"... and {p.moves.Count - PlanRowsShown} more", EditorStyles.miniLabel);
-        EditorGUILayout.EndScrollView();
-        using (new EditorGUILayout.HorizontalScope())
-        {
-            using (new EditorGUI.DisabledScope(p.moves.Count == 0 || running))
-                if (GUILayout.Button($"{StepVerb(p.step)} {p.moves.Count} images", GUILayout.Height(24))) ExecutePlan();
-            if (GUILayout.Button("Cancel", GUILayout.Width(80), GUILayout.Height(24))) plan = null;
-        }
-    }
-
     static string StepTitle(ImageClassifyStep step) =>
         step == ImageClassifyStep.Move ? "Move to category folders" : step == ImageClassifyStep.Rename ? "Rename files in category folders" : "Classify";
 
@@ -344,140 +175,6 @@ public class ImageClassifierWindow : EditorWindow
         (p.step == ImageClassifyStep.Rename ? $"{p.notInCategoryFolder} not in a category folder (left alone) · " : "") +
         $"{p.lowConfidenceHeldBack} low confidence held back · {p.lowConfidenceNeverMoved} low confidence never moved · {p.unmatched} unmatched stay" +
         (p.keptOut > 0 ? $" · {p.keptOut} moved out by you stay" : "");
-
-    void RefreshPassState()
-    {
-        if (!Directory.Exists(folder)) return;
-        includeLowConfidence = ImageClassifyMover.NextPassIncludesLowConfidence(folder, ImageClassifyStep.Move);
-        includeLowConfidenceRename = ImageClassifyMover.NextPassIncludesLowConfidence(folder, ImageClassifyStep.Rename);
-    }
-
-    void PreviewClassify(ImageClassifyStep step)
-    {
-        lastError = null;
-        plan = null;
-        try
-        {
-            var vocabulary = ImageRuleLinter.LoadVocabulary(ImageClassifierSettings.ModelsFolder, tagHeader?.model ?? ImageClassifierSettings.Model);
-            analysis = ImageAnalysis.Run(folder, ImageClassifierSettings.RulesPath, vocabulary, !reclassifySorted);
-            plan = ImageClassifyMover.BuildPlan(analysis, step == ImageClassifyStep.Rename ? includeLowConfidenceRename : includeLowConfidence, step);
-        }
-        catch (Exception e)
-        {
-            lastError = e.Message;
-            Debug.LogException(e);
-        }
-    }
-
-    void ExecutePlan()
-    {
-        var verb = StepVerb(plan.step);
-        if (!EditorUtility.DisplayDialog("Image Classifier", $"{verb} {plan.moves.Count} images in\n{folder}?\n\nRestore original names can later restore filenames, but does NOT move images back to their previous folders.", verb, "Cancel")) return;
-        lastError = null;
-        bool inAssets = IsUnderAssets(folder);
-        try
-        {
-            if (inAssets)
-            {
-                // AssetDatabase.MoveAsset needs the target folders to be known assets
-                foreach (var dir in plan.moves.Select(m => Path.GetDirectoryName(Path.Combine(folder, m.to))).Distinct()) Directory.CreateDirectory(dir);
-                AssetDatabase.Refresh();
-                AssetDatabase.StartAssetEditing();
-            }
-            var rules = analysis.rules;
-            var pass = ImageClassifyMover.Execute(plan, rules, inAssets ? (ImageClassifyMover.MoveFile)AssetMove : ImageClassifyMover.FileSystemMove,
-                deleteEmptyFolders, (i, n) => EditorUtility.DisplayProgressBar("Image Classifier", $"Moving {i + 1}/{n}", n == 0 ? 1 : i / (float)n));
-            var failed = pass.moves.Where(m => m.error != null).ToList();
-            if (failed.Count > 0) lastError = $"{failed.Count} moves failed (images stayed): " + string.Join("; ", failed.Take(5).Select(m => $"{m.from}: {m.error}"));
-            ShowNotification(new GUIContent($"Pass {pass.pass}: {(plan.step == ImageClassifyStep.Rename ? "renamed" : "moved")} {pass.moves.Count - failed.Count}"));
-        }
-        catch (Exception e)
-        {
-            lastError = e.Message;
-            Debug.LogException(e);
-        }
-        finally
-        {
-            if (inAssets) { AssetDatabase.StopAssetEditing(); AssetDatabase.Refresh(); }
-            EditorUtility.ClearProgressBar();
-            plan = null;
-            AfterMoves();
-        }
-    }
-
-    void RestoreOriginalNames()
-    {
-        lastError = null;
-        bool inAssets = IsUnderAssets(folder);
-        bool editing = false;
-        try
-        {
-            var rules = ImageRulesJsonLoader.Load(ImageClassifierSettings.RulesPath);
-            var preview = ImageClassifyMover.PreviewRestoreOriginalNames(folder, rules);
-            var details = string.Join("\n", preview.moves.Take(8).Select(m => $"{m.from} -> {m.to}"));
-            if (!EditorUtility.DisplayDialog("Restore original names",
-                $"{preview.tagged} tagged records: {preview.moves.Count} filenames to restore, {preview.alreadyOriginal} already original, {preview.skipped.Count} skipped.\n\n" +
-                "Keep CURRENT folders, including manual relocations. No folders are deleted. All tagged images are considered, including failed tags and settled names.\n" +
-                "Occupied names (including swaps/cycles), missing or changed images, and unsafe names are skipped. No overwrites or numbered approximations.\n\n" +
-                details + (preview.moves.Count > 8 ? "\n..." : "") +
-                (preview.skipped.Count > 0 ? "\n\nSkipped:\n" + string.Join("\n", preview.skipped.Take(5)) : ""), "Restore Names", "Cancel")) return;
-            if (inAssets)
-            {
-                AssetDatabase.Refresh();
-                AssetDatabase.StartAssetEditing();
-                editing = true;
-            }
-            // A partial restore or a checkpoint failure also invalidates the old classification preview.
-            plan = null;
-            analysis = null;
-            var result = ImageClassifyMover.RestoreOriginalNames(folder, rules,
-                inAssets ? (ImageClassifyMover.MoveFile)AssetMove : ImageClassifyMover.FileSystemMove,
-                (i, n) => EditorUtility.DisplayProgressBar("Restore original names", $"Renaming {i + 1}/{n}", n == 0 ? 1 : i / (float)n));
-            var summary = $"Restored {result.restored}; already original {result.alreadyOriginal}; skipped {result.skipped.Count}; failed {result.failures.Count}; manually relocated records followed {result.relinked}. Folders unchanged.";
-            if (result.failures.Count > 0) lastError = summary + "\n" + string.Join("\n", result.failures.Take(5));
-            EditorUtility.DisplayDialog("Restore original names", summary + "\n\n" + string.Join("\n", result.failures.Concat(result.skipped).Take(12)), "Close");
-            ShowNotification(new GUIContent($"Restored {result.restored} original names"));
-            // Do not run Analyze here: it creates category folders and would make Restore change the folder structure.
-            RefreshTagSummary();
-            RefreshPassState();
-        }
-        catch (Exception e)
-        {
-            lastError = e.Message;
-            Debug.LogException(e);
-        }
-        finally
-        {
-            if (editing) { AssetDatabase.StopAssetEditing(); AssetDatabase.Refresh(); }
-            EditorUtility.ClearProgressBar();
-        }
-    }
-
-    /// <summary>Re-reads the tag file and pass log and rewrites the reports, so they show what is left after the moves.</summary>
-    void AfterMoves()
-    {
-        RefreshTagSummary();
-        RefreshPassState();
-        try
-        {
-            var vocabulary = ImageRuleLinter.LoadVocabulary(ImageClassifierSettings.ModelsFolder, tagHeader?.model ?? ImageClassifierSettings.Model);
-            analysis = ImageAnalysis.Run(folder, ImageClassifierSettings.RulesPath, vocabulary, !reclassifySorted);
-            WriteSingleFolderReport();
-        }
-        catch (Exception e)
-        {
-            if (lastError == null) lastError = "Moves done, but the reports could not be rewritten: " + e.Message;
-        }
-    }
-
-    string SingleFolderReportPath => Path.Combine(folder, ImageReport.SingleFolderHtmlName);
-
-    /// <summary>&lt;folder&gt;/_image_analysis.html from the folder's cache (same template as the Mods report).</summary>
-    void WriteSingleFolderReport()
-    {
-        var entry = ImageReport.Describe(folder, Path.GetFileName(folder), ImageReport.RulesHash(ImageClassifierSettings.RulesPath));
-        ImageReport.WriteHtml(SingleFolderReportPath, Path.GetFileName(folder), new List<ImageReportFolder> { entry }, ImageClassifierSettings.RulesPath);
-    }
 
     static void OpenHtml(string path) => Application.OpenURL(new Uri(path).AbsoluteUri);
 
@@ -534,6 +231,7 @@ public class ImageClassifierWindow : EditorWindow
         modsUnselected.Clear();
         foreach (var line in ImageClassifierSettings.ModsUnselected.Split('\n'))
             if (line.Trim().Length > 0) modsUnselected.Add(line.Trim());
+        UpdateModsSearch();
     }
 
     static List<ImageReportFolder> DescribeModsFolders()
@@ -547,6 +245,35 @@ public class ImageClassifierWindow : EditorWindow
     }
 
     void SaveModsSelection() => ImageClassifierSettings.ModsUnselected = string.Join("\n", modsUnselected);
+
+    /// <summary>
+    /// Ticks exactly the work folders listed in Mods/_image_selection.json { saved, report, folders: [Mods-relative work folder], images: [folder/path] },
+    /// written by the report page's Save selection. Returns the status line.
+    /// </summary>
+    string ApplyReportSelection()
+    {
+        var path = Path.Combine(ModsRoot, ImageWorkFolders.SelectionFileName);
+        if (!File.Exists(path)) return $"No Mods/{ImageWorkFolders.SelectionFileName} - select images in the report and press Save selection there first.";
+        Newtonsoft.Json.Linq.JObject sel;
+        try { sel = Newtonsoft.Json.Linq.JObject.Parse(File.ReadAllText(path)); }
+        catch (Exception e) { return ImageWorkFolders.SelectionFileName + " unreadable: " + e.Message; }
+
+        var wanted = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        if (sel["folders"] is Newtonsoft.Json.Linq.JArray folders)
+            for (int i = 0; i < folders.Count; i++) wanted.Add((string)folders[i]);
+        RefreshMods();
+        int matched = 0;
+        foreach (var f in modsFolders)
+        {
+            if (wanted.Remove(f.name)) { modsUnselected.Remove(f.name); matched++; }
+            else modsUnselected.Add(f.name);
+        }
+        SaveModsSelection();
+        int images = sel["images"] is Newtonsoft.Json.Linq.JArray ia ? ia.Count : 0;
+        var status = $"Report selection (saved {(string)sel["saved"] ?? "?"}): {images} images in {matched} folders selected.";
+        if (wanted.Count > 0) status += $" {wanted.Count} folder(s) no longer exist: {string.Join(", ", wanted)}.";
+        return status;
+    }
 
     List<ImageReportFolder> SelectedMods()
     {
@@ -566,23 +293,49 @@ public class ImageClassifierWindow : EditorWindow
         return f.stale != null ? "(!) " + state + " · out of date" : state;
     }
 
+    /// <summary>Rebuilds modsMatches from modsSearch: every word must appear in the folder's Mods-relative path (case-insensitive).</summary>
+    void UpdateModsSearch()
+    {
+        var words = modsSearch.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        if (words.Length == 0 || modsFolders == null) { modsMatches = null; return; }
+        modsMatches = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var f in modsFolders)
+        {
+            bool all = true;
+            for (int i = 0; i < words.Length && all; i++) all = f.name.IndexOf(words[i], StringComparison.OrdinalIgnoreCase) >= 0;
+            if (all) modsMatches.Add(f.name);
+        }
+    }
+
+    /// <summary>Folders the tree shows and the tick boxes act on: all, or the search matches.</summary>
+    bool ModsShown(ImageReportFolder f) => modsMatches == null || modsMatches.Contains(f.name);
+
     void DrawModsFolder(ModsFolderNode node, int depth)
     {
+        int shownCount = 0, selectedCount = 0;
+        foreach (var f in node.descendants)
+        {
+            if (!ModsShown(f)) continue;
+            shownCount++;
+            if (!modsUnselected.Contains(f.name)) selectedCount++;
+        }
+        if (shownCount == 0) return;
+        bool searching = modsMatches != null;
+        bool expanded = searching || !modsCollapsed.Contains(node.relativePath);
+
         using (new EditorGUILayout.HorizontalScope())
         {
             GUILayout.Space(depth * 16);
-            bool expanded = !modsCollapsed.Contains(node.relativePath);
-            if (node.children.Count > 0)
+            if (node.children.Count > 0 && !searching)
             {
                 var rect = EditorGUILayout.GetControlRect(false, EditorGUIUtility.singleLineHeight, GUILayout.Width(16));
-                bool now = EditorGUI.Foldout(rect, expanded, GUIContent.none);
-                if (now) modsCollapsed.Remove(node.relativePath);
+                expanded = EditorGUI.Foldout(rect, expanded, GUIContent.none);
+                if (expanded) modsCollapsed.Remove(node.relativePath);
                 else modsCollapsed.Add(node.relativePath);
             }
             else GUILayout.Space(16);
 
-            int selectedCount = node.descendants.Count(f => !modsUnselected.Contains(f.name));
-            bool allSelected = selectedCount == node.descendants.Count;
+            bool allSelected = selectedCount == shownCount;
             bool previousMixed = EditorGUI.showMixedValue;
             EditorGUI.showMixedValue = selectedCount > 0 && !allSelected;
             EditorGUI.BeginChangeCheck();
@@ -591,8 +344,10 @@ public class ImageClassifierWindow : EditorWindow
             EditorGUI.showMixedValue = previousMixed;
             if (changed)
             {
+                // while searching, only the matching folders below this node change
                 foreach (var f in node.descendants)
                 {
+                    if (!ModsShown(f)) continue;
                     if (selected) modsUnselected.Remove(f.name);
                     else modsUnselected.Add(f.name);
                 }
@@ -603,11 +358,11 @@ public class ImageClassifierWindow : EditorWindow
             {
                 var f = node.folder;
                 EditorGUILayout.LabelField(new GUIContent(ModsRowState(f), f.stale ?? ""), EditorStyles.miniLabel, GUILayout.Width(250));
-                if (GUILayout.Button(new GUIContent("Use", "Load this folder into \"Single folder\" below"), EditorStyles.miniButton, GUILayout.Width(36))) SetFolder(f.path);
+                if (GUILayout.Button(new GUIContent("Open", "Open this folder in the file browser"), EditorStyles.miniButton, GUILayout.Width(40))) EditorUtility.OpenWithDefaultApp(Path.GetFullPath(f.path));
             }
-            else EditorGUILayout.LabelField($"{selectedCount} of {node.descendants.Count} selected", EditorStyles.miniLabel, GUILayout.Width(290));
+            else EditorGUILayout.LabelField($"{selectedCount} of {shownCount} selected", EditorStyles.miniLabel, GUILayout.Width(294));
         }
-        if (!modsCollapsed.Contains(node.relativePath))
+        if (expanded)
             foreach (var child in node.children) DrawModsFolder(child, depth + 1);
     }
 
@@ -624,24 +379,40 @@ public class ImageClassifierWindow : EditorWindow
         {
             using (new EditorGUILayout.HorizontalScope())
             {
-                if (GUILayout.Button("Select all", GUILayout.Width(90)))
+                EditorGUI.BeginChangeCheck();
+                modsSearch = EditorGUILayout.TextField(modsSearch, EditorStyles.toolbarSearchField);
+                if (GUILayout.Button(new GUIContent("Clear", "Clear the path search"), EditorStyles.miniButton, GUILayout.Width(44))) { modsSearch = ""; GUI.FocusControl(null); }
+                if (EditorGUI.EndChangeCheck()) UpdateModsSearch();
+                if (modsMatches != null) EditorGUILayout.LabelField($"{modsMatches.Count} of {modsFolders.Count} match", EditorStyles.miniLabel, GUILayout.Width(110));
+            }
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                var scope = modsMatches != null ? " shown" : " all";
+                if (GUILayout.Button(new GUIContent("Select" + scope, "While searching: the matching folders only"), GUILayout.Width(90)))
                 {
-                    foreach (var f in modsFolders) modsUnselected.Remove(f.name);
+                    foreach (var f in modsFolders) if (ModsShown(f)) modsUnselected.Remove(f.name);
                     SaveModsSelection();
                 }
-                if (GUILayout.Button("Unselect all", GUILayout.Width(90)))
+                if (GUILayout.Button(new GUIContent("Unselect" + scope, "While searching: the matching folders only"), GUILayout.Width(90)))
                 {
-                    foreach (var f in modsFolders) modsUnselected.Add(f.name);
+                    foreach (var f in modsFolders) if (ModsShown(f)) modsUnselected.Add(f.name);
                     SaveModsSelection();
                 }
+                if (GUILayout.Button(new GUIContent("Select from report", "Tick exactly the work folders of the images selected in the report page " +
+                        "(Save selection there writes Mods/" + ImageWorkFolders.SelectionFileName + "); every other folder is unticked"), GUILayout.Width(120)))
+                    modsStatus = ApplyReportSelection();
                 if (GUILayout.Button(new GUIContent("Refresh list", "Find the work folders again and re-read their analysis state"), GUILayout.Width(90))) RefreshMods();
                 GUILayout.FlexibleSpace();
-                EditorGUILayout.LabelField($"{selected.Count} of {modsFolders.Count} selected", EditorStyles.miniLabel, GUILayout.Width(120));
+                int hiddenSelected = 0;
+                if (modsMatches != null) foreach (var f in selected) if (!modsMatches.Contains(f.name)) hiddenSelected++;
+                EditorGUILayout.LabelField(new GUIContent($"{selected.Count} of {modsFolders.Count} selected" + (hiddenSelected > 0 ? $" ({hiddenSelected} hidden)" : ""),
+                    "The buttons below act on every ticked folder, including ticked folders the search hides"), EditorStyles.miniLabel, GUILayout.Width(170));
             }
 
             modsScroll = EditorGUILayout.BeginScrollView(modsScroll, GUILayout.Height(Mathf.Clamp(modsFolders.Count * 20 + 46, 26, 280)));
             foreach (var node in modsTree.children) DrawModsFolder(node, 0);
             if (modsFolders.Count == 0) EditorGUILayout.LabelField("No work folders found under " + ModsRoot, EditorStyles.miniLabel);
+            else if (modsMatches != null && modsMatches.Count == 0) EditorGUILayout.LabelField("No work folder path contains every search word.", EditorStyles.miniLabel);
             EditorGUILayout.EndScrollView();
         }
 
@@ -681,8 +452,8 @@ public class ImageClassifierWindow : EditorWindow
             modsLowConfidenceMode = EditorGUILayout.Popup(new GUIContent("Steps 3 + 4", "Per folder: a step's first pass on a folder takes confident images only, " +
                 "later passes of that step also low confidence (except moveLowConfidence: false categories, e.g. portrait). Unmatched images are never touched."),
                 modsLowConfidenceMode, LowConfidenceModes);
-            deleteEmptyFolders = EditorGUILayout.ToggleLeft(new GUIContent("Delete subfolders the move empties (shared with Single folder)", "Never the work folder itself"), deleteEmptyFolders);
-            reclassifySorted = EditorGUILayout.ToggleLeft(new GUIContent("Re-classify images in category folders (shared with Single folder)",
+            deleteEmptyFolders = EditorGUILayout.ToggleLeft(new GUIContent("Delete subfolders the move empties", "Never the work folder itself"), deleteEmptyFolders);
+            reclassifySorted = EditorGUILayout.ToggleLeft(new GUIContent("Re-classify images in category folders",
                 "Off (default): category folders keep their normal/perform placement; the rules only name images. " +
                 "On: rules and isperform choose the destination again, except protected manual categories and performer folders."), reclassifySorted);
             if (GUILayout.Button(new GUIContent($"5. Restore original names in {n} selected folders",
@@ -707,7 +478,7 @@ public class ImageClassifierWindow : EditorWindow
     {
         modsReportError = null;
         RefreshMods();
-        try { ImageReport.WriteHtml(ModsReportPath, "Mods asset packs", modsFolders, ImageClassifierSettings.RulesPath); }
+        try { ImageReport.WriteHtml(ModsReportPath, "Mods asset packs", modsFolders, ImageClassifierSettings.RulesPath, ImageWorkFolders.SelectionFileName); }
         catch (Exception e)
         {
             modsReportError = e.Message;
@@ -725,19 +496,6 @@ public class ImageClassifierWindow : EditorWindow
             vocabularies[model] = vocabulary;
         }
         return ImageAnalysis.Run(path, ImageClassifierSettings.RulesPath, vocabulary, !reclassifySorted);
-    }
-
-    /// <summary>The single-folder state is stale when an operation touched that folder.</summary>
-    void ResetSingleFolderIfIn(List<ImageReportFolder> targets)
-    {
-        foreach (var f in targets)
-            if (string.Equals(f.path, folder, StringComparison.OrdinalIgnoreCase))
-            {
-                plan = null;
-                analysis = null;
-                RefreshTagSummary();
-                RefreshPassState();
-            }
     }
 
     async void StartModsTag(List<ImageReportFolder> targets)
@@ -783,7 +541,6 @@ public class ImageClassifierWindow : EditorWindow
             running = false;
             cts.Dispose();
             cts = null;
-            ResetSingleFolderIfIn(targets);
             RefreshExcludedCount();
             WriteModsReport();
             Repaint();
@@ -823,7 +580,6 @@ public class ImageClassifierWindow : EditorWindow
         finally
         {
             EditorUtility.ClearProgressBar();
-            ResetSingleFolderIfIn(targets);
             RefreshExcludedCount();
             WriteModsReport();
         }
@@ -859,7 +615,6 @@ public class ImageClassifierWindow : EditorWindow
         finally
         {
             EditorUtility.ClearProgressBar();
-            ResetSingleFolderIfIn(targets);
             // the preview analyzed the folders: the report shows that state
             WriteModsReport();
         }
@@ -953,7 +708,6 @@ public class ImageClassifierWindow : EditorWindow
         finally
         {
             EditorUtility.ClearProgressBar();
-            ResetSingleFolderIfIn(touched);
             WriteModsReport();
         }
     }
@@ -1039,7 +793,6 @@ public class ImageClassifierWindow : EditorWindow
         finally
         {
             EditorUtility.ClearProgressBar();
-            ResetSingleFolderIfIn(touched);
             WriteModsReport();
         }
     }
@@ -1098,7 +851,6 @@ public class ImageClassifierWindow : EditorWindow
     {
         if (lastError != null) EditorGUILayout.HelpBox(lastError, MessageType.Error);
         DrawTagProgress();
-        DrawAnalysis();
     }
 
     void DrawTagProgress()
@@ -1123,51 +875,6 @@ public class ImageClassifierWindow : EditorWindow
         }
     }
 
-    void DrawAnalysis()
-    {
-        if (analysis == null) return;
-        var a = analysis;
-        EditorGUILayout.Space();
-        EditorGUILayout.LabelField("Analysis", EditorStyles.boldLabel);
-        EditorGUILayout.LabelField($"Confident {a.Count(ClassificationStatus.Confident)} · Low confidence {a.Count(ClassificationStatus.LowConfidence)} · Unmatched {a.Count(ClassificationStatus.Unmatched)}"
-            + (a.untagged > 0 ? $" · Not tagged {a.untagged}" : "") + (a.failedRecords > 0 ? $" · Tagging failed {a.failedRecords}" : "")
-            + (a.staleFiles > 0 ? $" · Changed since tagging {a.staleFiles}" : ""));
-        EditorGUILayout.LabelField($"In category folders {a.ByFolder} · Moved out by you {a.KeptOut}", EditorStyles.miniLabel);
-        EditorGUILayout.LabelField($"A confident-only pass would move or rename {a.firstPassMoves}; with low confidence {a.lowConfidencePassMoves}.", EditorStyles.miniLabel);
-        if (a.lint.Count > 0)
-            EditorGUILayout.HelpBox($"{a.lint.Count} rule check warnings - see the report.\n{a.lint[0]}" + (a.lint.Count > 1 ? "\n..." : ""), MessageType.Warning);
-        using (new EditorGUILayout.HorizontalScope())
-        {
-            using (new EditorGUI.DisabledScope(!File.Exists(SingleFolderReportPath)))
-                if (GUILayout.Button(new GUIContent("Open report (HTML)", SingleFolderReportPath))) OpenHtml(SingleFolderReportPath);
-        }
-    }
-
-    void RunAnalyze()
-    {
-        lastError = null;
-        analysis = null;
-        try
-        {
-            EditorUtility.DisplayProgressBar("Image Classifier", "Analyzing...", 0.5f);
-            var vocabulary = ImageRuleLinter.LoadVocabulary(ImageClassifierSettings.ModelsFolder, tagHeader?.model ?? ImageClassifierSettings.Model);
-            analysis = ImageAnalysis.Run(folder, ImageClassifierSettings.RulesPath, vocabulary, !reclassifySorted);
-            if (vocabulary == null)
-                analysis.lint.Add("Tagger vocabulary not checked: set \"Tagger models folder\" in Settings.");
-            WriteSingleFolderReport();
-        }
-        catch (Exception e)
-        {
-            lastError = e.Message;
-            Debug.LogException(e);
-        }
-        finally
-        {
-            EditorUtility.ClearProgressBar();
-            RefreshExcludedCount();
-        }
-    }
-
     async void CheckConnection()
     {
         lastError = null;
@@ -1182,36 +889,5 @@ public class ImageClassifierWindow : EditorWindow
             lastError = e.Message;
         }
         Repaint();
-    }
-
-    async void StartTag()
-    {
-        running = true;
-        lastError = null;
-        tagProgress = new ImageTagProgress();
-        cts = new CancellationTokenSource();
-        try
-        {
-            await ImageTagTask.RunAsync(folder, forceRetag, tagProgress, Repaint, cts.Token);
-        }
-        catch (OperationCanceledException)
-        {
-            tagProgress.status = $"Cancelled. {tagProgress.tagged} images were tagged and saved; run Tag again to continue.";
-        }
-        catch (Exception e)
-        {
-            lastError = e.Message;
-            tagProgress.status = "Stopped. Images tagged so far are saved; run Tag again to continue.";
-            Debug.LogException(e);
-        }
-        finally
-        {
-            running = false;
-            cts.Dispose();
-            cts = null;
-            RefreshTagSummary();
-            RefreshExcludedCount();
-            Repaint();
-        }
     }
 }

@@ -4016,6 +4016,9 @@ public abstract class ActionPackage
                 }
             }// else do not add callback
 
+            // The refusal menu enables insistence only when a forced retry can actually be dispatched.
+            if (callbacks.Count > 0) refuseEV.Targets.Add("retryRequester", new List<Character_Trainable>() { targetDoer });
+
             refuseEV.AppendStrings.Add("com_variant_name", new List<string>(){ this.DisplayName });
             appends.AddRange(forceAP.tooltip);
 

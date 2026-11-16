@@ -96,7 +96,7 @@
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-                        "_comment": "npc handling: push when SendRefuseEvent added callbacks (forced success rate >= 65 or a SoftEvent refusal), else default cancel. The callback option must come first - a branch runs the first option that executes.",
+                        "_comment": "Shared NPC/player insist dispatch guard: push only when SendRefuseEvent supplied retry callbacks, otherwise run failure cleanup. Retry validation and the NPC-only success-rate threshold are handled by SendRefuseEvent. Keep the callback option before the fallback.",
                         "label": "br_npc_ops",
                         "options": [
                             {
@@ -145,12 +145,22 @@
                             {
                                 "option": "event_OnAPRefuse_ev01_op1",
                                 "tooltip": "apTooltip",
+                                "invalidTooltip": "event_OnAPRefuse_retry_unavailable",
+                                "target_chara_conditions": {
+                                    "retryRequester": [
+                                        {
+                                            "parameters": [
+                                                "exists"
+                                            ]
+                                        }
+                                    ]
+                                },
                                 "Results": [
                                     {
                                         "Type": "JumpToLabel",
                                         "arguments": [
                                             "",
-                                            "br_push"
+                                            "br_npc_ops"
                                         ]
                                     }
                                 ]
@@ -245,6 +255,7 @@
                 "event_OnAPRefuse_ev01": "$evTarget.name$拒绝了$self.name$$com_variant_name$的请求",
                 "event_OnAPRefuse_ev01_op1": "强行要求",
                 "event_OnAPRefuse_ev01_op2": "什么都不做",
+                "event_OnAPRefuse_retry_unavailable": "当前不满足再次尝试的条件，无法强行要求。具体原因见上方提示。",
                 "event_OnAPRefuse_ev02": "$self.name$决定尊重$evTarget.name$的意见",
                 "event_OnAPRefuse_ev03": "$self.name$决定向$evTarget.name$施压"
             },
@@ -252,6 +263,7 @@
                 "event_OnAPRefuse_ev01": "$evTarget.name$ refused $self.name$'s request to $com_variant_name$",
                 "event_OnAPRefuse_ev01_op1": "Insist Again",
                 "event_OnAPRefuse_ev01_op2": "Let it Be",
+                "event_OnAPRefuse_retry_unavailable": "A forced retry is currently unavailable because its requirements are not met. See the details above.",
                 "event_OnAPRefuse_ev02": "$self.name$ decides to respect $evTarget.name$'s decision",
                 "event_OnAPRefuse_ev03": "$self.name$ decides to insist again."
             }

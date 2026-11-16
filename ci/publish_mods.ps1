@@ -3,6 +3,7 @@
 #
 # - Uploads packages (unencrypted .7z) that are new or whose sha256 differs from the published manifest.json.
 # - Replaces manifest.json (manual downloads) and catalog-v2.json (in-game updater); both point at the same .7z files.
+#   catalog-text.json (localized package names/descriptions for the in-game list) is published with them when present.
 # - Then deletes release assets no longer referenced: retired / renamed .7z packages and the .zip files of older catalogs.
 # - Regenerates the release notes.
 # Re-running is safe: anything left half done is picked up again by the next diff.
@@ -178,6 +179,9 @@ foreach ($p in $toUpload) {
 
 # Compare metadata independently: author/version/description changes need no archive diff.
 Publish-Metadata $release $manifestPath 'manifest.json' $publishedManifest
+# localized names/descriptions for the in-game list; separate from catalog-v2.json, which released builds read strictly
+$catalogTextPath = Join-Path $modsDir 'catalog-text.json'
+if ($catalog -and (Test-Path -LiteralPath $catalogTextPath -PathType Leaf)) { Publish-Metadata $release $catalogTextPath 'catalog-text.json' $assetByName['catalog-text.json'] }
 if ($catalog) { Publish-Metadata $release $catalogPath 'catalog-v2.json' $assetByName['catalog-v2.json'] }
 
 # retire only after both catalogs stopped referencing the assets

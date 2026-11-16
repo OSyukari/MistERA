@@ -274,8 +274,9 @@ public static class ImageReport
 
     // ---------------------------------------------------------------- HTML report
 
-    /// <summary>Writes the HTML report next to reportPath's folder; image links are relative to it. Throws when the template is missing.</summary>
-    public static void WriteHtml(string reportPath, string title, List<ImageReportFolder> folders, string rulesPath)
+    /// <summary>Writes the HTML report next to reportPath's folder; image links are relative to it. Throws when the template is missing.
+    /// selectionFile: the file the page may save its image selection to (in the report's folder); null = no selection saving.</summary>
+    public static void WriteHtml(string reportPath, string title, List<ImageReportFolder> folders, string rulesPath, string selectionFile = null)
     {
         var templateFile = Path.GetFullPath(TemplatePath);
         if (!File.Exists(templateFile)) throw new FileNotFoundException("HTML report template not found: " + templateFile);
@@ -285,18 +286,19 @@ public static class ImageReport
         ImageRules rules = null;
         try { rules = ImageRulesJsonLoader.Load(rulesPath); }
         catch (Exception) { /* the report still renders; unused rules and bold tags are left out */ }
-        var json = BuildReportJson(Path.GetDirectoryName(Path.GetFullPath(reportPath)), title, folders, rules, rulesPath, DateTime.Now);
+        var json = BuildReportJson(Path.GetDirectoryName(Path.GetFullPath(reportPath)), title, folders, rules, rulesPath, DateTime.Now, selectionFile);
         File.WriteAllText(reportPath, template.Replace(DataPlaceholder, json), new UTF8Encoding(false));
     }
 
     /// <summary>
     /// The data the template reads (window.REPORT). Shape:
-    /// { title, generated, rules, usedTags: [string],
+    /// { title, generated, rules, selectionFile (only when the page may save a selection), usedTags: [string],
     ///   folders: [{ name, base (URL prefix of the folder, relative to the report), hasTags, stale, analyzed, model, counts...,
     ///               created: [folders the last analysis created], items: [ImageReportItem] }],
     ///   lint: [string], unused: null | { categories: [string], names: [{ set, names: [string] }], variants: [string] } }
     /// </summary>
-    public static string BuildReportJson(string reportDir, string title, List<ImageReportFolder> folders, ImageRules rules, string rulesPath, DateTime generated)
+    public static string BuildReportJson(string reportDir, string title, List<ImageReportFolder> folders, ImageRules rules, string rulesPath, DateTime generated,
+        string selectionFile = null)
     {
         var serializer = JsonSerializer.Create(CacheSettings);
         var sw = new StringWriter(new StringBuilder(1 << 20));
@@ -306,6 +308,7 @@ public static class ImageReport
             w.WritePropertyName("title"); w.WriteValue(title);
             w.WritePropertyName("generated"); w.WriteValue(generated.ToString("yyyy-MM-dd HH:mm"));
             w.WritePropertyName("rules"); w.WriteValue(rulesPath);
+            if (selectionFile != null) { w.WritePropertyName("selectionFile"); w.WriteValue(selectionFile); }
 
             w.WritePropertyName("usedTags");
             w.WriteStartArray();

@@ -105,6 +105,12 @@ public class ModPackagerWindow : EditorWindow
             if (GUILayout.Button("Select none")) selected.Clear();
             using (new EditorGUI.DisabledScope(selected.Count == 0))
                 if (GUILayout.Button($"Build selected ({selected.Count})")) BuildSelected();
+            // catalog-text.json is also rewritten by every build; this refreshes it after About text edits alone
+            if (GUILayout.Button(new GUIContent("Rebuild catalog text", "Rewrite catalog-text.json (localized names/descriptions for the in-game mod list) from the About files")))
+            {
+                try { ModPackager.RebuildCatalogText(); Debug.Log("Mod Packager: catalog-text.json rebuilt"); }
+                catch (Exception ex) { Debug.LogError("Mod Packager: " + ex.Message); }
+            }
             if (GUILayout.Button("Open output folder"))
             {
                 Directory.CreateDirectory(ModPackagerSettings.OutputFolder);

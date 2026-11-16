@@ -390,8 +390,8 @@ public class scr_System_Serializer : MonoBehaviour
         }
         if (!recovered)
         {
-            bootRecoveryError = "Update recovery failed. Startup has been blocked to protect game files. "
-                + "Close the game and restore or repair the installation before restarting. See the player log for details.";
+            bootRecoveryError = UpdateService.Instance?.RecoveryMessage ?? ("Update recovery failed. Startup has been blocked to protect game files. "
+                + "Close the game and restore or repair the installation before restarting. See the player log for details.");
             Debug.LogError(bootRecoveryError);
             Observer_LoadProgress?.Invoke(0.00f, bootRecoveryError);
             yield break;

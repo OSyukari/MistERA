@@ -13,6 +13,8 @@ public static partial class ModPackager
 {
     public const string UpdateCatalogFile = "catalog-v2.json";
     static string UpdateCatalogPath => Path.Combine(ModPackagerSettings.OutputFolder, UpdateCatalogFile);
+    public const string UpdateCatalogTextFile = "catalog-text.json";
+    static string UpdateCatalogTextPath => Path.Combine(ModPackagerSettings.OutputFolder, UpdateCatalogTextFile);
 
     static IEnumerable<FileInfo> EnumerateUpdateFiles(DirectoryInfo directory)
     {
@@ -130,10 +132,71 @@ public static partial class ModPackager
     static void SaveUpdateCatalog(ModCatalog catalog)
     {
         catalog.packages.Sort((a, b) => string.CompareOrdinal(a.id, b.id));
-        string temporary = UpdateCatalogPath + ".tmp";
-        File.WriteAllText(temporary, JsonConvert.SerializeObject(catalog, Formatting.Indented), new UTF8Encoding(false));
-        if (File.Exists(UpdateCatalogPath)) File.Replace(temporary, UpdateCatalogPath, null);
-        else File.Move(temporary, UpdateCatalogPath);
+        WriteAtomic(UpdateCatalogPath, JsonConvert.SerializeObject(catalog, Formatting.Indented));
+        SaveCatalogText(catalog);
+    }
+
+    static void WriteAtomic(string path, string text)
+    {
+        string temporary = path + ".tmp";
+        File.WriteAllText(temporary, text, new UTF8Encoding(false));
+        if (File.Exists(path)) File.Replace(temporary, path, null);
+        else File.Move(temporary, path);
+    }
+
+    /// <summary>Writes catalog-text.json: every catalog package's About name/description looked up in its About
+    /// Dictionary, per language. Read from the About files on disk, so it also refreshes packages that were not rebuilt;
+    /// a package whose About is gone keeps its previous text. Keys without a dictionary entry are left out (the game
+    /// then shows the catalog's raw name).</summary>
+    public static void SaveCatalogText(ModCatalog catalog)
+    {
+        ModCatalogText previous = null;
+        if (File.Exists(UpdateCatalogTextPath))
+        {
+            try { previous = JsonConvert.DeserializeObject<ModCatalogText>(File.ReadAllText(UpdateCatalogTextPath)); }
+            catch (Exception) { previous = null; }
+        }
+        var text = new ModCatalogText();
+        foreach (var package in catalog.packages)
+        {
+            string aboutRoot = package.kind == "mod" ? package.roots[0] : $"{AssetPacksFolder}/{package.group}";
+            string aboutPath = Path.Combine(ModsRoot, aboutRoot, AboutFolder, AboutFile);
+            if (!File.Exists(aboutPath))
+            {
+                if (previous?.packages != null && previous.packages.TryGetValue(package.id, out var kept)) text.packages[package.id] = kept;
+                continue;
+            }
+            var about = JObject.Parse(File.ReadAllText(aboutPath));
+            var entries = about["Dictionary"]?["Entries"] as JObject;
+            var entry = new ModPackageText
+            {
+                name = ResolveAboutText(entries, (string)about["name"]),
+                description = ResolveAboutText(entries, (string)about["description"])
+            };
+            if (entry.name.Count > 0 || entry.description.Count > 0) text.packages[package.id] = entry;
+        }
+        UpdateValidation.ValidateCatalogText(text);
+        WriteAtomic(UpdateCatalogTextPath, JsonConvert.SerializeObject(text, Formatting.Indented));
+    }
+
+    /// <summary>Rebuilds catalog-text.json for the current catalog without building any package.</summary>
+    public static void RebuildCatalogText()
+    {
+        if (!File.Exists(UpdateCatalogPath)) throw new InvalidDataException("No catalog-v2.json in the output folder; build packages first");
+        SaveCatalogText(LoadUpdateCatalog());
+    }
+
+    static Dictionary<string, string> ResolveAboutText(JObject entries, string key)
+    {
+        var result = new Dictionary<string, string>();
+        if (entries == null || string.IsNullOrEmpty(key)) return result;
+        foreach (var language in entries.Properties())
+        {
+            if (!(language.Value is JObject values) || values[key]?.Type != JTokenType.String) continue;
+            string value = (string)values[key];
+            if (!string.IsNullOrWhiteSpace(value)) result[language.Name] = value;
+        }
+        return result;
     }
 
     /// <summary>Points the package's catalog entry at the 7z BuildArchive just made (same file as the manual download).</summary>

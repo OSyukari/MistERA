@@ -7,17 +7,20 @@
 <!--
   Template of Mods/_image_database.html (Tools/Image Classifier > Mods asset packs) and <folder>/_image_analysis.html (single folder).
   ImageReport.cs only replaces the REPORT_DATA slot below with the data as JSON (shape documented on ImageReport.BuildReportJson);
-  everything else - layout, styling, filters, hover preview, details panel - lives here and can be edited without recompiling.
+  everything else - layout, styling, filters, hover preview, details panel, image selection (Mods report: Save selection writes
+  REPORT.selectionFile next to the page for Unity's "Select from report") - lives here and can be edited without recompiling.
   Apply a template change with "Update report only (no analysis)".
 -->
 <style>
 :root {
   --bg: #f6f6f4; --panel: #ffffff; --text: #1d1d1b; --muted: #6b6b66; --line: #deded8; --accent: #3a6fd8;
   --low: #e08a00; --unmatched: #d33a3a; --disagree: #3a88ff; --kept: #9a9a9a; --stale: #b06a00;
+  --pick: #1f9d55; --pick-bg: rgba(31, 157, 85, .30);
   --thumb: 72px;
 }
 @media (prefers-color-scheme: dark) {
-  :root { --bg: #161615; --panel: #1f1f1e; --text: #e6e6e1; --muted: #9a9a93; --line: #34342f; --accent: #7aa2f7; --stale: #e0a040; }
+  :root { --bg: #161615; --panel: #1f1f1e; --text: #e6e6e1; --muted: #9a9a93; --line: #34342f; --accent: #7aa2f7; --stale: #e0a040;
+    --pick: #4cc38a; --pick-bg: rgba(76, 195, 138, .30); }
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
@@ -75,6 +78,15 @@ section.cat h2 .n { color: var(--muted); font-weight: 400; }
 .thumbs a.named::after { content: "✎"; position: absolute; right: 1px; bottom: 0; font-size: 11px; line-height: 1; padding: 1px 2px; border-radius: 2px;
   background: var(--panel); color: var(--text); opacity: .85; }
 .thumbs a:hover, .thumbs a.sel { outline: 2px solid var(--accent); outline-offset: 1px; }
+.thumbs a.picked { outline: 3px solid var(--pick); outline-offset: 1px; }
+.thumbs a.picked::before { content: ""; position: absolute; inset: 0; background: var(--pick-bg); pointer-events: none; }
+.thumbs a img { -webkit-user-drag: none; user-select: none; }
+#band { position: absolute; z-index: 15; display: none; pointer-events: none; border: 1px solid var(--pick); background: var(--pick-bg); }
+.selbar { display: inline-flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.selbar button { font: inherit; color: var(--text); background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 1px 8px; cursor: pointer; }
+.selbar button.primary { border-color: var(--pick); }
+.selbar .n { color: var(--pick); font-weight: 600; }
+.selbar .st { color: var(--muted); font-size: 12px; }
 .empty { color: var(--muted); padding: 20px 0; }
 
 #preview { position: fixed; z-index: 20; pointer-events: none; display: none; background: var(--panel); border: 1px solid var(--line);
@@ -129,6 +141,13 @@ section.cat h2 .n { color: var(--muted); font-weight: 400; }
   <label>Preview <select id="f-preview">
     <option value="0">Off</option><option value="256">256</option><option value="384">384</option><option value="512">512</option><option value="720">720</option>
   </select></label>
+  <span class="selbar" id="selbar" hidden>
+    <span class="n" id="sel-n"></span>
+    <button type="button" id="sel-shown" title="Select every image the filters show">Select shown</button>
+    <button type="button" id="sel-clear">Clear</button>
+    <button type="button" class="primary" id="sel-save" title="Write the selection for Unity: Image Classifier > Select from report ticks the work folders of these images">Save selection</button>
+    <span class="st" id="sel-status"></span>
+  </span>
   <span class="count" id="count"></span>
 </div>
 
@@ -143,12 +162,14 @@ section.cat h2 .n { color: var(--muted); font-weight: 400; }
     <span class="l-disagree">folder decided, rules disagree</span><span class="l-kept">moved out by you</span>
     <span class="l-name">file name used in analysis</span>
     <span>hover = large preview · click = details · ctrl/middle click = open image</span>
+    <span id="sel-help" hidden>drag = select images · shift+drag = add · alt+drag = remove · alt+click = toggle one</span>
   </div>
   <div id="cats"></div>
   <details class="panel" id="unused-panel"><summary>Rules that matched no image in any analyzed folder</summary><ul class="lint" id="unused"></ul></details>
 </main>
 
 <div id="preview"><img alt=""><div class="info"></div></div>
+<div id="band"></div>
 <aside id="details" aria-label="Image details"></aside>
 
 <script>
@@ -318,8 +339,8 @@ window.REPORT = /*__REPORT_DATA__*/null;
           if (!it.keptOut && it.status === "low") low++;
           if (!it.keptOut && it.status === "unmatched") un++;
           var idx = items.length; items.push(it);
-          thumbs += '<a class="' + frameClass(it) + (it.nameUsed ? " named" : "") + '" href="' + esc(it.src) + '" data-i="' + idx + '" target="_blank">' +
-                    '<img src="' + esc(it.src) + '" loading="lazy" alt=""></a>';
+          thumbs += '<a class="' + frameClass(it) + (it.nameUsed ? " named" : "") + (it.picked ? " picked" : "") + '" href="' + esc(it.src) + '" data-i="' + idx +
+                    '" target="_blank" draggable="false"><img src="' + esc(it.src) + '" loading="lazy" alt="" draggable="false"></a>';
         });
         if (!n) return;
         catShown += n;
@@ -388,7 +409,7 @@ window.REPORT = /*__REPORT_DATA__*/null;
   function hidePreview() { pv.style.display = "none"; current = -1; }
   $("cats").addEventListener("mouseover", function (e) {
     var a = e.target.closest ? e.target.closest("a[data-i]") : null;
-    if (!a || previewSel.value === "0") return;
+    if (!a || previewSel.value === "0" || (drag && drag.active)) return;
     var i = +a.getAttribute("data-i");
     if (i !== current) {
       current = i;
@@ -447,13 +468,167 @@ window.REPORT = /*__REPORT_DATA__*/null;
     if (selected) { selected.classList.remove("sel"); selected = null; }
   }
   $("cats").addEventListener("click", function (e) {
+    if (suppressClick) { suppressClick = false; e.preventDefault(); return; }
     var a = e.target.closest ? e.target.closest("a[data-i]") : null;
-    if (!a || e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) return;
+    if (!a || e.button !== 0) return;
+    if (canSelect && e.altKey) { e.preventDefault(); setPicked(items[+a.getAttribute("data-i")], a, !items[+a.getAttribute("data-i")].picked); selectionChanged(); return; }
+    if (e.ctrlKey || e.metaKey || e.shiftKey) return;
     e.preventDefault();
     showDetails(a);
   });
   det.addEventListener("click", function (e) { if (e.target.classList.contains("close")) closeDetails(); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeDetails(); });
+
+  // ---- image selection (Mods report only: R.selectionFile). Drag a box over thumbnails; Save selection writes
+  // { saved, report, folders: [work folder], images: ["work folder/path"] } next to this page, where Unity's
+  // Image Classifier > "Select from report" ticks those work folders (eg. to re-analyze one category's folders only).
+  var canSelect = !!R.selectionFile, suppressClick = false, drag = null, band = $("band");
+  function pickKey(it) { return R.folders[it.f].name + "/" + it.path; }
+  function setPicked(it, a, on) { it.picked = on; if (a) a.classList.toggle("picked", on); }
+  function selectionChanged() {
+    var n = 0, folders = {}, nf = 0;
+    all.forEach(function (it) { if (it.picked) { n++; if (!folders[it.f]) { folders[it.f] = true; nf++; } } });
+    $("sel-n").textContent = n + " selected" + (n ? " · " + nf + " folder" + (nf === 1 ? "" : "s") : "");
+    $("sel-save").disabled = n === 0;
+    store.set("picked", JSON.stringify(all.filter(function (it) { return it.picked; }).map(pickKey)));
+  }
+  function refreshPickedClasses() {
+    var links = $("cats").querySelectorAll("a[data-i]");
+    for (var i = 0; i < links.length; i++) links[i].classList.toggle("picked", !!items[+links[i].getAttribute("data-i")].picked);
+  }
+
+  if (canSelect) {
+    $("selbar").hidden = false;
+    $("sel-help").hidden = false;
+    try {
+      var keep = {};
+      JSON.parse(store.get("picked", "[]")).forEach(function (k) { keep[k] = true; });
+      all.forEach(function (it) { if (keep[pickKey(it)]) it.picked = true; });
+    } catch (e) {}
+    selectionChanged();
+
+    $("sel-shown").addEventListener("click", function () { items.forEach(function (it) { it.picked = true; }); refreshPickedClasses(); selectionChanged(); });
+    $("sel-clear").addEventListener("click", function () { all.forEach(function (it) { it.picked = false; }); refreshPickedClasses(); selectionChanged(); });
+
+    // drag box: plain = replace the selection, shift = add, alt = remove; a press without movement stays a normal click
+    $("cats").addEventListener("mousedown", function (e) {
+      if (e.button !== 0 || e.ctrlKey || e.metaKey) return;
+      drag = { x: e.pageX, y: e.pageY, cx: e.clientX, cy: e.clientY, mode: e.altKey ? "remove" : e.shiftKey ? "add" : "replace", active: false, boxes: null };
+      e.preventDefault();   // no native image drag, no text selection
+    });
+    function updateBand() {
+      var x2 = drag.cx + window.scrollX, y2 = drag.cy + window.scrollY;
+      var l = Math.min(drag.x, x2), r = Math.max(drag.x, x2), t = Math.min(drag.y, y2), b = Math.max(drag.y, y2);
+      band.style.left = l + "px"; band.style.top = t + "px"; band.style.width = (r - l) + "px"; band.style.height = (b - t) + "px";
+      drag.boxes.forEach(function (bx) {
+        var hit = bx.l < r && bx.r > l && bx.t < b && bx.b > t;
+        var on = drag.mode === "remove" ? bx.was && !hit : drag.mode === "add" ? bx.was || hit : hit;
+        if (on !== !!bx.it.picked) setPicked(bx.it, bx.a, on);
+      });
+    }
+    function autoScroll() {
+      if (!drag || !drag.active) return;
+      var edge = 48, step = 0;
+      if (drag.cy < edge) step = -Math.ceil((edge - drag.cy) / 3);
+      else if (drag.cy > window.innerHeight - edge) step = Math.ceil((drag.cy - window.innerHeight + edge) / 3);
+      if (step) { window.scrollBy(0, step); updateBand(); }
+      requestAnimationFrame(autoScroll);
+    }
+    document.addEventListener("mousemove", function (e) {
+      if (!drag) return;
+      drag.cx = e.clientX; drag.cy = e.clientY;
+      if (!drag.active) {
+        if (Math.abs(e.pageX - drag.x) + Math.abs(e.pageY - drag.y) < 6) return;
+        drag.active = true;
+        hidePreview();
+        if (drag.mode === "replace") all.forEach(function (it) { it.picked = false; });
+        drag.boxes = [];
+        var links = $("cats").querySelectorAll("a[data-i]");
+        for (var i = 0; i < links.length; i++) {
+          var rc = links[i].getBoundingClientRect(), it = items[+links[i].getAttribute("data-i")];
+          drag.boxes.push({ a: links[i], it: it, was: !!it.picked,
+            l: rc.left + window.scrollX, r: rc.right + window.scrollX, t: rc.top + window.scrollY, b: rc.bottom + window.scrollY });
+        }
+        band.style.display = "block";
+        requestAnimationFrame(autoScroll);
+      }
+      updateBand();
+    });
+    window.addEventListener("scroll", function () { if (drag && drag.active) updateBand(); });
+    document.addEventListener("mouseup", function () {
+      if (!drag) return;
+      if (drag.active) {
+        band.style.display = "none";
+        suppressClick = true;   // the click that ends a drag does not open details
+        setTimeout(function () { suppressClick = false; }, 0);
+        selectionChanged();
+      }
+      drag = null;
+    });
+
+    // saving: the page's folder (Mods/) is granted once via the directory picker and remembered (IndexedDB), like store_viewer.html
+    var reportFile = decodeURIComponent(location.pathname.split("/").pop() || "");
+    function idb() {
+      return new Promise(function (res, rej) {
+        var r = indexedDB.open("image-report", 1);
+        r.onupgradeneeded = function () { r.result.createObjectStore("handles"); };
+        r.onsuccess = function () { res(r.result); };
+        r.onerror = function () { rej(r.error); };
+      });
+    }
+    function saveHandle(h) { return idb().then(function (db) { db.transaction("handles", "readwrite").objectStore("handles").put(h, "mods"); }).catch(function () {}); }
+    function loadHandle() {
+      return idb().then(function (db) {
+        return new Promise(function (res) { var r = db.transaction("handles").objectStore("handles").get("mods"); r.onsuccess = function () { res(r.result); }; r.onerror = function () { res(null); }; });
+      }).catch(function () { return null; });
+    }
+    function setSaveStatus(s) { $("sel-status").textContent = s; }
+    function selectionJson() {
+      var images = [], folders = [], seen = {};
+      all.forEach(function (it) {
+        if (!it.picked) return;
+        images.push(pickKey(it));
+        var name = R.folders[it.f].name;
+        if (!seen[name]) { seen[name] = true; folders.push(name); }
+      });
+      folders.sort();
+      var now = new Date(), pad = function (n) { return (n < 10 ? "0" : "") + n; };
+      var saved = now.getFullYear() + "-" + pad(now.getMonth() + 1) + "-" + pad(now.getDate()) + " " + pad(now.getHours()) + ":" + pad(now.getMinutes());
+      return JSON.stringify({ saved: saved, report: R.generated, folders: folders, images: images }, null, 2) + "\n";
+    }
+    async function pickFolder() {
+      var dir;
+      try { dir = await window.showDirectoryPicker({ id: "image-report", mode: "readwrite" }); } catch (e) { return null; }
+      try { await dir.getFileHandle(reportFile); }
+      catch (e) { setSaveStatus("Not saved: that folder has no " + reportFile + " - pick the folder this page is in (Mods)."); return null; }
+      await saveHandle(dir);
+      return dir;
+    }
+    async function saveSelection() {
+      var text = selectionJson();
+      if (!window.showDirectoryPicker) {
+        // no File System Access API (eg. Firefox): download it; it must then be moved into the page's folder by hand
+        var link = document.createElement("a");
+        link.href = URL.createObjectURL(new Blob([text], { type: "application/json" }));
+        link.download = R.selectionFile;
+        link.click();
+        setSaveStatus("Downloaded - move " + R.selectionFile + " into the folder of this page (Mods).");
+        return;
+      }
+      var dir = await loadHandle();
+      if (dir) { try { if ((await dir.requestPermission({ mode: "readwrite" })) !== "granted") dir = null; } catch (e) { dir = null; } }
+      if (!dir) { setSaveStatus("Pick the folder this page is in (Mods)..."); dir = await pickFolder(); }
+      if (!dir) { if ($("sel-status").textContent.indexOf("Not saved") !== 0) setSaveStatus("Not saved."); return; }
+      try {
+        var fh = await dir.getFileHandle(R.selectionFile, { create: true });
+        var w = await fh.createWritable();
+        await w.write(text);
+        await w.close();
+        setSaveStatus("Saved to " + dir.name + "/" + R.selectionFile + " - in Unity: Select from report, then 2. Analyze.");
+      } catch (e) { setSaveStatus("Not saved: " + e.message); }
+    }
+    $("sel-save").addEventListener("click", function () { saveSelection(); });
+  }
 
   applySize();
   render();

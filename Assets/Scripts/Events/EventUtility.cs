@@ -2480,7 +2480,11 @@ public static class EventUtility
                     if (debug) Debug.Log($"JoinTargetJob found {packages.Count} joinable packages, rand select");
 
                     var randpackage = Utility.GetRandomElement(packages);
-                    return randpackage.JoinAP(owner.Self, forceResponse, true);
+                    var joined = randpackage.JoinAP(owner.Self, forceResponse, true);
+                    // Kojo-started NPC joins do not pass through FindJoinableAP's text injection.
+                    if (joined && owner.CurrentEventID == "RequestJoin" && !owner.AppendStrings.ContainsKey("kojo_joined"))
+                        owner.AppendStrings.Add("kojo_joined", new List<string>() { "" });
+                    return joined;
                 }
                 else
                 {

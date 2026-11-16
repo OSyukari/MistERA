@@ -59,6 +59,28 @@ public static class TA_Conditions
         return parts.Count < 1 ? "无条件" : string.Join("，且", parts);
     }
 
+    /// <summary>
+    /// Whether the entry's conditions pass in every situation (mirror of Description_Entry.ValidateConditions: none, or
+    /// only validators that return true unconditionally). Such an entry without keepLooking ends its level, so every
+    /// later sibling is unreachable.
+    /// </summary>
+    public static bool AlwaysPasses(COM_Descriptions.Description_Entry entry)
+    {
+        if (entry?.conditions == null) return true;
+        for (int i = 0; i < entry.conditions.Count; i++)
+        {
+            var c = entry.conditions[i];
+            if (c == null) continue;
+            if (c.validatorChance != null && c.validatorChance.percentChance != 100) return false;
+            if (c.validateJob != null && !string.IsNullOrEmpty(c.validateJob.existsPreviousCOM)) return false;
+            if (c.validateChara != null && !(c.validateChara.target == "" && c.validateChara.statID == ""
+                && c.validateChara.operand == LogicalOperand.none && c.validateChara.value == "")) return false;
+            if (c.validatePackage != null && (c.validatePackage.existsMaster || c.validatePackage.existsMaster_NonActor
+                || c.validatePackage.existsMaster_Doer || c.validatePackage.existsMaster_Receiver)) return false;
+        }
+        return true;
+    }
+
     static string Operand(LogicalOperand op)
     {
         switch (op.ToString())
@@ -163,6 +185,26 @@ public static class TA_Conditions
         }
     }
 
+    /// <summary>The variant limits who speaks it (doer / receiver / solo) - otherwise both roles draw it (§9.1 4).</summary>
+    public static bool RoleLocked(ResponseEntry.Variant v)
+    {
+        return v.requireSelfDoer || v.requireSelfReceiver || v.requireSelfOnly;
+    }
+
+    /// <summary>
+    /// The variant is valid every time it is checked in this context (Variant.isValid): applicable, no master/strong flags,
+    /// requirement untouched. A valid variant without keepLooking ends its level even when nothing below it prints, so
+    /// later siblings are unreachable - except ones with allowRecording, which the default requirement fails on.
+    /// </summary>
+    public static bool AlwaysValid(ResponseEntry.Variant v, TA_KojoContext ctx)
+    {
+        if (v == null || !Applies(v, ctx)) return false;
+        if (v.requireCOMStrongVariant || v.requireMaster || v.requireSelfMaster || v.requireSelfNotMaster) return false;
+        if (v.requirement == null) return true;
+        if (defaultRequirement == null) defaultRequirement = JObject.FromObject(new ResponseEntry.Variant.Requirement(), JsonSerializer.Create(settings));
+        return JToken.DeepEquals(JObject.FromObject(v.requirement, JsonSerializer.Create(settings)), defaultRequirement);
+    }
+
     /// <summary>
     /// Static applicability (§9.1 3b/4): role flags, self-target rule, accepted vs refused. Stats/tags/attitude are runtime
     /// and assumed possible.
@@ -175,6 +217,12 @@ public static class TA_Conditions
         if (v.requireSelfReceiver && !ctx.speakerIsReceiver) return false;
         if ((v.requireMaster || v.requireSelfMaster) && !ctx.masterPresent) return false;
         var r = v.requirement;
+        if (r != null && ctx.noEP)
+        {
+            // no action package: the KojoCollector still runs the EP checks and reads as accepted with result Accept
+            if (r.requireEPFailure) return false;
+            if (r.requireEPSuccessGTE > Memory_Response.Accept) return false;
+        }
         if (r != null && !ctx.noEP)
         {
             if (r.requireEPFailure && ctx.accepted) return false;

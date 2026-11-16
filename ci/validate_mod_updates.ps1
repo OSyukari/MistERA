@@ -72,4 +72,13 @@ function Visit-Mod($p) {
     $visited.Add($p.modId) | Out-Null
 }
 foreach ($p in $modIds.Values) { Visit-Mod $p }
+# optional display text (Mod Packager writes it next to the catalog); every entry must name a catalog package
+$textPath = Join-Path $ModsDir 'catalog-text.json'
+if (Test-Path -LiteralPath $textPath -PathType Leaf) {
+    $text = Get-Content -LiteralPath $textPath -Raw -Encoding UTF8 | ConvertFrom-Json
+    if ($text.schema -ne 1 -or $null -eq $text.packages) { throw 'Expected schema 1 catalog-text.json with packages' }
+    foreach ($property in $text.packages.PSObject.Properties) {
+        if (-not $ids.Contains($property.Name)) { throw "catalog-text.json names a package that is not in the catalog: $($property.Name)" }
+    }
+}
 Write-Host "Validated $($catalog.packages.Count) schema-2 packages"

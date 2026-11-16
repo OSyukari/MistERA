@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
 using Newtonsoft.Json.Linq;
 
@@ -10,62 +12,142 @@ public enum TA_Mode
 }
 
 /// <summary>
-/// Text authoring tool: shared part of the command and event writer-doc builders - doc/manifest state, slot handles,
-/// kojo entry resolution (static mirror of Character_Personality.GetKOJOMessage) and kojo slot rendering.
+/// Extracted unit (Docs/TextAuthoring/Plan_ExportStore.md §3-§4): the personality-independent shared layer (ops stream,
+/// narration/event slots, findings) and one layer per personality (its kojo at every lookup position).
+/// </summary>
+public class TA_Snapshot
+{
+    public JObject shared;
+    /// <summary>personality id -> layer, in extraction order</summary>
+    public readonly Dictionary<string, JObject> layers = new Dictionary<string, JObject>();
+    public readonly List<string> layerOrder = new List<string>();
+}
+
+/// <summary>
+/// Doc stream recorded by the extractor and resolved by TA_Renderer: literal lines, text-database lines (key + args,
+/// resolved at render so wording changes need no play mode), slot references, kojo positions and header blocks.
+/// </summary>
+public class TA_Ops
+{
+    public readonly JArray ops = new JArray();
+
+    public void AppendLine(string line) { ops.Add(new JObject { ["l"] = line }); }
+    public void AppendLine() { ops.Add(new JObject { ["l"] = "" }); }
+    /// <summary>Database line `key` with {name} args (name, value, …); a value "@@key" is itself a database text.</summary>
+    public void Text(string key, params string[] args) { TextP("", key, args); }
+    public void TextP(string prefix, string key, params string[] args)
+    {
+        var o = new JObject { ["k"] = key };
+        if (prefix != "") o["p"] = prefix;
+        if (args.Length > 0) o["a"] = new JArray(args);
+        ops.Add(o);
+    }
+    public void Slot(string handle) { ops.Add(new JObject { ["slot"] = handle }); }
+    public void KojoPos(int pos) { ops.Add(new JObject { ["kp"] = pos }); }
+    public void Header(string kind) { ops.Add(new JObject { ["hdr"] = kind }); }
+}
+
+/// <summary>
+/// Text authoring tool: shared part of the command and event extractors - snapshot state, stable slot handles, kojo entry
+/// resolution (static mirror of Character_Personality.GetKOJOMessage) and kojo extraction per personality layer.
+/// Wording lives in the text database (TA_Text) and is applied by TA_Renderer; findings are typed records.
 /// </summary>
 public abstract class TA_DocBuilderBase
 {
-    public TA_Mode mode = TA_Mode.Audit;
-    /// <summary>Audit: personalities whose kojo is shown/editable. KojoFill: [0] is the target personality.</summary>
+    /// <summary>Bump when snapshot shape or extraction semantics change: Scan then requires re-extraction.</summary>
+    public const int ExtractorVersion = 4;
+
+    /// <summary>Personalities whose kojo layers are extracted (any order; [0] first in docs).</summary>
     public List<string> personalities = new List<string>();
     public TA_SourceIndex index;
-    public string modListBlock = "";
+    /// <summary>Loaded data mods: [{id, name, version, folder}].</summary>
+    public JArray modList = new JArray();
+    /// <summary>
+    /// Coverage scan (Plan_ExportStore.md §7.1): only the kojo lookups matter - no kojo slots, comments or source
+    /// lookups, so every personality can be resolved quickly. The result is not a renderable snapshot.
+    /// </summary>
+    public bool coverageOnly;
 
-    protected StringBuilder sb;
-    protected JObject manifest;
-    protected JObject slots;
-    protected Dictionary<string, string> handles;     // slot key -> handle
-    protected List<string> suggestions;
-    Dictionary<string, List<string>> missing;
-    List<string> missingOrder;
-    protected int nCount, kCount;
+    protected TA_Ops sb;                 // current stream (shared, or a personality's kojo position)
+    TA_Ops shared;
+    JObject sharedSlots;
+    JArray sharedFindings, sharedUnreachable;
+    TA_Snapshot snap;
+
+    class Layer
+    {
+        public JObject positions = new JObject();
+        public JObject slots = new JObject();
+        public JArray findings = new JArray();
+        public JArray unreachable = new JArray();
+        public JArray lookups = new JArray();
+        public Dictionary<string, JObject> missing = new Dictionary<string, JObject>();
+    }
+    Dictionary<string, Layer> layers;
+    int kojoPositions;
+
+    Dictionary<string, string> handles;     // slot key -> handle
+    Dictionary<string, string> handleKeys;  // handle -> slot key (collision check)
+    HashSet<string> findingKeys;
+
+    /// <summary>Speaker roles a kojo slot was drawn for (resolved into slot data at FinishDoc).</summary>
+    class SlotRole
+    {
+        public string pid;
+        public bool locked, doer, receiver;
+        public string provider, entry, path, cond;
+    }
+    Dictionary<string, SlotRole> slotRoles;
+    List<string> slotRoleOrder;
+    /// <summary>Kojo variants applicable but shadowed by an earlier always-valid sibling; reported only if never reached.</summary>
+    Dictionary<string, JObject> kojoShadowed;
+    List<string> kojoShadowedOrder;
+    HashSet<string> kojoReached;
+    HashSet<string> unreachableKeys;
+    /// <summary>provider|entry trees already linted in this unit (TA_Lint.Tree runs once per entry).</summary>
+    HashSet<string> lintedEntries;
 
     static readonly FieldInfo f_entries = typeof(Character_Personality).GetField("entries", BindingFlags.NonPublic | BindingFlags.Instance);
     static readonly FieldInfo f_fallbackID = typeof(Character_Personality).GetField("fallbackID", BindingFlags.NonPublic | BindingFlags.Instance);
 
-    protected string Target { get { return personalities.Count > 0 ? personalities[0] : "?"; } }
-
-    protected void BeginDoc(string unitID, string unitKind)
+    protected void BeginDoc(string unitName, string unitID, string unitKind)
     {
-        sb = new StringBuilder();
-        manifest = new JObject();
-        slots = new JObject();
+        shared = new TA_Ops();
+        sb = shared;
+        sharedSlots = new JObject();
+        sharedFindings = new JArray();
+        sharedUnreachable = new JArray();
+        layers = new Dictionary<string, Layer>();
+        for (int i = 0; i < personalities.Count; i++) layers[personalities[i]] = new Layer();
+        kojoPositions = 0;
         handles = new Dictionary<string, string>();
-        suggestions = new List<string>();
-        missing = new Dictionary<string, List<string>>();
-        missingOrder = new List<string>();
-        nCount = kCount = 0;
+        handleKeys = new Dictionary<string, string>();
+        findingKeys = new HashSet<string>();
+        slotRoles = new Dictionary<string, SlotRole>();
+        slotRoleOrder = new List<string>();
+        kojoShadowed = new Dictionary<string, JObject>();
+        kojoShadowedOrder = new List<string>();
+        kojoReached = new HashSet<string>();
+        unreachableKeys = new HashSet<string>();
+        lintedEntries = new HashSet<string>();
 
-        manifest["unit"] = unitID;
-        manifest["unitKind"] = unitKind;
-        manifest["mode"] = mode.ToString();
-        manifest["personalities"] = new JArray(personalities.ToArray());
-        manifest["slots"] = slots;
-    }
-
-    protected void WriteCommonHeaderLines()
-    {
-        sb.AppendLine($"> 模式：{(mode == TA_Mode.Audit ? "A 审校改写（旁白与口上均可改）" : $"B 口上填写（旁白只读，口上写入 {Target}）")}");
-        sb.AppendLine("> 口上人格：");
-        var info = new JArray();
-        for (int i = 0; i < personalities.Count; i++)
+        snap = new TA_Snapshot();
+        snap.shared = new JObject
         {
-            PersonalityInfo(personalities[i], out string name, out string desc);
-            sb.AppendLine($">   - `{personalities[i]}` {name}{(desc != "" ? " ｜ " + desc : " ｜ （无说明）")}");
-            info.Add(new JObject { ["id"] = personalities[i], ["name"] = name, ["desc"] = desc });
-        }
-        manifest["personalityInfo"] = info;
+            ["unit"] = unitName,
+            ["unitID"] = unitID,
+            ["kind"] = unitKind,
+            ["extractorVersion"] = ExtractorVersion,
+            ["extractedAt"] = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+            ["modList"] = modList.DeepClone(),
+            ["flags"] = new JObject()
+        };
     }
+
+    protected JObject Flags { get { return (JObject)snap.shared["flags"]; } }
+
+    protected void WriteCommonHeaderLines() { sb.Header("common"); }
+    protected void WriteCommonHeaderFooter() { sb.Header("footer"); }
 
     /// <summary>Authoring name/description from the dictionary keys "&lt;id&gt;" / "&lt;id&gt;_desc" (name falls back to displayName).</summary>
     public static void PersonalityInfo(string pid, out string name, out string desc)
@@ -75,41 +157,97 @@ public abstract class TA_DocBuilderBase
         desc = IsDictKey(pid + "_desc") ? ZH(pid + "_desc") : "";
     }
 
-    protected void WriteCommonHeaderFooter()
+    protected TA_Snapshot FinishDoc()
     {
-        sb.AppendLine("> 写法：`- ` 开头的行可直接改写/增删（每个槽位至少 3 条随机句，`- 待写` 需替换）；`  · ` 开头的行是只读上下文。不要改【】编号。");
-        sb.AppendLine();
-        sb.AppendLine(modListBlock);
-        sb.AppendLine();
+        ResolveRoles();
+        for (int i = 0; i < kojoShadowedOrder.Count; i++)
+        {
+            var key = kojoShadowedOrder[i];
+            if (kojoReached.Contains(key)) continue;
+            var f = kojoShadowed[key];
+            var pid = (string)f["pid"];
+            AddFinding(f);
+            if (unreachableKeys.Add("K|" + key))
+            {
+                var parts = key.Split('|');
+                layers[pid].unreachable.Add(new JObject { ["kind"] = "kojo", ["personality"] = parts[0], ["provider"] = parts[1], ["entry"] = parts[2], ["variantPath"] = parts[3] });
+            }
+        }
+
+        snap.shared["ops"] = shared.ops;
+        snap.shared["slots"] = sharedSlots;
+        snap.shared["findings"] = sharedFindings;
+        snap.shared["unreachable"] = sharedUnreachable;
+        for (int i = 0; i < personalities.Count; i++)
+        {
+            var pid = personalities[i];
+            var l = layers[pid];
+            foreach (var kv in l.missing) l.findings.Add(kv.Value);
+            PersonalityInfo(pid, out string name, out string desc);
+            snap.layers[pid] = new JObject
+            {
+                ["unit"] = snap.shared["unit"],
+                ["personality"] = pid,
+                ["info"] = new JObject { ["id"] = pid, ["name"] = name, ["desc"] = desc },
+                ["extractedAt"] = snap.shared["extractedAt"],
+                ["positions"] = l.positions,
+                ["slots"] = l.slots,
+                ["findings"] = l.findings,
+                ["unreachable"] = l.unreachable,
+                ["lookups"] = l.lookups
+            };
+            snap.layerOrder.Add(pid);
+        }
+        return snap;
     }
 
-    protected string FinishDoc(out JObject manifestOut)
-    {
-        sb.AppendLine("---");
-        sb.AppendLine("## 结构建议（交给专职 coder，写手不要在文中新建槽位）");
-        for (int i = 0; i < missingOrder.Count; i++)
-            suggestions.Add($"{missingOrder[i]}（用于：{string.Join("；", missing[missingOrder[i]])}）。");
-        if (suggestions.Count < 1) sb.AppendLine("- 无");
-        for (int i = 0; i < suggestions.Count; i++) sb.AppendLine("- " + suggestions[i]);
-        sb.AppendLine();
-        sb.AppendLine("## 待补场景（写手填写：认为缺少文本的情境，用白话描述何时出现）");
-        sb.AppendLine("- ");
-        sb.AppendLine();
-        sb.AppendLine($"<!-- slots: 旁白 {nCount} / 口上 {kCount} -->");
-        manifestOut = manifest;
-        return sb.ToString();
-    }
-
-    /// <summary>Handle for a slot key; first = the slot hasn't been printed yet in this doc.</summary>
+    /// <summary>
+    /// Stable handle: N/K + 6 hex of SHA-1(slot key) (D12). first = the slot hasn't been recorded yet in this extraction.
+    /// A collision with another key in the same unit takes 8 hex.
+    /// </summary>
     protected string Handle(string key, char prefix, out bool first)
     {
         first = !handles.TryGetValue(key, out var h);
         if (first)
         {
-            h = prefix == 'N' ? $"N{++nCount}" : $"K{++kCount}";
+            var hex = Sha1Hex(key);
+            h = $"{prefix}-{hex.Substring(0, 6)}";
+            if (handleKeys.TryGetValue(h, out var other) && other != key) h = $"{prefix}-{hex.Substring(0, 8)}";
             handles[key] = h;
+            handleKeys[h] = key;
         }
         return h;
+    }
+
+    public static string Sha1Hex(string s)
+    {
+        using (var sha = SHA1.Create())
+        {
+            var bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(s));
+            var hex = new StringBuilder(bytes.Length * 2);
+            for (int i = 0; i < bytes.Length; i++) hex.Append(bytes[i].ToString("x2"));
+            return hex.ToString();
+        }
+    }
+
+    /// <summary>
+    /// Change-record target (Plan_ChangeStore.md D25): T- + 8 hex of SHA-1 of the data location. Kojo targets drop the
+    /// viewing personality, so inherited lines and lines shared by several units have one target.
+    /// </summary>
+    public static string TargetId(string targetKey) { return "T-" + Sha1Hex(targetKey).Substring(0, 8); }
+
+    static void SetTarget(JObject slot, string targetKey)
+    {
+        slot["targetKey"] = targetKey;
+        slot["target"] = TargetId(targetKey);
+    }
+
+    protected void AddSharedSlot(string handle, JObject data)
+    {
+        // narration "N|<owner>|<field>|<path>" -> "narr|…", event text "N|<event>|…" -> "event|…"
+        if (handleKeys.TryGetValue(handle, out var key))
+            SetTarget(data, ((string)data["kind"] == "event_text" ? "event" : "narr") + key.Substring(1));
+        sharedSlots[handle] = data;
     }
 
     // ---------------------------------------------------------------- kojo
@@ -117,41 +255,155 @@ public abstract class TA_DocBuilderBase
     /// <summary>Resolves the entry a personality would use at this position; null when the chain has none.</summary>
     protected delegate ResponseEntry EntryResolver(Character_Personality p, out string provider, out string entryID);
 
-    /// <summary>Renders one kojo position: per personality, the resolved entry's applicable branches as slots.</summary>
-    protected void KojoBlock(string key, EntryResolver resolve, string speaker, string listener, TA_KojoContext ctx)
+    /// <summary>
+    /// One kojo position: the shared stream gets the position marker; each personality layer gets its resolution
+    /// (missing chain / no branch / the applicable branches as slots) plus a coverage lookup record.
+    /// consumer: command | eventBranch | eventQuestion | eventLine | ... (where the lookup runs);
+    /// severity: what a missing kojo does there (TA_Coverage severities, §7.1). A silent event failure is also a finding.
+    /// </summary>
+    protected void KojoBlock(string key, EntryResolver resolve, string speaker, string listener, TA_KojoContext ctx, string consumer, string severity)
     {
         sb.AppendLine($"→ 此处接续口上 `{key}` ｜ 说话者：{speaker} → 听者：{listener}");
         sb.AppendLine();
+        int pos = kojoPositions++;
+        sb.KojoPos(pos);
 
+        var sharedStream = sb;
         for (int pi = 0; pi < personalities.Count; pi++)
         {
             var pid = personalities[pi];
+            var layer = layers[pid];
+            sb = new TA_Ops();
+            layer.positions[pos.ToString()] = sb.ops;
+            var lookup = new JObject { ["pos"] = pos, ["key"] = key, ["speaker"] = speaker, ["listener"] = listener, ["consumer"] = consumer, ["severity"] = severity };
+            layer.lookups.Add(lookup);
+
             var p = scr_System_Serializer.current.MasterList.Character_Personalities.GetByID(pid);
-            if (p == null) { sb.AppendLine($"  · [{pid}] 人格不存在"); continue; }
+            if (p == null)
+            {
+                sb.Text("doc.kojo.personalityMissing", "pid", pid);
+                lookup["state"] = "personalityMissing";
+                continue;
+            }
 
             var found = resolve(p, out var provider, out var entryID);
             if (found == null)
             {
-                sb.AppendLine($"  · [{pid}] 整条回退链都没有条目 `{key}` → 此处不显示口上");
-                AddMissing($"[{pid}] 缺少口上条目 `{key}`", $"{speaker} → {listener}{(ctx.accepted ? "" : "（拒绝）")}");
+                sb.Text("doc.kojo.missingChain", "pid", pid, "key", key);
+                // a conditional lookup (command _Climax) without an entry is by design, not a missing-entry finding
+                if (severity != TA_Coverage.Optional) AddMissing(pid, key, $"{speaker} → {listener}{(ctx.accepted ? "" : "（拒绝）")}");
+                lookup["state"] = "missing";
                 sb.AppendLine();
                 continue;
             }
 
+            if (!coverageOnly) Lint(pid, provider, entryID, found, true, ctx.noEP ? key : null, consumer);
             bool inherited = provider != pid;
-            sb.AppendLine($"  · [{pid}] 条目 `{entryID}` 来自 {provider}{(inherited ? "（继承）" : "")}；按顺序取第一个满足条件的分支：");
-            int shown = 0;
+            sb.Text("doc.kojo.entryFrom", "pid", pid, "entry", entryID, "provider", provider, "inherited", inherited ? "@@doc.kojo.inherited" : "");
             var chain = new List<ResponseEntry.Variant>();
             var pathParts = new List<string>();
-            for (int vi = 0; vi < found.variants.Count; vi++)
-                shown += KojoVariant(found.variants[vi], vi, chain, pathParts, provider, entryID, pid, inherited, ctx);
+            int shown = KojoSiblings(found.variants, chain, pathParts, provider, entryID, pid, inherited, ctx);
             if (shown == 0)
             {
-                sb.AppendLine("  · （没有适用于此情境的分支 → 此处不显示口上）");
-                AddSuggestion($"[{provider}] `{entryID}` 没有适用于「{speaker} → {listener}{(ctx.accepted ? "" : "，拒绝")}{(ctx.listenerIsSelf ? "，独自" : "")}」的分支。");
+                sb.Text("doc.kojo.noBranch");
+                AddFinding(new JObject
+                {
+                    ["type"] = "noBranch", ["pid"] = pid, ["provider"] = provider, ["entry"] = entryID,
+                    ["context"] = $"{speaker} → {listener}{(ctx.accepted ? "" : "，拒绝")}{(ctx.listenerIsSelf ? "，独自" : "")}"
+                });
+                lookup["state"] = "noBranch";
             }
+            else lookup["state"] = inherited ? "inherited:" + provider : "own";
+            lookup["entry"] = entryID;
             sb.AppendLine();
         }
+        sb = sharedStream;
+
+        if (severity == TA_Coverage.SilentEventFailure)
+            for (int pi = 0; pi < personalities.Count; pi++)
+            {
+                var lookups = layers[personalities[pi]].lookups;
+                var state = (string)lookups[lookups.Count - 1]["state"];
+                if (TA_Coverage.IsGap(state))
+                    AddFinding(new JObject
+                    {
+                        ["type"] = "silentEventFailure", ["pid"] = personalities[pi], ["key"] = key, ["consumer"] = consumer,
+                        ["state"] = state, ["speaker"] = speaker, ["listener"] = listener
+                    });
+            }
+    }
+
+    /// <summary>
+    /// A lookup the doc never shows (code-injected kojo, e.g. Job.JoinPackage's `&lt;COM&gt;_Tryjoin`): recorded in each
+    /// layer's coverage only, resolved like a doc position but without slots.
+    /// </summary>
+    protected void CoverageLookup(string key, EntryResolver resolve, string speaker, string listener, TA_KojoContext ctx, string consumer, string severity)
+    {
+        var keepStream = sb;
+        bool keepMode = coverageOnly;
+        coverageOnly = true;
+        for (int pi = 0; pi < personalities.Count; pi++)
+        {
+            var pid = personalities[pi];
+            sb = new TA_Ops();
+            var lookup = new JObject { ["pos"] = -1, ["key"] = key, ["speaker"] = speaker, ["listener"] = listener, ["consumer"] = consumer, ["severity"] = severity };
+            layers[pid].lookups.Add(lookup);
+            var p = scr_System_Serializer.current.MasterList.Character_Personalities.GetByID(pid);
+            if (p == null) { lookup["state"] = "personalityMissing"; continue; }
+            var found = resolve(p, out var provider, out var entryID);
+            if (found == null) { lookup["state"] = "missing"; continue; }
+            // code-injected join kojo is fetched both with and without an EP (EventUtility / EvaluationPackage): tree lint only
+            if (!keepMode) Lint(pid, provider, entryID, found, true, null, consumer);
+            int shown = KojoSiblings(found.variants, new List<ResponseEntry.Variant>(), new List<string>(), provider, entryID, pid, provider != pid, ctx);
+            lookup["state"] = shown == 0 ? "noBranch" : provider != pid ? "inherited:" + provider : "own";
+            lookup["entry"] = entryID;
+        }
+        coverageOnly = keepMode;
+        sb = keepStream;
+    }
+
+    /// <summary>
+    /// One level of variants in engine order. After an always-valid sibling without keepLooking the level ends, so later
+    /// siblings are skipped (and reported unless another context reaches them).
+    /// </summary>
+    int KojoSiblings(List<ResponseEntry.Variant> list, List<ResponseEntry.Variant> chain, List<string> pathParts,
+        string provider, string entryID, string pid, bool inherited, TA_KojoContext ctx)
+    {
+        if (list == null) return 0;
+        int shown = 0;
+        string blocker = null;
+        for (int i = 0; i < list.Count; i++)
+        {
+            var v = list[i];
+            if (v == null) continue;
+            if (blocker != null && !(v.requirement != null && v.requirement.allowRecording))
+            {
+                if (TA_Conditions.Applies(v, ctx)) RecordShadowedKojo(pid, provider, entryID, PathWith(pathParts, i), blocker);
+                continue;
+            }
+            shown += KojoVariant(v, i, chain, pathParts, provider, entryID, pid, inherited, ctx);
+            if (blocker == null && !v.keepLooking && TA_Conditions.AlwaysValid(v, ctx)) blocker = PathWith(pathParts, i);
+        }
+        return shown;
+    }
+
+    static string PathWith(List<string> pathParts, int index)
+    {
+        var p = $"variants[{index}]";
+        return pathParts.Count > 0 ? string.Join(".", pathParts) + "." + p : p;
+    }
+
+    void RecordShadowedKojo(string pid, string provider, string entryID, string path, string blocker)
+    {
+        if (coverageOnly) return;
+        var key = $"{pid}|{provider}|{entryID}|{path}";
+        if (kojoShadowed.ContainsKey(key)) return;
+        kojoShadowed[key] = new JObject
+        {
+            ["type"] = "unreachableKojo", ["pid"] = pid, ["provider"] = provider, ["entry"] = entryID, ["path"] = path,
+            ["blocker"] = blocker, ["comment"] = TA_SourceIndex.Comments(RawVariant(provider, entryID, path))
+        };
+        kojoShadowedOrder.Add(key);
     }
 
     int KojoVariant(ResponseEntry.Variant v, int variantIndex, List<ResponseEntry.Variant> chain, List<string> pathParts,
@@ -161,52 +413,56 @@ public abstract class TA_DocBuilderBase
         if (!TA_Conditions.Applies(v, ctx)) return 0;
         chain.Add(v);
         pathParts.Add($"variants[{variantIndex}]");
+        var path = string.Join(".", pathParts);
+        kojoReached.Add($"{pid}|{provider}|{entryID}|{path}");
         int shown = 0;
 
         // children are tried first; the node's own responses are the fallback after them
-        if (v.variants != null)
-            for (int i = 0; i < v.variants.Count; i++)
-                shown += KojoVariant(v.variants[i], i, chain, pathParts, provider, entryID, pid, inherited, ctx);
+        if (v.variants != null) shown += KojoSiblings(v.variants, chain, pathParts, provider, entryID, pid, inherited, ctx);
 
         bool leaf = (v.responses != null && v.responses.Count > 0) || v.variants == null || v.variants.Count == 0;
-        if (leaf)
+        if (leaf && coverageOnly) shown++;
+        else if (leaf)
         {
             shown++;
-            var path = string.Join(".", pathParts);
             var h = Handle($"K|{pid}|{provider}|{entryID}|{path}", 'K', out bool first);
-
-            var conds = new List<string>();
-            for (int i = 0; i < chain.Count; i++) conds.Add(TA_Conditions.DescribeVariant(chain[i], ctx.noEP));
-            var comment = TA_SourceIndex.Comments(RawVariant(provider, entryID, path));
-
-            sb.AppendLine($"【{h}】{string.Join(" › ", conds)}{(v.keepLooking ? "（叠加：命中后继续往下）" : "")}{(first ? "" : " ｜ 同上，见前文")}");
+            sb.Slot(h);
             if (first)
             {
-                if (v.extraSelfPortraitTags != null && v.extraSelfPortraitTags.Count > 0) sb.AppendLine($"  · 立绘表情：{string.Join("、", v.extraSelfPortraitTags)}");
-                if (comment != "") sb.AppendLine($"  · 原注释：{comment}（仅供参考，以上方条件为准）");
-                if (mode == TA_Mode.KojoFill && inherited)
+                var conds = new List<string>();
+                bool locked = false;
+                for (int i = 0; i < chain.Count; i++)
                 {
-                    sb.AppendLine($"  · 当前继承自 {provider} 的文本（参考，不要改）：");
-                    if (v.responses != null) for (int t = 0; t < v.responses.Count; t++) sb.AppendLine($"  · {ZH(v.responses[t])}");
-                    sb.AppendLine($"  · 为 {pid} 填写：");
-                    FillLines();
+                    conds.Add(TA_Conditions.DescribeVariant(chain[i], ctx.noEP));
+                    if (TA_Conditions.RoleLocked(chain[i])) locked = true;
                 }
-                else if (v.responses == null || v.responses.Count < 1) FillLines();
-                else for (int t = 0; t < v.responses.Count; t++) sb.AppendLine($"- {ZH(v.responses[t])}");
-
-                slots[h] = new JObject
+                var cond = string.Join(" › ", conds);
+                layers[pid].slots[h] = new JObject
                 {
                     ["kind"] = "kojo",
+                    ["multiLine"] = true,
                     ["personality"] = pid,
                     ["provider"] = provider,
                     ["entry"] = entryID,
                     ["variantPath"] = path,
+                    ["cond"] = cond,
+                    ["keepLooking"] = v.keepLooking,
+                    ["portrait"] = new JArray(v.extraSelfPortraitTags == null ? new string[0] : v.extraSelfPortraitTags.ToArray()),
+                    ["comment"] = TA_SourceIndex.Comments(RawVariant(provider, entryID, path)),
+                    ["inherited"] = inherited,
                     ["keys"] = new JArray(v.responses == null ? new string[0] : v.responses.ToArray()),
-                    ["texts"] = mode == TA_Mode.KojoFill && inherited ? new JArray() : Texts(v.responses),
-                    ["writeTo"] = mode == TA_Mode.KojoFill && inherited ? $"create in {pid} (mirror {provider} {entryID} {path})" : "existing",
+                    ["texts"] = Texts(v.responses),
                     ["entrySources"] = Sources(index.Resolve(index.kojoEntries, provider + "|" + entryID, entryID)),
                     ["keySources"] = KeySources(v.responses)
                 };
+                SetTarget((JObject)layers[pid].slots[h], $"kojo|{provider}|{entryID}|{path}");
+                slotRoles[h] = new SlotRole { pid = pid, locked = locked, provider = provider, entry = entryID, path = path, cond = cond };
+                slotRoleOrder.Add(h);
+            }
+            if (slotRoles.TryGetValue(h, out var role))
+            {
+                if (ctx.speakerIsDoer) role.doer = true;
+                if (ctx.speakerIsReceiver) role.receiver = true;
             }
             sb.AppendLine();
         }
@@ -216,11 +472,29 @@ public abstract class TA_DocBuilderBase
         return shown;
     }
 
-    protected void FillLines()
+    /// <summary>
+    /// Records each kojo slot's speaker roles now that every use in the unit is known; a slot drawn by both doer and
+    /// receiver without a role-restricting variant becomes a roleShared finding (rendered as ⚠ + 结构建议).
+    /// </summary>
+    void ResolveRoles()
     {
-        sb.AppendLine("- 待写");
-        sb.AppendLine("- 待写");
-        sb.AppendLine("- 待写");
+        for (int i = 0; i < slotRoleOrder.Count; i++)
+        {
+            var h = slotRoleOrder[i];
+            var r = slotRoles[h];
+            var roles = new JArray();
+            if (r.doer) roles.Add("doer");
+            if (r.receiver) roles.Add("receiver");
+            var slot = (JObject)layers[r.pid].slots[h];
+            slot["roles"] = roles;
+            slot["roleRestricted"] = r.locked;
+            if (r.doer && r.receiver && !r.locked)
+                AddFinding(new JObject
+                {
+                    ["type"] = "roleShared", ["pid"] = r.pid, ["provider"] = r.provider, ["entry"] = r.entry, ["path"] = r.path,
+                    ["handle"] = h, ["cond"] = r.cond
+                });
+        }
     }
 
     JToken RawVariant(string provider, string entryID, string path)
@@ -310,24 +584,83 @@ public abstract class TA_DocBuilderBase
         return scr_System_Serializer.current.MasterList.Character_Personalities.GetByID(id);
     }
 
-    // ---------------------------------------------------------------- helpers
+    // ---------------------------------------------------------------- lint
 
-    protected void AddSuggestion(string s)
+    /// <summary>
+    /// TA_Lint findings for a resolved entry (Plan_ChangeStore.md §8): the tree rules once per provider|entry in this unit,
+    /// plus the no-EP rule per event lookup (noEPKey = the lookup key, null for lookups with an EP).
+    /// Findings go to the viewing personality's layer; ops get the entry's definition file and JSON path.
+    /// </summary>
+    void Lint(string pid, string provider, string entryID, ResponseEntry e, bool tree, string noEPKey, string consumer)
     {
-        if (!suggestions.Contains(s)) suggestions.Add(s);
-    }
+        var found = new List<JObject>();
+        if (tree && lintedEntries.Add(provider + "|" + entryID)) TA_Lint.Tree(e, found);
+        int treeCount = found.Count;
+        if (noEPKey != null) TA_Lint.NoEPLookup(e, found);
+        if (found.Count < 1) return;
 
-    /// <summary>One suggestion per missing entry, listing every speaker → listener use the doc found for it.</summary>
-    protected void AddMissing(string what, string usage)
-    {
-        if (!missing.TryGetValue(what, out var uses))
+        // definition file: the last non-patch source (a patch-only entry can't take ops; the coder decides)
+        TA_SourceRef def = null;
+        var refs = index.Resolve(index.kojoEntries, provider + "|" + entryID, null);
+        for (int i = refs.Count - 1; i >= 0 && def == null; i--) if (!refs[i].isPatch) def = refs[i];
+
+        for (int i = 0; i < found.Count; i++)
         {
-            uses = new List<string>();
-            missing[what] = uses;
-            missingOrder.Add(what);
+            var f = found[i];
+            var path = (string)f["path"];
+            var o = new JObject { ["type"] = "lint", ["rule"] = f["rule"], ["pid"] = pid, ["provider"] = provider, ["entry"] = entryID };
+            foreach (var p in f.Properties()) if (p.Name != "rule") o[p.Name] = p.Value;
+            if (i >= treeCount) { o["key"] = noEPKey; o["consumer"] = consumer; }
+            o["comment"] = TA_SourceIndex.Comments(RawVariant(provider, entryID, path));
+            SetTarget(o, $"kojo|{provider}|{entryID}|{path}");
+            if (o["ops"] is JArray ops)
+            {
+                if (def == null) o["patchOnly"] = true;
+                for (int k = 0; k < ops.Count; k++)
+                {
+                    var op = (JObject)ops[k];
+                    op["file"] = def?.file;
+                    op["path"] = def == null ? null : def.jsonPath + "." + (string)op["node"];
+                    op.Remove("node");
+                }
+            }
+            AddFinding(o);
         }
-        if (!uses.Contains(usage)) uses.Add(usage);
     }
+
+    // ---------------------------------------------------------------- findings
+
+    /// <summary>Typed finding (rendered through doc.suggest.* templates); `pid` routes it to that personality's layer.</summary>
+    protected void AddFinding(JObject f)
+    {
+        var key = f.ToString(Newtonsoft.Json.Formatting.None);
+        if (!findingKeys.Add(key)) return;
+        var pid = (string)f["pid"];
+        if (pid != null && layers.TryGetValue(pid, out var l)) l.findings.Add(f);
+        else sharedFindings.Add(f);
+    }
+
+    /// <summary>Records an unreachable narration entry (shared, once per key).</summary>
+    protected void AddUnreachable(string key, JObject info)
+    {
+        if (unreachableKeys.Add(key)) sharedUnreachable.Add(info);
+    }
+
+    /// <summary>One missingEntry finding per (personality, entry), listing every speaker → listener use.</summary>
+    void AddMissing(string pid, string key, string usage)
+    {
+        var l = layers[pid];
+        if (!l.missing.TryGetValue(key, out var f))
+        {
+            f = new JObject { ["type"] = "missingEntry", ["pid"] = pid, ["key"] = key, ["uses"] = new JArray() };
+            l.missing[key] = f;
+        }
+        var uses = (JArray)f["uses"];
+        for (int i = 0; i < uses.Count; i++) if ((string)uses[i] == usage) return;
+        uses.Add(usage);
+    }
+
+    // ---------------------------------------------------------------- helpers
 
     /// <summary>zh-cn text of a dictionary key (literal text if the key isn't one).</summary>
     public static string ZH(string key)
@@ -351,7 +684,7 @@ public abstract class TA_DocBuilderBase
         return (entries.TryGetValue("zh-cn", out var zh) && zh.ContainsKey(key)) || (entries.TryGetValue("default", out var def) && def.ContainsKey(key));
     }
 
-    static string OneLine(string s) { return s.Replace("\r", "").Replace("\n", "\\n"); }
+    public static string OneLine(string s) { return (s ?? "").Replace("\r", "").Replace("\n", "\\n"); }
 
     protected static JArray Sources(List<TA_SourceRef> refs)
     {
@@ -361,10 +694,16 @@ public abstract class TA_DocBuilderBase
         return a;
     }
 
+    /// <summary>Source refs of an ID (definition + mod patch files mentioning it); skipped in a coverage scan.</summary>
+    protected JArray SourcesOf(Dictionary<string, List<TA_SourceRef>> table, string key, string idForPatchSearch)
+    {
+        return coverageOnly ? new JArray() : Sources(index.Resolve(table, key, idForPatchSearch));
+    }
+
     protected JObject KeySources(List<string> keys)
     {
         var o = new JObject();
-        if (keys == null) return o;
+        if (keys == null || coverageOnly) return o;
         for (int i = 0; i < keys.Count; i++) o[keys[i]] = Sources(index.Resolve(index.dictZh, keys[i], keys[i]));
         return o;
     }

@@ -617,6 +617,7 @@ public class PortraitManager
                 tags_neutral = GetOwnerActionTagsByPriority();
                 tags_neutral_target = GetOwnerActionTargetTagsByPriority();
                 GetValidPortrait(tags_neutral, tags_neutral_target, out _cache_NeutralPortrait, out _cache_NeutralPortrait_path, out _cache_NeutralPortrait_icon);
+                if (Owner == null && _cache_NeutralPortrait_path == "") PickTemplateRandomPortrait();
 
             }
             handler = _cache_NeutralPortrait;
@@ -638,6 +639,24 @@ public class PortraitManager
             // (spine handlers and playing animated webp don't route their main portrait through the sprite cache, so they're excluded)
             box.Draw(handler.DrawPortrait(box, path));
         }
+    }
+
+    /// <summary>
+    /// Template (no Owner) neutral draw found no image: template handlers are never rebuilt, so the last handler's
+    /// random_portrait_folder is unresolved. Only the last handler is used: pick one image from its folder (no full rebuild)
+    /// as the cached neutral portrait. The handler's own random_portrait_path is left untouched, Copy() hands it to characters.
+    /// </summary>
+    void PickTemplateRandomPortrait()
+    {
+        var list = portraitPriorityList;
+        if (list.Count < 1) return;
+        var image = list[list.Count - 1] as CharaPortrait_Image;
+        if (image == null || !image.isValid() || image.random_portrait_folder == "") return;
+        var paths = scr_System_Serializer.current.GetAllImageFilesInFolder(image.random_portrait_folder);
+        if (paths.Count < 1) return;
+        _cache_NeutralPortrait = image;
+        _cache_NeutralPortrait_path = Utility.GetRandomElement(paths);
+        _cache_NeutralPortrait_icon = image.icon_path != "" ? image.icon_path : _cache_NeutralPortrait_path;
     }
 
     public void CollectAllTags(List<string> s, List<string> s2)

@@ -131,80 +131,17 @@
                 "description_after": {
                     "Entries": [
                         {
-                            "_comment": "check chara current climax value",
+                            "_comment": "Random result narration; former comment-only tiers share one text pool.",
                             "keepLooking": true,
-                            "conditions": [],
-                            "Entries": [
-                                {
-                                    "_comment": "uncons / fatigued",
-                                    "keepLooking": false,
-                                    "conditions": [],
-                                    "texts": [
-                                        "com_sex_P_cowgirl_description_after_2_1"
-                                    ]
-                                },
-                                {
-                                    "_comment": "stimulation less than 300 ? 10000 is climax threshold",
-                                    "keepLooking": false,
-                                    "conditions": [],
-                                    "texts": [
-                                        "com_sex_P_cowgirl_description_after_2_2"
-                                    ]
-                                },
-                                {
-                                    "_comment": "< 1000",
-                                    "keepLooking": false,
-                                    "conditions": [],
-                                    "texts": [
-                                        "com_sex_P_cowgirl_description_after_2_3"
-                                    ]
-                                },
-                                {
-                                    "_comment": "< 3000",
-                                    "keepLooking": false,
-                                    "conditions": [],
-                                    "texts": [
-                                        "com_sex_P_cowgirl_description_after_2_4"
-                                    ]
-                                },
-                                {
-                                    "_comment": "< 6000",
-                                    "keepLooking": false,
-                                    "conditions": [],
-                                    "texts": [
-                                        "com_sex_P_cowgirl_description_after_2_5"
-                                    ]
-                                },
-                                {
-                                    "_comment": "< 10000",
-                                    "keepLooking": false,
-                                    "conditions": [],
-                                    "Entries": [
-                                        {
-                                            "_comment": "has trait : refuse pleasure / repressed",
-                                            "keepLooking": false,
-                                            "conditions": [],
-                                            "texts": [
-                                                "com_sex_P_cowgirl_description_after_2_6"
-                                            ]
-                                        },
-                                        {
-                                            "_comment": "else",
-                                            "keepLooking": false,
-                                            "texts": [
-                                                "com_sex_P_cowgirl_description_after_2_7"
-                                            ]
-                                        }
-                                    ]
-                                },
-                                {
-                                    "_comment": ">= 10000",
-                                    "keepLooking": false,
-                                    "conditions": [],
-                                    "texts": [
-                                        "com_sex_P_cowgirl_description_after_2_8"
-                                    ]
-                                }
+                            "texts": [
+                                "com_sex_P_cowgirl_description_after_2_1",
+                                "com_sex_P_cowgirl_description_after_2_2",
+                                "com_sex_P_cowgirl_description_after_2_3",
+                                "com_sex_P_cowgirl_description_after_2_4",
+                                "com_sex_P_cowgirl_description_after_2_5",
+                                "com_sex_P_cowgirl_description_after_2_6",
+                                "com_sex_P_cowgirl_description_after_2_7",
+                                "com_sex_P_cowgirl_description_after_2_8"
                             ]
                         },
                         {

@@ -91,6 +91,7 @@
                             "variants": [
                                 {
                                     "requirement": {
+                                        "requireEPSuccess": false,
                                         "requirePermission": true
                                     },
                                     "extraSelfPortraitTags": [
@@ -116,6 +117,7 @@
                                 },
                                 {
                                     "requirement": {
+                                        "requireEPSuccess": false,
                                         "requireSelfAttitudeGTE": "Like"
                                     },
                                     "extraSelfPortraitTags": [
@@ -158,6 +160,16 @@
                             ]
                         },
                         {
+                            "requireSelfDoer": true,
+                            "useActiveTags": false,
+                            "_comment": "邀请结果 施方 已接受",
+                            "responses": [
+                                "com_interaction_initiateSex_Doer_1",
+                                "com_interaction_initiateSex_Doer_2"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
                             "useActiveTags": false,
                             "_player only version": {
                                 "requirement": {
@@ -249,6 +261,8 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
+                "com_interaction_initiateSex_Doer_1": "$self$放下手头的东西，转过身来面向$target$，说话的声音低了些。",
+                "com_interaction_initiateSex_Doer_2": "$self$往$target$身边靠近一步，把接下来的话压低到两人之间。",
                 "com_interaction_initiateSex_Sleeping_1": "$self$呼吸绵长，对衣衫被掀起毫无知觉。\n\n直到温热的手覆上小穴，她才无意识地蹙眉，翻身哼出含糊的鼻音，腿根却已诚实地泛起湿意。",
                 "com_interaction_initiateSex_Sleeping_2": "$self$睡得正沉，身躯随床垫下陷而微倾。\n\n双腿大大方方地敞着，连内裤被褪到膝弯都没察觉，毫无防备的模样任人打量。",
                 "com_interaction_initiateSex_Sleeping_3": "$self$含糊地哼了哼，本能地往被子里缩，却没发现睡衣下摆已被推到胸口。\n\n两只奶子就那么露在空气里，乳珠被凉气激得发硬。",
@@ -302,6 +316,8 @@
                 "com_interaction_initiateSex_Success_Unexpected_6": "$self$慌乱地环顾四周，确信没人之后，半推半就地松开了紧绷的大腿。\n\n\"只、只有这次哦……\""
             },
             "en-us": {
+                "com_interaction_initiateSex_Doer_1": "$self$ sets aside what she was doing and turns toward $target$, lowering her voice.",
+                "com_interaction_initiateSex_Doer_2": "$self$ steps closer to $target$, keeping her next words between the two of them.",
                 "com_interaction_initiateSex_Sleeping_1": "$self$ breathes long and slow, oblivious to her clothes being lifted.\n\nIt isn't until a warm hand settles over her pussy that she frowns unconsciously, turning over with a muffled hum, her inner thighs already turning honestly damp.",
                 "com_interaction_initiateSex_Sleeping_2": "$self$ is dead asleep, her body tilting as the mattress sinks.\n\nHer legs lie spread wide open, and she doesn't even notice her panties tugged down to her knees—defenseless for anyone to look at.",
                 "com_interaction_initiateSex_Sleeping_3": "$self$ gives a vague hum, instinctively curling deeper into the covers, unaware her nightshirt has been rucked up to her chest.\n\nBoth her tits are bared to the air, the nipples gone hard from the chill.",

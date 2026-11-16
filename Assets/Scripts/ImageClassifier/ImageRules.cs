@@ -113,7 +113,7 @@ public class CategoryRule
     public float? threshold;
     /// <summary>A match stops classification: the image stays unmatched (e.g. an animal with no species tag).</summary>
     public bool hold;
-    /// <summary>Editor-only original-filename aliases that independently trigger a hold rule.</summary>
+    /// <summary>Editor-only original-filename aliases that independently match this category (hold or regular).</summary>
     public List<string> holdFilenameHints = new List<string>();
     public string nameSet = ImageRules.DefaultNameSet;
     /// <summary>Optional category-wide allowlist, applied before filenames and tag matching.</summary>

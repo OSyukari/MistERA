@@ -601,7 +601,8 @@ public class scr_Menu_Updates : scr_Menu
         var package = row.package;
         entry.name = Plain(PackageLabel(package)) + "  " + Plain(package.version);
         var details = new StringBuilder();
-        if (!string.IsNullOrEmpty(package.description)) details.Append(Plain(package.description));
+        string description = CatalogText(package.id, true) ?? package.description;
+        if (!string.IsNullOrEmpty(description)) details.Append(Plain(description));
         if (!string.IsNullOrEmpty(package.author)) AppendLine(details, Text("mod_author") + " " + Plain(package.author));
         AppendLine(details, Text("mod_size") + " " + Bytes(package.size));
         entry.nameTooltip = details.ToString();
@@ -698,10 +699,20 @@ public class scr_Menu_Updates : scr_Menu
         var copy = entry.copy;
         var receipt = service.ReceiptForFolder(copy.folderName);
         string version = copy.about?.version;
-        // About name/description: localization keys or plain text of an installed mod, resolved at display time only
-        entry.name = copy.DisplayName + (string.IsNullOrEmpty(version) ? "" : "  " + version) + "  " + Text(receipt != null ? "mod_tag_official" : "mod_tag_local");
-        var details = new StringBuilder();
+        // About name/description: localization keys or plain text of an installed mod, resolved at display time only.
+        // An official mod installed this session has no dictionary loaded until restart: the key comes back unresolved,
+        // so the catalog's text stands in
+        string name = copy.DisplayName;
         string description = copy.Description;
+        if (receipt != null && copy.about != null)
+        {
+            string catalogName = name == copy.about.name ? CatalogText(receipt.package.id, false) : null;
+            if (catalogName != null) name = Plain(catalogName);
+            string catalogDescription = description == copy.about.description ? CatalogText(receipt.package.id, true) : null;
+            if (catalogDescription != null) description = Plain(catalogDescription);
+        }
+        entry.name = name + (string.IsNullOrEmpty(version) ? "" : "  " + version) + "  " + Text(receipt != null ? "mod_tag_official" : "mod_tag_local");
+        var details = new StringBuilder();
         if (!string.IsNullOrEmpty(description)) details.Append(description);
         AppendLine(details, Text("mod_folder").Replace("$folder$", copy.folderName) + "  ModID: " + copy.id);
         if (copy.dependencies.Count > 0) AppendLine(details, Text("mod_dependencies") + " " + string.Join(", ", copy.dependencies));
@@ -845,7 +856,20 @@ public class scr_Menu_Updates : scr_Menu
     {
         if (string.IsNullOrEmpty(package.name)) return package.id;
         if (package.kind == "assetpack" && package.name == package.group && package.id != package.group) return package.id;
-        return package.name;
+        return CatalogText(package.id, false) ?? package.name;
+    }
+
+    /// <summary>Package name or description in the current language from catalog-text.json (null when not published).
+    /// About name/description are dictionary keys, and a mod's About Dictionary is only loaded once it is installed
+    /// and the game restarted. Remote text: callers wrap it in Plain.</summary>
+    static string CatalogText(string id, bool description)
+    {
+        var text = UpdateService.Instance != null ? UpdateService.Instance.CatalogText : null;
+        if (text == null || id == null || !text.packages.TryGetValue(id, out var package)) return null;
+        var values = description ? package.description : package.name;
+        string language = LocalizeDictionary.Instance != null ? LocalizeDictionary.Instance.Index.cachedLang : null;
+        if (language != null && values.TryGetValue(language, out string value)) return value;
+        return values.TryGetValue("default", out value) ? value : null;
     }
 
     string Percent()

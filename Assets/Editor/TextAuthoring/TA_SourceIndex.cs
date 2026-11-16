@@ -26,11 +26,62 @@ public class TA_SourceIndex
     public readonly Dictionary<string, List<TA_SourceRef>> events = new Dictionary<string, List<TA_SourceRef>>();
     /// <summary>zh-cn dictionary key -> files defining it</summary>
     public readonly Dictionary<string, List<TA_SourceRef>> dictZh = new Dictionary<string, List<TA_SourceRef>>();
+    /// <summary>"default" dictionary key -> files (fallback language, as LocalizeDictionary)</summary>
+    public readonly Dictionary<string, List<TA_SourceRef>> dictDefault = new Dictionary<string, List<TA_SourceRef>>();
 
     readonly Dictionary<string, JToken> fileCache = new Dictionary<string, JToken>();
     readonly List<(string file, string modID, string text)> patchFiles = new List<(string, string, string)>();
+    readonly HashSet<string> scanned = new HashSet<string>();
     readonly string projectRoot;
     public readonly List<string> errors = new List<string>();
+
+    public string ProjectRoot { get { return projectRoot; } }
+
+    /// <summary>Absolute path of a source ref's file (project-relative or already absolute).</summary>
+    public string AbsPath(string file)
+    {
+        return Path.IsPathRooted(file) ? file : Path.Combine(projectRoot, file);
+    }
+
+    /// <summary>
+    /// Indexes one more file (offline Re-validate: mod files the manifest points to, which a Data/-only scan misses).
+    /// Already indexed files are skipped.
+    /// </summary>
+    public void ScanFile(string absPath, string modID)
+    {
+        var f = absPath.Replace('\\', '/');
+        if (!scanned.Add(Rel(f)) || !File.Exists(f)) return;
+        string text;
+        try { text = File.ReadAllText(f); }
+        catch (Exception e) { errors.Add($"read {f}: {e.Message}"); return; }
+        JToken root;
+        try { root = JToken.Parse(text); }
+        catch (Exception e) { errors.Add($"parse {Rel(f)}: {e.Message}"); return; }
+        fileCache[Rel(f)] = root;
+        IndexFile(root as JObject, Rel(f), modID ?? "");
+    }
+
+    /// <summary>zh-cn text of a dictionary key from raw files (zh-cn, then default; the key itself when it is none).</summary>
+    public string DictText(string key, out bool found)
+    {
+        found = false;
+        if (string.IsNullOrEmpty(key)) return "";
+        if (DictLookup(dictZh, key, out var s) || DictLookup(dictDefault, key, out s)) { found = true; return s; }
+        return key;
+    }
+
+    bool DictLookup(Dictionary<string, List<TA_SourceRef>> table, string key, out string text)
+    {
+        text = null;
+        if (!table.TryGetValue(key, out var refs)) return false;
+        // last definition wins, as later-loaded files (mods) override earlier ones
+        for (int i = refs.Count - 1; i >= 0; i--)
+        {
+            var t = GetRaw(refs[i]);
+            if (t != null && t.Type == JTokenType.String) { text = (string)t; return true; }
+        }
+        return false;
+    }
 
     public TA_SourceIndex()
     {
@@ -79,6 +130,7 @@ public class TA_SourceIndex
             try { root2 = JToken.Parse(text); }
             catch (Exception e) { errors.Add($"parse {Rel(f)}: {e.Message}"); continue; }
             var rel = Rel(f);
+            if (!scanned.Add(rel)) continue;
             fileCache[rel] = root2;
             IndexFile(root2 as JObject, rel, modID);
         }
@@ -137,6 +189,10 @@ public class TA_SourceIndex
         if (root["Dictionary"]?["Entries"]?["zh-cn"] is JObject zh)
         {
             foreach (var prop in zh.Properties()) Add(dictZh, prop.Name, file, prop.Path, modID);
+        }
+        if (root["Dictionary"]?["Entries"]?["default"] is JObject def)
+        {
+            foreach (var prop in def.Properties()) Add(dictDefault, prop.Name, file, prop.Path, modID);
         }
     }
 

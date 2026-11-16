@@ -34,6 +34,25 @@ namespace MistEra.Updates
         public List<ModPackage> packages = new List<ModPackage>();
     }
 
+    /// <summary>catalog-text.json: each package's About name/description resolved through its About Dictionary, per
+    /// language (the game has no dictionary of mods that are not installed). A separate file because released builds read
+    /// catalog-v2.json with a strict schema; display text only.</summary>
+    [System.Serializable]
+    public class ModCatalogText
+    {
+        public int schema = 1;
+        // package id -> text
+        public Dictionary<string, ModPackageText> packages = new Dictionary<string, ModPackageText>();
+    }
+
+    [System.Serializable]
+    public class ModPackageText
+    {
+        // language ("zh-cn", "en-us", "default") -> text
+        public Dictionary<string, string> name = new Dictionary<string, string>();
+        public Dictionary<string, string> description = new Dictionary<string, string>();
+    }
+
     [System.Serializable]
     public class ModPackage
     {

@@ -150,6 +150,24 @@ namespace MistEra.Updates
             ValidateFiles(shared.Values.ToList());
         }
 
+        public static void ValidateCatalogText(ModCatalogText text)
+        {
+            Require(text != null && text.schema == 1 && text.packages != null && text.packages.Count <= 10000, "Invalid catalog text");
+            foreach (var pair in text.packages)
+            {
+                Text(pair.Key, "package id");
+                Require(pair.Value != null && pair.Value.name != null && pair.Value.description != null &&
+                    pair.Value.name.Count <= 32 && pair.Value.description.Count <= 32, "Invalid package text: " + pair.Key);
+                foreach (var name in pair.Value.name) { Text(name.Key, "language", 32); Text(name.Value, "name"); }
+                foreach (var description in pair.Value.description)
+                {
+                    Text(description.Key, "language", 32);
+                    Require(!string.IsNullOrWhiteSpace(description.Value) && description.Value.Length <= 8000 &&
+                        !description.Value.Any(c => char.IsControl(c) && c != '\n' && c != '\r' && c != '\t'), "Invalid description: " + pair.Key);
+                }
+            }
+        }
+
         /// <param name="hashOptional">Mod install records and transactions: files are tracked by path and size, a hash
         /// only where one is known (shared About files from the catalog, records written by older builds).</param>
         public static void ValidateFiles(List<UpdateFile> files, bool hashOptional = false)

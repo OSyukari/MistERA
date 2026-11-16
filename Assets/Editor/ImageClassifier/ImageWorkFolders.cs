@@ -15,6 +15,9 @@ public static class ImageWorkFolders
     public const string AssetpacksFolder = "Assetpacks";
     /// <summary>The merged report of every work folder, in Mods/.</summary>
     public const string ReportFileName = "_image_database.html";
+    /// <summary>Written by the report page (images selected there), in Mods/; "Select from report" ticks their work folders.
+    /// Mods/ itself is never scanned for def json, only the mod folders inside it.</summary>
+    public const string SelectionFileName = "_image_selection.json";
 
     public static bool Skipped(string folderName) =>
         folderName.StartsWith("_", StringComparison.Ordinal) || folderName.StartsWith(".", StringComparison.Ordinal)

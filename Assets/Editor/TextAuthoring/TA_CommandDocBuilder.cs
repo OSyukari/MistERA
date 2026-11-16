@@ -5,9 +5,9 @@ using System.Text;
 using Newtonsoft.Json.Linq;
 
 /// <summary>
-/// Text authoring tool: builds one writer doc (+ manifest) per command unit - scenarios in display order with fill-in
-/// slots (Docs/TextAuthoring/Plan_ScenarioTextTool.md §3, §4, §9.1). Writers edit the `- ` lines in place; `  · ` lines
-/// are read-only context.
+/// Text authoring tool: extracts one command unit - scenarios in display order with slots
+/// (Docs/TextAuthoring/Plan_ScenarioTextTool.md §3, §4, §9.1) - into a snapshot (Plan_ExportStore.md §4) that
+/// TA_Renderer turns into the writer doc + manifest.
 /// </summary>
 public class TA_CommandDocBuilder : TA_DocBuilderBase
 {
@@ -15,24 +15,27 @@ public class TA_CommandDocBuilder : TA_DocBuilderBase
 
     // ---------------------------------------------------------------- entry point
 
-    /// <summary>Null + skipReason when the unit is not generated.</summary>
-    public string Build(COM target, out JObject manifestOut, out string skipReason)
+    /// <summary>Null + skipReason when the unit can't be extracted.</summary>
+    public TA_Snapshot Build(COM target, out string skipReason)
     {
-        manifestOut = null;
         skipReason = null;
         if (target == null) { skipReason = "找不到指令"; return null; }
 
         com = target;
-        BeginDoc(com.ID, "command");
+        BeginDoc(UnitName(com.ID), com.ID, "command");
         WriteHeader();
 
         var req = com.requirements.requirement;
         bool solo = req.TreatReceiverAsDoer || req.receiverCount == 0;
         if (solo) BuildSoloScenarios();
         else BuildPairScenarios();
+        JoinLookups();
 
-        return FinishDoc(out manifestOut);
+        return FinishDoc();
     }
+
+    /// <summary>Store/file name of a command unit.</summary>
+    public static string UnitName(string comID) { return TA_Store.Prefixed("com_", TA_Store.Safe(comID)); }
 
     // ---------------------------------------------------------------- header
 
@@ -50,13 +53,13 @@ public class TA_CommandDocBuilder : TA_DocBuilderBase
             for (int i = 0; i < com.variants.Count; i++) vs.Add($"变体{i}「{com.DisplayName(i)}」");
             sb.AppendLine($"> 指令变体：{string.Join("、", vs)}");
         }
-        if (com.ParentCOM != null) sb.AppendLine($"> 口上回退：本指令无口上条目时使用父指令 {com.ParentCOM.ID} 的条目");
-        if (com.IsUpgrade) sb.AppendLine($"> 升级指令：没有自己的文本时沿用 {com.upgradeFrom} 的旁白与口上");
-        sb.AppendLine("> 占位符：旁白层 `$doer.firstname$`=施方、`$receiver.firstname$`=受方；口上层 `$self$`=说话者、`$target$`=听者。保留原样，不要替换成名字。");
+        if (com.ParentCOM != null) sb.Text("doc.command.kojoFallback", "parent", com.ParentCOM.ID);
+        if (com.IsUpgrade) sb.Text("doc.command.upgrade", "from", com.upgradeFrom);
+        sb.Text("doc.command.placeholders");
         if (com.GenerateAP != null && !string.IsNullOrEmpty(com.GenerateAP.itemTag))
-            sb.AppendLine($"> `$name$` = 本次使用的物品名（势力库存中带标签 `{com.GenerateAP.itemTag}` 的物品，按物品生成一个动作；旁白里可用；口上里是否替换未确认，口上中避免使用）");
+            sb.Text("doc.command.itemName", "itemTag", com.GenerateAP.itemTag);
         var effects = Effects();
-        sb.AppendLine($"> （数值行：{(effects.Count > 0 ? string.Join("；", effects) : "无结算效果")}）——文本不得与之矛盾，也不要写出数字");
+        sb.Text("doc.command.effects", "effects", effects.Count > 0 ? string.Join("；", effects) : "@@doc.command.noEffects");
         WriteCommonHeaderFooter();
     }
 
@@ -145,6 +148,8 @@ public class TA_CommandDocBuilder : TA_DocBuilderBase
 
     void BuildPairScenarios()
     {
+        bool climax = HasClimaxEntry();
+
         // 1 player -> NPC, accepted
         Scenario("场景 1：玩家对 NPC 使用（玩家=施方）· NPC 接受", "玩家下达指令，NPC 通过接受检定。玩家是参与者，看到检定行与口上；看不到「完成旁白」。");
         System("[检定] 接受检定结果行（引擎生成，不写）");
@@ -154,6 +159,7 @@ public class TA_CommandDocBuilder : TA_DocBuilderBase
         Section("结果段" + Timing());
         if (com.baseD20Check > 0) System($"[判定] 「{com.DisplayName(-1)} D20 = … ≥? {com.baseD20Check}」（引擎生成，不写）");
         Kojo("", "受方 NPC", "玩家", new TA_KojoContext { speakerIsReceiver = true });
+        Climax(climax, ("受方 NPC", "玩家", new TA_KojoContext { speakerIsReceiver = true }));
         Section("结束段（仅接受时；在结果之后）");
         Narration("after");
 
@@ -171,6 +177,7 @@ public class TA_CommandDocBuilder : TA_DocBuilderBase
         Kojo("_Begin", "施方 NPC", "玩家", new TA_KojoContext { speakerIsDoer = true });
         Section("结果段" + Timing());
         Kojo("", "施方 NPC", "玩家", new TA_KojoContext { speakerIsDoer = true });
+        Climax(climax, ("施方 NPC", "玩家", new TA_KojoContext { speakerIsDoer = true }));
         Section("结束段");
         Narration("after");
 
@@ -191,6 +198,9 @@ public class TA_CommandDocBuilder : TA_DocBuilderBase
         Narration("onComplete");
         Kojo("", "施方 NPC", "受方 NPC", new TA_KojoContext { speakerIsDoer = true, playerInvolved = false });
         Kojo("", "受方 NPC", "施方 NPC", new TA_KojoContext { speakerIsReceiver = true, playerInvolved = false });
+        Climax(climax,
+            ("施方 NPC", "受方 NPC", new TA_KojoContext { speakerIsDoer = true, playerInvolved = false }),
+            ("受方 NPC", "施方 NPC", new TA_KojoContext { speakerIsReceiver = true, playerInvolved = false }));
         Section("结束段（成功时，结束旁白之后接施方/受方的 _Ongoing 口上，听者为对方）");
         Narration("after");
         Kojo("_Ongoing", "施方 NPC", "受方 NPC", new TA_KojoContext { speakerIsDoer = true, playerInvolved = false });
@@ -207,6 +217,7 @@ public class TA_CommandDocBuilder : TA_DocBuilderBase
         }
         int topDC = com.requirements.requirement.doerCount;
         if (topDC < 0 || topDC > 1) group = true;
+        bool climax = HasClimaxEntry();
 
         Scenario("场景 1：玩家自己进行", "只有玩家。没有口上；结果段对参与者为空（完成旁白只给旁观者看）。");
         Section("开始段");
@@ -222,6 +233,7 @@ public class TA_CommandDocBuilder : TA_DocBuilderBase
             Kojo("_Begin", "NPC", "玩家", new TA_KojoContext { speakerIsDoer = true });
             Section("结果段" + Timing());
             Kojo("", "NPC", "玩家", new TA_KojoContext { speakerIsDoer = true });
+            Climax(climax, ("NPC", "自己", new TA_KojoContext { speakerIsDoer = true, listenerIsSelf = true }));
             Section("结束段");
             Narration("after");
         }
@@ -232,6 +244,7 @@ public class TA_CommandDocBuilder : TA_DocBuilderBase
         Narration("begin");
         Section("接受 → 结果段" + Timing() + "：口上听者是自己（自言自语）");
         Kojo("", "NPC", "自己", new TA_KojoContext { speakerIsDoer = true, listenerIsSelf = true, masterPresent = true });
+        Climax(climax, ("NPC", "自己", new TA_KojoContext { speakerIsDoer = true, listenerIsSelf = true, masterPresent = true }));
         Section("拒绝");
         System("[开始段] 引擎通用拒绝行：「" + ZH("ep_Description_refuse") + "」");
         Kojo("", "NPC", "下令的玩家", new TA_KojoContext { speakerIsDoer = true, accepted = false, masterPresent = true });
@@ -249,6 +262,7 @@ public class TA_CommandDocBuilder : TA_DocBuilderBase
         Section("结果段" + Timing());
         Narration("onComplete");
         Kojo("", "NPC", "自己", new TA_KojoContext { speakerIsDoer = true, listenerIsSelf = true, playerInvolved = false });
+        Climax(climax, ("NPC", "自己", new TA_KojoContext { speakerIsDoer = true, listenerIsSelf = true, playerInvolved = false }));
         Section("结束段");
         Narration("after");
     }
@@ -276,7 +290,53 @@ public class TA_CommandDocBuilder : TA_DocBuilderBase
                 if (fb != null) found = ResolveCommandEntry(p, fb, "", out provider, out entryID);
             }
             return found;
-        }, speaker, listener, ctx);
+        }, speaker, listener, ctx, "command", TA_Coverage.NoLine);
+    }
+
+    /// <summary>
+    /// Whether any extracted personality's chain has `&lt;COM.ID&gt;_Climax` (own, folder parent, fallback personality,
+    /// upgradeFrom - the same chain as Character_Personality.GetKOJOMessage). Commands without one get no climax sections.
+    /// </summary>
+    bool HasClimaxEntry()
+    {
+        for (int i = 0; i < personalities.Count; i++)
+        {
+            var p = scr_System_Serializer.current.MasterList.Character_Personalities.GetByID(personalities[i]);
+            if (p != null && ResolveCommandEntry(p, com, "_Climax", out _, out _) != null) return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// EvaluationPackage.LogMessage_Climax (ActionPackage execution, after the result, before LogMessage_After): each
+    /// non-player participant whose Climaxing status is on and body is climaxing fetches `&lt;COM.ID&gt;_Climax`; the
+    /// listener is the other participant, or itself when there is none. Conditional - most executions have no climax.
+    /// </summary>
+    void Climax(bool has, params (string speaker, string listener, TA_KojoContext ctx)[] uses)
+    {
+        if (!has) return;
+        Section("高潮（条件：仅当说话者此刻正在高潮时；在结果之后、结束旁白之前。不是每次都会出现）");
+        for (int i = 0; i < uses.Length; i++)
+            KojoBlock(com.ID + "_Climax", (Character_Personality p, out string provider, out string entryID) =>
+                ResolveCommandEntry(p, com, "_Climax", out provider, out entryID),
+                uses[i].speaker, uses[i].listener, uses[i].ctx, "command", TA_Coverage.Optional);
+    }
+
+    /// <summary>
+    /// Joinable commands: Job.JoinPackage fetches `&lt;COM.ID&gt;_Tryjoin` / `_Joined` / `_Join_Refused` for the joiner (to the
+    /// player) and injects them into RequestJoin, with "" when missing. Coverage only - the lines belong to that event.
+    /// </summary>
+    void JoinLookups()
+    {
+        if (!com.allowJoining) return;
+        var suffixes = new[] { "_Tryjoin", "_Joined", "_Join_Refused" };
+        for (int i = 0; i < suffixes.Length; i++)
+        {
+            var suffix = suffixes[i];
+            CoverageLookup(com.ID + suffix, (Character_Personality p, out string provider, out string entryID) =>
+                ResolveCommandEntry(p, com, suffix, out provider, out entryID),
+                "加入者 NPC", "玩家", new TA_KojoContext { noEP = true, playerInvolved = true }, "codeInjectedJoin", TA_Coverage.EmptyLine);
+        }
     }
 
     // ---------------------------------------------------------------- narration
@@ -298,7 +358,7 @@ public class TA_CommandDocBuilder : TA_DocBuilderBase
             var desc = GetDesc(com, field);
             if (HasEntries(desc))
             {
-                sb.AppendLine("  · 来源：指令本体（本层按顺序取第一个满足条件的条目；标「叠加」的命中后继续往下）");
+                sb.TextP("  · 来源：指令本体", "doc.narration.orderNote");
                 DescEntries(desc.Entries, com.ID + "|-1", field, -1, "Entries", 0);
                 any = true;
             }
@@ -330,11 +390,11 @@ public class TA_CommandDocBuilder : TA_DocBuilderBase
                 if (parts.Count < 1) continue;
                 var names = new List<string>();
                 for (int i = 0; i < groups[g].Count; i++) names.Add($"变体{groups[g][i]}「{com.DisplayName(groups[g][i])}」");
-                if (parts.Count > 1) sb.AppendLine($"  · {string.Join("、", names)}：以下各来源在同一段内依次叠加");
+                if (parts.Count > 1) sb.Text("doc.narration.stacked", "variants", string.Join("、", names));
                 for (int p = 0; p < parts.Count; p++)
                 {
                     var who = parts.Count > 1 ? "" : string.Join("、", names) + " ｜ ";
-                    sb.AppendLine($"  · {who}来源：{parts[p].role}（本层按顺序取第一个满足条件的条目；标「叠加」的命中后继续往下）");
+                    sb.TextP($"  · {who}来源：{parts[p].role}", "doc.narration.orderNote");
                     DescEntries(parts[p].desc.Entries, parts[p].ownerKey, field, parts[p].variantIndex, "Entries", 0);
                 }
                 any = true;
@@ -344,11 +404,11 @@ public class TA_CommandDocBuilder : TA_DocBuilderBase
         {
             if (field == "begin")
             {
-                sb.AppendLine($"  · （无专属旁白 → 引擎默认句：「{ZH("ep_Description_start")}」）");
-                AddSuggestion($"{com.ID} 没有 description_begin，开始旁白为引擎默认句——建议新增。");
+                sb.Text("doc.narration.engineDefault", "text", ZH("ep_Description_start"));
+                AddFinding(new JObject { ["type"] = "noBegin", ["com"] = com.ID });
             }
-            else if (field == "ongoing") sb.AppendLine($"  · （无专属旁白 → 引擎默认句：「{ZH("ep_Description_ongoing")}」）");
-            else sb.AppendLine("  · （无）");
+            else if (field == "ongoing") sb.Text("doc.narration.engineDefault", "text", ZH("ep_Description_ongoing"));
+            else sb.Text("doc.narration.none");
             sb.AppendLine();
         }
     }
@@ -382,43 +442,99 @@ public class TA_CommandDocBuilder : TA_DocBuilderBase
         return parts;
     }
 
+    /// <summary>
+    /// One level of description entries in engine order (COM_Descriptions.GetText). An entry whose conditions always pass
+    /// and that doesn't keepLooking ends the level: later siblings (and their subtrees) can never print, so they are left
+    /// out of the doc and listed as a structural suggestion + manifest `unreachable`.
+    /// </summary>
     void DescEntries(List<COM_Descriptions.Description_Entry> entries, string ownerKey, string field, int variantIndex, string path, int depth)
     {
+        string blocker = null;
+        var skipped = new List<string>();
         for (int i = 0; i < entries.Count; i++)
         {
             var e = entries[i];
             if (e == null) continue;
             var p = $"{path}[{i}]";
+            if (blocker != null)
+            {
+                skipped.Add(DescribeSkipped(e, variantIndex, field, p));
+                AddUnreachable($"N|{ownerKey}|{field}|{p}", new JObject
+                {
+                    ["kind"] = "narration",
+                    ["com"] = com.ID,
+                    ["variantIndex"] = variantIndex,
+                    ["field"] = "description_" + field,
+                    ["entryPath"] = p,
+                    ["keys"] = new JArray(SubtreeKeys(e).ToArray()),
+                    ["shadowedBy"] = blocker
+                });
+                continue;
+            }
             var indent = new string(' ', depth * 2);
             var cond = TA_Conditions.DescribeDescEntry(e) + (e.keepLooking ? "，叠加" : "");
 
             if (e.texts != null && e.texts.Count > 0)
             {
                 var h = Handle($"N|{ownerKey}|{field}|{p}", 'N', out bool first);
-                sb.AppendLine($"{indent}【{h}】旁白 ｜ 条件：{cond}{(first ? "" : " ｜ 同上，见前文")}");
+                sb.Slot(h);
                 if (first)
-                {
-                    bool readOnly = mode == TA_Mode.KojoFill;
-                    for (int t = 0; t < e.texts.Count; t++) sb.AppendLine($"{indent}{(readOnly ? "  · " : "- ")}{ZH(e.texts[t])}");
-                    slots[h] = new JObject
+                    AddSharedSlot(h, new JObject
                     {
                         ["kind"] = "narration",
+                        ["multiLine"] = true,
+                        ["indent"] = indent,
+                        ["cond"] = cond,
                         ["com"] = com.ID,
                         ["variantIndex"] = variantIndex,
                         ["field"] = "description_" + field,
                         ["entryPath"] = p,
                         ["keys"] = new JArray(e.texts.ToArray()),
                         ["texts"] = Texts(e.texts),
-                        ["readOnly"] = mode == TA_Mode.KojoFill,
-                        ["comSources"] = Sources(index.Resolve(index.coms, com.ID, com.ID)),
+                        ["comSources"] = SourcesOf(index.coms, com.ID, com.ID),
                         ["keySources"] = KeySources(e.texts)
-                    };
-                }
+                    });
                 sb.AppendLine();
             }
             else sb.AppendLine($"{indent}（分支：{cond}）");
 
             if (e.Entries != null && e.Entries.Count > 0) DescEntries(e.Entries, ownerKey, field, variantIndex, p + ".Entries", depth + 1);
+            if (!e.keepLooking && TA_Conditions.AlwaysPasses(e)) blocker = p;
         }
+        if (skipped.Count > 0)
+            AddFinding(new JObject
+            {
+                ["type"] = "unreachableNarration", ["com"] = com.ID, ["owner"] = variantIndex < 0 ? "指令本体" : $"变体{variantIndex}",
+                ["field"] = "description_" + field, ["blocker"] = blocker, ["count"] = skipped.Count, ["entries"] = string.Join("；", skipped)
+            });
+    }
+
+    /// <summary>"path「_comment」 keys…" for a skipped entry (raw json is the only place _comment survives).</summary>
+    string DescribeSkipped(COM_Descriptions.Description_Entry e, int variantIndex, string field, string path)
+    {
+        var comment = "";
+        var refs = index.Resolve(index.coms, com.ID, null);
+        if (refs.Count > 0)
+        {
+            var raw = index.GetRaw(refs[refs.Count - 1]);
+            var owner = variantIndex < 0 ? raw : raw?.SelectToken($"variants[{variantIndex}]");
+            comment = TA_SourceIndex.Comments(owner?.SelectToken($"description_{field}.{path}"));
+        }
+        var keys = SubtreeKeys(e);
+        return $"{path}{(comment == "" ? "" : $"「{comment}」")}{(keys.Count > 0 ? " " + string.Join("、", keys) : "")}";
+    }
+
+    static List<string> SubtreeKeys(COM_Descriptions.Description_Entry e)
+    {
+        var keys = new List<string>();
+        CollectKeys(e, keys);
+        return keys;
+    }
+
+    static void CollectKeys(COM_Descriptions.Description_Entry e, List<string> into)
+    {
+        if (e == null) return;
+        if (e.texts != null) into.AddRange(e.texts);
+        if (e.Entries != null) for (int i = 0; i < e.Entries.Count; i++) CollectKeys(e.Entries[i], into);
     }
 }

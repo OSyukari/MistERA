@@ -106,6 +106,7 @@
                     ],
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
@@ -137,6 +138,7 @@
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
@@ -152,6 +154,7 @@
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requirePermission": true
                             },
@@ -170,6 +173,7 @@
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireSelfAttitudeGTE": "Like"
                             },
@@ -186,6 +190,7 @@
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
@@ -259,6 +264,7 @@
                     ],
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
@@ -280,6 +286,7 @@
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
@@ -303,12 +310,14 @@
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireEPFailure": true
                             },
                             "variants": [
                                 {
                                     "requirement": {
+                                        "requireEPSuccess": false,
                                         "selfTags": [
                                             "justWokenUp"
                                         ]
@@ -326,6 +335,7 @@
                                     "variants": [
                                         {
                                             "requirement": {
+                                                "requireEPSuccess": false,
                                                 "requirePermission": true
                                             },
                                             "extraSelfPortraitTags": [
@@ -346,11 +356,12 @@
                                     ],
                                     "_comment": "2.2.9 刚睡醒时的 指令失败拒绝 被B抚摸 口上文 无允许",
                                     "responses": [
-                                        "com_sex_finger_caress_B_6"
+                                "com_sex_finger_caress_B_6"
                                     ]
                                 },
                                 {
                                     "requirement": {
+                                        "requireEPSuccess": false,
                                         "requirePermission": true
                                     },
                                     "extraSelfPortraitTags": [
@@ -365,11 +376,12 @@
                                     "useActiveTags": false,
                                     "_comment": "2.1.2 指令失败拒绝 被B抚摸 有允许 口上文",
                                     "responses": [
-                                        "com_sex_finger_caress_B_7"
+                                "com_sex_finger_caress_B_7"
                                     ]
                                 },
                                 {
                                     "requirement": {
+                                        "requireEPSuccess": false,
                                         "requireSelfAttitudeGTE": "Like"
                                     },
                                     "extraSelfPortraitTags": [
@@ -400,6 +412,7 @@
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "targetBaseID": "PLAYER",
                                 "selfTags": [
@@ -461,6 +474,7 @@
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireEPSuccessGTE": "Success"
                             },
@@ -509,6 +523,7 @@
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "variants": [
                                 {
                                     "requirement": {

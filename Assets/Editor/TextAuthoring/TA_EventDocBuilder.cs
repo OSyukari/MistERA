@@ -26,6 +26,10 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
     {
         public string speakerKey, listenerKey, kojoID, storeKey;
         public bool fromAppendStrings;
+        /// <summary>Where the fetch runs - decides what a failed lookup does (Plan_ExportStore.md §7.1).</summary>
+        public string consumer;
+        /// <summary>TA_Coverage severity of a failed lookup at this place.</summary>
+        public string severity;
     }
 
     class PathResult
@@ -40,30 +44,27 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
 
     // ---------------------------------------------------------------- entry point
 
-    public string Build(Event target, out JObject manifestOut, out string skipReason)
+    public TA_Snapshot Build(Event target, out string skipReason)
     {
-        manifestOut = null;
         skipReason = null;
         if (target == null) { skipReason = "找不到事件"; return null; }
         ev = target;
 
-        // kojo fill only concerns events that speak through kojo; audit covers every event (its text is rewritable)
-        if (mode == TA_Mode.KojoFill && !QueriesKojo())
-        {
-            skipReason = "事件不取口上（无 GetKojoEntry，文本中也没有代码注入的 $kojo…$），口上填写模式跳过";
-            return null;
-        }
-
         paths = new List<PathResult>();
         Walk(0, new PathResult(), new HashSet<string>());
 
-        BeginDoc(ev.ID, "event");
+        BeginDoc(UnitName(ev.ID), ev.ID, "event");
+        // kojo fill only concerns events that speak through kojo; the renderer skips the others in that mode
+        Flags["queriesKojo"] = QueriesKojo();
         bool flow = paths.Count >= MaxPaths;
         WriteHeader(flow);
         if (flow) WriteFlowView();
         else for (int i = 0; i < paths.Count; i++) WritePath(i, paths[i]);
-        return FinishDoc(out manifestOut);
+        return FinishDoc();
     }
+
+    /// <summary>Store/file name of an event unit.</summary>
+    public static string UnitName(string eventID) { return TA_Store.Prefixed("event_", TA_Store.Safe(eventID)); }
 
     // ---------------------------------------------------------------- kojo detection
 
@@ -151,7 +152,7 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
         {
             if (!visited.Add(idx + "|-1")) { Finish(p, $"（回到 {Label(idx)}，循环）"); return; }
             p.steps.Add(new Step { entryIndex = idx, entry = e });
-            CollectFetches(ResultsOf(e), p);
+            CollectFetches(ResultsOf(e), p, ConsumerOf(e, false), SeverityOf(e, -1));
             Continue(idx, e, FindJump(ResultsOf(e)), p, visited);
             return;
         }
@@ -162,7 +163,7 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
             if (!branchVisited.Add(idx + "|" + o)) { Finish(Copy(p), $"（回到 {Label(idx)}，循环）"); continue; }
             var bp = Copy(p);
             bp.steps.Add(new Step { entryIndex = idx, entry = e, optionIndex = o, option = options[o] });
-            CollectFetches(options[o]?.Results, bp);
+            CollectFetches(options[o]?.Results, bp, ConsumerOf(e, true), SeverityOf(e, o));
             var jump = FindJump(options[o]?.Results);
             if (jump == null && e is Event.EventEntry.EventEntry_Question q) jump = FindJump(q.loadOptionsResults);
             Continue(idx, e, jump, bp, branchVisited);
@@ -171,6 +172,7 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
 
     void Continue(int idx, Event.EventEntry e, string[] jump, PathResult p, HashSet<string> visited)
     {
+        jump = NavigationJump(e, jump);
         if (jump != null)
         {
             if (jump[0] != "" && jump[0] != ev.ID) { Finish(p, $"→ 跳到事件 {jump[0]} 的 {(jump[1] == "" ? "开头" : jump[1])}（另档）"); return; }
@@ -179,9 +181,22 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
             Walk(target, p, visited);
             return;
         }
-        if (!string.IsNullOrEmpty(e.nextEventID)) { Finish(p, $"→ 接续事件 {e.nextEventID}{(e.nextEntryLabel == "" ? "" : " 的 " + e.nextEntryLabel)}（另档）"); return; }
         if (e.isLast) { Finish(p, "事件结束"); return; }
         Walk(idx + 1, p, visited);
+    }
+
+    string[] NavigationJump(Event.EventEntry e, string[] jump)
+    {
+        // A Line's final LoadNext overrides all Results jumps, even with empty next fields.
+        if (e is Event.EventEntry.EventEntry_Line)
+            jump = new[] { e.nextEventID, e.nextEntryLabel };
+        else if (jump == null && !string.IsNullOrEmpty(e.nextEventID))
+            jump = new[] { e.nextEventID, e.nextEntryLabel };
+
+        // LoadNext with no label ends an isLast entry, or advances within the current event.
+        if (jump != null && string.IsNullOrEmpty(jump[1])
+            && (e.isLast || string.IsNullOrEmpty(jump[0]) || jump[0] == ev.ID)) return null;
+        return jump;
     }
 
     static string[] FindJump(List<Event.EventEntry.Executor> list)
@@ -191,13 +206,45 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
         for (int i = 0; i < list.Count; i++)
         {
             var ex = list[i];
-            if (ex == null || ex.Type != Event.EventEntry.ExecutionType.JumpToLabel || ex.arguments == null || ex.arguments.Count < 2) continue;
-            found = new[] { ex.arguments[0], ex.arguments[1] };  // Results don't short-circuit: the last jump wins
+            if (ex == null || ex.Type != Event.EventEntry.ExecutionType.JumpToLabel || ex.arguments == null || ex.arguments.Count != 2) continue;
+            found = new[] { ex.arguments[0], ex.arguments[1] };  // Option Results don't short-circuit: the last jump wins
         }
         return found;
     }
 
-    static void CollectFetches(List<Event.EventEntry.Executor> list, PathResult p, bool accumulate = false)
+    /// <summary>
+    /// What a failed GetKojoEntry does depends on where it runs (EventUtility.ExecuteOption / Execute(Line)): an option's
+    /// Results fail the option (Branch → next option, all fail → reset; Question → reset), a Line ignores the result.
+    /// </summary>
+    static string ConsumerOf(Event.EventEntry e, bool inOption)
+    {
+        if (e is Event.EventEntry.EventEntry_Line) return "eventLine";
+        if (e is Event.EventEntry.EventEntry_Branch) return "eventBranch";
+        if (e is Event.EventEntry.EventEntry_Question) return inOption ? "eventQuestion" : "eventQuestionLoad";
+        if (e is Event.EventEntry.EventEntry_InputField) return "eventInput";
+        return "event";
+    }
+
+    /// <summary>
+    /// What a failed fetch at this place does (EventUtility): option Results fail the option (ExecuteOption: any failed
+    /// executor); a Branch then tries its next option and resets the event when none succeeds, a Question resets at
+    /// once; a Line ignores the result and prints the $storeKey$ unfilled. A Branch counts as falling through when a
+    /// later option fetches no kojo (its own conditions are not judged).
+    /// </summary>
+    static string SeverityOf(Event.EventEntry e, int optionIndex)
+    {
+        if (e is Event.EventEntry.EventEntry_Line) return TA_Coverage.RawPlaceholder;
+        if (e is Event.EventEntry.EventEntry_Question && optionIndex >= 0) return TA_Coverage.SilentEventFailure;
+        if (e is Event.EventEntry.EventEntry_Branch b && optionIndex >= 0)
+        {
+            for (int o = optionIndex + 1; o < b.options.Count; o++)
+                if (b.options[o] != null && !FetchesKojo(b.options[o].Results)) return TA_Coverage.FallsThrough;
+            return TA_Coverage.SilentEventFailure;
+        }
+        return TA_Coverage.Unknown;
+    }
+
+    static void CollectFetches(List<Event.EventEntry.Executor> list, PathResult p, string consumer, string severity, bool accumulate = false)
     {
         if (list == null) return;
         for (int i = 0; i < list.Count; i++)
@@ -213,7 +260,9 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
                 listenerKey = ex.arguments[1],
                 kojoID = ex.arguments[2],
                 storeKey = ex.arguments[3],
-                fromAppendStrings = fromAppend
+                fromAppendStrings = fromAppend,
+                consumer = consumer,
+                severity = severity
             };
             if (!p.fetches.TryGetValue(f.storeKey, out var listForKey) || !accumulate)
             {
@@ -247,10 +296,12 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
         sb.AppendLine($"# 事件 {ev.ID} 写手文档");
         sb.AppendLine();
         WriteCommonHeaderLines();
-        if (flow) sb.AppendLine($"> 触发：{ev.trigger} ｜ 条目 {ev.events.Count} 条 ｜ 分支组合超过 {MaxPaths} 条路径，改为按条目顺序列出：每条目注明去向，每个选项/分支注明条件与跳转目标。写作时请沿去向连读。");
-        else sb.AppendLine($"> 触发：{ev.trigger} ｜ 条目 {ev.events.Count} 条 ｜ 列出路径 {paths.Count} 条（每条路径 = 一种从头到尾的走法，包括每个选项/分支）");
-        sb.AppendLine("> 角色键：`self` = 事件主体；其他键（如 `evTarget`）= 事件目标；`$键.name$` 等占位符在显示时替换为对应角色。保留原样。");
-        sb.AppendLine("> 口上：`GetKojoEntry` 取到的口上存入 `$存储键$`，在打印到该占位符的位置显示——下文在对应行之后展开。取不到时通常走下一个分支选项。");
+        if (flow) sb.Text("doc.event.flowView", "trigger", ev.trigger.ToString(), "count", ev.events.Count.ToString(), "max", MaxPaths.ToString());
+        else sb.Text("doc.event.pathView", "trigger", ev.trigger.ToString(), "count", ev.events.Count.ToString(), "paths", paths.Count.ToString());
+        sb.Text("doc.event.roleKeys");
+        sb.Text("doc.event.kojoNote");
+        sb.Text("doc.event.singleLineNote");
+        sb.AppendLine("  · 自动分支按顺序尝试，选中条件通过且 Results 全部执行成功的第一项；后续项仅在此前项未成功时尝试。Results 不短路，执行检查失败也不会阻止同一列表中后续操作。");
         WriteCommonHeaderFooter();
     }
 
@@ -265,7 +316,7 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
             if (s.option == null) continue;
             var name = s.entry is Event.EventEntry.EventEntry_Branch ? $"[分支 {s.option.option}]" : ZH(s.option.option);
             choices.Add(name);
-            var c = OptionConditions(s.option);
+            var c = OptionConditions(s.option, s.entry, s.optionIndex);
             if (c != "") conds.Add($"{name}：{c}");
         }
 
@@ -285,7 +336,7 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
             else if (e is Event.EventEntry.EventEntry_Question q)
             {
                 if (i == 0 || p.steps[i - 1].entry != e) TextSlot(s, "question", q.question, "提问", p);
-                if (!string.IsNullOrEmpty(q.loadOptionsKey)) sb.AppendLine($"  · （另有代码生成的选项：{q.loadOptionsKey}）");
+                if (!string.IsNullOrEmpty(q.loadOptionsKey)) sb.Text("doc.event.loadOptions", "key", q.loadOptionsKey);
                 if (s.option != null)
                 {
                     TextSlot(s, "option", s.option.option, $"选项（玩家选择：第 {s.optionIndex + 1} 项）", p);
@@ -298,7 +349,8 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
             }
             else if (e is Event.EventEntry.EventEntry_Branch && s.option != null)
             {
-                sb.AppendLine($"  · （自动分支 `{s.option.option}`：{(OptionConditions(s.option) == "" ? "无条件" : OptionConditions(s.option))}）");
+                var c = OptionConditions(s.option, e, s.optionIndex);
+                sb.AppendLine($"  · （自动分支 `{s.option.option}`：{(c == "" ? "无额外检查" : c)}）");
                 if (!string.IsNullOrEmpty(s.option.line)) TextSlot(s, "optionLine", s.option.line, "分支正文", p);
             }
         }
@@ -315,9 +367,9 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
         {
             var e = ev.events[i];
             if (e == null) continue;
-            CollectFetches(ResultsOf(e), all, true);
+            CollectFetches(ResultsOf(e), all, ConsumerOf(e, false), SeverityOf(e, -1), true);
             var opts = OptionsOf(e);
-            if (opts != null) for (int o = 0; o < opts.Count; o++) CollectFetches(opts[o]?.Results, all, true);
+            if (opts != null) for (int o = 0; o < opts.Count; o++) CollectFetches(opts[o]?.Results, all, ConsumerOf(e, true), SeverityOf(e, o), true);
         }
 
         for (int i = 0; i < ev.events.Count; i++)
@@ -340,7 +392,7 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
             if (e is Event.EventEntry.EventEntry_Question q)
             {
                 TextSlot(step, "question", q.question, "提问", all);
-                if (!string.IsNullOrEmpty(q.loadOptionsKey)) sb.AppendLine($"  · （另有代码生成的选项：{q.loadOptionsKey}）");
+                if (!string.IsNullOrEmpty(q.loadOptionsKey)) sb.Text("doc.event.loadOptions", "key", q.loadOptionsKey);
             }
             else if (e is Event.EventEntry.EventEntry_InputField f) TextSlot(step, "question", f.question, "输入框提示", all);
 
@@ -351,9 +403,9 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
                 var opt = options[o];
                 if (opt == null) continue;
                 var os = new Step { entryIndex = i, entry = e, optionIndex = o, option = opt };
-                var cond = OptionConditions(opt);
+                var cond = OptionConditions(opt, e, o);
                 bool branch = e is Event.EventEntry.EventEntry_Branch;
-                sb.AppendLine($"**▶ {(branch ? $"分支 `{opt.option}`（按顺序取第一个满足条件的）" : $"选项 {o + 1}")}** ｜ 条件：{(cond == "" ? "无" : cond)} ｜ 去向：{Destination(i, e, FindJump(opt.Results))}");
+                sb.AppendLine($"**▶ {(branch ? $"分支 `{opt.option}`（按顺序取第一个条件通过且执行成功的）" : $"选项 {o + 1}")}** ｜ 条件：{(cond == "" ? "无额外检查" : cond)} ｜ 去向：{Destination(i, e, FindJump(opt.Results))}");
                 sb.AppendLine();
                 if (!branch) TextSlot(os, "option", opt.option, "选项文字", all);
                 if (!string.IsNullOrEmpty(opt.line)) TextSlot(os, "optionLine", opt.line, branch ? "分支正文" : "选项后的正文", all);
@@ -372,13 +424,13 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
 
     string Destination(int idx, Event.EventEntry e, string[] jump)
     {
+        jump = NavigationJump(e, jump);
         if (jump != null)
         {
             if (jump[0] != "" && jump[0] != ev.ID) return $"跳到事件 {jump[0]} 的 {(jump[1] == "" ? "开头" : jump[1])}";
             int t = LabelIndex(jump[1]);
             return t < 0 ? $"跳到 {jump[1]}（不存在）" : $"跳到条目 {t}「{jump[1]}」";
         }
-        if (!string.IsNullOrEmpty(e.nextEventID)) return $"接续事件 {e.nextEventID}{(e.nextEntryLabel == "" ? "" : " 的 " + e.nextEntryLabel)}";
         if (e.isLast || idx + 1 >= ev.events.Count) return "事件结束";
         return $"下一条（条目 {idx + 1}）";
     }
@@ -390,20 +442,21 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
         if (string.IsNullOrEmpty(keyOrText)) return;
         // the entry's own text is the same slot whichever option is taken later
         int keyOption = field == "option" || field == "optionLine" ? s.optionIndex : -1;
-        var h = Handle($"N|{ev.ID}|{s.entryIndex}|{keyOption}|{field}", 'N', out bool first);
+        // identity by label when the entry has one, so inserting entries before it keeps the handle (D12)
+        var entryRef = s.entry.label != "" ? s.entry.label : "#" + s.entryIndex;
+        var h = Handle($"N|{ev.ID}|{entryRef}|{keyOption}|{field}", 'N', out bool first);
         var text = ZH(keyOrText);
-        sb.AppendLine($"【{h}】{what}{(s.entry.label != "" ? $"（{s.entry.label}）" : "")}{(first ? "" : " ｜ 同上，见前文")}");
-        bool placeholderOnly = placeholder.Replace(text, "").Replace("\\n", "").Trim().Length == 0;
+        sb.Slot(h);
         if (first)
         {
             bool isKey = IsDictKey(keyOrText);
-            if (mode == TA_Mode.KojoFill || placeholderOnly) sb.AppendLine($"  · {text}");
-            else sb.AppendLine($"- {text}");
-            if (placeholderOnly) sb.AppendLine("  · （此行只有占位符，没有可写的正文；内容见下方展开）");
-            else if (!isKey) sb.AppendLine("  · （此文本直接写在事件数据里，不是字典键）");
-            slots[h] = new JObject
+            AddSharedSlot(h, new JObject
             {
                 ["kind"] = "event_text",
+                // button labels never take random lines; other event text is single-line until the engine supports variants
+                ["multiLine"] = false,
+                ["what"] = what,
+                ["placeholderOnly"] = placeholder.Replace(text, "").Replace("\\n", "").Trim().Length == 0,
                 ["event"] = ev.ID,
                 ["entryIndex"] = s.entryIndex,
                 ["label"] = s.entry.label,
@@ -412,23 +465,20 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
                 ["key"] = keyOrText,
                 ["texts"] = new JArray(text),
                 ["isDictKey"] = isKey,
-                ["readOnly"] = mode == TA_Mode.KojoFill || placeholderOnly,
-                ["eventSources"] = Sources(index.Resolve(index.events, ev.ID, ev.ID)),
+                ["eventSources"] = SourcesOf(index.events, ev.ID, ev.ID),
                 ["keySources"] = isKey ? KeySources(new List<string> { keyOrText }) : new JObject()
-            };
-        }
-        // $x$ placeholders this event never fills itself: injected by the code that starts the event (noted once per slot)
-        if (first)
-        {
+            });
+
+            // $x$ placeholders this event never fills itself: injected by the code that starts the event (noted once per slot)
             var matches = placeholder.Matches(text);
             for (int m = 0; m < matches.Count; m++)
             {
                 var name = matches[m].Groups[1].Value;
                 if (p.fetches.ContainsKey(name) || name == "self" || name == "target") continue;
                 if (name.StartsWith("kojo_", System.StringComparison.OrdinalIgnoreCase))
-                    sb.AppendLine($"  · `${name}$`：由启动本事件的代码取口上后注入（不在本事件数据中取），显示说话者的口上——条目一般为 `<指令ID>{KojoSuffix(name)}`，见对应指令");
+                    sb.Text("doc.event.injectedKojo", "name", name, "suffix", KojoSuffix(name));
                 else
-                    sb.AppendLine($"  · `${name}$`：运行时由代码填入的变量，保留原样");
+                    sb.Text("doc.event.runtimeVar", "name", name);
             }
         }
         sb.AppendLine();
@@ -437,21 +487,21 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
         foreach (var kv in p.fetches)
         {
             if (text.IndexOf("$" + kv.Key + "$", System.StringComparison.Ordinal) < 0) continue;
-            if (kv.Value.Count > 1) sb.AppendLine($"  · `${kv.Key}$` 视走过的分支取以下 {kv.Value.Count} 个口上之一：");
+            if (kv.Value.Count > 1) sb.Text("doc.event.kojoChoice", "key", kv.Key, "count", kv.Value.Count.ToString());
             for (int i = 0; i < kv.Value.Count; i++)
             {
                 var f = kv.Value[i];
                 if (f.fromAppendStrings)
                 {
-                    sb.AppendLine($"→ 此处 `${kv.Key}$` 显示口上（口上 ID 运行时从 AppendStrings[{f.kojoID}] 取得，无法静态展开）");
+                    sb.Text("doc.event.appendStringsKojo", "key", kv.Key, "index", f.kojoID);
                     sb.AppendLine();
                     continue;
                 }
-                sb.AppendLine($"  · （以下口上显示在上一行 `${kv.Key}$` 的位置）");
+                sb.Text("doc.event.kojoAt", "key", kv.Key);
                 var ctx = new TA_KojoContext { noEP = true, listenerIsSelf = f.speakerKey == f.listenerKey, playerInvolved = true };
                 var kojoID = f.kojoID;
                 KojoBlock(kojoID, (Character_Personality per, out string provider, out string entryID) =>
-                    ResolvePlainEntry(per, kojoID, out provider, out entryID), KeyName(f.speakerKey), KeyName(f.listenerKey), ctx);
+                    ResolvePlainEntry(per, kojoID, out provider, out entryID), KeyName(f.speakerKey), KeyName(f.listenerKey), ctx, f.consumer, f.severity);
             }
         }
     }
@@ -472,9 +522,11 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
 
     static string KeyName(string key) { return key == "self" ? "事件主体(self)" : key; }
 
-    string OptionConditions(Event.EventEntry.Options o)
+    string OptionConditions(Event.EventEntry.Options o, Event.EventEntry entry, int optionIndex)
     {
         var parts = new List<string>();
+        if (entry is Event.EventEntry.EventEntry_Branch && optionIndex > 0)
+            parts.Add("此前分支均未成功时才尝试");
         if (o.conditions != null)
             for (int i = 0; i < o.conditions.Count; i++)
                 if (o.conditions[i] != null && o.conditions[i].randChance < 1) parts.Add($"{o.conditions[i].randChance * 100:0}% 概率");
@@ -492,6 +544,28 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
                     if (kv.Value[i]?.parameters != null && kv.Value[i].parameters.Count > 0) parts.Add($"{kv.Key} {string.Join(" ", kv.Value[i].parameters)}");
             }
         if (!string.IsNullOrEmpty(o.forEachTargetKey)) parts.Add($"按 {o.forEachTargetKey} 中每个角色各显示一次");
+        var checks = new List<string>();
+        bool otherResults = false;
+        if (o.Results != null)
+            foreach (var ex in o.Results)
+            {
+                if (ex == null) continue;
+                if (ex.conditions != null)
+                    foreach (var condition in ex.conditions)
+                        if (condition != null && condition.randChance < 1)
+                            checks.Add($"执行器 {ex.Type} 通过 {condition.randChance * 100:0}% 概率检查");
+                if (ex.Type == Event.EventEntry.ExecutionType.ExistAppendStrings)
+                    checks.Add(ex.arguments != null && ex.arguments.Count > 0 && !string.IsNullOrEmpty(ex.arguments[0])
+                        ? $"AppendStrings 含键 `{ex.arguments[0]}`（仅检查键存在）" : "ExistAppendStrings 参数无效（无法成功）");
+                else if (ex.Type == Event.EventEntry.ExecutionType.ExistCallbackID)
+                    checks.Add(ex.arguments != null && ex.arguments.Count > 0 && !string.IsNullOrEmpty(ex.arguments[0])
+                        ? $"回调 `{ex.arguments[0]}` 存在且非空" : "ExistCallbackID 参数无效（无法成功）");
+                else if (ex.Type == Event.EventEntry.ExecutionType.JumpToLabel && (ex.arguments == null || ex.arguments.Count != 2))
+                    checks.Add("JumpToLabel 参数无效（无法成功）");
+                else if (ex.Type != Event.EventEntry.ExecutionType.JumpToLabel) otherResults = true;
+            }
+        if (checks.Count > 0) parts.Add("执行成功要求（全部满足）：" + string.Join(" 且 ", checks));
+        if (otherResults) parts.Add("其他 Results 也须全部执行成功（非短路）");
         return string.Join("，", parts);
     }
 }

@@ -126,7 +126,7 @@ internal static class Program
         var result = new Dictionary<string, string>(StringComparer.Ordinal);
         for (int i = 0; i < args.Length; i += 2)
         {
-            Require(i + 1 < args.Length && args[i] is "--root" or "--pid" or "--started" or "--ticket" or "--recover", "Invalid helper arguments.");
+            Require(i + 1 < args.Length && args[i] is "--root" or "--pid" or "--started" or "--ticket" or "--recover" or "--repair", "Invalid helper arguments.");
             Require(result.TryAdd(args[i], args[i + 1]), "Duplicate helper argument.");
         }
         return result;
@@ -154,7 +154,16 @@ internal static class Program
     {
         Require(OperatingSystem.IsWindows(), "This helper requires Windows.");
         try { Console.Title = "MistEra updater"; } catch { }
+        // started by hand (the game cannot start after an interrupted update): repair the installation this helper is in
+        if (args.Length == 0) { Repair(InstallationOfHelper(), null); return; }
         var options = Arguments(args);
+        if (options.TryGetValue("--repair", out string repairRoot))
+        {
+            Require(options.Count == 1 || (options.Count == 3 && options.ContainsKey("--pid") && options.ContainsKey("--started")),
+                "Repair usage: --repair <root> [--pid <game pid> --started <start ticks>].");
+            Repair(repairRoot, options);
+            return;
+        }
         Require(options.ContainsKey("--root") && options.ContainsKey("--ticket"), "--root and --ticket are required.");
         string root = Path.GetFullPath(options["--root"]).TrimEnd(Path.DirectorySeparatorChar);
         Require(Paths.Equals(root, options["--root"]) && Directory.Exists(root), "Installation root must be canonical and exist.");
@@ -228,6 +237,165 @@ internal static class Program
     private sealed class Acknowledgement
     {
         public string nonce = null;
+    }
+
+    /// <summary>Installation root of a helper started by hand: the shipped UpdateTools\ copy, or a transaction's own
+    /// .updates\transactions\&lt;id&gt;\helper\ copy (for when UpdateTools itself was half replaced).</summary>
+    private static string InstallationOfHelper()
+    {
+        var folder = new DirectoryInfo(Path.GetDirectoryName(Path.GetFullPath(Environment.ProcessPath)));
+        if (Paths.Equals(folder.Name, "UpdateTools") && folder.Parent != null) return folder.Parent.FullName;
+        var transactions = folder.Parent?.Parent;
+        if (Paths.Equals(folder.Name, "helper") && transactions != null && Paths.Equals(transactions.Name, "transactions") &&
+            transactions.Parent != null && Paths.Equals(transactions.Parent.Name, ".updates") && transactions.Parent.Parent != null)
+            return transactions.Parent.Parent.FullName;
+        throw new InvalidOperationException("Run MistEra.Updater.exe from the game's UpdateTools folder.");
+    }
+
+    /// <summary>
+    /// Finishes game installs left half done (build journal "prepared": power cut, killed helper) from their staged files,
+    /// then starts the game. Started by the game when it finds one at startup (with --pid/--started: waits for the game
+    /// to exit first), or by hand without arguments when the game cannot start at all.
+    /// </summary>
+    private static void Repair(string rootArgument, Dictionary<string, string> options)
+    {
+        string root = Path.GetFullPath(rootArgument).TrimEnd(Path.DirectorySeparatorChar);
+        Require(Directory.Exists(root), "Installation root does not exist: " + root);
+        NoLinks(root);
+        logPath = Resolve(root, ".updates/repair.log");
+        bool fromGame = options != null && options.ContainsKey("--pid");
+        if (fromGame)
+        {
+            bool validPid = int.TryParse(options["--pid"], NumberStyles.None, CultureInfo.InvariantCulture, out int pid);
+            bool validStart = long.TryParse(options["--started"], NumberStyles.None, CultureInfo.InvariantCulture, out long started);
+            Require(validPid && validStart, "Invalid game process identity.");
+            Process game = null;
+            try { game = Process.GetProcessById(pid); }
+            catch (ArgumentException) { }   // already exited
+            using (game)
+            {
+                if (game != null && game.StartTime.ToUniversalTime().Ticks == started)
+                {
+                    Say("Waiting for the game to close...");
+                    Require(game.WaitForExit(120000), "The game did not exit within 120 seconds. Nothing was changed; close it and run UpdateTools\\MistEra.Updater.exe.");
+                }
+            }
+        }
+        string repaired = null;
+        using (var installationLock = UpdateFiles.AcquireLock(root))
+        {
+            NoGameProcesses(root);
+            string transactions = Resolve(root, ".updates/transactions");
+            if (Directory.Exists(transactions))
+                foreach (string directory in Directory.EnumerateDirectories(transactions).OrderBy(p => p, StringComparer.Ordinal))
+                {
+                    NoLinks(directory);
+                    string journalPath = Resolve(directory, "build-journal.json");
+                    if (!File.Exists(journalPath) || UpdateJson.Read<Journal>(journalPath).state != "prepared") continue;
+                    string id = Path.GetFileName(directory);
+                    Require(Guid.TryParseExact(id, "D", out _), "Invalid build transaction: " + directory);
+                    logPath = Resolve(directory, "helper.log");
+                    FinishInstall(root, directory, id);
+                    repaired = directory;
+                }
+        }
+        if (repaired == null)
+        {
+            Say("No interrupted game update was found.");
+            if (!fromGame) { MessageBoxW(IntPtr.Zero, "No interrupted game update was found. Nothing was changed.", "MistEra updater", 0x40); return; }
+        }
+        // the game that started this repair is restarted; by hand, the game is started too (the update is done)
+        string executable = repaired != null ? ReadHandoff(Resolve(repaired, "handoff.json")).executable : null;
+        if (executable == null)
+        {
+            string info = Resolve(root, ".updates/installed-build.json");
+            executable = UpdateJson.Read<BuildInfo>(File.Exists(info) ? info : Resolve(root, "build-info.json")).executable;
+        }
+        Require(executable != null && !executable.Contains('/') && !executable.Contains('\\') && executable.EndsWith(".exe", StringComparison.OrdinalIgnoreCase), "Executable must be a root-level .exe.");
+        Say("Starting the game...");
+        var launch = new ProcessStartInfo(Resolve(root, executable)) { UseShellExecute = false, WorkingDirectory = root };
+        if (repaired != null)
+        {
+            launch.ArgumentList.Add("--update-ack");
+            launch.ArgumentList.Add(Path.GetFileName(repaired));
+        }
+        using var child = Process.Start(launch);
+        Require(child != null, "The update is complete but the game could not be started. Launch the game manually.");
+    }
+
+    /// <summary>
+    /// Completes an install whose journal was written but not committed: every change is applied again from the staged
+    /// files (the journal is only written once all backups are durable, and staged sources are copied, never moved).
+    /// Targets already holding their new bytes are skipped; a target holding neither its old nor its new bytes stops the
+    /// repair (an edit made in between). When a staged source is gone, the previous version is restored instead.
+    /// </summary>
+    private static void FinishInstall(string root, string transaction, string nonce)
+    {
+        string path = Resolve(transaction, "build-journal.json");
+        var journal = UpdateJson.Read<Journal>(path);
+        Require(journal != null && journal.schema == 1 && journal.nonce == nonce && journal.changes != null, "Invalid recovery journal.");
+        if (journal.state != "prepared") return;
+        Say("Finishing the interrupted game update...");
+        bool[] installed = CheckRecoveryTargets(root, journal);
+        string prefix = Path.GetFullPath(transaction).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
+        bool complete = true;
+        for (int i = 0; i < journal.changes.Count && complete; i++)
+        {
+            var change = journal.changes[i];
+            if (change.after == null || installed[i]) continue;
+            // only ever copy from this transaction's own staging
+            complete = change.source != null && Path.GetFullPath(change.source).StartsWith(prefix, StringComparison.OrdinalIgnoreCase) && SameSize(change.source, change.after);
+        }
+        if (!complete)
+        {
+            Say("Staged update files are missing; restoring the previous version instead.");
+            Rollback(root, transaction, nonce);
+            return;
+        }
+        for (int i = 0; i < journal.changes.Count; i++)
+        {
+            Progress("Installing", i + 1, journal.changes.Count);
+            var change = journal.changes[i];
+            string target = Resolve(root, change.path);
+            string temporary = target + "." + nonce + ".tmp";
+            NoLinks(temporary);
+            if (File.Exists(temporary)) File.Delete(temporary);
+            if (installed[i]) continue;
+            if (change.after == null) { if (File.Exists(target)) File.Delete(target); continue; }
+            NoLinks(change.source);
+            Replace(change.source, target, nonce);
+        }
+        journal.state = "committed";
+        AtomicJson(path, journal);
+        Say("Installation complete.");
+    }
+
+    /// <summary>Recovery checks shared by rollback and repair: safe targets and hashes, and every target holding either
+    /// its old or its new bytes. Returns per change whether the target already holds its new state.</summary>
+    private static bool[] CheckRecoveryTargets(string root, Journal journal)
+    {
+        var installed = new bool[journal.changes.Count];
+        var seen = new HashSet<string>(Paths);
+        for (int i = 0; i < journal.changes.Count; i++)
+        {
+            var change = journal.changes[i];
+            Require(change != null && seen.Add(change.path) && (!Protected(change.path) ||
+                (EditableSidecar(change.path) && change.before == null && change.after != null) ||
+                change.path is ".updates/installed-build.json" or ".updates/installed-files.json"), "Unsafe recovery target.");
+            Resolve(root, change.path);
+            Require(change.before != null || change.after != null, "Empty recovery change.");
+            foreach (var file in new[] { change.before, change.after }.Where(f => f != null))
+                Require(file.path == change.path && file.size >= 0 && file.sha256 != null && file.sha256.Length == 64 && file.sha256.All(Uri.IsHexDigit), "Invalid recovery hashes.");
+            string target = Resolve(root, change.path);
+            Require(!Directory.Exists(target), "Recovery target is a directory: " + change.path);
+            if (File.Exists(target))
+            {
+                installed[i] = change.after != null && Matches(target, change.after);
+                Require(installed[i] || (change.before != null && Matches(target, change.before)), "Recovery blocked by a local edit: " + change.path);
+            }
+            else installed[i] = change.after == null;
+        }
+        return installed;
     }
 
     private static void NoGameProcesses(string root)
@@ -523,22 +691,9 @@ internal static class Program
         var journal = UpdateJson.Read<Journal>(path);
         Require(journal != null && journal.schema == 1 && journal.nonce == nonce && journal.state is "prepared" or "committed" or "rolledBack" && journal.changes != null, "Invalid recovery journal.");
         if (journal.state == "rolledBack") return;
-        var seen = new HashSet<string>(Paths);
+        CheckRecoveryTargets(root, journal);
         foreach (var change in journal.changes)
-        {
-            Require(change != null && seen.Add(change.path) && (!Protected(change.path) ||
-                (EditableSidecar(change.path) && change.before == null && change.after != null) ||
-                change.path is ".updates/installed-build.json" or ".updates/installed-files.json"), "Unsafe recovery target.");
-            Resolve(root, change.path);
-            Require(change.before != null || change.after != null, "Empty recovery change.");
-            foreach (var file in new[] { change.before, change.after }.Where(f => f != null))
-                Require(file.path == change.path && file.size >= 0 && file.sha256 != null && file.sha256.Length == 64 && file.sha256.All(Uri.IsHexDigit), "Invalid recovery hashes.");
-            string target = Resolve(root, change.path);
-            Require(!Directory.Exists(target), "Recovery target is a directory: " + change.path);
-            if (File.Exists(target))
-                Require((change.before != null && Matches(target, change.before)) || (change.after != null && Matches(target, change.after)), "Rollback blocked by a local edit: " + change.path);
             if (change.before != null) Require(Matches(Resolve(transaction, "backup/" + change.path), change.before), "Recovery backup is missing or corrupt: " + change.path);
-        }
         foreach (var change in journal.changes.AsEnumerable().Reverse())
         {
             string target = Resolve(root, change.path);

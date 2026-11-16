@@ -297,7 +297,7 @@ public class ImageClassifierEngine
         for (int i = 0; i < cats.Count; i++)
         {
             if (cats[i].manual) continue;   // hand-sorted only
-            var score = useFilenameHints && cats[i].hold && cats[i].holdFilenameHints.Any(h => FilenameMatches(r, h).Count > 0)
+            var score = useFilenameHints && cats[i].holdFilenameHints.Any(h => FilenameMatches(r, h).Count > 0)
                 ? (float?)0f : MatchCategory(r, cats[i]);
             if (score == null) continue;
 

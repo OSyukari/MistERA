@@ -7,6 +7,47 @@
                     "ID": "com_touch_head_Begin",
                     "variants": [
                         {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requirePermission": true
+                            },
+                            "extraSelfPortraitTags": ["smile", "relaxed"],
+                            "useActiveTags": false,
+                            "_comment": "开始摸头 施方 有允许",
+                            "responses": [
+                                "com_touch_head_Begin_Doer_Permission_1",
+                                "com_touch_head_Begin_Doer_Permission_2"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraSelfPortraitTags": ["smile"],
+                            "useActiveTags": false,
+                            "_comment": "开始摸头 施方 未允许 好意",
+                            "responses": [
+                                "com_touch_head_Begin_Doer_Like_1",
+                                "com_touch_head_Begin_Doer_Like_2"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false
+                            },
+                            "useActiveTags": false,
+                            "_comment": "开始摸头 施方 通用",
+                            "responses": [
+                                "com_touch_head_Begin_Doer_1",
+                                "com_touch_head_Begin_Doer_2"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
@@ -22,6 +63,7 @@
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
@@ -37,6 +79,7 @@
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requirePermission": true
                             },
@@ -55,6 +98,7 @@
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireSelfAttitudeGTE": "Like"
                             },
@@ -71,6 +115,7 @@
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "extraSelfPortraitTags": [
                                 "fear",
                                 "trembling"
@@ -93,6 +138,33 @@
                     "ID": "com_touch_head",
                     "variants": [
                         {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "extraSelfPortraitTags": ["smile", "relaxed"],
+                            "useActiveTags": false,
+                            "_comment": "摸头结果 施方 正面",
+                            "responses": [
+                                "com_touch_head_Doer_Success_1",
+                                "com_touch_head_Doer_Success_2"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false
+                            },
+                            "useActiveTags": false,
+                            "_comment": "摸头结果 施方 已接受但未达正面结果",
+                            "responses": [
+                                "com_touch_head_Doer_1",
+                                "com_touch_head_Doer_2"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
@@ -113,6 +185,7 @@
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
@@ -135,12 +208,14 @@
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireEPFailure": true
                             },
                             "variants": [
                                 {
                                     "requirement": {
+                                        "requireEPSuccess": false,
                                         "requirePermission": true
                                     },
                                     "extraSelfPortraitTags": [
@@ -163,6 +238,7 @@
                                 },
                                 {
                                     "requirement": {
+                                        "requireEPSuccess": false,
                                         "requireSelfAttitudeGTE": "Like"
                                     },
                                     "extraSelfPortraitTags": [
@@ -199,6 +275,7 @@
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireEPSuccessGTE": "Success"
                             },
@@ -247,6 +324,7 @@
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "variants": [
                                 {
                                     "requirement": {
@@ -295,6 +373,16 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
+                "com_touch_head_Begin_Doer_Permission_1": "$self$笑着把手搭上$target$的头顶，掌心顺着发丝轻轻捋下。",
+                "com_touch_head_Begin_Doer_Permission_2": "$self$伸手揉了揉$target$的发顶，又把翘起的几缕头发拨平。",
+                "com_touch_head_Begin_Doer_Like_1": "$self$的手在$target$头顶停了停，才轻轻落下，嘴角带着一点笑。",
+                "com_touch_head_Begin_Doer_Like_2": "$self$抬手碰了碰$target$的发顶，指尖的动作放得很轻。",
+                "com_touch_head_Begin_Doer_1": "$self$抬起手，用掌心轻拍了两下$target$的头顶。",
+                "com_touch_head_Begin_Doer_2": "$self$伸手抚过$target$的头发，手指避开了缠结的发梢。",
+                "com_touch_head_Doer_Success_1": "$self$最后轻轻揉了一下$target$的发顶，带着笑收回手。",
+                "com_touch_head_Doer_Success_2": "$self$替$target$捋平被揉乱的头发，指尖在发梢稍作停留，才松开手。",
+                "com_touch_head_Doer_1": "$self$停下手，把掌心从$target$头顶移开。",
+                "com_touch_head_Doer_2": "$self$又轻拍了一下$target$的发顶，随后收回了手。",
                 "com_touch_head_Begin_A_1": "$self$仿佛有所感应，在你手掌落下的瞬间便主动迎了上来，发出一声满足的叹息。",
                 "com_touch_head_Begin_A_2": "$self$微微眯起双眼，停下手中的动作，乖巧地将头轻靠在$target$的手心里。",
                 "com_touch_head_Begin_A_3": "$self$嘴角不自觉地上扬，全身放松下来，一副任由$target$摆布的模样。",
@@ -349,6 +437,16 @@
                 "com_touch_head_Begin_Timestop_2": "发旋被指腹碾着按了按，头皮蹭得发热，$self$低垂的眼睫停在原来的位置，房间里只有发丝被捋动的沙沙声。"
             },
             "en-us": {
+                "com_touch_head_Begin_Doer_Permission_1": "$self$ smiles and rests a hand on $target$'s head, gently smoothing their hair with her palm.",
+                "com_touch_head_Begin_Doer_Permission_2": "$self$ ruffles $target$'s hair, then smooths down a few stray strands.",
+                "com_touch_head_Begin_Doer_Like_1": "$self$'s hand pauses above $target$'s head before settling gently, a small smile on her lips.",
+                "com_touch_head_Begin_Doer_Like_2": "$self$ reaches up to touch $target$'s hair, keeping her fingertips light.",
+                "com_touch_head_Begin_Doer_1": "$self$ raises a hand and gives $target$ two light pats on the head.",
+                "com_touch_head_Begin_Doer_2": "$self$ strokes $target$'s hair, keeping her fingers clear of the tangled ends.",
+                "com_touch_head_Doer_Success_1": "$self$ gives $target$'s hair one last gentle ruffle, then withdraws her hand with a smile.",
+                "com_touch_head_Doer_Success_2": "$self$ smooths the hair she has ruffled on $target$'s head, her fingertips lingering at the ends before letting go.",
+                "com_touch_head_Doer_1": "$self$ stops and lifts her palm from $target$'s head.",
+                "com_touch_head_Doer_2": "$self$ gives $target$ one more light pat on the head, then withdraws her hand.",
                 "com_touch_head_Begin_A_1": "$self$ seems to sense it coming and actively leans in the moment your hand falls, letting out a satisfied sigh.",
                 "com_touch_head_Begin_A_2": "$self$ squints slightly, stopping what she was doing, and obediently leans her head into $target$'s palm.",
                 "com_touch_head_Begin_A_3": "The corners of $self$'s mouth unconsciously turn up as her body relaxes, looking ready to let $target$ do whatever they please.",

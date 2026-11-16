@@ -89,6 +89,8 @@ namespace MistEra.Updates
         public BuildInfo InstalledBuild { get; private set; }
         public GameRelease AvailableBuild { get; private set; }
         public ModCatalog Catalog { get; private set; }
+        /// <summary>Localized package names/descriptions (catalog-text.json next to the catalog); null when not published.</summary>
+        public ModCatalogText CatalogText { get; private set; }
         public IReadOnlyList<PackageReceipt> InstalledPackages => receipts.AsReadOnly();
         public IReadOnlyList<PackageReceipt> StagedPackages => stagedMods.SelectMany(r => r.packages).ToList().AsReadOnly();
         public event Action Changed;
@@ -100,6 +102,7 @@ namespace MistEra.Updates
         private UpdateSettings Settings => scr_System_CentralControl.current == null ? null : scr_System_CentralControl.current.UpdateSetting;
         private string root;
         private bool recovered, recoveryFailed, automaticStarted, handoffStarted, gameplayHold;
+        private string interruptedBuild;    // transaction folder of a build install left half done (LoadLocalState)
         private const float ConnectionRetrySeconds = 60f;
         private bool connectionFailed;
         private float connectionRetryAt;
@@ -167,6 +170,15 @@ namespace MistEra.Updates
                 // The editor must never recover a transaction into the project's real Mods directory.
                 if (!Application.isEditor) FileTransaction.Recover(root);
                 LoadLocalState();
+                if (interruptedBuild != null)
+                {
+                    recoveryFailed = true;
+                    StartBuildRepair(interruptedBuild);
+                    RecoveryMessage = "A game update was interrupted. The updater is finishing it and will start the game again.";
+                    Fail(RecoveryMessage);
+                    Application.Quit();
+                    return false;
+                }
                 recoveryFailed = false;
                 Publish();
                 return true;
@@ -174,9 +186,35 @@ namespace MistEra.Updates
             catch (Exception ex)
             {
                 recoveryFailed = true;
+                if (interruptedBuild != null)
+                    RecoveryMessage = "A game update was interrupted and the updater could not be started (" + ex.Message + "). Close the game and run " +
+                        RepairHelperHint + " to finish it.";
                 Fail("Update recovery failed. Gameplay must not start: " + ex.Message);
                 return false;
             }
+        }
+
+        /// <summary>Boot-blocking message for the loading screen when recovery cannot let the game start; null = generic.</summary>
+        public string RecoveryMessage { get; private set; }
+
+        const string RepairHelperHint = "UpdateTools\\MistEra.Updater.exe";
+
+        /// <summary>Starts the repair helper for a build install left half done (journal "prepared"). It waits for this
+        /// process to exit, finishes the install from the staged files and starts the game again. The transaction's own
+        /// helper copy is preferred: UpdateTools itself may be one of the half-replaced files.</summary>
+        private void StartBuildRepair(string transaction)
+        {
+            string helper = UpdateValidation.Resolve(transaction, "helper/MistEra.Updater.exe");
+            if (!File.Exists(helper)) helper = Local("UpdateTools/MistEra.Updater.exe");
+            Require(File.Exists(helper), "The updater helper is missing.");
+            using var current = Process.GetCurrentProcess();
+            var start = new ProcessStartInfo(helper)
+            {
+                UseShellExecute = false, WorkingDirectory = root,
+                Arguments = "--repair " + Quote(root) + " --pid " + current.Id + " --started " + current.StartTime.ToUniversalTime().Ticks
+            };
+            using var process = Process.Start(start);
+            Require(process != null, "Could not start the updater helper.");
         }
 
         public void NotifyBootReady()
@@ -199,10 +237,90 @@ namespace MistEra.Updates
                 }
             }
             ContentAvailableAfterRestart = false;
+            // before BootReady: no update operation can start while folders are moved
+            RetireTransactions();
             BootReady = true;
             try { AcknowledgeStartup(); }
             catch (Exception ex) { Fail("Startup succeeded, but updater acknowledgement failed: " + ex.Message); }
             Publish();
+        }
+
+        /// <summary>
+        /// Clears transaction folders nothing needs any more: finished mod installs/deletes, applied builds once a build at
+        /// least as new is running, rolled-back or superseded builds, finished or discarded mod batches, and interrupted
+        /// downloads/staging (no approval, no journal). Kept: the pending build, staged mod batches, unfinished journals and
+        /// this boot's own handoff (its helper may still be running; retired next boot). Retired folders are moved to
+        /// .updates/trash under the install lock (same volume, fast) and deleted in the background. Best effort.
+        /// </summary>
+        private void RetireTransactions()
+        {
+            if (Application.isEditor || InstalledBuild == null) return;
+            string transactions = Local(".updates/transactions");
+            string trash = Local(".updates/trash");
+            string[] args = Environment.GetCommandLineArgs();
+            int ackIndex = Array.IndexOf(args, "--update-ack");
+            string currentAck = ackIndex >= 0 && ackIndex + 1 < args.Length ? args[ackIndex + 1] : null;
+            try
+            {
+                if (Directory.Exists(transactions))
+                {
+                    using var gate = UpdateFiles.AcquireLock(root);
+                    foreach (string directory in Directory.GetDirectories(transactions))
+                    {
+                        string id = Path.GetFileName(directory);
+                        try
+                        {
+                            if (!Retired(directory, id, currentAck)) continue;
+                            UpdateValidation.NoLinks(directory);
+                            Directory.CreateDirectory(trash);
+                            string target = Path.Combine(trash, id);
+                            // a folder of the same name still being deleted from an earlier boot: retry next boot
+                            if (Directory.Exists(target)) continue;
+                            Directory.Move(directory, target);
+                        }
+                        // a file still open (a running helper) or an unreadable record: keep the folder
+                        catch (Exception ex) { Debug.LogWarning("UpdateService: kept transaction " + id + ": " + ex.Message); }
+                    }
+                }
+            }
+            catch (Exception ex) { Debug.LogWarning("UpdateService: could not retire old update transactions: " + ex.Message); }
+            if (!Directory.Exists(trash)) return;
+            Task.Run(() =>
+            {
+                foreach (string directory in Directory.GetDirectories(trash))
+                {
+                    try { DeleteTree(directory); }
+                    catch (Exception ex) { Debug.LogWarning("UpdateService: could not delete " + directory + ": " + ex.Message); }
+                }
+            });
+        }
+
+        private bool Retired(string directory, string id, string currentAck)
+        {
+            if (!UpdateValidation.TransactionId(id) || id == currentAck) return false;
+            if (interruptedBuild != null && Paths.Equals(directory, interruptedBuild)) return false;
+            string modJournal = UpdateValidation.Resolve(directory, "journal.json");
+            if (File.Exists(modJournal))
+            {
+                string state = UpdateJson.Read<TransactionJournal>(modJournal).state;
+                return state == "committed" || state == "rolledBack";
+            }
+            string buildJournal = UpdateValidation.Resolve(directory, "build-journal.json");
+            string stagedBuild = UpdateValidation.Resolve(directory, "staged-build.json");
+            if (File.Exists(buildJournal))
+            {
+                string state = UpdateJson.Read<UpdateBuildJournal>(buildJournal).state;
+                if (state == "rolledBack") return true;
+                // applied, and this boot got this far on a build at least as new: its backups are no longer needed
+                return state == "committed" && File.Exists(stagedBuild) &&
+                    UpdateJson.Read<StagedBuildRecord>(stagedBuild).manifest.buildNumber <= InstalledBuild.buildNumber;
+            }
+            // staged, never applied: only the newest newer build stays pending (LoadLocalState)
+            if (File.Exists(stagedBuild)) return pendingBuild == null || pendingBuild.transaction != id;
+            if (File.Exists(UpdateValidation.Resolve(directory, "staged-mods.json")))
+                return File.Exists(Local(".updates/completed-batches/" + id + ".json"));
+            // interrupted download/staging, discarded batch or an old plain-restart handoff: nothing approved or journaled
+            return true;
         }
 
         private void LoadLocalState()
@@ -211,6 +329,7 @@ namespace MistEra.Updates
             if (!File.Exists(info)) info = Local("build-info.json");
             InstalledBuild = File.Exists(info) ? UpdateJson.Read<BuildInfo>(info) : null;
             receipts.Clear();
+            interruptedBuild = null;
             string packages = Local(".updates/packages");
             if (Directory.Exists(packages))
                 foreach (string path in Directory.EnumerateFiles(packages, "*.json").OrderBy(p => p, StringComparer.Ordinal))
@@ -233,8 +352,10 @@ namespace MistEra.Updates
                 if (File.Exists(journalPath))
                 {
                     var journal = UpdateJson.Read<UpdateBuildJournal>(journalPath);
-                    Require(journal.schema == 1 && journal.nonce == id && (journal.state == "committed" || journal.state == "rolledBack"),
-                        "An interrupted build requires explicit updater-helper recovery before startup: " + directory);
+                    Require(journal.schema == 1 && journal.nonce == id && (journal.state == "committed" || journal.state == "rolledBack" || journal.state == "prepared"),
+                        "Invalid build journal: " + directory);
+                    // the helper stopped mid-install (power cut, killed): RecoverBeforeBoot hands it to the repair helper
+                    if (journal.state == "prepared") interruptedBuild = directory;
                 }
                 string buildPath = UpdateValidation.Resolve(directory, "staged-build.json");
                 if (File.Exists(buildPath))
@@ -275,8 +396,8 @@ namespace MistEra.Updates
         }
         public void InstallStagedMods() => StartOperation(CommitStagedRoutine, true, UpdateOperation.InstallMods);
         public void DiscardStagedMods() => StartOperation(DiscardStagedRoutine, true, UpdateOperation.InstallMods);
-        public void RestartToUpdate() => StartOperation(() => HandoffRoutine(true), true, UpdateOperation.Restart);
-        public void RestartGame() => StartOperation(() => HandoffRoutine(false), true, UpdateOperation.Restart);
+        public void RestartToUpdate() => StartOperation(HandoffRoutine, true, UpdateOperation.Restart);
+        public void RestartGame() => StartOperation(RelaunchRoutine, true, UpdateOperation.Restart);
 
         /// <summary>
         /// Catalog packages a one-click update installs. activeOnly: installed packages active this boot whose published
@@ -591,6 +712,7 @@ namespace MistEra.Updates
             GameRelease selected = null;
             bool buildChecked = false;  // one cached game-update.json: only the newest release with a valid manifest is read
             ModCatalog catalog = null;
+            ModCatalogText catalogText = null;
             foreach (var release in releases.Where(r => !r.prerelease || (Settings?.prereleases ?? false)).OrderByDescending(r => r.published_at, StringComparer.Ordinal))
             {
                 cancellation.Token.ThrowIfCancellationRequested();
@@ -630,10 +752,24 @@ namespace MistEra.Updates
                             urls[PackageKey(package)] = Official(FindAsset(release, package.asset, package.size).browser_download_url);
                         }
                         catalog = candidate;
+                        // display text only: a missing or invalid file leaves the catalog's raw names
+                        var textAsset = release.assets.FirstOrDefault(a => a.name == "catalog-text.json");
+                        if (textAsset != null)
+                        {
+                            string textJson = null;
+                            yield return FetchAsset(textAsset, t => textJson = t);
+                            try
+                            {
+                                var text = UpdateJson.Parse<ModCatalogText>(textJson);
+                                UpdateValidation.ValidateCatalogText(text);
+                                catalogText = text;
+                            }
+                            catch (Exception ex) { Debug.LogWarning("UpdateService: ignoring catalog-text.json: " + ex.Message); }
+                        }
                     }
                 }
             }
-            AvailableBuild = selected; Catalog = catalog;
+            AvailableBuild = selected; Catalog = catalog; CatalogText = catalog != null ? catalogText : null;
             assetUrls.Clear(); foreach (var pair in urls) assetUrls.Add(pair.Key, pair.Value);
             Progress = 1;
             Checked = true; InventoryVersion++;
@@ -1243,15 +1379,74 @@ namespace MistEra.Updates
             }
         }
 
-        private IEnumerator HandoffRoutine(bool build)
+        /// <summary>Plain restart (mod toggles, installs, deletes): nothing is installed, so no updater helper. Starts a new
+        /// game process that waits for this one to exit before it boots (WaitForPreviousInstance), then quits.</summary>
+        private IEnumerator RelaunchRoutine()
+        {
+            // the game is about to quit; released by RunOperation if the relaunch fails
+            gameplayHold = true;
+            Step = BuildStep.PreparingRestart; Status = "Restarting..."; Progress = 0; Publish();
+            yield return null;
+            using var current = Process.GetCurrentProcess();
+            long started = current.StartTime.ToUniversalTime().Ticks;
+            var start = new ProcessStartInfo(current.MainModule.FileName)
+            {
+                UseShellExecute = false, WorkingDirectory = root,
+                Arguments = WaitArgument + " " + current.Id.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " +
+                    started.ToString(System.Globalization.CultureInfo.InvariantCulture)
+            };
+            using var next = Process.Start(start);
+            Require(next != null, "Could not start the game again. The game has not exited.");
+            bool quitting = false;
+            try
+            {
+                quitting = true;
+                Application.Quit();
+                float quitDeadline = Time.realtimeSinceStartup + 5f;
+                while (Time.realtimeSinceStartup < quitDeadline) yield return null;
+                quitting = false;
+                throw new InvalidOperationException("The game did not exit. Restart was cancelled.");
+            }
+            finally
+            {
+                // the new process would otherwise boot next to this one once its wait times out
+                if (!quitting && !next.HasExited) next.Kill();
+            }
+        }
+
+        const string WaitArgument = "--wait-pid";
+
+        /// <summary>A game started by RelaunchRoutine (--wait-pid &lt;pid&gt; &lt;start ticks&gt;) waits for the previous
+        /// process to exit before anything loads, so the two never read or write prefs, saves or mods at the same time.
+        /// Runs before the first scene; a pid reused by another process (different start time) is not waited for.</summary>
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void WaitForPreviousInstance()
+        {
+            if (Application.isEditor) return;
+            string[] args = Environment.GetCommandLineArgs();
+            int index = Array.IndexOf(args, WaitArgument);
+            if (index < 0 || index + 2 >= args.Length) return;
+            if (!int.TryParse(args[index + 1], System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out int pid) ||
+                !long.TryParse(args[index + 2], System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out long started)) return;
+            try
+            {
+                using var previous = Process.GetProcessById(pid);
+                if (previous.StartTime.ToUniversalTime().Ticks != started) return;
+                if (!previous.WaitForExit(30000)) Debug.LogWarning("UpdateService: the previous game process did not exit within 30 seconds; starting anyway.");
+            }
+            catch (ArgumentException) { }   // already exited
+            catch (Exception ex) { Debug.LogWarning("UpdateService: could not wait for the previous game process: " + ex.Message); }
+        }
+
+        private IEnumerator HandoffRoutine()
         {
             Require(InstalledBuild != null, "The installed executable identity is unavailable.");
             Require(!InstalledBuild.executable.Contains('/'), "Updater requires a root-level executable.");
-            Require(!build || pendingBuild != null, "No approved game build is staged.");
-            Require(!build || stagedMods.Count == 0, "Install or discard the staged mod batch before applying a game build. A plain restart does not apply staged mods.");
+            Require(pendingBuild != null, "No approved game build is staged.");
+            Require(stagedMods.Count == 0, "Install or discard the staged mod batch before applying a game build.");
             // the game is about to quit; released by RunOperation if the handoff fails or is cancelled
             gameplayHold = true;
-            string id = build ? pendingBuild.transaction : Guid.NewGuid().ToString("D");
+            string id = pendingBuild.transaction;
             string relative = ".updates/transactions/" + id;
             string transaction = Local(relative);
             Directory.CreateDirectory(transaction);
@@ -1268,7 +1463,7 @@ namespace MistEra.Updates
                     CopyOrMatch(UpdateValidation.Resolve(source, file.path), UpdateValidation.Resolve(transaction, "helper/" + file.path), file);
                 }
                 // verified and extracted right after the download: only check the staged tree is still complete
-                if (build) ValidateBuildTree(UpdateValidation.Resolve(transaction, "extracted/" + pendingBuild.manifest.payloadRoot), pendingBuild.manifest, token);
+                ValidateBuildTree(UpdateValidation.Resolve(transaction, "extracted/" + pendingBuild.manifest.payloadRoot), pendingBuild.manifest, token);
             });
             cancellation.Token.ThrowIfCancellationRequested();
             using var parent = Process.GetCurrentProcess();
@@ -1276,11 +1471,11 @@ namespace MistEra.Updates
             Require(Paths.Equals(parent.MainModule.FileName, Local(InstalledBuild.executable)), "Running executable does not match build identity.");
             var ticket = new UpdateHandoff
             {
-                approved = true, mode = build ? "build" : "restart", nonce = id, root = root,
+                approved = true, mode = "build", nonce = id, root = root,
                 executable = InstalledBuild.executable, createdUtc = DateTime.UtcNow.ToString("O"), parentStartedTicks = started,
-                manifest = build ? pendingBuild.manifest : null,
-                archive = build ? relative + "/archive.7z" : null,
-                stagedRoot = build ? relative + "/extracted/" + pendingBuild.manifest.payloadRoot : null
+                manifest = pendingBuild.manifest,
+                archive = relative + "/archive.7z",
+                stagedRoot = relative + "/extracted/" + pendingBuild.manifest.payloadRoot
             };
             string readyPath = UpdateValidation.Resolve(transaction, "ready.json");
             if (File.Exists(readyPath)) File.Delete(readyPath);
