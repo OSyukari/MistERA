@@ -306,10 +306,10 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
         Scenario("场景 3：NPC 对玩家使用（玩家=受方）· 接受", "NPC 主动发起，玩家是受方。口上说话者是施方 NPC。", "NPC", "玩家");
         Section("开始段");
         Narration("begin");
-        Kojo("_Begin", "施方 NPC", "玩家", new TA_KojoContext { speakerIsDoer = true });
+        Kojo("_Begin", "施方 NPC", "玩家", new TA_KojoContext { speakerIsDoer = true, speakerIsMaster = true });
         Section("结果段" + Timing());
-        Kojo("", "施方 NPC", "玩家", new TA_KojoContext { speakerIsDoer = true });
-        Climax(climax, ("施方 NPC", "玩家", new TA_KojoContext { speakerIsDoer = true }));
+        Kojo("", "施方 NPC", "玩家", new TA_KojoContext { speakerIsDoer = true, speakerIsMaster = true });
+        Climax(climax, ("施方 NPC", "玩家", new TA_KojoContext { speakerIsDoer = true, speakerIsMaster = true }));
         Section("结束段");
         Narration("after");
 
@@ -317,26 +317,65 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
         Scenario("场景 4：玩家旁观 NPC 之间使用", $"玩家不参与。玩家等待很久时（总时长 > {com.TimeScale * 4} 分钟）短指令不显示。旁观者看到「完成旁白」而不是判定行。", "施方 NPC", "受方 NPC");
         Section("开始段");
         Narration("begin");
-        Kojo("_Begin", "施方 NPC", "受方 NPC", new TA_KojoContext { speakerIsDoer = true, playerInvolved = false });
+        Kojo("_Begin", "施方 NPC", "受方 NPC", new TA_KojoContext { speakerIsDoer = true, speakerIsMaster = true, playerInvolved = false });
         Kojo("_Begin", "受方 NPC", "施方 NPC", new TA_KojoContext { speakerIsReceiver = true, playerInvolved = false });
         if (com.TimeScale > 1)
         {
             Section("进行中（玩家一次等待的最后一分钟，仍在进行时）");
             Narration("ongoing");
-            Kojo("_Ongoing", "施方 NPC", "旁观的玩家", new TA_KojoContext { speakerIsDoer = true, playerInvolved = false });
+            Kojo("_Ongoing", "施方 NPC", "旁观的玩家", new TA_KojoContext { speakerIsDoer = true, speakerIsMaster = true, playerInvolved = false });
             Kojo("_Ongoing", "受方 NPC", "旁观的玩家", new TA_KojoContext { speakerIsReceiver = true, playerInvolved = false });
         }
         Section("结果段" + Timing());
         Narration("onComplete");
-        Kojo("", "施方 NPC", "受方 NPC", new TA_KojoContext { speakerIsDoer = true, playerInvolved = false });
+        Kojo("", "施方 NPC", "受方 NPC", new TA_KojoContext { speakerIsDoer = true, speakerIsMaster = true, playerInvolved = false });
         Kojo("", "受方 NPC", "施方 NPC", new TA_KojoContext { speakerIsReceiver = true, playerInvolved = false });
         Climax(climax,
-            ("施方 NPC", "受方 NPC", new TA_KojoContext { speakerIsDoer = true, playerInvolved = false }),
+            ("施方 NPC", "受方 NPC", new TA_KojoContext { speakerIsDoer = true, speakerIsMaster = true, playerInvolved = false }),
             ("受方 NPC", "施方 NPC", new TA_KojoContext { speakerIsReceiver = true, playerInvolved = false }));
         Section("结束段（成功时，结束旁白之后接施方/受方的 _Ongoing 口上，听者为对方）");
         Narration("after");
-        Kojo("_Ongoing", "施方 NPC", "受方 NPC", new TA_KojoContext { speakerIsDoer = true, playerInvolved = false });
+        Kojo("_Ongoing", "施方 NPC", "受方 NPC", new TA_KojoContext { speakerIsDoer = true, speakerIsMaster = true, playerInvolved = false });
         Kojo("_Ongoing", "受方 NPC", "施方 NPC", new TA_KojoContext { speakerIsReceiver = true, playerInvolved = false });
+
+        // 5 ordered by a third party (Plan_CommandCases.md K4)
+        Scenario("场景 5：玩家下令 NPC 对 NPC 使用（第三方下令）",
+            "性爱场景中玩家把施方、受方都指定为 NPC（下令者 = 玩家，不参与动作）；LLM 代理模式也可由第三方下令。玩家在场景内，看到检定行与口上，看不到「完成旁白」。旁白条件「由不参与的第三方下令」只在此场景成立；口上里施方不是下令者（`requireSelfNotMaster` 成立）。",
+            "施方 NPC（玩家下令）", "受方 NPC");
+        System("[检定] 接受检定结果行（引擎生成）");
+        Section("开始段（旁白与口上合为同一段）");
+        Narration("begin");
+        Kojo("_Begin", "施方 NPC", "受方 NPC", new TA_KojoContext { speakerIsDoer = true });
+        Kojo("_Begin", "受方 NPC", "施方 NPC", new TA_KojoContext { speakerIsReceiver = true });
+        Section("结果段" + Timing());
+        if (com.baseD20Check > 0) System($"[判定] 「{com.DisplayName(-1)} D20 = … ≥? {com.baseD20Check}」（引擎生成，不写）");
+        Kojo("", "施方 NPC", "受方 NPC", new TA_KojoContext { speakerIsDoer = true });
+        Kojo("", "受方 NPC", "施方 NPC", new TA_KojoContext { speakerIsReceiver = true });
+        Climax(climax,
+            ("施方 NPC", "受方 NPC", new TA_KojoContext { speakerIsDoer = true }),
+            ("受方 NPC", "施方 NPC", new TA_KojoContext { speakerIsReceiver = true }));
+        Section("结束段（仅接受时；在结果之后）");
+        Narration("after");
+        Section("受方拒绝");
+        System("[开始段] 引擎通用拒绝行：「" + ZH("ep_Description_refuse") + "」");
+        Kojo("", "受方 NPC", "施方 NPC", new TA_KojoContext { speakerIsReceiver = true, accepted = false });
+        Section("施方拒绝下令（口上对象是下令的玩家；施方自己发起时拒绝不出口上）");
+        Kojo("", "施方 NPC", "下令的玩家", new TA_KojoContext { speakerIsDoer = true, accepted = false });
+        System("→ 之后开始事件 OnAPRefuse（玩家=请求者，拒绝的施方 NPC=拒绝者）");
+
+        AbortScenario("场景 6", "施方", "受方");
+    }
+
+    /// <summary>
+    /// EvaluationPackage.LogMessage_Begin_Abort: an act replaced (Job.LogMessage_Begin_Replace: a sex act switch, a new act
+    /// in the room) or stopped with an extra tick prints description_remove (no kojo), not while the doer is time-stopped.
+    /// Everyone in the room sees the same line.
+    /// </summary>
+    void AbortScenario(string number, string doer, string receiver)
+    {
+        Scenario($"{number}：动作被中止或替换", "动作进行中被换成另一个动作（性爱中换姿势、房间里开始新动作）或被停止时；施方时停中不输出。所有人看到同一句，没有口上。", doer, receiver);
+        Section("中止段");
+        Narration("remove");
     }
 
     void BuildSoloScenarios()
@@ -375,11 +414,11 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
         Section("接受 → 开始段（NPC 没有听者，不查开始口上）");
         Narration("begin");
         Section("接受 → 结果段" + Timing() + "：口上听者是自己（自言自语）");
-        Kojo("", "NPC", "自己", new TA_KojoContext { speakerIsDoer = true, listenerIsSelf = true, masterPresent = true });
-        Climax(climax, ("NPC", "自己", new TA_KojoContext { speakerIsDoer = true, listenerIsSelf = true, masterPresent = true }));
+        Kojo("", "NPC", "自己", new TA_KojoContext { speakerIsDoer = true, listenerIsSelf = true });
+        Climax(climax, ("NPC", "自己", new TA_KojoContext { speakerIsDoer = true, listenerIsSelf = true }));
         Section("拒绝");
         System("[开始段] 引擎通用拒绝行：「" + ZH("ep_Description_refuse") + "」");
-        Kojo("", "NPC", "下令的玩家", new TA_KojoContext { speakerIsDoer = true, accepted = false, masterPresent = true });
+        Kojo("", "NPC", "下令的玩家", new TA_KojoContext { speakerIsDoer = true, accepted = false });
         System("→ 之后开始事件 OnAPRefuse（玩家=请求者，NPC=拒绝者）");
 
         Scenario("场景 4：玩家旁观 NPC 独自进行", $"玩家不参与；玩家等待很久时（总时长 > {com.TimeScale * 4} 分钟）短指令不显示。", "NPC", null);
@@ -389,14 +428,16 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
         {
             Section("进行中（玩家一次等待的最后一分钟，仍在进行时）");
             Narration("ongoing");
-            Kojo("_Ongoing", "NPC", "旁观的玩家", new TA_KojoContext { speakerIsDoer = true, playerInvolved = false });
+            Kojo("_Ongoing", "NPC", "旁观的玩家", new TA_KojoContext { speakerIsDoer = true, speakerIsMaster = true, playerInvolved = false });
         }
         Section("结果段" + Timing());
         Narration("onComplete");
-        Kojo("", "NPC", "自己", new TA_KojoContext { speakerIsDoer = true, listenerIsSelf = true, playerInvolved = false });
-        Climax(climax, ("NPC", "自己", new TA_KojoContext { speakerIsDoer = true, listenerIsSelf = true, playerInvolved = false }));
+        Kojo("", "NPC", "自己", new TA_KojoContext { speakerIsDoer = true, speakerIsMaster = true, listenerIsSelf = true, playerInvolved = false });
+        Climax(climax, ("NPC", "自己", new TA_KojoContext { speakerIsDoer = true, speakerIsMaster = true, listenerIsSelf = true, playerInvolved = false }));
         Section("结束段");
         Narration("after");
+
+        AbortScenario("场景 5", "NPC", null);
     }
 
     /// <summary>A scenario heading; doer / receiver = who the action's doer and receiver are in it (receiver null = none).</summary>
@@ -568,6 +609,7 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
                 AddFinding(new JObject { ["type"] = "noBegin", ["com"] = unitID });
             }
             else if (field == "ongoing") sb.Text("doc.narration.engineDefault", "text", ZH("ep_Description_ongoing"));
+            else if (field == "remove") sb.Text("doc.narration.engineDefault", "text", ZH("ep_Description_abort"));
             else sb.Text("doc.narration.none");
             sb.AppendLine();
         }

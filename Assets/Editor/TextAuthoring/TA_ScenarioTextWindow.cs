@@ -871,6 +871,7 @@ public class TA_ScenarioTextWindow : EditorWindow
         TA_Store.SaveIndex(index);
         if (x.index.errors.Count > 0) log.AppendLine("Source index errors: " + string.Join("; ", x.index.errors));
         if (TA_CaseTemplate.warnings.Count > 0) log.AppendLine("Case template: " + string.Join("; ", TA_CaseTemplate.warnings));
+        log.AppendLine(WriteKojoIndex(x));
         var result = $"Extracted {units.Count} unit(s) -> {TA_Store.Root}\n{log}";
         if (units.Count > 0) result += "\n" + TA_Changes.SyncFindings();
         ReloadStore();
@@ -942,7 +943,18 @@ public class TA_ScenarioTextWindow : EditorWindow
         foreach (var prop in TA_Store.Units(TA_Store.LoadIndex()).Properties())
             if ((bool?)prop.Value["missing"] ?? false) { anyMissing = true; break; }
         if (anyMissing) log.AppendLine(RemoveMissingUnits());
+        log.AppendLine(WriteKojoIndex(null));
         return log.ToString();
+    }
+
+    /// <summary>
+    /// Store/kojo_index.json: every personality's kojo entries, so the viewer's Kojo tab also lists kojo no unit looks up
+    /// (fetched from code with a runtime key). x = this batch's extraction (its source index), or null for a new one.
+    /// </summary>
+    static string WriteKojoIndex(Extraction x)
+    {
+        try { return TA_KojoIndex.Write((x ?? Extraction.Start()).index); }
+        catch (Exception e) { UnityEngine.Debug.LogException(e); return "Kojo index not written: " + e.Message; }
     }
 
     /// <summary>

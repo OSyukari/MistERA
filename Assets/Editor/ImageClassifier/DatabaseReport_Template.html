@@ -71,6 +71,7 @@ section.cat h2 .n { color: var(--muted); font-weight: 400; }
 .row .thumbs { flex: 1; display: flex; flex-wrap: wrap; gap: 4px; padding: 5px; align-content: flex-start; min-width: 0; }
 .thumbs a { position: relative; display: block; width: var(--thumb); height: var(--thumb); border: 2px solid transparent; border-radius: 3px; background: var(--bg); }
 .thumbs a img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.thumbs .repeated-images { display: flex; align-items: center; justify-content: center; width: var(--thumb); height: var(--thumb); border: 2px dashed var(--line); border-radius: 3px; color: var(--muted); font-size: 20px; }
 .thumbs a.low { border-color: var(--low); }
 .thumbs a.unmatched { border-color: var(--unmatched); }
 .thumbs a.disagree { border: 2px dashed var(--disagree); }
@@ -133,7 +134,7 @@ section.cat h2.handler-title b { font-weight: 700; }
 </header>
 
 <div class="toolbar">
-  <label id="view-label" hidden title="Classification: how each image was classified. Portrait handler: the global portrait handler template applied to every folder root, in its priority order; an image is shown once per variant that holds it">View <select id="f-view">
+  <label id="view-label" hidden title="Classification: how each image was classified. Portrait handler: template priority order; each image is shown once, with +X boxes counting repeated images in later rows">View <select id="f-view">
     <option value="class">Classification</option>
     <option value="handler">Portrait handler</option>
   </select></label>
@@ -442,7 +443,7 @@ window.REPORT = /*__REPORT_DATA__*/null;
 
   // Portrait handler view: the filtered images of every folder, laid out like the classification view but by the global portrait
   // handler (PortraitUsage.cs): one section per handler in template order, one row per variant in priority order. An image is drawn
-  // once per variant holding it; shadowing is per folder (the variant's pool in that folder), so it is marked on the thumbnail.
+  // only at its first visible use; later rows count repeated images in a placeholder. Membership and shadowing stay per variant.
   // Then the images no variant holds, by reason. Same filters as the classification view.
   function renderHandlers() {
     var cat = catSel.value, folder = folderSel.value, status = statusSel.value, named = namedSel.value;
@@ -454,20 +455,22 @@ window.REPORT = /*__REPORT_DATA__*/null;
     }
     var html = "", drawn = 0, distinct = {}, nDistinct = 0;
     items = [];
-    function count(it) { drawn++; var k = it.f + "|" + it.path; if (!distinct[k]) { distinct[k] = true; nDistinct++; } }
+    function count(it) {
+      if (distinct[it.src]) return false;
+      distinct[it.src] = true; drawn++; nDistinct++;
+      return true;
+    }
 
-    // pool (first variant reading the same files) -> [{ it, shadow }] over all folders. Variants of one pool hold the same images in
-    // every folder (eg. the activity keywords pose / dogeza / dancing all read the pose files), so the pool is one row; an image there
-    // counts as shadowed only when every variant of the pool is shadowed in its folder.
-    var byPool = {}, members = {}, poolTotal = {}, showEmpty = emptyIn.checked;
-    P.variants.forEach(function (pv, v) { (members[pv.pool] || (members[pv.pool] = [])).push(v); });
+    // Identical image pools can have different conditions and fallback positions. Keep each runtime variant separate.
+    var byVariant = {}, variantTotal = {}, showEmpty = emptyIn.checked;
     P.roots.forEach(function (root, ri) {
       root.slots.forEach(function (s) {
-        var pool = P.variants[s.v].pool, entries = byPool[pool] || (byPool[pool] = { list: [], at: {}, total: {} });
+        var entries = byVariant[s.v] || (byVariant[s.v] = { list: [], at: {}, total: {}, classes: {} });
         s.items.forEach(function (g) {
           var it = all[g];
           if (!it) return;
-          if (!entries.total[ri + "|" + g]) { entries.total[ri + "|" + g] = true; poolTotal[pool] = (poolTotal[pool] || 0) + 1; }
+          if (it.cls) entries.classes[it.cls] = true;
+          if (!entries.total[ri + "|" + g]) { entries.total[ri + "|" + g] = true; variantTotal[s.v] = (variantTotal[s.v] || 0) + 1; }
           if (!ok(it)) return;
           var key = ri + "|" + g, e = entries.at[key];
           if (!e) { e = entries.at[key] = { it: it, shadow: s.shadow }; entries.list.push(e); }
@@ -475,30 +478,34 @@ window.REPORT = /*__REPORT_DATA__*/null;
         });
       });
     });
-    var h = -1, rows = "", hDrawn = 0;
+    var h = -1, rows = "", hDrawn = 0, variantNumber = 0;
     function flush() {
       if (rows) html += '<section class="cat"><h2 class="handler-title">' + handlerLabel(h) + ' <span class="n">(' + hDrawn + ")</span></h2><div class=\"rows\">" + rows + "</div></section>";
       rows = ""; hDrawn = 0;
     }
     P.variants.forEach(function (pv, v) {
-      if (pv.h !== h) { flush(); h = pv.h; }
-      if (pv.pool !== v) return;   // a pool is drawn once, where it first appears
-      var list = byPool[v] ? byPool[v].list : [];
+      if (pv.h !== h) { flush(); h = pv.h; variantNumber = 0; }
+      var order = "<small>Variant " + (++variantNumber) + "</small>";
+      var classes = pv.classifications || Object.keys(byVariant[v] ? byVariant[v].classes : {}).sort();
+      order += "<small>All classifications used: " + esc(classes.length ? classes.join(", ") : "(none)") + "</small>";
+      var list = byVariant[v] ? byVariant[v].list : [];
       if (!list.length) {
         if (!showEmpty) return;
-        var mm = members[v], total = poolTotal[v] || 0;
-        rows += '<div class="row empty-variant"><div class="name"><b>' + esc(variantLabel(v)) + "</b>" +
-                (mm.length > 1 ? "<small>" + mm.length + " keywords: " + esc(mm.map(variantLabel).join(" · ")) + "</small>" : "") +
+        var total = variantTotal[v] || 0;
+        rows += '<div class="row empty-variant"><div class="name"><b>' + esc(variantLabel(v)) + "</b>" + order +
                 "<small>" + (total ? "0 of " + total + " images pass the filters" : "0 images in any folder") + '</small></div><div class="thumbs"></div></div>';
         return;
       }
       list.sort(function (a, b) { return cmp(R.folders[a.it.f].name.toLowerCase(), R.folders[b.it.f].name.toLowerCase()) || cmp(a.it.path.toLowerCase(), b.it.path.toLowerCase()); });
-      var thumbs = "", shadowed = 0;
-      list.forEach(function (e) { count(e.it); if (e.shadow >= 0) shadowed++; thumbs += thumb(e.it, e.shadow); });
+      var thumbs = "", shadowed = 0, repeated = 0;
+      list.forEach(function (e) {
+        if (e.shadow >= 0) shadowed++;
+        if (count(e.it)) thumbs += thumb(e.it, e.shadow);
+        else repeated++;
+      });
+      if (repeated) thumbs += '<span class="repeated-images" title="' + repeated + ' images already shown above" aria-label="' + repeated + ' images already shown above">+' + repeated + '</span>';
       hDrawn += list.length;
-      var m = members[v], also = "";
-      if (m.length > 1) also = "<small>" + m.length + " keywords: " + esc(m.map(variantLabel).join(" · ")) + "</small>";
-      rows += '<div class="row"><div class="name"><b>' + esc(variantLabel(v)) + "</b>" + also + "<small>" + list.length + " images</small>" +
+      rows += '<div class="row"><div class="name"><b>' + esc(variantLabel(v)) + "</b>" + order + "<small>" + list.length + " images</small>" +
               (shadowed ? '<small class="shadow">' + shadowed + " shadowed in their folder</small>" : "") +
               '</div><div class="thumbs">' + thumbs + "</div></div>";
     });
@@ -514,7 +521,7 @@ window.REPORT = /*__REPORT_DATA__*/null;
       var rows2 = "", total = 0;
       reasons.forEach(function (r) {
         var thumbs = "";
-        byReason[r].forEach(function (it) { count(it); thumbs += thumb(it); });
+        byReason[r].forEach(function (it) { if (count(it)) thumbs += thumb(it); });
         total += byReason[r].length;
         rows2 += '<div class="row"><div class="name"><b>' + esc(r) + "</b><small>" + byReason[r].length + '</small></div><div class="thumbs">' + thumbs + "</div></div>";
       });

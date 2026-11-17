@@ -660,6 +660,8 @@ public static class TA_Changes
                     ["location"] = location,
                     ["createdAt"] = Now()
                 };
+                // a kojo case slot (Plan_CommandCases.md K6): the case and the fields its new branch needs (location.needs)
+                if (slot["case"] != null) record["case"] = slot["case"];
                 records.Add(record);
                 byId[id] = record;
                 changed++;
@@ -691,9 +693,23 @@ public static class TA_Changes
         }
         if (texts.Count < 1) return false;
         var targetKey = (string)slot["targetKey"];
+        // a case slot (Plan_CommandCases.md K6): the condition is the case's, exact; a 条件 line the writer added anyway
+        // is kept as a note for the coder
+        var caseId = (string)slot["case"];
+        var writerCondition = condition;
+        if (caseId != null) condition = (string)slot["condText"] ?? "无条件";
         var id = RecordId($"{batch}|{targetKey}|{condition}|{texts.ToString(Formatting.None)}");
         if (byId.ContainsKey(id)) return false;
         var field = (string)slot["field"];
+        var entry = new JObject { ["com"] = slot["com"], ["field"] = field, ["condition"] = condition, ["position"] = position };
+        if (caseId != null)
+        {
+            entry["case"] = caseId;
+            // the description entry's `conditions` as data ([] = a generic entry without conditions)
+            entry["conditions"] = slot["condition"] is JObject cond ? new JArray(cond.DeepClone()) : new JArray();
+        }
+        var proposal = $"条件：{(condition == "" ? "（未写）" : condition)} ｜ 位置：{(position == "" ? "（未写）" : position)}";
+        if (caseId != null && writerCondition != "" && writerCondition != condition) proposal += $" ｜ 写手另注条件：{writerCondition}";
         var record = new JObject
         {
             ["id"] = id,
@@ -706,16 +722,17 @@ public static class TA_Changes
             ["personality"] = null,
             ["units"] = new JArray(unit),
             ["new"] = texts,
-            ["entry"] = new JObject { ["com"] = slot["com"], ["field"] = field, ["condition"] = condition, ["position"] = position },
+            ["entry"] = entry,
             ["issue"] = new JObject
             {
                 ["type"] = "newEntry",
-                ["problem"] = $"新增旁白条目 {slot["com"]} {field}",
+                ["problem"] = caseId != null ? $"新增旁白条目 {slot["com"]} {field}（情况 {caseId}）" : $"新增旁白条目 {slot["com"]} {field}",
                 ["evidence"] = "",
-                ["proposal"] = $"条件：{(condition == "" ? "（未写）" : condition)} ｜ 位置：{(position == "" ? "（未写）" : position)}"
+                ["proposal"] = proposal
             },
             ["createdAt"] = Now()
         };
+        if (caseId != null) record["case"] = caseId;
         records.Add(record);
         byId[id] = record;
         return true;

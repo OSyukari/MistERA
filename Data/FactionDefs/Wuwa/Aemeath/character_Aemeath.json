@@ -2,7 +2,7 @@
 {
     "baseID": "Wuwa_Aemeath",
     "Portrait":{
-        "useGlobalHandler": [ { "path": "Aemeath" } ],
+        "useGlobalHandler": [ { "path": "wuwa_Aemeath" } ],
         "portraitPriorityList":[
             {
                 "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
@@ -14,15 +14,17 @@
                 "icon_offset_x":0.0,
                 "icon_offset_y":0.0,
                 "icon_offset_size":0.56,
-
+  "Variants":
+  [
+    { "PortraitVariantData":["idle"] }
+  ],
                 "icon_path":"Aemeath/T_IconRoleHead256_53_UI.png",
                 
                 "straightAlpha":true,
                 "materialTexturePaths":["Aemeath/Portraits_Aimisi.png"],
                 "atlasJSON_path":"Aemeath/Portraits_Aimisi.atlas",
                 "skeletonJSON_path":"Aemeath/Portraits_Aimisi.skel",
-                "idleAnimName":"idle"
-
+                "idleAnimName":""
             },
             {
                 "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",

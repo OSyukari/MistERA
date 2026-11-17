@@ -9,7 +9,12 @@ public class TA_KojoContext
     public bool speakerIsReceiver;
     public bool listenerIsSelf;      // self-targeted lookup (solo EP)
     public bool accepted = true;     // false = refusal block
-    public bool masterPresent;       // someone else ordered it
+    /// <summary>
+    /// The speaker is the act's master as kojo sees it (KojoCollector.LoadEP: masterRef = Package.Master, else the doer):
+    /// a doer acting on its own initiative. False for a receiver, and for a doer ordered by someone else (the player in
+    /// sex mode, Plan_CommandCases.md K4).
+    /// </summary>
+    public bool speakerIsMaster;
     public bool playerInvolved = true;
     /// <summary>Kojo fetched without an action package (events): the EP checks (accepted/refused/result) don't run.</summary>
     public bool noEP;
@@ -228,7 +233,11 @@ public static class TA_Conditions
         if (!v.requireSelfOnly && ctx.listenerIsSelf) return false;
         if (v.requireSelfDoer && !ctx.speakerIsDoer) return false;
         if (v.requireSelfReceiver && !ctx.speakerIsReceiver) return false;
-        if ((v.requireMaster || v.requireSelfMaster) && !ctx.masterPresent) return false;
+        // ResponseEntryVariant.isValid(kol): with an action package masterRef is always set (Master, else the doer), so
+        // requireMaster only fails without one; requireSelfMaster / requireSelfNotMaster compare it with the speaker
+        if (v.requireMaster && ctx.noEP) return false;
+        if (v.requireSelfMaster && !ctx.speakerIsMaster) return false;
+        if (v.requireSelfNotMaster && ctx.speakerIsMaster) return false;
         var r = v.requirement;
         if (r != null && ctx.noEP)
         {

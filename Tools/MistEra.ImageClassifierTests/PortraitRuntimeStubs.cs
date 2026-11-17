@@ -55,6 +55,8 @@ public class PortraitManager
 
     public class PortraitVariant
     {
+        public int templateIndex;
+        public List<string> ImagePaths = new List<string>();
         public List<string> tagsMatch = new List<string>();
         public List<string> tagsExclude = new List<string>();
         public List<string> PortraitVariantData = new List<string>();
@@ -64,14 +66,18 @@ public class PortraitManager
 
     public class CharaPortrait
     {
+        public int templateIndex;
         public List<PortraitVariant> Variants = new List<PortraitVariant>();
         public List<string> RequireSelfContextKeys = new List<string>();
         public List<string> RequireTargetContextKeys = new List<string>();
         public bool isGenerated;
+        public CharaPortrait Copy() { throw new InvalidOperationException("Portrait Build tests must not copy resolved handlers."); }
     }
 
     public class CharaPortrait_Image : CharaPortrait
     {
+        public string portrait_path;
+        public List<string> random_portrait_path = new List<string>();
         public float portrait_offset_x, portrait_offset_y, portrait_offset_size;
         public float icon_offset_x, icon_offset_y, icon_offset_size;
         public ImageOrientation image_orientation;

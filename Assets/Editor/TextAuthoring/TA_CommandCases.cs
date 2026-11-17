@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Reflection;
 using Newtonsoft.Json.Linq;
 using CharaCond = COM_Descriptions.Description_Entry.COMDesc_Conditions.Validator_Chara;
+using PackageCond = COM_Descriptions.Description_Entry.COMDesc_Conditions.Validator_Package;
 
 /// <summary>
 /// Command cases (Docs/TextAuthoring/Plan_CommandCases.md): from the case template (TA_CaseTemplate) and the command's own
 /// data, the list of situations the command must cover - narration per phase (completion task) and kojo per speaker /
 /// state / listener / phase / outcome (kojo task) - each with its coverage: narration = the description entries that
-/// cover it (slot handles), kojo = which personalities have a branch for it (own / inherited / none). Stored on the
-/// shared snapshot as `cases`.
+/// cover it (slot handles), kojo = which personalities have a branch for it (TA_KojoCases). Stored on the shared snapshot
+/// as `cases`.
 /// </summary>
 public partial class TA_CommandDocBuilder
 {
@@ -134,21 +135,26 @@ public partial class TA_CommandDocBuilder
                 var sides = facts.pair ? new[] { "doer", "receiver" } : new[] { "doer" };
                 for (int s = 0; s < sides.Length; s++)
                 {
-                    var cond = Condition(t["condition"] as JObject, sides[s]);
+                    var cond = Chara(Condition(t["condition"] as JObject, sides[s]));
                     into.Add(NarrationCase($"narr.{id}.{sides[s]}", id, field, label + "（" + RoleLabel(sides[s], facts) + "）", required, variantOnly, sides[s], null, cond));
                 }
                 continue;
             }
-            into.Add(NarrationCase($"narr.{id}", id, field, label, required, variantOnly, null, null, null));
+            // a package condition (who ordered it: validatePackage existsMaster_NonActor …) instead of a stat
+            var package = t["package"] is JObject pk ? new JObject { ["validatePackage"] = pk.DeepClone() } : null;
+            into.Add(NarrationCase($"narr.{id}", id, field, label, required, variantOnly, null, null, package));
             if (!((bool?)t["states"] ?? false)) continue;
             foreach (var p in TA_CaseTemplate.NarrationStates.Properties())
             {
                 if (!Reachable(Side(reacting), p.Value["reachableIf"] as JObject)) continue;
-                var cond = Condition(p.Value["condition"] as JObject, reacting);
+                var cond = Chara(Condition(p.Value["condition"] as JObject, reacting));
                 into.Add(NarrationCase($"narr.{id}.{p.Name}", id, field, $"{label}：{RoleLabel(reacting, facts)}{(string)p.Value["label"] ?? p.Name}", false, variantOnly, reacting, p.Name, cond));
             }
         }
     }
+
+    /// <summary>A validateChara condition as a description condition ({ validateChara }); null stays null.</summary>
+    static JObject Chara(JObject cond) { return cond == null ? null : new JObject { ["validateChara"] = cond }; }
 
     static string RoleLabel(string side, CaseFacts facts)
     {
@@ -186,27 +192,65 @@ public partial class TA_CommandDocBuilder
         };
         if (side != null) o["side"] = side;
         if (state != null) o["state"] = state;
-        if (cond != null) o["condition"] = new JObject { ["validateChara"] = cond };
+        if (cond != null)
+        {
+            o["condition"] = cond;
+            o["condText"] = ConditionText(cond);
+        }
         return o;
     }
 
-    /// <summary>A description entry with text and the stat conditions on its path.</summary>
+    /// <summary>A case condition in the docs' words (TA_Conditions.DescribeDescEntry, as on existing narration slots).</summary>
+    static string ConditionText(JObject cond)
+    {
+        try
+        {
+            var c = cond.ToObject<COM_Descriptions.Description_Entry.COMDesc_Conditions>();
+            var e = new COM_Descriptions.Description_Entry();
+            e.conditions = new List<COM_Descriptions.Description_Entry.COMDesc_Conditions> { c };
+            return TA_Conditions.DescribeDescEntry(e);
+        }
+        catch { return cond.ToString(Newtonsoft.Json.Formatting.None); }
+    }
+
+    /// <summary>A description entry with text and the stat / package conditions on its path.</summary>
     class NarrEntry
     {
         public string handle;
         public List<CharaCond> chara = new List<CharaCond>();
-        /// <summary>Its path requires a state / climax stat (isUnconscious, isTimestopped, climaxed … = true): not a generic line.</summary>
+        public List<PackageCond> package = new List<PackageCond>();
+        /// <summary>
+        /// Its path requires a state / climax stat (isUnconscious, isTimestopped, climaxed … = true) or who ordered the act
+        /// (validatePackage master flags): not a generic line.
+        /// </summary>
         public bool special;
 
+        /// <summary>The path has the case's condition ({ validateChara } or { validatePackage }: every flag set there).</summary>
         public bool Has(JObject cond)
         {
-            for (int i = 0; i < chara.Count; i++)
-            {
-                var c = chara[i];
-                if (c.statID == (string)cond["statID"] && c.target == (string)cond["target"] && string.Equals(c.value, (string)cond["value"], StringComparison.OrdinalIgnoreCase)) return true;
-            }
+            if (cond["validateChara"] is JObject vc)
+                for (int i = 0; i < chara.Count; i++)
+                {
+                    var c = chara[i];
+                    if (c.statID == (string)vc["statID"] && c.target == (string)vc["target"] && string.Equals(c.value, (string)vc["value"], StringComparison.OrdinalIgnoreCase)) return true;
+                }
+            if (cond["validatePackage"] is JObject vp)
+                for (int i = 0; i < package.Count; i++)
+                {
+                    var c = package[i];
+                    if (((bool?)vp["existsMaster"] ?? false) && !c.existsMaster) continue;
+                    if (((bool?)vp["existsMaster_NonActor"] ?? false) && !c.existsMaster_NonActor) continue;
+                    if (((bool?)vp["existsMaster_Doer"] ?? false) && !c.existsMaster_Doer) continue;
+                    if (((bool?)vp["existsMaster_Receiver"] ?? false) && !c.existsMaster_Receiver) continue;
+                    return true;
+                }
             return false;
         }
+    }
+
+    static bool MasterCondition(PackageCond c)
+    {
+        return c.existsMaster || c.existsMaster_NonActor || c.existsMaster_Doer || c.existsMaster_Receiver;
     }
 
     static readonly HashSet<string> specialStats = new HashSet<string> { "isUnconscious", "isTimestopped", "climaxed" };
@@ -226,48 +270,47 @@ public partial class TA_CommandDocBuilder
         if (!variantOnly)
         {
             var d = GetDesc(owner, field);
-            if (d?.Entries != null) Walk(d.Entries, OwnerID(owner) + "|-1", field, "Entries", new List<CharaCond>(), into);
+            if (d?.Entries != null) Walk(d.Entries, OwnerID(owner) + "|-1", field, "Entries", new List<CharaCond>(), new List<PackageCond>(), into);
         }
         for (int v = 0; v < owner.variants.Count; v++)
         {
             var d = GetDesc(owner.variants[v], field);
-            if (d?.Entries != null) Walk(d.Entries, OwnerID(owner) + "|" + v, field, "Entries", new List<CharaCond>(), into);
+            if (d?.Entries != null) Walk(d.Entries, OwnerID(owner) + "|" + v, field, "Entries", new List<CharaCond>(), new List<PackageCond>(), into);
         }
     }
 
-    void Walk(List<COM_Descriptions.Description_Entry> entries, string ownerKey, string field, string path, List<CharaCond> chain, List<NarrEntry> into)
+    void Walk(List<COM_Descriptions.Description_Entry> entries, string ownerKey, string field, string path, List<CharaCond> chain, List<PackageCond> packages, List<NarrEntry> into)
     {
         for (int i = 0; i < entries.Count; i++)
         {
             var e = entries[i];
             if (e == null) continue;
             var p = $"{path}[{i}]";
-            int added = 0;
+            int added = 0, addedPackages = 0;
             if (e.conditions != null)
                 for (int c = 0; c < e.conditions.Count; c++)
+                {
                     if (e.conditions[c]?.validateChara != null) { chain.Add(e.conditions[c].validateChara); added++; }
+                    if (e.conditions[c]?.validatePackage != null) { packages.Add(e.conditions[c].validatePackage); addedPackages++; }
+                }
             if (e.texts != null && e.texts.Count > 0)
             {
                 var n = new NarrEntry { handle = ExistingHandle($"N|{ownerKey}|{field}|{p}") };
                 n.chara.AddRange(chain);
+                n.package.AddRange(packages);
                 for (int c = 0; c < chain.Count; c++)
                     if (specialStats.Contains(chain[c].statID) && string.Equals(chain[c].value, "true", StringComparison.OrdinalIgnoreCase)) n.special = true;
+                for (int c = 0; c < packages.Count; c++)
+                    if (MasterCondition(packages[c])) n.special = true;
                 into.Add(n);
             }
-            if (e.Entries != null && e.Entries.Count > 0) Walk(e.Entries, ownerKey, field, p + ".Entries", chain, into);
+            if (e.Entries != null && e.Entries.Count > 0) Walk(e.Entries, ownerKey, field, p + ".Entries", chain, packages, into);
             chain.RemoveRange(chain.Count - added, added);
+            packages.RemoveRange(packages.Count - addedPackages, addedPackages);
         }
     }
 
     // ---------------------------------------------------------------- kojo
-
-    /// <summary>One kojo case before coverage: who speaks to whom in which state, at which lookup.</summary>
-    class KojoCaseSpec
-    {
-        public string id, phase, label, suffix, fallback, speaker, speakerState, listener, listenerState, outcome, tierSet;
-        public bool required;
-        public List<string> phaseSelfTags = new List<string>();
-    }
 
     void KojoCases(CaseFacts facts, HashSet<string> flags, JArray into)
     {
@@ -283,6 +326,7 @@ public partial class TA_CommandDocBuilder
             bool withStates = (bool?)t["states"] ?? false;
             bool d20 = ((bool?)t["d20"] ?? false) && facts.d20;
             var requireState = (string)t["requireState"];
+            bool ordered = (string)t["order"] == "ordered";
             var phaseTags = new List<string>();
             if (t["selfTags"] is JArray st) for (int i = 0; i < st.Count; i++) phaseTags.Add((string)st[i]);
             var suffixes = new List<string>();
@@ -336,6 +380,8 @@ public partial class TA_CommandDocBuilder
                             {
                                 var outcome = (string)outcomes[oi];
                                 if (outcome == "refuse" && !CanRefuse(facts, receiverState, listener, requireState)) continue;
+                                // the doer refusing its master's order (EvaluationPackage.LogMessage_Kojo: kojo to the master)
+                                if (outcome == "refuseOrder" && (!ordered || speaker != "doer" || sState != "awake")) continue;
                                 var results = outcome == "accept" && d20 ? new[] { "success", "failure" } : new[] { outcome };
                                 for (int r = 0; r < results.Length; r++)
                                     for (int s = 0; s < suffixes.Count; s++)
@@ -344,13 +390,15 @@ public partial class TA_CommandDocBuilder
                                         {
                                             phase = id, label = label, suffix = suffixes[s], fallback = (string)t["fallback"],
                                             speaker = speaker, speakerState = sState, listener = listener, listenerState = lState,
-                                            outcome = results[r], tierSet = results[r] == "refuse" ? null : (string)t["tiers"],
+                                            outcome = results[r], tierSet = IsRefusal(results[r]) ? null : (string)t["tiers"], ordered = ordered,
+                                            // join lookups run without an action package (Job.JoinPackage)
+                                            noEP = speaker == "joiner",
                                             // only the reacting side's own situation is required; the other side's states are optional
                                             required = required && (lState == "awake" || listener == "self")
                                         };
                                         spec.phaseSelfTags.AddRange(phaseTags);
                                         spec.id = $"kojo.{id}{(suffixes.Count > 1 ? suffixes[s] : "")}.{speaker}.{sState}{(lState != "awake" && listener != "self" ? "." + lState : "")}.{listener}.{results[r]}";
-                                        into.Add(KojoCase(spec, facts));
+                                        into.Add(KojoCase(spec, KojoBase() + spec.suffix, CommandResolver(spec.suffix, spec.fallback)));
                                     }
                             }
                         }
@@ -358,6 +406,17 @@ public partial class TA_CommandDocBuilder
                 }
             }
         }
+    }
+
+    /// <summary>The command's kojo chain for a suffix (as the game: own key, folder parent, source …), then a plain fallback key.</summary>
+    EntryResolver CommandResolver(string suffix, string fallback)
+    {
+        return (Character_Personality p, out string provider, out string entryID) =>
+        {
+            var found = ResolveCommandEntry(p, com, suffix, out provider, out entryID);
+            if (found == null && fallback != null) found = ResolvePlainEntry(p, fallback, out provider, out entryID);
+            return found;
+        };
     }
 
     /// <summary>
@@ -371,215 +430,6 @@ public partial class TA_CommandDocBuilder
         if (receiverState == "awake") return true;
         var s = TA_CaseTemplate.States[receiverState];
         return s == null || ((bool?)s["refuses"] ?? true);
-    }
-
-    JObject StateDef(string state) { return state == "awake" ? null : TA_CaseTemplate.States[state] as JObject; }
-
-    static List<string> Tags(JObject state)
-    {
-        var l = new List<string>();
-        if (state?["tags"] is JArray a) for (int i = 0; i < a.Count; i++) l.Add((string)a[i]);
-        return l;
-    }
-
-    JObject KojoCase(KojoCaseSpec c, CaseFacts facts)
-    {
-        var sDef = StateDef(c.speakerState);
-        var lDef = c.listener == "self" ? sDef : StateDef(c.listenerState);
-        var selfTags = Tags(sDef);
-        selfTags.AddRange(c.phaseSelfTags);
-        var targetTags = Tags(lDef);
-        var ctx = new TA_KojoContext
-        {
-            speakerIsDoer = c.speaker == "doer" || c.speaker == "self",
-            speakerIsReceiver = c.speaker == "receiver",
-            listenerIsSelf = c.listener == "self",
-            accepted = c.outcome != "refuse",
-            masterPresent = !facts.pair && c.outcome == "refuse",
-            playerInvolved = c.listener == "player" || c.listener == "newcomer",
-            noEP = c.speaker == "joiner",
-            selfTags = selfTags,
-            targetTags = targetTags,
-            selfCanAct = sDef == null || ((bool?)sDef["canAct"] ?? true),
-            targetCanAct = lDef == null || ((bool?)lDef["canAct"] ?? true),
-            listenerIsPlayer = c.listener == "player" ? true : c.listener == "npc" ? false : (bool?)null,
-            result = c.outcome == "success" ? Memory_Response.Success : c.outcome == "failure" ? Memory_Response.Failure : (Memory_Response?)null,
-            strong = false
-        };
-        // what a branch must ask for to be made for this case (else a generic line only shows by accident)
-        var specificSelf = Tags(sDef);
-        specificSelf.AddRange(c.phaseSelfTags);
-        var specificTarget = c.listener == "self" ? new List<string>() : Tags(lDef);
-
-        var own = new JArray(); var inherited = new JArray(); var noBranch = new JArray(); var missing = new JArray();
-        JObject tierSet = c.tierSet == null ? null : TA_CaseTemplate.Tiers(c.tierSet);
-        var tierItems = tierSet?["tiers"] as JArray;
-        var tierCov = new List<JArray>();
-        if (tierItems != null) for (int i = 0; i < tierItems.Count; i++) tierCov.Add(new JArray());
-
-        var all = scr_System_Serializer.current.MasterList.Character_Personalities.list;
-        bool keepMode = countOnly;
-        countOnly = true;
-        for (int pi = 0; all != null && pi < all.Count; pi++)
-        {
-            var p = all[pi];
-            if (p == null || string.IsNullOrEmpty(p.ID)) continue;
-            var found = ResolveCommandEntry(p, com, c.suffix, out var provider, out var entryID);
-            var viaSource = resolvedViaSource;
-            if (found == null && c.fallback != null) found = ResolvePlainEntry(p, c.fallback, out provider, out entryID);
-            if (found == null) { missing.Add(p.ID); continue; }
-            var leaves = new List<List<ResponseEntry.Variant>>();
-            Leaves(found.variants, ctx, new List<ResponseEntry.Variant>(), leaves);
-            var fit = new List<List<ResponseEntry.Variant>>();
-            for (int l = 0; l < leaves.Count; l++)
-                if (Specific(leaves[l], specificSelf, specificTarget, c.outcome)) fit.Add(leaves[l]);
-            if (fit.Count == 0) { noBranch.Add(p.ID); continue; }
-            if (viaSource != null || provider != p.ID) inherited.Add(p.ID); else own.Add(p.ID);
-            if (tierItems != null)
-                for (int ti = 0; ti < tierItems.Count; ti++)
-                    if (TierCovered(fit, tierItems, ti)) tierCov[ti].Add(p.ID);
-        }
-        countOnly = keepMode;
-        resolvedViaSource = null;
-
-        var o = new JObject
-        {
-            ["id"] = c.id, ["layer"] = "kojo", ["phase"] = c.phase, ["label"] = c.label, ["key"] = KojoBase() + c.suffix,
-            ["speaker"] = c.speaker, ["speakerState"] = c.speakerState, ["listener"] = c.listener, ["listenerState"] = c.listenerState,
-            ["outcome"] = c.outcome, ["required"] = c.required,
-            ["needs"] = Needs(sDef, lDef, c),
-            ["cov"] = new JObject { ["own"] = own, ["inherited"] = inherited, ["noBranch"] = noBranch, ["missing"] = missing }
-        };
-        if (c.fallback != null) o["fallback"] = c.fallback;
-        if (tierItems != null)
-        {
-            var items = new JArray();
-            for (int ti = 0; ti < tierItems.Count; ti++)
-                items.Add(new JObject { ["id"] = tierItems[ti]["id"], ["label"] = tierItems[ti]["label"], ["covered"] = tierCov[ti] });
-            o["tiers"] = new JObject { ["set"] = c.tierSet, ["required"] = (bool?)tierSet["required"] ?? false, ["items"] = items };
-        }
-        return o;
-    }
-
-    /// <summary>
-    /// Leaves of a variant tree that can print in the context, in engine order (as KojoSiblings: an always-valid sibling
-    /// without keepLooking ends the level; children are tried before the node's own responses).
-    /// </summary>
-    static void Leaves(List<ResponseEntry.Variant> list, TA_KojoContext ctx, List<ResponseEntry.Variant> chain, List<List<ResponseEntry.Variant>> into)
-    {
-        if (list == null) return;
-        bool blocked = false;
-        for (int i = 0; i < list.Count; i++)
-        {
-            var v = list[i];
-            if (v == null) continue;
-            if (blocked && !(v.requirement != null && v.requirement.allowRecording)) continue;
-            if (TA_Conditions.Applies(v, ctx))
-            {
-                chain.Add(v);
-                if (v.variants != null && v.variants.Count > 0) Leaves(v.variants, ctx, chain, into);
-                bool leaf = (v.responses != null && v.responses.Count > 0) || v.variants == null || v.variants.Count == 0;
-                if (leaf) into.Add(new List<ResponseEntry.Variant>(chain));
-                chain.RemoveAt(chain.Count - 1);
-            }
-            if (!blocked && !v.keepLooking && TA_Conditions.AlwaysValid(v, ctx)) blocked = true;
-        }
-    }
-
-    /// <summary>
-    /// A leaf made for this case: when the case has a state / phase tag (sleeping, restrained, justWokenUp …) a variant on
-    /// the path must ask for one of them; a success case needs requireEPSuccessGTE ≥ Success; a failure case is covered
-    /// by any branch that isn't success-only.
-    /// </summary>
-    static bool Specific(List<ResponseEntry.Variant> chain, List<string> self, List<string> target, string outcome)
-    {
-        bool selfOk = self.Count == 0, targetOk = target.Count == 0, successOnly = false;
-        for (int i = 0; i < chain.Count; i++)
-        {
-            var r = chain[i].requirement;
-            if (r == null) continue;
-            if (!selfOk && r.selfTags != null) for (int k = 0; k < r.selfTags.Count; k++) if (self.Contains(r.selfTags[k])) selfOk = true;
-            if (!targetOk && r.targetTags != null) for (int k = 0; k < r.targetTags.Count; k++) if (target.Contains(r.targetTags[k])) targetOk = true;
-            if (r.requireEPSuccessGTE >= Memory_Response.Success) successOnly = true;
-        }
-        if (outcome == "success" && !successOnly) return false;
-        if (outcome == "failure" && successOnly) return false;
-        return selfOk && targetOk;
-    }
-
-    static readonly Dictionary<string, FieldInfo> variantFields = new Dictionary<string, FieldInfo>();
-    static readonly Dictionary<string, FieldInfo> requirementFields = new Dictionary<string, FieldInfo>();
-
-    static FieldInfo FieldOf(Dictionary<string, FieldInfo> cache, Type t, string name)
-    {
-        if (!cache.TryGetValue(name, out var fi)) { fi = t.GetField(name, BindingFlags.Public | BindingFlags.Instance); cache[name] = fi; }
-        return fi;
-    }
-
-    /// <summary>A path matches a tier when every `match` field is set to that value on some variant (or its requirement).</summary>
-    static bool PathMatches(List<ResponseEntry.Variant> chain, JObject match)
-    {
-        foreach (var p in match.Properties())
-        {
-            bool found = false;
-            for (int i = 0; i < chain.Count && !found; i++)
-            {
-                var v = chain[i];
-                var fi = FieldOf(variantFields, typeof(ResponseEntry.Variant), p.Name);
-                object val = null;
-                if (fi != null) val = fi.GetValue(v);
-                else if (v.requirement != null)
-                {
-                    var rf = FieldOf(requirementFields, typeof(ResponseEntry.Variant.Requirement), p.Name);
-                    if (rf != null) val = rf.GetValue(v.requirement);
-                }
-                if (val != null && string.Equals(val.ToString(), p.Value.ToString(), StringComparison.OrdinalIgnoreCase)) found = true;
-            }
-            if (!found) return false;
-        }
-        return true;
-    }
-
-    /// <summary>Tier ti covered by one of the case's leaves; an empty match = a leaf matching none of the other tiers (catch-all).</summary>
-    static bool TierCovered(List<List<ResponseEntry.Variant>> leaves, JArray tiers, int ti)
-    {
-        var match = tiers[ti]["match"] as JObject ?? new JObject();
-        for (int l = 0; l < leaves.Count; l++)
-        {
-            if (match.Count > 0) { if (PathMatches(leaves[l], match)) return true; continue; }
-            bool other = false;
-            for (int k = 0; k < tiers.Count && !other; k++)
-            {
-                var m = tiers[k]["match"] as JObject;
-                if (k != ti && m != null && m.Count > 0 && PathMatches(leaves[l], m)) other = true;
-            }
-            if (!other) return true;
-        }
-        return false;
-    }
-
-    /// <summary>The fields a new branch for this case needs (shown on blank slots; the coder copies them).</summary>
-    static JObject Needs(JObject sDef, JObject lDef, KojoCaseSpec c)
-    {
-        var n = new JObject();
-        if (c.speaker == "receiver") n["requireSelfReceiver"] = true;
-        else if (c.speaker == "doer") n["requireSelfDoer"] = true;
-        else if (c.speaker == "self") n["requireSelfOnly"] = c.listener == "self";
-        var req = new JObject();
-        if (sDef != null && !((bool?)sDef["canAct"] ?? true)) req["requireSelfAction"] = false;
-        if (c.listener != "self" && lDef != null && !((bool?)lDef["canAct"] ?? true)) req["requireTargetAction"] = false;
-        var selfTags = new JArray();
-        if (sDef?["tags"] is JArray st && st.Count > 0) selfTags.Add(st[0]);
-        for (int i = 0; i < c.phaseSelfTags.Count; i++) selfTags.Add(c.phaseSelfTags[i]);
-        if (selfTags.Count > 0) req["selfTags"] = selfTags;
-        if (c.speakerState == "fainted") req["excludeSelfTags"] = new JArray("sleeping");
-        if (c.listener != "self" && lDef?["tags"] is JArray tt && tt.Count > 0) req["targetTags"] = new JArray(tt[0]);
-        if (c.outcome == "refuse") req["requireEPFailure"] = true;
-        if (c.outcome == "success") req["requireEPSuccessGTE"] = "Success";
-        if (c.listener == "player") req["targetBaseID"] = "PLAYER";
-        if (req.Count > 0) n["requirement"] = req;
-        if (c.outcome == "failure") n["order"] = "after the success branch (no failure-only condition exists)";
-        return n;
     }
 
     // ---------------------------------------------------------------- overrides

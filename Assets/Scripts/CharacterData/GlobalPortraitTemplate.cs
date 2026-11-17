@@ -393,6 +393,8 @@ public static class GlobalPortraitTemplate
         public int order;
         public float tier;
         public List<string> hasVariants = new List<string>();
+        // Optional display-only suffix pool for the keyword without subtype tags.
+        public List<string> baseFiles;
         public List<string> onlyInCategories = new List<string>();
         public bool alsoUsePerformFolders;
         /// <summary>
@@ -477,6 +479,8 @@ public static class GlobalPortraitTemplate
                 var entries = new List<Entry>();
                 foreach (var n in names)
                 {
+                    var nameBaseFiles = n.baseFiles == null ? categoryBaseFiles
+                        : n.baseFiles.Where(f => f == "" || cat.allowedVariants == null || cat.allowedVariants.Contains(f)).ToList();
                     // every (keyword, role) pair of the name that belongs in this block (OR: any of them shows these images).
                     // The first keyword is primary across roles; other keywords are fallbacks.
                     for (int k = 0; k < n.keywords.Count; k++)
@@ -504,7 +508,7 @@ public static class GlobalPortraitTemplate
                             entries.Add(new Entry { tags = tags, tagsExclude = excludedTags, primary = primary, tier = n.tier, order = n.order, variantOrder = portraitVariants.IndexOf(v), patterns = Patterns(nameFolders, n, files, names, suffixIds, classifierIds, ext) });
                         }
                         if (kw != null)
-                            entries.Add(new Entry { tags = new List<string> { kw }, tagsExclude = excludedTags, primary = primary, tier = n.tier, order = n.order, patterns = Patterns(nameFolders, n, categoryBaseFiles, names, suffixIds, classifierIds, ext) });
+                            entries.Add(new Entry { tags = new List<string> { kw }, tagsExclude = excludedTags, primary = primary, tier = n.tier, order = n.order, patterns = Patterns(nameFolders, n, nameBaseFiles, names, suffixIds, classifierIds, ext) });
                     }
                 }
 
@@ -595,24 +599,39 @@ public static class GlobalPortraitTemplate
 
         if (mappedOnly) names = names.Where(n => fallbacks.Any(f => f.files.Contains(n.name))).ToList();
         var variants = new List<PortraitManager.PortraitVariant>();
-        // Exact expressions (including source-specific ids) precede every cross-expression fallback.
-        foreach (var n in names)
-            variants.Add(new PortraitManager.PortraitVariant
+        if (neutralFallback)
+        {
+            // Emotion keywords select one combined pool; classification ids only identify filenames.
+            foreach (var pair in fallbacks)
             {
-                tagsMatch = new List<string> { n.name },
-                PortraitVariantData = new List<string> { Pattern(folder, n.name, "", names, new List<string>(), ext) },
-            });
-        foreach (var pair in fallbacks)
-            foreach (var id in pair.files)
-            {
-                if (id == pair.keyword) continue;
-                // One variant per id: an available earlier expression must not pool with later fallbacks.
+                if (pair.keyword == "neutral" || pair.files.Count == 0) continue;
                 variants.Add(new PortraitManager.PortraitVariant
                 {
                     tagsMatch = new List<string> { pair.keyword },
-                    PortraitVariantData = new List<string> { Pattern(folder, id, "", names, new List<string>(), ext) },
+                    PortraitVariantData = pair.files.Select(id => Pattern(folder, id, "", names, new List<string>(), ext)).ToList(),
                 });
             }
+        }
+        else
+        {
+            // Actions and activities retain exact-name precedence and ordered fallbacks.
+            foreach (var n in names)
+                variants.Add(new PortraitManager.PortraitVariant
+                {
+                    tagsMatch = new List<string> { n.name },
+                    PortraitVariantData = new List<string> { Pattern(folder, n.name, "", names, new List<string>(), ext) },
+                });
+            foreach (var pair in fallbacks)
+                foreach (var id in pair.files)
+                {
+                    if (id == pair.keyword) continue;
+                    variants.Add(new PortraitManager.PortraitVariant
+                    {
+                        tagsMatch = new List<string> { pair.keyword },
+                        PortraitVariantData = new List<string> { Pattern(folder, id, "", names, new List<string>(), ext) },
+                    });
+                }
+        }
         if (neutralFallback && ids.Contains("neutral"))
             variants.Add(new PortraitManager.PortraitVariant
             {
@@ -788,6 +807,7 @@ public static class GlobalPortraitTemplate
                 onlyInCategories = onlyInCategories,
                 keywords = keywords,
                 alsoUsePerformFolders = m["alsoUsePerformFolders"]?.Value<bool>() ?? false,
+                baseFiles = (m["baseFiles"] as JArray)?.Values<string>().Select(f => f ?? "").Distinct().ToList(),
             });
         }
         return list;

@@ -60,7 +60,88 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
         WriteHeader(flow);
         if (flow) WriteFlowView();
         else for (int i = 0; i < paths.Count; i++) WritePath(i, paths[i]);
-        return FinishDoc();
+        var snap = FinishDoc();
+        // kojo lookups with a case spec (Docs/TextAuthoring/Plan_CommandCases.md §6.1): what each must handle
+        if (snap != null && !countOnly)
+        {
+            var cases = EventCases();
+            if (cases != null) snap.shared["cases"] = cases;
+        }
+        return snap;
+    }
+
+    // ---------------------------------------------------------------- kojo lookup cases (Plan_CommandCases.md §6.1, K8)
+
+    /// <summary>
+    /// Cases of the event's kojo lookups that have a spec in eventKojo.json (keyed by the kojo key, or by the $storeKey$
+    /// name): the speaker awake and in each listed state × each listed listener (player / npc; none listed = the fetch's
+    /// listener as is), with the spec's tier set. Covered like command kojo cases, resolved as a plain key (no action
+    /// package). Null when no lookup has a spec.
+    /// </summary>
+    JArray EventCases()
+    {
+        var err = TA_CaseTemplate.Load();
+        if (err != null) { AddFinding(new JObject { ["type"] = "caseTemplate", ["problem"] = err }); return null; }
+        var specs = TA_CaseTemplate.EventSpecs(ev.ID);
+        if (specs == null || specs.Count == 0) return null;
+
+        // every fetch of the event, whichever path runs it
+        var all = new PathResult();
+        for (int i = 0; i < ev.events.Count; i++)
+        {
+            var e = ev.events[i];
+            if (e == null) continue;
+            CollectFetches(ResultsOf(e), all, ConsumerOf(e, false), SeverityOf(e, -1), true);
+            var opts = OptionsOf(e);
+            if (opts != null) for (int o = 0; o < opts.Count; o++) CollectFetches(opts[o]?.Results, all, ConsumerOf(e, true), SeverityOf(e, o), true);
+        }
+
+        var cases = new JArray();
+        var done = new HashSet<string>();
+        var used = new HashSet<string>();
+        foreach (var kv in all.fetches)
+            for (int i = 0; i < kv.Value.Count; i++)
+            {
+                var f = kv.Value[i];
+                if (f.fromAppendStrings) continue;
+                var specKey = specs[f.kojoID] != null ? f.kojoID : specs[f.storeKey] != null ? f.storeKey : null;
+                if (specKey == null || !done.Add($"{f.kojoID}|{f.speakerKey}|{f.listenerKey}")) continue;
+                used.Add(specKey);
+                LookupCases(f, (JObject)specs[specKey], cases);
+            }
+        // a spec naming no lookup of this event: probably a renamed key
+        foreach (var p in specs.Properties())
+            if (!used.Contains(p.Name)) AddFinding(new JObject { ["type"] = "caseTemplate", ["problem"] = $"eventKojo.json {ev.ID}: `{p.Name}` matches no kojo lookup of the event" });
+        return cases;
+    }
+
+    void LookupCases(KojoFetch f, JObject spec, JArray into)
+    {
+        bool self = f.speakerKey == f.listenerKey;
+        var states = new List<string> { "awake" };
+        if (spec["states"] is JArray sa) for (int i = 0; i < sa.Count; i++) if (TA_CaseTemplate.States[(string)sa[i]] != null) states.Add((string)sa[i]);
+        var listeners = new List<string>();
+        if (!self && spec["listeners"] is JArray la) for (int i = 0; i < la.Count; i++) listeners.Add((string)la[i]);
+        if (listeners.Count == 0) listeners.Add(self ? "self" : "any");
+        bool required = (bool?)spec["required"] ?? true;
+        var label = (string)spec["label"] ?? f.kojoID;
+        var kojoID = f.kojoID;
+        EntryResolver resolve = (Character_Personality p, out string provider, out string entryID) => ResolvePlainEntry(p, kojoID, out provider, out entryID);
+        for (int s = 0; s < states.Count; s++)
+            for (int l = 0; l < listeners.Count; l++)
+            {
+                var listener = listeners[l];
+                var c = new KojoCaseSpec
+                {
+                    phase = kojoID, label = label, suffix = "", speaker = "event", speakerState = states[s],
+                    listener = listener, listenerState = "awake", outcome = "event", tierSet = (string)spec["tiers"],
+                    noEP = true, required = required,
+                    speakerLabel = KeyName(f.speakerKey),
+                    listenerLabel = listener == "any" || listener == "self" ? KeyName(f.listenerKey) : null
+                };
+                c.id = $"kojo.{kojoID}.{f.speakerKey}.{states[s]}.{(listener == "any" ? f.listenerKey : listener)}";
+                into.Add(KojoCase(c, kojoID, resolve));
+            }
     }
 
     /// <summary>Store/file name of an event unit.</summary>

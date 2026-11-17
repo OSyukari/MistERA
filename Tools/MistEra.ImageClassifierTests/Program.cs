@@ -10,15 +10,55 @@ static class Program
     static int Main(string[] args)
     {
         CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
-        if (args.Contains("--help"))
+        if (args.Contains("--help") && !args.Contains("--refresh-report") && !args.Contains("--emotion-tests") && !args.Contains("--group-tests"))
         {
             Console.WriteLine("Usage: dotnet run --project Tools/MistEra.ImageClassifierTests -- [config.json] [folder/_image_tags.jsonl]");
+            Console.WriteLine("       dotnet run --project Tools/MistEra.ImageClassifierTests -- --refresh-report");
+            Console.WriteLine("       dotnet run --project Tools/MistEra.ImageClassifierTests -- --emotion-tests");
+            Console.WriteLine("       dotnet run --project Tools/MistEra.ImageClassifierTests -- --group-tests");
             Console.WriteLine("Defaults: repository Mods/Assetpacks/Image_Generation_Config.json and Mods/ppatch_addon/Assetpacks/yerin_nude/_image_tags.jsonl.");
-            Console.WriteLine("Read-only tag predictions, mapping checks and synthetic regressions; no Unity, image access, tagging or moving.");
+            Console.WriteLine("Normal mode: read-only tag predictions, mapping checks and synthetic regressions; no Unity, image access, tagging or moving.");
+            Console.WriteLine("--refresh-report must be used alone: reads existing folder caches and writes only repository Mods/_image_database.html, with selection support.");
+            Console.WriteLine("--emotion-tests must be used alone: runs emotion pool tests with the default repository config, without a tag cache.");
+            Console.WriteLine("--group-tests must be used alone: runs group pool tests with the default repository config, without a tag cache.");
+            Console.WriteLine("Refresh does not analyze, tag, move images or write caches, config or the selection file. All modes may produce normal build artifacts.");
             return 0;
         }
         try
         {
+            if (args.Contains("--refresh-report"))
+            {
+                if (args.Length != 1) throw new ArgumentException("--refresh-report must be used alone; use --help.");
+                var reportRoot = FindRoot();
+                var modsRoot = Path.Combine(reportRoot, "Mods");
+                var rulesPath = Path.Combine(modsRoot, "Assetpacks", GlobalPortraitTemplate.ConfigFileName);
+                var rulesHash = ImageReport.RulesHash(rulesPath);
+                var folders = ImageWorkFolders.Find(modsRoot)
+                    .Select(folder => ImageReport.Describe(folder, ImageWorkFolders.DisplayName(modsRoot, folder), rulesHash)).ToList();
+                var reportPath = Path.Combine(modsRoot, ImageWorkFolders.ReportFileName);
+                var originalDirectory = Directory.GetCurrentDirectory();
+                try
+                {
+                    // WriteHtml resolves its fixed template path relative to the current directory.
+                    Directory.SetCurrentDirectory(reportRoot);
+                    ImageReport.WriteHtml(reportPath, "Mods asset packs", folders, rulesPath, ImageWorkFolders.SelectionFileName);
+                }
+                finally { Directory.SetCurrentDirectory(originalDirectory); }
+                Console.WriteLine($"Refreshed report from existing caches ({folders.Count} work folders): {reportPath}");
+                return 0;
+            }
+            if (args.Contains("--emotion-tests") || args.Contains("--group-tests"))
+            {
+                var mode = args.Contains("--group-tests") ? "--group-tests" : "--emotion-tests";
+                if (args.Length != 1) throw new ArgumentException(mode + " must be used alone; use --help.");
+                var poolConfig = Path.Combine(FindRoot(), "Mods", "Assetpacks", GlobalPortraitTemplate.ConfigFileName);
+                var poolRules = ImageRulesJsonLoader.Load(poolConfig);
+                var poolChecks = new Assertions();
+                if (mode == "--group-tests") GlobalPortraitTemplateTests.RunGroupPools(poolRules, poolChecks);
+                else GlobalPortraitTemplateTests.RunEmotionPools(poolRules, poolChecks);
+                Console.WriteLine($"RESULT: {poolChecks.Passed} passed, {poolChecks.Failed} failed");
+                return poolChecks.Failed == 0 ? 0 : 1;
+            }
             if (args.Length > 2) throw new ArgumentException("Expected at most two paths; use --help.");
             var root = FindRoot();
             var config = Path.GetFullPath(args.Length > 0 ? args[0] : Path.Combine(root, "Mods/Assetpacks/Image_Generation_Config.json"));

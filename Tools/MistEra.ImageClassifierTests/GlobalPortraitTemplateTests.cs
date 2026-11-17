@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 
 static class GlobalPortraitTemplateTests
 {
-    public static void Run(ImageRules rules, Assertions checks)
+    public static void RunEmotionPools(ImageRules rules, Assertions checks)
     {
         // Read only the selected rules config. Never initialize the runtime, resolve images or write debug output.
         var config = JObject.Parse(File.ReadAllText(rules.sourcePath));
@@ -18,6 +18,336 @@ static class GlobalPortraitTemplateTests
         var ids = rules.nameSets["portrait_emotions"].Select(n => n.name).Distinct().ToArray();
         var mappings = ((JObject)config["portrait_global"]["emotions"]).Properties()
             .Where(p => !p.Name.StartsWith("_", StringComparison.Ordinal)).ToArray();
+
+        checks.Test("global portraits append emotions without changing action handler priority", () =>
+        {
+            var actionsConfig = (JObject)config.DeepClone();
+            ((JObject)actionsConfig["portrait_global"]).Remove("emotions");
+            var actions = Build(actionsConfig);
+            checks.Check(actions.Count > 0, "Expected action handlers before emotions.");
+            checks.Equal(actions.Count + 1, handlers.Count, "One appended emotion handler");
+            checks.Equal(JsonConvert.SerializeObject(actions), JsonConvert.SerializeObject(handlers.Take(actions.Count)),
+                "Existing action handlers and variants retain their ordering");
+            checks.Check(handlers.Take(actions.Count).Where(h => h.RequireSelfContextKeys.Count > 0)
+                .All(h => h.RequireSelfContextKeys.Contains("sex")), "Guarded action handlers must retain their sex requirement.");
+            checks.Equal(0, emotion.RequireSelfContextKeys.Count, "Emotion self guards");
+            checks.Equal(0, emotion.RequireTargetContextKeys.Count, "Emotion target guards");
+
+            var actionImage = Image("human", "doggystyle");
+            var expressionImage = Image("portrait", "angry");
+            var selected = SelectHandler(handlers, new[] { "sex", "receiver", "doggy", "angry" },
+                new[] { "humanrace" }, actionImage, expressionImage);
+            checks.Check(selected != null && !ReferenceEquals(emotion, selected), "Sex/action images must beat available emotion images.");
+        });
+
+        checks.Test("global portraits build only configured emotion keyword pools in config order", () =>
+        {
+            var baseKeys = new[] { "happy", "sad", "angry", "serious", "surprised", "relaxed" };
+            var extendedKeys = new[] { "confident", "thinking", "shy", "awkward", "sorry", "disappointed", "fear", "pain" };
+            var expectedKeys = baseKeys.Concat(extendedKeys).Concat(new[] { "resting", "sleeping" }).ToArray();
+            var configuredKeys = mappings.Where(p => p.Name != "neutral").Select(p => p.Name).ToArray();
+            var tagged = emotion.Variants.Where(v => v.tagsMatch.Count > 0).ToArray();
+            checks.Equal(17, emotion.Variants.Count, "Six base, eight extended, resting, sleeping and neutral variants");
+            checks.Equal(17, mappings.Length, "Configured emotion group count");
+            checks.Equal(16, tagged.Length, "Tagged emotion variant count");
+            checks.Check(new HashSet<string>(configuredKeys).SetEquals(expectedKeys), "Only supported emotion and state keywords are configured");
+            checks.Check(tagged.All(v => v.tagsMatch.Count == 1 && v.tagsExclude.Count == 0), "Each pool has one positive keyword and no exclusions");
+            checks.Check(tagged.Select(v => v.tagsMatch.Single()).SequenceEqual(configuredKeys), "Tagged variants follow config order exactly");
+            foreach (var id in ids.Except(configuredKeys))
+                checks.Check(!emotion.Variants.Any(v => v.tagsMatch.Contains(id)), "No classification-only keyword variant: " + id);
+        });
+
+        checks.Test("global angry pools angry anger and fury in the same variant", () =>
+        {
+            var angry = emotion.Variants.Single(v => v.tagsMatch.SequenceEqual(new[] { "angry" }));
+            var images = new[] { "angry", "anger", "fury" }.Select(id => Image("portrait", id)).ToArray();
+            checks.Equal(images.Length, images.Count(image => Matches(angry, image)), "All three images belong to one simultaneously available pool");
+            foreach (var image in images)
+                checks.Equal(image, Select(emotion, new[] { "angry" }, image), "Angry keyword can select each pooled classification: " + image);
+            var neutral = Image("portrait", "neutral");
+            checks.Equal(neutral, Select(emotion, new[] { "angry" }, neutral), "Missing pool images falls back to neutral");
+            checks.Equal<string>(null, Select(emotion, new[] { "anger", "fury" }, images), "Classification-only tags do not activate angry");
+        });
+
+        checks.Test("global emotion mappings each form one complete pool covering all classification ids", () =>
+        {
+            checks.Equal(90, ids.Length, "Distinct portrait classification count");
+            var covered = new HashSet<string>();
+            foreach (var mapping in mappings)
+            {
+                checks.Check(mapping.Value is JArray, "Expected emotion array: " + mapping.Name);
+                var mapped = ((JArray)mapping.Value).Values<string>().ToArray();
+                foreach (var id in mapped) checks.Check(ids.Contains(id), "Unknown mapped emotion: " + mapping.Name + " -> " + id);
+                covered.UnionWith(mapped);
+                var variants = emotion.Variants.Where(v => mapping.Name == "neutral"
+                    ? v.tagsMatch.Count == 0 : v.tagsMatch.SequenceEqual(new[] { mapping.Name })).ToArray();
+                checks.Equal(1, variants.Length, "One pooled variant: " + mapping.Name);
+                var variant = variants.Single();
+                checks.Equal(mapped.Distinct().Count(), variant.PortraitVariantData.Count, "All mapped patterns in one variant: " + mapping.Name);
+                checks.Equal(variant.PortraitVariantData.Count, variant.PortraitVariantData.Distinct().Count(), "No duplicate pool patterns: " + mapping.Name);
+                foreach (var id in ids)
+                    checks.Equal(mapped.Contains(id), Matches(variant, Image("portrait", id)), "Direct pool membership: " + mapping.Name + " -> " + id);
+                foreach (var pattern in variant.PortraitVariantData)
+                {
+                    var regex = GlobalPortraitTemplate.KeyRegex(pattern, "Yerin");
+                    var matchedIds = ids.Where(id => regex.IsMatch(Image("portrait", id))).ToArray();
+                    checks.Equal(1, matchedIds.Length, "Each pattern isolates one classification, including subtype prefixes: " + mapping.Name);
+                    checks.Check(mapped.Contains(matchedIds.Single()), "Pattern belongs to the configured pool: " + mapping.Name);
+                }
+                foreach (var id in mapped.Distinct())
+                    checks.Equal(1, variant.PortraitVariantData.Count(pattern => GlobalPortraitTemplate.KeyRegex(pattern, "Yerin")
+                        .IsMatch(Image("portrait", id))), "Exactly one pattern per mapped classification: " + mapping.Name + " -> " + id);
+            }
+            checks.Check(covered.SetEquals(ids), "Mappings directly cover all 90 classification ids");
+        });
+
+        checks.Test("global emotion pools use case insensitive anchored extensions and isolated folders and prefixes", () =>
+        {
+            var extensions = ((string)config["portrait_global"]["imageExtensions"]).Split('|');
+            foreach (var variant in emotion.Variants)
+            foreach (var id in ids.Where(id => Matches(variant, Image("portrait", id))))
+            {
+                var path = Image("portrait", id);
+                foreach (var extension in extensions)
+                {
+                    var image = Path.ChangeExtension(path, extension);
+                    checks.Check(Matches(variant, image.ToUpperInvariant()), "Case-insensitive path and configured extension: " + image);
+                    checks.Check(!Matches(variant, image + ".bak"), "Extension must be anchored: " + image);
+                }
+                checks.Check(!Matches(variant, Path.ChangeExtension(path, "gif")), "Unsupported extension: " + id);
+                checks.Check(!Matches(variant, path.Replace("/portrait/", "/human/")), "Category isolation: " + id);
+                checks.Check(!Matches(variant, path.Replace("/portrait/", "/portrait_extra/")), "Category prefix isolation: " + id);
+                checks.Check(!Matches(variant, path.Replace("Yerin/", "Other/")), "Character folder isolation: " + id);
+                checks.Check(!Matches(variant, "extra/" + path), "Leading path must be anchored: " + id);
+                checks.Check(!Matches(variant, path.Replace("/" + id + "_", "/prefix_" + id + "_")), "Classification prefix isolation: " + id);
+            }
+        });
+
+        checks.Test("global emotion handler has only a final unconditional neutral fallback", () =>
+        {
+            var unconditional = emotion.Variants.Where(v => v.tagsMatch.Count == 0).ToArray();
+            checks.Equal(1, unconditional.Length, "Unconditional emotion variant count");
+            checks.Check(ReferenceEquals(emotion.Variants.Last(), unconditional[0]), "Neutral fallback must be last.");
+            checks.Equal(1, unconditional[0].PortraitVariantData.Count, "Single neutral pattern");
+            checks.Equal(0, unconditional[0].tagsExclude.Count, "Neutral has no keyword exclusions");
+            foreach (var id in ids) checks.Equal(id == "neutral", Matches(unconditional[0], Image("portrait", id)), "Unconditional " + id);
+            foreach (var id in new[] { "standing", "bathe", "dogeza", "facetoface", "cum" })
+                checks.Check(!emotion.Variants.Any(v => Matches(v, Image("portrait", id))), "Action/graphic filename must not match emotions: " + id);
+            checks.Equal<string>(null, Select(emotion, new string[0], Image("portrait", "happy")), "No arbitrary happy catch-all");
+        });
+    }
+
+    public static void RunGroupPools(ImageRules rules, Assertions checks)
+    {
+        // Build only in memory; do not initialize runtime caches or inspect image files.
+        var config = JObject.Parse(File.ReadAllText(rules.sourcePath));
+        var before = config.ToString(Formatting.None);
+        var handlers = Build(config);
+        var retired = new[] { "group_sex_multiple", "group_sex_mmfthreesome", "mmf", "triple_penetration", "multiple_penetration" };
+        var expectedTags = new[] {
+            new[] { "group_sex", "double_penetration" },
+            new[] { "group_sex", "spitroast" },
+            new[] { "group_sex" } };
+        var suffixes = new[] { "", "_double_penetration", "_spitroast" };
+
+        checks.Test("global group config has only the canonical receiver mapping and two subtype variants", () =>
+        {
+            var mapping = config["portrait_global"]["names"]["group_sex"];
+            var keywords = (JArray)mapping["keywords"];
+            checks.Equal(1, keywords.Count, "One canonical mapping, no null or alias entries");
+            checks.Equal("group_sex", (string)keywords[0]["keyword"], "Canonical keyword");
+            checks.Equal("receiver", (string)keywords[0]["role"], "Receiver role");
+            checks.Check(((JArray)mapping["baseFiles"]).Values<string>()
+                .SequenceEqual(new[] { "", "double_penetration", "spitroast" }), "Group-specific broad base pool");
+            var variants = ((JObject)config["portrait_global"]["variants"]).Properties()
+                .Where(p => !p.Name.StartsWith("_", StringComparison.Ordinal)).ToArray();
+            var groupVariants = variants.Where(p => ((JArray)p.Value["files"]).Values<string>()
+                .Any(f => f == "double_penetration" || f == "spitroast")).ToArray();
+            checks.Check(groupVariants.Select(p => p.Name).SequenceEqual(new[] { "double_penetration", "spitroast" }),
+                "Only double then spit subtype definitions, no alias variants");
+            foreach (var variant in groupVariants)
+            {
+                checks.Check(((JArray)variant.Value["keywords"]).Values<string>().SequenceEqual(new[] { variant.Name }), "Exact subtype keyword");
+                checks.Check(((JArray)variant.Value["files"]).Values<string>().SequenceEqual(new[] { variant.Name }), "Exact subtype suffix only");
+            }
+            checks.Check(!handlers.SelectMany(h => h.Variants).Any(v => v.tagsMatch.Any(retired.Contains)),
+                "Retired alias strings must not create variants anywhere");
+            checks.Equal(before, config.ToString(Formatting.None), "Building does not mutate config");
+        });
+
+        // Derive applicability from category/name metadata, not from the variants under test.
+        var groupDefinitions = ((JArray)config["file_names"]).OfType<JObject>().Where(n => n["group_sex"] != null).ToArray();
+        var unrestricted = groupDefinitions.Any(n => !(n["onlyInCategories"] is JArray scope) || scope.Count == 0);
+        var scopes = groupDefinitions.SelectMany(n => (n["onlyInCategories"] as JArray)?.Values<string>() ?? Enumerable.Empty<string>()).ToHashSet();
+        var categories = ((JArray)config["portrait_global"]["categories"]).OfType<JObject>().Where(c =>
+        {
+            var id = (string)c["id"];
+            var definitions = ((JArray)config["files_category"]).OfType<JObject>().Where(d => (string)d["id"] == id).ToArray();
+            return definitions.Length > 0 && !definitions.Any(d => (bool?)d["hold"] ?? false) && id != "portrait" && id != "activity"
+                && (unrestricted || scopes.Contains(id) || ((JArray)c["alsoUseFolders"])?.Values<string>().Any(scopes.Contains) == true);
+        }).ToArray();
+        checks.Test("global group has applicable receiver categories", () => checks.Check(categories.Length > 0, "No applicable categories"));
+
+        foreach (var category in categories)
+        {
+            var id = (string)category["id"];
+            var target = ((JArray)category["targetKeys"]).Values<string>().ToArray();
+            PortraitManager.CharaPortrait Receiver() => handlers.Single(h => h.RequireSelfContextKeys.Contains("receiver")
+                && h.RequireTargetContextKeys.SequenceEqual(target));
+
+            checks.Test("global group exactly three ordered receiver selectors: " + id, () =>
+            {
+                var receiver = Receiver();
+                var variants = receiver.Variants.Where(v => v.tagsMatch.Contains("group_sex")).ToArray();
+                checks.Equal(3, variants.Length, "Exactly three group selectors");
+                for (int i = 0; i < expectedTags.Length; i++)
+                {
+                    checks.Check(variants[i].tagsMatch.SequenceEqual(expectedTags[i]), "Double before spit before broad, exact tags at " + i);
+                    checks.Equal(0, variants[i].tagsExclude.Count, "No new group exclusions");
+                    var images = suffixes.Select(s => Image(id, "group_sex" + s)).ToArray();
+                    checks.Equal(i == 2 ? 3 : 1, images.Count(image => Matches(variants[i], image)), "Pool size at " + i);
+                    for (int j = 0; j < images.Length; j++)
+                        checks.Equal(i == 2 || j == i + 1, Matches(variants[i], images[j]), "Exact pool membership " + i + "/" + j);
+                }
+                checks.Check(receiver.RequireSelfContextKeys.SequenceEqual(new[] { "sex", "receiver" }), "Self guards unchanged");
+                checks.Check(receiver.RequireTargetContextKeys.SequenceEqual(target), "Target guards unchanged");
+            });
+
+            checks.Test("global group exact preference and broad three-image fallback: " + id, () =>
+            {
+                var receiver = Receiver();
+                var images = suffixes.Select(s => Image(id, "group_sex" + s)).ToArray();
+                var broad = receiver.Variants.Single(v => v.tagsMatch.SequenceEqual(new[] { "group_sex" }));
+                checks.Equal(3, images.Count(image => Matches(broad, image)), "All three coexist in a single broad pool");
+                checks.Equal(images[1], Select(receiver, expectedTags[0], images), "Exact double beats base offered first");
+                checks.Equal(images[2], Select(receiver, expectedTags[1], images), "Exact spit beats base and double offered first");
+                checks.Equal(images[1], Select(receiver, new[] { "group_sex", "spitroast", "double_penetration" }, images.Reverse().ToArray()), "Double beats spit when both requested");
+                foreach (var image in images)
+                {
+                    checks.Equal(image, Select(receiver, new[] { "group_sex" }, image), "Group alone can select any pool: " + image);
+                    checks.Equal(image, Select(receiver, expectedTags[0], image), "Missing double falls through to broad: " + image);
+                    checks.Equal(image, Select(receiver, expectedTags[1], image), "Missing spit falls through to broad: " + image);
+                    checks.Check(ReferenceEquals(receiver, SelectHandler(handlers, new[] { "sex", "receiver", "group_sex" }, target, image)), "Guarded receiver selection");
+                }
+                // A broad pool has no subtype ranking: availability/order may yield either remaining image.
+                checks.Equal(images[2], Select(receiver, expectedTags[0], images[2], images[0]), "Missing double can use spit from broad");
+                checks.Equal(images[0], Select(receiver, expectedTags[0], images[0], images[2]), "Missing double can use base from broad");
+                foreach (var keyword in retired.Concat(new[] { "double_penetration", "spitroast" }))
+                    checks.Equal<string>(null, Select(receiver, new[] { keyword }, images), "Subtype or alias alone cannot request group: " + keyword);
+                checks.Equal<string>(null, Select(receiver, new[] { "double_penetration", "spitroast" }, images), "Both subtypes still require group");
+                checks.Equal<string>(null, Select(receiver, Array.Empty<string>(), images), "No unconditional group fallback");
+            });
+
+            checks.Test("global group guards and filename isolation: " + id, () =>
+            {
+                var receiver = Receiver();
+                var variants = receiver.Variants.Where(v => v.tagsMatch.Contains("group_sex")).ToArray();
+                foreach (var suffix in suffixes)
+                {
+                    var image = Image(id, "group_sex" + suffix);
+                    foreach (var missing in receiver.RequireSelfContextKeys)
+                        checks.Check(SelectHandler(handlers, receiver.RequireSelfContextKeys.Where(k => k != missing).Concat(new[] { "group_sex" }).ToArray(), target, image) == null,
+                            "Missing self guard blocks group: " + missing);
+                    foreach (var missing in target)
+                        checks.Check(SelectHandler(handlers, new[] { "sex", "receiver", "group_sex" }, target.Where(k => k != missing).ToArray(), image) == null,
+                            "Missing target guard blocks category: " + missing);
+                    foreach (var invalid in new[] { image.Replace("Yerin/", "Other/"), "extra/" + image,
+                        Image(id + "_perform", "group_sex" + suffix), Image(id + "_extra", "group_sex" + suffix),
+                        Image(id, "prefix_group_sex" + suffix), Path.ChangeExtension(image, "gif"), image + ".bak" })
+                        checks.Check(!variants.Any(v => Matches(v, invalid)), "No folder/prefix/extension leak: " + invalid);
+                }
+                foreach (var suffix in rules.variants.Keys.Except(new[] { "double_penetration", "spitroast" }))
+                    checks.Check(!variants.Any(v => Matches(v, Image(id, "group_sex_" + suffix))), "Unsupported suffix must not enter broad pool: " + suffix);
+                foreach (var handler in handlers.Where(h => !h.RequireSelfContextKeys.Contains("receiver")))
+                {
+                    checks.Check(!handler.Variants.Any(v => v.tagsMatch.Contains("group_sex")), "No doer or generic group selectors");
+                    foreach (var suffix in suffixes)
+                        checks.Check(!handler.Variants.Any(v => Matches(v, Image(id, "group_sex" + suffix))), "No group images in nonreceiver handler");
+                }
+            });
+        }
+
+        checks.Test("global group mapping leaves the unrelated action graph unchanged", () =>
+        {
+            var withoutGroup = (JObject)config.DeepClone();
+            ((JObject)withoutGroup["portrait_global"]["names"]).Remove("group_sex");
+            var baseline = Build(withoutGroup);
+            checks.Equal(baseline.Count, handlers.Count, "Handler count unchanged");
+            for (int i = 0; i < baseline.Count; i++)
+            {
+                checks.Check(baseline[i].RequireSelfContextKeys.SequenceEqual(handlers[i].RequireSelfContextKeys), "Self guards/order unchanged at " + i);
+                checks.Check(baseline[i].RequireTargetContextKeys.SequenceEqual(handlers[i].RequireTargetContextKeys), "Target guards/order unchanged at " + i);
+                checks.Equal(JsonConvert.SerializeObject(baseline[i].Variants), JsonConvert.SerializeObject(handlers[i].Variants.Where(v => !v.tagsMatch.Contains("group_sex"))),
+                    "Non-group variant guards, patterns and priority unchanged at " + i);
+            }
+        });
+
+        foreach (var allowed in new[] { Array.Empty<string>(), new[] { "double_penetration" }, new[] { "spitroast" }, new[] { "double_penetration", "spitroast" } })
+            checks.Test("global group category allowlist filters specific and broad pools: " + string.Join(",", allowed), () =>
+            {
+                var fixture = (JObject)config.DeepClone();
+                foreach (var definition in ((JArray)fixture["files_category"]).OfType<JObject>().Where(c => (string)c["id"] == "human"))
+                    definition["allowedVariants"] = new JArray(allowed);
+                fixture["portrait_global"]["categories"] = JArray.Parse("[{'id':'human','targetKeys':[]}]");
+                var receiver = Build(fixture).Single(h => h.RequireSelfContextKeys.Contains("receiver"));
+                var broad = receiver.Variants.Single(v => v.tagsMatch.SequenceEqual(new[] { "group_sex" }));
+                for (int i = 0; i < suffixes.Length; i++)
+                {
+                    var image = Image("human", "group_sex" + suffixes[i]);
+                    var permitted = i == 0 || allowed.Contains(suffixes[i].Substring(1));
+                    checks.Equal(permitted, Matches(broad, image), "Broad respects category restriction: " + image);
+                    foreach (var tags in expectedTags)
+                        checks.Equal(permitted ? image : null, Select(receiver, tags, image), "Specific/fallback respects allowlist: " + image);
+                }
+            });
+
+        checks.Test("global group rejects longer configured names and subtype suffix prefixes", () =>
+        {
+            var fixture = (JObject)config.DeepClone();
+            ((JArray)fixture["file_names"]).Add(JObject.Parse("{'group_sex_extra':[], 'hasVariants':['double_penetration','spitroast']}"));
+            fixture["portrait_global"]["names"]["group_sex_extra"] = JObject.Parse("{'keywords':[{'keyword':'other_action','role':'receiver'}]}");
+            fixture["file_name_variants"]["double_penetration_extra"] = new JArray("test_extra");
+            fixture["file_name_variants"]["spitroast_extra"] = new JArray("test_extra");
+            var group = Build(fixture).SelectMany(h => h.Variants).Where(v => v.tagsMatch.Contains("group_sex")).ToArray();
+            checks.Check(group.Length > 0, "Expected group variants in prefix fixture");
+            foreach (var name in new[] { "group_sex_extra", "group_sex_extra_double_penetration", "group_sex_extra_spitroast", "group_sex_double_penetration_extra", "group_sex_spitroast_extra" })
+                checks.Check(!group.Any(v => Matches(v, Image("human", name))), "Longer name/suffix must not leak: " + name);
+        });
+
+        checks.Test("global ordinary name baseFiles override is optional and replaces rather than extends global base", () =>
+        {
+            var fixture = (JObject)config.DeepClone();
+            fixture["file_names"] = JArray.Parse("[{'ordinary':[], 'hasVariants':['anal','vaginal']}]");
+            fixture["portrait_global"]["categories"] = JArray.Parse("[{'id':'human','targetKeys':[]}]");
+            fixture["portrait_global"]["names"] = JObject.Parse("{'ordinary':{'keywords':[{'keyword':'ordinary','role':'receiver'}]}}");
+            var mapping = (JObject)fixture["portrait_global"]["names"]["ordinary"];
+            foreach (var overridden in new[] { false, true })
+            {
+                if (overridden) mapping["baseFiles"] = new JArray("anal");
+                var receiver = Build(fixture).Single(h => h.RequireSelfContextKeys.Contains("receiver"));
+                foreach (var suffix in new[] { "", "_vaginal", "_anal" })
+                {
+                    var image = Image("human", "ordinary" + suffix);
+                    checks.Equal((overridden ? suffix == "_anal" : suffix != "_anal") ? image : null,
+                        Select(receiver, new[] { "ordinary" }, image), "Optional/replacing override: " + overridden + "/" + suffix);
+                }
+            }
+        });
+
+        checks.Test("global group classifier still maps explicit triple tag to double suffix", () =>
+        {
+            var result = new ImageClassifierEngine(rules).Classify(RegressionTests.Record(("1boy", 0.99f), ("triple_penetration", 0.99f)));
+            checks.Equal("human", result.CategoryId, "Actor category");
+            checks.Equal("group_sex", result.nameRule?.name, "Canonical action");
+            checks.Equal("double_penetration", result.variant, "Triple classification uses double subtype");
+            checks.Equal("group_sex_double_penetration", result.name, "Canonical suffixed filename");
+        });
+    }
+
+    public static void Run(ImageRules rules, Assertions checks)
+    {
+        var config = JObject.Parse(File.ReadAllText(rules.sourcePath));
+        var handlers = Build(config);
 
         foreach (var flag in new bool?[] { null, false, true })
             checks.Test("runtime name loader does not skip isperform metadata: " + flag, () =>
@@ -57,101 +387,8 @@ static class GlobalPortraitTemplateTests
             checks.Check(selected != null && !ReferenceEquals(standalone, selected), "Specific ongoing action precedes standalone climax.");
         });
 
-        checks.Test("global portraits append emotions without changing action handler priority", () =>
-        {
-            var actionsConfig = (JObject)config.DeepClone();
-            ((JObject)actionsConfig["portrait_global"]).Remove("emotions");
-            var actions = Build(actionsConfig);
-            checks.Check(actions.Count > 0, "Expected action handlers before emotions.");
-            checks.Equal(actions.Count + 1, handlers.Count, "One appended emotion handler");
-            checks.Equal(JsonConvert.SerializeObject(actions), JsonConvert.SerializeObject(handlers.Take(actions.Count)),
-                "Existing action handlers and variants retain their ordering");
-            checks.Check(handlers.Take(actions.Count).Where(h => h.RequireSelfContextKeys.Count > 0)
-                .All(h => h.RequireSelfContextKeys.Contains("sex")), "Guarded action handlers must retain their sex requirement.");
-            checks.Equal(0, emotion.RequireSelfContextKeys.Count, "Emotion self guards");
-            checks.Equal(0, emotion.RequireTargetContextKeys.Count, "Emotion target guards");
-
-            var actionImage = Image("human", "doggystyle");
-            var expressionImage = Image("portrait", "angry");
-            var selected = SelectHandler(handlers, new[] { "sex", "receiver", "doggy", "angry" },
-                new[] { "humanrace" }, actionImage, expressionImage);
-            checks.Check(selected != null && !ReferenceEquals(emotion, selected), "Sex/action images must beat available emotion images.");
-        });
-
-        checks.Test("global portraits build exact expression variants before every fallback", () =>
-        {
-            checks.Check(emotion.Variants.Count > ids.Length, "Missing fallback variants.");
-            var ordinary = emotion.Variants.Where(v => v.tagsMatch.Count == 1 && ids.Contains(v.tagsMatch[0])
-                && Matches(v, Image("portrait", v.tagsMatch[0]))).ToArray();
-            for (int i = 0; i < ids.Length; i++)
-            {
-                var variant = ordinary[i];
-                checks.Check(variant.tagsMatch.SequenceEqual(new[] { ids[i] }), "Exact-id order: " + ids[i]);
-                checks.Equal(1, variant.PortraitVariantData.Count, "Exact-id pattern count: " + ids[i]);
-                checks.Check(Matches(variant, Image("portrait", ids[i])), "Missing exact pattern: " + ids[i]);
-            }
-            var surprised = Image("portrait", "surprised");
-            var shocked = Image("portrait", "shocked");
-            checks.Equal(surprised, Select(emotion, new[] { "surprised" }, shocked, surprised), "Exact surprised beats shocked fallback");
-            var stupefied = Image("portrait", "stupefied");
-            checks.Equal(stupefied, Select(emotion, new[] { "stupefied", "surprised" }, shocked, stupefied), "Extended exact id beats earlier generic fallback");
-        });
-
-        checks.Test("global surprised uses shocked only when primary images are absent", () =>
-        {
-            var shocked = Image("portrait", "shocked");
-            var overwhelmed = Image("portrait", "overwhelmed");
-            var neutral = Image("portrait", "neutral");
-            checks.Equal(shocked, Select(emotion, new[] { "surprised" }, overwhelmed, neutral, shocked), "First available fallback wins, not input order");
-            checks.Equal(overwhelmed, Select(emotion, new[] { "surprised" }, overwhelmed, neutral), "Missing shocked advances to next fallback");
-            checks.Equal(neutral, Select(emotion, new[] { "surprised" }, neutral), "No expression images falls back to neutral");
-        });
-
-        checks.Test("global emotion mappings reference available ids and keep separate ordered variants", () =>
-        {
-            foreach (var mapping in mappings)
-            {
-                checks.Check(mapping.Value is JArray, "Expected emotion array: " + mapping.Name);
-                var mapped = ((JArray)mapping.Value).Values<string>().ToArray();
-                foreach (var id in mapped) checks.Check(ids.Contains(id), "Unknown mapped emotion: " + mapping.Name + " -> " + id);
-                var expected = ids.Contains(mapping.Name) ? new List<string> { mapping.Name } : new List<string>();
-                expected.AddRange(mapped.Where(id => id != mapping.Name).Distinct());
-                var variants = emotion.Variants.Where(v => v.tagsMatch.SequenceEqual(new[] { mapping.Name })).ToArray();
-                checks.Equal(expected.Count, variants.Length, "Variant count: " + mapping.Name);
-                for (int i = 0; i < expected.Count; i++)
-                {
-                    checks.Equal(1, variants[i].PortraitVariantData.Count, "No pooled fallback patterns: " + mapping.Name);
-                    checks.Check(Matches(variants[i], Image("portrait", expected[i])), "Fallback order: " + mapping.Name + " -> " + expected[i]);
-                    foreach (var other in ids.Where(id => id != expected[i]))
-                        checks.Check(!Matches(variants[i], Image("portrait", other)), "Fallback pools unrelated ids: " + mapping.Name + " -> " + other);
-                }
-            }
-        });
-
-        checks.Test("global emotion patterns isolate happy tears and crying subtype prefixes", () =>
-        {
-            foreach (var id in new[] { "happy", "happy_tears", "crying", "crying_with_eyes_open", "crying_with_eyes_closed" })
-            {
-                var exact = emotion.Variants.First(v => v.tagsMatch.SequenceEqual(new[] { id }));
-                foreach (var other in ids)
-                    checks.Equal(id == other, Matches(exact, Image("portrait", other)), id + " versus " + other);
-                var path = Image("portrait", id);
-                checks.Check(Matches(exact, path.ToUpperInvariant()), "Case-insensitive filename: " + id);
-                checks.Check(!Matches(exact, path + ".bak"), "Pattern must be anchored to the extension: " + id);
-                checks.Check(!Matches(exact, path.Replace("/portrait/", "/human/")), "Emotion must stay in portrait folder: " + id);
-            }
-        });
-
-        checks.Test("global emotion handler has only a final unconditional neutral fallback", () =>
-        {
-            var unconditional = emotion.Variants.Where(v => v.tagsMatch.Count == 0).ToArray();
-            checks.Equal(1, unconditional.Length, "Unconditional emotion variant count");
-            checks.Check(ReferenceEquals(emotion.Variants.Last(), unconditional[0]), "Neutral fallback must be last.");
-            foreach (var id in ids) checks.Equal(id == "neutral", Matches(unconditional[0], Image("portrait", id)), "Unconditional " + id);
-            foreach (var id in new[] { "standing", "bathe", "dogeza", "facetoface", "cum" })
-                checks.Check(!emotion.Variants.Any(v => Matches(v, Image("portrait", id))), "Action/graphic filename must not match emotions: " + id);
-            checks.Equal<string>(null, Select(emotion, new string[0], Image("portrait", "happy")), "No arbitrary happy catch-all");
-        });
+        RunEmotionPools(rules, checks);
+        RunGroupPools(rules, checks);
 
         checks.Test("global spooning uses explicit receiver and doer primary keyword mappings", () =>
         {

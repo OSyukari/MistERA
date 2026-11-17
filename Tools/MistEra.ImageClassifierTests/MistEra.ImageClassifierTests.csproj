@@ -15,6 +15,7 @@
     <Compile Include="../../Assets/Editor/ImageClassifier/ImageClassifyMover.cs" Link="Production/ImageClassifyMover.cs" />
     <Compile Include="../../Assets/Editor/ImageClassifier/ImageRuleLinter.cs" Link="Production/ImageRuleLinter.cs" />
     <Compile Include="../../Assets/Editor/ImageClassifier/ImageReport.cs" Link="Production/ImageReport.cs" />
+    <Compile Include="../../Assets/Editor/ImageClassifier/PortraitUsage.cs" Link="Production/PortraitUsage.cs" />
     <Compile Include="../../Assets/Editor/ImageClassifier/ImageWorkFolders.cs" Link="Production/ImageWorkFolders.cs" />
     <Compile Include="../../Assets/Scripts/CharacterData/GlobalPortraitTemplate.cs" Link="Production/GlobalPortraitTemplate.cs" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />

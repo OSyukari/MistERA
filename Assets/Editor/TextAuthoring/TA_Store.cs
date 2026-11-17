@@ -245,7 +245,12 @@ public static class TA_Store
     /// </summary>
     static JObject KojoFlag(JArray ops, JArray cases)
     {
-        int positions = 0, unimplemented = 0, none = 0;
+        // lookup keys with cases are counted through their cases below (Plan_CommandCases.md K8: an event's lookups
+        // without a spec, a command position the template has no case for, keep the position rule)
+        var caseKeys = new HashSet<string>();
+        for (int i = 0; cases != null && i < cases.Count; i++)
+            if ((string)cases[i]["layer"] == "kojo" && (string)cases[i]["key"] != null) caseKeys.Add((string)cases[i]["key"]);
+        int positions = 0, unimplemented = 0, none = 0, uncased = 0;
         for (int i = 0; ops != null && i < ops.Count; i++)
         {
             if (!(ops[i] is JObject op) || op["kp"] == null || !(op["cov"] is JObject cov)) continue;
@@ -254,23 +259,29 @@ public static class TA_Store
             int has = ((cov["own"] as JArray)?.Count ?? 0) + ((cov["inherited"] as JArray)?.Count ?? 0);
             if (gaps > 0) unimplemented++;
             if (has == 0) none++;
+            // snapshots before K8 have no key on positions: with cases they count only through the cases, as before
+            var key = (string)op["key"];
+            if (gaps > 0 && key != null && !caseKeys.Contains(key)) uncased++;
         }
         var flag = new JObject { ["positions"] = positions, ["unimplemented"] = unimplemented, ["none"] = none };
         if (cases == null) return flag;
         // with command cases (Plan_CommandCases.md Q8) the flag counts required cases nothing covers: narration without an
         // entry, kojo no personality has a branch for
-        int required = 0, missingNarr = 0, missingKojo = 0;
+        int required = 0, missingNarr = 0, missingKojo = 0, custom = 0;
         for (int i = 0; i < cases.Count; i++)
         {
             var c = cases[i] as JObject;
-            if (c == null || !((bool?)c["required"] ?? false)) continue;
+            if (c == null) continue;
+            // a personality flagged "require custom" that only inherits the case (Plan_CommandCases.md §6.2): a gap for it
+            if (((c["cov"]?["custom"] as JArray)?.Count ?? 0) > 0) custom++;
+            if (!((bool?)c["required"] ?? false)) continue;
             required++;
             if ((string)c["layer"] == "narration") { if (!((bool?)c["covered"] ?? false)) missingNarr++; continue; }
             var cv = c["cov"] as JObject;
             if (((cv?["own"] as JArray)?.Count ?? 0) + ((cv?["inherited"] as JArray)?.Count ?? 0) == 0) missingKojo++;
         }
-        flag["cases"] = new JObject { ["required"] = required, ["missingNarration"] = missingNarr, ["missingKojo"] = missingKojo };
-        flag["unimplemented"] = missingNarr + missingKojo;
+        flag["cases"] = new JObject { ["required"] = required, ["missingNarration"] = missingNarr, ["missingKojo"] = missingKojo, ["custom"] = custom, ["positions"] = uncased };
+        flag["unimplemented"] = missingNarr + missingKojo + custom + uncased;
         return flag;
     }
 

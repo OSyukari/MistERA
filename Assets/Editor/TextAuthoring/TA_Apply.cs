@@ -911,6 +911,10 @@ public static class TA_Apply
                 sb.AppendLine("- New lines:");
                 for (int k = 0; k < nl.Count; k++) sb.AppendLine($"  - {(string)nl[k]}");
             }
+            // a command case (Plan_CommandCases.md K6): the new entry's exact conditions / the new branch's fields
+            if ((string)r["case"] != null) sb.AppendLine($"- Case: `{(string)r["case"]}`");
+            if (r["entry"]?["conditions"] is JArray conds) sb.AppendLine("- Entry conditions (exact, use as `conditions`): `" + conds.ToString(Formatting.None) + "`");
+            if (r["location"]?["needs"] is JObject needs) sb.AppendLine("- Branch needs (exact, set on the new variant): `" + needs.ToString(Formatting.None) + "`");
             if (r["location"] is JObject loc) sb.AppendLine("- Location: `" + loc.ToString(Formatting.None) + "`");
             if (r["ops"] is JArray ops) sb.AppendLine("- Ops: `" + ops.ToString(Formatting.None) + "`");
             if (r["notes"] is JArray notes)

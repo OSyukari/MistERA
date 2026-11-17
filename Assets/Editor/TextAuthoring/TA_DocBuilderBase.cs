@@ -50,9 +50,11 @@ public class TA_Ops
     /// A kojo position; who = { self, target[, doer, receiver] } names each placeholder's character there; cov = which
     /// personalities have own / inherited / noBranch / missing kojo there (all personalities).
     /// </summary>
-    public void KojoPos(int pos, JObject who = null, JObject cov = null)
+    public void KojoPos(int pos, JObject who = null, JObject cov = null, string key = null)
     {
         var o = new JObject { ["kp"] = pos };
+        // the lookup key: the store flag counts positions whose key has no cases (Plan_CommandCases.md K8)
+        if (key != null) o["key"] = key;
         if (who != null) o["who"] = who;
         if (cov != null) o["cov"] = cov;
         ops.Add(o);
@@ -65,7 +67,7 @@ public class TA_Ops
 /// resolution (static mirror of Character_Personality.GetKOJOMessage) and kojo extraction per personality layer.
 /// Wording lives in the text database (TA_Text) and is applied by TA_Renderer; findings are typed records.
 /// </summary>
-public abstract class TA_DocBuilderBase
+public abstract partial class TA_DocBuilderBase
 {
     /// <summary>Bump when snapshot shape or extraction semantics change: Scan then requires re-extraction.</summary>
     /// 5: generated commands (Plan_GeneratedCommands.md §5) - group units, no noSex units, kojo `source:` state, template write-back paths.
@@ -75,7 +77,10 @@ public abstract class TA_DocBuilderBase
     /// 9: kojo positions name every placeholder's character (doc.kojo.position + kp `who`: $self$ / $target$ / doer / receiver)
     ///    and count every personality's kojo there (kp `cov`, Plan_TaskReorg.md §5).
     /// 10: command cases from the case template (shared `cases`, Plan_CommandCases.md).
-    public const int ExtractorVersion = 10;
+    /// 11: abort (description_remove) and third-party-ordered scenarios; kojo master flags mirror KojoCollector (K4).
+    /// 12: cases carry doc text (kojo `text`, narration `condText`) and `branchIn` for the case list in the docs (K5).
+    /// 13: event kojo lookup cases (eventKojo.json); kojo positions carry their lookup `key` (K8).
+    public const int ExtractorVersion = 13;
 
     /// <summary>Personalities whose kojo layers are extracted (any order; [0] first in docs).</summary>
     public List<string> personalities = new List<string>();
@@ -305,7 +310,7 @@ public abstract class TA_DocBuilderBase
         else sb.Text("doc.kojo.position", "key", key, "self", speaker, "target", listener, "cast", "");
         sb.AppendLine();
         int pos = kojoPositions++;
-        sb.KojoPos(pos, who, countOnly ? null : PositionImplementation(resolve, ctx));
+        sb.KojoPos(pos, who, countOnly ? null : PositionImplementation(resolve, ctx), key);
 
         var sharedStream = sb;
         for (int pi = 0; pi < personalities.Count; pi++)
