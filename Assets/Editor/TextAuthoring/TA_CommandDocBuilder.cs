@@ -103,11 +103,15 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
         BeginDoc(UnitName(unitID), unitID, "command");
         WriteHeader();
 
-        var req = com.requirements.requirement;
-        bool solo = req.TreatReceiverAsDoer || req.receiverCount == 0;
+        // pair and / or solo scenarios by who takes part (COM.kojoParticipants, Auto from the requirements;
+        // Plan_KojoTemplates.md §7.12) - a command that can act on a receiver or alone gets both, in two parts
+        TA_KojoParticipants.DocShapes(com, out bool pair, out bool solo);
+        if (pair && solo) { sb.AppendLine("---"); sb.AppendLine("## ▣ 第一部分：对受方使用"); sb.AppendLine(); }
+        if (pair) BuildPairScenarios();
+        if (pair && solo) { sb.AppendLine("---"); sb.AppendLine("## ▣ 第二部分：独自进行（没有受方）"); sb.AppendLine(); }
         if (solo) BuildSoloScenarios();
-        else BuildPairScenarios();
         JoinLookups();
+        KojoOverrides(!pair);
 
         var snap = FinishDoc();
         // what the command must cover, with per-case coverage (Docs/TextAuthoring/Plan_CommandCases.md)
@@ -127,7 +131,8 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
         sb.AppendLine();
         WriteCommonHeaderLines();
         sb.AppendLine($"> 指令标签：{string.Join(" / ", com.comTags)} ｜ 耗时 {com.TimeScale} 分钟 ｜ {(com.baseD20Check > 0 ? $"接受后 D20 ≥ {com.baseD20Check} 判定结果" : "无结果判定")}");
-        sb.AppendLine($"> 人数：施方 {Count(req.doerCount)}、受方 {Count(req.receiverCount)}{(req.TreatReceiverAsDoer ? "（每人各做各的，没有「对方」）" : "")}");
+        sb.AppendLine($"> 人数：施方 {Count(req.doerCount)}、受方 {Count(req.receiverCount)}{(req.TreatReceiverAsDoer ? "（每人各做各的，没有「对方」）" : "")}"
+            + $" · 参与方式：{TA_KojoParticipants.Resolve(com)}{(com.kojoParticipants == KojoParticipants.Auto ? "（自动判断）" : "")}");
         if (com.variants.Count > 0)
         {
             var vs = new List<string>();
@@ -513,6 +518,100 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
                 ResolveCommandEntry(p, com, suffix, out provider, out entryID),
                 "加入者 NPC", "玩家", new TA_KojoContext { noEP = true, playerInvolved = true }, "codeInjectedJoin", TA_KojoSeverity.EmptyLine);
         }
+    }
+
+    // ---------------------------------------------------------------- kojo overrides (Plan_CommandCases.md §0 R3)
+
+    /// <summary>
+    /// Acceptance mods (personality, member type, recreation offer / activity) whose Result_EvaluationPackage
+    /// .overrideKojoEventID redirects this command's result kojo: EvaluationPackage.SetForcedKojoEventID →
+    /// RelationshipManager.GetKOJOMessage(isDoer, ep) looks up that key instead of the command's, for the mod owner's side
+    /// (EvaluationPackage.LogMessage_Kojo, accepted or refused). A mod applies to the command when every
+    /// Requirement_ActionPackage on its path (nested mods: parents first) matches the command; its isDoer names the side.
+    /// The override key is a plain key: missing, the owner says nothing (no fallback to the command's own entry).
+    /// </summary>
+    void KojoOverrides(bool solo)
+    {
+        var found = new List<KojoOverride>();
+        var ml = scr_System_Serializer.current.MasterList;
+        var personalities = ml.Character_Personalities.list;
+        for (int i = 0; personalities != null && i < personalities.Count; i++)
+            if (personalities[i] != null) OverrideMods(personalities[i].AcceptanceMods, "人格 " + personalities[i].ID, new List<PersonalityAcceptanceMod.RequireActionPackage_Quick>(), found);
+        var plans = ml.MapPlans;
+        for (int i = 0; plans?.memberTypes != null && i < plans.memberTypes.Count; i++)
+            if (plans.memberTypes[i] != null) OverrideMods(plans.memberTypes[i].AcceptanceMods, "成员类型 " + plans.memberTypes[i].ID, new List<PersonalityAcceptanceMod.RequireActionPackage_Quick>(), found);
+        for (int i = 0; plans?.recreationOffers != null && i < plans.recreationOffers.Count; i++)
+            if (plans.recreationOffers[i] != null) OverrideMods(plans.recreationOffers[i].AcceptanceMods, "娱乐邀约 " + plans.recreationOffers[i].ID, new List<PersonalityAcceptanceMod.RequireActionPackage_Quick>(), found);
+        for (int i = 0; plans?.sharedHouseActivities != null && i < plans.sharedHouseActivities.Count; i++)
+            if (plans.sharedHouseActivities[i] != null) OverrideMods(plans.sharedHouseActivities[i].AcceptanceMods, "共享住宅活动 " + plans.sharedHouseActivities[i].ID, new List<PersonalityAcceptanceMod.RequireActionPackage_Quick>(), found);
+        // solo: every actor is a doer (no receiver side), so receiver-only rules never apply
+        if (solo) found.RemoveAll(o => o.side == "receiver");
+        if (found.Count < 1) return;
+
+        Scenario("规则改写的结果口上（AcceptanceMod overrideKojoEventID）",
+            "某个接受规则成立时（规则的其他条件见下），该方的结果口上改查另一个条目，不再查本指令的口上；该条目缺失时这一方不说话（不回退到本指令的口上）。", solo ? "NPC" : "施方", solo ? null : "受方");
+        for (int i = 0; i < found.Count; i++)
+        {
+            var o = found[i];
+            System($"[规则] {o.holder}：{SideWord(o.side, solo)}的结果口上改查 `{o.key}`");
+            var key = o.key;
+            EntryResolver resolve = (Character_Personality p, out string provider, out string entryID) => ResolvePlainEntry(p, key, out provider, out entryID);
+            // RelationshipManager.GetKOJOMessage: the doer speaks to the receiver (solo: to itself), the receiver to the doer
+            if (o.side != "receiver")
+                KojoBlock(key, resolve, solo ? "NPC" : "施方 NPC", solo ? "自己" : "受方",
+                    new TA_KojoContext { speakerIsDoer = true, speakerIsMaster = true, listenerIsSelf = solo }, "command", TA_KojoSeverity.Optional);
+            if (o.side != "doer" && !solo)
+                KojoBlock(key, resolve, "受方 NPC", "施方", new TA_KojoContext { speakerIsReceiver = true }, "command", TA_KojoSeverity.Optional);
+        }
+    }
+
+    class KojoOverride { public string key, holder, side; }
+
+    static string SideWord(string side, bool solo)
+    {
+        if (solo) return "NPC";
+        return side == "doer" ? "施方" : side == "receiver" ? "受方" : "施方与受方";
+    }
+
+    /// <summary>Walks mods and their nested mods (checked only under a passing parent), collecting overrides that apply to this command.</summary>
+    void OverrideMods(List<PersonalityAcceptanceMod> mods, string holder, List<PersonalityAcceptanceMod.RequireActionPackage_Quick> path, List<KojoOverride> into)
+    {
+        for (int i = 0; mods != null && i < mods.Count; i++)
+        {
+            var mod = mods[i];
+            if (mod == null) continue;
+            bool pushed = mod.Requirement_ActionPackage != null;
+            if (pushed) path.Add(mod.Requirement_ActionPackage);
+            var key = mod.Result_EvaluationPackage?.overrideKojoEventID;
+            if (!string.IsNullOrEmpty(key) && AppliesTo(path, out var side))
+            {
+                bool dup = false;
+                for (int k = 0; k < into.Count && !dup; k++) dup = into[k].key == key && into[k].holder == holder && into[k].side == side;
+                if (!dup) into.Add(new KojoOverride { key = key, holder = holder, side = side });
+            }
+            if (mod.AcceptanceMods != null && mod.AcceptanceMods.Count > 0) OverrideMods(mod.AcceptanceMods, holder, path, into);
+            if (pushed) path.RemoveAt(path.Count - 1);
+        }
+    }
+
+    /// <summary>
+    /// RequireActionPackage_Quick.Validate on the command: targetComID, comTags any / all; every requirement on the path
+    /// pins the side with isDoer (contradicting sides never pass). No requirement = any command, both sides.
+    /// </summary>
+    bool AppliesTo(List<PersonalityAcceptanceMod.RequireActionPackage_Quick> path, out string side)
+    {
+        side = "both";
+        for (int i = 0; i < path.Count; i++)
+        {
+            var r = path[i];
+            if (r.targetComID != "" && r.targetComID != com.ID) return false;
+            if (!Utility.ListContainsLoose(com.comTags, r.requireComTags_Any)) return false;
+            if (!Utility.ListContainsStrict(com.comTags, r.requireComTags_All)) return false;
+            var s = r.isDoer ? "doer" : "receiver";
+            if (side != "both" && side != s) return false;
+            side = s;
+        }
+        return true;
     }
 
     // ---------------------------------------------------------------- narration

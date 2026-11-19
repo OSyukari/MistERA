@@ -22,7 +22,6 @@
                                 "relaxed",
                                 "unaware"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.1.1 睡眠中 口上文",
                             "responses": [
                                 "com_interaction_initiateSex_Sleeping_1",
@@ -51,7 +50,6 @@
                                 "still",
                                 "relaxed"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.1.2 时停中 口上文",
                             "responses": [
                                 "com_interaction_initiateSex_TimeStop_1",
@@ -63,7 +61,6 @@
                         },
                         {
                             "requireSelfOnly": true,
-                            "useActiveTags": false,
                             "_comment": "2.2.1 独自一人 口上文",
                             "extraSelfPortraitTags": [
                                 "sex",
@@ -161,7 +158,6 @@
                         },
                         {
                             "requireSelfDoer": true,
-                            "useActiveTags": false,
                             "_comment": "邀请结果 施方 已接受",
                             "responses": [
                                 "com_interaction_initiateSex_Doer_1",
@@ -170,7 +166,6 @@
                         },
                         {
                             "requireSelfReceiver": true,
-                            "useActiveTags": false,
                             "_player only version": {
                                 "requirement": {
                                     "targetBaseID": "PLAYER"
@@ -195,7 +190,6 @@
                                         "aroused",
                                         "smile"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.3.1 结果正面 有允许 口上文",
                                     "responses": [
                                         "com_interaction_initiateSex_Success_Allow_1",
@@ -221,7 +215,6 @@
                                         "sad",
                                         "pain"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.4.2 结果正面 未允许 屈服 口上文",
                                     "responses": [
                                         "com_interaction_initiateSex_Success_Forced_1",
@@ -253,7 +246,8 @@
                                 "com_interaction_initiateSex_Success_Unexpected_6"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandResult"
                 }
             }
         ]

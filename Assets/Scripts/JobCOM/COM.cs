@@ -6,6 +6,25 @@ using System.Linq;
 using Unity.Jobs;
 using UnityEngine;
 
+/// <summary>
+/// Who takes part in a command as kojo sees it (COM.kojoParticipants, authoring only - Plan_KojoTemplates.md §7.12).
+/// Distinct = doer and receiver play different roles; Mutual = participants are equivalent.
+/// </summary>
+public enum KojoParticipants
+{
+    /// <summary>Derived from the command's requirements (TA_KojoParticipants.Resolve).</summary>
+    Auto,
+    /// <summary>A receiver is required (one or many); doer and receiver differ (touch, sex acts, carry).</summary>
+    PairDistinct,
+    /// <summary>A partner is required, never alone; participants are equivalent (talk, kiss, sparring).</summary>
+    PairMutual,
+    /// <summary>Alone, or with any number of others; participants are equivalent (watching a video, cooking together).</summary>
+    SoloOrGroupMutual,
+    /// <summary>Never with a participant (self commands); the player may still order it.</summary>
+    SoloOnly,
+    /// <summary>Alone, or acting on a receiver whose role differs.</summary>
+    SoloOrPairDistinct
+}
 
 [System.Serializable]
 public class COM: I_SerializationCallbackReceiver, hasCategory
@@ -165,6 +184,13 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
     /// command stays a self command whoever is targeted or selected in a scene.
     /// </summary>
     public bool selfOnly = false;
+    /// <summary>
+    /// Authoring only (Docs/TextAuthoring/Plan_KojoTemplates.md §7.12): who takes part as kojo sees it - whether a
+    /// receiver is required, whether the roles differ, whether the command can run alone. Auto derives it from the
+    /// requirements; set it where that reads wrong (e.g. a receiverCount -1 touch act that never runs alone). Not read
+    /// by the game.
+    /// </summary>
+    public KojoParticipants kojoParticipants = KojoParticipants.Auto;
     /// <summary>Whether other actors may join an already-running package of this command.</summary>
     public bool allowJoining = true;
     /// <summary>

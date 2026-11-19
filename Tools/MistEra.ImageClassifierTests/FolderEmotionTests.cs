@@ -302,7 +302,7 @@ static class FolderEmotionTests
         {
             checks.Check(!new NameRule().isperform, "New name rules default to ordinary folders.");
             var approved = new HashSet<string> { "cowgirl", "handjob", "oral", "paizuri", "rimjob",
-                "reverse_cowgirl", "sitting_on_person", "lotus", "footjob", "hairjob", "anal_kiss",
+                "reverse_cowgirl", "sitting_on_person", "footjob", "hairjob", "anal_kiss",
                 "fellatio_goodnight", "fellatio_goodmorning" };
             var names = rules.nameSets[ImageRules.DefaultNameSet];
             checks.Check(approved.SetEquals(names.Where(n => n.isperform).Select(n => n.name)), "Exact opted-in action ids");

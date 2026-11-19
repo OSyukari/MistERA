@@ -298,6 +298,7 @@ public class Character_Personality
         {
             if (entries.ContainsKey(entry.ID)) continue;
             entries.Add(entry.ID, entry);
+            entry.RefreshDisabled();
             if (scr_System_Serializer.current.Debug_KojoIntegrityCheck) entry.ValidateIntegrity();
         }
     }

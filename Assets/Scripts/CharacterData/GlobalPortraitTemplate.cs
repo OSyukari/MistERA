@@ -20,6 +20,8 @@ public static class GlobalPortraitTemplate
 {
     public const string ConfigFileName = "Image_Generation_Config.json";
     public const string Placeholder = "$foldername$";
+    /// <summary>portrait_global key of the sex handler variant rows (doer / receiver / none)</summary>
+    public const string SexVariantKey = "SexPortraitVariantConfig";
     static readonly Dictionary<string, List<string>> stateKeywords = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
     static readonly List<string> stateOrder = new List<string>();
 
@@ -390,25 +392,11 @@ public static class GlobalPortraitTemplate
     class NameInfo
     {
         public string name;
-        public int order;
-        public float tier;
-        public List<string> hasVariants = new List<string>();
-        // Optional display-only suffix pool for the keyword without subtype tags.
-        public List<string> baseFiles;
-        public List<string> onlyInCategories = new List<string>();
-        public bool alsoUsePerformFolders;
-        /// <summary>
-        /// portrait_global.names[].keywords: OR list of (keyword, role block). Eg. oral: [(blowjob, doer), (irrumatio, receiver)] - the same
-        /// picture is the doer of a blowjob and the receiver of irrumatio; reverse_cowgirl: [(reverse_cowgirl, doer), (cowgirl, doer)].
-        /// The first pair is primary; later pairs are fallbacks, ranked after every name that has that keyword first. keyword null = no own keyword (generic).
-        /// </summary>
-        public List<(string keyword, string role)> keywords = new List<(string keyword, string role)>();
     }
 
     class Category
     {
         public string id;
-        public HashSet<string> allowedVariants;
         public List<string> targetKeys = new List<string>();
         public List<string> alsoUseFolders = new List<string>();
     }
@@ -417,33 +405,23 @@ public static class GlobalPortraitTemplate
     {
         public string role;
         public List<string> selfKeys = new List<string>();
-        public List<string> unconditional = new List<string>();
     }
 
-    /// <summary>One variant before merging: required/excluded tags and regexes.</summary>
-    class Entry
+    /// <summary>
+    /// One portrait_global.SexPortraitVariantConfig.&lt;role&gt; entry = one handler variant, in listed order. tagsMatch empty = unconditional.
+    /// assetPrefix reads &lt;category&gt;/, assetPrefix_perform reads &lt;category&gt;_perform/ (see PrefixPattern).
+    /// </summary>
+    class Row
     {
-        public List<string> tags;
+        public string id;
+        public List<string> tagsMatch = new List<string>();
         public List<string> tagsExclude = new List<string>();
-        public List<string> patterns = new List<string>();
-        public bool primary;        // false = a later keyword of the name (fallback): after the images of names that have it as their first keyword
-        public float tier;
-        public int order;
-        public int variantOrder = int.MaxValue;
-        public string key => (primary ? "own|" : "fb|") + string.Join("+", tags)
-            + "|not:" + string.Join("+", tagsExclude.OrderBy(t => t, StringComparer.Ordinal));
+        public List<string> assetPrefix = new List<string>();
+        public List<string> assetPrefixPerform = new List<string>();
     }
 
     // file_names keys that are not the name (same as the classifier's ImageRulesJsonLoader.NameEntryKeys)
     static readonly HashSet<string> NameEntryKeys = new HashSet<string> { "tier", "hasVariants", "defaultVariant", "none", "noneAll", "onlyInCategories", "fallback", "tierMinScore", "filenameOnly", "isperform", "threshold", "noneThreshold" };
-
-    /// <summary>Portrait-only role guards, shared by handler construction and generated-image candidate selection.</summary>
-    public static List<string> KeywordExclusions(JObject portraitConfig, string keyword, string role)
-    {
-        if (string.IsNullOrEmpty(keyword) || string.IsNullOrEmpty(role)) return new List<string>();
-        return (portraitConfig?["keywordRoleExclusions"]?[role]?[keyword] as JArray)?.Values<string>()
-            .Where(t => !string.IsNullOrEmpty(t)).Distinct(StringComparer.Ordinal).ToList() ?? new List<string>();
-    }
 
     static List<PortraitManager.CharaPortrait> Build(JObject config, out string debugOutput)
     {
@@ -454,93 +432,43 @@ public static class GlobalPortraitTemplate
         debugOutput = (string)pg["debugOutput"] ?? "";
         var ext = (string)pg["imageExtensions"] ?? "webp|png|jpg|jpeg";
 
-        var portraitVariants = ReadVariants(pg, out var baseFiles);
-        // every file suffix a file name may carry (file_name_variants ids + suffixes only named in portrait_global.variants, eg. anal_rape):
-        // a pattern for one suffix excludes the longer ones sharing its prefix (anal -> anal_rape), the unspecified pattern excludes them all
-        var suffixIds = new List<string>();
-        if (config["file_name_variants"] is JObject fnv) foreach (var p in fnv.Properties()) if (!IsComment(p.Name)) suffixIds.Add(p.Name);
-        var classifierIds = new HashSet<string>(suffixIds);
-        foreach (var f in portraitVariants.SelectMany(v => v.files).Concat(baseFiles)) if (f != "" && !suffixIds.Contains(f)) suffixIds.Add(f);
-        foreach (var id in suffixIds) if (!baseFiles.Contains(id) && !portraitVariants.Any(v => v.files.Contains(id)))
-            Debug.LogWarning($"GlobalPortraitTemplate: file suffix [{id}] is in no portrait_global.variants files, its files are not used");
-
-        var names = ReadNames(config, pg);
         var categories = ReadCategories(config, pg);
         var blocks = ReadBlocks(pg);
+        var rowsByRole = ReadRows(pg, blocks);
 
         foreach (var cat in categories)
         {
             var folders = new List<string> { cat.id };
             folders.AddRange(cat.alsoUseFolders);
-            var categoryBaseFiles = baseFiles.Where(f => f == "" || cat.allowedVariants == null || cat.allowedVariants.Contains(f)).ToList();
 
             foreach (var block in blocks)
             {
-                var entries = new List<Entry>();
-                foreach (var n in names)
+                // Strict config order, no sorting or merging: every entry is its own variant, in listed order. The first
+                // matching variant with images is shown, so a later entry with the same guards is that entry's fallback.
+                var variants = new List<PortraitManager.PortraitVariant>();
+                foreach (var row in rowsByRole[block.role])
                 {
-                    var nameBaseFiles = n.baseFiles == null ? categoryBaseFiles
-                        : n.baseFiles.Where(f => f == "" || cat.allowedVariants == null || cat.allowedVariants.Contains(f)).ToList();
-                    // every (keyword, role) pair of the name that belongs in this block (OR: any of them shows these images).
-                    // The first keyword is primary across roles; other keywords are fallbacks.
-                    for (int k = 0; k < n.keywords.Count; k++)
+                    var patterns = new List<string>();
+                    var sources = new List<string>();
+                    foreach (var prefix in row.assetPrefix)
                     {
-                        var (kw, kwRole) = n.keywords[k];
-                        bool primary = k == 0 || kw == n.keywords[0].Item1;
-                        bool both = kwRole == "both";
-                        if (kwRole != block.role && !(both && (block.role == "doer" || block.role == "receiver"))) continue;
-                        var excludedTags = KeywordExclusions(pg, kw, block.role);
-                        // A name without keyword (generic) only gets action variants here; its base is the unconditional variant.
-
-                        var nameFolders = NameFolders(n, folders, both && block.role == "doer",
-                            !both && (kwRole == "doer" || (n.alsoUsePerformFolders && kwRole == "receiver")));
-                        if (nameFolders.Count < 1) continue;
-
-                        // a variant applies when the name can have one of its suffixed files (in hasVariants, or a suffix the classifier never
-                        // writes: named by hand, eg. anal_rape); the unspecified files ("") only add to it
-                        foreach (var v in portraitVariants)
-                        {
-                            var files = v.files.Where(f => f == "" || cat.allowedVariants == null || cat.allowedVariants.Contains(f)).ToList();
-                            if (!files.Any(f => f != "" && (n.hasVariants.Contains(f) || !classifierIds.Contains(f)))) continue;
-                            var tags = new List<string>();
-                            if (kw != null) tags.Add(kw);
-                            tags.AddRange(v.keywords);
-                            entries.Add(new Entry { tags = tags, tagsExclude = excludedTags, primary = primary, tier = n.tier, order = n.order, variantOrder = portraitVariants.IndexOf(v), patterns = Patterns(nameFolders, n, files, names, suffixIds, classifierIds, ext) });
-                        }
-                        if (kw != null)
-                            entries.Add(new Entry { tags = new List<string> { kw }, tagsExclude = excludedTags, primary = primary, tier = n.tier, order = n.order, patterns = Patterns(nameFolders, n, nameBaseFiles, names, suffixIds, classifierIds, ext) });
+                        AddDistinct(sources, prefix);
+                        foreach (var f in folders) AddDistinct(patterns, PrefixPattern(f, prefix, ext));
                     }
-                }
-
-                // Merge only equivalent positive/negative guards; primary and fallback entries remain separate.
-                var merged = new List<Entry>();
-                var byKey = new Dictionary<string, Entry>();
-                foreach (var e in entries)
-                {
-                    if (byKey.TryGetValue(e.key, out var m))
+                    foreach (var prefix in row.assetPrefixPerform)
                     {
-                        foreach (var p in e.patterns) if (!m.patterns.Contains(p)) m.patterns.Add(p);
-                        m.tier = Math.Min(m.tier, e.tier);
-                        m.order = Math.Min(m.order, e.order);
-                        m.variantOrder = Math.Min(m.variantOrder, e.variantOrder);
+                        AddDistinct(sources, prefix);
+                        foreach (var f in folders) AddDistinct(patterns, PrefixPattern(f + "_perform", prefix, ext));
                     }
-                    else { byKey[e.key] = e; merged.Add(e); }
+                    variants.Add(new PortraitManager.PortraitVariant
+                    {
+                        tagsMatch = new List<string>(row.tagsMatch),
+                        tagsExclude = new List<string>(row.tagsExclude),
+                        PortraitVariantData = patterns,
+                        templateId = row.id,
+                        templateSources = sources,
+                    });
                 }
-
-                // Action variant priority precedes name/position fallbacks among equally specific requests.
-                var sorted = merged.OrderByDescending(e => e.tags.Count).ThenBy(e => e.variantOrder).ThenBy(e => e.primary ? 0 : 1).ThenBy(e => e.tier).ThenBy(e => e.order).ToList();
-
-                var variants = sorted.Select(e => new PortraitManager.PortraitVariant { tagsMatch = e.tags, tagsExclude = e.tagsExclude, PortraitVariantData = e.patterns }).ToList();
-
-                // unconditional variant (no tagsMatch): base files of the listed names (generic)
-                var uncond = new List<string>();
-                foreach (var un in block.unconditional)
-                {
-                    foreach (var n in names.Where(x => x.name == un))
-                        foreach (var p in Patterns(NameFolders(n, folders, false), n, categoryBaseFiles, names, suffixIds, classifierIds, ext))
-                            if (!uncond.Contains(p)) uncond.Add(p);
-                }
-                if (uncond.Count > 0) variants.Add(new PortraitManager.PortraitVariant { PortraitVariantData = uncond });
 
                 if (variants.Count < 1) continue;
                 result.Add(new PortraitManager.CharaPortrait_Image
@@ -650,44 +578,29 @@ public static class GlobalPortraitTemplate
         });
     }
 
-    /// <summary>
-    /// Folders this name's files live in for one block: category folders filtered by onlyInCategories,
-    /// with "_perform" exclusive for the doer side of a "both" name. Explicit doers read ordinary and performer
-    /// folders; receiver aliases may opt into the same perspective with alsoUsePerformFolders (forced oral).
-    /// </summary>
-    static List<string> NameFolders(NameInfo n, List<string> folders, bool perform, bool includePerform = false)
+    static void AddDistinct(List<string> list, string value)
     {
-        var list = new List<string>();
-        foreach (var f in folders)
-        {
-            if (n.onlyInCategories.Count > 0 && !n.onlyInCategories.Contains(f)) continue;
-            list.Add(perform ? f + "_perform" : f);
-            if (!perform && includePerform) list.Add(f + "_perform");
-        }
-        return list;
+        if (!list.Contains(value)) list.Add(value);
     }
 
     /// <summary>
-    /// Patterns of one name for a variant's files list, in listed order (own files first, then the files it falls back to). A classifier suffix
-    /// the name never gets (not in its hasVariants) is skipped; "" (unspecified) and hand-named suffixes always apply
+    /// Regex for an asset prefix: $foldername$/folder/prefix_*_N.ext, a literal prefix that catches every longer file name
+    /// (missionary -> missionary_anal_*, standing -> standing_missionary_*). Explicit exclusions follow the prefix, separated by '!',
+    /// each relative to it: "standing!missionary" skips standing_missionary_*, "anal!kiss!masturbation" skips anal_kiss_* and anal_masturbation_*.
     /// </summary>
-    static List<string> Patterns(List<string> folders, NameInfo n, List<string> files, List<NameInfo> names, List<string> suffixIds, HashSet<string> classifierIds, string ext)
+    static string PrefixPattern(string folder, string prefix, string ext)
     {
-        var list = new List<string>();
-        foreach (var suffix in files)
-        {
-            if (suffix != "" && classifierIds.Contains(suffix) && !n.hasVariants.Contains(suffix)) continue;
-            foreach (var f in folders)
-            {
-                var p = Pattern(f, n.name, suffix, names, suffixIds, ext);
-                if (!list.Contains(p)) list.Add(p);
-            }
-        }
-        return list;
+        var parts = prefix.Split('!');
+        var s = $"{Placeholder}/{Regex.Escape(folder)}/{Regex.Escape(parts[0])}_";
+        var excluded = new List<string>();
+        for (int i = 1; i < parts.Length; i++)
+            if (parts[i].Length > 0) AddDistinct(excluded, Regex.Escape(parts[i]));
+        if (excluded.Count > 0) s += $"(?!(?:{string.Join("|", excluded)})_)";
+        return s + $"[^/]+_[0-9]+\\.(?:{ext})";
     }
 
     /// <summary>
-    /// Regex for $foldername$/folder/name[_suffix]_pack_chara_N.ext. suffix "" = the unspecified files: excludes every file suffix;
+    /// Regex for the mapped portraits (standalone / activities / emotions) $foldername$/folder/name[_suffix]_pack_chara_N.ext. suffix "" = the unspecified files: excludes every file suffix;
     /// a suffix excludes the longer suffixes sharing its prefix (anal -> anal_rape); every pattern excludes longer names sharing the prefix (anal -> anal_masturbation)
     /// </summary>
     static string Pattern(string folder, string name, string suffix, List<NameInfo> names, List<string> suffixIds, string ext)
@@ -714,102 +627,61 @@ public static class GlobalPortraitTemplate
         return s + $"[^/]+_[0-9]+\\.(?:{ext})";
     }
 
-    class VariantInfo
-    {
-        public string id;
-        /// <summary> in-game portrait keywords added to the name's keyword (tagsMatch) </summary>
-        public List<string> keywords = new List<string>();
-        /// <summary> file suffixes shown, in order; "" = the unspecified files (no suffix) </summary>
-        public List<string> files = new List<string>();
-    }
-
     /// <summary>
-    /// portrait_global.variants: id -> { keywords, files }, listed order = priority among equally specific variants. The id "base" is the
-    /// variant without extra keywords ([keyword] and the unconditional variant); its files are returned in baseFiles (default [""])
+    /// portrait_global.SexPortraitVariantConfig: { doer: {...}, receiver: {...}, none: {...} }, each an ordered object id -> { tagsMatch, tagsExclude,
+    /// assetPrefix, assetPrefix_perform }. The id is only a label. Listed order is kept as is (handler variant order).
     /// </summary>
-    static List<VariantInfo> ReadVariants(JObject pg, out List<string> baseFiles)
+    static Dictionary<string, List<Row>> ReadRows(JObject pg, List<RoleBlock> blocks)
     {
-        var list = new List<VariantInfo>();
-        baseFiles = new List<string> { "" };
-        if (!(pg["variants"] is JObject vo)) return list;
-        foreach (var p in vo.Properties())
+        var result = new Dictionary<string, List<Row>>();
+        foreach (var b in blocks) result[b.role] = new List<Row>();
+        if (!(pg[SexVariantKey] is JObject names)) throw new Exception($"missing portrait_global.{SexVariantKey}");
+        foreach (var block in names.Properties())
         {
-            if (IsComment(p.Name)) continue;
-            if (!(p.Value is JObject o)) { Debug.LogWarning($"GlobalPortraitTemplate: portrait_global.variants [{p.Name}] is not an object {{ keywords, files }}, skipped"); continue; }
-            var v = new VariantInfo
+            if (IsComment(block.Name)) continue;
+            if (!result.TryGetValue(block.Name, out var rows))
             {
-                id = p.Name,
-                keywords = (o["keywords"] as JArray)?.Select(x => (string)x).Where(x => !string.IsNullOrEmpty(x)).ToList() ?? new List<string>(),
-                files = (o["files"] as JArray)?.Select(x => (string)x ?? "").Distinct().ToList() ?? new List<string> { p.Name },
-            };
-            if (p.Name == "base") { baseFiles = v.files; continue; }
-            if (v.keywords.Count < 1) { Debug.LogWarning($"GlobalPortraitTemplate: portrait_global.variants [{p.Name}] has no keywords (only \"base\" may), skipped"); continue; }
-            list.Add(v);
-        }
-        return list;
-    }
-
-    static List<NameInfo> ReadNames(JObject config, JObject pg)
-    {
-        var mapping = pg["names"] as JObject ?? new JObject();
-        var list = new List<NameInfo>();
-        if (!(config["file_names"] is JArray array)) throw new Exception("missing file_names");
-        for (int i = 0; i < array.Count; i++)
-        {
-            if (!(array[i] is JObject e)) continue;
-            var nameKeys = e.Properties().Where(p => !IsComment(p.Name) && !NameEntryKeys.Contains(p.Name)).ToList();
-            if (nameKeys.Count != 1) continue;
-            var name = nameKeys[0].Name;
-            var hasVariants = (e["hasVariants"] as JArray)?.Select(v => (string)v).ToList() ?? new List<string>();
-            var onlyInCategories = (e["onlyInCategories"] as JArray)?.Select(v => (string)v).ToList() ?? new List<string>();
-
-            // Alternative definitions share one name: union their scopes; an unrestricted definition covers every category.
-            var existing = list.FirstOrDefault(x => x.name == name);
-            if (existing != null)
-            {
-                foreach (var v in hasVariants) if (!existing.hasVariants.Contains(v)) existing.hasVariants.Add(v);
-                if (existing.onlyInCategories.Count == 0 || onlyInCategories.Count == 0)
-                    existing.onlyInCategories.Clear();
-                else
-                    foreach (var category in onlyInCategories)
-                        if (!existing.onlyInCategories.Contains(category)) existing.onlyInCategories.Add(category);
+                Debug.LogWarning($"GlobalPortraitTemplate: portrait_global.{SexVariantKey} [{block.Name}] has no roleBlocks entry, skipped");
                 continue;
             }
-
-            // keywords live in the game-only portrait_global.names (the classifier reads file_names)
-            if (!(mapping[name] is JObject m))
+            if (!(block.Value is JObject entries))
             {
-                Debug.LogWarning($"GlobalPortraitTemplate: file_names [{name}] has no portrait_global.names entry, its images are not used");
+                Debug.LogWarning($"GlobalPortraitTemplate: portrait_global.{SexVariantKey} [{block.Name}] is not an object, skipped");
                 continue;
             }
-
-            // keywords: OR list of { keyword, role }; keyword null = no own keyword (unconditional / variant-only)
-            var keywords = new List<(string keyword, string role)>();
-            foreach (var ko in (m["keywords"] as JArray)?.OfType<JObject>() ?? Enumerable.Empty<JObject>())
+            foreach (var p in entries.Properties())
             {
-                var kw = ko["keyword"] == null || ko["keyword"].Type == JTokenType.Null ? null : (string)ko["keyword"];
-                var kr = ((string)ko["role"] ?? "").Trim();
-                if (kw == "" || (kr != "doer" && kr != "receiver" && kr != "none" && kr != "both"))
+                if (IsComment(p.Name)) continue;
+                if (!(p.Value is JObject o))
                 {
-                    Debug.LogWarning($"GlobalPortraitTemplate: portrait_global.names [{name}] keywords entry [{ko.ToString(Formatting.None)}] needs a keyword (or null) and a doer/receiver/none/both role, skipped");
+                    Debug.LogWarning($"GlobalPortraitTemplate: portrait_global.{SexVariantKey}.{block.Name} [{p.Name}] is not an object, skipped");
                     continue;
                 }
-                keywords.Add((kw, kr));
+                var row = new Row
+                {
+                    id = p.Name,
+                    tagsMatch = Strings(o["tagsMatch"]),
+                    tagsExclude = Strings(o["tagsExclude"]),
+                    assetPrefix = Strings(o["assetPrefix"]),
+                    assetPrefixPerform = Strings(o["assetPrefix_perform"]),
+                };
+                if (row.assetPrefix.Count == 0 && row.assetPrefixPerform.Count == 0)
+                    Debug.LogWarning($"GlobalPortraitTemplate: portrait_global.{SexVariantKey}.{block.Name} [{p.Name}] has no assetPrefix / assetPrefix_perform, it never has images");
+                rows.Add(row);
             }
-            if (keywords.Count < 1) { Debug.LogWarning($"GlobalPortraitTemplate: portrait_global.names [{name}] has no valid keywords, its images are not used"); continue; }
-
-            list.Add(new NameInfo
-            {
-                name = name,
-                order = i,
-                tier = e["tier"]?.Value<float>() ?? 1,
-                hasVariants = hasVariants,
-                onlyInCategories = onlyInCategories,
-                keywords = keywords,
-                alsoUsePerformFolders = m["alsoUsePerformFolders"]?.Value<bool>() ?? false,
-                baseFiles = (m["baseFiles"] as JArray)?.Values<string>().Select(f => f ?? "").Distinct().ToList(),
-            });
         }
+        return result;
+    }
+
+    static List<string> Strings(JToken token)
+    {
+        var list = new List<string>();
+        if (token is JArray array)
+            foreach (var v in array)
+            {
+                var s = v.Type == JTokenType.String ? ((string)v).Trim() : null;
+                if (!string.IsNullOrEmpty(s) && !list.Contains(s)) list.Add(s);
+            }
         return list;
     }
 
@@ -817,7 +689,6 @@ public static class GlobalPortraitTemplate
     {
         // files_category ids that can be used: no hold, not portrait
         var usable = new HashSet<string>();
-        var allowedVariants = new Dictionary<string, HashSet<string>>();
         var blocked = new HashSet<string> { "portrait", "activity" };
         if (config["files_category"] is JArray fc)
         {
@@ -825,7 +696,6 @@ public static class GlobalPortraitTemplate
             {
                 var id = (string)c["id"];
                 if (string.IsNullOrEmpty(id)) continue;
-                if (c["allowedVariants"] is JArray variants) allowedVariants[id] = new HashSet<string>(variants.Values<string>());
                 if ((c["hold"]?.Value<bool>() ?? false) || id == "portrait" || id == "activity") blocked.Add(id);
                 else usable.Add(id);
             }
@@ -845,7 +715,6 @@ public static class GlobalPortraitTemplate
             list.Add(new Category
             {
                 id = id,
-                allowedVariants = allowedVariants.TryGetValue(id, out var allowed) ? allowed : null,
                 targetKeys = (c["targetKeys"] as JArray)?.Select(v => (string)v).ToList() ?? new List<string>(),
                 alsoUseFolders = (c["alsoUseFolders"] as JArray)?.Select(v => (string)v).ToList() ?? new List<string>(),
             });
@@ -863,7 +732,6 @@ public static class GlobalPortraitTemplate
             {
                 role = (string)b["role"] ?? "",
                 selfKeys = (b["selfKeys"] as JArray)?.Select(v => (string)v).ToList() ?? new List<string>(),
-                unconditional = (b["unconditional"] as JArray)?.Select(v => (string)v).ToList() ?? new List<string>(),
             });
         }
         return list;

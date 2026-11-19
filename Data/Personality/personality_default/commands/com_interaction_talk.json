@@ -20,7 +20,6 @@
                                 "excited",
                                 "happy"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.3.3 主动接受",
                             "responses": [
                                 "com_interaction_talk_Begin_1",
@@ -39,7 +38,6 @@
                                 "tearful",
                                 "pain"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.3.5 被动接受（屈服）",
                             "responses": [
                                 "com_interaction_talk_Begin_3",
@@ -52,7 +50,6 @@
                             "extraSelfPortraitTags": [
                                 "blush"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.3.4 被动接受（惊讶不反感）",
                             "responses": [
                                 "com_interaction_talk_Begin_5",
@@ -68,7 +65,6 @@
                                 "calm",
                                 "observation"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.1.1 行动开始",
                             "responses": [
                                 "com_interaction_talk_Begin_7",
@@ -76,7 +72,8 @@
                                 "com_interaction_talk_Begin_9"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandAct"
                 }
             },
             {
@@ -91,7 +88,8 @@
                                 "com_interaction_talk_Tryjoin_2"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "interaction"
                 }
             },
             {
@@ -106,7 +104,8 @@
                                 "com_interaction_talk_Joined_2"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "interaction"
                 }
             },
             {
@@ -121,7 +120,8 @@
                                 "com_interaction_talk_Join_Refused_2"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "interaction"
                 }
             },
             {
@@ -205,7 +205,8 @@
                                 "com_interaction_talk_Join_10"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandJoin"
                 }
             },
             {
@@ -221,7 +222,8 @@
                                 "com_interaction_talk_Ongoing_3"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandAct"
                 }
             },
             {
@@ -305,7 +307,8 @@
                                 "com_interaction_talk_Interrupt_15"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "interaction"
                 }
             },
             {
@@ -369,7 +372,6 @@
                                         "intrigued",
                                         "relaxed"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.5.3 成功（正面反馈）行动结束结果",
                                     "responses": [
                                         "kojo_default_com_interaction_talk_accept_success_1",
@@ -391,7 +393,6 @@
                                 "annoyed",
                                 "disappointed"
                             ],
-                            "useActiveTags": false,
                             "responses": [
                                 "com_interaction_talk_7",
                                 "com_interaction_talk_8"
@@ -410,7 +411,6 @@
                                         "intrigued",
                                         "relaxed"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.5.1 失败但正面反馈",
                                     "responses": [
                                         "kojo_default_com_interaction_talk_accept_failure_1",
@@ -433,13 +433,13 @@
                                 "annoyed",
                                 "disappointed"
                             ],
-                            "useActiveTags": false,
                             "responses": [
                                 "com_interaction_talk_11",
                                 "com_interaction_talk_12"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandResult"
                 }
             }
         ]

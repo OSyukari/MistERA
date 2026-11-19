@@ -18,6 +18,11 @@ public static class ImageWorkFolders
     /// <summary>Written by the report page (images selected there), in Mods/; "Select from report" ticks their work folders.
     /// Mods/ itself is never scanned for def json, only the mod folders inside it.</summary>
     public const string SelectionFileName = "_image_selection.json";
+    /// <summary>Written by the report page (classification overrides set there by hand), in Mods/:
+    /// { saved, report, overrides: { "work folder|original name": { category, name, was: { category, name }, original, path, set } } }.
+    /// Keyed by the tag record's originalName (kept through Move + Rename and manual moves); path = "work folder/path" when it was set.
+    /// Read back into the report when it is written; kept for a later correction step.</summary>
+    public const string OverrideFileName = "_image_overrides.json";
 
     public static bool Skipped(string folderName) =>
         folderName.StartsWith("_", StringComparison.Ordinal) || folderName.StartsWith(".", StringComparison.Ordinal)

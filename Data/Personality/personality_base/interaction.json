@@ -34,28 +34,32 @@
                             "useActiveTags": false,
                             "responses": []
                         }
-                    ]
+                    ],
+                    "template": "commandAct"
                 }
             },
             {
                 "ID": "personality_base",
                 "Entry": {
                     "ID": "com_interaction_talk_Tryjoin",
-                    "variants": [{ "responses": [] }]
+                    "variants": [{ "responses": [] }],
+                    "template": "interaction"
                 }
             },
             {
                 "ID": "personality_base",
                 "Entry": {
                     "ID": "com_interaction_talk_Joined",
-                    "variants": [{ "responses": [] }]
+                    "variants": [{ "responses": [] }],
+                    "template": "interaction"
                 }
             },
             {
                 "ID": "personality_base",
                 "Entry": {
                     "ID": "com_interaction_talk_Join_Refused",
-                    "variants": [{ "responses": [] }]
+                    "variants": [{ "responses": [] }],
+                    "template": "interaction"
                 }
             },
             {
@@ -94,14 +98,16 @@
                             "useActiveTags": false,
                             "responses": []
                         }
-                    ]
+                    ],
+                    "template": "commandJoin"
                 }
             },
             {
                 "ID": "personality_base",
                 "Entry": {
                     "ID": "com_interaction_talk_Ongoing",
-                    "variants": [{ "responses": [] }]
+                    "variants": [{ "responses": [] }],
+                    "template": "commandAct"
                 }
             },
             {
@@ -138,7 +144,8 @@
                             "useActiveTags": false,
                             "responses": []
                         }
-                    ]
+                    ],
+                    "template": "interaction"
                 }
             },
             {
@@ -188,7 +195,8 @@
                             "useActiveTags": false,
                             "responses": []
                         }
-                    ]
+                    ],
+                    "template": "commandResult"
                 }
             }
         ]

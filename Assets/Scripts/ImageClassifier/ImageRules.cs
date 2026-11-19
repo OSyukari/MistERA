@@ -175,4 +175,6 @@ public class NameRule
     public float? threshold;
     /// <summary>Explicit none/noneAll threshold; these exclusions also veto filename matches when configured.</summary>
     public float? noneThreshold;
+    /// <summary>AND clauses a filename match must also satisfy (threshold ?? settings.tagThreshold); empty = filename alone suffices.</summary>
+    public List<RuleClause> filenameRequires = new List<RuleClause>();
 }

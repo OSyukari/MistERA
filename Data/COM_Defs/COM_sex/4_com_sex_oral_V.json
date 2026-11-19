@@ -6,6 +6,7 @@
             {
                 "parentCOMID":"com_sex_service_base",
                 "ID":"com_sex_oral_V",
+                "kojoParticipants":"PairDistinct",
                 "ActionPackageClass":"ActionPackage_Sex",
                 "categoryTags":["com_category_v","com_category_service"],
                 "displayName":"com_sex_oral_V_displayName_1",
@@ -127,6 +128,7 @@
             {
                 "parentCOMID":"com_sex_service_base",
                 "ID":"com_sex_oral_V_force",
+                "kojoParticipants":"PairDistinct",
                 "upgradeFrom":"com_sex_oral_V",
                 "_comment_upgrade":"Upgrade of com_sex_oral_V (was its setForce variants): the tongue version, one round in place of the ongoing cunnilingus, which then resumes. Own acceptance roll every round. AC/DC copied from cunnilingus for tuning; setForce keeps the strong-act rules (receiverActTags_strong: the vagina, traceKeywords_strong). Texts and kojo: cunnilingus's unless its own are added.",
                 "ActionPackageClass":"ActionPackage_Sex",

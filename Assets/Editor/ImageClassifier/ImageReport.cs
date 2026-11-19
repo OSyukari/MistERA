@@ -292,10 +292,13 @@ public static class ImageReport
 
     /// <summary>
     /// The data the template reads (window.REPORT). Shape:
-    /// { title, generated, rules, selectionFile (only when the page may save a selection), usedTags: [string],
+    /// { title, generated, rules, selectionFile (only when the page may save a selection), usedTags: [string], classNames: [string],
+    ///   categoryNames: { category id: [[class name, isperform]] },
     ///   folders: [{ name, base (URL prefix of the folder, relative to the report), hasTags, stale, analyzed, model, counts...,
     ///               created: [folders the last analysis created], items: [ImageReportItem] }],
     ///   lint: [string], unused: null | { categories: [string], names: [{ set, names: [string] }], variants: [string] },
+    ///   overrideFile, overrides (with selectionFile only): the page's classification overrides, the "overrides" object of
+    ///   ImageWorkFolders.OverrideFileName in the report folder ({} when there is none),
     ///   portrait (with selectionFile only): the portrait handler view, shape on PortraitUsage.Write }
     /// </summary>
     public static string BuildReportJson(string reportDir, string title, List<ImageReportFolder> folders, ImageRules rules, string rulesPath, DateTime generated,
@@ -320,6 +323,47 @@ public static class ImageReport
                 for (int i = 0; i < used.Count; i++) w.WriteValue(used[i]);
             }
             w.WriteEndArray();
+
+            // every class name the rules can produce: name, and name_<variant> per hasVariants id (ImageClassifierEngine result.name)
+            w.WritePropertyName("classNames");
+            w.WriteStartArray();
+            if (rules != null)
+            {
+                var classNames = new HashSet<string>(StringComparer.Ordinal);
+                foreach (var set in rules.nameSets.Values)
+                    foreach (var n in set)
+                    {
+                        if (classNames.Add(n.name)) w.WriteValue(n.name);
+                        foreach (var v in n.hasVariants)
+                            if (classNames.Add(n.name + "_" + v)) w.WriteValue(n.name + "_" + v);
+                    }
+            }
+            w.WriteEndArray();
+
+            // per category, the class names it can give (its name set, allowedNames, onlyInCategories, allowedVariants), for the empty rows
+            w.WritePropertyName("categoryNames");
+            w.WriteStartObject();
+            if (rules != null)
+            {
+                var seenCategories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                foreach (var c in rules.categories)
+                {
+                    if (c.hold || c.manual || !c.rename || !seenCategories.Add(c.id) || !rules.nameSets.TryGetValue(c.nameSet, out var set)) continue;
+                    var written = new HashSet<string>(StringComparer.Ordinal);
+                    w.WritePropertyName(c.id);
+                    w.WriteStartArray();
+                    foreach (var n in set)
+                    {
+                        if (c.allowedNames != null && !c.allowedNames.Contains(n.name)) continue;
+                        if (n.onlyInCategories != null && !n.onlyInCategories.Contains(c.id)) continue;
+                        if (n.defaultVariant == null) WriteClassName(w, written, n.name, n.isperform);
+                        foreach (var v in n.hasVariants)
+                            if (c.AllowsVariant(v)) WriteClassName(w, written, n.name + "_" + v, n.isperform);
+                    }
+                    w.WriteEndArray();
+                }
+            }
+            w.WriteEndObject();
 
             var lint = new List<string>();
             var seenLint = new HashSet<string>(StringComparer.Ordinal);
@@ -357,6 +401,21 @@ public static class ImageReport
             }
             w.WriteEndArray();
 
+            // classification overrides set by hand in the page (Mods report only, with the selection): the saved file is read back
+            Newtonsoft.Json.Linq.JObject overrides = null;
+            if (selectionFile != null)
+            {
+                var overridePath = Path.Combine(reportDir, ImageWorkFolders.OverrideFileName);
+                if (File.Exists(overridePath))
+                {
+                    try { overrides = Newtonsoft.Json.Linq.JObject.Parse(File.ReadAllText(overridePath))["overrides"] as Newtonsoft.Json.Linq.JObject; }
+                    catch (Exception e) { lint.Add(ImageWorkFolders.OverrideFileName + " unreadable, its overrides are not shown (saving from the page replaces it): " + e.Message); }
+                }
+                w.WritePropertyName("overrideFile"); w.WriteValue(ImageWorkFolders.OverrideFileName);
+                w.WritePropertyName("overrides");
+                (overrides ?? new Newtonsoft.Json.Linq.JObject()).WriteTo(w);
+            }
+
             w.WritePropertyName("lint");
             WriteStrings(w, lint);
 
@@ -373,6 +432,16 @@ public static class ImageReport
         }
         // inside <script>: a "</script>" in a file name or reason must not close the tag
         return sw.ToString().Replace("</", "<\\/");
+    }
+
+    /// <summary>[name, isperform] once per name.</summary>
+    static void WriteClassName(JsonTextWriter w, HashSet<string> written, string name, bool isperform)
+    {
+        if (!written.Add(name)) return;
+        w.WriteStartArray();
+        w.WriteValue(name);
+        w.WriteValue(isperform);
+        w.WriteEndArray();
     }
 
     /// <summary>"./Assetpacks/you1069/ako/ako/" (each segment URL-escaped), "./" for the report's own folder.</summary>

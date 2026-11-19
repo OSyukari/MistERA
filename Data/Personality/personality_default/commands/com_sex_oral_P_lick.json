@@ -13,7 +13,6 @@
                         {
                             "requireSelfReceiver": true,
                             "extraSelfPortraitTags": ["sex", "receiver", "blowjob"],
-                            "useActiveTags": false,
                             "_comment": "受方 被舔肉棒",
                             "responses": ["com_sex_oral_P_lick_receiver_1"]
                         },
@@ -23,7 +22,6 @@
                                 "targetTags": ["condom_filled"]
                             },
                             "extraSelfPortraitTags": ["sex", "doer", "blowjob", "blush"],
-                            "useActiveTags": false,
                             "_comment": "攻方 舔戴着装满精液的避孕套的肉棒",
                             "responses": [
                                 "com_sex_oral_P_lick_condomFilled_1",
@@ -37,7 +35,6 @@
                                 "requirePermission": true
                             },
                             "extraSelfPortraitTags": ["sex", "doer", "blowjob", "blush"],
-                            "useActiveTags": false,
                             "_comment": "攻方 舔肉棒 有允许",
                             "responses": [
                                 "com_sex_oral_P_lick_1",
@@ -47,13 +44,13 @@
                         {
                             "requireSelfDoer": true,
                             "extraSelfPortraitTags": ["sex", "doer", "blowjob", "disgusted"],
-                            "useActiveTags": false,
                             "_comment": "攻方 舔肉棒 无允许",
                             "responses": [
                                 "com_sex_oral_P_lick_3"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandResult"
                 }
             }
         ]

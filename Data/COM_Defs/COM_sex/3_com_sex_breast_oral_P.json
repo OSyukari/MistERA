@@ -6,6 +6,7 @@
             {
                 "parentCOMID":"com_sex_service_base",
                 "ID":"com_sex_breast_oral_P",
+                "kojoParticipants":"PairDistinct",
                 "_comment_actOrgans":"Uses mouth AND breast: mouth is the primary doer organ (penetration, condoms, permission), the breast is used alongside; the doer side's stimulation is split between them.",
                 "doerActTags":["mouth"],
                 "doerExtraActTags":["breast"],

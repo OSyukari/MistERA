@@ -140,6 +140,7 @@
         },
         {
             "ID":"com_player_putDown",
+            "kojoParticipants":"PairDistinct",
             "_comments": "安放: folder - clicking lists every bed / sofa in the room that can take the carried character (scr_panel_COMmanager.LoadPutDownPanel), each a com_furniture_putDown package. Never executed itself.",
             "ActionPackageClass":"ActionPackage_Interaction",
             "displayName":"comManager_com_putDown",
@@ -344,6 +345,7 @@
         },
         {
             "ID":"com_interaction_talk",
+            "kojoParticipants":"PairMutual",
             "ActionPackageClass":"ActionPackage_Talk",
             "displayName":"com_interaction_talk_displayName_1",
             "timeScale":5,
@@ -397,6 +399,7 @@
         {
             "fallbackCOMID":"com_interaction_talk",
             "ID":"com_interaction_talk_topic",
+            "kojoParticipants":"PairMutual",
             "ActionPackageClass":"ActionPackage_Talk",
             "displayName":"com_interaction_talk_displayName_1",
             "timeScale":5,

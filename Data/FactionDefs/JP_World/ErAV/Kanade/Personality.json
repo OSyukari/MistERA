@@ -25,7 +25,8 @@
                                 "requirement": { "targetTags": ["erav_kanade_promise_accept"] },
                                 "responses": ["com_interaction_partyInvite_erav_kanade_promise_accept"]
                             }
-                        ]
+                        ],
+                        "template": "commandResult"
                     }
                 ]
             }

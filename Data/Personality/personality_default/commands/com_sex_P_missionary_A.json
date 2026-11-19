@@ -29,7 +29,6 @@
                                         "anal",
                                         "climax"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.4.1 高潮 有允许",
                                     "responses": [
                                         "com_sex_P_missionary_A_Climax_2",
@@ -44,14 +43,14 @@
                                 "anal",
                                 "climax"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.4.2 高潮 无允许",
                             "responses": [
                                 "com_sex_P_missionary_A_Climax_4",
                                 "com_sex_P_missionary_A_Climax_5"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandClimax"
                 }
             },
             {
@@ -68,7 +67,6 @@
                                 "selfTags": ["firstexp_A", "sleeping"]
                             },
                             "extraSelfPortraitTags": ["sex", "receiver", "missionary", "anal", "sleeping", "pain"],
-                            "useActiveTags": false,
                             "_comment": "初体验 开始正面位A 睡眠中",
                             "responses": ["com_sex_P_missionary_A_Begin_FE_Sleep_1", "com_sex_P_missionary_A_Begin_FE_Sleep_2"]
                         },
@@ -78,7 +76,6 @@
                                 "selfTags": ["firstexp_A", "timestop"]
                             },
                             "extraSelfPortraitTags": ["sex", "receiver", "missionary", "anal", "doll", "empty"],
-                            "useActiveTags": false,
                             "_comment": "初体验 开始正面位A 时停中",
                             "responses": ["com_sex_P_missionary_A_Begin_FE_Timestop_1", "com_sex_P_missionary_A_Begin_FE_Timestop_2"]
                         },
@@ -93,7 +90,6 @@
                                         "requirePermission": true
                                     },
                                     "extraSelfPortraitTags": ["sex", "receiver", "missionary", "anal", "blush", "pain", "tearful", "love"],
-                                    "useActiveTags": false,
                                     "_comment": "初体验 玩家专用 开始正面位A 有允许",
                                     "responses": ["com_sex_P_missionary_A_Begin_FE_Player_1", "com_sex_P_missionary_A_Begin_FE_Player_2"]
                                 },
@@ -102,7 +98,6 @@
                                         "requirePermission": true
                                     },
                                     "extraSelfPortraitTags": ["sex", "receiver", "missionary", "anal", "blush", "pain", "tearful"],
-                                    "useActiveTags": false,
                                     "_comment": "初体验 开始正面位A 有允许",
                                     "responses": ["com_sex_P_missionary_A_Begin_FE_1", "com_sex_P_missionary_A_Begin_FE_2"]
                                 },
@@ -111,13 +106,11 @@
                                         "requireSelfAttitudeGTE": "Like"
                                     },
                                     "extraSelfPortraitTags": ["sex", "receiver", "missionary", "anal", "blush", "pain", "tearful", "shy"],
-                                    "useActiveTags": false,
                                     "_comment": "初体验 开始正面位A 未允许 好意",
                                     "responses": ["com_sex_P_missionary_A_Begin_FE_3", "com_sex_P_missionary_A_Begin_FE_4"]
                                 }
                             ],
                             "extraSelfPortraitTags": ["sex", "receiver", "missionary", "anal", "fear", "pain", "tearful", "trembling"],
-                            "useActiveTags": false,
                             "_comment": "初体验 开始正面位A 未允许 敌意",
                             "responses": ["com_sex_P_missionary_A_Begin_FE_5", "com_sex_P_missionary_A_Begin_FE_6"]
                         },
@@ -126,7 +119,6 @@
                                 "selfTags": ["firstexp_partner_A"]
                             },
                             "extraSelfPortraitTags": ["sex", "doer", "missionary", "anal", "surprised"],
-                            "useActiveTags": false,
                             "_comment": "对方初体验 开始正面位A（插入的一方）",
                             "responses": ["com_sex_P_missionary_A_Begin_FE_Partner_1", "com_sex_P_missionary_A_Begin_FE_Partner_2"]
                         },
@@ -138,7 +130,6 @@
                                 ]
                             },
                             "extraSelfPortraitTags": ["sex", "receiver", "missionary", "anal", "sleeping", "relaxed"],
-                            "useActiveTags": false,
                             "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
                             "responses": [
                                 "com_sex_P_missionary_A_Begin_Sleep_1",
@@ -153,7 +144,6 @@
                                 ]
                             },
                             "extraSelfPortraitTags": ["sex", "receiver", "missionary", "anal", "doll", "empty", "silence", "idle"],
-                            "useActiveTags": false,
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_sex_P_missionary_A_Begin_Timestop_1",
@@ -173,7 +163,6 @@
                                 "blush",
                                 "affectionate"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.1.1 ($self$) 开始正面位A 有允许 口上文",
                             "responses": [
                                 "com_sex_P_missionary_A_Begin_1",
@@ -191,7 +180,6 @@
                                 "anal",
                                 "blush"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.2.1 ($self$) 开始正面位A 未允许 口上文",
                             "responses": [
                                 "com_sex_P_missionary_A_Begin_3",
@@ -209,14 +197,14 @@
                                 "tearful",
                                 "pain"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.2.2 ($self$) 开始正面位A 未允许 口上文",
                             "responses": [
                                 "com_sex_P_missionary_A_Begin_5",
                                 "com_sex_P_missionary_A_Begin_6"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandAct"
                 }
             },
             {
@@ -233,7 +221,6 @@
                                 "selfTags": ["firstexp_A", "sleeping"]
                             },
                             "extraSelfPortraitTags": ["sex", "receiver", "missionary", "anal", "sleeping", "pain"],
-                            "useActiveTags": false,
                             "_comment": "初体验 睡眠中 正面位A",
                             "responses": ["com_sex_P_missionary_A_FE_Sleep_1"]
                         },
@@ -243,7 +230,6 @@
                                 "selfTags": ["firstexp_A", "timestop"]
                             },
                             "extraSelfPortraitTags": ["sex", "receiver", "missionary", "anal", "doll", "empty"],
-                            "useActiveTags": false,
                             "_comment": "初体验 时停中 正面位A",
                             "responses": ["com_sex_P_missionary_A_FE_Timestop_1"]
                         },
@@ -258,7 +244,6 @@
                                         "requirePermission": true
                                     },
                                     "extraSelfPortraitTags": ["sex", "receiver", "missionary", "anal", "blush", "pain", "love"],
-                                    "useActiveTags": false,
                                     "_comment": "初体验 玩家专用 正面位A 有允许",
                                     "responses": ["com_sex_P_missionary_A_FE_Player_1"]
                                 },
@@ -267,7 +252,6 @@
                                         "requirePermission": true
                                     },
                                     "extraSelfPortraitTags": ["sex", "receiver", "missionary", "anal", "blush", "pain"],
-                                    "useActiveTags": false,
                                     "_comment": "初体验 正面位A 有允许（还在适应）",
                                     "responses": ["com_sex_P_missionary_A_FE_1", "com_sex_P_missionary_A_FE_2"]
                                 },
@@ -276,13 +260,11 @@
                                         "requireSelfAttitudeGTE": "Like"
                                     },
                                     "extraSelfPortraitTags": ["sex", "receiver", "missionary", "anal", "blush", "pain", "shy"],
-                                    "useActiveTags": false,
                                     "_comment": "初体验 正面位A 未允许 好意（还在适应）",
                                     "responses": ["com_sex_P_missionary_A_FE_3"]
                                 }
                             ],
                             "extraSelfPortraitTags": ["sex", "receiver", "missionary", "anal", "pain", "tearful", "cry"],
-                            "useActiveTags": false,
                             "_comment": "初体验 正面位A 未允许 敌意",
                             "responses": ["com_sex_P_missionary_A_FE_4", "com_sex_P_missionary_A_FE_5"]
                         },
@@ -291,7 +273,6 @@
                                 "selfTags": ["firstexp_partner_A"]
                             },
                             "extraSelfPortraitTags": ["sex", "doer", "missionary", "anal"],
-                            "useActiveTags": false,
                             "_comment": "对方初体验 正面位A（插入的一方）",
                             "responses": ["com_sex_P_missionary_A_FE_Partner_1"]
                         },
@@ -310,7 +291,6 @@
                                 "sleeping",
                                 "relaxed"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.3.2 ($self$) 睡眠中 正面位A口上文",
                             "responses": [
                                 "com_sex_P_missionary_A_1",
@@ -334,7 +314,6 @@
                                 "silence",
                                 "idle"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.3.1 ($self$) 时停中 被正面位A口上文",
                             "responses": [
                                 "com_sex_P_missionary_A_3",
@@ -470,7 +449,6 @@
                                         "blush",
                                         "lazy"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.1.5",
                                     "responses": [
                                         "com_sex_P_missionary_A_15",
@@ -491,7 +469,6 @@
                                         "blush",
                                         "lazy"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.2.7",
                                     "responses": [
                                         "com_sex_P_missionary_A_17",
@@ -508,7 +485,6 @@
                                 "scared",
                                 "submissive"
                             ],
-                            "useActiveTags": false,
                             "responses": [
                                 "com_sex_P_missionary_A_19",
                                 "com_sex_P_missionary_A_20"
@@ -518,7 +494,6 @@
                             "requirement": {
                                 "requireEPSuccessGTE": "Success"
                             },
-                            "useActiveTags": false,
                             "_player only version": {
                                 "requirement": {
                                     "targetBaseID": "PLAYER"
@@ -541,7 +516,6 @@
                                         "happy",
                                         "relaxed"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.1.3 ($self$) 正面位A 结果正面 有允许 口上文",
                                     "responses": [
                                         "com_sex_P_missionary_A_21",
@@ -582,7 +556,6 @@
                                         "doubt",
                                         "disappointed"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.1.4 ($self$) 正面位A 结果负面 有允许 口上文",
                                     "responses": [
                                         "com_sex_P_missionary_A_25",
@@ -605,13 +578,13 @@
                                 "troubled",
                                 "silence"
                             ],
-                            "useActiveTags": false,
                             "responses": [
                                 "com_sex_P_missionary_A_27",
                                 "com_sex_P_missionary_A_28"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandResult"
                 }
             }
         ]

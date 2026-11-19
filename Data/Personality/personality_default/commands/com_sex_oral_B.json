@@ -29,7 +29,6 @@
                                         "breasts",
                                         "climax"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.4.1 受方 被舔乳头 高潮 有允许 口上文",
                                     "responses": [
                                         "com_sex_oral_B_Climax_2",
@@ -44,7 +43,6 @@
                                 "breasts",
                                 "climax"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.4.2 受方 被舔乳头 高潮 无允许 口上文",
                             "responses": [
                                 "com_sex_oral_B_Climax_5",
@@ -52,7 +50,8 @@
                                 "com_sex_oral_B_Climax_7"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandClimax"
                 }
             },
             {
@@ -71,7 +70,6 @@
                                 ]
                             },
                             "extraSelfPortraitTags": ["sex", "receiver", "breasts", "sleeping", "relaxed"],
-                            "useActiveTags": false,
                             "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
                             "responses": [
                                 "com_sex_oral_B_Begin_Sleep_1",
@@ -86,7 +84,6 @@
                                 ]
                             },
                             "extraSelfPortraitTags": ["sex", "receiver", "breasts", "doll", "empty", "silence", "idle"],
-                            "useActiveTags": false,
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_sex_oral_B_Begin_Timestop_1",
@@ -105,7 +102,6 @@
                                 "blush",
                                 "affectionate"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.1.1 开始被舔乳头 有允许 口上文",
                             "responses": [
                                 "com_sex_oral_B_Begin_1",
@@ -123,7 +119,6 @@
                                 "breasts",
                                 "blush"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.2.1 开始被舔乳头 未允许 好意 口上文",
                             "responses": [
                                 "com_sex_oral_B_Begin_4",
@@ -141,7 +136,6 @@
                                 "tearful",
                                 "pain"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.2.2 开始被舔乳头 未允许 敌意 口上文",
                             "responses": [
                                 "com_sex_oral_B_Begin_7",
@@ -149,7 +143,8 @@
                                 "com_sex_oral_B_Begin_9"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandAct"
                 }
             },
             {
@@ -174,7 +169,6 @@
                                 "sleeping",
                                 "relaxed"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.3.2 睡眠中 被舔乳头 口上文",
                             "responses": [
                                 "com_sex_oral_B_1",
@@ -198,7 +192,6 @@
                                 "silence",
                                 "idle"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.3.1 时停中 被舔乳头 口上文",
                             "responses": [
                                 "com_sex_oral_B_4",
@@ -336,7 +329,6 @@
                                         "blush",
                                         "lazy"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.1.5  玩家专用的 刚睡醒时的 被舔乳头 有允许 口上文",
                                     "responses": [
                                         "com_sex_oral_B_19",
@@ -356,7 +348,6 @@
                                         "blush",
                                         "lazy"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.2.7 玩家专用的 刚睡醒时的 被舔乳头 无允许 好意 口上文",
                                     "responses": [
                                         "com_sex_oral_B_21",
@@ -372,7 +363,6 @@
                                 "scared",
                                 "submissive"
                             ],
-                            "useActiveTags": false,
                             "responses": [
                                 "com_sex_oral_B_23",
                                 "com_sex_oral_B_24"
@@ -382,7 +372,6 @@
                             "requirement": {
                                 "requireEPSuccessGTE": "Success"
                             },
-                            "useActiveTags": false,
                             "_player only version": {
                                 "requirement": {
                                     "targetBaseID": "PLAYER"
@@ -404,7 +393,6 @@
                                         "happy",
                                         "relaxed"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.1.3 ($self$) 被舔乳头 结果正面 有允许 口上文",
                                     "responses": [
                                         "com_sex_oral_B_25",
@@ -445,7 +433,6 @@
                                         "doubt",
                                         "disappointed"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.1.4 ($self$) 被舔乳头 结果负面 有允许 口上文",
                                     "responses": [
                                         "com_sex_oral_B_31",
@@ -468,14 +455,14 @@
                                 "troubled",
                                 "silence"
                             ],
-                            "useActiveTags": false,
                             "responses": [
                                 "com_sex_oral_B_34",
                                 "com_sex_oral_B_35",
                                 "com_sex_oral_B_36"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandResult"
                 }
             }
         ]

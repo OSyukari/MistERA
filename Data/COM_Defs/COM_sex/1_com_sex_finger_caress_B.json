@@ -6,6 +6,7 @@
             {
                 "parentCOMID":"com_sex_service_base",
                 "ID":"com_sex_finger_caress_B",
+                "kojoParticipants":"PairDistinct",
                 "_comment_traces":"Body traces (Data/RaceDefs/TraceDefs.json): strong (rough) groping may leave grab marks on the breast.",
                 "traceKeywords_strong":["grab"],
                 "ActionPackageClass":"ActionPackage_Sex",
@@ -13,7 +14,7 @@
                 "displayName":"com_sex_finger_caress_B_displayName_3",
                 "timeScale":3,
                 "comTags":["sex","service"],
-                "portraitTags_Receiver":["breasts"],
+                "portraitTags_Receiver":["portrait_breast"],
                 "requirements":{
                     "requirement":{
                         "req_Doers":{
@@ -191,6 +192,7 @@
             {
                 "parentCOMID":"com_sex_service_base",
                 "ID":"com_sex_finger_caress_B_force",
+                "kojoParticipants":"PairDistinct",
                 "upgradeFrom":"com_sex_finger_caress_B",
                 "_comment_upgrade":"Upgrade of com_sex_finger_caress_B (was its setForce variants): nipple play, one round in place of the ongoing caress, which then resumes. Own acceptance roll every round. AC/DC copied from the caress for tuning; setForce keeps the strong-act rules. Command-level texts: the caress's (COM.UsesUpgradeParentText); the self variants keep their own nipple texts. Kojo: the caress's lines unless its own are added.",
                 "_comment_traces":"Body traces (Data/RaceDefs/TraceDefs.json): strong (rough) groping may leave grab marks on the breast.",
@@ -201,7 +203,7 @@
                 "timeScale":3,
                 "comTags":["sex","service"],
                 "portraitTags":["nipple_pull"],
-                "portraitTags_Receiver":["breasts"],
+                "portraitTags_Receiver":["portrait_breast"],
                 "requirements":{
                     "requirement":{
                         "req_Doers":{

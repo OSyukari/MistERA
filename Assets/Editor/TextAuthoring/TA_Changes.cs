@@ -342,11 +342,12 @@ public static class TA_Changes
             staleById.TryGetValue(id, out bool stale);
             if (!(all[id] is JObject e))
             {
+                bool auto = (bool?)r["autoApprove"] ?? false;
                 all[id] = new JObject
                 {
-                    ["state"] = stale ? Stale : Pending,
+                    ["state"] = stale ? Stale : auto ? Approved : Pending,
                     ["batch"] = r["batch"], ["kind"] = r["kind"], ["lane"] = LaneOf(r), ["target"] = r["target"], ["units"] = r["units"],
-                    ["contentHash"] = content, ["updatedAt"] = Now(), ["by"] = "import"
+                    ["contentHash"] = content, ["updatedAt"] = Now(), ["by"] = auto && !stale ? "template error" : "import"
                 };
                 added++;
                 continue;
@@ -361,6 +362,8 @@ public static class TA_Changes
                 e["state"] = Pending; e["by"] = "finding returned"; reopened++;
             }
             if (stale && IsOpen((string)e["state"]) && (string)e["state"] != HandedOff) { e["state"] = Stale; e["by"] = "base changed"; }
+            // errors that skip review: a pending one (new, reopened or changed) goes straight to the coder queue
+            if (((bool?)r["autoApprove"] ?? false) && (string)e["state"] == Pending) { e["state"] = Approved; e["by"] = "template error"; }
             e["units"] = r["units"];
             e["kind"] = r["kind"];
             e["lane"] = LaneOf(r);
@@ -446,6 +449,8 @@ public static class TA_Changes
             for (int i = 0; i < pids.Count; i++)
                 CollectFindings(Path.Combine(unitsDir, unit, TA_Store.Safe(pids[i]) + ".json"), unit, records, byId, errors);
         }
+        // per-entry shadowing analysis over every personality's own entries (Plan_KojoTemplates.md T2): no unit
+        CollectFindings(TA_KojoIndex.FilePath, null, records, byId, errors);
         for (int i = 0; i < records.Count; i++) records[i]["contentHash"] = ContentHash(records[i]);
         SaveBatch(FindingsBatch, "tool", records);
 
@@ -479,7 +484,7 @@ public static class TA_Changes
             var rule = (string)f["rule"] ?? "";
             var targetKey = FindingTargetKey(f, unit);
             var id = RecordId($"{FindingsBatch}|{type}|{rule}|{targetKey}");
-            if (byId.TryGetValue(id, out var existing)) { AddUnit(existing, unit); continue; }
+            if (byId.TryGetValue(id, out var existing)) { if (unit != null) AddUnit(existing, unit); continue; }
             var ops = f["ops"] as JArray;
             var record = new JObject
             {
@@ -494,10 +499,10 @@ public static class TA_Changes
                 ["handle"] = f["handle"],
                 ["personality"] = f["pid"],
                 ["owner"] = FindingOwner(f, targetKey, unit),
-                ["units"] = new JArray(unit),
+                ["units"] = unit == null ? new JArray() : new JArray(unit),
                 ["issue"] = new JObject
                 {
-                    ["type"] = TA_Renderer.AnalysisType(type),
+                    ["type"] = TA_Renderer.AnalysisType(type, rule),
                     ["problem"] = TA_Renderer.FindingText(f),
                     ["evidence"] = "",
                     ["proposal"] = ""
@@ -507,6 +512,9 @@ public static class TA_Changes
             };
             if (ops != null && ops.Count > 0) record["ops"] = ops.DeepClone();
             if ((bool?)f["patchOnly"] ?? false) record["patchOnly"] = true;
+            // a template mismatch is an error, not a proposal (Plan_KojoTemplates.md §7.10): no review, straight to the
+            // coder task. The binding (templateBind) is a tool edit and stays reviewable.
+            if (type != null && type.StartsWith("template", StringComparison.Ordinal) && type != "templateBind") record["autoApprove"] = true;
             records.Add(record);
             byId[id] = record;
         }

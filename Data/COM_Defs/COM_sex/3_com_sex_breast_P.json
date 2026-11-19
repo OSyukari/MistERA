@@ -6,6 +6,7 @@
             {
                 "parentCOMID":"com_sex_service_base",
                 "ID":"com_sex_breast_P",
+                "kojoParticipants":"PairDistinct",
                 "_comment_traces":"Body traces: aroused receiver's precum on the breast; milk (aroused + pregnant) on the penis.",
                 "traceKeywords":["wet"],
                 "ActionPackageClass":"ActionPackage_Sex",
@@ -13,7 +14,7 @@
                 "categoryTags":["com_category_service"],
                 "timeScale":3,
                 "comTags":["sex","service", "position_face", "position_inequal"],
-                "portraitTags_Doer":["boobjob"],
+                "portraitTags_Doer":["boobjob", "handjob"],
                 "requirements":{
                     "requirement":{
                         "req_Doers":{

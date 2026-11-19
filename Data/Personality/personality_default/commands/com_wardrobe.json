@@ -12,24 +12,22 @@
                         {
                             "requirement": { "requirePermission": true },
                             "extraSelfPortraitTags": ["blush", "smile", "relaxed"],
-                            "useActiveTags": false,
                             "_comment": "接受 被脱外衣 有允许",
                             "responses": ["com_undress_outer_Begin_A_1", "com_undress_outer_Begin_A_2"]
                         },
                         {
                             "requirement": { "requireSelfForced": true },
                             "extraSelfPortraitTags": ["fear", "trembling"],
-                            "useActiveTags": false,
                             "_comment": "接受 被脱外衣 被迫",
                             "responses": ["com_undress_outer_Begin_B_1", "com_undress_outer_Begin_B_2"]
                         },
                         {
                             "extraSelfPortraitTags": ["shy", "troubled", "surprised"],
-                            "useActiveTags": false,
                             "_comment": "接受 被脱外衣 未允许",
                             "responses": ["com_undress_outer_Begin_C_1", "com_undress_outer_Begin_C_2"]
                         }
-                    ]
+                    ],
+                    "template": "commandAct"
                 }
             },
             {
@@ -63,38 +61,34 @@
                         {
                             "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] },
                             "extraSelfPortraitTags": ["sleeping", "relaxed"],
-                            "useActiveTags": false,
                             "_comment": "睡眠中 被脱外衣",
                             "responses": ["com_undress_outer_D_1", "com_undress_outer_D_2"]
                         },
                         {
                             "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] },
                             "extraSelfPortraitTags": ["doll", "empty", "silence", "idle"],
-                            "useActiveTags": false,
                             "_comment": "时停中 被脱外衣",
                             "responses": ["com_undress_outer_E_1", "com_undress_outer_E_2"]
                         },
                         {
                             "requirement": { "requirePermission": true },
                             "extraSelfPortraitTags": ["blush", "relaxed", "smile"],
-                            "useActiveTags": false,
                             "_comment": "完成 被脱外衣 有允许",
                             "responses": ["com_undress_outer_I_1", "com_undress_outer_I_2"]
                         },
                         {
                             "requirement": { "requireSelfForced": true },
                             "extraSelfPortraitTags": ["fear", "tearful", "trembling"],
-                            "useActiveTags": false,
                             "_comment": "完成 被脱外衣 被迫",
                             "responses": ["com_undress_outer_J_1", "com_undress_outer_J_2"]
                         },
                         {
                             "extraSelfPortraitTags": ["shy", "blush", "troubled"],
-                            "useActiveTags": false,
                             "_comment": "完成 被脱外衣 未允许",
                             "responses": ["com_undress_outer_K_1", "com_undress_outer_K_2"]
                         }
-                    ]
+                    ],
+                    "template": "commandResult"
                 }
             },
             {
@@ -106,24 +100,22 @@
                         {
                             "requirement": { "requirePermission": true },
                             "extraSelfPortraitTags": ["blush", "shy", "affectionate"],
-                            "useActiveTags": false,
                             "_comment": "接受 被脱衣物 有允许",
                             "responses": ["com_undress_inner_Begin_A_1", "com_undress_inner_Begin_A_2"]
                         },
                         {
                             "requirement": { "requireSelfForced": true },
                             "extraSelfPortraitTags": ["fear", "trembling", "tearful"],
-                            "useActiveTags": false,
                             "_comment": "接受 被脱衣物 被迫",
                             "responses": ["com_undress_inner_Begin_B_1", "com_undress_inner_Begin_B_2"]
                         },
                         {
                             "extraSelfPortraitTags": ["blush", "shy", "troubled"],
-                            "useActiveTags": false,
                             "_comment": "接受 被脱衣物 未允许",
                             "responses": ["com_undress_inner_Begin_C_1", "com_undress_inner_Begin_C_2"]
                         }
-                    ]
+                    ],
+                    "template": "commandAct"
                 }
             },
             {
@@ -158,38 +150,34 @@
                         {
                             "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] },
                             "extraSelfPortraitTags": ["sleeping"],
-                            "useActiveTags": false,
                             "_comment": "睡眠中 被脱衣物",
                             "responses": ["com_undress_inner_D_1", "com_undress_inner_D_2"]
                         },
                         {
                             "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] },
                             "extraSelfPortraitTags": ["doll", "empty", "silence", "idle"],
-                            "useActiveTags": false,
                             "_comment": "时停中 被脱衣物",
                             "responses": ["com_undress_inner_E_1", "com_undress_inner_E_2"]
                         },
                         {
                             "requirement": { "requirePermission": true },
                             "extraSelfPortraitTags": ["blush", "shy", "aroused"],
-                            "useActiveTags": false,
                             "_comment": "完成 被脱衣物 有允许",
                             "responses": ["com_undress_inner_I_1", "com_undress_inner_I_2"]
                         },
                         {
                             "requirement": { "requireSelfForced": true },
                             "extraSelfPortraitTags": ["fear", "tearful", "cry"],
-                            "useActiveTags": false,
                             "_comment": "完成 被脱衣物 被迫",
                             "responses": ["com_undress_inner_J_1", "com_undress_inner_J_2"]
                         },
                         {
                             "extraSelfPortraitTags": ["blush", "troubled", "pouting"],
-                            "useActiveTags": false,
                             "_comment": "完成 被脱衣物 未允许",
                             "responses": ["com_undress_inner_K_1", "com_undress_inner_K_2"]
                         }
-                    ]
+                    ],
+                    "template": "commandResult"
                 }
             },
             {
@@ -201,24 +189,22 @@
                         {
                             "requirement": { "requirePermission": true },
                             "extraSelfPortraitTags": ["blush", "aroused", "affectionate"],
-                            "useActiveTags": false,
                             "_comment": "接受 被脱贴身衣物 有允许",
                             "responses": ["com_undress_skin_Begin_A_1", "com_undress_skin_Begin_A_2"]
                         },
                         {
                             "requirement": { "requireSelfForced": true },
                             "extraSelfPortraitTags": ["fear", "tearful", "trembling"],
-                            "useActiveTags": false,
                             "_comment": "接受 被脱贴身衣物 被迫",
                             "responses": ["com_undress_skin_Begin_B_1", "com_undress_skin_Begin_B_2"]
                         },
                         {
                             "extraSelfPortraitTags": ["blush", "shy", "trembling"],
-                            "useActiveTags": false,
                             "_comment": "接受 被脱贴身衣物 未允许",
                             "responses": ["com_undress_skin_Begin_C_1", "com_undress_skin_Begin_C_2"]
                         }
-                    ]
+                    ],
+                    "template": "commandAct"
                 }
             },
             {
@@ -253,38 +239,34 @@
                         {
                             "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] },
                             "extraSelfPortraitTags": ["sleeping"],
-                            "useActiveTags": false,
                             "_comment": "睡眠中 被脱贴身衣物",
                             "responses": ["com_undress_skin_D_1", "com_undress_skin_D_2"]
                         },
                         {
                             "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] },
                             "extraSelfPortraitTags": ["doll", "empty", "silence", "idle"],
-                            "useActiveTags": false,
                             "_comment": "时停中 被脱贴身衣物",
                             "responses": ["com_undress_skin_E_1", "com_undress_skin_E_2"]
                         },
                         {
                             "requirement": { "requirePermission": true },
                             "extraSelfPortraitTags": ["blush", "aroused", "love"],
-                            "useActiveTags": false,
                             "_comment": "完成 被脱贴身衣物 有允许",
                             "responses": ["com_undress_skin_I_1", "com_undress_skin_I_2"]
                         },
                         {
                             "requirement": { "requireSelfForced": true },
                             "extraSelfPortraitTags": ["cry", "tearful", "fear"],
-                            "useActiveTags": false,
                             "_comment": "完成 被脱贴身衣物 被迫",
                             "responses": ["com_undress_skin_J_1", "com_undress_skin_J_2"]
                         },
                         {
                             "extraSelfPortraitTags": ["blush", "shy", "trembling"],
-                            "useActiveTags": false,
                             "_comment": "完成 被脱贴身衣物 未允许",
                             "responses": ["com_undress_skin_K_1", "com_undress_skin_K_2"]
                         }
-                    ]
+                    ],
+                    "template": "commandResult"
                 }
             },
             {
@@ -303,13 +285,11 @@
                         {
                             "requirement": { "requirePermission": true },
                             "extraSelfPortraitTags": ["smile", "relaxed", "shy"],
-                            "useActiveTags": false,
                             "_comment": "被穿衣 有允许",
                             "responses": ["com_redress_Begin_A_1", "com_redress_Begin_A_2"]
                         },
                         {
                             "extraSelfPortraitTags": ["surprised", "troubled", "shy"],
-                            "useActiveTags": false,
                             "_comment": "被穿衣 未允许",
                             "responses": ["com_redress_Begin_B_1", "com_redress_Begin_B_2"]
                         }
@@ -324,27 +304,23 @@
                         {
                             "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] },
                             "extraSelfPortraitTags": ["sleeping", "relaxed"],
-                            "useActiveTags": false,
                             "_comment": "睡眠中 被穿衣",
                             "responses": ["com_redress_D_1", "com_redress_D_2"]
                         },
                         {
                             "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] },
                             "extraSelfPortraitTags": ["doll", "empty", "silence", "idle"],
-                            "useActiveTags": false,
                             "_comment": "时停中 被穿衣",
                             "responses": ["com_redress_E_1", "com_redress_E_2"]
                         },
                         {
                             "requirement": { "requirePermission": true },
                             "extraSelfPortraitTags": ["smile", "happy", "relaxed"],
-                            "useActiveTags": false,
                             "_comment": "穿好 有允许",
                             "responses": ["com_redress_I_1", "com_redress_I_2"]
                         },
                         {
                             "extraSelfPortraitTags": ["neutral", "shy", "sigh"],
-                            "useActiveTags": false,
                             "_comment": "穿好 未允许",
                             "responses": ["com_redress_K_1", "com_redress_K_2"]
                         }

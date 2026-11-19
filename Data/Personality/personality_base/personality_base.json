@@ -58,6 +58,8 @@
                     },
                     {
                         "ID": "Greeting",
+                        "template": "none",
+                        "templateNote": "mechanism: kojo variables only, no dialogue",
                         "interruptSelfJob": true,
                         "interruptTargetJob": true,
                         "variants": [
@@ -81,6 +83,8 @@
                     },
                     {
                         "ID": "DailyGreeting",
+                        "template": "none",
+                        "templateNote": "mechanism: calls Descriptor, kojo variables, silent branch; no dialogue",
                         "interruptSelfJob": true,
                         "interruptTargetJob": true,
                         "variants": [
@@ -92,7 +96,8 @@
                             },
                             {
                                 "requirement": { "selfTags": ["privacy"], "requireTargetAction": false, "requireEPSuccess": false },
-                                "forbidPortaitDisplay": true
+                                "forbidPortaitDisplay": true,
+                                "silent": true
                             },
                             {
                                 "requirement": {
@@ -115,6 +120,8 @@
                     },
                     {
                         "ID": "Interrupt",
+                        "template": "none",
+                        "templateNote": "mechanism: calls DisruptSleep, launches events, cooldowns; no dialogue",
                         "interruptSelfJob": true,
                         "variants": [
                             {
@@ -154,11 +161,14 @@
                     },
                     {
                         "ID": "DisruptSleep",
+                        "template": "none",
+                        "templateNote": "mechanism: sleep status changes, silent branches; no dialogue",
                         "variants": [
                             {
                                 "tags": ["nsfw"],
                                 "requirement": { "requireSelfAction": false, "selfTags": ["sleeping","timestop"] },
-                                "responses": []
+                                "responses": [],
+                                "silent": true
                             },
                             {
                                 "tags": ["nsfw"],
@@ -169,7 +179,8 @@
                             {
                                 "tags": ["nsfw"],
                                 "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"], "selfReq": { "requireConscious": false, "requireAction": false, "requireStatusValue": [ { "statusID": "chara_status_sleeping", "operand": "gte", "value": 1.9 } ] } },
-                                "responses": []
+                                "responses": [],
+                                "silent": true
                             },
                             {
                                 "tags": ["nsfw"],
@@ -186,7 +197,8 @@
                             {
                                 "tags": ["nsfw"],
                                 "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"], "selfReq": { "requireConscious": false, "requireAction": false, "requireStatusValue": [ { "statusID": "chara_status_sleeping", "operand": "gte", "value": 0.9 } ] } },
-                                "responses": []
+                                "responses": [],
+                                "silent": true
                             },
                             {
                                 "tags": ["nsfw"],

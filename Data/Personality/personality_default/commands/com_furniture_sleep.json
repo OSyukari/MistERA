@@ -12,13 +12,11 @@
                             "requireSelfNotMaster": true,
                             "requirement": { "requireSelfForced": true },
                             "extraSelfPortraitTags": ["troubled", "fear"],
-                            "useActiveTags": false,
                             "responses": ["kojo_sleep_begin_forced_1", "kojo_sleep_begin_forced_2"]
                         },
                         {
                             "requirement": { "variantID": 1 },
                             "extraSelfPortraitTags": ["relaxed"],
-                            "useActiveTags": false,
                             "responses": ["kojo_sleep_begin_together_1", "kojo_sleep_begin_together_2"]
                         },
                         {
@@ -26,15 +24,14 @@
                             "requireSelfNotMaster": true,
                             "requirement": { "requireSelfAttitudeGTE": "Like" },
                             "extraSelfPortraitTags": ["happy", "relaxed"],
-                            "useActiveTags": false,
                             "responses": ["kojo_sleep_begin_like_1", "kojo_sleep_begin_like_2"]
                         },
                         {
                             "extraSelfPortraitTags": ["relaxed"],
-                            "useActiveTags": false,
                             "responses": ["kojo_sleep_begin_1", "kojo_sleep_begin_2", "kojo_sleep_begin_3"]
                         }
-                    ]
+                    ],
+                    "template": "commandAct"
                 }
             },
             {
@@ -56,7 +53,8 @@
                             "useActiveTags": false,
                             "responses": ["kojo_sleep_refuse_hostile_1", "kojo_sleep_refuse_hostile_2", "kojo_sleep_refuse_hostile_3"]
                         }
-                    ]
+                    ],
+                    "template": "commandResult"
                 }
             },
             {

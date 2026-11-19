@@ -20,7 +20,7 @@ public static class PortraitUsage
 
     public const string ReasonNoCategoryFolder = "not in a category folder";
     public const string ReasonFolderUnused = "category folder not used by the portrait handler";
-    public const string ReasonNoPattern = "file name matches no handler variant (name or suffix not mapped)";
+    public const string ReasonNoPattern = "file name matches no handler variant (no asset prefix / mapped name reads it)";
 
     class Pattern
     {
@@ -36,7 +36,9 @@ public static class PortraitUsage
         public int pool;
         public List<string> tags;
         public List<string> exclude;
-        public readonly List<string> classifications = new List<string>();
+        /// <summary>portrait_global.SexPortraitVariantConfig entry id and its asset prefixes as written; null / empty for mapped portraits</summary>
+        public string id;
+        public List<string> sources;
         public readonly List<Pattern> patterns = new List<Pattern>();
     }
 
@@ -49,18 +51,15 @@ public static class PortraitUsage
 
     /// <summary>
     /// Writes the "portrait" value of the report JSON:
-    /// { error } or { handlers: [{ folders, self, target }], variants: [{ h, pool (first variant with the same patterns), tags, excl, classifications }] (template priority order),
+    /// { error } or { handlers: [{ folders, self, target }], variants: [{ h, pool (first variant with the same patterns), tags, excl, id, sources }] (template priority order),
     ///   roots: [{ name, f, slots: [{ v, items: [global item index], shadow: variant index | -1 }] }], unplaced: [[item, reason]] }.
     /// Global item index = position in the report's folders[].items, folders with a cache only, in order (the page's flattened list).
     /// </summary>
     public static void Write(JsonTextWriter w, List<ImageReportFolder> folders, string rulesPath)
     {
         List<PortraitManager.CharaPortrait> handlers;
-        List<string> classificationNames;
         try
         {
-            var rules = ImageRulesJsonLoader.Load(rulesPath);
-            classificationNames = rules.nameSets.Values.SelectMany(set => set).Select(n => n.name).Distinct().ToList();
             handlers = GlobalPortraitTemplate.BuildTemplate(JObject.Parse(File.ReadAllText(rulesPath)));
         }
         catch (Exception e)
@@ -70,15 +69,13 @@ public static class PortraitUsage
             w.WriteEndObject();
             return;
         }
-        Write(w, folders, handlers, classificationNames);
+        Write(w, folders, handlers);
     }
 
     /// <summary>Write with an already built template (handlers in priority order, regexes still holding the placeholder).</summary>
-    public static void Write(JsonTextWriter w, List<ImageReportFolder> folders, List<PortraitManager.CharaPortrait> handlers, IEnumerable<string> classificationNames = null)
+    public static void Write(JsonTextWriter w, List<ImageReportFolder> folders, List<PortraitManager.CharaPortrait> handlers)
     {
         // template tables
-        var names = (classificationNames ?? Enumerable.Empty<string>()).Where(n => !string.IsNullOrEmpty(n))
-            .Distinct(StringComparer.Ordinal).OrderByDescending(n => n.Length).ToList();
         var variants = new List<TemplateVariant>();
         var usedFolders = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var regexes = new Dictionary<string, Regex>();
@@ -95,15 +92,15 @@ public static class PortraitUsage
                 {
                     var patternKey = string.Join("\n", hv[v].PortraitVariantData);
                     if (!poolByPatterns.TryGetValue(patternKey, out var pool)) poolByPatterns[patternKey] = pool = variants.Count;
-                    var tv = new TemplateVariant { handler = h, pool = pool, tags = hv[v].tagsMatch ?? new List<string>(), exclude = hv[v].tagsExclude ?? new List<string>() };
+                    var tv = new TemplateVariant
+                    {
+                        handler = h, pool = pool, tags = hv[v].tagsMatch ?? new List<string>(), exclude = hv[v].tagsExclude ?? new List<string>(),
+                        id = hv[v].templateId, sources = hv[v].templateSources ?? new List<string>(),
+                    };
                     foreach (var p in hv[v].PortraitVariantData)
                     {
                         var folder = PatternFolder(p);
                         if (folder == null) continue;
-                        // Read the configured ID from the template, even when no cached image matches it.
-                        var prefix = GlobalPortraitTemplate.Placeholder + "/" + Regex.Escape(folder) + "/";
-                        var classification = names.FirstOrDefault(id => p.StartsWith(prefix + Regex.Escape(id) + "_", StringComparison.Ordinal));
-                        if (classification != null && !tv.classifications.Contains(classification)) tv.classifications.Add(classification);
                         if (!regexes.TryGetValue(p, out var regex))
                         {
                             try { regex = GlobalPortraitTemplate.KeyRegex(p, RootToken); }
@@ -134,7 +131,8 @@ public static class PortraitUsage
             w.WritePropertyName("pool"); w.WriteValue(tv.pool);
             w.WritePropertyName("tags"); WriteStrings(w, tv.tags);
             w.WritePropertyName("excl"); WriteStrings(w, tv.exclude);
-            w.WritePropertyName("classifications"); WriteStrings(w, tv.classifications);
+            if (tv.id != null) { w.WritePropertyName("id"); w.WriteValue(tv.id); }
+            w.WritePropertyName("sources"); WriteStrings(w, tv.sources);
             w.WriteEndObject();
         }
         w.WriteEndArray();

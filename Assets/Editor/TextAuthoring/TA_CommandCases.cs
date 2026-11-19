@@ -17,11 +17,16 @@ public partial class TA_CommandDocBuilder
     /// <summary>Command facts the template's `when` lists test.</summary>
     class CaseFacts
     {
-        public bool pair, ongoing, sex, d20, joinable, strong, group, itemExec;
+        /// <summary>
+        /// pair = acted on a receiver (doer / receiver cases), solo = acted alone (self cases); both for a command that can
+        /// do either (COM.kojoParticipants via TA_KojoParticipants.DocShapes, Plan_KojoTemplates.md §7.12).
+        /// </summary>
+        public bool pair, solo, ongoing, sex, d20, joinable, strong, group, itemExec;
         public HashSet<string> Flags()
         {
             var f = new HashSet<string>();
-            f.Add(pair ? "pair" : "solo");
+            if (pair) f.Add("pair");
+            if (solo) f.Add("solo");
             if (ongoing) f.Add("ongoing");
             if (sex) f.Add("sex");
             if (d20) f.Add("d20");
@@ -35,10 +40,11 @@ public partial class TA_CommandDocBuilder
 
     CaseFacts Facts()
     {
-        var req = com.requirements.requirement;
+        TA_KojoParticipants.DocShapes(com, out bool pair, out bool solo);
         var f = new CaseFacts
         {
-            pair = !(req.TreatReceiverAsDoer || req.receiverCount == 0),
+            pair = pair,
+            solo = solo,
             ongoing = com.TimeScale > 1,
             sex = com.comTags.Contains("sex"),
             d20 = com.baseD20Check > 0,
@@ -62,8 +68,8 @@ public partial class TA_CommandDocBuilder
         return side == "receiver" ? req.req_Receivers : req.req_Doers;
     }
 
-    /// <summary>reachableIf: every listed CharaReq field has the given value.</summary>
-    static bool Reachable(CharaReq q, JObject reachableIf)
+    /// <summary>reachableIf: every listed CharaReq field has the given value. Also used by TA_KojoIndex (template fallback context).</summary>
+    internal static bool Reachable(CharaReq q, JObject reachableIf)
     {
         if (q == null) return false;
         if (reachableIf == null) return true;
@@ -158,7 +164,7 @@ public partial class TA_CommandDocBuilder
 
     static string RoleLabel(string side, CaseFacts facts)
     {
-        if (!facts.pair) return "自己";
+        if (side == "self" || !facts.pair) return "自己";
         return side == "receiver" ? "受方" : side == "doer" ? "施方" : side;
     }
 
@@ -336,7 +342,8 @@ public partial class TA_CommandDocBuilder
             for (int si = 0; si < speakers.Count; si++)
             {
                 var speaker = (string)speakers[si];
-                if (speaker == "self" && facts.pair) continue;
+                // self cases when the command can run alone, doer / receiver cases when it can act on a receiver (both possible)
+                if (speaker == "self" && !facts.solo) continue;
                 if ((speaker == "receiver" || speaker == "doer") && !facts.pair) continue;
                 bool required = phaseRequired && ((bool?)roles[speaker]?["required"] ?? false);
                 var mySide = speaker == "receiver" ? "receiver" : "doer";
@@ -359,7 +366,7 @@ public partial class TA_CommandDocBuilder
                 var listeners = new List<string>();
                 if (t["listeners"] is JArray la) for (int i = 0; i < la.Count; i++) listeners.Add((string)la[i]);
                 else if (speaker == "joiner") listeners.Add("player");
-                else if (facts.pair) { listeners.Add("player"); listeners.Add("npc"); }
+                else if (speaker != "self") { listeners.Add("player"); listeners.Add("npc"); }
                 else { listeners.Add("self"); listeners.Add("player"); }
 
                 for (int ss = 0; ss < speakerStates.Count; ss++)
@@ -367,7 +374,7 @@ public partial class TA_CommandDocBuilder
                     var sState = speakerStates[ss];
                     // the other side's states matter only while the speaker is awake (one non-awake side per case)
                     var listenerStates = new List<string> { "awake" };
-                    if (withStates && sState == "awake" && facts.pair) listenerStates.AddRange(SideStates(otherSide));
+                    if (withStates && sState == "awake" && speaker != "self" && facts.pair) listenerStates.AddRange(SideStates(otherSide));
                     for (int li = 0; li < listeners.Count; li++)
                     {
                         var listener = listeners[li];
@@ -379,7 +386,7 @@ public partial class TA_CommandDocBuilder
                             for (int oi = 0; oi < outcomes.Count; oi++)
                             {
                                 var outcome = (string)outcomes[oi];
-                                if (outcome == "refuse" && !CanRefuse(facts, receiverState, listener, requireState)) continue;
+                                if (outcome == "refuse" && !CanRefuse(receiverState, listener, requireState, speaker == "self")) continue;
                                 // the doer refusing its master's order (EvaluationPackage.LogMessage_Kojo: kojo to the master)
                                 if (outcome == "refuseOrder" && (!ordered || speaker != "doer" || sState != "awake")) continue;
                                 var results = outcome == "accept" && d20 ? new[] { "success", "failure" } : new[] { outcome };
@@ -423,9 +430,10 @@ public partial class TA_CommandDocBuilder
     /// A refusal exists only where the receiver decides awake and free (EVP_Modifiers: time-stopped, climaxing,
     /// unconscious, restrained always accept); solo: only when the player ordered it (the refusal goes to the orderer).
     /// </summary>
-    static bool CanRefuse(CaseFacts facts, string receiverState, string listener, string requireState)
+    static bool CanRefuse(string receiverState, string listener, string requireState, bool selfSpeaker)
     {
-        if (!facts.pair) return listener == "player";
+        // acting alone: refused only when the player ordered it (the refusal goes to the orderer)
+        if (selfSpeaker) return listener == "player";
         if (requireState != null) return true;      // woken: re-asked awake
         if (receiverState == "awake") return true;
         var s = TA_CaseTemplate.States[receiverState];

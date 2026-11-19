@@ -266,6 +266,8 @@ public class ImageClassifierEngine
             if (n.onlyInCategories != null && !n.onlyInCategories.Contains(result.CategoryId)) continue;
             // Opt-in hard exclusions veto filename overrides without changing other names' filename-first behavior.
             if (n.noneThreshold.HasValue && NameExcluded(r, n)) continue;
+            // Opt-in tag confirmation: ambiguous aliases (a character id "dorothy.after" + "fellatio") need the entry's evidence.
+            if (n.filenameRequires.Count > 0 && !n.filenameRequires.All(c => ClauseScore(r, c, n.threshold ?? s.tagThreshold) > 0f)) continue;
             // Fallback labels are too generic for filename evidence; explicit configured aliases still identify an act.
             IEnumerable<string> aliases = n.fallback ? Enumerable.Empty<string>() : new[] { n.name };
             if (rules.filenameHints.TryGetValue(n.name, out var extra)) aliases = aliases.Concat(extra);

@@ -941,6 +941,10 @@ public class PortraitManager
         public CharaReq charaReq = null;
         /// <summary> global portrait template only: position in its template handler, aligns the same variant of two folders (GlobalPortraitTemplate.GetMergedHandlers) </summary>
         [JsonIgnore] public int templateIndex = -1;
+        /// <summary> global portrait template only: the portrait_global.SexPortraitVariantConfig entry id this variant was built from (label, no effect) </summary>
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public string templateId = null;
+        /// <summary> global portrait template only: the entry's asset prefixes as written (assetPrefix + assetPrefix_perform), for the editor report </summary>
+        [JsonIgnore] public List<string> templateSources = null;
 
         /// <summary>
         /// Image handlers only (Image / LandscapeImage): PortraitVariantData resolved into image paths.

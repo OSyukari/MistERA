@@ -18,6 +18,12 @@ public partial class ResponseEntry
     public bool requirePlayer = true;
     /// <summary>Opt-in for automatic command Kojo: address the action partner, not an injected master/listener.</summary>
     public bool useEPPartnerAsTarget = false;
+    /// <summary>Authoring only (Docs/TextAuthoring/Plan_KojoTemplates.md): the kojo template this entry follows; "none" = exempt. Not read by the game.</summary>
+    public string template = "";
+    /// <summary>Authoring only: why the entry is exempt or deviates from its template.</summary>
+    public string templateNote = "";
+    /// <summary>Authoring only: ids of the template's extras (custom variants with pre-written conditions) this entry may have.</summary>
+    public List<string> templateExtras = null;
 
 
     public string CheckRedirect(string original)
@@ -206,6 +212,13 @@ public partial class ResponseEntry
     public void RemoveVariantsByTag(string tag)
     {
         this.variants.RemoveAll(x => x.tags.Contains(tag));
+        RefreshDisabled();
+    }
+
+    /// <summary>Recomputes every variant's disabled flag (after load and after variants are edited).</summary>
+    public void RefreshDisabled()
+    {
+        for (int i = 0; i < variants.Count; i++) if (variants[i] != null) variants[i].RefreshDisabled();
     }
     public MessageCollect_KojoEntry GetResponse(Character_Relationship rel, List<EvaluationPackage> selfEPs, List<EvaluationPackage> targetEPs)
     {

@@ -56,6 +56,30 @@ public partial class ResponseEntry
 
         public List<Variant> variants = new List<Variant>();
 
+        /// <summary>
+        /// Deliberate silence: the variant passes and says nothing on purpose, ending the search (e.g. a time-stopped
+        /// sleeper in DisruptSleep). Keeps a variant with no possible output enabled (see disabled).
+        /// </summary>
+        public bool silent = false;
+
+        /// <summary>
+        /// Nothing in this subtree can produce output - no response text, selfEventCall or results - and it isn't
+        /// silent: GetRandomResponse fails at once without checking conditions. Set by RefreshDisabled after load.
+        /// </summary>
+        [JsonIgnore] public bool disabled = false;
+
+        /// <summary>Recomputes disabled for this subtree; returns whether this variant can produce output.</summary>
+        public bool RefreshDisabled()
+        {
+            bool output = silent || !string.IsNullOrEmpty(selfEventCall) || (results != null && results.Count > 0);
+            if (!output && responses != null)
+                for (int i = 0; i < responses.Count && !output; i++) if (!string.IsNullOrEmpty(responses[i])) output = true;
+            if (variants != null)
+                for (int i = 0; i < variants.Count; i++) if (variants[i] != null && variants[i].RefreshDisabled()) output = true;
+            disabled = !output;
+            return output;
+        }
+
         public bool HasResponses()
         {
             for (int i = 0; i < responses.Count; i++) if (!string.IsNullOrEmpty(responses[i])) return true;
@@ -87,7 +111,7 @@ public partial class ResponseEntry
         public bool GetRandomResponse(out MessageCollect_KojoEntry response, KojoCollector kol, bool skipExecute = false)
         {
             // first apply cost
-            if (!isValid(kol))
+            if (disabled || !isValid(kol))
             {
                 response = null;
                 return false;
@@ -173,7 +197,7 @@ public partial class ResponseEntry
         public bool GetRandomResponse(out MessageCollect_KojoEntry response, Character_Relationship rel, EvaluationPackage ep, List<string> selfTags, List<string> targetTags, bool isPlayerInvolved = false, bool skipExecute = false)
         {
             // first apply cost
-            if (!isValid(rel, selfTags, targetTags, ep))
+            if (disabled || !isValid(rel, selfTags, targetTags, ep))
             {
                 response = null;
                 return false;

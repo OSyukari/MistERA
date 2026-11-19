@@ -12,21 +12,19 @@
                         {
                             "requirement": { "requirePermission": true },
                             "extraSelfPortraitTags": ["smile", "relaxed"],
-                            "useActiveTags": false,
                             "responses": ["pb_com_undress_outer_Begin_A_1", "pb_com_undress_outer_Begin_A_2"]
                         },
                         {
                             "requirement": { "requireSelfForced": true },
                             "extraSelfPortraitTags": ["fear", "trembling"],
-                            "useActiveTags": false,
                             "responses": ["pb_com_undress_outer_Begin_B_1", "pb_com_undress_outer_Begin_B_2"]
                         },
                         {
                             "extraSelfPortraitTags": ["surprised", "troubled"],
-                            "useActiveTags": false,
                             "responses": ["pb_com_undress_outer_Begin_C_1", "pb_com_undress_outer_Begin_C_2"]
                         }
-                    ]
+                    ],
+                    "template": "commandAct"
                 }
             },
             {
@@ -57,33 +55,29 @@
                         {
                             "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] },
                             "extraSelfPortraitTags": ["sleeping"],
-                            "useActiveTags": false,
                             "responses": ["pb_com_undress_outer_D_1"]
                         },
                         {
                             "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] },
                             "extraSelfPortraitTags": ["doll", "empty", "silence", "idle"],
-                            "useActiveTags": false,
                             "responses": ["pb_com_undress_outer_E_1"]
                         },
                         {
                             "requirement": { "requirePermission": true },
                             "extraSelfPortraitTags": ["relaxed", "smile"],
-                            "useActiveTags": false,
                             "responses": ["pb_com_undress_outer_I_1", "pb_com_undress_outer_I_2"]
                         },
                         {
                             "requirement": { "requireSelfForced": true },
                             "extraSelfPortraitTags": ["fear", "silence"],
-                            "useActiveTags": false,
                             "responses": ["pb_com_undress_outer_J_1", "pb_com_undress_outer_J_2"]
                         },
                         {
                             "extraSelfPortraitTags": ["troubled", "doubt"],
-                            "useActiveTags": false,
                             "responses": ["pb_com_undress_outer_K_1", "pb_com_undress_outer_K_2"]
                         }
-                    ]
+                    ],
+                    "template": "commandResult"
                 }
             },
             {
@@ -95,21 +89,19 @@
                         {
                             "requirement": { "requirePermission": true },
                             "extraSelfPortraitTags": ["smug", "confident"],
-                            "useActiveTags": false,
                             "responses": ["pb_com_undress_inner_Begin_A_1", "pb_com_undress_inner_Begin_A_2"]
                         },
                         {
                             "requirement": { "requireSelfForced": true },
                             "extraSelfPortraitTags": ["fear", "trembling"],
-                            "useActiveTags": false,
                             "responses": ["pb_com_undress_inner_Begin_B_1", "pb_com_undress_inner_Begin_B_2"]
                         },
                         {
                             "extraSelfPortraitTags": ["blush", "troubled"],
-                            "useActiveTags": false,
                             "responses": ["pb_com_undress_inner_Begin_C_1", "pb_com_undress_inner_Begin_C_2"]
                         }
-                    ]
+                    ],
+                    "template": "commandAct"
                 }
             },
             {
@@ -141,33 +133,29 @@
                         {
                             "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] },
                             "extraSelfPortraitTags": ["sleeping"],
-                            "useActiveTags": false,
                             "responses": ["pb_com_undress_inner_D_1"]
                         },
                         {
                             "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] },
                             "extraSelfPortraitTags": ["doll", "empty", "silence", "idle"],
-                            "useActiveTags": false,
                             "responses": ["pb_com_undress_inner_E_1"]
                         },
                         {
                             "requirement": { "requirePermission": true },
                             "extraSelfPortraitTags": ["confident", "aroused"],
-                            "useActiveTags": false,
                             "responses": ["pb_com_undress_inner_I_1", "pb_com_undress_inner_I_2"]
                         },
                         {
                             "requirement": { "requireSelfForced": true },
                             "extraSelfPortraitTags": ["fear", "sad"],
-                            "useActiveTags": false,
                             "responses": ["pb_com_undress_inner_J_1", "pb_com_undress_inner_J_2"]
                         },
                         {
                             "extraSelfPortraitTags": ["blush", "troubled"],
-                            "useActiveTags": false,
                             "responses": ["pb_com_undress_inner_K_1", "pb_com_undress_inner_K_2"]
                         }
-                    ]
+                    ],
+                    "template": "commandResult"
                 }
             },
             {
@@ -179,21 +167,19 @@
                         {
                             "requirement": { "requirePermission": true },
                             "extraSelfPortraitTags": ["aroused", "smug"],
-                            "useActiveTags": false,
                             "responses": ["pb_com_undress_skin_Begin_A_1", "pb_com_undress_skin_Begin_A_2"]
                         },
                         {
                             "requirement": { "requireSelfForced": true },
                             "extraSelfPortraitTags": ["fear", "trembling", "tearful"],
-                            "useActiveTags": false,
                             "responses": ["pb_com_undress_skin_Begin_B_1", "pb_com_undress_skin_Begin_B_2"]
                         },
                         {
                             "extraSelfPortraitTags": ["blush", "troubled"],
-                            "useActiveTags": false,
                             "responses": ["pb_com_undress_skin_Begin_C_1", "pb_com_undress_skin_Begin_C_2"]
                         }
-                    ]
+                    ],
+                    "template": "commandAct"
                 }
             },
             {
@@ -225,33 +211,29 @@
                         {
                             "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] },
                             "extraSelfPortraitTags": ["sleeping"],
-                            "useActiveTags": false,
                             "responses": ["pb_com_undress_skin_D_1"]
                         },
                         {
                             "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] },
                             "extraSelfPortraitTags": ["doll", "empty", "silence", "idle"],
-                            "useActiveTags": false,
                             "responses": ["pb_com_undress_skin_E_1"]
                         },
                         {
                             "requirement": { "requirePermission": true },
                             "extraSelfPortraitTags": ["aroused", "confident"],
-                            "useActiveTags": false,
                             "responses": ["pb_com_undress_skin_I_1", "pb_com_undress_skin_I_2"]
                         },
                         {
                             "requirement": { "requireSelfForced": true },
                             "extraSelfPortraitTags": ["fear", "tearful"],
-                            "useActiveTags": false,
                             "responses": ["pb_com_undress_skin_J_1", "pb_com_undress_skin_J_2"]
                         },
                         {
                             "extraSelfPortraitTags": ["blush", "troubled", "silence"],
-                            "useActiveTags": false,
                             "responses": ["pb_com_undress_skin_K_1", "pb_com_undress_skin_K_2"]
                         }
-                    ]
+                    ],
+                    "template": "commandResult"
                 }
             },
             {
@@ -270,12 +252,10 @@
                         {
                             "requirement": { "requirePermission": true },
                             "extraSelfPortraitTags": ["smile", "relaxed"],
-                            "useActiveTags": false,
                             "responses": ["pb_com_redress_Begin_A_1", "pb_com_redress_Begin_A_2"]
                         },
                         {
                             "extraSelfPortraitTags": ["surprised", "troubled"],
-                            "useActiveTags": false,
                             "responses": ["pb_com_redress_Begin_B_1", "pb_com_redress_Begin_B_2"]
                         }
                     ]
@@ -289,24 +269,20 @@
                         {
                             "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] },
                             "extraSelfPortraitTags": ["sleeping"],
-                            "useActiveTags": false,
                             "responses": ["pb_com_redress_D_1"]
                         },
                         {
                             "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] },
                             "extraSelfPortraitTags": ["doll", "empty", "silence", "idle"],
-                            "useActiveTags": false,
                             "responses": ["pb_com_redress_E_1"]
                         },
                         {
                             "requirement": { "requirePermission": true },
                             "extraSelfPortraitTags": ["smile", "relaxed"],
-                            "useActiveTags": false,
                             "responses": ["pb_com_redress_I_1", "pb_com_redress_I_2"]
                         },
                         {
                             "extraSelfPortraitTags": ["neutral", "sigh"],
-                            "useActiveTags": false,
                             "responses": ["pb_com_redress_K_1", "pb_com_redress_K_2"]
                         }
                     ]

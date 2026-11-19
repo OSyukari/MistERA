@@ -14,7 +14,6 @@
                                 ]
                             },
                             "extraSelfPortraitTags": ["sleeping", "relaxed"],
-                            "useActiveTags": false,
                             "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
                             "responses": [
                                 "com_touch_foot_toes_Begin_Sleep_1",
@@ -29,7 +28,6 @@
                                 ]
                             },
                             "extraSelfPortraitTags": ["doll", "empty", "silence", "idle"],
-                            "useActiveTags": false,
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_touch_foot_toes_Begin_Timestop_1",
@@ -45,7 +43,6 @@
                                 "blush",
                                 "affectionate"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.1.1 开始被撫摸脚趾 有允许 口上文",
                             "responses": [
                                 "com_touch_foot_toes_Begin_01",
@@ -60,7 +57,6 @@
                             "extraSelfPortraitTags": [
                                 "blush"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.2.1 开始被撫摸脚趾 未允许 好意 口上文",
                             "responses": [
                                 "com_touch_foot_toes_Begin_04",
@@ -73,7 +69,6 @@
                                 "fear",
                                 "trembling"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.2.2 开始被撫摸脚趾 未允许 敌意 口上文",
                             "responses": [
                                 "com_touch_foot_toes_Begin_07",
@@ -81,7 +76,8 @@
                                 "com_touch_foot_toes_Begin_09"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandAct"
                 }
             },
             {
@@ -100,7 +96,6 @@
                                 "sleeping",
                                 "relaxed"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.3.2 睡眠中 被撫摸脚趾 口上文",
                             "responses": [
                                 "com_touch_foot_toes_Sleep_01",
@@ -121,7 +116,6 @@
                                 "silence",
                                 "idle"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.3.1 时停中 被撫摸脚趾 口上文",
                             "responses": [
                                 "com_touch_foot_toes_TimeStop_01",
@@ -196,7 +190,6 @@
                             "requirement": {
                                 "requireEPSuccessGTE": "Success"
                             },
-                            "useActiveTags": false,
                             "_player only version": {
                                 "requirement": {
                                     "targetBaseID": "PLAYER"
@@ -215,7 +208,6 @@
                                         "happy",
                                         "relaxed"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.1.3 ($self$) 被撫摸脚趾 结果正面 有允许 口上文",
                                     "responses": [
                                         "com_touch_foot_toes_SuccPerm_01",
@@ -250,7 +242,6 @@
                                         "doubt",
                                         "disappointed"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.1.4 ($self$) 被撫摸脚趾 结果负面 有允许 口上文",
                                     "responses": [
                                         "com_touch_foot_toes_BadPerm_01",
@@ -270,14 +261,14 @@
                                 "troubled",
                                 "silence"
                             ],
-                            "useActiveTags": false,
                             "responses": [
                                 "com_touch_foot_toes_BadNoPerm_01",
                                 "com_touch_foot_toes_BadNoPerm_02",
                                 "com_touch_foot_toes_BadNoPerm_03"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandResult"
                 }
             }
         ]

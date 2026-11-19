@@ -6,6 +6,7 @@
             {
                 "parentCOMID":"com_sex_base",
                 "ID":"com_sex_oral_P_Force",
+                "kojoParticipants":"PairDistinct",
                 "_comment_traces":"Body traces: aroused doer's precum into the receiver's mouth, saliva on the penis, the doer's pubes on the receiver's face (low chance).",
                 "traceKeywords":["lick","wet","oral"],
                 "ActionPackageClass":"ActionPackage_Sex",
@@ -129,6 +130,7 @@
             {
                 "parentCOMID":"com_sex_base",
                 "ID":"com_sex_oral_P_Force_deep",
+                "kojoParticipants":"PairDistinct",
                 "upgradeFrom":"com_sex_oral_P_Force",
                 "_comment_upgrade":"Upgrade of com_sex_oral_P_Force (was its overpenetration setForce variants): forced deep throat, needs a long enough penis (requireExisting OverPenetration). One round in place of the ongoing forced blowjob, which then resumes. Own acceptance roll every round. AC/DC copied from the forced blowjob for tuning; setForce keeps the strong-act rules. Texts and kojo: the forced blowjob's unless its own are added.",
                 "_comment_traces":"Body traces: aroused doer's precum into the receiver's mouth, saliva on the penis, the doer's pubes on the receiver's face (low chance).",

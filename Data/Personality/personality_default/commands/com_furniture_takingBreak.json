@@ -69,7 +69,6 @@
                                 "happy",
                                 "resting"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.5.3 成功（正面反馈）行动结束结果",
                             "responses": [
                                 "com_furniture_takingBreak_25",
@@ -88,7 +87,6 @@
                                 "pouting",
                                 "doubt"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.5.4 成功（负面反馈）行动结束结果",
                             "responses": [
                                 "com_furniture_takingBreak_31",
@@ -99,7 +97,8 @@
                                 "com_furniture_takingBreak_36"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandResult"
                 }
             },
             {
@@ -118,7 +117,6 @@
                                 "blush",
                                 "affectionate"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.3.3 主动接受",
                             "responses": [
                                 "com_furniture_takingBreak_Begin_1",
@@ -141,7 +139,6 @@
                                 "tearful",
                                 "pain"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.3.5 被动接受（屈服）",
                             "responses": [
                                 "com_furniture_takingBreak_Begin_7",
@@ -158,7 +155,6 @@
                             "extraSelfPortraitTags": [
                                 "blush"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.3.4 被动接受（惊讶不反感）",
                             "responses": [
                                 "com_furniture_takingBreak_Begin_13",
@@ -173,7 +169,6 @@
                             "extraSelfPortraitTags": [
                                 "relaxed"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.1.1 行动开始",
                             "responses": [
                                 "com_furniture_takingBreak_Begin_19",
@@ -184,7 +179,8 @@
                                 "com_furniture_takingBreak_Begin_24"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandAct"
                 }
             },
             {
@@ -203,7 +199,8 @@
                                 "com_furniture_takingBreak_Tryjoin_6"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "interaction"
                 }
             },
             {
@@ -215,7 +212,8 @@
                             "_comment": "2.3.7 NPC的请求被同意后，NPC的反应",
                             "responses": []
                         }
-                    ]
+                    ],
+                    "template": "interaction"
                 }
             },
             {
@@ -227,7 +225,8 @@
                             "_comment": "2.3.8 NPC的请求被拒绝后，NPC的反应",
                             "responses": []
                         }
-                    ]
+                    ],
+                    "template": "interaction"
                 }
             },
             {
@@ -331,7 +330,8 @@
                                 "com_furniture_takingBreak_Join_30"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandJoin"
                 }
             },
             {
@@ -350,7 +350,8 @@
                                 "com_furniture_takingBreak_Ongoing_6"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandAct"
                 }
             },
             {
@@ -449,7 +450,8 @@
                                 "com_furniture_takingBreak_Interrupt_30"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "interaction"
                 }
             },
              {

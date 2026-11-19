@@ -4,6 +4,7 @@
     "list":[
         {
             "ID":"com_sex_service_base",
+            "kojoParticipants":"PairDistinct",
             "ActionPackageClass":"ActionPackage_Sex",
             "displayName":"com_sex_service_base",
             "timeScale":3,
@@ -25,6 +26,7 @@
         },
         {
             "ID":"com_sex_base",
+            "kojoParticipants":"PairDistinct",
             "ActionPackageClass":"ActionPackage_Sex",
             "displayName":"com_sex_base",
             "timeScale":3,

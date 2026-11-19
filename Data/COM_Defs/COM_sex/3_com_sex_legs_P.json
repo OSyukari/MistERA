@@ -6,6 +6,7 @@
             {
                 "parentCOMID":"com_sex_service_base",
                 "ID":"com_sex_legs_P",
+                "kojoParticipants":"PairDistinct",
                 "_comment_traces":"Body traces: aroused receiver's precum on the doer's leg.",
                 "traceKeywords":["wet"],
                 "ActionPackageClass":"ActionPackage_Sex",
@@ -13,7 +14,7 @@
                 "displayName":"com_sex_legs_P_displayName_1",
                 "timeScale":3,
                 "comTags":["sex","service", "position_face", "position_inequal"],
-                "portraitTags_Doer":["footjob"],
+                "portraitTags_Doer":["footjob", "handjob"],
                 "requirements":{
                     "requirement":{
                         "req_Doers":{

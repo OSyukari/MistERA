@@ -14,7 +14,6 @@
                                 ]
                             },
                             "extraSelfPortraitTags": ["sleeping", "relaxed"],
-                            "useActiveTags": false,
                             "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
                             "responses": [
                                 "com_touch_thigh_Begin_Sleep_1",
@@ -29,7 +28,6 @@
                                 ]
                             },
                             "extraSelfPortraitTags": ["doll", "empty", "silence", "idle"],
-                            "useActiveTags": false,
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_touch_thigh_Begin_Timestop_1",
@@ -45,7 +43,6 @@
                                 "blush",
                                 "affectionate"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.1.1 开始被抚摸大腿 有允许 口上文",
                             "responses": [
                                 "com_touch_thigh_Begin_1",
@@ -62,7 +59,6 @@
                             "extraSelfPortraitTags": [
                                 "blush"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.2.1 开始被抚摸大腿 未允许 好意 口上文",
                             "responses": [
                                 "com_touch_thigh_Begin_6",
@@ -76,7 +72,6 @@
                                 "fear",
                                 "trembling"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.2.2 开始被抚摸大腿 未允许 敌意 口上文",
                             "responses": [
                                 "com_touch_thigh_Begin_10",
@@ -85,7 +80,8 @@
                                 "com_touch_thigh_Begin_13"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandAct"
                 }
             },
             {
@@ -104,7 +100,6 @@
                                 "sleeping",
                                 "relaxed"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.3.2 睡眠中 被抚摸大腿 口上文",
                             "responses": [
                                 "com_touch_thigh_1",
@@ -127,7 +122,6 @@
                                 "silence",
                                 "idle"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.3.1 时停中 被抚摸大腿 口上文",
                             "responses": [
                                 "com_touch_thigh_6",
@@ -208,7 +202,6 @@
                             "requirement": {
                                 "requireEPSuccessGTE": "Success"
                             },
-                            "useActiveTags": false,
                             "_player only version": {
                                 "requirement": {
                                     "targetBaseID": "PLAYER"
@@ -227,7 +220,6 @@
                                         "happy",
                                         "relaxed"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.1.3 ($self$) 被抚摸大腿 结果正面 有允许 口上文",
                                     "responses": [
                                         "com_touch_thigh_24",
@@ -264,7 +256,6 @@
                                         "doubt",
                                         "disappointed"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.1.4 ($self$) 被抚摸大腿 结果负面 有允许 口上文",
                                     "responses": [
                                         "com_touch_thigh_32",
@@ -285,7 +276,6 @@
                                 "troubled",
                                 "silence"
                             ],
-                            "useActiveTags": false,
                             "responses": [
                                 "com_touch_thigh_36",
                                 "com_touch_thigh_37",
@@ -293,7 +283,8 @@
                                 "com_touch_thigh_39"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandResult"
                 }
             }
         ]

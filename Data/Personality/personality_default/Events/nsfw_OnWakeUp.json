@@ -199,6 +199,8 @@
                 "ID": "personality_default",
                 "Entry": {
                     "ID": "DisruptSleep",
+                    "template": "none",
+                    "templateNote": "event trigger (disrupted sleep); dedicated template later",
                     "_comment": "this event fire when character could be disrupted in sleep. this will be called when (1, there is direct interaction) (2, no direct interaction but self is light sleep)",
                     "variants": [
                         {

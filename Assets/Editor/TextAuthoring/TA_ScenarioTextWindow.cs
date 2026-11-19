@@ -873,7 +873,8 @@ public class TA_ScenarioTextWindow : EditorWindow
         if (TA_CaseTemplate.warnings.Count > 0) log.AppendLine("Case template: " + string.Join("; ", TA_CaseTemplate.warnings));
         log.AppendLine(WriteKojoIndex(x));
         var result = $"Extracted {units.Count} unit(s) -> {TA_Store.Root}\n{log}";
-        if (units.Count > 0) result += "\n" + TA_Changes.SyncFindings();
+        // also with no unit extracted: the rewritten kojo index carries its own findings (T2)
+        result += "\n" + TA_Changes.SyncFindings();
         ReloadStore();
         return result;
     }
@@ -944,6 +945,9 @@ public class TA_ScenarioTextWindow : EditorWindow
             if ((bool?)prop.Value["missing"] ?? false) { anyMissing = true; break; }
         if (anyMissing) log.AppendLine(RemoveMissingUnits());
         log.AppendLine(WriteKojoIndex(null));
+        // the index carries the per-entry shadowing findings (Plan_KojoTemplates.md T2): sync them after writing it
+        log.AppendLine(TA_Changes.SyncFindings());
+        ReloadStore();
         return log.ToString();
     }
 

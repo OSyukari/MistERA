@@ -6,6 +6,7 @@
         [
             {
                 "ID": "checkup_examination",
+                "kojoParticipants": "PairDistinct",
                 "_comment": "The doctor as doer, the patient as receiver. Variant 0 = preparing (no receiver yet - a player patient joins it through the join button, alone: joinAlone), variant 1 = examining. doerCount/receiverCount are upper limits; they also make the package joinable (MaxActorCount). Its timeScale is the checkup length; Job_Checkup fires Checkup_Result when it is over. Acceptance: forced by the checkup activity's AcceptanceMods.",
                 "ActionPackageClass": "ActionPackage_Interaction",
                 "displayName": "checkup_examination_displayName",

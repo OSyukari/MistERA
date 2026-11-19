@@ -93,7 +93,9 @@
                                 { "type": "Desire", "value": 3, "reverse": true }
                             ] }]
                         }
-                    ]
+                    ],
+                    "template": "interaction",
+                    "templateExtras": ["afterUnaware", "partnerPenis", "partnerMouth"]
                 }
             },
             {
@@ -176,7 +178,9 @@
                                 { "type": "Desire", "value": 3, "reverse": true }
                             ] }]
                         }
-                    ]
+                    ],
+                    "template": "interaction",
+                    "templateExtras": ["afterUnaware", "partnerPenis", "partnerMouth"]
                 }
             },
             {
@@ -228,7 +232,9 @@
                             "extraSelfPortraitTags": ["surprised", "blush"],
                             "responses": ["OnFirstExperience_W_generic_1"]
                         }
-                    ]
+                    ],
+                    "template": "interaction",
+                    "templateExtras": ["afterUnaware", "partnerPenis", "partnerMouth"]
                 }
             },
             {
@@ -326,7 +332,9 @@
                                 { "type": "Desire", "value": 3, "reverse": true }
                             ] }]
                         }
-                    ]
+                    ],
+                    "template": "interaction",
+                    "templateExtras": ["afterUnaware", "partnerMouth", "partnerPenis", "partnerAnus", "partnerVagina", "partnerClit"]
                 }
             },
             {
@@ -409,7 +417,9 @@
                                 { "type": "Desire", "value": 3, "reverse": true }
                             ] }]
                         }
-                    ]
+                    ],
+                    "template": "interaction",
+                    "templateExtras": ["afterUnaware"]
                 }
             },
             {
@@ -423,7 +433,9 @@
                             "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "requireSelfAction": false },
                             "responses": []
                         }
-                    ]
+                    ],
+                    "template": "none",
+                    "templateNote": "breast first experience has no kojo yet - bind to interaction when written"
                 }
             }
         ]

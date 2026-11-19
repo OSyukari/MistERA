@@ -20,7 +20,6 @@
                                 "excited",
                                 "happy"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.3.3 主动接受",
                             "responses": [
                                 "com_job_farm_maintain_Begin_1",
@@ -39,7 +38,6 @@
                                 "tearful",
                                 "pain"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.3.5 被动接受（屈服）",
                             "responses": [
                                 "com_job_farm_maintain_Begin_3",
@@ -52,7 +50,6 @@
                             "extraSelfPortraitTags": [
                                 "blush"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.3.4 被动接受（惊讶不反感）",
                             "responses": [
                                 "com_job_farm_maintain_Begin_5",
@@ -68,7 +65,6 @@
                                 "calm",
                                 "observation"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.1.1 行动开始",
                             "responses": [
                                 "com_job_farm_maintain_Begin_7",
@@ -77,7 +73,8 @@
                                 "com_job_farm_maintain_Begin_10"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandAct"
                 }
             },
             {
@@ -92,7 +89,8 @@
                                 "com_job_farm_maintain_Tryjoin_2"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "interaction"
                 }
             },
             {
@@ -107,7 +105,8 @@
                                 "com_job_farm_maintain_Joined_2"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "interaction"
                 }
             },
             {
@@ -122,7 +121,8 @@
                                 "com_job_farm_maintain_Join_Refused_2"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "interaction"
                 }
             },
             {
@@ -206,7 +206,8 @@
                                 "com_job_farm_maintain_Join_10"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandJoin"
                 }
             },
             {
@@ -224,7 +225,8 @@
                                 "com_job_farm_maintain_Ongoing_4"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandAct"
                 }
             },
             {
@@ -303,7 +305,8 @@
                                 "com_job_farm_maintain_Interrupt_10"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "interaction"
                 }
             },
             {
@@ -367,7 +370,6 @@
                                         "intrigued",
                                         "relaxed"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.5.3 成功（正面反馈）行动结束结果",
                                     "responses": [
                                         "com_job_farm_maintain_5",
@@ -387,7 +389,6 @@
                                 "annoyed",
                                 "disappointed"
                             ],
-                            "useActiveTags": false,
                             "responses": [
                                 "com_job_farm_maintain_7",
                                 "com_job_farm_maintain_8"
@@ -406,7 +407,6 @@
                                         "intrigued",
                                         "relaxed"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.5.1 失败但正面反馈",
                                     "responses": [
                                         "kojo_default_com_job_farm_maintain_accept_failure_1",
@@ -427,13 +427,13 @@
                                 "annoyed",
                                 "disappointed"
                             ],
-                            "useActiveTags": false,
                             "responses": [
                                 "com_job_farm_maintain_11",
                                 "com_job_farm_maintain_12"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandResult"
                 }
             }
         ]

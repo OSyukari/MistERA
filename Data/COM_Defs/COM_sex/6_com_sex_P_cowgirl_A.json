@@ -6,6 +6,7 @@
             {
                 "parentCOMID":"com_sex_base",
                 "ID":"com_sex_P_cowgirl_A",
+                "kojoParticipants":"PairDistinct",
                 "_comment_traces":"Body traces: aroused precum into the anus, pubes on the lower body, anal pubes on the penis (natural only), chances.",
                 "traceKeywords":["insert"],
                 "ActionPackageClass":"ActionPackage_Sex",
@@ -123,6 +124,7 @@
             {
                 "parentCOMID":"com_sex_base",
                 "ID":"com_sex_P_cowgirl_A_overpen",
+                "kojoParticipants":"PairDistinct",
                 "upgradeFrom":"com_sex_P_cowgirl_A",
                 "_comment_upgrade":"Upgrade of com_sex_P_cowgirl_A (was its overpenetration setForce variants; needs a long enough penis, requireExisting OverPenetration). One round in place of the ongoing anal cowgirl, which then resumes. Own acceptance roll every round. AC/DC copied from anal cowgirl for tuning; setForce keeps the strong-act rules. Texts and kojo: anal cowgirl's unless its own are added.",
                 "traceKeywords":["insert"],
@@ -189,6 +191,7 @@
             {
                 "parentCOMID":"com_sex_base",
                 "ID":"com_sex_P_cowgirl_A_force",
+                "kojoParticipants":"PairDistinct",
                 "upgradeFrom":"com_sex_P_cowgirl_A",
                 "_comment_upgrade":"Upgrade of com_sex_P_cowgirl_A (was its forceful setForce variants). One round in place of the ongoing anal cowgirl, which then resumes. Own acceptance roll every round. AC/DC copied from anal cowgirl for tuning; setForce keeps the strong-act rules. Texts and kojo: anal cowgirl's unless its own are added.",
                 "traceKeywords":["insert"],

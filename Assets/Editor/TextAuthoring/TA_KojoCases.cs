@@ -31,12 +31,13 @@ public abstract partial class TA_DocBuilderBase
     /// Whether the speaker is the act's master as kojo sees it (KojoCollector.LoadEP: Package.Master, else the doer). An
     /// NPC doer acting on its own is; a receiver isn't; an ordered doer isn't (the player ordered it: pair ordered cases,
     /// a solo NPC refusing the player's order, a solo NPC acting with the player - the command panel sets master = player).
-    /// Without an action package masterRef stays unset, so nobody is.
+    /// Without an action package masterRef stays unset, so nobody is. A solo actor walked in on or joined (listener
+    /// newcomer: _Interrupt / _Join, LoadEP with the newcomer as target) is its own act's master.
     /// </summary>
     static bool SpeakerIsMaster(KojoCaseSpec c)
     {
         if (c.noEP || c.ordered || c.speaker == "receiver" || c.speaker == "joiner") return false;
-        if (c.speaker == "self") return c.listener == "self";
+        if (c.speaker == "self") return c.listener == "self" || c.listener == "newcomer";
         return true;
     }
 
@@ -165,7 +166,8 @@ public abstract partial class TA_DocBuilderBase
         for (int i = 0; i < list.Count; i++)
         {
             var v = list[i];
-            if (v == null) continue;
+            // disabled (no possible output, not silent): the engine skips it without checking conditions
+            if (v == null || v.disabled) continue;
             if (blocked && !(v.requirement != null && v.requirement.allowRecording)) continue;
             if (TA_Conditions.Applies(v, ctx))
             {

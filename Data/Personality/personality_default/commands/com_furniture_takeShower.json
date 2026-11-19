@@ -39,7 +39,9 @@
                             ],
                             "responses": ["kojo_shower_refuse_receiver_fallback"]
                         }
-                    ]
+                    ],
+                    "template": "none",
+                    "templateNote": "command being reworked (was kojoParticipants TBD)"
                 }
             },
             {
@@ -70,7 +72,9 @@
                             ],
                             "responses": ["kojo_shower_accept_receiver_fallback"]
                         }
-                    ]
+                    ],
+                    "template": "none",
+                    "templateNote": "command being reworked (was kojoParticipants TBD)"
                 }
             },
             {

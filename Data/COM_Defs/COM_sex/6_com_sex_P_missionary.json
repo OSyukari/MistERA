@@ -4,6 +4,7 @@
             {
                 "parentCOMID":"com_sex_base",
                 "ID": "com_sex_P_missionary",
+                "kojoParticipants": "PairDistinct",
                 "_comment_traces":"Body traces: aroused precum into the vagina, aroused love juice on the penis, pubes both ways (chance).",
                 "traceKeywords":["insert"],
                 "categoryTags":["com_category_v"],
@@ -637,6 +638,7 @@
             {
                 "parentCOMID":"com_sex_base",
                 "ID": "com_sex_P_missionary_overpen",
+                "kojoParticipants": "PairDistinct",
                 "upgradeFrom": "com_sex_P_missionary",
                 "_comment_upgrade": "Upgrade of com_sex_P_missionary (was its overpenetration setForce variants; needs a long enough penis, requireExisting OverPenetration). One round in place of the ongoing missionary, which then resumes. Own acceptance roll on each new round (none when repeated right after an accepted round). AC/DC copied from missionary for tuning; setForce keeps the strong-act rules. Descriptions: missionary's (COM.OrUpgradeParent) - its existsPreviousCOM branch sees the suspended missionary. Kojo: missionary's lines.",
                 "traceKeywords":["insert"],
@@ -741,6 +743,7 @@
             {
                 "parentCOMID":"com_sex_base",
                 "ID": "com_sex_P_missionary_force",
+                "kojoParticipants": "PairDistinct",
                 "upgradeFrom": "com_sex_P_missionary",
                 "_comment_upgrade": "Upgrade of com_sex_P_missionary (was its forceful setForce variants). One round in place of the ongoing missionary, which then resumes. Own acceptance roll on each new round (none when repeated right after an accepted round). AC/DC copied from missionary for tuning; setForce keeps the strong-act rules. Descriptions: missionary's (COM.OrUpgradeParent). Kojo: missionary's lines.",
                 "traceKeywords":["insert"],

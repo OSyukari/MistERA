@@ -524,7 +524,11 @@ public class KojoCollector : I_ResultStorage, I_Records
         {
             this.commandID = ep.targetCOM.ID;
             this.comVariantID = ep.VariantID;
+
+            //ep.targetCOM.AddPortraitTags(this.actionTags, Owner == ep.Doer ? "doer" : Owner == ep.Receiver ? "receiver" : "");
         }
+
+        Utility.DistinctInPlace(actionTags);
 
         if (Target == null && target != null)
         {

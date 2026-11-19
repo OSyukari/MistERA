@@ -592,15 +592,33 @@ public class Character_Relationship
 
     /// <summary>
     /// Whether one of this relationship's types - bio, personal, or social (per shared faction) - is one of typeIDs
-    /// (null/empty = any). Inequal types match whichever side Owner is on (TargetScope.SelfRelationships).
+    /// (null/empty = any). A plain ID matches whichever side Owner is on (TargetScope.SelfRelationships); "&lt;ID&gt;:A" /
+    /// "&lt;ID&gt;:B" match only when Owner is on that side of an inequal type (Owner on side A when isA, as
+    /// SupportsPersonalRelationship) - e.g. relationship_parent:A = Owner is the parent.
     /// </summary>
     public bool HasRelationshipType(ICollection<string> typeIDs)
     {
         if (typeIDs == null || typeIDs.Count == 0) return true;
-        if (Relationship_Bio != null && typeIDs.Contains(Relationship_Bio.ID)) return true;
-        if (Relationship_Personal != null && typeIDs.Contains(Relationship_Personal.ID)) return true;
+        if (Relationship_Bio != null && MatchesType(typeIDs, Relationship_Bio.ID, isA_Bio)) return true;
+        if (Relationship_Personal != null && MatchesType(typeIDs, Relationship_Personal.ID, isA_Personal)) return true;
         foreach (var key in Relationship_Social_Keys)
-            if (tryGetSocialFaction(key, out var rel, out _) && rel != null && typeIDs.Contains(rel.ID)) return true;
+            if (tryGetSocialFaction(key, out var rel, out bool isA) && rel != null && MatchesType(typeIDs, rel.ID, isA)) return true;
+        return false;
+    }
+
+    /// <summary>typeIDs names typeID, plainly or with Owner's side suffix (":A" when ownerIsA, ":B" otherwise).</summary>
+    static bool MatchesType(ICollection<string> typeIDs, string typeID, bool ownerIsA)
+    {
+        foreach (var id in typeIDs)
+        {
+            if (id == null || !id.StartsWith(typeID, StringComparison.Ordinal)) continue;
+            if (id.Length == typeID.Length) return true;
+            if (id.Length == typeID.Length + 2 && id[typeID.Length] == ':')
+            {
+                char side = id[typeID.Length + 1];
+                if (side == (ownerIsA ? 'A' : 'B')) return true;
+            }
+        }
         return false;
     }
 

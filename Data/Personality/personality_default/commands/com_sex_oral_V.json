@@ -30,7 +30,6 @@
                                         "spread_pussy",
                                         "climax"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.4.1 受方 被舔阴 高潮 有允许 口上文",
                                     "responses": [
                                         "com_sex_oral_V_Climax_2",
@@ -49,7 +48,6 @@
                                 "spread_pussy",
                                 "climax"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.4.2 受方 被舔阴 高潮 无允许 口上文",
                             "responses": [
                                 "com_sex_oral_V_Climax_8",
@@ -60,7 +58,8 @@
                                 "com_sex_oral_V_Climax_13"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandClimax"
                 }
             },
             {
@@ -77,7 +76,6 @@
                                 "selfTags": ["firstexp_M", "sleeping"]
                             },
                             "extraSelfPortraitTags": ["sex", "doer", "cunnilingus", "sleeping", "relaxed"],
-                            "useActiveTags": false,
                             "_comment": "初体验 开始舔阴 睡眠中",
                             "responses": ["com_sex_oral_V_Begin_FE_Sleep_1", "com_sex_oral_V_Begin_FE_Sleep_2"]
                         },
@@ -87,7 +85,6 @@
                                 "selfTags": ["firstexp_M", "timestop"]
                             },
                             "extraSelfPortraitTags": ["sex", "doer", "cunnilingus", "doll", "empty"],
-                            "useActiveTags": false,
                             "_comment": "初体验 开始舔阴 时停中",
                             "responses": ["com_sex_oral_V_Begin_FE_Timestop_1", "com_sex_oral_V_Begin_FE_Timestop_2"]
                         },
@@ -102,7 +99,6 @@
                                         "requirePermission": true
                                     },
                                     "extraSelfPortraitTags": ["sex", "doer", "cunnilingus", "blush", "shy", "love"],
-                                    "useActiveTags": false,
                                     "_comment": "初体验 玩家专用 开始舔阴 有允许",
                                     "responses": ["com_sex_oral_V_Begin_FE_Player_1", "com_sex_oral_V_Begin_FE_Player_2"]
                                 },
@@ -111,7 +107,6 @@
                                         "requirePermission": true
                                     },
                                     "extraSelfPortraitTags": ["sex", "doer", "cunnilingus", "blush", "shy"],
-                                    "useActiveTags": false,
                                     "_comment": "初体验 开始舔阴 有允许",
                                     "responses": ["com_sex_oral_V_Begin_FE_1", "com_sex_oral_V_Begin_FE_2"]
                                 },
@@ -120,13 +115,11 @@
                                         "requireSelfAttitudeGTE": "Like"
                                     },
                                     "extraSelfPortraitTags": ["sex", "doer", "cunnilingus", "blush", "shy", "trembling"],
-                                    "useActiveTags": false,
                                     "_comment": "初体验 开始舔阴 未允许 好意",
                                     "responses": ["com_sex_oral_V_Begin_FE_3", "com_sex_oral_V_Begin_FE_4"]
                                 }
                             ],
                             "extraSelfPortraitTags": ["sex", "doer", "cunnilingus", "fear", "trembling", "tearful"],
-                            "useActiveTags": false,
                             "_comment": "初体验 开始舔阴 未允许 敌意",
                             "responses": ["com_sex_oral_V_Begin_FE_5", "com_sex_oral_V_Begin_FE_6"]
                         },
@@ -135,7 +128,6 @@
                                 "selfTags": ["firstexp_partner_M"]
                             },
                             "extraSelfPortraitTags": ["sex", "receiver", "cunnilingus", "spread_pussy", "surprised"],
-                            "useActiveTags": false,
                             "_comment": "对方初体验 开始舔阴（被侍奉的一方）",
                             "responses": ["com_sex_oral_V_Begin_FE_Partner_1", "com_sex_oral_V_Begin_FE_Partner_2"]
                         },
@@ -147,7 +139,6 @@
                                 ]
                             },
                             "extraSelfPortraitTags": ["sex", "receiver", "cunnilingus", "spread_pussy", "sleeping", "relaxed"],
-                            "useActiveTags": false,
                             "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
                             "responses": [
                                 "com_sex_oral_V_Begin_Sleep_1",
@@ -162,7 +153,6 @@
                                 ]
                             },
                             "extraSelfPortraitTags": ["sex", "receiver", "cunnilingus", "spread_pussy", "doll", "empty", "silence", "idle"],
-                            "useActiveTags": false,
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_sex_oral_V_Begin_Timestop_1",
@@ -182,7 +172,6 @@
                                 "blush",
                                 "affectionate"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.1.1 开始被舔阴 有允许 口上文",
                             "responses": [
                                 "com_sex_oral_V_Begin_1",
@@ -204,7 +193,6 @@
                                 "spread_pussy",
                                 "blush"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.2.1 开始被舔阴 未允许 好意 口上文",
                             "responses": [
                                 "com_sex_oral_V_Begin_7",
@@ -226,7 +214,6 @@
                                 "tearful",
                                 "pain"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.2.2 开始被舔阴 未允许 敌意 口上文",
                             "responses": [
                                 "com_sex_oral_V_Begin_13",
@@ -237,7 +224,8 @@
                                 "com_sex_oral_V_Begin_18"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandAct"
                 }
             },
             {
@@ -254,7 +242,6 @@
                                 "selfTags": ["firstexp_M", "sleeping"]
                             },
                             "extraSelfPortraitTags": ["sex", "doer", "cunnilingus", "sleeping", "relaxed"],
-                            "useActiveTags": false,
                             "_comment": "初体验 睡眠中 舔阴",
                             "responses": ["com_sex_oral_V_FE_Sleep_1"]
                         },
@@ -264,7 +251,6 @@
                                 "selfTags": ["firstexp_M", "timestop"]
                             },
                             "extraSelfPortraitTags": ["sex", "doer", "cunnilingus", "doll", "empty"],
-                            "useActiveTags": false,
                             "_comment": "初体验 时停中 舔阴",
                             "responses": ["com_sex_oral_V_FE_Timestop_1"]
                         },
@@ -279,7 +265,6 @@
                                         "requirePermission": true
                                     },
                                     "extraSelfPortraitTags": ["sex", "doer", "cunnilingus", "blush", "shy", "love"],
-                                    "useActiveTags": false,
                                     "_comment": "初体验 玩家专用 舔阴 有允许",
                                     "responses": ["com_sex_oral_V_FE_Player_1"]
                                 },
@@ -288,7 +273,6 @@
                                         "requirePermission": true
                                     },
                                     "extraSelfPortraitTags": ["sex", "doer", "cunnilingus", "blush", "shy"],
-                                    "useActiveTags": false,
                                     "_comment": "初体验 舔阴 有允许（还不熟练）",
                                     "responses": ["com_sex_oral_V_FE_1", "com_sex_oral_V_FE_2"]
                                 },
@@ -297,13 +281,11 @@
                                         "requireSelfAttitudeGTE": "Like"
                                     },
                                     "extraSelfPortraitTags": ["sex", "doer", "cunnilingus", "blush", "shy", "trembling"],
-                                    "useActiveTags": false,
                                     "_comment": "初体验 舔阴 未允许 好意（还不熟练）",
                                     "responses": ["com_sex_oral_V_FE_3"]
                                 }
                             ],
                             "extraSelfPortraitTags": ["sex", "doer", "cunnilingus", "fear", "trembling", "tearful"],
-                            "useActiveTags": false,
                             "_comment": "初体验 舔阴 未允许 敌意",
                             "responses": ["com_sex_oral_V_FE_4", "com_sex_oral_V_FE_5"]
                         },
@@ -312,7 +294,6 @@
                                 "selfTags": ["firstexp_partner_M"]
                             },
                             "extraSelfPortraitTags": ["sex", "receiver", "cunnilingus", "spread_pussy", "surprised"],
-                            "useActiveTags": false,
                             "_comment": "对方初体验 舔阴（被侍奉的一方）",
                             "responses": ["com_sex_oral_V_FE_Partner_1"]
                         },
@@ -331,7 +312,6 @@
                                 "sleeping",
                                 "relaxed"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.3.2 睡眠中 被舔阴 口上文",
                             "responses": [
                                 "com_sex_oral_V_1",
@@ -359,7 +339,6 @@
                                 "silence",
                                 "idle"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.3.1 时停中 被舔阴 口上文",
                             "responses": [
                                 "com_sex_oral_V_7",
@@ -519,7 +498,6 @@
                                         "blush",
                                         "lazy"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.1.5  玩家专用的 刚睡醒时的 被舔阴 有允许 口上文",
                                     "responses": [
                                         "com_sex_oral_V_43",
@@ -544,7 +522,6 @@
                                         "blush",
                                         "lazy"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.2.7 玩家专用的 刚睡醒时的 被舔阴 无允许 好意 口上文",
                                     "responses": [
                                         "com_sex_oral_V_49",
@@ -565,7 +542,6 @@
                                 "scared",
                                 "submissive"
                             ],
-                            "useActiveTags": false,
                             "responses": [
                                 "com_sex_oral_V_55",
                                 "com_sex_oral_V_56",
@@ -579,7 +555,6 @@
                             "requirement": {
                                 "requireEPSuccessGTE": "Success"
                             },
-                            "useActiveTags": false,
                             "_player only version": {
                                 "requirement": {
                                     "targetBaseID": "PLAYER"
@@ -602,7 +577,6 @@
                                         "happy",
                                         "relaxed"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.1.3 ($self$) 被舔阴 结果正面 有允许 口上文",
                                     "responses": [
                                         "com_sex_oral_V_61",
@@ -651,7 +625,6 @@
                                         "doubt",
                                         "disappointed"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.1.4 ($self$) 被舔阴 结果负面 有允许 口上文",
                                     "responses": [
                                         "com_sex_oral_V_73",
@@ -678,7 +651,6 @@
                                 "troubled",
                                 "silence"
                             ],
-                            "useActiveTags": false,
                             "responses": [
                                 "com_sex_oral_V_79",
                                 "com_sex_oral_V_80",
@@ -688,7 +660,8 @@
                                 "com_sex_oral_V_84"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandResult"
                 }
             }
         ]

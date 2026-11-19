@@ -24,7 +24,6 @@
                                             ]
                                         }
                                     },
-                                    "useActiveTags": false,
                                     "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
@@ -54,7 +53,6 @@
                                         "happy",
                                         "relaxed"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.1.1 睡眠 满足",
                                     "responses": [
                                         "com_interaction_endOngoingSex_Sleeping_Satisfied_1",
@@ -68,7 +66,6 @@
                                 "sleeping",
                                 "relaxed"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.1.2 睡眠中",
                             "responses": [
                                 "com_interaction_endOngoingSex_Sleeping_Normal_1",
@@ -93,7 +90,6 @@
                                             ]
                                         }
                                     },
-                                    "useActiveTags": false,
                                     "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
@@ -113,7 +109,6 @@
                                 "sex",
                                 "receiver"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.2.1 时停中",
                             "responses": [
                                 "com_interaction_endOngoingSex_TimeStop_Normal_1",
@@ -139,7 +134,6 @@
                                         "happy",
                                         "relaxed"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.6.1 自慰 满足",
                                     "responses": [
                                         "com_interaction_endOngoingSex_Masturbation_Satisfied_1",
@@ -151,7 +145,6 @@
                                 "sex",
                                 "receiver"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.6.2 自慰 不满",
                             "responses": [
                                 "com_interaction_endOngoingSex_Masturbation_Unsatisfied_1",
@@ -173,7 +166,6 @@
                                             ]
                                         }
                                     },
-                                    "useActiveTags": false,
                                     "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
@@ -205,7 +197,6 @@
                                         "happy",
                                         "relaxed"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.3.1 无法拒绝 满足",
                                     "responses": [
                                         "com_interaction_endOngoingSex_Forced_Satisfied_1",
@@ -217,7 +208,6 @@
                                 "sex",
                                 "receiver"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.3.2 无法拒绝",
                             "responses": [
                                 "com_interaction_endOngoingSex_Forced_Normal_1",
@@ -239,7 +229,6 @@
                                             ]
                                         }
                                     },
-                                    "useActiveTags": false,
                                     "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
@@ -276,7 +265,6 @@
                                         "happy",
                                         "relaxed"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.4.3 合意 疼痛",
                                     "responses": [
                                         "com_interaction_endOngoingSex_Consensual_Pain_1",
@@ -298,7 +286,6 @@
                                         "happy",
                                         "relaxed"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.4.1 合意 满足",
                                     "responses": [
                                         "com_interaction_endOngoingSex_Consensual_Satisfied_1",
@@ -310,7 +297,6 @@
                                 "sex",
                                 "receiver"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.4.2 合意 欲望",
                             "responses": [
                                 "com_interaction_endOngoingSex_Consensual_Desire_1",
@@ -332,7 +318,6 @@
                                             ]
                                         }
                                     },
-                                    "useActiveTags": false,
                                     "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
@@ -369,7 +354,6 @@
                                         "happy",
                                         "relaxed"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.5.3 无合意 疼痛",
                                     "responses": [
                                         "com_interaction_endOngoingSex_NoConsent_Pain_1",
@@ -391,7 +375,6 @@
                                         "happy",
                                         "relaxed"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.5.1 无合意 满足",
                                     "responses": [
                                         "com_interaction_endOngoingSex_NoConsent_Satisfied_1",
@@ -403,14 +386,14 @@
                                 "sex",
                                 "receiver"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.5.2 无合意 欲望",
                             "responses": [
                                 "com_interaction_endOngoingSex_NoConsent_Desire_1",
                                 "com_interaction_endOngoingSex_NoConsent_Desire_2"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandResult"
                 }
             }
         ]

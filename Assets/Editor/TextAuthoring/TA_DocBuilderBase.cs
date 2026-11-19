@@ -80,7 +80,11 @@ public abstract partial class TA_DocBuilderBase
     /// 11: abort (description_remove) and third-party-ordered scenarios; kojo master flags mirror KojoCollector (K4).
     /// 12: cases carry doc text (kojo `text`, narration `condText`) and `branchIn` for the case list in the docs (K5).
     /// 13: event kojo lookup cases (eventKojo.json); kojo positions carry their lookup `key` (K8).
-    public const int ExtractorVersion = 13;
+    /// 14: lint L6 activeTagsOff on command kojo (Plan_KojoTemplates.md §3.8).
+    /// 15: solo `seen` cases (speaker self) and `joinReact` (_Join participant) cases; kojo-override lookups (R3).
+    /// 16: no _Begin refuse cases (the engine never fetches _Begin on a refusal).
+    /// 17: pair / solo scenarios and cases from COM.kojoParticipants (both for a command that can do either).
+    public const int ExtractorVersion = 17;
 
     /// <summary>Personalities whose kojo layers are extracted (any order; [0] first in docs).</summary>
     public List<string> personalities = new List<string>();
@@ -457,7 +461,8 @@ public abstract partial class TA_DocBuilderBase
         for (int i = 0; i < list.Count; i++)
         {
             var v = list[i];
-            if (v == null) continue;
+            // disabled (no possible output, not silent): the engine skips it without checking conditions
+            if (v == null || v.disabled) continue;
             if (blocker != null && !(v.requirement != null && v.requirement.allowRecording))
             {
                 if (TA_Conditions.Applies(v, ctx)) RecordShadowedKojo(pid, provider, entryID, PathWith(pathParts, i), blocker);
@@ -672,7 +677,7 @@ public abstract partial class TA_DocBuilderBase
         return null;
     }
 
-    static Character_Personality Fallback(Character_Personality p)
+    protected static Character_Personality Fallback(Character_Personality p)
     {
         var id = f_fallbackID?.GetValue(p) as string;
         if (string.IsNullOrEmpty(id) || id == p.ID) return null;
@@ -689,7 +694,11 @@ public abstract partial class TA_DocBuilderBase
     void Lint(string pid, string provider, string entryID, ResponseEntry e, bool tree, string noEPKey, string consumer)
     {
         var found = new List<JObject>();
-        if (tree && lintedEntries.Add(provider + "|" + entryID)) TA_Lint.Tree(e, found);
+        if (tree && lintedEntries.Add(provider + "|" + entryID))
+        {
+            TA_Lint.Tree(e, found);
+            if (this is TA_CommandDocBuilder) TA_Lint.ActiveTags(e, entryID, found);
+        }
         int treeCount = found.Count;
         if (noEPKey != null) TA_Lint.NoEPLookup(e, found);
         if (found.Count < 1) return;

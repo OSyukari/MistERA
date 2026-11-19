@@ -6,6 +6,7 @@
             {
                 "parentCOMID":"com_sex_service_base",
                 "ID":"com_sex_oral_A",
+                "kojoParticipants":"PairDistinct",
                 "ActionPackageClass":"ActionPackage_Sex",
                 "categoryTags":["com_category_a","com_category_service"],
                 "displayName":"com_sex_oral_A_displayName_1",
@@ -132,6 +133,7 @@
             {
                 "parentCOMID":"com_sex_service_base",
                 "ID":"com_sex_oral_A_force",
+                "kojoParticipants":"PairDistinct",
                 "upgradeFrom":"com_sex_oral_A",
                 "_comment_upgrade":"Upgrade of com_sex_oral_A (was its setForce variants): the tongue version, one round in place of the ongoing rimming, which then resumes. Own acceptance roll every round. AC/DC copied from rimming for tuning; setForce keeps the strong-act rules. Texts and kojo: rimming's unless its own are added.",
                 "ActionPackageClass":"ActionPackage_Sex",

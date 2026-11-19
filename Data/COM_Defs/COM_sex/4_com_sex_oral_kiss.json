@@ -6,6 +6,7 @@
             {
                 "parentCOMID":"com_sex_service_base",
                 "ID":"com_sex_oral_kiss",
+                "kojoParticipants":"PairMutual",
                 "ActionPackageClass":"ActionPackage_Sex",
                 "categoryTags":["com_category_service"],
                 "displayName":"com_sex_oral_kiss_displayName_1",
@@ -126,6 +127,7 @@
             {
                 "parentCOMID":"com_sex_service_base",
                 "ID":"com_sex_oral_kiss_tongue",
+                "kojoParticipants":"PairMutual",
                 "upgradeFrom":"com_sex_oral_kiss",
                 "_comment_upgrade":"Upgrade of com_sex_oral_kiss (was its setForce variants): one round in place of the ongoing kiss, which then resumes. Own acceptance roll on each new round (none when repeated right after an accepted round). AC/DC copied from kiss for tuning; setForce keeps the strong-act rules (no actModifiers, traceKeywords_strong, strong kojo). description_remove / description_after: kiss's (COM.OrUpgradeParent). Kojo: kiss's lines (Character_Personality fallback).",
                 "ActionPackageClass":"ActionPackage_Sex",

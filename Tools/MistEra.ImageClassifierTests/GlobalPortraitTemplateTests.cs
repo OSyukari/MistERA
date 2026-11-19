@@ -35,7 +35,7 @@ static class GlobalPortraitTemplateTests
 
             var actionImage = Image("human", "doggystyle");
             var expressionImage = Image("portrait", "angry");
-            var selected = SelectHandler(handlers, new[] { "sex", "receiver", "doggy", "angry" },
+            var selected = SelectHandler(handlers, new[] { "sex", "receiver", "doggystyle", "angry" },
                 new[] { "humanrace" }, actionImage, expressionImage);
             checks.Check(selected != null && !ReferenceEquals(emotion, selected), "Sex/action images must beat available emotion images.");
         });
@@ -328,7 +328,9 @@ static class GlobalPortraitTemplateTests
                 foreach (var suffix in new[] { "", "_vaginal", "_anal" })
                 {
                     var image = Image("human", "ordinary" + suffix);
-                    checks.Equal((overridden ? suffix == "_anal" : suffix != "_anal") ? image : null,
+                    // New base policy: the global base pools unsuffixed + anal + vaginal (suffix requests stay
+                    // strict through two-tag variant priority); baseFiles replaces that pool entirely.
+                    checks.Equal((overridden ? suffix == "_anal" : true) ? image : null,
                         Select(receiver, new[] { "ordinary" }, image), "Optional/replacing override: " + overridden + "/" + suffix);
                 }
             }

@@ -17,6 +17,7 @@
             },
             {
                 "ID": "com_furniture_ingestStomach_self",
+                "kojoParticipants": "SoloOnly",
                 "ActionPackageClass": "ActionPackage_Interaction",
                 "displayName": "com_furniture_ingestStomach_self",
                 "hidden": true,
@@ -53,6 +54,7 @@
             },
             {
                 "ID": "com_furniture_ingestStomach_onTarget",
+                "kojoParticipants": "PairDistinct",
                 "ActionPackageClass": "ActionPackage_Interaction",
                 "displayName": "com_furniture_ingestStomach_onTarget",
                 "hidden": true,
@@ -61,6 +63,7 @@
                     "targetCOMClass": {
                         "$type": "COM_IngestItem, Assembly-CSharp",
                         "ID": "com_furniture_ingestStomach_onTarget",
+                        "kojoParticipants": "PairDistinct",
                         "ActionPackageClass": "ActionPackage_Interaction",
                         "displayName": "com_furniture_ingestStomach_onTarget",
                         "itemFolder": "$itemID$",

@@ -687,6 +687,17 @@ public static class TA_Apply
                     Change(p, file, fieldPath, "set " + op["field"], "", json);
                 }
             }
+            else if (opName == "append")
+            {
+                // append an item to the array field (kojo templates: the fallback skeleton, Plan_KojoTemplates.md T6)
+                var arr = doc.Find(fieldPath);
+                if (arr == null || arr.type != 'a') throw new Skip(ActStale, $"{fieldPath} is not an array in {file}");
+                var value = op["value"] ?? JValue.CreateNull();
+                if (doc.Value(arr) is JArray cur && cur.Count > 0 && JToken.DeepEquals(cur[cur.Count - 1], value)) { done++; continue; }
+                var json = value.ToString(Formatting.None);
+                doc.Append(fieldPath, json);
+                Change(p, file, fieldPath, "append " + op["field"], "", json);
+            }
             else throw new Skip(ActError, "unknown op " + opName);
         }
         if (done == ops.Count) throw new Skip(ActAlready, "the data already has these values");

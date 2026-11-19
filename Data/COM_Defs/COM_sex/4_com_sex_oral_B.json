@@ -4,6 +4,7 @@
             {
                 "parentCOMID":"com_sex_service_base",
                 "ID": "com_sex_oral_B",
+                "kojoParticipants": "PairDistinct",
                 "ActionPackageClass": "ActionPackage_Sex",
                 "categoryTags":["com_category_b","com_category_service"],
                 "displayName": "com_sex_oral_B_displayName_1",
@@ -15,7 +16,7 @@
                     "position_equal"
                 ],
                 "portraitTags": ["breast_suck"],
-                "portraitTags_Receiver": ["breasts"],
+                "portraitTags_Receiver": ["portrait_breast"],
                 "_comment_traces": "Body traces (Data/RaceDefs/TraceDefs.json): normal licking leaves saliva on the breast; strong rounds (NPC SetForced) by doer race: suck (humanoid, teeth mark 30%) / bite (others, teeth mark 100% + saliva). Milk (aroused + pregnant) into the doer's mouth on all of them. The suck / bite versions are the upgrade com_sex_oral_B_force.",
                 "traceKeywords": ["lick"],
                 "traceKeywords_strongByRace": [
@@ -156,6 +157,7 @@
             {
                 "parentCOMID":"com_sex_service_base",
                 "ID": "com_sex_oral_B_force",
+                "kojoParticipants": "PairDistinct",
                 "upgradeFrom": "com_sex_oral_B",
                 "_comment_upgrade": "Upgrade of com_sex_oral_B (was its setForce variants): suck (humanoid doer) or bite (others), one round in place of the ongoing nipple licking, which then resumes. Own acceptance roll every round. AC/DC copied from nipple licking for tuning; setForce keeps the strong-act rules (traceKeywords_strongByRace). Texts and kojo: nipple licking's unless its own are added.",
                 "ActionPackageClass": "ActionPackage_Sex",
@@ -169,7 +171,7 @@
                     "position_equal"
                 ],
                 "portraitTags": ["breast_suck"],
-                "portraitTags_Receiver": ["breasts"],
+                "portraitTags_Receiver": ["portrait_breast"],
                 "_comment_traces": "Body traces (Data/RaceDefs/TraceDefs.json): by doer race: suck (humanoid, teeth mark 30%) / bite (others, teeth mark 100% + saliva). Milk (aroused + pregnant) into the doer's mouth.",
                 "traceKeywords": ["lick"],
                 "traceKeywords_strongByRace": [

@@ -244,6 +244,8 @@
                     },
                     {
                         "ID": "Greeting",
+                        "template": "none",
+                        "templateNote": "mechanism: kojo variables only, no dialogue",
                         "_comment": "Event trigger. Fires when Self change location, when Target enters room, when Timestop resume, when character regain consciousness",
                         "interruptSelfJob": true,
                         "debugLogging": true,
@@ -286,6 +288,8 @@
                     },
                     {
                         "ID": "DailyGreeting",
+                        "template": "none",
+                        "templateNote": "event trigger (daily greeting); dedicated template later",
                         "_comment": "Event trigger. Fires when Self change location, when Target enters room, when Timestop resume, when character regain consciousness",
                         "interruptSelfJob": true,
                         "debugLogging": true,
@@ -310,7 +314,8 @@
                                     "requireTargetAction": false,
                                     "requireEPSuccess": false
                                 },
-                                "forbidPortaitDisplay":true
+                                "forbidPortaitDisplay":true,
+                                "silent": true
                             },
                             {
                                 "requirement": {
@@ -344,6 +349,8 @@
                     },
                     {
                         "ID": "Interrupt",
+                        "template": "none",
+                        "templateNote": "event trigger (interrupt reaction); dedicated template later",
                         "_comment": "trigger. Fires when anyone else executes AP in same room, check if Self action should be modified",
                         "_comment2": "Player is allowed to call interrupt on others, but response text will not display (results will get executed)",
                         "_comment3": "Relationship: [self] witnessing [target] action",

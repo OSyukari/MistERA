@@ -13,7 +13,6 @@
                                 "requirePermission": true
                             },
                             "extraSelfPortraitTags": ["smile", "relaxed"],
-                            "useActiveTags": false,
                             "_comment": "开始摸头 施方 有允许",
                             "responses": [
                                 "com_touch_head_Begin_Doer_Permission_1",
@@ -27,7 +26,6 @@
                                 "requireSelfAttitudeGTE": "Like"
                             },
                             "extraSelfPortraitTags": ["smile"],
-                            "useActiveTags": false,
                             "_comment": "开始摸头 施方 未允许 好意",
                             "responses": [
                                 "com_touch_head_Begin_Doer_Like_1",
@@ -39,7 +37,6 @@
                             "requirement": {
                                 "requireTargetAction": false
                             },
-                            "useActiveTags": false,
                             "_comment": "开始摸头 施方 通用",
                             "responses": [
                                 "com_touch_head_Begin_Doer_1",
@@ -55,7 +52,6 @@
                                 ]
                             },
                             "extraSelfPortraitTags": ["sleeping", "relaxed"],
-                            "useActiveTags": false,
                             "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
                             "responses": [
                                 "com_touch_head_Begin_Sleep_1",
@@ -71,7 +67,6 @@
                                 ]
                             },
                             "extraSelfPortraitTags": ["doll", "empty", "silence", "idle"],
-                            "useActiveTags": false,
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_touch_head_Begin_Timestop_1",
@@ -88,7 +83,6 @@
                                 "blush",
                                 "affectionate"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.1.1 开始被摸头 有允许 口上文",
                             "responses": [
                                 "com_touch_head_Begin_A_1",
@@ -105,7 +99,6 @@
                             "extraSelfPortraitTags": [
                                 "blush"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.2.1 开始被摸头 未允许 好意 口上文",
                             "responses": [
                                 "com_touch_head_Begin_B_1",
@@ -120,7 +113,6 @@
                                 "fear",
                                 "trembling"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.2.2 开始被摸头 未允许 敌意 口上文",
                             "responses": [
                                 "com_touch_head_Begin_C_1",
@@ -129,7 +121,8 @@
                                 "com_touch_head_Begin_C_4"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandAct"
                 }
             },
             {
@@ -144,7 +137,6 @@
                                 "requireEPSuccessGTE": "Success"
                             },
                             "extraSelfPortraitTags": ["smile", "relaxed"],
-                            "useActiveTags": false,
                             "_comment": "摸头结果 施方 正面",
                             "responses": [
                                 "com_touch_head_Doer_Success_1",
@@ -156,7 +148,6 @@
                             "requirement": {
                                 "requireTargetAction": false
                             },
-                            "useActiveTags": false,
                             "_comment": "摸头结果 施方 已接受但未达正面结果",
                             "responses": [
                                 "com_touch_head_Doer_1",
@@ -175,7 +166,6 @@
                                 "sleeping",
                                 "relaxed"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.3.2 睡眠中 被摸头 口上文",
                             "responses": [
                                 "com_touch_head_D_1",
@@ -198,7 +188,6 @@
                                 "silence",
                                 "idle"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.3.1 时停中 被摸头 口上文",
                             "responses": [
                                 "com_touch_head_E_1",
@@ -279,7 +268,6 @@
                             "requirement": {
                                 "requireEPSuccessGTE": "Success"
                             },
-                            "useActiveTags": false,
                             "_player only version": {
                                 "requirement": {
                                     "targetBaseID": "PLAYER"
@@ -298,7 +286,6 @@
                                         "happy",
                                         "relaxed"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.1.3 ($self$) 被摸头 结果正面 有允许 口上文",
                                     "responses": [
                                         "com_touch_head_I_1",
@@ -336,7 +323,6 @@
                                         "doubt",
                                         "disappointed"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.1.4 ($self$) 被摸头 结果负面 有允许 口上文",
                                     "responses": [
                                         "com_touch_head_K_1",
@@ -357,7 +343,6 @@
                                 "troubled",
                                 "silence"
                             ],
-                            "useActiveTags": false,
                             "responses": [
                                 "com_touch_head_L_1",
                                 "com_touch_head_L_2",
@@ -365,7 +350,8 @@
                                 "com_touch_head_L_4"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandResult"
                 }
             }
         ]

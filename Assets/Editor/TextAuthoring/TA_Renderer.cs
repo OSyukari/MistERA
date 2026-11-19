@@ -667,6 +667,49 @@ public class TA_Renderer
                     "blocker", (string)f["blocker"], "count", f["count"]?.ToString() ?? "", "entries", (string)f["entries"]);
             case "lint":
                 return LintText(f);
+            case "kojoShadowed":
+            case "kojoSilentParent":
+            case "kojoCallMissing":
+            case "kojoRedirectMissing":
+            case "kojoRedirectChain":
+                var c = (string)f["comment"] ?? "";
+                var cuts = (string)f["cuts"];
+                return TA_Text.F("doc.suggest." + (string)f["type"], "provider", (string)f["provider"], "entry", (string)f["entry"], "path", (string)f["path"],
+                    "comment", c == "" ? "" : TA_Text.F("doc.suggest.commentSuffix", "comment", c),
+                    "blocker", (string)f["blocker"], "cond", (string)f["cond"], "blockerCond", (string)f["blockerCond"], "call", (string)f["call"], "redirect", (string)f["redirect"], "next", (string)f["next"],
+                    "cuts", cuts == null ? "" : TA_Text.Get("doc.suggest.kojoSilentParentCuts." + cuts));
+            case "templateBind":
+            case "templateUnknown":
+            case "templateNoFallback":
+            case "templateFallbackFields":
+            case "templateOrder":
+            case "templateMixed":
+            case "templateDepth":
+            case "templateOutside":
+            case "templateExtraOutside":
+            case "templateExtraNotEnabled":
+            case "templateExtraFields":
+            case "templateExtraUnknown":
+            case "templateMisplaced":
+            case "templateLeafNoFallback":
+            case "templateRequiredLeaf":
+            case "templateBranchField":
+                var tc = (string)f["comment"] ?? "";
+                // a misplaced branch: where it goes (an existing key / a key still to create) or nowhere (never fetched)
+                var moveTo = (string)f["moveTo"];
+                var dest = string.IsNullOrEmpty(moveTo) ? TA_Text.Get("doc.suggest.templateMisplacedRemove")
+                    : TA_Text.F((string)f["targetExists"] == "yes" ? "doc.suggest.templateMisplacedMove" : "doc.suggest.templateMisplacedCreate", "target", moveTo);
+                var ops = (bool?)f["patchOnly"] ?? false ? TA_Text.Get("doc.suggest.lint.patchOnly")
+                    : f["ops"] is JArray to && to.Count > 0 ? TA_Text.F("doc.suggest.lint.ops", "count", to.Count.ToString()) : "。";
+                var extras = (string)f["extras"];
+                return TA_Text.F("doc.suggest." + (string)f["type"], "provider", (string)f["provider"], "entry", (string)f["entry"], "path", (string)f["path"],
+                    "comment", tc == "" ? "" : TA_Text.F("doc.suggest.commentSuffix", "comment", tc),
+                    "template", (string)f["template"], "last", (string)f["last"], "fields", (string)f["fields"], "axes", (string)f["axes"],
+                    "axis", (string)f["axis"], "after", (string)f["after"], "afterAxis", (string)f["afterAxis"],
+                    "parent", (string)f["parent"], "parentAxis", (string)f["parentAxis"], "ops", ops,
+                    "extra", (string)f["extra"], "extraID", (string)f["extraID"], "block", (string)f["block"],
+                    "label", (string)f["label"], "dest", dest, "leaf", (string)f["leaf"], "when", (string)f["when"])
+                    + (string.IsNullOrEmpty(extras) ? "" : TA_Text.F("doc.suggest.templateExtrasSuffix", "extras", extras));
         }
         return f.ToString(Newtonsoft.Json.Formatting.None);
     }
@@ -699,8 +742,9 @@ public class TA_Renderer
             "descendants", descendants, "ops", ops);
     }
 
-    internal static string AnalysisType(string findingType)
+    internal static string AnalysisType(string findingType, string rule = null)
     {
+        if (findingType == "lint" && rule == "activeTagsOff") return "portraitTags";
         switch (findingType)
         {
             case "missingEntry": return "missingKojo";
@@ -711,6 +755,27 @@ public class TA_Renderer
             case "unreachableNarration": return "unreachable";
             case "silentEventFailure": return "silentEventFailure";
             case "lint": return "unreachable";
+            case "kojoShadowed":
+            case "kojoSilentParent": return "unreachable";
+            case "kojoCallMissing":
+            case "kojoRedirectMissing":
+            case "kojoRedirectChain": return "missingKojo";
+            case "templateBind":
+            case "templateUnknown":
+            case "templateNoFallback":
+            case "templateFallbackFields":
+            case "templateOrder":
+            case "templateMixed":
+            case "templateDepth":
+            case "templateOutside":
+            case "templateExtraOutside":
+            case "templateExtraNotEnabled":
+            case "templateExtraFields":
+            case "templateExtraUnknown":
+            case "templateMisplaced":
+            case "templateLeafNoFallback":
+            case "templateRequiredLeaf":
+            case "templateBranchField": return "template";
         }
         return "other";
     }

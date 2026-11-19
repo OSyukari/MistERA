@@ -14,7 +14,6 @@
                                 ]
                             },
                             "extraSelfPortraitTags": ["sleeping", "relaxed"],
-                            "useActiveTags": false,
                             "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
                             "responses": [
                                 "com_touch_cheek_Begin_Sleep_1",
@@ -29,7 +28,6 @@
                                 ]
                             },
                             "extraSelfPortraitTags": ["doll", "empty", "silence", "idle"],
-                            "useActiveTags": false,
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_touch_cheek_Begin_Timestop_1",
@@ -45,7 +43,6 @@
                                 "blush",
                                 "affectionate"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.1.1 开始被捏脸蛋 有允许 口上文",
                             "responses": [
                                 "com_touch_cheek_Begin_1",
@@ -62,7 +59,6 @@
                             "extraSelfPortraitTags": [
                                 "blush"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.2.1 开始被捏脸蛋 未允许 好意 口上文",
                             "responses": [
                                 "com_touch_cheek_Begin_6",
@@ -76,7 +72,6 @@
                                 "fear",
                                 "trembling"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.2.2 开始被捏脸蛋 未允许 敌意 口上文",
                             "responses": [
                                 "com_touch_cheek_Begin_10",
@@ -85,7 +80,8 @@
                                 "com_touch_cheek_Begin_13"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandAct"
                 }
             },
             {
@@ -104,7 +100,6 @@
                                 "sleeping",
                                 "relaxed"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.3.2 睡眠中 被捏脸蛋 口上文",
                             "responses": [
                                 "com_touch_cheek_Sleep_1",
@@ -126,7 +121,6 @@
                                 "silence",
                                 "idle"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.3.1 时停中 被捏脸蛋 口上文",
                             "responses": [
                                 "com_touch_cheek_TimeStop_1",
@@ -205,7 +199,6 @@
                             "requirement": {
                                 "requireEPSuccessGTE": "Success"
                             },
-                            "useActiveTags": false,
                             "_player only version": {
                                 "requirement": {
                                     "targetBaseID": "PLAYER"
@@ -224,7 +217,6 @@
                                         "happy",
                                         "relaxed"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.1.3 ($self$) 被捏脸蛋 结果正面 有允许 口上文",
                                     "responses": [
                                         "com_touch_cheek_Success_Allow_1",
@@ -261,7 +253,6 @@
                                         "doubt",
                                         "disappointed"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.1.4 ($self$) 被捏脸蛋 结果负面 有允许 口上文",
                                     "responses": [
                                         "com_touch_cheek_Bad_Allow_1",
@@ -282,7 +273,6 @@
                                 "troubled",
                                 "silence"
                             ],
-                            "useActiveTags": false,
                             "responses": [
                                 "com_touch_cheek_Bad_NoAllow_1",
                                 "com_touch_cheek_Bad_NoAllow_2",
@@ -290,7 +280,8 @@
                                 "com_touch_cheek_Bad_NoAllow_4"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandResult"
                 }
             }
         ]

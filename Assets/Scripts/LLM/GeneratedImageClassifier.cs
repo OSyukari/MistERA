@@ -54,21 +54,23 @@ public sealed class GeneratedImageClassifier
         }
     }
 
+    /// <summary>One asset prefix of a matching SexPortraitVariantConfig row, resolved to its file_names rule and destination folder.</summary>
     sealed class Candidate
     {
         public NameRule rule;
         public CategoryRule category;
+        /// <summary>assetPrefix -> &lt;category&gt;, assetPrefix_perform -> &lt;category&gt;_perform: the folder the row reads</summary>
         public string folder;
-        public bool primary;
-        public int order;
-        public readonly HashSet<string> keywords = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        /// <summary>suffix written in the prefix (missionary_anal -> anal), fixed in the file name; "" = bare prefix, the image picks the variant</summary>
+        public string suffix;
+        /// <summary>the prefix's '!' exclusions: a bare prefix never takes a variant it excludes, so the stored file stays readable by the row</summary>
+        public List<string> excluded;
     }
 
     readonly ImageRules rules;
-    readonly JObject portraitConfig;
     readonly List<JObject> categories;
-    readonly List<JProperty> names;
-    readonly List<JObject> variants;
+    /// <summary>portrait_global.SexPortraitVariantConfig.doer / receiver / none rows, in listed (priority) order</summary>
+    readonly Dictionary<string, List<JProperty>> names = new Dictionary<string, List<JProperty>>();
 
     public static GeneratedImageClassifier Load()
     {
@@ -197,16 +199,102 @@ public sealed class GeneratedImageClassifier
     {
         this.rules = rules ?? throw new ArgumentNullException(nameof(rules));
         var pg = config?["portrait_global"] as JObject;
-        if (!(pg?["categories"] is JArray categoryList) || !(pg["names"] is JObject nameMap))
-            throw new InvalidDataException("missing portrait_global.categories or portrait_global.names");
-        portraitConfig = pg;
+        if (!(pg?["categories"] is JArray categoryList) || !(pg[GlobalPortraitTemplate.SexVariantKey] is JObject nameMap))
+            throw new InvalidDataException($"missing portrait_global.categories or portrait_global.{GlobalPortraitTemplate.SexVariantKey}");
         categories = categoryList.OfType<JObject>().Where(c => rules.categories.Any(r => r.id == (string)c["id"]
             && r.id != "portrait" && !r.hold && r.rename && r.nameSet == ImageRules.DefaultNameSet)).ToList();
-        names = nameMap.Properties().Where(p => !p.Name.StartsWith("_", StringComparison.Ordinal) && p.Value is JObject).ToList();
-        variants = (pg["variants"] as JObject)?.Properties()
-            .Where(p => p.Name != "base" && !p.Name.StartsWith("_", StringComparison.Ordinal) && p.Value is JObject)
-            .Select(p => (JObject)p.Value).Where(v => v["keywords"] is JArray keys && keys.Count > 0)
-            .OrderByDescending(v => ((JArray)v["keywords"]).Count).ToList() ?? new List<JObject>();
+        foreach (var role in new[] { "doer", "receiver", "none" })
+            names[role] = (nameMap[role] as JObject)?.Properties().Where(p => !p.Name.StartsWith("_", StringComparison.Ordinal) && p.Value is JObject).ToList()
+                ?? new List<JProperty>();
+    }
+
+    /// <summary>The file_names name an asset prefix names (longest name the prefix starts with), the remaining suffix ("" = none)
+    /// and its inline exclusions (prefix!x!y -> [x, y]).</summary>
+    static string PrefixName(List<NameRule> nameRules, string prefix, out string suffix, out List<string> excluded)
+    {
+        suffix = "";
+        excluded = new List<string>();
+        var parts = prefix.Split('!');
+        prefix = parts[0];
+        for (int i = 1; i < parts.Length; i++) if (parts[i].Length > 0) excluded.Add(parts[i]);
+        string best = null;
+        foreach (var n in nameRules)
+        {
+            if (best != null && n.name.Length <= best.Length) continue;
+            if (prefix == n.name || prefix.StartsWith(n.name + "_", StringComparison.Ordinal)) best = n.name;
+        }
+        if (best != null && prefix.Length > best.Length) suffix = prefix.Substring(best.Length + 1);
+        return best;
+    }
+
+    /// <summary>All tagsMatch (non-empty: the unconditional row never names a file) and none of tagsExclude present.</summary>
+    static bool RowMatches(JObject row, ICollection<string> keywords)
+    {
+        if (!(row["tagsMatch"] is JArray match) || match.Count == 0) return false;
+        foreach (var t in match) if (!keywords.Contains((string)t)) return false;
+        if (row["tagsExclude"] is JArray exclude)
+            foreach (var t in exclude) if (keywords.Contains((string)t)) return false;
+        return true;
+    }
+
+    /// <summary>The row's prefixes in listed order (assetPrefix, then assetPrefix_perform) as storable candidates in this category.</summary>
+    List<Candidate> RowCandidates(JObject row, List<NameRule> nameRules, CategoryRule category)
+    {
+        var list = new List<Candidate>();
+        foreach (var (key, perform) in new[] { ("assetPrefix", false), ("assetPrefix_perform", true) })
+        {
+            if (!(row[key] is JArray prefixes)) continue;
+            foreach (var token in prefixes)
+            {
+                var prefix = token.Type == JTokenType.String ? ((string)token).Trim() : null;
+                if (string.IsNullOrEmpty(prefix)) continue;
+                var name = PrefixName(nameRules, prefix, out var suffix, out var excluded);
+                if (name == null) continue;
+                // a fixed variant suffix the category does not allow cannot be stored there
+                if (suffix != "" && rules.variants.ContainsKey(suffix) && !category.AllowsVariant(suffix)) continue;
+                foreach (var rule in nameRules)
+                {
+                    if (rule.name != name || (rule.onlyInCategories != null && !rule.onlyInCategories.Contains(category.id))) continue;
+                    list.Add(new Candidate
+                    {
+                        rule = rule, category = category, folder = category.id + (perform ? "_perform" : ""),
+                        suffix = suffix, excluded = excluded,
+                    });
+                }
+            }
+        }
+        return list;
+    }
+
+    /// <summary>
+    /// One row's pick: without image tags the first candidate; otherwise WD14 scores choose among the row's names only.
+    /// picked = null when the image fits none of them (the returned classification carries the reasons).
+    /// </summary>
+    ImageClassification Pick(List<Candidate> candidates, ImageTagRecord record, out Candidate picked)
+    {
+        picked = null;
+        if (record == null || record.error != null)
+        {
+            picked = candidates[0];
+            return new ImageClassification { category = picked.category, nameRule = picked.rule, status = ClassificationStatus.Confident };
+        }
+        var ruleList = new List<NameRule>();
+        foreach (var c in candidates) if (!ruleList.Contains(c.rule)) ruleList.Add(c.rule);
+        // Copy the name-set dictionary and replace only its candidate list; the shared rules stay unchanged.
+        var restricted = new ImageRules
+        {
+            settings = rules.settings,
+            categories = rules.categories,
+            variants = rules.variants,
+            states = rules.states,
+            emotionPass = rules.emotionPass,
+            nameSets = new Dictionary<string, List<NameRule>>(rules.nameSets),
+        };
+        restricted.nameSets[ImageRules.DefaultNameSet] = ruleList;
+        var classified = new ImageClassifierEngine(restricted).ClassifyInCategory(record, candidates[0].category);
+        if (classified.status == ClassificationStatus.Unmatched || classified.nameRule == null) return classified;
+        foreach (var c in candidates) if (c.rule == classified.nameRule) { picked = c; break; }
+        return classified;
     }
 
     /// <summary>One image, main actor only. A missing or failed tag record uses game data alone.
@@ -224,9 +312,13 @@ public sealed class GeneratedImageClassifier
             result.skipReason = "file_names rules are missing";
             return result;
         }
-        var candidates = new List<Candidate>();
+        // per interaction: the first matching row the image fits (rows in listed order, as the display picks them)
+        var matches = new List<(Candidate candidate, ImageClassification classification, int interaction)>();
+        var failures = new List<string>();
+        int interactionIndex = -1;
         foreach (var inter in scene.interactions)
         {
+            interactionIndex++;
             bool doer = inter.doer?.character == scene.mainActor;
             bool receiver = inter.receiver?.character == scene.mainActor;
             if (!doer && !receiver) continue;
@@ -245,98 +337,48 @@ public sealed class GeneratedImageClassifier
             }
             var category = rules.categories.First(c => c.id == (string)categoryEntry["id"]);
             bool mapped = false;
-            for (int order = 0; order < names.Count; order++)
+            foreach (var row in names[role])
             {
-                var pairs = names[order].Value["keywords"] as JArray;
-                if (pairs == null) continue;
-                for (int k = 0; k < pairs.Count; k++)
+                if (!RowMatches((JObject)row.Value, keywords)) continue;
+                var rowCandidates = RowCandidates((JObject)row.Value, nameRules, category);
+                if (rowCandidates.Count == 0) continue;
+                mapped = true;
+                var classified = Pick(rowCandidates, record, out var picked);
+                if (picked == null)
                 {
-                    if (!(pairs[k] is JObject pair)) continue;
-                    var keyword = (string)pair["keyword"];
-                    var pairRole = ((string)pair["role"] ?? "").Trim();
-                    bool both = pairRole == "both" && (role == "doer" || role == "receiver");
-                    if (string.IsNullOrEmpty(keyword) || !keywords.Contains(keyword) || (pairRole != role && !both)) continue;
-                    if (GlobalPortraitTemplate.KeywordExclusions(portraitConfig, keyword, role).Any(keywords.Contains)) continue;
-                    foreach (var rule in nameRules.Where(n => n.name == names[order].Name
-                        && (n.onlyInCategories == null || n.onlyInCategories.Contains(category.id))))
-                    {
-                        string folder = category.id + (rule.isperform || (both && role == "doer") ? "_perform" : "");
-                        var candidate = candidates.Find(c => c.rule == rule && c.folder == folder);
-                        if (candidate == null)
-                        {
-                            candidate = new Candidate { rule = rule, category = category, folder = folder, order = order };
-                            candidates.Add(candidate);
-                        }
-                        candidate.primary |= k == 0 || keyword == (string)pairs[0]["keyword"];
-                        candidate.keywords.UnionWith(keywords);
-                        mapped = true;
-                    }
+                    // the image does not fit this row: try the next matching row (its fallback), like an empty display pool
+                    failures.Add($"{inter.Label} [{row.Name}]: {string.Join("; ", classified.reasons)}");
+                    continue;
                 }
+                matches.Add((picked, classified, interactionIndex));
+                break;
             }
-            if (!mapped) result.unmappedInteractions.Add($"{inter.Label}: no name mapping for role [{role}], category [{category.id}], keywords [{string.Join(", ", keywords)}]");
+            if (!mapped) result.unmappedInteractions.Add($"{inter.Label}: no {GlobalPortraitTemplate.SexVariantKey} row for role [{role}], category [{category.id}], keywords [{string.Join(", ", keywords)}]");
         }
-        if (candidates.Count == 0)
+        if (matches.Count == 0)
         {
-            result.skipReason = "no eligible name candidates for the main actor's interactions";
+            result.skipReason = failures.Count > 0 ? string.Join("; ", failures) : "no eligible name candidates for the main actor's interactions";
             return result;
         }
 
-        Candidate selected;
-        ImageClassification classification;
-        if (record == null || record.error != null)
-        {
-            selected = candidates.OrderByDescending(c => c.primary).ThenBy(c => c.order).ThenBy(c => c.rule.index).First();
-            classification = new ImageClassification { category = selected.category, nameRule = selected.rule, status = ClassificationStatus.Confident };
-        }
+        // Across interactions: winning tier, score, then interaction order.
+        var best = matches.OrderBy(m => m.classification.nameRule.tier).ThenByDescending(m => m.classification.score)
+            .ThenBy(m => m.interaction).First();
+        var selected = best.candidate;
+        var classification = best.classification;
+
+        if (selected.suffix != "") classification.variant = selected.suffix;
         else
         {
-            var matches = new List<(Candidate candidate, ImageClassification classification)>();
-            var failures = new List<string>();
-            foreach (var group in candidates.GroupBy(c => c.folder))
-            {
-                // Copy the name-set dictionary and replace only its candidate list; the shared rules stay unchanged.
-                var restricted = new ImageRules
-                {
-                    settings = rules.settings,
-                    categories = rules.categories,
-                    variants = rules.variants,
-                    states = rules.states,
-                    emotionPass = rules.emotionPass,
-                    nameSets = new Dictionary<string, List<NameRule>>(rules.nameSets),
-                };
-                restricted.nameSets[ImageRules.DefaultNameSet] = group.OrderByDescending(c => c.primary)
-                    .ThenBy(c => c.rule.index).Select(c => c.rule).ToList();
-                var classified = new ImageClassifierEngine(restricted).ClassifyInCategory(record, group.First().category);
-                if (classified.status == ClassificationStatus.Unmatched || classified.nameRule == null)
-                {
-                    failures.Add($"{group.Key}: {string.Join("; ", classified.reasons)}");
-                    continue;
-                }
-                matches.Add((group.First(c => c.rule == classified.nameRule), classified));
-            }
-            if (matches.Count == 0)
-            {
-                result.skipReason = string.Join("; ", failures);
-                return result;
-            }
-            // Across destinations: winning tier, score, primary mapping, then listed order. Stable ties keep interaction order.
-            var best = matches.OrderBy(m => m.classification.nameRule.tier).ThenByDescending(m => m.classification.score)
-                .ThenByDescending(m => m.candidate.primary).ThenBy(m => m.candidate.order).ThenBy(m => m.candidate.rule.index).First();
-            selected = best.candidate;
-            classification = best.classification;
+            // Bare prefix: the image's variant when the name has it, else the name's default; never one the prefix excludes.
+            var imageVariant = classification.variant;
+            classification.variant = null;
+            if (!string.IsNullOrEmpty(imageVariant) && selected.rule.hasVariants.Contains(imageVariant)
+                && selected.category.AllowsVariant(imageVariant) && !selected.excluded.Contains(imageVariant))
+                classification.variant = imageVariant;
+            else if (selected.category.AllowsVariant(selected.rule.defaultVariant) && !selected.excluded.Contains(selected.rule.defaultVariant))
+                classification.variant = selected.rule.defaultVariant;
         }
-
-        var confirmedKeys = new HashSet<string>(selected.keywords, StringComparer.OrdinalIgnoreCase);
-        // Image and game evidence share the same single-suffix priority.
-        var established = variants.FirstOrDefault(v => (v["files"] as JArray)?.Values<string>().FirstOrDefault() == classification.variant);
-        if (established != null) confirmedKeys.UnionWith(((JArray)established["keywords"]).Values<string>());
-        var supported = new HashSet<string>(variants.Where(v => ((JArray)v["keywords"]).Values<string>().All(confirmedKeys.Contains))
-            .Select(v => (v["files"] as JArray)?.Values<string>().FirstOrDefault()).Where(f => !string.IsNullOrEmpty(f)));
-        if (!string.IsNullOrEmpty(classification.variant)) supported.Add(classification.variant);
-        // The configured action-suffix priority also governs game evidence.
-        classification.variant = selected.rule.hasVariants.FirstOrDefault(v => selected.category.AllowsVariant(v) && supported.Contains(v));
-        if (classification.variant == null && selected.category.AllowsVariant(selected.rule.defaultVariant))
-            classification.variant = selected.rule.defaultVariant;
         {
             // Use captured actor/role tags only, never scene-wide or partner tags (or live character state).
             var mainTags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);

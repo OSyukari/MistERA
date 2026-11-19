@@ -14,6 +14,8 @@
                 "entries_list": [
                     {
                         "ID": "Greeting",
+                        "template": "none",
+                        "templateNote": "event trigger (greeting); dedicated template later",
                         "interruptSelfJob": true,
                         "interruptTargetJob": true,
                         "variants": [
@@ -33,6 +35,8 @@
                     },
                     {
                         "ID": "DailyGreeting",
+                        "template": "none",
+                        "templateNote": "event trigger (daily greeting); dedicated template later",
                         "interruptSelfJob": true,
                         "interruptTargetJob": true,
                         "variants": [
@@ -48,6 +52,8 @@
                     },
                     {
                         "ID": "Interrupt",
+                        "template": "none",
+                        "templateNote": "mechanism: calls DisruptSleep, launches events, cooldowns; no dialogue",
                         "interruptSelfJob": true,
                         "variants": [
                             {
@@ -99,6 +105,8 @@
                     },
                     {
                         "ID": "DisruptSleep",
+                        "template": "none",
+                        "templateNote": "mechanism: sleep status changes, silent branches; no dialogue",
                         "variants": [
                             {
                                 "tags": [ "nsfw" ],
@@ -106,7 +114,8 @@
                                     "requireSelfAction": false,
                                     "selfTags": ["sleeping", "timestop"]
                                 },
-                                "responses": []
+                                "responses": [],
+                                "silent": true
                             },
                             {
                                 "tags": [ "nsfw" ],
@@ -137,7 +146,8 @@
                                         ]
                                     }
                                 },
-                                "responses": []
+                                "responses": [],
+                                "silent": true
                             },
                             {
                                 "tags": [ "nsfw" ],
@@ -168,7 +178,8 @@
                                         ]
                                     }
                                 },
-                                "responses": []
+                                "responses": [],
+                                "silent": true
                             },
                             {
                                 "tags": [ "nsfw" ],

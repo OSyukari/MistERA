@@ -4,6 +4,7 @@
         "list": [
             {
                 "ID": "jp_hospital_csection_operation",
+                "kojoParticipants": "PairDistinct",
                 "_comment": "Staff (doctor + optional nurse) as doers; the patient is the receiver (no treatReceiverAsDoer - it would list the patient among $doer$ and leave $receiver$ unresolved in the logs). Variant 0 = preparing (no receiver yet - a player patient joins it through the join button, alone: joinAlone), variant 1 = operating. doerCount/receiverCount are upper limits; they also make the package joinable (MaxActorCount).",
                 "ActionPackageClass": "ActionPackage_Interaction",
                 "displayName": "jp_hospital_csection_operation_displayName",

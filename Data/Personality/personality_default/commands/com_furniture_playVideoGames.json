@@ -16,7 +16,6 @@
                             "extraSelfPortraitTags": [
                                 "blush"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.3.3 主动接受",
                             "responses": [
                                 "com_furniture_playVideoGames_Begin_1",
@@ -41,7 +40,6 @@
                                 "tearful",
                                 "pain"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.3.5 被动接受（屈服）",
                             "responses": [
                                 "com_furniture_playVideoGames_Begin_9",
@@ -60,7 +58,6 @@
                             "extraSelfPortraitTags": [
                                 "blush"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.3.4 被动接受（惊讶不反感）",
                             "responses": [
                                 "com_furniture_playVideoGames_Begin_17",
@@ -79,7 +76,6 @@
                                 "leaning",
                                 "happy"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.1.1 行动开始",
                             "responses": [
                                 "com_furniture_playVideoGames_Begin_25",
@@ -92,7 +88,8 @@
                                 "com_furniture_playVideoGames_Begin_32"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandAct"
                 }
             },
             {
@@ -161,7 +158,6 @@
                                         "excited",
                                         "surprised"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.5.3 成功（正面反馈）行动结束结果",
                                     "responses": [
                                         "com_furniture_playVideoGames_17",
@@ -177,7 +173,6 @@
                                 "pouting",
                                 "doubt"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.5.4 成功（负面反馈）行动结束结果",
                             "responses": [
                                 "com_furniture_playVideoGames_23",
@@ -199,7 +194,6 @@
                                         "excited",
                                         "surprised"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.5.1 失败但正面反馈",
                                     "responses": [
                                         "com_furniture_playVideoGames_29",
@@ -215,7 +209,6 @@
                                 "pouting",
                                 "doubt"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.5.2 失败且负面反馈",
                             "responses": [
                                 "com_furniture_playVideoGames_35",
@@ -226,7 +219,8 @@
                                 "com_furniture_playVideoGames_40"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandResult"
                 }
             },
             {
@@ -245,7 +239,8 @@
                                 "com_furniture_playVideoGames_Tryjoin_6"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "interaction"
                 }
             },
             {
@@ -264,7 +259,8 @@
                                 "com_furniture_playVideoGames_Joined_6"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "interaction"
                 }
             },
             {
@@ -283,7 +279,8 @@
                                 "com_furniture_playVideoGames_Join_Refused_6"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "interaction"
                 }
             },
             {
@@ -387,7 +384,8 @@
                                 "com_furniture_playVideoGames_Join_30"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandJoin"
                 }
             },
             {
@@ -408,7 +406,8 @@
                                 "com_furniture_playVideoGames_Ongoing_8"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandAct"
                 }
             },
             {
@@ -515,7 +514,8 @@
                                 "com_furniture_playVideoGames_Interrupt_38"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "interaction"
                 }
             }
         ]

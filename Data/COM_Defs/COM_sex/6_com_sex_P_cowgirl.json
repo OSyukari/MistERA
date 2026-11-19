@@ -4,6 +4,7 @@
             {
                 "parentCOMID":"com_sex_base",
                 "ID": "com_sex_P_cowgirl",
+                "kojoParticipants": "PairDistinct",
                 "_comment_traces":"Body traces: aroused precum into the vagina, aroused love juice on the penis, pubes both ways (chance).",
                 "traceKeywords":["insert"],
                 "ActionPackageClass": "ActionPackage_Sex",
@@ -212,6 +213,7 @@
             {
                 "parentCOMID":"com_sex_base",
                 "ID": "com_sex_P_cowgirl_overpen",
+                "kojoParticipants": "PairDistinct",
                 "upgradeFrom": "com_sex_P_cowgirl",
                 "_comment_upgrade": "Upgrade of com_sex_P_cowgirl (was its overpenetration setForce variants; needs a long enough penis, requireExisting OverPenetration). One round in place of the ongoing cowgirl, which then resumes. Own acceptance roll every round. AC/DC copied from cowgirl for tuning; setForce keeps the strong-act rules. Texts and kojo: cowgirl's unless its own are added.",
                 "traceKeywords":["insert"],
@@ -316,6 +318,7 @@
             {
                 "parentCOMID":"com_sex_base",
                 "ID": "com_sex_P_cowgirl_force",
+                "kojoParticipants": "PairDistinct",
                 "upgradeFrom": "com_sex_P_cowgirl",
                 "_comment_upgrade": "Upgrade of com_sex_P_cowgirl (was its forceful setForce variants). One round in place of the ongoing cowgirl, which then resumes. Own acceptance roll every round. AC/DC copied from cowgirl for tuning; setForce keeps the strong-act rules. Texts and kojo: cowgirl's unless its own are added.",
                 "traceKeywords":["insert"],

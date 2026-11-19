@@ -4,6 +4,7 @@
         "list": [
             {
                 "ID": "com_furniture_ingestAnus_self",
+                "kojoParticipants": "SoloOnly",
                 "ActionPackageClass": "ActionPackage_Interaction",
                 "displayName": "com_furniture_ingestAnus_self",
                 "hidden": true,
@@ -40,6 +41,7 @@
             },
             {
                 "ID": "com_furniture_ingestAnus_onTarget",
+                "kojoParticipants": "PairDistinct",
                 "ActionPackageClass": "ActionPackage_Interaction",
                 "displayName": "com_furniture_ingestAnus_onTarget",
                 "hidden": true,
@@ -48,6 +50,7 @@
                     "targetCOMClass": {
                         "$type": "COM_IngestItem, Assembly-CSharp",
                         "ID": "com_furniture_ingestAnus_onTarget",
+                        "kojoParticipants": "PairDistinct",
                         "ActionPackageClass": "ActionPackage_Interaction",
                         "displayName": "com_furniture_ingestAnus_onTarget",
                         "itemFolder": "$itemID$",
@@ -75,6 +78,7 @@
             },
             {
                 "ID": "com_furniture_ingestVagina_self",
+                "kojoParticipants": "SoloOnly",
                 "ActionPackageClass": "ActionPackage_Interaction",
                 "displayName": "com_furniture_ingestVagina_self",
                 "hidden": true,
@@ -111,6 +115,7 @@
             },
             {
                 "ID": "com_furniture_ingestVagina_onTarget",
+                "kojoParticipants": "PairDistinct",
                 "ActionPackageClass": "ActionPackage_Interaction",
                 "displayName": "com_furniture_ingestVagina_onTarget",
                 "hidden": true,
@@ -119,6 +124,7 @@
                     "targetCOMClass": {
                         "$type": "COM_IngestItem, Assembly-CSharp",
                         "ID": "com_furniture_ingestVagina_onTarget",
+                        "kojoParticipants": "PairDistinct",
                         "ActionPackageClass": "ActionPackage_Interaction",
                         "displayName": "com_furniture_ingestVagina_onTarget",
                         "itemFolder": "$itemID$",

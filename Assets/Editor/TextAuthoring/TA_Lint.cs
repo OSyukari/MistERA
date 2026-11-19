@@ -25,7 +25,7 @@ public static class TA_Lint
     }
 
     /// <summary>Outcomes a variant's own requirement lets through (ResponseEntryVariant.Requirement.Validate, EP part).</summary>
-    static int OwnEP(ResponseEntry.Variant.Requirement r)
+    internal static int OwnEP(ResponseEntry.Variant.Requirement r)
     {
         if (r == null) return AtLeast(Memory_Response.Accept);
         int s = AllEP;
@@ -195,6 +195,32 @@ public static class TA_Lint
         }
         if (!same.ContainsKey(id)) { same[id] = path; added.Add(new KeyValuePair<Dictionary<string, string>, string>(same, id)); }
         return dead;
+    }
+
+    /// <summary>
+    /// L6 (command kojo, Plan_KojoTemplates.md §3.8): useActiveTags:false drops the ongoing act's tags from the portrait, so
+    /// it belongs on refuse paths (requireEPFailure on the node or an ancestor) and on lookups where the speaker isn't in
+    /// the act (_Interrupt bystander, _Tryjoin / _Join_Refused joiner). Elsewhere the act is accepted and its tags must
+    /// win. Only printing nodes (own responses) count: the engine reads the flag there. Fix = remove the field (default true).
+    /// </summary>
+    public static void ActiveTags(ResponseEntry entry, string entryID, List<JObject> into)
+    {
+        if (entry?.variants == null || entryID == null) return;
+        if (entryID.EndsWith("_Interrupt") || entryID.EndsWith("_Tryjoin") || entryID.EndsWith("_Join_Refused")) return;
+        for (int i = 0; i < entry.variants.Count; i++) ActiveTagsNode(entry.variants[i], $"variants[{i}]", into);
+    }
+
+    static void ActiveTagsNode(ResponseEntry.Variant v, string path, List<JObject> into)
+    {
+        if (v == null || RequiresFailure(v)) return;
+        if (!v.useActiveTags && v.responses != null && v.responses.Count > 0)
+            into.Add(new JObject
+            {
+                ["rule"] = "activeTagsOff", ["path"] = path,
+                ["ops"] = new JArray(new JObject { ["node"] = path, ["op"] = "remove", ["field"] = "useActiveTags" })
+            });
+        if (v.variants != null)
+            for (int i = 0; i < v.variants.Count; i++) ActiveTagsNode(v.variants[i], $"{path}.variants[{i}]", into);
     }
 
     /// <summary>

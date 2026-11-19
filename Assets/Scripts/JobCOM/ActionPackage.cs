@@ -438,7 +438,7 @@ public abstract class ActionPackage
                     .Replace("$comname$", comname);
 
                     // join success branch
-                    if (!LogMessage_Join(c2, s))
+                    if (!LogMessage_Join(c2, result, s))
                     {
                         var desc = new DescriptionCollector(s);
                         desc.LoadActors(this.job.GetLogRelevantActors(this));
@@ -506,14 +506,14 @@ public abstract class ActionPackage
             {
                 if (newchara.Count > 0)
                 {
-                    logged = LogMessage_Join(Utility.GetRandomElement(newchara), s) || logged;
+                    logged = LogMessage_Join(Utility.GetRandomElement(newchara), result, s) || logged;
                 }
             }
             else
             {
                 foreach (var c2 in newchara)
                 {
-                    logged = LogMessage_Join(c2, s) || logged;
+                    logged = LogMessage_Join(c2, result, s) || logged;
                 }
             }
 
@@ -2176,7 +2176,7 @@ public abstract class ActionPackage
             var c = scr_System_CampaignManager.current.FindInstanceByID(refusers[i]);
             if (c == null) continue;
             var s = LocalizeDictionary.QueryThenParse("ui_ap_join_fail").Replace("$names$", c.FirstName).Replace("$comname$", comname);
-            if (!LogMessage_Join(c, s))
+            if (!LogMessage_Join(c, false, s))
             {
                 var desc = new DescriptionCollector(s);
                 desc.LoadActors(this.job.GetLogRelevantActors(this));
@@ -3426,7 +3426,8 @@ public abstract class ActionPackage
 
     List<int> joinAP_list = new List<int>();
 
-    public virtual bool LogMessage_Join(Character_Trainable target, string tooltip, MessageCollect m = null)
+    /// <param name="joined">whether the join went through (the joiner says _Joined, else _Join_Refused)</param>
+    public virtual bool LogMessage_Join(Character_Trainable target, bool joined, string tooltip, MessageCollect m = null)
     {
         if (m == null) m = this.job.m;
 
@@ -3447,7 +3448,7 @@ public abstract class ActionPackage
             //if (ep.Doer == target) continue;
             if (!requestAccepted && ep.Response != Memory_Response.Refuse) continue;
 
-            var responses = ep.LogMessage_Join(target, joinAP_list, m);
+            var responses = ep.LogMessage_Join(target, joined, joinAP_list, m);
             bool logged = false;
             foreach (var kol in responses)
             {

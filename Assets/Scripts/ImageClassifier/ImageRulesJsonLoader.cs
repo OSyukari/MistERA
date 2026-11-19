@@ -18,7 +18,7 @@ public static class ImageRulesJsonLoader
 {
     static readonly Regex WeightSuffix = new Regex(@"^(.*)\*([0-9]*\.?[0-9]+)$", RegexOptions.Compiled);
     static readonly HashSet<string> CategoryKeys = new HashSet<string> { "id", "group", "all", "any", "none", "threshold", "hold", "holdFilenameHints", "nameSet", "allowedNames", "allowedVariants", "moveLowConfidence", "rename", "refines", "manual", "filenameConfirmedNearMisses", "filenameFirst" };
-    static readonly HashSet<string> NameEntryKeys = new HashSet<string> { "tier", "hasVariants", "defaultVariant", "filenameOnly", "isperform", "none", "noneAll", "onlyInCategories", "fallback", "tierMinScore", "threshold", "noneThreshold" };
+    static readonly HashSet<string> NameEntryKeys = new HashSet<string> { "tier", "hasVariants", "defaultVariant", "filenameOnly", "isperform", "none", "noneAll", "onlyInCategories", "fallback", "tierMinScore", "threshold", "noneThreshold", "filenameRequires" };
     static readonly HashSet<string> EmotionPassKeys = new HashSet<string> { "categories", "labels", "prompt" };
 
     public static ImageRules Load(string path)
@@ -269,6 +269,7 @@ public static class ImageRulesJsonLoader
                 clauses = ReadClauses(nameKeys[0].Value, parser, where),
                 none = ReadClauses(e["none"], parser, where),
                 noneAll = ReadClauses(e["noneAll"], parser, where),
+                filenameRequires = ReadClauses(e["filenameRequires"], parser, where),
                 hasVariants = (e["hasVariants"] as JArray)?.Select(v => (string)v).ToList() ?? new List<string>(),
                 defaultVariant = (string)e["defaultVariant"],
             };

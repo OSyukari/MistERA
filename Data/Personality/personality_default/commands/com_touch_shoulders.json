@@ -14,7 +14,6 @@
                                 ]
                             },
                             "extraSelfPortraitTags": ["sleeping", "relaxed"],
-                            "useActiveTags": false,
                             "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
                             "responses": [
                                 "com_touch_shoulders_Begin_Sleep_1",
@@ -29,7 +28,6 @@
                                 ]
                             },
                             "extraSelfPortraitTags": ["doll", "empty", "silence", "idle"],
-                            "useActiveTags": false,
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_touch_shoulders_Begin_Timestop_1",
@@ -45,7 +43,6 @@
                                 "blush",
                                 "affectionate"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.1.1 开始被抚摸肩部 有允许 口上文",
                             "responses": [
                                 "com_touch_shoulders_Begin_A_1",
@@ -63,7 +60,6 @@
                             "extraSelfPortraitTags": [
                                 "blush"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.2.1 开始被抚摸肩部 未允许 好意 口上文",
                             "responses": [
                                 "com_touch_shoulders_Begin_B_1",
@@ -79,7 +75,6 @@
                                 "fear",
                                 "trembling"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.2.2 开始被抚摸肩部 未允许 敌意 口上文",
                             "responses": [
                                 "com_touch_shoulders_Begin_C_1",
@@ -90,7 +85,8 @@
                                 "com_touch_shoulders_Begin_C_6"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandAct"
                 }
             },
             {
@@ -109,7 +105,6 @@
                                 "sleeping",
                                 "relaxed"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.3.2 睡眠中 被抚摸肩部 口上文",
                             "responses": [
                                 "com_touch_shoulders_D_1",
@@ -133,7 +128,6 @@
                                 "silence",
                                 "idle"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.3.1 时停中 被抚摸肩部 口上文",
                             "responses": [
                                 "com_touch_shoulders_E_1",
@@ -220,7 +214,6 @@
                             "requirement": {
                                 "requireEPSuccessGTE": "Success"
                             },
-                            "useActiveTags": false,
                             "_player only version": {
                                 "requirement": {
                                     "targetBaseID": "PLAYER"
@@ -239,7 +232,6 @@
                                         "happy",
                                         "relaxed"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.1.3 ($self$) 被抚摸肩部 结果正面 有允许 口上文",
                                     "responses": [
                                         "com_touch_shoulders_I_1",
@@ -280,7 +272,6 @@
                                         "doubt",
                                         "disappointed"
                                     ],
-                                    "useActiveTags": false,
                                     "_comment": "2.1.4 ($self$) 被抚摸肩部 结果负面 有允许 口上文",
                                     "responses": [
                                         "com_touch_shoulders_K_1",
@@ -303,7 +294,6 @@
                                 "troubled",
                                 "silence"
                             ],
-                            "useActiveTags": false,
                             "responses": [
                                 "com_touch_shoulders_L_1",
                                 "com_touch_shoulders_L_2",
@@ -313,7 +303,8 @@
                                 "com_touch_shoulders_L_6"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "commandResult"
                 }
             }
         ]

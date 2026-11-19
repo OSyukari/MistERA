@@ -122,7 +122,7 @@ public static class ImageAnalysis
 
     /// <summary>
     /// Creates every category folder (holds excluded), plus &lt;category&gt;_perform where the game can read it: the category is read by
-    /// portrait_global.categories (as id or alsoUseFolders) and a doer/both name of portrait_global.names may be filed
+    /// portrait_global.categories (as id or alsoUseFolders) and a name read by a portrait_global.SexPortraitVariantConfig assetPrefix_perform may be filed
     /// in it (file_names onlyInCategories). Performer placement is hand-sorted and protected; Rename can name its files in place.
     /// </summary>
     static void EnsureCategoryFolders(ImageAnalysisResult result, string rulesPath)
@@ -138,13 +138,18 @@ public static class ImageAnalysis
                     if ((string)c["id"] is string cid) readByGame.Add(cid);
                     if (c["alsoUseFolders"] is Newtonsoft.Json.Linq.JArray also) foreach (var f in also) readByGame.Add((string)f);
                 }
-            var performNames = new HashSet<string>(StringComparer.Ordinal);
-            if (root["portrait_global"]?["names"] is Newtonsoft.Json.Linq.JObject names)
-                foreach (var p in names.Properties())
-                    if (p.Value is Newtonsoft.Json.Linq.JObject o && o["keywords"] is Newtonsoft.Json.Linq.JArray kws
-                        && ((bool?)o["alsoUsePerformFolders"] == true
-                            || kws.OfType<Newtonsoft.Json.Linq.JObject>().Any(k => (string)k["role"] == "both" || (string)k["role"] == "doer"))) performNames.Add(p.Name);
             result.rules.nameSets.TryGetValue(ImageRules.DefaultNameSet, out var fileNames);
+            // names read from a _perform folder: an assetPrefix_perform entry starts with the name (prefix == name or name_...)
+            var performNames = new HashSet<string>(StringComparer.Ordinal);
+            if (fileNames != null && root["portrait_global"]?[GlobalPortraitTemplate.SexVariantKey] is Newtonsoft.Json.Linq.JObject names)
+                foreach (var block in names.Properties())
+                    if (block.Value is Newtonsoft.Json.Linq.JObject rows)
+                        foreach (var row in rows.Properties())
+                            if (row.Value["assetPrefix_perform"] is Newtonsoft.Json.Linq.JArray prefixes)
+                                foreach (var prefix in prefixes.Values<string>())
+                                    foreach (var n in fileNames)
+                                        if (prefix != null && (prefix == n.name || prefix.StartsWith(n.name + "_", StringComparison.Ordinal)
+                                            || prefix.StartsWith(n.name + "!", StringComparison.Ordinal))) performNames.Add(n.name);
             if (fileNames != null) performNames.UnionWith(fileNames.Where(n => n.isperform).Select(n => n.name));
             foreach (var id in readByGame)
             {

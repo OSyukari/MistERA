@@ -15,12 +15,12 @@
 :root {
   --bg: #f6f6f4; --panel: #ffffff; --text: #1d1d1b; --muted: #6b6b66; --line: #deded8; --accent: #3a6fd8;
   --low: #e08a00; --unmatched: #d33a3a; --disagree: #3a88ff; --kept: #9a9a9a; --stale: #b06a00;
-  --pick: #1f9d55; --pick-bg: rgba(31, 157, 85, .30);
+  --pick: #1f9d55; --pick-bg: rgba(31, 157, 85, .30); --ov: #8a3fd1;
   --thumb: 72px;
 }
 @media (prefers-color-scheme: dark) {
   :root { --bg: #161615; --panel: #1f1f1e; --text: #e6e6e1; --muted: #9a9a93; --line: #34342f; --accent: #7aa2f7; --stale: #e0a040;
-    --pick: #4cc38a; --pick-bg: rgba(76, 195, 138, .30); }
+    --pick: #4cc38a; --pick-bg: rgba(76, 195, 138, .30); --ov: #a66cf0; }
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
@@ -39,6 +39,7 @@ table.grid td.text { text-align: left; color: var(--muted); white-space: normal;
 table.grid td.stale { text-align: left; color: var(--stale); white-space: normal; }
 table.grid tr.total td { font-weight: 600; border-bottom: none; }
 ul.lint { margin: 4px 0; padding-left: 18px; font-size: 13px; }
+h4.sub { font-size: 13px; margin: 10px 0 2px; }
 .tagfreq { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13px; margin: 4px 0; }
 .tagfreq b, .tags b { font-weight: 700; }
 .tagfreq span { color: var(--muted); }
@@ -49,6 +50,12 @@ ul.lint { margin: 4px 0; padding-left: 18px; font-size: 13px; }
 .toolbar label { display: inline-flex; gap: 6px; align-items: center; color: var(--muted); }
 .toolbar select, .toolbar input[type=search] { font: inherit; color: var(--text); background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 2px 6px; max-width: 260px; }
 .toolbar .count { margin-left: auto; color: var(--muted); }
+.catbar { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center; color: var(--muted); }
+.catbar button { font: inherit; font-size: 12px; color: var(--muted); background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 1px 9px; cursor: pointer; }
+.catbar button.on { color: #fff; background: var(--accent); border-color: var(--accent); }
+.catbar button.act { border-radius: 4px; color: var(--text); }
+.catbar button .n { opacity: .75; }
+.catbar label { margin-left: 8px; }
 .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--muted); margin: 6px 0 2px; }
 .legend span::before { content: ""; display: inline-block; width: 12px; height: 12px; margin-right: 5px; vertical-align: -2px; border: 2px solid transparent; border-radius: 2px; }
 .legend .l-low::before { border-color: var(--low); }
@@ -100,6 +107,12 @@ section.cat h2.handler-title b { font-weight: 700; }
 .selbar button.primary { border-color: var(--pick); }
 .selbar .n { color: var(--pick); font-weight: 600; }
 .selbar .st { color: var(--muted); font-size: 12px; }
+.ovbar { color: var(--muted); }
+.ovbar select, .ovbar input { font: inherit; color: var(--text); background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px; }
+.ovbar .st.dirty { color: var(--ov); font-weight: 600; }
+.thumbs a .ovmark { position: absolute; right: 1px; top: 1px; font-size: 10px; line-height: 1; padding: 1px 3px; border-radius: 2px;
+  background: var(--ov); color: #fff; pointer-events: none; max-width: calc(100% - 2px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.legend .l-ov::before { border: none; content: "→"; width: auto; height: auto; margin-right: 3px; padding: 0 3px; background: var(--ov); color: #fff; border-radius: 2px; }
 .empty { color: var(--muted); padding: 20px 0; }
 
 #preview { position: fixed; z-index: 20; pointer-events: none; display: none; background: var(--panel); border: 1px solid var(--line);
@@ -138,7 +151,7 @@ section.cat h2.handler-title b { font-weight: 700; }
     <option value="class">Classification</option>
     <option value="handler">Portrait handler</option>
   </select></label>
-  <label id="empty-label" hidden title="Portrait handler view: also list every handler variant of the template that holds no image (in any folder, or none that passes the filters)"><input type="checkbox" id="f-empty"> Show empty variants</label>
+  <label id="empty-label" title="Also list what holds no image (in any folder, or none that passes the filters). Classification view: every class name the rules can give in the category (&lt;category&gt;_perform: the isperform names). Portrait handler view: every handler variant of the template"><input type="checkbox" id="f-empty"> Show empty variants</label>
   <label id="use-label" hidden title="Variants of the portrait handler holding the image. Shadowed = an earlier variant of the same handler always matches first">Handler use <select id="f-use">
     <option value="">All images</option>
     <option value="none">In no variant</option>
@@ -146,7 +159,6 @@ section.cat h2.handler-title b { font-weight: 700; }
     <option value="never">Only in shadowed variants</option>
     <option value="shadow">In a shadowed variant</option>
   </select></label>
-  <label>Category <select id="f-cat"><option value="">All</option></select></label>
   <label>Folder <select id="f-folder"><option value="">All</option></select></label>
   <label>Show <select id="f-status">
     <option value="">Everything</option>
@@ -155,6 +167,7 @@ section.cat h2.handler-title b { font-weight: 700; }
     <option value="unmatched">Unmatched</option>
     <option value="disagree">Folder vs rules</option>
     <option value="kept">Moved out by you</option>
+    <option value="override">Overridden by you</option>
   </select></label>
   <label title="Whether the image's original file name gave its category, name, variant or state (filename IDs in the rules)">File names <select id="f-named">
     <option value="">All images</option>
@@ -174,10 +187,40 @@ section.cat h2.handler-title b { font-weight: 700; }
     <button type="button" class="primary" id="sel-save" title="Write the selection for Unity: Image Classifier > Select from report ticks the work folders of these images">Save selection</button>
     <span class="st" id="sel-status"></span>
   </span>
+  <span class="selbar ovbar" id="ovbar" hidden title="Classification override of the selected images, kept for a later correction (not applied by the classifier yet)">
+    Override <select id="ov-cat"><option value="">(keep category)</option></select>
+    <input type="search" id="ov-name" list="ov-names" placeholder="class name" size="16"><datalist id="ov-names"></datalist>
+    <button type="button" id="ov-set">Set override</button>
+    <button type="button" id="ov-unset">Unset override</button>
+    <button type="button" class="primary" id="ov-save" title="Write the overrides next to this page; the next report update reads them back">Save overrides</button>
+    <span class="st" id="ov-status"></span>
+  </span>
   <span class="count" id="count"></span>
+  <div class="catbar" id="catbar" title="Click a category to show or hide it; a category also shows its &lt;category&gt;_perform folder">Categories
+    <span id="cat-buttons"></span>
+    <button type="button" class="act" data-act="all">Select all</button>
+    <button type="button" class="act" data-act="none">Unselect all</button>
+    <label title="Ignore the category folder: classification view = one block per class name, portrait handler view = one block per handler role, each row holding every selected category"><input type="checkbox" id="f-merge"> Merge categories</label>
+  </div>
 </div>
 
 <main>
+  <details class="panel" id="unused-panel"><summary id="unused-title">Unused</summary>
+    <div id="prefix-block" hidden><h4 class="sub" id="prefix-title">Classifications not used by the portrait handler</h4>
+      <p class="hint">Class names of images in a category folder read by portrait_global.SexPortraitVariantConfig that no entry's assetPrefix / assetPrefix_perform catches
+        (prefix_ starts the name, prefix!x skips prefix_x_). Tested on the class name, so files not renamed yet do not count. Per class: the folders and image counts. Ignores the filters.</p>
+      <ul class="lint" id="prefix-unused"></ul></div>
+    <div id="noname-block" hidden><h4 class="sub" id="noname-title">Asset prefixes with no classification</h4>
+      <p class="hint">assetPrefix / assetPrefix_perform values of portrait_global.SexPortraitVariantConfig that catch no classification name the rules can produce
+        (each name and name_&lt;variant&gt; for its hasVariants), so no classified file can ever be read by them. Per prefix: the entries using it.</p>
+      <ul class="lint" id="noname"></ul></div>
+    <div id="rules-block"><h4 class="sub" id="rules-title">Classifications with no image match</h4>
+      <p class="hint">Rules that matched no image in any analyzed folder.</p>
+      <ul class="lint" id="unused"></ul></div>
+    <div id="vocab-block"><h4 class="sub" id="vocab-title">Tags not in the tagger vocabulary</h4>
+      <p class="hint">Rule tags the tagger model can never output, so they never match.</p>
+      <ul class="lint" id="vocab"></ul></div>
+  </details>
   <details class="panel" id="folders-panel"><summary id="folders-title">Folders</summary><div class="scrollx" id="folders"></div></details>
   <details class="panel" id="lint-panel"><summary id="lint-title">Rule check</summary><ul class="lint" id="lint"></ul></details>
   <details class="panel" id="freq-panel"><summary>Tag frequency in the shown images that are not confidently placed</summary>
@@ -188,11 +231,11 @@ section.cat h2.handler-title b { font-weight: 700; }
     <span class="l-disagree">folder decided, rules disagree</span><span class="l-kept">moved out by you</span>
     <span class="l-name">file name used in analysis</span>
     <span id="uses-help" hidden>corner number = reachable / all portrait handler variants holding the image</span>
-    <span>hover = large preview · click = details · ctrl/middle click = open image</span>
-    <span id="sel-help" hidden>drag = select images · shift+drag = add · alt+drag = remove · alt+click = toggle one</span>
+    <span>hover = large preview · click = details · middle click = open image</span>
+    <span id="sel-help" hidden>drag = select images · shift+drag = add · alt+drag = remove · ctrl/alt+click = toggle one</span>
+    <span class="l-ov" id="ov-help" hidden>classification override (set on the selected images)</span>
   </div>
   <div id="cats"></div>
-  <details class="panel" id="unused-panel"><summary>Rules that matched no image in any analyzed folder</summary><ul class="lint" id="unused"></ul></details>
 </main>
 
 <div id="preview"><img alt=""><div class="info"></div></div>
@@ -233,9 +276,50 @@ window.REPORT = /*__REPORT_DATA__*/null;
       var folder = it.path.replace(/\\/g, "/").split("/");
       it.cat = folder.length > 1 && /_perform$/i.test(folder[0])
         ? folder[0] : it.category == null ? "(no category)" : it.category;
+      // category toggle key: a <category>_perform folder follows its category
+      it.base = it.cat.replace(/_perform$/i, "");
       all.push(it);
     });
   });
+
+  // ---- classification overrides (Mods report: R.overrideFile), keyed "work folder|original name": the tag record keeps the first
+  // file name through Move + Rename and manual moves, so the key survives them ('|' cannot be in a file name). An original name held
+  // by two images of one work folder is ambiguous: no override there. Saved = R.overrides (the report writer reads the file back);
+  // unsaved changes = a delta in localStorage (null = removed) until Save overrides.
+  var ovBase = R.overrides || {}, ovDelta = {}, ovDup = {}, ovSeen = {};
+  try { ovDelta = JSON.parse(store.get("ovDelta", "{}")) || {}; } catch (e) {}
+  function ovKey(it) { return R.folders[it.f].name + "|" + (it.original || it.path.split("/").pop()); }
+  all.forEach(function (it) { var k = ovKey(it); if (ovSeen[k]) ovDup[k] = true; ovSeen[k] = true; });
+  function ovOf(it) {
+    var k = ovKey(it);
+    if (ovDup[k]) return null;
+    return Object.prototype.hasOwnProperty.call(ovDelta, k) ? ovDelta[k] : ovBase[k] || null;
+  }
+  // older entries keyed "work folder/path" (no '|'): re-keyed as unsaved changes, so the next Save writes the new keys. Unsaved
+  // changes first (they are newer); a saved entry whose image is not found (or is ambiguous) stays as it is.
+  var ovLegacy = 0;
+  (function () {
+    var byPath = {};
+    all.forEach(function (it) { byPath[pickKey(it)] = it; });
+    function convert(e, it, k) { return { category: e.category, name: e.name, was: e.was, original: it.original || null, path: k, set: e.set }; }
+    var has = function (o, k) { return Object.prototype.hasOwnProperty.call(o, k); }, removed = {};
+    Object.keys(ovDelta).forEach(function (k) {
+      if (k.indexOf("|") >= 0) return;
+      var e = ovDelta[k], it = byPath[k];
+      delete ovDelta[k];
+      if (!e) { removed[k] = true; return; }   // an unsaved removal of a saved legacy entry
+      if (it && !ovDup[ovKey(it)]) ovDelta[ovKey(it)] = convert(e, it, k);
+    });
+    Object.keys(ovBase).forEach(function (k) {
+      if (k.indexOf("|") >= 0) return;
+      var it = byPath[k];
+      if (!it || ovDup[ovKey(it)]) { if (removed[k]) ovDelta[k] = null; return; }
+      ovDelta[k] = null;   // the old key goes on the next Save
+      if (!removed[k] && !has(ovDelta, ovKey(it))) ovDelta[ovKey(it)] = convert(ovBase[k], it, k);
+      ovLegacy++;
+    });
+  })();
+  function ovLabel(ov) { return ov.category + " / " + ov.name; }
 
   // ---- portrait handler use (R.portrait, PortraitUsage.cs): every item's variants; all[] index = the global item index there
   var P = R.portrait && !R.portrait.error ? R.portrait : null;
@@ -261,6 +345,7 @@ window.REPORT = /*__REPORT_DATA__*/null;
   }
   function variantLabel(v) {
     var x = P.variants[v];
+    if (x.id) return x.id;
     return (x.tags.length ? x.tags.join(" + ") : "(no tags: always)") + (x.excl.length ? " · not " + x.excl.join(", ") : "");
   }
 
@@ -312,29 +397,115 @@ window.REPORT = /*__REPORT_DATA__*/null;
           'role "both" name (portrait_global.names, eg. cunnilingus) where the character performs the act; keep the file name.</p>';
   $("folders").innerHTML = fh;
   $("folders-title").textContent = "Folders (" + analyzed + " of " + R.folders.length + " analyzed" + (stale ? ", " + stale + " out of date" : "") + ")";
-  if (stale) $("folders-panel").open = true;
 
-  $("lint-title").textContent = "Rule check (" + R.lint.length + ")";
-  $("lint").innerHTML = R.lint.length ? R.lint.map(function (l) { return "<li>" + esc(l) + "</li>"; }).join("") : "<li>No problems found.</li>";
+  // the tagger vocabulary check (ImageRuleLinter) goes to the Unused panel, the rest of the lint stays in Rule check
+  var vocabRe = /not in the tagger vocabulary/, lint = [], vocab = [], nVocab = 0;
+  R.lint.forEach(function (l) {
+    if (!vocabRe.test(l)) { lint.push(l); return; }
+    var colon = l.indexOf(": ");
+    vocab.push(colon < 0 ? l : l.slice(colon + 2));
+    nVocab += colon < 0 ? 1 : l.slice(colon + 2).split(", ").length;
+  });
+  $("lint-title").textContent = "Rule check (" + lint.length + ")";
+  $("lint").innerHTML = lint.length ? lint.map(function (l) { return "<li>" + esc(l) + "</li>"; }).join("") : "<li>No problems found.</li>";
+  $("vocab-title").textContent = "Tags not in the tagger vocabulary (" + nVocab + ")";
+  $("vocab").innerHTML = vocab.length ? vocab.map(function (l) { return "<li>" + esc(l) + "</li>"; }).join("") :
+    "<li>None (or no tagger vocabulary set: Image Classifier models folder).</li>";
 
+  // ---- Unused panel: classifications not used by the portrait handler, rules with no image match, tags not in the vocabulary
+  var nRules = 0;
   if (R.unused) {
-    var u = R.unused, list = function (a) { return a.length ? esc(a.join(", ")) : "none"; };
+    var u = R.unused, list = function (a) { nRules += a.length; return a.length ? esc(a.join(", ")) : "none"; };
     var uh = "<li>Categories: " + list(u.categories) + "</li>";
     u.names.forEach(function (s) { uh += "<li>" + esc(s.set) + ": " + list(s.names) + "</li>"; });
     uh += "<li>Variants: " + list(u.variants) + "</li>";
     $("unused").innerHTML = uh;
   } else {
-    $("unused-panel").style.display = "none";
+    $("unused").innerHTML = "<li>No analyzed folder or no rules.</li>";
   }
+  $("rules-title").textContent = "Classifications with no image match (" + nRules + ")";
+
+  // classifications no asset prefix reads: a class name (= the renamed file name start) of an image in a category folder some
+  // SexPortraitVariantConfig entry reads, that no entry's assetPrefix / assetPrefix_perform catches. Same test as
+  // GlobalPortraitTemplate.PrefixPattern: "prefix_" starts the name, "prefix!x!y" skips prefix_x_ / prefix_y_. By name, so files not
+  // renamed yet do not count as a missing prefix.
+  var nPrefix = 0;
+  if (P) {
+    var prefixes = [], entryFolders = {};
+    P.variants.forEach(function (x) {
+      if (!x.id) return;
+      P.handlers[x.h].folders.forEach(function (fo) { entryFolders[fo.toLowerCase()] = true; });
+      (x.sources || []).forEach(function (s) { var p = s.split("!"); prefixes.push({ head: p[0] + "_", skip: p.slice(1).filter(function (e) { return e; }) }); });
+    });
+    var catches = function (p, name) {
+      var n = name + "_";
+      return n.indexOf(p.head) === 0 && !p.skip.some(function (e) { return n.indexOf(p.head + e + "_") === 0; });
+    };
+    var covered = function (name) {
+      for (var i = 0; i < prefixes.length; i++) if (catches(prefixes[i], name)) return true;
+      return false;
+    };
+
+    // asset prefixes no classification name falls under: names = every name the rules can produce (R.classNames, with the
+    // hasVariants suffixes) + the image class names; older report data without classNames: image names + rule names with no image
+    var names = {}, nameList = [];
+    var addName = function (s) { s = String(s).replace(/ \(entry #\d+\)$/, ""); if (!/^\(/.test(s) && !names[s]) { names[s] = true; nameList.push(s); } };
+    (R.classNames || []).forEach(addName);
+    all.forEach(function (it) { addName(it.cls); });
+    if (R.unused) R.unused.names.forEach(function (s) { s.names.forEach(addName); });
+    var bySource = {}, sourceList = [];
+    P.variants.forEach(function (x) {
+      if (!x.id) return;
+      var self = P.handlers[x.h].self.filter(function (k) { return k !== "sex"; }).join("+") || "none";
+      (x.sources || []).forEach(function (s) {
+        var e = bySource[s];
+        if (!e) { var p = s.split("!"); e = bySource[s] = { s: s, p: { head: p[0] + "_", skip: p.slice(1).filter(function (k) { return k; }) }, entries: [] }; sourceList.push(e); }
+        var label = self + "." + x.id;
+        if (e.entries.indexOf(label) < 0) e.entries.push(label);
+      });
+    });
+    var noName = sourceList.filter(function (e) { return !nameList.some(function (n) { return catches(e.p, n); }); });
+    $("noname-block").hidden = false;
+    $("noname-title").textContent = "Asset prefixes with no classification (" + noName.length + ")";
+    $("noname").innerHTML = noName.length ? noName.map(function (e) {
+      return "<li><b>" + esc(e.s) + "</b> · " + esc(e.entries.join(", ")) + "</li>";
+    }).join("") : "<li>None: every asset prefix catches a classification name.</li>";
+    var byCls = {}, clsList = [];
+    all.forEach(function (it) {
+      var parts = it.path.replace(/\\/g, "/").split("/");
+      if (parts.length < 2 || /^\(/.test(it.cls)) return;
+      var fo = parts[parts.length - 2].toLowerCase();
+      if (!entryFolders[fo] || covered(it.cls)) return;
+      var c = byCls[it.cls] || (byCls[it.cls] = { name: it.cls, n: 0, folders: {}, order: [], mapped: 0 });
+      if (!c.n) clsList.push(c);
+      c.n++;
+      if (!c.folders[fo]) { c.folders[fo] = { folder: fo, n: 0 }; c.order.push(c.folders[fo]); }
+      c.folders[fo].n++;
+      if ((it.slots || []).some(function (u) { return !P.variants[u.slot.v].id; })) c.mapped++;
+    });
+    var prefixRows = [];
+    clsList.forEach(function (c) {
+      c.order.sort(function (a, b) { return b.n - a.n || cmp(a.folder, b.folder); });
+      prefixRows.push({ n: c.n, name: c.name, html: "<li><b>" + esc(c.name) + "</b> · " + c.n + " image" + (c.n === 1 ? "" : "s") + " (" +
+        esc(c.order.map(function (e) { return e.folder + " " + e.n; }).join(", ")) + ")" +
+        (c.mapped ? ' · <span class="w-low">' + c.mapped + " read by a mapped portrait instead</span>" : "") + "</li>" });
+    });
+    prefixRows.sort(function (a, b) { return b.n - a.n || cmp(a.name, b.name); });
+    nPrefix = prefixRows.length;
+    $("prefix-block").hidden = false;
+    $("prefix-title").textContent = "Classifications not used by the portrait handler (" + nPrefix + ")";
+    $("prefix-unused").innerHTML = prefixRows.length ? prefixRows.map(function (r) { return r.html; }).join("") : "<li>None: every class name is read by an asset prefix.</li>";
+  }
+  $("unused-title").textContent = "Unused: " + (P ? nPrefix + " classifications not in the portrait handler · " + noName.length + " asset prefixes with no classification · " : "") +
+    nRules + " classifications with no image · " + nVocab + " tags not in the tagger vocabulary";
 
   // ---- filters
-  var catSel = $("f-cat"), folderSel = $("f-folder"), statusSel = $("f-status"), namedSel = $("f-named"),
+  var folderSel = $("f-folder"), statusSel = $("f-status"), namedSel = $("f-named"),
       classIn = $("f-class"), fileIn = $("f-file"), sizeIn = $("f-size"), previewSel = $("f-preview"),
-      viewSel = $("f-view"), useSel = $("f-use"), emptyIn = $("f-empty");
+      viewSel = $("f-view"), useSel = $("f-use"), emptyIn = $("f-empty"), mergeIn = $("f-merge");
+  emptyIn.checked = store.get("empty", "0") === "1";
   if (P) {
     $("view-label").hidden = false;
-    $("empty-label").hidden = false;
-    emptyIn.checked = store.get("empty", "0") === "1";
     $("use-label").hidden = false;
     $("uses-help").hidden = false;
     viewSel.value = store.get("view", "class");
@@ -342,8 +513,47 @@ window.REPORT = /*__REPORT_DATA__*/null;
   } else if (R.portrait && R.portrait.error) {
     $("meta").innerHTML += " · " + esc(R.portrait.error);
   }
-  cats.forEach(function (c, i) {
-    var o = document.createElement("option"); o.value = c.id; o.textContent = c.id + " (" + c.count + ")"; catSel.appendChild(o);
+  // category toggles: one per category (image categories and the portrait handler folders), <category>_perform folded in.
+  // Stored as the switched-off set, so a new category starts on.
+  var bases = [], baseCount = {};
+  function addBase(b, n) {
+    if (baseCount[b] == null) { baseCount[b] = 0; bases.push(b); }
+    baseCount[b] += n;
+  }
+  cats.forEach(function (c) { addBase(c.id.replace(/_perform$/i, ""), c.count); });
+  if (P) P.handlers.forEach(function (x) { x.folders.forEach(function (fo) { addBase(fo.replace(/_perform$/i, ""), 0); }); });
+  var catNames = R.categoryNames || {};
+  Object.keys(catNames).forEach(function (id) { addBase(id, 0); });
+  bases.sort(function (a, b) { return baseCount[b] - baseCount[a] || cmp(a, b); });
+  var catOff = {};
+  try { JSON.parse(store.get("catOff", "[]")).forEach(function (b) { catOff[b] = true; }); } catch (e) {}
+  function catOn(b) { return !catOff[b]; }
+  // a handler shows while any category folder it reads is switched on
+  function handlerOn(h) {
+    var fs = P.handlers[h].folders;
+    for (var i = 0; i < fs.length; i++) if (catOn(fs[i].replace(/_perform$/i, ""))) return true;
+    return !fs.length;
+  }
+  function renderCatButtons() {
+    $("cat-buttons").innerHTML = bases.map(function (b) {
+      return '<button type="button" data-cat="' + esc(b) + '"' + (catOn(b) ? ' class="on"' : "") + ">" + esc(b) + ' <span class="n">' + baseCount[b] + "</span></button>";
+    }).join(" ");
+  }
+  function catsChanged() {
+    store.set("catOff", JSON.stringify(Object.keys(catOff)));
+    renderCatButtons(); render(); window.scrollTo(0, 0);
+  }
+  renderCatButtons();
+  mergeIn.checked = store.get("merge", "0") === "1";
+  $("catbar").addEventListener("click", function (e) {
+    var b = e.target.closest ? e.target.closest("button") : null;
+    if (!b) return;
+    var c = b.getAttribute("data-cat"), act = b.getAttribute("data-act");
+    if (c != null) { if (catOff[c]) delete catOff[c]; else catOff[c] = true; }
+    else if (act === "all") catOff = {};
+    else if (act === "none") { catOff = {}; bases.forEach(function (x) { catOff[x] = true; }); }
+    else return;
+    catsChanged();
   });
   R.folders.forEach(function (f, i) {
     if (f.analyzed == null) return;
@@ -389,6 +599,7 @@ window.REPORT = /*__REPORT_DATA__*/null;
       case "unmatched": return !it.keptOut && it.status === "unmatched";
       case "disagree": return !!it.disagree;
       case "kept": return !!it.keptOut;
+      case "override": return !!ovOf(it);
     }
     return true;
   }
@@ -401,21 +612,65 @@ window.REPORT = /*__REPORT_DATA__*/null;
     var idx = items.length; items.push(it);
     var uses = "", shadowed = shadowedBy != null && shadowedBy >= 0;
     if (P) uses = '<span class="uses' + (!it.nReach ? " none" : it.nReach < it.nSlots ? " part" : "") + '">' + it.nReach + "/" + it.nSlots + "</span>";
+    var ov = ovOf(it);
+    if (ov) uses += '<span class="ovmark">→ ' + esc(ov.name) + "</span>";
     return '<a class="' + frameClass(it) + (it.nameUsed ? " named" : "") + (it.picked ? " picked" : "") + (shadowed ? " shadowed" : "") + '" href="' + esc(it.src) +
            '" data-i="' + idx + '"' + (shadowed ? ' title="shadowed in its folder by ' + esc(variantLabel(shadowedBy)) + '"' : "") +
            ' target="_blank" draggable="false"><img src="' + esc(it.src) + '" loading="lazy" alt="" draggable="false">' + uses + "</a>";
   }
 
   function render() {
+    // the override controls work on the classification view only
+    if (canSelect && R.overrideFile) $("ovbar").hidden = !!(P && viewSel.value === "handler");
     if (P && viewSel.value === "handler") { renderHandlers(); return; }
-    var cat = catSel.value, folder = folderSel.value, status = statusSel.value, named = namedSel.value;
+    var folder = folderSel.value, status = statusSel.value, named = namedSel.value;
     var q = classIn.value.trim().toLowerCase(), fileTerms = terms(fileIn.value);
-    var html = "", shown = 0;
+    var html = "", shown = 0, showEmpty = emptyIn.checked;
     items = [];
-    cats.forEach(function (c, ci) {
-      if (cat !== "" && c.id !== cat) return;
-      var rows = "", catShown = 0;
-      c.clusters.forEach(function (cl) {
+    var groups = cats.filter(function (c) { return catOn(c.id.replace(/_perform$/i, "")); });
+    // empty classifications: the class names the rules can give in the category (R.categoryNames; a _perform section: the isperform
+    // names), plus sections for switched-on categories without images
+    function expected(id) {
+      var perform = /_perform$/i.test(id), list = catNames[id.replace(/_perform$/i, "")] || [];
+      return list.filter(function (x) { return !perform || x[1]; }).map(function (x) { return x[0]; });
+    }
+    if (showEmpty) {
+      var have = {};
+      groups.forEach(function (c) { have[c.id] = true; });
+      Object.keys(catNames).forEach(function (id) {
+        if (!catOn(id)) return;
+        [id, id + "_perform"].forEach(function (s) {
+          if (!have[s] && expected(s).length) groups.push({ id: s, count: 0, clusters: [], byName: {} });
+        });
+      });
+    }
+    if (mergeIn.checked && groups.length) {
+      // merged: one block, one row per class name holding every selected category's images
+      var m = { id: "Merged: " + bases.filter(catOn).join(", "), count: 0, clusters: [], byName: {}, names: [] };
+      groups.forEach(function (c) {
+        m.count += c.count;
+        c.clusters.forEach(function (cl) {
+          var x = m.byName[cl.name];
+          if (!x) { x = m.byName[cl.name] = { name: cl.name, items: [] }; m.clusters.push(x); }
+          x.items = x.items.concat(cl.items);
+        });
+        if (showEmpty) expected(c.id).forEach(function (n) { if (m.names.indexOf(n) < 0) m.names.push(n); });
+      });
+      m.clusters.forEach(function (cl) {
+        cl.items.sort(function (a, b) { return cmp(R.folders[a.f].name.toLowerCase(), R.folders[b.f].name.toLowerCase()) || cmp(a.path.toLowerCase(), b.path.toLowerCase()); });
+      });
+      groups = [m];
+    }
+    groups.forEach(function (c, ci) {
+      var rows = "", catShown = 0, clusters = c.clusters;
+      if (showEmpty) {
+        clusters = clusters.slice();
+        (c.names || expected(c.id)).forEach(function (n) { if (!c.byName[n]) clusters.push({ name: n, items: [] }); });
+        clusters.sort(function (a, b) { return cmp(a.name, b.name); });
+      } else if (c.names) {
+        clusters = clusters.slice().sort(function (a, b) { return cmp(a.name, b.name); });
+      }
+      clusters.forEach(function (cl) {
         if (q && cl.name.toLowerCase().indexOf(q) < 0) return;
         var thumbs = "", n = 0, low = 0, un = 0;
         cl.items.forEach(function (it) {
@@ -425,13 +680,17 @@ window.REPORT = /*__REPORT_DATA__*/null;
           if (!it.keptOut && it.status === "unmatched") un++;
           thumbs += thumb(it);
         });
-        if (!n) return;
+        if (!n) {
+          if (showEmpty) rows += '<div class="row empty-variant"><div class="name"><b>' + esc(cl.name) + "</b><small>" +
+            (cl.items.length ? "0 of " + cl.items.length + " images pass the filters" : "0 images in any folder") + '</small></div><div class="thumbs"></div></div>';
+          return;
+        }
         catShown += n;
         rows += '<div class="row"><div class="name"><b>' + esc(cl.name) + "</b><small>" + n + (n !== cl.items.length ? " / " + cl.items.length : "") +
                 (low ? ' · <span class="w-low">' + low + " low</span>" : "") + (un ? ' · <span class="w-unmatched">' + un + " unmatched</span>" : "") +
                 '</small></div><div class="thumbs">' + thumbs + "</div></div>";
       });
-      if (!catShown) return;
+      if (!rows) return;
       shown += catShown;
       html += '<section class="cat"><h2 id="cat-' + ci + '">' + esc(c.id) + ' <span class="n">(' + catShown + (catShown !== c.count ? " / " + c.count : "") +
               ')</span></h2><div class="rows">' + rows + "</div></section>";
@@ -446,10 +705,10 @@ window.REPORT = /*__REPORT_DATA__*/null;
   // only at its first visible use; later rows count repeated images in a placeholder. Membership and shadowing stay per variant.
   // Then the images no variant holds, by reason. Same filters as the classification view.
   function renderHandlers() {
-    var cat = catSel.value, folder = folderSel.value, status = statusSel.value, named = namedSel.value;
+    var folder = folderSel.value, status = statusSel.value, named = namedSel.value;
     var q = classIn.value.trim().toLowerCase(), fileTerms = terms(fileIn.value);
     function ok(it) {
-      if (cat !== "" && it.cat !== cat) return false;
+      if (!catOn(it.base)) return false;
       if (q && String(it.cls).toLowerCase().indexOf(q) < 0) return false;
       return passes(it, folder, status, named, fileTerms);
     }
@@ -478,20 +737,70 @@ window.REPORT = /*__REPORT_DATA__*/null;
         });
       });
     });
-    var h = -1, rows = "", hDrawn = 0, variantNumber = 0;
-    function flush() {
-      if (rows) html += '<section class="cat"><h2 class="handler-title">' + handlerLabel(h) + ' <span class="n">(' + hDrawn + ")</span></h2><div class=\"rows\">" + rows + "</div></section>";
-      rows = ""; hDrawn = 0;
-    }
+    // Sections: one per switched-on handler; merged = the switched-on SexPortraitVariantConfig handlers of one role (same self keys)
+    // in one section, rows joined by entry id across categories (first appearance order). Mapped portrait handlers stay separate.
+    var sections = [], secByKey = {}, merge = mergeIn.checked;
     P.variants.forEach(function (pv, v) {
-      if (pv.h !== h) { flush(); h = pv.h; variantNumber = 0; }
-      var order = "<small>Variant " + (++variantNumber) + "</small>";
-      var classes = pv.classifications || Object.keys(byVariant[v] ? byVariant[v].classes : {}).sort();
-      order += "<small>All classifications used: " + esc(classes.length ? classes.join(", ") : "(none)") + "</small>";
-      var list = byVariant[v] ? byVariant[v].list : [];
+      if (!handlerOn(pv.h)) return;
+      var hx = P.handlers[pv.h], sk = merge && pv.id ? "e|" + hx.self.join("+") : "h|" + pv.h;
+      var sec = secByKey[sk];
+      if (!sec) { sec = secByKey[sk] = { hs: [], rows: [], rowByKey: {} }; sections.push(sec); }
+      if (sec.hs.indexOf(pv.h) < 0) sec.hs.push(pv.h);
+      var rk = merge && pv.id ? "id|" + pv.id : "v|" + v, r = sec.rowByKey[rk];
+      if (!r) { r = sec.rowByKey[rk] = { vs: [] }; sec.rows.push(r); }
+      r.vs.push(v);
+    });
+    function sectionLabel(hs) {
+      if (hs.length === 1) return handlerLabel(hs[0]);
+      var fo = [], tg = [];
+      hs.forEach(function (x) {
+        P.handlers[x].folders.forEach(function (f) { if (fo.indexOf(f) < 0) fo.push(f); });
+        P.handlers[x].target.forEach(function (t) { if (tg.indexOf(t) < 0) tg.push(t); });
+      });
+      var self = P.handlers[hs[0]].self;
+      return "<b>" + esc(fo.join(", ")) + "</b> · self " + esc(self.length ? self.join(" + ") : "(any)") + " · target " + esc(tg.length ? tg.join(" / ") : "(any)");
+    }
+    var rows = "", hDrawn = 0;
+    sections.forEach(function (sec) {
+      rows = ""; hDrawn = 0;
+      sec.rows.forEach(function (r) { renderRow(r.vs); });
+      if (rows) html += '<section class="cat"><h2 class="handler-title">' + sectionLabel(sec.hs) + ' <span class="n">(' + hDrawn + ")</span></h2><div class=\"rows\">" + rows + "</div></section>";
+    });
+    function renderRow(vs) {
+      var v = vs[0], pv = P.variants[v];
+      // entry rows: title = entry id, then its tagsMatch / tagsExclude / assetPrefix; mapped portraits: title = tags only
+      var order = "";
+      if (pv.id) {
+        var tags = [], excl = [], sources = [];
+        vs.forEach(function (x) {
+          var p = P.variants[x];
+          var t = p.tags.length ? p.tags.join(", ") : "(none: always)";
+          if (tags.indexOf(t) < 0) tags.push(t);
+          if (p.excl.length && excl.indexOf(p.excl.join(", ")) < 0) excl.push(p.excl.join(", "));
+          (p.sources || []).forEach(function (s) { if (sources.indexOf(s) < 0) sources.push(s); });
+        });
+        order += "<small>tagsMatch: " + esc(tags.join(" | ")) + "</small>";
+        if (excl.length) order += "<small>tagsExclude: " + esc(excl.join(" | ")) + "</small>";
+        if (sources.length) order += "<small>assetPrefix: " + esc(sources.join(", ")) + "</small>";
+      }
+      var list = byVariant[v] ? byVariant[v].list : [], total = variantTotal[v] || 0;
+      if (vs.length > 1) {
+        // merged row: union of the variants' images (an image read by two categories' handlers counts once)
+        var at = {}, tot = {};
+        list = []; total = 0;
+        vs.forEach(function (x) {
+          var b = byVariant[x];
+          if (!b) return;
+          Object.keys(b.total).forEach(function (k) { if (!tot[k]) { tot[k] = true; total++; } });
+          b.list.forEach(function (e) {
+            var k = e.it.f + "|" + e.it.path, prev = at[k];
+            if (!prev) { at[k] = { it: e.it, shadow: e.shadow }; list.push(at[k]); }
+            else if (e.shadow < 0) prev.shadow = -1;
+          });
+        });
+      }
       if (!list.length) {
         if (!showEmpty) return;
-        var total = variantTotal[v] || 0;
         rows += '<div class="row empty-variant"><div class="name"><b>' + esc(variantLabel(v)) + "</b>" + order +
                 "<small>" + (total ? "0 of " + total + " images pass the filters" : "0 images in any folder") + '</small></div><div class="thumbs"></div></div>';
         return;
@@ -508,8 +817,7 @@ window.REPORT = /*__REPORT_DATA__*/null;
       rows += '<div class="row"><div class="name"><b>' + esc(variantLabel(v)) + "</b>" + order + "<small>" + list.length + " images</small>" +
               (shadowed ? '<small class="shadow">' + shadowed + " shadowed in their folder</small>" : "") +
               '</div><div class="thumbs">' + thumbs + "</div></div>";
-    });
-    flush();
+    }
 
     var byReason = {}, reasons = [];
     all.forEach(function (it) {
@@ -544,10 +852,11 @@ window.REPORT = /*__REPORT_DATA__*/null;
       list.map(function (tag) { return (usedTags[tag] ? "<b>" + esc(tag) + "</b>" : esc(tag)) + " <span>" + freq[tag] + "</span>"; }).join(" · ");
   }
 
-  [catSel, folderSel, statusSel, namedSel, viewSel, useSel, emptyIn].forEach(function (el) {
+  [folderSel, statusSel, namedSel, viewSel, useSel, emptyIn, mergeIn].forEach(function (el) {
     el.addEventListener("change", function () {
       store.set("status", statusSel.value); store.set("folder", folderSel.value); store.set("named", namedSel.value);
       store.set("view", viewSel.value); store.set("use", useSel.value); store.set("empty", emptyIn.checked ? "1" : "0");
+      store.set("merge", mergeIn.checked ? "1" : "0");
       render(); window.scrollTo(0, 0);
     });
   });
@@ -568,6 +877,7 @@ window.REPORT = /*__REPORT_DATA__*/null;
     var s = '<span class="p">' + esc(R.folders[it.f].name + "/" + it.path) + "</span>";
     if (it.original) s += "\nOriginal name: " + esc(it.original);
     s += "\n" + esc(it.cat) + " / " + esc(it.cls);
+    if (ovOf(it)) s += "\nOverride: " + esc(ovLabel(ovOf(it)));
     s += "\n" + esc(statusText(it));
     if (it.disagree) s += " · rules say " + esc(it.rulesSay);
     s += "\n" + esc(it.source) + "\n" + esc(it.score);
@@ -603,7 +913,7 @@ window.REPORT = /*__REPORT_DATA__*/null;
   });
   pvImg.addEventListener("load", function () { if (pv.style.display === "block") { var r = pv.getBoundingClientRect(); if (r.bottom > window.innerHeight) pv.style.top = Math.max(4, window.innerHeight - r.height - 4) + "px"; } });
 
-  // ---- details panel (click); ctrl / shift / middle click keeps the browser's "open image"
+  // ---- details panel (click); middle click (and ctrl / shift click without selection) keeps the browser's "open image"
   var det = $("details"), selected = null;
   function tagList(pairs) {
     return (pairs || []).map(function (p) { return (usedTags[p[0]] ? "<b>" + esc(p[0]) + "</b>" : esc(p[0])) + " " + Number(p[1]).toFixed(2); }).join(" · ");
@@ -620,6 +930,7 @@ window.REPORT = /*__REPORT_DATA__*/null;
       row("Original name", it.original) +
       row("File name used in analysis", it.nameUsed ? "yes: " + it.nameHints : "no") +
       row("Category / class name", it.cat + " / " + it.cls) +
+      (ovOf(it) ? row("Override (yours)", ovLabel(ovOf(it)) + " · set " + ovOf(it).set) : "") +
       row("Confidence", statusText(it) + (it.disagree ? " · the folder decided; rules say " + it.rulesSay : "")) +
       row("Source", it.source) +
       row("Score", it.score) +
@@ -652,7 +963,8 @@ window.REPORT = /*__REPORT_DATA__*/null;
     if (suppressClick) { suppressClick = false; e.preventDefault(); return; }
     var a = e.target.closest ? e.target.closest("a[data-i]") : null;
     if (!a || e.button !== 0) return;
-    if (canSelect && e.altKey) { e.preventDefault(); setPicked(items[+a.getAttribute("data-i")], a, !items[+a.getAttribute("data-i")].picked); selectionChanged(); return; }
+    // ctrl / alt click = add or remove one image (Mods report); otherwise ctrl / shift click keep the browser's "open image"
+    if (canSelect && (e.altKey || e.ctrlKey || e.metaKey)) { e.preventDefault(); setPicked(items[+a.getAttribute("data-i")], a, !items[+a.getAttribute("data-i")].picked); selectionChanged(); return; }
     if (e.ctrlKey || e.metaKey || e.shiftKey) return;
     e.preventDefault();
     showDetails(a);
@@ -763,7 +1075,10 @@ window.REPORT = /*__REPORT_DATA__*/null;
         return new Promise(function (res) { var r = db.transaction("handles").objectStore("handles").get("mods"); r.onsuccess = function () { res(r.result); }; r.onerror = function () { res(null); }; });
       }).catch(function () { return null; });
     }
-    function setSaveStatus(s) { $("sel-status").textContent = s; }
+    function nowStamp() {
+      var now = new Date(), pad = function (n) { return (n < 10 ? "0" : "") + n; };
+      return now.getFullYear() + "-" + pad(now.getMonth() + 1) + "-" + pad(now.getDate()) + " " + pad(now.getHours()) + ":" + pad(now.getMinutes());
+    }
     function selectionJson() {
       var images = [], folders = [], seen = {};
       all.forEach(function (it) {
@@ -773,42 +1088,110 @@ window.REPORT = /*__REPORT_DATA__*/null;
         if (!seen[name]) { seen[name] = true; folders.push(name); }
       });
       folders.sort();
-      var now = new Date(), pad = function (n) { return (n < 10 ? "0" : "") + n; };
-      var saved = now.getFullYear() + "-" + pad(now.getMonth() + 1) + "-" + pad(now.getDate()) + " " + pad(now.getHours()) + ":" + pad(now.getMinutes());
-      return JSON.stringify({ saved: saved, report: R.generated, folders: folders, images: images }, null, 2) + "\n";
+      return JSON.stringify({ saved: nowStamp(), report: R.generated, folders: folders, images: images }, null, 2) + "\n";
     }
-    async function pickFolder() {
+    async function pickFolder(say) {
       var dir;
       try { dir = await window.showDirectoryPicker({ id: "image-report", mode: "readwrite" }); } catch (e) { return null; }
       try { await dir.getFileHandle(reportFile); }
-      catch (e) { setSaveStatus("Not saved: that folder has no " + reportFile + " - pick the folder this page is in (Mods)."); return null; }
+      catch (e) { say("Not saved: that folder has no " + reportFile + " - pick the folder this page is in (Mods)."); return null; }
       await saveHandle(dir);
       return dir;
     }
-    async function saveSelection() {
-      var text = selectionJson();
+    // writes fileName next to this page; say(status) reports progress; resolves true only when the file was written
+    async function writeReportFile(fileName, text, say) {
       if (!window.showDirectoryPicker) {
         // no File System Access API (eg. Firefox): download it; it must then be moved into the page's folder by hand
         var link = document.createElement("a");
         link.href = URL.createObjectURL(new Blob([text], { type: "application/json" }));
-        link.download = R.selectionFile;
+        link.download = fileName;
         link.click();
-        setSaveStatus("Downloaded - move " + R.selectionFile + " into the folder of this page (Mods).");
-        return;
+        say("Downloaded - move " + fileName + " into the folder of this page (Mods).");
+        return false;
       }
+      var said = "";
+      var track = function (s) { said = s; say(s); };
       var dir = await loadHandle();
       if (dir) { try { if ((await dir.requestPermission({ mode: "readwrite" })) !== "granted") dir = null; } catch (e) { dir = null; } }
-      if (!dir) { setSaveStatus("Pick the folder this page is in (Mods)..."); dir = await pickFolder(); }
-      if (!dir) { if ($("sel-status").textContent.indexOf("Not saved") !== 0) setSaveStatus("Not saved."); return; }
+      if (!dir) { track("Pick the folder this page is in (Mods)..."); dir = await pickFolder(track); }
+      if (!dir) { if (said.indexOf("Not saved") !== 0) say("Not saved."); return false; }
       try {
-        var fh = await dir.getFileHandle(R.selectionFile, { create: true });
+        var fh = await dir.getFileHandle(fileName, { create: true });
         var w = await fh.createWritable();
         await w.write(text);
         await w.close();
-        setSaveStatus("Saved to " + dir.name + "/" + R.selectionFile + " - in Unity: Select from report, then 2. Analyze.");
-      } catch (e) { setSaveStatus("Not saved: " + e.message); }
+        say("Saved to " + dir.name + "/" + fileName);
+        return true;
+      } catch (e) { say("Not saved: " + e.message); return false; }
     }
-    $("sel-save").addEventListener("click", function () { saveSelection(); });
+    function setSaveStatus(s) { $("sel-status").textContent = s; }
+    $("sel-save").addEventListener("click", async function () {
+      if (await writeReportFile(R.selectionFile, selectionJson(), setSaveStatus))
+        setSaveStatus($("sel-status").textContent + " - in Unity: Select from report, then 2. Analyze.");
+    });
+
+    // ---- classification overrides of the selected images (classification view)
+    if (R.overrideFile) {
+      $("ov-help").hidden = false;
+      var ovCats = [], ovNames = [];
+      cats.forEach(function (c) { ovCats.push(c.id); });
+      Object.keys(catNames).forEach(function (id) { if (ovCats.indexOf(id) < 0) ovCats.push(id); });
+      ovCats.sort(cmp);
+      $("ov-cat").innerHTML = '<option value="">(keep category)</option>' + ovCats.map(function (c) { return '<option value="' + esc(c) + '">' + esc(c) + "</option>"; }).join("");
+      (R.classNames || []).concat(all.map(function (it) { return it.cls; })).forEach(function (n) { if (!/^\(/.test(n) && ovNames.indexOf(n) < 0) ovNames.push(n); });
+      ovNames.sort(cmp);
+      $("ov-names").innerHTML = ovNames.map(function (n) { return '<option value="' + esc(n) + '">'; }).join("");
+
+      var ovSay = function (s) { $("ov-status").textContent = s; };
+      var ovStatus = function () {
+        var n = 0, d = Object.keys(ovDelta).length;
+        all.forEach(function (it) { if (ovOf(it)) n++; });
+        $("ov-status").className = "st" + (d ? " dirty" : "");
+        ovSay(n + " overridden" + (d ? " · " + d + " unsaved" : "") + (ovLegacy ? " (" + ovLegacy + " re-keyed by original name, save to keep)" : ""));
+      };
+      var ovChanged = function () { store.set("ovDelta", JSON.stringify(ovDelta)); render(); ovStatus(); };
+      ovStatus();
+
+      // Set: category and / or class name; the one left empty keeps the image's current value. was = the analysis result then.
+      $("ov-set").addEventListener("click", function () {
+        var cat = $("ov-cat").value, name = $("ov-name").value.trim(), n = 0, skipped = 0, when = nowStamp();
+        if (!cat && !name) { ovSay("Pick a category or type a class name first."); return; }
+        all.forEach(function (it) {
+          if (!it.picked) return;
+          if (ovDup[ovKey(it)]) { skipped++; return; }
+          n++;
+          ovDelta[ovKey(it)] = { category: cat || it.cat, name: name || it.cls, was: { category: it.cat, name: it.cls }, original: it.original || null,
+                                 path: pickKey(it), set: when };
+        });
+        if (!n && !skipped) { ovSay("Select images first (drag, ctrl+click)."); return; }
+        ovChanged();
+        if (skipped) ovSay($("ov-status").textContent + " · " + skipped + " skipped: original name shared by another image of the work folder");
+      });
+      $("ov-unset").addEventListener("click", function () {
+        var n = 0;
+        all.forEach(function (it) {
+          if (!it.picked || !ovOf(it)) return;
+          n++;
+          var k = ovKey(it);
+          if (ovBase[k]) ovDelta[k] = null; else delete ovDelta[k];
+        });
+        if (!n) { ovSay("No selected image has an override."); return; }
+        ovChanged();
+      });
+      // Save: the saved set with the unsaved changes applied, as { saved, report, overrides }
+      $("ov-save").addEventListener("click", async function () {
+        var merged = {};
+        Object.keys(ovBase).forEach(function (k) { merged[k] = ovBase[k]; });
+        Object.keys(ovDelta).forEach(function (k) { if (ovDelta[k]) merged[k] = ovDelta[k]; else delete merged[k]; });
+        var text = JSON.stringify({ saved: nowStamp(), report: R.generated, overrides: merged }, null, 2) + "\n";
+        if (!(await writeReportFile(R.overrideFile, text, ovSay))) return;
+        var said = $("ov-status").textContent;
+        ovBase = merged; ovDelta = {}; ovLegacy = 0;
+        store.set("ovDelta", "{}");
+        ovStatus();
+        ovSay(said + " · " + $("ov-status").textContent);
+      });
+    }
   }
 
   applySize();
