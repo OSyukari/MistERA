@@ -1344,11 +1344,14 @@ public class Character_Body
             // RequiredCOMTags decides which (if any) actually grant from the merged pool.
             List<string> allClimaxOwnerTags = new List<string>();
             List<string> allClimaxComTags = new List<string>();
+            // induced ovulation is triggered by vaginal stimulation only (Womb_Induced.NotifyClimax)
+            bool vClimax = false;
             foreach (var part in this.Internals)
             {
 
                 if (part.Sensitivity != "" && (int)Owner.Stats.GetStatusSeverityByStringMatch(part.Sensitivity) >= Owner.Stats.CumThreshold)
                 {
+                    if (part.Base.sensitivityClassString == "V") vClimax = true;
 
                     ConcatenateClimax(ref climaxKeywords, part.Sensitivity);// climaxKeywords.Add("Strong Climax "+ part.Sensitivity);
                     Item_Instance cum = null;
@@ -1636,9 +1639,12 @@ public class Character_Body
                 UtilityEX.CheckExperienceGainNoStimulate(Owner, 1, false, Utility.Distinct(allClimaxOwnerTags), Utility.Distinct(allClimaxComTags), exp);
 
                 List<string> wbmessages = new List<string>();
-                foreach (var wb in this.Owner.wombs)
+                if (vClimax)
                 {
-                    wb.NotifyClimax(intensity, Owner.ReproCycle, wbmessages);
+                    foreach (var wb in this.Owner.wombs)
+                    {
+                        wb.NotifyClimax(intensity, Owner.ReproCycle, wbmessages);
+                    }
                 }
                 if (wbmessages.Count > 0)
                 {

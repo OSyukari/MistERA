@@ -87,7 +87,7 @@
                     [
                         {
                             "keepLooking":true,
-                            "texts": [ "com_sex_breast_oral_P_description_ongoing_1" ]
+                            "texts": [ "com_sex_breast_oral_P_description_ongoing_1", "com_sex_breast_oral_P_description_ongoing_2", "com_sex_breast_oral_P_description_ongoing_3" ]
                         }
                     ]
                 },
@@ -96,7 +96,7 @@
                         {
                             "_comment":"",
                             "keepLooking":true,
-                            "texts":[ "com_sex_breast_oral_P_description_remove_1" ]
+                            "texts":[ "com_sex_breast_oral_P_description_remove_1", "com_sex_breast_oral_P_description_remove_2", "com_sex_breast_oral_P_description_remove_3" ]
                         }
                     ]
                 },
@@ -106,7 +106,7 @@
                         {
                             "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
-                            "texts":[ "com_sex_breast_oral_P_description_after_1" ]
+                            "texts":[ "com_sex_breast_oral_P_description_after_1", "com_sex_breast_oral_P_description_after_2", "com_sex_breast_oral_P_description_after_3" ]
                         }
                     ]
                 },
@@ -115,7 +115,7 @@
                     "Entries":[ 
                         {
                             "keepLooking":true,
-                            "texts": ["com_sex_breast_oral_P_description_begin_1"]
+                            "texts": ["com_sex_breast_oral_P_description_begin_1", "com_sex_breast_oral_P_description_begin_2", "com_sex_breast_oral_P_description_begin_3"]
                         }
                     ]
                     
@@ -136,10 +136,18 @@
                 "com_sex_breast_oral_P_displayName_3": "轮流口交乳交",
                 "com_sex_breast_oral_P_displayName_4": "同时口交乳交",
 
-                "com_sex_breast_oral_P_description_begin_1":"$doer.firstname$将$receiver.firstname$的肉棒夹在双乳间左右，低着头舔弄着对方的龟头",
-                "com_sex_breast_oral_P_description_after_1":"$receiver.firstname$将精液尽数射在了$doer.firstname$的脸上",
-                "com_sex_breast_oral_P_description_remove_1":"$doer.firstname$放开了$receiver.firstname$的肉棒",
-                "com_sex_breast_oral_P_description_ongoing_1":"$doer.firstname$正在给$receiver.firstname$乳夹口交"
+                "com_sex_breast_oral_P_description_begin_1":"$doer.firstname$用胸部夹住$receiver.firstname$的肉棒低头舔弄",
+                "com_sex_breast_oral_P_description_after_1":"$receiver.firstname$把精液射在$doer.firstname$的脸上",
+                "com_sex_breast_oral_P_description_remove_1":"$doer.firstname$的嘴从$receiver.firstname$的龟头上离开了",
+                "com_sex_breast_oral_P_description_ongoing_1":"$doer.firstname$还在用胸部夹着$receiver.firstname$的肉棒舔弄",
+                "com_sex_breast_oral_P_description_remove_2": "$doer.firstname$放开了$receiver.firstname$的肉棒",
+                "com_sex_breast_oral_P_description_remove_3": "$doer.firstname$把胸部从$receiver.firstname$的肉棒上撤开",
+                "com_sex_breast_oral_P_description_begin_2": "$doer.firstname$把$receiver.firstname$的肉棒夹在两团奶子间舔起龟头",
+                "com_sex_breast_oral_P_description_begin_3": "$doer.firstname$用奶子夹着$receiver.firstname$的肉棒含住龟头",
+                "com_sex_breast_oral_P_description_after_2": "$receiver.firstname$在$doer.firstname$的脸上射了出来",
+                "com_sex_breast_oral_P_description_after_3": "$receiver.firstname$的肉棒把精液射上$doer.firstname$的脸",
+                "com_sex_breast_oral_P_description_ongoing_2": "$doer.firstname$的舌头一直在$receiver.firstname$的龟头上打转",
+                "com_sex_breast_oral_P_description_ongoing_3": "$doer.firstname$还含着$receiver.firstname$的龟头没有松开"
 
             },
             "en-us":

@@ -14,7 +14,7 @@
                 "categoryTags":["com_category_v","com_category_service"],
                 "timeScale":3,
                 "comTags":["sex","service","permission_vaginal"],
-                "portraitTags_Receiver":["fingering", "spread_pussy"],
+                "portraitTags_Receiver":["portrait_lower","fingering", "spread_pussy"],
                 "requirements":{
                     "requirement":{
                         "req_Doers":{
@@ -57,7 +57,7 @@
                             "Entries":[
                                 {
                                     "keepLooking":true,
-                                    "texts": ["com_sex_finger_insert_V_solo_description_begin_1"]
+                                    "texts": ["com_sex_finger_insert_V_solo_description_begin_1", "com_sex_finger_insert_V_solo_description_begin_2", "com_sex_finger_insert_V_solo_description_begin_3"]
                                 }
                             ]
                         },
@@ -65,7 +65,7 @@
                             "Entries":[
                                 {
                                     "keepLooking":true,
-                                    "texts": ["com_sex_finger_insert_V_solo_description_ongoing_1"]
+                                    "texts": ["com_sex_finger_insert_V_solo_description_ongoing_1", "com_sex_finger_insert_V_solo_description_ongoing_2", "com_sex_finger_insert_V_solo_description_ongoing_3"]
                                 }
                             ]
                         },
@@ -74,7 +74,7 @@
                                 {
                                     "keepLooking":true,
                                     "conditions":[ { "validateChara":{"target":"doer", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
-                                    "texts":[ "com_sex_finger_insert_V_solo_description_after_1" ]
+                                    "texts":[ "com_sex_finger_insert_V_solo_description_after_1", "com_sex_finger_insert_V_solo_description_after_2", "com_sex_finger_insert_V_solo_description_after_3" ]
                                 }
                             ]
                         }
@@ -91,7 +91,7 @@
                             "Entries":[
                                 {
                                     "keepLooking":true,
-                                    "texts": ["com_sex_finger_insert_V_solo_group_description_begin_1"]
+                                    "texts": ["com_sex_finger_insert_V_solo_group_description_begin_1", "com_sex_finger_insert_V_solo_group_description_begin_2", "com_sex_finger_insert_V_solo_group_description_begin_3"]
                                 }
                             ]
                         },
@@ -99,7 +99,7 @@
                             "Entries":[
                                 {
                                     "keepLooking":true,
-                                    "texts": ["com_sex_finger_insert_V_solo_group_description_ongoing_1"]
+                                    "texts": ["com_sex_finger_insert_V_solo_group_description_ongoing_1", "com_sex_finger_insert_V_solo_group_description_ongoing_2", "com_sex_finger_insert_V_solo_group_description_ongoing_3"]
                                 }
                             ]
                         },
@@ -108,7 +108,7 @@
                                 {
                                     "keepLooking":true,
                                     "conditions":[ { "validateChara":{"target":"doer", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
-                                    "texts":[ "com_sex_finger_insert_V_solo_group_description_after_1" ]
+                                    "texts":[ "com_sex_finger_insert_V_solo_group_description_after_1", "com_sex_finger_insert_V_solo_group_description_after_2", "com_sex_finger_insert_V_solo_group_description_after_3" ]
                                 }
                             ]
                         }
@@ -154,7 +154,7 @@
                     [
                         {
                             "keepLooking":true,
-                            "texts": [ "com_sex_finger_insert_V_description_ongoing_1" ]
+                            "texts": [ "com_sex_finger_insert_V_description_ongoing_1", "com_sex_finger_insert_V_description_ongoing_2", "com_sex_finger_insert_V_description_ongoing_3" ]
                         }
                     ]
                 },
@@ -163,7 +163,7 @@
                         {
                             "_comment":"",
                             "keepLooking":true,
-                            "texts":[ "com_sex_finger_insert_V_description_remove_1" ]
+                            "texts":[ "com_sex_finger_insert_V_description_remove_1", "com_sex_finger_insert_V_description_remove_2", "com_sex_finger_insert_V_description_remove_3" ]
                         }
                     ]
                 },
@@ -173,7 +173,7 @@
                         {
                             "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
-                            "texts":[ "com_sex_finger_insert_V_description_after_1" ]
+                            "texts":[ "com_sex_finger_insert_V_description_after_1", "com_sex_finger_insert_V_description_after_2", "com_sex_finger_insert_V_description_after_3" ]
                         }
                     ]
                 },
@@ -182,7 +182,7 @@
                     "Entries":[ 
                         {
                             "keepLooking":true,
-                            "texts": ["com_sex_finger_insert_V_description_begin_1"]
+                            "texts": ["com_sex_finger_insert_V_description_begin_1", "com_sex_finger_insert_V_description_begin_2", "com_sex_finger_insert_V_description_begin_3"]
                         }
                     ]
                     
@@ -205,17 +205,37 @@
                 "com_sex_finger_insert_V_displayName_5": "轮流V指入",
                 "com_sex_finger_insert_V_displayName_6": "同时V指入",
 
-                "com_sex_finger_insert_V_description_begin_1":"$doer.firstname$的手指插入了$receiver.firstname$的小穴开始抽送",
-                "com_sex_finger_insert_V_description_after_1":"$receiver.firstname$的小穴由于高潮而紧缩",
-                "com_sex_finger_insert_V_description_remove_1":"$doer.firstname$将手指从$receiver.firstname$的小穴里抽出来",
-                "com_sex_finger_insert_V_description_ongoing_1":"$doer.firstname$正在指入$receiver.firstname$的小穴",
+                "com_sex_finger_insert_V_description_begin_1":"$doer.firstname$把手指插进$receiver.firstname$的小穴抽送起来",
+                "com_sex_finger_insert_V_description_after_1":"$receiver.firstname$的小穴在高潮里一阵阵收缩",
+                "com_sex_finger_insert_V_description_remove_1":"$doer.firstname$把手指从$receiver.firstname$的小穴里抽出来",
+                "com_sex_finger_insert_V_description_ongoing_1":"$doer.firstname$还在抽插$receiver.firstname$的小穴",
 
-                "com_sex_finger_insert_V_solo_description_begin_1": "$doer.firstname$将手指插入了自己的小穴，开始抽送着",
-                "com_sex_finger_insert_V_solo_description_ongoing_1": "$doer.firstname$正在抽插着自己的小穴",
-                "com_sex_finger_insert_V_solo_description_after_1": "$doer.firstname$的小穴由于高潮而紧缩",
-                "com_sex_finger_insert_V_solo_group_description_begin_1": "$doer.firstname$各自将手指插入了自己的小穴，开始抽送着",
-                "com_sex_finger_insert_V_solo_group_description_ongoing_1": "$doer.firstname$正各自抽插着自己的小穴",
-                "com_sex_finger_insert_V_solo_group_description_after_1": "$doer.firstname$的小穴由于高潮而紧缩"
+                "com_sex_finger_insert_V_solo_description_begin_1": "$doer.firstname$把手指插进自己的小穴抽送起来",
+                "com_sex_finger_insert_V_solo_description_ongoing_1": "$doer.firstname$还在抽插自己的小穴",
+                "com_sex_finger_insert_V_solo_description_after_1": "$doer.firstname$的小穴在高潮里一阵阵收缩",
+                "com_sex_finger_insert_V_solo_group_description_begin_1": "$doer.firstname$用两根手指抽送自己的小穴",
+                "com_sex_finger_insert_V_solo_group_description_ongoing_1": "$doer.firstname$还在指入自己的小穴",
+                "com_sex_finger_insert_V_solo_group_description_after_1": "$doer.firstname$的小穴在高潮中抽动着",
+                "com_sex_finger_insert_V_solo_group_description_ongoing_2": "$doer.firstname$的手指一直插在自己阴道里",
+                "com_sex_finger_insert_V_solo_group_description_ongoing_3": "$doer.firstname$的两根手指还在自己小穴里动着",
+                "com_sex_finger_insert_V_solo_group_description_begin_2": "$doer.firstname$的手指往自己阴道里送着",
+                "com_sex_finger_insert_V_solo_group_description_begin_3": "$doer.firstname$把手指送进自己的屄里抽送",
+                "com_sex_finger_insert_V_solo_group_description_after_2": "$doer.firstname$的阴道一阵阵地夹紧",
+                "com_sex_finger_insert_V_solo_group_description_after_3": "$doer.firstname$的屄在高潮里收缩个不停",
+                "com_sex_finger_insert_V_solo_description_ongoing_2": "$doer.firstname$的手指一直送在自己小穴里",
+                "com_sex_finger_insert_V_solo_description_ongoing_3": "$doer.firstname$没停下抽送自己的阴道",
+                "com_sex_finger_insert_V_description_ongoing_2": "$doer.firstname$的手指一直插在$receiver.firstname$的阴道里",
+                "com_sex_finger_insert_V_description_ongoing_3": "$doer.firstname$继续指入$receiver.firstname$的屄",
+                "com_sex_finger_insert_V_description_remove_2": "$doer.firstname$的手指从$receiver.firstname$的阴道里退出",
+                "com_sex_finger_insert_V_description_remove_3": "$doer.firstname$松开了$receiver.firstname$的屄",
+                "com_sex_finger_insert_V_solo_description_begin_2": "$doer.firstname$的手指送进自己的阴道里抽插",
+                "com_sex_finger_insert_V_solo_description_begin_3": "$doer.firstname$把指节推进自己的小穴抽送",
+                "com_sex_finger_insert_V_solo_description_after_2": "$doer.firstname$的阴道随着高潮收紧起来",
+                "com_sex_finger_insert_V_solo_description_after_3": "$doer.firstname$的屄在高潮中夹紧",
+                "com_sex_finger_insert_V_description_begin_2": "$doer.firstname$的手指送进$receiver.firstname$的阴道抽送",
+                "com_sex_finger_insert_V_description_begin_3": "$doer.firstname$把两根手指推进$receiver.firstname$的屄里抽插",
+                "com_sex_finger_insert_V_description_after_2": "$receiver.firstname$的阴道随着高潮收紧起来",
+                "com_sex_finger_insert_V_description_after_3": "$receiver.firstname$的屄在高潮中夹紧"
 
             },
             "en-us":

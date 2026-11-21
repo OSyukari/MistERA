@@ -86,6 +86,8 @@ public static class TA_Apply
         public readonly Dictionary<string, string> newKeys = new Dictionary<string, string>();
         /// <summary>Keys already given a new text by an earlier record of this plan: key → record id.</summary>
         public readonly Dictionary<string, string> editedKeys = new Dictionary<string, string>();
+        /// <summary>Dictionary key → commands whose definition lists it in a `texts` list (built on first use).</summary>
+        public Dictionary<string, HashSet<string>> keyUsers;
         public Outcome current;
     }
 
@@ -233,6 +235,8 @@ public static class TA_Apply
         if (kind == "newText" || kind == "replaceText") { PlanText(p, r); return; }
         if (r["ops"] is JArray ops && ops.Count > 0) { PlanOps(p, r, ops); return; }
         var type = (string)r["issue"]?["type"] ?? kind;
+        // a new narration entry: tell the coder where the command's field is defined (the task shows `location`)
+        if (type == "newEntry" && r["location"] == null) r["location"] = NewEntryLocation(p, (string)r["targetKey"]);
         throw new Skip(ActCoder, type == "writerNote" ? "writer note: a coder decides what to add" : "structural change without exact ops: a coder applies it");
     }
 
@@ -270,7 +274,8 @@ public static class TA_Apply
                 int at = comName.IndexOf('@');
                 if (at > 0) comName = comName.Substring(0, at);
                 var baseName = comName + "_" + (field.StartsWith("description_", StringComparison.Ordinal) ? field.Substring(12) : field);
-                PlanList(p, src.file, node, "texts", oldLines, newLines, baseName);
+                // keys another command's description also lists are not rewritten in place: this unit gets its own
+                PlanList(p, src.file, node, "texts", oldLines, newLines, baseName, comName);
                 break;
             }
             case "event_text":
@@ -279,6 +284,37 @@ public static class TA_Apply
             default:
                 throw new Skip(ActError, "unknown slot kind " + (string)loc["kind"]);
         }
+    }
+
+    /// <summary>
+    /// Where a new narration entry goes (`newnarr|&lt;unit&gt;|description_&lt;field&gt;[|case:…]`): the command's definition
+    /// (last non-patch source), its field there; a generator group unit (`&lt;generator&gt;@item`) writes its generator's
+    /// item template (`GenerateCOM.targetCOMClass`, shared by every generated item). Null when the unit can't be found.
+    /// </summary>
+    static JObject NewEntryLocation(Planner p, string targetKey)
+    {
+        var parts = (targetKey ?? "").Split('|');
+        if (parts.Length < 3) return null;
+        var unit = parts[1];
+        var field = parts[2];
+        int at = unit.IndexOf('@');
+        var com = at > 0 ? unit.Substring(0, at) : unit;
+        if (!p.data.coms.TryGetValue(com, out var refs)) return null;
+        for (int i = refs.Count - 1; i >= 0; i--)
+        {
+            if (refs[i].isPatch || string.IsNullOrEmpty(refs[i].file)) continue;
+            var path = refs[i].jsonPath;
+            var loc = new JObject { ["kind"] = "newEntry", ["com"] = com, ["field"] = field, ["file"] = refs[i].file };
+            if (at > 0)
+            {
+                var template = p.data.GetRaw(refs[i])?.SelectToken("GenerateCOM.targetCOMClass");
+                if (template != null) path += ".GenerateCOM.targetCOMClass";
+                else loc["note"] = "generator group unit: the items' template text lives in this generator's GenerateForFurniture entry";
+            }
+            loc["path"] = path + "." + field + ".Entries";
+            return loc;
+        }
+        return null;
     }
 
     struct Src { public string file, path; }
@@ -308,8 +344,10 @@ public static class TA_Apply
     /// A random-line list (kojo responses / narration texts) of keys or literal strings: checked against `old`, then
     /// rewritten per coder rule 3 - same count: replace texts; more: new keys (next free number) appended to the list
     /// and the dictionary; fewer: surplus items removed from the list (their dictionary entries stay, listed as orphans).
+    /// ownerCom (command narration): a key another command's description also lists is not rewritten - the changed line
+    /// gets a new key named after keyBase (the other command keeps its text), and so do lines added to such a list.
     /// </summary>
-    static void PlanList(Planner p, string file, string nodePath, string listName, List<string> oldLines, List<string> newLines, string keyBase)
+    static void PlanList(Planner p, string file, string nodePath, string listName, List<string> oldLines, List<string> newLines, string keyBase, string ownerCom = null)
     {
         var doc = p.files.Get(file);
         var node = doc.Find(nodePath);
@@ -341,11 +379,21 @@ public static class TA_Apply
         bool literal = items.Count > 0 && dictFile == null;
         if (dictFile == null && !literal) dictFile = file;
 
+        bool sharedList = false;
+        for (int i = 0; i < items.Count && !sharedList; i++) sharedList = IsKey(p, items[i]) && UsedElsewhere(p, items[i], ownerCom);
+
         int shared = Math.Min(items.Count, newLines.Count);
         for (int i = 0; i < shared; i++)
         {
             if (Norm(current[i]) == Norm(newLines[i])) continue;
-            if (IsKey(p, items[i])) SetDict(p, items[i], current[i], newLines[i]);
+            if (IsKey(p, items[i]) && UsedElsewhere(p, items[i], ownerCom))
+            {
+                var own = NewKey(p, keyBase);
+                AddDict(p, dictFile, own, newLines[i]);
+                p.files.Get(file).Replace($"{listPath}[{i}]", TA_JsonEdit.Str(own));
+                Change(p, file, $"{listPath}[{i}]", "own key (" + items[i] + " is shared with another command)", items[i], own);
+            }
+            else if (IsKey(p, items[i])) SetDict(p, items[i], current[i], newLines[i]);
             else
             {
                 p.files.Get(file).Replace($"{listPath}[{i}]", TA_JsonEdit.Str(newLines[i]));
@@ -354,7 +402,8 @@ public static class TA_Apply
         }
         if (newLines.Count > items.Count)
         {
-            var baseName = KeyBase(items, p, keyBase);
+            // a list of another command's keys: new lines are named after this one
+            var baseName = sharedList ? keyBase : KeyBase(items, p, keyBase);
             for (int i = items.Count; i < newLines.Count; i++)
             {
                 if (literal)
@@ -599,6 +648,47 @@ public static class TA_Apply
         p.newKeys[key] = file;
         p.editedKeys[key] = (string)p.current.record["id"];
         Change(p, file, DictPath(key), "new key " + key, "", text);
+    }
+
+    /// <summary>
+    /// Whether a command other than ownerCom lists key in its definition's narration (`texts` anywhere in the command:
+    /// fields, variants, generator templates, item overrides). Rewriting it in place would change that command's text too.
+    /// </summary>
+    static bool UsedElsewhere(Planner p, string key, string ownerCom)
+    {
+        if (ownerCom == null) return false;
+        if (p.keyUsers == null)
+        {
+            p.keyUsers = new Dictionary<string, HashSet<string>>();
+            foreach (var kv in p.data.coms)
+                for (int i = 0; i < kv.Value.Count; i++)
+                    if (!kv.Value[i].isPatch) CollectTextKeys(p.data.GetRaw(kv.Value[i]), kv.Key, p.keyUsers);
+        }
+        if (!p.keyUsers.TryGetValue(key, out var users)) return false;
+        foreach (var u in users) if (u != ownerCom) return true;
+        return false;
+    }
+
+    static void CollectTextKeys(JToken t, string com, Dictionary<string, HashSet<string>> into)
+    {
+        if (t is JObject o)
+        {
+            foreach (var prop in o.Properties())
+            {
+                if (prop.Name == "texts" && prop.Value is JArray a)
+                {
+                    for (int i = 0; i < a.Count; i++)
+                    {
+                        if (a[i].Type != JTokenType.String) continue;
+                        var k = (string)a[i];
+                        if (!into.TryGetValue(k, out var set)) into[k] = set = new HashSet<string>();
+                        set.Add(com);
+                    }
+                }
+                else CollectTextKeys(prop.Value, com, into);
+            }
+        }
+        else if (t is JArray arr) for (int i = 0; i < arr.Count; i++) CollectTextKeys(arr[i], com, into);
     }
 
     /// <summary>Base of new key names: the list's last key without its trailing number, else the entry / command name.</summary>
@@ -924,12 +1014,18 @@ public static class TA_Apply
             }
             // a command case (Plan_CommandCases.md K6): the new entry's exact conditions / the new branch's fields
             if ((string)r["case"] != null) sb.AppendLine($"- Case: `{(string)r["case"]}`");
-            if (r["entry"]?["conditions"] is JArray conds) sb.AppendLine("- Entry conditions (exact, use as `conditions`): `" + conds.ToString(Formatting.None) + "`");
-            if (r["location"]?["needs"] is JObject needs) sb.AppendLine("- Branch needs (exact, set on the new variant): `" + needs.ToString(Formatting.None) + "`");
+            // records from other origins may carry location/entry/notes as plain values - index only JObjects
+            if ((r["entry"] as JObject)?["conditions"] is JArray conds) sb.AppendLine("- Entry conditions (exact, use as `conditions`): `" + conds.ToString(Formatting.None) + "`");
+            if ((r["location"] as JObject)?["needs"] is JObject needs) sb.AppendLine("- Branch needs (exact, set on the new variant): `" + needs.ToString(Formatting.None) + "`");
             if (r["location"] is JObject loc) sb.AppendLine("- Location: `" + loc.ToString(Formatting.None) + "`");
+            else if (r["location"] is JValue locV && locV.Type != JTokenType.Null) sb.AppendLine($"- Location: {(string)locV}");
             if (r["ops"] is JArray ops) sb.AppendLine("- Ops: `" + ops.ToString(Formatting.None) + "`");
             if (r["notes"] is JArray notes)
-                for (int k = 0; k < notes.Count; k++) sb.AppendLine($"- Note ({(string)notes[k]["from"]}): {(string)notes[k]["text"]}");
+                for (int k = 0; k < notes.Count; k++)
+                {
+                    if (notes[k] is JObject n) sb.AppendLine($"- Note ({(string)n["from"]}): {(string)n["text"]}");
+                    else if (notes[k].Type != JTokenType.Null) sb.AppendLine($"- Note: {(string)notes[k]}");
+                }
             sb.AppendLine();
             report[id] = new JObject { ["result"] = "", ["note"] = "" };
         }

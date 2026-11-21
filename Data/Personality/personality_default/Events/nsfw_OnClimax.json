@@ -4,7 +4,7 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "OnClimax_single",
+                    "ID": "OnClimax_single", "template": "none", "templateNote": "code-fetched kojo; dedicated template later",
                     "tags": [
                         "nsfw"
                     ],
@@ -42,7 +42,7 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "OnClimax_target",
+                    "ID": "OnClimax_target", "template": "none", "templateNote": "code-fetched kojo; dedicated template later",
                     "tags": [
                         "nsfw"
                     ],

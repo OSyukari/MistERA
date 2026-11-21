@@ -133,6 +133,8 @@ public partial class TA_CommandDocBuilder
             if (!When(t, flags)) continue;
             var id = (string)t["id"];
             var field = (string)t["field"];
+            // onlyIfPresent: a field the command has no text for is not asked for (user, 2026-11-18: no after, no after)
+            if (((bool?)t["onlyIfPresent"] ?? false) && !HasNarration(field)) continue;
             bool required = (bool?)t["required"] ?? true;
             bool variantOnly = (bool?)t["variantOnly"] ?? false;
             var label = (string)t["label"] ?? id;
@@ -397,7 +399,7 @@ public partial class TA_CommandDocBuilder
                                         {
                                             phase = id, label = label, suffix = suffixes[s], fallback = (string)t["fallback"],
                                             speaker = speaker, speakerState = sState, listener = listener, listenerState = lState,
-                                            outcome = results[r], tierSet = IsRefusal(results[r]) ? null : (string)t["tiers"], ordered = ordered,
+                                            outcome = results[r], tierSet = IsRefusal(results[r]) || IsJoinRefused(results[r]) ? null : (string)t["tiers"], ordered = ordered,
                                             // join lookups run without an action package (Job.JoinPackage)
                                             noEP = speaker == "joiner",
                                             // only the reacting side's own situation is required; the other side's states are optional
@@ -405,7 +407,14 @@ public partial class TA_CommandDocBuilder
                                         };
                                         spec.phaseSelfTags.AddRange(phaseTags);
                                         spec.id = $"kojo.{id}{(suffixes.Count > 1 ? suffixes[s] : "")}.{speaker}.{sState}{(lState != "awake" && listener != "self" ? "." + lState : "")}.{listener}.{results[r]}";
-                                        into.Add(KojoCase(spec, KojoBase() + spec.suffix, CommandResolver(spec.suffix, spec.fallback)));
+                                        // a refused result speaks from <COM>_Refuse first, then <COM> (RelationshipManager.GetKOJOMessage)
+                                        if (spec.suffix == "" && IsRefusal(spec.outcome))
+                                            into.Add(KojoCase(spec, KojoBase() + "_Refuse", ThenResolver("_Refuse", "", spec.fallback)));
+                                        // a refused join's reaction: _JoinFailed, else _Join (EvaluationPackage.JoinReaction)
+                                        else if (spec.suffix == "_JoinFailed")
+                                            into.Add(KojoCase(spec, KojoBase() + spec.suffix, ThenResolver("_JoinFailed", "_Join", spec.fallback)));
+                                        else
+                                            into.Add(KojoCase(spec, KojoBase() + spec.suffix, CommandResolver(spec.suffix, spec.fallback)));
                                     }
                             }
                         }
@@ -423,6 +432,20 @@ public partial class TA_CommandDocBuilder
             var found = ResolveCommandEntry(p, com, suffix, out provider, out entryID);
             if (found == null && fallback != null) found = ResolvePlainEntry(p, fallback, out provider, out entryID);
             return found;
+        };
+    }
+
+    /// <summary>
+    /// The command's chain for suffix first, then for then (a refused result: _Refuse, then the plain key; a refused
+    /// join: _JoinFailed, then _Join), then a plain fallback key - as the engine tries them.
+    /// </summary>
+    EntryResolver ThenResolver(string suffix, string then, string fallback)
+    {
+        var next = CommandResolver(then, fallback);
+        return (Character_Personality p, out string provider, out string entryID) =>
+        {
+            var found = ResolveCommandEntry(p, com, suffix, out provider, out entryID);
+            return found ?? next(p, out provider, out entryID);
         };
     }
 

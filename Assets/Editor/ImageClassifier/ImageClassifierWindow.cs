@@ -123,6 +123,12 @@ public class ImageClassifierWindow : EditorWindow
             ImageClassifierSettings.ModelsFolder = EditorGUILayout.DelayedTextField(new GUIContent("Tagger models folder",
                 "Folder with <model>.csv (e.g. ComfyUI/custom_nodes/ComfyUI-WD14-Tagger/models). Used by Analyze to check rule tags against the tagger vocabulary; empty = skip that check."),
                 ImageClassifierSettings.ModelsFolder);
+            ImageClassifierSettings.MasterListPath = EditorGUILayout.DelayedTextField(new GUIContent("MasterList JSON",
+                "The game's MasterList dump (relative to the project root or absolute). Mods report, Character pairing view: the commands."),
+                ImageClassifierSettings.MasterListPath);
+            ImageClassifierSettings.CharacterDbPath = EditorGUILayout.DelayedTextField(new GUIContent("Character DB JSON",
+                "characterDBs.json from Tools/MistEra/Export Room Character Prompts (relative to the project root or absolute). Mods report, Character pairing view: the characters and their portrait folders."),
+                ImageClassifierSettings.CharacterDbPath);
 
             using (new EditorGUILayout.HorizontalScope())
             {

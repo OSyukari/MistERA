@@ -71,6 +71,7 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
             campaignManager.Observer_CurrentViewMode += OnVMChange;
             campaignManager.Observer_UpdateCurrentTargetAnchor += OnAnchorChange;
             campaignManager.Observer_CurrentTargetClick += OnPointerClick;
+            campaignManager.Observer_Peek += OnPeek;
         }
         if (isCurrentTargetEXBox)
         {
@@ -98,6 +99,12 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
     {
         if (this.currentHandler != p) return;
         UpdateAnchor(p);
+    }
+
+    /// <summary> a peek (scr_System_CampaignManager.PeekCharacter): that character's activity portrait; ended (-1): the target's again </summary>
+    private void OnPeek(int refID)
+    {
+        ReadCurrentChar(refID >= 0 ? refID : scr_System_CampaignManager.current.CurrentTargetRef, true);
     }
 
     private void OnVMChange(ViewMode vm, bool lockView)
@@ -441,6 +448,7 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
             campaignManager.Observer_LogsCharaChange -= ReadCurrentLogImage;
             campaignManager.Observer_CurrentViewMode -= OnVMChange;
             campaignManager.Observer_CurrentTargetClick -= OnPointerClick;
+            campaignManager.Observer_Peek -= OnPeek;
             campaignManager.Observer_CurrentTargetEX -= ReadCurrentChar;
             // Both target roles can register the same anchor callback in Awake.
             campaignManager.Observer_UpdateCurrentTargetAnchor -= OnAnchorChange;

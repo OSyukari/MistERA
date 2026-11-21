@@ -428,8 +428,7 @@ public class scr_panel_COMmanager : scr_Menu
                     break;
                 case -6500: button.Initialize(this, new ButtonValidator_ChangeDebugFilter(this, COMFilter.Debug, button)); break;
                 case -6511: button.Initialize(this, new ButtonValidator_ChangeDeterministicRollsFilter(this, COMFilter.DeterministicRolls, button)); break;
-                case -6512: button.Initialize(this, new ButtonValidator_ChangeShorterLogs(this, COMFilter.ShorterLogs, button)); break;
-                case -6513: button.Initialize(this, new Button_ToggleLLM(this, COMFilter.LLM, button)); break;
+                case -6513: button.Initialize(this, new Button_ToggleLLM(this, button)); break;
                 case -6514: button.Initialize(this, new ButtonValidator_ToggleAgentMode(this, button)); break;
                 case -6515: button.Initialize(this, new ButtonValidator_CycleOutcomeMode(this, button)); break;
 
@@ -663,6 +662,23 @@ public class scr_panel_COMmanager : scr_Menu
 
     public RectTransform panel_InteractionCOMs, panel_SexCOMs, panel_InventoryCOMs, panel_CombatCOMs;
     public RectTransform Box_InteractionCOMs, Box_UndressCOMs, Box_FurnitureCOMs, Box_FurnitureCOMsList, Box_TouchCOMs, Box_SpecialCOMs, Box_MassageCOMs, Box_ServiceCOMs, buttonPrefab_COM, Box_InitiateSex;
+    /// <summary>
+    /// Grid for the boxes of room dividers (stalls, prison cells) the player is not inside, made from
+    /// prefab_DividerCOMBox. The divider the player is in is drawn like any furniture box (prefab_IndividualCOMBox in
+    /// Box_FurnitureCOMsList). Either unset (not wired): every box as before.
+    /// </summary>
+    public RectTransform Box_DividerCOMsList;
+    public scr_IndividualCOMBox prefab_DividerCOMBox;
+
+    /// <summary> jf's box is an outside-divider box: a divider the player is not inside, with the divider grid wired </summary>
+    bool IsOutsideDividerBox(Job_Furniture jf)
+    {
+        if (Box_DividerCOMsList == null || prefab_DividerCOMBox == null || jf == null || !jf.IsDivider) return false;
+        return scr_System_CampaignManager.current.Player.ScopeRef != jf.RefID;
+    }
+
+    /// <summary> furniture box ref -> made as an outside-divider box (IsOutsideDividerBox): rebuilt when that changes </summary>
+    readonly Dictionary<int, bool> furnitureBoxOutsideDivider = new Dictionary<int, bool>();
     public RectTransform Box_SexCOMs_Full;
     public RectTransform Box_Filters;
 
@@ -871,7 +887,10 @@ public class scr_panel_COMmanager : scr_Menu
                 && trackedFurnitureActivityStamps.TryGetValue(jobRef, out var madeStamp)
                 && madeStamp != stamped.ParentRoom.ActivityContextStamp(scr_System_CampaignManager.current.Player)
                 || j is Job_Furniture occupied && trackedJobRefs.Contains(jobRef)
-                && trackedFurnitureOccupancyStamps.TryGetValue(jobRef, out var madeOccupancy) && madeOccupancy != occupied.OccupancyRevision)
+                && trackedFurnitureOccupancyStamps.TryGetValue(jobRef, out var madeOccupancy) && madeOccupancy != occupied.OccupancyRevision
+                // the player entered / left this divider: its box switches between the divider box and the furniture box
+                || j is Job_Furniture divider && trackedJobRefs.Contains(jobRef)
+                && furnitureBoxOutsideDivider.TryGetValue(jobRef, out var madeOutside) && madeOutside != IsOutsideDividerBox(divider))
             {
                 DestroyCOMButton(jobRef);
                 if (furnitureRectList.ContainsKey(jobRef)) DestroyCOMBox(jobRef);
@@ -985,12 +1004,15 @@ public class scr_panel_COMmanager : scr_Menu
                         // a bed (owners / sleepers) or a room divider is one box per furniture, never merged (Job_Furniture.DrawsOwnBox)
                         if (jfurn.Container != null || jfurn.isContainer || ownBox)
                         {
-                            scr_IndividualCOMBox newScript = Instantiate(prefab_IndividualCOMBox);
+                            // a divider the player is not inside: the divider box in the divider grid (when wired)
+                            bool outsideDivider = IsOutsideDividerBox(jfurn);
+                            furnitureBoxOutsideDivider[jobRef] = outsideDivider;
+                            scr_IndividualCOMBox newScript = Instantiate(outsideDivider ? prefab_DividerCOMBox : prefab_IndividualCOMBox);
                             newScript.title.text = jfurn.DisplayName;
 
 
                             RectTransform newRect = newScript.GetComponent<RectTransform>();
-                            newRect.SetParent(Box_FurnitureCOMsList, false);
+                            newRect.SetParent(outsideDivider ? Box_DividerCOMsList : Box_FurnitureCOMsList, false);
                             List<string> debugLogger = null;
                             List<string> coms = new List<string>();
                             foreach (var ap in j.MakePackages(scr_System_CampaignManager.current.Player, true, false, true, null, debugLogger))
@@ -1133,6 +1155,7 @@ public class scr_panel_COMmanager : scr_Menu
     {
         RectTransform rect = furnitureRectList[jobRef].GetComponent<RectTransform>();
         furnitureRectList.Remove(jobRef);
+        furnitureBoxOutsideDivider.Remove(jobRef);
         DestroyImmediate(rect.gameObject);
     }
 
@@ -2935,12 +2958,10 @@ public class scr_panel_COMmanager : scr_Menu
 
     public class Button_ToggleLLM : ButtonValidator, I_ButtonClickable
     {
-        COMFilter filter;
         new scr_panel_COMmanager parent;
         scr_SelectableText text;
-        public Button_ToggleLLM(scr_panel_COMmanager parent, COMFilter filter, scr_SelectableText text) : base(parent)
+        public Button_ToggleLLM(scr_panel_COMmanager parent, scr_SelectableText text) : base(parent)
         {
-            this.filter = filter;
             this.parent = parent;
             this.text = text;
 
@@ -2952,7 +2973,7 @@ public class scr_panel_COMmanager : scr_Menu
 
             bool setting = scr_System_CentralControl.current.LLMSetting.enabled;
             bool haspreset = scr_System_CentralControl.current.LLMSetting.currentPresetId != null;
-            var currentVal = parent.GetCOMFilter(filter) && setting && haspreset;
+            var currentVal = scr_System_CentralControl.current.LLMSetting.showCOMPanelInput && setting && haspreset;
             if (currentVal)
             {
                 text.Toggle(true, true);
@@ -2962,21 +2983,27 @@ public class scr_panel_COMmanager : scr_Menu
                 text.Toggle(true, false);
             }
             parent.LLMRect.gameObject.SetActive(currentVal);
-            if (!setting || !haspreset)
+            if (!setting)
             {
                 this.tooltip = LocalizeDictionary.QueryThenParse("ui_prefs_llm_apisetting_disabled");
+            }
+            else if (!haspreset)
+            {
+                this.tooltip = LocalizeDictionary.QueryThenParse("ui_prefs_llm_apisetting_noPreset");
             }
             else
             {
                 this.tooltip = LocalizeDictionary.QueryThenParse("ui_prefs_llm_apisetting_toggle");
             }
-            return setting;
+            // no preset: the input can't show, so a click would only flip the stored value unseen
+            return setting && haspreset;
         }
 
         public void OnClickButton()
         {
-            var resultValue = !parent.GetCOMFilter(filter);
-            parent.ChangeCOMFilter(filter, resultValue);
+            var llm = scr_System_CentralControl.current.LLMSetting;
+            llm.showCOMPanelInput = !llm.showCOMPanelInput;
+            scr_System_CentralControl.current.StoreLLMSetting();
         }
     }
 
@@ -3207,37 +3234,6 @@ public class scr_panel_COMmanager : scr_Menu
         }
     }
 
-    public class ButtonValidator_ChangeShorterLogs : ButtonValidator, I_ButtonClickable
-    {
-        COMFilter filter;
-        new scr_panel_COMmanager parent;
-        scr_SelectableText text;
-        public ButtonValidator_ChangeShorterLogs(scr_panel_COMmanager parent, COMFilter filter, scr_SelectableText text) : base(parent)
-        {
-            this.filter = filter;
-            this.parent = parent;
-            this.text = text;
-
-            text.isButtonToggle = true;
-            text.useDisabledColorWhenUntoggled = true;
-        }
-
-        public override bool IsButtonValid()
-        {
-            var currentVal = scr_System_CampaignManager.current.shortenLogsPrint;
-            parent.ChangeCOMFilter(filter, currentVal);
-            if (currentVal) text.Toggle(true, true);
-            else text.Toggle(true, false);
-            return true;
-        }
-
-        public void OnClickButton()
-        {
-            var resultValue = !parent.GetCOMFilter(filter);
-            parent.ChangeCOMFilter(filter, resultValue);
-            scr_System_CampaignManager.current.shortenLogsPrint = resultValue;
-        }
-    }
     public class ButtonValidator_ChangeDeterministicRollsFilter : ButtonValidator, I_ButtonClickable
     {
         COMFilter filter;

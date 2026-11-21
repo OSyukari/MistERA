@@ -171,4 +171,46 @@ public static partial class RecreationUtility
         individualVenueCache[(world, activity)] = venues;
         return venues;
     }
+
+    /// <summary>WorldVenuesOffering cache: the day it was built for (rebuilt daily, like IndividualVenues).</summary>
+    static int comTagVenueCacheDay = int.MinValue;
+    static scr_System_CampaignManager comTagVenueCacheCampaign = null;
+    static readonly Dictionary<(string world, string comTag), List<Manageable>> comTagVenueCache = new Dictionary<(string, string), List<Manageable>>();
+
+    /// <summary>
+    /// The venues of world with a room offering comTag (RoomOffersCommandTag), ordered by ID - how an activity finds its
+    /// locations by what the furniture there offers instead of an authored venue list (the pet walk's walkComTag).
+    /// Cached per day; callers re-check the room they pick.
+    /// </summary>
+    public static List<Manageable> WorldVenuesOffering(string world, string comTag)
+    {
+        var campaign = scr_System_CampaignManager.current;
+        int today = scr_System_Time.current.getAbsoluteDay();
+        if (comTagVenueCacheDay != today || comTagVenueCacheCampaign != campaign)
+        {
+            comTagVenueCache.Clear();
+            comTagVenueCacheDay = today;
+            comTagVenueCacheCampaign = campaign;
+        }
+        if (comTagVenueCache.TryGetValue((world, comTag), out var venues)) return venues;
+        venues = new List<Manageable>();
+        if (!string.IsNullOrEmpty(world) && !string.IsNullOrEmpty(comTag) && campaign != null)
+        {
+            foreach (var faction in campaign.ActivityFactions)
+            {
+                if (faction == null || WorldIDOf(faction) != world) continue;
+                foreach (var room in faction.ManagedRooms.Values)
+                    if (RoomOffersCommandTag(room, comTag)) { venues.Add(faction); break; }
+            }
+            venues.Sort((a, b) => string.CompareOrdinal(a.ID, b.ID));
+        }
+        comTagVenueCache[(world, comTag)] = venues;
+        return venues;
+    }
+
+    /// <summary>room is a public place (not private, not a prison) where some furniture offers a command tagged comTag.</summary>
+    public static bool RoomOffersCommandTag(Room_Instance room, string comTag)
+    {
+        return room != null && !room.isRoomPrison && !room.isRoomPrivate && !string.IsNullOrEmpty(comTag) && RoomOffersTag(room, comTag);
+    }
 }

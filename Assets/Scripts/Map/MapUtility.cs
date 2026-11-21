@@ -24,6 +24,17 @@ public static class MapUtility
         return !IsBlockingScope(scopeA) && !IsBlockingScope(scopeB);
     }
 
+    /// <summary>
+    /// a and b (same room) can interact: in the same scope - both in the open area or inside the same divider. Unlike
+    /// sight (CanSee: messages, interrupts), a divider that doesn't block visibility (a prison cell) still separates.
+    /// </summary>
+    public static bool CanInteract(Character_Trainable a, Character_Trainable b)
+    {
+        if (a == null || b == null) return false;
+        if (ReferenceEquals(a, b)) return true;
+        return a.ScopeRef == b.ScopeRef;
+    }
+
     /// <summary> a and b (same room) see each other </summary>
     public static bool CanSee(Character_Trainable a, Character_Trainable b)
     {

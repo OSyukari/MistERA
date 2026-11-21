@@ -201,7 +201,7 @@
                         ]
                     },
                     {
-                        "ID": "OnNightAssaultSuccess",
+                        "ID": "OnNightAssaultSuccess", "template": "none", "templateNote": "code-fetched kojo; dedicated template later",
                         "tags": ["nsfw"],
                         "debugLogging": true,
                         "variants": [
@@ -209,7 +209,7 @@
                         ]
                     },
                     {
-                        "ID": "OnNightAssaultFailure",
+                        "ID": "OnNightAssaultFailure", "template": "none", "templateNote": "code-fetched kojo; dedicated template later",
                         "tags": ["nsfw"],
                         "debugLogging": true,
                         "variants": [

@@ -136,7 +136,8 @@ public partial class Job_Activity
                 if (package.Duration == 0 || package.isPaused || package.isTemporaryAP || package is ActionPackage_PathTo
                     || package.PackageRoom != room || !package.actorRefs.Contains(c.RefID)) continue;
                 if (inChild || MatchesCommand(commands, package.targetCOM)
-                    || MatchesCommand(Definition?.activityCommands, package.targetCOM)) return c;
+                    || MatchesCommand(Definition?.activityCommands, package.targetCOM)
+                    || IsOwnCommandByTag(package.targetCOM)) return c;
             }
         }
         return null;
@@ -152,6 +153,12 @@ public partial class Job_Activity
         if (VisitActivity?.requireMedia != null && ChildJob == null) return false;
         return MatchesCommand(Definition?.activityCommands, command);
     }
+
+    /// <summary>
+    /// command is one of this activity's own execution commands by tag rather than by the ID lists (activityCommands /
+    /// workCommands) - Job_ActivityPetWalk: any command carrying its walk tag, wherever the walk ends up. False by default.
+    /// </summary>
+    protected virtual bool IsOwnCommandByTag(COM command) { return false; }
 
     static bool MatchesCommand(List<string> ids, COM command)
     {
@@ -199,7 +206,7 @@ public partial class Job_Activity
         // is the participant's: not the same furniture command for other items, nor the ordinary work commands.
         if (ChildJob is I_ActivityChildJob child && child.Wants(actor) && alternatives != null && alternatives.Count > 0)
             return child is Job childJob && ChildOffers(childJob, command);
-        if (MatchesCommand(alternatives, command)) return true;
+        if (MatchesCommand(alternatives, command) || IsOwnCommandByTag(command)) return true;
         return MatchesCommand(BookingOf(actor)?.workModule?.workCommands ?? Definition?.workModule?.workCommands, command);
     }
 

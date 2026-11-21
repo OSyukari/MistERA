@@ -4,19 +4,19 @@
         "looselist": [
             {
                 "ID": "personality_default",
-                "Entry": { "ID": "OnCharaWakeUp_SoloRested", "variants": [
+                "Entry": { "template": "none", "templateNote": "code-fetched kojo; dedicated template later", "ID":"OnCharaWakeUp_SoloRested", "variants": [
                     { "requireSelfOnly": true, "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }, "responses": ["kojo_wake_solo_rested"] }
                 ] }
             },
             {
                 "ID": "personality_default",
-                "Entry": { "ID": "OnCharaWakeUp_SoloTired", "variants": [
+                "Entry": { "template": "none", "templateNote": "code-fetched kojo; dedicated template later", "ID":"OnCharaWakeUp_SoloTired", "variants": [
                     { "requireSelfOnly": true, "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "selfReq": { "requireConscious": false, "requireAction": false, "requireStatusValue": [{ "statusID": "chara_status_sleep_deprived", "checkExistOnly": true }] } }, "responses": ["kojo_wake_solo_tired"] }
                 ] }
             },
             {
                 "ID": "personality_default",
-                "Entry": { "ID": "OnCharaWakeUp_WakeTogetherGreeting", "variants": [
+                "Entry": { "template": "none", "templateNote": "code-fetched kojo; dedicated template later", "ID":"OnCharaWakeUp_WakeTogetherGreeting", "variants": [
                     {
                         "hideWhenNotFocused": false, "displayType": "AlwaysDisplay",
                         "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "selfReq": { "requireConscious": false, "requireAction": false, "requireStatusValue": [{ "statusID": "chara_status_sleep_deprived", "checkExistOnly": true }] } },
@@ -35,7 +35,7 @@
             },
             {
                 "ID": "personality_default",
-                "Entry": { "ID": "OnCharaWakeUp_BesideSleepingPartner", "variants": [
+                "Entry": { "template": "none", "templateNote": "code-fetched kojo; dedicated template later", "ID":"OnCharaWakeUp_BesideSleepingPartner", "variants": [
                     { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_marriage"] }, "responses": ["kojo_wake_sleeper_marriage"] },
                     { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_couple"] }, "responses": ["kojo_wake_sleeper_couple"] },
                     { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_fwb"] }, "responses": ["kojo_wake_sleeper_fwb"] },
@@ -44,7 +44,7 @@
             },
             {
                 "ID": "personality_default",
-                "Entry": { "ID": "OnCharaWakeUp_RoomGreeting", "variants": [
+                "Entry": { "template": "none", "templateNote": "code-fetched kojo; dedicated template later", "ID":"OnCharaWakeUp_RoomGreeting", "variants": [
                     { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_marriage"] }, "responses": ["kojo_wake_room_marriage"] },
                     { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_couple"] }, "responses": ["kojo_wake_room_couple"] },
                     { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_fwb"] }, "responses": ["kojo_wake_room_fwb"] },
@@ -53,7 +53,7 @@
             },
             {
                 "ID": "personality_default",
-                "Entry": { "ID": "OnCharaWakeUp_RoomReply", "variants": [
+                "Entry": { "template": "none", "templateNote": "code-fetched kojo; dedicated template later", "ID":"OnCharaWakeUp_RoomReply", "variants": [
                     { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_marriage"] }, "responses": ["kojo_wake_reply_marriage"] },
                     { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_couple"] }, "responses": ["kojo_wake_reply_couple"] },
                     { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_fwb"] }, "responses": ["kojo_wake_reply_fwb"] },
@@ -64,6 +64,8 @@
                 "ID": "personality_default",
                 "Entry": {
                     "ID": "OnCharaWakeUp_SharedRoomGreeting",
+                    "template": "none",
+                    "templateNote": "code-fetched kojo; dedicated template later",
                     "variants": [
                         {
                             "hideWhenNotFocused": false,
@@ -85,6 +87,8 @@
                 "ID": "personality_base",
                 "Entry": {
                     "ID": "OnCharaWakeUp_SharedRoomGreeting",
+                    "template": "none",
+                    "templateNote": "code-fetched kojo; dedicated template later",
                     "variants": [
                         {
                             "hideWhenNotFocused": false,

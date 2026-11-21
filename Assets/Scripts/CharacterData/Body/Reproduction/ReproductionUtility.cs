@@ -278,7 +278,7 @@ public static class ReproductionUtility
         var owners = room.FactionOwner?.RoomOwners(room.RefID) ?? new List<int>();
 
         float d;
-        if (owners.Contains(c.RefID))  d = 4f;
+        if (owners.Contains(c.RefID) || FactionUtility.IsOwnBed(j, c))  d = 4f;
         else if (owners.Count == 0)    d = 2f;
         else if (room.isRoomPrivate)   d = 1f;
         else                           d = -1f;

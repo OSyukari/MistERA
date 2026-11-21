@@ -256,6 +256,10 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
                         button.Initialize(this, new ButtonValidator_toggleBooleanText(this, button, scr_System_CentralControl.current.DisplaySetting.immediateRunExpeditionEvent)); break;
                     case 0202: // Logs toggle: player portrait on player command lines (label ui_prefs_logs_playerPortrait, PlayerCommandPortrait)
                         button.Initialize(this, new ButtonValidator_toggleBooleanText(this, button, scr_System_CentralControl.current.DisplaySetting.displayPlayerPortraitInLogs)); break;
+                    case 0203: // Logs toggle: autoAnimate lines don't take over the portrait (label ui_prefs_logs_inhibitNonTargetInterrupt)
+                        button.Initialize(this, new ButtonValidator_toggleBooleanText(this, button, scr_System_CentralControl.current.DisplaySetting.inhibitNonTargetInterrupt)); break;
+                    case 0204: // Logs toggle 简化口上: one random participant's kojo on multi-actor commands (label ui_prefs_logs_shortenLogs)
+                        button.Initialize(this, new ButtonValidator_toggleBooleanText(this, button, scr_System_CentralControl.current.DisplaySetting.shortenLogsPrint)); break;
 
                     case 1000: // LLM enable button
                         button.Initialize(this, new buttonValidator_toggleLLM(this, button)); break;

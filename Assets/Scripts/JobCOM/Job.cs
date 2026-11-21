@@ -839,17 +839,22 @@ public class Job : IDisposable, I_Disposable
     /// <summary>Any of the actor's APs (as GetActorAPs collects them) carries tag in its ActorTargetTags - non-allocating.</summary>
     public bool ActorHasTargetTag(int refID, string tag)
     {
-        return actorHasTargetTag(packages_current, refID, tag) || actorHasTargetTag(packages_previous, refID, tag) || actorHasTargetTag(packages_completed, refID, tag);
+        return FindActorAPWithTargetTag(refID, tag) != null;
     }
-    static bool actorHasTargetTag(List<ActionPackage> aps, int refID, string tag)
+    /// <summary>The first of the actor's APs (same lists as ActorHasTargetTag) carrying tag in its ActorTargetTags, null if none - non-allocating.</summary>
+    public ActionPackage FindActorAPWithTargetTag(int refID, string tag)
+    {
+        return findActorAPWithTargetTag(packages_current, refID, tag) ?? findActorAPWithTargetTag(packages_previous, refID, tag) ?? findActorAPWithTargetTag(packages_completed, refID, tag);
+    }
+    static ActionPackage findActorAPWithTargetTag(List<ActionPackage> aps, int refID, string tag)
     {
         for (int i = 0; i < aps.Count; i++)
         {
             var ap = aps[i];
             if (!ap.DoerRefs.Contains(refID) && !ap.ReceiverRefs.Contains(refID)) continue;
-            if (ap.ActorHasTargetTag(refID, tag)) return true;
+            if (ap.ActorHasTargetTag(refID, tag)) return ap;
         }
-        return false;
+        return null;
     }
 
     public void GetActorEPs(int refID, List<EvaluationPackage> packages)

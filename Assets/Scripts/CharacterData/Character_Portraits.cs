@@ -295,6 +295,37 @@ public class PortraitManager
         get { return portraitPriorityList.Count > 0 || GeneratedHandlers.Count > 0 || GeneratedAssetHandlers.Count > 0; }
     }
 
+    /// <summary> self context key every sex handler requires (portrait_global.roleBlocks, character sex handlers) </summary>
+    public const string SexContextKey = "sex";
+
+    /// <summary> a sex handler requires the sex self context key </summary>
+    public static bool IsSexHandler(CharaPortrait handler)
+    {
+        return handler != null && handler.RequireSelfContextKeys != null && handler.RequireSelfContextKeys.Contains(SexContextKey);
+    }
+
+    static readonly List<string> _noTags = new List<string>();
+
+    /// <summary>
+    /// The handler a draw with these tags would pick (same selection, any box orientation - the log box is not known
+    /// at log time). Nothing is drawn or cached.
+    /// </summary>
+    public CharaPortrait PeekHandler(List<string> selfTags, List<string> targetTags)
+    {
+        GetValidPortraitInner(selfTags ?? _noTags, targetTags ?? _noTags, out var handler, out _, out _, null, true);
+        return handler;
+    }
+
+    /// <summary>
+    /// Sex job log lines (AC / DC): c's image is shown only when a sex handler returns it for these tags, else the line
+    /// carries no image of c. Fallback handlers (no matching sex image) count as not sex.
+    /// </summary>
+    public static bool HasSexImage(Character_Trainable c, List<string> selfTags, List<string> targetTags)
+    {
+        if (c == null || c.PortraitManager == null) return false;
+        return IsSexHandler(c.PortraitManager.PeekHandler(selfTags, targetTags));
+    }
+
     static string IconPathOf(CharaPortrait p)
     {
         switch (p)
@@ -483,7 +514,8 @@ public class PortraitManager
         if (scr_System_CentralControl.current.LogPrefs.DLog_Portrait_Spine) Debug.Log($"[SpineTEMP] GetValidPortrait owner [{Owner?.CallName}] took {(Time.realtimeSinceStartup - tempStart) * 1000f:F1}ms handler [{handler?.GetType().Name}] #{handler?.GetHashCode()} frame {Time.frameCount}");
     }
 
-    protected void GetValidPortraitInner(List<string> keywords, List<string> keywords_target, out CharaPortrait handler, out string portrait, out string icon, scr_CharPortraitBox box = null)
+    /// <param name="anyBox">PeekHandler: no box filter, images of any orientation count</param>
+    protected void GetValidPortraitInner(List<string> keywords, List<string> keywords_target, out CharaPortrait handler, out string portrait, out string icon, scr_CharPortraitBox box = null, bool anyBox = false)
     {
         keywords = GlobalPortraitTemplate.WithStateKeys(keywords);
         handler = null;
@@ -495,10 +527,12 @@ public class PortraitManager
         }
         else
         {
+            object stoppedSet = null;
             foreach (var i in ActivePortraits)
             {
+                if (stoppedSet != null && i.globalSet == stoppedSet) continue;
                 if (!i.isValid()) continue;
-                if (!i.isValidForBox(box)) continue;
+                if (!anyBox && !i.isValidForBox(box)) continue;
                 if ((keywords == null || keywords.Count < 1) && i.RequireSelfContextKeys.Count > 0) continue;
                 if ((keywords_target == null || keywords_target.Count < 1) && i.RequireTargetContextKeys.Count > 0) continue;
                 if (i.charaReq != null)
@@ -525,7 +559,13 @@ public class PortraitManager
                     //Debug.Log($"portrait prioriry missing [{String.Join(" ",i.RequireContextKeys)}] from [{String.Join(" ", keywords)}]");
                     continue;
                 }
-                portrait = i is CharaPortrait_Image image && i.isGenerated ? image.PortraitPath(keywords, box, Owner) : i.PortraitPath(keywords, box);
+                if (i is CharaPortrait_Image image)
+                {
+                    portrait = image.PortraitPath(keywords, box, i.isGenerated ? Owner : image.Owner?.Owner, anyBox, out bool stopped);
+                    // stopRecursion: no further fallback in this global handler set (the next set, then the original handlers)
+                    if (stopped && i.globalSet != null) { stoppedSet = i.globalSet; continue; }
+                }
+                else portrait = i.PortraitPath(keywords, box);
                 icon = i.isGenerated ? IconPathOf(NeutralHandler) : i.IconPath(keywords);
                 if (string.IsNullOrEmpty(icon)) icon = portrait;
 
@@ -945,6 +985,11 @@ public class PortraitManager
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public string templateId = null;
         /// <summary> global portrait template only: the entry's asset prefixes as written (assetPrefix + assetPrefix_perform), for the editor report </summary>
         [JsonIgnore] public List<string> templateSources = null;
+        /// <summary>
+        /// global portrait template only (SexPortraitVariantConfig row stopRecursion): matched with no image = the handler returns none and
+        /// the rest of its global handler set is skipped (CharaPortrait_Image.PortraitPath stopped, GetValidPortraitInner). Kept by PruneEmpty.
+        /// </summary>
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)] public bool stopRecursion = false;
 
         /// <summary>
         /// Image handlers only (Image / LandscapeImage): PortraitVariantData resolved into image paths.
@@ -1088,6 +1133,8 @@ public class PortraitManager
         [JsonIgnore] public bool isGenerated = false;
         /// <summary> global portrait template only: position in the template, aligns the same handler of two folders (GlobalPortraitTemplate.GetMergedHandlers) </summary>
         [JsonIgnore] public int templateIndex = -1;
+        /// <summary> global portrait handlers only: token shared by the handlers of one set (an entry's state / ordinary root, a generated root); a stopRecursion stop skips the rest of it </summary>
+        [JsonIgnore] public object globalSet = null;
 
         public float portrait_offset_x;
         public float portrait_offset_y;
@@ -1307,18 +1354,32 @@ public class PortraitManager
             return PortraitPath(tags, box, Owner?.Owner);
         }
 
-        internal string PortraitPath(List<string> tags, scr_CharPortraitBox box, Character_Trainable character)
+        /// <param name="anyOrientation">PortraitManager.PeekHandler: no box known, landscape images count too</param>
+        internal string PortraitPath(List<string> tags, scr_CharPortraitBox box, Character_Trainable character, bool anyOrientation = false)
         {
-            bool portraitOnly = image_orientation == ImageOrientation.auto && !BoxAcceptsLandscape(box);
+            return PortraitPath(tags, box, character, anyOrientation, out _);
+        }
+
+        /// <param name="stopped">a matching stopRecursion variant had no image: "" is returned and the caller skips the rest of this
+        /// handler's globalSet. The stop waits for the variants sharing its templateIndex (merged fallback folder copies) first.</param>
+        internal string PortraitPath(List<string> tags, scr_CharPortraitBox box, Character_Trainable character, bool anyOrientation, out bool stopped)
+        {
+            stopped = false;
+            bool portraitOnly = !anyOrientation && image_orientation == ImageOrientation.auto && !BoxAcceptsLandscape(box);
 
             if (this.Variants != null)
             {
+                int stopIndex = int.MinValue;
                 foreach (var i in this.Variants)
                 {
-                    if (i.ImagePaths.Count == 0 || !i.Validate(tags) || !i.Validate(character)) continue;
+                    if (stopIndex != int.MinValue && i.templateIndex != stopIndex) { stopped = true; return ""; }
+                    if (i.ImagePaths.Count == 0 && !i.stopRecursion) continue;
+                    if (!i.Validate(tags) || !i.Validate(character)) continue;
                     var paths = portraitOnly ? i.PortraitOnlyImagePaths : i.ImagePaths;
                     if (paths.Count > 0) return Utility.GetRandomElement(paths);
+                    if (i.stopRecursion) stopIndex = i.templateIndex;
                 }
+                if (stopIndex != int.MinValue) { stopped = true; return ""; }
             }
             var portraitOnlyRandom = portraitOnly ? PortraitOnlyRandomPaths : random_portrait_path;
             if (portraitOnlyRandom.Count > 0) return Utility.GetRandomElement(portraitOnlyRandom);

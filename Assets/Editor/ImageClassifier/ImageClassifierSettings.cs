@@ -76,6 +76,23 @@ public static class ImageClassifierSettings
         set => EditorPrefs.SetString(Prefix + "RulesPath", value);
     }
 
+    public const string DefaultMasterListPath = "Assets/MasterList.json";
+    public const string DefaultCharacterDbPath = "Mods/Assetpacks/characterDBs.json";
+
+    /// <summary>The game's MasterList dump (written at boot in the editor): the commands of the report's character pairing view.</summary>
+    public static string MasterListPath
+    {
+        get => EditorPrefs.GetString(Prefix + "MasterListPath", DefaultMasterListPath);
+        set => EditorPrefs.SetString(Prefix + "MasterListPath", value);
+    }
+
+    /// <summary>Character DB (Tools/MistEra/Export Room Character Prompts): the characters of the report's character pairing view.</summary>
+    public static string CharacterDbPath
+    {
+        get => EditorPrefs.GetString(Prefix + "CharacterDbPath", DefaultCharacterDbPath);
+        set => EditorPrefs.SetString(Prefix + "CharacterDbPath", value);
+    }
+
     public static string Model
     {
         get => EditorPrefs.GetString(Prefix + "Model", "wd-eva02-large-tagger-v3");

@@ -242,9 +242,12 @@ public class TA_ScenarioTextWindow : EditorWindow
         }
 
         EditorGUILayout.Space();
-        EditorGUILayout.TextArea(lastResult, GUILayout.MinHeight(60));
+        // wrap long lines to the window width instead of widening the scroll view
+        if (resultStyle == null) resultStyle = new GUIStyle(EditorStyles.textArea) { wordWrap = true };
+        EditorGUILayout.TextArea(lastResult, resultStyle, GUILayout.MinHeight(60), GUILayout.MaxWidth(position.width - 24));
         EditorGUILayout.EndScrollView();
     }
+    GUIStyle resultStyle;
 
     /// <summary>Apply previewed after a confirm dialog naming what the preview will do (details: viewer Apply tab).</summary>
     string ConfirmApply()

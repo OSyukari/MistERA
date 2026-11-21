@@ -89,7 +89,7 @@ public class SkillInstance : hasCategory
             TooltipCache.Clear();
             if ((this.currentLevel + 1) >= BaseRef.Levels.Count)
             {
-                TooltipCache.Add("already at max level");
+                TooltipCache.Add(LocalizeDictionary.QueryThenParse("ui_skill_maxLevel", "already at max level"));
                 return false;
             }
             return BaseRef.Levels[currentLevel + 1].ValidateChara(Owner, TooltipCache);

@@ -209,13 +209,13 @@ public static class FurnitureOccupancyUtility
     }
 
     /// <summary>
-    /// ActionPackage.PreEvaluate, every package: no actor across a room divider's door (stall) from the first doer -
-    /// touching / talking / sex through a door that hides them. A divider that doesn't block visibility (jail cell)
-    /// still allows it. Nobody in a blocking divider anywhere: answered at once.
+    /// ActionPackage.PreEvaluate, every package: no actor across a room divider from the first doer - touching / talking /
+    /// sex through a stall's door or a prison cell's bars. Every actor is in the first doer's scope (MapUtility.CanInteract),
+    /// whether the divider blocks sight or not (sight only decides messages and interrupts - MapUtility.CanSee).
     /// </summary>
     public static bool ValidateSameSide(ActionPackage ap, List<string> tooltip)
     {
-        if (!AnyoneInBlockingDivider) return true;
+        if (!ValidateLockedScope(ap, tooltip)) return false;
         var doers = ap.DoerRefs;
         if (doers == null || doers.Count < 1) return true;
         var campaign = scr_System_CampaignManager.current;
@@ -225,12 +225,48 @@ public static class FurnitureOccupancyUtility
         for (int i = 0; actors != null && i < actors.Count; i++)
         {
             var a = campaign.FindInstanceByID(actors[i]);
-            if (a == null || a == first || MapUtility.CanSee(first, a)) continue;
+            // interaction needs the same side of every divider - seeing through one (a prison cell) is not reaching through
+            if (a == null || a == first || MapUtility.CanInteract(first, a)) continue;
             // name the door that is between them: the other's divider, else the first doer's
             var where = ScopeName(a);
             if (where.Length < 1) where = ScopeName(first);
             tooltip.Add(LocalizeDictionary.QueryThenParse("ui_divider_crossDoor").Replace("$name$", a.FirstName).Replace("$furniture$", where));
             return false;
+        }
+        return true;
+    }
+
+    /// <summary>
+    /// ValidateSameSide: someone locked in a divider (a prison cell - restrained, Character_Trainable.FurnitureLockRef)
+    /// reaches nothing outside it, even when it does not block visibility: every other actor must be inside the same divider,
+    /// and no other furniture's command. The divider's own commands (lock / unlock, enter / leave) stay allowed. Per actor
+    /// one character lookup and an int read - nobody locked: nothing else is looked up.
+    /// </summary>
+    static bool ValidateLockedScope(ActionPackage ap, List<string> tooltip)
+    {
+        var actors = ap.actorRefs;
+        if (actors == null || actors.Count < 1) return true;
+        var campaign = scr_System_CampaignManager.current;
+        for (int i = 0; i < actors.Count; i++)
+        {
+            var locked = campaign.FindInstanceByID(actors[i]);
+            if (locked == null || locked.FurnitureLockRef < 0) continue;
+            var cell = campaign.FindJobInstanceByID(locked.FurnitureLockRef, false) as Job_Furniture;
+            if (cell == null || !cell.IsDivider || ap.job == cell) continue;
+            string name = cell.ParentInstance == null ? "" : cell.ParentInstance.DisplayName;
+            if (ap.job is Job_Furniture other && other != cell)
+            {
+                tooltip.Add(LocalizeDictionary.QueryThenParse("ui_divider_lockedInside").Replace("$name$", locked.FirstName).Replace("$furniture$", name));
+                return false;
+            }
+            for (int j = 0; j < actors.Count; j++)
+            {
+                if (j == i) continue;
+                var a = campaign.FindInstanceByID(actors[j]);
+                if (a == null || a.ScopeRef == cell.RefID) continue;
+                tooltip.Add(LocalizeDictionary.QueryThenParse("ui_divider_lockedInside").Replace("$name$", locked.FirstName).Replace("$furniture$", name));
+                return false;
+            }
         }
         return true;
     }

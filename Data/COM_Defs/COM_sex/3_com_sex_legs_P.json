@@ -14,7 +14,7 @@
                 "displayName":"com_sex_legs_P_displayName_1",
                 "timeScale":3,
                 "comTags":["sex","service", "position_face", "position_inequal"],
-                "portraitTags_Doer":["footjob", "handjob"],
+                "portraitTags_Doer":["portrait_lower","footjob", "handjob"],
                 "requirements":{
                     "requirement":{
                         "req_Doers":{
@@ -85,7 +85,7 @@
                     [
                         {
                             "keepLooking":true,
-                            "texts": [ "com_sex_legs_P_description_ongoing_1" ]
+                            "texts": [ "com_sex_legs_P_description_ongoing_1", "com_sex_legs_P_description_ongoing_2", "com_sex_legs_P_description_ongoing_3" ]
                         }
                     ]
                 },
@@ -94,7 +94,7 @@
                         {
                             "_comment":"",
                             "keepLooking":true,
-                            "texts":[ "com_sex_legs_P_description_remove_1" ]
+                            "texts":[ "com_sex_legs_P_description_remove_1", "com_sex_legs_P_description_remove_2", "com_sex_legs_P_description_remove_3" ]
                         }
                     ]
                 },
@@ -104,7 +104,7 @@
                         {
                             "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
-                            "texts":[ "com_sex_legs_P_description_after_1" ]
+                            "texts":[ "com_sex_legs_P_description_after_1", "com_sex_legs_P_description_after_2", "com_sex_legs_P_description_after_3" ]
                         }
                     ]
                 },
@@ -113,7 +113,7 @@
                     "Entries":[ 
                         {
                             "keepLooking":true,
-                            "texts": ["com_sex_legs_P_description_begin_1"]
+                            "texts": ["com_sex_legs_P_description_begin_1", "com_sex_legs_P_description_begin_2", "com_sex_legs_P_description_begin_3"]
                         }
                     ]
                     
@@ -134,10 +134,18 @@
                 "com_sex_legs_P_displayName_3": "轮流足交",
                 "com_sex_legs_P_displayName_4": "同时足交",
 
-                "com_sex_legs_P_description_begin_1":"$doer.firstname$的双足贴上了$receiver.firstname$的肉棒，左右揉搓着",
-                "com_sex_legs_P_description_after_1":"$receiver.firstname$将精液尽数射在了$doer.firstname$的足上",
-                "com_sex_legs_P_description_remove_1":"$doer.firstname$的双足放开了$receiver.firstname$的肉棒",
-                "com_sex_legs_P_description_ongoing_1":"$doer.firstname$正用脚踩弄着$receiver.firstname$的肉棒"
+                "com_sex_legs_P_description_begin_1":"$doer.firstname$用双足夹住$receiver.firstname$的肉棒来回揉搓",
+                "com_sex_legs_P_description_after_1":"$receiver.firstname$把精液射在$doer.firstname$的脚上",
+                "com_sex_legs_P_description_remove_1":"$doer.firstname$把双足从$receiver.firstname$的肉棒上移开",
+                "com_sex_legs_P_description_ongoing_1":"$doer.firstname$还在用脚踩着$receiver.firstname$的肉棒",
+                "com_sex_legs_P_description_ongoing_2": "$doer.firstname$的双足一直夹着$receiver.firstname$的肉棒",
+                "com_sex_legs_P_description_ongoing_3": "$doer.firstname$没停下用脚揉搓$receiver.firstname$的鸡巴",
+                "com_sex_legs_P_description_remove_2": "$doer.firstname$把脚从$receiver.firstname$的肉棒上收了回来",
+                "com_sex_legs_P_description_remove_3": "$doer.firstname$松开了踩着的$receiver.firstname$的肉棒",
+                "com_sex_legs_P_description_after_2": "$receiver.firstname$在$doer.firstname$的足上射了出来",
+                "com_sex_legs_P_description_after_3": "$receiver.firstname$的肉棒把精液射上$doer.firstname$的脚背",
+                "com_sex_legs_P_description_begin_2": "$doer.firstname$的脚掌贴上$receiver.firstname$的肉棒搓弄起来",
+                "com_sex_legs_P_description_begin_3": "$doer.firstname$用脚心压着$receiver.firstname$的鸡巴上下滑动"
 
             },
             "en-us":

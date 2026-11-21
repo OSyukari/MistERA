@@ -168,7 +168,12 @@ public static class FactionJoinUtility
     static List<Event.EventEntry.Options> BuildReachable(Character_Trainable candidate, List<MemberType> types, bool includeDisabled, string optionTextKey)
     {
         var options = new List<Event.EventEntry.Options>();
-        if (candidate == null || candidate.isImprisoned || types.Count == 0) return options;
+        if (candidate == null || types.Count == 0) return options;
+        // a prisoner joins nothing - except hospital admission (labor): a home prisoner may be admitted, one held through a
+        // temporary home is refused by the patient handler itself (Docs/Prison/Plan_PrisonRework.md decision 17)
+        if (candidate.isImprisoned)
+            for (int i = 0; i < types.Count; i++)
+                if (!(types[i].ResolveJoinTarget().joinHandler is JoinHandler_HospitalPatient)) return options;
 
         var campaign = scr_System_CampaignManager.current;
         var map = campaign.Map;

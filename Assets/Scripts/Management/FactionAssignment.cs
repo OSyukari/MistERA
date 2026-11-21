@@ -8,6 +8,33 @@ public class NPCInit
     public string initID = "";
     public List<string> tags = new List<string>();
     public string actorBaseID = "";
+    /// <summary>
+    /// Several actors in place of actorBaseID, each with its own Homefaction guest status (empty = Homefaction.guestStatus);
+    /// every other assignment is the entry's. Those spawned together share one ownership bed in the Homefaction room when
+    /// it sets room ownership (a couple's booth / bed - Room_Instance.AssignSharedBed).
+    /// </summary>
+    public List<ActorInit> actors = null;
+
+    public class ActorInit
+    {
+        public string actorBaseID = "";
+        /// <summary>Homefaction MemberType of this actor; empty = the entry's Homefaction.guestStatus.</summary>
+        public string guestStatus = "";
+    }
+
+    /// <summary>A copy of this entry for one actor of actors: that actor's base ID, its guestStatus on the Homefaction.</summary>
+    public NPCInit ForActor(ActorInit actor)
+    {
+        var copy = (NPCInit)MemberwiseClone();
+        copy.actorBaseID = actor.actorBaseID;
+        copy.actors = null;
+        if (Homefaction != null && !string.IsNullOrEmpty(actor.guestStatus))
+        {
+            copy.Homefaction = Homefaction.Copy();
+            copy.Homefaction.guestStatus = actor.guestStatus;
+        }
+        return copy;
+    }
     /// <summary>Opt-in one-time setup/load reconciliation per actor/initID; fills missing assignments without replacing player changes.</summary>
     public bool reconcileExistingAssignments = false;
     public FactionInit Homefaction = null;
@@ -35,6 +62,8 @@ public class NPCInit
         /// GetWorkFactionSourceOrDefault). Ignored on Homefaction/TempHomefaction entries.
         /// </summary>
         public string sourceFactionID = "";
+
+        public FactionInit Copy() { return (FactionInit)MemberwiseClone(); }
     }
 }
 

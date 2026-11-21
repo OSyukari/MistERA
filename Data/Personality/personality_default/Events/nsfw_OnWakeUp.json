@@ -4,7 +4,7 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "OnWakeUp",
+                    "ID": "OnWakeUp", "template": "none", "templateNote": "code-fetched kojo; dedicated template later",
                     "tags": [
                         "nsfw"
                     ],
@@ -66,7 +66,7 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "OnNightAssaultSuccess",
+                    "ID": "OnNightAssaultSuccess", "template": "none", "templateNote": "code-fetched kojo; dedicated template later",
                     "tags": [
                         "nsfw"
                     ],
@@ -132,7 +132,7 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "OnNightAssaultFailure",
+                    "ID": "OnNightAssaultFailure", "template": "none", "templateNote": "code-fetched kojo; dedicated template later",
                     "tags": [
                         "nsfw"
                     ],

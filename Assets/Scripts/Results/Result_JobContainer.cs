@@ -98,11 +98,13 @@ public class Result_JobContainer
             protected void Lock(Job_Furniture job, ActionPackage package, EvaluationPackage m, Character_Trainable c)
             {
                 job.SetContainer(c);
+                // restraint only: the lock gives no room (Docs/Prison/Plan_PrisonRework.md §6); its MemberType override
+                // comes from the lock command's saved choice (PrisonCommand.Resolve)
                 if (locationLock)
                 {
                     c.LockFurnitureJob(job);
-                    var j = job.FactionOwner as Manageable;
-                    if (j != null) j.AddRoomOwnership(c.RefID, job.ParentRoom.RefID);
+                    // locked in a divider (prison cell): inside it (Docs/Prison/Plan_PrisonRework.md)
+                    if (job.IsDivider) FurnitureOccupancyUtility.Enter(c, job, OccupancyReason.Enter);
                 }
                 if (scr_System_Serializer.current.GetByNameOrID_Status_Base(statusID) != null) c.Stats.AddOrModStatus(statusID, statusSeverity);
             }
@@ -116,8 +118,8 @@ public class Result_JobContainer
                     if (locationLock)
                     {
                         cc.UnlockFurnitureJob();
-                        var j = job.FactionOwner as Manageable;
-                        if (j != null) j.RemoveRoomOwnership(cc.RefID, job.ParentRoom.RefID);
+                        // they resume their own MemberType; one the lock made a member leaves
+                        (job.FactionOwner as Manageable)?.ClearLockOverride(cc);
                     }
                     if (scr_System_Serializer.current.GetByNameOrID_Status_Base(statusID) != null) cc.Stats.RemoveStatusByStringMatch(statusID);
                 }

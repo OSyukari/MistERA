@@ -1,0 +1,81 @@
+{
+    "_doc": "Prison commands (Docs/Prison/Plan_PrisonRework.md §6). Prison_Command: fired from code (PrisonCommand.AskThenLaunch) when the player clicks imprison / release / lock in place - self = the player, receiver = the target. $prisonQuestion$ = the question, built in code. The loaded options (prisonOptions) are one per MemberType (imprisonOption / releaseOption / lockOption tags; release also 'recruit as' and 'send home'); each jumps to 'accepted' (the command launches once the event ends) or 'refused' (a conscious, mobile target refusing that MemberType - $prisonRefused$). 'No' = default cancel: nothing happens. Prison_Resolve: started by the completed command's saved package (ActionPackage.onResolve) - applies the choice (step PrisonResolve), no text.",
+    "Events": {
+        "list": [
+            {
+                "ID": "Prison_Command",
+                "allowDuplicate": true,
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "ask",
+                        "question": "Prison_Command_question",
+                        "npcDecides": false,
+                        "loadOptionsKey": "prisonOptions",
+                        "loadOptionsResults": [ { "Type": "EventEnd" } ],
+                        "options": [
+                            {
+                                "option": "Prison_Command_no",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "EventEnd" } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "accepted",
+                        "options": [ { "option": "launch after the event", "Results": [ { "Type": "EventEnd" } ] } ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "refused",
+                        "isLast": true,
+                        "line": "Prison_Command_refused"
+                    }
+                ]
+            },
+            {
+                "ID": "Prison_Resolve",
+                "allowDuplicate": true,
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [ { "option": "apply", "Results": [ { "Type": "PrisonResolve", "arguments": [ "receiver" ] }, { "Type": "EventEnd" } ] },
+                                     { "option": "nothing applied", "Results": [ { "Type": "EventEnd" } ] } ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"Prison_Command":"监禁指令",
+"Prison_Resolve":"监禁指令结算",
+"Prison_Command_question":"$prisonQuestion$",
+"Prison_Command_question_imprison":"要监禁$name$吗？",
+"Prison_Command_question_release":"要如何释放$name$？",
+"Prison_Command_question_lock":"要把$name$锁在这里吗？",
+"Prison_Command_option_imprisonAs":"作为$memberType$监禁",
+"Prison_Command_option_releaseAs":"释放为$memberType$",
+"Prison_Command_option_recruitAs":"作为$memberType$加入$faction$",
+"Prison_Command_option_sendHome":"放其回家",
+"Prison_Command_option_lockAs":"作为$memberType$锁住",
+"Prison_Command_no":"不",
+"Prison_Command_refused":"$prisonTarget$拒绝了：$prisonRefused$",
+"ui_prison_accept_invalid":"无效的身份",
+"ui_prison_accept_refusePrisoner":"不愿成为$memberType$",
+"ui_prison_release_notPrisoner":"对象不是你方的囚犯",
+"ui_prison_cell_noBed":"没有指定的床位",
+"ui_prison_cell_notPrisonBed":"这不是监狱床位",
+"ui_prison_cell_notManaged":"这个家具不属于可管理的势力",
+"ui_prison_cell_full":"这个牢位已满",
+"ui_prison_cell_occupied":"有人正躺在这里",
+"ui_prison_noFreeCell":"没有空闲的牢位，无法关押"
+            }
+        }
+    }
+}

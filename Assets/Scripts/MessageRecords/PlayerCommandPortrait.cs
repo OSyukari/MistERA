@@ -34,9 +34,27 @@ public static class PlayerCommandPortrait
         if (desc == null || ap == null || player == null) return;
 
         desc.LoadActors(player.RefID, true, true);
+        CollectTags(ap, player, desc.displayTagsOverride_Self, desc.displayTagsOverride_Target);
+    }
 
-        var self = desc.displayTagsOverride_Self;
-        var target = desc.displayTagsOverride_Target;
+    /// <summary>
+    /// Inside a sex job / sex or unsafe interaction command (ActionPackage.SexImageOnly) the player's image is shown only
+    /// when a sex handler returns it (PortraitManager.HasSexImage), for the tags Load would snapshot. Otherwise always true.
+    /// </summary>
+    public static bool ShowsImage(ActionPackage ap)
+    {
+        if (ap == null || !ap.SexImageOnly) return true;
+        var player = scr_System_CampaignManager.current.Player;
+        if (player == null) return false;
+        var self = new List<string>();
+        var target = new List<string>();
+        CollectTags(ap, player, self, target);
+        return PortraitManager.HasSexImage(player, self, target);
+    }
+
+    /// <summary> self/target tags of ap's player EPs, appended to self / target </summary>
+    static void CollectTags(ActionPackage ap, Character_Trainable player, List<string> self, List<string> target)
+    {
         UtilityEX.GetActorTag(ref self, player);
 
         var list = ap.ListEP;

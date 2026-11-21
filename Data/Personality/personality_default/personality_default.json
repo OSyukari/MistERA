@@ -39,7 +39,6 @@
                     "Low":{ 
                         "mods":
                         [
-                            { "selfTags":["restrained"], "comTags":[] },
                             { "selfTags":["raped","penetration"], "mult":0.01,"comTags":["unsafe"], "tags":["nsfw"]  }
                         ]
                     },
@@ -52,7 +51,7 @@
                 },
                 "entries_list": [
                     {
-                        "ID": "com_touch_sleeponthigh_ask",
+                        "ID": "com_touch_sleeponthigh_ask", "template": "none", "templateNote": "command tagged do_not_use, not loaded: never looked up",
                         "tags": [
                             "nsfw"
                         ],
@@ -67,7 +66,7 @@
                         ]
                     },
                     {
-                        "ID": "com_touch_sleeponthigh_give",
+                        "ID": "com_touch_sleeponthigh_give", "template": "none", "templateNote": "command tagged do_not_use, not loaded: never looked up",
                         "tags": [
                             "nsfw"
                         ],
@@ -82,7 +81,7 @@
                         ]
                     },
                     {
-                        "ID": "Descriptor",
+                        "ID": "Descriptor", "template": "none", "templateNote": "code-fetched kojo; dedicated template later",
                         "tags": [
                             "nsfw"
                         ],

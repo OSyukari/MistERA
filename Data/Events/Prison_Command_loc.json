@@ -1,0 +1,33 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for Prison_Command.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "Prison_Command": "Prison Command",
+                "Prison_Resolve": "Prison Command Result",
+                "Prison_Command_question": "$prisonQuestion$",
+                "Prison_Command_question_imprison": "Imprison $name$?",
+                "Prison_Command_question_release": "How should $name$ be released?",
+                "Prison_Command_question_lock": "Lock $name$ in place here?",
+                "Prison_Command_option_imprisonAs": "Imprison as $memberType$",
+                "Prison_Command_option_releaseAs": "Release as $memberType$",
+                "Prison_Command_option_recruitAs": "Recruit into $faction$ as $memberType$",
+                "Prison_Command_option_sendHome": "Send home",
+                "Prison_Command_option_lockAs": "Lock as $memberType$",
+                "Prison_Command_no": "No",
+                "Prison_Command_refused": "$prisonTarget$ refuses: $prisonRefused$",
+                "ui_prison_accept_invalid": "Invalid standing",
+                "ui_prison_accept_refusePrisoner": "won't become $memberType$",
+                "ui_prison_release_notPrisoner": "Not a prisoner of your faction",
+                "ui_prison_cell_noBed": "No bed selected",
+                "ui_prison_cell_notPrisonBed": "Not a prison bed",
+                "ui_prison_cell_notManaged": "This furniture belongs to no manageable faction",
+                "ui_prison_cell_full": "This cell is full",
+                "ui_prison_cell_occupied": "Someone is lying in it",
+                "ui_prison_noFreeCell": "No free cell - nobody can be held"
+            }
+        }
+    }
+}

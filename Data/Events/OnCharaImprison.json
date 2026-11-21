@@ -3,6 +3,8 @@
         "list": [
             {
                 "ID": "OnCharaImprison",
+                "_comment_allowDuplicate": "several characters are imprisoned at once (npcInit, a party capture): one event each",
+                "allowDuplicate": true,
                 "SelfValidator":{
                     "chara_conditions":[
                         {"parameters":["exists"]}
@@ -33,17 +35,42 @@
     {
         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
         "label": "br_party",
-        "isLast": true,
         "line": "OnCharaImprison_ev01",
+        "nextEntryLabel": "captive_branch",
         "Results":[
             { "Type":"LogMemoryEntry", "arguments":["self", "memory_OnCharaImprison_ev01_receiver"] },
             { "Type":"LogMemoryEntry", "arguments":["party", "memory_OnCharaImprison_ev01_doer"] }
         ]
     },
     {
+        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+        "label": "captive_branch",
+        "_comment": "captiveOptions exist only for a new prisoner of the player's faction - party capture or not (PrisonUtility.InsertCaptiveOptions, Docs/Prison/Plan_PrisonRework.md §5.3a); anyone else's imprisonment ends at the line",
+        "options": [
+            { "option": "player faction: choose", "Results": [ { "Type": "ExistStoredOptions", "arguments": [ "captiveOptions" ] }, { "Type": "JumpToLabel", "arguments": [ "", "captive_ask" ] } ] },
+            { "option": "notification only", "Results": [ { "Type": "EventEnd" } ] }
+        ]
+    },
+    {
+        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+        "label": "captive_ask",
+        "question": "OnCharaImprison_captive_question",
+        "npcDecides": false,
+        "loadOptionsKey": "captiveOptions",
+        "loadOptionsResults": [ { "Type": "EventEnd" } ],
+        "options": [
+            {
+                "_comment": "default answer, set in code ($captiveDefault$ + callback captiveDefault): keep the preset prisoner type (getting a free cell), or - no free cell in the faction - release as a member",
+                "option": "OnCharaImprison_captive_default",
+                "isDefaultCancel": true,
+                "Results": [ { "Type": "ExecuteCallbackPermissive", "arguments": [ "captiveDefault" ] }, { "Type": "EventEnd" } ]
+            }
+        ]
+    },
+    {
         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
         "label": "br_noparty",
-        "isLast": true,
+        "nextEntryLabel": "captive_branch",
         "line": "OnCharaImprison_ev02",
         "Results":[
             { "Type":"LogMemoryEntry", "arguments":["self", "memory_OnCharaImprison_ev02_receiver"] }
@@ -65,7 +92,14 @@
 "memory_OnCharaImprison_ev01_receiver":"被$factionName$的$partyName$小队捕获了",
 
 "OnCharaImprison_ev02":"$self.name$被$factionName$捕获了！",
-"memory_OnCharaImprison_ev02_receiver":"成为了$factionName$的囚犯"
+"memory_OnCharaImprison_ev02_receiver":"成为了$factionName$的囚犯",
+
+"OnCharaImprison_captive_question":"要如何处置$self.name$？",
+"OnCharaImprison_captive_keep":"作为$presetMemberType$关押",
+"OnCharaImprison_captive_default":"$captiveDefault$",
+"event_captive_imprisonAs":"改为作为$memberType$关押",
+"event_captive_releaseAs":"释放为$memberType$",
+"event_captive_letGo":"放走"
 
             },
             "en-us":

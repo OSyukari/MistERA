@@ -328,7 +328,7 @@
             "reconcileExistingAssignments": true,
             "Homefaction": {
               "factionID": "btr_home_gotoh",
-              "guestStatus": "membertype_house_pet_dog",
+              "guestStatus": "membertype_house_pet",
               "spawnFloorID": "floor_btr_gotoh_house",
               "spawnRoomID": "4ldk_floor_1L_living",
               "setRoomOwnership": true

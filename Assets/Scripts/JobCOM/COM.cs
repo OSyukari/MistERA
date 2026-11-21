@@ -1820,6 +1820,9 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             case "ActionPackage_Work":
                 returnValue = new ActionPackage_Work(job, this, doers, receivers, masterRef);
                 break;
+            case "ActionPackage_Prison":
+                returnValue = new ActionPackage_Prison(job, this, doers, receivers, masterRef);
+                break;
             default:
                 break;
 
@@ -1897,6 +1900,10 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
                     break;
                 case "ActionPackage_GoToSchedule":
                     returnValue = new ActionPackage_GoToSchedule(job, this, doers, receivers, masterRef);
+                    if (returnValue != null) returnValues.Add(returnValue);
+                    break;
+                case "ActionPackage_Prison":
+                    returnValue = new ActionPackage_Prison(job, this, doers, receivers, masterRef);
                     if (returnValue != null) returnValues.Add(returnValue);
                     break;
                 case "ActionPackage_ItemUse":

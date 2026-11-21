@@ -5,25 +5,43 @@
             "ID":"furniture_prison_containment_spot",
             "furnitureSize":1,
             "value":150000,
-            "Tags":["rarity_rare"],
+            "Tags":["rarity_rare","prison"],
+            "_comment_prison":"prison furniture (Docs/Prison/Plan_PrisonRework.md): tag 'prison' = prison bed. A normal bed while nobody is held in it, a cell while a prisoner is (Manageable prison cells). Does not make the room a jail - that is furniture_marker_prison.",
+            "bedTypeID":"human",
+            "_comment_occupancy": "a cell: a room divider entered and left explicitly (its commands are used from inside) that does not block visibility - seen through the bars. Someone locked in it reaches nothing outside (FurnitureOccupancyUtility.ValidateLockedScope)",
+            "occupancy": { "isRoomDivider": true, "blocksVisibility": false, "holdsUnconscious": true, "assignOwnership": true },
             "givesJob":
-            [ { "comTags":["furniture","prison"] }, { "comTags":["furniture","bed"] }, { "comID":["com_furniture_changeOutfit"] }]
+            [ { "comTags":["furniture","prison"] }, { "comTags":["furniture","bed"] },
+              { "comTags":["furniture","bathroom"] }, { "comID":["com_furniture_restroom_fix"] },
+              { "comID":["com_furniture_changeOutfit"] }]
         },
         {
             "ID":"furniture_prison_containment_spot_2",
             "furnitureSize":2,
             "value":250000,
-            "Tags":["rarity_rare"],
+            "Tags":["rarity_rare","prison"],
+            "_comment_prison":"prison furniture (Docs/Prison/Plan_PrisonRework.md): tag 'prison' = prison bed. A normal bed while nobody is held in it, a cell while a prisoner is (Manageable prison cells). Does not make the room a jail - that is furniture_marker_prison.",
+            "bedTypeID":"human",
+            "_comment_occupancy": "a cell: a room divider entered and left explicitly (its commands are used from inside) that does not block visibility - seen through the bars. Someone locked in it reaches nothing outside (FurnitureOccupancyUtility.ValidateLockedScope)",
+            "occupancy": { "isRoomDivider": true, "blocksVisibility": false, "holdsUnconscious": true, "assignOwnership": true },
             "givesJob":
-            [ { "comTags":["furniture","prison"] }, { "comTags":["furniture","bed"] }, { "comID":["com_furniture_changeOutfit"] }]
+            [ { "comTags":["furniture","prison"] }, { "comTags":["furniture","bed"] },
+              { "comTags":["furniture","bathroom"] }, { "comID":["com_furniture_restroom_fix"] },
+              { "comID":["com_furniture_changeOutfit"] }]
         },
         {
             "ID":"furniture_prison_containment_spot_4",
             "furnitureSize":4,
             "value":400000,
-            "Tags":["rarity_rare"],
+            "Tags":["rarity_rare","prison"],
+            "_comment_prison":"prison furniture (Docs/Prison/Plan_PrisonRework.md): tag 'prison' = prison bed. A normal bed while nobody is held in it, a cell while a prisoner is (Manageable prison cells). Does not make the room a jail - that is furniture_marker_prison.",
+            "bedTypeID":"human",
+            "_comment_occupancy": "a cell: a room divider entered and left explicitly (its commands are used from inside) that does not block visibility - seen through the bars. Someone locked in it reaches nothing outside (FurnitureOccupancyUtility.ValidateLockedScope)",
+            "occupancy": { "isRoomDivider": true, "blocksVisibility": false, "holdsUnconscious": true, "assignOwnership": true },
             "givesJob":
-            [ { "comTags":["furniture","prison"] }, { "comTags":["furniture","bed"] }, { "comID":["com_furniture_changeOutfit"] }]
+            [ { "comTags":["furniture","prison"] }, { "comTags":["furniture","bed"] },
+              { "comTags":["furniture","bathroom"] }, { "comID":["com_furniture_restroom_fix"] },
+              { "comID":["com_furniture_changeOutfit"] }]
         }
     ]
     },

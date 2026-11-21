@@ -168,7 +168,8 @@ public class SpineAnimator41 : SpineAnimatorBase
                 else
                 {
                     animreset = true;
-                    loader.Animation.AnimationState.AddAnimation(0, idleAnim, true, 0f);
+                    var entry = loader.Animation.AnimationState.SetAnimation(0, idleAnim, true);
+                    if (!refresh) entry.MixDuration = SpineMixDuration;
                     loader.idleAnimName = idleAnimName;
                 }
             }
@@ -195,7 +196,8 @@ public class SpineAnimator41 : SpineAnimatorBase
                 else
                 {
                     animreset = true;
-                    loader.Animation.AnimationState.AddAnimation(1, addonAnim, true, 0f);
+                    var entry = loader.Animation.AnimationState.SetAnimation(1, addonAnim, true);
+                    if (!refresh) entry.MixDuration = SpineMixDuration;
                     loader.addonAnimName = addonAnimName;
                 }
             }

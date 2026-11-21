@@ -1569,7 +1569,15 @@ public class Event : I_SerializationCallbackReceiver
             /// [scopeKey, optional reportKey, optional bodyTag...]. Same as WashTraces, but wipes: solid traces off, liquids
             /// dry into their dried mark (no dried mark = off), dried marks stay. Restroom: ["self", key, "lower", "leg"].
             /// </summary>
-            WipeTraces
+            WipeTraces,
+
+            /// <summary>
+            /// [scopeKey] - applies a prison command's saved choice to every resolved character (PrisonCommand.Resolve,
+            /// Docs/Prison/Plan_PrisonRework.md §6), read from the event's AppendStrings: prison_action (imprison / release /
+            /// lock / unlock), prison_faction (faction ID), prison_memberType, prison_release (IntoType / SendHome /
+            /// Recruit), prison_furniture (furniture job RefID). Run by the package a prison command saves (onResolve).
+            /// </summary>
+            PrisonResolve
 
         }
     }

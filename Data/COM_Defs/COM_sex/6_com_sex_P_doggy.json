@@ -19,6 +19,7 @@
                     "permission_vaginal"
                 ],
                 "portraitTags": ["doggy"],
+                "portraitTags_Receiver":["portrait_lower"],
                 "requirements": {
                     "requirement": {
                         "req_Doers": {
@@ -130,14 +131,18 @@
                                                         }
                                                     ],
                                                     "texts": [
-                                                        "com_sex_P_doggy_description_begin_1_1"
+                                                        "com_sex_P_doggy_description_begin_1_1",
+                                                        "com_sex_P_doggy_description_begin_1_5",
+                                                        "com_sex_P_doggy_description_begin_1_6"
                                                     ]
                                                 },
                                                 {
                                                     "_comment": "if none of the above = new insert",
                                                     "keepLooking": false,
                                                     "texts": [
-                                                        "com_sex_P_doggy_description_begin_1_2"
+                                                        "com_sex_P_doggy_description_begin_1_2",
+                                                        "com_sex_P_doggy_description_begin_1_3",
+                                                        "com_sex_P_doggy_description_begin_1_4"
                                                     ]
                                                 }
                                             ]
@@ -174,14 +179,18 @@
                                                         }
                                                     ],
                                                     "texts": [
-                                                        "com_sex_P_doggy_description_begin_2_1"
+                                                        "com_sex_P_doggy_description_begin_2_1",
+                                                        "com_sex_P_doggy_description_begin_2_3",
+                                                        "com_sex_P_doggy_description_begin_2_4"
                                                     ]
                                                 },
                                                 {
                                                     "_comment": "if none of the above = new insert",
                                                     "keepLooking": false,
                                                     "texts": [
-                                                        "com_sex_P_doggy_description_begin_2_2"
+                                                        "com_sex_P_doggy_description_begin_2_2",
+                                                        "com_sex_P_doggy_description_begin_2_5",
+                                                        "com_sex_P_doggy_description_begin_2_6"
                                                     ]
                                                 }
                                             ]
@@ -236,7 +245,9 @@
                                                                 }
                                                             ],
                                                             "texts": [
-                                                                "com_sex_P_doggy_description_begin_3_1"
+                                                                "com_sex_P_doggy_description_begin_3_1",
+                                                                "com_sex_P_doggy_description_begin_3_22",
+                                                                "com_sex_P_doggy_description_begin_3_23"
                                                             ]
                                                         },
                                                         {
@@ -250,7 +261,9 @@
                                                                 }
                                                             ],
                                                             "texts": [
-                                                                "com_sex_P_doggy_description_begin_3_2"
+                                                                "com_sex_P_doggy_description_begin_3_2",
+                                                                "com_sex_P_doggy_description_begin_3_20",
+                                                                "com_sex_P_doggy_description_begin_3_21"
                                                             ]
                                                         },
                                                         {
@@ -258,7 +271,9 @@
                                                             "keepLooking": false,
                                                             "conditions": [],
                                                             "texts": [
-                                                                "com_sex_P_doggy_description_begin_3_3"
+                                                                "com_sex_P_doggy_description_begin_3_3",
+                                                                "com_sex_P_doggy_description_begin_3_14",
+                                                                "com_sex_P_doggy_description_begin_3_15"
                                                             ]
                                                         }
                                                     ]
@@ -285,7 +300,9 @@
                                                                 }
                                                             ],
                                                             "texts": [
-                                                                "com_sex_P_doggy_description_begin_3_4"
+                                                                "com_sex_P_doggy_description_begin_3_4",
+                                                                "com_sex_P_doggy_description_begin_3_10",
+                                                                "com_sex_P_doggy_description_begin_3_11"
                                                             ]
                                                         },
                                                         {
@@ -299,7 +316,9 @@
                                                                 }
                                                             ],
                                                             "texts": [
-                                                                "com_sex_P_doggy_description_begin_3_5"
+                                                                "com_sex_P_doggy_description_begin_3_5",
+                                                                "com_sex_P_doggy_description_begin_3_16",
+                                                                "com_sex_P_doggy_description_begin_3_17"
                                                             ]
                                                         },
                                                         {
@@ -307,7 +326,9 @@
                                                             "keepLooking": false,
                                                             "conditions": [],
                                                             "texts": [
-                                                                "com_sex_P_doggy_description_begin_3_6"
+                                                                "com_sex_P_doggy_description_begin_3_6",
+                                                                "com_sex_P_doggy_description_begin_3_18",
+                                                                "com_sex_P_doggy_description_begin_3_19"
                                                             ]
                                                         }
                                                     ]
@@ -328,7 +349,9 @@
                                                                 }
                                                             ],
                                                             "texts": [
-                                                                "com_sex_P_doggy_description_begin_3_7"
+                                                                "com_sex_P_doggy_description_begin_3_7",
+                                                                "com_sex_P_doggy_description_begin_3_24",
+                                                                "com_sex_P_doggy_description_begin_3_25"
                                                             ]
                                                         },
                                                         {
@@ -342,7 +365,9 @@
                                                                 }
                                                             ],
                                                             "texts": [
-                                                                "com_sex_P_doggy_description_begin_3_8"
+                                                                "com_sex_P_doggy_description_begin_3_8",
+                                                                "com_sex_P_doggy_description_begin_3_26",
+                                                                "com_sex_P_doggy_description_begin_3_27"
                                                             ]
                                                         },
                                                         {
@@ -350,7 +375,9 @@
                                                             "keepLooking": false,
                                                             "conditions": [],
                                                             "texts": [
-                                                                "com_sex_P_doggy_description_begin_3_9"
+                                                                "com_sex_P_doggy_description_begin_3_9",
+                                                                "com_sex_P_doggy_description_begin_3_12",
+                                                                "com_sex_P_doggy_description_begin_3_13"
                                                             ]
                                                         }
                                                     ]
@@ -398,7 +425,8 @@
                                     ],
                                     "texts": [
                                         "com_sex_P_doggy_description_begin_4_1",
-                                        "com_sex_P_doggy_description_begin_4_2"
+                                        "com_sex_P_doggy_description_begin_4_2",
+                                        "com_sex_P_doggy_description_begin_4_3"
                                     ]
                                 }
                             ]
@@ -411,7 +439,9 @@
                             "_comment": "",
                             "keepLooking": false,
                             "texts": [
-                                "com_sex_P_doggy_description_remove_1"
+                                "com_sex_P_doggy_description_remove_1",
+                                "com_sex_P_doggy_description_remove_2",
+                                "com_sex_P_doggy_description_remove_3"
                             ]
                         }
                     ]
@@ -429,7 +459,9 @@
                                 }
                             ],
                             "texts": [
-                                "com_sex_P_doggy_description_ongoing_1"
+                                "com_sex_P_doggy_description_ongoing_1",
+                                "com_sex_P_doggy_description_ongoing_2",
+                                "com_sex_P_doggy_description_ongoing_3"
                             ]
                         },
                         {
@@ -451,7 +483,8 @@
                                     ],
                                     "texts": [
                                         "com_sex_P_doggy_description_ongoing_2_1",
-                                        "com_sex_P_doggy_description_ongoing_2_2"
+                                        "com_sex_P_doggy_description_ongoing_2_2",
+                                        "com_sex_P_doggy_description_ongoing_2_3"
                                     ]
                                 },
                                 {
@@ -465,7 +498,9 @@
                                         }
                                     ],
                                     "texts": [
-                                        "com_sex_P_doggy_description_ongoing_3_1"
+                                        "com_sex_P_doggy_description_ongoing_3_1",
+                                        "com_sex_P_doggy_description_ongoing_3_2",
+                                        "com_sex_P_doggy_description_ongoing_3_3"
                                     ],
                                     "Entries": [
                                         {
@@ -473,7 +508,8 @@
                                             "keepLooking": false,
                                             "texts": [
                                                 "com_sex_P_doggy_description_ongoing_3_2_1",
-                                                "com_sex_P_doggy_description_ongoing_3_2_2"
+                                                "com_sex_P_doggy_description_ongoing_3_2_2",
+                                                "com_sex_P_doggy_description_ongoing_3_2_3"
                                             ]
                                         }
                                     ]
@@ -489,7 +525,9 @@
                                         }
                                     ],
                                     "texts": [
-                                        "com_sex_P_doggy_description_ongoing_4_1"
+                                        "com_sex_P_doggy_description_ongoing_4_1",
+                                        "com_sex_P_doggy_description_ongoing_4_2",
+                                        "com_sex_P_doggy_description_ongoing_4_3"
                                     ],
                                     "Entries": [
                                         {
@@ -497,7 +535,8 @@
                                             "keepLooking": false,
                                             "texts": [
                                                 "com_sex_P_doggy_description_ongoing_4_2_1",
-                                                "com_sex_P_doggy_description_ongoing_4_2_2"
+                                                "com_sex_P_doggy_description_ongoing_4_2_2",
+                                                "com_sex_P_doggy_description_ongoing_4_2_3"
                                             ]
                                         }
                                     ]
@@ -507,7 +546,8 @@
                                     "keepLooking": false,
                                     "texts": [
                                         "com_sex_P_doggy_description_ongoing_5_1_1",
-                                        "com_sex_P_doggy_description_ongoing_5_1_2"
+                                        "com_sex_P_doggy_description_ongoing_5_1_2",
+                                        "com_sex_P_doggy_description_ongoing_5_1_3"
                                     ]
                                 }
                             ]
@@ -530,7 +570,9 @@
                                 }
                             ],
                             "texts": [
-                                "com_sex_P_doggy_description_after_1"
+                                "com_sex_P_doggy_description_after_1",
+                                "com_sex_P_doggy_description_after_2",
+                                "com_sex_P_doggy_description_after_3"
                             ]
                         },
                         {
@@ -562,7 +604,8 @@
                                     ],
                                     "texts": [
                                         "com_sex_P_doggy_description_after_2_1",
-                                        "com_sex_P_doggy_description_after_2_2"
+                                        "com_sex_P_doggy_description_after_2_2",
+                                        "com_sex_P_doggy_description_after_2_3"
                                     ]
                                 }
                             ]
@@ -793,47 +836,89 @@
                 "com_sex_P_doggy_displayName_3": "轮流后背位V",
                 "com_sex_P_doggy_displayName_4": "同时后背位V",
 
-                "com_sex_P_doggy_description_begin_1_1":"$doer.firstname$在品味身体动弹不得的$receiver.firstname$膣内的触感的同时、再次開始动起了腰…",
-                "com_sex_P_doggy_description_begin_1_2":"$doer.firstname$将時停中的$receiver.firstname$仰面推倒、把即将暴発的阴茎插入了$receiver.v$里…",
+                "com_sex_P_doggy_description_begin_1_1":"$doer.firstname$在停住的时间里把$receiver.firstname$翻成趴着的姿势，从后面把$doer.p$捅进小穴",
+                "com_sex_P_doggy_description_begin_1_2":"$doer.firstname$在停住的时间里把$receiver.firstname$按成趴着的姿势，把$doer.p$捅进$receiver.firstname$的小穴",
 
-                "com_sex_P_doggy_description_begin_2_1":"$doer.firstname$在品味着睡眠中的$receiver.firstname$膣内的触感的同时、再次開始动起了腰…",
-                "com_sex_P_doggy_description_begin_2_2":"$doer.firstname$将睡眠中的$receiver.firstname$仰面推倒、把即将暴発的阴茎插入了$receiver.v$里…",
+                "com_sex_P_doggy_description_begin_2_1":"$doer.firstname$把睡着的$receiver.firstname$翻成趴着的姿势，从后面把$doer.p$捅进小穴",
+                "com_sex_P_doggy_description_begin_2_2":"$doer.firstname$把睡着的$receiver.firstname$按成趴着的姿势，从后面把$doer.p$捅进小穴",
 
-                "com_sex_P_doggy_description_begin_3_1":"$master.firstname$命令$doer.firstname$改变体位成後背位，再次移动腰部。\n$doer.firstname$把$receiver.firstname$推倒，从后面压住，再次开始扭动腰…",
-                "com_sex_P_doggy_description_begin_3_2":"$receiver.firstname$自己向前倒下，匍匐在地上，让$doer.firstname$用后背位扭动腰…",
-                "com_sex_P_doggy_description_begin_3_3":"$doer.firstname$把$receiver.firstname$推倒，从后面压住，然后以后背位的姿势再次开始扭动腰…",
-                "com_sex_P_doggy_description_begin_3_4":"$master.firstname$命令$doer.firstname$改变体位成後背位，再次移动腰部。\n$doer.firstname$抽插着$receiver.firstname$匍匐的身体，再次开始扭动腰…",
-                "com_sex_P_doggy_description_begin_3_5":"$receiver.firstname$扭转身体自己匍匐在地，让$doer.firstname$在后面扭动着腰…",
-                "com_sex_P_doggy_description_begin_3_6":"$doer.firstname$在插入的状态下将$receiver.firstname$的身体转回去，趴在地上，以后背位的姿势再次开始扭动腰…",
-                "com_sex_P_doggy_description_begin_3_7":"$master.firstname$命令$doer.firstname$用後背位侵犯$receiver.firstname$\n$doer.firstname$让$receiver.firstname$匍匐，把肉棒插入$receiver.firstname$的$receiver.v$摇晃腰…",
-                "com_sex_P_doggy_description_begin_3_8":"$receiver.firstname$将%STR_BODY(\"尻：外見\", MTAR:0)%对向$doer.firstname$，从后面让肉棒插入$receiver.v$…",
-                "com_sex_P_doggy_description_begin_3_9":"$doer.firstname$的肉棒从后面插入$receiver.firstname$的$receiver.v$，开始多次撞击腰部",
+                "com_sex_P_doggy_description_begin_3_1":"$doer.firstname$依着$master.firstname$的吩咐把$receiver.firstname$翻成趴着的姿势，把$doer.p$捅进小穴",
+                "com_sex_P_doggy_description_begin_3_2":"$receiver.firstname$自己翻成趴着的姿势，让$doer.firstname$把$doer.p$捅进小穴",
+                "com_sex_P_doggy_description_begin_3_3":"$doer.firstname$把$receiver.firstname$翻成趴着的姿势，从后面把$doer.p$捅进小穴",
+                "com_sex_P_doggy_description_begin_3_4":"$doer.firstname$依着$master.firstname$的吩咐把$receiver.firstname$从身上翻成趴着的姿势，把$doer.p$捅进小穴",
+                "com_sex_P_doggy_description_begin_3_5":"$receiver.firstname$从$doer.firstname$身上下来翻成趴着的姿势，让$doer.firstname$把$doer.p$捅进小穴",
+                "com_sex_P_doggy_description_begin_3_6":"$doer.firstname$把$receiver.firstname$从身上翻成趴着的姿势，从后面把$doer.p$捅进小穴",
+                "com_sex_P_doggy_description_begin_3_7":"$doer.firstname$依着$master.firstname$的吩咐把$receiver.firstname$按成趴着的姿势，把$doer.p$捅进小穴",
+                "com_sex_P_doggy_description_begin_3_8":"$receiver.firstname$自己趴下去把臀部对着$doer.firstname$的胯，让$doer.firstname$把$doer.p$捅进小穴",
+                "com_sex_P_doggy_description_begin_3_9":"$doer.firstname$把$receiver.firstname$按成趴着的姿势，从后面把$doer.p$捅进小穴",
 
-                "com_sex_P_doggy_description_begin_4_1":"$receiver.firstname$被情欲所驱使，像是在撒娇一样伸出屁股…",
-                "com_sex_P_doggy_description_begin_4_2":"发情的$receiver.firstname$在粗暴的抽插下喘着粗气……",
+                "com_sex_P_doggy_description_begin_4_1":"$receiver.firstname$发着情把腰塌下去让$doer.p$捅得更深",
+                "com_sex_P_doggy_description_begin_4_2":"$receiver.firstname$把臀部往后顶，让$doer.p$捅进小穴更深处",
 
 
-                "com_sex_P_doggy_description_after_1":"在射精的瞬間$doer.firstname$将阴茎深深突入了膣内最深处…",
-                "com_sex_P_doggy_description_after_2_1":"$receiver.firstname$撑不起来的上身，全身颤抖着…",
-                "com_sex_P_doggy_description_after_2_2":"$receiver.firstname$一边品尝着激烈绝顶的余韵，一边淫荡地扭动着含着$doer.firstname$的屁股…",
+                "com_sex_P_doggy_description_after_1":"$doer.firstname$把$doer.p$顶进$receiver.firstname$的小穴最深处",
+                "com_sex_P_doggy_description_after_2_1":"$receiver.firstname$的小穴把$doer.p$绞得动弹不得",
+                "com_sex_P_doggy_description_after_2_2":"$receiver.firstname$的小穴一阵阵抽紧裹住$doer.p$",
                 
 
-                "com_sex_P_doggy_description_remove_1":"$doer.firstname$从$receiver.firstname$的小穴内拔出了阴茎…",
+                "com_sex_P_doggy_description_remove_1":"$doer.firstname$把$doer.p$从$receiver.firstname$的小穴里拔出来",
 
-                "com_sex_P_doggy_description_ongoing_1":"$receiver.firstname$的小穴插入了$doer.firstname$的阴茎…",
-                "com_sex_P_doggy_description_ongoing_2_1":"$doer.firstname$从背后激烈地抽插着昏过去的$receiver.firstname$的小穴…",
-                "com_sex_P_doggy_description_ongoing_2_2":"$doer.firstname$从后面无数次摇动腰部拍打在筋疲力尽的$receiver.firstname$的$receiver.v$上…",
+                "com_sex_P_doggy_description_ongoing_1":"$doer.p$在$receiver.firstname$的$receiver.v$里抽插",
+                "com_sex_P_doggy_description_ongoing_2_1":"$doer.firstname$从背后把$doer.p$往$receiver.firstname$的$receiver.v$里撞",
+                "com_sex_P_doggy_description_ongoing_2_2":"$doer.firstname$抓着$receiver.firstname$的腰把$doer.p$抽送个不停",
 
-                "com_sex_P_doggy_description_ongoing_3_1":"$master.firstname$命令$doer.firstname$用后背位插入$receiver.firstname$，并更激烈地扭动腰",
-                "com_sex_P_doggy_description_ongoing_3_2_1":"$doer.firstname$按照指示的那样激烈地运动腰部，从后面无数次地冲击着$receiver.firstname$的小穴深处…",
-                "com_sex_P_doggy_description_ongoing_3_2_2":"$doer.firstname$按照指示的那样激烈地运动腰部，从后面好几次冲击$receiver.firstname$的$receiver.v$…",
+                "com_sex_P_doggy_description_ongoing_3_1":"$doer.firstname$依着$master.firstname$的吩咐把$doer.p$往小穴里摇得更快",
+                "com_sex_P_doggy_description_ongoing_3_2_1":"$doer.firstname$摇着腰从后面把$doer.p$往$receiver.firstname$的小穴深处撞",
+                "com_sex_P_doggy_description_ongoing_3_2_2":"$doer.firstname$把$doer.p$一次次捅进$receiver.firstname$的$receiver.v$",
 
-                "com_sex_P_doggy_description_ongoing_4_1":"$receiver.firstname$一边摇着屁股，一边要求$doer.firstname$的腰动得更激烈些",
-                "com_sex_P_doggy_description_ongoing_4_2_1":"$doer.firstname$再次抓住$receiver.firstname$的腰，用腰部从后面无数次撞击$receiver.firstname$的小穴深处…",
-                "com_sex_P_doggy_description_ongoing_4_2_2":"$doer.firstname$再次抓住$receiver.firstname$的腰，摆动腰部从后面好几次撞入$receiver.v$里…",
+                "com_sex_P_doggy_description_ongoing_4_1":"$receiver.firstname$把臀部往后顶，让$doer.p$捅进小穴更深处",
+                "com_sex_P_doggy_description_ongoing_4_2_1":"$doer.firstname$抓住$receiver.firstname$的腰把$doer.p$撞得更狠",
+                "com_sex_P_doggy_description_ongoing_4_2_2":"$doer.firstname$把$doer.p$一次次撞进$receiver.firstname$的小穴深处",
 
-                "com_sex_P_doggy_description_ongoing_5_1_1":"$doer.firstname$抓住了趴在地上的$receiver.firstname$的腰，激烈地刺到了小穴深处…",
-                "com_sex_P_doggy_description_ongoing_5_1_2":"$doer.firstname$从背后插入了$receiver.firstname$的$receiver.v$，用腰部无数次地击打…"
+                "com_sex_P_doggy_description_ongoing_5_1_1":"$doer.firstname$抓着$receiver.firstname$的腰把$doer.p$往小穴深处捅",
+                "com_sex_P_doggy_description_ongoing_5_1_2":"$doer.firstname$从背后把$doer.p$捅进$receiver.firstname$的$receiver.v$",
+                "com_sex_P_doggy_description_ongoing_2": "$doer.firstname$从后面把$doer.p$往$receiver.firstname$的$receiver.v$里捅",
+                "com_sex_P_doggy_description_ongoing_3": "$doer.firstname$跪在$receiver.firstname$身后摇着腰把$doer.p$往小穴里抽送",
+                "com_sex_P_doggy_description_begin_2_3": "$doer.firstname$把睡着的$receiver.firstname$摆成跪趴的姿势，把$doer.p$捅进$receiver.firstname$的$receiver.v$",
+                "com_sex_P_doggy_description_begin_2_4": "$doer.firstname$抓着睡着的$receiver.firstname$的腰摆成趴着的姿势，从后面把$doer.p$捅进小穴",
+                "com_sex_P_doggy_description_ongoing_2_3": "$doer.p$在$receiver.firstname$的$receiver.v$里进进出出",
+                "com_sex_P_doggy_description_begin_1_3": "$doer.firstname$在停住的时间里让$receiver.firstname$撅起臀部跪趴下来，从后面把$doer.p$捅进$receiver.firstname$的$receiver.v$",
+                "com_sex_P_doggy_description_begin_1_4": "$doer.firstname$在停住的时间里把$receiver.firstname$摆成后背位，把$doer.p$捅进$receiver.firstname$的$receiver.v$里",
+                "com_sex_P_doggy_description_begin_3_10": "$doer.firstname$按$master.firstname$的吩咐让$receiver.firstname$跪趴下来，从后面把$doer.p$捅进小穴",
+                "com_sex_P_doggy_description_begin_3_11": "$doer.firstname$应下$master.firstname$的吩咐把$receiver.firstname$摆成后背位，把$doer.p$捅进$receiver.firstname$的$receiver.v$",
+                "com_sex_P_doggy_description_begin_3_12": "$doer.firstname$让$receiver.firstname$跪趴下来，把$doer.p$捅进$receiver.firstname$的$receiver.v$",
+                "com_sex_P_doggy_description_begin_3_13": "$doer.firstname$从后面把$doer.p$一路捅进$receiver.firstname$的$receiver.v$里",
+                "com_sex_P_doggy_description_ongoing_3_2_3": "$doer.firstname$抓着$receiver.firstname$的腰把$doer.p$连续往里顶",
+                "com_sex_P_doggy_description_begin_3_14": "$doer.firstname$把$receiver.firstname$按成跪趴的样子，从后面把$doer.p$捅进$receiver.firstname$的$receiver.v$",
+                "com_sex_P_doggy_description_begin_3_15": "$doer.firstname$让$receiver.firstname$趴好撅起臀部，把$doer.p$捅进$receiver.firstname$的$receiver.v$里",
+                "com_sex_P_doggy_description_remove_2": "$doer.firstname$把$doer.p$从$receiver.firstname$的$receiver.v$里退出来",
+                "com_sex_P_doggy_description_remove_3": "$doer.p$从$receiver.firstname$的$receiver.v$里滑了出去",
+                "com_sex_P_doggy_description_begin_3_16": "$receiver.firstname$自己跪趴下来把臀部对着$doer.firstname$的胯，让$doer.firstname$把$doer.p$捅进小穴",
+                "com_sex_P_doggy_description_begin_3_17": "$receiver.firstname$翻成趴着的姿势，让$doer.firstname$从后面把$doer.p$捅进小穴",
+                "com_sex_P_doggy_description_ongoing_5_1_3": "$doer.firstname$压在$receiver.firstname$背上把$doer.p$一路捅进小穴",
+                "com_sex_P_doggy_description_ongoing_3_2": "$doer.firstname$按$master.firstname$的吩咐把$doer.p$加大幅度抽送",
+                "com_sex_P_doggy_description_ongoing_3_3": "$doer.firstname$应下$master.firstname$的吩咐把$doer.p$捅得更狠",
+                "com_sex_P_doggy_description_begin_3_18": "$doer.firstname$在插着的状态下让$receiver.firstname$跪趴下来，把$doer.p$捅进$receiver.firstname$的$receiver.v$",
+                "com_sex_P_doggy_description_begin_3_19": "$doer.firstname$把$receiver.firstname$摆成后背位，从后面把$doer.p$捅进$receiver.firstname$的$receiver.v$里",
+                "com_sex_P_doggy_description_begin_3_20": "$receiver.firstname$自己趴下去撅起臀部，让$doer.firstname$从后面把$doer.p$捅进小穴",
+                "com_sex_P_doggy_description_begin_3_21": "$receiver.firstname$跪趴下来把腰压低，让$doer.firstname$从后面把$doer.p$捅进$receiver.firstname$的$receiver.v$",
+                "com_sex_P_doggy_description_after_2": "$doer.firstname$按住$receiver.firstname$的腰把$doer.p$压得更深",
+                "com_sex_P_doggy_description_after_3": "$doer.p$捅到$receiver.firstname$的$receiver.v$里最深处",
+                "com_sex_P_doggy_description_ongoing_4_2_3": "$doer.firstname$摇着腰把$doer.p$往$receiver.firstname$的小穴里顶着",
+                "com_sex_P_doggy_description_begin_3_22": "$doer.firstname$按$master.firstname$的吩咐把$receiver.firstname$按成跪趴的样子，从后面把$doer.p$捅进小穴",
+                "com_sex_P_doggy_description_begin_3_23": "$doer.firstname$应下$master.firstname$的吩咐把$receiver.firstname$摆成后背位，把$doer.p$捅进$receiver.firstname$的$receiver.v$",
+                "com_sex_P_doggy_description_begin_4_3": "$receiver.firstname$发着情夹住$doer.p$把腰往后送",
+                "com_sex_P_doggy_description_begin_3_24": "$doer.firstname$按$master.firstname$的吩咐让$receiver.firstname$跪趴下来，从后面把$doer.p$捅进小穴",
+                "com_sex_P_doggy_description_begin_3_25": "$doer.firstname$应下$master.firstname$的吩咐把$receiver.firstname$摆成后背位，把$doer.p$捅进$receiver.firstname$的$receiver.v$",
+                "com_sex_P_doggy_description_after_2_3": "$receiver.firstname$的小穴缩得死紧夹着$doer.p$吸",
+                "com_sex_P_doggy_description_begin_1_5": "$doer.firstname$在停住的时间里把$receiver.firstname$掀成跪趴的姿势，把$doer.p$捅进$receiver.firstname$的$receiver.v$",
+                "com_sex_P_doggy_description_begin_1_6": "$doer.firstname$在停住的时间里把$receiver.firstname$压成趴着的样子，从后面把$doer.p$捅进$receiver.firstname$的$receiver.v$里",
+                "com_sex_P_doggy_description_ongoing_4_2": "$receiver.firstname$主动把腰往$doer.p$上撞",
+                "com_sex_P_doggy_description_ongoing_4_3": "$receiver.firstname$摇着腰把$doer.p$吞得更深",
+                "com_sex_P_doggy_description_begin_2_5": "$doer.firstname$把睡着的$receiver.firstname$翻成跪趴的样子，把$doer.p$捅进$receiver.firstname$的$receiver.v$",
+                "com_sex_P_doggy_description_begin_2_6": "$doer.firstname$压着睡着的$receiver.firstname$摆出后背位，从后面把$doer.p$捅进$receiver.firstname$的$receiver.v$里",
+                "com_sex_P_doggy_description_begin_3_26": "$receiver.firstname$跪趴下来把腰压低，让$doer.firstname$从后面把$doer.p$捅进小穴",
+                "com_sex_P_doggy_description_begin_3_27": "$receiver.firstname$翻成趴着的姿势，让$doer.firstname$从后面把$doer.p$捅进小穴"
 
             },
             "en-us":

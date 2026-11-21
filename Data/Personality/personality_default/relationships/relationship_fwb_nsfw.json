@@ -23,7 +23,8 @@
                                 "relationship_fwb_propose_12"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "response"
                 }
             },
             {
@@ -46,7 +47,8 @@
                                 "relationship_fwb_set_10"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "response"
                 }
             },
             {
@@ -69,7 +71,8 @@
                                 "relationship_fwb_refuse_10"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "response"
                 }
             },
             {
@@ -92,7 +95,8 @@
                                 "relationship_fwb_refused_10"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "response"
                 }
             },
             {
@@ -115,7 +119,8 @@
                                 "relationship_fwb_break_10"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "response"
                 }
             }
         ]

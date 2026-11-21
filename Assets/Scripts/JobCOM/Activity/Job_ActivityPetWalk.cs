@@ -117,7 +117,7 @@ public class Job_ActivityPetWalk : Job_Activity
             || !PairStillLive(human, pet) || !At(human, ParentRoom) || !At(pet, ParentRoom)) return false;
         var group = ActivityInstance as RecreationGroup;
         var spec = Definition?.petWalk;
-        if (group == null || group.AbsEnd - group.AbsStart != 2 || spec?.destinationFactionIDs == null) return false;
+        if (group == null || group.AbsEnd - group.AbsStart != 2 || string.IsNullOrEmpty(spec?.walkComTag)) return false;
         fixedEnd = scr_System_Time.current.getStartTime().Date.AddHours(group.AbsStart + 2);
         minimumOutdoorMinutes = Math.Max(15, spec.minimumOutdoorMinutes);
         returnBufferMinutes = Math.Max(5, spec.returnBufferMinutes);
@@ -127,42 +127,49 @@ public class Job_ActivityPetWalk : Job_Activity
         string world = Manageable.ResolveWorldID(home);
         if (homeExit == null || string.IsNullOrEmpty(world)) return false;
         worldID = world;
-        // Authored destinations only, with a bounded room choice at each; never discover the world registry.
-        int destinationCount = Math.Min(2, spec.destinationFactionIDs.Count);
-        for (int i = 0; i < destinationCount; i++)
+        // Destinations by what the furniture offers (walkComTag) in any venue of the home's world - the nearest room that
+        // fits the booked interval wins. Rooms examined per venue stay bounded.
+        var venues = RecreationUtility.WorldVenuesOffering(world, spec.walkComTag);
+        Room_Instance best = null;
+        float bestOutbound = float.MaxValue;
+        int bestBack = 0;
+        for (int i = 0; i < venues.Count; i++)
         {
-            var venue = scr_System_CampaignManager.current.FindFactionByID(spec.destinationFactionIDs[i]);
-            if (venue == null || venue == home || Manageable.ResolveWorldID(venue) != world) continue;
+            var venue = venues[i];
+            if (venue == null || venue == home) continue;
             int examined = 0;
             foreach (var entry in venue.ManagedRooms)
             {
                 if (++examined > 16) break;
                 var room = entry.Value;
-                if (room == null || room.isRoomPrivate || room.isRoomPrison
-                    || !room.CanBeAccessedBy(human) || !room.CanBeAccessedBy(pet) || !HasWalkFurniture(room)) continue;
+                if (!RecreationUtility.RoomOffersCommandTag(room, spec.walkComTag)
+                    || !room.CanBeAccessedBy(human) || !room.CanBeAccessedBy(pet)) continue;
                 float outbound = Math.Max(FactionUtility.GetTravelMinutesToRoom(human, room),
                     FactionUtility.GetTravelMinutesToRoom(pet, room));
-                if (!FiniteTrip(outbound) || !ReturnCostFrom(room, homeExit, human, pet, out int back)) continue;
+                if (!FiniteTrip(outbound) || outbound >= bestOutbound || !ReturnCostFrom(room, homeExit, human, pet, out int back)) continue;
                 // For a manual host the dog waits at home until the host has arrived outdoors.
                 double outwardBudget = humanRef == 0 ? outbound * 2 : outbound;
                 if ((fixedEnd - Now).TotalMinutes < outwardBudget + minimumOutdoorMinutes + back + returnBufferMinutes) continue;
-                travelRoomRefs.Clear();
-                var route = scr_System_CampaignManager.current.Map.Findpath(humanRef, room.RefID);
-                if (route == null) continue;
-                foreach (var edge in route)
-                {
-                    if (!travelRoomRefs.Contains(edge.Source)) travelRoomRefs.Add(edge.Source);
-                    if (!travelRoomRefs.Contains(edge.Target)) travelRoomRefs.Add(edge.Target);
-                }
-                destinationRoomRef = room.RefID;
-                cachedReturnMinutes = back;
-                returnDeadline = fixedEnd.AddMinutes(-back - returnBufferMinutes);
-                outdoorDeadline = returnDeadline.AddMinutes(-minimumOutdoorMinutes);
-                reason = "";
-                return true;
+                best = room;
+                bestOutbound = outbound;
+                bestBack = back;
             }
         }
-        return false;
+        if (best == null) return false;
+        var route = scr_System_CampaignManager.current.Map.Findpath(humanRef, best.RefID);
+        if (route == null) return false;
+        travelRoomRefs.Clear();
+        foreach (var edge in route)
+        {
+            if (!travelRoomRefs.Contains(edge.Source)) travelRoomRefs.Add(edge.Source);
+            if (!travelRoomRefs.Contains(edge.Target)) travelRoomRefs.Add(edge.Target);
+        }
+        destinationRoomRef = best.RefID;
+        cachedReturnMinutes = bestBack;
+        returnDeadline = fixedEnd.AddMinutes(-bestBack - returnBufferMinutes);
+        outdoorDeadline = returnDeadline.AddMinutes(-minimumOutdoorMinutes);
+        reason = "";
+        return true;
     }
 
     static bool FiniteTrip(float minutes)
@@ -498,35 +505,15 @@ public class Job_ActivityPetWalk : Job_Activity
         return null;
     }
 
-    /// <summary>The activity's walk commands: activityCommands, else workModule.workCommands (the activity JSON).</summary>
-    List<string> WalkCommandIDs
-    {
-        get
-        {
-            var definition = Definition;
-            if (definition == null) return null;
-            if (definition.activityCommands != null && definition.activityCommands.Count > 0) return definition.activityCommands;
-            return definition.workModule?.workCommands;
-        }
-    }
+    protected override bool IsOwnCommandByTag(COM command) { return WalkCommand(command); }
 
-    /// <summary>command (or a parent of it - its variants) is one of the activity's walk commands.</summary>
+    /// <summary>command (or a parent of it - its variants) carries the activity's walk tag (petWalk.walkComTag).</summary>
     bool WalkCommand(COM command)
     {
-        var ids = WalkCommandIDs;
-        if (ids == null || ids.Count == 0) return false;
+        string tag = Definition?.petWalk?.walkComTag;
+        if (string.IsNullOrEmpty(tag)) return false;
         for (var current = command; current != null; current = current.ParentCOM)
-            if (ids.Contains(current.ID)) return true;
-        return false;
-    }
-
-    bool HasWalkFurniture(Room_Instance room)
-    {
-        var jobs = room.Jobs;
-        for (int i = 0; i < jobs.Count; i++)
-            if (jobs[i] is Job_Furniture furniture)
-                for (int j = 0; j < furniture.allusableCOMs.Count; j++)
-                    if (WalkCommand(furniture.allusableCOMs[j])) return true;
+            if (current.comTags != null && current.comTags.Contains(tag)) return true;
         return false;
     }
 

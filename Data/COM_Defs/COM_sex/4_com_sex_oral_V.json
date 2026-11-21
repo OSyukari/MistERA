@@ -13,7 +13,7 @@
                 "timeScale":3,
                 "comTags":["sex","service", "position_face", "position_inequal","permission_vaginal"],
                 "portraitTags":["cunnilingus"],
-                "portraitTags_Receiver":["spread_pussy"],
+                "portraitTags_Receiver":["portrait_lower","spread_pussy"],
                 "_comment_strong":"Normal: always the clit. Tongue (force) variant: always the vagina.",
                 "receiverActTags":["clit"],
                 "receiverActTags_strong":["vagina"],
@@ -91,7 +91,7 @@
                     [
                         {
                             "keepLooking":true,
-                            "texts": [ "com_sex_oral_V_description_ongoing_1" ]
+                            "texts": [ "com_sex_oral_V_description_ongoing_1", "com_sex_oral_V_description_ongoing_2", "com_sex_oral_V_description_ongoing_3" ]
                         }
                     ]
                 },
@@ -100,7 +100,7 @@
                         {
                             "_comment":"",
                             "keepLooking":true,
-                            "texts":[ "com_sex_oral_V_description_remove_1" ]
+                            "texts":[ "com_sex_oral_V_description_remove_1", "com_sex_oral_V_description_remove_2", "com_sex_oral_V_description_remove_3" ]
                         }
                     ]
                 },
@@ -110,7 +110,7 @@
                         {
                             "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
-                            "texts":[ "com_sex_oral_V_description_after_1" ]
+                            "texts":[ "com_sex_oral_V_description_after_1", "com_sex_oral_V_description_after_2", "com_sex_oral_V_description_after_3" ]
                         }
                     ]
                 },
@@ -119,7 +119,7 @@
                     "Entries":[ 
                         {
                             "keepLooking":true,
-                            "texts": ["com_sex_oral_V_description_begin_1"]
+                            "texts": ["com_sex_oral_V_description_begin_1", "com_sex_oral_V_description_begin_2", "com_sex_oral_V_description_begin_3"]
                         }
                     ]
                     
@@ -228,10 +228,18 @@
                 "com_sex_oral_V_displayName_3_force": "轮流舌头插入",
                 "com_sex_oral_V_displayName_4_force": "同时舌头插入",
 
-                "com_sex_oral_V_description_begin_1":"$doer.firstname$的脸贴上了$receiver.firstname$的小穴，开始舔弄着对方的阴部",
-                "com_sex_oral_V_description_after_1":"高潮中的$receiver.firstname$的双腿紧紧夹住了$doer.firstname$的脑袋",
-                "com_sex_oral_V_description_remove_1":"$doer.firstname$将埋在$receiver.firstname$股间的头抬了起来",
-                "com_sex_oral_V_description_ongoing_1":"$doer.firstname$的头埋在$receiver.firstname$的股间舔着对方的阴部"
+                "com_sex_oral_V_description_begin_1":"$doer.firstname$的舌头舔开$receiver.firstname$的阴唇",
+                "com_sex_oral_V_description_after_1":"$receiver.firstname$的小穴在$doer.firstname$的舌头上抽紧",
+                "com_sex_oral_V_description_remove_1":"$doer.firstname$把舌头从$receiver.firstname$的小穴里抽出来",
+                "com_sex_oral_V_description_ongoing_1":"$doer.firstname$的舌头在$receiver.firstname$的屄缝上舔个不停",
+                "com_sex_oral_V_description_ongoing_2": "$doer.firstname$的舌尖顶进$receiver.firstname$的小穴里搅",
+                "com_sex_oral_V_description_ongoing_3": "$doer.firstname$的嘴吸着$receiver.firstname$的阴唇舔",
+                "com_sex_oral_V_description_begin_2": "$doer.firstname$的舌尖从$receiver.firstname$的屄缝舔下去",
+                "com_sex_oral_V_description_begin_3": "$doer.firstname$把嘴压在$receiver.firstname$的小穴上吸",
+                "com_sex_oral_V_description_after_2": "$receiver.firstname$的阴唇贴着$doer.firstname$的嘴一下一下地抖",
+                "com_sex_oral_V_description_after_3": "$receiver.firstname$的屄把$doer.firstname$的舌头夹得动不了",
+                "com_sex_oral_V_description_remove_2": "$doer.firstname$的嘴从$receiver.firstname$的阴唇上松开",
+                "com_sex_oral_V_description_remove_3": "$doer.firstname$湿着的舌尖离开$receiver.firstname$的屄"
 
             },
             "en-us":

@@ -58,7 +58,7 @@
                             "Entries":[
                                 {
                                     "keepLooking":true,
-                                    "texts": ["com_sex_finger_P_solo_description_begin_1"]
+                                    "texts": ["com_sex_finger_P_solo_description_begin_1", "com_sex_finger_P_solo_description_begin_2", "com_sex_finger_P_solo_description_begin_3"]
                                 }
                             ]
                         },
@@ -66,7 +66,7 @@
                             "Entries":[
                                 {
                                     "keepLooking":true,
-                                    "texts": ["com_sex_finger_P_solo_description_ongoing_1"]
+                                    "texts": ["com_sex_finger_P_solo_description_ongoing_1", "com_sex_finger_P_solo_description_ongoing_2", "com_sex_finger_P_solo_description_ongoing_3"]
                                 }
                             ]
                         }
@@ -83,7 +83,7 @@
                             "Entries":[
                                 {
                                     "keepLooking":true,
-                                    "texts": ["com_sex_finger_P_solo_group_description_begin_1"]
+                                    "texts": ["com_sex_finger_P_solo_group_description_begin_1", "com_sex_finger_P_solo_group_description_begin_2", "com_sex_finger_P_solo_group_description_begin_3"]
                                 }
                             ]
                         },
@@ -91,7 +91,7 @@
                             "Entries":[
                                 {
                                     "keepLooking":true,
-                                    "texts": ["com_sex_finger_P_solo_group_description_ongoing_1"]
+                                    "texts": ["com_sex_finger_P_solo_group_description_ongoing_1", "com_sex_finger_P_solo_group_description_ongoing_2", "com_sex_finger_P_solo_group_description_ongoing_3"]
                                 }
                             ]
                         }
@@ -137,7 +137,7 @@
                     [
                         {
                             "keepLooking":true,
-                            "texts": [ "com_sex_finger_P_description_ongoing_1" ]
+                            "texts": [ "com_sex_finger_P_description_ongoing_1", "com_sex_finger_P_description_ongoing_2", "com_sex_finger_P_description_ongoing_3" ]
                         }
                     ]
                 },
@@ -146,7 +146,7 @@
                         {
                             "_comment":"",
                             "keepLooking":true,
-                            "texts":[ "com_sex_finger_P_description_remove_1" ]
+                            "texts":[ "com_sex_finger_P_description_remove_1", "com_sex_finger_P_description_remove_2", "com_sex_finger_P_description_remove_3" ]
                         }
                     ]
                 },
@@ -155,7 +155,7 @@
                     "Entries":[ 
                         {
                             "keepLooking":true,
-                            "texts":  ["com_sex_finger_P_description_begin_1"]
+                            "texts":  ["com_sex_finger_P_description_begin_1", "com_sex_finger_P_description_begin_2", "com_sex_finger_P_description_begin_3"]
                         }
                     ]
                     
@@ -178,14 +178,28 @@
                 "com_sex_finger_P_displayName_5": "轮流手交",
                 "com_sex_finger_P_displayName_6": "同时手交",
 
-                "com_sex_finger_P_description_begin_1":"$doer.firstname$的手握住了$receiver.firstname$的肉棒开始套弄着",
-                "com_sex_finger_P_description_remove_1":"$doer.firstname$的手放开了$receiver.firstname$的肉棒",
-                "com_sex_finger_P_description_ongoing_1":"$doer.firstname$正在搓弄着$receiver.firstname$的肉棒",
+                "com_sex_finger_P_description_begin_1":"$doer.firstname$把手握上$receiver.firstname$的肉棒套弄起来",
+                "com_sex_finger_P_description_remove_1":"$doer.firstname$的手从$receiver.firstname$的肉棒上松开了",
+                "com_sex_finger_P_description_ongoing_1":"$doer.firstname$还在套弄$receiver.firstname$的肉棒",
 
-                "com_sex_finger_P_solo_description_begin_1": "$doer.firstname$的手握住了自己的肉棒，开始套弄着",
-                "com_sex_finger_P_solo_description_ongoing_1": "$doer.firstname$正在搓弄着自己的肉棒",
-                "com_sex_finger_P_solo_group_description_begin_1": "$doer.firstname$各自握住了自己的肉棒，开始套弄着",
-                "com_sex_finger_P_solo_group_description_ongoing_1": "$doer.firstname$正各自搓弄着自己的肉棒"
+                "com_sex_finger_P_solo_description_begin_1": "$doer.firstname$把手握上自己的肉棒套弄起来",
+                "com_sex_finger_P_solo_description_ongoing_1": "$doer.firstname$还在套弄自己的肉棒",
+                "com_sex_finger_P_solo_group_description_begin_1": "$doer.firstname$握着自己的屌套弄起来",
+                "com_sex_finger_P_solo_group_description_ongoing_1": "$doer.firstname$的手还圈在自己的肉棒上",
+                "com_sex_finger_P_description_begin_2": "$doer.firstname$的手指圈住$receiver.firstname$的鸡巴套弄",
+                "com_sex_finger_P_description_begin_3": "$doer.firstname$握住$receiver.firstname$的屌搓弄起来",
+                "com_sex_finger_P_description_remove_2": "$doer.firstname$把手从$receiver.firstname$的鸡巴上收了回来",
+                "com_sex_finger_P_description_remove_3": "$doer.firstname$放开了$receiver.firstname$的肉棒",
+                "com_sex_finger_P_solo_group_description_begin_2": "$doer.firstname$把手掌圈在自己肉棒上来回搓",
+                "com_sex_finger_P_solo_group_description_begin_3": "$doer.firstname$捏着自己的龟头搓弄起来",
+                "com_sex_finger_P_solo_group_description_ongoing_2": "$doer.firstname$还在搓弄自己的屌",
+                "com_sex_finger_P_solo_group_description_ongoing_3": "$doer.firstname$套弄的动作一直没有停",
+                "com_sex_finger_P_solo_description_ongoing_2": "$doer.firstname$的手一直握在自己肉棒上",
+                "com_sex_finger_P_solo_description_ongoing_3": "$doer.firstname$没停下搓弄自己的鸡巴",
+                "com_sex_finger_P_solo_description_begin_2": "$doer.firstname$的手指圈住自己的肉棒套弄着",
+                "com_sex_finger_P_solo_description_begin_3": "$doer.firstname$握住自己的鸡巴搓弄起来",
+                "com_sex_finger_P_description_ongoing_2": "$doer.firstname$的手一直握在$receiver.firstname$的肉棒上",
+                "com_sex_finger_P_description_ongoing_3": "$doer.firstname$继续搓弄$receiver.firstname$的鸡巴"
 
             },
             "en-us":

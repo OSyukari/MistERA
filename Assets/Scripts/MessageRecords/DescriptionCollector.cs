@@ -132,7 +132,17 @@ public class DescriptionCollector : I_Records
 
     public void Load(MessageCollect_KojoEntry kojo)
     {
-        if (kojo.PortraitRefID != -1)
+        Load(kojo, false);
+    }
+
+    /// <param name="sexImageOnly">sex job lines: the speaker's image (portrait ref + its portrait tags) is loaded only when a
+    /// sex handler returns it for this entry's own tags (PortraitManager.HasSexImage); the text is always loaded</param>
+    public void Load(MessageCollect_KojoEntry kojo, bool sexImageOnly)
+    {
+        bool image = !sexImageOnly || kojo.PortraitRefID != -1
+            && PortraitManager.HasSexImage(scr_System_CampaignManager.current.FindInstanceByID(kojo.PortraitRefID), kojo.selfPortraitTag, kojo.targetPortraitTag);
+
+        if (image && kojo.PortraitRefID != -1)
         {
             this.portraitRefs.Add(kojo.PortraitRefID);
             Utility.DistinctInPlace(portraitRefs);
@@ -143,17 +153,20 @@ public class DescriptionCollector : I_Records
             this.message += $"{(message.Length > 0 ? "\n" : "")}{kojo.message}";
             this.message_excludeRelated += $"{(message_excludeRelated.Length > 0 ? "\n" : "")}{kojo.message}";
         }
-        
-        this.displayTagsOverride_Self.AddRange(kojo.selfPortraitTag);
-        Utility.DistinctInPlace(displayTagsOverride_Self);
 
-        this.displayTagsOverride_Target.AddRange(kojo.targetPortraitTag);
-        Utility.DistinctInPlace(displayTagsOverride_Target);
+        if (image)
+        {
+            this.displayTagsOverride_Self.AddRange(kojo.selfPortraitTag);
+            Utility.DistinctInPlace(displayTagsOverride_Self);
+
+            this.displayTagsOverride_Target.AddRange(kojo.targetPortraitTag);
+            Utility.DistinctInPlace(displayTagsOverride_Target);
+        }
 
         this.relevantActors.AddRange(kojo.relevantActors);
         Utility.DistinctInPlace(relevantActors);
 
-        foreach (var next in kojo.nexts) Load(next);
+        foreach (var next in kojo.nexts) Load(next, sexImageOnly);
     }
 
     public void LoadActors(Character_Relationship rel)

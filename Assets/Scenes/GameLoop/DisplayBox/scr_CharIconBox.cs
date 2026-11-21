@@ -84,13 +84,13 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
     bool obscured = false;
 
     /// <summary>
-    /// in the player's room but not seen by the player (one of them inside a divider blocking visibility): the portrait
+    /// in the player's room but out of the player's reach (not in the same divider - seen through bars or not): the portrait
     /// image's alpha is lowered (DrawIcon only swaps the sprite, never the colour)
     /// </summary>
     void RefreshObscured()
     {
         if (isCombatBox) return;
-        bool o = !scr_System_CampaignManager.current.isCharaVisibleToPlayer(chara_refID);
+        bool o = !scr_System_CampaignManager.current.isCharaInteractableByPlayer(chara_refID);
         if (o == obscured) return;
         obscured = o;
         var color = picture.color;
@@ -163,8 +163,21 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
         {
             scr_System_CampaignManager.current.Observer_CurrentTarget += ReadCurrentChar;
             scr_System_CampaignManager.current.Observer_UpdateNotice += OnUpdateNotice;
+            scr_System_CampaignManager.current.Observer_Peek += OnPeek;
+            scr_System_CampaignManager.current.Observer_PeekLabel += RefreshPeekLabel;
             scr_UpdateHandler.current.Observer_PostUpdateTime_3 += OnPostUpdateTime3;
         }
+    }
+
+    void OnPeek(int refID) { RefreshPeekLabel(); }
+
+    /// <summary> the name, or "(peeking: name)" while the target box shows this character's peeked portrait </summary>
+    void RefreshPeekLabel()
+    {
+        if (isCombatBox || chara == null) return;
+        nameBox.text = scr_System_CampaignManager.current.PeekRef == chara_refID
+            ? LocalizeDictionary.QueryThenParse("ui_charList_peeking").Replace("$name$", chara.FirstName)
+            : chara.FirstName;
     }
 
     public RectTransform prefab_Canvas_charaDetail;
@@ -173,7 +186,16 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
     void IPointerClickHandler.OnPointerClick(PointerEventData eventData)
     {
-        if (obscured) return;   // behind a room divider's door: shown, not selectable
+        // across a room divider: not selectable - a click peeks at their activity portrait and unsets the current target
+        // (again = peek ends)
+        if (obscured)
+        {
+            if (this.chara == null || isCombatBox) return;
+            var campaign = scr_System_CampaignManager.current;
+            if (campaign.PeekRef == chara_refID) campaign.ClearPeek();
+            else campaign.PeekCharacter(chara_refID);
+            return;
+        }
         if (this.chara != null && !isCombatBox)
         {
             if (scr_System_CampaignManager.current.displaySex)
@@ -215,6 +237,8 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
         scr_System_CampaignManager.current.Observer_CurrentTarget -= ReadCurrentChar;
         scr_UpdateHandler.current.Observer_PostUpdateTime_3 -= OnPostUpdateTime3;
         scr_System_CampaignManager.current.Observer_UpdateNotice -= OnUpdateNotice;
+        scr_System_CampaignManager.current.Observer_Peek -= OnPeek;
+        scr_System_CampaignManager.current.Observer_PeekLabel -= RefreshPeekLabel;
     }
 
     public void ForceExit()

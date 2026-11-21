@@ -1093,7 +1093,20 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler, IScrollHandler
 
     bool HeldByPlayerImage(MessageLog next)
     {
-        return holdingPlayerImage && next != null && !next.ShowsPlayer && next.DisplaPortrait && next.WaitForPortrait;
+        return holdingPlayerImage && next != null && !InhibitsPortrait(next) && !next.ShowsPlayer && next.DisplaPortrait && next.WaitForPortrait;
+    }
+
+    /// <summary> inhibitNonTargetInterrupt on: an autoAnimate line prints without drawing its portrait </summary>
+    static bool InhibitsPortrait(MessageLog m)
+    {
+        return m.autoAnimate && scr_System_CentralControl.current.DisplaySetting.inhibitNonTargetInterrupt.value;
+    }
+
+    /// <summary> autoAnimate lines advance on their own, except (inhibitNonTargetInterrupt off) one that would draw a portrait - it waits for a click </summary>
+    static bool AutoAdvances(MessageLog m)
+    {
+        if (!m.autoAnimate) return false;
+        return InhibitsPortrait(m) || !(m.DisplaPortrait && m.WaitForPortrait);
     }
 
     /// <summary> after drawing current (not skipping): a portrait switch decides the hold, text-only lines leave it as is </summary>
@@ -1303,7 +1316,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler, IScrollHandler
             // scrollwheel-driven temporary override; then apply this message's own mode if it has one
             SetDisplayMode(current.Display.displayMode);
             scr_System_CampaignManager.current.InvokeMessageDisplay(current.Display);
-            bool skipImage = skipping;
+            bool skipImage = skipping || InhibitsPortrait(current);
 
             if (current is Message_Text)
             {
@@ -1378,7 +1391,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler, IScrollHandler
 
             // auto advance check - animated messages only within the shown message's section
             var next = todo.Count > 0 ? todo[0] : null;
-            if (next != null && !WaitingForInput && !HeldByPlayerImage(next) && (next.autoAnimate || (automaticMessages.Contains(next) && CanAutoContinue(next, false))))
+            if (next != null && !WaitingForInput && !HeldByPlayerImage(next) && (AutoAdvances(next) || (automaticMessages.Contains(next) && CanAutoContinue(next, false))))
             {
                 AnimateOneStep();
             }

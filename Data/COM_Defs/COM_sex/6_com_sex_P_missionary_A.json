@@ -15,6 +15,7 @@
                 "timeScale":3,
                 "comTags":["sex", "penetration", "position_face", "position_equal","missionary","permission_anal"],
                 "portraitTags":["anal", "missionary"],
+                "portraitTags_Receiver":["portrait_lower"],
                 "requirements":{
                     "requirement":{
                         "req_Doers":{
@@ -87,7 +88,7 @@
                     [
                         {
                             "keepLooking":true,
-                            "texts": [ "com_sex_P_missionary_A_description_ongoing_1" ]
+                            "texts": [ "com_sex_P_missionary_A_description_ongoing_1", "com_sex_P_missionary_A_description_ongoing_2", "com_sex_P_missionary_A_description_ongoing_3" ]
                         }
                     ]
                 },
@@ -96,7 +97,7 @@
                         {
                             "_comment":"",
                             "keepLooking":true,
-                            "texts":[ "com_sex_P_missionary_A_description_remove_1" ]
+                            "texts":[ "com_sex_P_missionary_A_description_remove_1", "com_sex_P_missionary_A_description_remove_2", "com_sex_P_missionary_A_description_remove_3" ]
                         }
                     ]
                 },
@@ -106,7 +107,7 @@
                         {
                             "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"doer", "statID":"isCumReady", "operand":"eq", "value":"true" } } ],
-                            "texts":[ "com_sex_P_missionary_A_description_after_1" ]
+                            "texts":[ "com_sex_P_missionary_A_description_after_1", "com_sex_P_missionary_A_description_after_2", "com_sex_P_missionary_A_description_after_3" ]
                         }
                     ]
                 },
@@ -115,7 +116,7 @@
                     "Entries":[ 
                         {
                             "keepLooking":true,
-                            "texts": ["com_sex_P_missionary_A_description_begin_1"]
+                            "texts": ["com_sex_P_missionary_A_description_begin_1", "com_sex_P_missionary_A_description_begin_2", "com_sex_P_missionary_A_description_begin_3"]
                         }
                     ]
                     
@@ -272,10 +273,18 @@
                 "com_sex_P_missionary_A_displayName_3": "轮流正常位A",
                 "com_sex_P_missionary_A_displayName_4": "同时正常位A",
 
-                "com_sex_P_missionary_A_description_begin_1":"$doer.firstname$压在$receiver.firstname$身上，肉棒对准了肛门插入进去",
-                "com_sex_P_missionary_A_description_after_1":"即将射精的$doer.firstname$将肉棒狠狠顶入了$receiver.firstname$的体内",
-                "com_sex_P_missionary_A_description_remove_1":"$doer.firstname$将肉棒从$receiver.firstname$的肛内抽出来",
-                "com_sex_P_missionary_A_description_ongoing_1":"$doer.firstname$的阴茎在$receiver.firstname$的肛门中进出"
+                "com_sex_P_missionary_A_description_begin_1":"$doer.firstname$压在$receiver.firstname$身上把$doer.p$捅进肛门",
+                "com_sex_P_missionary_A_description_after_1":"$doer.firstname$把$doer.p$顶进$receiver.firstname$的肛门最深处",
+                "com_sex_P_missionary_A_description_remove_1":"$doer.firstname$把$doer.p$从$receiver.firstname$的肛门里抽出来",
+                "com_sex_P_missionary_A_description_ongoing_1":"$doer.p$在$receiver.firstname$的肛门里来回抽插",
+                "com_sex_P_missionary_A_description_ongoing_2": "$doer.firstname$压在$receiver.firstname$身上摇着腰把$doer.p$往肛门里抽送",
+                "com_sex_P_missionary_A_description_ongoing_3": "$doer.firstname$抓着$receiver.firstname$的腰把$doer.p$往深处捅",
+                "com_sex_P_missionary_A_description_after_2": "$doer.firstname$按住$receiver.firstname$的腰把$doer.p$压得更深",
+                "com_sex_P_missionary_A_description_after_3": "$doer.p$捅到$receiver.firstname$的后穴最里面",
+                "com_sex_P_missionary_A_description_begin_2": "$doer.firstname$掰开$receiver.firstname$的腿把$doer.p$塞进后穴里",
+                "com_sex_P_missionary_A_description_begin_3": "$doer.firstname$压着$receiver.firstname$的腰把$doer.p$捅进$receiver.firstname$的肛门",
+                "com_sex_P_missionary_A_description_remove_2": "$doer.firstname$把$doer.p$从$receiver.firstname$的后穴里退出来",
+                "com_sex_P_missionary_A_description_remove_3": "$doer.p$从$receiver.firstname$的肛门里滑了出去"
 
             },
             "en-us":

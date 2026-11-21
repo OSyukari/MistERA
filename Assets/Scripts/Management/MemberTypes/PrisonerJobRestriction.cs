@@ -2,45 +2,88 @@ using System.Collections.Generic;
 using System;
 
 /// <summary>
-/// Shared room-restriction logic for prisoner-specific FindJobNode overrides in this folder.
-/// Computes which prison room(s) a prisoner may search in: just their current room if they're already
-/// inside a prison room, otherwise every prison room the locale faction manages.
-/// PathingRoomFilter.excludePrisonRooms defaults to false, so a normal search already includes prison
-/// rooms like any other room - no special opt-in is needed here. What actually confines the search to
-/// prison rooms for these override nodes is the restrictRoomList computed below, passed into
-/// GetValidJobs_Heuristics.
+/// Where a prisoner may use furniture (Docs/Prison/Plan_PrisonRework.md §4): their current room, their cell bed, and -
+/// when the cell stands in a jail room - that room's whole jail block (jail rooms joined by doors). A cage in an ordinary
+/// room allows only the cage, not its room.
+/// <br/>Every autonomous furniture search applies it (Manageable / Manageable_Party.GetValidJobs_Heuristics), so the
+/// behaviors without a prisoner override (restroom, shower, redress, outfit, rest) are confined too. Nothing found in the
+/// area = not done (a prisoner with no meal spot doesn't eat).
 /// </summary>
+public sealed class PrisonArea
+{
+    /// <summary> the faction holding them as a prisoner (null: a party's prisoner - current room only) </summary>
+    public Manageable Captor;
+    /// <summary> rooms whose furniture is all allowed </summary>
+    public readonly List<int> Rooms = new List<int>();
+    /// <summary> single furniture jobs allowed outside Rooms (a cage in an ordinary room) </summary>
+    public readonly List<int> Furniture = new List<int>();
+
+    /// <summary>
+    /// Their own cell, or any furniture of an allowed room except prison furniture (tag prison): another cage is someone
+    /// else's cell or an unassigned one - a prisoner uses only the cage they are assigned to.
+    /// </summary>
+    public bool Allows(Job_Furniture job)
+    {
+        if (job == null) return false;
+        if (Furniture.Contains(job.RefID)) return true;
+        if (job.ParentInstance?.FurnitureBase?.Tags?.Contains(Room_Instance.FurnitureTag_Prison) == true) return false;
+        return job.ParentRoom != null && Rooms.Contains(job.ParentRoom.RefID);
+    }
+
+    /// <summary> Rooms plus the rooms of the allowed single furniture: every room a search must look in </summary>
+    public List<int> SearchRooms()
+    {
+        var result = new List<int>(Rooms);
+        for (int i = 0; i < Furniture.Count; i++)
+        {
+            var job = scr_System_CampaignManager.current.FindJobInstanceByID(Furniture[i], false) as Job_Furniture;
+            if (job?.ParentRoom != null && !result.Contains(job.ParentRoom.RefID)) result.Add(job.ParentRoom.RefID);
+        }
+        return result;
+    }
+}
+
 public static class PrisonerJobRestriction
 {
     /// <summary>
-    /// Rooms a prisoner is currently allowed to search for furniture in: just their current room if
-    /// they're already inside a prison room, otherwise every prison room the locale faction manages.
-    /// Returns an empty list if no prison room is available at all.
+    /// The faction c is confined by: their active faction (temp home first, as for behavior overrides) when it holds them
+    /// as a prisoner, lock override included. A home prisoner admitted to hospital is a patient there - not confined.
     /// </summary>
-    public static List<int> GetAllowedRoomRefs(Character_Trainable c, I_IsJobGiver currentLocaleFaction)
+    public static Manageable GetCaptor(Character_Trainable c)
     {
-        var result = new List<int>();
+        var active = c?.FactionManager?.CurrentlyActiveFaction;
+        return active != null && active.GetMemberType(c)?.isPrisoner == true ? active : null;
+    }
 
-        var charaRoom = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
-        if (c.isImprisoned && charaRoom != null && charaRoom.isRoomPrison)
-        {
-            result.Add(charaRoom.RefID);
-            return result;
-        }
+    /// <summary> c's prison area, or null when c is not a prisoner (nothing to confine) </summary>
+    public static PrisonArea GetArea(Character_Trainable c)
+    {
+        if (c == null) return null;
+        var captor = GetCaptor(c);
+        var party = c.FactionManager?.CurrentActiveParty;
+        if (captor == null && (party == null || !party.isPrisoner(c.RefID))) return null;
 
-        if (currentLocaleFaction != null)
+        var area = new PrisonArea() { Captor = captor };
+        var current = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
+        if (current != null) area.Rooms.Add(current.RefID);
+        if (captor != null && captor.TryGetCell(c.RefID, out var cell))
         {
-            foreach (var floor in currentLocaleFaction.ManagedFloors)
+            area.Furniture.Add(cell.RefID);
+            if (cell.ParentRoom.isRoomPrison)
             {
-                if (floor == null || floor.rooms == null) continue;
-                foreach (var room in floor.rooms)
-                {
-                    if (room != null && room.isRoomPrison) result.Add(room.RefID);
-                }
+                var block = new List<int>();
+                captor.GetJailBlock(cell.ParentRoom.RefID, block);
+                for (int i = 0; i < block.Count; i++) if (!area.Rooms.Contains(block[i])) area.Rooms.Add(block[i]);
             }
         }
+        return area;
+    }
 
-        return result;
+    /// <summary> the whole rooms of c's prison area (empty when c is not a prisoner) - the cleaning override's room list </summary>
+    public static List<int> GetAllowedRoomRefs(Character_Trainable c, I_IsJobGiver currentLocaleFaction)
+    {
+        var area = GetArea(c);
+        return area == null ? new List<int>() : new List<int>(area.Rooms);
     }
 }
 
@@ -69,22 +112,20 @@ public class TryFindMealNode_Prisoner : TryFindMealNode
             return true;
         }
 
-        var restrictRoomList = PrisonerJobRestriction.GetAllowedRoomRefs(c, currentLocaleFaction);
-        if (restrictRoomList.Count == 0)
+        // confined to the prison area by the search itself (PrisonArea, GetValidJobs_Heuristics); none there = no meal
+        List<Job_Furniture> possibleMeals = new List<Job_Furniture>();
+        possibleMeals.AddRange(currentLocaleFaction.GetValidJobs_Heuristics(Heuristic, 1, c, currentHour, filter, tagoverride: tag, s: s));
+
+        if (possibleMeals.Count < 1 && currentJobFaction != null && currentLocaleFaction != currentJobFaction)
         {
-            if (s != null) s.Add("TryFindMealNode_Prisoner: no prison room available to search for meal furniture");
+            possibleMeals.AddRange(currentJobFaction.GetValidJobs_Heuristics(Heuristic, 1, c, currentHour, filter, tagoverride: tag, s: s));
+        }
+
+        if (possibleMeals.Count < 1)
+        {
+            if (s != null) s.Add("TryFindMealNode_Prisoner: no meal spot in the prison area");
             return false;
         }
-
-        List<Job_Furniture> possibleMeals = new List<Job_Furniture>();
-        possibleMeals.AddRange(currentLocaleFaction.GetValidJobs_Heuristics(Heuristic, 1, c, currentHour, filter, tagoverride: tag, s: s, restrictRoomList: restrictRoomList));
-
-        if (possibleMeals.Count < 1 && currentLocaleFaction != currentJobFaction)
-        {
-            possibleMeals.AddRange(currentJobFaction.GetValidJobs_Heuristics(Heuristic, 1, c, currentHour, filter, tagoverride: tag, s: s, restrictRoomList: restrictRoomList));
-        }
-
-        if (possibleMeals.Count < 1) return false;
 
         Job job = Utility.GetRandomElement(possibleMeals);
         if (s != null) s.Add($"Changing job to tag [{tag}] (prisoner-restricted) " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{job.RefID}| in room [" + job.ParentRoom.DisplayName + "]"));
@@ -122,15 +163,9 @@ public class TryFindSleepNode_Prisoner : TryFindSleepNode
         var faction = FindInJobFaction ? currentJobFaction : currentLocaleFaction;
         if (faction == null) return false;
 
-        var restrictRoomList = PrisonerJobRestriction.GetAllowedRoomRefs(c, currentLocaleFaction);
-        if (restrictRoomList.Count == 0)
-        {
-            if (s != null) s.Add("TryFindSleepNode_Prisoner: no prison room available to search for sleep furniture");
-            return false;
-        }
-
+        // confined to the prison area by the search itself (PrisonArea, GetValidJobs_Heuristics)
         List<Job_Furniture> possibleJobs = faction.GetValidJobs_Heuristics(
-            Heuristic, 1, c, currentHour, filter, comIDOverride: targetID, s: s, restrictRoomList: restrictRoomList);
+            Heuristic, 1, c, currentHour, filter, comIDOverride: targetID, s: s);
 
         if (possibleJobs != null && possibleJobs.Count > 0)
         {
@@ -166,19 +201,22 @@ public class TryFindBedRestNode_Prisoner : TryFindBedRestNode
             return true;
         }
 
+        // the prison area always holds the current room (PrisonArea, applied by GetValidJobs_Heuristics)
         var currentRoom = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
-        var allowedRooms = PrisonerJobRestriction.GetAllowedRoomRefs(c, currentLocaleFaction);
-        if (currentRoom != null && !allowedRooms.Contains(currentRoom.RefID)) allowedRooms.Add(currentRoom.RefID);
-        if (allowedRooms.Count == 0) return false;
+        Room_Instance cellRoom = null;
+        var captor = PrisonerJobRestriction.GetCaptor(c);
+        if (captor != null && captor.TryGetCell(c.RefID, out var cell)) cellRoom = cell.ParentRoom;
 
         var factions = new List<I_IsJobGiver>();
         if (currentLocaleFaction != null) factions.Add(currentLocaleFaction);
         I_IsJobGiver roomOwner = currentRoom?.FactionOwner;
         if (roomOwner != null && !factions.Contains(roomOwner)) factions.Add(roomOwner);
+        I_IsJobGiver cellOwner = cellRoom?.FactionOwner;
+        if (cellOwner != null && !factions.Contains(cellOwner)) factions.Add(cellOwner);
 
         foreach (var faction in factions)
         {
-            var possibleJobs = faction.GetValidJobs_Heuristics(Heuristic, 1, c, currentHour, filter, comIDOverride: targetID, s: s, restrictRoomList: allowedRooms);
+            var possibleJobs = faction.GetValidJobs_Heuristics(Heuristic, 1, c, currentHour, filter, comIDOverride: targetID, s: s);
             if (possibleJobs == null || possibleJobs.Count < 1) continue;
             Job job = possibleJobs[0];
             if (s != null) s.Add($"Changing job to {targetID} (prisoner-restricted) " + String.Join(",", job.allusableCOMStrings) + $"|{job.RefID}| in room [" + job.ParentRoom.DisplayName + "]");
@@ -281,19 +319,13 @@ public class TryFindNonJobByTagNode_Prisoner : TryFindNonJobByTagNode
         }
         else if (currentLocaleFaction != null)
         {
-            var restrictRoomList = PrisonerJobRestriction.GetAllowedRoomRefs(c, currentLocaleFaction);
-            if (restrictRoomList.Count == 0)
-            {
-                if (s != null) s.Add($"TryFindNonJobByTagNode_Prisoner: no prison room available to search for tag [{tag}]");
-                return false;
-            }
-
+            // confined to the prison area by the search itself (PrisonArea, GetValidJobs_Heuristics)
             List<Job_Furniture> possibleJobs = new List<Job_Furniture>();
-            possibleJobs.AddRange(currentLocaleFaction.GetValidJobs_Heuristics(Heuristic, 1, c, currentHour, filter, tagoverride: tag, s: s, restrictRoomList: restrictRoomList));
+            possibleJobs.AddRange(currentLocaleFaction.GetValidJobs_Heuristics(Heuristic, 1, c, currentHour, filter, tagoverride: tag, s: s));
 
-            if (possibleJobs.Count < 1 && currentLocaleFaction != currentJobFaction)
+            if (possibleJobs.Count < 1 && currentJobFaction != null && currentLocaleFaction != currentJobFaction)
             {
-                possibleJobs.AddRange(currentJobFaction.GetValidJobs_Heuristics(Heuristic, 1, c, currentHour, filter, tagoverride: tag, s: s, restrictRoomList: restrictRoomList));
+                possibleJobs.AddRange(currentJobFaction.GetValidJobs_Heuristics(Heuristic, 1, c, currentHour, filter, tagoverride: tag, s: s));
             }
 
             if (possibleJobs.Count < 1) return false;

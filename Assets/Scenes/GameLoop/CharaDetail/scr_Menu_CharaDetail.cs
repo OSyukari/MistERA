@@ -769,7 +769,7 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
             if (sk.CanUpgrade)
             {
                 text.SetText("[" + innerText +": "+sk.GetSkillLevel+ "] +");
-                this.tooltip = skillTooltip + "\n\n" + String.Join("\n", sk.TooltipCache)+"\n\nThis skill has enough experience to level up, will be auto-updated on next day.";
+                this.tooltip = skillTooltip + "\n\n" + String.Join("\n", sk.TooltipCache)+"\n\n"+LocalizeDictionary.QueryThenParse("ui_skill_canLevelUp", "This skill has enough experience to level up, will be auto-updated on next day.");
                 return false;
             }
             else

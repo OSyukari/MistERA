@@ -48,7 +48,7 @@
                 "recipe": [],
                 "furnitureSize": 1,
                 "value": 0,
-                "occupancy": { "capacity": 1, "holdsUnconscious": true, "assignOwnership": true },
+                "occupancy": { "holdsUnconscious": true, "assignOwnership": true },
                 "givesJob": [ { "comTags": ["furniture", "bed"] } ]
             },
             {

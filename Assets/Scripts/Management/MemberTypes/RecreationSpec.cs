@@ -36,7 +36,11 @@ public class RecreationWeightMod
 /// <summary>A home-hosted walk; travel out and back is included in its two booked hours.</summary>
 public class PetWalkActivitySpec
 {
-    public List<string> destinationFactionIDs = new List<string>();
+    /// <summary>
+    /// Command tag of walking: destinations are the rooms of any venue in the home's world whose furniture offers a command
+    /// with it (RecreationUtility.WorldVenuesOffering - no authored venue list), and the walk itself is those commands.
+    /// </summary>
+    public string walkComTag = "activity_recreation_walk";
     public int minimumOutdoorMinutes = 15;
     public int returnBufferMinutes = 5;
 }
@@ -133,6 +137,13 @@ public class RecreationActivity
     /// rules (RecreationUtility.ActivityAllows) - so it gates booking, invitations and joining alike. Null = anyone.
     /// </summary>
     public Event.EventScope_Self eligibility = null;
+
+    /// <summary>
+    /// A provided activity (MemberType.providedActivities) only: who holding the MemberType actually provides it
+    /// (chara_conditions, self = the holder - e.g. only a dog provides the pet walk). Checked wherever "provides" is asked
+    /// (RecreationUtility.CanProvide). Null = every holder.
+    /// </summary>
+    public Event.EventScope_Self providerConditions = null;
 
     /// <summary>
     /// A media item (ItemComponent_Media - a movie, a game) from the venue's (the home's) inventory the visit is held

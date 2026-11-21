@@ -15,6 +15,7 @@
                 "timeScale":3,
                 "comTags":["sex","penetration", "position_face", "position_equal","permission_anal"],
                 "portraitTags":["anal", "cowgirl"],
+                "portraitTags_Doer":["portrait_lower"],
                 "requirements":{
                     "requirement":{
                         "req_Doers":{
@@ -87,7 +88,7 @@
                     [
                         {
                             "keepLooking":true,
-                            "texts": [ "com_sex_P_cowgirl_A_description_ongoing_1" ]
+                            "texts": [ "com_sex_P_cowgirl_A_description_ongoing_1", "com_sex_P_cowgirl_A_description_ongoing_2", "com_sex_P_cowgirl_A_description_ongoing_3" ]
                         }
                     ]
                 },
@@ -96,7 +97,7 @@
                         {
                             "_comment":"",
                             "keepLooking":true,
-                            "texts":[ "com_sex_P_cowgirl_A_description_remove_1" ]
+                            "texts":[ "com_sex_P_cowgirl_A_description_remove_1", "com_sex_P_cowgirl_A_description_remove_2", "com_sex_P_cowgirl_A_description_remove_3" ]
                         }
                     ]
                 },
@@ -106,7 +107,7 @@
                         {
                             "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"receiver", "statID":"isCumReady", "operand":"eq", "value":"true" } } ],
-                            "texts":[ "com_sex_P_cowgirl_A_description_after_1" ]
+                            "texts":[ "com_sex_P_cowgirl_A_description_after_1", "com_sex_P_cowgirl_A_description_after_2", "com_sex_P_cowgirl_A_description_after_3" ]
                         }
                     ]
                 },
@@ -115,7 +116,7 @@
                     "Entries":[ 
                         {
                             "keepLooking":true,
-                            "texts": ["com_sex_P_cowgirl_A_description_begin_1"]
+                            "texts": ["com_sex_P_cowgirl_A_description_begin_1", "com_sex_P_cowgirl_A_description_begin_2", "com_sex_P_cowgirl_A_description_begin_3"]
                         }
                     ]
                     
@@ -272,10 +273,18 @@
                 "com_sex_P_cowgirl_A_displayName_3": "轮流骑乘位A",
                 "com_sex_P_cowgirl_A_displayName_4": "同时骑乘位A",
 
-                "com_sex_P_cowgirl_A_description_begin_1":"$doer.firstname$其在$receiver.firstname$，将肉棒对准了自己的肛门插入进去",
-                "com_sex_P_cowgirl_A_description_after_1":"即将射精的$receiver.firstname$将肉棒狠狠顶入了$doer.firstname$的体内",
-                "com_sex_P_cowgirl_A_description_remove_1":"$doer.firstname$抬起身体，抽出了刚才还插在肛门中的肉棒",
-                "com_sex_P_cowgirl_A_description_ongoing_1":"$receiver.firstname$的肉棒在$doer.firstname$的肛门中进出"
+                "com_sex_P_cowgirl_A_description_begin_1":"$doer.firstname$扶着$receiver.p$对准自己的肛门慢慢坐下去",
+                "com_sex_P_cowgirl_A_description_after_1":"$receiver.firstname$把$receiver.p$往$doer.firstname$的肛门深处顶",
+                "com_sex_P_cowgirl_A_description_remove_1":"$doer.firstname$抬起身体让$receiver.p$从肛门里脱出来",
+                "com_sex_P_cowgirl_A_description_ongoing_1":"$receiver.p$在$doer.firstname$的肛门里来回进出",
+                "com_sex_P_cowgirl_A_description_begin_2": "$doer.firstname$把$receiver.p$送进自己的后穴里",
+                "com_sex_P_cowgirl_A_description_begin_3": "$doer.firstname$用肛门从上面套住$receiver.p$",
+                "com_sex_P_cowgirl_A_description_remove_2": "$doer.firstname$把后穴从$receiver.p$上面抬开",
+                "com_sex_P_cowgirl_A_description_remove_3": "$receiver.p$从$doer.firstname$的屁眼里滑了出去",
+                "com_sex_P_cowgirl_A_description_ongoing_2": "$doer.firstname$用肛门套着$receiver.p$上下起落",
+                "com_sex_P_cowgirl_A_description_ongoing_3": "$receiver.firstname$掐着$doer.firstname$的腰把$receiver.p$往肛门里顶",
+                "com_sex_P_cowgirl_A_description_after_2": "$receiver.firstname$按住$doer.firstname$的腰把$receiver.p$顶得更深",
+                "com_sex_P_cowgirl_A_description_after_3": "$doer.firstname$的肛门被$receiver.p$顶到最里面"
 
             },
             "en-us":

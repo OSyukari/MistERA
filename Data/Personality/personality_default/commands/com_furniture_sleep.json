@@ -60,7 +60,7 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "OnSleepComplete_Solo",
+                    "ID": "OnSleepComplete_Solo", "template": "none", "templateNote": "code-fetched kojo; dedicated template later",
                     "variants": [{
                         "requireSelfOnly": true,
                         "hideWhenNotFocused": false,
@@ -73,7 +73,7 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "OnSleepComplete_UndressSelf",
+                    "ID": "OnSleepComplete_UndressSelf", "template": "none", "templateNote": "code-fetched kojo; dedicated template later",
                     "variants": [
                         { "requireSelfOnly": true, "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }, "responses": ["kojo_sleep_undress_self"] }
                     ]
@@ -82,7 +82,7 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "OnSleepComplete_UndressTogether",
+                    "ID": "OnSleepComplete_UndressTogether", "template": "none", "templateNote": "code-fetched kojo; dedicated template later",
                     "variants": [
                         { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_marriage"] }, "responses": ["kojo_sleep_undress_marriage"] },
                         { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_couple", "relationship_fwb"] }, "responses": ["kojo_sleep_undress_close"] },
@@ -93,7 +93,7 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "OnSleepComplete_LieDownTogether",
+                    "ID": "OnSleepComplete_LieDownTogether", "template": "none", "templateNote": "code-fetched kojo; dedicated template later",
                     "variants": [
                         { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_marriage"] }, "responses": ["kojo_sleep_lie_marriage"] },
                         { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_couple", "relationship_fwb"] }, "responses": ["kojo_sleep_lie_close"] },
@@ -104,7 +104,7 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "OnSleepComplete_JoinSleeper",
+                    "ID": "OnSleepComplete_JoinSleeper", "template": "none", "templateNote": "code-fetched kojo; dedicated template later",
                     "variants": [
                         { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_marriage", "relationship_couple", "relationship_fwb"] }, "responses": ["kojo_sleep_join_close"] },
                         { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }, "responses": ["kojo_sleep_join_fallback"] }
@@ -114,7 +114,7 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "OnSleepComplete_GoodnightKiss",
+                    "ID": "OnSleepComplete_GoodnightKiss", "template": "none", "templateNote": "code-fetched kojo; dedicated template later",
                     "variants": [
                         { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_marriage"] }, "responses": ["kojo_sleep_kiss_marriage"] },
                         { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_couple", "relationship_fwb"] }, "responses": ["kojo_sleep_kiss_close"] },

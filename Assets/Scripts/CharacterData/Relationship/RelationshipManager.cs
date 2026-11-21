@@ -169,16 +169,6 @@ public class RelationshipManager
                 total += value;
             }
         }
-        if (Owner.isRestrained)
-        {
-            // send isrestrained pride change
-            var value = CheckPrideChange(new List<string>() { "restrained" }, new List<string>(), 10, null, true);
-            if (value != 0)
-            {
-                tooltips.Add($"{value.ToString("+0.#;-0.#")} due to restraint");
-                total += value;
-            }
-        }
         if (tooltips.Count > 0)
         {
             messages.Add(new Manageable.DailyReportHandler.MiscMessageEntry($"{Owner.CallName}'s Pride {total.ToString("+0.#;-0.#")}", tooltips));
@@ -951,8 +941,26 @@ public class RelationshipManager
         }
 
         var overrideEventID = ep.GetForcedKojoEventID(isDoer);
+        var eventID = string.IsNullOrEmpty(overrideEventID) ? ep.targetCOM.ID : overrideEventID;
+
+        // a refusal speaks from <COM>_Refuse first (the whole key chain: own, kojo source, folder parent, fallback
+        // personality), then from <COM> as before (Docs/TextAuthoring/Plan_KojoTemplates.md §7.13 W1). Own collector:
+        // the lookup may move kol.eventID to the folder parent.
+        if (ep.Response == Memory_Response.Refuse)
+        {
+            var refuse = new KojoCollector(Owner, eventID, "_Refuse");
+            refuse.LoadEP(ep, injectRel);
+            refuse.collect = Personality.GetKOJOMessage(refuse);
+            if (refuse.isValid)
+            {
+                if (ep.targetCOM != null) refuse.collect.message = ep.targetCOM.Replace(refuse.collect.message);
+                if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{refuse.collect.message} | {String.Join(" ", refuse.collect.selfPortraitTag)} | {String.Join(" ", refuse.collect.targetPortraitTag)}");
+                return refuse;
+            }
+        }
+
         // the command ID: Character_Personality.GetKOJOMessage_Command builds its kojo keys (own, kojo source, folder parent)
-        KojoCollector kol = new KojoCollector(Owner, string.IsNullOrEmpty(overrideEventID) ? ep.targetCOM.ID : overrideEventID);
+        KojoCollector kol = new KojoCollector(Owner, eventID);
         kol.LoadEP(ep, injectRel);
 
         MessageCollect_KojoEntry message = Personality.GetKOJOMessage(kol);

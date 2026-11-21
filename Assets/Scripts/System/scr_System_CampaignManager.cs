@@ -488,6 +488,8 @@ public class scr_System_CampaignManager : MonoBehaviour
         // factions whose template was removed from the data: homes move to current districts, residents are rehoused
         // (district / hotel) or removed, worker pools go. Needs the new districts (world reconciliation above) and loaded characters.
         FactionLoadCleanup.DropObsoleteFactions();
+        // saves from before the prison rework: jail markers, old prison locks become cells (Docs/Prison/Plan_PrisonRework.md §11)
+        PrisonMigration.Run(Factions, Index_referenceID.Values);
 
         this.statisRoomID = obj.statisRoomRef;
         this.tempRoomID = obj.tempRoomRef;
@@ -775,7 +777,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         foreach (var next in m.nexts) AddLog_Recursive(next, animate, rightAlign || m.rightAlign, tooltip, replaceStrings);
     }
 
-    public bool shortenLogsPrint = true;
+    public bool shortenLogsPrint { get { return scr_System_CentralControl.current.DisplaySetting.shortenLogsPrint.value; } }
 
     public void NotifyEventEnd()
     {
@@ -1520,6 +1522,16 @@ public class scr_System_CampaignManager : MonoBehaviour
         //return Map.IsBothCharaInSameRoom(charaRefID, Player.RefID);// Map.FindRoomByChara(charaRefID) == Map.FindRoomByChara();//.RefID == currentRoomRef;
     }
 
+    /// <summary>
+    /// The player can interact with the character: same room and same scope (MapUtility.CanInteract) - someone seen
+    /// through a divider that doesn't block sight (a prison cell) is still out of reach. Drives selecting / targeting.
+    /// </summary>
+    public bool isCharaInteractableByPlayer(int charaRefID)
+    {
+        if (!CurrentRoom.RoomCharaRefs.Contains(charaRefID)) return false;
+        return charaRefID == Player.RefID || MapUtility.CanInteract(Player, FindInstanceByID(charaRefID));
+    }
+
     public void NotifyUpdateHandlerExist()
     {
 
@@ -2240,6 +2252,8 @@ public class scr_System_CampaignManager : MonoBehaviour
         else
         {
             if (viewMode != vm) viewMode = vm;
+            // the target box redraws for the new mode: a peek ends
+            ClearPeek(false);
             Observer_CurrentViewMode?.Invoke(vm, lockView);
             Observer_UpdateNotice?.Invoke(false);
             if (viewMode == ViewMode.View_Room)
@@ -2272,11 +2286,43 @@ public class scr_System_CampaignManager : MonoBehaviour
         {
             if (currentTarget != refID || forceUpdate)
             {
+                ClearPeek(false);
                 currentTarget = refID;
                 Observer_CurrentTarget?.Invoke(currentTarget, forceUpdate);
             }
         }
     }
+
+    // ---- peek: an out-of-reach character's activity portrait in the target box, with no current target ----
+    // (in the room but across a room divider - isCharaInteractableByPlayer false). Anything else that redraws the target
+    // box (a target change, a view mode change, a room change) ends it.
+
+    int peekRef = -1;
+    /// <summary> the character whose activity portrait the target box shows instead of the target's; -1 = none </summary>
+    public int PeekRef { get { return peekRef; } }
+    /// <summary> peek started (refID) or ended (-1): the target box redraws, the character list / icons relabel </summary>
+    public event Action<int> Observer_Peek;
+
+    /// <summary> shows refID's activity portrait in the target box; the current target is unset (no target while peeking) </summary>
+    public void PeekCharacter(int refID)
+    {
+        if (refID < 0 || !Index_referenceID.ContainsKey(refID)) return;
+        // unset first: a target change ends any previous peek
+        ChangeCurrentTarget(0);
+        peekRef = refID;
+        Observer_Peek?.Invoke(peekRef);
+    }
+
+    /// <summary> ends the peek. redraw: the target box goes back to the target (false when something else redraws it anyway) </summary>
+    public void ClearPeek(bool redraw = true)
+    {
+        if (peekRef < 0) return;
+        peekRef = -1;
+        if (redraw) Observer_Peek?.Invoke(-1);
+        else Observer_PeekLabel?.Invoke();
+    }
+    /// <summary> the peek ended without a redraw of its own: only the labels refresh </summary>
+    public event Action Observer_PeekLabel;
     public void ChangeCurrentTarget_Training(int refID = 0)
     {
         ChangeCurrentTarget(refID);
@@ -3233,9 +3279,11 @@ public class scr_System_CampaignManager : MonoBehaviour
     /// <summary> the current target is dropped when the player no longer sees them (room change, a room divider's door between them) </summary>
     public void UpdateCurrentTarget()
     {
+        // a peeked character who left the room or came within reach: the peek ends
+        if (peekRef >= 0 && (!CurrentRoom.RoomCharaRefs.Contains(peekRef) || isCharaInteractableByPlayer(peekRef))) ClearPeek();
         if (currentTarget == 0) return;
-        // in the room and not behind a stall's door (room dividers blocking visibility)
-        if (currentTarget > 0 && isCharaVisibleToPlayer(currentTarget)) return;
+        // in the room and on the same side of any room divider (a target in a prison cell needs the player inside too)
+        if (currentTarget > 0 && isCharaInteractableByPlayer(currentTarget)) return;
         ChangeCurrentTarget(0);
     }
 
@@ -4201,8 +4249,11 @@ public static class WorldManager
             // campaign_init_factionVisitor pattern this replaces - it must exist before SetHomeFaction can
             // register guest status against it.
             scr_System_CampaignManager.current.FindorAddHomeFactionByID(init.Homefaction.factionID);
-            chara.FactionManager.SetHomeFaction(init.Homefaction.factionID, status1);
-            if (init.Homefaction.setRoomOwnership)
+            // a prisoner placed by campaign init: no capture event, its default answer applied at once (a cell, or member
+            // when none is free) - prisoners hold cells, never rooms (Docs/Prison/Plan_PrisonRework.md §3)
+            chara.FactionManager.SetHomeFaction(init.Homefaction.factionID, status1, !status1.isPrisoner);
+            if (status1.isPrisoner) PrisonUtility.AutoResolveNewPrisoner(chara.FactionManager.Faction_Home, chara);
+            else if (init.Homefaction.setRoomOwnership)
             {
                 Room_Instance r = ResolveNPCInitRoom(init.Homefaction);
                 if (r != null) chara.FactionManager.Faction_Home.AddRoomOwnership(chara.RefID, r.RefID);
@@ -4212,8 +4263,9 @@ public static class WorldManager
         if (init.TempHomefaction != null && FactionUtility.TryGetMemberType(init.TempHomefaction.guestStatus, out var status))
         {
             scr_System_CampaignManager.current.FindorAddHomeFactionByID(init.TempHomefaction.factionID);
-            chara.FactionManager.SetTempHomeFaction(init.TempHomefaction.factionID, status);
-            if (init.TempHomefaction.setRoomOwnership)
+            chara.FactionManager.SetTempHomeFaction(init.TempHomefaction.factionID, status, !status.isPrisoner);
+            if (status.isPrisoner) PrisonUtility.AutoResolveNewPrisoner(chara.FactionManager.Faction_Home_Temporary, chara);
+            else if (init.TempHomefaction.setRoomOwnership)
             {
                 Room_Instance r = ResolveNPCInitRoom(init.TempHomefaction);
                 if (r != null) chara.FactionManager.Faction_Home_Temporary.AddRoomOwnership(chara.RefID, r.RefID);
@@ -4344,7 +4396,12 @@ public static class WorldManager
         {
             int places = 0;
             for (int i = 0; i < destination.FurnitureCount; i++)
-                if (destination.GetFurniture(i)?.JobGiver is Job_Furniture bed && bed.AssignsOwnership) places += Math.Max(0, bed.Capacity);
+                if (destination.GetFurniture(i)?.JobGiver is Job_Furniture bed && bed.AssignsOwnership)
+                {
+                    // size 0 = no limit (int.MaxValue): saturate instead of overflowing
+                    places = bed.Capacity >= int.MaxValue - places ? int.MaxValue : places + Math.Max(0, bed.Capacity);
+                    if (places == int.MaxValue) break;
+                }
             if (home.RoomOwners(destination.RefID).Count < places) home.AddRoomOwnership(chara.RefID, destination.RefID);
         }
         if (leaveRetiredRooms)
@@ -4357,18 +4414,43 @@ public static class WorldManager
     /// <summary>
     /// Spawns one NPCInit entry: resolves a spawn room, instantiates the character there, then applies
     /// Home/TempHome/Work faction membership. Must only run after every faction/map in the campaign has
-    /// finished generating.
+    /// finished generating. An entry with actors spawns each listed actor with the entry's assignments and its own
+    /// Homefaction guest status (NPCInit.ForActor); those spawned now share one ownership bed in the Homefaction room
+    /// (setRoomOwnership) - Room_Instance.AssignSharedBed.
     /// </summary>
     public static void InitializeNPC(NPCInit init)
     {
-        if (init == null || string.IsNullOrEmpty(init.actorBaseID))
+        if (init == null || (string.IsNullOrEmpty(init.actorBaseID) && (init.actors == null || init.actors.Count == 0)))
         {
             Debug.LogError("InitializeNPC: init or actorBaseID missing.");
             return;
         }
+        if (init.actors == null || init.actors.Count == 0)
+        {
+            InitializeNPC(init, init.actorBaseID);
+            return;
+        }
 
+        List<int> spawned = null;
+        for (int i = 0; i < init.actors.Count; i++)
+        {
+            var actor = init.actors[i];
+            if (actor == null || string.IsNullOrEmpty(actor.actorBaseID)) continue;
+            var chara = InitializeNPC(init.ForActor(actor), actor.actorBaseID);
+            if (chara == null) continue;
+            if (spawned == null) spawned = new List<int>();
+            spawned.Add(chara.RefID);
+        }
+        // setup only: actors already present (save-load reconciliation) keep whatever bed they have now
+        if (spawned != null && spawned.Count > 1 && init.Homefaction != null && init.Homefaction.setRoomOwnership)
+            ResolveNPCInitRoom(init.Homefaction)?.AssignSharedBed(spawned);
+    }
+
+    /// <summary>One actor of an NPCInit entry. Returns the character spawned now, null if it already existed or failed.</summary>
+    static Character_Trainable InitializeNPC(NPCInit init, string actorBaseID)
+    {
         // Existing entries are untouched unless their content explicitly opts into filling missing assignments.
-        var existingRefs = scr_System_CampaignManager.current.FindRefIDByBaseID(init.actorBaseID);
+        var existingRefs = scr_System_CampaignManager.current.FindRefIDByBaseID(actorBaseID);
         if (existingRefs != null && existingRefs.Count > 0)
         {
             if (init.reconcileExistingAssignments)
@@ -4381,27 +4463,28 @@ public static class WorldManager
                     if (existing?.FactionManager != null && !existing.FactionManager.HasAppliedNpcAssignments(init.initID)
                         && ReconcileNPCInitAssignments(existing, init)) existing.FactionManager.MarkNpcAssignmentsApplied(init.initID);
                 }
-                else Debug.LogWarning($"NPCInit [{init.initID}]: ambiguous existing actors for [{init.actorBaseID}], assignments left unchanged");
+                else Debug.LogWarning($"NPCInit [{init.initID}]: ambiguous existing actors for [{actorBaseID}], assignments left unchanged");
             }
-            return;
+            return null;
         }
 
         Room_Instance spawnRoom = ResolveNPCInitSpawnRoom(init);
         if (spawnRoom == null)
         {
             Debug.LogError($"InitializeNPC [{init.initID}]: could not resolve a spawn room from Homefaction/TempHomefaction/Workfactions.");
-            return;
+            return null;
         }
 
-        Character_Trainable chara = scr_System_CampaignManager.current.InstantiateCharacter_FromBaseID(init.actorBaseID, spawnRoom);
+        Character_Trainable chara = scr_System_CampaignManager.current.InstantiateCharacter_FromBaseID(actorBaseID, spawnRoom);
         if (chara == null)
         {
-            Debug.LogError($"InitializeNPC [{init.initID}]: failed to instantiate actorBaseID [{init.actorBaseID}].");
-            return;
+            Debug.LogError($"InitializeNPC [{init.initID}]: failed to instantiate actorBaseID [{actorBaseID}].");
+            return null;
         }
 
         ApplyFactionAssignments(chara, init);
         if (init.reconcileExistingAssignments && !string.IsNullOrEmpty(init.initID)) chara.FactionManager.MarkNpcAssignmentsApplied(init.initID);
+        return chara;
     }
 
     /// <summary>

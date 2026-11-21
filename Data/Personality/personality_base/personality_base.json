@@ -18,7 +18,6 @@
                     ] },
                     "Low": {
                         "mods": [
-                            { "selfTags":["restrained"], "comTags":[] },
                             { "selfTags":["raped","penetration"], "mult":0.01, "comTags":["unsafe"], "tags":["nsfw"] }
                         ]
                     },
@@ -26,7 +25,7 @@
                 },
                 "entries_list": [
                     {
-                        "ID": "Descriptor",
+                        "ID": "Descriptor", "template": "none", "templateNote": "code-fetched kojo; dedicated template later",
                         "tags": ["nsfw"],
                         "variants": [
                             {
@@ -214,7 +213,7 @@
                         ]
                     },
                     {
-                        "ID": "OnNightAssaultSuccess",
+                        "ID": "OnNightAssaultSuccess", "template": "none", "templateNote": "code-fetched kojo; dedicated template later",
                         "tags": ["nsfw"],
                         "debugLogging": true,
                         "variants": [
@@ -222,7 +221,7 @@
                         ]
                     },
                     {
-                        "ID": "OnNightAssaultFailure",
+                        "ID": "OnNightAssaultFailure", "template": "none", "templateNote": "code-fetched kojo; dedicated template later",
                         "tags": ["nsfw"],
                         "debugLogging": true,
                         "variants": [

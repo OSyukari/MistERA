@@ -218,7 +218,7 @@
                 "displayName": "jp_riverside_relax_displayName",
                 "_comment": "Open to everyone at any time - found by the generic recreation search too.",
                 "timeScale": 30,
-                "comTags": ["furniture", "recreation", "jp_tourist_riverside"],
+                "comTags": ["furniture", "recreation", "jp_tourist_riverside", "activity_recreation_walk"],
                 "requirements": { "requirement": { "treatReceiverAsDoer": true } },
                 "results_EP": {
                     "results_character": [

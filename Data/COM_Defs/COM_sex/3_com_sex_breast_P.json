@@ -84,7 +84,7 @@
                     [
                         {
                             "keepLooking":true,
-                            "texts": [ "com_sex_breast_P_description_ongoing_1" ]
+                            "texts": [ "com_sex_breast_P_description_ongoing_1", "com_sex_breast_P_description_ongoing_2", "com_sex_breast_P_description_ongoing_3" ]
                         }
                     ]
                 },
@@ -93,7 +93,7 @@
                         {
                             "_comment":"",
                             "keepLooking":true,
-                            "texts":[ "com_sex_breast_P_description_remove_1" ]
+                            "texts":[ "com_sex_breast_P_description_remove_1", "com_sex_breast_P_description_remove_2", "com_sex_breast_P_description_remove_3" ]
                         }
                     ]
                 },
@@ -103,7 +103,7 @@
                         {
                             "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
-                            "texts":[ "com_sex_breast_P_description_after_1" ]
+                            "texts":[ "com_sex_breast_P_description_after_1", "com_sex_breast_P_description_after_2", "com_sex_breast_P_description_after_3" ]
                         }
                     ]
                 },
@@ -112,7 +112,7 @@
                     "Entries":[ 
                         {
                             "keepLooking":true,
-                            "texts": ["com_sex_breast_P_description_begin_1"]
+                            "texts": ["com_sex_breast_P_description_begin_1", "com_sex_breast_P_description_begin_2", "com_sex_breast_P_description_begin_3"]
                         }
                     ]
                     
@@ -133,10 +133,18 @@
                 "com_sex_breast_P_displayName_3": "轮流乳交",
                 "com_sex_breast_P_displayName_4": "同时乳交",
 
-                "com_sex_breast_P_description_begin_1":"$doer.firstname$将$receiver.firstname$的肉棒夹在双乳间左右揉弄着",
-                "com_sex_breast_P_description_after_1":"$receiver.firstname$将精液尽数射在了$doer.firstname$的双乳间",
-                "com_sex_breast_P_description_remove_1":"$receiver.firstname$的肉棒被从$doer.firstname$的双乳间解放了出来",
-                "com_sex_breast_P_description_ongoing_1":"$doer.firstname$正在给$receiver.firstname$乳交"
+                "com_sex_breast_P_description_begin_1":"$doer.firstname$用胸部夹住$receiver.firstname$的肉棒来回揉弄",
+                "com_sex_breast_P_description_after_1":"$receiver.firstname$把精液射在$doer.firstname$的奶子间",
+                "com_sex_breast_P_description_remove_1":"$doer.firstname$把胸部从$receiver.firstname$的肉棒上撤开",
+                "com_sex_breast_P_description_ongoing_1":"$doer.firstname$还在用胸部夹着$receiver.firstname$的肉棒",
+                "com_sex_breast_P_description_after_2": "$receiver.firstname$在$doer.firstname$的胸部上射了出来",
+                "com_sex_breast_P_description_after_3": "$receiver.firstname$的肉棒把精液射进$doer.firstname$的奶子间",
+                "com_sex_breast_P_description_remove_2": "$doer.firstname$松开了夹着的$receiver.firstname$的肉棒",
+                "com_sex_breast_P_description_remove_3": "$receiver.firstname$的肉棒从$doer.firstname$的奶子间抽了出来",
+                "com_sex_breast_P_description_ongoing_2": "$doer.firstname$的奶子一直在$receiver.firstname$的肉棒上搓着",
+                "com_sex_breast_P_description_ongoing_3": "$doer.firstname$的胸部还夹着$receiver.firstname$的肉棒没松",
+                "com_sex_breast_P_description_begin_2": "$doer.firstname$把$receiver.firstname$的肉棒夹在两团奶子间搓弄",
+                "com_sex_breast_P_description_begin_3": "$doer.firstname$用奶子夹紧$receiver.firstname$的肉棒上下套弄"
 
             },
             "en-us":

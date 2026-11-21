@@ -90,7 +90,7 @@ public class CharaSkill
         {
            // Debug.LogError("CharaSkill RequireOne null?" + (entries == null || entries.Count < 1));
             if (entries == null || entries.Count < 1) return true;
-            if (tooltips != null) tooltips.Add("Require one of the following:");
+            if (tooltips != null) tooltips.Add(LocalizeDictionary.QueryThenParse("ui_skill_requireOne", "Require one of the following:"));
             foreach (var i in entries) if (i.Validate(c, tooltips)) return true;
             return false;
         }
@@ -108,7 +108,7 @@ public class CharaSkill
         {
            // Debug.LogError("CharaSkill RequireAll null?" + (entries == null || entries.Count < 1));
             if (entries == null || entries.Count < 1) return true;
-            if (tooltips != null) tooltips.Add("Require all of the following:");
+            if (tooltips != null) tooltips.Add(LocalizeDictionary.QueryThenParse("ui_skill_requireAll", "Require all of the following:"));
             foreach (var i in entries) if (!i.Validate(c, tooltips)) return false;
             return true;
         }
@@ -134,6 +134,8 @@ public class CharaSkill
             var returnValue = true;
             List<string> c1 = new List<string> ();
             List<string> c2 = new List<string> ();
+            // every condition in one entry (and every item inside a condition's brackets) must hold
+            string andSep = LocalizeDictionary.QueryThenParse("ui_skill_req_and", " | ");
             //Debug.Log("CharaSkill RequirementEntry nulldata? ["+(requireBodyTag != null && requireBodyTag.Count > 0) +"] ["+(requireStatKeyword != null && requireStatKeyword.Count > 0) +"] ["+(requireExperiences != null && requireExperiences.Count > 0) +"]");
             if (requireBodyTag != null && requireBodyTag.Count > 0)
             {
@@ -148,7 +150,7 @@ public class CharaSkill
                     else c2.Add(i);
                     
                 }
-                c1.Add("require BodyTags ["+ String.Join("|", c2)+"]");
+                c1.Add(LocalizeDictionary.QueryThenParse("ui_skill_req_bodyTags", "require BodyTags [$list$]").Replace("$list$", String.Join(andSep, c2)));
             }
             if (requireStatKeyword != null && requireStatKeyword.Count > 0)
             {
@@ -162,7 +164,7 @@ public class CharaSkill
                     }
                     else c2.Add(i);
                 }
-                c1.Add("require statkeyword [" + String.Join("|", c2) + "]");
+                c1.Add(LocalizeDictionary.QueryThenParse("ui_skill_req_statKeyword", "require statkeyword [$list$]").Replace("$list$", String.Join(andSep, c2)));
             }
             if (requireExperiences != null &&  requireExperiences.Count > 0)
             {
@@ -178,19 +180,20 @@ public class CharaSkill
                     }
                     else c2.Add(i.Tooltip);
                 }
-                c1.Add("require Experiences [" + String.Join("|", c2) + "]");
+                c1.Add(LocalizeDictionary.QueryThenParse("ui_skill_req_experiences", "require Experiences [$list$]").Replace("$list$", String.Join(andSep, c2)));
             }
 
             if (requireGender != InteractionGenderType.none)
             {
                 c2.Clear();
+                string genderName = LocalizeDictionary.QueryThenParse("interactionGender_" + requireGender.ToString(), requireGender.ToString());
                 if (!scr_System_CentralControl.current.GetGender(c).Contains(requireGender))
                 {
-                    c2.Add("<color=" + scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Hex + ">" + requireGender.ToString() + "</color>");
+                    c2.Add("<color=" + scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Hex + ">" + genderName + "</color>");
                     returnValue= false;
                 }
-                else c2.Add(requireGender.ToString());
-                c1.Add("require Gender [" + String.Join("|", c2) + "]");
+                else c2.Add(genderName);
+                c1.Add(LocalizeDictionary.QueryThenParse("ui_skill_req_gender", "require Gender [$list$]").Replace("$list$", String.Join(andSep, c2)));
             }
 
             if (requireSumExperiences.isValid)
@@ -198,16 +201,17 @@ public class CharaSkill
                 c2.Clear();
                 int sumValue = 0;
                 foreach (var i in requireSumExperiences.experienceIDs) sumValue += c.Skills.GetExperienceLevel(i);
+                string currentFormat = LocalizeDictionary.QueryThenParse("ui_skill_req_current", "$text$ (currently $value$)");
                 if (!Utility.CompareValue(sumValue, requireSumExperiences.operand, requireSumExperiences.value))
                 {
-                    c2.Add("<color=" + scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Hex + ">" + requireSumExperiences.Tooltip + "</color> (currently "+sumValue+")");
+                    c2.Add(currentFormat.Replace("$text$", "<color=" + scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Hex + ">" + requireSumExperiences.Tooltip + "</color>").Replace("$value$", sumValue.ToString()));
                     returnValue = false;
                 }
-                else c2.Add(requireSumExperiences.Tooltip+" (currently "+sumValue+")");
-                c1.Add("require Sum Experiences [" + String.Join("|", c2) + "]");
+                else c2.Add(currentFormat.Replace("$text$", requireSumExperiences.Tooltip).Replace("$value$", sumValue.ToString()));
+                c1.Add(LocalizeDictionary.QueryThenParse("ui_skill_req_sumExperiences", "require Sum Experiences [$list$]").Replace("$list$", String.Join(andSep, c2)));
             }
 
-            if (tooltips != null && c1.Count > 0) tooltips.Add(String.Join(" | ",c1));
+            if (tooltips != null && c1.Count > 0) tooltips.Add(String.Join(andSep, c1));
             return returnValue;
         }
 
@@ -219,8 +223,16 @@ public class CharaSkill
             [JsonIgnore] public bool isValid { get { return experienceID != "" && operand != LogicalOperand.none; } }
             [JsonIgnore] public string Tooltip { get
                 {
-                    return LocalizeDictionary.QueryThenParse(experienceID)+" values must be "+ LocalizeDictionary.QueryThenParse(operand.ToString())+" "+value;
+                    return LocalizeDictionary.QueryThenParse("ui_skill_req_experience", "$exp$ values must be $op$ $value$")
+                        .Replace("$exp$", LocalizeDictionary.QueryThenParse(experienceID))
+                        .Replace("$op$", OperandName(operand))
+                        .Replace("$value$", value.ToString());
                 } }
+
+            public static string OperandName(LogicalOperand operand)
+            {
+                return LocalizeDictionary.QueryThenParse("logicalOperand_" + operand.ToString(), operand.ToString());
+            }
 
             public bool WipeExperienceOnLevelUp = false;
             public bool DeduceExperienceOnLevelUp = false;
@@ -229,11 +241,13 @@ public class CharaSkill
                 if (this.WipeExperienceOnLevelUp)
                 {
                     c.Skills.ResetExperienceByID(experienceID);
-                    if (messages != null) messages.Add(experienceID + " is getting wiped on level-up");
+                    if (messages != null) messages.Add(LocalizeDictionary.QueryThenParse("ui_skill_expWiped", "$exp$ is getting wiped on level-up")
+                        .Replace("$exp$", LocalizeDictionary.QueryThenParse(experienceID)));
                 }else if (this.DeduceExperienceOnLevelUp)
                 {
                     c.Skills.ModExperienceByID(experienceID, -value);
-                    if (messages != null) messages.Add(experienceID + " reduced by "+value+" on level-up");
+                    if (messages != null) messages.Add(LocalizeDictionary.QueryThenParse("ui_skill_expReduced", "$exp$ reduced by $value$ on level-up")
+                        .Replace("$exp$", LocalizeDictionary.QueryThenParse(experienceID)).Replace("$value$", value.ToString()));
                 }
             }
         }
@@ -252,7 +266,10 @@ public class CharaSkill
                     List<string> allNames = new List<string>();
                     foreach (var i in experienceIDs) allNames.Add(LocalizeDictionary.QueryThenParse(i));
                     //Debug.Log("expIDs " + String.Join("|", allNames));
-                    return String.Join(",",allNames) + " sum must be " + LocalizeDictionary.QueryThenParse(operand.ToString()) + " " + value;
+                    return LocalizeDictionary.QueryThenParse("ui_skill_req_sumExperience", "$exps$ sum must be $op$ $value$")
+                        .Replace("$exps$", String.Join(",", allNames))
+                        .Replace("$op$", RequireExperience.OperandName(operand))
+                        .Replace("$value$", value.ToString());
                 }
             }
         }

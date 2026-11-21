@@ -63,8 +63,31 @@ public class Job_Furniture : Job
     {
         get
         {
-            if (isContainer) return ParentInstance.DisplayName + " : " + (Container == null ? " - " : Container.DisplayName);
+            // a bed that is also a character container (prison cage): its assigned owners / held prisoners, then anyone
+            // locked in it (Docs/Prison/Plan_PrisonRework.md)
+            if (isContainer && !AssignsOwnership) return ParentInstance.DisplayName + " : " + (Container == null ? " - " : Container.DisplayName);
             if (!HasOccupancy) return ParentInstance.DisplayName;
+            if (isContainer && Container is JobContainer_Chara locked && locked.HasContent)
+            {
+                var names = new System.Text.StringBuilder();
+                var sep = LocalizeDictionary.QueryThenParse("ui_entry_separator");
+                foreach (var c in locked.Chara)
+                {
+                    if (c == null) continue;
+                    if (names.Length > 0) names.Append(sep);
+                    names.Append(c.FirstName);
+                }
+                return OccupancyDisplayName + LocalizeDictionary.QueryThenParse("ui_furniture_lockedSuffix").Replace("$names$", names.ToString());
+            }
+            return OccupancyDisplayName;
+        }
+    }
+
+    /// <summary> "bed : owners" (just the name while unowned) </summary>
+    [JsonIgnore] string OccupancyDisplayName
+    {
+        get
+        {
             ParentRoom?.EnsureFurnitureOwnership();
             // "bed : owners" - cached per occupancy revision (the command panel reads it every refresh)
             if (_occupancyNameCache == null || _occupancyNameRev != OccupancyRevision)
@@ -286,15 +309,16 @@ public class Job_Furniture : Job
     [JsonIgnore] public bool BlocksVisibility { get { var d = OccupancyDef; return d != null && d.isRoomDivider && d.blocksVisibility; } }
     [JsonIgnore] public bool AllowsSexJob { get { var d = OccupancyDef; return d != null && d.isRoomDivider && d.allowSexJob; } }
     [JsonIgnore] public bool AssignsOwnership { get { var d = OccupancyDef; return d != null && d.assignOwnership; } }
+    /// <summary> occupant / owner limit = (int)furnitureSize, the same number that limits actors per command (CanCOMAcceptMoreActor); size 0 = no limit (int.MaxValue). Only gates the find-job path; a direct entry is never blocked </summary>
     [JsonIgnore] public int Capacity
     {
         get
         {
-            var d = OccupancyDef;
-            if (d == null) return 0;
-            if (d.capacity >= 0) return d.capacity;
+            if (OccupancyDef == null) return 0;
             var fi = ParentInstance;
-            return fi == null || fi.FurnitureBase == null ? 0 : (int)fi.FurnitureBase.furnitureSize;
+            if (fi == null || fi.FurnitureBase == null) return 0;
+            int size = (int)fi.FurnitureBase.furnitureSize;
+            return size <= 0 ? int.MaxValue : size;
         }
     }
     /// <summary> the space this furniture's commands run in: its own RefID for a divider, -1 (room open area) otherwise </summary>
@@ -327,7 +351,7 @@ public class Job_Furniture : Job
         return true;
     }
 
-    /// <summary> Room_Instance.ReassignFurnitureOwnership only </summary>
+    /// <summary> Room_Instance.ReassignFurnitureOwnership / AssignSharedBed only </summary>
     internal void Ownership_Set(List<int> owners)
     {
         ownerRefs.Clear();

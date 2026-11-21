@@ -734,7 +734,7 @@
                 "furnitureSize":2,
                 "value":300000,
                 "Tags":[],
-                "occupancy": { "capacity": 1, "holdsUnconscious": true },
+                "occupancy": { "holdsUnconscious": true },
                 "givesJob": [ { "comID":["com_furniture_sleep", "jp_hospital_bed_rest", "com_furniture_rest_required"] } ]
             },
             {

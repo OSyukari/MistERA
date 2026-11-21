@@ -26,6 +26,8 @@ public abstract partial class TA_DocBuilderBase
     }
 
     protected static bool IsRefusal(string outcome) { return outcome == "refuse" || outcome == "refuseOrder"; }
+    /// <summary>A participant reacting to a refused join (_JoinFailed): the response it sees may be refused or accepted.</summary>
+    protected static bool IsJoinRefused(string outcome) { return outcome == "joinRefused"; }
 
     /// <summary>
     /// Whether the speaker is the act's master as kojo sees it (KojoCollector.LoadEP: Package.Master, else the doer). An
@@ -66,7 +68,7 @@ public abstract partial class TA_DocBuilderBase
             speakerIsDoer = c.speaker == "doer" || c.speaker == "self",
             speakerIsReceiver = c.speaker == "receiver",
             listenerIsSelf = c.listener == "self",
-            accepted = !IsRefusal(c.outcome),
+            accepted = !IsRefusal(c.outcome) && !IsJoinRefused(c.outcome),
             speakerIsMaster = SpeakerIsMaster(c),
             playerInvolved = c.noEP || c.listener == "player" || c.listener == "newcomer",
             noEP = c.noEP,
@@ -290,6 +292,7 @@ public abstract partial class TA_DocBuilderBase
         if (c.speakerState == "fainted") req["excludeSelfTags"] = new JArray("sleeping");
         if (c.listener != "self" && lDef?["tags"] is JArray tt && tt.Count > 0) req["targetTags"] = new JArray(tt[0]);
         if (IsRefusal(c.outcome)) req["requireEPFailure"] = true;
+        if (IsJoinRefused(c.outcome)) req["requireEPSuccess"] = false;
         if (c.outcome == "success") req["requireEPSuccessGTE"] = "Success";
         if (c.listener == "player") req["targetBaseID"] = "PLAYER";
         if (req.Count > 0) n["requirement"] = req;

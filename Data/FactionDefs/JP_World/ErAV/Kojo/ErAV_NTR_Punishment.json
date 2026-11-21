@@ -5,7 +5,7 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "ErAV_NTRPunishment_farewell",
+                    "ID": "ErAV_NTRPunishment_farewell", "template": "none", "templateNote": "code-fetched kojo; dedicated template later",
                     "_comment": "触发时机：事件erav_ntr_punishment_select中，玩家选定victim之后、离开叙述（departure）之前。场景：被选中者对玩家做最后的道别。内容要求：克制、简短，可以有对日常事务的交代（家务、工作安排）或对玩家的叮嘱，不带哭腔、不控诉，可以暗示「会平安回来」。说话者：女性NPC，听者：玩家。",
                     "variants": [
                         {
@@ -28,7 +28,7 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "ErAV_NTRPunishment_return",
+                    "ID": "ErAV_NTRPunishment_return", "template": "none", "templateNote": "code-fetched kojo; dedicated template later",
                     "_comment": "触发时机：事件erav_ntr_mia_release中，担保劳务期满、被桐生组送回时（玩家打开银行事件后）。场景：被送回者见到玩家后的第一句话。内容要求：疲惫、勉强维持平常的语气，不细说这几天发生了什么（回避、含糊带过），可以有「我回来了」式的确认或对家里的关心；不控诉玩家。说话者：女性NPC，听者：玩家。",
                     "variants": [
                         {

@@ -4,7 +4,7 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "OnTimestopStart",
+                    "ID": "OnTimestopStart", "template": "none", "templateNote": "code-fetched kojo; dedicated template later",
                     "tags": [
                         "nsfw"
                     ],
@@ -22,7 +22,7 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "OnTimestopEnd",
+                    "ID": "OnTimestopEnd", "template": "none", "templateNote": "code-fetched kojo; dedicated template later",
                     "tags": [
                         "nsfw"
                     ],

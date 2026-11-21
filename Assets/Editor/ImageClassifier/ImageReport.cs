@@ -299,7 +299,8 @@ public static class ImageReport
     ///   lint: [string], unused: null | { categories: [string], names: [{ set, names: [string] }], variants: [string] },
     ///   overrideFile, overrides (with selectionFile only): the page's classification overrides, the "overrides" object of
     ///   ImageWorkFolders.OverrideFileName in the report folder ({} when there is none),
-    ///   portrait (with selectionFile only): the portrait handler view, shape on PortraitUsage.Write }
+    ///   portrait (with selectionFile only): the portrait handler view, shape on PortraitUsage.Write,
+    ///   pairing (with selectionFile only): the character pairing view's characters and commands, shape on PortraitPairing.Write }
     /// </summary>
     public static string BuildReportJson(string reportDir, string title, List<ImageReportFolder> folders, ImageRules rules, string rulesPath, DateTime generated,
         string selectionFile = null)
@@ -427,6 +428,9 @@ public static class ImageReport
             {
                 w.WritePropertyName("portrait");
                 PortraitUsage.Write(w, folders, rulesPath);
+                // character pairing view: characters (characterDBs.json) x commands (MasterList.json), resolved in the page
+                w.WritePropertyName("pairing");
+                PortraitPairing.Write(w, rulesPath, ImageClassifierSettings.MasterListPath, ImageClassifierSettings.CharacterDbPath);
             }
             w.WriteEndObject();
         }

@@ -211,12 +211,12 @@
     { "ID": "furniture_jp_park_sandpit", "displayName": "jp_park_sandpit_equipment", "recipe": [], "furnitureSize": 0, "value": 100000, "givesJob": [{ "comID": ["jp_park_sandpit"] }] },
     { "ID": "furniture_jp_park_blocks", "displayName": "jp_park_blocks_equipment", "recipe": [], "furnitureSize": 0, "value": 100000,
       "_comment": "Hide-and-seek blocks are a visibility-blocking divider with ordinary play inside, not hide-and-seek mechanics.",
-      "occupancy": { "capacity": 4, "isRoomDivider": true, "blocksVisibility": true, "allowSexJob": false },
+      "occupancy": { "isRoomDivider": true, "blocksVisibility": true, "allowSexJob": false },
       "givesJob": [{ "comID": ["jp_park_blocks_play"] }] }
   ] },
   "COMs": { "list": [
     {
-      "ID": "jp_park_stroll", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "jp_park_stroll", "timeScale": 30, "comTags": ["furniture", "recreation", "jp_park"],
+      "ID": "jp_park_stroll", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "jp_park_stroll", "timeScale": 30, "comTags": ["furniture", "recreation", "jp_park", "activity_recreation_walk"],
       "requirements": { "requirement": { "treatReceiverAsDoer": true } },
       "variants": [{ "displayName": "jp_park_stroll", "requirements": { "requirement": { "doerCount": 99 } } }],
       "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 5 },

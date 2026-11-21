@@ -87,7 +87,7 @@
                     [
                         {
                             "keepLooking":true,
-                            "texts": [ "com_sex_oral_P_lick_description_ongoing_1" ]
+                            "texts": [ "com_sex_oral_P_lick_description_ongoing_1", "com_sex_oral_P_lick_description_ongoing_2", "com_sex_oral_P_lick_description_ongoing_3" ]
                         }
                     ]
                 },
@@ -96,7 +96,7 @@
                         {
                             "_comment":"",
                             "keepLooking":true,
-                            "texts":[ "com_sex_oral_P_lick_description_remove_1" ]
+                            "texts":[ "com_sex_oral_P_lick_description_remove_1", "com_sex_oral_P_lick_description_remove_2", "com_sex_oral_P_lick_description_remove_3" ]
                         }
                     ]
                 },
@@ -106,7 +106,7 @@
                         {
                             "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
-                            "texts":[ "com_sex_oral_P_lick_description_after_1" ]
+                            "texts":[ "com_sex_oral_P_lick_description_after_1", "com_sex_oral_P_lick_description_after_2", "com_sex_oral_P_lick_description_after_3" ]
                         }
                     ]
                 },
@@ -115,7 +115,7 @@
                     "Entries":[
                         {
                             "keepLooking":true,
-                            "texts": ["com_sex_oral_P_lick_description_begin_1"]
+                            "texts": ["com_sex_oral_P_lick_description_begin_1", "com_sex_oral_P_lick_description_begin_2", "com_sex_oral_P_lick_description_begin_3"]
                         }
                     ]
                 }
@@ -135,10 +135,18 @@
                 "com_sex_oral_P_lick_displayName_3": "轮流舔肉棒",
                 "com_sex_oral_P_lick_displayName_4": "同时舔肉棒",
 
-                "com_sex_oral_P_lick_description_begin_1":"$doer.firstname$凑近$receiver.firstname$的胯下，伸出舌头舔上了肉棒",
-                "com_sex_oral_P_lick_description_after_1":"$receiver.firstname$的肉棒在$doer.firstname$舌尖的舔弄下射出了精液",
-                "com_sex_oral_P_lick_description_remove_1":"$doer.firstname$的舌头离开了$receiver.firstname$的肉棒",
-                "com_sex_oral_P_lick_description_ongoing_1":"$doer.firstname$正用舌头来回舔着$receiver.firstname$的肉棒"
+                "com_sex_oral_P_lick_description_begin_1":"$doer.firstname$的舌头从$receiver.firstname$的龟头舔到根部",
+                "com_sex_oral_P_lick_description_after_1":"$receiver.firstname$的肉棒在$doer.firstname$的舌尖下涨得发硬",
+                "com_sex_oral_P_lick_description_remove_1":"$doer.firstname$把舌头从$receiver.firstname$的肉棒上收回来",
+                "com_sex_oral_P_lick_description_ongoing_1":"$doer.firstname$的舌头在$receiver.firstname$的肉棒上下舔",
+                "com_sex_oral_P_lick_description_begin_2": "$doer.firstname$的舌尖抵着$receiver.firstname$的龟头舔",
+                "com_sex_oral_P_lick_description_begin_3": "$doer.firstname$的嘴贴上$receiver.firstname$的肉棒舔",
+                "com_sex_oral_P_lick_description_remove_2": "$doer.firstname$的舌尖离开$receiver.firstname$的龟头",
+                "com_sex_oral_P_lick_description_remove_3": "$doer.firstname$的嘴从$receiver.firstname$的肉棒上松开",
+                "com_sex_oral_P_lick_description_ongoing_2": "$doer.firstname$的舌尖绕着$receiver.firstname$的龟头打转",
+                "com_sex_oral_P_lick_description_ongoing_3": "$doer.firstname$的嘴含着$receiver.firstname$的肉棒舔",
+                "com_sex_oral_P_lick_description_after_2": "$receiver.firstname$的龟头贴着$doer.firstname$的舌头一跳一跳",
+                "com_sex_oral_P_lick_description_after_3": "$receiver.firstname$的肉棒在$doer.firstname$的脸前抖个不停"
             }
         }
     }

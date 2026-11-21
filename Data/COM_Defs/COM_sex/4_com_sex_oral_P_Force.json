@@ -87,7 +87,7 @@
                     [
                         {
                             "keepLooking":true,
-                            "texts": [ "com_sex_oral_P_Force_description_ongoing_1" ]
+                            "texts": [ "com_sex_oral_P_Force_description_ongoing_1", "com_sex_oral_P_Force_description_ongoing_2", "com_sex_oral_P_Force_description_ongoing_3" ]
                         }
                     ]
                 },
@@ -96,7 +96,7 @@
                         {
                             "_comment":"",
                             "keepLooking":true,
-                            "texts":[ "com_sex_oral_P_Force_description_remove_1" ]
+                            "texts":[ "com_sex_oral_P_Force_description_remove_1", "com_sex_oral_P_Force_description_remove_2", "com_sex_oral_P_Force_description_remove_3" ]
                         }
                     ]
                 },
@@ -106,12 +106,12 @@
                         {
                             "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"doer", "statID":"isCumReady", "operand":"eq", "value":"true" } } ],
-                            "texts":[ "com_sex_oral_P_Force_description_after_1" ]
+                            "texts":[ "com_sex_oral_P_Force_description_after_1", "com_sex_oral_P_Force_description_after_3", "com_sex_oral_P_Force_description_after_4" ]
                         },
                         {
                             "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
-                            "texts":[ "com_sex_oral_P_Force_description_after_2" ]
+                            "texts":[ "com_sex_oral_P_Force_description_after_2", "com_sex_oral_P_Force_description_after_5", "com_sex_oral_P_Force_description_after_6" ]
                         }
                     ]
                 },
@@ -120,7 +120,7 @@
                     "Entries":[
                         {
                             "keepLooking":true,
-                            "texts": ["com_sex_oral_P_Force_description_begin_1"]
+                            "texts": ["com_sex_oral_P_Force_description_begin_1", "com_sex_oral_P_Force_description_begin_2", "com_sex_oral_P_Force_description_begin_3"]
                         }
                     ]
 
@@ -228,11 +228,21 @@
                 "com_sex_oral_P_Force_displayName_3_force": "轮流强制深喉口交",
                 "com_sex_oral_P_Force_displayName_4_force": "同时强制深喉口交",
 
-                "com_sex_oral_P_Force_description_begin_1":"$doer.firstname$抓住了$receiver.firstname$的脑袋，将$doer.p$粗暴地插入了$receiver.firstname$嘴里",
-                "com_sex_oral_P_Force_description_after_1":"$doer.firstname$在射精的瞬间狠狠地按住了$receiver.firstname$的头",
-                "com_sex_oral_P_Force_description_after_2":"$receiver.firstname$在与$doer.firstname$的肉棒亲密接触中迎来了高潮",
-                "com_sex_oral_P_Force_description_remove_1":"$doer.firstname$将$doer.p$从$receiver.firstname$嘴里拿出来",
-                "com_sex_oral_P_Force_description_ongoing_1":"$doer.firstname$的$doer.p$正蹂躏着$receiver.firstname$的嘴"
+                "com_sex_oral_P_Force_description_begin_1":"$doer.firstname$把$doer.p$捅进$receiver.firstname$的嘴里顶到喉咙",
+                "com_sex_oral_P_Force_description_after_1":"$doer.firstname$把$receiver.firstname$的脑袋按在$doer.p$上不让动",
+                "com_sex_oral_P_Force_description_after_2":"$receiver.firstname$的喉咙把$doer.p$夹得死紧",
+                "com_sex_oral_P_Force_description_remove_1":"$doer.firstname$把$doer.p$从$receiver.firstname$的嘴里抽出来",
+                "com_sex_oral_P_Force_description_ongoing_1":"$doer.firstname$的$doer.p$在$receiver.firstname$的嘴里来回抽插",
+                "com_sex_oral_P_Force_description_after_3": "$doer.firstname$的手死死按住$receiver.firstname$的脑袋",
+                "com_sex_oral_P_Force_description_after_4": "$doer.firstname$把$receiver.firstname$的脑袋往$doer.p$上压得更死",
+                "com_sex_oral_P_Force_description_after_5": "$receiver.firstname$的嘴裹着$doer.p$一阵阵收紧",
+                "com_sex_oral_P_Force_description_after_6": "$receiver.firstname$的舌头被$doer.p$压在下面动弹不得",
+                "com_sex_oral_P_Force_description_begin_2": "$doer.firstname$抓着$receiver.firstname$的脑袋往$doer.p$上按",
+                "com_sex_oral_P_Force_description_begin_3": "$doer.firstname$的$doer.p$捅开$receiver.firstname$的嘴唇",
+                "com_sex_oral_P_Force_description_remove_2": "$doer.firstname$的$doer.p$从$receiver.firstname$的喉咙里退出来",
+                "com_sex_oral_P_Force_description_remove_3": "$doer.firstname$的$doer.p$从$receiver.firstname$的嘴唇间滑出来",
+                "com_sex_oral_P_Force_description_ongoing_2": "$doer.firstname$抓着$receiver.firstname$的脑袋往$doer.p$上撞",
+                "com_sex_oral_P_Force_description_ongoing_3": "$doer.firstname$的$doer.p$捅进$receiver.firstname$的喉咙深处搅"
 
             },
             "en-us":

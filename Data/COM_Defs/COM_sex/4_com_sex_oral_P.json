@@ -89,7 +89,7 @@
                     [
                         {
                             "keepLooking":true,
-                            "texts": [ "com_sex_oral_P_description_ongoing_1" ]
+                            "texts": [ "com_sex_oral_P_description_ongoing_1", "com_sex_oral_P_description_ongoing_2", "com_sex_oral_P_description_ongoing_3" ]
                         }
                     ]
                 },
@@ -98,7 +98,7 @@
                         {
                             "_comment":"",
                             "keepLooking":true,
-                            "texts":[ "com_sex_oral_P_description_remove_1" ]
+                            "texts":[ "com_sex_oral_P_description_remove_1", "com_sex_oral_P_description_remove_2", "com_sex_oral_P_description_remove_3" ]
                         }
                     ]
                 },
@@ -108,7 +108,7 @@
                         {
                             "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
-                            "texts":[ "com_sex_oral_P_description_after_1" ]
+                            "texts":[ "com_sex_oral_P_description_after_1", "com_sex_oral_P_description_after_2", "com_sex_oral_P_description_after_3" ]
                         }
                     ]
                 },
@@ -117,7 +117,7 @@
                     "Entries":[
                         {
                             "keepLooking":true,
-                            "texts": ["com_sex_oral_P_description_begin_1"]
+                            "texts": ["com_sex_oral_P_description_begin_1", "com_sex_oral_P_description_begin_2", "com_sex_oral_P_description_begin_3"]
                         }
                     ]
 
@@ -225,10 +225,18 @@
                 "com_sex_oral_P_displayName_3_force": "轮流深喉口交",
                 "com_sex_oral_P_displayName_4_force": "同时深喉口交",
 
-                "com_sex_oral_P_description_begin_1":"$doer.firstname$张大了嘴，将$receiver.firstname$的肉棒吞入了口中",
-                "com_sex_oral_P_description_after_1":"$receiver.firstname$的肉棒抖动着将精液射入了$doer.firstname$的口中",
-                "com_sex_oral_P_description_remove_1":"$doer.firstname$将$receiver.firstname$的肉棒从嘴里解放出来",
-                "com_sex_oral_P_description_ongoing_1":"$doer.firstname$正在吮吸着$receiver.firstname$的肉棒"
+                "com_sex_oral_P_description_begin_1":"$doer.firstname$把$receiver.firstname$的肉棒含进嘴里吸",
+                "com_sex_oral_P_description_after_1":"$receiver.firstname$的肉棒在$doer.firstname$的嘴里涨得发硬",
+                "com_sex_oral_P_description_remove_1":"$doer.firstname$把$receiver.firstname$的肉棒从嘴里吐出来",
+                "com_sex_oral_P_description_ongoing_1":"$doer.firstname$的嘴含着$receiver.firstname$的肉棒上下来回吞",
+                "com_sex_oral_P_description_begin_2": "$doer.firstname$的嘴裹住$receiver.firstname$的龟头往下吞",
+                "com_sex_oral_P_description_begin_3": "$doer.firstname$把$receiver.firstname$的肉棒吞到喉咙口",
+                "com_sex_oral_P_description_after_2": "$receiver.firstname$的龟头在$doer.firstname$的嘴里跳个不停",
+                "com_sex_oral_P_description_after_3": "$receiver.firstname$的肉棒在$doer.firstname$的嘴上抽动",
+                "com_sex_oral_P_description_remove_2": "$doer.firstname$的嘴唇从$receiver.firstname$的肉棒上松开",
+                "com_sex_oral_P_description_remove_3": "$doer.firstname$的嘴离开$receiver.firstname$的龟头",
+                "com_sex_oral_P_description_ongoing_2": "$doer.firstname$的舌头绕着$receiver.firstname$的龟头打转舔",
+                "com_sex_oral_P_description_ongoing_3": "$doer.firstname$把$receiver.firstname$的肉棒吞到喉咙里吸"
 
             },
             "en-us":

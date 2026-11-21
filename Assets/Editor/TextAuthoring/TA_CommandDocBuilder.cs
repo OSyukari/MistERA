@@ -461,10 +461,15 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
 
     void Kojo(string suffix, string speaker, string listener, TA_KojoContext ctx)
     {
-        string key = KojoBase() + suffix;
+        // a refused result speaks from <COM>_Refuse first, then <COM> (RelationshipManager.GetKOJOMessage)
+        bool refusal = suffix == "" && !ctx.accepted;
+        string key = KojoBase() + (refusal ? "_Refuse" : suffix);
         KojoBlock(key, (Character_Personality p, out string provider, out string entryID) =>
         {
-            var found = ResolveCommandEntry(p, com, suffix, out provider, out entryID);
+            ResponseEntry found = null;
+            provider = ""; entryID = "";
+            if (refusal) found = ResolveCommandEntry(p, com, "_Refuse", out provider, out entryID);
+            if (found == null) found = ResolveCommandEntry(p, com, suffix, out provider, out entryID);
             if (found == null && suffix == "" && !string.IsNullOrEmpty(com.fallbackCOMID))
             {
                 var fb = scr_System_Serializer.current.GetByNameOrID_COM(com.fallbackCOMID);
@@ -712,8 +717,24 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
             else sb.Text("doc.narration.none");
             sb.AppendLine();
         }
-        // a completion task may add an entry to this field (rendered once per field, at its first use)
-        if (!countOnly) sb.NewEntry(unitID, field);
+        // a completion task may add an entry to this field (rendered once per field, at its first use) - not to `after`
+        // when the command has none (user, 2026-11-18: the completion line is enough; no after, no after)
+        if (!countOnly && (any || field != "after")) sb.NewEntry(unitID, field);
+    }
+
+    /// <summary>
+    /// Whether the command prints any text in the field: its own (command or variants, as VariantParts assembles them),
+    /// else its text source's - the same sources Narration shows.
+    /// </summary>
+    bool HasNarration(string field)
+    {
+        if (HasEntries(GetDesc(com, field))) return true;
+        for (int i = 0; i < com.variants.Count; i++) if (VariantParts(com, i, field).Count > 0) return true;
+        var src = com.TextSource;
+        if (src == null) return false;
+        if (HasEntries(GetDesc(src, field))) return true;
+        for (int i = 0; i < src.variants.Count; i++) if (VariantParts(src, i, field).Count > 0) return true;
+        return false;
     }
 
     internal static COM_Descriptions GetDesc(object owner, string field)

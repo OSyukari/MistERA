@@ -9,7 +9,7 @@
                 "displayName": "com_sex_tribadism_displayName",
                 "timeScale": 3,
                 "comTags": ["sex", "position_equal", "permission_intimacy_high"],
-                "portraitTags": ["tribadism"],
+                "portraitTags": ["portrait_lower","tribadism"],
                 "_comment_contact": "External clitoral contact on both sides, not vaginal insertion or oral service. Explicit act tags keep both picked organs clitoral; the non-penetration sex resolver stimulates each with the other as its source. Uses high intimacy permission, like other external caresses, not permission_vaginal.",
                 "doerActTags": ["clit"],
                 "receiverActTags": ["clit"],
@@ -28,9 +28,8 @@
                         "req_Receivers": {
                             "BodyTags": ["clit"],
                             "minRevealingScore": 1,
-                            "requireConscious": true,
-                            "requireAction": true,
-                            "cost_ST": 1
+                            "requireConscious": false,
+                            "requireAction": false
                         }
                     }
                 },
@@ -66,13 +65,13 @@
                     }
                 ],
                 "description_begin": {
-                    "Entries": [{"texts": ["com_sex_tribadism_begin"]}]
+                    "Entries": [{"texts": ["com_sex_tribadism_begin", "com_sex_tribadism_begin_1", "com_sex_tribadism_begin_2"]}]
                 },
                 "description_ongoing": {
-                    "Entries": [{"texts": ["com_sex_tribadism_ongoing"]}]
+                    "Entries": [{"texts": ["com_sex_tribadism_ongoing", "com_sex_tribadism_ongoing_1", "com_sex_tribadism_ongoing_2"]}]
                 },
                 "description_remove": {
-                    "Entries": [{"texts": ["com_sex_tribadism_remove"]}]
+                    "Entries": [{"texts": ["com_sex_tribadism_remove", "com_sex_tribadism_remove_1", "com_sex_tribadism_remove_2"]}]
                 }
             }
         ]
@@ -82,9 +81,15 @@
             "zh-cn": {
                 "com_sex_tribadism": "双方以外阴相互摩擦，刺激彼此的阴蒂。需要双方都有可接触的阴蒂；仅限一对一，不进行插入。",
                 "com_sex_tribadism_displayName": "磨镜",
-                "com_sex_tribadism_begin": "$doer.firstname$与$receiver.firstname$开始磨镜",
-                "com_sex_tribadism_ongoing": "$doer.firstname$与$receiver.firstname$正在磨镜",
-                "com_sex_tribadism_remove": "$doer.firstname$与$receiver.firstname$结束了磨镜"
+                "com_sex_tribadism_begin": "$doer.firstname$把自己的小穴压着$receiver.firstname$的小穴磨",
+                "com_sex_tribadism_ongoing": "$doer.firstname$的小穴压着$receiver.firstname$的小穴来回磨",
+                "com_sex_tribadism_remove": "$doer.firstname$把小穴从$receiver.firstname$的小穴上挪开",
+                "com_sex_tribadism_begin_1": "$doer.firstname$用阴蒂在$receiver.firstname$的阴蒂上磨蹭",
+                "com_sex_tribadism_begin_2": "$doer.firstname$把胯间的小穴挤进$receiver.firstname$的腿缝里磨上去",
+                "com_sex_tribadism_remove_1": "$doer.firstname$把阴唇从$receiver.firstname$的阴唇上移开",
+                "com_sex_tribadism_remove_2": "$doer.firstname$把胯部从$receiver.firstname$的腿间抽回来",
+                "com_sex_tribadism_ongoing_1": "$doer.firstname$的阴蒂顶着$receiver.firstname$的阴蒂磨个不停",
+                "com_sex_tribadism_ongoing_2": "$doer.firstname$用阴唇裹着$receiver.firstname$的阴唇蹭"
             },
             "en-us": {
                 "com_sex_tribadism": "Mutual external genital contact stimulates both actors' clitorises. Requires an accessible clitoris on both actors; one pair only, without penetration.",

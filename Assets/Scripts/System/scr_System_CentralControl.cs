@@ -767,11 +767,15 @@ public class scr_System_CentralControl : MonoBehaviour
             if (entry == null || string.IsNullOrEmpty(entry.path)) continue;
             // set.Key = the entry's handlers for one state (merged with entry.fallback when given), set.Value = the state gate
             foreach (var set in GlobalPortraitTemplate.GetEntrySets(entry.path, entry.fallback))
+            {
+                // one stopRecursion scope per set (PortraitManager.GetValidPortraitInner)
+                var token = new object();
                 foreach (var handler in set.Key)
                 {
                     var copy = handler.Copy();
                     if (copy == null) continue;
                     copy.isGenerated = true;
+                    copy.globalSet = token;
                     if (entry.selfKeys != null && entry.selfKeys.Count > 0)
                         copy.RequireSelfContextKeys = copy.RequireSelfContextKeys.Concat(entry.selfKeys).Distinct().ToList();
                     if (entry.targetKeys != null && entry.targetKeys.Count > 0)
@@ -780,6 +784,7 @@ public class scr_System_CentralControl : MonoBehaviour
                         copy.RequireSelfContextKeys = copy.RequireSelfContextKeys.Concat(new[] { set.Value }).Distinct().ToList();
                     list.Add(copy);
                 }
+            }
         }
 
         // GetHandlers(pruneEmpty) keeps only handlers with images: any left = assets
@@ -814,15 +819,20 @@ public class scr_System_CentralControl : MonoBehaviour
     void FillGeneratedPortraitHandlers(string templateID, List<PortraitManager.CharaPortrait> list)
     {
         foreach (var root in GeneratedPortraitRegistry.GetRoots(templateID))
+        {
+            // one stopRecursion scope per generated root (PortraitManager.GetValidPortraitInner)
+            var token = new object();
             foreach (var handler in GlobalPortraitTemplate.GetHandlers(root.Key))
             {
                 var copy = handler.Copy();
                 if (copy == null) continue;
                 copy.isGenerated = true;
+                copy.globalSet = token;
                 if (!string.IsNullOrEmpty(root.Value))
                     copy.RequireSelfContextKeys = copy.RequireSelfContextKeys.Concat(new[] { root.Value }).Distinct().ToList();
                 list.Add(copy);
             }
+        }
     }
 
     public void ClearGlobalPortraitHandlers() => globalPortraitHandlers.Clear();
@@ -1394,6 +1404,13 @@ public class DisplaySettings
     public BoolSetting clearLogs = new BoolSetting(true, "clearLogs");
 
     public BoolSetting displayPlayerPortraitInLogs = new BoolSetting(true, "displayPlayerPortraitInLogs");
+
+    /// <summary> autoAnimate log lines (lines not about the player: ambient kojo, ongoing, ...) can't take over the portrait.
+    /// true: they print without drawing a portrait. false: one that would draw a portrait waits for a click. </summary>
+    public BoolSetting inhibitNonTargetInterrupt = new BoolSetting(true, "inhibitNonTargetInterrupt");
+
+    /// <summary> 简化口上: multi-actor commands print one random participant's kojo instead of everyone's </summary>
+    public BoolSetting shortenLogsPrint = new BoolSetting(true, "shortenLogsPrint");
 
     public BoolSetting asciiRenderEnabled = new BoolSetting(false, "asciiRenderEnabled");
 

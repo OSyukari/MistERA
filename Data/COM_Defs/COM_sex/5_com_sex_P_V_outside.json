@@ -14,7 +14,7 @@
                 "displayName":"com_sex_P_V_outside_displayName_1",
                 "timeScale":3,
                 "comTags":["sex","service", "position_equal"],
-                "portraitTags_Receiver":["intercrural", "thighjob"],
+                "portraitTags_Receiver":["portrait_lower","intercrural", "thighjob"],
                 "requirements":{
                     "requirement":{
                         "req_Doers":{
@@ -84,7 +84,7 @@
                     [
                         {
                             "keepLooking":true,
-                            "texts": [ "com_sex_P_V_outside_description_ongoing_1" ]
+                            "texts": [ "com_sex_P_V_outside_description_ongoing_1", "com_sex_P_V_outside_description_ongoing_2", "com_sex_P_V_outside_description_ongoing_3" ]
                         }
                     ]
                 },
@@ -93,7 +93,7 @@
                         {
                             "_comment":"",
                             "keepLooking":true,
-                            "texts":[ "com_sex_P_V_outside_description_remove_1" ]
+                            "texts":[ "com_sex_P_V_outside_description_remove_1", "com_sex_P_V_outside_description_remove_2", "com_sex_P_V_outside_description_remove_3" ]
                         }
                     ]
                 },
@@ -102,7 +102,7 @@
                     "Entries":[ 
                         {
                             "keepLooking":true,
-                            "texts": ["com_sex_P_V_outside_description_begin_1"]
+                            "texts": ["com_sex_P_V_outside_description_begin_1", "com_sex_P_V_outside_description_begin_2", "com_sex_P_V_outside_description_begin_3"]
                         }
                     ]
                     
@@ -123,9 +123,15 @@
                 "com_sex_P_V_outside_displayName_3": "轮流素股",
                 "com_sex_P_V_outside_displayName_4": "同时素股",
 
-                "com_sex_P_V_outside_description_begin_1":"$doer.firstname$将肉棒顶在了$receiver.firstname$的股间来回摩擦着",
-                "com_sex_P_V_outside_description_remove_1":"$doer.firstname$结束了与$receiver.firstname$素股",
-                "com_sex_P_V_outside_description_ongoing_1":"$doer.firstname$正在与$receiver.firstname$素股"
+                "com_sex_P_V_outside_description_begin_1":"$doer.firstname$把肉棒夹进$receiver.firstname$的两腿之间磨",
+                "com_sex_P_V_outside_description_remove_1":"$doer.firstname$把肉棒从$receiver.firstname$的腿缝里抽出来",
+                "com_sex_P_V_outside_description_ongoing_1":"$doer.firstname$的肉棒在$receiver.firstname$的腿缝里来回抽送",
+                "com_sex_P_V_outside_description_ongoing_2": "$doer.firstname$的龟头蹭着$receiver.firstname$的股间磨",
+                "com_sex_P_V_outside_description_ongoing_3": "$doer.firstname$的肉棒在$receiver.firstname$的两腿间进出",
+                "com_sex_P_V_outside_description_remove_2": "$doer.firstname$的龟头从$receiver.firstname$的股间离开",
+                "com_sex_P_V_outside_description_remove_3": "$doer.firstname$的肉棒从$receiver.firstname$的两腿间退出来",
+                "com_sex_P_V_outside_description_begin_2": "$doer.firstname$的肉棒贴着$receiver.firstname$的腿缝蹭",
+                "com_sex_P_V_outside_description_begin_3": "$doer.firstname$把龟头顶在$receiver.firstname$的股间压"
 
             },
             "en-us":

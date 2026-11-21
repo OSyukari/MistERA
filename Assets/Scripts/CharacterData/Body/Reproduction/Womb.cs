@@ -682,9 +682,34 @@ public class Womb_Induced : BodyInternal_Womb
     {
 
     }
+    /// <summary>
+    /// Follicles matured for the current estrus. Rolled once on entering estrus; climaxes release eggs
+    /// from it until empty, then nothing more until the next estrus.
+    /// -1 = not rolled yet (old saves already in estrus) - rolled on the first climax instead.
+    /// </summary>
+    [JsonProperty] protected int folliclePool = -1;
+
     public override void dayTick_Cycle(ReproductionCycle cycle)
     {
+        bool enteringEstrus = cycle.CurrentStatus != currentStatus && cycle.CanOvulate;
         base.dayTick_Cycle(cycle);
+        if (enteringEstrus) folliclePool = RollFolliclePool();
+    }
+
+    /// <summary>
+    /// Same per-ovulation egg count as ovulation() (quantity roll x fertility x mother's fertility mult),
+    /// rolled once per estrus; reserve is spent here instead of per release.
+    /// </summary>
+    int RollFolliclePool()
+    {
+        float ovuPower = Utility.getRandwithVariation(BaseTemplate.ovulationQuantityAverage, BaseTemplate.ovulationQuantityVariation);
+        if (!noAging) currentPower -= (int)ovuPower;
+
+        var motherFertilityMult = source.Owner.Stats.GetStatValue(ReproductionUtility.stat_fertility_mult);
+        float expected = ovuPower * BaseTemplate.fertility / BaseTemplate.ovulationQuantityAverage * motherFertilityMult;
+        int pool = Mathf.FloorToInt(expected);
+        if (UnityEngine.Random.Range(0f, 1f) < expected - pool) pool++;
+        return pool;
     }
 
     // Call this when a climax event occurs (hook to your arousal/climax system)
@@ -692,15 +717,20 @@ public class Womb_Induced : BodyInternal_Womb
     {
         if (BaseTemplate == null) return;
         if (!cycle.CanOvulate) return;
+        if (folliclePool < 0) folliclePool = RollFolliclePool();
 
-        int count = Mathf.FloorToInt(climaxIntensity / BaseTemplate.climaxOvulationThreshold);
+        // intensity decides how many of the matured follicles this climax releases
+        int count = Mathf.Min(Mathf.FloorToInt(climaxIntensity / BaseTemplate.climaxOvulationThreshold), folliclePool);
         for (int i = 0; i < count; i++)
         {
-            ovulation();
+            eggs.Add(new Ovum(this, source.Owner, BaseTemplate));
         }
+        if (count <= 0) return;
+        folliclePool -= count;
+        isOvumRelease = true;
        // Debug.Log($"NotifyClimax induce ovu: {climaxIntensity} / {BaseTemplate.climaxOvulationThreshold} = {climaxIntensity / BaseTemplate.climaxOvulationThreshold} -> {count}");
         var msg = LocalizeDictionary.QueryThenParse("womb_climax_ovulation");
-        if (count > 0 && !messages.Contains(msg)) messages.Add(msg);
+        if (!messages.Contains(msg)) messages.Add(msg);
 
     }
 }

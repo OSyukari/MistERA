@@ -13,7 +13,7 @@
                 "timeScale":3,
                 "comTags":["sex","service", "position_face", "position_inequal","permission_anal"],
                 "portraitTags":["rimjob"],
-                "portraitTags_Receiver":["spread_pussy"],
+                "portraitTags_Receiver":["portrait_lower","spread_pussy"],
                 "_comment_traces":"Body traces (Data/RaceDefs/TraceDefs.json): saliva into the anus (cap from trace_saliva), anal pubes on the doer's face (low chance, natural only). Normal and tongue (force) variant alike.",
                 "traceKeywords":["lick","oral"],
                 "requirements":{
@@ -96,7 +96,7 @@
                     [
                         {
                             "keepLooking":true,
-                            "texts": [ "com_sex_oral_A_description_ongoing_1" ]
+                            "texts": [ "com_sex_oral_A_description_ongoing_1", "com_sex_oral_A_description_ongoing_2", "com_sex_oral_A_description_ongoing_3" ]
                         }
                     ]
                 },
@@ -105,7 +105,7 @@
                         {
                             "_comment":"",
                             "keepLooking":true,
-                            "texts":[ "com_sex_oral_A_description_remove_1" ]
+                            "texts":[ "com_sex_oral_A_description_remove_1", "com_sex_oral_A_description_remove_2", "com_sex_oral_A_description_remove_3" ]
                         }
                     ]
                 },
@@ -115,7 +115,7 @@
                         {
                             "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
-                            "texts":[ "com_sex_oral_A_description_after_1" ]
+                            "texts":[ "com_sex_oral_A_description_after_1", "com_sex_oral_A_description_after_2", "com_sex_oral_A_description_after_3" ]
                         }
                     ]
                 },
@@ -124,7 +124,7 @@
                     "Entries":[ 
                         {
                             "keepLooking":true,
-                            "texts": ["com_sex_oral_A_description_begin_1"]
+                            "texts": ["com_sex_oral_A_description_begin_1", "com_sex_oral_A_description_begin_2", "com_sex_oral_A_description_begin_3"]
                         }
                     ]
                     
@@ -239,10 +239,18 @@
                 "com_sex_oral_A_displayName_3_force": "轮流肛门深吻",
                 "com_sex_oral_A_displayName_4_force": "同时肛门深吻",
 
-                "com_sex_oral_A_description_begin_1":"$doer.firstname$的脸贴上了$receiver.firstname$的屁股，将双唇贴上了对方的肛门",
-                "com_sex_oral_A_description_after_1":"$doer.firstname$正通过舌头感受着$receiver.firstname$身体的高潮",
-                "com_sex_oral_A_description_remove_1":"$doer.firstname$的双唇离开了$receiver.firstname$的股间",
-                "com_sex_oral_A_description_ongoing_1":"$doer.firstname$的舌头正在$receiver.firstname$的肛门中抽送着"
+                "com_sex_oral_A_description_begin_1":"$doer.firstname$的舌头捅进$receiver.firstname$的屁眼搅了一下",
+                "com_sex_oral_A_description_after_1":"$receiver.firstname$的屁眼一阵一阵地夹紧$doer.firstname$的舌头",
+                "com_sex_oral_A_description_remove_1":"$doer.firstname$把舌头从$receiver.firstname$的屁眼里拔出来",
+                "com_sex_oral_A_description_ongoing_1":"$doer.firstname$的舌头在$receiver.firstname$的屁眼里搅得又深又急",
+                "com_sex_oral_A_description_begin_2": "$doer.firstname$的嘴唇裹住$receiver.firstname$的后穴吸了一口",
+                "com_sex_oral_A_description_begin_3": "$doer.firstname$的舌尖舔开$receiver.firstname$的屁眼钻进去",
+                "com_sex_oral_A_description_remove_2": "$doer.firstname$的嘴唇从$receiver.firstname$的后穴上松开",
+                "com_sex_oral_A_description_remove_3": "$doer.firstname$湿着的舌尖离开$receiver.firstname$的肛门",
+                "com_sex_oral_A_description_ongoing_2": "$doer.firstname$的嘴裹着$receiver.firstname$的后穴吸个不停",
+                "com_sex_oral_A_description_ongoing_3": "$doer.firstname$的舌尖把$receiver.firstname$的屁眼舔得湿淋淋",
+                "com_sex_oral_A_description_after_2": "$receiver.firstname$的臀肉贴着$doer.firstname$的脸抖个不停",
+                "com_sex_oral_A_description_after_3": "$receiver.firstname$的后穴抽紧了，把$doer.firstname$的舌头绞在里面"
 
             },
             "en-us":

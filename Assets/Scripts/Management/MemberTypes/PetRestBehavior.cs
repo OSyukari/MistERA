@@ -102,11 +102,15 @@ internal static class PetRestBehavior
     internal static bool TryResolve(Character_Trainable c, I_IsJobGiver locale, out Scope scope)
     {
         scope = default;
-        if (c.isImprisoned)
+        // a prisoner rests in their prison area only (Docs/Prison/Plan_PrisonRework.md §4); the search trims it to the
+        // allowed furniture (a cage in an ordinary room, not the rest of that room)
+        var area = PrisonerJobRestriction.GetArea(c);
+        if (area != null)
         {
-            var room = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
-            if (room == null || !room.isRoomPrison || room.FactionOwner == null) return false;
-            scope = new Scope(room.FactionOwner, null, null, room);
+            I_IsJobGiver captor = area.Captor;
+            if (captor == null) captor = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID)?.FactionOwner;
+            if (captor == null) return false;
+            scope = new Scope(captor, null, area.SearchRooms(), null, true);
             return true;
         }
 
@@ -126,18 +130,17 @@ internal static class PetRestBehavior
 
         var homes = c.FactionManager.HomeFactions;
         var home = homes.Count > 0 ? homes[0] : null;
-        bool prisonOnly = home?.GetMemberType(c)?.isPrisoner == true;
         if (home != null)
         {
             // Reuse the existing inverse index, without allocating an empty GetOwnedRooms result.
             var directOwnedRoomByChara = home.OwnedRoomByChara;
             if (directOwnedRoomByChara.TryGetValue(c.RefID, out var assigned) && assigned != null && assigned.Count > 0)
             {
-                scope = new Scope(home, null, assigned, null, prisonOnly);
+                scope = new Scope(home, null, assigned, null);
                 return true;
             }
         }
-        scope = new Scope(home, locale == home ? null : locale, null, null, prisonOnly);
+        scope = new Scope(home, locale == home ? null : locale, null, null);
         return home != null || locale != null;
     }
 
@@ -147,25 +150,28 @@ internal static class PetRestBehavior
         readonly I_IsJobGiver secondary;
         readonly List<int> assigned;
         readonly Room_Instance anchor;
-        readonly bool prisonOnly;
+        /// <summary> assigned = a prisoner's area rooms: exactly those, whatever their kind </summary>
+        readonly bool confined;
 
-        internal Scope(I_IsJobGiver primary, I_IsJobGiver secondary, List<int> assigned, Room_Instance anchor, bool prisonOnly = false)
+        internal Scope(I_IsJobGiver primary, I_IsJobGiver secondary, List<int> assigned, Room_Instance anchor, bool confined = false)
         {
             this.primary = primary;
             this.secondary = secondary;
             this.assigned = assigned;
             this.anchor = anchor;
-            this.prisonOnly = prisonOnly;
+            this.confined = confined;
         }
 
         internal bool Allows(Room_Instance room, Character_Trainable c, PathingRoomFilter filter)
         {
-            if (room == null || !room.CanBeAccessedBy(c)) return false;
+            if (room == null) return false;
+            if (confined) return assigned != null && assigned.Contains(room.RefID);
+            if (!room.CanBeAccessedBy(c)) return false;
             if (filter.skipPrivateRoom && room.isRoomPrivate) return false;
-            if (filter.excludePrisonRooms && room.isRoomPrison && room != anchor && !prisonOnly) return false;
+            if (filter.excludePrisonRooms && room.isRoomPrison && room != anchor) return false;
             if (filter.respectRoomGender && room.IsOppositeSex(c)) return false;
             if (anchor != null) return room == anchor;
-            if (prisonOnly != room.isRoomPrison) return false;
+            if (room.isRoomPrison) return false;
             if (assigned != null) return assigned.Contains(room.RefID);
             return !room.isRoomPrivate && (Contains(primary, room) || Contains(secondary, room));
         }
@@ -185,7 +191,7 @@ internal static class PetRestBehavior
             try
             {
                 // Copy every authored field; only exact current-cell confinement overrides exclusion.
-            if ((prisonOnly || anchor != null && anchor.isRoomPrison) && filter.excludePrisonRooms)
+            if ((confined || anchor != null && anchor.isRoomPrison) && filter.excludePrisonRooms)
                 {
                     prisonFilter = prisonFilters.Count > 0 ? prisonFilters.Pop() : new PathingRoomFilter();
                     prisonFilter.checkBlacklist = filter.checkBlacklist;

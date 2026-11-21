@@ -308,8 +308,9 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         }
     }
     [JsonIgnore] public bool canMove { get { return canMoveIgnoringTimestop && !isTimeStopped; } }
-    /// <summary> canMove without the time stop check: conscious, not restrained, not imprisoned, not Immobilized </summary>
-    [JsonIgnore] public bool canMoveIgnoringTimestop { get { return (Stats == null || !Stats.isConsciousnessUnconscious) && !isRestrained && !isImprisoned && !Stats.hasStatusEXTag(StatsUtility.Stat_Tag_Immobilized) && !Stats.hasStatusTag(StatsUtility.Stat_Tag_Immobilized); } }
+    /// <summary> canMove without the time stop check: conscious, not restrained, not Immobilized. Being a prisoner does not
+    /// stop movement - their searches are confined instead (PrisonArea, Docs/Prison/Plan_PrisonRework.md §7) </summary>
+    [JsonIgnore] public bool canMoveIgnoringTimestop { get { return (Stats == null || !Stats.isConsciousnessUnconscious) && !isRestrained && !Stats.hasStatusEXTag(StatsUtility.Stat_Tag_Immobilized) && !Stats.hasStatusTag(StatsUtility.Stat_Tag_Immobilized); } }
     [JsonIgnore] public bool canLeave { get { return canMove && (CurrentJob == null || CurrentJob.CanBeInterrupted); } }
     [JsonIgnore] public Manageable.HourlySchedule currentHourSchedule { get {
             return GetJobPost(scr_System_Time.current.getCurrentTime().Hour);
@@ -343,6 +344,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         //Debug.Log("LockFurnitureJob [" + FirstName + "] in [" + i.ParentInstance.DisplayName + "]");
         furnitureLockJobCache = i;
         furnitureLockJobRef = i.RefID;
+        InvalidateActorTags();   // "restrained" actor tag
         scr_System_CampaignManager.current.party.RemoveFromParty(this);
         //ChangeCurrentJob(i);
     }
@@ -351,6 +353,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     {
         furnitureLockJobCache = null ;
         furnitureLockJobRef = -1;
+        InvalidateActorTags();   // "restrained" actor tag
         ChangeCurrentJob(null);
 
     }
@@ -1490,6 +1493,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             if (scr_System_CampaignManager.current != null && scr_System_CampaignManager.current.Player == this) tags.Add("pov");
             // in the carrier's arms (携带) - Carry / ClearCarried reset this cache
             if (FurnitureOccupancyUtility.IsCarriedRef(RefID)) tags.Add("carried");
+            // locked into furniture (拘束) - LockFurnitureJob / UnlockFurnitureJob reset this cache
+            if (isRestrained) tags.Add("restrained");
             if (isVisiblyPregnant) tags.Add("pregnant");
             if (ReproductionUtility.IsDangerDay(this)) tags.Add("dangerDay");
             if (Body != null)

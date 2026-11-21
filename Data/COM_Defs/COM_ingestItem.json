@@ -46,9 +46,13 @@
                         ],
                         "AcceptanceCheck": { "baseAcceptanceValue": 40 },
                         "DifficultyCheck": { "baseD20Check": 0 },
-                        "description_begin": { "Entries":[{"texts":["com_furniture_ingestStomach_begin_1"]}], "keepLooking": false },
-                        "description_ongoing": { "Entries":[{"texts":["com_furniture_ingestStomach_ongoing_1"]}], "keepLooking": false },
-                        "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_furniture_ingestStomach_onComplete_1"]}] }
+                        "description_begin": { "Entries":[
+                            { "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_furniture_ingestStomach_begin_ordered_1", "com_furniture_ingestStomach_begin_ordered_2", "com_furniture_ingestStomach_begin_ordered_3"] },
+                            { "texts":["com_furniture_ingestStomach_begin_1", "com_furniture_ingestStomach_begin_2", "com_furniture_ingestStomach_begin_3"] }
+                        ], "keepLooking": false },
+                        "description_ongoing": { "Entries":[{"texts":["com_furniture_ingestStomach_ongoing_1", "com_furniture_ingestStomach_ongoing_2", "com_furniture_ingestStomach_ongoing_3"]}], "keepLooking": false },
+                        "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_furniture_ingestStomach_onComplete_1", "com_furniture_ingestStomach_onComplete_2", "com_furniture_ingestStomach_onComplete_3"]}] },
+                        "description_remove": { "Entries":[{"texts":["com_furniture_ingestStomach_remove_1", "com_furniture_ingestStomach_remove_2", "com_furniture_ingestStomach_remove_3"]}], "keepLooking": false }
                     }
                 }
             },
@@ -83,9 +87,13 @@
                         ],
                         "AcceptanceCheck": { "baseAcceptanceValue": 40 },
                         "DifficultyCheck": { "baseD20Check": 0 },
-                        "description_begin": { "Entries":[{"texts":["com_furniture_ingestStomach_begin_administer"]}], "keepLooking": false },
-                        "description_ongoing": { "Entries":[{"texts":["com_furniture_ingestStomach_ongoing_administer"]}], "keepLooking": false },
-                        "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_furniture_ingestStomach_onComplete_administer"]}] }
+                        "description_begin": { "Entries":[
+                            { "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_furniture_ingestStomach_begin_administer_ordered_1", "com_furniture_ingestStomach_begin_administer_ordered_2", "com_furniture_ingestStomach_begin_administer_ordered_3"] },
+                            { "texts":["com_furniture_ingestStomach_begin_administer", "com_furniture_ingestStomach_begin_administer_1", "com_furniture_ingestStomach_begin_administer_2"] }
+                        ], "keepLooking": false },
+                        "description_ongoing": { "Entries":[{"texts":["com_furniture_ingestStomach_ongoing_administer", "com_furniture_ingestStomach_ongoing_administer_1", "com_furniture_ingestStomach_ongoing_administer_2"]}], "keepLooking": false },
+                        "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_furniture_ingestStomach_onComplete_administer", "com_furniture_ingestStomach_onComplete_administer_1", "com_furniture_ingestStomach_onComplete_administer_2"]}] },
+                        "description_remove": { "Entries":[{"texts":["com_furniture_ingestStomach_remove_administer_1", "com_furniture_ingestStomach_remove_administer_2", "com_furniture_ingestStomach_remove_administer_3"]}], "keepLooking": false }
                     }
                 }
             }
@@ -97,12 +105,36 @@
                 "com_useItem_displayName": "使用$name$",
                 "com_furniture_ingestStomach_self": "服用",
                 "com_furniture_ingestStomach_onTarget": "喂对方服用",
-                "com_furniture_ingestStomach_begin_1": "$doer.firstname$吞下了$name$",
-                "com_furniture_ingestStomach_ongoing_1": "$doer.firstname$正在服药",
-                "com_furniture_ingestStomach_onComplete_1": "$doer.firstname$服下了药",
-                "com_furniture_ingestStomach_begin_administer": "$doer.firstname$给$receiver.firstname$喂下了$name$",
-                "com_furniture_ingestStomach_ongoing_administer": "$doer.firstname$正在给$receiver.firstname$喂药",
-                "com_furniture_ingestStomach_onComplete_administer": "$doer.firstname$给$receiver.firstname$喂药完毕"
+                "com_furniture_ingestStomach_begin_ordered_1": "$doer.firstname$依言把$name$送到自己嘴边",
+                "com_furniture_ingestStomach_begin_ordered_2": "$doer.firstname$照做把$name$举到唇边",
+                "com_furniture_ingestStomach_begin_ordered_3": "$doer.firstname$应下吩咐把$name$抵住嘴唇",
+                "com_furniture_ingestStomach_remove_1": "$doer.firstname$把$name$从嘴边拿开",
+                "com_furniture_ingestStomach_remove_2": "$doer.firstname$松开了捏着$name$的手",
+                "com_furniture_ingestStomach_remove_3": "$doer.firstname$把$name$放了下来",
+                "com_furniture_ingestStomach_begin_administer_ordered_1": "$doer.firstname$依言把$name$送到$receiver.firstname$唇边",
+                "com_furniture_ingestStomach_begin_administer_ordered_2": "$doer.firstname$照做把$name$喂到$receiver.firstname$嘴边",
+                "com_furniture_ingestStomach_begin_administer_ordered_3": "$doer.firstname$应下吩咐把$name$抵上$receiver.firstname$嘴唇",
+                "com_furniture_ingestStomach_remove_administer_1": "$doer.firstname$把$name$从$receiver.firstname$唇边拿开",
+                "com_furniture_ingestStomach_remove_administer_2": "$doer.firstname$松开拿着$name$的手",
+                "com_furniture_ingestStomach_remove_administer_3": "$doer.firstname$把$name$放了下来",
+                "com_furniture_ingestStomach_begin_1": "$doer.firstname$把$name$送到了自己嘴边",
+                "com_furniture_ingestStomach_ongoing_1": "$doer.firstname$还在把$name$含在嘴里",
+                "com_furniture_ingestStomach_onComplete_1": "$doer.firstname$把$name$咽了下去",
+                "com_furniture_ingestStomach_begin_administer": "$doer.firstname$把$name$送到$receiver.firstname$唇边",
+                "com_furniture_ingestStomach_ongoing_administer": "$doer.firstname$还在把$name$往$receiver.firstname$嘴里送",
+                "com_furniture_ingestStomach_onComplete_administer": "$doer.firstname$把$name$喂完了",
+                "com_furniture_ingestStomach_onComplete_2": "$doer.firstname$把嘴里的$name$吞进肚里",
+                "com_furniture_ingestStomach_onComplete_3": "$doer.firstname$手里的$name$已经用掉了",
+                "com_furniture_ingestStomach_onComplete_administer_1": "$doer.firstname$手里的$name$已经喂空",
+                "com_furniture_ingestStomach_onComplete_administer_2": "$doer.firstname$把$name$喂进了$receiver.firstname$嘴里",
+                "com_furniture_ingestStomach_begin_2": "$doer.firstname$拿起$name$凑近自己唇边",
+                "com_furniture_ingestStomach_begin_3": "$doer.firstname$把$name$抵在自己唇上",
+                "com_furniture_ingestStomach_ongoing_2": "$doer.firstname$嘴里的$name$还没有咽下去",
+                "com_furniture_ingestStomach_ongoing_3": "$doer.firstname$手里还捏着$name$没松手",
+                "com_furniture_ingestStomach_begin_administer_1": "$doer.firstname$把$name$抵在$receiver.firstname$的嘴唇上",
+                "com_furniture_ingestStomach_begin_administer_2": "$doer.firstname$捏着$name$凑到$receiver.firstname$嘴边",
+                "com_furniture_ingestStomach_ongoing_administer_1": "$doer.firstname$的$name$还抵在$receiver.firstname$唇上",
+                "com_furniture_ingestStomach_ongoing_administer_2": "$doer.firstname$一点点把$name$喂进$receiver.firstname$嘴里"
             }
         }
     }

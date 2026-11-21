@@ -32,7 +32,9 @@
                 "skipsJobDispatch": false,
                 "isPurgedOnPartyCleanup": false,
                 "isDisplayableInFactionUI": true,
-                "participatesInCombat": true
+                "participatesInCombat": true,
+                "_comment_tags": "releaseOption: a prisoner can be released into this type (PrisonUtility); isMember types are also offered as 'recruit' (A becomes the permanent home)",
+                "Tags": ["releaseOption"]
             },
             {
                 "_comment": "Kept as a faction member for isMember/ordinal-parity purposes, matching the old Manageable_GuestStatus behavior (Hidden < Visitor). Deliberately reuses the Member social-standing label (a Hidden character was never shown a distinct label before), while displayNameKey stays honestly distinct for debug/tooltip use.",
@@ -65,7 +67,8 @@
                 "skipsJobDispatch": false,
                 "isPurgedOnPartyCleanup": true,
                 "isDisplayableInFactionUI": true,
-                "participatesInCombat": false
+                "participatesInCombat": false,
+                "Tags": ["releaseOption"]
             },
             {
                 "ID": "membertype_prisoner",
@@ -82,6 +85,8 @@
                 "isPurgedOnPartyCleanup": true,
                 "isDisplayableInFactionUI": true,
                 "participatesInCombat": false,
+                "_comment_tags": "imprisonOption / lockOption: offered by the imprison and lock-in-place questions (PrisonUtility, Docs/Prison/Plan_PrisonRework.md §5.5). Further prisoner types: tag them the same way (children of this type inherit its fields).",
+                "Tags": ["imprisonOption", "lockOption"],
                 "_comment_outfit": "Prison garb (wardrobe outfit, copied into the prisoner's wardrobe under <captor faction>|membertype_prisoner). Replaces the inner and outer layers (shoes, accessories and coats come off too), underwear stays, locked items stay. Worn wherever the prisoner is (limitToLocaleFaction false: a party has no rooms) and kept on to sleep. Changed at com_furniture_changeOutfit - the prison cells offer it (FurnitureDefs_nsfw.json), the behavior_changeOutfit override below lets prisoners search prison rooms.",
                 "outfit": {
                     "pieces": [

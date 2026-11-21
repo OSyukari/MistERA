@@ -47,7 +47,7 @@ public static partial class RecreationUtility
             if (provided == null) continue;
             foreach (var a in provided)
             {
-                if (a == null || string.IsNullOrEmpty(a.ID)) continue;
+                if (a == null || string.IsNullOrEmpty(a.ID) || !CanProvide(member, a)) continue;
                 if (spec == null) spec = new RecreationSpec();
                 if (spec.GetActivity(a.ID) == null) spec.activities.Add(a);
             }
@@ -58,10 +58,18 @@ public static partial class RecreationUtility
     /// <summary>c's MemberType at one of their factions provides activity (MemberType.providedActivities - by reference).</summary>
     public static bool ProvidesActivity(Character_Trainable c, RecreationActivity activity)
     {
-        if (c?.FactionManager == null || activity == null) return false;
+        if (c?.FactionManager == null || activity == null || !CanProvide(c, activity)) return false;
         foreach (var faction in c.FactionManager.Factions)
             if (faction?.GetMemberType(c)?.providedActivities?.Contains(activity) == true) return true;
         return false;
+    }
+
+    /// <summary>c, holding a MemberType that lists activity, passes its providerConditions (null = every holder - e.g. only a dog provides the pet walk).</summary>
+    public static bool CanProvide(Character_Trainable c, RecreationActivity activity)
+    {
+        if (c == null || activity == null) return false;
+        if (activity.providerConditions == null) return true;
+        return EventUtility.isCharaValid(activity.providerConditions, ConditionContext(c), c);
     }
 
     /// <summary>The cooldown / pending-reservation key of activity found at faction: its cooldownTag, else faction ID + ":" + activity ID.</summary>

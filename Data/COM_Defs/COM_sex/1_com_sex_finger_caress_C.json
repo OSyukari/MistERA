@@ -14,7 +14,7 @@
                 "displayName":"com_sex_finger_caress_C_displayName_3",
                 "timeScale":3,
                 "comTags":["sex","service"],
-                "portraitTags_Receiver":["spread_pussy"],
+                "portraitTags_Receiver":["portrait_lower","spread_pussy"],
                 "requirements":{
                     "requirement":{
                         "req_Doers":{
@@ -56,7 +56,7 @@
                             "Entries":[
                                 {
                                     "keepLooking":true,
-                                    "texts": ["com_sex_finger_caress_C_solo_description_begin_1"]
+                                    "texts": ["com_sex_finger_caress_C_solo_description_begin_1", "com_sex_finger_caress_C_solo_description_begin_2", "com_sex_finger_caress_C_solo_description_begin_3"]
                                 }
                             ]
                         },
@@ -64,7 +64,7 @@
                             "Entries":[
                                 {
                                     "keepLooking":true,
-                                    "texts": ["com_sex_finger_caress_C_solo_description_ongoing_1"]
+                                    "texts": ["com_sex_finger_caress_C_solo_description_ongoing_1", "com_sex_finger_caress_C_solo_description_ongoing_2", "com_sex_finger_caress_C_solo_description_ongoing_3"]
                                 }
                             ]
                         },
@@ -73,7 +73,7 @@
                                 {
                                     "keepLooking":true,
                                     "conditions":[ { "validateChara":{"target":"doer", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
-                                    "texts":[ "com_sex_finger_caress_C_solo_description_after_1" ]
+                                    "texts":[ "com_sex_finger_caress_C_solo_description_after_1", "com_sex_finger_caress_C_solo_description_after_2", "com_sex_finger_caress_C_solo_description_after_3" ]
                                 }
                             ]
                         }
@@ -87,7 +87,7 @@
                             "Entries":[
                                 {
                                     "keepLooking":true,
-                                    "texts": ["com_sex_finger_caress_C_solo_group_description_begin_1"]
+                                    "texts": ["com_sex_finger_caress_C_solo_group_description_begin_1", "com_sex_finger_caress_C_solo_group_description_begin_2", "com_sex_finger_caress_C_solo_group_description_begin_3"]
                                 }
                             ]
                         },
@@ -95,7 +95,7 @@
                             "Entries":[
                                 {
                                     "keepLooking":true,
-                                    "texts": ["com_sex_finger_caress_C_solo_group_description_ongoing_1"]
+                                    "texts": ["com_sex_finger_caress_C_solo_group_description_ongoing_1", "com_sex_finger_caress_C_solo_group_description_ongoing_2", "com_sex_finger_caress_C_solo_group_description_ongoing_3"]
                                 }
                             ]
                         },
@@ -104,7 +104,7 @@
                                 {
                                     "keepLooking":true,
                                     "conditions":[ { "validateChara":{"target":"doer", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
-                                    "texts":[ "com_sex_finger_caress_C_solo_group_description_after_1" ]
+                                    "texts":[ "com_sex_finger_caress_C_solo_group_description_after_1", "com_sex_finger_caress_C_solo_group_description_after_2", "com_sex_finger_caress_C_solo_group_description_after_3" ]
                                 }
                             ]
                         }
@@ -139,7 +139,7 @@
                     [
                         {
                             "keepLooking":true,
-                            "texts": [ "com_sex_finger_caress_C_description_ongoing_1" ]
+                            "texts": [ "com_sex_finger_caress_C_description_ongoing_1", "com_sex_finger_caress_C_description_ongoing_2", "com_sex_finger_caress_C_description_ongoing_3" ]
                         }
                     ]
                 },
@@ -148,7 +148,7 @@
                         {
                             "_comment":"",
                             "keepLooking":true,
-                            "texts":[ "com_sex_finger_caress_C_description_remove_1" ]
+                            "texts":[ "com_sex_finger_caress_C_description_remove_1", "com_sex_finger_caress_C_description_remove_2", "com_sex_finger_caress_C_description_remove_3" ]
                         }
                     ]
                 },
@@ -158,7 +158,7 @@
                         {
                             "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
-                            "texts":[ "com_sex_finger_caress_C_description_after_1" ]
+                            "texts":[ "com_sex_finger_caress_C_description_after_1", "com_sex_finger_caress_C_description_after_2", "com_sex_finger_caress_C_description_after_3" ]
                         }
                     ]
                 },
@@ -168,7 +168,7 @@
                         {
                             "_comment":"if receiver is lewd or is estrus. blocks timestop or unconscious",
                             "keepLooking":true,
-                            "texts": ["com_sex_finger_caress_C_description_begin_1"]
+                            "texts": ["com_sex_finger_caress_C_description_begin_1", "com_sex_finger_caress_C_description_begin_2", "com_sex_finger_caress_C_description_begin_3"]
                         }
                     ]
                     
@@ -191,17 +191,37 @@
                 "com_sex_finger_caress_C_displayName_5": "轮流愛撫阴蒂",
                 "com_sex_finger_caress_C_displayName_6": "同时愛撫阴蒂",
 
-                "com_sex_finger_caress_C_description_begin_1":"$doer.firstname$的手指捏拿住了$receiver.firstname$的阴蒂，开始有规律地揉搓着",
-                "com_sex_finger_caress_C_description_after_1":"$receiver.firstname$的阴蒂由于高潮凸起来",
-                "com_sex_finger_caress_C_description_remove_1":"$doer.firstname$的手从$receiver.firstname$的阴蒂上抽离开来",
-                "com_sex_finger_caress_C_description_ongoing_1":"$doer.firstname$正在愛撫$receiver.firstname$的阴蒂",
+                "com_sex_finger_caress_C_description_begin_1":"$doer.firstname$把手指按上$receiver.firstname$的阴蒂揉搓起来",
+                "com_sex_finger_caress_C_description_after_1":"$receiver.firstname$的阴蒂在高潮里凸了起来",
+                "com_sex_finger_caress_C_description_remove_1":"$doer.firstname$的手指从$receiver.firstname$的阴蒂上移开了",
+                "com_sex_finger_caress_C_description_ongoing_1":"$doer.firstname$还在揉弄$receiver.firstname$的阴蒂",
 
-                "com_sex_finger_caress_C_solo_description_begin_1": "$doer.firstname$的手指伸向了自己的阴蒂，开始有规律地揉搓着",
-                "com_sex_finger_caress_C_solo_description_ongoing_1": "$doer.firstname$正在愛撫自己的阴蒂",
-                "com_sex_finger_caress_C_solo_description_after_1": "$doer.firstname$的阴蒂由于高潮凸起来",
-                "com_sex_finger_caress_C_solo_group_description_begin_1": "$doer.firstname$的手指各自伸向了自己的阴蒂，开始有规律地揉搓着",
-                "com_sex_finger_caress_C_solo_group_description_ongoing_1": "$doer.firstname$正各自愛撫着自己的阴蒂",
-                "com_sex_finger_caress_C_solo_group_description_after_1": "$doer.firstname$的阴蒂由于高潮凸起来"
+                "com_sex_finger_caress_C_solo_description_begin_1": "$doer.firstname$把手指按上自己的阴蒂揉搓起来",
+                "com_sex_finger_caress_C_solo_description_ongoing_1": "$doer.firstname$还在揉弄自己的阴蒂",
+                "com_sex_finger_caress_C_solo_description_after_1": "$doer.firstname$的阴蒂在高潮里凸了起来",
+                "com_sex_finger_caress_C_solo_group_description_begin_1": "$doer.firstname$用指尖按上自己的阴蒂揉弄",
+                "com_sex_finger_caress_C_solo_group_description_ongoing_1": "$doer.firstname$的指尖一直没离开自己的阴蒂",
+                "com_sex_finger_caress_C_solo_group_description_after_1": "$doer.firstname$的阴蒂在高潮中挺了出来",
+                "com_sex_finger_caress_C_solo_group_description_after_2": "$doer.firstname$的阴蒂因高潮而发硬",
+                "com_sex_finger_caress_C_solo_group_description_after_3": "$doer.firstname$的阴蒂在高潮里抖个不停",
+                "com_sex_finger_caress_C_solo_group_description_begin_2": "$doer.firstname$的指腹压在自己的阴蒂上揉搓着",
+                "com_sex_finger_caress_C_solo_group_description_begin_3": "$doer.firstname$把指尖抵在自己的阴蒂上揉起来",
+                "com_sex_finger_caress_C_description_after_2": "$receiver.firstname$的阴蒂随着高潮挺起",
+                "com_sex_finger_caress_C_description_after_3": "$receiver.firstname$的阴蒂一阵阵地发颤",
+                "com_sex_finger_caress_C_solo_description_after_2": "$doer.firstname$的阴蒂随着高潮挺起",
+                "com_sex_finger_caress_C_solo_description_after_3": "$doer.firstname$的阴蒂一阵阵地发颤",
+                "com_sex_finger_caress_C_solo_description_ongoing_2": "$doer.firstname$的手指一直按在自己阴蒂上",
+                "com_sex_finger_caress_C_solo_description_ongoing_3": "$doer.firstname$的指尖还在自己阴蒂上打着转",
+                "com_sex_finger_caress_C_description_ongoing_2": "$doer.firstname$的手指一直按在$receiver.firstname$的阴蒂上",
+                "com_sex_finger_caress_C_description_ongoing_3": "$doer.firstname$继续揉着$receiver.firstname$的阴蒂",
+                "com_sex_finger_caress_C_solo_group_description_ongoing_2": "$doer.firstname$还在用指尖揉着自己的阴蒂",
+                "com_sex_finger_caress_C_solo_group_description_ongoing_3": "$doer.firstname$的指腹压在自己阴蒂上没有挪开",
+                "com_sex_finger_caress_C_solo_description_begin_2": "$doer.firstname$的两根手指有节奏地揉着自己的阴蒂",
+                "com_sex_finger_caress_C_solo_description_begin_3": "$doer.firstname$捏住自己的阴蒂揉弄起来",
+                "com_sex_finger_caress_C_description_begin_2": "$doer.firstname$的两根手指揉起$receiver.firstname$的阴蒂",
+                "com_sex_finger_caress_C_description_begin_3": "$doer.firstname$捏住$receiver.firstname$的阴蒂揉弄起来",
+                "com_sex_finger_caress_C_description_remove_2": "$doer.firstname$把手从$receiver.firstname$的阴蒂上收了回来",
+                "com_sex_finger_caress_C_description_remove_3": "$doer.firstname$松开了$receiver.firstname$的阴蒂"
 
             },
             "en-us":

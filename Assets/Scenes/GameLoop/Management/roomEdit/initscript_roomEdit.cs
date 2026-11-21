@@ -442,6 +442,9 @@ public class initscript_roomEdit : MonoBehaviour
             button.Toggle(true, isOwner);
             tooltip = "";
             if (isOwner) return true;
+            // prisoners hold cells, never rooms (Docs/Prison/Plan_PrisonRework.md §3)
+            if (script.CurrentFaction.GetMemberType(chara)?.isPrisoner == true)
+            { tooltip = LocalizeDictionary.QueryThenParse("ui_room_owner_prisoner"); return false; }
             if (room.Base?.requireHomeMembership == true && !chara.FactionManager.HomeFactions.Contains(script.CurrentFaction))
             { tooltip = residentOnlyTooltip; return false; }
             if (!room.CanAssignBedOwnership) { tooltip = "select a room with an assignable bed first"; return false; }

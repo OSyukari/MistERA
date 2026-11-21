@@ -212,7 +212,8 @@
                                         "furniture_prison_containment_spot_2",
                                         "furniture_prison_containment_spot_2",
                                         "furniture_prison_containment_spot_2",
-                                        "furniture_prison_containment_spot"],
+                                        "furniture_prison_containment_spot",
+                                        "furniture_marker_prison"],
                         "roomImagePath":"Media_UI_Scenario_Background/BG_Prison.jpg"
                     },
                     {
@@ -225,7 +226,8 @@
                         "furnitureIDs":["furniture_toilet_shower_set",
                                         "furniture_prison_containment_spot",
                                         "furniture_prison_containment_spot_2",
-                                        "furniture_prison_containment_spot_4"],
+                                        "furniture_prison_containment_spot_4",
+                                        "furniture_marker_prison"],
                         "roomImagePath":"Media_UI_Scenario_Background/BG_Prison.jpg"
                     },
                     {

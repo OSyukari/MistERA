@@ -451,10 +451,12 @@ public class Room_Instance: IDisposable, I_Disposable
             var beds = work.Beds;
             if (!CollectOwnershipCandidates(work))
             {
+                (FactionOwner as Manageable)?.SyncCellBeds(this);
                 _furnitureOwnershipChecked = true;
                 return;
             }
 
+            (FactionOwner as Manageable)?.SyncCellBeds(this);
             MatchFurnitureOwners(work, work.Ideal, false);
             MatchFurnitureOwners(work, work.Actual, true);
             bool occupied = false, blocked = false;
@@ -482,14 +484,77 @@ public class Room_Instance: IDisposable, I_Disposable
         }
     }
 
+    /// <summary>
+    /// Puts actorRefs (room owners here) on one ownership bed together - NPCInit.actors at setup. The bed one of them
+    /// already owns if it takes them all, else the one with the fewest other owners; capacity and bed type
+    /// (BedPreferenceUtility.Allows) must fit everyone, an occupied bed is never used. The others' old beds drop them, then
+    /// the normal matching runs and keeps the shared bed (it keeps existing assignments first). False = no bed fits.
+    /// </summary>
+    public bool AssignSharedBed(List<int> actorRefs)
+    {
+        if (actorRefs == null || actorRefs.Count == 0 || _furnitureOwnershipAssigning) return false;
+        var faction = FactionOwner as Manageable;
+        if (faction == null || roomJobFurnitures == null) return false;
+        var owners = faction.RoomOwners(RefID);
+        for (int i = 0; i < actorRefs.Count; i++) if (owners == null || !owners.Contains(actorRefs[i])) return false;
+
+        Job_Furniture best = null;
+        int bestOthers = int.MaxValue;
+        bool bestHeld = false;
+        for (int b = 0; b < roomJobFurnitures.Count; b++)
+        {
+            if (!(roomJobFurnitures[b].JobGiver is Job_Furniture bed) || !bed.AssignsOwnership || bed.OccupantRefs.Count > 0
+                || faction.IsCellBed(RefID, bed.RefID)) continue;
+            int others = 0;
+            bool held = false;
+            var current = bed.OwnerRefs;
+            for (int i = 0; i < current.Count; i++)
+            {
+                if (actorRefs.Contains(current[i])) held = true;
+                else others++;
+            }
+            if (others + actorRefs.Count > bed.Capacity) continue;
+            bool fits = true;
+            for (int i = 0; i < actorRefs.Count && fits; i++)
+            {
+                var actor = scr_System_CampaignManager.current.FindInstanceByID(actorRefs[i]);
+                fits = BedPreferenceUtility.Allows(BedPreferenceUtility.GetPriority(BedPreferenceUtility.GetEffectiveType(actor, faction)), bed);
+            }
+            if (!fits) continue;
+            // a bed one of them already holds wins, then the fewest other owners
+            if (best == null || (held && !bestHeld) || (held == bestHeld && others < bestOthers))
+            { best = bed; bestOthers = others; bestHeld = held; }
+        }
+        if (best == null)
+        {
+            Debug.LogWarning($"AssignSharedBed: no ownership bed in room [{RefID}] fits {actorRefs.Count} actors together");
+            return false;
+        }
+
+        for (int b = 0; b < roomJobFurnitures.Count; b++)
+        {
+            if (!(roomJobFurnitures[b].JobGiver is Job_Furniture bed) || !bed.AssignsOwnership || faction.IsCellBed(RefID, bed.RefID)) continue;
+            var current = bed.OwnerRefs;
+            var next = new List<int>(current.Count + actorRefs.Count);
+            for (int i = 0; i < current.Count; i++) if (!actorRefs.Contains(current[i])) next.Add(current[i]);
+            if (bed == best) next.AddRange(actorRefs);
+            if (next.Count != current.Count || bed == best) bed.Ownership_Set(next);
+        }
+        ReassignFurnitureOwnership();
+        return true;
+    }
+
     /// <summary>Fills work with this room's ownership beds and its faction's room owners. False when the room has no such bed.</summary>
     bool CollectOwnershipCandidates(OwnershipWorkspace work)
     {
         var beds = work.Beds;
+        var cellFaction = FactionOwner as Manageable;
         if (roomJobFurnitures != null)
         {
+            // a cell (prison bed holding a prisoner) is no bed for the room's owners (Docs/Prison/Plan_PrisonRework.md §3)
             for (int i = 0; i < roomJobFurnitures.Count; i++)
-                if (roomJobFurnitures[i].JobGiver is Job_Furniture jf && jf.AssignsOwnership) beds.Add(jf);
+                if (roomJobFurnitures[i].JobGiver is Job_Furniture jf && jf.AssignsOwnership
+                    && (cellFaction == null || !cellFaction.IsCellBed(RefID, jf.RefID))) beds.Add(jf);
         }
         if (beds.Count == 0) return false;
         while (work.Ideal.Count < beds.Count)
@@ -513,11 +578,12 @@ public class Room_Instance: IDisposable, I_Disposable
     }
 
     /// <summary>
-    /// Furniture removal only: a room owner no remaining bed can take (capacity / bed type) loses the room. Matched
+    /// Furniture removal, or a bed becoming a cell (Manageable.AssignCell): a room owner no remaining bed can take
+    /// (capacity / bed type) loses the room. Matched
     /// ignoring occupancy, so an owner only kept out by a sleeper stays. A room left without any ownership bed is
     /// RemoveFurniture's ClearRoomOwnership case, not this one.
     /// </summary>
-    void ReleaseOwnersWithoutBed()
+    internal void ReleaseOwnersWithoutBed()
     {
         var faction = FactionOwner as Manageable;
         if (faction == null || _furnitureOwnershipAssigning) return;
@@ -592,7 +658,7 @@ public class Room_Instance: IDisposable, I_Disposable
             if (_bedOwnershipEligibilityCached) return _canAssignBedOwnership;
             _bedOwnershipEligibilityCached = true;
             _canAssignBedOwnership = false;
-            if (isRoomPrison) return false;
+            // jail rooms too: a prison bed nobody is held in is a normal bed (Docs/Prison/Plan_PrisonRework.md)
             for (int i = 0; i < FurnitureCount; i++)
             {
                 var furniture = GetFurniture(i);
@@ -1078,18 +1144,34 @@ public class Room_Instance: IDisposable, I_Disposable
         }
     }
 
+    /// <summary> furniture tag marking its room as a jail room (furniture_marker_prison) </summary>
+    public const string FurnitureTag_PrisonRoom = "room_prison";
+    /// <summary> furniture tag of prison furniture (cages): a prison bed wherever it stands </summary>
+    public const string FurnitureTag_Prison = "prison";
+    public const string FurnitureID_PrisonMarker = "furniture_marker_prison";
+
     bool _isRoomPrison = false;
     bool _isRoomPrison_cached = false;
+    /// <summary> jail room: holds a furniture tagged room_prison (the marker). Prison furniture alone does not make one
+    /// (Docs/Prison/Plan_PrisonRework.md). </summary>
     [JsonIgnore] public bool isRoomPrison { get {
             if (!_isRoomPrison_cached)
             {
                 _isRoomPrison_cached = true;
                 _isRoomPrison = false;
                 for (int i = 0; i < FurnitureCount; i++)
-                    if (GetFurniture(i)?.FurnitureBase?.ID.Contains("furniture_prison") == true) { _isRoomPrison = true; break; }
+                    if (GetFurniture(i)?.FurnitureBase?.Tags?.Contains(FurnitureTag_PrisonRoom) == true) { _isRoomPrison = true; break; }
             }
             return _isRoomPrison;
         }
+    }
+
+    /// <summary> holds prison furniture (tag prison) - old saves' jail rooms before the marker (migration) </summary>
+    internal bool HasPrisonFurniture()
+    {
+        for (int i = 0; i < FurnitureCount; i++)
+            if (GetFurniture(i)?.FurnitureBase?.Tags?.Contains(FurnitureTag_Prison) == true) return true;
+        return false;
     }
 
 

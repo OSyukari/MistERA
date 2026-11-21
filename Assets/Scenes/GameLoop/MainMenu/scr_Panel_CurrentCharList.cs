@@ -208,7 +208,9 @@ public class scr_Panel_CurrentCharList : scr_Menu
 
         public override bool IsButtonValid()
         {
-            if (scr_System_CampaignManager.current.party.HasMember(refID)) text.SetText(firstName+"*");
+            if (scr_System_CampaignManager.current.PeekRef == refID)
+                text.SetText(LocalizeDictionary.QueryThenParse("ui_charList_peeking").Replace("$name$", firstName));
+            else if (scr_System_CampaignManager.current.party.HasMember(refID)) text.SetText(firstName+"*");
             else text.SetText(firstName);
             if (scr_System_CampaignManager.current.CurrentTargetRef == refID)
             {
@@ -217,15 +219,16 @@ public class scr_Panel_CurrentCharList : scr_Menu
             }
             else text.Toggle(true, false);
 
-            // in the room, but behind a room divider's door (stall): listed, not selectable
-            if (!scr_System_CampaignManager.current.isCharaVisibleToPlayer(refID))
+            // in the room, but on the other side of a room divider (stall, prison cell): not selectable as target - a click
+            // only peeks at their activity portrait (OnClickButton)
+            if (!scr_System_CampaignManager.current.isCharaInteractableByPlayer(refID))
             {
                 var campaign = scr_System_CampaignManager.current;
                 var c = campaign.FindInstanceByID(refID);
                 var where = FurnitureOccupancyUtility.ScopeName(c);
                 if (where.Length < 1) where = FurnitureOccupancyUtility.ScopeName(campaign.Player);
                 tooltip = LocalizeDictionary.QueryThenParse("ui_charList_obscured").Replace("$name$", firstName).Replace("$furniture$", where);
-                return false;
+                return true;
             }
             tooltip = "";
 
@@ -242,6 +245,17 @@ public class scr_Panel_CurrentCharList : scr_Menu
         {
             if (this.refID > 0)
             {
+                var campaign = scr_System_CampaignManager.current;
+                // out of reach: peek at their activity portrait - the current target is unset (again = peek ends)
+                if (!campaign.isCharaInteractableByPlayer(refID))
+                {
+                    bool wasPeeking = campaign.PeekRef == refID;
+                    // the view change ends any peek and redraws the target
+                    campaign.ChangeCurrentViewMode(ViewMode.View_Room);
+                    if (wasPeeking) campaign.ClearPeek();
+                    else campaign.PeekCharacter(refID);
+                    return;
+                }
 
                 if (scr_System_CampaignManager.current.CurrentTargetRef != refID)
                 {

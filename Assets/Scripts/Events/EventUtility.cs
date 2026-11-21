@@ -13,6 +13,40 @@ public static class EventUtility
     /// <param name="p"></param>
     /// <param name="startImmediate"></param>
     /// <returns></returns>
+    /// <summary>
+    /// A saved event package outside expeditions (e.g. ActionPackage.onResolve): self = self, the package's targets,
+    /// strings and scope/generation overrides, then loaded - like the expedition overload, without its expedition parts
+    /// (keywords, log memories, silent runs). Not registered: the caller starts it. Null when the package is empty.
+    /// </summary>
+    public static EventInstance StartEvent(Character_Trainable self, SerializableEventPackage p)
+    {
+        if (p == null || !p.isValid) return null;
+        var inst = new EventInstance(self, p.eventID, p.eventLabel, 300, false);
+        foreach (var k in p.Targets)
+        {
+            var crs = new List<Character_Trainable>();
+            foreach (var refid in k.Value)
+            {
+                var c = scr_System_CampaignManager.current.FindInstanceByID(refid);
+                if (c != null) crs.Add(c);
+            }
+            inst.Targets[k.Key] = crs;
+        }
+        foreach (var k in p.AppendStrings) inst.AppendStrings[k.Key] = new List<string>(k.Value);
+        if (p.overrideTargetScope)
+        {
+            inst.overrideTargetScope = true;
+            inst.OverrideTargetScope = p.targetScopes;
+        }
+        if (p.overrideTargetGen)
+        {
+            inst.overrideTargetGen = true;
+            inst.OverrideTargetGen = p.targetGens;
+        }
+        inst.LoadNext(p.eventID, p.eventLabel);
+        return inst;
+    }
+
     public static EventInstance StartEvent(Job_Expedition j, SerializableEventPackage p, ExpeditionSilentRunner.Sink silentSink = null,
         Action<I_Records> experienceObserver = null, Func<bool, ExpeditionMessageEntry> logEntry = null)
     {
@@ -848,11 +882,12 @@ public static class EventUtility
             case "providesActivity":
             {
                 // providesActivity [activityID] [optional true|false, default true] -- c's MemberType at one of their factions
-                // provides that activity to others (MemberType.providedActivities)
+                // provides that activity to others (MemberType.providedActivities) and passes its providerConditions
                 if (r.parameters.Count < 2) return false;
                 bool expected = r.parameters.Count < 3 || !bool.TryParse(r.parameters[2], out var exp) || exp;
                 bool provides = c.FactionManager != null && c.FactionManager.Factions.Exists(fa => fa != null
-                    && fa.GetMemberType(c)?.providedActivities?.Exists(a => a != null && a.ID == r.parameters[1]) == true);
+                    && fa.GetMemberType(c)?.providedActivities?.Exists(a => a != null && a.ID == r.parameters[1]
+                        && RecreationUtility.CanProvide(c, a)) == true);
                 return provides == expected;
             }
             case "isPrisonerAtHome":
@@ -3578,6 +3613,18 @@ public static class EventUtility
             case Event.EventEntry.ExecutionType.LeaveRoom:
                 if (owner.Self == null) return false;
 
+                // asked by someone sharing the same vision-blocking divider (RequestLeaveUtility PrivateAction): leaves the
+                // divider, not the room
+                if (owner.Self.IsInBlockingDivider && owner.Targets.TryGetValue("requestFrom", out var dividerRequesters))
+                {
+                    int selfScope = owner.Self.ScopeRef;
+                    foreach (var requester in dividerRequesters)
+                    {
+                        if (requester == null || requester.ScopeRef != selfScope) continue;
+                        return FurnitureOccupancyUtility.Leave(owner.Self, OccupancyReason.LeaveCommand);
+                    }
+                }
+
                 var currentRoom = scr_System_CampaignManager.current.Map.FindRoomByChara(owner.Self.RefID);
                 if (currentRoom == null) return false;
                 if (currentRoom.FactionOwner.MainExit == null) return false;
@@ -4592,6 +4639,8 @@ public static class EventUtility
             }
             case Event.EventEntry.ExecutionType.AddToPartyHidden:
                 return EventExecutors_Expedition.AddToPartyHidden(owner, exec.arguments);
+            case Event.EventEntry.ExecutionType.PrisonResolve:
+                return PrisonCommand.Resolve(owner, exec.arguments);
             case Event.EventEntry.ExecutionType.ModReputation:
                 return ReputationUtility.ExecuteMod(owner, exec.arguments);
             case Event.EventEntry.ExecutionType.ModExpeditionProgress:

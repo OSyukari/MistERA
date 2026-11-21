@@ -18,6 +18,9 @@ public class LLM_Setting
     /// </summary>
     public bool useAgentMode = true;
 
+    /// <summary> COM panel LLM toggle (scr_panel_COMmanager.Button_ToggleLLM): shows the LLM input area. Persisted with the rest of LLM_Setting. </summary>
+    public bool showCOMPanelInput = true;
+
     /// <summary>
     /// Agent mode only: who decides action outcomes - see LLMOutcomeRules. Snapshotted onto
     /// LLMAgentSession.outcomeMode at session start, so flipping it mid-run never changes the rules of

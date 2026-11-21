@@ -37,6 +37,18 @@
                                 "allowDC":true
                             } ,
                             {
+                                "skillUseTags":"touch",
+                                "requireSelfTags":["human","male"],
+                                "requireCOMTags":["human","female"],
+                                "allowDC":true
+                            } ,
+                            {
+                                "skillUseTags":"touch",
+                                "requireSelfTags":["human","female"],
+                                "requireCOMTags":["human","male"],
+                                "allowDC":true
+                            } ,
+                            {
                                 "skillUseTags":"sex",
                                 "requireSelfTags":["human","male"],
                                 "requireCOMTags":["human","female"],
@@ -53,8 +65,8 @@
                         "requirements":{ 
                             "$type":"CharaSkill+RequireOne, Assembly-CSharp",
                             "entries":[
-                                { "requireGender":"female", "requireExperiences": [{ "experienceID":"experience_sex_female", "operand":"gte", "value":100 }] },
-                                { "requireGender":"male", "requireExperiences": [{ "experienceID":"experience_sex_male", "operand":"gte", "value":100 }] }
+                                { "requireGender":"female", "requireExperiences": [{ "experienceID":"experience_sex_male", "operand":"gte", "value":100 }] },
+                                { "requireGender":"male", "requireExperiences": [{ "experienceID":"experience_sex_female", "operand":"gte", "value":100 }] }
                             ]
                          },
                          "stat_modifiers":
@@ -66,8 +78,8 @@
                         "requirements":{ 
                             "$type":"CharaSkill+RequireOne, Assembly-CSharp",
                             "entries":[
-                                { "requireGender":"female", "requireExperiences": [{ "experienceID":"experience_sex_female", "operand":"gte", "value":230 }] },
-                                { "requireGender":"male", "requireExperiences": [{ "experienceID":"experience_sex_male", "operand":"gte", "value":230 }] }
+                                { "requireGender":"female", "requireExperiences": [{ "experienceID":"experience_sex_male", "operand":"gte", "value":230 }] },
+                                { "requireGender":"male", "requireExperiences": [{ "experienceID":"experience_sex_female", "operand":"gte", "value":230 }] }
                             ]
                          },
                          "stat_modifiers":
@@ -79,8 +91,8 @@
                         "requirements":{ 
                             "$type":"CharaSkill+RequireOne, Assembly-CSharp",
                             "entries":[
-                                { "requireGender":"female", "requireExperiences": [{ "experienceID":"experience_sex_female", "operand":"gte", "value":430 }] },
-                                { "requireGender":"male", "requireExperiences": [{ "experienceID":"experience_sex_male", "operand":"gte", "value":430 }] }
+                                { "requireGender":"female", "requireExperiences": [{ "experienceID":"experience_sex_male", "operand":"gte", "value":430 }] },
+                                { "requireGender":"male", "requireExperiences": [{ "experienceID":"experience_sex_female", "operand":"gte", "value":430 }] }
                             ]
                          },
                          "stat_modifiers":
@@ -92,8 +104,8 @@
                         "requirements":{ 
                             "$type":"CharaSkill+RequireOne, Assembly-CSharp",
                             "entries":[
-                                { "requireGender":"female", "requireExperiences": [{ "experienceID":"experience_sex_female", "operand":"gte", "value":830 }] },
-                                { "requireGender":"male", "requireExperiences": [{ "experienceID":"experience_sex_male", "operand":"gte", "value":830 }] }
+                                { "requireGender":"female", "requireExperiences": [{ "experienceID":"experience_sex_male", "operand":"gte", "value":830 }] },
+                                { "requireGender":"male", "requireExperiences": [{ "experienceID":"experience_sex_female", "operand":"gte", "value":830 }] }
                             ]
                          },
                          "stat_modifiers":

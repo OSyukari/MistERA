@@ -43,14 +43,20 @@
             {
                 "Entries":[
                     {
+                        "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}],
+                        "texts": ["com_interaction_partyInvite_begin_ordered_1", "com_interaction_partyInvite_begin_ordered_2", "com_interaction_partyInvite_begin_ordered_3"]
+                    },
+                    {
                         "keepLooking":true,
-                        "texts": ["com_interaction_partyInvite_begin_1"]
+                        "texts": ["com_interaction_partyInvite_begin_1", "com_interaction_partyInvite_begin_2", "com_interaction_partyInvite_begin_3"]
                     }
                 ]
 
             },
             "description_end":{ "Entries":[{"texts":["com_interaction_partyInvite_end_1"]}], "keepLooking":false },
-            "description_ongoing":{ "Entries":[{"texts":["com_interaction_partyInvite_ongoing_1"]}], "keepLooking":false }
+            "description_ongoing":{ "Entries":[{"texts":["com_interaction_partyInvite_ongoing_1"]}], "keepLooking":false },
+            "description_remove":{ "Entries":[{"texts":["com_interaction_partyInvite_remove_1", "com_interaction_partyInvite_remove_2", "com_interaction_partyInvite_remove_3"]}], "keepLooking":false },
+            "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_interaction_partyInvite_onComplete_1", "com_interaction_partyInvite_onComplete_2", "com_interaction_partyInvite_onComplete_3"]}] }
         },
         {
             "ID":"com_interaction_partyDisband",
@@ -93,10 +99,16 @@
                 "Entries":[
                     {
                         "keepLooking":true,
-                        "texts":[ "comManager_com_follow_stop_begin_1" ]
+                        "texts":[ "comManager_com_follow_stop_begin_1", "comManager_com_follow_stop_begin_2", "comManager_com_follow_stop_begin_3" ]
                     }
                 ]
-            }
+            },
+            "description_begin":{ "Entries":[
+                { "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_interaction_partyDisband_begin_ordered_1", "com_interaction_partyDisband_begin_ordered_2", "com_interaction_partyDisband_begin_ordered_3"] },
+                { "texts":["com_interaction_partyDisband_begin_1", "com_interaction_partyDisband_begin_2", "com_interaction_partyDisband_begin_3"] }
+            ], "keepLooking":false },
+            "description_remove":{ "Entries":[{"texts":["com_interaction_partyDisband_remove_1", "com_interaction_partyDisband_remove_2", "com_interaction_partyDisband_remove_3"]}], "keepLooking":false },
+            "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_interaction_partyDisband_onComplete_1", "com_interaction_partyDisband_onComplete_2", "com_interaction_partyDisband_onComplete_3"]}] }
         },
         {
             "ID":"com_interaction_carry",
@@ -127,7 +139,7 @@
                     "requirements":{ "requirement":{ "req_Receivers":{ "requireTimestopped":true } } },
                     "displayName":"comManager_com_carry_timestop",
                     "useBaseDescription": false,
-                    "description_begin":{ "Entries":[{"texts":["com_interaction_carry_timestop_begin_1"]}], "keepLooking":false },
+                    "description_begin":{ "Entries":[{"texts":["com_interaction_carry_timestop_begin_1", "com_interaction_carry_timestop_begin_2", "com_interaction_carry_timestop_begin_3"]}], "keepLooking":false },
                     "description_ongoing":{ "Entries":[{"texts":["com_interaction_carry_timestop_ongoing_1"]}], "keepLooking":false }
                 },
                 {
@@ -135,8 +147,13 @@
                     "displayName":"comManager_com_carry"
                 }
             ],
-            "description_begin":{ "Entries":[{"texts":["com_interaction_carry_begin_1"]}], "keepLooking":false },
-            "description_ongoing":{ "Entries":[{"texts":["com_interaction_carry_ongoing_1"]}], "keepLooking":false }
+            "description_begin":{ "Entries":[
+                { "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_interaction_carry_begin_ordered_1", "com_interaction_carry_begin_ordered_2", "com_interaction_carry_begin_ordered_3"] },
+                { "texts":["com_interaction_carry_begin_1", "com_interaction_carry_begin_2", "com_interaction_carry_begin_3"] }
+            ], "keepLooking":false },
+            "description_ongoing":{ "Entries":[{"texts":["com_interaction_carry_ongoing_1"]}], "keepLooking":false },
+            "description_remove":{ "Entries":[{"texts":["com_interaction_carry_remove_1", "com_interaction_carry_remove_2", "com_interaction_carry_remove_3"]}], "keepLooking":false },
+            "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_interaction_carry_onComplete_1", "com_interaction_carry_onComplete_2", "com_interaction_carry_onComplete_3"]}] }
         },
         {
             "ID":"com_player_putDown",
@@ -166,7 +183,13 @@
                     "requirements":{ "requirement":{ } },
                     "displayName":"comManager_com_putDown"
                 }
-            ]
+            ],
+            "description_begin":{ "Entries":[
+                { "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_player_putDown_begin_ordered_1", "com_player_putDown_begin_ordered_2", "com_player_putDown_begin_ordered_3"] },
+                { "texts":["com_player_putDown_begin_1", "com_player_putDown_begin_2", "com_player_putDown_begin_3"] }
+            ], "keepLooking":false },
+            "description_remove":{ "Entries":[{"texts":["com_player_putDown_remove_1", "com_player_putDown_remove_2", "com_player_putDown_remove_3"]}], "keepLooking":false },
+            "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_player_putDown_onComplete_1", "com_player_putDown_onComplete_2", "com_player_putDown_onComplete_3"]}] }
         },
         {
             "ID":"com_furniture_putDown",
@@ -195,7 +218,7 @@
                     "requirements":{ "requirement":{ "req_Receivers":{ "requireTimestopped":true } } },
                     "displayName":"com_furniture_putDown_displayName",
                     "useBaseDescription": false,
-                    "description_begin":{ "Entries":[{"texts":["com_furniture_putDown_timestop_begin_1"]}], "keepLooking":false },
+                    "description_begin":{ "Entries":[{"texts":["com_furniture_putDown_timestop_begin_1", "com_furniture_putDown_timestop_begin_2", "com_furniture_putDown_timestop_begin_3"]}], "keepLooking":false },
                     "description_ongoing":{ "Entries":[{"texts":["com_furniture_putDown_timestop_ongoing_1"]}], "keepLooking":false }
                 },
                 {
@@ -205,8 +228,13 @@
             ],
             "AcceptanceCheck": { "baseAcceptanceValue": 0, "alwaysAccept": true },
             "DifficultyCheck": { "baseD20Check": 0 },
-            "description_begin":{ "Entries":[{"texts":["com_furniture_putDown_begin_1"]}], "keepLooking":false },
-            "description_ongoing":{ "Entries":[{"texts":["com_furniture_putDown_ongoing_1"]}], "keepLooking":false }
+            "description_begin":{ "Entries":[
+                { "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_furniture_putDown_begin_ordered_1", "com_furniture_putDown_begin_ordered_2", "com_furniture_putDown_begin_ordered_3"] },
+                { "texts":["com_furniture_putDown_begin_1", "com_furniture_putDown_begin_2", "com_furniture_putDown_begin_3"] }
+            ], "keepLooking":false },
+            "description_ongoing":{ "Entries":[{"texts":["com_furniture_putDown_ongoing_1"]}], "keepLooking":false },
+            "description_remove":{ "Entries":[{"texts":["com_furniture_putDown_remove_1", "com_furniture_putDown_remove_2", "com_furniture_putDown_remove_3"]}], "keepLooking":false },
+            "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_putDown_onComplete_1", "com_furniture_putDown_onComplete_2", "com_furniture_putDown_onComplete_3"]}] }
         },
         {
             "ID":"com_player_putDownHere",
@@ -234,7 +262,7 @@
                     "requirements":{ "requirement":{ "req_Receivers":{ "requireTimestopped":true } } },
                     "displayName":"com_player_putDownHere_displayName",
                     "useBaseDescription": false,
-                    "description_begin":{ "Entries":[{"texts":["com_player_putDownHere_timestop_begin_1"]}], "keepLooking":false },
+                    "description_begin":{ "Entries":[{"texts":["com_player_putDownHere_timestop_begin_1", "com_player_putDownHere_timestop_begin_2", "com_player_putDownHere_timestop_begin_3"]}], "keepLooking":false },
                     "description_ongoing":{ "Entries":[{"texts":["com_player_putDownHere_timestop_ongoing_1"]}], "keepLooking":false }
                 },
                 {
@@ -244,8 +272,13 @@
             ],
             "AcceptanceCheck": { "baseAcceptanceValue": 0, "alwaysAccept": true },
             "DifficultyCheck": { "baseD20Check": 0 },
-            "description_begin":{ "Entries":[{"texts":["com_player_putDownHere_begin_1"]}], "keepLooking":false },
-            "description_ongoing":{ "Entries":[{"texts":["com_player_putDownHere_ongoing_1"]}], "keepLooking":false }
+            "description_begin":{ "Entries":[
+                { "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_player_putDownHere_begin_ordered_1", "com_player_putDownHere_begin_ordered_2", "com_player_putDownHere_begin_ordered_3"] },
+                { "texts":["com_player_putDownHere_begin_1", "com_player_putDownHere_begin_2", "com_player_putDownHere_begin_3"] }
+            ], "keepLooking":false },
+            "description_ongoing":{ "Entries":[{"texts":["com_player_putDownHere_ongoing_1"]}], "keepLooking":false },
+            "description_remove":{ "Entries":[{"texts":["com_player_putDownHere_remove_1", "com_player_putDownHere_remove_2", "com_player_putDownHere_remove_3"]}], "keepLooking":false },
+            "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_player_putDownHere_onComplete_1", "com_player_putDownHere_onComplete_2", "com_player_putDownHere_onComplete_3"]}] }
         },
         {
             "ID":"com_interaction_waste_time",
@@ -386,6 +419,15 @@
                 "Entries": [
                     {
                         "keepLooking": false,
+                        "conditions": [{"validatePackage":{"existsMaster_NonActor":true}}],
+                        "texts": [
+                            "com_interaction_talk_begin_ordered_1",
+                            "com_interaction_talk_begin_ordered_2",
+                            "com_interaction_talk_begin_ordered_3"
+                        ]
+                    },
+                    {
+                        "keepLooking": false,
                         "texts": [
                             "com_interaction_talk_begin_1",
                             "com_interaction_talk_begin_2",
@@ -394,7 +436,9 @@
                     }
                 ]
             },
-            "description_ongoing":{ "Entries":[{"texts":["com_interaction_talk_description_ongoing_1"]}], "keepLooking":false }
+            "description_ongoing":{ "Entries":[{"texts":["com_interaction_talk_description_ongoing_1", "com_interaction_talk_description_ongoing_2", "com_interaction_talk_description_ongoing_3"]}], "keepLooking":false },
+            "description_remove":{ "Entries":[{"texts":["com_interaction_talk_description_remove_1", "com_interaction_talk_description_remove_2", "com_interaction_talk_description_remove_3"]}], "keepLooking":false },
+            "description_onComplete":{ "Entries":[{"texts":["com_interaction_talk_description_onComplete_1", "com_interaction_talk_description_onComplete_2", "com_interaction_talk_description_onComplete_3"]}], "keepLooking":false }
         },
         {
             "fallbackCOMID":"com_interaction_talk",
@@ -439,6 +483,15 @@
                 "Entries": [
                     {
                         "keepLooking": false,
+                        "conditions": [{"validatePackage":{"existsMaster_NonActor":true}}],
+                        "texts": [
+                            "com_interaction_talk_topic_begin_ordered_1",
+                            "com_interaction_talk_topic_begin_ordered_2",
+                            "com_interaction_talk_topic_begin_ordered_3"
+                        ]
+                    },
+                    {
+                        "keepLooking": false,
                         "texts": [
                             "com_interaction_talk_begin_1_topic",
                             "com_interaction_talk_begin_2_topic",
@@ -447,7 +500,9 @@
                     }
                 ]
             },
-            "description_ongoing":{ "Entries":[{"texts":["com_interaction_talk_description_ongoing_1"]}], "keepLooking":false }
+            "description_ongoing":{ "Entries":[{"texts":["com_interaction_talk_topic_ongoing_1", "com_interaction_talk_topic_ongoing_2", "com_interaction_talk_topic_ongoing_3"]}], "keepLooking":false },
+            "description_remove":{ "Entries":[{"texts":["com_interaction_talk_topic_description_remove_1", "com_interaction_talk_topic_description_remove_2", "com_interaction_talk_topic_description_remove_3"]}], "keepLooking":false },
+            "description_onComplete":{ "Entries":[{"texts":["com_interaction_talk_topic_description_onComplete_1", "com_interaction_talk_topic_description_onComplete_2", "com_interaction_talk_topic_description_onComplete_3"]}], "keepLooking":false }
         },
         {
             "ID": "com_furniture_combat_sim",
@@ -487,7 +542,12 @@
             "DifficultyCheck": { "baseD20Check": 0 },
 
             "description_ongoing":{ "Entries":[{"texts":["com_furniture_combat_sim_description_ongoing_1"]}], "keepLooking":false },
-            "description_begin":{ "Entries":[{"texts":["com_furniture_combat_sim_description_begin_1"]}], "keepLooking":false }
+            "description_begin":{ "Entries":[
+                { "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_furniture_combat_sim_description_begin_ordered_1", "com_furniture_combat_sim_description_begin_ordered_2", "com_furniture_combat_sim_description_begin_ordered_3"] },
+                { "texts":["com_furniture_combat_sim_description_begin_1", "com_furniture_combat_sim_description_begin_2", "com_furniture_combat_sim_description_begin_3"] }
+            ], "keepLooking":false },
+            "description_remove":{ "Entries":[{"texts":["com_furniture_combat_sim_description_remove_1", "com_furniture_combat_sim_description_remove_2", "com_furniture_combat_sim_description_remove_3"]}], "keepLooking":false },
+            "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_combat_sim_description_onComplete_1", "com_furniture_combat_sim_description_onComplete_2", "com_furniture_combat_sim_description_onComplete_3"]}] }
         },
         {
             "ID": "com_furniture_mealPrep",
@@ -552,8 +612,13 @@
             },
             "DifficultyCheck": { "baseD20Check": 0 },
 
-            "description_ongoing":{ "Entries":[{"texts":["prepping meals"]}], "keepLooking":false },
-            "description_begin":{ "Entries":[{"texts":["starts prepping meals"]}], "keepLooking":false }
+            "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$还在准备餐点", "$doer.firstname$手底下的活一直没有停", "$doer.firstname$仍在张罗餐点的事"]}], "keepLooking":false },
+            "description_begin":{ "Entries":[
+                { "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_furniture_mealPrep_description_begin_ordered_1", "com_furniture_mealPrep_description_begin_ordered_2", "com_furniture_mealPrep_description_begin_ordered_3"] },
+                { "texts":["$doer.firstname$开始动手准备餐点", "$doer.firstname$着手张罗起餐点", "$doer.firstname$动手做起餐前的准备"] }
+            ], "keepLooking":false },
+            "description_remove":{ "Entries":[{"texts":["com_furniture_mealPrep_description_remove_1", "com_furniture_mealPrep_description_remove_2", "com_furniture_mealPrep_description_remove_3"]}], "keepLooking":false },
+            "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_mealPrep_description_onComplete_1", "com_furniture_mealPrep_description_onComplete_2", "com_furniture_mealPrep_description_onComplete_3"]}] }
         }
     ]
     },
@@ -590,9 +655,95 @@
                 "com_interaction_work_tooltip_shift": "班次：$faction$ $post$ $hours$",
                 "com_interaction_work_tooltip_commands": "工作指令：$commands$",
                 "com_interaction_work_tooltip_room": "工作地点：$room$",
-                "com_interaction_partyInvite_begin_1": "$receiver.firstname$加入了$doer.firstname$",
+                "com_interaction_partyInvite_begin_ordered_1": "$doer.firstname$依言向$receiver.firstname$提出同行",
+                "com_interaction_partyInvite_begin_ordered_2": "$doer.firstname$照着吩咐邀$receiver.firstname$同行",
+                "com_interaction_partyInvite_begin_ordered_3": "$doer.firstname$应下吩咐开口请$receiver.firstname$同行",
+                "com_interaction_partyInvite_remove_1": "$doer.firstname$把同行的邀请收了回来",
+                "com_interaction_partyInvite_remove_2": "$receiver.firstname$跟着$doer.firstname$的事没有成",
+                "com_interaction_partyInvite_remove_3": "$doer.firstname$与$receiver.firstname$的同行作罢了",
+                "com_interaction_partyInvite_onComplete_1": "$receiver.firstname$加入了$doer.firstname$的同行",
+                "com_interaction_partyInvite_onComplete_2": "$receiver.firstname$成了$doer.firstname$的同行者",
+                "com_interaction_partyInvite_onComplete_3": "$doer.firstname$身边多了$receiver.firstname$作同行",
+
+                "com_interaction_partyDisband_begin_ordered_1": "$doer.firstname$依言解除了与$receiver.firstname$的同行",
+                "com_interaction_partyDisband_begin_ordered_2": "$doer.firstname$照着吩咐让$receiver.firstname$不必跟着",
+                "com_interaction_partyDisband_begin_ordered_3": "$doer.firstname$应下吩咐提出解除同行",
+                "com_interaction_partyDisband_begin_1": "$doer.firstname$向$receiver.firstname$提出解除同行",
+                "com_interaction_partyDisband_begin_2": "$doer.firstname$开口让$receiver.firstname$不必再跟着",
+                "com_interaction_partyDisband_begin_3": "$doer.firstname$告诉$receiver.firstname$不必再跟着自己",
+                "com_interaction_partyDisband_remove_1": "$doer.firstname$把解除同行的意思收了回来",
+                "com_interaction_partyDisband_remove_2": "$receiver.firstname$继续跟着$doer.firstname$",
+                "com_interaction_partyDisband_remove_3": "$doer.firstname$与$receiver.firstname$的同行照旧",
+                "com_interaction_partyDisband_onComplete_1": "$doer.firstname$与$receiver.firstname$的同行关系解开了",
+                "com_interaction_partyDisband_onComplete_2": "$doer.firstname$这边不再带着$receiver.firstname$同行",
+                "com_interaction_partyDisband_onComplete_3": "$receiver.firstname$跟随$doer.firstname$的关系被解除了",
+
+                "com_interaction_carry_begin_ordered_1": "$doer.firstname$依言把$receiver.firstname$抱了起来",
+                "com_interaction_carry_begin_ordered_2": "$doer.firstname$照着吩咐把$receiver.firstname$抱进怀里",
+                "com_interaction_carry_begin_ordered_3": "$doer.firstname$应下吩咐把$receiver.firstname$抱了起来",
+                "com_interaction_carry_remove_1": "$doer.firstname$把$receiver.firstname$放了下去",
+                "com_interaction_carry_remove_2": "$doer.firstname$松开了抱着$receiver.firstname$的手",
+                "com_interaction_carry_remove_3": "$doer.firstname$把$receiver.firstname$从怀里放了下来",
+                "com_interaction_carry_onComplete_1": "$receiver.firstname$被$doer.firstname$抱在怀里",
+                "com_interaction_carry_onComplete_2": "$receiver.firstname$的身子被$doer.firstname$托在怀里",
+                "com_interaction_carry_onComplete_3": "$doer.firstname$怀里多了$receiver.firstname$",
+
+                "com_player_putDown_begin_ordered_1": "$doer.firstname$依言把$receiver.firstname$放了下来",
+                "com_player_putDown_begin_ordered_2": "$doer.firstname$照着吩咐把$receiver.firstname$放下",
+                "com_player_putDown_begin_ordered_3": "$doer.firstname$应下吩咐把$receiver.firstname$放了下来",
+                "com_player_putDown_begin_1": "$doer.firstname$把$receiver.firstname$放了下来",
+                "com_player_putDown_begin_2": "$doer.firstname$把$receiver.firstname$从怀里放了下来",
+                "com_player_putDown_begin_3": "$doer.firstname$松开手臂把$receiver.firstname$放了下来",
+                "com_player_putDown_remove_1": "$doer.firstname$把$receiver.firstname$重新抱住了",
+                "com_player_putDown_remove_2": "$doer.firstname$没把$receiver.firstname$放下去",
+                "com_player_putDown_remove_3": "$doer.firstname$的胳膊重新托住了$receiver.firstname$",
+                "com_player_putDown_onComplete_1": "$receiver.firstname$已经不在$doer.firstname$怀里",
+                "com_player_putDown_onComplete_2": "$doer.firstname$的怀里空了下来",
+                "com_player_putDown_onComplete_3": "$receiver.firstname$被$doer.firstname$安置好了",
+
+                "com_furniture_putDown_begin_ordered_1": "$doer.firstname$依言把$receiver.firstname$放了下来",
+                "com_furniture_putDown_begin_ordered_2": "$doer.firstname$照着吩咐把$receiver.firstname$放下",
+                "com_furniture_putDown_begin_ordered_3": "$doer.firstname$应下吩咐把$receiver.firstname$放了下来",
+                "com_furniture_putDown_remove_1": "$doer.firstname$把$receiver.firstname$重新抱回怀里",
+                "com_furniture_putDown_remove_2": "$doer.firstname$没有把$receiver.firstname$放下",
+                "com_furniture_putDown_remove_3": "$doer.firstname$的手臂重新托住了$receiver.firstname$",
+                "com_furniture_putDown_onComplete_1": "$receiver.firstname$被$doer.firstname$安置好了",
+                "com_furniture_putDown_onComplete_2": "$doer.firstname$把$receiver.firstname$放好之后松了手",
+                "com_furniture_putDown_onComplete_3": "$receiver.firstname$已经不在$doer.firstname$怀里",
+
+                "com_player_putDownHere_begin_ordered_1": "$doer.firstname$依言把$receiver.firstname$放了下来",
+                "com_player_putDownHere_begin_ordered_2": "$doer.firstname$照着吩咐把$receiver.firstname$放下",
+                "com_player_putDownHere_begin_ordered_3": "$doer.firstname$应下吩咐把$receiver.firstname$放了下来",
+                "com_player_putDownHere_remove_1": "$doer.firstname$把$receiver.firstname$重新抱回怀里",
+                "com_player_putDownHere_remove_2": "$doer.firstname$没有把$receiver.firstname$放下",
+                "com_player_putDownHere_remove_3": "$doer.firstname$的双手重新托住了$receiver.firstname$",
+                "com_player_putDownHere_onComplete_1": "$receiver.firstname$的双脚落在了$doer.firstname$放下的地方",
+                "com_player_putDownHere_onComplete_2": "$doer.firstname$的怀里空了下来",
+                "com_player_putDownHere_onComplete_3": "$receiver.firstname$被$doer.firstname$放到地上站着",
+
+                "com_furniture_combat_sim_description_begin_ordered_1": "$doer.firstname$依言开始模拟战斗",
+                "com_furniture_combat_sim_description_begin_ordered_2": "$doer.firstname$照着吩咐演练起模拟战斗",
+                "com_furniture_combat_sim_description_begin_ordered_3": "$doer.firstname$应下吩咐摆开架势打起模拟战",
+                "com_furniture_combat_sim_description_remove_1": "$doer.firstname$把摆开的架势收了起来",
+                "com_furniture_combat_sim_description_remove_2": "$doer.firstname$收起了演练的动作",
+                "com_furniture_combat_sim_description_remove_3": "$doer.firstname$松开架势停下手里的动作",
+                "com_furniture_combat_sim_description_onComplete_1": "$doer.firstname$把模拟战斗停了下来",
+                "com_furniture_combat_sim_description_onComplete_2": "$doer.firstname$停下了这套模拟战斗的动作",
+                "com_furniture_combat_sim_description_onComplete_3": "$doer.firstname$演练完毕收住了手脚",
+
+                "com_furniture_mealPrep_description_begin_ordered_1": "$doer.firstname$依言动手准备餐点",
+                "com_furniture_mealPrep_description_begin_ordered_2": "$doer.firstname$照着吩咐张罗起餐点",
+                "com_furniture_mealPrep_description_begin_ordered_3": "$doer.firstname$应下吩咐开始准备餐点",
+                "com_furniture_mealPrep_description_remove_1": "$doer.firstname$准备到一半便停了手",
+                "com_furniture_mealPrep_description_remove_2": "$doer.firstname$放下了手里准备餐点的活",
+                "com_furniture_mealPrep_description_remove_3": "$doer.firstname$手上的准备动作停了下来",
+                "com_furniture_mealPrep_description_onComplete_1": "$doer.firstname$停下了准备餐点的手",
+                "com_furniture_mealPrep_description_onComplete_2": "$doer.firstname$把要用的东西都备齐了",
+                "com_furniture_mealPrep_description_onComplete_3": "$doer.firstname$把餐点的准备做完了",
+
+                "com_interaction_partyInvite_begin_1": "$receiver.firstname$接下了$doer.firstname$的同行邀请",
                 "com_interaction_partyInvite_ongoing_1": "$receiver.firstname$正准备跟上$doer.firstname$",
-                "comManager_com_follow_stop_begin_1": "$receiver.firstname$离开了$doer.firstname$",
+                "comManager_com_follow_stop_begin_1": "$receiver.firstname$停下了跟着$doer.firstname$的脚步",
                 "comManager_com_carry": "携带",
                 "com_interaction_carry_begin_1": "$doer.firstname$把$receiver.firstname$抱了起来",
                 "com_interaction_carry_ongoing_1": "$doer.firstname$正在抱起$receiver.firstname$",
@@ -613,28 +764,71 @@
                 "com_interaction_waste_time_begin_1": "$doer.firstname$什么都没做",
                 "com_interaction_waste_time_description_ongoing_1": "$doer.firstname$正在发呆",
 
-                "com_interaction_talk_begin_1": "$doer.firstname$有一搭没一搭地和$receiver.firstname$聊了起来",
-                "com_interaction_talk_begin_2": "$doer.firstname$漫不经心地和$receiver.firstname$聊了起来",
-                "com_interaction_talk_begin_3": "$doer.firstname$随意地和$receiver.firstname$聊着天",
-                "com_interaction_talk_begin_1_topic": "$doer.firstname$有一搭没一搭地和$receiver.firstname$聊起了$topic$",
-                "com_interaction_talk_begin_2_topic": "$doer.firstname$漫不经心地和$receiver.firstname$聊起了$topic$",
-                "com_interaction_talk_begin_3_topic": "$doer.firstname$随意地和$receiver.firstname$聊着$topic$",
+                "com_interaction_talk_begin_ordered_1": "$doer.firstname$依言转向$receiver.firstname$，起了个话头",
+                "com_interaction_talk_begin_ordered_2": "$doer.firstname$照做，和$receiver.firstname$搭起话来",
+                "com_interaction_talk_begin_ordered_3": "$doer.firstname$应下，开口和$receiver.firstname$聊了起来",
+                "com_interaction_talk_description_remove_1": "$doer.firstname$和$receiver.firstname$的交谈中断了",
+                "com_interaction_talk_description_remove_2": "$doer.firstname$和$receiver.firstname$的话没有说完",
+                "com_interaction_talk_description_remove_3": "$doer.firstname$和$receiver.firstname$的话头断在半截",
+                "com_interaction_talk_description_onComplete_1": "$doer.firstname$和$receiver.firstname$的交谈结束了",
+                "com_interaction_talk_description_onComplete_2": "$doer.firstname$与$receiver.firstname$说完了话",
+                "com_interaction_talk_description_onComplete_3": "$doer.firstname$和$receiver.firstname$把话讲到了头",
+
+                "com_interaction_talk_topic_begin_ordered_1": "$doer.firstname$依言转向$receiver.firstname$，聊起了$topic$",
+                "com_interaction_talk_topic_begin_ordered_2": "$doer.firstname$照做，和$receiver.firstname$聊起$topic$",
+                "com_interaction_talk_topic_begin_ordered_3": "$doer.firstname$应下，开口和$receiver.firstname$聊起了$topic$",
+                "com_interaction_talk_topic_description_remove_1": "$doer.firstname$和$receiver.firstname$的话头断了",
+                "com_interaction_talk_topic_description_remove_2": "$doer.firstname$和$receiver.firstname$的交谈没有说完",
+                "com_interaction_talk_topic_description_remove_3": "$doer.firstname$与$receiver.firstname$说到一半停住",
+                "com_interaction_talk_topic_description_onComplete_1": "$doer.firstname$和$receiver.firstname$把话题聊到了头",
+                "com_interaction_talk_topic_description_onComplete_2": "$doer.firstname$与$receiver.firstname$说完了话",
+                "com_interaction_talk_topic_description_onComplete_3": "$doer.firstname$和$receiver.firstname$的交谈结束了",
+
+                "com_interaction_talk_begin_1": "$doer.firstname$开口和$receiver.firstname$搭上了话",
+                "com_interaction_talk_begin_2": "$doer.firstname$把话头抛给了$receiver.firstname$",
+                "com_interaction_talk_begin_3": "$doer.firstname$和$receiver.firstname$随口聊了起来",
+                "com_interaction_talk_begin_1_topic": "$doer.firstname$开口和$receiver.firstname$聊起了$topic$",
+                "com_interaction_talk_begin_2_topic": "$doer.firstname$把话头引到$topic$上",
+                "com_interaction_talk_begin_3_topic": "$doer.firstname$和$receiver.firstname$随口聊起$topic$",
                 "com_interaction_talk_displayName_1": "闲聊",
                 "com_interaction_talk_displayName_1_topic": "聊$topic$",
                 "com_interaction_talk_displayName_2": "大家一起闲聊",
                 "com_interaction_talk_displayName_2_topic": "大家一起聊$topic$",
-                "com_interaction_talk_description_ongoing_1": "$doer.firstname$正在与$receiver.firstname$交谈",
+                "com_interaction_talk_description_ongoing_1": "$doer.firstname$和$receiver.firstname$还在说着话",
 
                 "com_furniture_combat_sim_displayName_1":"模拟战斗",
                 "com_furniture_combat_sim_displayName_2":"一同模拟战斗",
                 "com_furniture_combat_sim_description_ongoing_1":"$doer.firstname$正在模拟战",
-                "com_furniture_combat_sim_description_begin_1":"$doer.firstname$开始模拟战",
+                "com_furniture_combat_sim_description_begin_1":"$doer.firstname$开始模拟战斗",
 
                 "com_furniture_mealPrep":"准备餐点。将下个小时设为饭点。",
                 "com_furniture_mealPrep_displayName":"准备餐点",
                 "com_furniture_mealPrep_displayName_1":"准备餐点（特殊）",
                 "com_furniture_mealPrep_displayName_2":"准备餐点",
-                "com_furniture_mealPrep_displayName_3":"一起准备餐点"
+                "com_furniture_mealPrep_displayName_3":"一起准备餐点",
+                "com_interaction_talk_description_ongoing_2": "$doer.firstname$与$receiver.firstname$仍在交谈",
+                "com_interaction_talk_description_ongoing_3": "$doer.firstname$和$receiver.firstname$的话头还没断",
+                "com_interaction_talk_topic_ongoing_1": "$doer.firstname$和$receiver.firstname$还在说着话",
+                "com_interaction_talk_topic_ongoing_2": "$doer.firstname$与$receiver.firstname$的话题还没讲完",
+                "com_interaction_talk_topic_ongoing_3": "$doer.firstname$和$receiver.firstname$的话头还没断",
+                "com_player_putDownHere_timestop_begin_2": "$doer.firstname$把时间静止中的$receiver.firstname$就势放在原地",
+                "com_player_putDownHere_timestop_begin_3": "$doer.firstname$松开手让时间静止中的$receiver.firstname$留在原地",
+                "com_furniture_combat_sim_description_begin_2": "$doer.firstname$动手演练起模拟战斗",
+                "com_furniture_combat_sim_description_begin_3": "$doer.firstname$摆开架势打起了模拟战",
+                "com_interaction_partyInvite_begin_2": "$receiver.firstname$应下了$doer.firstname$的同行请求",
+                "com_interaction_partyInvite_begin_3": "$receiver.firstname$答应了与$doer.firstname$同行",
+                "com_furniture_putDown_begin_2": "$doer.firstname$弯下身把$receiver.firstname$放下",
+                "com_furniture_putDown_begin_3": "$doer.firstname$托着$receiver.firstname$的背把人放了下来",
+                "com_interaction_carry_begin_2": "$doer.firstname$把$receiver.firstname$抱进了怀里",
+                "com_interaction_carry_begin_3": "$doer.firstname$用双臂把$receiver.firstname$抱了起来",
+                "com_interaction_carry_timestop_begin_2": "$doer.firstname$把时间静止中的$receiver.firstname$抱进了怀里",
+                "com_interaction_carry_timestop_begin_3": "$doer.firstname$用双臂抱起了时间静止中的$receiver.firstname$",
+                "com_furniture_putDown_timestop_begin_2": "$doer.firstname$弯下身把时间静止中的$receiver.firstname$放下",
+                "com_furniture_putDown_timestop_begin_3": "$doer.firstname$托着时间静止中的$receiver.firstname$把人放了下来",
+                "com_player_putDownHere_begin_2": "$doer.firstname$把$receiver.firstname$从怀里放了下来",
+                "com_player_putDownHere_begin_3": "$doer.firstname$松开手臂把$receiver.firstname$放了下来",
+                "comManager_com_follow_stop_begin_2": "$receiver.firstname$不再跟着$doer.firstname$了",
+                "comManager_com_follow_stop_begin_3": "$receiver.firstname$没再跟上$doer.firstname$的步子"
                 
             },
             "en-us":

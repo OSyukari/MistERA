@@ -212,7 +212,7 @@ public class LeaveHandler_HospitalPatient : MemberLeaveHandler
     /// however the stay ended. A post held without links (staff) comes back as is; one held with links (visitor) only if
     /// someone it linked to is still a member here - with just those links.
     /// </summary>
-    static void RestoreSuspendedPost(Manageable hospital, Character_Trainable patient)
+    internal static void RestoreSuspendedPost(Manageable hospital, Character_Trainable patient)
     {
         var post = hospital.TakeSuspendedPost(patient);
         if (post == null) return;
@@ -331,7 +331,7 @@ public class JoinHandler_HospitalPatient : MemberJoinHandler
     /// (LeaveHandler_HospitalPatient.RestoreSuspendedPost). Their shift is covered meanwhile - a pooled fallback worker is
     /// replaced (FallbackWorkerManager skips anyone with a temp home), others by the establishment's fallback headcount.
     /// </summary>
-    static void SuspendWorkPost(Manageable hospital, Character_Trainable c)
+    internal static void SuspendWorkPost(Manageable hospital, Character_Trainable c)
     {
         if (!c.FactionManager.WorkFactions.Contains(hospital)) return;
         var type = hospital.GetMemberType(c);

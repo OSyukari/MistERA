@@ -72,8 +72,7 @@ public class FurnitureBase
 /// </summary>
 public class FurnitureOccupancyDef
 {
-    /// <summary> -1 = (int)furnitureSize. Only gates the find-job path; a direct entry is never blocked </summary>
-    public int capacity = -1;
+    // capacity = FurnitureBase.furnitureSize (Job_Furniture.Capacity): 0 = no limit
     /// <summary> keeps a character who falls asleep here / is put down here (bed, sofa) </summary>
     public bool holdsUnconscious = false;
     /// <summary> has an inside, entered and left explicitly (stall, private bathroom, jail cell) </summary>

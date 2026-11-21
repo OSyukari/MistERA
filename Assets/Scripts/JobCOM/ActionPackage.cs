@@ -229,6 +229,12 @@ public abstract class ActionPackage
     }
     //public List<Character_Trainable> Actors;
 
+    /// <summary>
+    /// Event started when this package completes successfully (e.g. the choice of the prison commands' question - the
+    /// MemberType to give, the cell). Saved with the package, so the choice survives save/load. Docs/Prison/Plan_PrisonRework.md §6
+    /// </summary>
+    [JsonProperty] public SerializableEventPackage onResolve = null;
+
     [JsonProperty] protected List<int> doerRefs = new List<int>();
     [JsonIgnore] public virtual List<int> DoerRefs { get { return doerRefs; } }
     [JsonProperty] protected List<int> receiverRefs = new List<int>();
@@ -1233,6 +1239,12 @@ public abstract class ActionPackage
 
             if (!requested)
             {
+                // a package asking first on its first tick (ActionPackage_Prison): it stops here, its answer re-injects a copy
+                if (TryStopBeforeRequest())
+                {
+                    Ticked = true;
+                    return true;
+                }
                 if (!Request())
                 {
                     // refuse!
@@ -2221,6 +2233,19 @@ public abstract class ActionPackage
         //scr_UpdateHandler.current.NotifyCheckResult(finalResults);
     }
 
+    /// <summary>
+    /// Sex job, or interaction job running a sex / unsafe command: AC / DC log lines show a character's image only when a
+    /// sex handler returns it (PortraitManager.HasSexImage), and the player's DC line carries the player image.
+    /// </summary>
+    [JsonIgnore] public bool SexImageOnly
+    {
+        get
+        {
+            if (this.job is Job_Sex_Group) return true;
+            return this.job is Job_CharaCOM && targetCOM != null && (targetCOM.isSexCOM || targetCOM.isUnsafe);
+        }
+    }
+
     public void LogResultCheck(MessageCollect m = null)
     {
         if (isTemporaryAP) return;
@@ -2234,9 +2259,10 @@ public abstract class ActionPackage
         bool single = ShortenAPDisplay;
         var desc = new DescriptionCollector();
 
-        // player acts in it: the check result line carries the player image, the kojo below stays its own line (NPC image)
+        // player acts in it: the check result line carries the player image, the kojo below stays its own line (NPC image).
+        // DC check only shows it inside a sex job / sex or unsafe interaction command, and only a sex handler image
         DescriptionCollector playerDesc = null;
-        if (isPlayerRelatedPackage && !string.IsNullOrEmpty(this.checkResults_result) && PlayerCommandPortrait.Applies(this))
+        if (isPlayerRelatedPackage && !string.IsNullOrEmpty(this.checkResults_result) && SexImageOnly &&PlayerCommandPortrait.Applies(this) && PlayerCommandPortrait.ShowsImage(this))
         {
             playerDesc = PlayerCommandPortrait.Create(this.checkResults_result, this);
             playerDesc.tooltip = this.checkResults_tooltips;
@@ -2267,6 +2293,8 @@ public abstract class ActionPackage
             //Debug.LogError($"shuffled list count 0, resetting to {shuffledList.Count}");
         }
         Utility.Shuffle(shuffledList);
+        // inside a sex job / sex or unsafe interaction command a speaker's image shows only when a sex handler returns it
+        bool sexImageOnly = SexImageOnly;
         foreach (var ep in shuffledList)
         {
 
@@ -2277,7 +2305,7 @@ public abstract class ActionPackage
             foreach (var kol in responses)
             {
                 exist = exist || kol.isValid;
-                desc.Load(kol.collect);
+                desc.Load(kol.collect, sexImageOnly);
             }
             if (exist && single) break;
         }
@@ -2339,7 +2367,7 @@ public abstract class ActionPackage
         // kills the whole message (AddLog falls back to the never-populated message_excludeRelated).
         desc.LoadActors(this.actorRefs);
         desc.LoadActors(this.job.GetLogRelevantActors(this));
-        if (PlayerCommandPortrait.Applies(this)) PlayerCommandPortrait.Load(desc, this);
+        if (PlayerCommandPortrait.Applies(this) && PlayerCommandPortrait.ShowsImage(this)) PlayerCommandPortrait.Load(desc, this);
         m.AddMessage_Checks(desc, logging? RecordingRoom : null);//
         if (!logging) packageStateChanged = true;
 
@@ -2801,6 +2829,13 @@ public abstract class ActionPackage
         var finishSleep = deferSleep && executeSuccessful && targetCOM != null && targetCOM.comTags.Contains("sleep")
             ? SnapshotSleepTransition(out prepareSleepEvent) : null;
         if (targetCOM != null) targetCOM.ApplyResults_AP(this, prepareSleepEvent);
+        if (executeSuccessful && onResolve != null && onResolve.isValid)
+        {
+            var resolveSelf = receiver.Count > 0 ? receiver[0] : doer.Count > 0 ? doer[0] : null;
+            var resolveEvent = EventUtility.StartEvent(resolveSelf, onResolve);
+            if (resolveEvent != null) scr_UpdateHandler.current.EventHandler.StartEvent(resolveEvent, false);
+            onResolve = null;
+        }
 
         if (executeSuccessful)// && targetCOM.requirements.requirement.TreatReceiverAsDoer)         // this behavior does not need to be limited to treatreceiverasdoer, right ?
         {   // if job is recreation and result at least neutral, increase relationship between all participating actors
@@ -4043,6 +4078,32 @@ public abstract class ActionPackage
     [JsonProperty] public bool demandAnswered = false;
     /// <summary>Legacy demand continuations in existing saves use a forced next Request. New continuations retain EPs.</summary>
     [JsonProperty] public bool acceptOnNextRequest = false;
+    /// <summary>
+    /// First tick, before Request: a package that asks something first (an event) stops here and returns true - it ends
+    /// quietly (StopForQuestion) and the answer re-injects a copy. Default: never.
+    /// </summary>
+    protected virtual bool TryStopBeforeRequest() { return false; }
+
+    /// <summary>
+    /// TryStopBeforeRequest helper, like SendDemandEvent's stop: the lines so far are shown before the question, then this
+    /// package ends without results, refusal costs or repeat.
+    /// </summary>
+    protected void StopForQuestion()
+    {
+        MessageCollect mm = new MessageCollect();
+        this.job.CollectLogs(this, mm);
+        mm.Merge(this.job.m);
+        mm.exp.leftAlignOverride = mm.exp.isPlayerLog;
+        mm.exp.AddRelevantChara(job.actorRefID);
+        this.job.m.Clear();
+        scr_UpdateHandler.current.NotifyJobDescriptions(mm);
+        scr_UpdateHandler.current.FlushCollectedLogs(true, false);
+        duration = 0;
+        toggleRepeat = false;
+        internalState = AP_Status.refused;
+        LoggedBegin = true;
+    }
+
     /// <summary>An accepted demand continuation still needs its begin phase, but no second Request or AC log.</summary>
     [JsonProperty] bool acceptedDemandPendingBegin = false;
 

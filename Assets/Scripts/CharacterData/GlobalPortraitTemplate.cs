@@ -305,10 +305,13 @@ public static class GlobalPortraitTemplate
     /// Drop resolved variants without images, then image handlers left without variants (and no fixed / random path).
     /// Selection already skips both (empty ImagePaths, "" path), so the pick is unchanged; per-character copies and every
     /// portrait pick just touch less. Not for folders AddImage may still fill: it only adds into existing variants.
+    /// stopRecursion variants are kept without images (their stop is the point), unless the folder has no image at all: then
+    /// nothing is kept, so FillGlobalPortraitHandlers still sees a folder without assets (globalHandlerNoAssets).
     /// </summary>
     static void PruneEmpty(List<PortraitManager.CharaPortrait> handlers)
     {
         int keptHandlers = 0;
+        bool anyImage = false;
         for (int h = 0; h < handlers.Count; h++)
         {
             var handler = handlers[h];
@@ -317,15 +320,23 @@ public static class GlobalPortraitTemplate
             {
                 int kept = 0;
                 for (int v = 0; v < variants.Count; v++)
-                    if (variants[v].ImagePaths.Count > 0) variants[kept++] = variants[v];
+                {
+                    if (variants[v].ImagePaths.Count > 0) anyImage = true;
+                    else if (!variants[v].stopRecursion) continue;
+                    variants[kept++] = variants[v];
+                }
                 variants.RemoveRange(kept, variants.Count - kept);
             }
+            if (handler is PortraitManager.CharaPortrait_Image withPath
+                && (!string.IsNullOrEmpty(withPath.portrait_path) || (withPath.random_portrait_path != null && withPath.random_portrait_path.Count > 0)))
+                anyImage = true;
             bool empty = (variants == null || variants.Count == 0)
                 && handler is PortraitManager.CharaPortrait_Image image
                 && string.IsNullOrEmpty(image.portrait_path)
                 && (image.random_portrait_path == null || image.random_portrait_path.Count == 0);
             if (!empty) handlers[keptHandlers++] = handler;
         }
+        if (!anyImage) keptHandlers = 0;
         handlers.RemoveRange(keptHandlers, handlers.Count - keptHandlers);
     }
 
@@ -418,6 +429,8 @@ public static class GlobalPortraitTemplate
         public List<string> tagsExclude = new List<string>();
         public List<string> assetPrefix = new List<string>();
         public List<string> assetPrefixPerform = new List<string>();
+        /// <summary> category targetKeys (all required): in those categories the variant gets stopRecursion </summary>
+        public List<string> stopRecursion = new List<string>();
     }
 
     // file_names keys that are not the name (same as the classifier's ImageRulesJsonLoader.NameEntryKeys)
@@ -435,6 +448,14 @@ public static class GlobalPortraitTemplate
         var categories = ReadCategories(config, pg);
         var blocks = ReadBlocks(pg);
         var rowsByRole = ReadRows(pg, blocks);
+        foreach (var pair in rowsByRole)
+            foreach (var row in pair.Value)
+            {
+                if (row.stopRecursion.Count == 0) continue;
+                bool any = false;
+                foreach (var cat in categories) if (ContainsAll(cat.targetKeys, row.stopRecursion)) { any = true; break; }
+                if (!any) Debug.LogWarning($"GlobalPortraitTemplate: portrait_global.{SexVariantKey}.{pair.Key} [{row.id}] stopRecursion [{string.Join(", ", row.stopRecursion)}] matches no category targetKeys, it never stops");
+            }
 
         foreach (var cat in categories)
         {
@@ -467,6 +488,7 @@ public static class GlobalPortraitTemplate
                         PortraitVariantData = patterns,
                         templateId = row.id,
                         templateSources = sources,
+                        stopRecursion = row.stopRecursion.Count > 0 && ContainsAll(cat.targetKeys, row.stopRecursion),
                     });
                 }
 
@@ -583,6 +605,12 @@ public static class GlobalPortraitTemplate
         if (!list.Contains(value)) list.Add(value);
     }
 
+    static bool ContainsAll(List<string> list, List<string> values)
+    {
+        foreach (var v in values) if (!list.Contains(v)) return false;
+        return true;
+    }
+
     /// <summary>
     /// Regex for an asset prefix: $foldername$/folder/prefix_*_N.ext, a literal prefix that catches every longer file name
     /// (missionary -> missionary_anal_*, standing -> standing_missionary_*). Explicit exclusions follow the prefix, separated by '!',
@@ -664,6 +692,7 @@ public static class GlobalPortraitTemplate
                     tagsExclude = Strings(o["tagsExclude"]),
                     assetPrefix = Strings(o["assetPrefix"]),
                     assetPrefixPerform = Strings(o["assetPrefix_perform"]),
+                    stopRecursion = Strings(o["stopRecursion"]),
                 };
                 if (row.assetPrefix.Count == 0 && row.assetPrefixPerform.Count == 0)
                     Debug.LogWarning($"GlobalPortraitTemplate: portrait_global.{SexVariantKey}.{block.Name} [{p.Name}] has no assetPrefix / assetPrefix_perform, it never has images");

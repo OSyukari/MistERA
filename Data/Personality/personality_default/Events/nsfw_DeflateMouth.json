@@ -4,7 +4,7 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "deflate_mouth",
+                    "ID": "deflate_mouth", "template": "none", "templateNote": "code-fetched kojo; dedicated template later",
                     "tags": ["nsfw"],
                     "variants": [
                         {

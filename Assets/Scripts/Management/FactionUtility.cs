@@ -246,6 +246,12 @@ public static class FactionUtility
         searchJobList = false,
         searchNonJobList = true
     };
+    /// <summary> c is an owner of the bed itself (room owner matched to it, or a prisoner held on it) </summary>
+    public static bool IsOwnBed(Job_Furniture j, Character_Trainable c)
+    {
+        return j != null && j.AssignsOwnership && j.IsOwner(c.RefID);
+    }
+
     public static float Heuristic_Ownership_Strict(Job_Furniture j, Character_Trainable c, Dictionary<int, float> cache)
     {
         if (cache.TryGetValue(j.RefID, out float cached))
@@ -255,7 +261,8 @@ public static class FactionUtility
         var owners = room.FactionOwner?.RoomOwners(room.RefID) ?? new List<int>();
 
         float d;
-        if (owners.Contains(c.RefID)) d = 4f;
+        // a prisoner owns their cell bed, not its room (Docs/Prison/Plan_PrisonRework.md §3)
+        if (owners.Contains(c.RefID) || IsOwnBed(j, c)) d = 4f;
         else return 0f;
 
         float result = -d;
@@ -272,7 +279,7 @@ public static class FactionUtility
         var owners = room.FactionOwner?.RoomOwners(room.RefID) ?? new List<int>();
 
         float d;
-        if (owners.Contains(c.RefID)) d = 4f;
+        if (owners.Contains(c.RefID) || IsOwnBed(j, c)) d = 4f;
         else if (owners.Count == 0) d = 2f;
         else return 0f;
 
@@ -307,6 +314,8 @@ public static class FactionUtility
         var ev = new EventInstance(c, "OnCharaImprison", "");
         ev.displayOverride = faction.FactionOwnerRoot.isPlayerFaction || c.DisplayCharaEvent;
         ev.AppendStrings.Add("factionName", new List<string>() { faction.FactionOwnerRoot.FactionDisplayName });
+        // a new prisoner of the player's faction: the player picks what to do with them (Docs/Prison/Plan_PrisonRework.md §5.3a)
+        if (faction.FactionOwnerRoot.isPlayerFaction) PrisonUtility.InsertCaptiveOptions(ev, faction, null, c);
         scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
     }
     public static void SendImprisonEvent(Manageable_Party faction, Character_Trainable c)
@@ -317,6 +326,8 @@ public static class FactionUtility
         ev.displayOverride = faction.FactionOwnerRoot.isPlayerFaction || c.DisplayCharaEvent;
         ev.AppendStrings.Add("partyName", new List<string>() { faction.FactionDisplayName });
         ev.AppendStrings.Add("factionName", new List<string>() { faction.FactionOwnerRoot.FactionDisplayName });
+        // a capture is only a notification: the player chooses when the party hands the captive over to the faction
+        // (Manageable_Party.ExpeditionEnd - Docs/Prison/Plan_PrisonRework.md §5.3a)
         scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
     }
 

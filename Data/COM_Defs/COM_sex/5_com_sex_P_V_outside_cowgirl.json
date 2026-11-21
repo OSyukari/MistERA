@@ -14,7 +14,7 @@
                 "displayName":"com_sex_P_V_outside_cowgirl_displayName_1",
                 "timeScale":3,
                 "comTags":["sex","service", "position_equal"],
-                "portraitTags_Doer":["intercrural"],
+                "portraitTags_Doer":["portrait_lower","intercrural"],
                 "requirements":{
                     "requirement":{
                         "req_Doers":{
@@ -84,7 +84,7 @@
                     [
                         {
                             "keepLooking":true,
-                            "texts": [ "com_sex_P_V_outside_cowgirl_description_ongoing_1" ]
+                            "texts": [ "com_sex_P_V_outside_cowgirl_description_ongoing_1", "com_sex_P_V_outside_cowgirl_description_ongoing_2", "com_sex_P_V_outside_cowgirl_description_ongoing_3" ]
                         }
                     ]
                 },
@@ -93,7 +93,7 @@
                         {
                             "_comment":"",
                             "keepLooking":true,
-                            "texts":[ "com_sex_P_V_outside_cowgirl_description_remove_1" ]
+                            "texts":[ "com_sex_P_V_outside_cowgirl_description_remove_1", "com_sex_P_V_outside_cowgirl_description_remove_2", "com_sex_P_V_outside_cowgirl_description_remove_3" ]
                         }
                     ]
                 },
@@ -102,7 +102,7 @@
                     "Entries":[ 
                         {
                             "keepLooking":true,
-                            "texts": ["com_sex_P_V_outside_cowgirl_description_begin_1"]
+                            "texts": ["com_sex_P_V_outside_cowgirl_description_begin_1", "com_sex_P_V_outside_cowgirl_description_begin_2", "com_sex_P_V_outside_cowgirl_description_begin_3"]
                         }
                     ]
                     
@@ -123,9 +123,15 @@
                 "com_sex_P_V_outside_cowgirl_displayName_3": "轮流骑乘素股",
                 "com_sex_P_V_outside_cowgirl_displayName_4": "同时骑乘素股",
 
-                "com_sex_P_V_outside_cowgirl_description_begin_1":"$doer.firstname$将$receiver.firstname$的肉棒顶在了股间摩擦着",
-                "com_sex_P_V_outside_cowgirl_description_remove_1":"$doer.firstname$结束了与$receiver.firstname$素股",
-                "com_sex_P_V_outside_cowgirl_description_ongoing_1":"$doer.firstname$正在给$receiver.firstname$素股"
+                "com_sex_P_V_outside_cowgirl_description_begin_1":"$doer.firstname$把$receiver.firstname$的肉棒夹进自己的腿缝磨",
+                "com_sex_P_V_outside_cowgirl_description_remove_1":"$doer.firstname$的股间从$receiver.firstname$的肉棒上松开",
+                "com_sex_P_V_outside_cowgirl_description_ongoing_1":"$doer.firstname$的股间夹着$receiver.firstname$的肉棒上下磨",
+                "com_sex_P_V_outside_cowgirl_description_begin_2": "$doer.firstname$的股间夹着$receiver.firstname$的肉棒来回蹭",
+                "com_sex_P_V_outside_cowgirl_description_begin_3": "$doer.firstname$把$receiver.firstname$的肉棒压在自己腿间蹭",
+                "com_sex_P_V_outside_cowgirl_description_ongoing_2": "$doer.firstname$的腿缝在$receiver.firstname$的肉棒上蹭得发热",
+                "com_sex_P_V_outside_cowgirl_description_ongoing_3": "$doer.firstname$的腰夹着$receiver.firstname$的肉棒前后晃",
+                "com_sex_P_V_outside_cowgirl_description_remove_2": "$doer.firstname$把$receiver.firstname$的肉棒从腿间放出来",
+                "com_sex_P_V_outside_cowgirl_description_remove_3": "$doer.firstname$的腿缝从$receiver.firstname$的肉棒上离开"
 
             },
             "en-us":

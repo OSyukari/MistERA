@@ -84,7 +84,7 @@ internal sealed class ActorTagContextCache
     }
 }
 
-public class Manageable : I_Disposable, I_IsJobGiver
+public partial class Manageable : I_Disposable, I_IsJobGiver
 {
     [JsonIgnore] public string FactionID { get { return this.ID; } }
 
@@ -607,12 +607,19 @@ public class Manageable : I_Disposable, I_IsJobGiver
         return c != null && c.FactionManager.HomeFactions.Contains(this) ? null : this;
     }
 
+    /// <summary> the MemberType held here - a lock override (Manageable_Prison) first </summary>
     public MemberType GetMemberType(Character_Trainable c)
     {
-        if (charaGuestStatus.TryGetValue(c.RefID, out var guestStatus)) return FactionUtility.GetMemberType(guestStatus);
-        else return FactionUtility.MemberType_None;
+        return GetMemberType(c.RefID);
     }
     public MemberType GetMemberType(int c)
+    {
+        if (lockOverrides != null && TryGetLockOverrideType(c, out var locked)) return locked;
+        if (charaGuestStatus.TryGetValue(c, out var guestStatus)) return FactionUtility.GetMemberType(guestStatus);
+        else return FactionUtility.MemberType_None;
+    }
+    /// <summary> the MemberType stored here, ignoring a lock override </summary>
+    public MemberType GetOwnMemberType(int c)
     {
         if (charaGuestStatus.TryGetValue(c, out var guestStatus)) return FactionUtility.GetMemberType(guestStatus);
         else return FactionUtility.MemberType_None;
@@ -632,7 +639,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         string type = GetPreferredBedTypeOverride(charaRef);
         if (type != null) return type;
         if (charaGuestStatus.TryGetValue(charaRef, out var status))
-            type = FactionUtility.GetMemberType(status)?.preferredBedTypeID;
+            type = FactionUtility.GetMemberType(EffectiveGuestStatusID(charaRef, status))?.preferredBedTypeID;
         return string.IsNullOrEmpty(type) ? BedPreferenceUtility.HumanType : type;
     }
 
@@ -815,6 +822,8 @@ public class Manageable : I_Disposable, I_IsJobGiver
             foreach (var job in room.Jobs)
                 if (job is Job_Furniture furnitureJob) RemoveJobPost(furnitureJob);
         managedRoomRefs.Remove(roomRefID);
+        DropRoomCells(roomRefID);
+        InvalidateJailBlocks();
         roomRefsCache = null;
         managedRoomOwnersRefs = null;
         mainExit_cache = null;
@@ -1948,7 +1957,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         {
             if (i.RefID != chara.RefID &&
                 !FurnitureOccupancyUtility.IsInCarry(i) &&   // carrying / being carried (携带): not sought out
-                MapUtility.CanSee(chara, i) &&               // not across a stall's door (PreEvaluate would refuse it)
+                MapUtility.CanInteract(chara, i) &&          // not across a room divider (PreEvaluate would refuse it)
                 ( scr_System_CentralControl.current.CanInteractWith(chara.RefID, i.RefID) ) &&
                 (!restrainedOnly || i.isRestrained) &&
                 (i.InteractionJob.HasAvailableCOMwithCOMTags (new List<string>() { tag  }))
@@ -1993,10 +2002,8 @@ public class Manageable : I_Disposable, I_IsJobGiver
         if (tagoverride == "") tagoverride = filter.matchCOMTag;
         if (comIDOverride == "") comIDOverride = filter.matchCOMID;
         if (scr_System_CentralControl.current.isSafeMode && scr_System_Serializer.current.nsfwKeywords.Contains(tagoverride)) return new List<Job_Furniture>();
-        if (chara.Jail != null && chara.Jail.ownerJob != null)
-        {
-
-        }
+        // a prisoner's own searches stay in their prison area; scheduled work (searchJobList) is not confined
+        var prisonArea = filter.searchJobList ? null : PrisonerJobRestriction.GetArea(chara);
 
         // Draw the schedule command once, both for validation and query-specific rest preference.
         var scheduleCOM = filter.searchJobList ? GetSchedule(chara, currentHour).getRandCOM : null;
@@ -2026,7 +2033,8 @@ public class Manageable : I_Disposable, I_IsJobGiver
                 possibleJobs.RemoveAt(i);
                 continue;
             }
-            if (filter.excludePrisonRooms && j.ParentRoom.isRoomPrison)
+            // a prisoner's area replaces the exclusion: their jail block is theirs to use
+            if (filter.excludePrisonRooms && prisonArea == null && j.ParentRoom.isRoomPrison)
             {
                 if (detailog) ss += $"\n{j.DisplayName} removed due to room {j.ParentRoom.RefID} being a prison room and filter.excludePrisonRooms true";
                 possibleJobs.RemoveAt(i);
@@ -2041,6 +2049,12 @@ public class Manageable : I_Disposable, I_IsJobGiver
             if (restrictRoomList != null && (j.ParentRoom == null || !restrictRoomList.Contains(j.ParentRoom.RefID)))
             {
                 if (detailog) ss += $"\n{j.DisplayName} removed due to room {(j.ParentRoom == null ? "null" : j.ParentRoom.RefID)} match with restrictRoomList {String.Join(" ", restrictRoomList)}";
+                possibleJobs.RemoveAt(i);
+                continue;
+            }
+            if (prisonArea != null && !prisonArea.Allows(j))
+            {
+                if (detailog) ss += $"\n{j.DisplayName} removed: outside {chara.FirstName}'s prison area";
                 possibleJobs.RemoveAt(i);
                 continue;
             }
@@ -2251,7 +2265,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
                 _managerRefs = new List<int>();
                 foreach (var i in charaGuestStatus)
                 {
-                    if (FactionUtility.TryGetMemberType(i.Value, out var status) && status.isManager)
+                    if (FactionUtility.TryGetMemberType(EffectiveGuestStatusID(i.Key, i.Value), out var status) && status.isManager)
                     {
                         _managerRefs.Add(i.Key);
                     }
@@ -2286,6 +2300,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
     public void AddToFaction(Room_Instance room, bool addAllCharaToFaction = false, bool setRoomOwnership = false, bool isRenting = true, string landlordFactionID = "")
     {
         if (!this.managedRoomRefs.ContainsKey(room.RefID)) this.managedRoomRefs.Add(room.RefID, new List<int>());
+        InvalidateJailBlocks();
         this.roomRefsCache = null;
         this.mainExit_cache = null;
 
@@ -2452,6 +2467,8 @@ public class Manageable : I_Disposable, I_IsJobGiver
         bool isNewMember = !charaGuestStatus.ContainsKey(c.RefID);
         bool wasForbidWorkType = !isNewMember && FactionUtility.GetMemberType(charaGuestStatus[c.RefID])?.initiallyForbidWork == true;
         bool statusChanged = isNewMember || charaGuestStatus[c.RefID] != guestStatus.ID;
+        // a new imprisonment = entering a prisoner type from a non-prisoner one (Docs/Prison/Plan_PrisonRework.md §5.2)
+        bool wasPrisoner = !isNewMember && FactionUtility.GetMemberType(charaGuestStatus[c.RefID])?.isPrisoner == true;
 
         //c.AddToFaction(this);
         if (!charaGuestStatus.ContainsKey(c.RefID)) charaGuestStatus.Add(c.RefID, guestStatus.ID);
@@ -2472,7 +2489,10 @@ public class Manageable : I_Disposable, I_IsJobGiver
         // the membertype becomes a wardrobe key an outfit can be set for
         c.Wardrobe?.RegisterMemberType(this, guestStatus);
 
-        if (sendEvent && guestStatus.isPrisoner) FactionUtility.SendImprisonEvent(this, c);
+        if (sendEvent && guestStatus.isPrisoner && !wasPrisoner) FactionUtility.SendImprisonEvent(this, c);
+        // only prisoners hold cells; a real status now replaces one the lock added (Manageable_Prison)
+        if (!guestStatus.isPrisoner) ReleaseCell(c.RefID);
+        KeepLockAddedMember(c.RefID);
         // set manager roles
         NotifyFactionMemberChange();
         // a member / MemberType change: the visits held here re-validate (an offered type or house activity may be gone)
@@ -2518,6 +2538,8 @@ public class Manageable : I_Disposable, I_IsJobGiver
         else Debug.LogError($"charaGuestStatus null when RemoveFromFaction {c.FirstName}");
         forbidWorkRefs?.Remove(c.RefID);
         preferredBedTypeOverrides?.Remove(c.RefID);
+        ReleaseCell(c.RefID);
+        lockOverrides?.Remove(c.RefID);
 
         // drop c's own links (c is leaving), and the links other members hold to c. A member whose link to c was held as
         // MemberType T leaves too only if they hold no other link as T AND still hold T here (e.g. a discharged patient's
@@ -2813,6 +2835,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
     public void NotifyFurnitureChange(Room_Instance room)
     {
+        DropStaleCells(room);
         RefreshRoomJobs(room);
         facilitySerial++;
         RecreationUtility.NotifyVenueActivitiesChanged(this);

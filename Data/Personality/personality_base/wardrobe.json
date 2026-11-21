@@ -248,6 +248,8 @@
                 "ID": "personality_base",
                 "Entry": {
                     "ID": "com_redress_Begin",
+                    "template": "commandAct",
+                    "templateNote": "shared by com_redress_outer / inner / skin / all (RedirectID); set by hand - not a command key",
                     "variants": [
                         {
                             "requirement": { "requirePermission": true },
@@ -265,6 +267,8 @@
                 "ID": "personality_base",
                 "Entry": {
                     "ID": "com_redress",
+                    "template": "commandResult",
+                    "templateNote": "shared by com_redress_outer / inner / skin / all (RedirectID); set by hand - not a command key",
                     "variants": [
                         {
                             "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] },

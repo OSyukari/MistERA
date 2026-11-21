@@ -84,7 +84,10 @@ public abstract partial class TA_DocBuilderBase
     /// 15: solo `seen` cases (speaker self) and `joinReact` (_Join participant) cases; kojo-override lookups (R3).
     /// 16: no _Begin refuse cases (the engine never fetches _Begin on a refusal).
     /// 17: pair / solo scenarios and cases from COM.kojoParticipants (both for a command that can do either).
-    public const int ExtractorVersion = 17;
+    /// 18: refused results look up <COM>_Refuse first, then <COM> (engine wired, Plan_KojoTemplates.md §7.13 W1).
+    /// 19: `joinFailedReact` cases (_JoinFailed, else _Join; outcome joinRefused - requireEPSuccess false).
+    /// 20: no `after` narration case / new-entry slot for a command without after text (cases.json onlyIfPresent).
+    public const int ExtractorVersion = 20;
 
     /// <summary>Personalities whose kojo layers are extracted (any order; [0] first in docs).</summary>
     public List<string> personalities = new List<string>();

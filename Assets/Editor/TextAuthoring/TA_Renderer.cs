@@ -409,6 +409,18 @@ public class TA_Renderer
         var field = (string)ne["field"];
         var h = "N-" + TA_DocBuilderBase.Sha1Hex($"NEW|{unit}|{field}").Substring(0, 6);
         if (!printed.Add(h)) return;
+        // the field has uncovered narration cases: their slots (condition fixed) go here instead of a free one - one
+        // place per field, so a writer can't fill two entries of the same field (the case list points back here)
+        var missing = MissingNarrationCases("description_" + field);
+        if (missing.Count > 0)
+        {
+            for (int i = 0; i < missing.Count; i++)
+            {
+                var ch = CaseSlotHandle(missing[i]);
+                if (printed.Add(ch)) CaseSlot(missing[i], ch);
+            }
+            return;
+        }
         sb.AppendLine($"【{h}】{TA_Text.F("doc.narration.newEntry", "field", "description_" + field)}");
         sb.AppendLine(TA_Text.Get("doc.narration.newEntryHelp"));
         sb.AppendLine("- 待写");
@@ -502,16 +514,45 @@ public class TA_Renderer
                 : TA_Text.F("doc.cases.narrCoveredNoSlot", "label", label, "optional", optional));
             return;
         }
-        // a new entry for the case: the condition comes with it, the writer only writes its lines (and where it goes)
+        // a new entry for the case: the condition comes with it, the writer only writes its lines (and where it goes).
+        // Usually already printed in the scene where its field first appears (NewEntry); then this line only points there.
+        var h = CaseSlotHandle(c);
+        sb.AppendLine(TA_Text.F("doc.cases.narrMissing", "label", label, "optional", optional, "handle", h));
+        if (!printed.Add(h)) return;
+        sb.AppendLine();
+        CaseSlot(c, h);
+    }
+
+    string CaseSlotHandle(JObject c)
+    {
+        return "N-" + TA_DocBuilderBase.Sha1Hex($"NEWC|{(string)snap.shared["unitID"]}|{(string)c["id"]}").Substring(0, 6);
+    }
+
+    /// <summary>Narration cases not covered yet whose new entry belongs to this command field (`description_&lt;f&gt;`).</summary>
+    List<JObject> MissingNarrationCases(string field)
+    {
+        var list = new List<JObject>();
+        var cases = Cases;
+        if (cases == null) return list;
+        for (int i = 0; i < cases.Count; i++)
+        {
+            var c = (JObject)cases[i];
+            if ((string)c["layer"] == "kojo" || ((bool?)c["covered"] ?? false)) continue;
+            if ((string)c["field"] == field) list.Add(c);
+        }
+        return list;
+    }
+
+    /// <summary>The new-entry slot of an uncovered narration case (its condition fixed by the case).</summary>
+    void CaseSlot(JObject c, string h)
+    {
         var unit = (string)snap.shared["unitID"];
         var field = (string)c["field"];
         var id = (string)c["id"];
-        var h = "N-" + TA_DocBuilderBase.Sha1Hex($"NEWC|{unit}|{id}").Substring(0, 6);
-        sb.AppendLine(TA_Text.F("doc.cases.narrMissing", "label", label, "optional", optional, "handle", h));
-        if (!printed.Add(h)) return;
+        var label = (string)c["label"];
         nCount++;
-        sb.AppendLine();
-        sb.AppendLine($"【{h}】{TA_Text.F("doc.cases.narrSlot", "field", field, "label", label)}");
+        bool optional = !((bool?)c["required"] ?? true);
+        sb.AppendLine($"【{h}】{TA_Text.F("doc.cases.narrSlot", "field", field, "label", label, "optional", optional ? TA_Text.Get("doc.cases.optional") : "")}");
         var condText = (string)c["condText"];
         sb.AppendLine(condText == null ? TA_Text.Get("doc.cases.narrHelpGeneric") : TA_Text.F("doc.cases.narrHelp", "cond", condText));
         sb.AppendLine("- 待写");
@@ -522,7 +563,7 @@ public class TA_Renderer
             ["kind"] = "newEntry",
             ["multiLine"] = true,
             ["readOnly"] = false,
-            ["optional"] = !((bool?)c["required"] ?? true),
+            ["optional"] = optional,
             ["com"] = unit,
             ["field"] = field,
             ["case"] = id,

@@ -1632,7 +1632,26 @@ public partial class EvaluationPackage : I_ResultStorage
     /// <summary>
     /// Logs kojo automatically
     /// </summary>
-    /// <param name="joined">whether the join went through: the joiner's own line is _Joined, or _Join_Refused when it failed</param>
+    /// <summary>
+    /// A participant's reaction to a joiner: _Join when the join went through; when it failed _JoinFailed, or _Join
+    /// where no _JoinFailed line exists (Docs/TextAuthoring/Plan_KojoTemplates.md §7.13 W2).
+    /// </summary>
+    KojoCollector JoinReaction(Character_Trainable speaker, Character_Trainable joiner, bool joined, MessageCollect m)
+    {
+        if (!joined)
+        {
+            var failed = new KojoCollector(speaker, targetCOM.ID, "_JoinFailed");
+            failed.LoadEP(this, joiner);
+            var mf = speaker.Relationships.GetKOJOMessage_Suffix(failed, m);
+            if (mf != null) return mf;
+        }
+        var kol = new KojoCollector(speaker, targetCOM.ID, "_Join");
+        kol.LoadEP(this, joiner);
+        return speaker.Relationships.GetKOJOMessage_Suffix(kol, m);
+    }
+
+    /// <param name="joined">whether the join went through: participants react with _Join (failed: _JoinFailed, else
+    /// _Join), the joiner says _Joined or _Join_Refused</param>
     public List<KojoCollector> LogMessage_Join(Character_Trainable injectChara, bool joined, List<int> reactedRefs,  MessageCollect m = null)
     {
         var joinerSuffix = joined ? "_Joined" : "_Join_Refused";
@@ -1648,9 +1667,7 @@ public partial class EvaluationPackage : I_ResultStorage
             //var rel = Doer.Relationships.FindRelationshipWith(injectChara);
             //else if (Receiver != null && Receiver != Doer) rel = Doer.Relationships.FindRelationshipWith(Receiver);
             //Doer.Relationships.GetKOJOMessage_Join(true, rightAlign, this, m, rel);
-            var kol = new KojoCollector(Doer, targetCOM.ID, "_Join");
-            kol.LoadEP(this, injectChara);
-            var mm = Doer.Relationships.GetKOJOMessage_Suffix(kol, m);
+            var mm = JoinReaction(Doer, injectChara, joined, m);
             //var mm = Doer.Relationships.GetKOJOMessage_Suffix(targetCOM.tooltipID, "_Join", injectChara, m);
             //if (mm != null) m.messages_before.Add(mm.message);
             if (mm != null) responses.Add(mm);
@@ -1670,10 +1687,8 @@ public partial class EvaluationPackage : I_ResultStorage
                 //Receiver.Relationships.GetKOJOMessage_Join(false, rightAlign, this, m, rel);
                 //var mm = Receiver.Relationships.GetKOJOMessage_Suffix(targetCOM.tooltipID, "_Join", injectChara, m);
                 //if (mm != null) m.messages_before.Add(mm.message);
-                var kol = new KojoCollector(Receiver, targetCOM.ID, "_Join");
-                kol.LoadEP(this, injectChara);
                 // the receiver's own personality (Doer's spoke from the doer's personality and returned null for a player doer)
-                var mm = Receiver.Relationships.GetKOJOMessage_Suffix(kol, m);
+                var mm = JoinReaction(Receiver, injectChara, joined, m);
                 if (mm != null) responses.Add(mm);
 
                 returnval = true;

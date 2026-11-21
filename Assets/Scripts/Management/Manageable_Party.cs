@@ -76,10 +76,8 @@ public class Manageable_Party : I_IsJobGiver
         if (tagoverride == "") tagoverride = filter.matchCOMTag;
         if (comIDOverride == "") comIDOverride = filter.matchCOMID;
         if (scr_System_CentralControl.current.isSafeMode && scr_System_Serializer.current.nsfwKeywords.Contains(tagoverride)) return new List<Job_Furniture>();
-        if (chara.Jail != null && chara.Jail.ownerJob != null)
-        {
-
-        }
+        // a prisoner's own searches stay in their prison area (Docs/Prison/Plan_PrisonRework.md §4)
+        var prisonArea = PrisonerJobRestriction.GetArea(chara);
 
         if (!FactionUtility.TryFindValidNonJobInstances(nonjobPosts, managedRoomRefs, out possibleJobs, chara, comIDOverride, tagoverride, filter.checkBlacklist) || possibleJobs == null || possibleJobs.Count < 1)
         {
@@ -109,6 +107,12 @@ public class Manageable_Party : I_IsJobGiver
             if (restrictRoomList != null && (j.ParentRoom == null || !restrictRoomList.Contains(j.ParentRoom.RefID)))
             {
                 ss += $"\n{j.DisplayName} removed due to room {(j.ParentRoom == null ? "null" : j.ParentRoom.RefID)} match with restrictRoomList {String.Join(" ", restrictRoomList)}";
+                possibleJobs.RemoveAt(i);
+                continue;
+            }
+            if (prisonArea != null && !prisonArea.Allows(j))
+            {
+                ss += $"\n{j.DisplayName} removed: outside {chara.FirstName}'s prison area";
                 possibleJobs.RemoveAt(i);
                 continue;
             }
@@ -358,6 +362,14 @@ public class Manageable_Party : I_IsJobGiver
             {
                 var c = scr_System_CampaignManager.current.FindInstanceByID(i);
                 RemoveFromFaction(c);
+                // the captive is handed over to the faction (Docs/Prison/Plan_PrisonRework.md §5.3a): the player's faction
+                // asks what to do with them (keep as prisoner with a free cell / no cell: release as member / ...); an NPC
+                // faction just gives them a free cell
+                if (s2.isPrisoner && c != null && PrisonUtility.IsPrisonerOf(c, OwnerFaction))
+                {
+                    if (OwnerFaction.FactionOwnerRoot.isPlayerFaction) FactionUtility.SendImprisonEvent(OwnerFaction, c);
+                    else PrisonUtility.TryAutoAssignCell(OwnerFaction, c);
+                }
             }
         }
         // clear all temporaryactors
@@ -644,6 +656,8 @@ public class Manageable_Party : I_IsJobGiver
     {
         // a parent MemberType is never held: joining as it joins as its first child
         guestStatus = guestStatus?.ResolveJoinTarget();
+        // a new imprisonment = entering a prisoner type from a non-prisoner one (Docs/Prison/Plan_PrisonRework.md §5.2)
+        bool wasPrisoner = charaGuestStatus.TryGetValue(c.RefID, out var previousID) && FactionUtility.GetMemberType(previousID)?.isPrisoner == true;
         //c.AddToFaction(this);
         if (!charaGuestStatus.ContainsKey(c.RefID)) charaGuestStatus.Add(c.RefID, guestStatus.ID);
         else charaGuestStatus[c.RefID] = guestStatus.ID;
@@ -654,7 +668,7 @@ public class Manageable_Party : I_IsJobGiver
         // set manager roles
         if (!OwnerFaction.ManagedChara.Contains(c)) OwnerFaction.AddToFaction(c, guestStatus, false);
 
-        if (sendEvent && guestStatus.isPrisoner)
+        if (sendEvent && guestStatus.isPrisoner && !wasPrisoner)
         {
             FactionUtility.SendImprisonEvent(this, c);
             if (this.Job.isActive)
@@ -908,7 +922,7 @@ public class Manageable_Party : I_IsJobGiver
         {
             if (i.RefID != chara.RefID &&
                 !FurnitureOccupancyUtility.IsInCarry(i) &&   // carrying / being carried (携带): not sought out
-                MapUtility.CanSee(chara, i) &&               // not across a stall's door (PreEvaluate would refuse it)
+                MapUtility.CanInteract(chara, i) &&          // not across a room divider (PreEvaluate would refuse it)
                 (scr_System_CentralControl.current.CanInteractWith(chara.RefID, i.RefID)) &&
                 (!restrainedOnly || i.isImprisoned || i.isRestrained) &&
                 (i.InteractionJob.HasAvailableCOMwithCOMTags(new List<string>() { tag }))

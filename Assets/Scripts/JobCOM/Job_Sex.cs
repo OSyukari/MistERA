@@ -405,6 +405,8 @@ public class Job_Sex_Group : Job
                 if (!_cachedActorList)
                 {
                     _rapistActorList.Clear();
+                    // player-involved scenes never auto-assign a male-animal rapist; the player decides the roles
+                    if (this.actorRefID.Contains(0)) return _rapistActorList;
                     bool hasReceiver = false;
                     foreach (var i in this.actorRefID)
                     {

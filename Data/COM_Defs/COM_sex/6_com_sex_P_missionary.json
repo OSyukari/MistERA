@@ -19,6 +19,7 @@
                     "permission_vaginal"
                 ],
                 "portraitTags": ["missionary"],
+                "portraitTags_Receiver":["portrait_lower"],
                 "requirements": {
                     "requirement": {
                         "req_Doers": {
@@ -130,14 +131,18 @@
                                                         }
                                                     ],
                                                     "texts": [
-                                                        "com_sex_P_missionary_description_begin_1_1"
+                                                        "com_sex_P_missionary_description_begin_1_1",
+                                                        "com_sex_P_missionary_description_begin_1_5",
+                                                        "com_sex_P_missionary_description_begin_1_6"
                                                     ]
                                                 },
                                                 {
                                                     "_comment": "if none of the above = new insert",
                                                     "keepLooking": false,
                                                     "texts": [
-                                                        "com_sex_P_missionary_description_begin_1_2"
+                                                        "com_sex_P_missionary_description_begin_1_2",
+                                                        "com_sex_P_missionary_description_begin_1_3",
+                                                        "com_sex_P_missionary_description_begin_1_4"
                                                     ]
                                                 }
                                             ]
@@ -174,14 +179,18 @@
                                                         }
                                                     ],
                                                     "texts": [
-                                                        "com_sex_P_missionary_description_begin_2_1"
+                                                        "com_sex_P_missionary_description_begin_2_1",
+                                                        "com_sex_P_missionary_description_begin_2_3",
+                                                        "com_sex_P_missionary_description_begin_2_4"
                                                     ]
                                                 },
                                                 {
                                                     "_comment": "if none of the above = new insert",
                                                     "keepLooking": false,
                                                     "texts": [
-                                                        "com_sex_P_missionary_description_begin_2_2"
+                                                        "com_sex_P_missionary_description_begin_2_2",
+                                                        "com_sex_P_missionary_description_begin_2_5",
+                                                        "com_sex_P_missionary_description_begin_2_6"
                                                     ]
                                                 }
                                             ]
@@ -236,7 +245,9 @@
                                                                 }
                                                             ],
                                                             "texts": [
-                                                                "com_sex_P_missionary_description_begin_3_1"
+                                                                "com_sex_P_missionary_description_begin_3_1",
+                                                                "com_sex_P_missionary_description_begin_3_5",
+                                                                "com_sex_P_missionary_description_begin_3_6"
                                                             ]
                                                         },
                                                         {
@@ -250,7 +261,9 @@
                                                                 }
                                                             ],
                                                             "texts": [
-                                                                "com_sex_P_missionary_description_begin_3_2"
+                                                                "com_sex_P_missionary_description_begin_3_2",
+                                                                "com_sex_P_missionary_description_begin_3_3",
+                                                                "com_sex_P_missionary_description_begin_3_4"
                                                             ]
                                                         },
                                                         {
@@ -260,8 +273,7 @@
                                                             "texts": [
                                                                 "com_sex_P_missionary_description_begin_3_3_1",
                                                                 "com_sex_P_missionary_description_begin_3_3_2",
-                                                                "com_sex_P_missionary_description_begin_3_3_3",
-                                                                "com_sex_P_missionary_description_begin_3_3_4"
+                                                                "com_sex_P_missionary_description_begin_3_3_3"
                                                             ]
                                                         }
                                                     ]
@@ -288,7 +300,9 @@
                                                                 }
                                                             ],
                                                             "texts": [
-                                                                "com_sex_P_missionary_description_begin_4_1"
+                                                                "com_sex_P_missionary_description_begin_4_1",
+                                                                "com_sex_P_missionary_description_begin_4_6",
+                                                                "com_sex_P_missionary_description_begin_4_7"
                                                             ]
                                                         },
                                                         {
@@ -302,7 +316,9 @@
                                                                 }
                                                             ],
                                                             "texts": [
-                                                                "com_sex_P_missionary_description_begin_4_2"
+                                                                "com_sex_P_missionary_description_begin_4_2",
+                                                                "com_sex_P_missionary_description_begin_4_8",
+                                                                "com_sex_P_missionary_description_begin_4_9"
                                                             ]
                                                         },
                                                         {
@@ -310,7 +326,9 @@
                                                             "keepLooking": false,
                                                             "conditions": [],
                                                             "texts": [
-                                                                "com_sex_P_missionary_description_begin_4_3"
+                                                                "com_sex_P_missionary_description_begin_4_3",
+                                                                "com_sex_P_missionary_description_begin_4_4",
+                                                                "com_sex_P_missionary_description_begin_4_5"
                                                             ]
                                                         }
                                                     ]
@@ -337,7 +355,9 @@
                                                                 }
                                                             ],
                                                             "texts": [
-                                                                "com_sex_P_missionary_description_begin_5_1"
+                                                                "com_sex_P_missionary_description_begin_5_1",
+                                                                "com_sex_P_missionary_description_begin_5_6",
+                                                                "com_sex_P_missionary_description_begin_5_7"
                                                             ]
                                                         },
                                                         {
@@ -351,7 +371,9 @@
                                                                 }
                                                             ],
                                                             "texts": [
-                                                                "com_sex_P_missionary_description_begin_5_2"
+                                                                "com_sex_P_missionary_description_begin_5_2",
+                                                                "com_sex_P_missionary_description_begin_5_4",
+                                                                "com_sex_P_missionary_description_begin_5_5"
                                                             ]
                                                         },
                                                         {
@@ -359,7 +381,9 @@
                                                             "keepLooking": false,
                                                             "conditions": [],
                                                             "texts": [
-                                                                "com_sex_P_missionary_description_begin_5_3"
+                                                                "com_sex_P_missionary_description_begin_5_3",
+                                                                "com_sex_P_missionary_description_begin_5_8",
+                                                                "com_sex_P_missionary_description_begin_5_9"
                                                             ]
                                                         }
                                                     ]
@@ -380,7 +404,9 @@
                                                                 }
                                                             ],
                                                             "texts": [
-                                                                "com_sex_P_missionary_description_begin_6_1"
+                                                                "com_sex_P_missionary_description_begin_6_1",
+                                                                "com_sex_P_missionary_description_begin_6_8",
+                                                                "com_sex_P_missionary_description_begin_6_9"
                                                             ]
                                                         },
                                                         {
@@ -394,7 +420,9 @@
                                                                 }
                                                             ],
                                                             "texts": [
-                                                                "com_sex_P_missionary_description_begin_6_2"
+                                                                "com_sex_P_missionary_description_begin_6_2",
+                                                                "com_sex_P_missionary_description_begin_6_4",
+                                                                "com_sex_P_missionary_description_begin_6_5"
                                                             ]
                                                         },
                                                         {
@@ -402,7 +430,9 @@
                                                             "keepLooking": false,
                                                             "conditions": [],
                                                             "texts": [
-                                                                "com_sex_P_missionary_description_begin_6_3"
+                                                                "com_sex_P_missionary_description_begin_6_3",
+                                                                "com_sex_P_missionary_description_begin_6_6",
+                                                                "com_sex_P_missionary_description_begin_6_7"
                                                             ]
                                                         }
                                                     ]
@@ -450,7 +480,8 @@
                                     ],
                                     "texts": [
                                         "com_sex_P_missionary_description_begin_7_1_1",
-                                        "com_sex_P_missionary_description_begin_7_1_2"
+                                        "com_sex_P_missionary_description_begin_7_1_2",
+                                        "com_sex_P_missionary_description_begin_7_1_3"
                                     ]
                                 },
                                 {
@@ -468,7 +499,8 @@
                                     ],
                                     "texts": [
                                         "com_sex_P_missionary_description_begin_7_2_1",
-                                        "com_sex_P_missionary_description_begin_7_2_2"
+                                        "com_sex_P_missionary_description_begin_7_2_2",
+                                        "com_sex_P_missionary_description_begin_7_2_3"
                                     ]
                                 }
                             ]
@@ -482,7 +514,9 @@
                             "keepLooking": false,
                             "conditions": [],
                             "texts": [
-                                "com_sex_P_missionary_description_remove_1"
+                                "com_sex_P_missionary_description_remove_1",
+                                "com_sex_P_missionary_description_remove_2",
+                                "com_sex_P_missionary_description_remove_3"
                             ],
                             "Entries": []
                         }
@@ -501,7 +535,9 @@
                                 }
                             ],
                             "texts": [
-                                "com_sex_P_missionary_description_ongoing_1"
+                                "com_sex_P_missionary_description_ongoing_1",
+                                "com_sex_P_missionary_description_ongoing_2",
+                                "com_sex_P_missionary_description_ongoing_3"
                             ]
                         },
                         {
@@ -524,7 +560,9 @@
                                         }
                                     ],
                                     "texts": [
-                                        "com_sex_P_missionary_description_ongoing_2_1"
+                                        "com_sex_P_missionary_description_ongoing_2_1",
+                                        "com_sex_P_missionary_description_ongoing_2_5",
+                                        "com_sex_P_missionary_description_ongoing_2_6"
                                     ],
                                     "Entries": []
                                 },
@@ -539,7 +577,9 @@
                                         }
                                     ],
                                     "texts": [
-                                        "com_sex_P_missionary_description_ongoing_2_2"
+                                        "com_sex_P_missionary_description_ongoing_2_2",
+                                        "com_sex_P_missionary_description_ongoing_2_7",
+                                        "com_sex_P_missionary_description_ongoing_2_8"
                                     ],
                                     "Entries": []
                                 },
@@ -554,7 +594,9 @@
                                         }
                                     ],
                                     "texts": [
-                                        "com_sex_P_missionary_description_ongoing_2_3"
+                                        "com_sex_P_missionary_description_ongoing_2_3",
+                                        "com_sex_P_missionary_description_ongoing_2_11",
+                                        "com_sex_P_missionary_description_ongoing_2_12"
                                     ],
                                     "Entries": []
                                 },
@@ -563,7 +605,9 @@
                                     "keepLooking": false,
                                     "conditions": [],
                                     "texts": [
-                                        "com_sex_P_missionary_description_ongoing_2_4"
+                                        "com_sex_P_missionary_description_ongoing_2_4",
+                                        "com_sex_P_missionary_description_ongoing_2_9",
+                                        "com_sex_P_missionary_description_ongoing_2_10"
                                     ],
                                     "Entries": []
                                 }
@@ -587,7 +631,9 @@
                                 }
                             ],
                             "texts": [
-                                "com_sex_P_missionary_description_after_1"
+                                "com_sex_P_missionary_description_after_1",
+                                "com_sex_P_missionary_description_after_2",
+                                "com_sex_P_missionary_description_after_3"
                             ]
                         },
                         {
@@ -627,7 +673,8 @@
                                     ],
                                     "texts": [
                                         "com_sex_P_missionary_description_after_2_1",
-                                        "com_sex_P_missionary_description_after_2_2"
+                                        "com_sex_P_missionary_description_after_2_2",
+                                        "com_sex_P_missionary_description_after_2_3"
                                     ]
                                 }
                             ]
@@ -858,43 +905,90 @@
                 "com_sex_P_missionary_displayName_3": "轮流正常位V",
                 "com_sex_P_missionary_displayName_4": "同时正常位V",
 
-                "com_sex_P_missionary_description_begin_1_1":"$doer.firstname$在品味身体动弹不得的$receiver.firstname$膣内的触感的同时、再次開始动起了腰…",
-                "com_sex_P_missionary_description_begin_1_2":"$doer.firstname$将時停中的$receiver.firstname$仰面推倒、把即将暴発的阴茎插入了小穴里…",
-                "com_sex_P_missionary_description_begin_2_1":"$doer.firstname$在品味着睡眠中的$receiver.firstname$膣内的触感的同时、再次開始动起了腰…",
-                "com_sex_P_missionary_description_begin_2_2":"$doer.firstname$拨开睡眠中的$receiver.firstname$的双腿，把即将暴発的阴茎插入了熟睡着的小穴里…",
+                "com_sex_P_missionary_description_begin_1_1":"$doer.firstname$在停住的时间里压在$receiver.firstname$身上把$doer.p$往小穴深处捅",
+                "com_sex_P_missionary_description_begin_1_2":"$doer.firstname$在停住的时间里把$receiver.firstname$按成仰面躺着的姿势，把$doer.p$捅进小穴",
+                "com_sex_P_missionary_description_begin_2_1":"$doer.firstname$把睡着的$receiver.firstname$的腿抬起来，把$doer.p$往小穴里捅",
+                "com_sex_P_missionary_description_begin_2_2":"$doer.firstname$掰开睡着的$receiver.firstname$的双腿，把$doer.p$捅进小穴",
 
-                "com_sex_P_missionary_description_begin_3_1":"$master.firstname$命令$doer.firstname$以正常位插入$receiver.firstname$，并更激烈地运动腰",
-                "com_sex_P_missionary_description_begin_3_2":"$receiver.firstname$在$doer.firstname$的腰上缠着脚，要求对方更加激烈地运动腰",
-                "com_sex_P_missionary_description_begin_3_3_1":"$doer.firstname$插在$receiver.firstname$里面,更激烈地运动腰部…",
-                "com_sex_P_missionary_description_begin_3_3_2":"$doer.firstname$抓住$receiver.firstname$的腰,肉棒更激烈的插入…",
-                "com_sex_P_missionary_description_begin_3_3_3":"$doer.firstname$抱着$receiver.firstname$的腿,用巧妙的腰使之执拗地攻击弱点…",
+                "com_sex_P_missionary_description_begin_3_1":"$doer.firstname$依着$master.firstname$的吩咐把$doer.p$往小穴里捅得更狠",
+                "com_sex_P_missionary_description_begin_3_2":"$receiver.firstname$用腿勾住$doer.firstname$的腰，把臀部往$doer.p$上撞",
+                "com_sex_P_missionary_description_begin_3_3_1":"$doer.firstname$压着$receiver.firstname$把$doer.p$捅进小穴更深处",
+                "com_sex_P_missionary_description_begin_3_3_2":"$doer.firstname$抓住$receiver.firstname$的腰把$doer.p$抽送得更狠",
+                "com_sex_P_missionary_description_begin_3_3_3":"$doer.firstname$抱起$receiver.firstname$的腿把$doer.p$往小穴深处捅",
                 "com_sex_P_missionary_description_begin_3_3_4":"$doer.firstname$插在$receiver.firstname$里面,用猛烈的活塞摩擦小穴…",
-                "com_sex_P_missionary_description_begin_4_1":"$master.firstname$命令$doer.firstname$把体位调到正常位，再次扭动腰部",
-                "com_sex_P_missionary_description_begin_4_2":"$receiver.firstname$向后倒下，让$doer.firstname$在正常位摆动腰…",
-                "com_sex_P_missionary_description_begin_4_3":"$doer.firstname$在插入的状态下将$receiver.firstname$推倒，从上方压住后再次开始扭动腰部…",
-                "com_sex_P_missionary_description_begin_5_1":"$master.firstname$命令$doer.firstname$把体位调到正常位，再次扭动腰部",
-                "com_sex_P_missionary_description_begin_5_2":"$receiver.firstname$面对$doer.firstname$， 自己躺下让对方扭动着腰…",
-                "com_sex_P_missionary_description_begin_5_3":"$doer.firstname$在插入的状态下将$receiver.firstname$的身体朝向正面，从上方压住后再次开始扭动腰部…",
-                "com_sex_P_missionary_description_begin_6_1":"$doer.firstname$在$master.firstname$的命令下推倒了$receiver.firstname$， %LOCALS:1%肉棒刺进了$receiver.firstname$的小穴并开始扭动腰部…",
-                "com_sex_P_missionary_description_begin_6_2":"$receiver.firstname$挪动到$doer.firstname$的下面，引导着对方的肉棒插入插入自己的秘部…",
-                "com_sex_P_missionary_description_begin_6_3":"$doer.firstname$将$receiver.firstname$推倒，向$receiver.firstname$的肉穴突入肉棒开始扭动腰部…",
+                "com_sex_P_missionary_description_begin_4_1":"$doer.firstname$依着$master.firstname$的吩咐把$receiver.firstname$放成仰面躺着的姿势，把$doer.p$捅进小穴",
+                "com_sex_P_missionary_description_begin_4_2":"$receiver.firstname$自己向后躺倒把腿分开，让$doer.p$捅进小穴",
+                "com_sex_P_missionary_description_begin_4_3":"$doer.firstname$在插着的状态下把$receiver.firstname$放成仰面躺着的姿势，把$doer.p$接着往小穴里顶",
+                "com_sex_P_missionary_description_begin_5_1":"$doer.firstname$依着$master.firstname$的吩咐把$receiver.firstname$翻成仰面躺着的姿势，把$doer.p$捅进小穴",
+                "com_sex_P_missionary_description_begin_5_2":"$receiver.firstname$自己翻过身仰面躺下，让$doer.p$捅进小穴",
+                "com_sex_P_missionary_description_begin_5_3":"$doer.firstname$在插着的状态下把$receiver.firstname$翻成仰面躺着的姿势，把$doer.p$接着往小穴里顶",
+                "com_sex_P_missionary_description_begin_6_1":"$doer.firstname$依着$master.firstname$的吩咐把$receiver.firstname$推成仰面躺着的姿势，把$doer.p$捅进小穴",
+                "com_sex_P_missionary_description_begin_6_2":"$receiver.firstname$挪到$doer.firstname$身下把腿分开，让$doer.p$捅进小穴",
+                "com_sex_P_missionary_description_begin_6_3":"$doer.firstname$把$receiver.firstname$推成仰面躺着的姿势，把$doer.p$捅进小穴",
 
-                "com_sex_P_missionary_description_begin_7_1_1":"发情的$receiver.firstname$的视线被$doer.firstname$的阴茎深深吸引…",
-                "com_sex_P_missionary_description_begin_7_1_2":"被情欲所俘虏的$receiver.firstname$，将贪婪的视线投向了$doer.firstname$的阴茎…",
-                "com_sex_P_missionary_description_begin_7_2_1":"$receiver.firstname$在肉欲的驱使下，迈开大腿将阴茎含到了深处…",
-                "com_sex_P_missionary_description_begin_7_2_2":"兴奋不已的$receiver.firstname$配合着$doer.firstname$的插入，美艳地摆动着腰…",
+                "com_sex_P_missionary_description_begin_7_1_1":"$receiver.firstname$发着情把腿缠上$doer.firstname$的腰，把$doer.p$夹进小穴",
+                "com_sex_P_missionary_description_begin_7_1_2":"$receiver.firstname$发着情把腰往$doer.p$上迎，让$doer.p$捅得更深",
+                "com_sex_P_missionary_description_begin_7_2_1":"$receiver.firstname$把腿张得更开让$doer.p$捅进小穴更深处",
+                "com_sex_P_missionary_description_begin_7_2_2":"$receiver.firstname$夹着$doer.p$摆着腰配合抽送",
 
-                "com_sex_P_missionary_description_after_1":"在射精的瞬間$doer.firstname$将阴茎深深突入了$receiver.firstname$膣内最深处…",
-                "com_sex_P_missionary_description_after_2_1":"$receiver.firstname$浑身是汗的身体颤抖着接受着快乐…",
-                "com_sex_P_missionary_description_after_2_2":"$receiver.firstname$全身张成了弓形，颤颤巍峨地痉挛着，用全身品味着强烈的绝顶…",
+                "com_sex_P_missionary_description_after_1":"$doer.firstname$把$doer.p$顶进$receiver.firstname$的小穴最深处",
+                "com_sex_P_missionary_description_after_2_1":"$receiver.firstname$的小穴把$doer.p$绞得动弹不得",
+                "com_sex_P_missionary_description_after_2_2":"$receiver.firstname$的小穴一阵阵抽紧裹住$doer.p$",
 
-                "com_sex_P_missionary_description_remove_1":"$doer.firstname$从$receiver.firstname$的小穴内拔出了阴茎…",
+                "com_sex_P_missionary_description_remove_1":"$doer.firstname$把$doer.p$从$receiver.firstname$的小穴里拔出来",
 
-                "com_sex_P_missionary_description_ongoing_1":"$receiver.firstname$的小穴中含进了$doer.firstname$的阴茎…",
-                "com_sex_P_missionary_description_ongoing_2_1":"$doer.firstname$插在筋疲力尽的$receiver.firstname$体内，更加激烈地动着腰…",
-                "com_sex_P_missionary_description_ongoing_2_2":"命令$doer.firstname$以正常位插入$receiver.firstname$，并更激烈地运动腰\n$doer.firstname$按照$master.firstname$的指示，激烈地抽插$receiver.firstname$小穴深处…",
-                "com_sex_P_missionary_description_ongoing_2_3":"$receiver.firstname$的脚缠在$doer.firstname$的腰上，要求对方更加激烈地运动腰",
-                "com_sex_P_missionary_description_ongoing_2_4":"$doer.firstname$插在$receiver.firstname$体内，腰更加剧烈地运动着…"
+                "com_sex_P_missionary_description_ongoing_1":"$doer.p$在$receiver.firstname$的小穴里抽插",
+                "com_sex_P_missionary_description_ongoing_2_1":"$doer.firstname$压在$receiver.firstname$身上把$doer.p$抽送个不停",
+                "com_sex_P_missionary_description_ongoing_2_2":"$doer.firstname$依着$master.firstname$的吩咐把$doer.p$往小穴里摇得更狠",
+                "com_sex_P_missionary_description_ongoing_2_3":"$receiver.firstname$用腿勾着$doer.firstname$的腰把$doer.p$往小穴里吞",
+                "com_sex_P_missionary_description_ongoing_2_4":"$doer.firstname$压着$receiver.firstname$摇着腰把$doer.p$往小穴里抽送",
+                "com_sex_P_missionary_description_ongoing_2_5": "$doer.firstname$把$doer.p$一次次捅进$receiver.firstname$的小穴",
+                "com_sex_P_missionary_description_ongoing_2_6": "$doer.firstname$抓着$receiver.firstname$的腰把$doer.p$往小穴深处顶",
+                "com_sex_P_missionary_description_begin_6_4": "$receiver.firstname$自己躺好把$doer.p$吞进小穴里",
+                "com_sex_P_missionary_description_begin_6_5": "$doer.firstname$顺着$receiver.firstname$躺好的姿势把$doer.p$捅进小穴",
+                "com_sex_P_missionary_description_begin_2_3": "$doer.firstname$压在睡着的$receiver.firstname$身上，把$doer.p$顶进小穴",
+                "com_sex_P_missionary_description_begin_2_4": "$doer.firstname$抱着睡着的$receiver.firstname$的腰把$doer.p$往小穴里带",
+                "com_sex_P_missionary_description_begin_3_3": "$receiver.firstname$把腰往上顶让$doer.p$捅进小穴更深处",
+                "com_sex_P_missionary_description_begin_3_4": "$receiver.firstname$夹紧$doer.p$把腰往上送，让$doer.p$捅得更深",
+                "com_sex_P_missionary_description_begin_1_3": "$doer.firstname$在停住的时间里掰开$receiver.firstname$的腿，把$doer.p$捅进$receiver.firstname$的阴道",
+                "com_sex_P_missionary_description_begin_1_4": "$doer.firstname$在停住的时间里把$receiver.firstname$压成仰面躺着的姿势，把$doer.p$塞进小穴里",
+                "com_sex_P_missionary_description_begin_1_5": "$doer.firstname$在停住的时间里抬起$receiver.firstname$的腿把$doer.p$捅进小穴深处",
+                "com_sex_P_missionary_description_begin_1_6": "$doer.firstname$在停住的时间里抱着$receiver.firstname$的腰把$doer.p$往小穴里顶",
+                "com_sex_P_missionary_description_begin_7_2_3": "$receiver.firstname$把腰往上顶让$doer.p$进得更深",
+                "com_sex_P_missionary_description_begin_5_4": "$receiver.firstname$躺好以后把腿分开，把$doer.p$往小穴里送",
+                "com_sex_P_missionary_description_begin_5_5": "$doer.firstname$顺着$receiver.firstname$躺好的姿势压到$receiver.firstname$身上，把$doer.p$捅进小穴",
+                "com_sex_P_missionary_description_remove_2": "$doer.firstname$把$doer.p$从$receiver.firstname$的阴道里退出来",
+                "com_sex_P_missionary_description_remove_3": "$doer.p$从$receiver.firstname$的小穴里滑了出去",
+                "com_sex_P_missionary_description_begin_5_6": "$doer.firstname$按$master.firstname$的吩咐把$receiver.firstname$翻正，压到身上把$doer.p$捅进小穴",
+                "com_sex_P_missionary_description_begin_5_7": "$doer.firstname$应下$master.firstname$的吩咐把$receiver.firstname$翻成仰面躺着的姿势，把$doer.p$塞进小穴里",
+                "com_sex_P_missionary_description_ongoing_2_7": "$doer.firstname$按$master.firstname$的吩咐把$doer.p$往$receiver.firstname$的小穴深处抽送",
+                "com_sex_P_missionary_description_ongoing_2_8": "$doer.firstname$应下$master.firstname$的吩咐把$doer.p$捅进小穴更深处",
+                "com_sex_P_missionary_description_begin_2_5": "$doer.firstname$把$doer.p$捅进$receiver.firstname$熟睡着的小穴",
+                "com_sex_P_missionary_description_begin_2_6": "$doer.firstname$压上睡着的$receiver.firstname$，把$doer.p$塞进小穴里",
+                "com_sex_P_missionary_description_ongoing_2": "$doer.firstname$压在$receiver.firstname$身上摇着腰把$doer.p$往小穴里抽送",
+                "com_sex_P_missionary_description_ongoing_3": "$doer.firstname$把$doer.p$往$receiver.firstname$的小穴里捅",
+                "com_sex_P_missionary_description_begin_4_4": "$doer.firstname$从上面压住$receiver.firstname$把$doer.p$接着往小穴里捅",
+                "com_sex_P_missionary_description_begin_4_5": "$doer.firstname$让$receiver.firstname$仰面躺好以后把$doer.p$重新捅进小穴",
+                "com_sex_P_missionary_description_begin_6_6": "$doer.firstname$把$doer.p$捅进$receiver.firstname$的小穴",
+                "com_sex_P_missionary_description_begin_6_7": "$doer.firstname$掰开$receiver.firstname$的腿把$doer.p$捅进去抽送",
+                "com_sex_P_missionary_description_ongoing_2_9": "$doer.p$在$receiver.firstname$的小穴里进出",
+                "com_sex_P_missionary_description_ongoing_2_10": "$doer.firstname$把$receiver.firstname$的腿压开把$doer.p$往深处捅",
+                "com_sex_P_missionary_description_begin_6_8": "$doer.firstname$按$master.firstname$的吩咐压到$receiver.firstname$身上把$doer.p$捅进小穴",
+                "com_sex_P_missionary_description_begin_6_9": "$doer.firstname$应下$master.firstname$的吩咐仰面压着把$doer.p$往里抽送",
+                "com_sex_P_missionary_description_begin_4_6": "$doer.firstname$按$master.firstname$的吩咐压到$receiver.firstname$身上把$doer.p$捅进小穴",
+                "com_sex_P_missionary_description_begin_4_7": "$doer.firstname$应下$master.firstname$的吩咐压着$receiver.firstname$把$doer.p$往里顶",
+                "com_sex_P_missionary_description_begin_7_1_3": "$receiver.firstname$夹紧$doer.p$把臀部往上顶，把$doer.p$吞进小穴更深处",
+                "com_sex_P_missionary_description_begin_4_8": "$receiver.firstname$躺好以后把腰往$doer.p$上迎，让$doer.p$进得更深",
+                "com_sex_P_missionary_description_begin_4_9": "$doer.firstname$顺着$receiver.firstname$躺好的姿势压到$receiver.firstname$身上，把$doer.p$捅进小穴",
+                "com_sex_P_missionary_description_begin_3_5": "$doer.firstname$按$master.firstname$的吩咐压着$receiver.firstname$把$doer.p$往小穴里猛顶",
+                "com_sex_P_missionary_description_begin_3_6": "$doer.firstname$应下$master.firstname$的吩咐把$doer.p$捅进$receiver.firstname$的小穴更深处",
+                "com_sex_P_missionary_description_begin_5_8": "$doer.firstname$从上面压住翻过来的$receiver.firstname$把$doer.p$接着往小穴里捅",
+                "com_sex_P_missionary_description_begin_5_9": "$doer.firstname$把$receiver.firstname$翻正以后把$doer.p$重新捅进小穴",
+                "com_sex_P_missionary_description_ongoing_2_11": "$receiver.firstname$把腰往$doer.p$上迎，让$doer.p$捅进小穴更深处",
+                "com_sex_P_missionary_description_ongoing_2_12": "$receiver.firstname$夹着$doer.p$把腰往上顶",
+                "com_sex_P_missionary_description_after_2": "$doer.firstname$按住$receiver.firstname$的腰把$doer.p$压得更深",
+                "com_sex_P_missionary_description_after_3": "$doer.p$捅到$receiver.firstname$的小穴最里面",
+                "com_sex_P_missionary_description_after_2_3": "$receiver.firstname$的小穴缩得死紧夹着$doer.p$吸"
 
 
             },

@@ -19,6 +19,7 @@
                     "permission_vaginal"
                 ],
                 "portraitTags": ["cowgirl"],
+                "portraitTags_Receiver":["portrait_lower"],
                 "requirements": {
                     "requirement": {
                         "req_Doers": {
@@ -105,7 +106,8 @@
                                     "keepLooking": false,
                                     "texts": [
                                         "com_sex_P_cowgirl_description_ongoing_1_1",
-                                        "com_sex_P_cowgirl_description_ongoing_1_2"
+                                        "com_sex_P_cowgirl_description_ongoing_1_2",
+                                        "com_sex_P_cowgirl_description_ongoing_1_3"
                                     ]
                                 }
                             ]
@@ -122,7 +124,9 @@
                                     "_comment": "",
                                     "keepLooking": false,
                                     "texts": [
-                                        "com_sex_P_cowgirl_description_remove_1"
+                                        "com_sex_P_cowgirl_description_remove_1",
+                                        "com_sex_P_cowgirl_description_remove_2",
+                                        "com_sex_P_cowgirl_description_remove_3"
                                     ]
                                 }
                             ]
@@ -137,12 +141,7 @@
                             "texts": [
                                 "com_sex_P_cowgirl_description_after_2_1",
                                 "com_sex_P_cowgirl_description_after_2_2",
-                                "com_sex_P_cowgirl_description_after_2_3",
-                                "com_sex_P_cowgirl_description_after_2_4",
-                                "com_sex_P_cowgirl_description_after_2_5",
-                                "com_sex_P_cowgirl_description_after_2_6",
-                                "com_sex_P_cowgirl_description_after_2_7",
-                                "com_sex_P_cowgirl_description_after_2_8"
+                                "com_sex_P_cowgirl_description_after_2_3"
                             ]
                         },
                         {
@@ -159,7 +158,9 @@
                                 }
                             ],
                             "texts": [
-                                "com_sex_P_cowgirl_description_after_1"
+                                "com_sex_P_cowgirl_description_after_1",
+                                "com_sex_P_cowgirl_description_after_2",
+                                "com_sex_P_cowgirl_description_after_3"
                             ]
                         }
                     ]
@@ -195,7 +196,8 @@
                                     ],
                                     "texts": [
                                         "com_sex_P_cowgirl_description_begin_2_1",
-                                        "com_sex_P_cowgirl_description_begin_2_2"
+                                        "com_sex_P_cowgirl_description_begin_2_2",
+                                        "com_sex_P_cowgirl_description_begin_2_3"
                                     ]
                                 }
                             ]
@@ -204,7 +206,9 @@
                             "_comment": "middle branch, no condition, always check",
                             "keepLooking": true,
                             "texts": [
-                                "com_sex_P_cowgirl_description_begin_1"
+                                "com_sex_P_cowgirl_description_begin_1",
+                                "com_sex_P_cowgirl_description_begin_2",
+                                "com_sex_P_cowgirl_description_begin_3"
                             ]
                         }
                     ]
@@ -433,24 +437,32 @@
                 "com_sex_P_cowgirl_displayName_3": "轮流骑乘位V",
                 "com_sex_P_cowgirl_displayName_4": "同时骑乘位V",
 
-                "com_sex_P_cowgirl_description_begin_1":"$doer.firstname$跨坐在$receiver.firstname$身上，缓缓将阴茎送入自己的膣内…",
-                "com_sex_P_cowgirl_description_begin_2_1":"$doer.firstname$被情欲所驱使，像是在撒娇一样伸出屁股…",
-                "com_sex_P_cowgirl_description_begin_2_2":"$doer.firstname$以野兽的姿态将$receiver.firstname$的阴茎刺入体内，发情的雌性的脸喘着粗气……",
+                "com_sex_P_cowgirl_description_begin_1":"$doer.firstname$扶着$receiver.p$对准自己的小穴坐了下去",
+                "com_sex_P_cowgirl_description_begin_2_1":"$receiver.firstname$把$receiver.p$往上顶进$doer.firstname$的小穴",
+                "com_sex_P_cowgirl_description_begin_2_2":"$receiver.firstname$发着情把$receiver.p$往$doer.firstname$的阴道里撞",
 
-                "com_sex_P_cowgirl_description_after_1":"在射精的瞬間$receiver.firstname$将阴茎深深突入了$doer.firstname$膣内最深处…",
-                "com_sex_P_cowgirl_description_after_2_1":"$doer.firstname$每一次插入都在颤抖，嘴角不断有口水垂下来。",
-                "com_sex_P_cowgirl_description_after_2_2":"$doer.firstname$疯狂地移动着臀部，但还远远没有从中得到快感，显得有些痛苦",
-                "com_sex_P_cowgirl_description_after_2_3":"$doer.firstname$虽然看起来很痛苦，但表情中却隐约透露着快乐",
+                "com_sex_P_cowgirl_description_after_1":"$receiver.firstname$把$receiver.p$顶进$doer.firstname$的小穴最深处",
+                "com_sex_P_cowgirl_description_after_2_1":"$doer.firstname$的小穴还裹着$receiver.p$一下下收紧",
+                "com_sex_P_cowgirl_description_after_2_2":"$doer.firstname$塌下腰把小穴留在$receiver.p$上没动",
+                "com_sex_P_cowgirl_description_after_2_3":"$receiver.p$还插在$doer.firstname$的小穴里没有拔出去",
                 "com_sex_P_cowgirl_description_after_2_4":"$doer.firstname$摇着腰，因无法抑制的快乐而发出可爱的声音",
                 "com_sex_P_cowgirl_description_after_2_5":"$doer.firstname$大概已经习惯了，一边顺应快感被顶着，一边心甘情愿地摇晃着臀部。",
                 "com_sex_P_cowgirl_description_after_2_6":"$doer.firstname$继续不受控制地喘息着，同时吐出拒绝快感的话语。",
                 "com_sex_P_cowgirl_description_after_2_7":"$doer.firstname$用力地翘起臀部，弓着腰，快乐地呻吟着。",
                 "com_sex_P_cowgirl_description_after_2_8":"$doer.firstname$正摇晃着臀部，一脸堕落的表情贪图着快乐。",
 
-                "com_sex_P_cowgirl_description_remove_1":"$doer.firstname$扭动腰部从小穴里拔出了$doer.firstname$的肉棒…",
+                "com_sex_P_cowgirl_description_remove_1":"$doer.firstname$抬起身体让$receiver.p$从小穴里脱出来",
 
-                "com_sex_P_cowgirl_description_ongoing_1_1":"$doer.firstname$以骑乘位的姿势将$receiver.firstname$插入，并摇晃着腰部…",
-                "com_sex_P_cowgirl_description_ongoing_1_2":"$receiver.firstname$抓住$doer.firstname$的腰部，将她的臀部往上顶，责弄$doer.v$……"
+                "com_sex_P_cowgirl_description_ongoing_1_1":"$doer.firstname$的小穴套着$receiver.p$不停地起落",
+                "com_sex_P_cowgirl_description_ongoing_1_2":"$doer.firstname$在$receiver.firstname$身上摇着腰让$receiver.p$在体内进出",
+                "com_sex_P_cowgirl_description_begin_2": "$doer.firstname$把$receiver.p$送进自己的小穴里",
+                "com_sex_P_cowgirl_description_begin_3": "$doer.firstname$用自己的小穴从上面把$receiver.p$套住",
+                "com_sex_P_cowgirl_description_ongoing_1_3": "$receiver.firstname$抓住$doer.firstname$的腰把$doer.firstname$的小穴按在$receiver.p$上",
+                "com_sex_P_cowgirl_description_begin_2_3": "$receiver.firstname$按住$doer.firstname$的腰把$receiver.p$一直往上顶",
+                "com_sex_P_cowgirl_description_after_2": "$receiver.firstname$按住$doer.firstname$的腰把$doer.firstname$的胯往$receiver.p$上按",
+                "com_sex_P_cowgirl_description_after_3": "$doer.firstname$的小穴被$receiver.p$顶得更深",
+                "com_sex_P_cowgirl_description_remove_2": "$doer.firstname$把小穴从$receiver.p$上面抬开",
+                "com_sex_P_cowgirl_description_remove_3": "$receiver.p$从$doer.firstname$的小穴里滑了出去"
 
             },
             "en-us":

@@ -115,6 +115,39 @@ section.cat h2.handler-title b { font-weight: 700; }
 .legend .l-ov::before { border: none; content: "→"; width: auto; height: auto; margin-right: 3px; padding: 0 3px; background: var(--ov); color: #fff; border-radius: 2px; }
 .empty { color: var(--muted); padding: 20px 0; }
 
+/* character pairing view: character list left, command rows right */
+body.pairmode .cls-only { display: none !important; }
+#pair-wrap.on { display: grid; grid-template-columns: minmax(240px, 320px) minmax(0, 1fr); gap: 12px; align-items: start; margin-top: 12px; }
+#pair-side { position: sticky; overflow-y: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; }
+#pc-search { position: sticky; top: 0; z-index: 1; width: 100%; font: inherit; color: var(--text); background: var(--panel); border: none;
+  border-bottom: 1px solid var(--line); padding: 6px 10px; }
+.pc-row { display: flex; gap: 6px; align-items: center; padding: 5px 8px 5px 10px; border-bottom: 1px solid var(--line); border-left: 3px solid transparent; }
+.pc-row:last-child { border-bottom: none; }
+.pc-row.view { border-left-color: var(--accent); background: var(--bg); }
+.pc-name { flex: 1; min-width: 0; word-break: break-word; }
+.pc-name b { display: block; font-weight: 600; }
+.pc-name small { display: block; color: var(--muted); font-size: 11px; }
+.pc-name small.warn { color: var(--low); }
+.pc-btns { display: flex; flex-direction: column; gap: 2px; }
+.pc-btns button { font: inherit; font-size: 11px; color: var(--muted); background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 0 6px; cursor: pointer; }
+.pc-btns button.on { color: #fff; background: var(--accent); border-color: var(--accent); }
+.pc-btns button:disabled { opacity: .4; cursor: default; }
+#pair-head { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 8px 12px; font-size: 13px; }
+#pair-sum p { margin: 2px 0; }
+#pair-sum .k { color: var(--muted); }
+#pair-sum .warn { color: var(--low); }
+#pair-sum .err { color: var(--unmatched); }
+.pair-opts { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 6px; color: var(--muted); }
+.pair-opts label { display: inline-flex; gap: 6px; align-items: center; }
+.pair-opts input[type=search] { font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 2px 6px; }
+#pair-main section.cat { margin-top: 10px; }
+.row.no-image .name { color: var(--muted); }
+.row.no-image .name b { font-weight: 400; }
+@media (max-width: 640px) {
+  #pair-wrap.on { grid-template-columns: 1fr; }
+  #pair-side { position: static; max-height: 40vh !important; }
+}
+
 #preview { position: fixed; z-index: 20; pointer-events: none; display: none; background: var(--panel); border: 1px solid var(--line);
   border-radius: 6px; box-shadow: 0 6px 24px rgba(0,0,0,.35); padding: 6px; max-width: 92vw; }
 #preview img { display: block; max-width: var(--preview); max-height: var(--preview); width: auto; height: auto; margin: 0 auto; }
@@ -147,20 +180,21 @@ section.cat h2.handler-title b { font-weight: 700; }
 </header>
 
 <div class="toolbar">
-  <label id="view-label" hidden title="Classification: how each image was classified. Portrait handler: template priority order; each image is shown once, with +X boxes counting repeated images in later rows">View <select id="f-view">
+  <label id="view-label" hidden title="Classification: how each image was classified. Portrait handler: template priority order; each image is shown once, with +X boxes counting repeated images in later rows. Character pairing: the images a character shows per command as doer or receiver with a partner">View <select id="f-view">
     <option value="class">Classification</option>
     <option value="handler">Portrait handler</option>
+    <option value="pair" id="view-pair" hidden disabled>Character pairing</option>
   </select></label>
-  <label id="empty-label" title="Also list what holds no image (in any folder, or none that passes the filters). Classification view: every class name the rules can give in the category (&lt;category&gt;_perform: the isperform names). Portrait handler view: every handler variant of the template"><input type="checkbox" id="f-empty"> Show empty variants</label>
-  <label id="use-label" hidden title="Variants of the portrait handler holding the image. Shadowed = an earlier variant of the same handler always matches first">Handler use <select id="f-use">
+  <label class="cls-only" id="empty-label" title="Also list what holds no image (in any folder, or none that passes the filters). Classification view: every class name the rules can give in the category (&lt;category&gt;_perform: the isperform names). Portrait handler view: every handler variant of the template"><input type="checkbox" id="f-empty"> Show empty variants</label>
+  <label class="cls-only" id="use-label" hidden title="Variants of the portrait handler holding the image. Shadowed = an earlier variant of the same handler always matches first">Handler use <select id="f-use">
     <option value="">All images</option>
     <option value="none">In no variant</option>
     <option value="reach">In a reachable variant</option>
     <option value="never">Only in shadowed variants</option>
     <option value="shadow">In a shadowed variant</option>
   </select></label>
-  <label>Folder <select id="f-folder"><option value="">All</option></select></label>
-  <label>Show <select id="f-status">
+  <label class="cls-only">Folder <select id="f-folder"><option value="">All</option></select></label>
+  <label class="cls-only">Show <select id="f-status">
     <option value="">Everything</option>
     <option value="flagged">Flagged only</option>
     <option value="low">Low confidence</option>
@@ -169,13 +203,13 @@ section.cat h2.handler-title b { font-weight: 700; }
     <option value="kept">Moved out by you</option>
     <option value="override">Overridden by you</option>
   </select></label>
-  <label title="Whether the image's original file name gave its category, name, variant or state (filename IDs in the rules)">File names <select id="f-named">
+  <label class="cls-only" title="Whether the image's original file name gave its category, name, variant or state (filename IDs in the rules)">File names <select id="f-named">
     <option value="">All images</option>
     <option value="used">Name used in analysis</option>
     <option value="unused">Name not used in analysis</option>
   </select></label>
-  <label title="Filter the rows by class name (name / emotion), eg. cowgirl or smile">Class name <input type="search" id="f-class" placeholder="eg. cowgirl" size="12"></label>
-  <label title="Match the file path: work folder, sub folders, current and original file name. Several words must all match.">File name <input type="search" id="f-file" placeholder="folder or file name" size="16"></label>
+  <label class="cls-only" title="Filter the rows by class name (name / emotion), eg. cowgirl or smile">Class name <input type="search" id="f-class" placeholder="eg. cowgirl" size="12"></label>
+  <label class="cls-only" title="Match the file path: work folder, sub folders, current and original file name. Several words must all match.">File name <input type="search" id="f-file" placeholder="folder or file name" size="16"></label>
   <label>Thumbs <input type="range" id="f-size" min="40" max="160" step="8"></label>
   <label>Preview <select id="f-preview">
     <option value="0">Off</option><option value="256">256</option><option value="384">384</option><option value="512">512</option><option value="720">720</option>
@@ -196,7 +230,7 @@ section.cat h2.handler-title b { font-weight: 700; }
     <span class="st" id="ov-status"></span>
   </span>
   <span class="count" id="count"></span>
-  <div class="catbar" id="catbar" title="Click a category to show or hide it; a category also shows its &lt;category&gt;_perform folder">Categories
+  <div class="catbar cls-only" id="catbar" title="Click a category to show or hide it; a category also shows its &lt;category&gt;_perform folder">Categories
     <span id="cat-buttons"></span>
     <button type="button" class="act" data-act="all">Select all</button>
     <button type="button" class="act" data-act="none">Unselect all</button>
@@ -235,7 +269,22 @@ section.cat h2.handler-title b { font-weight: 700; }
     <span id="sel-help" hidden>drag = select images · shift+drag = add · alt+drag = remove · ctrl/alt+click = toggle one</span>
     <span class="l-ov" id="ov-help" hidden>classification override (set on the selected images)</span>
   </div>
-  <div id="cats"></div>
+  <div id="pair-wrap">
+    <div id="pair-side" hidden>
+      <input type="search" id="pc-search" placeholder="character name or id">
+      <div id="pc-list"></div>
+    </div>
+    <div id="pair-main">
+      <div id="pair-head" hidden>
+        <div id="pair-sum"></div>
+        <div class="pair-opts">
+          <label title="Match the command id. Several words must all match.">Command <input type="search" id="pa-search" placeholder="eg. cowgirl" size="16"></label>
+          <label title="Hide the commands that show no template image, or only an unconditional variant of a handler without self / target keys (eg. the neutral portrait every command falls back to)"><input type="checkbox" id="pa-images"> Hide commands with only a fallback portrait</label>
+        </div>
+      </div>
+      <div id="cats"></div>
+    </div>
+  </div>
 </main>
 
 <div id="preview"><img alt=""><div class="info"></div></div>
@@ -348,6 +397,96 @@ window.REPORT = /*__REPORT_DATA__*/null;
     if (x.id) return x.id;
     return (x.tags.length ? x.tags.join(" + ") : "(no tags: always)") + (x.excl.length ? " · not " + x.excl.join(", ") : "");
   }
+
+  // ---- character pairing (R.pairing, PortraitPairing.cs): per command, the template handler variant a character shows as doer or
+  // receiver with a partner, resolved like PortraitManager.GetValidPortrait over the character's global handlers
+  // (scr_System_CentralControl.FillGlobalPortraitHandlers + GlobalPortraitTemplate.GetEntrySets). Self tags = exported actor_tags +
+  // comTags + role + portraitTags (+ _Doer / _Receiver) + "sex" for service + image state keys; target tags = the partner's actor_tags +
+  // its portrait template id. No runtime state beyond the export, no per-performance / kojo tags, template handlers only.
+  var PR = P && R.pairing ? R.pairing : null;
+  var pairChars = {}, pairRoots = {}, slotItems = [], varsOf = [];
+  if (PR) {
+    PR.characters.forEach(function (c) { pairChars[c.id] = c; });
+    P.roots.forEach(function (root, ri) {
+      var m = slotItems[ri] = {};
+      root.slots.forEach(function (s) { m[s.v] = s.items; });
+    });
+    P.variants.forEach(function (x, v) { (varsOf[x.h] || (varsOf[x.h] = [])).push(v); });
+  }
+  function normPath(p) { return String(p || "").replace(/\\/g, "/").replace(/^\/+|\/+$/g, "").trim().toLowerCase(); }
+  // report roots of a useGlobalHandler path: the game reads every image whose full path holds /path/ (GetHandlers)
+  function rootsFor(path) {
+    path = normPath(path);
+    if (!path) return [];
+    if (pairRoots[path]) return pairRoots[path];
+    var list = [];
+    P.roots.forEach(function (root, ri) {
+      var n = normPath(root.name);
+      if (n === path || n.slice(-(path.length + 1)) === "/" + path) list.push(ri);
+    });
+    return (pairRoots[path] = list);
+  }
+  function stateRoot(path, state) { path = normPath(path); return path + "/" + path.split("/").pop() + "_" + state; }
+  // GetEntrySets: every image state either folder has (state gate added to the self keys), then the ordinary roots
+  function entrySets(entry) {
+    var fb = normPath(entry.fallback);
+    if (fb === normPath(entry.path)) fb = "";
+    var sets = [];
+    PR.states.forEach(function (s) {
+      var own = rootsFor(stateRoot(entry.path, s[0])), other = fb ? rootsFor(stateRoot(fb, s[0])) : [];
+      if (own.length || other.length) sets.push({ own: own, fb: other, state: s[0] });
+    });
+    sets.push({ own: rootsFor(entry.path), fb: fb ? rootsFor(fb) : [], state: null });
+    return sets;
+  }
+  function addAll(list, more) { (more || []).forEach(function (x) { if (list.indexOf(x) < 0) list.push(x); }); return list; }
+  function hasAll(list, need) { for (var i = 0; i < need.length; i++) if (list.indexOf(need[i]) < 0) return false; return true; }
+  function pairSelfTags(ch, com, role) {
+    var t = addAll([], ch.tags);
+    addAll(t, com.tags);
+    if (role) addAll(t, [role]);
+    addAll(t, com.pt);
+    if (role === "doer") addAll(t, com.ptd);
+    else if (role === "receiver") addAll(t, com.ptr);
+    if (t.indexOf("service") >= 0) addAll(t, ["sex"]);
+    // GlobalPortraitTemplate.WithStateKeys: a state's keyword adds the state name
+    var base = t.slice();
+    PR.states.forEach(function (s) { if (t.indexOf(s[0]) < 0 && s[1].some(function (k) { return base.indexOf(k) >= 0; })) t.push(s[0]); });
+    return t;
+  }
+  function pairTargetTags(partner) { return partner ? addAll(addAll([], partner.tags), [partner.id]) : []; }
+  function poolOf(roots, v) {
+    var out = [], seen = {};
+    roots.forEach(function (ri) { (slotItems[ri][v] || []).forEach(function (g) { if (!seen[g] && all[g]) { seen[g] = true; out.push(all[g]); } }); });
+    return out;
+  }
+  // first handler whose keys pass and that has a variant with images passing its tags (PortraitVariant.Validate); per variant the
+  // entry's own folder before its fallback (GetMergedHandlers). null = no template image: the game goes on to generated / custom handlers.
+  function resolvePair(ch, self, target) {
+    for (var e = 0; e < ch.handlers.length; e++) {
+      var entry = ch.handlers[e], sets = entrySets(entry);
+      for (var si = 0; si < sets.length; si++) {
+        var set = sets[si];
+        if (!set.own.length && !set.fb.length) continue;
+        for (var h = 0; h < P.handlers.length; h++) {
+          var hx = P.handlers[h];
+          var need = addAll(addAll(hx.self.slice(), entry.self), set.state ? [set.state] : []);
+          if (!hasAll(self, need) || !hasAll(target, addAll(hx.target.slice(), entry.target))) continue;
+          var vs = varsOf[h] || [];
+          for (var i = 0; i < vs.length; i++) {
+            var x = P.variants[vs[i]];
+            if (x.excl.some(function (k) { return self.indexOf(k) >= 0; }) || !hasAll(self, x.tags)) continue;
+            var pool = poolOf(set.own, vs[i]), from = "own";
+            if (!pool.length) { pool = poolOf(set.fb, vs[i]); from = "fallback"; }
+            if (pool.length) return { entry: entry, state: set.state, h: h, v: vs[i], items: pool, from: from };
+          }
+        }
+      }
+    }
+    return null;
+  }
+  var pairSel = { doer: store.get("pairDoer", ""), receiver: store.get("pairRecv", ""), view: store.get("pairView", "doer") };
+  function savePairSel() { store.set("pairDoer", pairSel.doer); store.set("pairRecv", pairSel.receiver); store.set("pairView", pairSel.view); }
 
   // ---- group: categories by size, class names alphabetically, images by folder then path
   var catByKey = {}, cats = [];
@@ -508,7 +647,9 @@ window.REPORT = /*__REPORT_DATA__*/null;
     $("view-label").hidden = false;
     $("use-label").hidden = false;
     $("uses-help").hidden = false;
+    if (PR) { $("view-pair").hidden = false; $("view-pair").disabled = false; }
     viewSel.value = store.get("view", "class");
+    if (viewSel.selectedIndex < 0 || viewSel.options[viewSel.selectedIndex].disabled) viewSel.value = "class";
     useSel.value = store.get("use", "");
   } else if (R.portrait && R.portrait.error) {
     $("meta").innerHTML += " · " + esc(R.portrait.error);
@@ -621,7 +762,12 @@ window.REPORT = /*__REPORT_DATA__*/null;
 
   function render() {
     // the override controls work on the classification view only
-    if (canSelect && R.overrideFile) $("ovbar").hidden = !!(P && viewSel.value === "handler");
+    if (canSelect && R.overrideFile) $("ovbar").hidden = !!(P && viewSel.value !== "class");
+    var pairMode = !!(PR && viewSel.value === "pair");
+    document.body.classList.toggle("pairmode", pairMode);
+    $("pair-wrap").classList.toggle("on", pairMode);
+    $("pair-side").hidden = $("pair-head").hidden = !pairMode;
+    if (pairMode) { renderPairing(); return; }
     if (P && viewSel.value === "handler") { renderHandlers(); return; }
     var folder = folderSel.value, status = statusSel.value, named = namedSel.value;
     var q = classIn.value.trim().toLowerCase(), fileTerms = terms(fileIn.value);
@@ -840,6 +986,101 @@ window.REPORT = /*__REPORT_DATA__*/null;
     if ($("freq-panel").open) renderFreq();
   }
 
+  // Character pairing view: the character list (left) and one row per command with the images the viewed actor shows (right)
+  function renderPairChars() {
+    var q = terms($("pc-search").value), html = "";
+    PR.characters.forEach(function (c) {
+      var isDoer = pairSel.doer === c.id, isRecv = pairSel.receiver === c.id;
+      if (q.length && !isDoer && !isRecv) {
+        var s = (c.name + " " + c.id).toLowerCase();
+        for (var i = 0; i < q.length; i++) if (s.indexOf(q[i]) < 0) return;
+      }
+      var viewed = (isDoer && pairSel.view === "doer") || (isRecv && pairSel.view === "receiver");
+      var info = c.handlers == null ? '<small class="warn" title="characterDBs.json has no global_handlers for it: export it again (Tools/MistEra/Export Room Character Prompts). It can still be the partner.">not exported with portrait folders</small>'
+        : c.handlers.length ? "<small>" + c.handlers.length + " portrait folder" + (c.handlers.length === 1 ? "" : "s") + "</small>"
+        : "<small>no useGlobalHandler</small>";
+      html += '<div class="pc-row' + (viewed ? " view" : "") + '" data-id="' + esc(c.id) + '"><div class="pc-name"><b>' + esc(c.name) + "</b><small>" + esc(c.id) + "</small>" + info + "</div>" +
+        '<div class="pc-btns"><button type="button" data-role="doer"' + (isDoer ? ' class="on"' : "") + ">Doer</button>" +
+        '<button type="button" data-role="receiver"' + (isRecv ? ' class="on"' : "") + ">Receiver</button>" +
+        '<button type="button" data-role="view"' + (viewed ? ' class="on"' : "") + (isDoer || isRecv ? "" : " disabled") +
+        ' title="Show the images from this actor (pick it as doer or receiver first; when it is both, click again to switch)">View</button></div></div>';
+    });
+    $("pc-list").innerHTML = html || '<p class="empty" style="padding:10px">No character matches.</p>';
+  }
+  function placePairSide() {
+    var top = document.querySelector(".toolbar").offsetHeight + 8;
+    $("pair-side").style.top = top + "px";
+    $("pair-side").style.maxHeight = "calc(100vh - " + (top + 12) + "px)";
+  }
+  function pairLabel(id) {
+    var c = pairChars[id];
+    return c ? "<b>" + esc(c.name) + '</b> <span class="k">' + esc(c.id) + "</span>" : '<span class="k">(none)</span>';
+  }
+  function renderPairing() {
+    placePairSide();
+    renderPairChars();
+    items = [];
+    var viewerId = pairSel.view === "receiver" ? pairSel.receiver : pairSel.doer, partnerId = pairSel.view === "receiver" ? pairSel.doer : pairSel.receiver;
+    var viewer = pairChars[viewerId] || null, partner = pairChars[partnerId] || null;
+    var sum = "";
+    PR.errors.forEach(function (e) { sum += '<p class="err">' + esc(e) + "</p>"; });
+    sum += "<p>" + '<span class="k">Doer</span> ' + pairLabel(pairSel.doer) + ' &nbsp; <span class="k">Receiver</span> ' + pairLabel(pairSel.receiver) +
+           ' &nbsp; <span class="k">Viewing</span> ' + esc(viewer ? pairSel.view : "(pick a doer or receiver, then View)") + "</p>";
+    if (viewer) {
+      sum += '<p><span class="k">Viewer actor tags:</span> ' + esc(viewer.tags.join(", ") || "(none)") + "</p>";
+      sum += '<p><span class="k">Partner tags:</span> ' + esc(partner ? pairTargetTags(partner).join(", ") : "(no partner: handlers needing target keys never pass)") + "</p>";
+      if (viewer.handlers == null) sum += '<p class="warn">' + esc(viewer.name) + " has no global_handlers in " + esc(PR.characterDb) + ": export it again in play mode (Tools/MistEra/Export Room Character Prompts).</p>";
+      else if (!viewer.handlers.length) sum += '<p class="warn">' + esc(viewer.name) + " has no useGlobalHandler: only custom portrait handlers, not previewed here.</p>";
+      else sum += '<p><span class="k">Portrait folders (priority order):</span> ' + viewer.handlers.map(function (e) {
+        var n = rootsFor(e.path).length, s = esc(e.path);
+        if (e.self.length) s += ' <span class="k">self</span> ' + esc(e.self.join(" + "));
+        if (e.target.length) s += ' <span class="k">target</span> ' + esc(e.target.join(" + "));
+        if (e.fallback) s += ' <span class="k">fallback</span> ' + esc(e.fallback) + (rootsFor(e.fallback).length ? "" : ' <span class="warn">(not in this report)</span>');
+        return s + (n ? "" : ' <span class="warn">(not in this report)</span>');
+      }).join(" · ") + "</p>";
+    }
+    sum += '<p class="hint">Static preview: exported actor tags (as of the export), command comTags + portraitTags + role. Not included: per-performance and kojo ' +
+           "portrait tags, live state changed since the export, generated and custom (hand-written) handlers. The game picks one image at random from the row's images.</p>";
+    $("pair-sum").innerHTML = sum;
+
+    if (!viewer || !viewer.handlers || !viewer.handlers.length) {
+      $("cats").innerHTML = "";
+      $("count").textContent = PR.characters.length + " characters · " + PR.coms.length + " commands";
+      return;
+    }
+    var q = terms($("pa-search").value), onlyImages = $("pa-images").checked, rows = "", nRows = 0, nImages = 0, nEval = 0;
+    PR.coms.forEach(function (com) {
+      var id = com.id.toLowerCase();
+      for (var i = 0; i < q.length; i++) if (id.indexOf(q[i]) < 0) return;
+      nEval++;
+      // solo acts: no role, no partner (GetEPPortraitActionTags)
+      var role = com.solo ? "" : pairSel.view, self = pairSelfTags(viewer, com, role), target = com.solo ? [] : pairTargetTags(partner);
+      var r = resolvePair(viewer, self, target);
+      // fallback portrait: an unconditional variant of a handler with no self / target keys (the neutral portrait)
+      var hx = r ? P.handlers[r.h] : null, px = r ? P.variants[r.v] : null;
+      var fallbackOnly = !r || (!hx.self.length && !hx.target.length && !r.entry.self.length && !r.entry.target.length && !r.state && !px.tags.length);
+      if (!fallbackOnly) nImages++;
+      if (fallbackOnly && onlyImages) return;
+      nRows++;
+      var title = ' title="' + esc("self: " + self.join(", ") + "\ntarget: " + (target.join(", ") || "(none)")) + '"';
+      if (!r) {
+        rows += '<div class="row no-image"><div class="name"' + title + "><b>" + esc(com.id) + "</b><small>" + (com.solo ? "solo · " : "") +
+                'no template image (falls to generated / custom handlers)</small></div><div class="thumbs"></div></div>';
+        return;
+      }
+      var thumbs = "";
+      r.items.slice().sort(function (a, b) { return cmp(R.folders[a.f].name.toLowerCase(), R.folders[b.f].name.toLowerCase()) || cmp(a.path.toLowerCase(), b.path.toLowerCase()); })
+        .forEach(function (it) { thumbs += thumb(it); });
+      rows += '<div class="row' + (fallbackOnly ? " no-image" : "") + '"><div class="name"' + title + "><b>" + esc(com.id) + "</b>" + (com.solo ? "<small>solo</small>" : "") +
+              "<small>" + esc(r.entry.path) + (r.state ? " · state " + esc(r.state) : "") + (r.from === "fallback" ? " · fallback " + esc(r.entry.fallback) : "") + "</small>" +
+              "<small>" + handlerLabel(r.h) + "</small><small>→ " + esc(variantLabel(r.v)) + "</small><small>" + r.items.length + " images</small>" +
+              '</div><div class="thumbs">' + thumbs + "</div></div>";
+    });
+    $("cats").innerHTML = rows ? '<section class="cat"><div class="rows">' + rows + "</div></section>" : '<p class="empty">No command matches.</p>';
+    $("count").textContent = nImages + " of " + nEval + " commands have more than a fallback portrait" + (nRows !== nEval ? " · " + nRows + " shown" : "");
+    if ($("freq-panel").open) renderFreq();
+  }
+
   function renderFreq() {
     var freq = {}, n = 0;
     items.forEach(function (it) {
@@ -864,6 +1105,29 @@ window.REPORT = /*__REPORT_DATA__*/null;
   [classIn, fileIn].forEach(function (el) {
     el.addEventListener("input", function () { clearTimeout(typeTimer); typeTimer = setTimeout(render, 150); });
   });
+  if (PR) {
+    $("pa-images").checked = store.get("pairImages", "1") === "1";
+    $("pc-list").addEventListener("click", function (e) {
+      var b = e.target.closest ? e.target.closest("button[data-role]") : null;
+      if (!b || b.disabled) return;
+      var id = b.closest(".pc-row").getAttribute("data-id"), role = b.getAttribute("data-role");
+      if (role === "view") {
+        // a character that is both doer and receiver switches the side; otherwise view its own side
+        if (pairSel.doer === id && pairSel.receiver === id) pairSel.view = pairSel.view === "doer" ? "receiver" : "doer";
+        else pairSel.view = pairSel.receiver === id ? "receiver" : "doer";
+      } else {
+        pairSel[role] = pairSel[role] === id ? "" : id;
+      }
+      // the viewed side follows the picks: an empty side hands over to the other one
+      if (!pairSel[pairSel.view]) pairSel.view = pairSel.doer ? "doer" : pairSel.receiver ? "receiver" : pairSel.view;
+      savePairSel();
+      render();
+    });
+    $("pc-search").addEventListener("input", function () { clearTimeout(typeTimer); typeTimer = setTimeout(renderPairChars, 150); });
+    $("pa-search").addEventListener("input", function () { clearTimeout(typeTimer); typeTimer = setTimeout(render, 150); });
+    $("pa-images").addEventListener("change", function () { store.set("pairImages", $("pa-images").checked ? "1" : "0"); render(); });
+    window.addEventListener("resize", function () { if (viewSel.value === "pair") placePairSide(); });
+  }
   sizeIn.addEventListener("input", function () { store.set("size", sizeIn.value); applySize(); });
   previewSel.addEventListener("change", function () { store.set("preview", previewSel.value); applySize(); });
   $("freq-panel").addEventListener("toggle", function () { if ($("freq-panel").open) renderFreq(); });

@@ -12,7 +12,8 @@
                                 "relationship_bully_propose_A_1"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "response"
                 }
             },
             {
@@ -31,7 +32,8 @@
                                 "relationship_bully_set_A_6"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "response"
                 }
             },
             {
@@ -50,7 +52,8 @@
                                 "relationship_bully_break_A_6"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "response"
                 }
             },
             {
@@ -64,7 +67,8 @@
                                 "relationship_bully_propose_B_1"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "response"
                 }
             },
             {
@@ -83,7 +87,8 @@
                                 "relationship_bully_set_B_6"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "response"
                 }
             },
             {
@@ -102,7 +107,8 @@
                                 "relationship_bully_break_B_6"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "response"
                 }
             }
         ]

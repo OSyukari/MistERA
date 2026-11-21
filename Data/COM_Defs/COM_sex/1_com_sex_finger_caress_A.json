@@ -12,7 +12,7 @@
                 "displayName":"com_sex_finger_caress_A_displayName_3",
                 "timeScale":3,
                 "comTags":["sex","service","permission_anal"],
-                "portraitTags_Receiver":["spread_pussy"],
+                "portraitTags_Receiver":["portrait_lower","spread_pussy"],
                 "requirements":{
                     "requirement":{
                         "req_Doers":{
@@ -59,7 +59,7 @@
                             "Entries":[
                                 {
                                     "keepLooking":true,
-                                    "texts": ["com_sex_finger_caress_A_solo_description_begin_1"]
+                                    "texts": ["com_sex_finger_caress_A_solo_description_begin_1", "com_sex_finger_caress_A_solo_description_begin_2", "com_sex_finger_caress_A_solo_description_begin_3"]
                                 }
                             ]
                         },
@@ -67,7 +67,7 @@
                             "Entries":[
                                 {
                                     "keepLooking":true,
-                                    "texts": ["com_sex_finger_caress_A_solo_description_ongoing_1"]
+                                    "texts": ["com_sex_finger_caress_A_solo_description_ongoing_1", "com_sex_finger_caress_A_solo_description_ongoing_2", "com_sex_finger_caress_A_solo_description_ongoing_3"]
                                 }
                             ]
                         },
@@ -76,7 +76,7 @@
                                 {
                                     "keepLooking":true,
                                     "conditions":[ { "validateChara":{"target":"doer", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
-                                    "texts":[ "com_sex_finger_caress_A_solo_description_after_1" ]
+                                    "texts":[ "com_sex_finger_caress_A_solo_description_after_1", "com_sex_finger_caress_A_solo_description_after_2", "com_sex_finger_caress_A_solo_description_after_3" ]
                                 }
                             ]
                         }
@@ -93,7 +93,7 @@
                             "Entries":[
                                 {
                                     "keepLooking":true,
-                                    "texts": ["com_sex_finger_caress_A_solo_group_description_begin_1"]
+                                    "texts": ["com_sex_finger_caress_A_solo_group_description_begin_1", "com_sex_finger_caress_A_solo_group_description_begin_2", "com_sex_finger_caress_A_solo_group_description_begin_3"]
                                 }
                             ]
                         },
@@ -101,7 +101,7 @@
                             "Entries":[
                                 {
                                     "keepLooking":true,
-                                    "texts": ["com_sex_finger_caress_A_solo_group_description_ongoing_1"]
+                                    "texts": ["com_sex_finger_caress_A_solo_group_description_ongoing_1", "com_sex_finger_caress_A_solo_group_description_ongoing_2", "com_sex_finger_caress_A_solo_group_description_ongoing_3"]
                                 }
                             ]
                         },
@@ -110,7 +110,7 @@
                                 {
                                     "keepLooking":true,
                                     "conditions":[ { "validateChara":{"target":"doer", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
-                                    "texts":[ "com_sex_finger_caress_A_solo_group_description_after_1" ]
+                                    "texts":[ "com_sex_finger_caress_A_solo_group_description_after_1", "com_sex_finger_caress_A_solo_group_description_after_2", "com_sex_finger_caress_A_solo_group_description_after_3" ]
                                 }
                             ]
                         }
@@ -156,7 +156,7 @@
                     [
                         {
                             "keepLooking":true,
-                            "texts": [ "com_sex_finger_caress_A_description_ongoing_1" ]
+                            "texts": [ "com_sex_finger_caress_A_description_ongoing_1", "com_sex_finger_caress_A_description_ongoing_2", "com_sex_finger_caress_A_description_ongoing_3" ]
                         }
                     ]
                 },
@@ -165,7 +165,7 @@
                         {
                             "_comment":"",
                             "keepLooking":true,
-                            "texts":[ "com_sex_finger_caress_A_description_remove_1" ]
+                            "texts":[ "com_sex_finger_caress_A_description_remove_1", "com_sex_finger_caress_A_description_remove_2", "com_sex_finger_caress_A_description_remove_3" ]
                         }
                     ]
                 },
@@ -175,7 +175,7 @@
                         {
                             "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
-                            "texts":[ "com_sex_finger_caress_A_description_after_1" ]
+                            "texts":[ "com_sex_finger_caress_A_description_after_1", "com_sex_finger_caress_A_description_after_2", "com_sex_finger_caress_A_description_after_3" ]
                         }
                     ]
                 },
@@ -184,7 +184,7 @@
                     "Entries":[ 
                         {
                             "keepLooking":true,
-                            "texts": ["com_sex_finger_caress_A_description_begin_1"]
+                            "texts": ["com_sex_finger_caress_A_description_begin_1", "com_sex_finger_caress_A_description_begin_2", "com_sex_finger_caress_A_description_begin_3"]
                         }
                     ]
                     
@@ -207,17 +207,37 @@
                 "com_sex_finger_caress_A_displayName_5": "轮流愛撫肛門",
                 "com_sex_finger_caress_A_displayName_6": "同时愛撫肛門",
 
-                "com_sex_finger_caress_A_description_begin_1":"$doer.firstname$的双手搭上了$receiver.firstname$的屁股开始搓揉着",
-                "com_sex_finger_caress_A_description_after_1":"$receiver.firstname$的臀部在高潮中不止地颤抖着",
-                "com_sex_finger_caress_A_description_remove_1":"$doer.firstname$的双手放开了$receiver.firstname$的屁股",
-                "com_sex_finger_caress_A_description_ongoing_1":"$doer.firstname$正在愛撫$receiver.firstname$的屁股",
+                "com_sex_finger_caress_A_description_begin_1":"$doer.firstname$把手指按上$receiver.firstname$的肛门揉弄起来",
+                "com_sex_finger_caress_A_description_after_1":"$receiver.firstname$的肛门在高潮里一阵阵地收紧",
+                "com_sex_finger_caress_A_description_remove_1":"$doer.firstname$的手指从$receiver.firstname$的肛门上移开了",
+                "com_sex_finger_caress_A_description_ongoing_1":"$doer.firstname$还在揉弄$receiver.firstname$的肛门",
 
-                "com_sex_finger_caress_A_solo_description_begin_1": "$doer.firstname$的双手伸向了自己的屁股，开始搓揉着",
-                "com_sex_finger_caress_A_solo_description_ongoing_1": "$doer.firstname$正在愛撫自己的屁股",
-                "com_sex_finger_caress_A_solo_description_after_1": "$doer.firstname$的臀部在高潮中不止地颤抖着",
-                "com_sex_finger_caress_A_solo_group_description_begin_1": "$doer.firstname$的双手各自伸向了自己的屁股，开始搓揉着",
-                "com_sex_finger_caress_A_solo_group_description_ongoing_1": "$doer.firstname$正各自愛撫着自己的屁股",
-                "com_sex_finger_caress_A_solo_group_description_after_1": "$doer.firstname$的臀部在高潮中不止地颤抖着"
+                "com_sex_finger_caress_A_solo_description_begin_1": "$doer.firstname$把手指按在自己肛门上揉弄起来",
+                "com_sex_finger_caress_A_solo_description_ongoing_1": "$doer.firstname$还在揉弄自己的肛门",
+                "com_sex_finger_caress_A_solo_description_after_1": "$doer.firstname$的肛门在高潮里一阵阵地收紧",
+                "com_sex_finger_caress_A_solo_group_description_begin_1": "$doer.firstname$的两只手各自按上了自己的肛门",
+                "com_sex_finger_caress_A_solo_group_description_ongoing_1": "$doer.firstname$的两只手还在各自揉弄自己的肛门",
+                "com_sex_finger_caress_A_solo_group_description_after_1": "$doer.firstname$的肛门在高潮中收缩个不停",
+                "com_sex_finger_caress_A_solo_group_description_begin_2": "$doer.firstname$的两只手分开揉着自己的屁眼",
+                "com_sex_finger_caress_A_solo_group_description_begin_3": "$doer.firstname$把两只手都按在自己后穴上揉弄",
+                "com_sex_finger_caress_A_description_ongoing_2": "$doer.firstname$的手指一直按在$receiver.firstname$的屁眼上",
+                "com_sex_finger_caress_A_description_ongoing_3": "$doer.firstname$继续揉着$receiver.firstname$的后穴",
+                "com_sex_finger_caress_A_solo_group_description_ongoing_2": "$doer.firstname$左右手都按在自己屁眼上继续揉",
+                "com_sex_finger_caress_A_solo_group_description_ongoing_3": "$doer.firstname$的两只手一直没离开自己的后穴",
+                "com_sex_finger_caress_A_description_after_2": "$receiver.firstname$的屁眼随着高潮收缩起来",
+                "com_sex_finger_caress_A_description_after_3": "$receiver.firstname$的后穴在高潮中不停地抽动",
+                "com_sex_finger_caress_A_solo_description_begin_2": "$doer.firstname$的两根手指揉上了自己的屁眼",
+                "com_sex_finger_caress_A_solo_description_begin_3": "$doer.firstname$伸手按上自己的后穴揉弄",
+                "com_sex_finger_caress_A_solo_description_after_2": "$doer.firstname$的屁眼随着高潮收缩起来",
+                "com_sex_finger_caress_A_solo_description_after_3": "$doer.firstname$的后穴在高潮中不停地抽动",
+                "com_sex_finger_caress_A_solo_description_ongoing_2": "$doer.firstname$的手指一直按在自己屁眼上没有挪开",
+                "com_sex_finger_caress_A_solo_description_ongoing_3": "$doer.firstname$没停下揉弄自己的后穴",
+                "com_sex_finger_caress_A_description_begin_2": "$doer.firstname$的两根手指揉上了$receiver.firstname$的屁眼",
+                "com_sex_finger_caress_A_description_begin_3": "$doer.firstname$伸手按上$receiver.firstname$的后穴揉弄",
+                "com_sex_finger_caress_A_description_remove_2": "$doer.firstname$把手从$receiver.firstname$的屁眼上收了回来",
+                "com_sex_finger_caress_A_description_remove_3": "$doer.firstname$松开了$receiver.firstname$的后穴",
+                "com_sex_finger_caress_A_solo_group_description_after_2": "$doer.firstname$的屁眼一阵阵地收缩着",
+                "com_sex_finger_caress_A_solo_group_description_after_3": "$doer.firstname$的后穴在高潮里颤动起来"
 
             },
             "en-us":

@@ -33,9 +33,20 @@
                         ],
                         "AcceptanceCheck": { "baseAcceptanceValue": 40 },
                         "DifficultyCheck": { "baseD20Check": 0 },
-                        "description_begin": { "Entries":[{"texts":["com_furniture_ingestAnus_begin_1"]}], "keepLooking": false },
-                        "description_ongoing": { "Entries":[{"texts":["com_furniture_ingestAnus_ongoing_1"]}], "keepLooking": false },
-                        "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_furniture_ingestAnus_onComplete_1"]}] }
+                        "description_begin": { "Entries":[
+                            { "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_furniture_ingestAnus_begin_ordered_1", "com_furniture_ingestAnus_begin_ordered_2", "com_furniture_ingestAnus_begin_ordered_3"] },
+                            { "texts":["com_furniture_ingestAnus_begin_1", "com_furniture_ingestAnus_begin_2", "com_furniture_ingestAnus_begin_3"] }
+                        ], "keepLooking": false },
+                        "description_ongoing": { "Entries":[{"texts":["com_furniture_ingestAnus_ongoing_1", "com_furniture_ingestAnus_ongoing_2", "com_furniture_ingestAnus_ongoing_3"]}], "keepLooking": false },
+                        "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_furniture_ingestAnus_onComplete_1", "com_furniture_ingestAnus_onComplete_2", "com_furniture_ingestAnus_onComplete_3"]}] },
+                        "description_remove": { "Entries":[{"texts":["com_furniture_ingestAnus_remove_1", "com_furniture_ingestAnus_remove_2", "com_furniture_ingestAnus_remove_3"]}], "keepLooking": false }
+                    },
+                    "itemOverrides": {
+                        "consumable_lube": {
+                            "description_ongoing": { "Entries":[{"texts":["com_furniture_ingestAnus_self_consumable_lube_ongoing_1", "com_furniture_ingestAnus_self_consumable_lube_ongoing_2", "com_furniture_ingestAnus_self_consumable_lube_ongoing_3"]}], "keepLooking": false },
+                            "description_begin": { "Entries":[{"conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_furniture_ingestAnus_self_consumable_lube_begin_ordered_1", "com_furniture_ingestAnus_self_consumable_lube_begin_ordered_2", "com_furniture_ingestAnus_self_consumable_lube_begin_ordered_3"]}], "keepLooking": false },
+                            "description_remove": { "Entries":[{"texts":["com_furniture_ingestAnus_self_consumable_lube_remove_1", "com_furniture_ingestAnus_self_consumable_lube_remove_2", "com_furniture_ingestAnus_self_consumable_lube_remove_3"]}], "keepLooking": false }
+                        }
                     }
                 }
             },
@@ -70,9 +81,24 @@
                         ],
                         "AcceptanceCheck": { "baseAcceptanceValue": 40 },
                         "DifficultyCheck": { "baseD20Check": 0 },
-                        "description_begin": { "Entries":[{"texts":["com_furniture_ingestAnus_begin_administer"]}], "keepLooking": false },
-                        "description_ongoing": { "Entries":[{"texts":["com_furniture_ingestAnus_ongoing_administer"]}], "keepLooking": false },
-                        "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_furniture_ingestAnus_onComplete_administer"]}] }
+                        "description_begin": { "Entries":[
+                            { "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_furniture_ingestAnus_begin_administer_ordered_1", "com_furniture_ingestAnus_begin_administer_ordered_2", "com_furniture_ingestAnus_begin_administer_ordered_3"] },
+                            { "texts":["com_furniture_ingestAnus_begin_administer", "com_furniture_ingestAnus_begin_administer_1", "com_furniture_ingestAnus_begin_administer_2"] }
+                        ], "keepLooking": false },
+                        "description_ongoing": { "Entries":[{"texts":["com_furniture_ingestAnus_ongoing_administer", "com_furniture_ingestAnus_ongoing_administer_1", "com_furniture_ingestAnus_ongoing_administer_2"]}], "keepLooking": false },
+                        "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_furniture_ingestAnus_onComplete_administer", "com_furniture_ingestAnus_onComplete_administer_1", "com_furniture_ingestAnus_onComplete_administer_2"]}] },
+                        "description_remove": { "Entries":[{"texts":["com_furniture_ingestAnus_remove_administer_1", "com_furniture_ingestAnus_remove_administer_2", "com_furniture_ingestAnus_remove_administer_3"]}], "keepLooking": false }
+                    },
+                    "itemOverrides": {
+                        "consumable_lube": {
+                            "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_furniture_ingestAnus_onTarget_consumable_lube_onComplete_1", "com_furniture_ingestAnus_onTarget_consumable_lube_onComplete_2", "com_furniture_ingestAnus_onTarget_consumable_lube_onComplete_3"]}] },
+                            "description_ongoing": { "Entries":[{"texts":["com_furniture_ingestAnus_onTarget_consumable_lube_ongoing_1", "com_furniture_ingestAnus_onTarget_consumable_lube_ongoing_2", "com_furniture_ingestAnus_onTarget_consumable_lube_ongoing_3"]}], "keepLooking": false },
+                            "description_begin": { "Entries":[
+                                { "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_furniture_ingestAnus_onTarget_consumable_lube_begin_ordered_1", "com_furniture_ingestAnus_onTarget_consumable_lube_begin_ordered_2", "com_furniture_ingestAnus_onTarget_consumable_lube_begin_ordered_3"] },
+                                { "texts":["com_furniture_ingestAnus_onTarget_consumable_lube_begin_1", "com_furniture_ingestAnus_onTarget_consumable_lube_begin_2", "com_furniture_ingestAnus_onTarget_consumable_lube_begin_3"] }
+                            ], "keepLooking": false },
+                            "description_remove": { "Entries":[{"texts":["com_furniture_ingestAnus_onTarget_consumable_lube_remove_1", "com_furniture_ingestAnus_onTarget_consumable_lube_remove_2", "com_furniture_ingestAnus_onTarget_consumable_lube_remove_3"]}], "keepLooking": false }
+                        }
                     }
                 }
             },
@@ -107,9 +133,23 @@
                         ],
                         "AcceptanceCheck": { "baseAcceptanceValue": 40 },
                         "DifficultyCheck": { "baseD20Check": 0 },
-                        "description_begin": { "Entries":[{"texts":["com_furniture_ingestVagina_begin_1"]}], "keepLooking": false },
-                        "description_ongoing": { "Entries":[{"texts":["com_furniture_ingestVagina_ongoing_1"]}], "keepLooking": false },
-                        "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_furniture_ingestVagina_onComplete_1"]}] }
+                        "description_begin": { "Entries":[
+                            { "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_furniture_ingestVagina_begin_ordered_1", "com_furniture_ingestVagina_begin_ordered_2", "com_furniture_ingestVagina_begin_ordered_3"] },
+                            { "texts":["com_furniture_ingestVagina_begin_1", "com_furniture_ingestVagina_begin_2", "com_furniture_ingestVagina_begin_3"] }
+                        ], "keepLooking": false },
+                        "description_ongoing": { "Entries":[{"texts":["com_furniture_ingestVagina_ongoing_1", "com_furniture_ingestVagina_ongoing_2", "com_furniture_ingestVagina_ongoing_3"]}], "keepLooking": false },
+                        "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_furniture_ingestVagina_onComplete_1", "com_furniture_ingestVagina_onComplete_2", "com_furniture_ingestVagina_onComplete_3"]}] },
+                        "description_remove": { "Entries":[{"texts":["com_furniture_ingestVagina_remove_1", "com_furniture_ingestVagina_remove_2", "com_furniture_ingestVagina_remove_3"]}], "keepLooking": false }
+                    },
+                    "itemOverrides": {
+                        "consumable_lube": {
+                            "description_begin": { "Entries":[
+                                { "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_furniture_ingestVagina_self_consumable_lube_begin_ordered_1", "com_furniture_ingestVagina_self_consumable_lube_begin_ordered_2", "com_furniture_ingestVagina_self_consumable_lube_begin_ordered_3"] },
+                                { "texts":["com_furniture_ingestVagina_self_consumable_lube_begin_1", "com_furniture_ingestVagina_self_consumable_lube_begin_2", "com_furniture_ingestVagina_self_consumable_lube_begin_3"] }
+                            ], "keepLooking": false },
+                            "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_furniture_ingestVagina_self_consumable_lube_onComplete_1", "com_furniture_ingestVagina_self_consumable_lube_onComplete_2", "com_furniture_ingestVagina_self_consumable_lube_onComplete_3"]}] },
+                            "description_remove": { "Entries":[{"texts":["com_furniture_ingestVagina_self_consumable_lube_remove_1", "com_furniture_ingestVagina_self_consumable_lube_remove_2", "com_furniture_ingestVagina_self_consumable_lube_remove_3"]}], "keepLooking": false }
+                        }
                     }
                 }
             },
@@ -144,9 +184,24 @@
                         ],
                         "AcceptanceCheck": { "baseAcceptanceValue": 40 },
                         "DifficultyCheck": { "baseD20Check": 0 },
-                        "description_begin": { "Entries":[{"texts":["com_furniture_ingestVagina_begin_administer"]}], "keepLooking": false },
-                        "description_ongoing": { "Entries":[{"texts":["com_furniture_ingestVagina_ongoing_administer"]}], "keepLooking": false },
-                        "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_furniture_ingestVagina_onComplete_administer"]}] }
+                        "description_begin": { "Entries":[
+                            { "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_furniture_ingestVagina_begin_administer_ordered_1", "com_furniture_ingestVagina_begin_administer_ordered_2", "com_furniture_ingestVagina_begin_administer_ordered_3"] },
+                            { "texts":["com_furniture_ingestVagina_begin_administer", "com_furniture_ingestVagina_begin_administer_1", "com_furniture_ingestVagina_begin_administer_2"] }
+                        ], "keepLooking": false },
+                        "description_ongoing": { "Entries":[{"texts":["com_furniture_ingestVagina_ongoing_administer", "com_furniture_ingestVagina_ongoing_administer_1", "com_furniture_ingestVagina_ongoing_administer_2"]}], "keepLooking": false },
+                        "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_furniture_ingestVagina_onComplete_administer", "com_furniture_ingestVagina_onComplete_administer_1", "com_furniture_ingestVagina_onComplete_administer_2"]}] },
+                        "description_remove": { "Entries":[{"texts":["com_furniture_ingestVagina_remove_administer_1", "com_furniture_ingestVagina_remove_administer_2", "com_furniture_ingestVagina_remove_administer_3"]}], "keepLooking": false }
+                    },
+                    "itemOverrides": {
+                        "consumable_lube": {
+                            "description_begin": { "Entries":[
+                                { "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_furniture_ingestVagina_onTarget_consumable_lube_begin_ordered_1", "com_furniture_ingestVagina_onTarget_consumable_lube_begin_ordered_2", "com_furniture_ingestVagina_onTarget_consumable_lube_begin_ordered_3"] },
+                                { "texts":["com_furniture_ingestVagina_onTarget_consumable_lube_begin_1", "com_furniture_ingestVagina_onTarget_consumable_lube_begin_2", "com_furniture_ingestVagina_onTarget_consumable_lube_begin_3"] }
+                            ], "keepLooking": false },
+                            "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_furniture_ingestVagina_onTarget_consumable_lube_onComplete_1", "com_furniture_ingestVagina_onTarget_consumable_lube_onComplete_2", "com_furniture_ingestVagina_onTarget_consumable_lube_onComplete_3"]}] },
+                            "description_ongoing": { "Entries":[{"texts":["com_furniture_ingestVagina_onTarget_consumable_lube_ongoing_1", "com_furniture_ingestVagina_onTarget_consumable_lube_ongoing_2", "com_furniture_ingestVagina_onTarget_consumable_lube_ongoing_3"]}], "keepLooking": false },
+                            "description_remove": { "Entries":[{"texts":["com_furniture_ingestVagina_onTarget_consumable_lube_remove_1", "com_furniture_ingestVagina_onTarget_consumable_lube_remove_2", "com_furniture_ingestVagina_onTarget_consumable_lube_remove_3"]}], "keepLooking": false }
+                        }
                     }
                 }
             }
@@ -155,23 +210,126 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
+                "com_furniture_ingestAnus_begin_ordered_1": "$doer.firstname$依言把$name$抵上自己的屁眼",
+                "com_furniture_ingestAnus_begin_ordered_2": "$doer.firstname$照做把$name$对准了后穴",
+                "com_furniture_ingestAnus_begin_ordered_3": "$doer.firstname$应下吩咐把$name$顶住肛门",
+                "com_furniture_ingestAnus_remove_1": "$doer.firstname$把$name$从屁眼里退了出来",
+                "com_furniture_ingestAnus_remove_2": "$doer.firstname$松开了拿着$name$的手",
+                "com_furniture_ingestAnus_remove_3": "$doer.firstname$把$name$从后穴抽了出来",
+                "com_furniture_ingestAnus_self_consumable_lube_begin_ordered_1": "$doer.firstname$依言把$name$抵上自己的屁眼",
+                "com_furniture_ingestAnus_self_consumable_lube_begin_ordered_2": "$doer.firstname$照做把$name$按在肛门上",
+                "com_furniture_ingestAnus_self_consumable_lube_begin_ordered_3": "$doer.firstname$应下吩咐把$name$凑到后穴上",
+                "com_furniture_ingestAnus_self_consumable_lube_remove_1": "$doer.firstname$把$name$从屁眼里退了出来",
+                "com_furniture_ingestAnus_self_consumable_lube_remove_2": "$doer.firstname$松开了拿着$name$的手",
+                "com_furniture_ingestAnus_self_consumable_lube_remove_3": "$doer.firstname$把$name$从后穴抽了出来",
+
+                "com_furniture_ingestAnus_begin_administer_ordered_1": "$doer.firstname$依言把$name$抵上$receiver.firstname$的屁眼",
+                "com_furniture_ingestAnus_begin_administer_ordered_2": "$doer.firstname$照做把$name$对准了$receiver.firstname$后穴",
+                "com_furniture_ingestAnus_begin_administer_ordered_3": "$doer.firstname$应下吩咐把$name$顶住$receiver.firstname$肛门",
+                "com_furniture_ingestAnus_remove_administer_1": "$doer.firstname$把$name$从$receiver.firstname$屁眼里退了出来",
+                "com_furniture_ingestAnus_remove_administer_2": "$doer.firstname$松开拿着$name$的手",
+                "com_furniture_ingestAnus_remove_administer_3": "$doer.firstname$把$name$从$receiver.firstname$后穴抽了出来",
+                "com_furniture_ingestAnus_onTarget_consumable_lube_begin_ordered_1": "$doer.firstname$依言把$name$抵上$receiver.firstname$的屁眼",
+                "com_furniture_ingestAnus_onTarget_consumable_lube_begin_ordered_2": "$doer.firstname$照做把$name$按在$receiver.firstname$肛门上",
+                "com_furniture_ingestAnus_onTarget_consumable_lube_begin_ordered_3": "$doer.firstname$应下吩咐把$name$凑到$receiver.firstname$后穴上",
+                "com_furniture_ingestAnus_onTarget_consumable_lube_remove_1": "$doer.firstname$把$name$从$receiver.firstname$屁眼里退了出来",
+                "com_furniture_ingestAnus_onTarget_consumable_lube_remove_2": "$doer.firstname$松开拿着$name$的手",
+                "com_furniture_ingestAnus_onTarget_consumable_lube_remove_3": "$doer.firstname$把$name$从$receiver.firstname$后穴抽了出来",
+
+                "com_furniture_ingestVagina_begin_ordered_1": "$doer.firstname$依言把$name$抵上自己的小穴",
+                "com_furniture_ingestVagina_begin_ordered_2": "$doer.firstname$照做把$name$按在阴道上",
+                "com_furniture_ingestVagina_begin_ordered_3": "$doer.firstname$应下吩咐把$name$贴到屄上",
+                "com_furniture_ingestVagina_remove_1": "$doer.firstname$把$name$从小穴里退了出来",
+                "com_furniture_ingestVagina_remove_2": "$doer.firstname$松开了拿着$name$的手",
+                "com_furniture_ingestVagina_remove_3": "$doer.firstname$把$name$从阴道里抽了出来",
+                "com_furniture_ingestVagina_self_consumable_lube_begin_ordered_1": "$doer.firstname$依言把$name$抵上自己的小穴",
+                "com_furniture_ingestVagina_self_consumable_lube_begin_ordered_2": "$doer.firstname$照做把$name$贴到阴道上",
+                "com_furniture_ingestVagina_self_consumable_lube_begin_ordered_3": "$doer.firstname$应下吩咐把$name$按在屄上",
+                "com_furniture_ingestVagina_self_consumable_lube_remove_1": "$doer.firstname$把$name$从小穴里退了出来",
+                "com_furniture_ingestVagina_self_consumable_lube_remove_2": "$doer.firstname$松开了拿着$name$的手",
+                "com_furniture_ingestVagina_self_consumable_lube_remove_3": "$doer.firstname$把$name$从阴道里抽了出来",
+
+                "com_furniture_ingestVagina_begin_administer_ordered_1": "$doer.firstname$依言把$name$抵上$receiver.firstname$的小穴",
+                "com_furniture_ingestVagina_begin_administer_ordered_2": "$doer.firstname$照做把$name$按在$receiver.firstname$阴道上",
+                "com_furniture_ingestVagina_begin_administer_ordered_3": "$doer.firstname$应下吩咐把$name$贴到$receiver.firstname$屄上",
+                "com_furniture_ingestVagina_remove_administer_1": "$doer.firstname$把$name$从$receiver.firstname$小穴里退了出来",
+                "com_furniture_ingestVagina_remove_administer_2": "$doer.firstname$松开拿着$name$的手",
+                "com_furniture_ingestVagina_remove_administer_3": "$doer.firstname$把$name$从$receiver.firstname$阴道里抽了出来",
+                "com_furniture_ingestVagina_onTarget_consumable_lube_begin_ordered_1": "$doer.firstname$依言把$name$抵上$receiver.firstname$的小穴",
+                "com_furniture_ingestVagina_onTarget_consumable_lube_begin_ordered_2": "$doer.firstname$照做把$name$贴近$receiver.firstname$的阴道",
+                "com_furniture_ingestVagina_onTarget_consumable_lube_begin_ordered_3": "$doer.firstname$应下吩咐把$name$按在$receiver.firstname$的屄上",
+                "com_furniture_ingestVagina_onTarget_consumable_lube_remove_1": "$doer.firstname$把$name$从$receiver.firstname$小穴里退了出来",
+                "com_furniture_ingestVagina_onTarget_consumable_lube_remove_2": "$doer.firstname$松开拿着$name$的手",
+                "com_furniture_ingestVagina_onTarget_consumable_lube_remove_3": "$doer.firstname$把$name$从$receiver.firstname$阴道里抽了出来",
+
                 "com_furniture_ingestAnus_self": "自行塞入肛门",
                 "com_furniture_ingestAnus_onTarget": "塞入对方肛门",
-                "com_furniture_ingestAnus_begin_1": "$doer.firstname$将$name$塞入了肛门",
-                "com_furniture_ingestAnus_ongoing_1": "$doer.firstname$正在用药",
-                "com_furniture_ingestAnus_onComplete_1": "$doer.firstname$用药完毕",
-                "com_furniture_ingestAnus_begin_administer": "$doer.firstname$将$name$塞入了$receiver.firstname$的肛门",
-                "com_furniture_ingestAnus_ongoing_administer": "$doer.firstname$正在为$receiver.firstname$用药",
-                "com_furniture_ingestAnus_onComplete_administer": "$doer.firstname$为$receiver.firstname$用药完毕",
+                "com_furniture_ingestAnus_begin_1": "$doer.firstname$把$name$抵在自己的屁眼上",
+                "com_furniture_ingestAnus_ongoing_1": "$doer.firstname$还在把$name$往屁眼里送",
+                "com_furniture_ingestAnus_onComplete_1": "$doer.firstname$把$name$推进了后穴",
+                "com_furniture_ingestAnus_begin_administer": "$doer.firstname$把$name$抵在$receiver.firstname$的屁眼上",
+                "com_furniture_ingestAnus_ongoing_administer": "$doer.firstname$还在把$name$往$receiver.firstname$屁眼里送",
+                "com_furniture_ingestAnus_onComplete_administer": "$doer.firstname$把$name$推进了$receiver.firstname$的后穴",
 
                 "com_furniture_ingestVagina_self": "自行塞入阴道",
                 "com_furniture_ingestVagina_onTarget": "塞入对方阴道",
-                "com_furniture_ingestVagina_begin_1": "$doer.firstname$将$name$塞入了阴道",
-                "com_furniture_ingestVagina_ongoing_1": "$doer.firstname$正在用药",
-                "com_furniture_ingestVagina_onComplete_1": "$doer.firstname$用药完毕",
-                "com_furniture_ingestVagina_begin_administer": "$doer.firstname$将$name$塞入了$receiver.firstname$的阴道",
-                "com_furniture_ingestVagina_ongoing_administer": "$doer.firstname$正在为$receiver.firstname$用药",
-                "com_furniture_ingestVagina_onComplete_administer": "$doer.firstname$为$receiver.firstname$用药完毕"
+                "com_furniture_ingestVagina_begin_1": "$doer.firstname$把$name$抵在自己的小穴上",
+                "com_furniture_ingestVagina_ongoing_1": "$doer.firstname$还在把$name$往小穴里挤",
+                "com_furniture_ingestVagina_onComplete_1": "$doer.firstname$把$name$挤进了小穴",
+                "com_furniture_ingestVagina_begin_administer": "$doer.firstname$把$name$抵在$receiver.firstname$的小穴上",
+                "com_furniture_ingestVagina_ongoing_administer": "$doer.firstname$还在把$name$往$receiver.firstname$小穴里挤",
+                "com_furniture_ingestVagina_onComplete_administer": "$doer.firstname$把$name$挤进了$receiver.firstname$的小穴",
+                "com_furniture_ingestVagina_self_consumable_lube_begin_1": "$doer.firstname$把$name$抵在自己的小穴上",
+                "com_furniture_ingestVagina_self_consumable_lube_begin_2": "$doer.firstname$把$name$贴在自己的阴道上",
+                "com_furniture_ingestVagina_self_consumable_lube_begin_3": "$doer.firstname$把$name$凑到自己的屄上",
+                "com_furniture_ingestAnus_onTarget_consumable_lube_onComplete_1": "$doer.firstname$把$name$挤进了$receiver.firstname$的后穴",
+                "com_furniture_ingestAnus_onTarget_consumable_lube_onComplete_2": "$doer.firstname$把$name$挤进$receiver.firstname$屁眼深处",
+                "com_furniture_ingestAnus_onTarget_consumable_lube_onComplete_3": "$doer.firstname$把$name$抹在了$receiver.firstname$肛门里",
+                "com_furniture_ingestAnus_onComplete_administer_1": "$doer.firstname$把$name$送进$receiver.firstname$屁眼深处",
+                "com_furniture_ingestAnus_onComplete_administer_2": "$doer.firstname$把$name$塞进了$receiver.firstname$的肛门里",
+                "com_furniture_ingestVagina_onTarget_consumable_lube_begin_1": "$doer.firstname$把$name$抵在$receiver.firstname$的小穴上",
+                "com_furniture_ingestVagina_onTarget_consumable_lube_begin_2": "$doer.firstname$把$name$贴近$receiver.firstname$的阴道",
+                "com_furniture_ingestVagina_onTarget_consumable_lube_begin_3": "$doer.firstname$把$name$按在$receiver.firstname$的屄上",
+                "com_furniture_ingestVagina_ongoing_2": "$doer.firstname$一点点把$name$挤进阴道",
+                "com_furniture_ingestVagina_ongoing_3": "$doer.firstname$的手指按着$name$往里推",
+                "com_furniture_ingestAnus_onTarget_consumable_lube_ongoing_1": "$doer.firstname$还在把$name$往$receiver.firstname$屁眼里挤",
+                "com_furniture_ingestAnus_onTarget_consumable_lube_ongoing_2": "$doer.firstname$一点点把$name$挤进$receiver.firstname$后穴",
+                "com_furniture_ingestAnus_onTarget_consumable_lube_ongoing_3": "$doer.firstname$的手还按着$name$往$receiver.firstname$后穴里挤",
+                "com_furniture_ingestAnus_self_consumable_lube_ongoing_1": "$doer.firstname$还在把$name$往屁眼里挤",
+                "com_furniture_ingestAnus_self_consumable_lube_ongoing_2": "$doer.firstname$一点点把$name$挤进后穴",
+                "com_furniture_ingestAnus_self_consumable_lube_ongoing_3": "$doer.firstname$的手指按着$name$往里推",
+                "com_furniture_ingestVagina_onTarget_consumable_lube_onComplete_1": "$doer.firstname$把$name$推进了$receiver.firstname$的小穴",
+                "com_furniture_ingestVagina_onTarget_consumable_lube_onComplete_2": "$doer.firstname$把$name$送进了$receiver.firstname$的阴道",
+                "com_furniture_ingestVagina_onTarget_consumable_lube_onComplete_3": "$doer.firstname$把$name$抹在了$receiver.firstname$屄里",
+                "com_furniture_ingestVagina_self_consumable_lube_onComplete_1": "$doer.firstname$把$name$推进了小穴",
+                "com_furniture_ingestVagina_self_consumable_lube_onComplete_2": "$doer.firstname$把$name$送进了阴道",
+                "com_furniture_ingestVagina_self_consumable_lube_onComplete_3": "$doer.firstname$把$name$抹在了屄里",
+                "com_furniture_ingestAnus_onComplete_2": "$doer.firstname$把$name$送进屁眼深处",
+                "com_furniture_ingestAnus_onComplete_3": "$doer.firstname$把$name$塞进了肛门里",
+                "com_furniture_ingestAnus_onTarget_consumable_lube_begin_1": "$doer.firstname$把$name$抵在$receiver.firstname$的屁眼上",
+                "com_furniture_ingestAnus_onTarget_consumable_lube_begin_2": "$doer.firstname$把$name$按在$receiver.firstname$的肛门上",
+                "com_furniture_ingestAnus_onTarget_consumable_lube_begin_3": "$doer.firstname$把$name$凑到$receiver.firstname$的后穴上",
+                "com_furniture_ingestVagina_onComplete_2": "$doer.firstname$把$name$送进阴道深处",
+                "com_furniture_ingestVagina_onComplete_3": "$doer.firstname$把$name$抹进了屄里",
+                "com_furniture_ingestVagina_onComplete_administer_1": "$doer.firstname$把$name$送进$receiver.firstname$阴道深处",
+                "com_furniture_ingestVagina_onComplete_administer_2": "$doer.firstname$把$name$抹在了$receiver.firstname$的屄里",
+                "com_furniture_ingestAnus_begin_administer_1": "$doer.firstname$把$name$对准了$receiver.firstname$的后穴",
+                "com_furniture_ingestAnus_begin_administer_2": "$doer.firstname$把$name$顶在$receiver.firstname$的肛门上",
+                "com_furniture_ingestVagina_begin_administer_1": "$doer.firstname$把$name$按在$receiver.firstname$的阴道上",
+                "com_furniture_ingestVagina_begin_administer_2": "$doer.firstname$把$name$贴到$receiver.firstname$的屄上",
+                "com_furniture_ingestAnus_begin_2": "$doer.firstname$把$name$对准了自己的后穴",
+                "com_furniture_ingestAnus_begin_3": "$doer.firstname$把$name$顶在自己的肛门上",
+                "com_furniture_ingestAnus_ongoing_administer_1": "$doer.firstname$一点点把$name$推进$receiver.firstname$后穴",
+                "com_furniture_ingestAnus_ongoing_administer_2": "$doer.firstname$的手还按着$name$往$receiver.firstname$后穴里顶",
+                "com_furniture_ingestAnus_ongoing_2": "$doer.firstname$一点点把$name$推进后穴",
+                "com_furniture_ingestAnus_ongoing_3": "$doer.firstname$的手还按着$name$往里顶",
+                "com_furniture_ingestVagina_onTarget_consumable_lube_ongoing_1": "$doer.firstname$还在把$name$往$receiver.firstname$小穴里送",
+                "com_furniture_ingestVagina_onTarget_consumable_lube_ongoing_2": "$doer.firstname$一点点把$name$推进$receiver.firstname$阴道",
+                "com_furniture_ingestVagina_onTarget_consumable_lube_ongoing_3": "$doer.firstname$的手指还按着$name$往$receiver.firstname$小穴里挤",
+                "com_furniture_ingestVagina_begin_2": "$doer.firstname$把$name$按在自己的阴道上",
+                "com_furniture_ingestVagina_begin_3": "$doer.firstname$把$name$贴在自己的屄上",
+                "com_furniture_ingestVagina_ongoing_administer_1": "$doer.firstname$一点点把$name$挤进$receiver.firstname$阴道",
+                "com_furniture_ingestVagina_ongoing_administer_2": "$doer.firstname$的手指按着$name$往$receiver.firstname$小穴里推"
             }
         }
     }

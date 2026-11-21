@@ -107,7 +107,9 @@
                         {
                             "keepLooking": true,
                             "texts": [
-                                "com_sex_oral_B_description_ongoing_1"
+                                "com_sex_oral_B_description_ongoing_1",
+                                "com_sex_oral_B_description_ongoing_2",
+                                "com_sex_oral_B_description_ongoing_3"
                             ]
                         }
                     ]
@@ -118,7 +120,9 @@
                             "_comment": "",
                             "keepLooking": true,
                             "texts": [
-                                "com_sex_oral_B_description_remove_1"
+                                "com_sex_oral_B_description_remove_1",
+                                "com_sex_oral_B_description_remove_2",
+                                "com_sex_oral_B_description_remove_3"
                             ]
                         }
                     ]
@@ -138,7 +142,9 @@
                                 }
                             ],
                             "texts": [
-                                "com_sex_oral_B_description_after_1"
+                                "com_sex_oral_B_description_after_1",
+                                "com_sex_oral_B_description_after_2",
+                                "com_sex_oral_B_description_after_3"
                             ]
                         }
                     ]
@@ -148,7 +154,9 @@
                         {
                             "keepLooking": true,
                             "texts": [
-                                "com_sex_oral_B_description_begin_1"
+                                "com_sex_oral_B_description_begin_1",
+                                "com_sex_oral_B_description_begin_2",
+                                "com_sex_oral_B_description_begin_3"
                             ]
                         }
                     ]
@@ -295,10 +303,18 @@
                 "com_sex_oral_B_displayName_2_bite": "交替啃咬乳头",
                 "com_sex_oral_B_displayName_3_bite": "轮流啃咬乳头",
                 "com_sex_oral_B_displayName_4_bite": "同时啃咬乳头",
-                "com_sex_oral_B_description_begin_1": "$doer.firstname$将$receiver.firstname$的乳头含在了嘴里",
-                "com_sex_oral_B_description_after_1": "$doer.firstname$在口中感受着$receiver.firstname$乳头的突起",
-                "com_sex_oral_B_description_remove_1": "$doer.firstname$松开了含在嘴里的$receiver.firstname$的乳头",
-                "com_sex_oral_B_description_ongoing_1": "$doer.firstname$正吸吮着$receiver.firstname$的乳头"
+                "com_sex_oral_B_description_begin_1": "$doer.firstname$的嘴裹住$receiver.firstname$的乳头吸",
+                "com_sex_oral_B_description_after_1": "$receiver.firstname$的乳头在$doer.firstname$的嘴里硬得发抖",
+                "com_sex_oral_B_description_remove_1": "$doer.firstname$把$receiver.firstname$的乳头从嘴里吐出来",
+                "com_sex_oral_B_description_ongoing_1": "$doer.firstname$的嘴含着$receiver.firstname$的乳头吸个不停",
+                "com_sex_oral_B_description_remove_2": "$doer.firstname$的嘴唇从$receiver.firstname$的乳头上松开",
+                "com_sex_oral_B_description_remove_3": "$doer.firstname$的舌头离开$receiver.firstname$的乳头",
+                "com_sex_oral_B_description_ongoing_2": "$doer.firstname$的舌头绕着$receiver.firstname$的乳头打转舔",
+                "com_sex_oral_B_description_ongoing_3": "$doer.firstname$把$receiver.firstname$的乳头含到舌根上碾",
+                "com_sex_oral_B_description_begin_2": "$doer.firstname$用舌头把$receiver.firstname$的乳头舔得发硬",
+                "com_sex_oral_B_description_begin_3": "$doer.firstname$把$receiver.firstname$的乳头含到舌根上蹭",
+                "com_sex_oral_B_description_after_2": "$receiver.firstname$的奶子往$doer.firstname$的嘴里挤",
+                "com_sex_oral_B_description_after_3": "$receiver.firstname$的乳头在$doer.firstname$的嘴里涨得发红"
             },
             "en-us": {
                 "com_sex_oral_B": "%%tooltip_sex_com_alternating_tooltip%%",

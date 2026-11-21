@@ -6,8 +6,10 @@ public enum RequestLeaveReason
     None,
     /// <summary>Room has a gender preference, subject fits it and target is the opposite sex. Hard restriction, no exemptions.</summary>
     GenderedRoom,
-    /// <summary>Subject is doing a privacy-tagged action (any room, e.g. a restroom). Anyone but the room's other owners can be asked;
-    /// in a gendered room only targets of the opposite sex (everyone who fits the room shares it).</summary>
+    /// <summary>Subject is doing a privacy-tagged action where privacy is allowed (RequestLeaveUtility.TryGetPrivacyAction): a private
+    /// room, at an allowPrivacy furniture, or inside a vision-blocking divider. Anyone but the room's other owners can be asked - inside
+    /// a vision-blocking divider only those in the same divider and not part of the action; in a gendered room only targets of the
+    /// opposite sex (everyone who fits the room shares it).</summary>
     PrivateAction,
     /// <summary>Subject owns the private room. Only strangers (no bio/personal/social relationship) can be asked, whatever subject
     /// is doing; members linked to the subject (e.g. a patient's visitors) are welcome.</summary>
@@ -23,11 +25,13 @@ public enum RequestLeaveReason
 public static class RequestLeaveUtility
 {
     public const string PrivacyTag = "privacy";
+    /// <summary>FurnitureBase.Tags: a privacy action done at this furniture lets the doer ask others to leave (toilet, shower).</summary>
+    public const string AllowPrivacyFurnitureTag = "allowPrivacy";
 
     /// <summary>
     /// Hot path (once per chara in the room per validator pass) - allocation-free. Each reason is subject condition AND target
     /// condition, tried in priority order; all checks are pure reads, so cheap target rejections run before expensive subject
-    /// checks (IsDoingPrivacyAction) and the faction check only runs once a reason matched.
+    /// checks (TryGetPrivacyAction) and the faction check only runs once a reason matched.
     /// </summary>
     public static bool CanRequestLeave(Character_Trainable subject, Character_Trainable target, out RequestLeaveReason reason)
     {
@@ -43,17 +47,20 @@ public static class RequestLeaveUtility
         if (cm.IsInSameParty(subject, target)) return false;
 
         bool conscious = !subject.Stats.isConsciousnessUnconscious;
-        // GenderedRoom: subject fits the room's preference, target is the opposite sex
-        if (conscious && room.GenderPreference != RoomGenderPreference.DontCare && !room.IsOppositeSex(subject) && room.IsOppositeSex(target))
+        // GenderedRoom: subject fits the room's preference, target is the opposite sex and not one of the room's owners
+        if (conscious && room.GenderPreference != RoomGenderPreference.DontCare && !room.IsOppositeSex(subject) && room.IsOppositeSex(target)
+            && !isRoomOwner(target, room))
             reason = RequestLeaveReason.GenderedRoom;
         // both private reasons exempt the room's other owners
         else if (!isRoomOwner(target, room))
         {
-            // PrivateAction: subject is doing a privacy-tagged action, target can get away. Any room - restrooms/showers have no
-            // bed, so they never count as isRoomPrivate. A gendered room is shared by everyone who fits it, so only an
-            // opposite-sex target can be asked
+            // PrivateAction: subject is doing a privacy-tagged action where privacy is allowed, target can get away. Inside a
+            // vision-blocking divider only the others in it who aren't part of the action; elsewhere anyone in the room. A
+            // gendered room is shared by everyone who fits it, so only an opposite-sex target can be asked
             if (target.canMove && (room.GenderPreference == RoomGenderPreference.DontCare || room.IsOppositeSex(target))
-                && IsDoingPrivacyAction(subject))
+                && TryGetPrivacyAction(subject, room, out var privacyAP, out bool inBlockingDivider)
+                && (!inBlockingDivider || (target.ScopeRef == subject.ScopeRef
+                    && !privacyAP.DoerRefs.Contains(target.RefID) && !privacyAP.ReceiverRefs.Contains(target.RefID))))
                 reason = RequestLeaveReason.PrivateAction;
             // PrivateRoom: subject owns the private room, target is a stranger not linked to them
             else if (conscious && room.isRoomPrivate && isRoomOwner(subject, room) && !isLinkedTo(target, subject, room) && isStranger(subject, target))
@@ -92,11 +99,37 @@ public static class RequestLeaveUtility
         return currentJob != null && currentJob.ActorHasTargetTag(c.RefID, PrivacyTag);
     }
 
+    /// <summary>
+    /// The character's privacy-tagged AP (same lookup as IsDoingPrivacyAction), when privacy is allowed where it happens: inside a
+    /// vision-blocking divider (inBlockingDivider), in a private room (isRoomPrivate), or at a furniture tagged allowPrivacy.
+    /// A privacy action anywhere else (a pet sleeping in its house in the living room) asks nobody to leave.
+    /// </summary>
+    public static bool TryGetPrivacyAction(Character_Trainable c, Room_Instance room, out ActionPackage ap, out bool inBlockingDivider)
+    {
+        inBlockingDivider = false;
+        ap = null;
+        if (c == null) return false;
+        var interactionJob = c.InteractionJob;
+        if (interactionJob != null) ap = interactionJob.FindActorAPWithTargetTag(c.RefID, PrivacyTag);
+        if (ap == null)
+        {
+            var currentJob = c.CurrentJob;
+            if (currentJob != null) ap = currentJob.FindActorAPWithTargetTag(c.RefID, PrivacyTag);
+        }
+        if (ap == null) return false;
+
+        if (c.IsInBlockingDivider) { inBlockingDivider = true; return true; }
+        if (room != null && room.isRoomPrivate) return true;
+        var furniture = (ap.job as Job_Furniture)?.ParentInstance?.FurnitureBase;
+        return furniture != null && furniture.Tags != null && furniture.Tags.Contains(AllowPrivacyFurnitureTag);
+    }
+
     static bool isRoomOwner(Character_Trainable c, Room_Instance room)
     {
         var owner = room.FactionOwner;
         if (owner == null) return false;
-        if (owner is Manageable faction) return faction.IsRoomOwner(room.RefID, c.RefID);
+        // a prisoner held in a cell here belongs to the room like an owner (Docs/Prison/Plan_PrisonRework.md §3)
+        if (owner is Manageable faction) return faction.IsRoomOwner(room.RefID, c.RefID) || faction.IsHeldInRoom(room.RefID, c.RefID);
         return owner.RoomOwners(room.RefID).Contains(c.RefID);
     }
 

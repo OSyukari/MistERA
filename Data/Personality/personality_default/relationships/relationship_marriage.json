@@ -19,7 +19,8 @@
                                 "relationship_marriage_propose_8"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "response"
                 }
             },
             {
@@ -38,7 +39,8 @@
                                 "relationship_marriage_set_6"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "response"
                 }
             },
             {
@@ -57,7 +59,8 @@
                                 "relationship_marriage_refuse_6"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "response"
                 }
             },
             {
@@ -76,7 +79,8 @@
                                 "relationship_marriage_refused_6"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "response"
                 }
             },
             {
@@ -95,7 +99,8 @@
                                 "relationship_marriage_break_6"
                             ]
                         }
-                    ]
+                    ],
+                    "template": "response"
                 }
             }
         ]

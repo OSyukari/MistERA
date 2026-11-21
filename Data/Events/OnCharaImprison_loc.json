@@ -1,0 +1,17 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for OnCharaImprison.json (keys added with the captive choice, Docs/Prison/Plan_PrisonRework.md §5.3a)."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "OnCharaImprison_captive_question": "What should be done with $self.name$?",
+                "OnCharaImprison_captive_keep": "Hold as $presetMemberType$",
+                "OnCharaImprison_captive_default": "$captiveDefault$",
+                "event_captive_imprisonAs": "Hold as $memberType$ instead",
+                "event_captive_releaseAs": "Release as $memberType$",
+                "event_captive_letGo": "Let go"
+            }
+        }
+    }
+}

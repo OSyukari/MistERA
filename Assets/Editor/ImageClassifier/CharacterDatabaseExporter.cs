@@ -117,6 +117,7 @@ public static class CharacterDatabaseExporter
             ["naked"] = OptionalSnapshot(nakedGroups, nakedRules),
             ["clothed"] = OptionalSnapshot(clothedGroups, clothedRules),
         };
+        entry["global_handlers"] = GlobalHandlerSnapshot(target.PortraitManager?.GlobalHandlerEntries);
         if (database.Property(baseID) != null)
             database[baseID] = entry;
         else
@@ -127,6 +128,28 @@ public static class CharacterDatabaseExporter
             else next.AddBeforeSelf(property);
         }
         return baseID;
+    }
+
+    /// <summary>
+    /// The portrait template's useGlobalHandler entries in priority order (never in MasterList.json: the field is read-only JSON),
+    /// for the image database report's character pairing view (PortraitPairing.cs).
+    /// </summary>
+    static JArray GlobalHandlerSnapshot(List<PortraitManager.GlobalHandlerEntry> entries)
+    {
+        var result = new JArray();
+        if (entries == null) return result;
+        foreach (var e in entries)
+        {
+            if (e == null || string.IsNullOrEmpty(e.path)) continue;
+            result.Add(new JObject
+            {
+                ["path"] = e.path,
+                ["selfKeys"] = new JArray(e.selfKeys ?? new List<string>()),
+                ["targetKeys"] = new JArray(e.targetKeys ?? new List<string>()),
+                ["fallback"] = e.fallback ?? "",
+            });
+        }
+        return result;
     }
 
     static JObject OptionalSnapshot(Dictionary<string, List<string>> groups, List<ActorOptionalPromptRule> rules)

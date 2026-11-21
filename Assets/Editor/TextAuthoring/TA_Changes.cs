@@ -58,6 +58,8 @@ public static class TA_Changes
 
     static JObject Records(JObject index) { return (JObject)index["records"]; }
 
+    /// <summary>`by` of a record released from a deleted coder task: pending, and auto-approval leaves it alone.</summary>
+    const string CoderTaskDeleted = "coder task deleted";
     static bool IsOpen(string state) { return state == Pending || state == Approved || state == HandedOff; }
 
     /// <summary>
@@ -362,8 +364,9 @@ public static class TA_Changes
                 e["state"] = Pending; e["by"] = "finding returned"; reopened++;
             }
             if (stale && IsOpen((string)e["state"]) && (string)e["state"] != HandedOff) { e["state"] = Stale; e["by"] = "base changed"; }
-            // errors that skip review: a pending one (new, reopened or changed) goes straight to the coder queue
-            if (((bool?)r["autoApprove"] ?? false) && (string)e["state"] == Pending) { e["state"] = Approved; e["by"] = "template error"; }
+            // errors that skip review: a pending one (new, reopened or changed) goes straight to the coder queue - not one
+            // whose coder task was deleted (the user chose not to run it; it waits for review like any pending record)
+            if (((bool?)r["autoApprove"] ?? false) && (string)e["state"] == Pending && (string)e["by"] != CoderTaskDeleted) { e["state"] = Approved; e["by"] = "template error"; }
             e["units"] = r["units"];
             e["kind"] = r["kind"];
             e["lane"] = LaneOf(r);
@@ -458,12 +461,22 @@ public static class TA_Changes
         MergeReview(index, null);
         int added = 0, reopened = 0, resolved = 0;
         Merge(index, records, new Dictionary<string, bool>(), ref added, ref reopened);
+        // a deleted coder task gives its records back as pending: still flagged, not queued again until approved
+        var generated = Path.Combine(Path.GetDirectoryName(TA_Store.Root), "Generated");
+        foreach (var r in Records(index).Properties())
+        {
+            var e = (JObject)r.Value;
+            var task = (string)e["coderTask"];
+            if ((string)e["state"] != HandedOff || string.IsNullOrEmpty(task) || Directory.Exists(Path.Combine(generated, task))) continue;
+            e["state"] = Pending; e["by"] = CoderTaskDeleted; e.Remove("coderTask"); e["updatedAt"] = Now();
+        }
         foreach (var r in Records(index).Properties())
         {
             var e = (JObject)r.Value;
             if ((string)e["batch"] != FindingsBatch || byId.ContainsKey(r.Name)) continue;
             var state = (string)e["state"];
-            if (state == Pending || state == Approved || state == Stale) { e["state"] = Resolved; e["by"] = "finding gone"; e["updatedAt"] = Now(); resolved++; }
+            // a handed-off record closes too: the finding is gone whoever fixed it (a discarded coder task never reports)
+            if (state == Pending || state == Approved || state == Stale || state == HandedOff) { e["state"] = Resolved; e["by"] = "finding gone"; e["updatedAt"] = Now(); resolved++; }
         }
         SaveIndex(index);
         var err = errors.Count > 0 ? $"\n  unreadable: {string.Join("; ", errors)}" : "";
