@@ -47,7 +47,7 @@ namespace MistEra.Updates
         public bool BlocksGameplay => RestartRequired || gameplayHold;
         /// <summary>What the running operation is (None when idle); lets the update panel label the right button.</summary>
         public UpdateOperation Operation { get; private set; }
-        /// <summary>Stage of a game build download / restart handoff, for the panel's button label (Progress is per stage).</summary>
+        /// <summary>Current update stage, for the panel's button label (Progress is per stage).</summary>
         public BuildStep Step { get; private set; }
         /// <summary>True after a check succeeded this session.</summary>
         public bool Checked { get; private set; }
@@ -83,7 +83,9 @@ namespace MistEra.Updates
         public bool CanInstallStagedMods => BootReady && !recoveryFailed && !RestartRequired && HasStagedMods && (!StagedModsRequireTitle || SafeTitle());
         public string Status { get; private set; } = "Updates have not been checked.";
         public string Error { get; private set; } = "";
-        public float Progress { get; private set; }
+        /// <summary>Stage-local completion fraction; NaN when the current work cannot be measured.</summary>
+        public float Progress { get => progress; private set => progress = value; }
+        private volatile float progress;
         public long DownloadedBytes { get; private set; }
         public long TotalBytes { get; private set; }
         public BuildInfo InstalledBuild { get; private set; }
@@ -681,6 +683,13 @@ namespace MistEra.Updates
             Publish();
         }
 
+        private void SetStage(BuildStep step, string status, bool determinate = true)
+        {
+            Step = step;
+            Status = status;
+            Progress = determinate ? 0 : float.NaN;
+        }
+
         private IEnumerator Worker(Action<CancellationToken> action)
         {
             var token = cancellation.Token;
@@ -895,14 +904,16 @@ namespace MistEra.Updates
             // extracting, so the extracted tree is only checked for completeness (sizes), never hashed again.
             Step = BuildStep.Verifying; Status = "Verifying game build..."; Progress = 0; Publish();
             yield return Worker(token => VerifyArchive(archive, manifest.size, manifest.sha256, token, p => Progress = p));
-            Step = BuildStep.Extracting; Status = "Extracting game build..."; Progress = 0; Publish();
+            SetStage(BuildStep.Inspecting, "Inspecting game archive...", false); Publish();
             yield return Worker(token =>
             {
                 string tools = Local("UpdateTools");
                 DiskSpace(checked(SevenZip.Inspect(tools, archive, manifest.payloadRoot, token, ExpandedLimit(manifest.size)) * 3));
                 string extraction = UpdateValidation.Resolve(transaction, "extracted");
+                SetStage(BuildStep.Extracting, "Extracting game build...");
                 SevenZip.Extract(tools, archive, extraction, manifest.payloadRoot, token, ExpandedLimit(manifest.size), percent => Progress = percent / 100f);
-                ValidateBuildTree(UpdateValidation.Resolve(extraction, manifest.payloadRoot), manifest, token);
+                SetStage(BuildStep.Checking, "Checking extracted game files...");
+                ValidateBuildTree(UpdateValidation.Resolve(extraction, manifest.payloadRoot), manifest, token, p => Progress = p);
                 token.ThrowIfCancellationRequested();
                 UpdateJson.Write(UpdateValidation.Resolve(transaction, "staged-build.json"), new StagedBuildRecord { approved = 1, transaction = id, manifest = manifest });
             });
@@ -996,15 +1007,16 @@ namespace MistEra.Updates
                 cancellation.Token.ThrowIfCancellationRequested();
                 Require(assetUrls.TryGetValue(PackageKey(package), out string url), "Package URL is unavailable; check releases again.");
                 string archive = UpdateValidation.Resolve(transaction, "downloads/" + index + "." + package.archiveFormat);
-                Status = "Downloading " + (package.name ?? package.id) + "..."; Publish();
+                SetStage(BuildStep.Downloading, "Downloading " + (package.name ?? package.id) + "..."); Publish();
                 yield return Download(url, archive, package.size, package.size);
-                Status = "Verifying and staging " + package.id + "..."; Progress = 0; Publish();
+                SetStage(BuildStep.Verifying, "Verifying " + package.id + "..."); Publish();
                 yield return Worker(token =>
                 {
-                    VerifyArchive(archive, package.size, package.sha256, token);
+                    VerifyArchive(archive, package.size, package.sha256, token, p => Progress = p);
                     // 7z.exe from UpdateTools (shipped for game builds) extracts the package; every entry must be inside
                     // the package's roots or a parent folder of them
                     string tools = Local("UpdateTools");
+                    SetStage(BuildStep.Inspecting, "Inspecting " + package.id + "...", false);
                     var entries = SevenZip.ListPackage(tools, archive, p => AllowedArchivePath(package, p), token, ExpandedLimit(package.size));
                     long expanded = 0;
                     var files = new List<SevenZip.Entry>(entries.Count);
@@ -1031,10 +1043,12 @@ namespace MistEra.Updates
                     DiskSpace(checked(expanded * 2));
                     // extracted straight into the batch (no separate unpack + copy); checked file by file before the batch is approved
                     Directory.CreateDirectory(mods);
-                    SevenZip.ExtractPackageInto(tools, archive, mods, token);
+                    SetStage(BuildStep.Extracting, "Extracting " + package.id + "...");
+                    SevenZip.ExtractPackageInto(tools, archive, mods, token, percent => Progress = percent / 100f);
                     // No per-file hashing: the archive hash matched the catalog and 7z checked every file's checksum while
                     // extracting. The record tracks path + size; shared About files carry the catalog's hash.
                     var receipt = new PackageReceipt { package = package };
+                    SetStage(BuildStep.Checking, "Checking extracted files for " + package.id + "...");
                     foreach (var file in files)
                     {
                         token.ThrowIfCancellationRequested();
@@ -1043,6 +1057,7 @@ namespace MistEra.Updates
                         var shared = package.sharedFiles.FirstOrDefault(f => Paths.Equals(f.path, file.path));
                         if (shared != null) Require(shared.size == file.size, "Shared file differs from catalog: " + file.path);
                         receipt.files.Add(new UpdateFile { path = "Mods/" + file.path, size = file.size, sha256 = shared?.sha256 });
+                        Progress = (float)receipt.files.Count / files.Count;
                     }
                     foreach (var shared in package.sharedFiles) Require(receipt.files.Any(f => f.path == "Mods/" + shared.path), "Package lacks declared shared file: " + shared.path);
                     ValidatePackageAbout(mods, package);
@@ -1073,7 +1088,7 @@ namespace MistEra.Updates
                 {
                     // the title must not start gameplay while active files are drained and replaced
                     gameplayHold = true;
-                    Status = "Waiting for asset reads to finish..."; Progress = 0; Publish();
+                    SetStage(BuildStep.Waiting, "Waiting for asset reads to finish...", false); Publish();
                     float deadline = Time.realtimeSinceStartup + 30f;
                     while (true)
                     {
@@ -1089,7 +1104,7 @@ namespace MistEra.Updates
                 {
                     cancellation.Token.ThrowIfCancellationRequested();
                     ValidateStagedDependencies(record);
-                    Status = "Installing staged mod batch..."; Publish();
+                    SetStage(BuildStep.Checking, "Checking staged mod batch...", false); Publish();
                     var previous = receipts.ToList();
                     if (requiresTitle)
                     {
@@ -1180,7 +1195,8 @@ namespace MistEra.Updates
             ValidateRootOwnership(record.packages.Select(r => r.package).ToList(), installed);
             Require(RestartRequired || !BatchRequiresTitle(record.packages.Select(r => r.package)), "Cannot commit boot-active content without blocking gameplay.");
             // FileTransaction owns its own lock. Cancellation after this point must wait for durable commit/rollback.
-            FileTransaction.Install(root, payload, new FileInventory { files = next.Values.ToList() }, new FileInventory { files = old.Values.ToList() });
+            SetStage(BuildStep.Installing, "Installing staged mod batch...");
+            FileTransaction.Install(root, payload, new FileInventory { files = next.Values.ToList() }, new FileInventory { files = old.Values.ToList() }, progress: p => Progress = p);
         }
 
         /// <summary>
@@ -1385,7 +1401,7 @@ namespace MistEra.Updates
         {
             // the game is about to quit; released by RunOperation if the relaunch fails
             gameplayHold = true;
-            Step = BuildStep.PreparingRestart; Status = "Restarting..."; Progress = 0; Publish();
+            SetStage(BuildStep.Waiting, "Restarting...", false); Publish();
             yield return null;
             using var current = Process.GetCurrentProcess();
             long started = current.StartTime.ToUniversalTime().Ticks;
@@ -1450,20 +1466,25 @@ namespace MistEra.Updates
             string relative = ".updates/transactions/" + id;
             string transaction = Local(relative);
             Directory.CreateDirectory(transaction);
-            Step = BuildStep.PreparingRestart; Status = "Preparing updater helper..."; Progress = 0; Publish();
+            SetStage(BuildStep.PreparingRestart, "Inspecting updater helper...", false); Publish();
             yield return Worker(token =>
             {
                 string source = Local("UpdateTools");
                 var inventory = UpdateFiles.Inventory(source);
                 Require(inventory.files.Any(f => f.path == "MistEra.Updater.exe"), "The packaged updater helper is missing.");
                 DiskSpace(inventory.files.Sum(f => f.size));
+                SetStage(BuildStep.PreparingRestart, "Preparing updater helper...");
+                long total = inventory.files.Sum(f => Math.Max(1L, f.size)), done = 0;
                 foreach (var file in inventory.files)
                 {
                     token.ThrowIfCancellationRequested();
                     CopyOrMatch(UpdateValidation.Resolve(source, file.path), UpdateValidation.Resolve(transaction, "helper/" + file.path), file);
+                    done += Math.Max(1L, file.size);
+                    Progress = (float)done / total;
                 }
                 // verified and extracted right after the download: only check the staged tree is still complete
-                ValidateBuildTree(UpdateValidation.Resolve(transaction, "extracted/" + pendingBuild.manifest.payloadRoot), pendingBuild.manifest, token);
+                SetStage(BuildStep.Checking, "Checking staged game files...");
+                ValidateBuildTree(UpdateValidation.Resolve(transaction, "extracted/" + pendingBuild.manifest.payloadRoot), pendingBuild.manifest, token, p => Progress = p);
             });
             cancellation.Token.ThrowIfCancellationRequested();
             using var parent = Process.GetCurrentProcess();
@@ -1490,7 +1511,7 @@ namespace MistEra.Updates
             bool ready = false;
             try
             {
-                Status = "Waiting for updater readiness..."; Publish();
+                SetStage(BuildStep.Waiting, "Waiting for updater readiness...", false); Publish();
                 float deadline = Time.realtimeSinceStartup + 30f;
                 while (!ready)
                 {
@@ -1734,7 +1755,7 @@ namespace MistEra.Updates
 
         /// <summary>Completeness check of an extracted build (no hashing: the archive hash and 7z's per-file CRCs already
         /// cover content): every listed file exists with its listed size, nothing unlisted, identity matches the manifest.</summary>
-        private static void ValidateBuildTree(string tree, GameRelease manifest, CancellationToken token)
+        private static void ValidateBuildTree(string tree, GameRelease manifest, CancellationToken token, Action<float> progress = null)
         {
             UpdateValidation.ValidateBuild(manifest);
             var inventory = UpdateJson.Read<FileInventory>(UpdateValidation.Resolve(tree, "game-files.json"));
@@ -1747,6 +1768,7 @@ namespace MistEra.Updates
                 string path = UpdateValidation.Resolve(tree, file.path);
                 Require(File.Exists(path) && new FileInfo(path).Length == file.size, "Extracted build file is missing or incomplete: " + file.path);
                 listed.Add(file.path);
+                progress?.Invoke(0.5f * listed.Count / inventory.files.Count);
             }
             int count = 0;
             var directories = new Stack<string>();
@@ -1754,11 +1776,13 @@ namespace MistEra.Updates
             while (directories.Count > 0)
                 foreach (string entry in Directory.EnumerateFileSystemEntries(directories.Pop()))
                 {
+                    token.ThrowIfCancellationRequested();
                     UpdateValidation.NoLinks(entry);
                     if (Directory.Exists(entry)) { directories.Push(entry); continue; }
                     string relative = entry.Substring(tree.TrimEnd(Path.DirectorySeparatorChar).Length + 1).Replace(Path.DirectorySeparatorChar, '/');
                     Require(relative == "game-files.json" || listed.Contains(relative), "Build payload has unlisted files: " + relative);
                     count++;
+                    progress?.Invoke(0.5f + 0.49f * Math.Min(count, inventory.files.Count + 1) / (inventory.files.Count + 1));
                 }
             Require(count == inventory.files.Count + 1, "Build payload has unlisted files.");
             Require(inventory.files.Any(f => f.path == manifest.executable) && inventory.files.Any(f => f.path == "build-info.json"), "Build payload lacks executable/identity.");
@@ -1766,6 +1790,7 @@ namespace MistEra.Updates
             Require(embedded.schema == manifest.schema && embedded.buildId == manifest.buildId && embedded.buildNumber == manifest.buildNumber && embedded.version == manifest.version &&
                 embedded.platform == manifest.platform && embedded.channel == manifest.channel && embedded.minimumUpdaterProtocol == manifest.minimumUpdaterProtocol && embedded.executable == manifest.executable,
                 "Embedded build identity differs from release manifest.");
+            progress?.Invoke(1f);
         }
 
         private static bool BuildProtected(string path) => Paths.Equals(path, ".updates") || path.StartsWith(".updates/", StringComparison.OrdinalIgnoreCase) || Paths.Equals(path, "Save") || path.StartsWith("Save/", StringComparison.OrdinalIgnoreCase) ||

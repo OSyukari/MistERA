@@ -22,7 +22,7 @@ namespace MistEra.Updates
     {
         // All public operations own the installation lock. Callers must not hold it recursively.
         // checkpoint runs after durable preparation, each live change, and durable commit.
-        public static string Install(string installRoot, string stagedRoot, FileInventory incoming, FileInventory previous, Action<string> checkpoint = null)
+        public static string Install(string installRoot, string stagedRoot, FileInventory incoming, FileInventory previous, Action<string> checkpoint = null, Action<float> progress = null)
         {
             using var gate = UpdateFiles.AcquireLock(installRoot);
             RecoverLocked(installRoot);
@@ -31,8 +31,12 @@ namespace MistEra.Updates
             var old = previous.files.ToDictionary(f => f.path, StringComparer.OrdinalIgnoreCase);
             var next = incoming.files.ToDictionary(f => f.path, StringComparer.OrdinalIgnoreCase);
             var journal = new TransactionJournal { id = Guid.NewGuid().ToString("N"), installRoot = Path.GetFullPath(installRoot), state = "prepared" };
-            foreach (string path in old.Keys.Union(next.Keys, StringComparer.OrdinalIgnoreCase).OrderBy(p => p, StringComparer.Ordinal))
+            var targets = old.Keys.Union(next.Keys, StringComparer.OrdinalIgnoreCase).OrderBy(p => p, StringComparer.Ordinal).ToArray();
+            // Per-file stages: inspection 0-20%, backups 20-50%, application 50-95%; commit completes progress.
+            progress?.Invoke(0f);
+            for (int i = 0; i < targets.Length; i++)
             {
+                string path = targets[i];
                 CheckTarget(path);
                 old.TryGetValue(path, out UpdateFile before); next.TryGetValue(path, out UpdateFile after);
                 UpdateValidation.Require((before == null || before.path == path) && (after == null || after.path == path), "Case-only ownership changes are unsupported");
@@ -50,11 +54,17 @@ namespace MistEra.Updates
                 {
                     // an owned file the player deleted: nothing to back up or remove
                     before = null;
-                    if (after == null) continue;
+                    if (after == null)
+                    {
+                        progress?.Invoke(0.2f * ((i + 1) / (float)targets.Length));
+                        continue;
+                    }
                 }
                 if (after != null) UpdateValidation.Require(UpdateFiles.SameSize(UpdateValidation.Resolve(stagedRoot, after.path), after), "Staged file is missing or incomplete: " + path);
                 journal.entries.Add(new TransactionEntry { path = path, before = before, after = after });
+                progress?.Invoke(0.2f * ((i + 1) / (float)targets.Length));
             }
+            progress?.Invoke(0.2f);
             UpdateValidation.Require(journal.entries.Count <= UpdateValidation.MaximumFiles, "Too many transaction operations");
             string transaction = TransactionRoot(installRoot, journal.id);
             Directory.CreateDirectory(transaction);
@@ -63,16 +73,20 @@ namespace MistEra.Updates
             for (int i = 0; i < journal.entries.Count; i++)
             {
                 TransactionEntry entry = journal.entries[i];
-                if (entry.before == null) continue;
-                string backup = Slot(transaction, "backup", i);
-                UpdateFiles.CopyDurable(UpdateValidation.Resolve(installRoot, entry.path), backup);
-                UpdateValidation.Require(UpdateFiles.SameSize(backup, entry.before), "Backup copy is incomplete: " + entry.path);
+                if (entry.before != null)
+                {
+                    string backup = Slot(transaction, "backup", i);
+                    UpdateFiles.CopyDurable(UpdateValidation.Resolve(installRoot, entry.path), backup);
+                    UpdateValidation.Require(UpdateFiles.SameSize(backup, entry.before), "Backup copy is incomplete: " + entry.path);
+                }
+                progress?.Invoke(0.2f + 0.3f * ((i + 1) / (float)journal.entries.Count));
             }
             Save(transaction, journal);
             UpdateValidation.Require(new FileInfo(UpdateValidation.Resolve(transaction, "journal.json")).Length <= 31L * 1024 * 1024, "Transaction journal too large for recovery");
             try
             {
                 checkpoint?.Invoke("prepared");
+                progress?.Invoke(0.5f);
                 for (int i = 0; i < journal.entries.Count; i++)
                 {
                     TransactionEntry entry = journal.entries[i];
@@ -82,7 +96,9 @@ namespace MistEra.Updates
                     if (entry.after == null) File.Delete(target);
                     else Replace(UpdateValidation.Resolve(stagedRoot, entry.after.path), target, entry.after, false);
                     checkpoint?.Invoke("applied:" + i);
+                    progress?.Invoke(0.5f + 0.45f * ((i + 1) / (float)journal.entries.Count));
                 }
+                progress?.Invoke(0.95f);
                 journal.state = "committed"; Save(transaction, journal);
             }
             catch
@@ -92,6 +108,7 @@ namespace MistEra.Updates
             }
             // A failure after the durable commit is not an implicit rollback of a successful install.
             checkpoint?.Invoke("committed");
+            progress?.Invoke(1f);
             return journal.id;
         }
 

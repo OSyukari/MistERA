@@ -77,10 +77,10 @@ namespace MistEra.Updates
 
         /// <summary>Extracts a package archive already checked with ListPackage into a folder that may hold other
         /// packages of the same batch (existing files are overwritten; roots never overlap, shared files are identical).</summary>
-        public static void ExtractPackageInto(string toolsFolder, string archive, string destination, CancellationToken cancellation = default)
+        public static void ExtractPackageInto(string toolsFolder, string archive, string destination, CancellationToken cancellation = default, Action<int> progress = null)
         {
             UpdateValidation.NoLinks(destination);
-            ExtractAll(toolsFolder, archive, destination, "", cancellation);
+            ExtractAll(toolsFolder, archive, destination, "", cancellation, progress);
         }
 
         private static List<Entry> List(string toolsFolder, string archive, string passwordArgument, CancellationToken cancellation)

@@ -90,6 +90,13 @@ namespace MistEra.Updates
                 foreach (JToken child in (JArray)token) CheckShape(child, type.GetGenericArguments()[0]);
                 return;
             }
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(System.Collections.Generic.Dictionary<,>) && type.GetGenericArguments()[0] == typeof(string))
+            {
+                UpdateValidation.Require(token is JObject, "Expected JSON object");
+                foreach (JProperty property in ((JObject)token).Properties())
+                    CheckShape(property.Value, type.GetGenericArguments()[1]);
+                return;
+            }
             UpdateValidation.Require(token is JObject, "Expected JSON object");
             var obj = (JObject)token;
             var fields = type.GetFields(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);

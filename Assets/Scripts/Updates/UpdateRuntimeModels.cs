@@ -5,8 +5,8 @@ namespace MistEra.Updates
 {
     public enum UpdateOperation { None, Check, DownloadBuild, InstallMods, Restart, DeleteMods }
 
-    /// <summary>Stage of a game build download (DownloadBuild) or restart handoff (Restart).</summary>
-    public enum BuildStep { None, Downloading, Verifying, Extracting, PreparingRestart }
+    /// <summary>Current stage of a game or mod update, or restart handoff.</summary>
+    public enum BuildStep { None, Downloading, Verifying, Extracting, PreparingRestart, Inspecting, Checking, Installing, Waiting }
 
     /// <summary>One-click mod update scopes of the update panel.</summary>
     public enum ModUpdateScope { None, All, Active }

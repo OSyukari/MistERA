@@ -256,7 +256,8 @@ public class scr_Menu_Updates : scr_Menu
         if (text_status != null)
         {
             string status = Plain(service.Status);
-            if (service.IsBusy) status += "  " + Percent();
+            string percent = service.IsBusy ? Percent() : "";
+            if (percent.Length > 0) status += (status.Length > 0 ? "  " : "") + percent;
             if (!string.IsNullOrEmpty(service.Error)) status += "\n" + Plain(service.Error);
             text_status.SetText(status);
         }
@@ -298,11 +299,7 @@ public class scr_Menu_Updates : scr_Menu
         }
         else if (op == UpdateOperation.DownloadBuild || op == UpdateOperation.Restart)
         {
-            // each stage reports its own 0-100%: name the stage so a restarting percent never reads as a stalled download
-            string stage = service.Step == BuildStep.Verifying ? "game_verifying"
-                : service.Step == BuildStep.Extracting ? "game_extracting"
-                : op == UpdateOperation.Restart ? "game_preparing" : "game_downloading";
-            labels[Game] = Text(stage) + (op == UpdateOperation.Restart ? "" : " " + Percent());
+            labels[Game] = StageLabel(true);
             reasons[Game] = Text("tooltip_busy");
         }
         else if (service.HasPendingBuild)
@@ -335,7 +332,7 @@ public class scr_Menu_Updates : scr_Menu
         string list = UpdateList(updates, conflicts, slot == ModsAll);
         if (service.RunningModUpdate == scope)
         {
-            labels[slot] = Text("mods_updating") + " " + Percent();
+            labels[slot] = StageLabel(false);
             reasons[slot] = Text("tooltip_busy");
         }
         else if (service.CompletedModUpdate == scope)
@@ -623,7 +620,7 @@ public class scr_Menu_Updates : scr_Menu
         var main = entry.main;
         if (RunningInstall(package.id))
         {
-            main.label = Text("mod_downloading") + " " + Percent();
+            main.label = StageLabel(false);
             main.reason = Text("tooltip_busy");
             main.tooltip = null;
         }
@@ -756,7 +753,7 @@ public class scr_Menu_Updates : scr_Menu
         bool updateAvailable = published != null && !string.Equals(published.sha256, receipt.package.sha256, StringComparison.OrdinalIgnoreCase);
         if (RunningInstall(packageId))
         {
-            update.label = Text("mod_downloading") + " " + Percent();
+            update.label = StageLabel(false);
             update.reason = Text("tooltip_busy");
         }
         else
@@ -872,10 +869,29 @@ public class scr_Menu_Updates : scr_Menu
         return values.TryGetValue("default", out value) ? value : null;
     }
 
+    string StageLabel(bool game)
+    {
+        string key;
+        switch (service.Step)
+        {
+            case BuildStep.Downloading: key = game ? "game_downloading" : "mod_downloading"; break;
+            case BuildStep.Verifying: key = game ? "game_verifying" : "progress_verifying"; break;
+            case BuildStep.Extracting: key = game ? "game_extracting" : "progress_extracting"; break;
+            case BuildStep.PreparingRestart: key = "game_preparing"; break;
+            case BuildStep.Inspecting: key = "progress_inspecting"; break;
+            case BuildStep.Checking: key = "progress_checking"; break;
+            case BuildStep.Installing: key = "progress_installing"; break;
+            case BuildStep.Waiting: key = "progress_waiting"; break;
+            default: key = game ? "game_preparing" : "mods_updating"; break;
+        }
+        string percent = Percent();
+        return Text(key) + (percent.Length > 0 ? " " + percent : "");
+    }
+
     string Percent()
     {
-        float progress = float.IsNaN(service.Progress) ? 0 : Mathf.Clamp01(service.Progress);
-        return progress.ToString("P0");
+        float progress = service.Progress;
+        return float.IsNaN(progress) ? "" : Mathf.Clamp01(progress).ToString("P0");
     }
 
     static string BuildDescription(BuildInfo build)
