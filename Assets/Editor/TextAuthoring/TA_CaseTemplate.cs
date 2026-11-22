@@ -109,6 +109,13 @@ public static class TA_CaseTemplate
     public static JObject NarrationStates { get { return cases?["narrationStates"] as JObject ?? new JObject(); } }
     public static JArray Narration { get { return cases?["narration"] as JArray ?? new JArray(); } }
     public static JArray Kojo { get { return cases?["kojo"] as JArray ?? new JArray(); } }
+    public static JObject CommandProfile(COM command, COM categoryParent)
+    {
+        var bindings = cases?["commandProfiles"];
+        var name = (string)bindings?[command.ID];
+        if (name == null && categoryParent != null) name = (string)bindings?[categoryParent.ID];
+        return cases?["profiles"]?[name ?? "standard"] as JObject ?? new JObject();
+    }
     public static JObject Roles { get { return cases?["roles"] as JObject ?? new JObject(); } }
     public static JObject Overrides { get { return cases?["overrides"] as JObject ?? new JObject(); } }
     /// <summary>Doc words for case axes ({ listeners, outcomes, ordered }).</summary>

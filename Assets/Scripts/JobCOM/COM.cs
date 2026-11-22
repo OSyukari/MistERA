@@ -191,6 +191,13 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
     /// by the game.
     /// </summary>
     public KojoParticipants kojoParticipants = KojoParticipants.Auto;
+    /// <summary>
+    /// Authoring only (category kojo, 2026-11-21): this parent command is a category-level kojo home - its _Interrupt /
+    /// _Tryjoin / _Joined / _Join_Refused / _Join / _JoinFailed entries serve every child that has none of its own (the
+    /// game's kojo chain tries the folder parent; MapUtility / Job / EvaluationPackage all fetch through it). A category
+    /// unit exports only these entries; its children never implement the six keys. Not read by the game.
+    /// </summary>
+    public bool categoryKojo = false;
     /// <summary>Whether other actors may join an already-running package of this command.</summary>
     public bool allowJoining = true;
     /// <summary>

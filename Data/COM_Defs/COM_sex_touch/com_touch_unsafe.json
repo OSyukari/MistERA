@@ -4,6 +4,7 @@
     "list":[
         {
             "ID":"com_touch_unsafe_base",
+            "categoryKojo":true,
             "ActionPackageClass":"ActionPackage_Interaction",
             "displayName":"com_touch_unsafe_base",
             "timeScale":2,

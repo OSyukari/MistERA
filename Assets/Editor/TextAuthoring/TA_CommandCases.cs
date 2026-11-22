@@ -112,12 +112,10 @@ public partial class TA_CommandDocBuilder
     JArray BuildCases()
     {
         if (countOnly) return null;
-        var err = TA_CaseTemplate.Load();
-        if (err != null) { AddFinding(new JObject { ["type"] = "caseTemplate", ["problem"] = err }); return null; }
         var facts = Facts();
         var flags = facts.Flags();
         var cases = new JArray();
-        NarrationCases(facts, flags, cases);
+        if (!com.categoryKojo) NarrationCases(facts, flags, cases);
         KojoCases(facts, flags, cases);
         ApplyOverrides(cases);
         return cases;
@@ -320,13 +318,79 @@ public partial class TA_CommandDocBuilder
 
     // ---------------------------------------------------------------- kojo
 
+    static List<string> CaseListeners(JToken template, string speaker)
+    {
+        var listeners = new List<string>();
+        var explicitListeners = template["listenersBySpeaker"]?[speaker] as JArray ?? template["listeners"] as JArray;
+        if (explicitListeners != null)
+            for (int i = 0; i < explicitListeners.Count; i++) listeners.Add((string)explicitListeners[i]);
+        else if (speaker == "joiner") listeners.Add("player");
+        else if (speaker != "self") { listeners.Add("player"); listeners.Add("npc"); }
+        else { listeners.Add("self"); listeners.Add("player"); }
+        return listeners;
+    }
+
+    JObject KojoProfile()
+    {
+        var parent = com.KojoFolderParent;
+        return TA_CaseTemplate.CommandProfile(com, parent != null && parent.categoryKojo ? parent : null);
+    }
+
+    IEnumerable<JToken> KojoPhases(HashSet<string> flags, JObject profile)
+    {
+        bool categoryChild = com.KojoFolderParent?.categoryKojo == true;
+        foreach (var phase in TA_CaseTemplate.Kojo)
+        {
+            if (!When(phase, flags)) continue;
+            if (profile["omit"] is JArray omit && Contains(omit, (string)phase["id"])) continue;
+            bool shared = (bool?)phase["category"] ?? false;
+            if (com.categoryKojo && !shared || categoryChild && shared) continue;
+            yield return phase;
+        }
+    }
+
+    static List<string> CaseSuffixes(JToken phase)
+    {
+        var suffixes = new List<string>();
+        if (phase["suffixes"] is JArray list)
+            foreach (var suffix in list) suffixes.Add((string)suffix);
+        else suffixes.Add((string)phase["suffix"] ?? "");
+        return suffixes;
+    }
+
+    static JObject CaseCast(JToken phase, KojoCaseSpec c)
+    {
+        var who = new JObject();
+        void Apply(JToken rules)
+        {
+            if (!(rules is JArray list)) return;
+            foreach (var rule in list)
+            {
+                var match = rule["match"];
+                if (match?["speaker"] != null && (string)match["speaker"] != c.speaker
+                    || match?["listener"] != null && (string)match["listener"] != c.listener
+                    || match?["outcome"] != null && (string)match["outcome"] != c.outcome
+                    || match?["suffix"] != null && (string)match["suffix"] != c.suffix
+                    || match?["ordered"] != null && (bool?)match["ordered"] != c.ordered) continue;
+                if (!(rule["who"] is JObject fields)) continue;
+                foreach (var field in fields.Properties())
+                    if (field.Value.Type == JTokenType.Null) who.Remove(field.Name);
+                    else who[field.Name] = field.Value.DeepClone();
+            }
+        }
+        Apply(TA_CaseTemplate.Cases?["kojoContext"]);
+        Apply(phase?["context"]);
+        return who;
+    }
+
     void KojoCases(CaseFacts facts, HashSet<string> flags, JArray into)
     {
         var roles = TA_CaseTemplate.Roles;
-        foreach (var t in TA_CaseTemplate.Kojo)
+        var profile = KojoProfile();
+        foreach (var t in KojoPhases(flags, profile))
         {
-            if (!When(t, flags)) continue;
             var id = (string)t["id"];
+            bool assign = profile["assign"] is JArray assigned && Contains(assigned, id);
             var label = (string)t["label"] ?? id;
             bool phaseRequired = (bool?)t["required"] ?? true;
             var speakers = t["speakers"] as JArray ?? new JArray();
@@ -337,9 +401,7 @@ public partial class TA_CommandDocBuilder
             bool ordered = (string)t["order"] == "ordered";
             var phaseTags = new List<string>();
             if (t["selfTags"] is JArray st) for (int i = 0; i < st.Count; i++) phaseTags.Add((string)st[i]);
-            var suffixes = new List<string>();
-            if (t["suffixes"] is JArray sa) for (int i = 0; i < sa.Count; i++) suffixes.Add((string)sa[i]);
-            else suffixes.Add((string)t["suffix"] ?? "");
+            var suffixes = CaseSuffixes(t);
 
             for (int si = 0; si < speakers.Count; si++)
             {
@@ -365,11 +427,7 @@ public partial class TA_CommandDocBuilder
                 }
 
                 // listeners: the partner (player or NPC) in a pair; alone or with the player solo; a newcomer for `seen`
-                var listeners = new List<string>();
-                if (t["listeners"] is JArray la) for (int i = 0; i < la.Count; i++) listeners.Add((string)la[i]);
-                else if (speaker == "joiner") listeners.Add("player");
-                else if (speaker != "self") { listeners.Add("player"); listeners.Add("npc"); }
-                else { listeners.Add("self"); listeners.Add("player"); }
+                var listeners = CaseListeners(t, speaker);
 
                 for (int ss = 0; ss < speakerStates.Count; ss++)
                 {
@@ -399,12 +457,15 @@ public partial class TA_CommandDocBuilder
                                         {
                                             phase = id, label = label, suffix = suffixes[s], fallback = (string)t["fallback"],
                                             speaker = speaker, speakerState = sState, listener = listener, listenerState = lState,
-                                            outcome = results[r], tierSet = IsRefusal(results[r]) || IsJoinRefused(results[r]) ? null : (string)t["tiers"], ordered = ordered,
+                                            outcome = results[r], outcomeLabel = (string)t["suffixLabels"]?[suffixes[s]],
+                                            tierSet = IsRefusal(results[r]) || IsJoinRefused(results[r]) ? null : (string)t["tiers"], ordered = ordered,
                                             // join lookups run without an action package (Job.JoinPackage)
                                             noEP = speaker == "joiner",
                                             // only the reacting side's own situation is required; the other side's states are optional
-                                            required = required && (lState == "awake" || listener == "self")
+                                            required = assign || required && (lState == "awake" || listener == "self")
                                         };
+                                        spec.who = CaseCast(t, spec);
+                                        if (listener == "newcomer") spec.listenerLabel = (string)spec.who["target"];
                                         spec.phaseSelfTags.AddRange(phaseTags);
                                         spec.id = $"kojo.{id}{(suffixes.Count > 1 ? suffixes[s] : "")}.{speaker}.{sState}{(lState != "awake" && listener != "self" ? "." + lState : "")}.{listener}.{results[r]}";
                                         // a refused result speaks from <COM>_Refuse first, then <COM> (RelationshipManager.GetKOJOMessage)
@@ -412,7 +473,37 @@ public partial class TA_CommandDocBuilder
                                             into.Add(KojoCase(spec, KojoBase() + "_Refuse", ThenResolver("_Refuse", "", spec.fallback)));
                                         // a refused join's reaction: _JoinFailed, else _Join (EvaluationPackage.JoinReaction)
                                         else if (spec.suffix == "_JoinFailed")
-                                            into.Add(KojoCase(spec, KojoBase() + spec.suffix, ThenResolver("_JoinFailed", "_Join", spec.fallback)));
+                                        {
+                                            string route = null;
+                                            EntryResolver resolve = (Character_Personality p, out string provider, out string entryID) =>
+                                            {
+                                                route = "joinFailed";
+                                                var found = ResolveCommandEntry(p, com, "_JoinFailed", out provider, out entryID);
+                                                if (found != null) return found;
+                                                route = "join";
+                                                found = ResolveCommandEntry(p, com, "_Join", out provider, out entryID);
+                                                if (found != null || spec.fallback == null) return found;
+                                                route = "plainFallback";
+                                                return ResolvePlainEntry(p, spec.fallback, out provider, out entryID);
+                                            };
+                                            // This records first existing entry, including noBranch. Runtime may try _Join
+                                            // when _JoinFailed exists but produces no message; coverage does not model that retry.
+                                            into.Add(KojoCase(spec, KojoBase() + spec.suffix, resolve, () => route));
+                                        }
+                                        else if (spec.fallback != null)
+                                        {
+                                            // route: which tier covered the case (seen's global `Interrupt` is a plain key)
+                                            string route = null;
+                                            EntryResolver resolve = (Character_Personality p, out string provider, out string entryID) =>
+                                            {
+                                                route = null;
+                                                var found = ResolveCommandEntry(p, com, spec.suffix, out provider, out entryID);
+                                                if (found != null) return found;
+                                                route = "plainFallback";
+                                                return ResolvePlainEntry(p, spec.fallback, out provider, out entryID);
+                                            };
+                                            into.Add(KojoCase(spec, KojoBase() + spec.suffix, resolve, () => route));
+                                        }
                                         else
                                             into.Add(KojoCase(spec, KojoBase() + spec.suffix, CommandResolver(spec.suffix, spec.fallback)));
                                     }

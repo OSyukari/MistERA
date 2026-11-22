@@ -116,7 +116,7 @@ public static class TA_Store
 
     /// <summary>
     /// {struct, unit, slots: {handle: {s, t}}}: slot struct = everything but texts/keys/keySources (a write-back adds or
-    /// removes keys); unit struct = streams, findings, lookups + slot structs; unit = struct + slot texts.
+    /// removes keys); unit struct = streams, findings, lookups + slot structs; unit = struct + slot texts + personality info.
     /// </summary>
     public static JObject Hashes(TA_Snapshot s)
     {
@@ -129,13 +129,17 @@ public static class TA_Store
         var st = new StringBuilder();
         st.Append(Str(s.shared["ops"])).Append(Str(s.shared["findings"])).Append(Str(s.shared["unreachable"])).Append(Str(s.shared["flags"]))
             // command cases (Plan_CommandCases.md): a template edit or new kojo elsewhere changes them -> Scan reports it
-            .Append(Str(s.shared["cases"]));
+            .Append(Str(s.shared["cases"]))
+            .Append(Str(s.shared["generatorGroup"]))
+            .Append(Str(s.shared["categoryGroup"]));
         for (int i = 0; i < layerIDs.Count; i++)
         {
             var l = s.layers[layerIDs[i]];
             st.Append('|').Append(layerIDs[i]).Append(Str(l["positions"])).Append(Str(l["findings"])).Append(Str(l["unreachable"])).Append(Str(l["lookups"]));
         }
         var tx = new StringBuilder();
+        for (int i = 0; i < layerIDs.Count; i++)
+            tx.Append('|').Append(layerIDs[i]).Append(':').Append(Str(s.layers[layerIDs[i]]["info"]));
         var slotsOut = new JObject();
         foreach (var kv in slots)
         {

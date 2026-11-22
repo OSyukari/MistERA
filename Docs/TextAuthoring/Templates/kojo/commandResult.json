@@ -1,0 +1,65 @@
+{
+  "_comment": "Command result kojo `<COM>` (Plan_KojoTemplates.md §7.11): fetched after execution (EvaluationPackage.LogMessage_Kojo). EP levels first - facts fixed per lookup - then each EP branch is a full `interaction` tree whose own lines are its fallback. Refusals belong in `<COM>_Refuse` (template commandRefuse; the engine call is not wired yet): refuse branches here are errors.",
+  "id": "commandResult",
+  "label": "指令结果口上",
+  "inner": "interaction",
+  "bindCommand": [""],
+
+  "_comment_fallback": "Accepted results only: requireEPSuccess keeps its default (true) so a refusal never reaches the accept fallback. The receiver can be asleep / time-stopped, the target time-stopped.",
+  "fallback": {
+    "label": "兜底（接受，任何状态）",
+    "requirement": { "requireSelfAction": false, "requireTargetAction": false, "allowRecording": true }
+  },
+
+  "levels": [
+    {
+      "id": "role", "label": "说话者角色",
+      "leaves": {
+        "doer": { "label": "施方", "variant": { "requireSelfDoer": true } },
+        "receiver": { "label": "受方", "variant": { "requireSelfReceiver": true } },
+        "self": { "label": "独自（对象是自己）", "variant": { "requireSelfOnly": true } }
+      }
+    },
+    {
+      "id": "ordered", "label": "下令者",
+      "leaves": {
+        "ordered": { "label": "被第三方下令", "variant": { "requireSelfNotMaster": true } },
+        "own": { "label": "自己发起", "variant": { "requireSelfMaster": true } },
+        "hasMaster": { "label": "有下令者", "variant": { "requireMaster": true } }
+      }
+    },
+    {
+      "id": "result", "label": "判定结果",
+      "leaves": {
+        "success": { "label": "判定成功", "requirement": { "requireEPSuccessGTE": "Success" } },
+        "critical": { "label": "大成功", "requirement": { "requireEPSuccessGTE": "CriticalSuccess" } }
+      }
+    }
+  ],
+
+  "_comment_required": "Leaves every bound entry must have, by the facts of the commands using the key (pair / solo / d20). path = leaf ids, outer to inner (levels in between may be skipped). Each required leaf needs its own lines. D20 failure = the leaf's own lines below the success child.",
+  "required": [
+    { "path": ["receiver"], "when": ["pair"] },
+    { "path": ["self"], "when": ["solo"] },
+    { "path": ["receiver", "success"], "when": ["pair", "d20"] },
+    { "path": ["self", "success"], "when": ["solo", "d20"] }
+  ],
+
+  "misplaced": [
+    { "requirement": { "requireEPFailure": true }, "label": "拒绝分支", "moveTo": "_Refuse" }
+  ],
+
+  "_comment_extras": "Tags the engine adds to command kojo when a first experience happens in the act (EvaluationPackage.GetFirstExperienceTags). Enable per entry (templateExtras) where that class can be taken.",
+  "extras": {
+    "firstexpV": { "label": "本次失去阴道初次", "requirement": { "selfTags": ["firstexp_V"] } },
+    "firstexpA": { "label": "本次失去肛门初次", "requirement": { "selfTags": ["firstexp_A"] } },
+    "firstexpM": { "label": "本次失去口初次", "requirement": { "selfTags": ["firstexp_M"] } },
+    "firstexpW": { "label": "本次子宫初次", "requirement": { "selfTags": ["firstexp_W"] } },
+    "firstexpC": { "label": "本次阴茎初次", "requirement": { "selfTags": ["firstexp_C"] } },
+    "firstexpPartnerV": { "label": "对方本次失去阴道初次", "requirement": { "selfTags": ["firstexp_partner_V"] } },
+    "firstexpPartnerA": { "label": "对方本次失去肛门初次", "requirement": { "selfTags": ["firstexp_partner_A"] } },
+    "firstexpPartnerM": { "label": "对方本次失去口初次", "requirement": { "selfTags": ["firstexp_partner_M"] } },
+    "firstexpPartnerW": { "label": "对方本次子宫初次", "requirement": { "selfTags": ["firstexp_partner_W"] } },
+    "firstexpPartnerC": { "label": "对方本次阴茎初次", "requirement": { "selfTags": ["firstexp_partner_C"] } }
+  }
+}

@@ -107,6 +107,11 @@
                     "Entries":[
                         {
                             "keepLooking":true,
+                            "conditions":[{"validateChara":{"statID":"climaxed","operand":"eq","value":"true","target":"doer"}}],
+                            "texts":[ "com_sex_oral_P_description_after_4", "com_sex_oral_P_description_after_5", "com_sex_oral_P_description_after_6" ]
+                        },
+                        {
+                            "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
                             "texts":[ "com_sex_oral_P_description_after_1", "com_sex_oral_P_description_after_2", "com_sex_oral_P_description_after_3" ]
                         }
@@ -115,6 +120,21 @@
                 "description_begin":
                 {
                     "Entries":[
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}],
+                            "texts":[ "com_sex_oral_P_description_begin_4", "com_sex_oral_P_description_begin_5", "com_sex_oral_P_description_begin_6" ]
+                        },
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validateChara":{"statID":"isUnconscious","operand":"eq","value":"true","target":"receiver"}}],
+                            "texts":[ "com_sex_oral_P_description_begin_7", "com_sex_oral_P_description_begin_8", "com_sex_oral_P_description_begin_9" ]
+                        },
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validateChara":{"statID":"isTimestopped","operand":"eq","value":"true","target":"receiver"}}],
+                            "texts":[ "com_sex_oral_P_description_begin_10", "com_sex_oral_P_description_begin_11", "com_sex_oral_P_description_begin_12" ]
+                        },
                         {
                             "keepLooking":true,
                             "texts": ["com_sex_oral_P_description_begin_1", "com_sex_oral_P_description_begin_2", "com_sex_oral_P_description_begin_3"]
@@ -236,7 +256,19 @@
                 "com_sex_oral_P_description_remove_2": "$doer.firstname$的嘴唇从$receiver.firstname$的肉棒上松开",
                 "com_sex_oral_P_description_remove_3": "$doer.firstname$的嘴离开$receiver.firstname$的龟头",
                 "com_sex_oral_P_description_ongoing_2": "$doer.firstname$的舌头绕着$receiver.firstname$的龟头打转舔",
-                "com_sex_oral_P_description_ongoing_3": "$doer.firstname$把$receiver.firstname$的肉棒吞到喉咙里吸"
+                "com_sex_oral_P_description_ongoing_3": "$doer.firstname$把$receiver.firstname$的肉棒吞到喉咙里吸",
+                "com_sex_oral_P_description_begin_4": "$doer.firstname$应下这声吩咐，把$receiver.firstname$的肉棒含进嘴",
+                "com_sex_oral_P_description_begin_5": "$doer.firstname$照着吩咐跪下去，裹住$receiver.firstname$的龟头吸",
+                "com_sex_oral_P_description_begin_6": "$doer.firstname$领了吩咐张开嘴，把$receiver.firstname$的肉棒吞进去",
+                "com_sex_oral_P_description_begin_7": "$doer.firstname$把熟睡的$receiver.firstname$的肉棒含进嘴里",
+                "com_sex_oral_P_description_begin_8": "$doer.firstname$的嘴裹住睡着的$receiver.firstname$的龟头吸",
+                "com_sex_oral_P_description_begin_9": "$doer.firstname$把昏睡的$receiver.firstname$的肉棒吞进嘴里",
+                "com_sex_oral_P_description_begin_10": "$doer.firstname$在停住的时间里把$receiver.firstname$的肉棒含进嘴",
+                "com_sex_oral_P_description_begin_11": "$doer.firstname$的嘴在停住的时间里裹住$receiver.firstname$的龟头",
+                "com_sex_oral_P_description_begin_12": "$doer.firstname$在停住的时间里吞下$receiver.firstname$的肉棒",
+                "com_sex_oral_P_description_after_4": "$doer.firstname$含着肉棒的嘴吸得更紧",
+                "com_sex_oral_P_description_after_5": "$doer.firstname$的喉咙在$receiver.firstname$的肉棒上一阵收紧",
+                "com_sex_oral_P_description_after_6": "$doer.firstname$的舌头被$receiver.firstname$的肉棒压得动不了"
 
             },
             "en-us":

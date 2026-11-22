@@ -131,6 +131,11 @@
                     "Entries": [
                         {
                             "keepLooking": true,
+                            "conditions": [{"validateChara":{"statID":"climaxed","operand":"eq","value":"true","target":"doer"}}],
+                            "texts": ["com_sex_oral_B_description_after_4", "com_sex_oral_B_description_after_5", "com_sex_oral_B_description_after_6"]
+                        },
+                        {
+                            "keepLooking": true,
                             "conditions": [
                                 {
                                     "validateChara": {
@@ -151,6 +156,21 @@
                 },
                 "description_begin": {
                     "Entries": [
+                        {
+                            "keepLooking": false,
+                            "conditions": [{"validatePackage":{"existsMaster_NonActor":true}}],
+                            "texts": ["com_sex_oral_B_description_begin_4", "com_sex_oral_B_description_begin_5", "com_sex_oral_B_description_begin_6"]
+                        },
+                        {
+                            "keepLooking": false,
+                            "conditions": [{"validateChara":{"statID":"isUnconscious","operand":"eq","value":"true","target":"receiver"}}],
+                            "texts": ["com_sex_oral_B_description_begin_7", "com_sex_oral_B_description_begin_8", "com_sex_oral_B_description_begin_9"]
+                        },
+                        {
+                            "keepLooking": false,
+                            "conditions": [{"validateChara":{"statID":"isTimestopped","operand":"eq","value":"true","target":"receiver"}}],
+                            "texts": ["com_sex_oral_B_description_begin_10", "com_sex_oral_B_description_begin_11", "com_sex_oral_B_description_begin_12"]
+                        },
                         {
                             "keepLooking": true,
                             "texts": [
@@ -282,7 +302,49 @@
                         "displayName": "com_sex_oral_B_displayName_4_bite",
                         "setForce": true
                     }
-                ]
+                ],
+                "description_begin": {
+                    "Entries": [
+                        {
+                            "keepLooking": false,
+                            "conditions": [{"validatePackage":{"existsMaster_NonActor":true}}],
+                            "texts": ["com_sex_oral_B_force_description_begin_1", "com_sex_oral_B_force_description_begin_2", "com_sex_oral_B_force_description_begin_3"]
+                        },
+                        {
+                            "keepLooking": false,
+                            "conditions": [{"validateChara":{"statID":"isUnconscious","operand":"eq","value":"true","target":"receiver"}}],
+                            "texts": ["com_sex_oral_B_force_description_begin_4", "com_sex_oral_B_force_description_begin_5", "com_sex_oral_B_force_description_begin_6"]
+                        },
+                        {
+                            "keepLooking": false,
+                            "conditions": [{"validateChara":{"statID":"isTimestopped","operand":"eq","value":"true","target":"receiver"}}],
+                            "texts": ["com_sex_oral_B_force_description_begin_7", "com_sex_oral_B_force_description_begin_8", "com_sex_oral_B_force_description_begin_9"]
+                        },
+                        {
+                            "keepLooking": false,
+                            "conditions": [],
+                            "texts": ["com_sex_oral_B_force_description_begin_10", "com_sex_oral_B_force_description_begin_11", "com_sex_oral_B_force_description_begin_12"]
+                        }
+                    ]
+                },
+                "description_ongoing": {
+                    "Entries": [
+                        {
+                            "keepLooking": false,
+                            "conditions": [],
+                            "texts": ["com_sex_oral_B_force_description_ongoing_1", "com_sex_oral_B_force_description_ongoing_2", "com_sex_oral_B_force_description_ongoing_3"]
+                        }
+                    ]
+                },
+                "description_remove": {
+                    "Entries": [
+                        {
+                            "keepLooking": false,
+                            "conditions": [],
+                            "texts": ["com_sex_oral_B_force_description_remove_1", "com_sex_oral_B_force_description_remove_2", "com_sex_oral_B_force_description_remove_3"]
+                        }
+                    ]
+                }
             }
         ]
     },
@@ -314,7 +376,37 @@
                 "com_sex_oral_B_description_begin_2": "$doer.firstname$用舌头把$receiver.firstname$的乳头舔得发硬",
                 "com_sex_oral_B_description_begin_3": "$doer.firstname$把$receiver.firstname$的乳头含到舌根上蹭",
                 "com_sex_oral_B_description_after_2": "$receiver.firstname$的奶子往$doer.firstname$的嘴里挤",
-                "com_sex_oral_B_description_after_3": "$receiver.firstname$的乳头在$doer.firstname$的嘴里涨得发红"
+                "com_sex_oral_B_description_after_3": "$receiver.firstname$的乳头在$doer.firstname$的嘴里涨得发红",
+                "com_sex_oral_B_description_begin_4": "$doer.firstname$应下这声吩咐，把$receiver.firstname$的乳头含进嘴里",
+                "com_sex_oral_B_description_begin_5": "$doer.firstname$照着吩咐低下头，嘴裹住$receiver.firstname$的乳头吸",
+                "com_sex_oral_B_description_begin_6": "$doer.firstname$领了吩咐凑上去，舌尖舔上$receiver.firstname$的乳头",
+                "com_sex_oral_B_description_begin_7": "$doer.firstname$的嘴裹住熟睡的$receiver.firstname$的乳头吸",
+                "com_sex_oral_B_description_begin_8": "$doer.firstname$的舌头把睡着的$receiver.firstname$的乳头舔硬",
+                "com_sex_oral_B_description_begin_9": "$doer.firstname$把昏睡的$receiver.firstname$的乳头含进嘴里",
+                "com_sex_oral_B_description_begin_10": "$doer.firstname$在停住的时间里把$receiver.firstname$的乳头含进嘴",
+                "com_sex_oral_B_description_begin_11": "$doer.firstname$的嘴在停住的时间里裹住$receiver.firstname$的乳头吸",
+                "com_sex_oral_B_description_begin_12": "$doer.firstname$的舌头在停住的时间里舔上$receiver.firstname$的乳头",
+                "com_sex_oral_B_description_after_4": "$doer.firstname$含着乳头的嘴吸得更狠",
+                "com_sex_oral_B_description_after_5": "$doer.firstname$的舌头把$receiver.firstname$的乳头压得发紧",
+                "com_sex_oral_B_description_after_6": "$doer.firstname$的嘴把$receiver.firstname$的乳头裹得更紧",
+                "com_sex_oral_B_force_description_begin_1": "$doer.firstname$应下这声吩咐，把$receiver.firstname$的乳头含进嘴里",
+                "com_sex_oral_B_force_description_begin_2": "$doer.firstname$照着吩咐低下头，嘴裹紧$receiver.firstname$的乳头",
+                "com_sex_oral_B_force_description_begin_3": "$doer.firstname$领了吩咐凑上去，咬住$receiver.firstname$的乳头磨",
+                "com_sex_oral_B_force_description_begin_4": "$doer.firstname$把熟睡的$receiver.firstname$的乳头含进嘴里吸",
+                "com_sex_oral_B_force_description_begin_5": "$doer.firstname$的嘴裹紧睡着的$receiver.firstname$的乳头",
+                "com_sex_oral_B_force_description_begin_6": "$doer.firstname$咬住昏睡的$receiver.firstname$的乳头磨",
+                "com_sex_oral_B_force_description_begin_7": "$doer.firstname$在停住的时间里含住$receiver.firstname$的乳头吸",
+                "com_sex_oral_B_force_description_begin_8": "$doer.firstname$的嘴在停住的时间里裹紧$receiver.firstname$的乳头",
+                "com_sex_oral_B_force_description_begin_9": "$doer.firstname$在停住的时间里咬住$receiver.firstname$的乳头",
+                "com_sex_oral_B_force_description_begin_10": "$doer.firstname$把$receiver.firstname$的乳头含到嘴里用力吸",
+                "com_sex_oral_B_force_description_begin_11": "$doer.firstname$的嘴裹紧$receiver.firstname$的乳头往外吸",
+                "com_sex_oral_B_force_description_begin_12": "$doer.firstname$用牙咬住$receiver.firstname$的乳头磨",
+                "com_sex_oral_B_force_description_ongoing_1": "$doer.firstname$含着$receiver.firstname$的乳头吸得又狠又急",
+                "com_sex_oral_B_force_description_ongoing_2": "$doer.firstname$的嘴把$receiver.firstname$的乳头吸得发红",
+                "com_sex_oral_B_force_description_ongoing_3": "$doer.firstname$咬着$receiver.firstname$的乳头来回磨",
+                "com_sex_oral_B_force_description_remove_1": "$doer.firstname$把$receiver.firstname$的乳头从嘴里放开",
+                "com_sex_oral_B_force_description_remove_2": "$doer.firstname$的嘴从$receiver.firstname$的乳头上松开",
+                "com_sex_oral_B_force_description_remove_3": "$doer.firstname$的牙齿离开$receiver.firstname$的乳头"
             },
             "en-us": {
                 "com_sex_oral_B": "%%tooltip_sex_com_alternating_tooltip%%",

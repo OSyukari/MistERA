@@ -70,6 +70,10 @@
                 {
                     "Entries":[ 
                         {
+                            "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}],
+                            "texts":["com_job_cleaning_begin_4", "com_job_cleaning_begin_5", "com_job_cleaning_begin_6"]
+                        },
+                        {
                             "keepLooking":true,
                             "texts": [  "com_job_cleaning_begin_1", "com_job_cleaning_begin_2",
                                         "com_job_cleaning_begin_3"   ]
@@ -77,6 +81,7 @@
                     ]
                     
                 },
+                "description_remove":{ "Entries":[{"conditions":[], "texts":["com_job_cleaning_description_remove_1", "com_job_cleaning_description_remove_2", "com_job_cleaning_description_remove_3"]}] },
                 "description_ongoing":{ "Entries":[{"texts":["com_job_cleaning_description_ongoing_1", "com_job_cleaning_description_ongoing_2", "com_job_cleaning_description_ongoing_3"]}], "keepLooking":false },
                 "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_job_cleaning_description_onComplete_1", "com_job_cleaning_description_onComplete_2", "com_job_cleaning_description_onComplete_3"]}] }
             },
@@ -153,6 +158,10 @@
                 {
                     "Entries":[ 
                         {
+                            "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}],
+                            "texts":["com_job_production_cooking_begin_4", "com_job_production_cooking_begin_5", "com_job_production_cooking_begin_6"]
+                        },
+                        {
                             "keepLooking":true,
                             "texts": [  "com_job_production_cooking_begin_1",
                                         "com_job_production_cooking_begin_2",
@@ -161,6 +170,7 @@
                     ]
                     
                 },
+                "description_remove":{ "Entries":[{"conditions":[], "texts":["com_job_production_cooking_description_remove_1", "com_job_production_cooking_description_remove_2", "com_job_production_cooking_description_remove_3"]}] },
                 "description_ongoing":{ "Entries":[{"texts":["com_job_production_cooking_description_ongoing_1", "com_job_production_cooking_description_ongoing_2", "com_job_production_cooking_description_ongoing_3"]}], "keepLooking":false }
             },
             {
@@ -556,12 +566,17 @@
                 {
                     "Entries":[ 
                         {
+                            "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}],
+                            "texts":["com_job_farm_maintain_begin_4", "com_job_farm_maintain_begin_5", "com_job_farm_maintain_begin_6"]
+                        },
+                        {
                             "keepLooking":true,
                             "texts": ["com_job_farm_maintain_begin_1","com_job_farm_maintain_begin_2","com_job_farm_maintain_begin_3"]
                         }
                     ]
                     
                 },
+                "description_remove":{ "Entries":[{"conditions":[], "texts":["com_job_farm_maintain_description_remove_1", "com_job_farm_maintain_description_remove_2", "com_job_farm_maintain_description_remove_3"]}] },
                 "description_ongoing":{ "Entries":[{"texts":["com_job_farm_maintain_description_ongoing_1", "com_job_farm_maintain_description_ongoing_2", "com_job_farm_maintain_description_ongoing_3"]}], "keepLooking":false },
                 "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_job_farm_maintain_description_onComplete_1", "com_job_farm_maintain_description_onComplete_2", "com_job_farm_maintain_description_onComplete_3"]}] }
             },
@@ -740,6 +755,10 @@
                         {
                             "Entries":[ 
                                 {
+                                    "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}],
+                                    "texts":["com_job_farm_cultivate_crop_begin_4", "com_job_farm_cultivate_crop_begin_5", "com_job_farm_cultivate_crop_begin_6"]
+                                },
+                                {
                                     "keepLooking":true,
                                     "texts": [  "com_job_farm_cultivate_crop_begin_1", 
                                                 "com_job_farm_cultivate_crop_begin_2",
@@ -748,6 +767,7 @@
                             ]
                             
                         },
+                        "description_remove":{ "Entries":[{"conditions":[], "texts":["com_job_farm_cultivate_crop_description_remove_1", "com_job_farm_cultivate_crop_description_remove_2", "com_job_farm_cultivate_crop_description_remove_3"]}] },
                         "description_ongoing":{ "Entries":[{"texts":["com_job_farm_cultivate_crop_ongoing_1", "com_job_farm_cultivate_crop_ongoing_2", "com_job_farm_cultivate_crop_ongoing_3"]}], "keepLooking":false },
                         "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_job_farm_cultivate_crop_description_onComplete_1", "com_job_farm_cultivate_crop_description_onComplete_2", "com_job_farm_cultivate_crop_description_onComplete_3"]}] }
                     }
@@ -900,6 +920,10 @@
                         {
                             "Entries":[
                                 {
+                                    "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}],
+                                    "texts":["com_job_farm_cultivate_meat_begin_4", "com_job_farm_cultivate_meat_begin_5", "com_job_farm_cultivate_meat_begin_6"]
+                                },
+                                {
                                     "keepLooking":true,
                                     "texts": [  "com_job_farm_cultivate_meat_begin_1",
                                                 "com_job_farm_cultivate_meat_begin_2",
@@ -908,6 +932,7 @@
                             ]
 
                         },
+                        "description_remove":{ "Entries":[{"conditions":[], "texts":["com_job_farm_cultivate_meat_description_remove_1", "com_job_farm_cultivate_meat_description_remove_2", "com_job_farm_cultivate_meat_description_remove_3"]}] },
                         "description_ongoing":{ "Entries":[{"texts":["com_job_farm_cultivate_meat_ongoing_1", "com_job_farm_cultivate_meat_ongoing_2", "com_job_farm_cultivate_meat_ongoing_3"]}], "keepLooking":false },
                         "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_job_farm_cultivate_meat_description_onComplete_1", "com_job_farm_cultivate_meat_description_onComplete_2", "com_job_farm_cultivate_meat_description_onComplete_3"]}] }
                     }
@@ -1103,7 +1128,37 @@
 "com_job_farm_cultivate_crop_description_onComplete_2": "种植收尾，$doer.firstname$从土边直起身来——$result$",
 "com_job_farm_cultivate_crop_description_onComplete_3": "$doer.firstname$把$name$种完，拍掉手上的土——$result$",
 "com_job_cleaning_description_ongoing_2": "$doer.firstname$手上的清洁工作还没停下",
-"com_job_cleaning_description_ongoing_3": "$doer.firstname$继续清理着房间的角落"
+"com_job_cleaning_description_ongoing_3": "$doer.firstname$继续清理着房间的角落",
+"com_job_cleaning_begin_4": "照着吩咐，$doer.firstname$拿起抹布，开始擦拭房间里的角落",
+"com_job_cleaning_begin_5": "听到吩咐之后，$doer.firstname$取出清洁工具，开始打扫",
+"com_job_cleaning_begin_6": "领了差事，$doer.firstname$推出吸尘器，开始清理地面",
+"com_job_cleaning_description_remove_1": "$doer.firstname$停下了手上的清洁",
+"com_job_cleaning_description_remove_2": "清洁做到一半就停了，工具被放在一边",
+"com_job_cleaning_description_remove_3": "手上的活搁了下来，$doer.firstname$不再继续",
+"com_job_production_cooking_begin_4": "照着吩咐，$doer.firstname$开始准备食材",
+"com_job_production_cooking_begin_5": "听到吩咐之后，$doer.firstname$生起火，开始烹饪",
+"com_job_production_cooking_begin_6": "领了差事，$doer.firstname$把食材摆上台面，开始下厨",
+"com_job_production_cooking_description_remove_1": "$doer.firstname$停下了手上的烹饪",
+"com_job_production_cooking_description_remove_2": "烹饪做到一半就停了，手上的东西被放到一边",
+"com_job_production_cooking_description_remove_3": "手上的活搁了下来，$doer.firstname$不再继续",
+"com_job_farm_maintain_begin_4": "照着吩咐，$doer.firstname$拎起水桶，开始给作物浇水",
+"com_job_farm_maintain_begin_5": "听到吩咐之后，$doer.firstname$走进田里，开始清理杂草",
+"com_job_farm_maintain_begin_6": "领了差事，$doer.firstname$蹲在田垄边，开始松动土壤",
+"com_job_farm_maintain_description_remove_1": "$doer.firstname$停下了手上的农活",
+"com_job_farm_maintain_description_remove_2": "农活做到一半就停了，工具被放在垄边",
+"com_job_farm_maintain_description_remove_3": "手上的活搁了下来，$doer.firstname$不再继续",
+"com_job_farm_cultivate_crop_begin_4": "照着吩咐，$doer.firstname$拿起种苗，开始栽种",
+"com_job_farm_cultivate_crop_begin_5": "听到吩咐之后，$doer.firstname$走进种植区，开始翻土",
+"com_job_farm_cultivate_crop_begin_6": "领了差事，$doer.firstname$蹲在垄边，开始栽下$name$",
+"com_job_farm_cultivate_crop_description_remove_1": "$doer.firstname$停下了手上的栽种",
+"com_job_farm_cultivate_crop_description_remove_2": "栽种做到一半就停了，种苗被放在一边",
+"com_job_farm_cultivate_crop_description_remove_3": "手上的活搁了下来，$doer.firstname$不再继续",
+"com_job_farm_cultivate_meat_begin_4": "照着吩咐，$doer.firstname$提着饲料，开始给$name$喂食",
+"com_job_farm_cultivate_meat_begin_5": "听到吩咐之后，$doer.firstname$走进饲养区，开始清理养殖环境",
+"com_job_farm_cultivate_meat_begin_6": "领了差事，$doer.firstname$调配起营养液，开始照料$name$",
+"com_job_farm_cultivate_meat_description_remove_1": "$doer.firstname$停下了手上的活",
+"com_job_farm_cultivate_meat_description_remove_2": "照料做到一半就停了，饲料被放到一边",
+"com_job_farm_cultivate_meat_description_remove_3": "手上的活搁了下来，$doer.firstname$不再继续"
 
 
                 

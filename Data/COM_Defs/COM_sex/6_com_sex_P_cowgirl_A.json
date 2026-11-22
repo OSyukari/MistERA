@@ -108,12 +108,37 @@
                             "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"receiver", "statID":"isCumReady", "operand":"eq", "value":"true" } } ],
                             "texts":[ "com_sex_P_cowgirl_A_description_after_1", "com_sex_P_cowgirl_A_description_after_2", "com_sex_P_cowgirl_A_description_after_3" ]
+                        },
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validateChara":{ "target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
+                            "texts":[ "com_sex_P_cowgirl_A_description_after_4", "com_sex_P_cowgirl_A_description_after_5", "com_sex_P_cowgirl_A_description_after_6" ]
+                        },
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validateChara":{ "target":"doer", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
+                            "texts":[ "com_sex_P_cowgirl_A_description_after_7", "com_sex_P_cowgirl_A_description_after_8", "com_sex_P_cowgirl_A_description_after_9" ]
                         }
                     ]
                 },
                 "description_begin":
                 {
                     "Entries":[ 
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validateChara":{ "target":"receiver", "statID":"isUnconscious", "operand":"eq", "value":"true" } } ],
+                            "texts":[ "com_sex_P_cowgirl_A_description_begin_4", "com_sex_P_cowgirl_A_description_begin_5", "com_sex_P_cowgirl_A_description_begin_6" ]
+                        },
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validateChara":{ "target":"receiver", "statID":"isTimestopped", "operand":"eq", "value":"true" } } ],
+                            "texts":[ "com_sex_P_cowgirl_A_description_begin_7", "com_sex_P_cowgirl_A_description_begin_8", "com_sex_P_cowgirl_A_description_begin_9" ]
+                        },
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validatePackage":{ "existsMaster_NonActor":true } } ],
+                            "texts":[ "com_sex_P_cowgirl_A_description_begin_10", "com_sex_P_cowgirl_A_description_begin_11", "com_sex_P_cowgirl_A_description_begin_12" ]
+                        },
                         {
                             "keepLooking":true,
                             "texts": ["com_sex_P_cowgirl_A_description_begin_1", "com_sex_P_cowgirl_A_description_begin_2", "com_sex_P_cowgirl_A_description_begin_3"]
@@ -187,7 +212,52 @@
                         "displayName":"com_sex_P_A_overpen_4",
                         "setForce":true
                     }
-                ]
+                ],
+                "description_begin":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validateChara":{ "target":"receiver", "statID":"isUnconscious", "operand":"eq", "value":"true" } } ],
+                            "texts":[ "com_sex_P_cowgirl_A_overpen_description_begin_1", "com_sex_P_cowgirl_A_overpen_description_begin_2", "com_sex_P_cowgirl_A_overpen_description_begin_3" ]
+                        },
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validateChara":{ "target":"receiver", "statID":"isTimestopped", "operand":"eq", "value":"true" } } ],
+                            "texts":[ "com_sex_P_cowgirl_A_overpen_description_begin_4", "com_sex_P_cowgirl_A_overpen_description_begin_5", "com_sex_P_cowgirl_A_overpen_description_begin_6" ]
+                        },
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validatePackage":{ "existsMaster_NonActor":true } } ],
+                            "texts":[ "com_sex_P_cowgirl_A_overpen_description_begin_7", "com_sex_P_cowgirl_A_overpen_description_begin_8", "com_sex_P_cowgirl_A_overpen_description_begin_9" ]
+                        },
+                        {
+                            "keepLooking":true,
+                            "conditions":[],
+                            "texts":[ "com_sex_P_cowgirl_A_overpen_description_begin_10", "com_sex_P_cowgirl_A_overpen_description_begin_11", "com_sex_P_cowgirl_A_overpen_description_begin_12" ]
+                        }
+                    ]
+                },
+                "description_ongoing":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "conditions":[],
+                            "texts":[ "com_sex_P_cowgirl_A_overpen_description_ongoing_1", "com_sex_P_cowgirl_A_overpen_description_ongoing_2", "com_sex_P_cowgirl_A_overpen_description_ongoing_3" ]
+                        }
+                    ]
+                },
+                "description_remove":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "conditions":[],
+                            "texts":[ "com_sex_P_cowgirl_A_overpen_description_remove_1", "com_sex_P_cowgirl_A_overpen_description_remove_2", "com_sex_P_cowgirl_A_overpen_description_remove_3" ]
+                        }
+                    ]
+                }
             },
             {
                 "parentCOMID":"com_sex_base",
@@ -254,7 +324,52 @@
                         "displayName":"com_sex_P_A_force_4",
                         "setForce":true
                     }
-                ]
+                ],
+                "description_begin":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validateChara":{ "target":"receiver", "statID":"isUnconscious", "operand":"eq", "value":"true" } } ],
+                            "texts":[ "com_sex_P_cowgirl_A_force_description_begin_1", "com_sex_P_cowgirl_A_force_description_begin_2", "com_sex_P_cowgirl_A_force_description_begin_3" ]
+                        },
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validateChara":{ "target":"receiver", "statID":"isTimestopped", "operand":"eq", "value":"true" } } ],
+                            "texts":[ "com_sex_P_cowgirl_A_force_description_begin_4", "com_sex_P_cowgirl_A_force_description_begin_5", "com_sex_P_cowgirl_A_force_description_begin_6" ]
+                        },
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validatePackage":{ "existsMaster_NonActor":true } } ],
+                            "texts":[ "com_sex_P_cowgirl_A_force_description_begin_7", "com_sex_P_cowgirl_A_force_description_begin_8", "com_sex_P_cowgirl_A_force_description_begin_9" ]
+                        },
+                        {
+                            "keepLooking":true,
+                            "conditions":[],
+                            "texts":[ "com_sex_P_cowgirl_A_force_description_begin_10", "com_sex_P_cowgirl_A_force_description_begin_11", "com_sex_P_cowgirl_A_force_description_begin_12" ]
+                        }
+                    ]
+                },
+                "description_ongoing":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "conditions":[],
+                            "texts":[ "com_sex_P_cowgirl_A_force_description_ongoing_1", "com_sex_P_cowgirl_A_force_description_ongoing_2", "com_sex_P_cowgirl_A_force_description_ongoing_3" ]
+                        }
+                    ]
+                },
+                "description_remove":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "conditions":[],
+                            "texts":[ "com_sex_P_cowgirl_A_force_description_remove_1", "com_sex_P_cowgirl_A_force_description_remove_2", "com_sex_P_cowgirl_A_force_description_remove_3" ]
+                        }
+                    ]
+                }
             }
         ]
     },
@@ -284,7 +399,61 @@
                 "com_sex_P_cowgirl_A_description_ongoing_2": "$doer.firstname$用肛门套着$receiver.p$上下起落",
                 "com_sex_P_cowgirl_A_description_ongoing_3": "$receiver.firstname$掐着$doer.firstname$的腰把$receiver.p$往肛门里顶",
                 "com_sex_P_cowgirl_A_description_after_2": "$receiver.firstname$按住$doer.firstname$的腰把$receiver.p$顶得更深",
-                "com_sex_P_cowgirl_A_description_after_3": "$doer.firstname$的肛门被$receiver.p$顶到最里面"
+                "com_sex_P_cowgirl_A_description_after_3": "$doer.firstname$的肛门被$receiver.p$顶到最里面",
+
+                "com_sex_P_cowgirl_A_description_begin_4": "$doer.firstname$扶着$receiver.p$对准自己的后穴坐下去",
+                "com_sex_P_cowgirl_A_description_begin_5": "$doer.firstname$骑到睡着的$receiver.firstname$身上把$receiver.p$吞进自己的后穴",
+                "com_sex_P_cowgirl_A_description_begin_6": "$doer.firstname$用肛门从上往下把$receiver.p$套住",
+                "com_sex_P_cowgirl_A_description_begin_7": "$doer.firstname$在停住的时间里扶着$receiver.p$对准自己的后穴坐下去",
+                "com_sex_P_cowgirl_A_description_begin_8": "$doer.firstname$在停住的时间里用后穴从上面把$receiver.p$套住",
+                "com_sex_P_cowgirl_A_description_begin_9": "$doer.firstname$在停住的时间里把$receiver.p$送进自己的后穴里",
+                "com_sex_P_cowgirl_A_description_begin_10": "$doer.firstname$依言扶着$receiver.p$对准自己的后穴坐下去",
+                "com_sex_P_cowgirl_A_description_begin_11": "$doer.firstname$照着吩咐用肛门从上往下把$receiver.p$套住",
+                "com_sex_P_cowgirl_A_description_begin_12": "$doer.firstname$应下吩咐跨坐到$receiver.firstname$身上把$receiver.p$吞进自己的后穴",
+                "com_sex_P_cowgirl_A_description_after_4": "$receiver.p$在$doer.firstname$的肛门里涨硬着跳",
+                "com_sex_P_cowgirl_A_description_after_5": "$receiver.p$顶在$doer.firstname$的肛门深处一下下地抖",
+                "com_sex_P_cowgirl_A_description_after_6": "$receiver.p$把$doer.firstname$的肛门撑得发紧又跳个不停",
+                "com_sex_P_cowgirl_A_description_after_7": "$doer.firstname$的肛门把$receiver.p$夹得动弹不得",
+                "com_sex_P_cowgirl_A_description_after_8": "$doer.firstname$的后穴一阵阵抽紧绞住$receiver.p$",
+                "com_sex_P_cowgirl_A_description_after_9": "$doer.firstname$的肛门缩得死紧箍住$receiver.p$",
+
+                "com_sex_P_cowgirl_A_overpen_description_begin_1": "$doer.firstname$扶着$receiver.p$对准自己的后穴坐下去捅到直肠",
+                "com_sex_P_cowgirl_A_overpen_description_begin_2": "$doer.firstname$对准自己的后穴坐下去让$receiver.p$捅进直肠里",
+                "com_sex_P_cowgirl_A_overpen_description_begin_3": "$doer.firstname$骑到睡着的$receiver.firstname$身上把$receiver.p$吞到直肠里",
+                "com_sex_P_cowgirl_A_overpen_description_begin_4": "$doer.firstname$在停住的时间里扶着$receiver.p$对准自己的后穴捅进直肠",
+                "com_sex_P_cowgirl_A_overpen_description_begin_5": "$doer.firstname$在停住的时间里对准自己的后穴坐下去让$receiver.p$顶进直肠",
+                "com_sex_P_cowgirl_A_overpen_description_begin_6": "$doer.firstname$在停住的时间里把$receiver.p$塞进自己的直肠里",
+                "com_sex_P_cowgirl_A_overpen_description_begin_7": "$doer.firstname$依言扶着$receiver.p$对准自己的后穴坐下去捅到直肠",
+                "com_sex_P_cowgirl_A_overpen_description_begin_8": "$doer.firstname$照着吩咐对准自己的后穴坐下去让$receiver.p$捅进直肠里",
+                "com_sex_P_cowgirl_A_overpen_description_begin_9": "$doer.firstname$应下吩咐把$receiver.p$顶进自己的直肠里",
+                "com_sex_P_cowgirl_A_overpen_description_begin_10": "$doer.firstname$扶着$receiver.p$对准自己的后穴坐下去让它捅进直肠",
+                "com_sex_P_cowgirl_A_overpen_description_begin_11": "$doer.firstname$把$receiver.p$一路塞进自己的直肠里",
+                "com_sex_P_cowgirl_A_overpen_description_begin_12": "$doer.firstname$跨坐到$receiver.firstname$身上让$receiver.p$捅到直肠里面",
+                "com_sex_P_cowgirl_A_overpen_description_ongoing_1": "$receiver.p$在$doer.firstname$的直肠里来回捅",
+                "com_sex_P_cowgirl_A_overpen_description_ongoing_2": "$doer.firstname$的后穴套着$receiver.p$在直肠里进出",
+                "com_sex_P_cowgirl_A_overpen_description_ongoing_3": "$receiver.firstname$挺着腰把$receiver.p$往$doer.firstname$的直肠里撞",
+                "com_sex_P_cowgirl_A_overpen_description_remove_1": "$doer.firstname$抬起身体让$receiver.p$从直肠里退出来",
+                "com_sex_P_cowgirl_A_overpen_description_remove_2": "$doer.firstname$把肛门从$receiver.p$上面抬开",
+                "com_sex_P_cowgirl_A_overpen_description_remove_3": "$receiver.p$从$doer.firstname$的直肠里滑了出去",
+
+                "com_sex_P_cowgirl_A_force_description_begin_1": "$doer.firstname$扶着$receiver.p$对准自己的后穴坐下去捅到结肠",
+                "com_sex_P_cowgirl_A_force_description_begin_2": "$doer.firstname$对准自己的后穴坐下去让$receiver.p$顶进结肠里",
+                "com_sex_P_cowgirl_A_force_description_begin_3": "$doer.firstname$骑到睡着的$receiver.firstname$身上把$receiver.p$吞到结肠里",
+                "com_sex_P_cowgirl_A_force_description_begin_4": "$doer.firstname$在停住的时间里扶着$receiver.p$对准自己的后穴捅进结肠",
+                "com_sex_P_cowgirl_A_force_description_begin_5": "$doer.firstname$在停住的时间里对准自己的后穴坐下去让$receiver.p$顶进结肠",
+                "com_sex_P_cowgirl_A_force_description_begin_6": "$doer.firstname$在停住的时间里把$receiver.p$塞进自己的结肠里",
+                "com_sex_P_cowgirl_A_force_description_begin_7": "$doer.firstname$依言扶着$receiver.p$对准自己的后穴坐下去捅到结肠",
+                "com_sex_P_cowgirl_A_force_description_begin_8": "$doer.firstname$照着吩咐对准自己的后穴坐下去让$receiver.p$顶进结肠里",
+                "com_sex_P_cowgirl_A_force_description_begin_9": "$doer.firstname$应下吩咐把$receiver.p$捅进自己的结肠里",
+                "com_sex_P_cowgirl_A_force_description_begin_10": "$doer.firstname$扶着$receiver.p$对准自己的后穴坐下去让它捅进结肠里",
+                "com_sex_P_cowgirl_A_force_description_begin_11": "$doer.firstname$把$receiver.p$一路塞进自己的结肠深处",
+                "com_sex_P_cowgirl_A_force_description_begin_12": "$doer.firstname$跨坐到$receiver.firstname$身上让$receiver.p$捅到结肠里面",
+                "com_sex_P_cowgirl_A_force_description_ongoing_1": "$receiver.p$在$doer.firstname$的结肠里来回搅",
+                "com_sex_P_cowgirl_A_force_description_ongoing_2": "$doer.firstname$的后穴套着$receiver.p$在结肠里进出",
+                "com_sex_P_cowgirl_A_force_description_ongoing_3": "$receiver.firstname$挺着腰把$receiver.p$往$doer.firstname$的结肠里撞",
+                "com_sex_P_cowgirl_A_force_description_remove_1": "$doer.firstname$抬起身体让$receiver.p$从结肠里退出来",
+                "com_sex_P_cowgirl_A_force_description_remove_2": "$doer.firstname$撑着腿把后穴从$receiver.p$上抬起",
+                "com_sex_P_cowgirl_A_force_description_remove_3": "$receiver.p$从$doer.firstname$的结肠里一路退了出去"
 
             },
             "en-us":

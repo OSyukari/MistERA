@@ -54,7 +54,7 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
         return string.IsNullOrEmpty(c.generatorKey) ? c.ID : c.generatorKey;
     }
 
-    /// <summary> Members of a generator group, in masterlist order (empty for a plain command ID). </summary>
+    /// <summary> Members of a generator group, sorted by ID (empty for a plain command ID). </summary>
     public static List<COM> GroupMembers(string unitID)
     {
         var members = new List<COM>();
@@ -96,11 +96,28 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
         skipReason = null;
         if (target == null) { skipReason = "找不到指令"; return null; }
         if (IsAlias(target)) { skipReason = $"使用 {target.textSourceID} 的旁白与口上（不单独导出）"; return null; }
+        var templateError = TA_CaseTemplate.Load();
+        if (templateError != null) { skipReason = templateError; return null; }
 
         com = target;
         isMember = member;
         unitID = member ? com.ID : UnitID(com);
+        kojoBaseKey = KojoBase();
         BeginDoc(UnitName(unitID), unitID, "command");
+        // Category parents own only the shared phases in the selected profile.
+        if (com.categoryKojo)
+        {
+            WriteCategoryHeader();
+            TA_KojoParticipants.DocShapes(com, out bool cPair, out bool cSolo);
+            TemplateEntries(cPair, cSolo);
+            var catSnap = FinishDoc();
+            if (catSnap != null)
+            {
+                catSnap.shared["cases"] = BuildCases();
+                catSnap.shared["categoryGroup"] = CategoryMetadata();
+            }
+            return catSnap;
+        }
         WriteHeader();
 
         // pair and / or solo scenarios by who takes part (COM.kojoParticipants, Auto from the requirements;
@@ -110,13 +127,69 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
         if (pair) BuildPairScenarios();
         if (pair && solo) { sb.AppendLine("---"); sb.AppendLine("## ▣ 第二部分：独自进行（没有受方）"); sb.AppendLine(); }
         if (solo) BuildSoloScenarios();
-        JoinLookups();
+        TemplateEntries(pair, solo);
         KojoOverrides(!pair);
 
         var snap = FinishDoc();
         // what the command must cover, with per-case coverage (Docs/TextAuthoring/Plan_CommandCases.md)
-        if (snap != null) snap.shared["cases"] = BuildCases();
+        if (snap != null)
+        {
+            snap.shared["cases"] = BuildCases();
+            if (unitID != com.ID) snap.shared["generatorGroup"] = GroupMetadata();
+        }
         return snap;
+    }
+
+    JObject GroupMetadata()    {
+        var source = com.TextSource;
+        var members = GroupMembers(unitID);
+        var entries = new JArray();
+        for (int i = 0; i < members.Count; i++)
+            entries.Add(new JObject
+            {
+                ["commandID"] = members[i].ID,
+                ["itemID"] = members[i].generatorItemID,
+                ["displayName"] = members[i].DisplayName(-1)
+            });
+        return new JObject
+        {
+            ["sourceID"] = source != null ? source.ID : com.textSourceID,
+            ["sourceName"] = source?.DisplayName(-1),
+            ["kojoKey"] = KojoBase(),
+            ["representativeID"] = com.ID,
+            ["representativeName"] = com.DisplayName(-1),
+            ["members"] = entries
+        };
+    }
+
+    /// <summary>A category unit's authoring scope.</summary>
+    JObject CategoryMetadata()
+    {
+        var children = new JArray();
+        var all = scr_System_Serializer.current.MasterList.COMs.LIST;
+        for (int i = 0; all != null && i < all.Count; i++)
+        {
+            var c = all[i];
+            if (c == null || c == com || c.KojoFolderParent != com) continue;
+            string name;
+            try { name = c.DisplayName(-1); } catch { name = c.ID; }
+            children.Add(new JObject { ["commandID"] = c.ID, ["displayName"] = string.IsNullOrEmpty(name) ? c.ID : name });
+        }
+        string title;
+        try { title = com.DisplayName(-1); } catch { title = com.ID; }
+        return new JObject { ["id"] = com.ID, ["name"] = title, ["children"] = children };
+    }
+
+    /// <summary>A category unit's header and writer instructions.</summary>
+    void WriteCategoryHeader()
+    {
+        string title;
+        try { title = com.DisplayName(-1); } catch { title = com.ID; }
+        sb.AppendLine($"# {title}（类级口上单元 {unitID}）写手文档");
+        sb.AppendLine();
+        WriteCommonHeaderLines();
+        WriteCommonHeaderFooter();
+        sb.Text("doc.command.categoryGroup");
     }
 
     /// <summary>Store/file name of a command unit.</summary>
@@ -127,7 +200,9 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
     void WriteHeader()
     {
         var req = com.requirements.requirement;
-        sb.AppendLine($"# {com.DisplayName(-1)}（{unitID}）写手文档");
+        bool group = unitID != com.ID;
+        var title = group ? (com.TextSource?.DisplayName(-1) ?? com.textSourceID ?? unitID) : com.DisplayName(-1);
+        sb.AppendLine($"# {title}（{unitID}）写手文档");
         sb.AppendLine();
         WriteCommonHeaderLines();
         sb.AppendLine($"> 指令标签：{string.Join(" / ", com.comTags)} ｜ 耗时 {com.TimeScale} 分钟 ｜ {(com.baseD20Check > 0 ? $"接受后 D20 ≥ {com.baseD20Check} 判定结果" : "无结果判定")}");
@@ -137,7 +212,7 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
         {
             var vs = new List<string>();
             for (int i = 0; i < com.variants.Count; i++) vs.Add($"变体{i}「{com.DisplayName(i)}」");
-            sb.AppendLine($"> 指令变体：{string.Join("、", vs)}");
+            sb.AppendLine($"> {(group ? "代表成员的指令变体" : "指令变体")}：{string.Join("、", vs)}");
         }
         if (com.KojoFolderParent != null) sb.Text("doc.command.kojoFallback", "parent", com.KojoFolderParent.ID);
         if (com.IsUpgrade) sb.Text("doc.command.upgrade", "from", com.upgradeFrom);
@@ -319,7 +394,7 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
         Narration("after");
 
         // 4 observed
-        Scenario("场景 4：玩家旁观 NPC 之间使用", $"玩家不参与。玩家等待很久时（总时长 > {com.TimeScale * 4} 分钟）短指令不显示。旁观者看到「完成旁白」而不是判定行。", "施方 NPC", "受方 NPC");
+        Scenario("场景 4：玩家旁观 NPC 之间使用", "玩家旁观，不参与动作。", "施方 NPC", "受方 NPC");
         Section("开始段");
         Narration("begin");
         Kojo("_Begin", "施方 NPC", "受方 NPC", new TA_KojoContext { speakerIsDoer = true, speakerIsMaster = true, playerInvolved = false });
@@ -328,8 +403,8 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
         {
             Section("进行中（玩家一次等待的最后一分钟，仍在进行时）");
             Narration("ongoing");
-            Kojo("_Ongoing", "施方 NPC", "旁观的玩家", new TA_KojoContext { speakerIsDoer = true, speakerIsMaster = true, playerInvolved = false });
-            Kojo("_Ongoing", "受方 NPC", "旁观的玩家", new TA_KojoContext { speakerIsReceiver = true, playerInvolved = false });
+            TemplateKojo("ongoing", "_Ongoing", "doer", "player", "accept", new TA_KojoContext { speakerIsDoer = true, speakerIsMaster = true, playerInvolved = false });
+            TemplateKojo("ongoing", "_Ongoing", "receiver", "player", "accept", new TA_KojoContext { speakerIsReceiver = true, playerInvolved = false });
         }
         Section("结果段" + Timing());
         Narration("onComplete");
@@ -340,8 +415,8 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
             ("受方 NPC", "施方 NPC", new TA_KojoContext { speakerIsReceiver = true, playerInvolved = false }));
         Section("结束段（成功时，结束旁白之后接施方/受方的 _Ongoing 口上，听者为对方）");
         Narration("after");
-        Kojo("_Ongoing", "施方 NPC", "受方 NPC", new TA_KojoContext { speakerIsDoer = true, speakerIsMaster = true, playerInvolved = false });
-        Kojo("_Ongoing", "受方 NPC", "施方 NPC", new TA_KojoContext { speakerIsReceiver = true, playerInvolved = false });
+        TemplateKojo("ongoing", "_Ongoing", "doer", "npc", "accept", new TA_KojoContext { speakerIsDoer = true, speakerIsMaster = true, playerInvolved = false });
+        TemplateKojo("ongoing", "_Ongoing", "receiver", "npc", "accept", new TA_KojoContext { speakerIsReceiver = true, playerInvolved = false });
 
         // 5 ordered by a third party (Plan_CommandCases.md K4)
         Scenario("场景 5：玩家下令 NPC 对 NPC 使用（第三方下令）",
@@ -365,7 +440,7 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
         System("[开始段] 引擎通用拒绝行：「" + ZH("ep_Description_refuse") + "」");
         Kojo("", "受方 NPC", "施方 NPC", new TA_KojoContext { speakerIsReceiver = true, accepted = false });
         Section("施方拒绝下令（口上对象是下令的玩家；施方自己发起时拒绝不出口上）");
-        Kojo("", "施方 NPC", "下令的玩家", new TA_KojoContext { speakerIsDoer = true, accepted = false });
+        TemplateKojo("orderedRefuse", "", "doer", "player", "refuseOrder", new TA_KojoContext { speakerIsDoer = true, accepted = false }, true);
         System("→ 之后开始事件 OnAPRefuse（玩家=请求者，拒绝的施方 NPC=拒绝者）");
 
         AbortScenario("场景 6", "施方", "受方");
@@ -423,17 +498,17 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
         Climax(climax, ("NPC", "自己", new TA_KojoContext { speakerIsDoer = true, listenerIsSelf = true }));
         Section("拒绝");
         System("[开始段] 引擎通用拒绝行：「" + ZH("ep_Description_refuse") + "」");
-        Kojo("", "NPC", "下令的玩家", new TA_KojoContext { speakerIsDoer = true, accepted = false });
+        TemplateKojo("result", "", "self", "player", "refuse", new TA_KojoContext { speakerIsDoer = true, accepted = false });
         System("→ 之后开始事件 OnAPRefuse（玩家=请求者，NPC=拒绝者）");
 
-        Scenario("场景 4：玩家旁观 NPC 独自进行", $"玩家不参与；玩家等待很久时（总时长 > {com.TimeScale * 4} 分钟）短指令不显示。", "NPC", null);
+        Scenario("场景 4：玩家旁观 NPC 独自进行", "玩家旁观，不参与动作。", "NPC", null);
         Section("开始段（没有听者，不查开始口上）");
         Narration("begin");
         if (com.TimeScale > 1)
         {
             Section("进行中（玩家一次等待的最后一分钟，仍在进行时）");
             Narration("ongoing");
-            Kojo("_Ongoing", "NPC", "旁观的玩家", new TA_KojoContext { speakerIsDoer = true, speakerIsMaster = true, playerInvolved = false });
+            TemplateKojo("ongoing", "_Ongoing", "self", "player", "accept", new TA_KojoContext { speakerIsDoer = true, speakerIsMaster = true, playerInvolved = false });
         }
         Section("结果段" + Timing());
         Narration("onComplete");
@@ -459,7 +534,16 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
     void Section(string s) { sb.AppendLine($"**▶ {s}**"); sb.AppendLine(); }
     void System(string s) { sb.AppendLine(s); sb.AppendLine(); }
 
-    void Kojo(string suffix, string speaker, string listener, TA_KojoContext ctx)
+    void TemplateKojo(string phaseId, string suffix, string speaker, string listener, string outcome, TA_KojoContext ctx, bool ordered = false)
+    {
+        JToken phase = null;
+        foreach (var t in TA_CaseTemplate.Kojo)
+            if ((string)t["id"] == phaseId) { phase = t; break; }
+        var who = CaseCast(phase, new KojoCaseSpec { speaker = speaker, listener = listener, outcome = outcome, suffix = suffix, ordered = ordered });
+        Kojo(suffix, (string)who["self"], (string)who["target"], ctx, who);
+    }
+
+    void Kojo(string suffix, string speaker, string listener, TA_KojoContext ctx, JObject who = null)
     {
         // a refused result speaks from <COM>_Refuse first, then <COM> (RelationshipManager.GetKOJOMessage)
         bool refusal = suffix == "" && !ctx.accepted;
@@ -476,7 +560,7 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
                 if (fb != null) found = ResolveCommandEntry(p, fb, "", out provider, out entryID);
             }
             return found;
-        }, speaker, listener, ctx, "command", TA_KojoSeverity.NoLine);
+        }, speaker, listener, ctx, "command", TA_KojoSeverity.NoLine, who);
     }
 
     /// <summary>
@@ -509,19 +593,93 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
     }
 
     /// <summary>
-    /// Joinable commands: Job.JoinPackage fetches `&lt;COM.ID&gt;_Tryjoin` / `_Joined` / `_Join_Refused` for the joiner (to the
-    /// player) and injects them into RequestJoin, with "" when missing. Coverage only - the lines belong to that event.
+    /// Scene references and existing text for the profile's special authoring phases.
     /// </summary>
-    void JoinLookups()
+    void TemplateEntries(bool pair, bool solo)
     {
-        if (!com.allowJoining) return;
-        var suffixes = new[] { "_Tryjoin", "_Joined", "_Join_Refused" };
-        for (int i = 0; i < suffixes.Length; i++)
+        castDoer = null;
+        castReceiver = null;
+        // Shared phases are authored on the category parent, not repeated on the child.
+        var categoryParent = com.KojoFolderParent;
+        if (categoryParent != null && categoryParent.categoryKojo)
         {
-            var suffix = suffixes[i];
-            CoverageLookup(KojoBase() + suffix, (Character_Personality p, out string provider, out string entryID) =>
-                ResolveCommandEntry(p, com, suffix, out provider, out entryID),
-                "加入者 NPC", "玩家", new TA_KojoContext { noEP = true, playerInvolved = true }, "codeInjectedJoin", TA_KojoSeverity.EmptyLine);
+            sb.AppendLine("---");
+            sb.AppendLine("## ◆特殊情境口上（类级处理）");
+            string parentName;
+            try { parentName = categoryParent.DisplayName(-1); } catch { parentName = categoryParent.ID; }
+            sb.Text("doc.kojo.categoryChildNote", "parent", string.IsNullOrEmpty(parentName) ? categoryParent.ID : parentName, "id", categoryParent.ID);
+            sb.AppendLine();
+        }
+        bool heading = false;
+        foreach (var phase in KojoPhases(Facts().Flags(), KojoProfile()))
+        {
+            var scene = phase["scene"] as JObject;
+            if (scene == null) continue;
+            if (!heading)
+            {
+                sb.AppendLine("---");
+                sb.AppendLine("## ◆特殊情境口上（按模板）");
+                sb.Text("doc.kojo.templateIntro");
+                sb.AppendLine();
+                heading = true;
+            }
+            foreach (var suffix in CaseSuffixes(phase))
+                EntrySection(phase, suffix, pair, solo, (string)scene["consumer"] ?? "command");
+        }
+    }
+
+    /// <summary>Writing axes, scene context, and the existing text for this entry.</summary>
+    void EntrySection(JToken phase, string suffix, bool pair, bool solo, string consumer)
+    {
+        var key = KojoBase() + suffix;
+        var label = (string)phase["suffixLabels"]?[suffix] ?? (string)phase["label"];
+        Section($"{label}（`{key}`）");
+        EntryResolver resolve = (Character_Personality p, out string provider, out string entry) => ResolveAuthoringEntry(p, key, out provider, out entry);
+
+        // the template as the first resolving layer's entry declares it, else the command template claiming the suffix
+        string templateID = null;
+        for (int pi = 0; pi < personalities.Count && string.IsNullOrEmpty(templateID); pi++)
+        {
+            var p = scr_System_Serializer.current.MasterList.Character_Personalities.GetByID(personalities[pi]);
+            if (p == null) continue;
+            resolvedViaSource = null;
+            var found = resolve(p, out _, out _);
+            if (found != null) templateID = found.template;
+        }
+        if (string.IsNullOrEmpty(templateID)) templateID = TA_KojoTemplate.ClaimedBy(suffix);
+        var t = string.IsNullOrEmpty(templateID) ? null : TA_KojoTemplate.Find(templateID);
+        if (t != null)
+        {
+            var labels = new List<string>();
+            for (int i = 0; i < t.axes.Count; i++) if (t.axes[i].label != "") labels.Add(t.axes[i].label);
+            sb.Text("doc.kojo.templateAxes", "template", templateID, "axes", string.Join(" → ", labels));
+            if (t.everyBranch != null)
+                sb.Text("doc.kojo.templateEvery", "fields", t.everyBranch.ToString(Newtonsoft.Json.Formatting.None));
+        }
+        sb.AppendLine();
+
+        bool noEP = consumer == "codeInjectedJoin";
+        bool refusedJoin = phase["outcomes"] is JArray outcomes && Contains(outcomes, "joinRefused");
+        void Block(string role, bool ordered = false)
+        {
+            foreach (var listener in CaseListeners(phase, role))
+            {
+                var who = CaseCast(phase, new KojoCaseSpec { speaker = role, listener = listener, outcome = refusedJoin ? "joinRefused" : "accept", suffix = suffix, ordered = ordered });
+                Section(ordered ? (string)who["doer"] ?? (string)who["self"] : (string)who["self"]);
+                KojoBlock(key, resolve, (string)who["self"], (string)who["target"], new TA_KojoContext
+                {
+                    speakerIsDoer = role == "doer" || role == "self", speakerIsReceiver = role == "receiver",
+                    speakerIsMaster = (role == "doer" || role == "self") && !ordered,
+                    accepted = !refusedJoin, playerInvolved = true, noEP = noEP, listenerIsPlayer = noEP ? true : (bool?)null
+                }, consumer, TA_KojoSeverity.Optional, who);
+            }
+        }
+        foreach (var speaker in phase["speakers"] as JArray ?? new JArray())
+        {
+            var role = (string)speaker;
+            if (role == "self" && !solo || (role == "doer" || role == "receiver") && !pair) continue;
+            Block(role);
+            if (role == "doer" || role == "self") Block(role, true);
         }
     }
 
@@ -554,7 +712,7 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
         if (found.Count < 1) return;
 
         Scenario("规则改写的结果口上（AcceptanceMod overrideKojoEventID）",
-            "某个接受规则成立时（规则的其他条件见下），该方的结果口上改查另一个条目，不再查本指令的口上；该条目缺失时这一方不说话（不回退到本指令的口上）。", solo ? "NPC" : "施方", solo ? null : "受方");
+            "以下为特定接受规则成立时的独立写作情境。", solo ? "NPC" : "施方", solo ? null : "受方");
         for (int i = 0; i < found.Count; i++)
         {
             var o = found[i];

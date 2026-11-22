@@ -609,6 +609,25 @@
                                     ]
                                 }
                             ]
+                        },
+                        {
+                            "_comment": "doer climaxed",
+                            "keepLooking": true,
+                            "conditions": [
+                                {
+                                    "validateChara": {
+                                        "target": "doer",
+                                        "statID": "climaxed",
+                                        "operand": "eq",
+                                        "value": "true"
+                                    }
+                                }
+                            ],
+                            "texts": [
+                                "com_sex_P_doggy_description_after_4",
+                                "com_sex_P_doggy_description_after_5",
+                                "com_sex_P_doggy_description_after_6"
+                            ]
                         }
                     ]
                 }
@@ -716,7 +735,103 @@
                         "displayName": "com_sex_P_V_overpen_4",
                         "setForce": true
                     }
-                ]
+                ],
+                "description_begin": {
+                    "Entries": [
+                        {
+                            "_comment": "receiver unconscious",
+                            "keepLooking": true,
+                            "conditions": [
+                                {
+                                    "validateChara": {
+                                        "target": "receiver",
+                                        "statID": "isUnconscious",
+                                        "operand": "eq",
+                                        "value": "true"
+                                    }
+                                }
+                            ],
+                            "texts": [
+                                "com_sex_P_doggy_overpen_description_begin_1",
+                                "com_sex_P_doggy_overpen_description_begin_2",
+                                "com_sex_P_doggy_overpen_description_begin_3"
+                            ]
+                        },
+                        {
+                            "_comment": "receiver timestopped",
+                            "keepLooking": true,
+                            "conditions": [
+                                {
+                                    "validateChara": {
+                                        "target": "receiver",
+                                        "statID": "isTimestopped",
+                                        "operand": "eq",
+                                        "value": "true"
+                                    }
+                                }
+                            ],
+                            "texts": [
+                                "com_sex_P_doggy_overpen_description_begin_4",
+                                "com_sex_P_doggy_overpen_description_begin_5",
+                                "com_sex_P_doggy_overpen_description_begin_6"
+                            ]
+                        },
+                        {
+                            "_comment": "someone else (non-participant) is ordering",
+                            "keepLooking": true,
+                            "conditions": [
+                                {
+                                    "validatePackage": {
+                                        "existsMaster_NonActor": true
+                                    }
+                                }
+                            ],
+                            "texts": [
+                                "com_sex_P_doggy_overpen_description_begin_7",
+                                "com_sex_P_doggy_overpen_description_begin_8",
+                                "com_sex_P_doggy_overpen_description_begin_9"
+                            ]
+                        },
+                        {
+                            "_comment": "generic",
+                            "keepLooking": true,
+                            "conditions": [],
+                            "texts": [
+                                "com_sex_P_doggy_overpen_description_begin_10",
+                                "com_sex_P_doggy_overpen_description_begin_11",
+                                "com_sex_P_doggy_overpen_description_begin_12"
+                            ]
+                        }
+                    ]
+                },
+                "description_ongoing": {
+                    "Entries": [
+                        {
+                            "_comment": "",
+                            "keepLooking": true,
+                            "conditions": [],
+                            "texts": [
+                                "com_sex_P_doggy_overpen_description_ongoing_1",
+                                "com_sex_P_doggy_overpen_description_ongoing_2",
+                                "com_sex_P_doggy_overpen_description_ongoing_3"
+                            ]
+                        }
+                    ]
+                },
+                "description_remove": {
+                    "Entries": [
+                        {
+                            "_comment": "",
+                            "keepLooking": true,
+                            "conditions": [],
+                            "texts": [
+                                "com_sex_P_doggy_overpen_description_remove_1",
+                                "com_sex_P_doggy_overpen_description_remove_2",
+                                "com_sex_P_doggy_overpen_description_remove_3"
+                            ]
+                        }
+                    ]
+                }
             },
             {
                 "parentCOMID":"com_sex_base",
@@ -817,7 +932,103 @@
                         "setForce": true,
                         "displayName": "com_sex_P_V_force_4"
                     }
-                ]
+                ],
+                "description_begin": {
+                    "Entries": [
+                        {
+                            "_comment": "receiver unconscious",
+                            "keepLooking": true,
+                            "conditions": [
+                                {
+                                    "validateChara": {
+                                        "target": "receiver",
+                                        "statID": "isUnconscious",
+                                        "operand": "eq",
+                                        "value": "true"
+                                    }
+                                }
+                            ],
+                            "texts": [
+                                "com_sex_P_doggy_force_description_begin_1",
+                                "com_sex_P_doggy_force_description_begin_2",
+                                "com_sex_P_doggy_force_description_begin_3"
+                            ]
+                        },
+                        {
+                            "_comment": "receiver timestopped",
+                            "keepLooking": true,
+                            "conditions": [
+                                {
+                                    "validateChara": {
+                                        "target": "receiver",
+                                        "statID": "isTimestopped",
+                                        "operand": "eq",
+                                        "value": "true"
+                                    }
+                                }
+                            ],
+                            "texts": [
+                                "com_sex_P_doggy_force_description_begin_4",
+                                "com_sex_P_doggy_force_description_begin_5",
+                                "com_sex_P_doggy_force_description_begin_6"
+                            ]
+                        },
+                        {
+                            "_comment": "someone else (non-participant) is ordering",
+                            "keepLooking": true,
+                            "conditions": [
+                                {
+                                    "validatePackage": {
+                                        "existsMaster_NonActor": true
+                                    }
+                                }
+                            ],
+                            "texts": [
+                                "com_sex_P_doggy_force_description_begin_7",
+                                "com_sex_P_doggy_force_description_begin_8",
+                                "com_sex_P_doggy_force_description_begin_9"
+                            ]
+                        },
+                        {
+                            "_comment": "generic",
+                            "keepLooking": true,
+                            "conditions": [],
+                            "texts": [
+                                "com_sex_P_doggy_force_description_begin_10",
+                                "com_sex_P_doggy_force_description_begin_11",
+                                "com_sex_P_doggy_force_description_begin_12"
+                            ]
+                        }
+                    ]
+                },
+                "description_ongoing": {
+                    "Entries": [
+                        {
+                            "_comment": "",
+                            "keepLooking": true,
+                            "conditions": [],
+                            "texts": [
+                                "com_sex_P_doggy_force_description_ongoing_1",
+                                "com_sex_P_doggy_force_description_ongoing_2",
+                                "com_sex_P_doggy_force_description_ongoing_3"
+                            ]
+                        }
+                    ]
+                },
+                "description_remove": {
+                    "Entries": [
+                        {
+                            "_comment": "",
+                            "keepLooking": true,
+                            "conditions": [],
+                            "texts": [
+                                "com_sex_P_doggy_force_description_remove_1",
+                                "com_sex_P_doggy_force_description_remove_2",
+                                "com_sex_P_doggy_force_description_remove_3"
+                            ]
+                        }
+                    ]
+                }
             }
         ]
     },
@@ -918,7 +1129,49 @@
                 "com_sex_P_doggy_description_begin_2_5": "$doer.firstname$把睡着的$receiver.firstname$翻成跪趴的样子，把$doer.p$捅进$receiver.firstname$的$receiver.v$",
                 "com_sex_P_doggy_description_begin_2_6": "$doer.firstname$压着睡着的$receiver.firstname$摆出后背位，从后面把$doer.p$捅进$receiver.firstname$的$receiver.v$里",
                 "com_sex_P_doggy_description_begin_3_26": "$receiver.firstname$跪趴下来把腰压低，让$doer.firstname$从后面把$doer.p$捅进小穴",
-                "com_sex_P_doggy_description_begin_3_27": "$receiver.firstname$翻成趴着的姿势，让$doer.firstname$从后面把$doer.p$捅进小穴"
+                "com_sex_P_doggy_description_begin_3_27": "$receiver.firstname$翻成趴着的姿势，让$doer.firstname$从后面把$doer.p$捅进小穴",
+
+                "com_sex_P_doggy_description_after_4": "$doer.p$在$receiver.firstname$的小穴里涨硬着跳",
+                "com_sex_P_doggy_description_after_5": "$doer.p$顶在$receiver.firstname$小穴深处一下下地抖",
+                "com_sex_P_doggy_description_after_6": "$doer.p$把$receiver.firstname$的小穴撑得发紧又跳个不停",
+
+                "com_sex_P_doggy_overpen_description_begin_1": "$doer.firstname$扶着$receiver.firstname$的腰把$doer.p$捅进$receiver.firstname$的子宫",
+                "com_sex_P_doggy_overpen_description_begin_2": "$doer.firstname$把$doer.p$捅进睡着的$receiver.firstname$的子宫里",
+                "com_sex_P_doggy_overpen_description_begin_3": "$doer.firstname$从后面把龟头顶进$receiver.firstname$的子宫",
+                "com_sex_P_doggy_overpen_description_begin_4": "$doer.firstname$在停住的时间里把$doer.p$捅进$receiver.firstname$的子宫",
+                "com_sex_P_doggy_overpen_description_begin_5": "$doer.firstname$在停住的时间里从后面把龟头顶进$receiver.firstname$的子宫",
+                "com_sex_P_doggy_overpen_description_begin_6": "$doer.firstname$在停住的时间里把$doer.p$塞进$receiver.firstname$的子宫里",
+                "com_sex_P_doggy_overpen_description_begin_7": "$doer.firstname$依言把$doer.p$捅进$receiver.firstname$的子宫",
+                "com_sex_P_doggy_overpen_description_begin_8": "$doer.firstname$照着吩咐从后面把龟头顶进$receiver.firstname$的子宫里",
+                "com_sex_P_doggy_overpen_description_begin_9": "$doer.firstname$应下吩咐把$doer.p$捅到$receiver.firstname$的子宫里",
+                "com_sex_P_doggy_overpen_description_begin_10": "$doer.firstname$从后面把$doer.p$捅进$receiver.firstname$的子宫",
+                "com_sex_P_doggy_overpen_description_begin_11": "$doer.firstname$顶着$receiver.firstname$的腰让$doer.p$顶进$receiver.firstname$的子宫里",
+                "com_sex_P_doggy_overpen_description_begin_12": "$doer.firstname$从背后把龟头捅到$receiver.firstname$的子宫里",
+                "com_sex_P_doggy_overpen_description_ongoing_1": "$doer.p$在$receiver.firstname$的子宫里来回捅",
+                "com_sex_P_doggy_overpen_description_ongoing_2": "$doer.firstname$从后面把$doer.p$往$receiver.firstname$的子宫里撞",
+                "com_sex_P_doggy_overpen_description_ongoing_3": "$doer.firstname$压着$receiver.firstname$的腰让$doer.p$在子宫里搅",
+                "com_sex_P_doggy_overpen_description_remove_1": "$doer.firstname$把$doer.p$从$receiver.firstname$的子宫里退出来",
+                "com_sex_P_doggy_overpen_description_remove_2": "$doer.firstname$把$doer.p$从$receiver.firstname$的子宫里抽出来",
+                "com_sex_P_doggy_overpen_description_remove_3": "$doer.p$从$receiver.firstname$的子宫里滑了出去",
+
+                "com_sex_P_doggy_force_description_begin_1": "$doer.firstname$把$doer.p$捅进睡着的$receiver.firstname$的小穴，让龟头顶住深处那块软肉",
+                "com_sex_P_doggy_force_description_begin_2": "$doer.firstname$从后面把龟头捅进$receiver.firstname$的小穴，慢慢顶住阴道深处那一块",
+                "com_sex_P_doggy_force_description_begin_3": "$doer.firstname$把$doer.p$塞进$receiver.firstname$的小穴里顶着最深处那一点",
+                "com_sex_P_doggy_force_description_begin_4": "$doer.firstname$在停住的时间里把$doer.p$捅进$receiver.firstname$的小穴顶着深处那块软肉",
+                "com_sex_P_doggy_force_description_begin_5": "$doer.firstname$在停住的时间里把龟头塞进$receiver.firstname$的小穴顶住阴道深处那一块",
+                "com_sex_P_doggy_force_description_begin_6": "$doer.firstname$在停住的时间里从后面把$doer.p$捅进小穴再去顶最深处那一点",
+                "com_sex_P_doggy_force_description_begin_7": "$doer.firstname$依言把$doer.p$捅进$receiver.firstname$的小穴顶住深处那块软肉",
+                "com_sex_P_doggy_force_description_begin_8": "$doer.firstname$照着吩咐把龟头捅进$receiver.firstname$的小穴抵住阴道深处那一块",
+                "com_sex_P_doggy_force_description_begin_9": "$doer.firstname$应下吩咐从后面把$doer.p$捅进$receiver.firstname$的小穴顶着最深处那一点",
+                "com_sex_P_doggy_force_description_begin_10": "$doer.firstname$从后面把$doer.p$捅进$receiver.firstname$的小穴，让龟头顶住深处那块软肉",
+                "com_sex_P_doggy_force_description_begin_11": "$doer.firstname$把龟头捅进$receiver.firstname$的小穴顶住阴道深处顶起的那一块",
+                "com_sex_P_doggy_force_description_begin_12": "$doer.firstname$从背后把$doer.p$塞进$receiver.firstname$的小穴，拿龟头顶住最深处那一点",
+                "com_sex_P_doggy_force_description_ongoing_1": "$doer.p$在$receiver.firstname$的小穴里顶着深处那块软肉来回磨",
+                "com_sex_P_doggy_force_description_ongoing_2": "$doer.firstname$从后面把$doer.p$反复捅进$receiver.firstname$的小穴顶最深处那一点",
+                "com_sex_P_doggy_force_description_ongoing_3": "$doer.firstname$压着$receiver.firstname$的腰把龟头往阴道深处那一块上蹭",
+                "com_sex_P_doggy_force_description_remove_1": "$doer.firstname$把$doer.p$从$receiver.firstname$的小穴里抽出来",
+                "com_sex_P_doggy_force_description_remove_2": "$doer.firstname$把$doer.p$从$receiver.firstname$的小穴里退出来",
+                "com_sex_P_doggy_force_description_remove_3": "$doer.p$从$receiver.firstname$的小穴里滑了出去"
 
             },
             "en-us":

@@ -94,6 +94,11 @@
                 "description_remove":{
                     "Entries":[
                         {
+                            "keepLooking":false,
+                            "conditions":[],
+                            "texts":[ "com_sex_legs_caress_C_description_remove_4", "com_sex_legs_caress_C_description_remove_5", "com_sex_legs_caress_C_description_remove_6" ]
+                        },
+                        {
                             "_comment":"",
                             "keepLooking":true,
                             "texts":[ "com_sex_legs_caress_C_description_remove_1", "com_sex_legs_caress_C_description_remove_2", "com_sex_legs_caress_C_description_remove_3" ]
@@ -105,6 +110,11 @@
                     "Entries":[
                         {
                             "keepLooking":true,
+                            "conditions":[{"validateChara":{"statID":"climaxed","operand":"eq","value":"true","target":"doer"}}],
+                            "texts":[ "com_sex_legs_caress_C_description_after_4", "com_sex_legs_caress_C_description_after_5", "com_sex_legs_caress_C_description_after_6" ]
+                        },
+                        {
+                            "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
                             "texts":[ "com_sex_legs_caress_C_description_after_1", "com_sex_legs_caress_C_description_after_2", "com_sex_legs_caress_C_description_after_3" ]
                         }
@@ -113,6 +123,21 @@
                 "description_begin":
                 {
                     "Entries":[ 
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}],
+                            "texts":[ "com_sex_legs_caress_C_description_begin_4", "com_sex_legs_caress_C_description_begin_5", "com_sex_legs_caress_C_description_begin_6" ]
+                        },
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validateChara":{"statID":"isUnconscious","operand":"eq","value":"true","target":"receiver"}}],
+                            "texts":[ "com_sex_legs_caress_C_description_begin_7", "com_sex_legs_caress_C_description_begin_8", "com_sex_legs_caress_C_description_begin_9" ]
+                        },
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validateChara":{"statID":"isTimestopped","operand":"eq","value":"true","target":"receiver"}}],
+                            "texts":[ "com_sex_legs_caress_C_description_begin_10", "com_sex_legs_caress_C_description_begin_11", "com_sex_legs_caress_C_description_begin_12" ]
+                        },
                         {
                             "keepLooking":true,
                             "texts": ["com_sex_legs_caress_C_description_begin_1", "com_sex_legs_caress_C_description_begin_2", "com_sex_legs_caress_C_description_begin_3"]
@@ -147,7 +172,22 @@
                 "com_sex_legs_caress_C_description_begin_2": "$doer.firstname$的大腿顶住$receiver.firstname$的阴蒂按压起来",
                 "com_sex_legs_caress_C_description_begin_3": "$doer.firstname$把腿压在$receiver.firstname$的股间揉按着",
                 "com_sex_legs_caress_C_description_after_2": "$receiver.firstname$的股间随着高潮夹住了$doer.firstname$的腿",
-                "com_sex_legs_caress_C_description_after_3": "$receiver.firstname$的阴蒂抵着$doer.firstname$的大腿发颤"
+                "com_sex_legs_caress_C_description_after_3": "$receiver.firstname$的阴蒂抵着$doer.firstname$的大腿发颤",
+                "com_sex_legs_caress_C_description_begin_4":"$doer.firstname$依言把大腿压上了$receiver.firstname$的股间",
+                "com_sex_legs_caress_C_description_begin_5":"$doer.firstname$照着吩咐用腿按压$receiver.firstname$的阴蒂",
+                "com_sex_legs_caress_C_description_begin_6":"$doer.firstname$应着吩咐把腿压进$receiver.firstname$的股间",
+                "com_sex_legs_caress_C_description_begin_7":"$doer.firstname$的大腿压上$receiver.firstname$毫无反应的股间",
+                "com_sex_legs_caress_C_description_begin_8":"$doer.firstname$对着昏睡中的$receiver.firstname$用腿按压股间",
+                "com_sex_legs_caress_C_description_begin_9":"$doer.firstname$把大腿压在$receiver.firstname$昏睡中的阴蒂上",
+                "com_sex_legs_caress_C_description_begin_10":"$doer.firstname$在停住的时间里用大腿按压$receiver.firstname$的股间",
+                "com_sex_legs_caress_C_description_begin_11":"$doer.firstname$在时间停住时把腿压上$receiver.firstname$的阴蒂",
+                "com_sex_legs_caress_C_description_begin_12":"$doer.firstname$对着定格不动的$receiver.firstname$揉按股间",
+                "com_sex_legs_caress_C_description_after_4":"$doer.firstname$的大腿在高潮里绷紧",
+                "com_sex_legs_caress_C_description_after_5":"$doer.firstname$的腿随着高潮一阵发颤",
+                "com_sex_legs_caress_C_description_after_6":"$doer.firstname$压着的大腿在高潮中抖个不停",
+                "com_sex_legs_caress_C_description_remove_4":"$receiver.firstname$的股间上不再压着大腿",
+                "com_sex_legs_caress_C_description_remove_5":"$receiver.firstname$的双腿从$doer.firstname$的腿下松开",
+                "com_sex_legs_caress_C_description_remove_6":"$doer.firstname$的腿从$receiver.firstname$的阴蒂上撤开了"
 
             },
             "en-us":

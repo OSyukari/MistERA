@@ -162,6 +162,11 @@
                 "description_remove":{
                     "Entries":[
                         {
+                            "keepLooking":false,
+                            "conditions":[],
+                            "texts":["com_sex_finger_caress_B_description_remove_4", "com_sex_finger_caress_B_description_remove_5", "com_sex_finger_caress_B_description_remove_6"]
+                        },
+                        {
                             "_comment":"",
                             "keepLooking":true,
                             "texts":[ "com_sex_finger_caress_B_description_remove_1", "com_sex_finger_caress_B_description_remove_2", "com_sex_finger_caress_B_description_remove_3" ]
@@ -181,6 +186,21 @@
                 "description_begin":
                 {
                     "Entries":[
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}],
+                            "texts":["com_sex_finger_caress_B_description_begin_4", "com_sex_finger_caress_B_description_begin_5", "com_sex_finger_caress_B_description_begin_6"]
+                        },
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validateChara":{"statID":"isUnconscious","operand":"eq","value":"true","target":"receiver"}}],
+                            "texts":["com_sex_finger_caress_B_description_begin_7", "com_sex_finger_caress_B_description_begin_8", "com_sex_finger_caress_B_description_begin_9"]
+                        },
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validateChara":{"statID":"isTimestopped","operand":"eq","value":"true","target":"receiver"}}],
+                            "texts":["com_sex_finger_caress_B_description_begin_10", "com_sex_finger_caress_B_description_begin_11", "com_sex_finger_caress_B_description_begin_12"]
+                        },
                         {
                             "keepLooking":true,
                             "texts": ["com_sex_finger_caress_B_description_begin_1", "com_sex_finger_caress_B_description_begin_2", "com_sex_finger_caress_B_description_begin_3"]
@@ -376,7 +396,44 @@
                         "displayName":"com_sex_finger_caress_B_displayName_6_force",
                         "setForce":true
                     }
-                ]
+                ],
+                "description_begin":{
+                    "Entries":[
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}],
+                            "texts":["com_sex_finger_caress_B_force_description_begin_1", "com_sex_finger_caress_B_force_description_begin_2", "com_sex_finger_caress_B_force_description_begin_3"]
+                        },
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validateChara":{"statID":"isUnconscious","operand":"eq","value":"true","target":"receiver"}}],
+                            "texts":["com_sex_finger_caress_B_force_description_begin_4", "com_sex_finger_caress_B_force_description_begin_5", "com_sex_finger_caress_B_force_description_begin_6"]
+                        },
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validateChara":{"statID":"isTimestopped","operand":"eq","value":"true","target":"receiver"}}],
+                            "texts":["com_sex_finger_caress_B_force_description_begin_7", "com_sex_finger_caress_B_force_description_begin_8", "com_sex_finger_caress_B_force_description_begin_9"]
+                        }
+                    ]
+                },
+                "description_remove":{
+                    "Entries":[
+                        {
+                            "keepLooking":false,
+                            "conditions":[],
+                            "texts":["com_sex_finger_caress_B_force_description_remove_1", "com_sex_finger_caress_B_force_description_remove_2", "com_sex_finger_caress_B_force_description_remove_3"]
+                        }
+                    ]
+                },
+                "description_after":{
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "conditions":[{"validateChara":{"statID":"climaxed","operand":"eq","value":"true","target":"receiver"}}],
+                            "texts":["com_sex_finger_caress_B_force_description_after_1", "com_sex_finger_caress_B_force_description_after_2", "com_sex_finger_caress_B_force_description_after_3"]
+                        }
+                    ]
+                }
             }
         ]
     },
@@ -450,7 +507,34 @@
                 "com_sex_finger_caress_B_solo_group_force_description_after_2": "$doer.firstname$的乳头因高潮而凸起",
                 "com_sex_finger_caress_B_solo_group_force_description_after_3": "$doer.firstname$的乳头在高潮里抖个不停",
                 "com_sex_finger_caress_B_solo_group_force_description_ongoing_2": "$doer.firstname$左右手都捻着自己一边乳头",
-                "com_sex_finger_caress_B_solo_group_force_description_ongoing_3": "$doer.firstname$的手指一直没离开自己的乳头"
+                "com_sex_finger_caress_B_solo_group_force_description_ongoing_3": "$doer.firstname$的手指一直没离开自己的乳头",
+                "com_sex_finger_caress_B_description_begin_4":"$doer.firstname$依言把双手按上了$receiver.firstname$的奶子",
+                "com_sex_finger_caress_B_description_begin_5":"$doer.firstname$照着吩咐揉上$receiver.firstname$的奶子",
+                "com_sex_finger_caress_B_description_begin_6":"$doer.firstname$应着吩咐捏住$receiver.firstname$的奶子",
+                "com_sex_finger_caress_B_description_begin_7":"$doer.firstname$的手按上$receiver.firstname$毫无反应的奶子",
+                "com_sex_finger_caress_B_description_begin_8":"$doer.firstname$对着昏睡中的$receiver.firstname$揉起奶子",
+                "com_sex_finger_caress_B_description_begin_9":"$doer.firstname$把手按上$receiver.firstname$昏睡中的乳头揉弄",
+                "com_sex_finger_caress_B_description_begin_10":"$doer.firstname$在停住的时间里揉弄$receiver.firstname$的奶子",
+                "com_sex_finger_caress_B_description_begin_11":"$doer.firstname$在时间停住时按上$receiver.firstname$的乳头",
+                "com_sex_finger_caress_B_description_begin_12":"$doer.firstname$对着定格不动的$receiver.firstname$揉起奶子",
+                "com_sex_finger_caress_B_description_remove_4":"$receiver.firstname$的奶子上不再有手指按压",
+                "com_sex_finger_caress_B_description_remove_5":"$receiver.firstname$的奶子从$doer.firstname$的手下露了出来",
+                "com_sex_finger_caress_B_description_remove_6":"$doer.firstname$的手指从$receiver.firstname$的乳头上离开了",
+                "com_sex_finger_caress_B_force_description_begin_1":"$doer.firstname$依言把手指按上了$receiver.firstname$的乳头",
+                "com_sex_finger_caress_B_force_description_begin_2":"$doer.firstname$照着吩咐捏住$receiver.firstname$的乳头",
+                "com_sex_finger_caress_B_force_description_begin_3":"$doer.firstname$应着吩咐揉上$receiver.firstname$的乳头",
+                "com_sex_finger_caress_B_force_description_begin_4":"$doer.firstname$的手指捏上$receiver.firstname$毫无反应的乳头",
+                "com_sex_finger_caress_B_force_description_begin_5":"$doer.firstname$对着昏睡中的$receiver.firstname$把玩乳头",
+                "com_sex_finger_caress_B_force_description_begin_6":"$doer.firstname$捏住$receiver.firstname$昏睡中的乳头揉弄",
+                "com_sex_finger_caress_B_force_description_begin_7":"$doer.firstname$在停住的时间里揉弄$receiver.firstname$的乳头",
+                "com_sex_finger_caress_B_force_description_begin_8":"$doer.firstname$在时间停住时捏上$receiver.firstname$的乳头",
+                "com_sex_finger_caress_B_force_description_begin_9":"$doer.firstname$对着定格不动的$receiver.firstname$把玩乳头",
+                "com_sex_finger_caress_B_force_description_remove_1":"$doer.firstname$的手指从$receiver.firstname$的乳头上移开了",
+                "com_sex_finger_caress_B_force_description_remove_2":"$doer.firstname$把手从$receiver.firstname$的乳头收了回来",
+                "com_sex_finger_caress_B_force_description_remove_3":"$doer.firstname$松开了$receiver.firstname$的乳头",
+                "com_sex_finger_caress_B_force_description_after_1":"$receiver.firstname$的乳头在高潮里挺得笔直",
+                "com_sex_finger_caress_B_force_description_after_2":"$receiver.firstname$的乳头随着高潮变硬凸起",
+                "com_sex_finger_caress_B_force_description_after_3":"$receiver.firstname$的胸部在高潮里起伏起来"
 
             },
             "en-us":

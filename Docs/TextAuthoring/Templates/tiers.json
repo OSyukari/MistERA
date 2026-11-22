@@ -1,0 +1,12 @@
+{
+  "_comment": "Relationship tier template (Docs/TextAuthoring/Plan_CommandCases.md D41), inserted into kojo cases that name it (cases.json \"tiers\"). The relationship system is being reworked: edit the tiers here, no code change. A kojo branch covers a tier when a variant on its path has every field in `match` (fields of the variant or of its requirement); an empty match = the catch-all branch with none of the other tiers' fields. required: false = tier sub-cases are optional.",
+  "relationship": {
+    "required": false,
+    "tiers": [
+      { "id": "permission", "label": "有允许", "match": { "requirePermission": true } },
+      { "id": "like",       "label": "态度 ≥ Like", "match": { "requireSelfAttitudeGTE": "Like" } },
+      { "id": "master",     "label": "主人在场", "match": { "requireMaster": true } },
+      { "id": "base",       "label": "兜底", "match": {} }
+    ]
+  }
+}

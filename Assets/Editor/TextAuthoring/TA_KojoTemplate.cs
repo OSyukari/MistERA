@@ -116,7 +116,10 @@ public static class TA_KojoTemplate
         public bool ListenerUnaware { get { return side == "doer" ? receiverUnaware : side == "receiver" ? doerUnaware : doerUnaware || receiverUnaware; } }
     }
 
-    public static string Dir { get { return Path.Combine(TA_CaseTemplate.Dir, "kojo"); } }
+    /// <summary>Directory override for offline harnesses (they cannot read Application.dataPath); null = the real path.</summary>
+    public static string DirOverride;
+
+    public static string Dir { get { return DirOverride ?? Path.Combine(TA_CaseTemplate.Dir, "kojo"); } }
 
     /// <summary>The template a kojo-override key inherits: it replaces the command's result kojo.</summary>
     const string OverrideTemplate = "commandResult";
@@ -211,6 +214,22 @@ public static class TA_KojoTemplate
             if (!string.IsNullOrEmpty(t.inner) && templates.TryGetValue(t.inner, out var inner)) LoadExtras(t, inner.raw["extras"] as JObject);
         }
         return templates;
+    }
+
+    /// <summary>A loaded template by id (null when unknown); loads on first use.</summary>
+    public static Template Find(string id)
+    {
+        if (templates == null) Load();
+        return templates != null && templates.TryGetValue(id, out var t) ? t : null;
+    }
+
+    /// <summary>The command template that claims a kojo suffix via bindCommand ("" = the command's own key); null = none.</summary>
+    public static string ClaimedBy(string suffix)
+    {
+        if (templates == null) Load();
+        if (templates == null) return null;
+        foreach (var t in templates.Values) if (t.bindCommand.Contains(suffix)) return t.id;
+        return null;
     }
 
     /// <summary>

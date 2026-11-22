@@ -1,0 +1,26 @@
+{
+  "_comment": "Command `<COM>_Join` kojo (Plan_KojoTemplates.md §7.11): the act's doer, then its receiver, react when someone joins (EvaluationPackage.LogMessage_Join; listener = the joiner; not while the doer is time-stopped). Accepted joins only: a refused join belongs in `<COM>_JoinFailed` (template commandJoinFailed; the engine call is not wired yet), so refuse branches here are errors. Not the joiner's own keys (_Tryjoin / _Joined / _Join_Refused).",
+  "id": "commandJoin",
+  "label": "参与者对加入者的反应（加入成功）",
+  "inner": "interaction",
+  "bindCommand": ["_Join"],
+
+  "fallback": {
+    "label": "兜底（加入成功）",
+    "requirement": { "requireSelfAction": false, "requireTargetAction": false, "allowRecording": true }
+  },
+
+  "levels": [
+    {
+      "id": "role", "label": "说话者角色",
+      "leaves": {
+        "doer": { "label": "施方", "variant": { "requireSelfDoer": true } },
+        "receiver": { "label": "受方", "variant": { "requireSelfReceiver": true } }
+      }
+    }
+  ],
+
+  "misplaced": [
+    { "requirement": { "requireEPFailure": true }, "label": "加入被拒绝的分支", "moveTo": "_JoinFailed" }
+  ]
+}

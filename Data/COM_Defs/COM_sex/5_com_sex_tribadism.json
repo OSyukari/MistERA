@@ -65,7 +65,48 @@
                     }
                 ],
                 "description_begin": {
-                    "Entries": [{"texts": ["com_sex_tribadism_begin", "com_sex_tribadism_begin_1", "com_sex_tribadism_begin_2"]}]
+                    "Entries": [
+                        {
+                            "keepLooking": true,
+                            "conditions": [
+                                {
+                                    "validateChara": {
+                                        "target": "receiver",
+                                        "statID": "isUnconscious",
+                                        "operand": "eq",
+                                        "value": "true"
+                                    }
+                                }
+                            ],
+                            "texts": ["com_sex_tribadism_begin_3", "com_sex_tribadism_begin_4", "com_sex_tribadism_begin_5"]
+                        },
+                        {
+                            "keepLooking": true,
+                            "conditions": [
+                                {
+                                    "validateChara": {
+                                        "target": "receiver",
+                                        "statID": "isTimestopped",
+                                        "operand": "eq",
+                                        "value": "true"
+                                    }
+                                }
+                            ],
+                            "texts": ["com_sex_tribadism_begin_6", "com_sex_tribadism_begin_7", "com_sex_tribadism_begin_8"]
+                        },
+                        {
+                            "keepLooking": true,
+                            "conditions": [
+                                {
+                                    "validatePackage": {
+                                        "existsMaster_NonActor": true
+                                    }
+                                }
+                            ],
+                            "texts": ["com_sex_tribadism_begin_9", "com_sex_tribadism_begin_10", "com_sex_tribadism_begin_11"]
+                        },
+                        {"texts": ["com_sex_tribadism_begin", "com_sex_tribadism_begin_1", "com_sex_tribadism_begin_2"]}
+                    ]
                 },
                 "description_ongoing": {
                     "Entries": [{"texts": ["com_sex_tribadism_ongoing", "com_sex_tribadism_ongoing_1", "com_sex_tribadism_ongoing_2"]}]
@@ -89,7 +130,16 @@
                 "com_sex_tribadism_remove_1": "$doer.firstname$把阴唇从$receiver.firstname$的阴唇上移开",
                 "com_sex_tribadism_remove_2": "$doer.firstname$把胯部从$receiver.firstname$的腿间抽回来",
                 "com_sex_tribadism_ongoing_1": "$doer.firstname$的阴蒂顶着$receiver.firstname$的阴蒂磨个不停",
-                "com_sex_tribadism_ongoing_2": "$doer.firstname$用阴唇裹着$receiver.firstname$的阴唇蹭"
+                "com_sex_tribadism_ongoing_2": "$doer.firstname$用阴唇裹着$receiver.firstname$的阴唇蹭",
+                "com_sex_tribadism_begin_3": "$doer.firstname$把$receiver.firstname$瘫软的小穴压上自己的小穴磨",
+                "com_sex_tribadism_begin_4": "$doer.firstname$用阴蒂在$receiver.firstname$没有反应的阴唇上磨",
+                "com_sex_tribadism_begin_5": "$doer.firstname$把胯下的小穴磨开$receiver.firstname$合着的阴唇",
+                "com_sex_tribadism_begin_6": "$doer.firstname$在停住的时间里把小穴压上$receiver.firstname$的小穴磨开",
+                "com_sex_tribadism_begin_7": "$doer.firstname$在停住的时间里用阴蒂磨$receiver.firstname$的阴蒂",
+                "com_sex_tribadism_begin_8": "$doer.firstname$在停住的时间里把小穴压上$receiver.firstname$的阴唇磨开",
+                "com_sex_tribadism_begin_9": "$doer.firstname$依言把小穴压上$receiver.firstname$的小穴磨起来",
+                "com_sex_tribadism_begin_10": "$doer.firstname$照着吩咐用阴蒂顶磨$receiver.firstname$的阴蒂",
+                "com_sex_tribadism_begin_11": "$doer.firstname$应下吩咐把胯间的小穴挤进$receiver.firstname$的腿间磨上去"
             },
             "en-us": {
                 "com_sex_tribadism": "Mutual external genital contact stimulates both actors' clitorises. Requires an accessible clitoris on both actors; one pair only, without penetration.",

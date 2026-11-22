@@ -615,16 +615,26 @@ public static class TA_Changes
             {
                 var h = prop.Name;
                 if (!(prop.Value is JObject slot) || ((bool?)slot["readOnly"] ?? false)) continue;
-                if (!doc.TryGetValue(h, out var lines) || lines.Count == 0) continue;
+                bool requiredKojo = (string)slot["kind"] == "kojo" && (bool?)slot["optional"] != true;
+                if (!doc.TryGetValue(h, out var lines) || lines.Count == 0 || (requiredKojo && lines.TrueForAll(string.IsNullOrWhiteSpace)))
+                {
+                    if (requiredKojo) { log.AppendLine($"  {unit} 【{h}】 required Kojo slot is missing or empty - skipped"); skipped++; }
+                    continue;
+                }
                 // texts = what the doc showed (a pending record's lines when one was overlaid); liveTexts = the game's text then
                 var shown = TA_Revalidator.ToList(slot["texts"] as JArray);
                 if (TA_Revalidator.SameList(lines, shown)) continue;
                 var liveTexts = slot["liveTexts"] as JArray ?? slot["texts"] as JArray ?? new JArray();
-                bool pending = false;
-                for (int i = 0; i < lines.Count; i++) if (lines[i] == "待写") pending = true;
-                // optional slots (an inherited kojo, a new narration entry) left as they were: nothing to import
-                if (pending && ((bool?)slot["optional"] ?? false)) continue;
-                if (pending) { log.AppendLine($"  {unit} 【{h}】 still has 待写 - skipped"); skipped++; continue; }
+                int markers = 0;
+                for (int i = 0; i < lines.Count; i++) if (lines[i] == "待写") markers++;
+                bool pending = markers > 0;
+                // optional slots (an inherited kojo, a new narration entry) left as they were (marker-only): nothing to import
+                if (pending && markers == lines.Count && ((bool?)slot["optional"] ?? false)) continue;
+                if (pending)
+                {
+                    log.AppendLine($"  {unit} 【{h}】 still has 待写 ({markers}/{lines.Count} line(s)){(markers == lines.Count ? "" : " - mixed with filled lines, fill or clear the whole slot")} - skipped");
+                    skipped++; continue;
+                }
                 if ((string)slot["kind"] == "newEntry")
                 {
                     if (NewEntryRecord(slot, lines, unit, batch, h, records, byId)) changed++;

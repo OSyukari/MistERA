@@ -1,0 +1,120 @@
+{
+  "_comment": "Command case template (Docs/TextAuthoring/Plan_CommandCases.md). Read by Assets/Editor/TextAuthoring/TA_CaseTemplate.cs at every extraction; edit freely (by hand or by an agent), then Update store. Every rule here mirrors an engine fact (plan §3, §7) - keep it that way. Cases a command can't reach are pruned from its own data (requirement flags, D20, timeScale, comTags).",
+  "version": 1,
+
+  "_comment_states": "Kojo-side states a speaker or listener can be in besides awake. sides: which roles can be in it. reachableIf: fields of that side's CharaRequirement (req_Doers / req_Receivers) that must have these values. canAct: Character_Trainable.canAct in that state (false = kojo needs requireSelfAction / requireTargetAction false). tags: the character's tags in that state (what kojo selfTags / targetTags see). refuses: whether a receiver in that state can refuse (EVP_Modifiers: time-stopped, climaxing, unconscious, restrained always accept).",
+  "states": {
+    "sleeping":   { "sides": ["doer", "receiver"], "reachableIf": { "requireConscious": false }, "canAct": false, "tags": ["sleeping", "unconscious"], "refuses": false, "label": "睡眠中" },
+    "fainted":    { "sides": ["doer", "receiver"], "reachableIf": { "requireConscious": false }, "canAct": false, "tags": ["unconscious"], "refuses": false, "label": "昏迷（非睡眠）" },
+    "timestop":   { "sides": ["doer", "receiver"], "reachableIf": { "requireAction": false }, "canAct": false, "tags": ["timestop"], "refuses": false, "label": "时停中" },
+    "restrained": { "sides": ["receiver"], "reachableIf": { "requireUnrestrained": false }, "canAct": true, "tags": ["restrained"], "refuses": false, "label": "被束缚" }
+  },
+
+  "_comment_narrationStates": "Narration-side states: narration conditions can only compare stats (COM_Descriptions Validator_Chara → Character_Trainable.CompareStatValue). condition = the validateChara a new entry for this state uses (target is filled in: doer / receiver). A stat the engine can't compare is reported as a template warning.",
+  "narrationStates": {
+    "unconscious": { "reachableIf": { "requireConscious": false }, "condition": { "statID": "isUnconscious", "operand": "eq", "value": "true" }, "label": "失去意识（睡眠或昏迷）" },
+    "timestop":    { "reachableIf": { "requireAction": false }, "condition": { "statID": "isTimestopped", "operand": "eq", "value": "true" }, "label": "时停中" }
+  },
+
+  "_comment_narration": "Narration cases (completion task). field = description_<field>. when: command facts that must hold (pair, solo, ongoing, sex, d20, joinable, strong, group, itemExec). onlyIfPresent: the case exists only for a command that already has text in the field. perSide: one case per side that can climax, with condition (target filled in). states: also one optional case per reachable narration state of the receiver (pair) / doer (solo). package: a validatePackage condition (who ordered the act) the covering entry's path must have; entries with any master condition never cover a generic case. abort: description_remove, printed when the act is replaced or stopped (not while the doer is time-stopped), engine default ep_Description_abort. required: false = optional.",
+  "narration": [
+    { "id": "begin",      "field": "begin",      "required": true, "states": true, "label": "开始旁白（接受后）" },
+    { "id": "ongoing",    "field": "ongoing",    "required": true, "when": ["ongoing"], "label": "进行中旁白" },
+    { "id": "onComplete", "field": "onComplete", "required": true, "label": "完成旁白（旁观者看到）" },
+    { "id": "after",      "field": "after",      "required": true, "onlyIfPresent": true, "label": "结束旁白（成功后）", "_comment": "user 2026-11-18: a command without after narration doesn't get one (no case, no new-entry slot); one that has it is reviewed" },
+    { "id": "abort",      "field": "remove",     "required": false, "label": "中止旁白（被替换或停止）" },
+    { "id": "ordered",    "field": "begin",      "required": false, "package": { "existsMaster_NonActor": true }, "label": "第三方下令时的开始旁白" },
+    { "id": "climax",     "field": "after",      "required": true, "onlyIfPresent": true, "when": ["sex"], "perSide": true, "condition": { "statID": "climaxed", "operand": "eq", "value": "true" }, "label": "高潮后旁白" },
+    { "id": "group",      "field": "begin",      "required": false, "when": ["group"], "label": "多人版开始旁白" },
+    { "id": "strong",     "field": "begin",      "required": false, "when": ["strong"], "label": "强力版开始旁白" },
+    { "id": "execSuccess", "field": "execution_success", "required": true, "when": ["itemExec"], "variantOnly": true, "label": "使用成功" },
+    { "id": "execFailure", "field": "execution_failure", "required": true, "when": ["itemExec"], "variantOnly": true, "label": "使用失败" }
+  ],
+
+  "_comment_kojo": "Kojo cases (kojo task). suffix: lookup key = <command kojo key><suffix>. speakers: pair roles doer / receiver, solo role self. outcomes: accept / refuse (refuse only where the receiver can refuse). d20: an accepted result splits into Success / Failure when the command has a D20 check. states: the speaker's and the listener's reachable states each make a case. requireState / selfTags: woken = the receiver was asleep and woke (justWokenUp). fallback: a plain key that also covers the case (generic Interrupt). seen: MapUtility.CheckReverseInterrupt fetches <COM>_Interrupt for anyone walked in on, solo actors included (speaker self). joinReact: EvaluationPackage.LogMessage_Join - the act's doer and receiver (solo: the actor) react to the joiner (listener newcomer), with the action package; not while the doer is time-stopped. tiers: the relationship tier template inserted into each accepted case (tiers.json). order: ordered = a third party (the player in sex mode, the command panel's master) ordered the act - kojo sees masterRef = Package.Master, else the doer (KojoCollector.LoadEP), so an ordered doer / solo self is not the master and its branch needs requireSelfNotMaster; the receiver has no flag that tells an ordered act apart. outcome refuseOrder: the ordered doer refuses the order and speaks to the master (EvaluationPackage.LogMessage_Kojo); a doer acting on its own says nothing when it declines. First experience is not a command case (user, 2026-11-16: no position dependency) - it is the per-part OnFirstExperience_<class> kojo.",
+  "kojo": [
+    { "id": "begin",   "suffix": "_Begin", "speakers": ["receiver", "doer"], "outcomes": ["accept"], "states": true, "tiers": "relationship", "label": "开始口上", "_comment": "accept only: _Begin is fetched by PackageBegin on the accept path; a refusal prints only the generic refuse narration (LogMessage_Begin_Refuse) and the result kojo" },
+    { "id": "result",  "suffix": "",       "speakers": ["receiver", "doer", "self"], "outcomes": ["accept", "refuse"], "d20": true, "states": true, "tiers": "relationship", "label": "结果口上", "context": [
+      { "match": { "speaker": "self", "listener": "player", "outcome": "refuse" }, "who": { "self": "接到指令的 NPC", "target": "下令的玩家", "doer": "NPC（玩家下令）", "situation": "NPC 拒绝执行玩家的指令；玩家不参与动作。" } }
+    ] },
+    { "id": "woken",   "suffix": "",       "speakers": ["receiver"], "outcomes": ["accept", "refuse"], "requireState": "sleeping", "selfTags": ["justWokenUp"], "label": "被弄醒后" },
+    { "id": "ongoing", "suffix": "_Ongoing", "speakers": ["receiver", "doer", "self"], "listenersBySpeaker": { "self": ["player"] }, "outcomes": ["accept"], "when": ["ongoing"], "label": "进行中口上", "context": [
+      { "match": { "listener": "player" }, "who": { "target": "旁观的玩家", "situation": "动作还在进行；玩家在旁观看，不参与。" } },
+      { "match": { "listener": "player", "speaker": "receiver" }, "who": { "doer": "施方 NPC" } },
+      { "match": { "listener": "player", "speaker": "doer" }, "who": { "receiver": "受方 NPC" } },
+      { "match": { "listener": "npc" }, "who": { "situation": "NPC 对动作的另一方说话。" } }
+    ] },
+    { "id": "climax",  "suffix": "_Climax", "speakers": ["receiver", "doer", "self"], "outcomes": ["accept"], "when": ["sex"], "label": "高潮口上" },
+    { "id": "seen", "suffix": "_Interrupt", "fallback": "Interrupt", "speakers": ["receiver", "doer", "self"], "outcomes": ["accept"], "listeners": ["newcomer"], "category": true, "label": "被撞见", "scene": {}, "context": [
+      { "who": { "situation": "动作进行中被他人遇见；参与者对新来的人说话。" } },
+      { "match": { "speaker": "self" }, "who": { "self": "当前动作中的 NPC", "doer": "当前动作中的 NPC" } }
+    ] },
+    { "id": "join", "suffixes": ["_Tryjoin", "_Joined", "_Join_Refused"], "suffixLabels": { "_Tryjoin": "尝试加入", "_Joined": "加入成功", "_Join_Refused": "加入被拒绝" }, "speakers": ["joiner"], "outcomes": ["accept"], "when": ["joinable"], "category": true, "label": "加入", "scene": { "consumer": "codeInjectedJoin" }, "context": [
+      { "match": { "suffix": "_Tryjoin" }, "who": { "situation": "NPC 向玩家请求加入正在进行的活动。" } },
+      { "match": { "suffix": "_Joined" }, "who": { "situation": "NPC 成功加入，向玩家回应。" } },
+      { "match": { "suffix": "_Join_Refused" }, "who": { "situation": "NPC 未能加入，向玩家回应。" } }
+    ] },
+    { "id": "joinReact", "suffix": "_Join", "speakers": ["receiver", "doer", "self"], "outcomes": ["accept"], "listeners": ["newcomer"], "when": ["joinable"], "category": true, "label": "有人加入时（参与者的反应）", "scene": {}, "context": [
+      { "who": { "target": "加入者", "situation": "有人加入正在进行的动作；原参与者对加入者说话。" } },
+      { "match": { "speaker": "self" }, "who": { "self": "原参与者 NPC", "doer": "原参与者 NPC" } }
+    ] },
+    { "id": "joinFailedReact", "suffix": "_JoinFailed", "speakers": ["receiver", "doer", "self"], "outcomes": ["joinRefused"], "listeners": ["newcomer"], "when": ["joinable"], "category": true, "label": "有人未能加入（参与者的反应）", "scene": {}, "context": [
+      { "who": { "target": "未能加入的人", "situation": "加入未成；原参与者对未能加入的人说话。不预设是谁拒绝，也不预设原参与者独处。" } },
+      { "match": { "speaker": "self" }, "who": { "self": "原参与者 NPC", "doer": "原参与者 NPC" } }
+    ] },
+    { "id": "orderedBegin",  "suffix": "_Begin", "order": "ordered", "speakers": ["receiver", "doer"], "outcomes": ["accept"], "listeners": ["npc"], "when": ["pair"], "required": false, "label": "第三方下令·开始口上" },
+    { "id": "orderedResult", "suffix": "",       "order": "ordered", "speakers": ["receiver", "doer"], "outcomes": ["accept", "refuse"], "d20": true, "listeners": ["npc"], "when": ["pair"], "required": false, "label": "第三方下令·结果口上" },
+    { "id": "orderedRefuse", "suffix": "",       "order": "ordered", "speakers": ["doer"], "outcomes": ["refuseOrder"], "listeners": ["player"], "when": ["pair"], "required": false, "label": "拒绝下令的玩家", "context": [
+      { "who": { "self": "接到指令的施方 NPC", "target": "下令的玩家", "doer": "施方 NPC（玩家下令）", "receiver": "受方 NPC", "situation": "施方 NPC 拒绝执行玩家的指令；玩家不参与动作。" } }
+    ] },
+    { "id": "orderedSelf",   "suffix": "",       "order": "ordered", "speakers": ["self"], "outcomes": ["accept"], "d20": true, "listeners": ["self"], "when": ["solo"], "required": false, "label": "玩家下令·独自进行" }
+  ],
+
+  "_comment_kojoContext": "Writer context only. Apply kojoContext in order, then phase.context in order. match supports speaker, listener, outcome, suffix and ordered; omitted fields match any case. who merges self, target, doer, receiver and situation; null removes a field. This does not change runtime conditions.",
+  "kojoContext": [
+    { "match": { "speaker": "doer" }, "who": { "self": "施方 NPC", "target": "受方 NPC", "doer": "施方 NPC", "receiver": "受方 NPC" } },
+    { "match": { "speaker": "receiver" }, "who": { "self": "受方 NPC", "target": "施方 NPC", "doer": "施方 NPC", "receiver": "受方 NPC" } },
+    { "match": { "speaker": "self" }, "who": { "self": "单独行动的 NPC", "target": "自己", "doer": "单独行动的 NPC" } },
+    { "match": { "speaker": "joiner" }, "who": { "self": "加入者 NPC", "target": "玩家" } },
+    { "match": { "speaker": "doer", "listener": "player" }, "who": { "target": "玩家", "receiver": "玩家" } },
+    { "match": { "speaker": "receiver", "listener": "player" }, "who": { "target": "玩家", "doer": "玩家" } },
+    { "match": { "speaker": "self", "listener": "player" }, "who": { "target": "一同活动的玩家（各做各的）" } },
+    { "match": { "listener": "newcomer" }, "who": { "target": "新来的人" } },
+    { "match": { "speaker": "doer", "listener": "newcomer" }, "who": { "receiver": "受方（玩家或另一名 NPC）" } },
+    { "match": { "speaker": "receiver", "listener": "newcomer" }, "who": { "doer": "施方（玩家或另一名 NPC）" } },
+    { "match": { "ordered": true, "speaker": "doer" }, "who": { "doer": "施方 NPC（玩家下令）" } },
+    { "match": { "ordered": true, "speaker": "receiver" }, "who": { "doer": "施方 NPC（玩家下令）" } },
+    { "match": { "ordered": true, "speaker": "self" }, "who": { "doer": "NPC（玩家下令）" } }
+  ],
+
+  "_comment_profiles": "Command authoring profiles share the phase definitions above. A command uses its binding, then its category parent's binding, then standard. omit excludes phases from both cases and scenes. category marks phases owned by the category unit when there is one. assign includes all eligible roles in that phase, with dedicated text at the assigned key.",
+  "profiles": {
+    "standard": { "assign": ["seen", "join", "joinReact", "joinFailedReact"] },
+    "sexTouch": { "omit": ["join", "joinReact", "joinFailedReact"], "assign": ["seen"] }
+  },
+  "commandProfiles": {
+    "com_sex_base": "sexTouch",
+    "com_sex_service_base": "sexTouch",
+    "com_touch_safe_base": "sexTouch",
+    "com_touch_unsafe_base": "sexTouch",
+    "com_touch_head": "sexTouch"
+  },
+
+  "_comment_roles": "Whether a speaker role's kojo cases are required (D43: the reacting side must speak, the doer may).",
+  "roles": {
+    "receiver": { "required": true, "label": "受方" },
+    "self":     { "required": true, "label": "自己（单人）" },
+    "doer":     { "required": false, "label": "施方" },
+    "joiner":   { "required": false, "label": "加入者" }
+  },
+
+  "_comment_words": "How the docs name a kojo case's listener, outcome and the ordered prefix (speaker names: roles.label, state names: states.label).",
+  "words": {
+    "listeners": { "player": "玩家", "npc": "NPC", "self": "自己", "newcomer": "新来的人" },
+    "outcomes": { "accept": "接受", "refuse": "拒绝", "success": "接受·判定成功", "failure": "接受·判定失败", "refuseOrder": "拒绝下令", "joinRefused": "未能加入", "event": "事件中" },
+    "ordered": "〔第三方下令〕"
+  },
+
+  "_comment_overrides": "Per command ID or comTag: { \"drop\": [case id prefixes], \"optional\": [case id prefixes], \"require\": [case id prefixes] }. Case ids look like kojo.result.receiver.awake.player.success or narr.begin.",
+  "overrides": {}
+}

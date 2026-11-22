@@ -108,6 +108,11 @@
                     "Entries":[
                         {
                             "keepLooking":true,
+                            "conditions":[{"validateChara":{"statID":"climaxed","operand":"eq","value":"true","target":"doer"}}],
+                            "texts":["com_sex_oral_kiss_description_after_4", "com_sex_oral_kiss_description_after_5", "com_sex_oral_kiss_description_after_6"]
+                        },
+                        {
+                            "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
                             "texts":[ "com_sex_oral_kiss_description_after_1", "com_sex_oral_kiss_description_after_2", "com_sex_oral_kiss_description_after_3" ]
                         }
@@ -116,6 +121,21 @@
                 "description_begin":
                 {
                     "Entries":[
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}],
+                            "texts":["com_sex_oral_kiss_description_begin_4", "com_sex_oral_kiss_description_begin_5", "com_sex_oral_kiss_description_begin_6"]
+                        },
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validateChara":{"statID":"isUnconscious","operand":"eq","value":"true","target":"receiver"}}],
+                            "texts":["com_sex_oral_kiss_description_begin_7", "com_sex_oral_kiss_description_begin_8", "com_sex_oral_kiss_description_begin_9"]
+                        },
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validateChara":{"statID":"isTimestopped","operand":"eq","value":"true","target":"receiver"}}],
+                            "texts":["com_sex_oral_kiss_description_begin_10", "com_sex_oral_kiss_description_begin_11", "com_sex_oral_kiss_description_begin_12"]
+                        },
                         {
                             "keepLooking":true,
                             "texts": ["com_sex_oral_kiss_description_begin_1", "com_sex_oral_kiss_description_begin_2", "com_sex_oral_kiss_description_begin_3"]
@@ -219,8 +239,32 @@
                 {
                     "Entries":[
                         {
+                            "keepLooking":false,
+                            "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}],
+                            "texts":["com_sex_oral_kiss_tongue_description_begin_4", "com_sex_oral_kiss_tongue_description_begin_5", "com_sex_oral_kiss_tongue_description_begin_6"]
+                        },
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validateChara":{"statID":"isUnconscious","operand":"eq","value":"true","target":"receiver"}}],
+                            "texts":["com_sex_oral_kiss_tongue_description_begin_7", "com_sex_oral_kiss_tongue_description_begin_8", "com_sex_oral_kiss_tongue_description_begin_9"]
+                        },
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validateChara":{"statID":"isTimestopped","operand":"eq","value":"true","target":"receiver"}}],
+                            "texts":["com_sex_oral_kiss_tongue_description_begin_10", "com_sex_oral_kiss_tongue_description_begin_11", "com_sex_oral_kiss_tongue_description_begin_12"]
+                        },
+                        {
                             "keepLooking":true,
                             "texts": ["com_sex_oral_kiss_tongue_description_begin_1", "com_sex_oral_kiss_tongue_description_begin_2", "com_sex_oral_kiss_tongue_description_begin_3"]
+                        }
+                    ]
+                },
+                "description_remove":{
+                    "Entries":[
+                        {
+                            "keepLooking":false,
+                            "conditions":[],
+                            "texts":["com_sex_oral_kiss_tongue_description_remove_1", "com_sex_oral_kiss_tongue_description_remove_2", "com_sex_oral_kiss_tongue_description_remove_3"]
                         }
                     ]
                 }
@@ -263,7 +307,31 @@
                 "com_sex_oral_kiss_description_after_2": "$receiver.firstname$的嘴唇贴着$doer.firstname$的唇抖个不停",
                 "com_sex_oral_kiss_description_after_3": "$receiver.firstname$的舌尖在$doer.firstname$的舌头上抖着",
                 "com_sex_oral_kiss_description_begin_2": "$doer.firstname$把$receiver.firstname$的嘴唇含进嘴里碾",
-                "com_sex_oral_kiss_description_begin_3": "$doer.firstname$的嘴贴上$receiver.firstname$的嘴唇磨"
+                "com_sex_oral_kiss_description_begin_3": "$doer.firstname$的嘴贴上$receiver.firstname$的嘴唇磨",
+                "com_sex_oral_kiss_description_begin_4":"$doer.firstname$应下这声吩咐，把嘴唇压上$receiver.firstname$的唇",
+                "com_sex_oral_kiss_description_begin_5":"$doer.firstname$照着吩咐凑过去，把$receiver.firstname$的嘴唇含住",
+                "com_sex_oral_kiss_description_begin_6":"$doer.firstname$领了吩咐低下头，嘴贴上$receiver.firstname$的嘴唇",
+                "com_sex_oral_kiss_description_begin_7":"$doer.firstname$的嘴唇压上熟睡的$receiver.firstname$的嘴唇",
+                "com_sex_oral_kiss_description_begin_8":"$doer.firstname$把睡着的$receiver.firstname$的嘴唇含进嘴里",
+                "com_sex_oral_kiss_description_begin_9":"$doer.firstname$的嘴贴住昏睡的$receiver.firstname$的嘴唇吸",
+                "com_sex_oral_kiss_description_begin_10":"$doer.firstname$在停住的时间里把嘴唇压上$receiver.firstname$的唇",
+                "com_sex_oral_kiss_description_begin_11":"$doer.firstname$的嘴在停住的时间里含住$receiver.firstname$的嘴唇",
+                "com_sex_oral_kiss_description_begin_12":"$doer.firstname$在停住的时间里贴上$receiver.firstname$的嘴唇吸",
+                "com_sex_oral_kiss_description_after_4":"$doer.firstname$的嘴唇把$receiver.firstname$的唇压得更狠",
+                "com_sex_oral_kiss_description_after_5":"$doer.firstname$的舌头在$receiver.firstname$的嘴里搅得更急",
+                "com_sex_oral_kiss_description_after_6":"$doer.firstname$的舌头在$receiver.firstname$的嘴里一阵发紧",
+                "com_sex_oral_kiss_tongue_description_begin_4":"$doer.firstname$应下这声吩咐，把舌头伸进$receiver.firstname$的嘴",
+                "com_sex_oral_kiss_tongue_description_begin_5":"$doer.firstname$照着吩咐倾过脸，舌头撬开$receiver.firstname$的牙关",
+                "com_sex_oral_kiss_tongue_description_begin_6":"$doer.firstname$领了吩咐凑上去，舌头缠住$receiver.firstname$的舌头",
+                "com_sex_oral_kiss_tongue_description_begin_7":"$doer.firstname$的舌头撬进熟睡的$receiver.firstname$的嘴里",
+                "com_sex_oral_kiss_tongue_description_begin_8":"$doer.firstname$的舌头伸进睡着的$receiver.firstname$的嘴里搅",
+                "com_sex_oral_kiss_tongue_description_begin_9":"$doer.firstname$的舌尖舔过昏睡的$receiver.firstname$的舌头",
+                "com_sex_oral_kiss_tongue_description_begin_10":"$doer.firstname$在停住的时间里把舌头撬进$receiver.firstname$的嘴",
+                "com_sex_oral_kiss_tongue_description_begin_11":"$doer.firstname$的舌头在停住的时间里伸进$receiver.firstname$的嘴里",
+                "com_sex_oral_kiss_tongue_description_begin_12":"$doer.firstname$在停住的时间里缠上$receiver.firstname$的舌头",
+                "com_sex_oral_kiss_tongue_description_remove_1":"$doer.firstname$把舌头从$receiver.firstname$的嘴里抽出来",
+                "com_sex_oral_kiss_tongue_description_remove_2":"$doer.firstname$的舌头从$receiver.firstname$的舌头上松开",
+                "com_sex_oral_kiss_tongue_description_remove_3":"$doer.firstname$的舌尖离开$receiver.firstname$的嘴"
 
             },
             "en-us":

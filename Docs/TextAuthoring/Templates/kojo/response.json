@@ -1,0 +1,61 @@
+{
+  "_comment": "Kojo template `response` (Docs/TextAuthoring/Plan_KojoTemplates.md §7.14): the speaker answers someone - a permission request, a relationship event, a dialogue option. The speaker can always respond here (e.g. a permission granter must be able to act; low consciousness and refusal have their own keys), so there is no status or consent axis and the fallback is a plain unconditional branch with own lines. Every branch is optional except the fallback. Edit freely, then Update store.",
+  "id": "response",
+  "label": "回应（许可 / 关系 / 选项）",
+
+  "_comment_bind": "Entries proposed for this template (templateBind, reviewed): own entries whose key starts with one of these, without a template field yet.",
+  "bind": ["permission_", "relationship_", "Opt_"],
+
+  "_comment_fallback": "The mandatory last branch: default requirement, no role / master / strong flags, no keepLooking, own lines.",
+  "fallback": {
+    "label": "兜底（无条件）",
+    "requirement": {}
+  },
+  "placeholder": "(unimplemented: response fallback)",
+
+  "_comment_axes": "kind: target (targetBaseID, or targetTags from `tags`), relationship (requireRelationshipTypes; legacy targetTags relationship_*), attitude (requireSelfAttitudeGTE / requireSelfAttitudeKey). examples: suggested branches - other values of the same fields count as the same axis.",
+  "axes": [
+    {
+      "id": "target", "kind": "target", "label": "对方是谁",
+      "tags": ["male", "female", "ambi", "human", "animal", "creature", "insect", "corpse", "pov",
+               "humanrace", "playableRace", "humanoid", "large_animal", "dog", "horse", "pig", "bear", "goblin", "android", "child", "corrupted", "BlueArchive", "NIKKE"],
+      "examples": [
+        { "label": "玩家", "requirement": { "targetBaseID": "PLAYER" } },
+        { "label": "男性", "requirement": { "targetTags": ["male"] } },
+        { "label": "女性", "requirement": { "targetTags": ["female"] } }
+      ]
+    },
+    {
+      "id": "relationship", "kind": "relationship", "label": "关系",
+      "examples": [
+        { "label": "亲密", "group": "intimate" },
+        { "label": "友好", "group": "friendly" },
+        { "label": "敌对", "group": "hostile" },
+        { "label": "受害方", "group": "victim" },
+        { "label": "居上位", "group": "authorityOver" },
+        { "label": "居下位", "group": "underAuthority" },
+        { "label": "家人", "group": "family" }
+      ]
+    },
+    {
+      "id": "attitude", "kind": "attitude", "label": "态度",
+      "examples": [
+        { "label": "爱", "requirement": { "requireSelfAttitudeGTE": "Love" } },
+        { "label": "喜欢", "requirement": { "requireSelfAttitudeGTE": "Like" } }
+      ]
+    }
+  ],
+
+  "_comment_relationshipGroups": "Suggested relationship branches (requireRelationshipTypes lists), same as `interaction`. `<type>:A` / `<type>:B` = the speaker is that side of a one-sided type; a plain type = either side.",
+  "relationshipGroups": {
+    "intimate": ["relationship_couple", "relationship_marriage", "relationship_fwb"],
+    "friendly": ["relationship_friend", "relationship_bff", "relationship_housemate"],
+    "hostile": ["relationship_enemy", "relationship_rival", "relationship_bully:A"],
+    "victim": ["relationship_bully:B", "relationship_prisoner:B", "relationship_slave:B"],
+    "authorityOver": ["relationship_parent:A", "relationship_stepparent:A", "relationship_family_guardian:A", "relationship_slave:A", "relationship_servant:A", "relationship_subordinate:A", "relationship_prisoner:A", "relationship_mentor:A", "relationship_ba_teacher_student:A", "relationship_erav_filmstudio_director_actor:A"],
+    "underAuthority": ["relationship_parent:B", "relationship_stepparent:B", "relationship_family_guardian:B", "relationship_servant:B", "relationship_subordinate:B", "relationship_mentor:B", "relationship_ba_teacher_student:B", "relationship_erav_filmstudio_director_actor:B"],
+    "family": ["relationship_parent", "relationship_sibling", "relationship_stepparent", "relationship_family", "relationship_family_guardian"],
+    "peers": ["relationship_colleague", "relationship_ba_studentmates", "relationship_erav_filmstudio_actor_actor", "relationship_sibling"],
+    "distant": ["relationship_stranger", "relationship_acquaintance"]
+  }
+}

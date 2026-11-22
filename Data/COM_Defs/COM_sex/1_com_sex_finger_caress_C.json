@@ -146,6 +146,11 @@
                 "description_remove":{
                     "Entries":[
                         {
+                            "keepLooking":false,
+                            "conditions":[],
+                            "texts":["com_sex_finger_caress_C_description_remove_4", "com_sex_finger_caress_C_description_remove_5", "com_sex_finger_caress_C_description_remove_6"]
+                        },
+                        {
                             "_comment":"",
                             "keepLooking":true,
                             "texts":[ "com_sex_finger_caress_C_description_remove_1", "com_sex_finger_caress_C_description_remove_2", "com_sex_finger_caress_C_description_remove_3" ]
@@ -165,6 +170,21 @@
                 "description_begin":
                 {
                     "Entries":[ 
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}],
+                            "texts":["com_sex_finger_caress_C_description_begin_4", "com_sex_finger_caress_C_description_begin_5", "com_sex_finger_caress_C_description_begin_6"]
+                        },
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validateChara":{"statID":"isUnconscious","operand":"eq","value":"true","target":"receiver"}}],
+                            "texts":["com_sex_finger_caress_C_description_begin_7", "com_sex_finger_caress_C_description_begin_8", "com_sex_finger_caress_C_description_begin_9"]
+                        },
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validateChara":{"statID":"isTimestopped","operand":"eq","value":"true","target":"receiver"}}],
+                            "texts":["com_sex_finger_caress_C_description_begin_10", "com_sex_finger_caress_C_description_begin_11", "com_sex_finger_caress_C_description_begin_12"]
+                        },
                         {
                             "_comment":"if receiver is lewd or is estrus. blocks timestop or unconscious",
                             "keepLooking":true,
@@ -221,7 +241,19 @@
                 "com_sex_finger_caress_C_description_begin_2": "$doer.firstname$的两根手指揉起$receiver.firstname$的阴蒂",
                 "com_sex_finger_caress_C_description_begin_3": "$doer.firstname$捏住$receiver.firstname$的阴蒂揉弄起来",
                 "com_sex_finger_caress_C_description_remove_2": "$doer.firstname$把手从$receiver.firstname$的阴蒂上收了回来",
-                "com_sex_finger_caress_C_description_remove_3": "$doer.firstname$松开了$receiver.firstname$的阴蒂"
+                "com_sex_finger_caress_C_description_remove_3": "$doer.firstname$松开了$receiver.firstname$的阴蒂",
+                "com_sex_finger_caress_C_description_begin_4":"$doer.firstname$依言把手指按上了$receiver.firstname$的阴蒂",
+                "com_sex_finger_caress_C_description_begin_5":"$doer.firstname$照着吩咐揉上$receiver.firstname$的阴蒂",
+                "com_sex_finger_caress_C_description_begin_6":"$doer.firstname$应着吩咐捏住$receiver.firstname$的阴蒂",
+                "com_sex_finger_caress_C_description_begin_7":"$doer.firstname$的手指按上$receiver.firstname$毫无反应的阴蒂",
+                "com_sex_finger_caress_C_description_begin_8":"$doer.firstname$对着昏睡中的$receiver.firstname$揉起阴蒂",
+                "com_sex_finger_caress_C_description_begin_9":"$doer.firstname$捏住$receiver.firstname$昏睡中的阴蒂揉弄",
+                "com_sex_finger_caress_C_description_begin_10":"$doer.firstname$在停住的时间里揉弄$receiver.firstname$的阴蒂",
+                "com_sex_finger_caress_C_description_begin_11":"$doer.firstname$在时间停住时按上$receiver.firstname$的阴蒂",
+                "com_sex_finger_caress_C_description_begin_12":"$doer.firstname$对着定格不动的$receiver.firstname$揉起阴蒂",
+                "com_sex_finger_caress_C_description_remove_4":"$receiver.firstname$的阴蒂上不再有手指按压",
+                "com_sex_finger_caress_C_description_remove_5":"$receiver.firstname$的阴蒂从$doer.firstname$的手下露了出来",
+                "com_sex_finger_caress_C_description_remove_6":"$doer.firstname$的手指从$receiver.firstname$的阴蒂上离开了"
 
             },
             "en-us":

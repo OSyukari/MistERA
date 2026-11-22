@@ -163,6 +163,11 @@
                 "description_remove":{
                     "Entries":[
                         {
+                            "keepLooking":false,
+                            "conditions":[],
+                            "texts":["com_sex_finger_insert_A_description_remove_4", "com_sex_finger_insert_A_description_remove_5", "com_sex_finger_insert_A_description_remove_6"]
+                        },
+                        {
                             "_comment":"",
                             "keepLooking":true,
                             "texts":[ "com_sex_finger_insert_A_description_remove_1", "com_sex_finger_insert_A_description_remove_2", "com_sex_finger_insert_A_description_remove_3" ]
@@ -182,6 +187,21 @@
                 "description_begin":
                 {
                     "Entries":[ 
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}],
+                            "texts":["com_sex_finger_insert_A_description_begin_4", "com_sex_finger_insert_A_description_begin_5", "com_sex_finger_insert_A_description_begin_6"]
+                        },
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validateChara":{"statID":"isUnconscious","operand":"eq","value":"true","target":"receiver"}}],
+                            "texts":["com_sex_finger_insert_A_description_begin_7", "com_sex_finger_insert_A_description_begin_8", "com_sex_finger_insert_A_description_begin_9"]
+                        },
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validateChara":{"statID":"isTimestopped","operand":"eq","value":"true","target":"receiver"}}],
+                            "texts":["com_sex_finger_insert_A_description_begin_10", "com_sex_finger_insert_A_description_begin_11", "com_sex_finger_insert_A_description_begin_12"]
+                        },
                         {
                             "keepLooking":true,
                             "texts": ["com_sex_finger_insert_A_description_begin_1", "com_sex_finger_insert_A_description_begin_2", "com_sex_finger_insert_A_description_begin_3"]
@@ -237,7 +257,19 @@
                 "com_sex_finger_insert_A_solo_group_description_begin_2": "$doer.firstname$的手指插进自己的后穴抽送着",
                 "com_sex_finger_insert_A_solo_group_description_begin_3": "$doer.firstname$把手指推进自己的屁眼里抽插",
                 "com_sex_finger_insert_A_solo_description_ongoing_2": "$doer.firstname$的手指一直送在自己肛门里",
-                "com_sex_finger_insert_A_solo_description_ongoing_3": "$doer.firstname$没停下抽送自己的后穴"
+                "com_sex_finger_insert_A_solo_description_ongoing_3": "$doer.firstname$没停下抽送自己的后穴",
+                "com_sex_finger_insert_A_description_begin_4":"$doer.firstname$依言把手指插进了$receiver.firstname$的肛门",
+                "com_sex_finger_insert_A_description_begin_5":"$doer.firstname$照着吩咐把手指送进$receiver.firstname$的后穴",
+                "com_sex_finger_insert_A_description_begin_6":"$doer.firstname$应着吩咐指入$receiver.firstname$的屁眼",
+                "com_sex_finger_insert_A_description_begin_7":"$doer.firstname$的手指插进$receiver.firstname$毫无反应的肛门",
+                "com_sex_finger_insert_A_description_begin_8":"$doer.firstname$对着昏睡中的$receiver.firstname$指入肛门",
+                "com_sex_finger_insert_A_description_begin_9":"$doer.firstname$把手指送进$receiver.firstname$昏睡中的后穴",
+                "com_sex_finger_insert_A_description_begin_10":"$doer.firstname$在停住的时间里抽插$receiver.firstname$的肛门",
+                "com_sex_finger_insert_A_description_begin_11":"$doer.firstname$在时间停住时把手指送进$receiver.firstname$的屁眼",
+                "com_sex_finger_insert_A_description_begin_12":"$doer.firstname$对着定格不动的$receiver.firstname$指入后穴",
+                "com_sex_finger_insert_A_description_remove_4":"$receiver.firstname$的肛门上不再有手指插入",
+                "com_sex_finger_insert_A_description_remove_5":"$receiver.firstname$的屁眼重新收拢回去",
+                "com_sex_finger_insert_A_description_remove_6":"$doer.firstname$的手指从$receiver.firstname$的后穴上离开了"
 
             },
             "en-us":

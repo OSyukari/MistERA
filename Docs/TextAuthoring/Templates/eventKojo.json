@@ -1,0 +1,6 @@
+{
+  "_comment": "Event kojo lookup specs (Docs/TextAuthoring/Plan_CommandCases.md §6.1, D48). Read by Assets/Editor/TextAuthoring/TA_CaseTemplate.cs at every extraction. Events get no case template; only a kojo lookup listed here gets cases - the situations it must handle. A lookup not listed keeps the plain rule (it needs some kojo). Keys: events.<event ID>.<kojo key (GetKojoEntry argument 3) or $storeKey$ name (argument 4)>.",
+  "_comment_spec": "label: doc name of the lookup (default the kojo key). states: speaker states from cases.json `states` (sleeping, fainted, timestop, restrained) - each is one more case besides awake; list only states the speaker can really be in when the event runs. listeners: player / npc - one case each (needs targetBaseID PLAYER for the player case); empty or omitted = the fetch's listener as is; ignored when the speaker talks to itself. tiers: a tier set from tiers.json (relationship) shown per case. required: false = optional cases (default true). Shape: \"<event ID>\": { \"<kojo key>\": { \"label\": \"…\", \"states\": [\"restrained\"], \"listeners\": [\"player\", \"npc\"], \"tiers\": \"relationship\" } }. A key that matches no lookup of the event is reported as a finding.",
+  "version": 1,
+  "events": {}
+}

@@ -53,53 +53,17 @@ public class TA_Renderer
         RenderOps(snap.shared["ops"] as JArray);
         CaseSection();
 
-        // each task lists the findings its owner fixes (Plan_TaskReorg.md §4): completion the unit's, kojo the target's
-        var findings = new List<JObject>();
-        var unit = (string)snap.shared["unit"];
-        if (mode == TA_Mode.Completion) AddAll(findings, snap.shared["findings"] as JArray);
-        else
-        {
-            var all = new List<JObject>();
-            AddAll(all, snap.layers[Target]["findings"] as JArray);
-            for (int i = 0; i < all.Count; i++)
-                if (TA_Changes.FindingOwner(all[i], (string)all[i]["targetKey"], unit) == "personality|" + Target) findings.Add(all[i]);
-        }
-
         sb.AppendLine("---");
-        sb.AppendLine(TA_Text.Get("doc.footer.structureHeading"));
-        var lines = new List<string>();
-        for (int i = 0; i < findings.Count; i++)
-        {
-            var s = FindingText(findings[i]);
-            if (!lines.Contains(s)) lines.Add(s);
-        }
-        var proposed = overlay?.Structural((string)snap.shared["unit"]) ?? new List<JObject>();
-        if (lines.Count + proposed.Count < 1) sb.AppendLine(TA_Text.Get("doc.footer.none"));
-        for (int i = 0; i < lines.Count; i++) sb.AppendLine("- " + lines[i]);
-        // structural changes an analyst already proposed (open records): listed so nobody re-reports them
-        for (int i = 0; i < proposed.Count; i++)
-        {
-            var r = proposed[i];
-            var proposal = (string)r["issue"]?["proposal"] ?? "";
-            sb.AppendLine("- " + TA_Text.F("doc.change.proposed", "id", (string)r["id"], "state", (string)r["state"],
-                "problem", (string)r["issue"]?["problem"] ?? "", "proposal", proposal == "" ? "" : TA_Text.F("doc.change.proposalSuffix", "proposal", proposal)));
-            if (r["notes"] is JArray notes)
-                for (int k = 0; k < notes.Count; k++) sb.AppendLine(TA_Text.F("doc.change.proposedNote", "from", (string)notes[k]["from"], "text", (string)notes[k]["text"]));
-        }
-        sb.AppendLine();
         sb.AppendLine(TA_Text.Get("doc.footer.pendingHeading"));
         sb.AppendLine("- ");
         sb.AppendLine();
         sb.AppendLine(TA_Text.F("doc.footer.slotCount", "n", nCount.ToString(), "k", kCount.ToString()));
 
-        var unreachable = new JArray();
-        AddAll(unreachable, snap.shared["unreachable"] as JArray);
         var info = new JArray();
         var pids = new JArray();
         for (int i = 0; i < snap.layerOrder.Count; i++)
         {
             var l = snap.layers[snap.layerOrder[i]];
-            AddAll(unreachable, l["unreachable"] as JArray);
             info.Add(l["info"].DeepClone());
             pids.Add(snap.layerOrder[i]);
         }
@@ -116,20 +80,11 @@ public class TA_Renderer
                 ["struct"] = storeHashes?["struct"],
                 ["unit"] = storeHashes?["unit"]
             },
-            ["slots"] = manifestSlots,
-            ["unreachable"] = unreachable
+            ["slots"] = manifestSlots
         };
+        if (snap.shared["generatorGroup"] is JObject group) manifest["generatorGroup"] = group.DeepClone();
+        if (snap.shared["categoryGroup"] is JObject category) manifest["categoryGroup"] = category.DeepClone();
         return sb.ToString();
-    }
-
-    static void AddAll(List<JObject> into, JArray a)
-    {
-        if (a != null) for (int i = 0; i < a.Count; i++) if (a[i] is JObject o) into.Add(o);
-    }
-
-    static void AddAll(JArray into, JArray a)
-    {
-        if (a != null) for (int i = 0; i < a.Count; i++) into.Add(a[i].DeepClone());
     }
 
     // ---------------------------------------------------------------- ops
@@ -141,19 +96,60 @@ public class TA_Renderer
         {
             var op = ops[i] as JObject;
             if (op == null) continue;
+            var textKey = (string)op["k"];
+            if (textKey == "doc.kojo.missingChain" || textKey == "doc.kojo.noBranch" || textKey == "doc.kojo.entryFrom"
+                || textKey == "doc.kojo.fromSource" || textKey == "doc.kojo.personalityMissing" || textKey == "doc.command.kojoFallback") continue;
             if (op["hdr"] != null) Header((string)op["hdr"]);
             else if (op["kp"] != null)
             {
-                if (mode == TA_Mode.Completion) { ImplementedLine(op["cov"] as JObject); continue; }
+                if (mode == TA_Mode.Completion) continue;
                 var pos = op["kp"].ToString();
                 RenderOps(snap.layers[Target]["positions"]?[pos] as JArray);
                 BlankKojo(pos);
             }
             else if (op["newEntry"] != null) { if (mode == TA_Mode.Completion) NewEntry((JObject)op["newEntry"]); }
             else if (op["slot"] != null) Slot((string)op["slot"]);
+            else if ((string)op["k"] == "doc.command.generatedGroup" && snap.shared["generatorGroup"] is JObject group) GroupContext(group);
+            else if ((string)op["k"] == "doc.command.categoryGroup" && snap.shared["categoryGroup"] is JObject category) CategoryContext(category);
             else if (op["k"] != null) sb.AppendLine((string)op["p"] + TA_Text.F((string)op["k"], Args(op["a"] as JArray)));
             else sb.AppendLine((string)op["l"] ?? "");
         }
+    }
+
+    void GroupContext(JObject group)
+    {
+        var source = (string)group["sourceID"] ?? "";
+        var key = (string)group["kojoKey"] ?? "";
+        var name = (string)group["sourceName"];
+        if (string.IsNullOrEmpty(name)) name = source;
+        sb.AppendLine(TA_Text.F("doc.command.groupScope", "name", name, "source", source, "kojo", key));
+        if (source == key && source != "") sb.AppendLine(TA_Text.Get("doc.command.groupBaseKojo"));
+        sb.AppendLine(TA_Text.Get(mode == TA_Mode.Kojo ? "doc.command.groupKojoUse" : "doc.command.groupNarrationUse"));
+        sb.AppendLine(TA_Text.Get("doc.command.groupMembers"));
+        if (group["members"] is JArray members)
+            for (int i = 0; i < members.Count; i++)
+            {
+                var id = (string)members[i]["commandID"] ?? "";
+                var display = (string)members[i]["displayName"];
+                sb.AppendLine(TA_Text.F("doc.command.groupMember", "name", string.IsNullOrEmpty(display) ? id : display, "id", id));
+            }
+        sb.AppendLine(TA_Text.F("doc.command.groupRepresentative", "name", (string)group["representativeName"] ?? "", "id", (string)group["representativeID"] ?? ""));
+    }
+
+    /// <summary>A category unit's header block: the six keys this parent serves and the children that resolve here.</summary>
+    void CategoryContext(JObject group)
+    {
+        var id = (string)group["id"] ?? "";
+        sb.AppendLine(TA_Text.F("doc.command.categoryScope", "id", id));
+        sb.AppendLine(TA_Text.Get("doc.command.categoryChildren"));
+        if (group["children"] is JArray children)
+            for (int i = 0; i < children.Count; i++)
+            {
+                var cid = (string)children[i]["commandID"] ?? "";
+                var display = (string)children[i]["displayName"];
+                sb.AppendLine(TA_Text.F("doc.command.groupMember", "name", string.IsNullOrEmpty(display) ? cid : display, "id", cid));
+            }
+        sb.AppendLine(TA_Text.Get("doc.command.categoryNote"));
     }
 
     /// <summary>Op args; a value "@@key" is a database text itself.</summary>
@@ -185,8 +181,20 @@ public class TA_Renderer
         }
         else if (kind == "footer")
         {
-            sb.AppendLine(TA_Text.Get("doc.header.howToWrite"));
+            sb.AppendLine(TA_Text.Get(mode == TA_Mode.Kojo ? "doc.header.howToWriteKojo" : "doc.header.howToWrite"));
             sb.AppendLine();
+            if (mode == TA_Mode.Kojo)
+            {
+                var instructions = snap.layers[Target]["info"]?["authoringInstructions"] as JArray;
+                sb.AppendLine(TA_Text.Get("doc.header.personalityInstructions"));
+                if (instructions == null || instructions.Count == 0)
+                    sb.AppendLine(TA_Text.Get("doc.header.noPersonalityInstructions"));
+                else
+                    for (int i = 0; i < instructions.Count; i++)
+                        foreach (var line in instructions[i].ToString().Replace("\r", "").Split('\n'))
+                            sb.AppendLine("> " + line);
+                sb.AppendLine();
+            }
             sb.AppendLine(ModListBlock(snap.shared["modList"] as JArray));
             sb.AppendLine();
         }
@@ -223,6 +231,7 @@ public class TA_Renderer
     {
         var s = FindSlot(h);
         if (s == null) { sb.AppendLine($"【{h}】（快照中没有此槽位）"); return; }
+        if ((string)s["kind"] == "kojo" && (bool?)s["inherited"] == true) return;
         bool first = printed.Add(h);
         if (first) { if (h[0] == 'N') nCount++; else kCount++; }
         var again = first ? "" : " ｜ 同上，见前文";
@@ -256,23 +265,10 @@ public class TA_Renderer
             var comment = (string)s["comment"] ?? "";
             if (comment != "") sb.AppendLine(TA_Text.F("doc.kojo.comment", "comment", comment));
 
-            var pid = (string)s["personality"];
-            bool inherited = (bool?)s["inherited"] ?? false;
-            // inherited (from a fallback personality): covered - the target's own lines here are optional (D33, D34)
-            bool create = inherited;
             var m = (JObject)s.DeepClone();
             m["readOnly"] = false;
-            m["writeTo"] = create ? $"create in {pid} (mirror {(string)s["provider"]} {(string)s["entry"]} {(string)s["variantPath"]})" : "existing";
-            if (create)
-            {
-                var inheritedTexts = s["texts"] as JArray ?? new JArray();
-                sb.AppendLine(TA_Text.F("doc.kojo.inheritedRef", "provider", (string)s["provider"]));
-                for (int t = 0; t < inheritedTexts.Count; t++) sb.AppendLine($"  · {(string)inheritedTexts[t]}");
-                sb.AppendLine(TA_Text.F("doc.kojo.optionalFor", "pid", pid));
-                m["texts"] = new JArray();
-                m["optional"] = true;
-            }
-            var texts = Pending(s, m, "", create, pid, true);
+            m["writeTo"] = "existing";
+            var texts = Pending(s, m, "", false, null, true);
             if (texts.Count < 1) FillLines();
             else for (int t = 0; t < texts.Count; t++) sb.AppendLine($"- {(string)texts[t]}");
             Manifest(h, m);
@@ -342,17 +338,6 @@ public class TA_Renderer
 
     // ---------------------------------------------------------------- task-specific blocks (Plan_TaskReorg.md §3)
 
-    /// <summary>Completion: how many personalities have kojo at this position (no kojo content - D31).</summary>
-    void ImplementedLine(JObject cov)
-    {
-        if (cov == null) { sb.AppendLine(TA_Text.Get("doc.kojo.implementedUnknown")); sb.AppendLine(); return; }
-        int own = (cov["own"] as JArray)?.Count ?? 0, inherited = (cov["inherited"] as JArray)?.Count ?? 0;
-        int noBranch = (cov["noBranch"] as JArray)?.Count ?? 0, missing = (cov["missing"] as JArray)?.Count ?? 0;
-        sb.AppendLine(TA_Text.F("doc.kojo.implemented", "own", own.ToString(), "inherited", inherited.ToString(),
-            "noBranch", noBranch.ToString(), "missing", missing.ToString(), "total", (own + inherited + noBranch + missing).ToString()));
-        sb.AppendLine();
-    }
-
     /// <summary>
     /// Kojo task: a position where the target has nothing (no entry on its whole chain, or an entry without a branch for
     /// this context) gets a blank slot to fill (D33). Imported as a "create" record; Apply hands it to the coder task.
@@ -367,13 +352,13 @@ public class TA_Renderer
         var state = (string)lookup?["state"];
         if (state != "missing" && state != "noBranch") return;
         var key = (string)lookup["key"];
-        // a lookup with cases: its gaps are filled per case at the end (one slot per case, not per position)
-        if (HasKojoCases(key)) { sb.AppendLine(TA_Text.F("doc.cases.blankByCase", "pid", pid)); sb.AppendLine(); return; }
-        var entry = state == "missing" ? key : (string)lookup["entry"];
+        if (HasKojoCases(key) || (string)lookup["severity"] == TA_KojoSeverity.Optional) return;
+        var entry = key;
+        bool newEntry = state == "missing" || (string)lookup["entry"] != key;
         var h = "K-" + TA_DocBuilderBase.Sha1Hex($"KB|{pid}|{entry}|{(string)lookup["speaker"]}|{(string)lookup["listener"]}").Substring(0, 6);
         bool first = printed.Add(h);
         if (first) kCount++;
-        sb.AppendLine($"【{h}】{TA_Text.F(state == "missing" ? "doc.kojo.blankEntry" : "doc.kojo.blankBranch", "pid", pid, "entry", entry)}{(first ? "" : " ｜ 同上，见前文")}");
+        sb.AppendLine($"【{h}】{TA_Text.F(newEntry ? "doc.kojo.blankEntry" : "doc.kojo.blankBranch", "pid", pid, "entry", entry)}{(first ? "" : " ｜ 同上，见前文")}");
         if (!first) { sb.AppendLine(); return; }
         var targetKey = $"kojo|{pid}|{entry}|new|{(string)lookup["speaker"]}|{(string)lookup["listener"]}";
         var m = new JObject
@@ -389,7 +374,7 @@ public class TA_Renderer
             ["targetKey"] = targetKey,
             ["target"] = TA_DocBuilderBase.TargetId(targetKey),
             ["texts"] = new JArray(),
-            ["writeTo"] = state == "missing" ? $"create entry {entry} in {pid}" : $"create branch in {pid} {entry} for {(string)lookup["speaker"]} → {(string)lookup["listener"]}"
+            ["writeTo"] = newEntry ? $"create entry {entry} in {pid}" : $"create branch in {pid} {entry} for {(string)lookup["speaker"]} → {(string)lookup["listener"]}"
         };
         var texts = Pending(m, m, "", true, pid, true);
         if (texts.Count < 1) FillLines();
@@ -453,52 +438,51 @@ public class TA_Renderer
         return false;
     }
 
-    /// <summary>
-    /// What the command must cover (shared `cases`): completion = its narration cases (✓ review the listed slots / ✗ a new
-    /// entry slot that carries the case's condition) and a count of kojo cases; kojo = the target's kojo cases per phase
-    /// (✓ own / ◇ inherited / ✗ a blank slot per missing required case with the fields its branch needs; optional gaps are
-    /// listed only).
-    /// </summary>
+    /// <summary>Narration cases for completion; extra required assignments for Kojo.</summary>
     void CaseSection()
     {
         var cases = Cases;
         if (cases == null || cases.Count < 1) return;
-        sb.AppendLine("---");
-        sb.AppendLine(TA_Text.Get("doc.cases.heading"));
         if (mode == TA_Mode.Completion)
         {
-            int kojo = 0, kojoRequired = 0;
             bool intro = false;
             for (int i = 0; i < cases.Count; i++)
             {
                 var c = (JObject)cases[i];
-                if ((string)c["layer"] == "kojo") { kojo++; if ((bool?)c["required"] ?? false) kojoRequired++; continue; }
+                if ((string)c["layer"] == "kojo") continue;
                 // events have kojo cases only
-                if (!intro) { sb.AppendLine(TA_Text.Get("doc.cases.narrationIntro")); sb.AppendLine(); intro = true; }
+                if (!intro) { sb.AppendLine("---"); sb.AppendLine(TA_Text.Get("doc.cases.heading")); sb.AppendLine(TA_Text.Get("doc.cases.narrationIntro")); sb.AppendLine(); intro = true; }
                 NarrationCaseLine(c);
             }
             if (intro) sb.AppendLine();
-            if (kojo > 0) { sb.AppendLine(TA_Text.F("doc.cases.kojoSummary", "count", kojo.ToString(), "required", kojoRequired.ToString())); sb.AppendLine(); }
             return;
         }
         var pid = Target;
-        sb.AppendLine(TA_Text.F("doc.cases.kojoIntro", "pid", pid));
-        sb.AppendLine();
-        string phase = null, phaseKey = null;
+        bool heading = false;
         for (int i = 0; i < cases.Count; i++)
         {
             var c = (JObject)cases[i];
             if ((string)c["layer"] != "kojo") continue;
-            if ((string)c["phase"] != phase)
+            bool custom = In(c["cov"]?["custom"], pid);
+            if (!custom && (bool?)c["required"] != true) continue;
+            if (!custom && c["authoring"]?[pid] is JArray handles)
             {
-                if (phase != null) sb.AppendLine();
-                phase = (string)c["phase"];
-                phaseKey = (string)c["key"];
-                sb.AppendLine(TA_Text.F("doc.cases.phase", "label", (string)c["label"], "key", phaseKey));
+                if (handles.Count > 0)
+                {
+                    foreach (var handle in handles) if (!printed.Contains((string)handle)) Slot((string)handle);
+                    continue;
+                }
             }
-            KojoCaseLine(c, pid, phaseKey);
+            if (!heading)
+            {
+                sb.AppendLine("---");
+                sb.AppendLine(TA_Text.Get("doc.cases.kojoHeading"));
+                sb.AppendLine(TA_Text.F("doc.cases.kojoIntro", "pid", pid));
+                sb.AppendLine();
+                heading = true;
+            }
+            KojoCaseSlot(c, pid, custom);
         }
-        sb.AppendLine();
     }
 
     void NarrationCaseLine(JObject c)
@@ -583,33 +567,54 @@ public class TA_Renderer
         return false;
     }
 
-    void KojoCaseLine(JObject c, string pid, string phaseKey)
+    void KojoCaseSlot(JObject c, string pid, bool custom)
     {
-        var cov = c["cov"] as JObject;
-        var key = (string)c["key"];
-        var text = (string)c["text"] + (key != phaseKey ? $" `{key}`" : "");
-        bool required = (bool?)c["required"] ?? false;
-        var tiers = TierText(c, pid);
-        if (In(cov?["own"], pid)) { sb.AppendLine(TA_Text.F("doc.cases.kojoOwn", "text", text, "tiers", tiers)); return; }
-        if (In(cov?["inherited"], pid)) { sb.AppendLine(TA_Text.F("doc.cases.kojoInherited", "text", text, "tiers", tiers)); return; }
-        // flagged "require custom" (Store/custom.json): inherited content no longer counts - a gap even when optional
-        bool custom = In(cov?["custom"], pid);
-        if (!required && !custom) { sb.AppendLine(TA_Text.F("doc.cases.kojoMissingOptional", "text", text)); return; }
-
-        bool missing = !custom && In(cov?["missing"], pid);
+        bool missing = c["authoring"]?[pid] == null;
         var from = custom ? (string)c["customFrom"]?[pid] ?? "" : "";
-        var entry = missing || custom ? key : (string)c["branchIn"]?[pid] ?? key;
+        var entry = (string)c["key"];
         var id = (string)c["id"];
         var h = "K-" + TA_DocBuilderBase.Sha1Hex($"KC|{pid}|{id}").Substring(0, 6);
-        sb.AppendLine(custom ? TA_Text.F("doc.cases.kojoCustom", "text", text, "from", from, "handle", h) : TA_Text.F("doc.cases.kojoMissing", "text", text, "handle", h));
         if (!printed.Add(h)) return;
         kCount++;
         sb.AppendLine();
         sb.AppendLine($"【{h}】{TA_Text.F("doc.cases.kojoSlot", "pid", pid, "label", (string)c["label"], "text", (string)c["text"])}");
-        if (custom) sb.AppendLine(TA_Text.F("doc.cases.kojoCustomEntry", "pid", pid, "entry", entry, "from", from));
-        else sb.AppendLine(TA_Text.F(missing ? "doc.cases.kojoNewEntry" : "doc.cases.kojoNewBranch", "entry", entry));
+        if (c["who"] is JObject who)
+        {
+            var cast = who["doer"] == null ? "" : (who["receiver"] == null
+                ? TA_Text.F("doc.kojo.castSolo", "doer", (string)who["doer"])
+                : TA_Text.F("doc.kojo.cast", "doer", (string)who["doer"], "receiver", (string)who["receiver"]));
+            sb.AppendLine(TA_Text.F("doc.kojo.assignmentCast", "self", (string)who["self"], "target", (string)who["target"], "cast", cast));
+            if ((string)who["situation"] is string situation && situation.Length > 0) sb.AppendLine("  · " + situation);
+        }
         var needs = c["needs"] as JObject;
-        if (needs != null && needs.Count > 0) sb.AppendLine(TA_Text.F("doc.cases.kojoNeeds", "needs", needs.ToString(Newtonsoft.Json.Formatting.None)));
+        var phase = (string)c["phase"];
+        var outcome = (string)c["outcome"];
+        JObject placement = null;
+        if ((phase == "result" || phase == "orderedResult" || phase == "orderedSelf")
+            && (outcome == "success" || outcome == "failure") && needs != null)
+        {
+            var parent = (JObject)needs.DeepClone();
+            parent.Remove("order");
+            if (parent["requirement"] is JObject requirement)
+            {
+                requirement.Remove("requireEPSuccessGTE");
+                if (!requirement.HasValues) parent.Remove("requirement");
+            }
+            var pair = id.Substring(0, id.LastIndexOf('.'));
+            var child = new JObject { ["requirement"] = new JObject { ["requireEPSuccessGTE"] = "Success" } };
+            // Every variant is validated separately; a child of a self-target parent must also allow self-targets.
+            if ((bool?)parent["requireSelfOnly"] == true) child["requireSelfOnly"] = true;
+            placement = new JObject
+            {
+                ["template"] = "commandResult", ["group"] = pair,
+                ["parentConditions"] = parent,
+                ["successChildConditions"] = child,
+                ["textDestination"] = outcome == "success" ? "successChild" : "parentFallback",
+                ["otherCase"] = pair + (outcome == "success" ? ".failure" : ".success")
+            };
+        }
+        if (placement == null) sb.AppendLine(TA_Text.F(missing ? "doc.cases.kojoNewEntry" : "doc.cases.kojoNewBranch", "entry", entry));
+        else sb.AppendLine(TA_Text.F("doc.cases.kojoAssignmentEntry", "entry", entry));
         var targetKey = $"kojo|{pid}|{entry}|new|case:{id}";
         var m = new JObject
         {
@@ -626,24 +631,18 @@ public class TA_Renderer
             ["target"] = TA_DocBuilderBase.TargetId(targetKey),
             ["texts"] = new JArray(),
             ["writeTo"] = custom ? $"create entry {entry} in {pid} (copy every branch of {from} first, then add the branch for case {id})"
+                : placement != null ? $"create or reuse result parent in {pid} {entry}; place case {id} text in {placement["textDestination"]}"
                 : missing ? $"create entry {entry} in {pid}" : $"create branch in {pid} {entry} for {(string)c["text"]} (case {id})"
         };
         if (custom) m["customFrom"] = from;
-        if (needs != null) m["needs"] = needs.DeepClone();
+        if (placement != null) m["needs"] = placement["parentConditions"].DeepClone();
+        else if (needs != null) m["needs"] = needs.DeepClone();
+        if (placement != null) m["placement"] = placement;
         var texts = Pending(m, m, "", true, pid, true);
         if (texts.Count < 1) FillLines();
         else for (int t = 0; t < texts.Count; t++) sb.AppendLine($"- {(string)texts[t]}");
         Manifest(h, m);
         sb.AppendLine();
-    }
-
-    /// <summary>"（关系层级 2/4）": the case's tier sub-cases the personality covers; "" without tiers.</summary>
-    static string TierText(JObject c, string pid)
-    {
-        if (!(c["tiers"]?["items"] is JArray items) || items.Count < 1) return "";
-        int n = 0;
-        for (int i = 0; i < items.Count; i++) if (In(items[i]["covered"], pid)) n++;
-        return TA_Text.F("doc.cases.tiers", "n", n.ToString(), "total", items.Count.ToString());
     }
 
     void Manifest(string h, JObject m)

@@ -1,0 +1,126 @@
+{
+  "_comment": "Kojo template `interaction` (Docs/TextAuthoring/Plan_KojoTemplates.md §7). Bound to an entry by its `template` field. Every branch is optional except the fallback, the entry's last top-level branch, which must pass for anyone in any state. Axes are listed in nesting / first-match order: a branch is recognised by the fields it sets (kind), siblings must keep this order, anything not matching an axis is free customization. Every branch a writer opens needs its own lines (they print when no child passes). Edit freely, then Update store.",
+  "id": "interaction",
+  "label": "通用互动",
+
+  "_comment_bind": "Entries proposed for this template (T7): own entries whose key starts with one of these, without a template field yet.",
+  "bind": ["OnFirstExperience_"],
+  "_comment_bindCommand": "Command kojo keys (a command's kojo key + suffix) proposed for this template: an outsider seeing the act, the joiner's own lines.",
+  "bindCommand": ["_Interrupt", "_Tryjoin", "_Joined", "_Join_Refused"],
+
+  "_comment_fallback": "The mandatory last branch: these requirement fields, nothing else (role / master / strong flags off, no keepLooking). Engine defaults are not unconditional - requireSelfAction / requireTargetAction / requireEPSuccess default true, allowRecording false. A missing fallback gets a skeleton with the placeholder line.",
+  "fallback": {
+    "label": "兜底（任何人、任何状态）",
+    "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "allowRecording": true }
+  },
+  "placeholder": "(unimplemented: interaction fallback)",
+
+  "_comment_axes": "kind: selfStatus (selfTags from `tags`), targetStatus (targetTags from `tags`), target (targetBaseID, or targetTags from `tags`), consent (requireSelfForced / requirePermission), relationship (requireRelationshipTypes; legacy targetTags relationship_*), attitude (requireSelfAttitudeGTE / requireSelfAttitudeKey). examples: suggested branches for the docs - other values of the same fields count as the same axis.",
+  "axes": [
+    {
+      "id": "speakerStatus", "kind": "selfStatus", "label": "说话者状态",
+      "tags": ["timestop", "timestopped", "sleeping", "unconscious", "restrained", "carried"],
+      "_comment_alias": "aliasSelfTags: lookup-specific self tags that mean this axis - recognised, never rewritten. firstexp_unaware = the speaker is time-stopped, asleep or unconscious (BodyInternal_Instance.GetUnawareReason).",
+      "aliasSelfTags": ["firstexp_unaware"],
+      "examples": [
+        { "label": "时停中", "requirement": { "selfTags": ["timestop"], "requireSelfAction": false } },
+        { "label": "睡眠中", "requirement": { "selfTags": ["sleeping"], "requireSelfAction": false } },
+        { "label": "昏迷（非睡眠）", "requirement": { "selfTags": ["unconscious"], "excludeSelfTags": ["sleeping"], "requireSelfAction": false } },
+        { "label": "被束缚", "requirement": { "selfTags": ["restrained"] } }
+      ]
+    },
+    {
+      "id": "targetStatus", "kind": "targetStatus", "label": "对方状态",
+      "tags": ["timestop", "timestopped", "sleeping", "unconscious", "restrained", "carried"],
+      "examples": [
+        { "label": "对方时停中", "requirement": { "targetTags": ["timestop"], "requireTargetAction": false } },
+        { "label": "对方睡眠中", "requirement": { "targetTags": ["sleeping"], "requireTargetAction": false } },
+        { "label": "对方昏迷", "requirement": { "targetTags": ["unconscious"], "excludeTargetTags": ["sleeping"], "requireTargetAction": false } },
+        { "label": "对方被束缚", "requirement": { "targetTags": ["restrained"] } }
+      ]
+    },
+    {
+      "id": "target", "kind": "target", "label": "对方是谁",
+      "_comment_tags": "Target tags that say who the target is: InteractionGenderType values, `pov` (the player) and the actor keywords the loaded masterlist defines (race types, template keywords). targetBaseID always counts. Other target tags (body parts in first experience: mouth, penis …) are customization. Add mod keywords here.",
+      "tags": ["male", "female", "ambi", "human", "animal", "creature", "insect", "corpse", "pov",
+               "humanrace", "playableRace", "humanoid", "large_animal", "dog", "horse", "pig", "bear", "goblin", "android", "child", "corrupted", "BlueArchive", "NIKKE"],
+      "examples": [
+        { "label": "玩家", "requirement": { "targetBaseID": "PLAYER" } },
+        { "label": "狗", "requirement": { "targetTags": ["dog"] } },
+        { "label": "哥布林", "requirement": { "targetTags": ["goblin"] } },
+        { "label": "动物", "requirement": { "targetTags": ["animal"] } },
+        { "label": "男性", "requirement": { "targetTags": ["male"] } },
+        { "label": "女性", "requirement": { "targetTags": ["female"] } }
+      ]
+    },
+    {
+      "id": "consent", "kind": "consent", "label": "同意",
+      "_comment_alias": "firstexp_consent / firstexp_nonconsent come from the same hasPermission (EvaluationPackage.GetFirstExperienceKojo).",
+      "aliasSelfTags": ["firstexp_consent", "firstexp_nonconsent"],
+      "examples": [
+        { "label": "被强迫", "requirement": { "requireSelfForced": true } },
+        { "label": "对方有许可", "requirement": { "requirePermission": true } }
+      ]
+    },
+    {
+      "id": "relationship", "kind": "relationship", "label": "关系",
+      "examples": [
+        { "label": "亲密", "group": "intimate" },
+        { "label": "友好", "group": "friendly" },
+        { "label": "敌对", "group": "hostile" },
+        { "label": "受害方", "group": "victim" },
+        { "label": "居上位", "group": "authorityOver" },
+        { "label": "居下位", "group": "underAuthority" },
+        { "label": "家人", "group": "family" }
+      ]
+    },
+    {
+      "id": "attitude", "kind": "attitude", "label": "态度",
+      "examples": [
+        { "label": "爱", "requirement": { "requireSelfAttitudeGTE": "Love" } },
+        { "label": "喜欢", "requirement": { "requireSelfAttitudeGTE": "Like" } }
+      ]
+    }
+  ],
+
+  "_comment_extras": "Extras: custom variants with pre-written conditions, enabled per entry by its `templateExtras` list. Copy `requirement` exactly - children don't inherit their parent's fields, so the block carries the loosened defaults the lookup needs. Recognised by the tags in the block; a recognised branch must have exactly this requirement, must be enabled on the entry, and must sit inside an axis branch or the fallback (never top level). Optional: an enabled extra that isn't written is listed as available, not an error. No axis fields here. First experience: the partner part's tags (EvaluationPackage.GetFirstExperienceKojo → the source BodyInternal part's Base.tags); a tongue acts through the mouth part (no tongue part exists).",
+  "extras": {
+    "afterUnaware": {
+      "label": "曾在无意识中失去（现在清醒）",
+      "requirement": { "selfTags": ["firstexp_after_unaware"], "requireTargetAction": false, "requireEPSuccess": false }
+    },
+    "partnerPenis": {
+      "label": "对方部位：阴茎",
+      "requirement": { "targetTags": ["penis"], "requireTargetAction": false, "requireEPSuccess": false }
+    },
+    "partnerMouth": {
+      "label": "对方部位：嘴（含舌头）",
+      "requirement": { "targetTags": ["mouth"], "requireTargetAction": false, "requireEPSuccess": false }
+    },
+    "partnerAnus": {
+      "label": "对方部位：肛门",
+      "requirement": { "targetTags": ["anus"], "requireTargetAction": false, "requireEPSuccess": false }
+    },
+    "partnerVagina": {
+      "label": "对方部位：阴道",
+      "requirement": { "targetTags": ["vagina"], "requireTargetAction": false, "requireEPSuccess": false }
+    },
+    "partnerClit": {
+      "label": "对方部位：阴蒂",
+      "requirement": { "targetTags": ["clit"], "requireTargetAction": false, "requireEPSuccess": false }
+    }
+  },
+
+  "_comment_relationshipGroups": "Suggested relationship branches (requireRelationshipTypes lists). Any set of types is a valid relationship branch - edit or add groups freely. `<type>:A` / `<type>:B` = the speaker is that side of a one-sided type (Character_Relationship.HasRelationshipType); a plain type = either side.",
+  "relationshipGroups": {
+    "intimate": ["relationship_couple", "relationship_marriage", "relationship_fwb"],
+    "friendly": ["relationship_friend", "relationship_bff", "relationship_housemate"],
+    "hostile": ["relationship_enemy", "relationship_rival", "relationship_bully:A"],
+    "victim": ["relationship_bully:B", "relationship_prisoner:B", "relationship_slave:B"],
+    "authorityOver": ["relationship_parent:A", "relationship_stepparent:A", "relationship_family_guardian:A", "relationship_slave:A", "relationship_servant:A", "relationship_subordinate:A", "relationship_prisoner:A", "relationship_mentor:A", "relationship_ba_teacher_student:A", "relationship_erav_filmstudio_director_actor:A"],
+    "underAuthority": ["relationship_parent:B", "relationship_stepparent:B", "relationship_family_guardian:B", "relationship_servant:B", "relationship_subordinate:B", "relationship_mentor:B", "relationship_ba_teacher_student:B", "relationship_erav_filmstudio_director_actor:B"],
+    "family": ["relationship_parent", "relationship_sibling", "relationship_stepparent", "relationship_family", "relationship_family_guardian"],
+    "peers": ["relationship_colleague", "relationship_ba_studentmates", "relationship_erav_filmstudio_actor_actor", "relationship_sibling"],
+    "distant": ["relationship_stranger", "relationship_acquaintance"]
+  }
+}

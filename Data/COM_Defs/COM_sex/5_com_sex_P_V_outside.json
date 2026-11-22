@@ -101,6 +101,21 @@
                 {
                     "Entries":[ 
                         {
+                            "keepLooking":false,
+                            "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}],
+                            "texts":[ "com_sex_P_V_outside_description_begin_4", "com_sex_P_V_outside_description_begin_5", "com_sex_P_V_outside_description_begin_6" ]
+                        },
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validateChara":{"statID":"isUnconscious","operand":"eq","value":"true","target":"receiver"}}],
+                            "texts":[ "com_sex_P_V_outside_description_begin_7", "com_sex_P_V_outside_description_begin_8", "com_sex_P_V_outside_description_begin_9" ]
+                        },
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validateChara":{"statID":"isTimestopped","operand":"eq","value":"true","target":"receiver"}}],
+                            "texts":[ "com_sex_P_V_outside_description_begin_10", "com_sex_P_V_outside_description_begin_11", "com_sex_P_V_outside_description_begin_12" ]
+                        },
+                        {
                             "keepLooking":true,
                             "texts": ["com_sex_P_V_outside_description_begin_1", "com_sex_P_V_outside_description_begin_2", "com_sex_P_V_outside_description_begin_3"]
                         }
@@ -131,7 +146,16 @@
                 "com_sex_P_V_outside_description_remove_2": "$doer.firstname$的龟头从$receiver.firstname$的股间离开",
                 "com_sex_P_V_outside_description_remove_3": "$doer.firstname$的肉棒从$receiver.firstname$的两腿间退出来",
                 "com_sex_P_V_outside_description_begin_2": "$doer.firstname$的肉棒贴着$receiver.firstname$的腿缝蹭",
-                "com_sex_P_V_outside_description_begin_3": "$doer.firstname$把龟头顶在$receiver.firstname$的股间压"
+                "com_sex_P_V_outside_description_begin_3": "$doer.firstname$把龟头顶在$receiver.firstname$的股间压",
+                "com_sex_P_V_outside_description_begin_4":"$doer.firstname$应下这声吩咐，把肉棒夹进$receiver.firstname$的腿间",
+                "com_sex_P_V_outside_description_begin_5":"$doer.firstname$照着吩咐贴上去，肉棒蹭着$receiver.firstname$的腿缝",
+                "com_sex_P_V_outside_description_begin_6":"$doer.firstname$领了吩咐动起来，龟头在$receiver.firstname$的股间磨",
+                "com_sex_P_V_outside_description_begin_7":"$doer.firstname$把肉棒夹进熟睡的$receiver.firstname$的两腿之间",
+                "com_sex_P_V_outside_description_begin_8":"$doer.firstname$的肉棒贴着睡着的$receiver.firstname$的腿缝蹭",
+                "com_sex_P_V_outside_description_begin_9":"$doer.firstname$把龟头顶在昏睡的$receiver.firstname$的股间",
+                "com_sex_P_V_outside_description_begin_10":"$doer.firstname$在停住的时间里把肉棒夹进$receiver.firstname$的腿间",
+                "com_sex_P_V_outside_description_begin_11":"$doer.firstname$的肉棒在停住的时间里贴着$receiver.firstname$的腿缝蹭",
+                "com_sex_P_V_outside_description_begin_12":"$doer.firstname$在停住的时间里把龟头顶上$receiver.firstname$的股间"
 
             },
             "en-us":

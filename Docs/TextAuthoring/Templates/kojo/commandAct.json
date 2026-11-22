@@ -1,0 +1,52 @@
+{
+  "_comment": "Command `<COM>_Begin` / `<COM>_Ongoing` kojo (Plan_KojoTemplates.md §7.11): accept only - _Begin is fetched by PackageBegin on the accept path, _Ongoing while the act runs. No D20 level. A refuse branch can never pass here and is an error.",
+  "id": "commandAct",
+  "label": "指令开始 / 进行中口上",
+  "inner": "interaction",
+  "bindCommand": ["_Begin", "_Ongoing"],
+
+  "fallback": {
+    "label": "兜底（接受，任何状态）",
+    "requirement": { "requireSelfAction": false, "requireTargetAction": false, "allowRecording": true }
+  },
+
+  "levels": [
+    {
+      "id": "role", "label": "说话者角色",
+      "leaves": {
+        "doer": { "label": "施方", "variant": { "requireSelfDoer": true } },
+        "receiver": { "label": "受方", "variant": { "requireSelfReceiver": true } },
+        "self": { "label": "独自（对象是自己）", "variant": { "requireSelfOnly": true } }
+      }
+    },
+    {
+      "id": "ordered", "label": "下令者",
+      "leaves": {
+        "ordered": { "label": "被第三方下令", "variant": { "requireSelfNotMaster": true } },
+        "own": { "label": "自己发起", "variant": { "requireSelfMaster": true } },
+        "hasMaster": { "label": "有下令者", "variant": { "requireMaster": true } }
+      }
+    }
+  ],
+
+  "required": [
+    { "path": ["receiver"], "when": ["pair"] }
+  ],
+
+  "misplaced": [
+    { "requirement": { "requireEPFailure": true }, "label": "拒绝分支（开始 / 进行中口上不会在拒绝时取）", "moveTo": "_Refuse" }
+  ],
+
+  "extras": {
+    "firstexpV": { "label": "本次失去阴道初次", "requirement": { "selfTags": ["firstexp_V"] } },
+    "firstexpA": { "label": "本次失去肛门初次", "requirement": { "selfTags": ["firstexp_A"] } },
+    "firstexpM": { "label": "本次失去口初次", "requirement": { "selfTags": ["firstexp_M"] } },
+    "firstexpW": { "label": "本次子宫初次", "requirement": { "selfTags": ["firstexp_W"] } },
+    "firstexpC": { "label": "本次阴茎初次", "requirement": { "selfTags": ["firstexp_C"] } },
+    "firstexpPartnerV": { "label": "对方本次失去阴道初次", "requirement": { "selfTags": ["firstexp_partner_V"] } },
+    "firstexpPartnerA": { "label": "对方本次失去肛门初次", "requirement": { "selfTags": ["firstexp_partner_A"] } },
+    "firstexpPartnerM": { "label": "对方本次失去口初次", "requirement": { "selfTags": ["firstexp_partner_M"] } },
+    "firstexpPartnerW": { "label": "对方本次子宫初次", "requirement": { "selfTags": ["firstexp_partner_W"] } },
+    "firstexpPartnerC": { "label": "对方本次阴茎初次", "requirement": { "selfTags": ["firstexp_partner_C"] } }
+  }
+}

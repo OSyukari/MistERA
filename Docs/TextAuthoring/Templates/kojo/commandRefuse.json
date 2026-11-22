@@ -1,0 +1,36 @@
+{
+  "_comment": "Command refusal kojo `<COM>_Refuse` (Plan_KojoTemplates.md §7.11, wired §7.13 W1): for a refused EP the engine tries `<COM>_Refuse` first (RelationshipManager.GetKOJOMessage - the whole key chain: own, kojo source, folder parent, fallback personality), then `<COM>`. Fetched only for a refused EP, so every branch must not require success (requireEPSuccess false, or requireEPFailure true) - a branch with the default requireEPSuccess true never passes here. A refusing speaker is awake (sleepers / time-stopped / restrained always accept, EVP_Modifiers). useActiveTags false is right here (T-D15).",
+  "id": "commandRefuse",
+  "label": "指令拒绝口上",
+  "inner": "interaction",
+  "bindCommand": ["_Refuse"],
+
+  "fallback": {
+    "label": "兜底（拒绝）",
+    "requirement": { "requireTargetAction": false, "requireEPSuccess": false, "allowRecording": true }
+  },
+  "everyBranch": { "requirement": { "requireEPSuccess": false } },
+
+  "levels": [
+    {
+      "id": "role", "label": "说话者角色",
+      "leaves": {
+        "doer": { "label": "施方（拒绝下令者）", "variant": { "requireSelfDoer": true } },
+        "receiver": { "label": "受方", "variant": { "requireSelfReceiver": true } },
+        "self": { "label": "独自（对象是自己）", "variant": { "requireSelfOnly": true } }
+      }
+    },
+    {
+      "id": "ordered", "label": "下令者",
+      "leaves": {
+        "ordered": { "label": "被第三方下令", "variant": { "requireSelfNotMaster": true } },
+        "own": { "label": "自己发起", "variant": { "requireSelfMaster": true } },
+        "hasMaster": { "label": "有下令者", "variant": { "requireMaster": true } }
+      }
+    }
+  ],
+
+  "required": [
+    { "path": ["receiver"], "when": ["pair"] }
+  ]
+}

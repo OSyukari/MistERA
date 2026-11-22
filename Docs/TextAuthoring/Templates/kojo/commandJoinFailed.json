@@ -1,0 +1,23 @@
+{
+  "_comment": "Command `<COM>_JoinFailed` kojo (Plan_KojoTemplates.md §7.11): the act's participants react when a join is refused (wired §7.13 W2: EvaluationPackage.JoinReaction tries `_JoinFailed`, then `_Join`; the caller passes whether the join went through). Fetched for a refused EP, so every branch must not require success.",
+  "id": "commandJoinFailed",
+  "label": "参与者对加入者的反应（加入被拒绝）",
+  "inner": "interaction",
+  "bindCommand": ["_JoinFailed"],
+
+  "fallback": {
+    "label": "兜底（加入被拒绝）",
+    "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "allowRecording": true }
+  },
+  "everyBranch": { "requirement": { "requireEPSuccess": false } },
+
+  "levels": [
+    {
+      "id": "role", "label": "说话者角色",
+      "leaves": {
+        "doer": { "label": "施方", "variant": { "requireSelfDoer": true } },
+        "receiver": { "label": "受方", "variant": { "requireSelfReceiver": true } }
+      }
+    }
+  ]
+}

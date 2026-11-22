@@ -87,7 +87,22 @@ public abstract partial class TA_DocBuilderBase
     /// 18: refused results look up <COM>_Refuse first, then <COM> (engine wired, Plan_KojoTemplates.md §7.13 W1).
     /// 19: `joinFailedReact` cases (_JoinFailed, else _Join; outcome joinRefused - requireEPSuccess false).
     /// 20: no `after` narration case / new-entry slot for a command without after text (cases.json onlyIfPresent).
-    public const int ExtractorVersion = 20;
+    /// 21: personality info includes authoringInstructions from the personality definition, without fallback inheritance.
+    /// 22: kojo coverage ownership follows the provider personality, independently of command source / parent reuse.
+    /// 23: generator groups record resolved member names and shared kojo scope.
+    /// 24: per-speaker listener overrides exclude unreachable solo self-target ongoing cases.
+    /// 25: join cases use suffix-specific display labels without changing outcome or case identity.
+    /// 26: special command kojo lookups expose review positions with their runtime contexts.
+    /// 27: special review marks global fallback read-only, skips side-effect-only slots and records join provenance.
+    /// 28: kojo slots record earlier sibling conditions and child-before-parent fallback ordering.
+    /// 29: special entries follow their kojo template (axes + fallback) with runtime fetch contexts only; the context
+    ///     matrix, global shared-fallback blocks and per-slot ordering notes are gone.
+    /// 30: category kojo (COM.categoryKojo): category units (the four parents) carry only the six category keys; children
+    ///     suppress them (one note); seen's global Interrupt fallback is attributed and no longer asks for a fill.
+    /// 31: shared case/scene profiles, deferred scene text, and dedicated authoring coverage.
+    /// 32: writing assignments carry speaker, listener and command cast context.
+    /// 33: command scene and case casts use shared template metadata.
+    public const int ExtractorVersion = 33;
 
     /// <summary>Personalities whose kojo layers are extracted (any order; [0] first in docs).</summary>
     public List<string> personalities = new List<string>();
@@ -198,6 +213,17 @@ public abstract partial class TA_DocBuilderBase
         desc = IsDictKey(pid + "_desc") ? ZH(pid + "_desc") : "";
     }
 
+    public static JObject PersonalityAuthoringInfo(string pid)
+    {
+        PersonalityInfo(pid, out string name, out string desc);
+        var p = scr_System_Serializer.current?.MasterList?.Character_Personalities?.GetByID(pid);
+        return new JObject
+        {
+            ["id"] = pid, ["name"] = name, ["desc"] = desc,
+            ["authoringInstructions"] = new JArray(p?.authoringInstructions ?? new List<string>())
+        };
+    }
+
     protected TA_Snapshot FinishDoc()
     {
         ResolveRoles();
@@ -224,12 +250,11 @@ public abstract partial class TA_DocBuilderBase
             var pid = personalities[i];
             var l = layers[pid];
             foreach (var kv in l.missing) l.findings.Add(kv.Value);
-            PersonalityInfo(pid, out string name, out string desc);
             snap.layers[pid] = new JObject
             {
                 ["unit"] = snap.shared["unit"],
                 ["personality"] = pid,
-                ["info"] = new JObject { ["id"] = pid, ["name"] = name, ["desc"] = desc },
+                ["info"] = PersonalityAuthoringInfo(pid),
                 ["extractedAt"] = snap.shared["extractedAt"],
                 ["positions"] = l.positions,
                 ["slots"] = l.slots,
@@ -258,6 +283,11 @@ public abstract partial class TA_DocBuilderBase
             handleKeys[h] = key;
         }
         return h;
+    }
+
+    protected string ExistingKojoHandle(string pid, string entry, string path)
+    {
+        return handles.TryGetValue($"K|{pid}|{pid}|{entry}|{path}", out var handle) ? handle : null;
     }
 
     public static string Sha1Hex(string s)
@@ -302,19 +332,23 @@ public abstract partial class TA_DocBuilderBase
     /// consumer: command | eventBranch | eventQuestion | eventLine | ... (where the lookup runs);
     /// severity: what a missing kojo does there (TA_KojoSeverity). A silent event failure is also a finding.
     /// </summary>
-    protected void KojoBlock(string key, EntryResolver resolve, string speaker, string listener, TA_KojoContext ctx, string consumer, string severity)
+    protected void KojoBlock(string key, EntryResolver resolve, string speaker, string listener, TA_KojoContext ctx, string consumer, string severity, JObject templateWho = null)
     {
         // who each kojo placeholder is here ($self$ = speaker, $target$ = listener: ResponseEntryVariant), and in a
         // command scenario who the action's doer / receiver are (castDoer / castReceiver, set per scenario)
         var who = new JObject { ["self"] = speaker, ["target"] = listener };
-        if (castDoer != null)
+        var doer = templateWho == null ? castDoer : (string)templateWho["doer"];
+        var receiver = templateWho == null ? castReceiver : (string)templateWho["receiver"];
+        if (doer != null)
         {
-            who["doer"] = castDoer;
-            who["receiver"] = castReceiver ?? "";
+            who["doer"] = doer;
+            who["receiver"] = receiver ?? "";
             sb.Text("doc.kojo.position", "key", key, "self", speaker, "target", listener,
-                "cast", castReceiver == null ? "@@doc.kojo.castSolo" : "@@doc.kojo.cast", "doer", castDoer, "receiver", castReceiver ?? "");
+                "cast", receiver == null ? "@@doc.kojo.castSolo" : "@@doc.kojo.cast", "doer", doer, "receiver", receiver ?? "");
         }
         else sb.Text("doc.kojo.position", "key", key, "self", speaker, "target", listener, "cast", "");
+        var situation = (string)templateWho?["situation"];
+        if (!string.IsNullOrEmpty(situation)) sb.AppendLine("  · " + situation);
         sb.AppendLine();
         int pos = kojoPositions++;
         sb.KojoPos(pos, who, countOnly ? null : PositionImplementation(resolve, ctx), key);
@@ -353,8 +387,10 @@ public abstract partial class TA_DocBuilderBase
             if (!countOnly) Lint(pid, provider, entryID, found, true, ctx.noEP ? key : null, consumer);
             bool inherited = provider != pid;
             sb.Text("doc.kojo.entryFrom", "pid", pid, "entry", entryID, "provider", provider, "inherited", inherited ? "@@doc.kojo.inherited" : "");
-            // a generated command speaking with its source's kojo: covered, writing its own is optional
-            if (viaSource != null) sb.Text("doc.kojo.fromSource", "source", viaSource);
+            // Command source reuse is separate from personality ownership and template / explicit custom obligations.
+            // The unit's own kojo base (a generator group's shared key) is the designated authoring key, not a fallback:
+            // no note there; any other source key is a genuine fallback the member may override later.
+            if (viaSource != null && viaSource != kojoBaseKey) sb.Text("doc.kojo.fromSource", "source", viaSource);
             var chain = new List<ResponseEntry.Variant>();
             var pathParts = new List<string>();
             int shown = KojoSiblings(found.variants, chain, pathParts, provider, entryID, pid, inherited, ctx);
@@ -390,8 +426,9 @@ public abstract partial class TA_DocBuilderBase
 
     /// <summary>
     /// Who has kojo at a position, over every loaded personality (not only the extracted layers): own / inherited (from
-    /// a fallback personality, or a generated command's source) / noBranch (an entry, no branch for this context) /
+    /// a fallback personality) / noBranch (an entry, no branch for this context) /
     /// missing (nothing on the chain). Docs/TextAuthoring/Plan_TaskReorg.md §5, D33. Resolved like CoverageLookup.
+    /// Reusing a source / folder parent command's key within the same personality is own coverage.
     /// </summary>
     JObject PositionImplementation(EntryResolver resolve, TA_KojoContext ctx)
     {
@@ -408,11 +445,10 @@ public abstract partial class TA_DocBuilderBase
             if (p == null || string.IsNullOrEmpty(p.ID)) continue;
             resolvedViaSource = null;
             var found = resolve(p, out var provider, out var entryID);
-            var viaSource = resolvedViaSource;
             if (found == null) { missing.Add(p.ID); continue; }
             int shown = KojoSiblings(found.variants, new List<ResponseEntry.Variant>(), new List<string>(), provider, entryID, p.ID, provider != p.ID, ctx);
             if (shown == 0) noBranch.Add(p.ID);
-            else if (viaSource != null || provider != p.ID) inherited.Add(p.ID);
+            else if (provider != p.ID) inherited.Add(p.ID);
             else own.Add(p.ID);
         }
         countOnly = keepMode;
@@ -511,7 +547,13 @@ public abstract partial class TA_DocBuilderBase
         if (v.variants != null) shown += KojoSiblings(v.variants, chain, pathParts, provider, entryID, pid, inherited, ctx);
 
         bool leaf = (v.responses != null && v.responses.Count > 0) || v.variants == null || v.variants.Count == 0;
+        bool sideEffectOnly = (v.responses == null || v.responses.Count == 0) &&
+            (!string.IsNullOrEmpty(v.selfEventCall) || (v.results != null && v.results.Count > 0));
         if (leaf && countOnly) shown++;
+        else if (leaf && sideEffectOnly)
+        {
+            shown++;
+        }
         else if (leaf)
         {
             shown++;
@@ -611,8 +653,15 @@ public abstract partial class TA_DocBuilderBase
     /// <summary>
     /// Set by ResolveCommandEntry when the entry was found under the command's kojo source (a generated command without its
     /// own kojo, Plan_GeneratedCommands.md §4.3) - the lookup state becomes `source:&lt;id&gt;`; null otherwise.
+    /// This records command routing, not personality ownership: compare provider with the viewing personality for that.
     /// </summary>
     protected string resolvedViaSource;
+
+    /// <summary>
+    /// The key this unit's kojo positions are named after (TA_CommandDocBuilder.KojoBase). A resolvedViaSource equal to
+    /// it is the unit's designated shared authoring key (a generator group), not a fallback: no fromSource note is shown.
+    /// </summary>
+    protected string kojoBaseKey;
 
     /// <summary>
     /// Command kojo, mirror of Character_Personality.GetKOJOMessage_Command: per personality the command's key list (own
@@ -660,6 +709,14 @@ public abstract partial class TA_DocBuilderBase
         }
         provider = ""; entryID = "";
         return null;
+    }
+
+    protected ResponseEntry ResolveAuthoringEntry(Character_Personality p, string key, out string provider, out string entryID)
+    {
+        provider = p.ID;
+        entryID = key;
+        var entries = Entries(p);
+        return entries != null && entries.TryGetValue(key, out var entry) && entry.CheckRedirect(key) == key ? entry : null;
     }
 
     /// <summary>Plain kojo ID (events): own entry (RedirectID), else the fallback personality.</summary>

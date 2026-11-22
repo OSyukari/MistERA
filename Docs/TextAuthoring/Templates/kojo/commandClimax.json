@@ -1,0 +1,27 @@
+{
+  "_comment": "Command `<COM>_Climax` kojo (Plan_KojoTemplates.md §7.11): fetched per side only while that side is climaxing (EvaluationPackage.LogMessage_Climax); listener = the other side, or itself when there is none.",
+  "id": "commandClimax",
+  "label": "指令高潮口上",
+  "inner": "interaction",
+  "bindCommand": ["_Climax"],
+
+  "fallback": {
+    "label": "兜底（任何状态）",
+    "requirement": { "requireSelfAction": false, "requireTargetAction": false, "allowRecording": true }
+  },
+
+  "levels": [
+    {
+      "id": "role", "label": "说话者角色",
+      "leaves": {
+        "doer": { "label": "施方", "variant": { "requireSelfDoer": true } },
+        "receiver": { "label": "受方", "variant": { "requireSelfReceiver": true } },
+        "self": { "label": "独自（对象是自己）", "variant": { "requireSelfOnly": true } }
+      }
+    }
+  ],
+
+  "misplaced": [
+    { "requirement": { "requireEPFailure": true }, "label": "拒绝分支（高潮口上不会在拒绝时取）" }
+  ]
+}

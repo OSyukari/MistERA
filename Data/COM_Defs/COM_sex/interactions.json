@@ -224,7 +224,12 @@
 
             "description_ongoing":{ "Entries":[{"texts":["com_interaction_initiateSex_description_ongoing_1"]}], "keepLooking":false },
             "description_onComplete":{ "Entries":[{"texts":["com_interaction_initiateSex_description_onComplete_1"]}], "keepLooking":false },
-            "description_begin":{ "Entries":[{"texts":["com_interaction_initiateSex_description_begin_1"]}], "keepLooking":false }
+            "description_begin":{ "Entries":[
+                {"conditions":[{"validateChara":{"statID":"isTimestopped","operand":"eq","value":"true","target":"receiver"}}], "texts":["com_interaction_initiateSex_description_begin_9"]},
+                {"conditions":[{"validateChara":{"statID":"isUnconscious","operand":"eq","value":"true","target":"receiver"}}], "texts":["com_interaction_initiateSex_description_begin_10"]},
+                {"conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_interaction_initiateSex_description_begin_11"]},
+                {"texts":["com_interaction_initiateSex_description_begin_1"]}
+            ], "keepLooking":false }
         },
         {
             "ID":"com_interaction_endOngoingSex",
@@ -331,7 +336,15 @@
             "description_ongoing":{ "Entries":[{"texts":[""]}], "keepLooking":false },
             "description_after":{ "Entries":[{"texts":[""]}], "keepLooking":false },
             "description_remove":{ "Entries":[{"texts":[""]}], "keepLooking":false },
-            "description_begin":{ "Entries":[{"texts":[""]}], "keepLooking":false }
+            "description_begin":{ "Entries":[
+                {"conditions":[{"validateChara":{"statID":"isTimestopped","operand":"eq","value":"true","target":"receiver"}}], "texts":["com_interaction_endOngoingSex_description_begin_1"]},
+                {"conditions":[{"validateChara":{"statID":"isUnconscious","operand":"eq","value":"true","target":"receiver"}}], "texts":["com_interaction_endOngoingSex_description_begin_2"]},
+                {"conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_interaction_endOngoingSex_description_begin_3"]},
+                {"texts":[""]}
+            ], "keepLooking":false },
+            "description_onComplete":{ "Entries":[
+                {"conditions":[], "texts":["com_interaction_endOngoingSex_description_onComplete_1"]}
+            ] }
         }
     ]
     },
@@ -424,7 +437,15 @@
 
                 "com_interaction_initiateSex_description_begin_8": "$doer.firstname$把熟睡中的$receiver.firstname$翻过身，对其轮奸了起来",
                 "com_interaction_initiateSex_description_ongoing_8": "$doer.firstname$正在轮奸熟睡中的$receiver.firstname$",
-                "com_interaction_initiateSex_description_onComplete_8": "$doer.firstname$轮奸了熟睡中的$receiver.firstname$"
+                "com_interaction_initiateSex_description_onComplete_8": "$doer.firstname$轮奸了熟睡中的$receiver.firstname$",
+
+                "com_interaction_initiateSex_description_begin_9": "$receiver.firstname$被定在原处一直没有动过",
+                "com_interaction_initiateSex_description_begin_10": "$receiver.firstname$躺在原处一直没有醒过来",
+                "com_interaction_initiateSex_description_begin_11": "$doer.firstname$照着吩咐对$receiver.firstname$动起手来",
+                "com_interaction_endOngoingSex_description_begin_1": "$receiver.firstname$被定格在原处，姿势没有变过",
+                "com_interaction_endOngoingSex_description_begin_2": "$receiver.firstname$合着眼躺在那儿，一直没有动静",
+                "com_interaction_endOngoingSex_description_begin_3": "$doer.firstname$依照吩咐停住了手上的动作",
+                "com_interaction_endOngoingSex_description_onComplete_1": "$doer.firstname$停下了正在进行的性行为"
 
 
             },

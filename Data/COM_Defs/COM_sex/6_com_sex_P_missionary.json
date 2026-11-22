@@ -678,6 +678,25 @@
                                     ]
                                 }
                             ]
+                        },
+                        {
+                            "_comment": "doer climaxed",
+                            "keepLooking": true,
+                            "conditions": [
+                                {
+                                    "validateChara": {
+                                        "target": "doer",
+                                        "statID": "climaxed",
+                                        "operand": "eq",
+                                        "value": "true"
+                                    }
+                                }
+                            ],
+                            "texts": [
+                                "com_sex_P_missionary_description_after_4",
+                                "com_sex_P_missionary_description_after_5",
+                                "com_sex_P_missionary_description_after_6"
+                            ]
                         }
                     ]
                 }
@@ -785,7 +804,103 @@
                         "displayName": "com_sex_P_V_overpen_4",
                         "setForce": true
                     }
-                ]
+                ],
+                "description_begin": {
+                    "Entries": [
+                        {
+                            "_comment": "receiver unconscious",
+                            "keepLooking": true,
+                            "conditions": [
+                                {
+                                    "validateChara": {
+                                        "target": "receiver",
+                                        "statID": "isUnconscious",
+                                        "operand": "eq",
+                                        "value": "true"
+                                    }
+                                }
+                            ],
+                            "texts": [
+                                "com_sex_P_missionary_overpen_description_begin_1",
+                                "com_sex_P_missionary_overpen_description_begin_2",
+                                "com_sex_P_missionary_overpen_description_begin_3"
+                            ]
+                        },
+                        {
+                            "_comment": "receiver timestopped",
+                            "keepLooking": true,
+                            "conditions": [
+                                {
+                                    "validateChara": {
+                                        "target": "receiver",
+                                        "statID": "isTimestopped",
+                                        "operand": "eq",
+                                        "value": "true"
+                                    }
+                                }
+                            ],
+                            "texts": [
+                                "com_sex_P_missionary_overpen_description_begin_4",
+                                "com_sex_P_missionary_overpen_description_begin_5",
+                                "com_sex_P_missionary_overpen_description_begin_6"
+                            ]
+                        },
+                        {
+                            "_comment": "someone else (non-participant) is ordering",
+                            "keepLooking": true,
+                            "conditions": [
+                                {
+                                    "validatePackage": {
+                                        "existsMaster_NonActor": true
+                                    }
+                                }
+                            ],
+                            "texts": [
+                                "com_sex_P_missionary_overpen_description_begin_7",
+                                "com_sex_P_missionary_overpen_description_begin_8",
+                                "com_sex_P_missionary_overpen_description_begin_9"
+                            ]
+                        },
+                        {
+                            "_comment": "generic",
+                            "keepLooking": true,
+                            "conditions": [],
+                            "texts": [
+                                "com_sex_P_missionary_overpen_description_begin_10",
+                                "com_sex_P_missionary_overpen_description_begin_11",
+                                "com_sex_P_missionary_overpen_description_begin_12"
+                            ]
+                        }
+                    ]
+                },
+                "description_ongoing": {
+                    "Entries": [
+                        {
+                            "_comment": "",
+                            "keepLooking": true,
+                            "conditions": [],
+                            "texts": [
+                                "com_sex_P_missionary_overpen_description_ongoing_1",
+                                "com_sex_P_missionary_overpen_description_ongoing_2",
+                                "com_sex_P_missionary_overpen_description_ongoing_3"
+                            ]
+                        }
+                    ]
+                },
+                "description_remove": {
+                    "Entries": [
+                        {
+                            "_comment": "",
+                            "keepLooking": true,
+                            "conditions": [],
+                            "texts": [
+                                "com_sex_P_missionary_overpen_description_remove_1",
+                                "com_sex_P_missionary_overpen_description_remove_2",
+                                "com_sex_P_missionary_overpen_description_remove_3"
+                            ]
+                        }
+                    ]
+                }
             },
             {
                 "parentCOMID":"com_sex_base",
@@ -886,7 +1001,103 @@
                         "setForce": true,
                         "displayName": "com_sex_P_V_force_4"
                     }
-                ]
+                ],
+                "description_begin": {
+                    "Entries": [
+                        {
+                            "_comment": "receiver unconscious",
+                            "keepLooking": true,
+                            "conditions": [
+                                {
+                                    "validateChara": {
+                                        "target": "receiver",
+                                        "statID": "isUnconscious",
+                                        "operand": "eq",
+                                        "value": "true"
+                                    }
+                                }
+                            ],
+                            "texts": [
+                                "com_sex_P_missionary_force_description_begin_1",
+                                "com_sex_P_missionary_force_description_begin_2",
+                                "com_sex_P_missionary_force_description_begin_3"
+                            ]
+                        },
+                        {
+                            "_comment": "receiver timestopped",
+                            "keepLooking": true,
+                            "conditions": [
+                                {
+                                    "validateChara": {
+                                        "target": "receiver",
+                                        "statID": "isTimestopped",
+                                        "operand": "eq",
+                                        "value": "true"
+                                    }
+                                }
+                            ],
+                            "texts": [
+                                "com_sex_P_missionary_force_description_begin_4",
+                                "com_sex_P_missionary_force_description_begin_5",
+                                "com_sex_P_missionary_force_description_begin_6"
+                            ]
+                        },
+                        {
+                            "_comment": "someone else (non-participant) is ordering",
+                            "keepLooking": true,
+                            "conditions": [
+                                {
+                                    "validatePackage": {
+                                        "existsMaster_NonActor": true
+                                    }
+                                }
+                            ],
+                            "texts": [
+                                "com_sex_P_missionary_force_description_begin_7",
+                                "com_sex_P_missionary_force_description_begin_8",
+                                "com_sex_P_missionary_force_description_begin_9"
+                            ]
+                        },
+                        {
+                            "_comment": "generic",
+                            "keepLooking": true,
+                            "conditions": [],
+                            "texts": [
+                                "com_sex_P_missionary_force_description_begin_10",
+                                "com_sex_P_missionary_force_description_begin_11",
+                                "com_sex_P_missionary_force_description_begin_12"
+                            ]
+                        }
+                    ]
+                },
+                "description_ongoing": {
+                    "Entries": [
+                        {
+                            "_comment": "",
+                            "keepLooking": true,
+                            "conditions": [],
+                            "texts": [
+                                "com_sex_P_missionary_force_description_ongoing_1",
+                                "com_sex_P_missionary_force_description_ongoing_2",
+                                "com_sex_P_missionary_force_description_ongoing_3"
+                            ]
+                        }
+                    ]
+                },
+                "description_remove": {
+                    "Entries": [
+                        {
+                            "_comment": "",
+                            "keepLooking": true,
+                            "conditions": [],
+                            "texts": [
+                                "com_sex_P_missionary_force_description_remove_1",
+                                "com_sex_P_missionary_force_description_remove_2",
+                                "com_sex_P_missionary_force_description_remove_3"
+                            ]
+                        }
+                    ]
+                }
             }
         ]
     },
@@ -988,8 +1199,49 @@
                 "com_sex_P_missionary_description_ongoing_2_12": "$receiver.firstname$夹着$doer.p$把腰往上顶",
                 "com_sex_P_missionary_description_after_2": "$doer.firstname$按住$receiver.firstname$的腰把$doer.p$压得更深",
                 "com_sex_P_missionary_description_after_3": "$doer.p$捅到$receiver.firstname$的小穴最里面",
-                "com_sex_P_missionary_description_after_2_3": "$receiver.firstname$的小穴缩得死紧夹着$doer.p$吸"
+                "com_sex_P_missionary_description_after_2_3": "$receiver.firstname$的小穴缩得死紧夹着$doer.p$吸",
 
+                "com_sex_P_missionary_description_after_4": "$doer.p$在$receiver.firstname$的小穴里涨硬着跳",
+                "com_sex_P_missionary_description_after_5": "$doer.p$顶在$receiver.firstname$的小穴深处一下下地抖",
+                "com_sex_P_missionary_description_after_6": "$doer.p$把$receiver.firstname$的小穴撑得发紧又跳个不停",
+
+                "com_sex_P_missionary_overpen_description_begin_1": "$doer.firstname$掰开睡着的$receiver.firstname$的腿把$doer.p$捅进子宫里",
+                "com_sex_P_missionary_overpen_description_begin_2": "$doer.firstname$把$doer.p$捅进$receiver.firstname$熟睡着的小穴一路顶到子宫",
+                "com_sex_P_missionary_overpen_description_begin_3": "$doer.firstname$压上睡着的$receiver.firstname$把$doer.p$塞进$receiver.firstname$的子宫",
+                "com_sex_P_missionary_overpen_description_begin_4": "$doer.firstname$在停住的时间里把$doer.p$捅进$receiver.firstname$的小穴顶进子宫",
+                "com_sex_P_missionary_overpen_description_begin_5": "$doer.firstname$在停住的时间里把$doer.p$捅开子宫口塞进子宫里",
+                "com_sex_P_missionary_overpen_description_begin_6": "$doer.firstname$在停住的时间里压在$receiver.firstname$身上把$doer.p$捅进$receiver.firstname$的子宫",
+                "com_sex_P_missionary_overpen_description_begin_7": "$doer.firstname$依言把$doer.p$捅进$receiver.firstname$的小穴顶进子宫",
+                "com_sex_P_missionary_overpen_description_begin_8": "$doer.firstname$照着吩咐掰开$receiver.firstname$的腿把$doer.p$捅开子宫口",
+                "com_sex_P_missionary_overpen_description_begin_9": "$doer.firstname$应下吩咐压到$receiver.firstname$身上把$doer.p$捅进$receiver.firstname$的子宫里",
+                "com_sex_P_missionary_overpen_description_begin_10": "$doer.firstname$压到$receiver.firstname$身上把$doer.p$捅进小穴一路顶进子宫",
+                "com_sex_P_missionary_overpen_description_begin_11": "$doer.firstname$掰开$receiver.firstname$的腿把$doer.p$捅开子宫口塞进去",
+                "com_sex_P_missionary_overpen_description_begin_12": "$doer.firstname$压着$receiver.firstname$的腰把$doer.p$捅进$receiver.firstname$的子宫里",
+                "com_sex_P_missionary_overpen_description_ongoing_1": "$doer.p$在$receiver.firstname$的子宫里来回捅",
+                "com_sex_P_missionary_overpen_description_ongoing_2": "$doer.firstname$压在$receiver.firstname$身上把$doer.p$往子宫里撞",
+                "com_sex_P_missionary_overpen_description_ongoing_3": "$doer.firstname$掰着$receiver.firstname$的腿让$doer.p$在子宫里搅",
+                "com_sex_P_missionary_overpen_description_remove_1": "$doer.firstname$把$doer.p$从$receiver.firstname$的子宫里退出来",
+                "com_sex_P_missionary_overpen_description_remove_2": "$doer.firstname$把$doer.p$从$receiver.firstname$的小穴里抽出来",
+                "com_sex_P_missionary_overpen_description_remove_3": "$doer.p$从$receiver.firstname$的子宫里滑了出去",
+
+                "com_sex_P_missionary_force_description_begin_1": "$doer.firstname$掰开睡着的$receiver.firstname$的腿把$doer.p$捅进小穴顶住深处那块软肉",
+                "com_sex_P_missionary_force_description_begin_2": "$doer.firstname$把$doer.p$捅进$receiver.firstname$熟睡着的小穴抵住阴道深处那一块",
+                "com_sex_P_missionary_force_description_begin_3": "$doer.firstname$压上睡着的$receiver.firstname$把$doer.p$塞进小穴顶着最深处那一点",
+                "com_sex_P_missionary_force_description_begin_4": "$doer.firstname$在停住的时间里把$doer.p$捅进$receiver.firstname$的小穴顶住深处那块软肉",
+                "com_sex_P_missionary_force_description_begin_5": "$doer.firstname$在停住的时间里把$doer.p$塞进小穴抵住阴道深处那一块",
+                "com_sex_P_missionary_force_description_begin_6": "$doer.firstname$在停住的时间里压在$receiver.firstname$身上把$doer.p$捅进小穴顶住最深处那一点",
+                "com_sex_P_missionary_force_description_begin_7": "$doer.firstname$依言把$doer.p$捅进$receiver.firstname$的小穴顶住深处那块软肉",
+                "com_sex_P_missionary_force_description_begin_8": "$doer.firstname$照着吩咐掰开$receiver.firstname$的腿把$doer.p$塞进小穴抵住阴道深处那一块",
+                "com_sex_P_missionary_force_description_begin_9": "$doer.firstname$应下吩咐压到$receiver.firstname$身上把$doer.p$捅进小穴顶着最深处那一点",
+                "com_sex_P_missionary_force_description_begin_10": "$doer.firstname$压到$receiver.firstname$身上把$doer.p$捅进小穴顶住深处那块软肉",
+                "com_sex_P_missionary_force_description_begin_11": "$doer.firstname$掰开$receiver.firstname$的腿把$doer.p$塞进小穴抵住阴道深处那一块",
+                "com_sex_P_missionary_force_description_begin_12": "$doer.firstname$压着$receiver.firstname$的腰把$doer.p$捅进小穴顶住最深处那一点",
+                "com_sex_P_missionary_force_description_ongoing_1": "$doer.p$在$receiver.firstname$的小穴里顶着深处那块软肉来回磨",
+                "com_sex_P_missionary_force_description_ongoing_2": "$doer.firstname$压在$receiver.firstname$身上把$doer.p$反复顶进阴道深处那一块",
+                "com_sex_P_missionary_force_description_ongoing_3": "$doer.firstname$掰着$receiver.firstname$的腿把$doer.p$往最深处那一点上蹭",
+                "com_sex_P_missionary_force_description_remove_1": "$doer.firstname$把$doer.p$从$receiver.firstname$的小穴里抽出来",
+                "com_sex_P_missionary_force_description_remove_2": "$doer.firstname$把$doer.p$从$receiver.firstname$的小穴里退出来",
+                "com_sex_P_missionary_force_description_remove_3": "$doer.p$从$receiver.firstname$的小穴里滑了出去"
 
             },
             "en-us":

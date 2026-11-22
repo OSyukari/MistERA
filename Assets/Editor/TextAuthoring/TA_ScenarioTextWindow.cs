@@ -1010,7 +1010,7 @@ public class TA_ScenarioTextWindow : EditorWindow
     /// <summary>
     /// Render a task from stored snapshots into Generated/&lt;time&gt;_&lt;completion|kojo&gt;/: docs + manifests, _index.md,
     /// the task's handoffs and the game-text-rules skill (Plan_TaskReorg.md). In play mode, outdated units and (kojo) a
-    /// missing target layer are extracted first; outside play mode they are skipped.
+    /// missing target layer or changed authoring info are extracted first; outside play mode outdated versions are skipped.
     /// </summary>
     string RenderTask(TA_Mode renderMode, List<string> units)
     {
@@ -1038,7 +1038,8 @@ public class TA_ScenarioTextWindow : EditorWindow
             var unit = units[i];
             var row = TA_Store.Row(index, unit);
             if (row == null) { skipped.Add($"{unit}：不在 store 中"); continue; }
-            if ((bool?)row["outdated"] ?? false) { skipped.Add($"{unit}：数据已变（outdated），请在运行模式中渲染（会先重新提取）"); continue; }
+            if (((bool?)row["outdated"] ?? false) || (int?)row["extractorVersion"] != TA_DocBuilderBase.ExtractorVersion)
+            { skipped.Add($"{unit}：数据或提取器已变，请在运行模式中渲染（会先重新提取）"); continue; }
 
             // completion: no kojo layers (D31); kojo: exactly the target's layer
             var pids = new List<string>();
@@ -1050,6 +1051,8 @@ public class TA_ScenarioTextWindow : EditorWindow
 
             var snap = TA_Store.LoadSnapshot(unit, pids, out string loadError);
             if (snap == null) { skipped.Add($"{unit}：{loadError}"); continue; }
+            if ((int?)snap.shared["extractorVersion"] != TA_DocBuilderBase.ExtractorVersion)
+            { skipped.Add($"{unit}：快照提取器版本已过期，请在运行模式中重新提取"); continue; }
             var doc = TA_Renderer.Render(snap, renderMode, row["hashes"] as JObject, overlay, out JObject manifest, out string skip);
             if (doc == null) { skipped.Add($"{unit}：{skip}"); continue; }
 
@@ -1091,8 +1094,8 @@ public class TA_ScenarioTextWindow : EditorWindow
     }
 
     /// <summary>
-    /// Before rendering (play mode only): re-extract outdated units, and for a kojo task add the target's layer where the
-    /// unit doesn't have it. Returns the log ("" when nothing was extracted).
+    /// Before rendering (play mode only): re-extract outdated units (including extractor versions), and for a kojo task
+    /// add or refresh the target's layer when its authoring info changed. Returns the log ("" when nothing was extracted).
     /// </summary>
     string PrepareUnits(TA_Mode renderMode, List<string> units, string target)
     {
@@ -1107,7 +1110,17 @@ public class TA_ScenarioTextWindow : EditorWindow
             if (row == null) continue;
             var layers = TA_Store.Personalities(row);
             bool needLayer = renderMode == TA_Mode.Kojo && !layers.Contains(target);
-            if (!((bool?)row["outdated"] ?? false) && !needLayer) continue;
+            bool infoChanged = false;
+            bool snapshotOutdated = false;
+            if (!needLayer)
+            {
+                var stored = TA_Store.LoadSnapshot(units[i], renderMode == TA_Mode.Kojo ? new List<string> { target } : new List<string>(), out _);
+                snapshotOutdated = stored == null || (int?)stored.shared["extractorVersion"] != TA_DocBuilderBase.ExtractorVersion;
+                infoChanged = renderMode == TA_Mode.Kojo && stored != null && !JToken.DeepEquals(stored.layers[target]["info"], TA_DocBuilderBase.PersonalityAuthoringInfo(target));
+            }
+            if (!((bool?)row["outdated"] ?? false) && !needLayer && !infoChanged && !snapshotOutdated
+                && (int?)row["extractorVersion"] == TA_DocBuilderBase.ExtractorVersion) continue;
+            if (infoChanged || snapshotOutdated) row["outdated"] = true;
             if (needLayer) layers.Add(target);
             if (x == null) x = Extraction.Start();
             var snap = x.Extract((string)row["kind"], (string)row["unitID"], layers, out string skip);
@@ -1171,7 +1184,8 @@ public class TA_ScenarioTextWindow : EditorWindow
 
     /// <summary>
     /// Handoff = parts from the text database (TA_Text, `handoff.<kind>.parts` → `parts.<name>`) + the run's unit index.
-    /// Completion: the completion handoff (coder agent). Kojo: the kojo writer handoff. Both: the game-text-rules skill.
+    /// Completion: the completion handoff (coder agent). Kojo: the kojo writer handoff. Both: the game-text-rules skill;
+    /// kojo also the kojo-writing skill (the general kojo prose style).
     /// </summary>
     static string WriteTaskHandoffs(string run, TA_Mode renderMode)
     {
@@ -1179,6 +1193,7 @@ public class TA_ScenarioTextWindow : EditorWindow
         var log = new StringBuilder();
         log.AppendLine("Written: " + WriteHandoff(run, renderMode == TA_Mode.Kojo ? "handoff.writerKojo" : "handoff.completion", units));
         log.AppendLine(WriteSkill("skills.gameTextRules"));
+        if (renderMode == TA_Mode.Kojo) log.AppendLine(WriteSkill("skills.kojoWriting"));
         return log.ToString();
     }
 

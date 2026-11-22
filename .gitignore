@@ -89,6 +89,15 @@ Mods/*
 Mods/Assetpacks/*
 !Mods/Assetpacks/Image_Generation_Config.json
 
+!Docs/
+Docs/*
+!Docs/TextAuthoring/
+Docs/TextAuthoring/*
+!Docs/TextAuthoring/Templates/
+Docs/TextAuthoring/Templates/*
+!Docs/TextAuthoring/Templates/**/
+!Docs/TextAuthoring/Templates/**/*.json
+
 # CI workflows (re-included after the /* and *.yml rules above)
 !.github/
 !.github/workflows/

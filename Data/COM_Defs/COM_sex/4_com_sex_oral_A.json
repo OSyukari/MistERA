@@ -114,6 +114,11 @@
                     "Entries":[
                         {
                             "keepLooking":true,
+                            "conditions":[{"validateChara":{"statID":"climaxed","operand":"eq","value":"true","target":"doer"}}],
+                            "texts":["com_sex_oral_A_description_after_4", "com_sex_oral_A_description_after_5", "com_sex_oral_A_description_after_6"]
+                        },
+                        {
+                            "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
                             "texts":[ "com_sex_oral_A_description_after_1", "com_sex_oral_A_description_after_2", "com_sex_oral_A_description_after_3" ]
                         }
@@ -122,6 +127,21 @@
                 "description_begin":
                 {
                     "Entries":[ 
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}],
+                            "texts":["com_sex_oral_A_description_begin_4", "com_sex_oral_A_description_begin_5", "com_sex_oral_A_description_begin_6"]
+                        },
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validateChara":{"statID":"isUnconscious","operand":"eq","value":"true","target":"receiver"}}],
+                            "texts":["com_sex_oral_A_description_begin_7", "com_sex_oral_A_description_begin_8", "com_sex_oral_A_description_begin_9"]
+                        },
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validateChara":{"statID":"isTimestopped","operand":"eq","value":"true","target":"receiver"}}],
+                            "texts":["com_sex_oral_A_description_begin_10", "com_sex_oral_A_description_begin_11", "com_sex_oral_A_description_begin_12"]
+                        },
                         {
                             "keepLooking":true,
                             "texts": ["com_sex_oral_A_description_begin_1", "com_sex_oral_A_description_begin_2", "com_sex_oral_A_description_begin_3"]
@@ -217,7 +237,49 @@
                         "displayName":"com_sex_oral_A_displayName_4_force",
                         "setForce":true
                     }
-                ]
+                ],
+                "description_begin":{
+                    "Entries":[
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}],
+                            "texts":["com_sex_oral_A_force_description_begin_1", "com_sex_oral_A_force_description_begin_2", "com_sex_oral_A_force_description_begin_3"]
+                        },
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validateChara":{"statID":"isUnconscious","operand":"eq","value":"true","target":"receiver"}}],
+                            "texts":["com_sex_oral_A_force_description_begin_4", "com_sex_oral_A_force_description_begin_5", "com_sex_oral_A_force_description_begin_6"]
+                        },
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validateChara":{"statID":"isTimestopped","operand":"eq","value":"true","target":"receiver"}}],
+                            "texts":["com_sex_oral_A_force_description_begin_7", "com_sex_oral_A_force_description_begin_8", "com_sex_oral_A_force_description_begin_9"]
+                        },
+                        {
+                            "keepLooking":false,
+                            "conditions":[],
+                            "texts":["com_sex_oral_A_force_description_begin_10", "com_sex_oral_A_force_description_begin_11", "com_sex_oral_A_force_description_begin_12"]
+                        }
+                    ]
+                },
+                "description_ongoing":{
+                    "Entries":[
+                        {
+                            "keepLooking":false,
+                            "conditions":[],
+                            "texts":["com_sex_oral_A_force_description_ongoing_1", "com_sex_oral_A_force_description_ongoing_2", "com_sex_oral_A_force_description_ongoing_3"]
+                        }
+                    ]
+                },
+                "description_remove":{
+                    "Entries":[
+                        {
+                            "keepLooking":false,
+                            "conditions":[],
+                            "texts":["com_sex_oral_A_force_description_remove_1", "com_sex_oral_A_force_description_remove_2", "com_sex_oral_A_force_description_remove_3"]
+                        }
+                    ]
+                }
             }
         ]
     },
@@ -250,7 +312,37 @@
                 "com_sex_oral_A_description_ongoing_2": "$doer.firstname$的嘴裹着$receiver.firstname$的后穴吸个不停",
                 "com_sex_oral_A_description_ongoing_3": "$doer.firstname$的舌尖把$receiver.firstname$的屁眼舔得湿淋淋",
                 "com_sex_oral_A_description_after_2": "$receiver.firstname$的臀肉贴着$doer.firstname$的脸抖个不停",
-                "com_sex_oral_A_description_after_3": "$receiver.firstname$的后穴抽紧了，把$doer.firstname$的舌头绞在里面"
+                "com_sex_oral_A_description_after_3": "$receiver.firstname$的后穴抽紧了，把$doer.firstname$的舌头绞在里面",
+                "com_sex_oral_A_description_begin_4":"$doer.firstname$应下这声吩咐，把舌头捅进$receiver.firstname$的屁眼",
+                "com_sex_oral_A_description_begin_5":"$doer.firstname$照着吩咐把脸埋下去，舌尖舔开$receiver.firstname$的后穴",
+                "com_sex_oral_A_description_begin_6":"$doer.firstname$领了吩咐凑上去，嘴唇裹住$receiver.firstname$的屁眼",
+                "com_sex_oral_A_description_begin_7":"$doer.firstname$的舌头捅进熟睡的$receiver.firstname$的屁眼",
+                "com_sex_oral_A_description_begin_8":"$doer.firstname$的嘴唇裹住睡着的$receiver.firstname$的后穴吸",
+                "com_sex_oral_A_description_begin_9":"$doer.firstname$的舌尖顶开昏睡的$receiver.firstname$的屁眼",
+                "com_sex_oral_A_description_begin_10":"$doer.firstname$在停住的时间里把舌头捅进$receiver.firstname$的屁眼",
+                "com_sex_oral_A_description_begin_11":"$doer.firstname$的嘴唇在停住的时间里裹住$receiver.firstname$的后穴",
+                "com_sex_oral_A_description_begin_12":"$doer.firstname$的舌尖在停住的时间里顶开$receiver.firstname$的屁眼",
+                "com_sex_oral_A_description_after_4":"$doer.firstname$的舌头在$receiver.firstname$的屁眼里僵得发直",
+                "com_sex_oral_A_description_after_5":"$doer.firstname$的嘴死死压在$receiver.firstname$的屁股上",
+                "com_sex_oral_A_description_after_6":"$doer.firstname$的舌头抵着$receiver.firstname$的后穴一阵抽动",
+                "com_sex_oral_A_force_description_begin_1":"$doer.firstname$应下这声吩咐，把舌头捅进$receiver.firstname$的屁眼",
+                "com_sex_oral_A_force_description_begin_2":"$doer.firstname$照着吩咐把脸埋下去，舌头撑开$receiver.firstname$的后穴",
+                "com_sex_oral_A_force_description_begin_3":"$doer.firstname$领了吩咐凑上去，把舌头插进$receiver.firstname$的肛门",
+                "com_sex_oral_A_force_description_begin_4":"$doer.firstname$把舌头捅进熟睡的$receiver.firstname$的屁眼",
+                "com_sex_oral_A_force_description_begin_5":"$doer.firstname$的舌头撑开睡着的$receiver.firstname$的后穴",
+                "com_sex_oral_A_force_description_begin_6":"$doer.firstname$把舌头插进昏睡的$receiver.firstname$的肛门",
+                "com_sex_oral_A_force_description_begin_7":"$doer.firstname$在停住的时间里把舌头捅进$receiver.firstname$的屁眼",
+                "com_sex_oral_A_force_description_begin_8":"$doer.firstname$的舌头在停住的时间里撑开$receiver.firstname$的后穴",
+                "com_sex_oral_A_force_description_begin_9":"$doer.firstname$在停住的时间里把舌头插进$receiver.firstname$的肛门",
+                "com_sex_oral_A_force_description_begin_10":"$doer.firstname$把整根舌头捅进$receiver.firstname$的屁眼里",
+                "com_sex_oral_A_force_description_begin_11":"$doer.firstname$的舌头撑开$receiver.firstname$的后穴钻到底",
+                "com_sex_oral_A_force_description_begin_12":"$doer.firstname$把舌头插进$receiver.firstname$的肛门里搅",
+                "com_sex_oral_A_force_description_ongoing_1":"$doer.firstname$的舌头在$receiver.firstname$的屁眼深处搅",
+                "com_sex_oral_A_force_description_ongoing_2":"$doer.firstname$把舌头一路舔进$receiver.firstname$的后穴深处",
+                "com_sex_oral_A_force_description_ongoing_3":"$doer.firstname$的舌头在$receiver.firstname$的肛门里抽插",
+                "com_sex_oral_A_force_description_remove_1":"$doer.firstname$把舌头从$receiver.firstname$的屁眼深处拔出",
+                "com_sex_oral_A_force_description_remove_2":"$doer.firstname$的舌头从$receiver.firstname$的后穴里退出来",
+                "com_sex_oral_A_force_description_remove_3":"$doer.firstname$湿着的舌头离开$receiver.firstname$的肛门"
 
             },
             "en-us":

@@ -105,6 +105,11 @@
                     "Entries":[
                         {
                             "keepLooking":true,
+                            "conditions":[{"validateChara":{"statID":"climaxed","operand":"eq","value":"true","target":"doer"}}],
+                            "texts":[ "com_sex_oral_P_Force_description_after_7", "com_sex_oral_P_Force_description_after_8", "com_sex_oral_P_Force_description_after_9" ]
+                        },
+                        {
+                            "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"doer", "statID":"isCumReady", "operand":"eq", "value":"true" } } ],
                             "texts":[ "com_sex_oral_P_Force_description_after_1", "com_sex_oral_P_Force_description_after_3", "com_sex_oral_P_Force_description_after_4" ]
                         },
@@ -112,12 +117,47 @@
                             "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
                             "texts":[ "com_sex_oral_P_Force_description_after_2", "com_sex_oral_P_Force_description_after_5", "com_sex_oral_P_Force_description_after_6" ]
+                        },
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validateChara":{"target":"doer", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
+                            "texts":[ "com_sex_oral_P_Force_description_after_10", "com_sex_oral_P_Force_description_after_11", "com_sex_oral_P_Force_description_after_12" ]
                         }
                     ]
                 },
                 "description_begin":
                 {
                     "Entries":[
+                        {
+                            "keepLooking":true,
+                            "conditions":[{"validateChara":{"statID":"isUnconscious","operand":"eq","value":"true","target":"receiver"}}],
+                            "texts":[ "com_sex_oral_P_Force_description_begin_13", "com_sex_oral_P_Force_description_begin_14", "com_sex_oral_P_Force_description_begin_15" ]
+                        },
+                        {
+                            "keepLooking":true,
+                            "conditions":[{"validateChara":{"statID":"isTimestopped","operand":"eq","value":"true","target":"receiver"}}],
+                            "texts":[ "com_sex_oral_P_Force_description_begin_16", "com_sex_oral_P_Force_description_begin_17", "com_sex_oral_P_Force_description_begin_18" ]
+                        },
+                        {
+                            "keepLooking":true,
+                            "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}],
+                            "texts":[ "com_sex_oral_P_Force_description_begin_19", "com_sex_oral_P_Force_description_begin_20", "com_sex_oral_P_Force_description_begin_21" ]
+                        },
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}],
+                            "texts":[ "com_sex_oral_P_Force_description_begin_4", "com_sex_oral_P_Force_description_begin_5", "com_sex_oral_P_Force_description_begin_6" ]
+                        },
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validateChara":{"statID":"isUnconscious","operand":"eq","value":"true","target":"receiver"}}],
+                            "texts":[ "com_sex_oral_P_Force_description_begin_7", "com_sex_oral_P_Force_description_begin_8", "com_sex_oral_P_Force_description_begin_9" ]
+                        },
+                        {
+                            "keepLooking":false,
+                            "conditions":[{"validateChara":{"statID":"isTimestopped","operand":"eq","value":"true","target":"receiver"}}],
+                            "texts":[ "com_sex_oral_P_Force_description_begin_10", "com_sex_oral_P_Force_description_begin_11", "com_sex_oral_P_Force_description_begin_12" ]
+                        },
                         {
                             "keepLooking":true,
                             "texts": ["com_sex_oral_P_Force_description_begin_1", "com_sex_oral_P_Force_description_begin_2", "com_sex_oral_P_Force_description_begin_3"]
@@ -206,6 +246,51 @@
                         "setForce":true
                     }
                 ],
+                "description_begin":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validateChara":{ "target":"receiver", "statID":"isUnconscious", "operand":"eq", "value":"true" } } ],
+                            "texts":[ "com_sex_oral_P_Force_deep_description_begin_1", "com_sex_oral_P_Force_deep_description_begin_2", "com_sex_oral_P_Force_deep_description_begin_3" ]
+                        },
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validateChara":{ "target":"receiver", "statID":"isTimestopped", "operand":"eq", "value":"true" } } ],
+                            "texts":[ "com_sex_oral_P_Force_deep_description_begin_4", "com_sex_oral_P_Force_deep_description_begin_5", "com_sex_oral_P_Force_deep_description_begin_6" ]
+                        },
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validatePackage":{ "existsMaster_NonActor":true } } ],
+                            "texts":[ "com_sex_oral_P_Force_deep_description_begin_7", "com_sex_oral_P_Force_deep_description_begin_8", "com_sex_oral_P_Force_deep_description_begin_9" ]
+                        },
+                        {
+                            "keepLooking":true,
+                            "conditions":[],
+                            "texts":[ "com_sex_oral_P_Force_deep_description_begin_10", "com_sex_oral_P_Force_deep_description_begin_11", "com_sex_oral_P_Force_deep_description_begin_12" ]
+                        }
+                    ]
+                },
+                "description_ongoing":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "conditions":[],
+                            "texts":[ "com_sex_oral_P_Force_deep_description_ongoing_1", "com_sex_oral_P_Force_deep_description_ongoing_2", "com_sex_oral_P_Force_deep_description_ongoing_3" ]
+                        }
+                    ]
+                },
+                "description_remove":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "conditions":[],
+                            "texts":[ "com_sex_oral_P_Force_deep_description_remove_1", "com_sex_oral_P_Force_deep_description_remove_2", "com_sex_oral_P_Force_deep_description_remove_3" ]
+                        }
+                    ]
+                },
                 "results_EP": { "result_event": { "id_overwrite": "com_sex_oral_swallow", "eventLabel": "receiver" } }
             }
         ]
@@ -242,7 +327,51 @@
                 "com_sex_oral_P_Force_description_remove_2": "$doer.firstname$的$doer.p$从$receiver.firstname$的喉咙里退出来",
                 "com_sex_oral_P_Force_description_remove_3": "$doer.firstname$的$doer.p$从$receiver.firstname$的嘴唇间滑出来",
                 "com_sex_oral_P_Force_description_ongoing_2": "$doer.firstname$抓着$receiver.firstname$的脑袋往$doer.p$上撞",
-                "com_sex_oral_P_Force_description_ongoing_3": "$doer.firstname$的$doer.p$捅进$receiver.firstname$的喉咙深处搅"
+                "com_sex_oral_P_Force_description_ongoing_3": "$doer.firstname$的$doer.p$捅进$receiver.firstname$的喉咙深处搅",
+                "com_sex_oral_P_Force_description_begin_4": "$doer.firstname$应下这声吩咐，把$doer.p$捅进$receiver.firstname$的嘴",
+                "com_sex_oral_P_Force_description_begin_5": "$doer.firstname$照着吩咐抓住$receiver.firstname$的脑袋按下去",
+                "com_sex_oral_P_Force_description_begin_6": "$doer.firstname$领了吩咐上前，把$doer.p$捅进$receiver.firstname$的喉咙",
+                "com_sex_oral_P_Force_description_begin_7": "$doer.firstname$把$doer.p$捅进熟睡的$receiver.firstname$的嘴里",
+                "com_sex_oral_P_Force_description_begin_8": "$doer.firstname$的$doer.p$捅开睡着的$receiver.firstname$的嘴唇",
+                "com_sex_oral_P_Force_description_begin_9": "$doer.firstname$抓着昏睡的$receiver.firstname$的脑袋往$doer.p$上按",
+                "com_sex_oral_P_Force_description_begin_10": "$doer.firstname$在停住的时间里把$doer.p$捅进$receiver.firstname$的嘴",
+                "com_sex_oral_P_Force_description_begin_11": "$doer.firstname$的$doer.p$在停住的时间里捅开$receiver.firstname$的嘴唇",
+                "com_sex_oral_P_Force_description_begin_12": "$doer.firstname$在停住的时间里抓着$receiver.firstname$的脑袋往下按",
+                "com_sex_oral_P_Force_description_after_7": "$doer.firstname$按着$receiver.firstname$脑袋的手死死收紧",
+                "com_sex_oral_P_Force_description_after_8": "$doer.p$在$receiver.firstname$的喉咙里绷得发硬",
+                "com_sex_oral_P_Force_description_after_9": "$doer.firstname$的腰死死往前顶住",
+
+                "com_sex_oral_P_Force_description_begin_13": "$doer.firstname$掰开睡着的$receiver.firstname$的嘴把$doer.p$捅进那张嘴里",
+                "com_sex_oral_P_Force_description_begin_14": "$doer.firstname$把$doer.p$捅进$receiver.firstname$熟睡着的嘴里顶到喉咙",
+                "com_sex_oral_P_Force_description_begin_15": "$doer.firstname$托着$receiver.firstname$的后脑把$doer.p$塞进那张嘴里",
+                "com_sex_oral_P_Force_description_begin_16": "$doer.firstname$在停住的时间里把$doer.p$捅进$receiver.firstname$的嘴里",
+                "com_sex_oral_P_Force_description_begin_17": "$doer.firstname$在停住的时间里把$doer.p$塞进那张嘴里顶到喉咙",
+                "com_sex_oral_P_Force_description_begin_18": "$doer.firstname$在停住的时间里掰开$receiver.firstname$的嘴唇把$doer.p$捅进嘴里",
+                "com_sex_oral_P_Force_description_begin_19": "$doer.firstname$依言把$doer.p$捅进$receiver.firstname$的嘴里",
+                "com_sex_oral_P_Force_description_begin_20": "$doer.firstname$照着吩咐按住$receiver.firstname$的后脑把$doer.p$捅进嘴里",
+                "com_sex_oral_P_Force_description_begin_21": "$doer.firstname$应下吩咐把$doer.p$塞进$receiver.firstname$的嘴里顶到喉咙",
+                "com_sex_oral_P_Force_description_after_10": "$doer.p$在$receiver.firstname$的嘴里涨硬着跳",
+                "com_sex_oral_P_Force_description_after_11": "$doer.p$顶在$receiver.firstname$的喉咙口一下下地抖",
+                "com_sex_oral_P_Force_description_after_12": "$doer.p$把$receiver.firstname$的嘴撑得发紧又跳个不停",
+
+                "com_sex_oral_P_Force_deep_description_begin_1": "$doer.firstname$掰开睡着的$receiver.firstname$的嘴把$doer.p$捅进喉咙",
+                "com_sex_oral_P_Force_deep_description_begin_2": "$doer.firstname$把$doer.p$捅进$receiver.firstname$熟睡着的喉咙深处",
+                "com_sex_oral_P_Force_deep_description_begin_3": "$doer.firstname$托着$receiver.firstname$的后脑把$doer.p$塞进喉咙里",
+                "com_sex_oral_P_Force_deep_description_begin_4": "$doer.firstname$在停住的时间里把$doer.p$捅进$receiver.firstname$的喉咙",
+                "com_sex_oral_P_Force_deep_description_begin_5": "$doer.firstname$在停住的时间里把$doer.p$塞进嘴里一路顶到喉咙",
+                "com_sex_oral_P_Force_deep_description_begin_6": "$doer.firstname$在停住的时间里掰开$receiver.firstname$的嘴把$doer.p$捅进喉咙深处",
+                "com_sex_oral_P_Force_deep_description_begin_7": "$doer.firstname$依言把$doer.p$捅进$receiver.firstname$的喉咙",
+                "com_sex_oral_P_Force_deep_description_begin_8": "$doer.firstname$照着吩咐按住$receiver.firstname$的后脑把$doer.p$捅到喉咙深处",
+                "com_sex_oral_P_Force_deep_description_begin_9": "$doer.firstname$应下吩咐把$doer.p$塞进$receiver.firstname$的喉咙里",
+                "com_sex_oral_P_Force_deep_description_begin_10": "$doer.firstname$把$doer.p$捅进$receiver.firstname$的嘴里一路顶进喉咙",
+                "com_sex_oral_P_Force_deep_description_begin_11": "$doer.firstname$按住$receiver.firstname$的后脑把$doer.p$捅到喉咙最深处",
+                "com_sex_oral_P_Force_deep_description_begin_12": "$doer.firstname$抓着$receiver.firstname$的脑袋把$doer.p$捅进喉咙深处",
+                "com_sex_oral_P_Force_deep_description_ongoing_1": "$doer.p$在$receiver.firstname$的喉咙里来回抽插",
+                "com_sex_oral_P_Force_deep_description_ongoing_2": "$doer.firstname$抓着$receiver.firstname$的后脑把$doer.p$往喉咙深处撞",
+                "com_sex_oral_P_Force_deep_description_ongoing_3": "$doer.firstname$把$doer.p$捅在$receiver.firstname$的喉咙里搅",
+                "com_sex_oral_P_Force_deep_description_remove_1": "$doer.firstname$把$doer.p$从$receiver.firstname$的喉咙里抽出来",
+                "com_sex_oral_P_Force_deep_description_remove_2": "$doer.firstname$把$doer.p$从$receiver.firstname$的嘴里退出来",
+                "com_sex_oral_P_Force_deep_description_remove_3": "$doer.p$从$receiver.firstname$的喉咙里滑了出来"
 
             },
             "en-us":

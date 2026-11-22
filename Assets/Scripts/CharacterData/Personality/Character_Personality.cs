@@ -139,6 +139,9 @@ public class Character_Personality
     [JsonProperty] private string displayName;
     [JsonIgnore] public string DisplayName { get { return displayName; } }
 
+    // Authoring-only guidance for this personality; deliberately not inherited through fallbackID.
+    public List<string> authoringInstructions = new List<string>();
+
     // Fallback Reference 
     [JsonProperty] private string fallbackID = "";
     private Character_Personality fallbackRef = null;

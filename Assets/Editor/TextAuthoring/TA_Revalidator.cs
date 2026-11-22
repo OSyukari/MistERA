@@ -188,10 +188,25 @@ public static class TA_Revalidator
         problem = false;
         if (slot == null) return null;
         bool readOnly = slot.Value<bool?>("readOnly") ?? false;
+        bool optional = slot.Value<bool?>("optional") ?? false;
         bool hasSnapshot = slot["texts"] is JArray;     // manifests from before 2026-11-15 15:00 have none
         var snapshot = ToList(slot["texts"] as JArray);
         doc.TryGetValue(handle, out var docLines);
         if (docLines == null) docLines = new List<string>();
+        int markers = 0;
+        for (int i = 0; i < docLines.Count; i++) if (docLines[i] == "待写") markers++;
+
+        // an optional slot left as generated (marker-only): an intentional no-op - not a change, not a problem
+        if (optional && markers > 0 && markers == docLines.Count) return null;
+
+        // a structural proposal (newEntry): filled = a record for review (import handles it); no live location to compare offline
+        if ((string)slot["kind"] == "newEntry")
+        {
+            if (!readOnly && hasSnapshot && docLines.Count > 0 && !SameList(docLines, snapshot)) unit.docChanged = true;
+            if (markers > 0) { problem = true; unit.pending = true; return $"- 【{handle}】仍有「待写」"; }
+            return null;
+        }
+
         if (!readOnly && hasSnapshot && docLines.Count > 0 && !SameList(docLines, snapshot)) unit.docChanged = true;
 
         var live = LiveTexts(slot, data, out string liveError);
@@ -199,7 +214,7 @@ public static class TA_Revalidator
         if (liveError != null) { problem = true; return $"- 【{handle}】无法读取数据文件：{liveError}{patched}"; }
 
         for (int i = 0; i < docLines.Count; i++)
-            if (docLines[i] == "待写") { problem = true; unit.pending = true; return $"- 【{handle}】仍有「待写」"; }
+            if (docLines[i] == "待写") { problem = true; unit.pending = true; return $"- 【{handle}】仍有「待写」{(markers < docLines.Count ? "（与正文混留）" : "")}"; }
 
         // event text and buttons hold one string; manifests without the flag treat event_text as single-line too
         bool multiLine = slot.Value<bool?>("multiLine") ?? (string)slot["kind"] != "event_text";
@@ -471,12 +486,15 @@ public static class TA_Revalidator
     {
         var old = ToList(slot?["texts"] as JArray);
         bool readOnly = (slot?.Value<bool?>("readOnly") ?? false) || newLines.Count == 0;
-        bool pending = false;
-        for (int i = 0; i < newLines.Count; i++) if (newLines[i] == "待写") pending = true;
+        int markers = 0;
+        for (int i = 0; i < newLines.Count; i++) if (newLines[i] == "待写") markers++;
+        bool pending = markers > 0;
+        // an optional slot left as generated: an intentional skip, not unfinished required work
+        bool leftOptional = (slot?.Value<bool?>("optional") ?? false) && markers == newLines.Count && newLines.Count > 0;
         bool isChanged = !readOnly && !pending && !SameList(newLines, old);
-        string state = readOnly ? "只读" : pending ? "待写" : isChanged ? "改写" : "未改";
+        string state = readOnly ? "只读" : leftOptional ? "未写（可选）" : pending ? "待写" : isChanged ? "改写" : "未改";
         if (isChanged) changed++;
-        if (pending) pendingFill++;
+        if (pending && !leftOptional) pendingFill++;
 
         into.AppendLine();
         into.AppendLine($"**{header}** ｜ {state}");

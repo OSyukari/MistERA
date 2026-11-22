@@ -21,7 +21,8 @@ public abstract partial class TA_DocBuilderBase
         /// <summary>Fetched without an action package (events, join lookups): the EP checks don't run.</summary>
         public bool noEP;
         /// <summary>Doc names when the template's role / listener words don't fit (event role keys).</summary>
-        public string speakerLabel, listenerLabel;
+        public string speakerLabel, listenerLabel, outcomeLabel;
+        public JObject who;
         public List<string> phaseSelfTags = new List<string>();
     }
 
@@ -56,7 +57,7 @@ public abstract partial class TA_DocBuilderBase
     /// The case with its coverage over every personality. key = the lookup key (shown on the case); resolve = how a
     /// personality finds the entry (command chain + fallback, or a plain event key).
     /// </summary>
-    protected JObject KojoCase(KojoCaseSpec c, string key, EntryResolver resolve)
+    protected JObject KojoCase(KojoCaseSpec c, string key, EntryResolver resolve, Func<string> lookupRoute = null)
     {
         var sDef = StateDef(c.speakerState);
         var lDef = c.listener == "self" ? sDef : StateDef(c.listenerState);
@@ -88,7 +89,11 @@ public abstract partial class TA_DocBuilderBase
         var own = new JArray(); var inherited = new JArray(); var noBranch = new JArray(); var missing = new JArray();
         // where a personality without a branch for the case would get one (its resolved entry)
         var branchIn = new JObject();
-        // inherited but flagged "require custom" (Store/custom.json, D50): not covered for it; customFrom = what it uses now
+        var authoring = new JObject();
+        // Entry-resolution provenance, not a prediction of which lookup produces a runtime message.
+        var lookupProvenance = lookupRoute == null ? null : new JObject();
+        // Fallback personality or source reuse flagged "require custom" (Store/custom.json, D50): not covered;
+        // customFrom = what it uses now. This explicit obligation is independent of own / inherited ownership.
         var custom = new JArray();
         var customFrom = new JObject();
         JObject tierSet = c.tierSet == null ? null : TA_CaseTemplate.Tiers(c.tierSet);
@@ -103,26 +108,47 @@ public abstract partial class TA_DocBuilderBase
         {
             var p = all[pi];
             if (p == null || string.IsNullOrEmpty(p.ID)) continue;
+            var direct = ResolveAuthoringEntry(p, key, out _, out _);
+            if (direct != null)
+            {
+                var slots = new JArray();
+                var candidates = new List<List<ResponseEntry.Variant>>();
+                Leaves(direct.variants, ctx, new List<ResponseEntry.Variant>(), candidates);
+                foreach (var path in candidates)
+                {
+                    if (!Specific(path, specificSelf, specificTarget, c.outcome, OrderedDoer(c))) continue;
+                    var siblings = direct.variants;
+                    var parts = new List<string>();
+                    foreach (var node in path)
+                    {
+                        parts.Add($"variants[{siblings.IndexOf(node)}]");
+                        siblings = node.variants;
+                    }
+                    var handle = ExistingKojoHandle(p.ID, key, string.Join(".", parts));
+                    if (handle != null) slots.Add(handle);
+                }
+                authoring[p.ID] = slots;
+            }
             resolvedViaSource = null;
             var found = resolve(p, out var provider, out var entryID);
             var viaSource = resolvedViaSource;
             if (found == null) { missing.Add(p.ID); continue; }
+            if (lookupProvenance != null)
+                lookupProvenance[p.ID] = new JObject { ["route"] = lookupRoute(), ["provider"] = provider, ["entry"] = entryID };
             var leaves = new List<List<ResponseEntry.Variant>>();
             Leaves(found.variants, ctx, new List<ResponseEntry.Variant>(), leaves);
             var fit = new List<List<ResponseEntry.Variant>>();
             for (int l = 0; l < leaves.Count; l++)
                 if (Specific(leaves[l], specificSelf, specificTarget, c.outcome, OrderedDoer(c))) fit.Add(leaves[l]);
             if (fit.Count == 0) { noBranch.Add(p.ID); branchIn[p.ID] = entryID; continue; }
-            if (viaSource != null || provider != p.ID)
+            if ((viaSource != null || provider != p.ID) && TA_CaseTemplate.RequiresCustom(p.ID, c.id))
             {
-                if (TA_CaseTemplate.RequiresCustom(p.ID, c.id))
-                {
-                    custom.Add(p.ID);
-                    customFrom[p.ID] = $"{provider} {entryID}";
-                    continue;
-                }
-                inherited.Add(p.ID);
+                custom.Add(p.ID);
+                customFrom[p.ID] = $"{provider} {entryID}";
+                continue;
             }
+            // Ownership follows the personality, not the command key (source / folder parent reuse is still own).
+            if (provider != p.ID) inherited.Add(p.ID);
             else own.Add(p.ID);
             if (tierItems != null)
                 for (int ti = 0; ti < tierItems.Count; ti++)
@@ -138,9 +164,12 @@ public abstract partial class TA_DocBuilderBase
             ["outcome"] = c.outcome, ["required"] = c.required,
             ["text"] = CaseText(c, sDef, lDef),
             ["needs"] = Needs(sDef, lDef, c),
-            ["cov"] = new JObject { ["own"] = own, ["inherited"] = inherited, ["noBranch"] = noBranch, ["missing"] = missing }
+            ["cov"] = new JObject { ["own"] = own, ["inherited"] = inherited, ["noBranch"] = noBranch, ["missing"] = missing },
+            ["authoring"] = authoring
         };
+        if (c.who != null) o["who"] = c.who;
         if (branchIn.Count > 0) o["branchIn"] = branchIn;
+        if (lookupProvenance != null) o["lookupProvenance"] = lookupProvenance;
         if (custom.Count > 0)
         {
             o["cov"]["custom"] = custom;
@@ -267,7 +296,7 @@ public abstract partial class TA_DocBuilderBase
         var words = TA_CaseTemplate.Words;
         var speaker = c.speakerLabel ?? (string)TA_CaseTemplate.Roles[c.speaker]?["label"] ?? c.speaker;
         var listener = c.listenerLabel ?? (string)words["listeners"]?[c.listener] ?? c.listener;
-        var outcome = (string)words["outcomes"]?[c.outcome] ?? c.outcome;
+        var outcome = c.outcomeLabel ?? (string)words["outcomes"]?[c.outcome] ?? c.outcome;
         var s = speaker + (sDef != null ? "（" + ((string)sDef["label"] ?? c.speakerState) + "）" : "");
         var l = listener + (c.listener != "self" && lDef != null ? "（" + ((string)lDef["label"] ?? c.listenerState) + "）" : "");
         var order = c.ordered ? (string)words["ordered"] ?? "" : "";

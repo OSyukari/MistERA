@@ -108,12 +108,37 @@
                             "keepLooking":true,
                             "conditions":[ { "validateChara":{"target":"doer", "statID":"isCumReady", "operand":"eq", "value":"true" } } ],
                             "texts":[ "com_sex_P_missionary_A_description_after_1", "com_sex_P_missionary_A_description_after_2", "com_sex_P_missionary_A_description_after_3" ]
+                        },
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validateChara":{ "target":"receiver", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
+                            "texts":[ "com_sex_P_missionary_A_description_after_4", "com_sex_P_missionary_A_description_after_5", "com_sex_P_missionary_A_description_after_6" ]
+                        },
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validateChara":{ "target":"doer", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
+                            "texts":[ "com_sex_P_missionary_A_description_after_7", "com_sex_P_missionary_A_description_after_8", "com_sex_P_missionary_A_description_after_9" ]
                         }
                     ]
                 },
                 "description_begin":
                 {
                     "Entries":[ 
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validateChara":{ "target":"receiver", "statID":"isUnconscious", "operand":"eq", "value":"true" } } ],
+                            "texts":[ "com_sex_P_missionary_A_description_begin_4", "com_sex_P_missionary_A_description_begin_5", "com_sex_P_missionary_A_description_begin_6" ]
+                        },
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validateChara":{ "target":"receiver", "statID":"isTimestopped", "operand":"eq", "value":"true" } } ],
+                            "texts":[ "com_sex_P_missionary_A_description_begin_7", "com_sex_P_missionary_A_description_begin_8", "com_sex_P_missionary_A_description_begin_9" ]
+                        },
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validatePackage":{ "existsMaster_NonActor":true } } ],
+                            "texts":[ "com_sex_P_missionary_A_description_begin_10", "com_sex_P_missionary_A_description_begin_11", "com_sex_P_missionary_A_description_begin_12" ]
+                        },
                         {
                             "keepLooking":true,
                             "texts": ["com_sex_P_missionary_A_description_begin_1", "com_sex_P_missionary_A_description_begin_2", "com_sex_P_missionary_A_description_begin_3"]
@@ -187,7 +212,52 @@
                         "displayName":"com_sex_P_A_overpen_4",
                         "setForce":true
                     }
-                ]
+                ],
+                "description_begin":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validateChara":{ "target":"receiver", "statID":"isUnconscious", "operand":"eq", "value":"true" } } ],
+                            "texts":[ "com_sex_P_missionary_A_overpen_description_begin_1", "com_sex_P_missionary_A_overpen_description_begin_2", "com_sex_P_missionary_A_overpen_description_begin_3" ]
+                        },
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validateChara":{ "target":"receiver", "statID":"isTimestopped", "operand":"eq", "value":"true" } } ],
+                            "texts":[ "com_sex_P_missionary_A_overpen_description_begin_4", "com_sex_P_missionary_A_overpen_description_begin_5", "com_sex_P_missionary_A_overpen_description_begin_6" ]
+                        },
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validatePackage":{ "existsMaster_NonActor":true } } ],
+                            "texts":[ "com_sex_P_missionary_A_overpen_description_begin_7", "com_sex_P_missionary_A_overpen_description_begin_8", "com_sex_P_missionary_A_overpen_description_begin_9" ]
+                        },
+                        {
+                            "keepLooking":true,
+                            "conditions":[],
+                            "texts":[ "com_sex_P_missionary_A_overpen_description_begin_10", "com_sex_P_missionary_A_overpen_description_begin_11", "com_sex_P_missionary_A_overpen_description_begin_12" ]
+                        }
+                    ]
+                },
+                "description_ongoing":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "conditions":[],
+                            "texts":[ "com_sex_P_missionary_A_overpen_description_ongoing_1", "com_sex_P_missionary_A_overpen_description_ongoing_2", "com_sex_P_missionary_A_overpen_description_ongoing_3" ]
+                        }
+                    ]
+                },
+                "description_remove":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "conditions":[],
+                            "texts":[ "com_sex_P_missionary_A_overpen_description_remove_1", "com_sex_P_missionary_A_overpen_description_remove_2", "com_sex_P_missionary_A_overpen_description_remove_3" ]
+                        }
+                    ]
+                }
             },
             {
                 "parentCOMID":"com_sex_base",
@@ -254,7 +324,52 @@
                         "displayName":"com_sex_P_A_force_4",
                         "setForce":true
                     }
-                ]
+                ],
+                "description_begin":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validateChara":{ "target":"receiver", "statID":"isUnconscious", "operand":"eq", "value":"true" } } ],
+                            "texts":[ "com_sex_P_missionary_A_force_description_begin_1", "com_sex_P_missionary_A_force_description_begin_2", "com_sex_P_missionary_A_force_description_begin_3" ]
+                        },
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validateChara":{ "target":"receiver", "statID":"isTimestopped", "operand":"eq", "value":"true" } } ],
+                            "texts":[ "com_sex_P_missionary_A_force_description_begin_4", "com_sex_P_missionary_A_force_description_begin_5", "com_sex_P_missionary_A_force_description_begin_6" ]
+                        },
+                        {
+                            "keepLooking":true,
+                            "conditions":[ { "validatePackage":{ "existsMaster_NonActor":true } } ],
+                            "texts":[ "com_sex_P_missionary_A_force_description_begin_7", "com_sex_P_missionary_A_force_description_begin_8", "com_sex_P_missionary_A_force_description_begin_9" ]
+                        },
+                        {
+                            "keepLooking":true,
+                            "conditions":[],
+                            "texts":[ "com_sex_P_missionary_A_force_description_begin_10", "com_sex_P_missionary_A_force_description_begin_11", "com_sex_P_missionary_A_force_description_begin_12" ]
+                        }
+                    ]
+                },
+                "description_ongoing":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "conditions":[],
+                            "texts":[ "com_sex_P_missionary_A_force_description_ongoing_1", "com_sex_P_missionary_A_force_description_ongoing_2", "com_sex_P_missionary_A_force_description_ongoing_3" ]
+                        }
+                    ]
+                },
+                "description_remove":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "conditions":[],
+                            "texts":[ "com_sex_P_missionary_A_force_description_remove_1", "com_sex_P_missionary_A_force_description_remove_2", "com_sex_P_missionary_A_force_description_remove_3" ]
+                        }
+                    ]
+                }
             }
         ]
     },
@@ -284,7 +399,61 @@
                 "com_sex_P_missionary_A_description_begin_2": "$doer.firstname$掰开$receiver.firstname$的腿把$doer.p$塞进后穴里",
                 "com_sex_P_missionary_A_description_begin_3": "$doer.firstname$压着$receiver.firstname$的腰把$doer.p$捅进$receiver.firstname$的肛门",
                 "com_sex_P_missionary_A_description_remove_2": "$doer.firstname$把$doer.p$从$receiver.firstname$的后穴里退出来",
-                "com_sex_P_missionary_A_description_remove_3": "$doer.p$从$receiver.firstname$的肛门里滑了出去"
+                "com_sex_P_missionary_A_description_remove_3": "$doer.p$从$receiver.firstname$的肛门里滑了出去",
+
+                "com_sex_P_missionary_A_description_begin_4": "$doer.firstname$掰开睡着的$receiver.firstname$的腿把$doer.p$捅进肛门",
+                "com_sex_P_missionary_A_description_begin_5": "$doer.firstname$把$doer.p$捅进$receiver.firstname$没有反应的后穴里",
+                "com_sex_P_missionary_A_description_begin_6": "$doer.firstname$压上睡着的$receiver.firstname$把$doer.p$塞进$receiver.firstname$的肛门",
+                "com_sex_P_missionary_A_description_begin_7": "$doer.firstname$在停住的时间里把$doer.p$捅进$receiver.firstname$的肛门",
+                "com_sex_P_missionary_A_description_begin_8": "$doer.firstname$在停住的时间里掰开$receiver.firstname$的腿把$doer.p$塞进后穴",
+                "com_sex_P_missionary_A_description_begin_9": "$doer.firstname$在停住的时间里压在$receiver.firstname$身上把$doer.p$捅进$receiver.firstname$的肛门里",
+                "com_sex_P_missionary_A_description_begin_10": "$doer.firstname$依言把$doer.p$捅进$receiver.firstname$的肛门",
+                "com_sex_P_missionary_A_description_begin_11": "$doer.firstname$照着吩咐压到$receiver.firstname$身上把$doer.p$塞进后穴",
+                "com_sex_P_missionary_A_description_begin_12": "$doer.firstname$应下吩咐掰开$receiver.firstname$的腿把$doer.p$捅进$receiver.firstname$的肛门里",
+                "com_sex_P_missionary_A_description_after_4": "$receiver.firstname$的肛门把$doer.p$绞得动弹不得",
+                "com_sex_P_missionary_A_description_after_5": "$receiver.firstname$的后穴一阵阵抽紧裹住$doer.p$",
+                "com_sex_P_missionary_A_description_after_6": "$receiver.firstname$的肛门缩得死紧夹着$doer.p$吸",
+                "com_sex_P_missionary_A_description_after_7": "$doer.p$在$receiver.firstname$的肛门里涨硬着跳",
+                "com_sex_P_missionary_A_description_after_8": "$doer.p$顶在$receiver.firstname$的后穴深处一下下地抖",
+                "com_sex_P_missionary_A_description_after_9": "$doer.p$把$receiver.firstname$的肛门撑得发紧又跳个不停",
+
+                "com_sex_P_missionary_A_overpen_description_begin_1": "$doer.firstname$掰开睡着的$receiver.firstname$的腿把$doer.p$捅进直肠",
+                "com_sex_P_missionary_A_overpen_description_begin_2": "$doer.firstname$把$doer.p$捅进$receiver.firstname$没有反应的后穴里一路顶到直肠",
+                "com_sex_P_missionary_A_overpen_description_begin_3": "$doer.firstname$压上睡着的$receiver.firstname$把$doer.p$塞进$receiver.firstname$的直肠里",
+                "com_sex_P_missionary_A_overpen_description_begin_4": "$doer.firstname$在停住的时间里把$doer.p$捅进$receiver.firstname$的直肠",
+                "com_sex_P_missionary_A_overpen_description_begin_5": "$doer.firstname$在停住的时间里掰开$receiver.firstname$的腿把$doer.p$塞进直肠里",
+                "com_sex_P_missionary_A_overpen_description_begin_6": "$doer.firstname$在停住的时间里压在$receiver.firstname$身上把$doer.p$捅开肛门顶进直肠",
+                "com_sex_P_missionary_A_overpen_description_begin_7": "$doer.firstname$依言把$doer.p$捅进$receiver.firstname$的直肠",
+                "com_sex_P_missionary_A_overpen_description_begin_8": "$doer.firstname$照着吩咐压到$receiver.firstname$身上把$doer.p$塞进直肠里",
+                "com_sex_P_missionary_A_overpen_description_begin_9": "$doer.firstname$应下吩咐掰开$receiver.firstname$的腿把$doer.p$捅开肛门顶进直肠",
+                "com_sex_P_missionary_A_overpen_description_begin_10": "$doer.firstname$压在$receiver.firstname$身上把$doer.p$捅进肛门一路捅进直肠",
+                "com_sex_P_missionary_A_overpen_description_begin_11": "$doer.firstname$掰开$receiver.firstname$的腿把$doer.p$塞进$receiver.firstname$的直肠里",
+                "com_sex_P_missionary_A_overpen_description_begin_12": "$doer.firstname$压着$receiver.firstname$的腰把$doer.p$捅开肛门顶进直肠",
+                "com_sex_P_missionary_A_overpen_description_ongoing_1": "$doer.p$在$receiver.firstname$的直肠里来回捅",
+                "com_sex_P_missionary_A_overpen_description_ongoing_2": "$doer.firstname$压在$receiver.firstname$身上把$doer.p$往直肠里撞",
+                "com_sex_P_missionary_A_overpen_description_ongoing_3": "$doer.firstname$掰着$receiver.firstname$的腿让$doer.p$在直肠里搅",
+                "com_sex_P_missionary_A_overpen_description_remove_1": "$doer.firstname$把$doer.p$从$receiver.firstname$的直肠里退出来",
+                "com_sex_P_missionary_A_overpen_description_remove_2": "$doer.firstname$把$doer.p$从$receiver.firstname$的肛门里抽出来",
+                "com_sex_P_missionary_A_overpen_description_remove_3": "$doer.p$从$receiver.firstname$的直肠里滑了出去",
+
+                "com_sex_P_missionary_A_force_description_begin_1": "$doer.firstname$掰开睡着的$receiver.firstname$的腿把$doer.p$捅进结肠",
+                "com_sex_P_missionary_A_force_description_begin_2": "$doer.firstname$把$doer.p$捅进$receiver.firstname$没有反应的后穴里一路顶到结肠",
+                "com_sex_P_missionary_A_force_description_begin_3": "$doer.firstname$压上睡着的$receiver.firstname$把$doer.p$塞进$receiver.firstname$的结肠深处",
+                "com_sex_P_missionary_A_force_description_begin_4": "$doer.firstname$在停住的时间里把$doer.p$捅进$receiver.firstname$的结肠",
+                "com_sex_P_missionary_A_force_description_begin_5": "$doer.firstname$在停住的时间里掰开$receiver.firstname$的腿把$doer.p$塞进结肠里",
+                "com_sex_P_missionary_A_force_description_begin_6": "$doer.firstname$在停住的时间里压在$receiver.firstname$身上把$doer.p$捅开肛门顶进结肠",
+                "com_sex_P_missionary_A_force_description_begin_7": "$doer.firstname$依言把$doer.p$捅进$receiver.firstname$的结肠",
+                "com_sex_P_missionary_A_force_description_begin_8": "$doer.firstname$照着吩咐压到$receiver.firstname$身上把$doer.p$塞进结肠里",
+                "com_sex_P_missionary_A_force_description_begin_9": "$doer.firstname$应下吩咐掰开$receiver.firstname$的腿把$doer.p$捅开后穴顶进结肠",
+                "com_sex_P_missionary_A_force_description_begin_10": "$doer.firstname$压在$receiver.firstname$身上把$doer.p$捅开肛门一路捅进结肠",
+                "com_sex_P_missionary_A_force_description_begin_11": "$doer.firstname$掰开$receiver.firstname$的腿把$doer.p$塞进$receiver.firstname$的结肠里",
+                "com_sex_P_missionary_A_force_description_begin_12": "$doer.firstname$压着$receiver.firstname$的腰把$doer.p$捅进后穴顶到结肠深处",
+                "com_sex_P_missionary_A_force_description_ongoing_1": "$doer.p$在$receiver.firstname$的结肠里来回捅",
+                "com_sex_P_missionary_A_force_description_ongoing_2": "$doer.firstname$压在$receiver.firstname$身上把$doer.p$往结肠深处撞",
+                "com_sex_P_missionary_A_force_description_ongoing_3": "$doer.firstname$掰着$receiver.firstname$的腿让$doer.p$在结肠里搅",
+                "com_sex_P_missionary_A_force_description_remove_1": "$doer.firstname$把$doer.p$从$receiver.firstname$的结肠里退出来",
+                "com_sex_P_missionary_A_force_description_remove_2": "$doer.firstname$把$doer.p$从$receiver.firstname$的后穴里抽出来",
+                "com_sex_P_missionary_A_force_description_remove_3": "$doer.p$从$receiver.firstname$的结肠里滑了出去"
 
             },
             "en-us":
