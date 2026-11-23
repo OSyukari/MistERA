@@ -7,6 +7,45 @@
                     "ID": "com_touch_cheek_Begin",
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_touch_cheek_Begin_Restrained_1",
+                                        "com_touch_cheek_Begin_Restrained_2",
+                                        "com_touch_cheek_Begin_Restrained_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "unconscious"
+                                        ],
+                                        "excludeSelfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_touch_cheek_Begin_Fainted_1",
+                                        "com_touch_cheek_Begin_Fainted_2",
+                                        "com_touch_cheek_Begin_Fainted_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
+                            "responses": [
+                                "com_touch_cheek_Begin_Receiver_1"
+                            ]
+                        },
+                        {
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
@@ -42,38 +81,6 @@
                                 "com_touch_cheek_Begin_Timestop_1",
                                 "com_touch_cheek_Begin_Timestop_2",
                                 "com_touch_cheek_Begin_Timestop_3"
-                            ]
-                        },
-                        {
-                            "requireSelfReceiver": true,
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "unconscious"
-                                ],
-                                "excludeSelfTags": [
-                                    "sleeping"
-                                ]
-                            },
-                            "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
-                            "responses": [
-                                "com_touch_cheek_Begin_Fainted_1",
-                                "com_touch_cheek_Begin_Fainted_2",
-                                "com_touch_cheek_Begin_Fainted_3"
-                            ]
-                        },
-                        {
-                            "requireSelfReceiver": true,
-                            "requirement": {
-                                "selfTags": [
-                                    "restrained"
-                                ]
-                            },
-                            "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
-                            "responses": [
-                                "com_touch_cheek_Begin_Restrained_1",
-                                "com_touch_cheek_Begin_Restrained_2",
-                                "com_touch_cheek_Begin_Restrained_3"
                             ]
                         },
                         {
@@ -119,7 +126,12 @@
                                 "com_touch_cheek_Begin_11",
                                 "com_touch_cheek_Begin_12",
                                 "com_touch_cheek_Begin_13"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandAct"
@@ -657,6 +669,17 @@
                                 "com_touch_cheek_Ongoing_NPC_2",
                                 "com_touch_cheek_Ongoing_NPC_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_touch_cheek_Ongoing_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -749,7 +772,9 @@
                 "com_touch_cheek_Ongoing_Player_3": "$self$任由另一人碰着自己的脸，同时冲站在一旁的$target$摆了摆手：\"别光站着看了。\"",
                 "com_touch_cheek_Ongoing_NPC_1": "$self$揉了揉刚才被捏过的脸颊，冲$target$笑道：\"捏够了吧？脸都要被你搓热了。\"",
                 "com_touch_cheek_Ongoing_NPC_2": "动作停下后，$self$顺手理了理脸侧的碎发：\"下次轻点，我脸皮薄着呢。\"",
-                "com_touch_cheek_Ongoing_NPC_3": "$self$偏头看了看$target$，语气轻松：\"手感有这么好吗，一直捏个没完。\""
+                "com_touch_cheek_Ongoing_NPC_3": "$self$偏头看了看$target$，语气轻松：\"手感有这么好吗，一直捏个没完。\"",
+                "com_touch_cheek_Begin_Receiver_1": "$self$顺从地配合着$target$的动作。",
+                "com_touch_cheek_Ongoing_Fallback_1": "$self$偏着头感受着脸颊上的温度，神色平静。"
             },
             "en-us": {
                 "com_touch_cheek_Begin_1": "$self$ doesn't shy away, but instead leans her cheek into $target$'s palm, like a small animal seeking affection.",

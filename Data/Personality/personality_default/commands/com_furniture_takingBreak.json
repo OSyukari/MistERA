@@ -482,12 +482,12 @@
                         },
                         {
                             "requirement": {
-                                "targetBaseID": "PLAYER"
+                                "requireEPSuccessGTE": "Success"
                             },
                             "variants": [
                                 {
                                     "requirement": {
-                                        "requireEPSuccessGTE": "Success"
+                                        "targetBaseID": "PLAYER"
                                     },
                                     "_comment": "自己 → 玩家 ｜ 接受·判定成功",
                                     "responses": [
@@ -497,11 +497,40 @@
                                     ]
                                 }
                             ],
-                            "_comment": "自己 → 玩家 ｜ 接受·判定失败",
+                            "_comment": "判定成功（通用）",
                             "responses": [
-                                "com_furniture_takingLongBreak_Result_Player_Fail_1",
-                                "com_furniture_takingLongBreak_Result_Player_Fail_2",
-                                "com_furniture_takingLongBreak_Result_Player_Fail_3"
+                                "com_furniture_takingLongBreak_Result_Success_1"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessLTE": "Failure"
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "自己 → 玩家 ｜ 接受·判定失败",
+                                    "responses": [
+                                        "com_furniture_takingLongBreak_Result_Player_Fail_1",
+                                        "com_furniture_takingLongBreak_Result_Player_Fail_2",
+                                        "com_furniture_takingLongBreak_Result_Player_Fail_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "判定失败（通用）",
+                            "responses": [
+                                "com_furniture_takingLongBreak_Result_Failure_1"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_takingLongBreak_Fallback_1"
                             ]
                         }
                     ]
@@ -531,6 +560,16 @@
                                 "com_furniture_takingLongBreak_Refuse_2",
                                 "com_furniture_takingLongBreak_Refuse_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_takingLongBreak_Refuse_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -550,6 +589,16 @@
                                 "com_furniture_takingLongBreak_Tryjoin_1",
                                 "com_furniture_takingLongBreak_Tryjoin_2",
                                 "com_furniture_takingLongBreak_Tryjoin_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_takingLongBreak_Tryjoin_Fallback_1"
                             ]
                         }
                     ]
@@ -571,6 +620,16 @@
                                 "com_furniture_takingLongBreak_Joined_2",
                                 "com_furniture_takingLongBreak_Joined_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_takingLongBreak_Joined_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -591,6 +650,16 @@
                                 "com_furniture_takingLongBreak_Join_Refused_2",
                                 "com_furniture_takingLongBreak_Join_Refused_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_takingLongBreak_Join_Refused_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -602,7 +671,9 @@
                     "template": "commandJoin",
                     "variants": [
                         {
-                            "requirement": {},
+                            "requirement": {
+                                "allowRecording": true
+                            },
                             "_comment": "原参与者 NPC → 加入者 ｜ 接受",
                             "responses": [
                                 "com_furniture_takingLongBreak_Join_1",
@@ -621,7 +692,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
                             "responses": [
@@ -649,6 +721,15 @@
                                 "com_furniture_takingLongBreak_Ongoing_2",
                                 "com_furniture_takingLongBreak_Ongoing_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_takingLongBreak_Ongoing_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -660,7 +741,9 @@
                     "template": "commandInterrupt",
                     "variants": [
                         {
-                            "requirement": {},
+                            "requirement": {
+                                "allowRecording": true
+                            },
                             "_comment": "自己 → 新来的人 ｜ 接受",
                             "responses": [
                                 "com_furniture_takingLongBreak_Interrupt_1",
@@ -855,7 +938,15 @@
                 "com_furniture_takingLongBreak_Ongoing_3": "$self$拉了拉衣角换了个姿势，闭目养神，没再出声。",
                 "com_furniture_takingLongBreak_Interrupt_1": "“哟，$target$，我正长休呢，有事找我？”",
                 "com_furniture_takingLongBreak_Interrupt_2": "$self$略微支起身子朝$target$点头：“动作轻点啊，我难得歇一回。”",
-                "com_furniture_takingLongBreak_Interrupt_3": "“刚好歇到一半，$target$怎么过来了？”"
+                "com_furniture_takingLongBreak_Interrupt_3": "“刚好歇到一半，$target$怎么过来了？”",
+                "com_furniture_takingLongBreak_Result_Success_1": "$self$好好休息了一阵，感觉状态恢复了不少。",
+                "com_furniture_takingLongBreak_Result_Failure_1": "$self$歇了一会儿，但还是觉得有些疲惫。",
+                "com_furniture_takingLongBreak_Fallback_1": "$self$舒展了一下身体，总算好好歇了一阵。",
+                "com_furniture_takingLongBreak_Ongoing_Fallback_1": "$self$正靠在一旁安心歇息着。",
+                "com_furniture_takingLongBreak_Tryjoin_Fallback_1": "$self$走过来问：“我也一起歇一阵，介意吗？”",
+                "com_furniture_takingLongBreak_Joined_Fallback_1": "$self$在旁坐了下来，一起享受难得的空闲。",
+                "com_furniture_takingLongBreak_Refuse_Fallback_1": "$self$摆手道：“现在还有事，没法长歇。”",
+                "com_furniture_takingLongBreak_Join_Refused_Fallback_1": "$self$笑了笑：“行，那你先忙着，我等会儿再来。”"
             },
             "en-us": {
                 "com_furniture_takingBreak_1": "$self$ waves a hand apologetically. \"Umm... I just want to be alone for a bit, maybe another time?\"",

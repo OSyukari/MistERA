@@ -1,0 +1,300 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_job_farm_remove_JoinFailed",
+                    "template": "commandJoinFailed",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_job_farm_remove_JoinFailed_1",
+                                "com_job_farm_remove_JoinFailed_2",
+                                "com_job_farm_remove_JoinFailed_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_job_farm_remove_Ongoing",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "自己（单人） → 玩家 ｜ 接受",
+                            "responses": [
+                                "com_job_farm_remove_Ongoing_1",
+                                "com_job_farm_remove_Ongoing_2",
+                                "com_job_farm_remove_Ongoing_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_job_farm_remove_Join",
+                    "template": "commandJoin",
+                    "variants": [
+                        {
+                            "_comment": "原参与者 NPC → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_job_farm_remove_Join_1",
+                                "com_job_farm_remove_Join_2",
+                                "com_job_farm_remove_Join_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_job_farm_remove",
+                    "template": "commandResult",
+                    "variants": [
+                        {
+                            "requireSelfOnly": true,
+                            "_comment": "自己（单人） → 自己",
+                            "responses": [
+                                "com_job_farm_remove_1",
+                                "com_job_farm_remove_2",
+                                "com_job_farm_remove_3"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "自己（单人） → 自己 ｜ 接受·判定成功",
+                                    "responses": [
+                                        "com_job_farm_remove_7",
+                                        "com_job_farm_remove_8",
+                                        "com_job_farm_remove_9"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessLTE": "Failure"
+                            },
+                            "_comment": "判定失败",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "自己（单人） → 玩家 ｜ 接受·判定失败",
+                                    "responses": [
+                                        "com_job_farm_remove_4",
+                                        "com_job_farm_remove_5",
+                                        "com_job_farm_remove_6"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_job_farm_remove_Fallback_1"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "_comment": "判定成功",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "自己（单人） → 玩家 ｜ 接受·判定成功",
+                                    "responses": [
+                                        "com_job_farm_remove_10",
+                                        "com_job_farm_remove_11",
+                                        "com_job_farm_remove_12"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_job_farm_remove_Fallback_2"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_job_farm_remove_Interrupt",
+                    "template": "commandInterrupt",
+                    "variants": [
+                        {
+                            "_comment": "当前动作中的 NPC → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_job_farm_remove_Interrupt_1",
+                                "com_job_farm_remove_Interrupt_2",
+                                "com_job_farm_remove_Interrupt_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_job_farm_remove_Tryjoin",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 尝试加入",
+                            "responses": [
+                                "com_job_farm_remove_Tryjoin_1",
+                                "com_job_farm_remove_Tryjoin_2",
+                                "com_job_farm_remove_Tryjoin_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_job_farm_remove_Joined",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入成功",
+                            "responses": [
+                                "com_job_farm_remove_Joined_1",
+                                "com_job_farm_remove_Joined_2",
+                                "com_job_farm_remove_Joined_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_job_farm_remove_Join_Refused",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入被拒绝",
+                            "responses": [
+                                "com_job_farm_remove_Join_Refused_1",
+                                "com_job_farm_remove_Join_Refused_2",
+                                "com_job_farm_remove_Join_Refused_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_job_farm_remove_Refuse",
+                    "template": "commandRefuse",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER",
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "自己（单人） → 玩家 ｜ 拒绝",
+                            "responses": [
+                                "com_job_farm_remove_Refuse_1",
+                                "com_job_farm_remove_Refuse_2",
+                                "com_job_farm_remove_Refuse_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_job_farm_remove_Begin",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "_comment": "NPC → 玩家",
+                            "responses": [
+                                "com_job_farm_remove_Begin_1",
+                                "com_job_farm_remove_Begin_2",
+                                "com_job_farm_remove_Begin_3"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_job_farm_remove_JoinFailed_1": "$self$看着挤不开的窄垄，对$target$摆手：\"这儿站不下这么多人，回头再凑吧。\"",
+                "com_job_farm_remove_JoinFailed_2": "\"工具和地方都不太凑手，今天先这样，你去看看别处。\" $self$说完又低头忙了起来。",
+                "com_job_farm_remove_JoinFailed_3": "$self$朝$target$示意了一下：\"这边暂时加不进人了，辛苦你白跑一趟。\"",
+                "com_job_farm_remove_Ongoing_1": "$self$停下手里的活直了直腰，擦着汗问旁边的$target$：\"站着不闷吗？我这儿还得挖好一会儿呢。\"",
+                "com_job_farm_remove_Ongoing_2": "知道$target$在一旁看着，$self$用胳膊肘蹭掉脸颊上的灰，继续埋头清理剩下的部分。",
+                "com_job_farm_remove_Ongoing_3": "$self$往旁边踢开一块碍事的土块：\"别站太近，待会儿扬起的土全落你鞋上了。\"",
+                "com_job_farm_remove_Join_1": "$self$直起腰给$target$指了指旁边那排：\"你清那条吧，这排我快弄完了。\"",
+                "com_job_farm_remove_Join_2": "\"来得太及时了，这土比看着难挖多了。\" $self$往旁边让出一步，继续手上的活。",
+                "com_job_farm_remove_Join_3": "$self$朝$target$点点头：\"注意脚下那些硬块，一块儿干快多了。\"",
+                "com_job_farm_remove_1": "$self$盯着断在土里的半截残根皱了皱眉，费了半天劲还是没拔干净。",
+                "com_job_farm_remove_2": "\"土太实了，弄得手心直发疼也没起彻底。\" $self$站起来甩了甩满是泥的手。",
+                "com_job_farm_remove_3": "越急越容易把根扯断，$self$只好先停下来，等回头再想办法挖出来。",
+                "com_job_farm_remove_Interrupt_1": "$self$从田垄边抬起头，见是$target$过来了，举起满是泥的手示意：\"没法握手啊，找我有事？\"",
+                "com_job_farm_remove_Interrupt_2": "$self$先把手里正拽着的根茎放下，免得泥点溅到$target$身上：\"刚来？我正清这块地呢。\"",
+                "com_job_farm_remove_Interrupt_3": "\"脚下看着点，这边刚刨过，坑坑洼洼的。\" $self$提醒完，站直身子看向$target$。",
+                "com_job_farm_remove_4": "$self$拎着泥手站起身，朝$target$苦笑：\"我这边卡住了，底下的根缠得太死，弄半天没清利索。\"",
+                "com_job_farm_remove_5": "\"抱歉，我这头拖后腿了，土太硬拔不动。\" $self$揉着发酸的虎口直喘气。",
+                "com_job_farm_remove_6": "$self$看了眼被弄得乱糟糟的地块，叹气道：\"算了，我这边看来还得重弄一次。\"",
+                "com_job_farm_remove_Tryjoin_1": "$self$走到田边看了看进度，问$target$：\"这块看着还得折腾好久，我来搭把手一起清吧？\"",
+                "com_job_farm_remove_Tryjoin_2": "\"多个人手能快点收工，介意我也来挖这一块吗？\" $self$挽起袖子看着$target$。",
+                "com_job_farm_remove_Tryjoin_3": "$self$顺手拎起备用的工具朝$target$示意：\"我闲着也是闲着，算我一个？\"",
+                "com_job_farm_remove_Joined_1": "\"行，那我从另一头往里清，咱们中间碰头。\" $self$走过去选好位置蹲下。",
+                "com_job_farm_remove_Joined_2": "$self$点点头，把工具往地里一插：\"人多干着就是快，开始吧。\"",
+                "com_job_farm_remove_Joined_3": "\"你顾好你那片就行，这边交给我。\" $self$说完便动起手来。",
+                "com_job_farm_remove_Join_Refused_1": "\"成，那你自己慢慢清吧，我去忙别的了。\" $self$放下手里的工具转身离开。",
+                "com_job_farm_remove_Join_Refused_2": "$self$点点头，没再坚持：\"好吧，需要搭手了再叫我。\"",
+                "com_job_farm_remove_Join_Refused_3": "\"知道了，那我不在这儿碍事了。\" $self$顺手拍掉袖口刚沾上的灰，往回走去。",
+                "com_job_farm_remove_7": "$self$直起腰捶了捶后背，眼前这片总算清干净了，看着利索不少。",
+                "com_job_farm_remove_8": "\"根都起出来了，没留乱七八糟的碎茬。\" $self$拍掉手上的泥土。",
+                "com_job_farm_remove_9": "活干得比预想中顺手，$self$把工具靠在边上，长出了一口气。",
+                "com_job_farm_remove_Refuse_1": "$self$看了眼那片地，直接对$target$摇摇头：\"我现在没力气去挖土拔根，找别人干吧。\"",
+                "com_job_farm_remove_Refuse_2": "\"这活又累又脏，我这会儿不想接。\" $self$往后退开半步，没有伸手拿工具。",
+                "com_job_farm_remove_Refuse_3": "$self$把视线移开，语气干脆：\"我现在不想去田里折腾，你自己安排吧。\"",
+                "com_job_farm_remove_10": "$self$拍干净手上的浮土，朝$target$那头望过去：\"我这边都起干净了，你那块还差多少？\"",
+                "com_job_farm_remove_11": "\"总算腾出地方来了，比想象的省力。\" $self$擦了把额头的汗，把多余的杂物堆到一边。",
+                "com_job_farm_remove_12": "$self$伸了个懒腰，看向$target$：\"我这就剩收尾了，完事后咱们一块儿撤。\"",
+                "com_job_farm_remove_Begin_1": "$self$打量了一眼待清理的那一块地，对$target$说：\"你顾着你那半边，我先把这头的根系清掉。\"",
+                "com_job_farm_remove_Begin_2": "$self$挽起袖口蹲下身，摸了摸泥土松紧：\"看着不算太死，应该能起得出来。\"",
+                "com_job_farm_remove_Begin_3": "\"清完这块就能腾出空地了，早点干完早收工。\" $self$活动了一下手指，埋头干了起来。",
+                "com_job_farm_remove_Fallback_1": "$self$点了点头，没有多说什么。",
+                "com_job_farm_remove_Fallback_2": "$self$点了点头，没有多说什么。"
+            }
+        }
+    }
+}

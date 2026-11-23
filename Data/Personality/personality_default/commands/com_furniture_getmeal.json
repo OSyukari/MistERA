@@ -1,0 +1,246 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_getmeal_Ongoing",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "自己（单人） → 玩家 ｜ 接受",
+                            "responses": [
+                                "com_furniture_getmeal_Ongoing_1",
+                                "com_furniture_getmeal_Ongoing_2",
+                                "com_furniture_getmeal_Ongoing_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_getmeal_Interrupt",
+                    "template": "commandInterrupt",
+                    "variants": [
+                        {
+                            "_comment": "当前动作中的 NPC → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_furniture_getmeal_Interrupt_1",
+                                "com_furniture_getmeal_Interrupt_2",
+                                "com_furniture_getmeal_Interrupt_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_getmeal_JoinFailed",
+                    "template": "commandJoinFailed",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_furniture_getmeal_JoinFailed_1",
+                                "com_furniture_getmeal_JoinFailed_2",
+                                "com_furniture_getmeal_JoinFailed_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_getmeal_Joined",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入成功",
+                            "responses": [
+                                "com_furniture_getmeal_Joined_1",
+                                "com_furniture_getmeal_Joined_2",
+                                "com_furniture_getmeal_Joined_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_getmeal_Join",
+                    "template": "commandJoin",
+                    "variants": [
+                        {
+                            "_comment": "原参与者 NPC → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_furniture_getmeal_Join_1",
+                                "com_furniture_getmeal_Join_2",
+                                "com_furniture_getmeal_Join_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_getmeal_Tryjoin",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 尝试加入",
+                            "responses": [
+                                "com_furniture_getmeal_Tryjoin_1",
+                                "com_furniture_getmeal_Tryjoin_2",
+                                "com_furniture_getmeal_Tryjoin_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_getmeal_Refuse",
+                    "template": "commandRefuse",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER",
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "自己（单人） → 玩家 ｜ 拒绝",
+                            "responses": [
+                                "com_furniture_getmeal_Refuse_1",
+                                "com_furniture_getmeal_Refuse_2",
+                                "com_furniture_getmeal_Refuse_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_getmeal_Begin",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "_comment": "NPC → 玩家",
+                            "responses": [
+                                "com_furniture_getmeal_Begin_1",
+                                "com_furniture_getmeal_Begin_2",
+                                "com_furniture_getmeal_Begin_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_getmeal",
+                    "template": "commandResult",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "自己（单人） → 玩家 ｜ 接受",
+                            "responses": [
+                                "com_furniture_getmeal_1",
+                                "com_furniture_getmeal_2",
+                                "com_furniture_getmeal_3"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "_comment": "自己（单人） → 自己 ｜ 接受",
+                            "responses": [
+                                "com_furniture_getmeal_4",
+                                "com_furniture_getmeal_5",
+                                "com_furniture_getmeal_6"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_getmeal_Join_Refused",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入被拒绝",
+                            "responses": [
+                                "com_furniture_getmeal_Join_Refused_1",
+                                "com_furniture_getmeal_Join_Refused_2",
+                                "com_furniture_getmeal_Join_Refused_3"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_furniture_getmeal_Ongoing_1": "$self$察觉$target$在旁边看着，把嘴里的东西咽下去才开口：\"站着干嘛，你也吃点？\"",
+                "com_furniture_getmeal_Ongoing_2": "$self$被盯得动作慢了半拍，拿餐具的手顿了顿：\"……看我吃饭有什么好看的。\"",
+                "com_furniture_getmeal_Ongoing_3": "$self$没停下进食，只抬眼朝$target$示意了一下空位：\"我还得吃会儿，你有事可以先坐。\"",
+                "com_furniture_getmeal_Interrupt_1": "$self$听见动静抬起头，见是$target$进来了，随口招呼一句：\"刚来？我这儿正吃着呢。\"",
+                "com_furniture_getmeal_Interrupt_2": "$self$把口里的食物咽下，朝$target$点点头：\"有事等我两分钟，或者坐下一起说。\"",
+                "com_furniture_getmeal_Interrupt_3": "$self$护住手边的水杯免得被进门的风带倒，顺势往里侧让了点空当。",
+                "com_furniture_getmeal_JoinFailed_1": "$self$看了眼挤不过来的位置，朝$target$摊了摊手：\"这边实在腾不开地方了，下顿再说吧。\"",
+                "com_furniture_getmeal_JoinFailed_2": "\"抱歉，这桌眼下不太方便加人。\" $self$话音落下，低头继续吃自己那份。",
+                "com_furniture_getmeal_JoinFailed_3": "$self$朝$target$摇了摇头：\"这回凑不到一块儿，你先去看看别处有没有空位。\"",
+                "com_furniture_getmeal_Joined_1": "\"谢了，那我就不客气了。\" $self$拉开椅子坐下，把餐盘往自己面前摆稳。",
+                "com_furniture_getmeal_Joined_2": "$self$顺手拿过公用的调料瓶往中间放了放：\"人多点吃着也香。\"",
+                "com_furniture_getmeal_Joined_3": "$self$坐定后朝$target$笑了一下：\"你吃你的，不用管我，我很快就能跟上。\"",
+                "com_furniture_getmeal_Join_1": "$self$把占着位置的杂物往旁边拨开：\"坐这儿吧，刚好空着。\"",
+                "com_furniture_getmeal_Join_2": "\"来得挺巧，我也才刚开始吃。\" $self$朝$target$抬手示意了一下对面的座位。",
+                "com_furniture_getmeal_Join_3": "$self$挪了挪胳膊，给$target$让出足够摆餐具的地方，自己继续低头吃着。",
+                "com_furniture_getmeal_Tryjoin_1": "$self$走到桌边停下，朝$target$问：\"我也还没吃，这会儿能一起坐下吗？\"",
+                "com_furniture_getmeal_Tryjoin_2": "\"正好赶上饭点，介意我搭个伙吗？\" $self$手里端着自己那份，目光落在旁边的空位上。",
+                "com_furniture_getmeal_Tryjoin_3": "$self$凑近看了眼桌上的空处：\"一个人吃怪冷清的，算我一个吧。\"",
+                "com_furniture_getmeal_Refuse_1": "$self$没往餐桌那边去，只朝$target$摇摇头：\"我现在不饿，吃不下，等会儿再说。\"",
+                "com_furniture_getmeal_Refuse_2": "\"这会儿没什么胃口，你让我坐那儿也是干看着。\" $self$把身子转开些，没有接话茬。",
+                "com_furniture_getmeal_Refuse_3": "$self$打量了一眼桌上的吃食，直接退了一步：\"我不吃这个，你自己看着办吧。\"",
+                "com_furniture_getmeal_Begin_1": "$self$朝$target$抬了抬下巴：\"趁热吃吧，等会儿凉了味道就差一截。\"",
+                "com_furniture_getmeal_Begin_2": "$self$先把餐具摆正，顺手把水杯往桌边挪开一点，免得碰翻。",
+                "com_furniture_getmeal_Begin_3": "\"今天这顿看着还行，先垫垫肚子。\" $self$说着动了第一口。",
+                "com_furniture_getmeal_1": "$self$搁下餐具，偏头看了眼$target$那边：\"我先吃好了，你慢慢来，不用赶。\"",
+                "com_furniture_getmeal_2": "\"味道还过得去，就是分量稍微少了点。\" $self$顺手收拾起自己面前的桌面。",
+                "com_furniture_getmeal_3": "$self$喝了口水顺顺气，等着$target$把最后几口吃完。",
+                "com_furniture_getmeal_4": "$self$呼出一口气，胃里总算踏实下来，比刚才有精神多了。",
+                "com_furniture_getmeal_5": "\"比预想的顺口，下次还能这么吃。\" $self$拿纸巾擦了擦嘴角。",
+                "com_furniture_getmeal_6": "$self$把空盘往前推开半寸，靠着椅背缓了缓神，不急着起身。",
+                "com_furniture_getmeal_Join_Refused_1": "\"行，那我不打扰你了。\" $self$收住脚步，端着东西转身往另一边走。",
+                "com_furniture_getmeal_Join_Refused_2": "$self$顿了一下，点点头：\"知道了，我去别处吃。\"",
+                "com_furniture_getmeal_Join_Refused_3": "\"哦，那你先吃着。\" $self$面色没变，把刚拉出一半的椅子又推回原位。"
+            }
+        }
+    }
+}

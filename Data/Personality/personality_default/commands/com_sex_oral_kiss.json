@@ -370,44 +370,6 @@
                             "variants": [
                                 {
                                     "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "firstexp_M",
-                                            "sleeping"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "kiss",
-                                        "sleeping",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "初体验 睡眠中 接吻",
-                                    "responses": [
-                                        "com_sex_oral_kiss_FE_Sleep_1"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "firstexp_M",
-                                            "timestop"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "kiss",
-                                        "doll",
-                                        "empty"
-                                    ],
-                                    "_comment": "初体验 时停中 接吻",
-                                    "responses": [
-                                        "com_sex_oral_kiss_FE_Timestop_1"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
                                         "selfTags": [
                                             "firstexp_M"
                                         ]
@@ -415,19 +377,30 @@
                                     "variants": [
                                         {
                                             "requirement": {
-                                                "targetBaseID": "PLAYER",
-                                                "requirePermission": true
+                                                "targetBaseID": "PLAYER"
                                             },
-                                            "extraSelfPortraitTags": [
-                                                "sex",
-                                                "kiss",
-                                                "blush",
-                                                "shy",
-                                                "love"
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "requirePermission": true
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "kiss",
+                                                        "blush",
+                                                        "shy",
+                                                        "love"
+                                                    ],
+                                                    "_comment": "初体验 玩家专用 接吻 有允许",
+                                                    "responses": [
+                                                        "com_sex_oral_kiss_FE_Player_1"
+                                                    ]
+                                                }
                                             ],
-                                            "_comment": "初体验 玩家专用 接吻 有允许",
+                                            "_comment": "玩家专用（无允许兜底）",
                                             "responses": [
-                                                "com_sex_oral_kiss_FE_Player_1"
+                                                "com_sex_oral_kiss_FE_4",
+                                                "com_sex_oral_kiss_FE_5"
                                             ]
                                         },
                                         {
@@ -531,6 +504,26 @@
                                         "com_sex_oral_kiss_20",
                                         "com_sex_oral_kiss_21",
                                         "com_sex_oral_kiss_22"
+                                    ],
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "firstexp_M"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "kiss",
+                                                "sleeping",
+                                                "relaxed"
+                                            ],
+                                            "_comment": "初体验 睡眠中 接吻",
+                                            "responses": [
+                                                "com_sex_oral_kiss_FE_Sleep_1"
+                                            ]
+                                        }
                                     ]
                                 },
                                 {
@@ -575,6 +568,26 @@
                                         "com_sex_oral_kiss_42",
                                         "com_sex_oral_kiss_43",
                                         "com_sex_oral_kiss_44"
+                                    ],
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "firstexp_M"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "kiss",
+                                                "doll",
+                                                "empty"
+                                            ],
+                                            "_comment": "初体验 时停中 接吻",
+                                            "responses": [
+                                                "com_sex_oral_kiss_FE_Timestop_1"
+                                            ]
+                                        }
                                     ]
                                 },
                                 {
@@ -745,25 +758,6 @@
                         },
                         {
                             "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "firstexp_M",
-                                    "timestop"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "kiss",
-                                "doll",
-                                "empty"
-                            ],
-                            "_comment": "初体验 时停中 接吻",
-                            "responses": [
-                                "com_sex_oral_kiss_FE_Timestop_1"
-                            ]
-                        },
-                        {
-                            "requirement": {
                                 "selfTags": [
                                     "firstexp_M"
                                 ]
@@ -771,19 +765,30 @@
                             "variants": [
                                 {
                                     "requirement": {
-                                        "targetBaseID": "PLAYER",
-                                        "requirePermission": true
+                                        "targetBaseID": "PLAYER"
                                     },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "kiss",
-                                        "blush",
-                                        "shy",
-                                        "love"
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "kiss",
+                                                "blush",
+                                                "shy",
+                                                "love"
+                                            ],
+                                            "_comment": "初体验 玩家专用 接吻 有允许",
+                                            "responses": [
+                                                "com_sex_oral_kiss_FE_Player_1"
+                                            ]
+                                        }
                                     ],
-                                    "_comment": "初体验 玩家专用 接吻 有允许",
+                                    "_comment": "玩家专用（无允许兜底）",
                                     "responses": [
-                                        "com_sex_oral_kiss_FE_Player_1"
+                                        "com_sex_oral_kiss_FE_4",
+                                        "com_sex_oral_kiss_FE_5"
                                     ]
                                 },
                                 {
@@ -830,22 +835,6 @@
                             "responses": [
                                 "com_sex_oral_kiss_FE_4",
                                 "com_sex_oral_kiss_FE_5"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "selfTags": [
-                                    "firstexp_partner_M"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "kiss",
-                                "surprised"
-                            ],
-                            "_comment": "对方初体验 接吻",
-                            "responses": [
-                                "com_sex_oral_kiss_FE_Partner_1"
                             ]
                         },
                         {
@@ -931,6 +920,26 @@
                                 "com_sex_oral_kiss_42",
                                 "com_sex_oral_kiss_43",
                                 "com_sex_oral_kiss_44"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "firstexp_M"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "kiss",
+                                        "doll",
+                                        "empty"
+                                    ],
+                                    "_comment": "初体验 时停中 接吻",
+                                    "responses": [
+                                        "com_sex_oral_kiss_FE_Timestop_1"
+                                    ]
+                                }
                             ]
                         },
                         {
@@ -1059,6 +1068,24 @@
                                         "com_sex_oral_kiss_161",
                                         "com_sex_oral_kiss_162"
                                     ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_partner_M"
+                                        ],
+                                        "requireSelfAction": false,
+                                        "requireTargetAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "kiss",
+                                        "surprised"
+                                    ],
+                                    "_comment": "对方初体验 接吻",
+                                    "responses": [
+                                        "com_sex_oral_kiss_FE_Partner_1"
+                                    ]
                                 }
                             ],
                             "_comment": "2.2.6 亲吻 结果负面 未允许 口上文",
@@ -1089,7 +1116,11 @@
                             }
                         }
                     ],
-                    "template": "commandResult"
+                    "template": "commandResult",
+                    "templateExtras": [
+                        "firstexpM",
+                        "firstexpPartnerM"
+                    ]
                 }
             },
             {

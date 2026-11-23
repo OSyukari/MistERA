@@ -56,6 +56,15 @@
                                 "com_interaction_talk_topic_Result_Fail_2",
                                 "com_interaction_talk_topic_Result_Fail_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_interaction_talk_topic_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -89,6 +98,15 @@
                                 "com_interaction_talk_topic_Begin_Receiver_2",
                                 "com_interaction_talk_topic_Begin_Receiver_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_interaction_talk_topic_Begin_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -109,6 +127,16 @@
                                 "com_interaction_talk_topic_Refuse_1",
                                 "com_interaction_talk_topic_Refuse_2",
                                 "com_interaction_talk_topic_Refuse_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_interaction_talk_topic_Refuse_Fallback_1"
                             ]
                         }
                     ]
@@ -141,6 +169,15 @@
                                 "com_interaction_talk_topic_Ongoing_NPC_2",
                                 "com_interaction_talk_topic_Ongoing_NPC_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_interaction_talk_topic_Ongoing_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -158,7 +195,10 @@
                                 "com_interaction_talk_topic_Interrupt_Doer_1",
                                 "com_interaction_talk_topic_Interrupt_Doer_2",
                                 "com_interaction_talk_topic_Interrupt_Doer_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         },
                         {
                             "requireSelfReceiver": true,
@@ -167,7 +207,10 @@
                                 "com_interaction_talk_topic_Interrupt_Receiver_1",
                                 "com_interaction_talk_topic_Interrupt_Receiver_2",
                                 "com_interaction_talk_topic_Interrupt_Receiver_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ]
                 }
@@ -187,6 +230,16 @@
                                 "com_interaction_talk_topic_Tryjoin_1",
                                 "com_interaction_talk_topic_Tryjoin_2",
                                 "com_interaction_talk_topic_Tryjoin_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_interaction_talk_topic_Tryjoin_Fallback_1"
                             ]
                         }
                     ]
@@ -208,6 +261,16 @@
                                 "com_interaction_talk_topic_Joined_2",
                                 "com_interaction_talk_topic_Joined_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_interaction_talk_topic_Joined_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -228,6 +291,16 @@
                                 "com_interaction_talk_topic_Join_Refused_2",
                                 "com_interaction_talk_topic_Join_Refused_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_interaction_talk_topic_Join_Refused_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -245,7 +318,10 @@
                                 "com_interaction_talk_topic_Join_Doer_1",
                                 "com_interaction_talk_topic_Join_Doer_2",
                                 "com_interaction_talk_topic_Join_Doer_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         },
                         {
                             "requireSelfReceiver": true,
@@ -254,7 +330,10 @@
                                 "com_interaction_talk_topic_Join_Receiver_1",
                                 "com_interaction_talk_topic_Join_Receiver_2",
                                 "com_interaction_talk_topic_Join_Receiver_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ]
                 }
@@ -268,7 +347,8 @@
                         {
                             "requireSelfDoer": true,
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "_comment": "施方 → 未能加入的人 ｜ 未能加入",
                             "responses": [
@@ -280,7 +360,8 @@
                         {
                             "requireSelfReceiver": true,
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "_comment": "受方 → 未能加入的人 ｜ 未能加入",
                             "responses": [
@@ -350,7 +431,14 @@
                 "com_interaction_talk_topic_JoinFailed_Doer_3": "“先这样吧$target$，这边很快就结束了。”",
                 "com_interaction_talk_topic_JoinFailed_Receiver_1": "“抱歉啊$target$，这边正好聊到要紧处，回头再找你。”",
                 "com_interaction_talk_topic_JoinFailed_Receiver_2": "$self$朝$target$点了点头：“现在不太方便插话，下次聊吧。”",
-                "com_interaction_talk_topic_JoinFailed_Receiver_3": "“你先忙自己的去，$target$，等会儿再说。”"
+                "com_interaction_talk_topic_JoinFailed_Receiver_3": "“你先忙自己的去，$target$，等会儿再说。”",
+                "com_interaction_talk_topic_Joined_Fallback_1": "$self$凑了过来，顺着话题插了一句。",
+                "com_interaction_talk_topic_Begin_Fallback_1": "$self$清了清嗓子，准备顺着话头聊下去。",
+                "com_interaction_talk_topic_Tryjoin_Fallback_1": "$self$走近些问道：“你们在聊什么？我也听听行吗？”",
+                "com_interaction_talk_topic_Fallback_1": "$self$聊完了这个话题，微微点了点头。",
+                "com_interaction_talk_topic_Refuse_Fallback_1": "$self$摆了摆手：“这个话题我现在不太想聊。”",
+                "com_interaction_talk_topic_Ongoing_Fallback_1": "$self$正专注地倾听并回应着这段交谈。",
+                "com_interaction_talk_topic_Join_Refused_Fallback_1": "$self$笑了笑：“那你们先聊，我就不打岔了。”"
             }
         }
     }

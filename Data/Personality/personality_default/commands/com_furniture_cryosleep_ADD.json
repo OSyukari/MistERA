@@ -1,0 +1,394 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_cryosleep_ADD_Join",
+                    "template": "commandJoin",
+                    "variants": [
+                        {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_furniture_cryosleep_ADD_Join_1",
+                                "com_furniture_cryosleep_ADD_Join_2",
+                                "com_furniture_cryosleep_ADD_Join_3"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_furniture_cryosleep_ADD_Join_4",
+                                "com_furniture_cryosleep_ADD_Join_5",
+                                "com_furniture_cryosleep_ADD_Join_6"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_cryosleep_ADD_Joined",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入成功",
+                            "responses": [
+                                "com_furniture_cryosleep_ADD_Joined_1",
+                                "com_furniture_cryosleep_ADD_Joined_2",
+                                "com_furniture_cryosleep_ADD_Joined_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_cryosleep_ADD",
+                    "template": "commandResult",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "sleeping"
+                                        ],
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（睡眠中） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_cryosleep_ADD_1",
+                                        "com_furniture_cryosleep_ADD_2",
+                                        "com_furniture_cryosleep_ADD_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_cryosleep_ADD_7",
+                                        "com_furniture_cryosleep_ADD_8",
+                                        "com_furniture_cryosleep_ADD_9"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "unconscious"
+                                        ],
+                                        "excludeSelfTags": [
+                                            "sleeping"
+                                        ],
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_cryosleep_ADD_10",
+                                        "com_furniture_cryosleep_ADD_11",
+                                        "com_furniture_cryosleep_ADD_12"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_cryosleep_ADD_4",
+                                "com_furniture_cryosleep_ADD_5",
+                                "com_furniture_cryosleep_ADD_6"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_cryosleep_ADD_Begin",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "sleeping"
+                                        ],
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（睡眠中） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_cryosleep_ADD_Begin_1",
+                                        "com_furniture_cryosleep_ADD_Begin_2",
+                                        "com_furniture_cryosleep_ADD_Begin_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "unconscious"
+                                        ],
+                                        "excludeSelfTags": [
+                                            "sleeping"
+                                        ],
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_cryosleep_ADD_Begin_4",
+                                        "com_furniture_cryosleep_ADD_Begin_5",
+                                        "com_furniture_cryosleep_ADD_Begin_6"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_cryosleep_ADD_Begin_7",
+                                "com_furniture_cryosleep_ADD_Begin_8",
+                                "com_furniture_cryosleep_ADD_Begin_9"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_cryosleep_ADD_Ongoing",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "受方 → 玩家 ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_cryosleep_ADD_Ongoing_1",
+                                        "com_furniture_cryosleep_ADD_Ongoing_2",
+                                        "com_furniture_cryosleep_ADD_Ongoing_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_cryosleep_ADD_Ongoing_Fallback_1"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_cryosleep_ADD_Refuse",
+                    "template": "commandRefuse",
+                    "variants": [
+                        {
+                            "requireRefusalContext": "ReceiverDeclined",
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ],
+                                        "requireEPSuccess": false
+                                    },
+                                    "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
+                                    "responses": [
+                                        "com_furniture_cryosleep_ADD_Refuse_1",
+                                        "com_furniture_cryosleep_ADD_Refuse_2",
+                                        "com_furniture_cryosleep_ADD_Refuse_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_cryosleep_ADD_Refuse_4",
+                                "com_furniture_cryosleep_ADD_Refuse_5",
+                                "com_furniture_cryosleep_ADD_Refuse_6"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_cryosleep_ADD_JoinFailed",
+                    "template": "commandJoinFailed",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "受方 → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_furniture_cryosleep_ADD_JoinFailed_1",
+                                "com_furniture_cryosleep_ADD_JoinFailed_2",
+                                "com_furniture_cryosleep_ADD_JoinFailed_3"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方 → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_furniture_cryosleep_ADD_JoinFailed_4",
+                                "com_furniture_cryosleep_ADD_JoinFailed_5",
+                                "com_furniture_cryosleep_ADD_JoinFailed_6"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_cryosleep_ADD_Interrupt",
+                    "template": "commandInterrupt",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_furniture_cryosleep_ADD_Interrupt_1",
+                                "com_furniture_cryosleep_ADD_Interrupt_2",
+                                "com_furniture_cryosleep_ADD_Interrupt_3"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_furniture_cryosleep_ADD_Interrupt_4",
+                                "com_furniture_cryosleep_ADD_Interrupt_5",
+                                "com_furniture_cryosleep_ADD_Interrupt_6"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_cryosleep_ADD_Tryjoin",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 尝试加入",
+                            "responses": [
+                                "com_furniture_cryosleep_ADD_Tryjoin_1",
+                                "com_furniture_cryosleep_ADD_Tryjoin_2",
+                                "com_furniture_cryosleep_ADD_Tryjoin_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_cryosleep_ADD_Join_Refused",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入被拒绝",
+                            "responses": [
+                                "com_furniture_cryosleep_ADD_Join_Refused_1",
+                                "com_furniture_cryosleep_ADD_Join_Refused_2",
+                                "com_furniture_cryosleep_ADD_Join_Refused_3"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_furniture_cryosleep_ADD_Join_1": "$self$往面板旁边挪出半步：\"来得正好，帮我盯着左边那个指示灯。\"",
+                "com_furniture_cryosleep_ADD_Join_2": "\"你看着密封条，我这边点启动。\" $self$朝$target$偏了偏头，手上动作没停。",
+                "com_furniture_cryosleep_ADD_Join_3": "$self$顺手把核对清单递给$target$一半：\"一块儿弄能快点完事。\"",
+                "com_furniture_cryosleep_ADD_Joined_1": "\"行，你调温度，我来核对密封状态。\" $self$站到面板另一侧帮着操作起来。",
+                "com_furniture_cryosleep_ADD_Joined_2": "$self$点点头：\"两个人一块儿确认，确实不容易漏掉步骤。\"",
+                "com_furniture_cryosleep_ADD_Joined_3": "\"好，那我先检查这边的卡扣。\" $self$说着伸手按了下去。",
+                "com_furniture_cryosleep_ADD_1": "低温渐渐渗进舱里，$self$在睡梦里打了个极轻的哆嗦，随即彻底沉静下来。",
+                "com_furniture_cryosleep_ADD_2": "$self$自始至终都没有醒来，呼吸平稳地过渡到了更深的休眠状态。",
+                "com_furniture_cryosleep_ADD_3": "舱内安静下来后，$self$连翻身的动静也没了，安稳地沉睡着。",
+                "com_furniture_cryosleep_ADD_Begin_1": "$self$还在熟睡中，被挪动时只是含糊地哼了一声，没睁开眼睛。",
+                "com_furniture_cryosleep_ADD_Begin_2": "呼吸均匀地落在舱壁内侧，$self$无意识地往暖和点的姿势蜷了蜷。",
+                "com_furniture_cryosleep_ADD_Begin_3": "$self$的眼皮轻轻动了下，终究没有醒过来，由着人把自己放平。",
+                "com_furniture_cryosleep_ADD_Ongoing_1": "$self$在舱里看见站在外面的$target$，隔着玻璃比了个快好了的手势。",
+                "com_furniture_cryosleep_ADD_Ongoing_2": "\"参数还没调完吗？里面风吹得有点凉了。\" $self$缩了缩手脚，仰头朝$target$那边看了一眼。",
+                "com_furniture_cryosleep_ADD_Ongoing_3": "$self$安静地待在位置上等着程序走完，见$target$在旁边看着，也没乱动。",
+                "com_furniture_cryosleep_ADD_Refuse_1": "$self$猛地清醒过来，一把撑住舱壁坐起身：\"等下，谁让你把我往这里面放的？\"",
+                "com_furniture_cryosleep_ADD_Refuse_2": "\"我不进去！\" $self$皱着眉推开要合上的舱门，直接跨了出来。",
+                "com_furniture_cryosleep_ADD_Refuse_3": "刚醒过来就发现差点被关进休眠舱，$self$脸色一沉，立刻退到了安全距离外。",
+                "com_furniture_cryosleep_ADD_Begin_4": "$self$毫无知觉，四肢软绵绵地垂在舱内，对外界的动作没有任何回应。",
+                "com_furniture_cryosleep_ADD_Begin_5": "闭着眼的脸色有些发白，$self$连呼吸都浅得几乎听不见。",
+                "com_furniture_cryosleep_ADD_Begin_6": "无论外头怎么摆弄，$self$始终沉在昏迷里，一动不动。",
+                "com_furniture_cryosleep_ADD_JoinFailed_1": "$self$在舱里朝$target$挥挥手：\"这里头已经够忙的了，你先忙别的去吧。\"",
+                "com_furniture_cryosleep_ADD_JoinFailed_2": "\"没事，这儿用不着那么多人盯着。\" $self$隔着舱沿对$target$说了一句。",
+                "com_furniture_cryosleep_ADD_JoinFailed_3": "$self$冲$target$摇摇头：\"加不进来就算了，回头醒了再聊。\"",
+                "com_furniture_cryosleep_ADD_Interrupt_1": "$self$躺在舱里朝刚进来的$target$抬了抬手：\"正准备睡呢，有事赶紧说，待会儿门就关了。\"",
+                "com_furniture_cryosleep_ADD_Interrupt_2": "见$target$走进来，$self$偏过头打了个招呼：\"我先休眠一阵，外头的事你们看着办。\"",
+                "com_furniture_cryosleep_ADD_Interrupt_3": "\"刚来？我这边程序快启动完了。\" $self$靠在舱垫上，冲$target$点点头。",
+                "com_furniture_cryosleep_ADD_4": "寒气慢慢漫上来，$self$的眼皮越来越沉，临闭眼前只来得及朝$target$看了一眼。",
+                "com_furniture_cryosleep_ADD_5": "\"嗯……那就先睡一觉了……\" $self$的声音随着意识一起沉了下去。",
+                "com_furniture_cryosleep_ADD_6": "$self$彻底放松下来，呼吸渐渐放缓，安静地合上了眼睛。",
+                "com_furniture_cryosleep_ADD_Begin_7": "$self$往里靠了靠，仰头看向$target$：\"定好时间就行，别忘了回头来叫我。\"",
+                "com_furniture_cryosleep_ADD_Begin_8": "\"里面看着还真有点冷……\" $self$缩了缩肩膀，顺从地调整好躺姿。",
+                "com_furniture_cryosleep_ADD_Begin_9": "$self$朝$target$点点头：\"我躺稳了，你开始设置吧。\"",
+                "com_furniture_cryosleep_ADD_7": "$self$迷迷糊糊睁开眼，看清是$target$在外面操作，又安心地闭了回去：\"……到点了叫我啊。\"",
+                "com_furniture_cryosleep_ADD_8": "刚被惊醒还有点发懵，$self$含糊应了一声，没反对继续休眠。",
+                "com_furniture_cryosleep_ADD_9": "$self$揉了揉眼睛，见是要进休眠舱，点点头往里躺好：\"行，那我继续睡。\"",
+                "com_furniture_cryosleep_ADD_Tryjoin_1": "$self$走到操作台旁边看了一眼，问$target$：\"需要我帮忙看着点数值吗？\"",
+                "com_furniture_cryosleep_ADD_Tryjoin_2": "\"这台$furniture$设置挺麻烦的，我来搭把手一起弄吧。\" $self$凑近了些。",
+                "com_furniture_cryosleep_ADD_Tryjoin_3": "$self$朝$target$示意了一下旁边的空位：\"我闲着也是闲着，一块儿帮忙安置吧？\"",
+                "com_furniture_cryosleep_ADD_JoinFailed_4": "$self$看了一眼挤不过来的操作台，对$target$摆手：\"这儿站不下这么多人，不用折腾了。\"",
+                "com_furniture_cryosleep_ADD_JoinFailed_5": "\"程序已经走到一半了，这会儿加不进来，你先去忙别的吧。\" $self$朝$target$示意了一下。",
+                "com_furniture_cryosleep_ADD_JoinFailed_6": "$self$摇摇头：\"今天人手够了，辛苦你白跑一趟。\"",
+                "com_furniture_cryosleep_ADD_10": "昏迷中的$self$完全没有察觉温度变化，安静地留在了休眠舱内。",
+                "com_furniture_cryosleep_ADD_11": "没有任何苏醒的迹象，$self$的身体随程序运行渐渐归于静止。",
+                "com_furniture_cryosleep_ADD_12": "舱门闭合，昏迷的$self$在里面毫无声息。",
+                "com_furniture_cryosleep_ADD_Join_Refused_1": "\"行吧，你一个人忙得过来就行，我先走了。\" $self$退开两步转身离开。",
+                "com_furniture_cryosleep_ADD_Join_Refused_2": "$self$点点头：\"知道了，那我不在这儿添乱了。\"",
+                "com_furniture_cryosleep_ADD_Join_Refused_3": "\"成，弄完了叫我一声。\" $self$收回手，站到一旁不再插手。",
+                "com_furniture_cryosleep_ADD_Refuse_4": "$self$扶着舱沿直接退了出来，朝$target$摇头：\"我不想进去冻着，换别人吧。\"",
+                "com_furniture_cryosleep_ADD_Refuse_5": "\"关在里面太闷了，我现在清醒得很，不需要休眠。\" $self$往后退开两步。",
+                "com_furniture_cryosleep_ADD_Refuse_6": "$self$抬手挡住舱门：\"别把我往里塞，我还没打算睡过去。\"",
+                "com_furniture_cryosleep_ADD_Interrupt_4": "$self$手里还按着面板，回头看了眼进来的$target$：\"小点声，这边正启动休眠呢。\"",
+                "com_furniture_cryosleep_ADD_Interrupt_5": "\"找我有事？等我把这台设置确认完。\" $self$朝$target$示意了一下，手下没停。",
+                "com_furniture_cryosleep_ADD_Interrupt_6": "$self$核对完最后一项数值，转头问刚到的$target$：\"怎么这会儿过来了？\"",
+                "com_furniture_cryosleep_ADD_Join_4": "$self$朝刚凑过来的$target$点点头：\"你们动作快点啊，里头已经开始凉了。\"",
+                "com_furniture_cryosleep_ADD_Join_5": "\"你也来帮忙？记得帮我把舱门检查严实些。\" $self$躺着叮嘱了一句。",
+                "com_furniture_cryosleep_ADD_Join_6": "$self$看着$target$站到操作台边，安心地闭上了眼睛。",
+                "com_furniture_cryosleep_ADD_Ongoing_Fallback_1": "$self$点了点头，没有多说什么。"
+            }
+        }
+    }
+}

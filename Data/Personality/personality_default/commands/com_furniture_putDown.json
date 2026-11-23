@@ -88,6 +88,17 @@
                                 "com_furniture_putDown_Result_Receiver_2",
                                 "com_furniture_putDown_Result_Receiver_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_putDown_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -152,6 +163,17 @@
                                 "com_furniture_putDown_Begin_Receiver_2",
                                 "com_furniture_putDown_Begin_Receiver_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_putDown_Begin_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -188,6 +210,17 @@
                                 "com_furniture_putDown_Refuse_2",
                                 "com_furniture_putDown_Refuse_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_putDown_Refuse_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -205,7 +238,11 @@
                                 "com_furniture_putDown_Interrupt_Doer_1",
                                 "com_furniture_putDown_Interrupt_Doer_2",
                                 "com_furniture_putDown_Interrupt_Doer_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
                         },
                         {
                             "requireSelfReceiver": true,
@@ -214,7 +251,11 @@
                                 "com_furniture_putDown_Interrupt_Receiver_1",
                                 "com_furniture_putDown_Interrupt_Receiver_2",
                                 "com_furniture_putDown_Interrupt_Receiver_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "allowRecording": true
+                            }
                         }
                     ]
                 }
@@ -234,6 +275,18 @@
                                 "com_furniture_putDown_Tryjoin_1",
                                 "com_furniture_putDown_Tryjoin_2",
                                 "com_furniture_putDown_Tryjoin_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_putDown_Tryjoin_Fallback_1"
                             ]
                         }
                     ]
@@ -255,6 +308,18 @@
                                 "com_furniture_putDown_Joined_2",
                                 "com_furniture_putDown_Joined_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_putDown_Joined_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -275,6 +340,18 @@
                                 "com_furniture_putDown_Join_Refused_2",
                                 "com_furniture_putDown_Join_Refused_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_putDown_Join_Refused_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -292,7 +369,11 @@
                                 "com_furniture_putDown_Join_Doer_1",
                                 "com_furniture_putDown_Join_Doer_2",
                                 "com_furniture_putDown_Join_Doer_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
                         },
                         {
                             "requireSelfReceiver": true,
@@ -301,7 +382,11 @@
                                 "com_furniture_putDown_Join_Receiver_1",
                                 "com_furniture_putDown_Join_Receiver_2",
                                 "com_furniture_putDown_Join_Receiver_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "allowRecording": true
+                            }
                         }
                     ]
                 }
@@ -315,7 +400,9 @@
                         {
                             "requireSelfDoer": true,
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
                             },
                             "_comment": "施方 → 未能加入的人 ｜ 未能加入",
                             "responses": [
@@ -327,7 +414,9 @@
                         {
                             "requireSelfReceiver": true,
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "requireSelfAction": false,
+                                "allowRecording": true
                             },
                             "_comment": "受方 → 未能加入的人 ｜ 未能加入",
                             "responses": [
@@ -406,7 +495,13 @@
                 "com_furniture_putDown_JoinFailed_Doer_3": "“地方就这么点儿，$target$你先去忙别的吧。”",
                 "com_furniture_putDown_JoinFailed_Receiver_1": "“不用啦$target$，这边已经放好了。”",
                 "com_furniture_putDown_JoinFailed_Receiver_2": "$self$朝$target$摇摇头：“空间不大，不用挤这么多人过来。”",
-                "com_furniture_putDown_JoinFailed_Receiver_3": "“谢谢关心，$target$，你先忙自己的吧。”"
+                "com_furniture_putDown_JoinFailed_Receiver_3": "“谢谢关心，$target$，你先忙自己的吧。”",
+                "com_furniture_putDown_Begin_Fallback_1": "$self$找了个稳妥的地方准备把人放下。",
+                "com_furniture_putDown_Refuse_Fallback_1": "$self$皱了皱眉：“现在还不能就这么放下来。”",
+                "com_furniture_putDown_Join_Refused_Fallback_1": "$self$点点头：“行，那你自己小心放好。”",
+                "com_furniture_putDown_Tryjoin_Fallback_1": "$self$走上前：“需要我帮忙扶一下吗？”",
+                "com_furniture_putDown_Fallback_1": "$self$将人安顿好后直起了身。",
+                "com_furniture_putDown_Joined_Fallback_1": "$self$上前搭了把手，一起把人稳稳放妥。"
             }
         }
     }

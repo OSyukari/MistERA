@@ -15,6 +15,15 @@
                                 "com_interaction_partyInvite_Result_Receiver_2",
                                 "com_interaction_partyInvite_Result_Receiver_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_interaction_partyInvite_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -32,6 +41,15 @@
                                 "com_interaction_partyInvite_Begin_Receiver_1",
                                 "com_interaction_partyInvite_Begin_Receiver_2",
                                 "com_interaction_partyInvite_Begin_Receiver_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_interaction_partyInvite_Begin_Fallback_1"
                             ]
                         }
                     ]
@@ -54,6 +72,16 @@
                                 "com_interaction_partyInvite_Refuse_2",
                                 "com_interaction_partyInvite_Refuse_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_interaction_partyInvite_Refuse_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -71,7 +99,10 @@
                                 "com_interaction_partyInvite_Interrupt_Doer_1",
                                 "com_interaction_partyInvite_Interrupt_Doer_2",
                                 "com_interaction_partyInvite_Interrupt_Doer_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         },
                         {
                             "requireSelfReceiver": true,
@@ -80,7 +111,10 @@
                                 "com_interaction_partyInvite_Interrupt_Receiver_1",
                                 "com_interaction_partyInvite_Interrupt_Receiver_2",
                                 "com_interaction_partyInvite_Interrupt_Receiver_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ]
                 }
@@ -100,6 +134,16 @@
                                 "com_interaction_partyInvite_Tryjoin_1",
                                 "com_interaction_partyInvite_Tryjoin_2",
                                 "com_interaction_partyInvite_Tryjoin_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_interaction_partyInvite_Tryjoin_Fallback_1"
                             ]
                         }
                     ]
@@ -121,6 +165,16 @@
                                 "com_interaction_partyInvite_Joined_2",
                                 "com_interaction_partyInvite_Joined_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_interaction_partyInvite_Joined_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -141,6 +195,16 @@
                                 "com_interaction_partyInvite_Join_Refused_2",
                                 "com_interaction_partyInvite_Join_Refused_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_interaction_partyInvite_Join_Refused_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -158,7 +222,10 @@
                                 "com_interaction_partyInvite_Join_Doer_1",
                                 "com_interaction_partyInvite_Join_Doer_2",
                                 "com_interaction_partyInvite_Join_Doer_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         },
                         {
                             "requireSelfReceiver": true,
@@ -167,7 +234,10 @@
                                 "com_interaction_partyInvite_Join_Receiver_1",
                                 "com_interaction_partyInvite_Join_Receiver_2",
                                 "com_interaction_partyInvite_Join_Receiver_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ]
                 }
@@ -181,7 +251,8 @@
                         {
                             "requireSelfDoer": true,
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "_comment": "施方 → 未能加入的人 ｜ 未能加入",
                             "responses": [
@@ -193,7 +264,8 @@
                         {
                             "requireSelfReceiver": true,
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "_comment": "受方 → 未能加入的人 ｜ 未能加入",
                             "responses": [
@@ -245,7 +317,13 @@
                 "com_interaction_partyInvite_JoinFailed_Doer_3": "“今天就不一块儿走了，回头见。”",
                 "com_interaction_partyInvite_JoinFailed_Receiver_1": "“抱歉啦$target$，这次不太方便带人，下次吧。”",
                 "com_interaction_partyInvite_JoinFailed_Receiver_2": "$self$看了$target$一眼，神色有些歉意：“回头有空再约。”",
-                "com_interaction_partyInvite_JoinFailed_Receiver_3": "“先这样吧，你忙你的去。”"
+                "com_interaction_partyInvite_JoinFailed_Receiver_3": "“先这样吧，你忙你的去。”",
+                "com_interaction_partyInvite_Join_Refused_Fallback_1": "$self$点点头：“理解，那我先忙别的去了。”",
+                "com_interaction_partyInvite_Joined_Fallback_1": "$self$笑了笑，顺势站到了队伍里。",
+                "com_interaction_partyInvite_Tryjoin_Fallback_1": "$self$走上前问：“我也一起加入，可以吗？”",
+                "com_interaction_partyInvite_Refuse_Fallback_1": "$self$摇头婉拒道：“抱歉，我现在不太方便同行。”",
+                "com_interaction_partyInvite_Fallback_1": "$self$看了一眼身旁，神色平静。",
+                "com_interaction_partyInvite_Begin_Fallback_1": "$self$朝$target$示意了一下，打算同行。"
             }
         }
     }

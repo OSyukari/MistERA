@@ -343,46 +343,6 @@
                             "variants": [
                                 {
                                     "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "firstexp_M",
-                                            "sleeping"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "cunnilingus",
-                                        "sleeping",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "初体验 睡眠中 舔阴",
-                                    "responses": [
-                                        "com_sex_oral_V_FE_Sleep_1"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "firstexp_M",
-                                            "timestop"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "cunnilingus",
-                                        "doll",
-                                        "empty"
-                                    ],
-                                    "_comment": "初体验 时停中 舔阴",
-                                    "responses": [
-                                        "com_sex_oral_V_FE_Timestop_1"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
                                         "selfTags": [
                                             "firstexp_M"
                                         ]
@@ -390,20 +350,31 @@
                                     "variants": [
                                         {
                                             "requirement": {
-                                                "targetBaseID": "PLAYER",
-                                                "requirePermission": true
+                                                "targetBaseID": "PLAYER"
                                             },
-                                            "extraSelfPortraitTags": [
-                                                "sex",
-                                                "doer",
-                                                "cunnilingus",
-                                                "blush",
-                                                "shy",
-                                                "love"
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "requirePermission": true
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "doer",
+                                                        "cunnilingus",
+                                                        "blush",
+                                                        "shy",
+                                                        "love"
+                                                    ],
+                                                    "_comment": "初体验 玩家专用 舔阴 有允许",
+                                                    "responses": [
+                                                        "com_sex_oral_V_FE_Player_1"
+                                                    ]
+                                                }
                                             ],
-                                            "_comment": "初体验 玩家专用 舔阴 有允许",
+                                            "_comment": "玩家专用（无允许兜底）",
                                             "responses": [
-                                                "com_sex_oral_V_FE_Player_1"
+                                                "com_sex_oral_V_FE_4",
+                                                "com_sex_oral_V_FE_5"
                                             ]
                                         },
                                         {
@@ -496,6 +467,27 @@
                                         "com_sex_oral_V_4",
                                         "com_sex_oral_V_5",
                                         "com_sex_oral_V_6"
+                                    ],
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "firstexp_M"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "cunnilingus",
+                                                "sleeping",
+                                                "relaxed"
+                                            ],
+                                            "_comment": "初体验 睡眠中 舔阴",
+                                            "responses": [
+                                                "com_sex_oral_V_FE_Sleep_1"
+                                            ]
+                                        }
                                     ]
                                 },
                                 {
@@ -523,6 +515,27 @@
                                         "com_sex_oral_V_10",
                                         "com_sex_oral_V_11",
                                         "com_sex_oral_V_12"
+                                    ],
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "firstexp_M"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "cunnilingus",
+                                                "doll",
+                                                "empty"
+                                            ],
+                                            "_comment": "初体验 时停中 舔阴",
+                                            "responses": [
+                                                "com_sex_oral_V_FE_Timestop_1"
+                                            ]
+                                        }
                                     ]
                                 },
                                 {
@@ -668,26 +681,6 @@
                         },
                         {
                             "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "firstexp_M",
-                                    "timestop"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "cunnilingus",
-                                "doll",
-                                "empty"
-                            ],
-                            "_comment": "初体验 时停中 舔阴",
-                            "responses": [
-                                "com_sex_oral_V_FE_Timestop_1"
-                            ]
-                        },
-                        {
-                            "requirement": {
                                 "selfTags": [
                                     "firstexp_M"
                                 ]
@@ -695,20 +688,31 @@
                             "variants": [
                                 {
                                     "requirement": {
-                                        "targetBaseID": "PLAYER",
-                                        "requirePermission": true
+                                        "targetBaseID": "PLAYER"
                                     },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "cunnilingus",
-                                        "blush",
-                                        "shy",
-                                        "love"
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "cunnilingus",
+                                                "blush",
+                                                "shy",
+                                                "love"
+                                            ],
+                                            "_comment": "初体验 玩家专用 舔阴 有允许",
+                                            "responses": [
+                                                "com_sex_oral_V_FE_Player_1"
+                                            ]
+                                        }
                                     ],
-                                    "_comment": "初体验 玩家专用 舔阴 有允许",
+                                    "_comment": "玩家专用（无允许兜底）",
                                     "responses": [
-                                        "com_sex_oral_V_FE_Player_1"
+                                        "com_sex_oral_V_FE_4",
+                                        "com_sex_oral_V_FE_5"
                                     ]
                                 },
                                 {
@@ -762,24 +766,6 @@
                         },
                         {
                             "requirement": {
-                                "selfTags": [
-                                    "firstexp_partner_M"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "cunnilingus",
-                                "spread_pussy",
-                                "surprised"
-                            ],
-                            "_comment": "对方初体验 舔阴（被侍奉的一方）",
-                            "responses": [
-                                "com_sex_oral_V_FE_Partner_1"
-                            ]
-                        },
-                        {
-                            "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
                                     "sleeping"
@@ -828,6 +814,27 @@
                                 "com_sex_oral_V_10",
                                 "com_sex_oral_V_11",
                                 "com_sex_oral_V_12"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "firstexp_M"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "cunnilingus",
+                                        "doll",
+                                        "empty"
+                                    ],
+                                    "_comment": "初体验 时停中 舔阴",
+                                    "responses": [
+                                        "com_sex_oral_V_FE_Timestop_1"
+                                    ]
+                                }
                             ]
                         },
                         {
@@ -931,6 +938,26 @@
                                         "com_sex_oral_V_77",
                                         "com_sex_oral_V_78"
                                     ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_partner_M"
+                                        ],
+                                        "requireSelfAction": false,
+                                        "requireTargetAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "cunnilingus",
+                                        "spread_pussy",
+                                        "surprised"
+                                    ],
+                                    "_comment": "对方初体验 舔阴（被侍奉的一方）",
+                                    "responses": [
+                                        "com_sex_oral_V_FE_Partner_1"
+                                    ]
                                 }
                             ],
                             "_comment": "2.2.6 ($self$) 被舔阴 结果负面 未允许 口上文",
@@ -963,7 +990,11 @@
                             }
                         }
                     ],
-                    "template": "commandResult"
+                    "template": "commandResult",
+                    "templateExtras": [
+                        "firstexpM",
+                        "firstexpPartnerM"
+                    ]
                 }
             },
             {

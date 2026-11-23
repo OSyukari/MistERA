@@ -1,0 +1,300 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_music_practice_Tryjoin",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 尝试加入",
+                            "responses": [
+                                "com_furniture_music_practice_Tryjoin_1",
+                                "com_furniture_music_practice_Tryjoin_2",
+                                "com_furniture_music_practice_Tryjoin_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_music_practice_Interrupt",
+                    "template": "commandInterrupt",
+                    "variants": [
+                        {
+                            "_comment": "当前动作中的 NPC → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_furniture_music_practice_Interrupt_1",
+                                "com_furniture_music_practice_Interrupt_2",
+                                "com_furniture_music_practice_Interrupt_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_music_practice",
+                    "template": "commandResult",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccessLTE": "Failure"
+                            },
+                            "_comment": "判定失败",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "自己（单人） → 玩家 ｜ 接受·判定失败",
+                                    "responses": [
+                                        "com_furniture_music_practice_1",
+                                        "com_furniture_music_practice_2",
+                                        "com_furniture_music_practice_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_music_practice_Fallback_1"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "_comment": "判定成功",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "自己（单人） → 玩家 ｜ 接受·判定成功",
+                                    "responses": [
+                                        "com_furniture_music_practice_4",
+                                        "com_furniture_music_practice_5",
+                                        "com_furniture_music_practice_6"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_music_practice_Fallback_2"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "_comment": "自己（单人） → 自己",
+                            "responses": [
+                                "com_furniture_music_practice_7",
+                                "com_furniture_music_practice_8",
+                                "com_furniture_music_practice_9"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "自己（单人） → 自己 ｜ 接受·判定成功",
+                                    "responses": [
+                                        "com_furniture_music_practice_10",
+                                        "com_furniture_music_practice_11",
+                                        "com_furniture_music_practice_12"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_music_practice_Joined",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入成功",
+                            "responses": [
+                                "com_furniture_music_practice_Joined_1",
+                                "com_furniture_music_practice_Joined_2",
+                                "com_furniture_music_practice_Joined_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_music_practice_Ongoing",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "自己（单人） → 玩家 ｜ 接受",
+                            "responses": [
+                                "com_furniture_music_practice_Ongoing_1",
+                                "com_furniture_music_practice_Ongoing_2",
+                                "com_furniture_music_practice_Ongoing_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_music_practice_Refuse",
+                    "template": "commandRefuse",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER",
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "自己（单人） → 玩家 ｜ 拒绝",
+                            "responses": [
+                                "com_furniture_music_practice_Refuse_1",
+                                "com_furniture_music_practice_Refuse_2",
+                                "com_furniture_music_practice_Refuse_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_music_practice_JoinFailed",
+                    "template": "commandJoinFailed",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_furniture_music_practice_JoinFailed_1",
+                                "com_furniture_music_practice_JoinFailed_2",
+                                "com_furniture_music_practice_JoinFailed_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_music_practice_Begin",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "_comment": "NPC → 玩家",
+                            "responses": [
+                                "com_furniture_music_practice_Begin_1",
+                                "com_furniture_music_practice_Begin_2",
+                                "com_furniture_music_practice_Begin_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_music_practice_Join",
+                    "template": "commandJoin",
+                    "variants": [
+                        {
+                            "_comment": "原参与者 NPC → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_furniture_music_practice_Join_1",
+                                "com_furniture_music_practice_Join_2",
+                                "com_furniture_music_practice_Join_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_music_practice_Join_Refused",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入被拒绝",
+                            "responses": [
+                                "com_furniture_music_practice_Join_Refused_1",
+                                "com_furniture_music_practice_Join_Refused_2",
+                                "com_furniture_music_practice_Join_Refused_3"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_furniture_music_practice_Tryjoin_1": "$self$在门边听了一会儿，走近问$target$：\"我也想练一会儿，能一起吗？\"",
+                "com_furniture_music_practice_Tryjoin_2": "\"正好我也手生了，算我一个怎么样？\" $self$说着往旁边空着的位置看了一眼。",
+                "com_furniture_music_practice_Tryjoin_3": "$self$朝$target$扬了扬手里的谱子：\"一个人练太闷了，介意多个搭档吗？\"",
+                "com_furniture_music_practice_Interrupt_1": "$self$听到门响停了下来，见是$target$，松了口气：\"我还以为吵到谁了，找我有事？\"",
+                "com_furniture_music_practice_Interrupt_2": "$self$把声音收住，朝刚进来的$target$点点头：\"我还在练呢，你要是嫌吵我小声点。\"",
+                "com_furniture_music_practice_Interrupt_3": "\"刚卡在一段难的地方，差点没听见你进来。\" $self$顺手扶稳身前的架子，朝$target$看过去。",
+                "com_furniture_music_practice_1": "$self$中途断了一拍，干脆停下来对$target$摆摆手：\"不行，这段我还是老出错，别管我。\"",
+                "com_furniture_music_practice_2": "\"抱歉，刚才那下走神了，节奏全散了。\" $self$有些懊恼地盯着出错的那几行。",
+                "com_furniture_music_practice_3": "$self$揉着发僵的手腕，朝$target$苦笑一下：\"今天状态不太对，练不出手感。\"",
+                "com_furniture_music_practice_4": "$self$收住尾音，转头问$target$：\"刚才那段听着还行吧？我自己感觉比前两天稳多了。\"",
+                "com_furniture_music_practice_5": "\"总算把那个难点啃下来了，没拖后腿吧？\" $self$长舒一口气，擦了擦额角的汗。",
+                "com_furniture_music_practice_6": "$self$满意地把谱页翻过去，朝$target$扬了扬下巴：\"我这边过关了，你那边怎么样？\"",
+                "com_furniture_music_practice_7": "$self$皱着眉停住，刚才那处转折还是接得磕磕绊绊，越急越容易乱。",
+                "com_furniture_music_practice_8": "\"算了，再硬练下去也是错的肌肉记忆，先歇会儿。\" $self$把谱子合上放到一旁。",
+                "com_furniture_music_practice_9": "节奏一快就容易漂，练了半天还是老毛病，$self$叹了口气，揉了揉僵住的指节。",
+                "com_furniture_music_practice_Joined_1": "\"那我站这边，尽量不抢你的拍子。\" $self$走过去腾出活动空间，很快进入状态。",
+                "com_furniture_music_practice_Joined_2": "$self$点点头，把位置调到不挡视线的地方：\"行，你先起个头，我跟着进。\"",
+                "com_furniture_music_practice_Joined_3": "\"太好了，有个人一起练，错的地方也容易听出来。\" $self$说着迅速做起准备。",
+                "com_furniture_music_practice_Ongoing_1": "$self$余光扫到$target$站在一旁，没停下动作，只抽空说了一句：\"别光看着，要是觉得哪段怪直说。\"",
+                "com_furniture_music_practice_Ongoing_2": "$self$把出错的那几小节重来了一遍，被$target$盯着看，动作比刚才更谨慎些。",
+                "com_furniture_music_practice_Ongoing_3": "$self$顺手调整了一下站姿，继续跟着拍子往下练，没让旁边的视线打乱节奏。",
+                "com_furniture_music_practice_Refuse_1": "$self$没有去碰乐器，直接对$target$说：\"我现在没心思练，去了也是白费功夫。\"",
+                "com_furniture_music_practice_Refuse_2": "\"手正累着呢，今天不想碰这些。\" $self$往后退了半步，把话堵在前面。",
+                "com_furniture_music_practice_Refuse_3": "$self$摇摇头拒绝了提议：\"练不进去的时候硬练没用，换个时间吧。\"",
+                "com_furniture_music_practice_JoinFailed_1": "$self$看了眼挤不开的角落，对$target$摆摆手：\"这儿确实施展不开，下回再凑一块儿吧。\"",
+                "com_furniture_music_practice_JoinFailed_2": "\"今天怕是挤不下了，改天找个宽敞点的时间再一起练。\" $self$朝$target$示意了一下，随即收回注意力。",
+                "com_furniture_music_practice_JoinFailed_3": "$self$停顿了一下，对未能进来的$target$说：\"这边暂时没法再加人了，你先忙别的吧。\"",
+                "com_furniture_music_practice_Begin_1": "$self$朝$target$比了个开始的手势：\"我先过一遍前面卡壳的小节，待会儿再对节奏。\"",
+                "com_furniture_music_practice_Begin_2": "$self$深吸一口气，活动了两下手腕，把注意力收回到面前的节拍上。",
+                "com_furniture_music_practice_Begin_3": "\"今天争取把这段顺下来，别老在同一个地方掉拍。\" $self$低声念叨了一句。",
+                "com_furniture_music_practice_Join_1": "$self$往旁边挪出半个身位：\"来吧，正好这段一个人练着有点单调。\"",
+                "com_furniture_music_practice_Join_2": "\"你来得正好，帮我听听刚才那段节奏稳不稳。\" $self$朝$target$偏了偏头。",
+                "com_furniture_music_practice_Join_3": "$self$停下重整了一下节拍，等$target$站定后重新起头。",
+                "com_furniture_music_practice_Join_Refused_1": "\"行，那你先自己专心练吧，我不掺和了。\" $self$退开两步，顺手把门带上。",
+                "com_furniture_music_practice_Join_Refused_2": "$self$停住脚步，耸耸肩：\"好吧，那我等会儿再来，或者去别处看看。\"",
+                "com_furniture_music_practice_Join_Refused_3": "\"知道了，不打扰你找状态。\" $self$把刚拿出来的谱子又收了回去。",
+                "com_furniture_music_practice_10": "$self$停下来甩了甩发酸的手，刚才那几遍总算没再抢拍，比预想的稳。",
+                "com_furniture_music_practice_11": "\"这段总算顺过来了，明天不用再从头磨。\" $self$在谱纸边角折了个记号。",
+                "com_furniture_music_practice_12": "最后一个音落稳，紧绷的肩膀跟着松了下来，今天的手感确实在线。",
+                "com_furniture_music_practice_Fallback_1": "$self$点了点头，没有多说什么。",
+                "com_furniture_music_practice_Fallback_2": "$self$点了点头，没有多说什么。"
+            }
+        }
+    }
+}

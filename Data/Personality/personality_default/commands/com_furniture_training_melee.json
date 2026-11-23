@@ -1,0 +1,300 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_training_melee",
+                    "template": "commandResult",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccessLTE": "Failure"
+                            },
+                            "_comment": "判定失败",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "自己（单人） → 玩家 ｜ 接受·判定失败",
+                                    "responses": [
+                                        "com_furniture_training_melee_1",
+                                        "com_furniture_training_melee_2",
+                                        "com_furniture_training_melee_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_training_melee_Fallback_1"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "_comment": "自己（单人） → 自己",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "自己（单人） → 自己 ｜ 接受·判定成功",
+                                    "responses": [
+                                        "com_furniture_training_melee_4",
+                                        "com_furniture_training_melee_5",
+                                        "com_furniture_training_melee_6"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_training_melee_7",
+                                "com_furniture_training_melee_8",
+                                "com_furniture_training_melee_9"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "_comment": "判定成功",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "自己（单人） → 玩家 ｜ 接受·判定成功",
+                                    "responses": [
+                                        "com_furniture_training_melee_10",
+                                        "com_furniture_training_melee_11",
+                                        "com_furniture_training_melee_12"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_training_melee_Fallback_2"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_training_melee_Begin",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "_comment": "NPC → 玩家",
+                            "responses": [
+                                "com_furniture_training_melee_Begin_1",
+                                "com_furniture_training_melee_Begin_2",
+                                "com_furniture_training_melee_Begin_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_training_melee_Tryjoin",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 尝试加入",
+                            "responses": [
+                                "com_furniture_training_melee_Tryjoin_1",
+                                "com_furniture_training_melee_Tryjoin_2",
+                                "com_furniture_training_melee_Tryjoin_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_training_melee_Interrupt",
+                    "template": "commandInterrupt",
+                    "variants": [
+                        {
+                            "_comment": "当前动作中的 NPC → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_furniture_training_melee_Interrupt_1",
+                                "com_furniture_training_melee_Interrupt_2",
+                                "com_furniture_training_melee_Interrupt_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_training_melee_Ongoing",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "自己（单人） → 玩家 ｜ 接受",
+                            "responses": [
+                                "com_furniture_training_melee_Ongoing_1",
+                                "com_furniture_training_melee_Ongoing_2",
+                                "com_furniture_training_melee_Ongoing_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_training_melee_Joined",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入成功",
+                            "responses": [
+                                "com_furniture_training_melee_Joined_1",
+                                "com_furniture_training_melee_Joined_2",
+                                "com_furniture_training_melee_Joined_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_training_melee_Refuse",
+                    "template": "commandRefuse",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER",
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "自己（单人） → 玩家 ｜ 拒绝",
+                            "responses": [
+                                "com_furniture_training_melee_Refuse_1",
+                                "com_furniture_training_melee_Refuse_2",
+                                "com_furniture_training_melee_Refuse_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_training_melee_JoinFailed",
+                    "template": "commandJoinFailed",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_furniture_training_melee_JoinFailed_1",
+                                "com_furniture_training_melee_JoinFailed_2",
+                                "com_furniture_training_melee_JoinFailed_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_training_melee_Join",
+                    "template": "commandJoin",
+                    "variants": [
+                        {
+                            "_comment": "原参与者 NPC → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_furniture_training_melee_Join_1",
+                                "com_furniture_training_melee_Join_2",
+                                "com_furniture_training_melee_Join_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_training_melee_Join_Refused",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入被拒绝",
+                            "responses": [
+                                "com_furniture_training_melee_Join_Refused_1",
+                                "com_furniture_training_melee_Join_Refused_2",
+                                "com_furniture_training_melee_Join_Refused_3"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_furniture_training_melee_1": "$self$停下来揉了揉扭到的手腕，对$target$摆手：\"不行，后半程全乱套了，歇会儿。\"",
+                "com_furniture_training_melee_2": "\"别看了，刚才步子没踩稳，丢人得很。\" $self$喘着气，自己先笑了一声。",
+                "com_furniture_training_melee_3": "$self$有些泄气地垂下手臂：\"今天状态不太对，怎么练都觉得别扭。\"",
+                "com_furniture_training_melee_Begin_1": "$self$朝$target$活动了两下肩颈：\"各练各的吧，等会儿热开身了再看。\"",
+                "com_furniture_training_melee_Begin_2": "$self$踩稳重心试着滑步挪动了一下，确认脚下不打滑。",
+                "com_furniture_training_melee_Begin_3": "\"今天把发力收住些，免得练完胳膊抬不起来。\" $self$嘀咕了一句，眼神落回前方。",
+                "com_furniture_training_melee_4": "$self$抹了把额角的汗，刚才几下出拳收势都算干脆，脚步没乱。",
+                "com_furniture_training_melee_5": "\"发力比前两天顺多了，没白折腾这一趟。\" $self$甩了甩发酸的手腕，慢慢把气息调匀。",
+                "com_furniture_training_melee_6": "练到最后一组重心依然稳当，$self$干脆利落地收了架势。",
+                "com_furniture_training_melee_Tryjoin_1": "$self$走到场边活动了两下手腕，问$target$：\"我也想活动活动筋骨，能一起练吗？\"",
+                "com_furniture_training_melee_Tryjoin_2": "\"看你练得挺起劲的，算我一个怎么样？\" $self$往旁边的空地看了一眼。",
+                "com_furniture_training_melee_Tryjoin_3": "$self$朝$target$偏了偏头：\"旁边还有空位，介意我搭个伴一起练吗？\"",
+                "com_furniture_training_melee_Interrupt_1": "$self$听到动静收住动作，见是$target$过来，顺势放下了护在身前的手：\"有事找我？\"",
+                "com_furniture_training_melee_Interrupt_2": "\"站远点，别走太近，免得我收不住手误伤到你。\" $self$喘着气提醒了一句。",
+                "com_furniture_training_melee_Interrupt_3": "$self$拿袖口蹭掉额头的汗，朝进来的$target$点点头：\"我刚练到一半，先说事吧。\"",
+                "com_furniture_training_melee_Ongoing_1": "$self$收住一记横踢，喘着气瞥了眼场边的$target$：\"站那儿看半天了，要不要下来练两下？\"",
+                "com_furniture_training_melee_Ongoing_2": "$self$知道$target$在看，刻意把最后两组动作做标准，没偷懒糊弄过去。",
+                "com_furniture_training_melee_Ongoing_3": "\"我这儿还得练一会儿呢，你先找地方坐着等吧。\" $self$抹了把汗，重新拉开架势。",
+                "com_furniture_training_melee_Joined_1": "\"行，那我站这边，互不碍事。\" $self$快步走进场内，迅速拉开架势。",
+                "com_furniture_training_melee_Joined_2": "$self$点点头，留出足够的挥拳空间：\"有个人一块儿练，自己也容易打起精神。\"",
+                "com_furniture_training_melee_Joined_3": "\"那我就不客气了，趁热身还没凉赶紧开始。\" $self$说着活动起脚踝。",
+                "com_furniture_training_melee_Refuse_1": "$self$站着没动，直接回绝了$target$：\"浑身还酸着呢，今天不想做近身训练。\"",
+                "com_furniture_training_melee_Refuse_2": "\"我现在没力气折腾这个，硬练容易拉伤。\" $self$揉了揉肩膀，把话挑明了。",
+                "com_furniture_training_melee_Refuse_3": "$self$摇摇头避开了去训练场那边的视线：\"换点别的吧，今天不想动手脚。\"",
+                "com_furniture_training_melee_7": "$self$收势时脚下拌了一下，差点没站稳，索性停下来喘口气。",
+                "com_furniture_training_melee_8": "\"体力掉得太快了，后半段动作全散了。\" $self$扶着膝盖缓了缓，有点懊恼。",
+                "com_furniture_training_melee_9": "出招老是慢半拍，越想提速越容易变形，$self$摇摇头停了下来。",
+                "com_furniture_training_melee_JoinFailed_1": "$self$收势看了一眼挤不开的训练区，对$target$摊手：\"这儿地方确实不够用，下回吧。\"",
+                "com_furniture_training_melee_JoinFailed_2": "\"今天人满为患了，施展不开，你先去看看别处。\" $self$说完又把架势摆了回去。",
+                "com_furniture_training_melee_JoinFailed_3": "$self$朝$target$摇摇头：\"这会儿加不进来，等空出位置了再说。\"",
+                "com_furniture_training_melee_Join_1": "$self$往旁边退开两步让出场地：\"来吧，注意留点间隔，别撞一块儿了。\"",
+                "com_furniture_training_melee_Join_2": "\"正好一个人练得闷，一起吧。\" $self$朝$target$点了点头，继续自己的动作。",
+                "com_furniture_training_melee_Join_3": "$self$等$target$站稳后示意了一下：\"我先练完这组，待会儿节奏跟上就行。\"",
+                "com_furniture_training_melee_Join_Refused_1": "\"成，那你专心练你的，我不瞎掺和了。\" $self$摆摆手，退回场外。",
+                "com_furniture_training_melee_Join_Refused_2": "$self$停住脚步点点头：\"行吧，那我待会儿再来，或者换个项目。\"",
+                "com_furniture_training_melee_Join_Refused_3": "\"知道了，不打扰你保持节奏。\" $self$把刚挽起一点的袖子放了下来。",
+                "com_furniture_training_melee_10": "$self$顺了顺气息，偏头看向$target$：\"我这组练完了，状态还不错，你那边呢？\"",
+                "com_furniture_training_melee_11": "\"刚才那几下衔接挺顺的，总算找到点感觉了。\" $self$拿毛巾擦了擦脖子。",
+                "com_furniture_training_melee_12": "$self$活动着发酸的肩膀，朝$target$抬下巴示意：\"先歇两分钟吧，汗都要进眼睛里了。\"",
+                "com_furniture_training_melee_Fallback_1": "$self$点了点头，没有多说什么。",
+                "com_furniture_training_melee_Fallback_2": "$self$点了点头，没有多说什么。"
+            }
+        }
+    }
+}

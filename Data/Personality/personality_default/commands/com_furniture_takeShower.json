@@ -9,6 +9,29 @@
                     "useEPPartnerAsTarget": true,
                     "variants": [
                         {
+                            "requireRefusalContext": "DeclinedOrder",
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER",
+                                        "requireEPSuccess": false
+                                    },
+                                    "_comment": "自己（单人） → 玩家 ｜ 拒绝",
+                                    "responses": [
+                                        "com_furniture_takeShower_Refuse_1",
+                                        "com_furniture_takeShower_Refuse_2",
+                                        "com_furniture_takeShower_Refuse_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_takeShower_Refuse_Fallback_1"
+                            ]
+                        },
+                        {
                             "requireSelfOnly": true,
                             "requireSelfDoer": true,
                             "requirement": {
@@ -168,6 +191,27 @@
                     "ID": "com_furniture_takeShower_Begin",
                     "useEPPartnerAsTarget": true,
                     "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_takeShower_Begin_1",
+                                        "com_furniture_takeShower_Begin_2",
+                                        "com_furniture_takeShower_Begin_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_takeShower_Begin_Fallback_1"
+                            ]
+                        },
                         {
                             "requireSelfOnly": true,
                             "requireSelfDoer": true,
@@ -1009,6 +1053,132 @@
                         }
                     ]
                 }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_takeShower",
+                    "template": "commandResult",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_takeShower_1",
+                                        "com_furniture_takeShower_2",
+                                        "com_furniture_takeShower_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_takeShower_7",
+                                "com_furniture_takeShower_8",
+                                "com_furniture_takeShower_9"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "_comment": "自己（单人） → 自己 ｜ 接受",
+                            "responses": [
+                                "com_furniture_takeShower_4",
+                                "com_furniture_takeShower_5",
+                                "com_furniture_takeShower_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "自己（单人） → 玩家 ｜ 接受",
+                            "responses": [
+                                "com_furniture_takeShower_10",
+                                "com_furniture_takeShower_11",
+                                "com_furniture_takeShower_12"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_takeShower_Interrupt",
+                    "template": "commandInterrupt",
+                    "variants": [
+                        {
+                            "_comment": "当前动作中的 NPC → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_furniture_takeShower_Interrupt_1",
+                                "com_furniture_takeShower_Interrupt_2",
+                                "com_furniture_takeShower_Interrupt_3"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_furniture_takeShower_Interrupt_4",
+                                "com_furniture_takeShower_Interrupt_5",
+                                "com_furniture_takeShower_Interrupt_6"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_furniture_takeShower_Interrupt_7",
+                                "com_furniture_takeShower_Interrupt_8",
+                                "com_furniture_takeShower_Interrupt_9"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_takeShower_Ongoing",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "受方 → 玩家 ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_takeShower_Ongoing_1",
+                                        "com_furniture_takeShower_Ongoing_2",
+                                        "com_furniture_takeShower_Ongoing_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_takeShower_Ongoing_Fallback_1"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "自己（单人） → 玩家 ｜ 接受",
+                            "responses": [
+                                "com_furniture_takeShower_Ongoing_4",
+                                "com_furniture_takeShower_Ongoing_5",
+                                "com_furniture_takeShower_Ongoing_6"
+                            ]
+                        }
+                    ]
+                }
             }
         ]
     },
@@ -1109,7 +1279,43 @@
                 "kojo_shower_refuse_helper_marriage_1": "\"手里还有事没收尾，你自己先冲着行吗？\" $self$朝$target$摇了摇头。",
                 "kojo_shower_refuse_helper_marriage_2": "$self$叹了口气：\"这会儿真抽不开身帮你洗，晚点再说。\"",
                 "kojo_shower_accept_receiver_couple_1": "\"后面我自己总搓不匀，正好麻烦你啦。\" $self$朝$target$转过背去。",
-                "kojo_shower_accept_receiver_couple_2": "$self$抓了抓胳膊，小声叮嘱：\"别光顾着闹，早点洗完早点出去。\""
+                "kojo_shower_accept_receiver_couple_2": "$self$抓了抓胳膊，小声叮嘱：\"别光顾着闹，早点洗完早点出去。\"",
+                "com_furniture_takeShower_1": "浑身湿漉漉的，$self$打了个寒颤，偏头催促$target$：\"快拿毛巾擦一下，绳子湿了更勒人。\"",
+                "com_furniture_takeShower_2": "\"总算冲干净了，就是湿答答黏在身上难受。\" $self$甩了甩垂下的水珠。",
+                "com_furniture_takeShower_3": "$self$被束缚着没法自己擦身，只能站在原地等$target$递干毛巾过来。",
+                "com_furniture_takeShower_Interrupt_1": "$self$慌忙扯过架子上的浴巾裹住身子，冲门口的$target$喊道：\"出去！我在洗澡呢！\"",
+                "com_furniture_takeShower_Interrupt_2": "\"谁让你直接推门进来的？！\" $self$把花洒往墙上一按，瞪着$target$。",
+                "com_furniture_takeShower_Interrupt_3": "$self$转过身护住自己，没好气地朝$target$挥手：\"把门带上，等我穿好衣服再说！\"",
+                "com_furniture_takeShower_Interrupt_4": "$self$赶紧挡在前面顺手把门往里带，对$target$摆手：\"正洗澡呢，先退出去等会儿。\"",
+                "com_furniture_takeShower_Interrupt_5": "\"怎么连门都不敲就推开了？\" $self$皱起眉示意$target$先出去。",
+                "com_furniture_takeShower_Interrupt_6": "$self$关掉花洒免得声音太吵，回头对$target$说：\"有急事等洗完再说吧。\"",
+                "com_furniture_takeShower_4": "$self$拿干毛巾擦拭着肩膀上的水珠，洗完热水澡整个人都松快下来。",
+                "com_furniture_takeShower_5": "\"总算清爽了，刚才黏糊糊的难受死了。\" $self$伸了个懒腰，把浴巾披在肩上。",
+                "com_furniture_takeShower_6": "抹去镜面上的水雾，$self$确认身上已经冲净，准备出去换衣服。",
+                "com_furniture_takeShower_Refuse_1": "$self$摆手拒绝了$target$：\"我今天刚洗过，不想再进去淋一遍水。\"",
+                "com_furniture_takeShower_Refuse_2": "\"现在水太凉了，要去你自己去，我可不洗。\" $self$抱起胳膊没动窝。",
+                "com_furniture_takeShower_Refuse_3": "$self$摇摇头回绝：\"我现在身上干净着呢，不用去洗。\"",
+                "com_furniture_takeShower_7": "$self$拧干滴水的发梢，接过毛巾擦脸：\"洗完真是浑身舒坦，谢啦。\"",
+                "com_furniture_takeShower_8": "\"总算把身上的汗味冲掉了。\" $self$长舒一口气，朝$target$点点头。",
+                "com_furniture_takeShower_9": "$self$披上干浴巾揉了揉手臂：\"水温刚好，比我自己瞎洗省事多了。\"",
+                "com_furniture_takeShower_Begin_1": "$self$动了动被缚住的手腕，仰头看着$target$：\"水别太烫，我这样可没法自己躲开。\"",
+                "com_furniture_takeShower_Begin_2": "手脚都被绑着，站久了有点吃力，$self$只能靠在墙边任由$target$往身上淋水。",
+                "com_furniture_takeShower_Begin_3": "\"行吧……反正我自己也洗不着，你动作快点。\" $self$闭上眼等着水柱落下来。",
+                "com_furniture_takeShower_Ongoing_1": "$self$隔着水雾看见外面的$target$，下意识护住身前皱起眉：\"……看够了没有？\"",
+                "com_furniture_takeShower_Ongoing_2": "\"外面不冷吗？站这儿盯着人洗澡怪奇怪的。\" $self$偏过头避开$target$的视线。",
+                "com_furniture_takeShower_Ongoing_3": "$self$被水淋着不好乱动，只能冲$target$瞪了一眼：\"快走开点。\"",
+                "com_furniture_takeShower_Ongoing_4": "$self$抹了一把脸上的水，发现$target$正站在门边看着，赶紧把水调小：\"喂，有事出去等啊！\"",
+                "com_furniture_takeShower_Ongoing_5": "\"别一直盯着我看，我马上就冲好了。\" $self$扯过旁边的浴巾挡在身前。",
+                "com_furniture_takeShower_Ongoing_6": "$self$被$target$看得动作一顿，索性背过身去继续快速冲洗。",
+                "com_furniture_takeShower_Interrupt_7": "$self$吓了一跳，连忙蹲低身子躲进水雾里，朝门口的$target$喊：\"快出去！门怎么没锁好！\"",
+                "com_furniture_takeShower_Interrupt_8": "\"先退回去！我这边正洗着澡呢！\" $self$抓起毛巾护住胸口。",
+                "com_furniture_takeShower_Interrupt_9": "$self$脸色涨红地瞪向闯进来的$target$：\"有事出去说，别站门框那儿！\"",
+                "com_furniture_takeShower_10": "$self$披着干毛巾推门出来，朝$target$说：\"我先洗完了，热水挺足的。\"",
+                "com_furniture_takeShower_11": "\"洗完好舒服，你也洗好了吗？\" $self$拿毛巾擦着脖颈上的水渍。",
+                "com_furniture_takeShower_12": "$self$把用完的洗漱用品归回架子上，偏头等$target$一起收拾。",
+                "com_furniture_takeShower_Refuse_Fallback_1": "$self$点了点头，没有多说什么。",
+                "com_furniture_takeShower_Begin_Fallback_1": "$self$点了点头，没有多说什么。",
+                "com_furniture_takeShower_Ongoing_Fallback_1": "$self$点了点头，没有多说什么。"
             },
             "en-us": {
                 "kojo_shower_accept_self": "$self$ agrees. \"Yes, I'll go take a shower.\"",

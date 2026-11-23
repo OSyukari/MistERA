@@ -44,20 +44,28 @@
                         {
                             "requireMaster": true,
                             "requireSelfNotMaster": true,
-                            "requirement": {
-                                "requireSelfForced": true
-                            },
-                            "extraSelfPortraitTags": [
-                                "fear",
-                                "trembling",
-                                "tearful",
-                                "pain"
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfForced": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "fear",
+                                        "trembling",
+                                        "tearful",
+                                        "pain"
+                                    ],
+                                    "_comment": "2.3.5 被动接受（屈服）",
+                                    "responses": [
+                                        "com_interaction_talk_Begin_3",
+                                        "com_interaction_talk_Begin_4",
+                                        "com_interaction_talk_Begin_10"
+                                    ]
+                                }
                             ],
-                            "_comment": "2.3.5 被动接受（屈服）",
+                            "_comment": "被第三方下令",
                             "responses": [
-                                "com_interaction_talk_Begin_3",
-                                "com_interaction_talk_Begin_4",
-                                "com_interaction_talk_Begin_10"
+                                "com_interaction_talk_Begin_Ordered_1"
                             ]
                         },
                         {
@@ -87,7 +95,10 @@
                                 "com_interaction_talk_Begin_7",
                                 "com_interaction_talk_Begin_8",
                                 "com_interaction_talk_Begin_9"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandAct"
@@ -619,7 +630,8 @@
                 "com_interaction_talk_Receiver_2": "$self$顺着$target$的话点点头。\n\"原来是这样啊，我明白了。\"",
                 "com_interaction_talk_Begin_Restrained_1": "“手脚都绑着呢，你还有心情跟我闲聊啊……”",
                 "com_interaction_talk_Begin_Restrained_2": "$self$动了动发紧的手腕，抬眼看过去：“你想说什么？”",
-                "com_interaction_talk_Begin_Restrained_3": "“……行吧，总比干待着强，你说。”"
+                "com_interaction_talk_Begin_Restrained_3": "“……行吧，总比干待着强，你说。”",
+                "com_interaction_talk_Begin_Ordered_1": "$self$依言照做了，神色却有些勉强。"
             },
             "en-us": {
                 "com_interaction_talk_Begin_1": "$self$ immediately shuts her book, eyes full of anticipation: \"Sure! I was bored to death anyway!\"",

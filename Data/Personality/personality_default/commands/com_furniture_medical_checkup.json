@@ -1,0 +1,427 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_medical_checkup",
+                    "template": "commandResult",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
+                            "responses": [
+                                "com_furniture_medical_checkup_1",
+                                "com_furniture_medical_checkup_2",
+                                "com_furniture_medical_checkup_3"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "unconscious"
+                                        ],
+                                        "excludeSelfTags": [
+                                            "sleeping"
+                                        ],
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_medical_checkup_4",
+                                        "com_furniture_medical_checkup_5",
+                                        "com_furniture_medical_checkup_6"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "sleeping"
+                                        ],
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（睡眠中） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_medical_checkup_7",
+                                        "com_furniture_medical_checkup_8",
+                                        "com_furniture_medical_checkup_9"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_medical_checkup_10",
+                                        "com_furniture_medical_checkup_11",
+                                        "com_furniture_medical_checkup_12"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_medical_checkup_13",
+                                        "com_furniture_medical_checkup_14",
+                                        "com_furniture_medical_checkup_15"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_medical_checkup_Interrupt",
+                    "template": "commandInterrupt",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_furniture_medical_checkup_Interrupt_1",
+                                "com_furniture_medical_checkup_Interrupt_2",
+                                "com_furniture_medical_checkup_Interrupt_3"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_furniture_medical_checkup_Interrupt_4",
+                                "com_furniture_medical_checkup_Interrupt_5",
+                                "com_furniture_medical_checkup_Interrupt_6"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_medical_checkup_Begin",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "sleeping"
+                                        ],
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（睡眠中） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_medical_checkup_Begin_1",
+                                        "com_furniture_medical_checkup_Begin_2",
+                                        "com_furniture_medical_checkup_Begin_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_medical_checkup_Begin_4",
+                                        "com_furniture_medical_checkup_Begin_5",
+                                        "com_furniture_medical_checkup_Begin_6"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "unconscious"
+                                        ],
+                                        "excludeSelfTags": [
+                                            "sleeping"
+                                        ],
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_medical_checkup_Begin_7",
+                                        "com_furniture_medical_checkup_Begin_8",
+                                        "com_furniture_medical_checkup_Begin_9"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_medical_checkup_Begin_10",
+                                "com_furniture_medical_checkup_Begin_11",
+                                "com_furniture_medical_checkup_Begin_12"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_medical_checkup_Joined",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入成功",
+                            "responses": [
+                                "com_furniture_medical_checkup_Joined_1",
+                                "com_furniture_medical_checkup_Joined_2",
+                                "com_furniture_medical_checkup_Joined_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_medical_checkup_Refuse",
+                    "template": "commandRefuse",
+                    "variants": [
+                        {
+                            "requireRefusalContext": "ReceiverDeclined",
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ],
+                                        "requireEPSuccess": false
+                                    },
+                                    "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
+                                    "responses": [
+                                        "com_furniture_medical_checkup_Refuse_1",
+                                        "com_furniture_medical_checkup_Refuse_2",
+                                        "com_furniture_medical_checkup_Refuse_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_medical_checkup_Refuse_4",
+                                "com_furniture_medical_checkup_Refuse_5",
+                                "com_furniture_medical_checkup_Refuse_6"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_medical_checkup_Ongoing",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "受方 → 玩家 ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_medical_checkup_Ongoing_1",
+                                        "com_furniture_medical_checkup_Ongoing_2",
+                                        "com_furniture_medical_checkup_Ongoing_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_medical_checkup_Ongoing_Fallback_1"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_medical_checkup_JoinFailed",
+                    "template": "commandJoinFailed",
+                    "variants": [
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方 → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_furniture_medical_checkup_JoinFailed_1",
+                                "com_furniture_medical_checkup_JoinFailed_2",
+                                "com_furniture_medical_checkup_JoinFailed_3"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "受方 → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_furniture_medical_checkup_JoinFailed_4",
+                                "com_furniture_medical_checkup_JoinFailed_5",
+                                "com_furniture_medical_checkup_JoinFailed_6"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_medical_checkup_Join",
+                    "template": "commandJoin",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_furniture_medical_checkup_Join_1",
+                                "com_furniture_medical_checkup_Join_2",
+                                "com_furniture_medical_checkup_Join_3"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_furniture_medical_checkup_Join_4",
+                                "com_furniture_medical_checkup_Join_5",
+                                "com_furniture_medical_checkup_Join_6"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_medical_checkup_Tryjoin",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 尝试加入",
+                            "responses": [
+                                "com_furniture_medical_checkup_Tryjoin_1",
+                                "com_furniture_medical_checkup_Tryjoin_2",
+                                "com_furniture_medical_checkup_Tryjoin_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_medical_checkup_Join_Refused",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入被拒绝",
+                            "responses": [
+                                "com_furniture_medical_checkup_Join_Refused_1",
+                                "com_furniture_medical_checkup_Join_Refused_2",
+                                "com_furniture_medical_checkup_Join_Refused_3"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_furniture_medical_checkup_1": "$self$撑着床沿坐起身，整理好衣领问$target$：\"查完了？各项都还正常吧？\"",
+                "com_furniture_medical_checkup_2": "\"总算结束了，躺这么久腰都有点酸。\" $self$活动着肩膀下了床。",
+                "com_furniture_medical_checkup_3": "$self$长出一口气，朝$target$点点头：\"谢了，心里踏实多了。\"",
+                "com_furniture_medical_checkup_Interrupt_1": "$self$躺在检查床上不好起身，只朝门口的$target$抬了抬手：\"正体检呢，稍等我几分钟。\"",
+                "com_furniture_medical_checkup_Interrupt_2": "\"怎么这时候进来了？\" $self$有些尴尬地扯了扯盖在身上的薄单。",
+                "com_furniture_medical_checkup_Interrupt_3": "$self$偏头看了眼刚进来的$target$：\"找我有事？过会儿出去说。\"",
+                "com_furniture_medical_checkup_Begin_1": "熟睡中的$self$被放上检查床时只含糊哼了一声，换了个侧脸的姿势继续睡。",
+                "com_furniture_medical_checkup_Begin_2": "$self$闭着眼呼吸平缓，对身旁的检查准备毫无察觉。",
+                "com_furniture_medical_checkup_Begin_3": "被碰触到衣袖时，$self$无意识地往暖和点的方向缩了缩手，人没醒。",
+                "com_furniture_medical_checkup_Joined_1": "\"行，你报数值，我来写记录。\" $self$拿起夹板和笔站到一旁。",
+                "com_furniture_medical_checkup_Joined_2": "$self$点点头，帮忙把旁边的仪器推近些：\"这样顺手多了，继续吧。\"",
+                "com_furniture_medical_checkup_Joined_3": "\"两个人配合着查，很快就能走完流程。\" $self$说着进入状态。",
+                "com_furniture_medical_checkup_Refuse_1": "$self$猛地惊醒，直接坐起身避开$target$的手：\"干嘛趁我睡着折腾这些？我不查了！\"",
+                "com_furniture_medical_checkup_Refuse_2": "\"睡得好好的被冰醒，谁受得了……\" $self$皱着眉翻身下了检查床。",
+                "com_furniture_medical_checkup_Refuse_3": "刚醒过来就发现有人在身上摆弄仪器，$self$脸色一沉，直接拒了继续检查。",
+                "com_furniture_medical_checkup_4": "检查结束了，可昏迷中的$self$依然静静躺在床上，没有醒来的迹象。",
+                "com_furniture_medical_checkup_5": "$self$毫无声息地合着眼，连手指都没有动弹一下。",
+                "com_furniture_medical_checkup_6": "维持着浅薄的呼吸，$self$仍旧没有恢复意识。",
+                "com_furniture_medical_checkup_Begin_4": "$self$动了动被绑住的手腕，仰面看着$target$：\"……绑着怎么查？你自己弄吧。\"",
+                "com_furniture_medical_checkup_Begin_5": "身体被束缚着动弹不得，$self$索性摊平了任由$target$动手检查。",
+                "com_furniture_medical_checkup_Begin_6": "\"仪器凉的话提前说一声，我这儿可没法自己躲。\" $self$皱了皱鼻尖。",
+                "com_furniture_medical_checkup_Begin_7": "昏迷中的$self$软绵绵地躺在检查床上，对外界的触碰没有任何反应。",
+                "com_furniture_medical_checkup_Begin_8": "$self$双眼紧闭，脸色有些发白，呼吸浅得几乎察觉不到。",
+                "com_furniture_medical_checkup_Begin_9": "无论怎么摆正四肢，$self$始终沉在昏迷里，毫无知觉。",
+                "com_furniture_medical_checkup_Ongoing_1": "$self$躺在床上偏过头，见$target$站在旁边看着，有点不自在地拉了拉衣角。",
+                "com_furniture_medical_checkup_Ongoing_2": "\"还有几项没查完呢，你站那儿看我干嘛。\" $self$朝$target$嘟囔了一句。",
+                "com_furniture_medical_checkup_Ongoing_3": "$self$老实配合着检查，只是被$target$盯着看，浑身总觉得有点僵。",
+                "com_furniture_medical_checkup_Refuse_4": "$self$压根没往检查床那边走，直接回绝了$target$：\"我好得很，用不着查。\"",
+                "com_furniture_medical_checkup_Refuse_5": "\"少拿那些冰凉的仪器往我身上贴，今天不想做体检。\" $self$往后退了一步。",
+                "com_furniture_medical_checkup_Refuse_6": "$self$摆摆手把话堵死：\"没病没痛的折腾什么，我不去。\"",
+                "com_furniture_medical_checkup_JoinFailed_1": "$self$看了看窄小的检查室，对$target$说：\"这边地方不够大，就不留你帮忙了。\"",
+                "com_furniture_medical_checkup_JoinFailed_2": "\"今天人手够了，例行体检一个人就能搞定。\" $self$朝$target$摆摆手。",
+                "com_furniture_medical_checkup_JoinFailed_3": "$self$摇摇头：\"这会儿加不进来，你先去忙别的吧。\"",
+                "com_furniture_medical_checkup_Begin_10": "$self$顺从地放平身体，偏头看向$target$：\"床单有点凉，不过还行，你开始吧。\"",
+                "com_furniture_medical_checkup_Begin_11": "\"有哪里不对劲的话记得直接告诉我啊。\" $self$把胳膊摆在身侧，配合检查。",
+                "com_furniture_medical_checkup_Begin_12": "$self$放松下来配合躺好：\"例行查一遍也好，免得小毛病拖大了。\"",
+                "com_furniture_medical_checkup_7": "整套检查做完，$self$自始至终都没醒过来，只轻轻翻了个身。",
+                "com_furniture_medical_checkup_8": "$self$安稳地睡在检查床上，呼吸绵长均匀。",
+                "com_furniture_medical_checkup_9": "仪器收起来后，$self$迷迷糊糊往枕头里埋了埋脸，继续熟睡。",
+                "com_furniture_medical_checkup_10": "$self$被检查的触碰弄醒，眯着眼看清面前的$target$，含糊问了一句：\"……是在做体检吗？\"",
+                "com_furniture_medical_checkup_11": "刚醒过来脑子还有点晕，$self$揉了揉眼睛，顺从地配合把最后几项查完。",
+                "com_furniture_medical_checkup_12": "$self$打了个哈欠，朝$target$点点头：\"醒都醒了，顺便把结果也告诉我吧。\"",
+                "com_furniture_medical_checkup_Join_1": "$self$看着凑过来的$target$，叹了口气：\"怎么检查个身体还要多个人围观啊……\"",
+                "com_furniture_medical_checkup_Join_2": "\"你要帮忙记数据？那麻烦手快点，我躺得有点凉。\" $self$对$target$说。",
+                "com_furniture_medical_checkup_Join_3": "$self$朝$target$点点头，没说什么，继续配合剩下的步骤。",
+                "com_furniture_medical_checkup_Join_4": "$self$往旁边让出半步：\"来得正好，帮我把那边的记录单拿过来。\"",
+                "com_furniture_medical_checkup_Join_5": "\"我报数你来填，这样能快点查完。\" $self$对$target$说完，继续操作仪器。",
+                "com_furniture_medical_checkup_Join_6": "$self$朝$target$示意了一下托盘：\"帮我递一下那边的棉签和听诊器。\"",
+                "com_furniture_medical_checkup_Tryjoin_1": "$self$走到检查床边看了一眼记录表，问$target$：\"需要我帮忙搭把手、记一下数据吗？\"",
+                "com_furniture_medical_checkup_Tryjoin_2": "\"项目挺多的吧，我来帮着扶一下器械或者记录？\" $self$朝$target$示意。",
+                "com_furniture_medical_checkup_Tryjoin_3": "$self$在门边问了一句：\"人手够吗？需要我一块儿协助检查吗？\"",
+                "com_furniture_medical_checkup_Join_Refused_1": "\"成，那你自己忙着，不在这儿挤着了。\" $self$放下刚拿起的笔退出去。",
+                "com_furniture_medical_checkup_Join_Refused_2": "$self$点点头：\"知道了，查完了叫我一声。\"",
+                "com_furniture_medical_checkup_Join_Refused_3": "\"好吧，那我不打扰体检了。\" $self$顺手带上房门离开。",
+                "com_furniture_medical_checkup_Interrupt_4": "$self$手里正拿着检查仪器，回头对进来的$target$说：\"这边做体检呢，先到外头等会儿。\"",
+                "com_furniture_medical_checkup_Interrupt_5": "\"有事找我？等我把这几项数据记完。\" $self$朝$target$点点头，手下没停。",
+                "com_furniture_medical_checkup_Interrupt_6": "$self$停顿了一下，示意$target$顺手把门带上免得吹风。",
+                "com_furniture_medical_checkup_13": "检查总算告一段落，$self$被绑在床上的手脚早就麻了，偏头看$target$：\"查完能帮我理下衣服吗？\"",
+                "com_furniture_medical_checkup_14": "\"……结果怎么说？没查出什么毛病吧？\" $self$动了动被勒红的手腕。",
+                "com_furniture_medical_checkup_15": "束缚还在身上没法起身，$self$只好继续平躺着，等$target$下一步动作。",
+                "com_furniture_medical_checkup_JoinFailed_4": "$self$朝门外的$target$摆摆手：\"人多了反而别扭，你在外头等着就行。\"",
+                "com_furniture_medical_checkup_JoinFailed_5": "\"没事，很快就能查完，不用挤进来。\" $self$躺在床上对$target$说。",
+                "com_furniture_medical_checkup_JoinFailed_6": "$self$冲$target$点点头：\"等出去了再聊。\"",
+                "com_furniture_medical_checkup_Ongoing_Fallback_1": "$self$点了点头，没有多说什么。"
+            }
+        }
+    }
+}

@@ -39,6 +39,15 @@
                                 "com_furniture_combat_sim_Result_Player_2",
                                 "com_furniture_combat_sim_Result_Player_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_combat_sim_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -50,7 +59,9 @@
                     "template": "commandAct",
                     "variants": [
                         {
-                            "requirement": {},
+                            "requirement": {
+                                "allowRecording": true
+                            },
                             "_comment": "通用开始",
                             "responses": [
                                 "com_furniture_combat_sim_Begin_1",
@@ -78,6 +89,16 @@
                                 "com_furniture_combat_sim_Refuse_2",
                                 "com_furniture_combat_sim_Refuse_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_combat_sim_Refuse_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -89,7 +110,9 @@
                     "template": "commandInterrupt",
                     "variants": [
                         {
-                            "requirement": {},
+                            "requirement": {
+                                "allowRecording": true
+                            },
                             "_comment": "自己 → 新来的人 ｜ 接受",
                             "responses": [
                                 "com_furniture_combat_sim_Interrupt_1",
@@ -116,6 +139,16 @@
                                 "com_furniture_combat_sim_Tryjoin_2",
                                 "com_furniture_combat_sim_Tryjoin_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_combat_sim_Tryjoin_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -135,6 +168,16 @@
                                 "com_furniture_combat_sim_Joined_1",
                                 "com_furniture_combat_sim_Joined_2",
                                 "com_furniture_combat_sim_Joined_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_combat_sim_Joined_Fallback_1"
                             ]
                         }
                     ]
@@ -156,6 +199,16 @@
                                 "com_furniture_combat_sim_Join_Refused_2",
                                 "com_furniture_combat_sim_Join_Refused_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_combat_sim_Join_Refused_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -167,7 +220,9 @@
                     "template": "commandJoin",
                     "variants": [
                         {
-                            "requirement": {},
+                            "requirement": {
+                                "allowRecording": true
+                            },
                             "_comment": "原参与者 NPC → 加入者 ｜ 接受",
                             "responses": [
                                 "com_furniture_combat_sim_Join_1",
@@ -186,7 +241,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
                             "responses": [
@@ -232,7 +288,12 @@
                 "com_furniture_combat_sim_Join_3": "“一个人练也挺闷的，$target$来了正好。”",
                 "com_furniture_combat_sim_JoinFailed_1": "“抱歉啊$target$，这会儿场地不太方便多加人，下轮吧。”",
                 "com_furniture_combat_sim_JoinFailed_2": "$self$停下动作朝$target$点点头：“等结束了再叫你。”",
-                "com_furniture_combat_sim_JoinFailed_3": "“今天先这样吧，$target$你去忙别的或者旁边等会儿也行。”"
+                "com_furniture_combat_sim_JoinFailed_3": "“今天先这样吧，$target$你去忙别的或者旁边等会儿也行。”",
+                "com_furniture_combat_sim_Fallback_1": "$self$结束了这一轮战斗模拟训练。",
+                "com_furniture_combat_sim_Tryjoin_Fallback_1": "$self$走近看了看：“需要我一起练吗？”",
+                "com_furniture_combat_sim_Joined_Fallback_1": "$self$加入进来，配合着开始了训练。",
+                "com_furniture_combat_sim_Refuse_Fallback_1": "$self$摆了摆手：“现在不想做模拟训练。”",
+                "com_furniture_combat_sim_Join_Refused_Fallback_1": "$self$点点头：“那你先练着，我在旁边看看。”"
             }
         }
     }

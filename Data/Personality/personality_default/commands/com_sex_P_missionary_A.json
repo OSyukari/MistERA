@@ -332,48 +332,6 @@
                             "variants": [
                                 {
                                     "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "firstexp_A",
-                                            "sleeping"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "missionary",
-                                        "anal",
-                                        "sleeping",
-                                        "pain"
-                                    ],
-                                    "_comment": "初体验 睡眠中 正面位A",
-                                    "responses": [
-                                        "com_sex_P_missionary_A_FE_Sleep_1"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "firstexp_A",
-                                            "timestop"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "missionary",
-                                        "anal",
-                                        "doll",
-                                        "empty"
-                                    ],
-                                    "_comment": "初体验 时停中 正面位A",
-                                    "responses": [
-                                        "com_sex_P_missionary_A_FE_Timestop_1"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
                                         "selfTags": [
                                             "firstexp_A"
                                         ]
@@ -381,21 +339,32 @@
                                     "variants": [
                                         {
                                             "requirement": {
-                                                "targetBaseID": "PLAYER",
-                                                "requirePermission": true
+                                                "targetBaseID": "PLAYER"
                                             },
-                                            "extraSelfPortraitTags": [
-                                                "sex",
-                                                "receiver",
-                                                "missionary",
-                                                "anal",
-                                                "blush",
-                                                "pain",
-                                                "love"
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "requirePermission": true
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "receiver",
+                                                        "missionary",
+                                                        "anal",
+                                                        "blush",
+                                                        "pain",
+                                                        "love"
+                                                    ],
+                                                    "_comment": "初体验 玩家专用 正面位A 有允许",
+                                                    "responses": [
+                                                        "com_sex_P_missionary_A_FE_Player_1"
+                                                    ]
+                                                }
                                             ],
-                                            "_comment": "初体验 玩家专用 正面位A 有允许",
+                                            "_comment": "玩家专用（无允许兜底）",
                                             "responses": [
-                                                "com_sex_P_missionary_A_FE_Player_1"
+                                                "com_sex_P_missionary_A_FE_4",
+                                                "com_sex_P_missionary_A_FE_5"
                                             ]
                                         },
                                         {
@@ -486,6 +455,28 @@
                                     "responses": [
                                         "com_sex_P_missionary_A_1",
                                         "com_sex_P_missionary_A_2"
+                                    ],
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "firstexp_A"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "missionary",
+                                                "anal",
+                                                "sleeping",
+                                                "pain"
+                                            ],
+                                            "_comment": "初体验 睡眠中 正面位A",
+                                            "responses": [
+                                                "com_sex_P_missionary_A_FE_Sleep_1"
+                                            ]
+                                        }
                                     ]
                                 },
                                 {
@@ -509,6 +500,28 @@
                                     "responses": [
                                         "com_sex_P_missionary_A_3",
                                         "com_sex_P_missionary_A_4"
+                                    ],
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "firstexp_A"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "missionary",
+                                                "anal",
+                                                "doll",
+                                                "empty"
+                                            ],
+                                            "_comment": "初体验 时停中 正面位A",
+                                            "responses": [
+                                                "com_sex_P_missionary_A_FE_Timestop_1"
+                                            ]
+                                        }
                                     ]
                                 },
                                 {
@@ -635,27 +648,6 @@
                         },
                         {
                             "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "firstexp_A",
-                                    "timestop"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "missionary",
-                                "anal",
-                                "doll",
-                                "empty"
-                            ],
-                            "_comment": "初体验 时停中 正面位A",
-                            "responses": [
-                                "com_sex_P_missionary_A_FE_Timestop_1"
-                            ]
-                        },
-                        {
-                            "requirement": {
                                 "selfTags": [
                                     "firstexp_A"
                                 ]
@@ -663,21 +655,32 @@
                             "variants": [
                                 {
                                     "requirement": {
-                                        "targetBaseID": "PLAYER",
-                                        "requirePermission": true
+                                        "targetBaseID": "PLAYER"
                                     },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "missionary",
-                                        "anal",
-                                        "blush",
-                                        "pain",
-                                        "love"
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "missionary",
+                                                "anal",
+                                                "blush",
+                                                "pain",
+                                                "love"
+                                            ],
+                                            "_comment": "初体验 玩家专用 正面位A 有允许",
+                                            "responses": [
+                                                "com_sex_P_missionary_A_FE_Player_1"
+                                            ]
+                                        }
                                     ],
-                                    "_comment": "初体验 玩家专用 正面位A 有允许",
+                                    "_comment": "玩家专用（无允许兜底）",
                                     "responses": [
-                                        "com_sex_P_missionary_A_FE_Player_1"
+                                        "com_sex_P_missionary_A_FE_4",
+                                        "com_sex_P_missionary_A_FE_5"
                                     ]
                                 },
                                 {
@@ -734,23 +737,6 @@
                         },
                         {
                             "requirement": {
-                                "selfTags": [
-                                    "firstexp_partner_A"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "missionary",
-                                "anal"
-                            ],
-                            "_comment": "对方初体验 正面位A（插入的一方）",
-                            "responses": [
-                                "com_sex_P_missionary_A_FE_Partner_1"
-                            ]
-                        },
-                        {
-                            "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
                                     "sleeping"
@@ -791,6 +777,28 @@
                             "responses": [
                                 "com_sex_P_missionary_A_3",
                                 "com_sex_P_missionary_A_4"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "firstexp_A"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "missionary",
+                                        "anal",
+                                        "doll",
+                                        "empty"
+                                    ],
+                                    "_comment": "初体验 时停中 正面位A",
+                                    "responses": [
+                                        "com_sex_P_missionary_A_FE_Timestop_1"
+                                    ]
+                                }
                             ]
                         },
                         {
@@ -878,6 +886,25 @@
                                         "com_sex_P_missionary_A_25",
                                         "com_sex_P_missionary_A_26"
                                     ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_partner_A"
+                                        ],
+                                        "requireSelfAction": false,
+                                        "requireTargetAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "missionary",
+                                        "anal"
+                                    ],
+                                    "_comment": "对方初体验 正面位A（插入的一方）",
+                                    "responses": [
+                                        "com_sex_P_missionary_A_FE_Partner_1"
+                                    ]
                                 }
                             ],
                             "_comment": "2.2.6 ($self$) 正面位A 结果负面 未允许 口上文",
@@ -906,7 +933,11 @@
                             }
                         }
                     ],
-                    "template": "commandResult"
+                    "template": "commandResult",
+                    "templateExtras": [
+                        "firstexpPartnerA",
+                        "firstexpA"
+                    ]
                 }
             },
             {

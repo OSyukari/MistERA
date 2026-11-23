@@ -513,14 +513,25 @@
                                 "requireSelfAction": false,
                                 "selfTags": [
                                     "timestop"
-                                ],
-                                "targetBaseID": "PLAYER"
+                                ]
                             },
-                            "_comment": "自己（时停中） → 玩家 ｜ 接受",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER",
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "自己（时停中） → 玩家 ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_sleep_Result_Player_Timestop_1",
+                                        "com_furniture_sleep_Result_Player_Timestop_2",
+                                        "com_furniture_sleep_Result_Player_Timestop_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "自己（timestop）",
                             "responses": [
-                                "com_furniture_sleep_Result_Player_Timestop_1",
-                                "com_furniture_sleep_Result_Player_Timestop_2",
-                                "com_furniture_sleep_Result_Player_Timestop_3"
+                                "com_furniture_sleep_timestop_1"
                             ]
                         },
                         {
@@ -528,14 +539,25 @@
                                 "requireSelfAction": false,
                                 "selfTags": [
                                     "sleeping"
-                                ],
-                                "targetBaseID": "PLAYER"
+                                ]
                             },
-                            "_comment": "自己（睡眠中） → 玩家 ｜ 接受",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER",
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "自己（睡眠中） → 玩家 ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_sleep_Result_Player_Sleep_1",
+                                        "com_furniture_sleep_Result_Player_Sleep_2",
+                                        "com_furniture_sleep_Result_Player_Sleep_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "自己（sleeping）",
                             "responses": [
-                                "com_furniture_sleep_Result_Player_Sleep_1",
-                                "com_furniture_sleep_Result_Player_Sleep_2",
-                                "com_furniture_sleep_Result_Player_Sleep_3"
+                                "com_furniture_sleep_sleeping_1"
                             ]
                         },
                         {
@@ -546,14 +568,25 @@
                                 ],
                                 "excludeSelfTags": [
                                     "sleeping"
-                                ],
-                                "targetBaseID": "PLAYER"
+                                ]
                             },
-                            "_comment": "自己（昏迷（非睡眠）） → 玩家 ｜ 接受",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER",
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "自己（昏迷（非睡眠）） → 玩家 ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_sleep_Result_Player_Fainted_1",
+                                        "com_furniture_sleep_Result_Player_Fainted_2",
+                                        "com_furniture_sleep_Result_Player_Fainted_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "自己（unconscious）",
                             "responses": [
-                                "com_furniture_sleep_Result_Player_Fainted_1",
-                                "com_furniture_sleep_Result_Player_Fainted_2",
-                                "com_furniture_sleep_Result_Player_Fainted_3"
+                                "com_furniture_sleep_unconscious_1"
                             ]
                         },
                         {
@@ -565,6 +598,17 @@
                                 "com_furniture_sleep_Result_Player_1",
                                 "com_furniture_sleep_Result_Player_2",
                                 "com_furniture_sleep_Result_Player_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_sleep_Fallback_1"
                             ]
                         }
                     ]
@@ -586,6 +630,17 @@
                                 "com_furniture_sleep_Ongoing_2",
                                 "com_furniture_sleep_Ongoing_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_sleep_Ongoing_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -597,7 +652,11 @@
                     "template": "commandInterrupt",
                     "variants": [
                         {
-                            "requirement": {},
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
                             "_comment": "自己 → 新来的人 ｜ 接受",
                             "responses": [
                                 "com_furniture_sleep_Interrupt_1",
@@ -624,6 +683,18 @@
                                 "com_furniture_sleep_Tryjoin_2",
                                 "com_furniture_sleep_Tryjoin_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_sleep_Tryjoin_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -643,6 +714,18 @@
                                 "com_furniture_sleep_Joined_1",
                                 "com_furniture_sleep_Joined_2",
                                 "com_furniture_sleep_Joined_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_sleep_Joined_Fallback_1"
                             ]
                         }
                     ]
@@ -664,6 +747,18 @@
                                 "com_furniture_sleep_Join_Refused_2",
                                 "com_furniture_sleep_Join_Refused_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_sleep_Join_Refused_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -675,7 +770,11 @@
                     "template": "commandJoin",
                     "variants": [
                         {
-                            "requirement": {},
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
                             "_comment": "原参与者 NPC → 加入者 ｜ 接受",
                             "responses": [
                                 "com_furniture_sleep_Join_1",
@@ -694,7 +793,10 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
                             },
                             "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
                             "responses": [
@@ -797,7 +899,15 @@
                 "com_furniture_sleep_Join_3": "“嗯……你也困了啊，$target$躺这边吧。”",
                 "com_furniture_sleep_JoinFailed_1": "“抱歉啊$target$，这边睡不下这么多人，你去别处吧。”",
                 "com_furniture_sleep_JoinFailed_2": "$self$睁开半只眼朝$target$摇摇头：“改天再说，我现在困得不行。”",
-                "com_furniture_sleep_JoinFailed_3": "“地方不够大，$target$再找找别的床位吧。”"
+                "com_furniture_sleep_JoinFailed_3": "“地方不够大，$target$再找找别的床位吧。”",
+                "com_furniture_sleep_sleeping_1": "$self$沉沉地睡着，没有察觉到旁边的动静。",
+                "com_furniture_sleep_timestop_1": "时间静止中的$self$保持着原本的姿态，一动不动。",
+                "com_furniture_sleep_unconscious_1": "昏迷中的$self$毫无知觉，呼吸微弱。",
+                "com_furniture_sleep_Joined_Fallback_1": "$self$在旁边躺了下来，闭上眼睛准备休息。",
+                "com_furniture_sleep_Fallback_1": "$self$睡醒了一般动了动身子。",
+                "com_furniture_sleep_Tryjoin_Fallback_1": "$self$轻声问道：“旁边还有空位，能一起睡会儿吗？”",
+                "com_furniture_sleep_Ongoing_Fallback_1": "$self$呼吸平稳，仍在安稳地睡着。",
+                "com_furniture_sleep_Join_Refused_Fallback_1": "$self$点点头：“好，不打扰你休息了。”"
             },
             "en-us": {
                 "kojo_sleep_begin_forced_1": "$self$ hesitates, then quietly agrees and moves over to rest.",

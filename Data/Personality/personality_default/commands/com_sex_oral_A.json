@@ -327,18 +327,31 @@
                                     "requirement": {
                                         "requireSelfAction": false,
                                         "selfTags": [
-                                            "firstexp_M",
                                             "sleeping"
                                         ]
                                     },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "rimjob",
-                                        "sleeping",
-                                        "relaxed"
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "firstexp_M"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "rimjob",
+                                                "sleeping",
+                                                "relaxed"
+                                            ],
+                                            "_comment": "初体验 睡眠中 舔肛",
+                                            "responses": [
+                                                "com_sex_oral_A_FE_Sleep_1"
+                                            ]
+                                        }
                                     ],
-                                    "_comment": "初体验 睡眠中 舔肛",
+                                    "_comment": "sleeping",
                                     "responses": [
                                         "com_sex_oral_A_FE_Sleep_1"
                                     ]
@@ -347,18 +360,31 @@
                                     "requirement": {
                                         "requireSelfAction": false,
                                         "selfTags": [
-                                            "firstexp_M",
                                             "timestop"
                                         ]
                                     },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "rimjob",
-                                        "doll",
-                                        "empty"
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "firstexp_M"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "rimjob",
+                                                "doll",
+                                                "empty"
+                                            ],
+                                            "_comment": "初体验 时停中 舔肛",
+                                            "responses": [
+                                                "com_sex_oral_A_FE_Timestop_1"
+                                            ]
+                                        }
                                     ],
-                                    "_comment": "初体验 时停中 舔肛",
+                                    "_comment": "timestop",
                                     "responses": [
                                         "com_sex_oral_A_FE_Timestop_1"
                                     ]
@@ -372,20 +398,31 @@
                                     "variants": [
                                         {
                                             "requirement": {
-                                                "targetBaseID": "PLAYER",
-                                                "requirePermission": true
+                                                "targetBaseID": "PLAYER"
                                             },
-                                            "extraSelfPortraitTags": [
-                                                "sex",
-                                                "doer",
-                                                "rimjob",
-                                                "blush",
-                                                "shy",
-                                                "love"
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "requirePermission": true
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "doer",
+                                                        "rimjob",
+                                                        "blush",
+                                                        "shy",
+                                                        "love"
+                                                    ],
+                                                    "_comment": "初体验 玩家专用 舔肛 有允许",
+                                                    "responses": [
+                                                        "com_sex_oral_A_FE_Player_1"
+                                                    ]
+                                                }
                                             ],
-                                            "_comment": "初体验 玩家专用 舔肛 有允许",
+                                            "_comment": "玩家专用（无允许兜底）",
                                             "responses": [
-                                                "com_sex_oral_A_FE_Player_1"
+                                                "com_sex_oral_A_FE_4",
+                                                "com_sex_oral_A_FE_5"
                                             ]
                                         },
                                         {
@@ -827,7 +864,11 @@
                             }
                         }
                     ],
-                    "template": "commandResult"
+                    "template": "commandResult",
+                    "templateExtras": [
+                        "firstexpPartnerM",
+                        "firstexpM"
+                    ]
                 }
             },
             {

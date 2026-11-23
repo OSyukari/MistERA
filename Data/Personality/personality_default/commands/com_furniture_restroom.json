@@ -63,6 +63,15 @@
                                 "com_furniture_restroom_Result_Player_2",
                                 "com_furniture_restroom_Result_Player_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_restroom_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -96,6 +105,15 @@
                                 "com_furniture_restroom_Begin_Receiver_2",
                                 "com_furniture_restroom_Begin_Receiver_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_restroom_Begin_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -109,14 +127,25 @@
                         {
                             "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
-                                "requireEPSuccess": false,
-                                "targetBaseID": "PLAYER"
+                                "requireEPSuccess": false
                             },
-                            "_comment": "自己 → 玩家 ｜ 拒绝",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "自己 → 玩家 ｜ 拒绝",
+                                    "responses": [
+                                        "com_furniture_restroom_Refuse_Order_1",
+                                        "com_furniture_restroom_Refuse_Order_2",
+                                        "com_furniture_restroom_Refuse_Order_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "拒绝上下文（DeclinedOrder）",
                             "responses": [
-                                "com_furniture_restroom_Refuse_Order_1",
-                                "com_furniture_restroom_Refuse_Order_2",
-                                "com_furniture_restroom_Refuse_Order_3"
+                                "com_furniture_restroom_Refuse_RefuseCtx_1"
                             ]
                         },
                         {
@@ -130,6 +159,16 @@
                                 "com_furniture_restroom_Refuse_Receiver_2",
                                 "com_furniture_restroom_Refuse_Receiver_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_restroom_Refuse_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -142,14 +181,22 @@
                     "variants": [
                         {
                             "requireSelfReceiver": true,
-                            "requirement": {
-                                "targetBaseID": "PLAYER"
-                            },
-                            "_comment": "受方 → 玩家 ｜ 进行中",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "受方 → 玩家 ｜ 进行中",
+                                    "responses": [
+                                        "com_furniture_restroom_Ongoing_Receiver_1",
+                                        "com_furniture_restroom_Ongoing_Receiver_2",
+                                        "com_furniture_restroom_Ongoing_Receiver_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "受方 → 对方 ｜ 进行中",
                             "responses": [
-                                "com_furniture_restroom_Ongoing_Receiver_1",
-                                "com_furniture_restroom_Ongoing_Receiver_2",
-                                "com_furniture_restroom_Ongoing_Receiver_3"
+                                "com_furniture_restroom_Ongoing_Receiver_4"
                             ]
                         },
                         {
@@ -161,6 +208,15 @@
                                 "com_furniture_restroom_Ongoing_Self_1",
                                 "com_furniture_restroom_Ongoing_Self_2",
                                 "com_furniture_restroom_Ongoing_Self_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_restroom_Ongoing_Fallback_1"
                             ]
                         }
                     ]
@@ -191,7 +247,9 @@
                             ]
                         },
                         {
-                            "requirement": {},
+                            "requirement": {
+                                "allowRecording": true
+                            },
                             "_comment": "自己 → 新来的人 ｜ 接受",
                             "responses": [
                                 "com_furniture_restroom_Interrupt_Self_1",
@@ -218,6 +276,16 @@
                                 "com_furniture_restroom_Tryjoin_2",
                                 "com_furniture_restroom_Tryjoin_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_restroom_Tryjoin_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -238,6 +306,16 @@
                                 "com_furniture_restroom_Joined_2",
                                 "com_furniture_restroom_Joined_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_restroom_Joined_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -257,6 +335,16 @@
                                 "com_furniture_restroom_Join_Refused_1",
                                 "com_furniture_restroom_Join_Refused_2",
                                 "com_furniture_restroom_Join_Refused_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_restroom_Join_Refused_Fallback_1"
                             ]
                         }
                     ]
@@ -287,7 +375,9 @@
                             ]
                         },
                         {
-                            "requirement": {},
+                            "requirement": {
+                                "allowRecording": true
+                            },
                             "_comment": "原参与者 NPC → 加入者 ｜ 接受",
                             "responses": [
                                 "com_furniture_restroom_Join_Self_1",
@@ -330,7 +420,8 @@
                         },
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
                             "responses": [
@@ -412,7 +503,16 @@
                 "com_furniture_restroom_JoinFailed_Receiver_3": "“先去外面等等吧$target$，很快就能空出来。”",
                 "com_furniture_restroom_JoinFailed_Self_1": "“抱歉啊$target$，这儿一次就够一个人用，你稍等。”",
                 "com_furniture_restroom_JoinFailed_Self_2": "$self$压着声音回道：“马上好，先别进来。”",
-                "com_furniture_restroom_JoinFailed_Self_3": "“现在不太方便，$target$先去外面候着吧。”"
+                "com_furniture_restroom_JoinFailed_Self_3": "“现在不太方便，$target$先去外面候着吧。”",
+                "com_furniture_restroom_Ongoing_Receiver_4": "$self$点点头，照常应对着。",
+                "com_furniture_restroom_Refuse_RefuseCtx_1": "$self$摇摇头回绝了这个要求。",
+                "com_furniture_restroom_Begin_Fallback_1": "$self$朝洗手间的方向走了过去。",
+                "com_furniture_restroom_Refuse_Fallback_1": "$self$摇摇头：“我现在还不用去。”",
+                "com_furniture_restroom_Fallback_1": "$self$整理好衣物，从洗手间走了出来。",
+                "com_furniture_restroom_Ongoing_Fallback_1": "$self$正在洗手间里简单拾掇着。",
+                "com_furniture_restroom_Tryjoin_Fallback_1": "$self$在门边问了一句：“方便一起进去用一下吗？”",
+                "com_furniture_restroom_Joined_Fallback_1": "$self$走了进来，站在另一侧整理起来。",
+                "com_furniture_restroom_Join_Refused_Fallback_1": "$self$停下脚步：“那我等会儿再来。”"
             }
         }
     }

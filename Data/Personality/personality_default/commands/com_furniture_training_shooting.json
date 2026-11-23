@@ -1,0 +1,300 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_training_shooting_JoinFailed",
+                    "template": "commandJoinFailed",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_furniture_training_shooting_JoinFailed_1",
+                                "com_furniture_training_shooting_JoinFailed_2",
+                                "com_furniture_training_shooting_JoinFailed_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_training_shooting_Ongoing",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "自己（单人） → 玩家 ｜ 接受",
+                            "responses": [
+                                "com_furniture_training_shooting_Ongoing_1",
+                                "com_furniture_training_shooting_Ongoing_2",
+                                "com_furniture_training_shooting_Ongoing_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_training_shooting_Join_Refused",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入被拒绝",
+                            "responses": [
+                                "com_furniture_training_shooting_Join_Refused_1",
+                                "com_furniture_training_shooting_Join_Refused_2",
+                                "com_furniture_training_shooting_Join_Refused_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_training_shooting_Tryjoin",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 尝试加入",
+                            "responses": [
+                                "com_furniture_training_shooting_Tryjoin_1",
+                                "com_furniture_training_shooting_Tryjoin_2",
+                                "com_furniture_training_shooting_Tryjoin_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_training_shooting",
+                    "template": "commandResult",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "_comment": "判定成功",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "自己（单人） → 玩家 ｜ 接受·判定成功",
+                                    "responses": [
+                                        "com_furniture_training_shooting_1",
+                                        "com_furniture_training_shooting_2",
+                                        "com_furniture_training_shooting_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_training_shooting_Fallback_1"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "_comment": "自己（单人） → 自己",
+                            "responses": [
+                                "com_furniture_training_shooting_4",
+                                "com_furniture_training_shooting_5",
+                                "com_furniture_training_shooting_6"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "自己（单人） → 自己 ｜ 接受·判定成功",
+                                    "responses": [
+                                        "com_furniture_training_shooting_10",
+                                        "com_furniture_training_shooting_11",
+                                        "com_furniture_training_shooting_12"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessLTE": "Failure"
+                            },
+                            "_comment": "判定失败",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "自己（单人） → 玩家 ｜ 接受·判定失败",
+                                    "responses": [
+                                        "com_furniture_training_shooting_7",
+                                        "com_furniture_training_shooting_8",
+                                        "com_furniture_training_shooting_9"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_training_shooting_Fallback_2"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_training_shooting_Refuse",
+                    "template": "commandRefuse",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER",
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "自己（单人） → 玩家 ｜ 拒绝",
+                            "responses": [
+                                "com_furniture_training_shooting_Refuse_1",
+                                "com_furniture_training_shooting_Refuse_2",
+                                "com_furniture_training_shooting_Refuse_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_training_shooting_Join",
+                    "template": "commandJoin",
+                    "variants": [
+                        {
+                            "_comment": "原参与者 NPC → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_furniture_training_shooting_Join_1",
+                                "com_furniture_training_shooting_Join_2",
+                                "com_furniture_training_shooting_Join_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_training_shooting_Joined",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入成功",
+                            "responses": [
+                                "com_furniture_training_shooting_Joined_1",
+                                "com_furniture_training_shooting_Joined_2",
+                                "com_furniture_training_shooting_Joined_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_training_shooting_Begin",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "_comment": "NPC → 玩家",
+                            "responses": [
+                                "com_furniture_training_shooting_Begin_1",
+                                "com_furniture_training_shooting_Begin_2",
+                                "com_furniture_training_shooting_Begin_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_training_shooting_Interrupt",
+                    "template": "commandInterrupt",
+                    "variants": [
+                        {
+                            "_comment": "当前动作中的 NPC → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_furniture_training_shooting_Interrupt_1",
+                                "com_furniture_training_shooting_Interrupt_2",
+                                "com_furniture_training_shooting_Interrupt_3"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_furniture_training_shooting_JoinFailed_1": "$self$掀开半边耳罩朝$target$摇摇头：\"这边靶位排满了，再塞人不太安全，下回吧。\"",
+                "com_furniture_training_shooting_JoinFailed_2": "\"今天场地腾不开空道了，你先去看看别的。\" $self$对$target$说完，重新扣上耳罩。",
+                "com_furniture_training_shooting_JoinFailed_3": "$self$朝$target$抬手示意了一下：\"这会儿加不进来，等有空位再说。\"",
+                "com_furniture_training_shooting_Ongoing_1": "$self$在换弹的空档偏过一只耳罩，朝站在警戒线外的$target$喊了一声：\"站后头点，别靠靶道太近。\"",
+                "com_furniture_training_shooting_Ongoing_2": "$self$余光知道$target$在看着，屏住呼吸稳稳扣完这几发，才放下枪歇了半秒。",
+                "com_furniture_training_shooting_Ongoing_3": "$self$朝$target$比了个稍等的手势，接着重新举起武器对准远处的靶子。",
+                "com_furniture_training_shooting_Join_Refused_1": "\"行，那你专心瞄准，我不在这儿晃了。\" $self$收起护具，退出了靶场范围。",
+                "com_furniture_training_shooting_Join_Refused_2": "$self$点点头，退回安全线外：\"知道了，等你打完这轮我再来。\"",
+                "com_furniture_training_shooting_Join_Refused_3": "\"好吧，不打扰你找准星。\" $self$转身往场地外走去。",
+                "com_furniture_training_shooting_Tryjoin_1": "$self$停在安全线外，等枪声歇了才走近问$target$：\"旁边那条靶道空着，我能一起打两轮吗？\"",
+                "com_furniture_training_shooting_Tryjoin_2": "\"正好我也想练练准头，介意多个靶位吗？\" $self$手里拎着护具，朝$target$示意了一下。",
+                "com_furniture_training_shooting_Tryjoin_3": "$self$指了指空着的射击位：\"一起练个伴？各打各的互不影响。\"",
+                "com_furniture_training_shooting_1": "$self$拉下耳罩，冲旁边的$target$扬了扬下巴：\"我这边靶子还挺像样的，你打得怎么样？\"",
+                "com_furniture_training_shooting_2": "\"刚才连发那几下稳住了，没白费功夫。\" $self$把武器卡回架子上，神色轻松了些。",
+                "com_furniture_training_shooting_3": "$self$揉了揉震得发酸的手腕，偏头看$target$：\"这轮差不多了，要不要看一眼各自靶纸？\"",
+                "com_furniture_training_shooting_Refuse_1": "$self$没有去拿护具，只对$target$摇了摇头：\"我现在手不够稳，去了也是浪费弹药。\"",
+                "com_furniture_training_shooting_Refuse_2": "\"今天不想碰枪，耳朵现在还嫌吵呢。\" $self$往后退了一步，态度很明确。",
+                "com_furniture_training_shooting_Refuse_3": "$self$朝$target$摆摆手：\"算了吧，这会儿心静不下来，打靶也白搭。\"",
+                "com_furniture_training_shooting_Join_1": "$self$暂时放下武器，冲$target$指了指旁边的空靶位：\"那道空的，把耳罩戴严实了再打。\"",
+                "com_furniture_training_shooting_Join_2": "\"来得正好，旁边靶位没人，各自注意安全线就行。\" $self$说完重新戴回耳罩。",
+                "com_furniture_training_shooting_Join_3": "$self$往自己这边挪了挪弹药盒，给$target$留出摆放东西的台面。",
+                "com_furniture_training_shooting_4": "$self$盯着远处稀稀拉拉的靶面叹了口气，后半轮手抖得厉害，全偏到边上去了。",
+                "com_furniture_training_shooting_5": "\"准星老是晃，越想稳住越抠歪。\" $self$退下弹匣检查了一下，决定先停手。",
+                "com_furniture_training_shooting_6": "震得耳朵有点嗡嗡响，成绩也不理想，$self$摇摇头把装备收了起来。",
+                "com_furniture_training_shooting_Joined_1": "\"谢了，那我站旁边那道，注意安全线。\" $self$戴好耳罩，站进靶位。",
+                "com_furniture_training_shooting_Joined_2": "$self$点点头，挑了不挡视线的邻近位置：\"行，你打你的，我也把这组过一遍。\"",
+                "com_furniture_training_shooting_Joined_3": "\"一个人打靶怪闷的，有人在旁边还能比比准头。\" $self$麻利地检查起自己的装备。",
+                "com_furniture_training_shooting_7": "$self$取下耳罩，对着$target$无奈摆手：\"别提了，今天全打飞了，准头完全不在状态。\"",
+                "com_furniture_training_shooting_8": "\"风偏加上手不稳，靶心附近没几个洞。\" $self$耸了耸肩，放下手里的家伙。",
+                "com_furniture_training_shooting_9": "$self$甩了甩发麻的虎口：\"今天算是白费子弹了，下回再找回来吧。\"",
+                "com_furniture_training_shooting_Begin_1": "$self$朝旁边的$target$点点头示意开始，随即把视线收回到前方的靶位上。",
+                "com_furniture_training_shooting_Begin_2": "\"今天练一下控枪稳度，别打歪太多就行。\" $self$低声说完，压低重心。",
+                "com_furniture_training_shooting_Begin_3": "$self$确认过枪膛和靶道前方没人，冲$target$比了个各打各的手势。",
+                "com_furniture_training_shooting_10": "$self$摘下耳罩挂在脖子上，远处的靶纸弹孔集中，比上次准了不少。",
+                "com_furniture_training_shooting_11": "\"这组着弹点总算没飘了，手感保持得不错。\" $self$把枪口朝下放稳，清掉多余的弹壳。",
+                "com_furniture_training_shooting_12": "虎口震得微微发麻，不过这一轮的命中率确实让人满意，$self$舒了口气。",
+                "com_furniture_training_shooting_Interrupt_1": "$self$赶紧把枪口压低朝向地面，掀开耳罩对刚进来的$target$说：\"进来前叫一声啊，这边正实弹练着呢。\"",
+                "com_furniture_training_shooting_Interrupt_2": "$self$确认保险扣上才转身看向$target$：\"找我有事？先到安全线后面站着。\"",
+                "com_furniture_training_shooting_Interrupt_3": "\"声音太大了差点没听见你进来。\" $self$把枪搁在台面上，抬眼看向$target$。",
+                "com_furniture_training_shooting_Fallback_1": "$self$点了点头，没有多说什么。",
+                "com_furniture_training_shooting_Fallback_2": "$self$点了点头，没有多说什么。"
+            }
+        }
+    }
+}

@@ -7,6 +7,45 @@
                     "ID": "com_touch_thigh_Begin",
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "unconscious"
+                                        ],
+                                        "excludeSelfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_touch_thigh_Begin_Fainted_1",
+                                        "com_touch_thigh_Begin_Fainted_2",
+                                        "com_touch_thigh_Begin_Fainted_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_touch_thigh_Begin_Restrained_1",
+                                        "com_touch_thigh_Begin_Restrained_2",
+                                        "com_touch_thigh_Begin_Restrained_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
+                            "responses": [
+                                "com_touch_thigh_Begin_Receiver_1"
+                            ]
+                        },
+                        {
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
@@ -42,38 +81,6 @@
                                 "com_touch_thigh_Begin_Timestop_1",
                                 "com_touch_thigh_Begin_Timestop_2",
                                 "com_touch_thigh_Begin_Timestop_3"
-                            ]
-                        },
-                        {
-                            "requireSelfReceiver": true,
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "unconscious"
-                                ],
-                                "excludeSelfTags": [
-                                    "sleeping"
-                                ]
-                            },
-                            "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
-                            "responses": [
-                                "com_touch_thigh_Begin_Fainted_1",
-                                "com_touch_thigh_Begin_Fainted_2",
-                                "com_touch_thigh_Begin_Fainted_3"
-                            ]
-                        },
-                        {
-                            "requireSelfReceiver": true,
-                            "requirement": {
-                                "selfTags": [
-                                    "restrained"
-                                ]
-                            },
-                            "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
-                            "responses": [
-                                "com_touch_thigh_Begin_Restrained_1",
-                                "com_touch_thigh_Begin_Restrained_2",
-                                "com_touch_thigh_Begin_Restrained_3"
                             ]
                         },
                         {
@@ -119,7 +126,12 @@
                                 "com_touch_thigh_Begin_11",
                                 "com_touch_thigh_Begin_12",
                                 "com_touch_thigh_Begin_13"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandAct"
@@ -657,6 +669,17 @@
                                 "com_touch_thigh_Ongoing_NPC_2",
                                 "com_touch_thigh_Ongoing_NPC_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_touch_thigh_Ongoing_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -752,7 +775,9 @@
                 "com_touch_thigh_Ongoing_Player_3": "$self$小声冲站在旁边的$target$抱怨：\"喂，有那么好看吗，一直盯着。\"",
                 "com_touch_thigh_Ongoing_NPC_1": "$self$活动了一下腿脚，冲$target$轻哼道：\"摸够了吧？手还真不老实。\"",
                 "com_touch_thigh_Ongoing_NPC_2": "揉捏停下后，$self$脸颊微热地调侃道：\"手感就这么好啊？\"",
-                "com_touch_thigh_Ongoing_NPC_3": "$self$语气带着点羞恼对$target$说道：\"行啦，别没完没了的。\""
+                "com_touch_thigh_Ongoing_NPC_3": "$self$语气带着点羞恼对$target$说道：\"行啦，别没完没了的。\"",
+                "com_touch_thigh_Begin_Receiver_1": "$self$顺从地配合着$target$的动作。",
+                "com_touch_thigh_Ongoing_Fallback_1": "$self$腿侧微微绷了一下，随即恢复了平静。"
             },
             "en-us": {
                 "com_touch_thigh_Begin_1": "$self$ didn't dodge, instead naturally covering $target$'s hand with her own, fingertips gently rubbing. \"Hmm? Why so clingy all of a sudden?\"",

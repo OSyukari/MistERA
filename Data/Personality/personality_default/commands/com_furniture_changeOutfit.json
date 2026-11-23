@@ -1,0 +1,422 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_changeOutfit_Tryjoin",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 尝试加入",
+                            "responses": [
+                                "com_furniture_changeOutfit_Tryjoin_1",
+                                "com_furniture_changeOutfit_Tryjoin_2",
+                                "com_furniture_changeOutfit_Tryjoin_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_changeOutfit",
+                    "template": "commandResult",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_changeOutfit_1",
+                                        "com_furniture_changeOutfit_2",
+                                        "com_furniture_changeOutfit_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_changeOutfit_10",
+                                "com_furniture_changeOutfit_11",
+                                "com_furniture_changeOutfit_12"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "_comment": "自己（单人） → 自己 ｜ 接受",
+                            "responses": [
+                                "com_furniture_changeOutfit_4",
+                                "com_furniture_changeOutfit_5",
+                                "com_furniture_changeOutfit_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "自己（单人） → 玩家 ｜ 接受",
+                            "responses": [
+                                "com_furniture_changeOutfit_7",
+                                "com_furniture_changeOutfit_8",
+                                "com_furniture_changeOutfit_9"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_changeOutfit_Interrupt",
+                    "template": "commandInterrupt",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_furniture_changeOutfit_Interrupt_1",
+                                "com_furniture_changeOutfit_Interrupt_2",
+                                "com_furniture_changeOutfit_Interrupt_3"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_furniture_changeOutfit_Interrupt_4",
+                                "com_furniture_changeOutfit_Interrupt_5",
+                                "com_furniture_changeOutfit_Interrupt_6"
+                            ]
+                        },
+                        {
+                            "_comment": "当前动作中的 NPC → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_furniture_changeOutfit_Interrupt_7",
+                                "com_furniture_changeOutfit_Interrupt_8",
+                                "com_furniture_changeOutfit_Interrupt_9"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_changeOutfit_Begin",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
+                            "responses": [
+                                "com_furniture_changeOutfit_Begin_1",
+                                "com_furniture_changeOutfit_Begin_2",
+                                "com_furniture_changeOutfit_Begin_3"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_changeOutfit_Begin_4",
+                                        "com_furniture_changeOutfit_Begin_5",
+                                        "com_furniture_changeOutfit_Begin_6"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_changeOutfit_JoinFailed",
+                    "template": "commandJoinFailed",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_furniture_changeOutfit_JoinFailed_1",
+                                "com_furniture_changeOutfit_JoinFailed_2",
+                                "com_furniture_changeOutfit_JoinFailed_3"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "受方 → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_furniture_changeOutfit_JoinFailed_4",
+                                "com_furniture_changeOutfit_JoinFailed_5",
+                                "com_furniture_changeOutfit_JoinFailed_6"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方 → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_furniture_changeOutfit_JoinFailed_7",
+                                "com_furniture_changeOutfit_JoinFailed_8",
+                                "com_furniture_changeOutfit_JoinFailed_9"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_changeOutfit_Refuse",
+                    "template": "commandRefuse",
+                    "variants": [
+                        {
+                            "requireRefusalContext": "ReceiverDeclined",
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
+                            "responses": [
+                                "com_furniture_changeOutfit_Refuse_1",
+                                "com_furniture_changeOutfit_Refuse_2",
+                                "com_furniture_changeOutfit_Refuse_3"
+                            ]
+                        },
+                        {
+                            "requireRefusalContext": "DeclinedOrder",
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER",
+                                        "requireEPSuccess": false
+                                    },
+                                    "_comment": "自己（单人） → 玩家 ｜ 拒绝",
+                                    "responses": [
+                                        "com_furniture_changeOutfit_Refuse_4",
+                                        "com_furniture_changeOutfit_Refuse_5",
+                                        "com_furniture_changeOutfit_Refuse_6"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_changeOutfit_Refuse_Fallback_1"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_changeOutfit_Join",
+                    "template": "commandJoin",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_furniture_changeOutfit_Join_1",
+                                "com_furniture_changeOutfit_Join_2",
+                                "com_furniture_changeOutfit_Join_3"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_furniture_changeOutfit_Join_4",
+                                "com_furniture_changeOutfit_Join_5",
+                                "com_furniture_changeOutfit_Join_6"
+                            ]
+                        },
+                        {
+                            "_comment": "原参与者 NPC → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_furniture_changeOutfit_Join_7",
+                                "com_furniture_changeOutfit_Join_8",
+                                "com_furniture_changeOutfit_Join_9"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_changeOutfit_Join_Refused",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入被拒绝",
+                            "responses": [
+                                "com_furniture_changeOutfit_Join_Refused_1",
+                                "com_furniture_changeOutfit_Join_Refused_2",
+                                "com_furniture_changeOutfit_Join_Refused_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_changeOutfit_Ongoing",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "自己（单人） → 玩家 ｜ 接受",
+                            "responses": [
+                                "com_furniture_changeOutfit_Ongoing_1",
+                                "com_furniture_changeOutfit_Ongoing_2",
+                                "com_furniture_changeOutfit_Ongoing_3"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "受方 → 玩家 ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_changeOutfit_Ongoing_4",
+                                        "com_furniture_changeOutfit_Ongoing_5",
+                                        "com_furniture_changeOutfit_Ongoing_6"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_changeOutfit_Ongoing_Fallback_1"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_changeOutfit_Joined",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入成功",
+                            "responses": [
+                                "com_furniture_changeOutfit_Joined_1",
+                                "com_furniture_changeOutfit_Joined_2",
+                                "com_furniture_changeOutfit_Joined_3"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_furniture_changeOutfit_Tryjoin_1": "$self$拎着自己的替换衣物走近些，问$target$：\"我也想换身衣服，能一起吗？\"",
+                "com_furniture_changeOutfit_Tryjoin_2": "\"正好这儿有镜子，我也顺便换一下，不介意吧？\" $self$朝$target$示意了一下。",
+                "com_furniture_changeOutfit_Tryjoin_3": "$self$在门边问了一句：\"换衣服吗？算我一个，各自换各自的。\"",
+                "com_furniture_changeOutfit_1": "新衣穿好后，$self$试着蹭了蹭磨到束缚带的布料，总算舒服了些。",
+                "com_furniture_changeOutfit_2": "\"总算弄完了……绳子压着衣角的地方好紧。\" $self$扭了扭腰身。",
+                "com_furniture_changeOutfit_3": "$self$被束缚着没法自己整理，只偏头朝$target$示意了一下歪掉的领口。",
+                "com_furniture_changeOutfit_Interrupt_1": "$self$吓了一跳，下意识拽紧手里刚套上一半的衣服：\"喂！进来前好歹敲下门吧！\"",
+                "com_furniture_changeOutfit_Interrupt_2": "\"先别进来，我这边正换衣服呢！\" $self$赶紧背过身躲开$target$的视线。",
+                "com_furniture_changeOutfit_Interrupt_3": "$self$皱起眉看向门口的$target$：\"门外等会儿，等我穿好再说。\"",
+                "com_furniture_changeOutfit_Begin_1": "$self$稍微抬起手臂配合$target$的动作：\"换这件就行，动作利索点。\"",
+                "com_furniture_changeOutfit_Begin_2": "\"领口有点紧，等会儿帮我顺一下。\" $self$朝$target$偏了偏头。",
+                "com_furniture_changeOutfit_Begin_3": "$self$站稳身子由着$target$摆弄：\"行，听你的，就换这套。\"",
+                "com_furniture_changeOutfit_4": "$self$转过身照了照镜子，把偏了的衣领拨正，这套穿着确实利落。",
+                "com_furniture_changeOutfit_5": "\"行，总算换好了，行动起来也方便些。\" $self$把旧衣服叠好放到一旁。",
+                "com_furniture_changeOutfit_6": "扣好最后一颗扣子，$self$活动了下胳膊，松紧正合适。",
+                "com_furniture_changeOutfit_JoinFailed_1": "$self$看着挤不开的隔间，对$target$说：\"地方太窄了，我马上弄完让给你。\"",
+                "com_furniture_changeOutfit_JoinFailed_2": "\"先别进来了，东西堆得没处下脚。\" $self$朝$target$摆了摆手。",
+                "com_furniture_changeOutfit_JoinFailed_3": "$self$点点头：\"等我换好叫你。\"",
+                "com_furniture_changeOutfit_Refuse_1": "$self$按住领口退开一步，盯着$target$说：\"我自己能换，不用你动手。\"",
+                "com_furniture_changeOutfit_Refuse_2": "\"我现在不想换这套，别拉我衣服。\" $self$干脆利落地把对方的手拨开。",
+                "com_furniture_changeOutfit_Refuse_3": "$self$往后退开半步拉开距离：\"这件穿着挺好的，不换。\"",
+                "com_furniture_changeOutfit_Join_1": "$self$朝进来的$target$抬了抬下巴：\"随便站吧，正好帮忙把门带上。\"",
+                "com_furniture_changeOutfit_Join_2": "\"你也来换衣服？拿那边那件备用的吧，看着挺干净。\" $self$随口指了一下。",
+                "com_furniture_changeOutfit_Join_3": "$self$往里侧挪了点位置，留出地方给$target$放衣服。",
+                "com_furniture_changeOutfit_Join_Refused_1": "\"行，那你先换，我在外头等你出来。\" $self$抱着衣服退出了门外。",
+                "com_furniture_changeOutfit_Join_Refused_2": "$self$点点头：\"知道了，那我去别处找个空房间换。\"",
+                "com_furniture_changeOutfit_Join_Refused_3": "\"好吧，不打扰你。\" $self$转身带上房门离开了。",
+                "com_furniture_changeOutfit_Interrupt_4": "$self$手里还拿着衣服，连忙挡在前面朝$target$摆手：\"等等，里面正换衣服呢，先退出去。\"",
+                "com_furniture_changeOutfit_Interrupt_5": "\"进来也不打声招呼……\" $self$无奈地把门推回去半扇，\"稍等两分钟。\"",
+                "com_furniture_changeOutfit_Interrupt_6": "$self$停下手里的活，回头对$target$说：\"有事等穿好衣服再聊。\"",
+                "com_furniture_changeOutfit_Interrupt_7": "$self$赶紧拿外衣遮住身前，朝门口的$target$喊道：\"出去出去！我这儿正换衣服呢！\"",
+                "com_furniture_changeOutfit_Interrupt_8": "\"怎么不敲门就进来了？\" $self$一边快速拉好领口一边瞪了$target$一眼。",
+                "com_furniture_changeOutfit_Interrupt_9": "$self$手忙脚乱地把衣服往身上套：\"先转过去，等我弄好再说！\"",
+                "com_furniture_changeOutfit_JoinFailed_4": "$self$对没能进来的$target$说：\"里头地方太小，你等下一拨吧。\"",
+                "com_furniture_changeOutfit_JoinFailed_5": "\"等会儿换完就出来，不用挤在这儿。\" $self$朝$target$示意了一下。",
+                "com_furniture_changeOutfit_JoinFailed_6": "$self$摇摇头：\"这回凑不开了，你先去看看别处有没有空屋。\"",
+                "com_furniture_changeOutfit_Join_4": "$self$往旁边让出半步：\"来吧，正好帮我递一下搭扣，刚才没找着。\"",
+                "com_furniture_changeOutfit_Join_5": "\"你要是也换，记得把门反锁一下。\" $self$朝$target$交代了一句。",
+                "com_furniture_changeOutfit_Join_6": "$self$点点头：\"行，一块儿弄快点。\"",
+                "com_furniture_changeOutfit_Ongoing_1": "$self$扣到一半发现$target$还站在原地，停手朝对方扬了扬下巴：\"你不出去等吗？\"",
+                "com_furniture_changeOutfit_Ongoing_2": "\"马上就好，别催。\" $self$加快了手上的动作，背对着$target$把衣服套严实。",
+                "com_furniture_changeOutfit_Ongoing_3": "$self$被盯得有些不自在，索性背过身去继续整理衣领。",
+                "com_furniture_changeOutfit_Join_7": "$self$把椅子上的衣服往边上拨开：\"坐那儿放东西吧，我马上换完。\"",
+                "com_furniture_changeOutfit_Join_8": "\"来得正好，帮我看看背后拉链拉齐了没有。\" $self$朝$target$偏了偏头。",
+                "com_furniture_changeOutfit_Join_9": "$self$腾出镜子前的一半位置给$target$，继续理自己的袖口。",
+                "com_furniture_changeOutfit_Ongoing_4": "$self$注意到站在旁边的$target$，略微有些不自在地偏开视线：\"……快换好了。\"",
+                "com_furniture_changeOutfit_Ongoing_5": "\"别一直盯着我看啊，转过去等两分钟。\" $self$一边配合换衣一边对$target$说。",
+                "com_furniture_changeOutfit_Ongoing_6": "$self$拉着衣襟遮了遮，冲旁观的$target$皱了下眉，示意别靠太近。",
+                "com_furniture_changeOutfit_7": "$self$理平衣角，转头看向$target$：\"我这边换好了，你那套合身吗？\"",
+                "com_furniture_changeOutfit_8": "\"换身衣服感觉精神多了，咱们走吧？\" $self$把换下来的衣物收进袋子。",
+                "com_furniture_changeOutfit_9": "$self$低头确认了一遍穿戴，朝$target$点点头：\"我差不多了，随时能出发。\"",
+                "com_furniture_changeOutfit_JoinFailed_7": "$self$朝门外的$target$摆摆手：\"这边正换着呢，再进来就挤得转不开身了。\"",
+                "com_furniture_changeOutfit_JoinFailed_8": "\"今天就先这样，马上就好，你去外头稍等吧。\" $self$对$target$说完继续手上的动作。",
+                "com_furniture_changeOutfit_JoinFailed_9": "$self$摇摇头：\"里面人够多了，加不进来。\"",
+                "com_furniture_changeOutfit_10": "$self$低头扯了扯衣摆，活动一下肩膀：\"尺码倒是挺合身，谢了。\"",
+                "com_furniture_changeOutfit_11": "\"换好了，看着还算顺眼吧？\" $self$转身朝$target$看了一眼。",
+                "com_furniture_changeOutfit_12": "$self$把换下来的旧衣服理到一边，顺手拍平新衣上的褶皱。",
+                "com_furniture_changeOutfit_Begin_4": "$self$动了动被绑住的手腕，只能由着$target$凑近来换：\"……轻点拉，别勒着。\"",
+                "com_furniture_changeOutfit_Begin_5": "手脚都被缚住没法自己抬胳膊，$self$干脆放松肩膀任由$target$摆布。",
+                "com_furniture_changeOutfit_Begin_6": "\"你自己看着换吧，反正我也没法搭手。\" $self$垂眼看着$target$的动作。",
+                "com_furniture_changeOutfit_Joined_1": "\"谢啦，我占那边角落就行，很快。\" $self$走过去抖开自己的衣服。",
+                "com_furniture_changeOutfit_Joined_2": "$self$点点头：\"行，你换你的，我也把这身沾了灰的换掉。\"",
+                "com_furniture_changeOutfit_Joined_3": "\"刚好互相帮忙看着点门，免得有人乱闯。\" $self$说着开始解扣子。",
+                "com_furniture_changeOutfit_Refuse_4": "$self$看了眼那身衣服，朝$target$摇摇头：\"我现在穿着挺舒服的，不想换。\"",
+                "com_furniture_changeOutfit_Refuse_5": "\"换来换去麻烦得很，今天就这样吧。\" $self$站在原地没动弹。",
+                "com_furniture_changeOutfit_Refuse_6": "$self$干脆地回绝了：\"那套我不想穿，你自己看着办。\"",
+                "com_furniture_changeOutfit_Refuse_Fallback_1": "$self$点了点头，没有多说什么。",
+                "com_furniture_changeOutfit_Ongoing_Fallback_1": "$self$点了点头，没有多说什么。"
+            }
+        }
+    }
+}

@@ -39,6 +39,15 @@
                                 "com_furniture_mealPrep_Result_Player_2",
                                 "com_furniture_mealPrep_Result_Player_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_mealPrep_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -50,7 +59,9 @@
                     "template": "commandAct",
                     "variants": [
                         {
-                            "requirement": {},
+                            "requirement": {
+                                "allowRecording": true
+                            },
                             "_comment": "通用开始",
                             "responses": [
                                 "com_furniture_mealPrep_Begin_1",
@@ -78,6 +89,16 @@
                                 "com_furniture_mealPrep_Refuse_2",
                                 "com_furniture_mealPrep_Refuse_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_mealPrep_Refuse_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -98,6 +119,15 @@
                                 "com_furniture_mealPrep_Ongoing_2",
                                 "com_furniture_mealPrep_Ongoing_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_mealPrep_Ongoing_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -109,7 +139,9 @@
                     "template": "commandInterrupt",
                     "variants": [
                         {
-                            "requirement": {},
+                            "requirement": {
+                                "allowRecording": true
+                            },
                             "_comment": "自己 → 新来的人 ｜ 接受",
                             "responses": [
                                 "com_furniture_mealPrep_Interrupt_1",
@@ -136,6 +168,16 @@
                                 "com_furniture_mealPrep_Tryjoin_2",
                                 "com_furniture_mealPrep_Tryjoin_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_mealPrep_Tryjoin_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -155,6 +197,16 @@
                                 "com_furniture_mealPrep_Joined_1",
                                 "com_furniture_mealPrep_Joined_2",
                                 "com_furniture_mealPrep_Joined_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_mealPrep_Joined_Fallback_1"
                             ]
                         }
                     ]
@@ -176,6 +228,16 @@
                                 "com_furniture_mealPrep_Join_Refused_2",
                                 "com_furniture_mealPrep_Join_Refused_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_mealPrep_Join_Refused_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -187,7 +249,9 @@
                     "template": "commandJoin",
                     "variants": [
                         {
-                            "requirement": {},
+                            "requirement": {
+                                "allowRecording": true
+                            },
                             "_comment": "原参与者 NPC → 加入者 ｜ 接受",
                             "responses": [
                                 "com_furniture_mealPrep_Join_1",
@@ -206,7 +270,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
                             "responses": [
@@ -255,7 +320,13 @@
                 "com_furniture_mealPrep_Join_3": "“正好，$target$过来一起搭把手也快些。”",
                 "com_furniture_mealPrep_JoinFailed_1": "“抱歉啊$target$，台面就这么大，挤不开人，等会儿吧。”",
                 "com_furniture_mealPrep_JoinFailed_2": "$self$朝$target$摇摇头：“这轮快弄完了，你先歇着。”",
-                "com_furniture_mealPrep_JoinFailed_3": "“现在不太方便插手，$target$你先去忙别的吧。”"
+                "com_furniture_mealPrep_JoinFailed_3": "“现在不太方便插手，$target$你先去忙别的吧。”",
+                "com_furniture_mealPrep_Ongoing_Fallback_1": "$self$正专注地处理着手头的食材。",
+                "com_furniture_mealPrep_Tryjoin_Fallback_1": "$self$探头看了一眼：“要我搭把手一起备餐吗？”",
+                "com_furniture_mealPrep_Join_Refused_Fallback_1": "$self$退开半步：“好，那你一个人忙吧。”",
+                "com_furniture_mealPrep_Joined_Fallback_1": "$self$挽起袖子，站到台边帮忙准备起来。",
+                "com_furniture_mealPrep_Refuse_Fallback_1": "$self$摇头道：“这会儿不太方便准备餐食。”",
+                "com_furniture_mealPrep_Fallback_1": "$self$收拾好灶台，结束了备餐。"
             }
         }
     }

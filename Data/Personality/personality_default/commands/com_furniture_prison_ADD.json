@@ -1,0 +1,429 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_prison_ADD_Begin",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "unconscious"
+                                        ],
+                                        "excludeSelfTags": [
+                                            "sleeping"
+                                        ],
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_prison_ADD_Begin_1",
+                                        "com_furniture_prison_ADD_Begin_2",
+                                        "com_furniture_prison_ADD_Begin_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "sleeping"
+                                        ],
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（睡眠中） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_prison_ADD_Begin_4",
+                                        "com_furniture_prison_ADD_Begin_5",
+                                        "com_furniture_prison_ADD_Begin_6"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "timestop"
+                                        ],
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（时停中） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_prison_ADD_Begin_10",
+                                        "com_furniture_prison_ADD_Begin_11",
+                                        "com_furniture_prison_ADD_Begin_12"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_prison_ADD_Begin_7",
+                                "com_furniture_prison_ADD_Begin_8",
+                                "com_furniture_prison_ADD_Begin_9"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_prison_ADD_Interrupt",
+                    "template": "commandInterrupt",
+                    "variants": [
+                        {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_furniture_prison_ADD_Interrupt_1",
+                                "com_furniture_prison_ADD_Interrupt_2",
+                                "com_furniture_prison_ADD_Interrupt_3"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_furniture_prison_ADD_Interrupt_4",
+                                "com_furniture_prison_ADD_Interrupt_5",
+                                "com_furniture_prison_ADD_Interrupt_6"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_prison_ADD",
+                    "template": "commandResult",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
+                            "responses": [
+                                "com_furniture_prison_ADD_1",
+                                "com_furniture_prison_ADD_2",
+                                "com_furniture_prison_ADD_3"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_prison_ADD_4",
+                                        "com_furniture_prison_ADD_5",
+                                        "com_furniture_prison_ADD_6"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "unconscious"
+                                        ],
+                                        "excludeSelfTags": [
+                                            "sleeping"
+                                        ],
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_prison_ADD_7",
+                                        "com_furniture_prison_ADD_8",
+                                        "com_furniture_prison_ADD_9"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "sleeping"
+                                        ],
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（睡眠中） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_prison_ADD_10",
+                                        "com_furniture_prison_ADD_11",
+                                        "com_furniture_prison_ADD_12"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "timestop"
+                                        ],
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（时停中） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_prison_ADD_13",
+                                        "com_furniture_prison_ADD_14",
+                                        "com_furniture_prison_ADD_15"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_prison_ADD_Join_Refused",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入被拒绝",
+                            "responses": [
+                                "com_furniture_prison_ADD_Join_Refused_1",
+                                "com_furniture_prison_ADD_Join_Refused_2",
+                                "com_furniture_prison_ADD_Join_Refused_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_prison_ADD_Join",
+                    "template": "commandJoin",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_furniture_prison_ADD_Join_1",
+                                "com_furniture_prison_ADD_Join_2",
+                                "com_furniture_prison_ADD_Join_3"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_furniture_prison_ADD_Join_4",
+                                "com_furniture_prison_ADD_Join_5",
+                                "com_furniture_prison_ADD_Join_6"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_prison_ADD_Refuse",
+                    "template": "commandRefuse",
+                    "variants": [
+                        {
+                            "requireRefusalContext": "ReceiverDeclined",
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ],
+                                        "requireEPSuccess": false
+                                    },
+                                    "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
+                                    "responses": [
+                                        "com_furniture_prison_ADD_Refuse_1",
+                                        "com_furniture_prison_ADD_Refuse_2",
+                                        "com_furniture_prison_ADD_Refuse_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_prison_ADD_Refuse_4",
+                                "com_furniture_prison_ADD_Refuse_5",
+                                "com_furniture_prison_ADD_Refuse_6"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_prison_ADD_JoinFailed",
+                    "template": "commandJoinFailed",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "受方 → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_furniture_prison_ADD_JoinFailed_1",
+                                "com_furniture_prison_ADD_JoinFailed_2",
+                                "com_furniture_prison_ADD_JoinFailed_3"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方 → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_furniture_prison_ADD_JoinFailed_4",
+                                "com_furniture_prison_ADD_JoinFailed_5",
+                                "com_furniture_prison_ADD_JoinFailed_6"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_prison_ADD_Ongoing",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "受方 → 玩家 ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_prison_ADD_Ongoing_1",
+                                        "com_furniture_prison_ADD_Ongoing_2",
+                                        "com_furniture_prison_ADD_Ongoing_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_prison_ADD_Ongoing_Fallback_1"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_prison_ADD_Tryjoin",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 尝试加入",
+                            "responses": [
+                                "com_furniture_prison_ADD_Tryjoin_1",
+                                "com_furniture_prison_ADD_Tryjoin_2",
+                                "com_furniture_prison_ADD_Tryjoin_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_prison_ADD_Joined",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入成功",
+                            "responses": [
+                                "com_furniture_prison_ADD_Joined_1",
+                                "com_furniture_prison_ADD_Joined_2",
+                                "com_furniture_prison_ADD_Joined_3"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_furniture_prison_ADD_Begin_1": "昏迷的$self$全身没有半点力气，被送进去时完全没有反应。",
+                "com_furniture_prison_ADD_Begin_2": "$self$双目紧闭，像一具沉重的布偶般被推进了门内，毫无知觉。",
+                "com_furniture_prison_ADD_Begin_3": "无论外头怎么搬动，$self$始终没有清醒的迹象，呼吸微弱。",
+                "com_furniture_prison_ADD_Interrupt_1": "$self$按住门扇，回头瞥了眼进来的$target$：\"这边正收押呢，先别挡着门口。\"",
+                "com_furniture_prison_ADD_Interrupt_2": "\"怎么跑这儿来了？\" $self$朝$target$示意了一下，\"等我把门锁上再说。\"",
+                "com_furniture_prison_ADD_Interrupt_3": "$self$手里攥着钥匙，对新来的$target$点点头：\"稍等半分钟，马上好。\"",
+                "com_furniture_prison_ADD_Interrupt_4": "$self$站在门口看见$target$过来，扯了扯嘴角：\"正好，省得我再解释去哪儿找我了。\"",
+                "com_furniture_prison_ADD_Interrupt_5": "\"如你所见，我要被关进去了。\" $self$冲刚来的$target$抬了抬下巴。",
+                "com_furniture_prison_ADD_Interrupt_6": "$self$扶着门框看向$target$：\"有事快说，再过两分钟门就锁上了。\"",
+                "com_furniture_prison_ADD_1": "铁锁咔哒扣严，$self$靠着里面的墙坐下来：\"行了，你走吧，别忘了按时送饭。\"",
+                "com_furniture_prison_ADD_2": "$self$隔着门栏望向外头的$target$，抿了抿嘴：\"关够了记得放我出来。\"",
+                "com_furniture_prison_ADD_3": "\"地方真够窄的……\" $self$打量了一圈四周，挑了个角落安顿下来。",
+                "com_furniture_prison_ADD_Join_Refused_1": "\"成，那你自己弄吧，我就不掺和了。\" $self$退回走廊，转身离开。",
+                "com_furniture_prison_ADD_Join_Refused_2": "$self$点点头：\"知道了，那你小心看着点门锁。\"",
+                "com_furniture_prison_ADD_Join_Refused_3": "\"行吧，不在这儿碍你的事。\" $self$收回手往外走去。",
+                "com_furniture_prison_ADD_Begin_4": "熟睡中的$self$被半拖半推着进了门，只是皱了皱眉，含糊梦呓了一声。",
+                "com_furniture_prison_ADD_Begin_5": "$self$沉沉睡着，被放倒在里面时也只动了动肩膀，没有睁眼。",
+                "com_furniture_prison_ADD_Begin_6": "呼吸依旧均匀，睡梦里的$self$根本没察觉自己正被带进$furniture$。",
+                "com_furniture_prison_ADD_Join_1": "$self$看着新凑上来的$target$，冷哼了一声：\"还真热闹，连你也要来凑一脚。\"",
+                "com_furniture_prison_ADD_Join_2": "\"用得着这么多人看着我进门吗？\" $self$朝$target$翻了个白眼。",
+                "com_furniture_prison_ADD_Join_3": "$self$没再多说，只是顺着步子往里退开些，避开门口拥挤的人群。",
+                "com_furniture_prison_ADD_Begin_7": "$self$看了眼里面的空间，没再反抗，跟着$target$的动作往里走：\"行，我进去就是了。\"",
+                "com_furniture_prison_ADD_Begin_8": "\"锁上之前记得把灯留着。\" $self$低声叮嘱了一句，跨过了门槛。",
+                "com_furniture_prison_ADD_Begin_9": "$self$垂下视线默不作声地迈步走进去，任由$target$在身后动作。",
+                "com_furniture_prison_ADD_4": "$self$迷糊睁开眼发现自己在门内，愣了一下才看向$target$：\"……这就关上了？\"",
+                "com_furniture_prison_ADD_5": "刚清醒过来还有点搞不清状况，$self$揉了揉眼睛，终究没闹腾，叹了口气靠墙坐下。",
+                "com_furniture_prison_ADD_6": "$self$打量着四周的栏杆，默默接受了现状：\"行吧，反正也跑不掉。\"",
+                "com_furniture_prison_ADD_Refuse_1": "$self$猛地惊醒过来，一眼看见要合上的铁门，立刻抵住门缝：\"干什么？！放我出去！\"",
+                "com_furniture_prison_ADD_Refuse_2": "\"趁我睡着把我往这儿塞？\" $self$怒气冲冲地推开门口的$target$，直接跨了出来。",
+                "com_furniture_prison_ADD_Refuse_3": "刚醒就察觉处境不对，$self$二话不说往外挤：\"别想趁我不备锁住我！\"",
+                "com_furniture_prison_ADD_JoinFailed_1": "$self$朝被拦在门外的$target$扯了扯嘴角：\"省省吧，里面也站不下那么多人。\"",
+                "com_furniture_prison_ADD_JoinFailed_2": "\"没你的事，先走吧。\" $self$撇开视线，不再看门口的$target$。",
+                "com_furniture_prison_ADD_JoinFailed_3": "$self$冲$target$摆了摆手：\"这儿用不着你插手。\"",
+                "com_furniture_prison_ADD_Refuse_4": "$self$一把抓住门框死活不肯再往里迈半步，朝$target$冷声道：\"别想把我关进去！\"",
+                "com_furniture_prison_ADD_Refuse_5": "\"少来这一套，我犯了什么错要被锁在里头？\" $self$用力挣开$target$的手。",
+                "com_furniture_prison_ADD_Refuse_6": "$self$往后退开几步，眼神戒备：\"想关我？门都没有。\"",
+                "com_furniture_prison_ADD_7": "门锁落定，昏迷的$self$依然静静倒在里面，没有半点苏醒的痕迹。",
+                "com_furniture_prison_ADD_8": "$self$悄无声息地躺在角落，任由那道门把她隔绝在内。",
+                "com_furniture_prison_ADD_9": "外面的落锁声丝毫传不进$self$的意识里，她仍处于昏迷之中。",
+                "com_furniture_prison_ADD_Join_4": "$self$朝$target$偏了偏头：\"来得正好，帮我把门栓按稳了。\"",
+                "com_furniture_prison_ADD_Join_5": "\"你看着点门缝，别让人趁乱卡住了。\" $self$一边说一边继续手上的动作。",
+                "com_furniture_prison_ADD_Join_6": "$self$往侧边让出半步，和$target$配合着把门带严实。",
+                "com_furniture_prison_ADD_10": "门锁合上的轻响没能吵醒$self$，她缩在角落里，呼吸依旧平稳。",
+                "com_furniture_prison_ADD_11": "睡得太沉，$self$被关在里面也浑然不觉，只顾着找了个舒服的姿势。",
+                "com_furniture_prison_ADD_12": "$self$翻了个身继续睡去，仿佛外面那道锁根本不存在。",
+                "com_furniture_prison_ADD_JoinFailed_4": "$self$看了眼窄小的门口，对$target$摆摆手：\"这儿挤不下这么多人，不用来帮忙了。\"",
+                "com_furniture_prison_ADD_JoinFailed_5": "\"锁门而已，没必要折腾这么多人过来。\" $self$朝$target$示意了一下。",
+                "com_furniture_prison_ADD_JoinFailed_6": "$self$摇摇头：\"今天加不进来了，你先忙别的去吧。\"",
+                "com_furniture_prison_ADD_13": "时停中的$self$被锁在里面，依旧维持着静止不动的模样，没有半点声响。",
+                "com_furniture_prison_ADD_14": "哪怕门已经彻底锁死，$self$的视线和姿态也没有任何偏移。",
+                "com_furniture_prison_ADD_15": "被停住的时间里，$self$像被定格了一样留在$furniture$内。",
+                "com_furniture_prison_ADD_Ongoing_1": "$self$在门边停住步子，偏头朝外面袖手旁观的$target$看了一眼，没说话。",
+                "com_furniture_prison_ADD_Ongoing_2": "\"看够了吗？看够了搭把手还是怎么着。\" $self$没好气地冲$target$撇了撇嘴。",
+                "com_furniture_prison_ADD_Ongoing_3": "$self$被带进门内时顺着视线扫了$target$一眼，随即收回目光。",
+                "com_furniture_prison_ADD_Tryjoin_1": "$self$走到$furniture$门前停下，问$target$：\"一个人不好按住吧？要不要我帮个手？\"",
+                "com_furniture_prison_ADD_Tryjoin_2": "\"我看门锁有点卡，需要我过来搭把手关门吗？\" $self$看着$target$问了一句。",
+                "com_furniture_prison_ADD_Tryjoin_3": "$self$朝门口走近两步：\"我来帮你一起把人送进去锁好？\"",
+                "com_furniture_prison_ADD_Joined_1": "\"行，你推人，我来扶着门框准备落锁。\" $self$走到门侧卡好位置。",
+                "com_furniture_prison_ADD_Joined_2": "$self$点点头，伸手按住沉重的铁门：\"快点，我拉着呢。\"",
+                "com_furniture_prison_ADD_Joined_3": "\"两个人的确省事多了。\" $self$说着帮着把门往里合拢。",
+                "com_furniture_prison_ADD_Begin_10": "时间静止中的$self$凝固在原地，连眨眼都没有，像座雕像一样被挪了进去。",
+                "com_furniture_prison_ADD_Begin_11": "$self$保持着前一刻的姿势一动不动，对周遭的一切毫无感知。",
+                "com_furniture_prison_ADD_Begin_12": "静止的空气里，$self$既没有呼吸的起伏，也没有任何反抗的动作。",
+                "com_furniture_prison_ADD_Ongoing_Fallback_1": "$self$点了点头，没有多说什么。"
+            }
+        }
+    }
+}

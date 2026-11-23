@@ -1,0 +1,421 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_restroom_fix_Join",
+                    "template": "commandJoin",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_furniture_restroom_fix_Join_1",
+                                "com_furniture_restroom_fix_Join_2",
+                                "com_furniture_restroom_fix_Join_3"
+                            ]
+                        },
+                        {
+                            "_comment": "原参与者 NPC → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_furniture_restroom_fix_Join_4",
+                                "com_furniture_restroom_fix_Join_5",
+                                "com_furniture_restroom_fix_Join_6"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_furniture_restroom_fix_Join_7",
+                                "com_furniture_restroom_fix_Join_8",
+                                "com_furniture_restroom_fix_Join_9"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_restroom_fix",
+                    "template": "commandResult",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_restroom_fix_1",
+                                        "com_furniture_restroom_fix_2",
+                                        "com_furniture_restroom_fix_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_restroom_fix_7",
+                                "com_furniture_restroom_fix_8",
+                                "com_furniture_restroom_fix_9"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "_comment": "自己（单人） → 自己 ｜ 接受",
+                            "responses": [
+                                "com_furniture_restroom_fix_4",
+                                "com_furniture_restroom_fix_5",
+                                "com_furniture_restroom_fix_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "自己（单人） → 玩家 ｜ 接受",
+                            "responses": [
+                                "com_furniture_restroom_fix_10",
+                                "com_furniture_restroom_fix_11",
+                                "com_furniture_restroom_fix_12"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_restroom_fix_Ongoing",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "受方 → 玩家 ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_restroom_fix_Ongoing_1",
+                                        "com_furniture_restroom_fix_Ongoing_2",
+                                        "com_furniture_restroom_fix_Ongoing_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_restroom_fix_Ongoing_Fallback_1"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "自己（单人） → 玩家 ｜ 接受",
+                            "responses": [
+                                "com_furniture_restroom_fix_Ongoing_4",
+                                "com_furniture_restroom_fix_Ongoing_5",
+                                "com_furniture_restroom_fix_Ongoing_6"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_restroom_fix_Interrupt",
+                    "template": "commandInterrupt",
+                    "variants": [
+                        {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_furniture_restroom_fix_Interrupt_1",
+                                "com_furniture_restroom_fix_Interrupt_2",
+                                "com_furniture_restroom_fix_Interrupt_3"
+                            ]
+                        },
+                        {
+                            "_comment": "当前动作中的 NPC → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_furniture_restroom_fix_Interrupt_4",
+                                "com_furniture_restroom_fix_Interrupt_5",
+                                "com_furniture_restroom_fix_Interrupt_6"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_furniture_restroom_fix_Interrupt_7",
+                                "com_furniture_restroom_fix_Interrupt_8",
+                                "com_furniture_restroom_fix_Interrupt_9"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_restroom_fix_Refuse",
+                    "template": "commandRefuse",
+                    "variants": [
+                        {
+                            "requireRefusalContext": "DeclinedOrder",
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER",
+                                        "requireEPSuccess": false
+                                    },
+                                    "_comment": "自己（单人） → 玩家 ｜ 拒绝",
+                                    "responses": [
+                                        "com_furniture_restroom_fix_Refuse_1",
+                                        "com_furniture_restroom_fix_Refuse_2",
+                                        "com_furniture_restroom_fix_Refuse_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_restroom_fix_Refuse_Fallback_1"
+                            ]
+                        },
+                        {
+                            "requireRefusalContext": "ReceiverDeclined",
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
+                            "responses": [
+                                "com_furniture_restroom_fix_Refuse_4",
+                                "com_furniture_restroom_fix_Refuse_5",
+                                "com_furniture_restroom_fix_Refuse_6"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_restroom_fix_JoinFailed",
+                    "template": "commandJoinFailed",
+                    "variants": [
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方 → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_furniture_restroom_fix_JoinFailed_1",
+                                "com_furniture_restroom_fix_JoinFailed_2",
+                                "com_furniture_restroom_fix_JoinFailed_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_furniture_restroom_fix_JoinFailed_4",
+                                "com_furniture_restroom_fix_JoinFailed_5",
+                                "com_furniture_restroom_fix_JoinFailed_6"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "受方 → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_furniture_restroom_fix_JoinFailed_7",
+                                "com_furniture_restroom_fix_JoinFailed_8",
+                                "com_furniture_restroom_fix_JoinFailed_9"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_restroom_fix_Begin",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_restroom_fix_Begin_1",
+                                        "com_furniture_restroom_fix_Begin_2",
+                                        "com_furniture_restroom_fix_Begin_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_restroom_fix_Begin_4",
+                                "com_furniture_restroom_fix_Begin_5",
+                                "com_furniture_restroom_fix_Begin_6"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_restroom_fix_Joined",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入成功",
+                            "responses": [
+                                "com_furniture_restroom_fix_Joined_1",
+                                "com_furniture_restroom_fix_Joined_2",
+                                "com_furniture_restroom_fix_Joined_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_restroom_fix_Join_Refused",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入被拒绝",
+                            "responses": [
+                                "com_furniture_restroom_fix_Join_Refused_1",
+                                "com_furniture_restroom_fix_Join_Refused_2",
+                                "com_furniture_restroom_fix_Join_Refused_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_restroom_fix_Tryjoin",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 尝试加入",
+                            "responses": [
+                                "com_furniture_restroom_fix_Tryjoin_1",
+                                "com_furniture_restroom_fix_Tryjoin_2",
+                                "com_furniture_restroom_fix_Tryjoin_3"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_furniture_restroom_fix_Join_1": "$self$往镜子一侧挪了挪：\"来吧，那边照得到。\"",
+                "com_furniture_restroom_fix_Join_2": "\"你也来拾掇一下？正好我这儿快弄完了。\" $self$朝$target$点点头。",
+                "com_furniture_restroom_fix_Join_3": "$self$把水台边占着的地方腾出一点给$target$。",
+                "com_furniture_restroom_fix_Join_4": "$self$往左让出半面镜子：\"来吧，一块儿理理。\"",
+                "com_furniture_restroom_fix_Join_5": "\"顺便帮我看看后面有没有蹭上灰，刚才靠过墙。\" $self$朝$target$侧了侧身。",
+                "com_furniture_restroom_fix_Join_6": "$self$朝$target$点点头，继续整理自己手边的袖扣。",
+                "com_furniture_restroom_fix_1": "衣服被理平后，$self$低头看了看，虽然还被绑着，至少身上没那么邋遢了。",
+                "com_furniture_restroom_fix_2": "\"行了，卡住的那块也顺过来了，谢了。\" $self$站稳了些。",
+                "com_furniture_restroom_fix_3": "$self$偏头对着镜子确认了一下，朝$target$示意已经妥当。",
+                "com_furniture_restroom_fix_Ongoing_1": "$self$从镜子里看见站在身后的$target$，略微挑了下眉：\"就理个衣服，也要在旁边看着？\"",
+                "com_furniture_restroom_fix_Ongoing_2": "\"快好了，别挤在门口挡光。\" $self$朝$target$示意了一下。",
+                "com_furniture_restroom_fix_Ongoing_3": "$self$配合着抬抬手，冲镜子里的$target$撇了下嘴，没多说话。",
+                "com_furniture_restroom_fix_Interrupt_1": "$self$正帮着顺平褶皱，回头瞥了眼进来的$target$：\"找人？稍等，马上理完。\"",
+                "com_furniture_restroom_fix_Interrupt_2": "\"刚来？我帮她把后面的扣子扣好就走。\" $self$朝$target$示意了一下。",
+                "com_furniture_restroom_fix_Interrupt_3": "$self$手上没停，只对$target$点点头：\"有事等两分钟啊。\"",
+                "com_furniture_restroom_fix_Refuse_1": "$self$低头瞄了自己一眼，对$target$摆手：\"这样挺好的，用不着特意跑去照镜子。\"",
+                "com_furniture_restroom_fix_Refuse_2": "\"忙着呢，没功夫在意这些细节。\" $self$站着没动。",
+                "com_furniture_restroom_fix_Refuse_3": "$self$摇摇头回绝了：\"我觉得没必要整理，就这样吧。\"",
+                "com_furniture_restroom_fix_JoinFailed_1": "$self$看了眼挤不过来的洗手台前，对$target$说：\"今天站不下了，下回吧。\"",
+                "com_furniture_restroom_fix_JoinFailed_2": "\"人太多转不开身，马上就好，你去外头等会儿。\" $self$朝$target$示意了一下。",
+                "com_furniture_restroom_fix_JoinFailed_3": "$self$摇摇头：\"加不进来，你先忙别的吧。\"",
+                "com_furniture_restroom_fix_JoinFailed_4": "$self$看着窄小的镜前过道，对$target$说：\"这儿挤不下两个人，我马上就好。\"",
+                "com_furniture_restroom_fix_JoinFailed_5": "\"你先在外头等半分钟吧，里面太窄了。\" $self$朝$target$摆手。",
+                "com_furniture_restroom_fix_JoinFailed_6": "$self$点点头：\"我理完这下就让出来。\"",
+                "com_furniture_restroom_fix_Interrupt_4": "$self$从镜子里看见$target$进来，随手理了理衣袖：\"刚进来？我这儿快弄好了。\"",
+                "com_furniture_restroom_fix_Interrupt_5": "\"脸上没蹭上灰吧？\" $self$转过身问刚进来的$target$。",
+                "com_furniture_restroom_fix_Interrupt_6": "$self$让开半个镜前的位置，冲$target$点点头：\"你要用洗手台的话，我马上就好。\"",
+                "com_furniture_restroom_fix_Refuse_4": "$self$拍开$target$伸过来的手，自己往后退了一步：\"用不着你碰，我自己会理。\"",
+                "com_furniture_restroom_fix_Refuse_5": "\"乱点就乱点，反正等会儿还得干活，不用你管。\" $self$避开了对方的手。",
+                "com_furniture_restroom_fix_Refuse_6": "$self$皱起眉：\"离我远点，我衣服不需要别人动。\"",
+                "com_furniture_restroom_fix_4": "$self$把歪掉的领口和袖边一一归位，镜子里看着总算利索了。",
+                "com_furniture_restroom_fix_5": "\"嗯，这样出门不会显得太狼狈。\" $self$拍平衣角的褶皱。",
+                "com_furniture_restroom_fix_6": "顺手拨开挡眼的碎发，$self$对着镜子确认无误，准备转身离开。",
+                "com_furniture_restroom_fix_Begin_1": "$self$动了动被绑住的手，朝$target$偏过头：\"手没法抬，只能靠你帮我拉平整了。\"",
+                "com_furniture_restroom_fix_Begin_2": "被束缚着够不到皱掉的衣摆，$self$干脆站在原地由着$target$收拾。",
+                "com_furniture_restroom_fix_Begin_3": "\"绳子压着的地方顺便也拨一下吧，卡得有点难受。\" $self$低声说了一句。",
+                "com_furniture_restroom_fix_Begin_4": "$self$照了照镜子，对$target$说：\"后面领口我够不着，麻烦帮我理一下。\"",
+                "com_furniture_restroom_fix_Begin_5": "\"刚才忙活得有点乱了，借镜子这边整一整。\" $self$略微侧过身配合$target$。",
+                "com_furniture_restroom_fix_Begin_6": "$self$站直了些，由着$target$帮忙抚平肩头：\"谢了，我自己老扯不齐。\"",
+                "com_furniture_restroom_fix_Joined_1": "\"谢了，我占边上这一小块镜面就行。\" $self$走过去理了理衣角。",
+                "com_furniture_restroom_fix_Joined_2": "$self$点点头，站到$target$旁边：\"你理你的，我就顺一下领子，很快。\"",
+                "com_furniture_restroom_fix_Joined_3": "\"两个人还能互相看看后面有没有歪。\" $self$说着动起手来。",
+                "com_furniture_restroom_fix_Join_Refused_1": "\"行，那你先用着，我在外头等你。\" $self$退后两步让开门口。",
+                "com_furniture_restroom_fix_Join_Refused_2": "$self$点点头：\"好吧，那我待会儿再来。\"",
+                "com_furniture_restroom_fix_Join_Refused_3": "\"知道了，不在这儿跟你抢镜子。\" $self$转身走开了。",
+                "com_furniture_restroom_fix_7": "$self$在镜前转了半圈打量自己，满意地点点头：\"齐整多了，谢啦。\"",
+                "com_furniture_restroom_fix_8": "\"总算看着像样了，刚才真是乱七八糟的。\" $self$拂了拂袖口。",
+                "com_furniture_restroom_fix_9": "$self$朝$target$笑了一下：\"比我自己照着镜子瞎摸理得快多了。\"",
+                "com_furniture_restroom_fix_JoinFailed_7": "$self$朝门外的$target$摆了摆手：\"里面地方窄，站不开，稍等我两分钟。\"",
+                "com_furniture_restroom_fix_JoinFailed_8": "\"马上理完就出去了，不用挤进来。\" $self$对$target$说了一句。",
+                "com_furniture_restroom_fix_JoinFailed_9": "$self$点点头：\"等我弄好让给你。\"",
+                "com_furniture_restroom_fix_Tryjoin_1": "$self$走到洗手间门口看了眼镜子，问$target$：\"镜子够宽吧？我也顺便理一下仪表？\"",
+                "com_furniture_restroom_fix_Tryjoin_2": "\"正好我袖口也卷了，一起借下镜子不介意吧？\" $self$朝$target$示意。",
+                "com_furniture_restroom_fix_Tryjoin_3": "$self$摸了摸自己微乱的衣领：\"算我一个，各自照照镜子整理一下。\"",
+                "com_furniture_restroom_fix_Join_7": "$self$往旁边让开半步：\"镜子够大，站过来照吧。\"",
+                "com_furniture_restroom_fix_Join_8": "\"来得正好，帮我看下她这边的肩线齐不齐。\" $self$朝$target$偏了偏头。",
+                "com_furniture_restroom_fix_Join_9": "$self$点点头，留出足够两人转身的空间。",
+                "com_furniture_restroom_fix_10": "$self$收拾利索，侧过头问旁边的$target$：\"我这边好了，你理完了吗？\"",
+                "com_furniture_restroom_fix_11": "\"整理完感觉清爽不少，走吧。\" $self$从镜子前退开半步。",
+                "com_furniture_restroom_fix_12": "$self$帮着看了眼$target$那边，朝对方点点头：\"行，都挺齐整的。\"",
+                "com_furniture_restroom_fix_Interrupt_7": "$self$听见门响回头看去，见是$target$，顺口招呼：\"进来吧，就整理一下衣服，不碍事。\"",
+                "com_furniture_restroom_fix_Interrupt_8": "\"刚忙完身上乱糟糟的，顺便借镜子拾掇一下。\" $self$对$target$点点头。",
+                "com_furniture_restroom_fix_Interrupt_9": "$self$抬手理着领口，朝进来的$target$问：\"找我有事？\"",
+                "com_furniture_restroom_fix_Ongoing_4": "$self$对着镜子把衣角抚平，顺口问身后看着的$target$：\"我后背没粘上什么脏东西吧？\"",
+                "com_furniture_restroom_fix_Ongoing_5": "知道$target$在旁边看着，$self$动作麻利了些，赶紧把扣子扣齐。",
+                "com_furniture_restroom_fix_Ongoing_6": "\"马上弄好，你要用的话稍等我半分钟。\" $self$回头对$target$说了一句。",
+                "com_furniture_restroom_fix_Ongoing_Fallback_1": "$self$点了点头，没有多说什么。",
+                "com_furniture_restroom_fix_Refuse_Fallback_1": "$self$点了点头，没有多说什么。"
+            }
+        }
+    }
+}

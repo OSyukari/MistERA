@@ -319,46 +319,6 @@
                             "variants": [
                                 {
                                     "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "firstexp_V",
-                                            "sleeping"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "doggy",
-                                        "sleeping",
-                                        "pain"
-                                    ],
-                                    "_comment": "初体验 睡眠中 后背位V",
-                                    "responses": [
-                                        "com_sex_P_doggy_FE_Sleep_1"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "firstexp_V",
-                                            "timestop"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "doggy",
-                                        "doll",
-                                        "empty"
-                                    ],
-                                    "_comment": "初体验 时停中 后背位V",
-                                    "responses": [
-                                        "com_sex_P_doggy_FE_Timestop_1"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
                                         "selfTags": [
                                             "firstexp_V"
                                         ]
@@ -366,20 +326,31 @@
                                     "variants": [
                                         {
                                             "requirement": {
-                                                "targetBaseID": "PLAYER",
-                                                "requirePermission": true
+                                                "targetBaseID": "PLAYER"
                                             },
-                                            "extraSelfPortraitTags": [
-                                                "sex",
-                                                "receiver",
-                                                "doggy",
-                                                "blush",
-                                                "pain",
-                                                "love"
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "requirePermission": true
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "receiver",
+                                                        "doggy",
+                                                        "blush",
+                                                        "pain",
+                                                        "love"
+                                                    ],
+                                                    "_comment": "初体验 玩家专用 后背位V 有允许",
+                                                    "responses": [
+                                                        "com_sex_P_doggy_FE_Player_1"
+                                                    ]
+                                                }
                                             ],
-                                            "_comment": "初体验 玩家专用 后背位V 有允许",
+                                            "_comment": "玩家专用（无允许兜底）",
                                             "responses": [
-                                                "com_sex_P_doggy_FE_Player_1"
+                                                "com_sex_P_doggy_FE_4",
+                                                "com_sex_P_doggy_FE_5"
                                             ]
                                         },
                                         {
@@ -467,6 +438,27 @@
                                         "com_sex_P_doggy_2",
                                         "com_sex_P_doggy_3",
                                         "com_sex_P_doggy_4"
+                                    ],
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "firstexp_V"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "doggy",
+                                                "sleeping",
+                                                "pain"
+                                            ],
+                                            "_comment": "初体验 睡眠中 后背位V",
+                                            "responses": [
+                                                "com_sex_P_doggy_FE_Sleep_1"
+                                            ]
+                                        }
                                     ]
                                 },
                                 {
@@ -491,6 +483,27 @@
                                         "com_sex_P_doggy_6",
                                         "com_sex_P_doggy_7",
                                         "com_sex_P_doggy_8"
+                                    ],
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "firstexp_V"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "doggy",
+                                                "doll",
+                                                "empty"
+                                            ],
+                                            "_comment": "初体验 时停中 后背位V",
+                                            "responses": [
+                                                "com_sex_P_doggy_FE_Timestop_1"
+                                            ]
+                                        }
                                     ]
                                 },
                                 {
@@ -611,26 +624,6 @@
                         },
                         {
                             "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "firstexp_V",
-                                    "timestop"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "doggy",
-                                "doll",
-                                "empty"
-                            ],
-                            "_comment": "初体验 时停中 后背位V",
-                            "responses": [
-                                "com_sex_P_doggy_FE_Timestop_1"
-                            ]
-                        },
-                        {
-                            "requirement": {
                                 "selfTags": [
                                     "firstexp_V"
                                 ]
@@ -638,20 +631,31 @@
                             "variants": [
                                 {
                                     "requirement": {
-                                        "targetBaseID": "PLAYER",
-                                        "requirePermission": true
+                                        "targetBaseID": "PLAYER"
                                     },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "doggy",
-                                        "blush",
-                                        "pain",
-                                        "love"
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "doggy",
+                                                "blush",
+                                                "pain",
+                                                "love"
+                                            ],
+                                            "_comment": "初体验 玩家专用 后背位V 有允许",
+                                            "responses": [
+                                                "com_sex_P_doggy_FE_Player_1"
+                                            ]
+                                        }
                                     ],
-                                    "_comment": "初体验 玩家专用 后背位V 有允许",
+                                    "_comment": "玩家专用（无允许兜底）",
                                     "responses": [
-                                        "com_sex_P_doggy_FE_Player_1"
+                                        "com_sex_P_doggy_FE_4",
+                                        "com_sex_P_doggy_FE_5"
                                     ]
                                 },
                                 {
@@ -705,22 +709,6 @@
                         },
                         {
                             "requirement": {
-                                "selfTags": [
-                                    "firstexp_partner_V"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "doggy"
-                            ],
-                            "_comment": "对方初体验 后背位V（插入的一方）",
-                            "responses": [
-                                "com_sex_P_doggy_FE_Partner_1"
-                            ]
-                        },
-                        {
-                            "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
                                     "sleeping"
@@ -763,6 +751,27 @@
                                 "com_sex_P_doggy_6",
                                 "com_sex_P_doggy_7",
                                 "com_sex_P_doggy_8"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "firstexp_V"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "doggy",
+                                        "doll",
+                                        "empty"
+                                    ],
+                                    "_comment": "初体验 时停中 后背位V",
+                                    "responses": [
+                                        "com_sex_P_doggy_FE_Timestop_1"
+                                    ]
+                                }
                             ]
                         },
                         {
@@ -846,6 +855,24 @@
                                         "com_sex_P_doggy_29",
                                         "com_sex_P_doggy_30"
                                     ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_partner_V"
+                                        ],
+                                        "requireSelfAction": false,
+                                        "requireTargetAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "doggy"
+                                    ],
+                                    "_comment": "对方初体验 后背位V（插入的一方）",
+                                    "responses": [
+                                        "com_sex_P_doggy_FE_Partner_1"
+                                    ]
                                 }
                             ],
                             "_comment": "2.2.6 ($self$) 被后背位V 结果负面 未允许 口上文",
@@ -873,7 +900,11 @@
                             }
                         }
                     ],
-                    "template": "commandResult"
+                    "template": "commandResult",
+                    "templateExtras": [
+                        "firstexpPartnerV",
+                        "firstexpV"
+                    ]
                 }
             },
             {

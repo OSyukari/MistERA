@@ -39,6 +39,15 @@
                                 "com_furniture_rest_required_Result_Player_2",
                                 "com_furniture_rest_required_Result_Player_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_rest_required_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -50,7 +59,9 @@
                     "template": "commandAct",
                     "variants": [
                         {
-                            "requirement": {},
+                            "requirement": {
+                                "allowRecording": true
+                            },
                             "_comment": "通用开始",
                             "responses": [
                                 "com_furniture_rest_required_Begin_1",
@@ -78,6 +89,16 @@
                                 "com_furniture_rest_required_Refuse_2",
                                 "com_furniture_rest_required_Refuse_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_rest_required_Refuse_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -89,7 +110,9 @@
                     "template": "commandInterrupt",
                     "variants": [
                         {
-                            "requirement": {},
+                            "requirement": {
+                                "allowRecording": true
+                            },
                             "_comment": "自己 → 新来的人 ｜ 接受",
                             "responses": [
                                 "com_furniture_rest_required_Interrupt_1",
@@ -116,6 +139,16 @@
                                 "com_furniture_rest_required_Tryjoin_2",
                                 "com_furniture_rest_required_Tryjoin_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_rest_required_Tryjoin_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -135,6 +168,16 @@
                                 "com_furniture_rest_required_Joined_1",
                                 "com_furniture_rest_required_Joined_2",
                                 "com_furniture_rest_required_Joined_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_rest_required_Joined_Fallback_1"
                             ]
                         }
                     ]
@@ -156,6 +199,16 @@
                                 "com_furniture_rest_required_Join_Refused_2",
                                 "com_furniture_rest_required_Join_Refused_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_furniture_rest_required_Join_Refused_Fallback_1"
+                            ]
                         }
                     ]
                 }
@@ -167,7 +220,9 @@
                     "template": "commandJoin",
                     "variants": [
                         {
-                            "requirement": {},
+                            "requirement": {
+                                "allowRecording": true
+                            },
                             "_comment": "原参与者 NPC → 加入者 ｜ 接受",
                             "responses": [
                                 "com_furniture_rest_required_Join_1",
@@ -186,7 +241,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
                             "responses": [
@@ -232,7 +288,12 @@
                 "com_furniture_rest_required_Join_3": "“行啊，大家一块儿躺着静养，别出声吵着就行。”",
                 "com_furniture_rest_required_JoinFailed_1": "“抱歉啊$target$，这地方躺两个人太挤了，你去别处歇吧。”",
                 "com_furniture_rest_required_JoinFailed_2": "$self$抬眼看了看$target$：“这会儿不太方便多个人待着，见谅。”",
-                "com_furniture_rest_required_JoinFailed_3": "“地方有限，$target$你再找找别的空位吧。”"
+                "com_furniture_rest_required_JoinFailed_3": "“地方有限，$target$你再找找别的空位吧。”",
+                "com_furniture_rest_required_Joined_Fallback_1": "$self$找了个空位坐下，跟着一起休息起来。",
+                "com_furniture_rest_required_Refuse_Fallback_1": "$self$摇了摇头：“现在还不想去休息。”",
+                "com_furniture_rest_required_Fallback_1": "$self$调整了一下呼吸，感觉精神缓过来了些。",
+                "com_furniture_rest_required_Join_Refused_Fallback_1": "$self$摆摆手：“没事，你好好歇着吧。”",
+                "com_furniture_rest_required_Tryjoin_Fallback_1": "$self$看了看这边：“我也过来一起歇会儿行吗？”"
             }
         }
     }

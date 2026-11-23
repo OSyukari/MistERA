@@ -1,0 +1,300 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_readBooks_Refuse",
+                    "template": "commandRefuse",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER",
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "自己（单人） → 玩家 ｜ 拒绝",
+                            "responses": [
+                                "com_furniture_readBooks_Refuse_1",
+                                "com_furniture_readBooks_Refuse_2",
+                                "com_furniture_readBooks_Refuse_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_readBooks",
+                    "template": "commandResult",
+                    "variants": [
+                        {
+                            "requireSelfOnly": true,
+                            "_comment": "自己（单人） → 自己",
+                            "responses": [
+                                "com_furniture_readBooks_1",
+                                "com_furniture_readBooks_2",
+                                "com_furniture_readBooks_3"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "自己（单人） → 自己 ｜ 接受·判定成功",
+                                    "responses": [
+                                        "com_furniture_readBooks_7",
+                                        "com_furniture_readBooks_8",
+                                        "com_furniture_readBooks_9"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessLTE": "Failure"
+                            },
+                            "_comment": "判定失败",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "自己（单人） → 玩家 ｜ 接受·判定失败",
+                                    "responses": [
+                                        "com_furniture_readBooks_4",
+                                        "com_furniture_readBooks_5",
+                                        "com_furniture_readBooks_6"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_readBooks_Fallback_1"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "_comment": "判定成功",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "自己（单人） → 玩家 ｜ 接受·判定成功",
+                                    "responses": [
+                                        "com_furniture_readBooks_10",
+                                        "com_furniture_readBooks_11",
+                                        "com_furniture_readBooks_12"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_readBooks_Fallback_2"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_readBooks_Interrupt",
+                    "template": "commandInterrupt",
+                    "variants": [
+                        {
+                            "_comment": "当前动作中的 NPC → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_furniture_readBooks_Interrupt_1",
+                                "com_furniture_readBooks_Interrupt_2",
+                                "com_furniture_readBooks_Interrupt_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_readBooks_Ongoing",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "自己（单人） → 玩家 ｜ 接受",
+                            "responses": [
+                                "com_furniture_readBooks_Ongoing_1",
+                                "com_furniture_readBooks_Ongoing_2",
+                                "com_furniture_readBooks_Ongoing_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_readBooks_Begin",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "_comment": "NPC → 玩家",
+                            "responses": [
+                                "com_furniture_readBooks_Begin_1",
+                                "com_furniture_readBooks_Begin_2",
+                                "com_furniture_readBooks_Begin_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_readBooks_Joined",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入成功",
+                            "responses": [
+                                "com_furniture_readBooks_Joined_1",
+                                "com_furniture_readBooks_Joined_2",
+                                "com_furniture_readBooks_Joined_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_readBooks_Tryjoin",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 尝试加入",
+                            "responses": [
+                                "com_furniture_readBooks_Tryjoin_1",
+                                "com_furniture_readBooks_Tryjoin_2",
+                                "com_furniture_readBooks_Tryjoin_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_readBooks_Join_Refused",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入被拒绝",
+                            "responses": [
+                                "com_furniture_readBooks_Join_Refused_1",
+                                "com_furniture_readBooks_Join_Refused_2",
+                                "com_furniture_readBooks_Join_Refused_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_readBooks_JoinFailed",
+                    "template": "commandJoinFailed",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_furniture_readBooks_JoinFailed_1",
+                                "com_furniture_readBooks_JoinFailed_2",
+                                "com_furniture_readBooks_JoinFailed_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_readBooks_Join",
+                    "template": "commandJoin",
+                    "variants": [
+                        {
+                            "_comment": "原参与者 NPC → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_furniture_readBooks_Join_1",
+                                "com_furniture_readBooks_Join_2",
+                                "com_furniture_readBooks_Join_3"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_furniture_readBooks_Refuse_1": "$self$没有去拿桌上的书，只看着$target$说：\"我现在静不下心看这个，等有空再说吧。\"",
+                "com_furniture_readBooks_Refuse_2": "\"眼睛正累着呢，不想再盯着字看了。\" $self$往后靠了靠，没接对方递过来的意思。",
+                "com_furniture_readBooks_Refuse_3": "$self$摇摇头回绝了：\"我对这本没什么兴趣，你找别人看或者自己翻吧。\"",
+                "com_furniture_readBooks_1": "$self$揉了揉发涩的眼角，刚才走神了好几回，前面讲什么几乎没记住。",
+                "com_furniture_readBooks_2": "\"字都认识，凑一块儿怎么就看不进去呢……\" $self$把书往桌上一扣，叹了口气。",
+                "com_furniture_readBooks_3": "越往后看越犯困，注意力全散了，$self$干脆停下来发了会儿呆。",
+                "com_furniture_readBooks_4": "$self$捏了捏鼻梁，对$target$摇摇头：\"不行，今天脑子太乱，看了半天全浮在表面。\"",
+                "com_furniture_readBooks_5": "\"总觉得越看越困，这一轮算是白翻了。\" $self$把书往旁边推开些，靠回椅背。",
+                "com_furniture_readBooks_6": "$self$朝$target$无奈地摊了摊手：\"前面刚看完后面就忘，今天实在看不进去。\"",
+                "com_furniture_readBooks_Interrupt_1": "$self$听见脚步声从书页里抬起头，见是$target$，拿手指夹住页码：\"刚进来？找我有事吗？\"",
+                "com_furniture_readBooks_Interrupt_2": "$self$下意识把书合上一半，看清来人是$target$才松开手：\"吓我一跳，走路没声似的。\"",
+                "com_furniture_readBooks_Interrupt_3": "\"正看得出神呢，差点没注意有人进来。\" $self$冲$target$点了点头，顺势换了个坐姿。",
+                "com_furniture_readBooks_Ongoing_1": "$self$用手指压住页角，抬眼瞥了$target$一下：\"我正看到关键地方呢，有事待会儿再说。\"",
+                "com_furniture_readBooks_Ongoing_2": "察觉$target$在旁边看着，$self$把书稍微往怀里收了收：\"别这么盯着我看，怪不自在的。\"",
+                "com_furniture_readBooks_Ongoing_3": "$self$翻过一页，头也没抬地问：\"你站着不累吗？我这儿还得看一阵子。\"",
+                "com_furniture_readBooks_Begin_1": "$self$朝$target$偏了下头：\"你也看你的，我先翻几页看看里面写的什么。\"",
+                "com_furniture_readBooks_Begin_2": "$self$调整了个舒服的坐姿，把书页压平，很快安静下来。",
+                "com_furniture_readBooks_Begin_3": "\"这本听说挺有意思的，正好趁现在看会儿。\" $self$说完便垂下视线。",
+                "com_furniture_readBooks_Joined_1": "\"谢啦，我保证不出声打扰你。\" $self$轻手轻脚地拉开椅子坐下，把自己的书摊开。",
+                "com_furniture_readBooks_Joined_2": "$self$朝$target$点点头，挑了个光线够亮的位置坐稳，很快也低头看了起来。",
+                "com_furniture_readBooks_Joined_3": "\"两个人待着反而更有看书的气氛。\" $self$把椅子往里拉了拉，安静下来。",
+                "com_furniture_readBooks_Tryjoin_1": "$self$拿着挑好的书走近些，压低声音问$target$：\"这里挺安静的，我能坐旁边一起看吗？\"",
+                "com_furniture_readBooks_Tryjoin_2": "\"我也找了本东西看，不介意我凑一桌吧？\" $self$朝$target$旁边的空座示意了一下。",
+                "com_furniture_readBooks_Tryjoin_3": "$self$在桌前停住脚步：\"正好想歇会儿看看书，算我一个？\"",
+                "com_furniture_readBooks_Join_Refused_1": "\"行，那我不打扰你清静了。\" $self$抱着书转身往另一边走去。",
+                "com_furniture_readBooks_Join_Refused_2": "$self$顿了一下，点点头：\"好吧，那我去别处找个角落坐。\"",
+                "com_furniture_readBooks_Join_Refused_3": "\"抱歉，打断你看了。\" $self$退开两步，顺手把刚才碰过的椅子归回原位。",
+                "com_furniture_readBooks_7": "$self$盯着末页停了片刻，刚才那段确实写得有意思，比预想中耐看。",
+                "com_furniture_readBooks_8": "\"原来前面埋的线在这儿呢，难怪。\" $self$顺手拿张废纸折成书签夹进页缝。",
+                "com_furniture_readBooks_9": "一口气看到这儿，脑子倒是比刚才清醒了些，$self$揉了揉有点发酸的脖子。",
+                "com_furniture_readBooks_10": "$self$合上书页，偏头看向$target$：\"这本比我想的精彩，你要是还没看，待会儿可以拿去翻翻。\"",
+                "com_furniture_readBooks_11": "\"总算看完了，里面有几处还挺出人意料的。\" $self$说着把书推到桌中间。",
+                "com_furniture_readBooks_12": "$self$伸了个懒腰，问旁边的$target$：\"我这边看完了，你那本看得怎么样？\"",
+                "com_furniture_readBooks_JoinFailed_1": "$self$看了看实在挤不开的桌角，朝$target$抱歉地摇摇头：\"这边坐不下了，下回再一块儿看吧。\"",
+                "com_furniture_readBooks_JoinFailed_2": "\"光线和位置都凑不齐，这回只能先这样了。\" $self$对$target$说完，重新把注意力收回书里。",
+                "com_furniture_readBooks_JoinFailed_3": "$self$抬眼朝$target$示意了一下：\"这里暂时腾不出空位，你去看看旁边还有没有地方。\"",
+                "com_furniture_readBooks_Join_1": "$self$把摊在旁边空位上的东西收拢到自己这边：\"坐吧，灯亮着，够两个人看。\"",
+                "com_furniture_readBooks_Join_2": "\"你挑了哪本？坐这儿就行，互相不碍事。\" $self$朝$target$抬了抬下巴，随后又把视线落回书页。",
+                "com_furniture_readBooks_Join_3": "$self$往里侧挪了点位置，留出够放书的桌面，继续看自己手里的那几页。",
+                "com_furniture_readBooks_Fallback_1": "$self$点了点头，没有多说什么。",
+                "com_furniture_readBooks_Fallback_2": "$self$点了点头，没有多说什么。"
+            }
+        }
+    }
+}

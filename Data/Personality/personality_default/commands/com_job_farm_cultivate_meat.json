@@ -1,0 +1,300 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_job_farm_cultivate_meat",
+                    "template": "commandResult",
+                    "variants": [
+                        {
+                            "requireSelfOnly": true,
+                            "_comment": "自己（单人） → 自己",
+                            "responses": [
+                                "com_job_farm_cultivate_meat_1",
+                                "com_job_farm_cultivate_meat_2",
+                                "com_job_farm_cultivate_meat_3"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "自己（单人） → 自己 ｜ 接受·判定成功",
+                                    "responses": [
+                                        "com_job_farm_cultivate_meat_7",
+                                        "com_job_farm_cultivate_meat_8",
+                                        "com_job_farm_cultivate_meat_9"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "_comment": "判定成功",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "自己（单人） → 玩家 ｜ 接受·判定成功",
+                                    "responses": [
+                                        "com_job_farm_cultivate_meat_4",
+                                        "com_job_farm_cultivate_meat_5",
+                                        "com_job_farm_cultivate_meat_6"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_job_farm_cultivate_meat_Fallback_1"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessLTE": "Failure"
+                            },
+                            "_comment": "判定失败",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "自己（单人） → 玩家 ｜ 接受·判定失败",
+                                    "responses": [
+                                        "com_job_farm_cultivate_meat_10",
+                                        "com_job_farm_cultivate_meat_11",
+                                        "com_job_farm_cultivate_meat_12"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_job_farm_cultivate_meat_Fallback_2"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_job_farm_cultivate_meat_Interrupt",
+                    "template": "commandInterrupt",
+                    "variants": [
+                        {
+                            "_comment": "当前动作中的 NPC → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_job_farm_cultivate_meat_Interrupt_1",
+                                "com_job_farm_cultivate_meat_Interrupt_2",
+                                "com_job_farm_cultivate_meat_Interrupt_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_job_farm_cultivate_meat_Join_Refused",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入被拒绝",
+                            "responses": [
+                                "com_job_farm_cultivate_meat_Join_Refused_1",
+                                "com_job_farm_cultivate_meat_Join_Refused_2",
+                                "com_job_farm_cultivate_meat_Join_Refused_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_job_farm_cultivate_meat_Tryjoin",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 尝试加入",
+                            "responses": [
+                                "com_job_farm_cultivate_meat_Tryjoin_1",
+                                "com_job_farm_cultivate_meat_Tryjoin_2",
+                                "com_job_farm_cultivate_meat_Tryjoin_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_job_farm_cultivate_meat_Ongoing",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "自己（单人） → 玩家 ｜ 接受",
+                            "responses": [
+                                "com_job_farm_cultivate_meat_Ongoing_1",
+                                "com_job_farm_cultivate_meat_Ongoing_2",
+                                "com_job_farm_cultivate_meat_Ongoing_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_job_farm_cultivate_meat_Join",
+                    "template": "commandJoin",
+                    "variants": [
+                        {
+                            "_comment": "原参与者 NPC → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_job_farm_cultivate_meat_Join_1",
+                                "com_job_farm_cultivate_meat_Join_2",
+                                "com_job_farm_cultivate_meat_Join_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_job_farm_cultivate_meat_Refuse",
+                    "template": "commandRefuse",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER",
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "自己（单人） → 玩家 ｜ 拒绝",
+                            "responses": [
+                                "com_job_farm_cultivate_meat_Refuse_1",
+                                "com_job_farm_cultivate_meat_Refuse_2",
+                                "com_job_farm_cultivate_meat_Refuse_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_job_farm_cultivate_meat_Begin",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "_comment": "NPC → 玩家",
+                            "responses": [
+                                "com_job_farm_cultivate_meat_Begin_1",
+                                "com_job_farm_cultivate_meat_Begin_2",
+                                "com_job_farm_cultivate_meat_Begin_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_job_farm_cultivate_meat_JoinFailed",
+                    "template": "commandJoinFailed",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_job_farm_cultivate_meat_JoinFailed_1",
+                                "com_job_farm_cultivate_meat_JoinFailed_2",
+                                "com_job_farm_cultivate_meat_JoinFailed_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_job_farm_cultivate_meat_Joined",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入成功",
+                            "responses": [
+                                "com_job_farm_cultivate_meat_Joined_1",
+                                "com_job_farm_cultivate_meat_Joined_2",
+                                "com_job_farm_cultivate_meat_Joined_3"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_job_farm_cultivate_meat_1": "$self$盯着撒了一地的饲料皱起眉，刚才手一滑全洒在箱子缝里了，收拾起来更麻烦。",
+                "com_job_farm_cultivate_meat_2": "\"这批状态不太对劲，弄了半天还是蔫蔫的。\" $self$叹了口气，有些头疼。",
+                "com_job_farm_cultivate_meat_3": "味道熏得人发闷，活也没干利索，$self$烦躁地摘下手套丢到一边。",
+                "com_job_farm_cultivate_meat_Interrupt_1": "$self$听见门响抬起头，见是$target$进来了，示意一下沾着料的手：\"找我有事？先别靠太近，脏。\"",
+                "com_job_farm_cultivate_meat_Interrupt_2": "$self$顺手把敞着的箱盖虚掩上，才看向$target$：\"刚进来？稍等我把手洗一下。\"",
+                "com_job_farm_cultivate_meat_Interrupt_3": "\"怎么跑饲养区来了？\" $self$停下搅拌，朝门口的$target$问了一句。",
+                "com_job_farm_cultivate_meat_4": "$self$擦干净手，朝$target$那边扬声道：\"我这排箱子全搞定了，长势挺好，你那边怎么样？\"",
+                "com_job_farm_cultivate_meat_5": "\"总算弄完了，快出去透口气吧。\" $self$把空桶拎到墙角放好，朝出口走了一步。",
+                "com_job_farm_cultivate_meat_6": "$self$冲$target$比了个搞定的手势：\"幸好有你一起，比我一个人干快多了。\"",
+                "com_job_farm_cultivate_meat_Join_Refused_1": "\"行吧，那你先忙着，我就不在这儿挤着了。\" $self$放下手套往外走去。",
+                "com_job_farm_cultivate_meat_Join_Refused_2": "$self$点点头：\"知道了，等会儿要是缺人手再喊我。\"",
+                "com_job_farm_cultivate_meat_Join_Refused_3": "\"那好，我去干点别的活。\" $self$转身离开了饲养区。",
+                "com_job_farm_cultivate_meat_Tryjoin_1": "$self$拎着另一份工具走到饲养区门口，问$target$：\"这边活挺多的，我来帮你分担一半？\"",
+                "com_job_farm_cultivate_meat_Tryjoin_2": "\"剩下那几排箱子还没喂吧？算我一个一起弄。\" $self$朝$target$示意了一下。",
+                "com_job_farm_cultivate_meat_Tryjoin_3": "$self$戴上手套探头问了一句：\"两个人弄能快点完事，需要搭把手吗？\"",
+                "com_job_farm_cultivate_meat_7": "$self$盖严最后一个箱盖，把工具洗净放回原位，这轮打理得挺顺当。",
+                "com_job_farm_cultivate_meat_8": "\"湿度和温度都调好了，这批应该能长不错。\" $self$摘掉手套，长舒了一口气。",
+                "com_job_farm_cultivate_meat_9": "活计比预想中省心，没出什么幺蛾子，$self$拍了拍围裙上的灰，准备收工。",
+                "com_job_farm_cultivate_meat_Ongoing_1": "$self$抽空回头瞥了眼站在门边的$target$：\"不嫌味儿冲啊？我还得弄会儿呢。\"",
+                "com_job_farm_cultivate_meat_Ongoing_2": "$self$加快了手上的动作，被$target$这么干看着，总想早点把箱子盖好。",
+                "com_job_farm_cultivate_meat_Ongoing_3": "\"站在通道中间小心沾上脏水，往后退点。\" $self$提醒了一句，继续往下检查。",
+                "com_job_farm_cultivate_meat_Join_1": "$self$往过道里面让了让：\"正好，后面还有一排没喂呢，手套在架子上。\"",
+                "com_job_farm_cultivate_meat_Join_2": "\"来得正好，这活一个人干太磨人了。\" $self$朝$target$点点头，指了指旁边的饲料桶。",
+                "com_job_farm_cultivate_meat_Join_3": "$self$把调好的料分出一半推过去：\"你顾着那头，咱们分开弄快得很。\"",
+                "com_job_farm_cultivate_meat_Refuse_1": "$self$皱着眉往后退了半步，对$target$直言：\"里面味儿太重了，我现在实在不想去碰那些东西。\"",
+                "com_job_farm_cultivate_meat_Refuse_2": "\"喂食清理的活找别人吧，我这会儿胃里正犯恶心呢。\" $self$摆摆手，没有接过饲料桶。",
+                "com_job_farm_cultivate_meat_Refuse_3": "$self$态度很干脆地回绝了：\"我不去饲养区，你自己看着安排吧。\"",
+                "com_job_farm_cultivate_meat_Begin_1": "$self$掩了掩口鼻，朝$target$扬下巴示意：\"味儿有点冲，咱们手脚麻利点弄完。\"",
+                "com_job_farm_cultivate_meat_Begin_2": "$self$把桶拎到靠近饲养箱的位置放稳，开始逐个检查里面的情况。",
+                "com_job_farm_cultivate_meat_Begin_3": "\"今天这批看着还算精神，照常规分量添就行。\" $self$低声念叨了一句，埋头忙开。",
+                "com_job_farm_cultivate_meat_JoinFailed_1": "$self$看了眼窄小的过道，对$target$摆摆手：\"这儿站不开那么多人，下次再搭伙吧。\"",
+                "com_job_farm_cultivate_meat_JoinFailed_2": "\"箱子就这么几个，今天凑不进来了，你先去忙别的吧。\" $self$说完转回身继续照料。",
+                "com_job_farm_cultivate_meat_JoinFailed_3": "$self$朝$target$示意了一下：\"这边暂时不用再加人了，辛苦你走一趟。\"",
+                "com_job_farm_cultivate_meat_10": "$self$一脸无奈地朝$target$摊摊手：\"我这边搞砸了，营养液兑多了，弄得黏糊糊的。\"",
+                "com_job_farm_cultivate_meat_11": "\"别提了，刚才差点把箱子掀翻，收拾半天还是没弄好。\" $self$垂头丧气地洗着手。",
+                "com_job_farm_cultivate_meat_12": "$self$揉了揉发胀的太阳穴：\"这批看来不太乐观，我实在有点应付不来。\"",
+                "com_job_farm_cultivate_meat_Joined_1": "\"行，你弄东边那排，西边这些我来清。\" $self$拎起桶走过去，很快动起手来。",
+                "com_job_farm_cultivate_meat_Joined_2": "$self$点点头，顺手接过半桶饲料：\"那我紧着点弄，争取早点出去透气。\"",
+                "com_job_farm_cultivate_meat_Joined_3": "\"两个人的确快多了。\" $self$说完便弯腰打开了旁边的饲养箱。",
+                "com_job_farm_cultivate_meat_Fallback_1": "$self$点了点头，没有多说什么。",
+                "com_job_farm_cultivate_meat_Fallback_2": "$self$点了点头，没有多说什么。"
+            }
+        }
+    }
+}

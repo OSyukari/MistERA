@@ -326,46 +326,6 @@
                                     "variants": [
                                         {
                                             "requirement": {
-                                                "requireSelfAction": false,
-                                                "selfTags": [
-                                                    "firstexp_V",
-                                                    "sleeping"
-                                                ]
-                                            },
-                                            "extraSelfPortraitTags": [
-                                                "sex",
-                                                "doer",
-                                                "cowgirl",
-                                                "sleeping",
-                                                "pain"
-                                            ],
-                                            "_comment": "初体验 睡眠中 骑乘位V",
-                                            "responses": [
-                                                "com_sex_P_cowgirl_FE_Sleep_1"
-                                            ]
-                                        },
-                                        {
-                                            "requirement": {
-                                                "requireSelfAction": false,
-                                                "selfTags": [
-                                                    "firstexp_V",
-                                                    "timestop"
-                                                ]
-                                            },
-                                            "extraSelfPortraitTags": [
-                                                "sex",
-                                                "doer",
-                                                "cowgirl",
-                                                "doll",
-                                                "empty"
-                                            ],
-                                            "_comment": "初体验 时停中 骑乘位V",
-                                            "responses": [
-                                                "com_sex_P_cowgirl_FE_Timestop_1"
-                                            ]
-                                        },
-                                        {
-                                            "requirement": {
                                                 "selfTags": [
                                                     "firstexp_V"
                                                 ]
@@ -373,20 +333,31 @@
                                             "variants": [
                                                 {
                                                     "requirement": {
-                                                        "targetBaseID": "PLAYER",
-                                                        "requirePermission": true
+                                                        "targetBaseID": "PLAYER"
                                                     },
-                                                    "extraSelfPortraitTags": [
-                                                        "sex",
-                                                        "doer",
-                                                        "cowgirl",
-                                                        "blush",
-                                                        "pain",
-                                                        "love"
+                                                    "variants": [
+                                                        {
+                                                            "requirement": {
+                                                                "requirePermission": true
+                                                            },
+                                                            "extraSelfPortraitTags": [
+                                                                "sex",
+                                                                "doer",
+                                                                "cowgirl",
+                                                                "blush",
+                                                                "pain",
+                                                                "love"
+                                                            ],
+                                                            "_comment": "初体验 玩家专用 骑乘位V 有允许",
+                                                            "responses": [
+                                                                "com_sex_P_cowgirl_FE_Player_1"
+                                                            ]
+                                                        }
                                                     ],
-                                                    "_comment": "初体验 玩家专用 骑乘位V 有允许",
+                                                    "_comment": "玩家专用（无允许兜底）",
                                                     "responses": [
-                                                        "com_sex_P_cowgirl_FE_Player_1"
+                                                        "com_sex_P_cowgirl_FE_4",
+                                                        "com_sex_P_cowgirl_FE_5"
                                                     ]
                                                 },
                                                 {
@@ -456,6 +427,27 @@
                                             "responses": [
                                                 "com_sex_P_cowgirl_1",
                                                 "com_sex_P_cowgirl_2"
+                                            ],
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "requireSelfAction": false,
+                                                        "selfTags": [
+                                                            "firstexp_V"
+                                                        ]
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "doer",
+                                                        "cowgirl",
+                                                        "sleeping",
+                                                        "pain"
+                                                    ],
+                                                    "_comment": "初体验 睡眠中 骑乘位V",
+                                                    "responses": [
+                                                        "com_sex_P_cowgirl_FE_Sleep_1"
+                                                    ]
+                                                }
                                             ]
                                         },
                                         {
@@ -478,6 +470,27 @@
                                             "responses": [
                                                 "com_sex_P_cowgirl_3",
                                                 "com_sex_P_cowgirl_4"
+                                            ],
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "requireSelfAction": false,
+                                                        "selfTags": [
+                                                            "firstexp_V"
+                                                        ]
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "doer",
+                                                        "cowgirl",
+                                                        "doll",
+                                                        "empty"
+                                                    ],
+                                                    "_comment": "初体验 时停中 骑乘位V",
+                                                    "responses": [
+                                                        "com_sex_P_cowgirl_FE_Timestop_1"
+                                                    ]
+                                                }
                                             ]
                                         },
                                         {
@@ -579,46 +592,6 @@
                                 },
                                 {
                                     "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "firstexp_V",
-                                            "sleeping"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "cowgirl",
-                                        "sleeping",
-                                        "pain"
-                                    ],
-                                    "_comment": "初体验 睡眠中 骑乘位V",
-                                    "responses": [
-                                        "com_sex_P_cowgirl_FE_Sleep_1"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "firstexp_V",
-                                            "timestop"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "cowgirl",
-                                        "doll",
-                                        "empty"
-                                    ],
-                                    "_comment": "初体验 时停中 骑乘位V",
-                                    "responses": [
-                                        "com_sex_P_cowgirl_FE_Timestop_1"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
                                         "selfTags": [
                                             "firstexp_V"
                                         ]
@@ -626,20 +599,31 @@
                                     "variants": [
                                         {
                                             "requirement": {
-                                                "targetBaseID": "PLAYER",
-                                                "requirePermission": true
+                                                "targetBaseID": "PLAYER"
                                             },
-                                            "extraSelfPortraitTags": [
-                                                "sex",
-                                                "doer",
-                                                "cowgirl",
-                                                "blush",
-                                                "pain",
-                                                "love"
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "requirePermission": true
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "doer",
+                                                        "cowgirl",
+                                                        "blush",
+                                                        "pain",
+                                                        "love"
+                                                    ],
+                                                    "_comment": "初体验 玩家专用 骑乘位V 有允许",
+                                                    "responses": [
+                                                        "com_sex_P_cowgirl_FE_Player_1"
+                                                    ]
+                                                }
                                             ],
-                                            "_comment": "初体验 玩家专用 骑乘位V 有允许",
+                                            "_comment": "玩家专用（无允许兜底）",
                                             "responses": [
-                                                "com_sex_P_cowgirl_FE_Player_1"
+                                                "com_sex_P_cowgirl_FE_4",
+                                                "com_sex_P_cowgirl_FE_5"
                                             ]
                                         },
                                         {
@@ -709,6 +693,27 @@
                                     "responses": [
                                         "com_sex_P_cowgirl_1",
                                         "com_sex_P_cowgirl_2"
+                                    ],
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "firstexp_V"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "cowgirl",
+                                                "sleeping",
+                                                "pain"
+                                            ],
+                                            "_comment": "初体验 睡眠中 骑乘位V",
+                                            "responses": [
+                                                "com_sex_P_cowgirl_FE_Sleep_1"
+                                            ]
+                                        }
                                     ]
                                 },
                                 {
@@ -731,6 +736,27 @@
                                     "responses": [
                                         "com_sex_P_cowgirl_3",
                                         "com_sex_P_cowgirl_4"
+                                    ],
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "firstexp_V"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "cowgirl",
+                                                "doll",
+                                                "empty"
+                                            ],
+                                            "_comment": "初体验 时停中 骑乘位V",
+                                            "responses": [
+                                                "com_sex_P_cowgirl_FE_Timestop_1"
+                                            ]
+                                        }
                                     ]
                                 },
                                 {
@@ -836,26 +862,6 @@
                         },
                         {
                             "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "firstexp_V",
-                                    "timestop"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "cowgirl",
-                                "doll",
-                                "empty"
-                            ],
-                            "_comment": "初体验 时停中 骑乘位V",
-                            "responses": [
-                                "com_sex_P_cowgirl_FE_Timestop_1"
-                            ]
-                        },
-                        {
-                            "requirement": {
                                 "selfTags": [
                                     "firstexp_V"
                                 ]
@@ -863,20 +869,31 @@
                             "variants": [
                                 {
                                     "requirement": {
-                                        "targetBaseID": "PLAYER",
-                                        "requirePermission": true
+                                        "targetBaseID": "PLAYER"
                                     },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "cowgirl",
-                                        "blush",
-                                        "pain",
-                                        "love"
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "cowgirl",
+                                                "blush",
+                                                "pain",
+                                                "love"
+                                            ],
+                                            "_comment": "初体验 玩家专用 骑乘位V 有允许",
+                                            "responses": [
+                                                "com_sex_P_cowgirl_FE_Player_1"
+                                            ]
+                                        }
                                     ],
-                                    "_comment": "初体验 玩家专用 骑乘位V 有允许",
+                                    "_comment": "玩家专用（无允许兜底）",
                                     "responses": [
-                                        "com_sex_P_cowgirl_FE_Player_1"
+                                        "com_sex_P_cowgirl_FE_4",
+                                        "com_sex_P_cowgirl_FE_5"
                                     ]
                                 },
                                 {
@@ -930,22 +947,6 @@
                         },
                         {
                             "requirement": {
-                                "selfTags": [
-                                    "firstexp_partner_V"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "cowgirl"
-                            ],
-                            "_comment": "对方初体验 骑乘位V（被骑的一方）",
-                            "responses": [
-                                "com_sex_P_cowgirl_FE_Partner_1"
-                            ]
-                        },
-                        {
-                            "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
                                     "sleeping"
@@ -984,6 +985,27 @@
                             "responses": [
                                 "com_sex_P_cowgirl_3",
                                 "com_sex_P_cowgirl_4"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "firstexp_V"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "cowgirl",
+                                        "doll",
+                                        "empty"
+                                    ],
+                                    "_comment": "初体验 时停中 骑乘位V",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_FE_Timestop_1"
+                                    ]
+                                }
                             ]
                         },
                         {
@@ -1006,6 +1028,24 @@
                                         "com_sex_P_cowgirl_27",
                                         "com_sex_P_cowgirl_28",
                                         "com_sex_P_cowgirl_29"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_partner_V"
+                                        ],
+                                        "requireSelfAction": false,
+                                        "requireTargetAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "cowgirl"
+                                    ],
+                                    "_comment": "对方初体验 骑乘位V（被骑的一方）",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_FE_Partner_1"
                                     ]
                                 }
                             ],
@@ -1034,7 +1074,11 @@
                             }
                         }
                     ],
-                    "template": "commandResult"
+                    "template": "commandResult",
+                    "templateExtras": [
+                        "firstexpV",
+                        "firstexpPartnerV"
+                    ]
                 }
             },
             {
