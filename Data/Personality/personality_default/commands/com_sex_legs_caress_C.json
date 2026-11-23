@@ -13,7 +13,9 @@
                             "requireSelfDoer": true,
                             "_comment": "攻方 腿按压阴部 高潮",
                             "responses": [
-                                "UID_com_sex_legs_caress_C_Climax_1"
+                                "UID_com_sex_legs_caress_C_Climax_1",
+                                "UID_com_sex_legs_caress_C_Climax_8",
+                                "UID_com_sex_legs_caress_C_Climax_9"
                             ]
                         },
                         {
@@ -32,7 +34,8 @@
                                     "_comment": "2.4.1 受方 被腿按压阴部 高潮 有允许 口上文",
                                     "responses": [
                                         "UID_com_sex_legs_caress_C_Climax_2",
-                                        "UID_com_sex_legs_caress_C_Climax_3"
+                                        "UID_com_sex_legs_caress_C_Climax_3",
+                                        "UID_com_sex_legs_caress_C_Climax_6"
                                     ]
                                 }
                             ],
@@ -45,7 +48,8 @@
                             "_comment": "2.4.2 受方 被腿按压阴部 高潮 无允许 口上文",
                             "responses": [
                                 "UID_com_sex_legs_caress_C_Climax_4",
-                                "UID_com_sex_legs_caress_C_Climax_5"
+                                "UID_com_sex_legs_caress_C_Climax_5",
+                                "UID_com_sex_legs_caress_C_Climax_7"
                             ]
                         }
                     ],
@@ -60,26 +64,6 @@
                         "nsfw"
                     ],
                     "variants": [
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "spread_pussy",
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
-                            "responses": [
-                                "UID_com_sex_legs_caress_C_Begin_Sleep_1",
-                                "UID_com_sex_legs_caress_C_Begin_Sleep_2"
-                            ]
-                        },
                         {
                             "requirement": {
                                 "requireSelfAction": false,
@@ -99,8 +83,80 @@
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "UID_com_sex_legs_caress_C_Begin_Timestop_1",
-                                "UID_com_sex_legs_caress_C_Begin_Timestop_2"
+                                "UID_com_sex_legs_caress_C_Begin_Timestop_2",
+                                "UID_com_sex_legs_caress_C_Begin_Timestop_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "spread_pussy",
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
+                            "responses": [
+                                "UID_com_sex_legs_caress_C_Begin_Sleep_1",
+                                "UID_com_sex_legs_caress_C_Begin_Sleep_2",
+                                "UID_com_sex_legs_caress_C_Begin_Sleep_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_sex_legs_caress_C_Begin_1",
+                                        "com_sex_legs_caress_C_Begin_2",
+                                        "com_sex_legs_caress_C_Begin_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_sex_legs_caress_C_Begin_4",
+                                        "com_sex_legs_caress_C_Begin_5",
+                                        "com_sex_legs_caress_C_Begin_6"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_legs_caress_C_Begin_7",
+                                "com_sex_legs_caress_C_Begin_8",
+                                "com_sex_legs_caress_C_Begin_9"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            }
                         },
                         {
                             "requirement": {
@@ -117,7 +173,8 @@
                             "_comment": "2.1.1 开始被腿按压阴部 有允许 口上文",
                             "responses": [
                                 "UID_com_sex_legs_caress_C_Begin_1",
-                                "UID_com_sex_legs_caress_C_Begin_2"
+                                "UID_com_sex_legs_caress_C_Begin_2",
+                                "UID_com_sex_legs_caress_C_Begin_7"
                             ]
                         },
                         {
@@ -133,7 +190,8 @@
                             "_comment": "2.2.1 开始被腿按压阴部 未允许 好意 口上文",
                             "responses": [
                                 "UID_com_sex_legs_caress_C_Begin_3",
-                                "UID_com_sex_legs_caress_C_Begin_4"
+                                "UID_com_sex_legs_caress_C_Begin_4",
+                                "UID_com_sex_legs_caress_C_Begin_8"
                             ]
                         },
                         {
@@ -149,8 +207,13 @@
                             "_comment": "2.2.2 开始被腿按压阴部 未允许 敌意 口上文",
                             "responses": [
                                 "UID_com_sex_legs_caress_C_Begin_5",
-                                "UID_com_sex_legs_caress_C_Begin_6"
-                            ]
+                                "UID_com_sex_legs_caress_C_Begin_6",
+                                "UID_com_sex_legs_caress_C_Begin_9"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            }
                         }
                     ],
                     "template": "commandAct"
@@ -166,6 +229,192 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "spread_pussy",
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "_comment": "2.3.1 时停中 被腿按压阴部 口上文",
+                            "responses": [
+                                "UID_com_sex_legs_caress_C_3",
+                                "UID_com_sex_legs_caress_C_4",
+                                "UID_com_sex_legs_caress_C_30"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "spread_pussy",
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "_comment": "2.3.1 时停中 被腿按压阴部 口上文",
+                            "responses": [
+                                "UID_com_sex_legs_caress_C_3",
+                                "UID_com_sex_legs_caress_C_4",
+                                "com_sex_legs_caress_C_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "spread_pussy",
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "_comment": "2.3.2 睡眠中 被腿按压阴部 口上文",
+                            "responses": [
+                                "UID_com_sex_legs_caress_C_1",
+                                "UID_com_sex_legs_caress_C_2",
+                                "com_sex_legs_caress_C_1"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "spread_pussy",
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "_comment": "2.3.2 睡眠中 被腿按压阴部 口上文",
+                            "responses": [
+                                "UID_com_sex_legs_caress_C_1",
+                                "UID_com_sex_legs_caress_C_2",
+                                "UID_com_sex_legs_caress_C_25"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_sex_legs_caress_C_18",
+                                        "com_sex_legs_caress_C_19",
+                                        "com_sex_legs_caress_C_20"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessLTE": "Failure"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_sex_legs_caress_C_9",
+                                                "com_sex_legs_caress_C_10",
+                                                "com_sex_legs_caress_C_11"
+                                            ]
+                                        }
+                                    ],
+                                    "responses": [
+                                        "com_sex_legs_caress_C_24",
+                                        "com_sex_legs_caress_C_25",
+                                        "com_sex_legs_caress_C_26"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_sex_legs_caress_C_12",
+                                                "com_sex_legs_caress_C_13",
+                                                "com_sex_legs_caress_C_14"
+                                            ]
+                                        }
+                                    ],
+                                    "responses": [
+                                        "com_sex_legs_caress_C_27",
+                                        "com_sex_legs_caress_C_28",
+                                        "com_sex_legs_caress_C_29"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_sex_legs_caress_C_15",
+                                        "com_sex_legs_caress_C_16",
+                                        "com_sex_legs_caress_C_17"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_legs_caress_C_21",
+                                "com_sex_legs_caress_C_22",
+                                "com_sex_legs_caress_C_23"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            }
+                        },
+                        {
+                            "requirement": {
                                 "requireEPSuccessGTE": "Success"
                             },
                             "_player only version": {
@@ -177,48 +426,6 @@
                                 "requireCOMStrongVariant": true
                             },
                             "variants": [
-                                {
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "sleeping"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "spread_pussy",
-                                        "sleeping",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.3.2 睡眠中 被腿按压阴部 口上文",
-                                    "responses": [
-                                        "UID_com_sex_legs_caress_C_1",
-                                        "UID_com_sex_legs_caress_C_2"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "timestop"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "spread_pussy",
-                                        "doll",
-                                        "empty",
-                                        "silence",
-                                        "idle"
-                                    ],
-                                    "_comment": "2.3.1 时停中 被腿按压阴部 口上文",
-                                    "responses": [
-                                        "UID_com_sex_legs_caress_C_3",
-                                        "UID_com_sex_legs_caress_C_4"
-                                    ]
-                                },
                                 {
                                     "requirement": {
                                         "targetBaseID": "PLAYER",
@@ -243,7 +450,9 @@
                                             ],
                                             "_comment": "2.1.5  玩家专用的 刚睡醒时的 被腿按压阴部 有允许 口上文",
                                             "responses": [
-                                                "UID_com_sex_legs_caress_C_12"
+                                                "UID_com_sex_legs_caress_C_12",
+                                                "com_sex_legs_caress_C_5",
+                                                "com_sex_legs_caress_C_6"
                                             ]
                                         },
                                         {
@@ -261,7 +470,9 @@
                                             ],
                                             "_comment": "2.2.7 玩家专用的 刚睡醒时的 被腿按压阴部 无允许 好意 口上文",
                                             "responses": [
-                                                "UID_com_sex_legs_caress_C_13"
+                                                "UID_com_sex_legs_caress_C_13",
+                                                "com_sex_legs_caress_C_3",
+                                                "com_sex_legs_caress_C_4"
                                             ]
                                         }
                                     ],
@@ -274,7 +485,9 @@
                                         "submissive"
                                     ],
                                     "responses": [
-                                        "UID_com_sex_legs_caress_C_14"
+                                        "UID_com_sex_legs_caress_C_14",
+                                        "UID_com_sex_legs_caress_C_36",
+                                        "UID_com_sex_legs_caress_C_37"
                                     ]
                                 },
                                 {
@@ -292,7 +505,8 @@
                                     "_comment": "2.1.3 ($self$) 被腿按压阴部 结果正面 有允许 口上文",
                                     "responses": [
                                         "UID_com_sex_legs_caress_C_15",
-                                        "UID_com_sex_legs_caress_C_16"
+                                        "UID_com_sex_legs_caress_C_16",
+                                        "UID_com_sex_legs_caress_C_29"
                                     ]
                                 }
                             ],
@@ -309,49 +523,8 @@
                             ],
                             "responses": [
                                 "UID_com_sex_legs_caress_C_17",
-                                "UID_com_sex_legs_caress_C_18"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "spread_pussy",
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "2.3.2 睡眠中 被腿按压阴部 口上文",
-                            "responses": [
-                                "UID_com_sex_legs_caress_C_1",
-                                "UID_com_sex_legs_caress_C_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "timestop"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "spread_pussy",
-                                "doll",
-                                "empty",
-                                "silence",
-                                "idle"
-                            ],
-                            "_comment": "2.3.1 时停中 被腿按压阴部 口上文",
-                            "responses": [
-                                "UID_com_sex_legs_caress_C_3",
-                                "UID_com_sex_legs_caress_C_4"
+                                "UID_com_sex_legs_caress_C_18",
+                                "UID_com_sex_legs_caress_C_26"
                             ]
                         },
                         {
@@ -378,7 +551,9 @@
                                     ],
                                     "_comment": "2.1.5  玩家专用的 刚睡醒时的 被腿按压阴部 有允许 口上文",
                                     "responses": [
-                                        "UID_com_sex_legs_caress_C_12"
+                                        "UID_com_sex_legs_caress_C_12",
+                                        "UID_com_sex_legs_caress_C_32",
+                                        "UID_com_sex_legs_caress_C_33"
                                     ]
                                 },
                                 {
@@ -396,7 +571,9 @@
                                     ],
                                     "_comment": "2.2.7 玩家专用的 刚睡醒时的 被腿按压阴部 无允许 好意 口上文",
                                     "responses": [
-                                        "UID_com_sex_legs_caress_C_13"
+                                        "UID_com_sex_legs_caress_C_13",
+                                        "UID_com_sex_legs_caress_C_27",
+                                        "UID_com_sex_legs_caress_C_28"
                                     ]
                                 }
                             ],
@@ -409,54 +586,71 @@
                                 "submissive"
                             ],
                             "responses": [
-                                "UID_com_sex_legs_caress_C_14"
+                                "UID_com_sex_legs_caress_C_14",
+                                "com_sex_legs_caress_C_7",
+                                "com_sex_legs_caress_C_8"
                             ]
                         },
                         {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "responses": [
+                                "com_sex_legs_caress_C_30",
+                                "com_sex_legs_caress_C_31",
+                                "com_sex_legs_caress_C_32"
+                            ],
                             "variants": [
                                 {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "spread_pussy",
+                                                "pain",
+                                                "bored",
+                                                "doubt",
+                                                "disappointed"
+                                            ],
+                                            "_comment": "2.1.4 ($self$) 被腿按压阴部 结果负面 有允许 口上文",
+                                            "responses": [
+                                                "UID_com_sex_legs_caress_C_19",
+                                                "UID_com_sex_legs_caress_C_20",
+                                                "UID_com_sex_legs_caress_C_24"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.6 ($self$) 被腿按压阴部 结果负面 未允许 口上文",
                                     "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
                                         "spread_pussy",
-                                        "pain",
-                                        "bored",
-                                        "doubt",
-                                        "disappointed"
+                                        "angry",
+                                        "cry",
+                                        "glare",
+                                        "disgust",
+                                        "pouting",
+                                        "sad",
+                                        "troubled",
+                                        "silence"
                                     ],
-                                    "_comment": "2.1.4 ($self$) 被腿按压阴部 结果负面 有允许 口上文",
                                     "responses": [
-                                        "UID_com_sex_legs_caress_C_19",
-                                        "UID_com_sex_legs_caress_C_20"
-                                    ]
+                                        "UID_com_sex_legs_caress_C_21",
+                                        "UID_com_sex_legs_caress_C_22",
+                                        "UID_com_sex_legs_caress_C_31"
+                                    ],
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "requireTargetAction": false,
+                                        "allowRecording": true
+                                    }
                                 }
-                            ],
-                            "_comment": "2.2.6 ($self$) 被腿按压阴部 结果负面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "spread_pussy",
-                                "angry",
-                                "cry",
-                                "glare",
-                                "disgust",
-                                "pouting",
-                                "sad",
-                                "troubled",
-                                "silence"
-                            ],
-                            "responses": [
-                                "UID_com_sex_legs_caress_C_21",
-                                "UID_com_sex_legs_caress_C_22"
-                            ],
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            }
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -483,7 +677,8 @@
                             "useActiveTags": false,
                             "responses": [
                                 "com_sex_legs_caress_C_Refuse_Receiver_1",
-                                "com_sex_legs_caress_C_Refuse_Receiver_2"
+                                "com_sex_legs_caress_C_Refuse_Receiver_2",
+                                "com_sex_legs_caress_C_Refuse_Receiver_3"
                             ]
                         },
                         {
@@ -528,13 +723,17 @@
                                             "useActiveTags": false,
                                             "_comment": "2.1.6 刚睡醒时的 指令失败拒绝 被腿按压阴部 口上文 有允许",
                                             "responses": [
-                                                "UID_com_sex_legs_caress_C_5"
+                                                "UID_com_sex_legs_caress_C_5",
+                                                "UID_com_sex_legs_caress_C_34",
+                                                "UID_com_sex_legs_caress_C_35"
                                             ]
                                         }
                                     ],
                                     "_comment": "2.2.9 刚睡醒时的 指令失败拒绝 被腿按压阴部 口上文 无允许",
                                     "responses": [
-                                        "UID_com_sex_legs_caress_C_6"
+                                        "UID_com_sex_legs_caress_C_6",
+                                        "UID_com_sex_legs_caress_C_41",
+                                        "UID_com_sex_legs_caress_C_42"
                                     ]
                                 },
                                 {
@@ -555,7 +754,8 @@
                                     "_comment": "2.1.2 指令失败拒绝 被腿按压阴部 有允许 口上文",
                                     "responses": [
                                         "UID_com_sex_legs_caress_C_7",
-                                        "UID_com_sex_legs_caress_C_8"
+                                        "UID_com_sex_legs_caress_C_8",
+                                        "UID_com_sex_legs_caress_C_23"
                                     ]
                                 },
                                 {
@@ -574,7 +774,9 @@
                                     "useActiveTags": false,
                                     "_comment": "2.2.3 指令失败拒绝 被腿按压阴部 无允许 善意 口上文",
                                     "responses": [
-                                        "UID_com_sex_legs_caress_C_9"
+                                        "UID_com_sex_legs_caress_C_9",
+                                        "UID_com_sex_legs_caress_C_39",
+                                        "UID_com_sex_legs_caress_C_40"
                                     ]
                                 }
                             ],
@@ -588,11 +790,55 @@
                             "useActiveTags": false,
                             "responses": [
                                 "UID_com_sex_legs_caress_C_10",
-                                "UID_com_sex_legs_caress_C_11"
+                                "UID_com_sex_legs_caress_C_11",
+                                "UID_com_sex_legs_caress_C_38"
                             ]
                         }
                     ],
                     "template": "commandRefuse"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_legs_caress_C_Ongoing",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "responses": [
+                                        "com_sex_legs_caress_C_Ongoing_1",
+                                        "com_sex_legs_caress_C_Ongoing_2",
+                                        "com_sex_legs_caress_C_Ongoing_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_legs_caress_C_Ongoing_4",
+                                "com_sex_legs_caress_C_Ongoing_5",
+                                "com_sex_legs_caress_C_Ongoing_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "responses": [
+                                "com_sex_legs_caress_C_Ongoing_7",
+                                "com_sex_legs_caress_C_Ongoing_8",
+                                "com_sex_legs_caress_C_Ongoing_9"
+                            ]
+                        }
+                    ],
+                    "template": "commandAct"
                 }
             }
         ]
@@ -600,45 +846,125 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "UID_com_sex_legs_caress_C_Climax_1": "$self$用大腿压着$target$的股间慢慢磨按，自己的呼吸却先乱了，腿根抖着就这么到了。\n\"唔……明明是在给你磨……我怎么会先……♡\"",
-                "UID_com_sex_legs_caress_C_Climax_4": "$self$绝望地摇头，泪和口水糊了脸，腿缝却在那条腿的研磨下痉挛着到了顶。\n\"不要！那种事……明明讨厌的……啊啊啊！不行了……！\"",
-                "UID_com_sex_legs_caress_C_Climax_5": "$self$的双腿本能地绞紧$target$的腿，理智被快感冲得散了架，只剩抽搐。\n\"明明不想的……身体……擅自……哈啊啊……！\"",
-                "UID_com_sex_legs_caress_C_Climax_2": "$self$猛地仰起头，脊背弓起来，股间被$target$的大腿压着研磨，阴蒂抖着把她送上了顶。\n\"啊啊——！到了……要坏掉了……哈啊♡\"",
-                "UID_com_sex_legs_caress_C_Climax_3": "$self$浑身颤抖地失神，口水顺着嘴角淌，双腿把$target$的腿夹得紧极了。\n\"同时……哈啊……最喜欢了……呜哇♡\"",
-                "UID_com_sex_legs_caress_C_Begin_1": "$self$顺从地分开双腿，让$target$的大腿挤进腿间贴住腿缝。\n\"如果是你的话……也可以哦。\"",
-                "UID_com_sex_legs_caress_C_Begin_2": "$self$主动抬起膝盖蹭了蹭$target$的腿根，坐稳了。\n\"那就快点……我已经湿了。\"",
-                "UID_com_sex_legs_caress_C_Begin_3": "$self$僵了下，却没推开那条挤进腿间的大腿，脸迅速红了。\n\"等、等下……$target$？这里不行……会被人看到的……\"",
-                "UID_com_sex_legs_caress_C_Begin_4": "$self$咬着唇抓紧裙摆，任由那条腿抵了上来。\n\"如果是你要求的……但我不知道该怎么做……\"",
-                "UID_com_sex_legs_caress_C_Begin_5": "$self$颤抖着缩起肩膀，不敢看$target$。\n\"我明白了……请别告诉别人……就这次……\"",
-                "UID_com_sex_legs_caress_C_Begin_6": "$self$紧闭双眼，双腿被摆开架上了那条腿。\n\"只要听话就不会有事对吧……我照做……\"",
-                "UID_com_sex_legs_caress_C_1": "$self$发出轻微的鼾声，对腿间被压着研磨毫无察觉，只是偶尔痒得皱眉，翻身时还蹭了蹭。",
+                "UID_com_sex_legs_caress_C_Climax_1": "$self$用大腿压着$target$的股间慢慢磨按，自己的呼吸却先乱了，腿根抖着就这么到了：“唔……明明是在给你磨……我怎么会先……♡”",
+                "UID_com_sex_legs_caress_C_Climax_4": "$self$绝望地摇头，泪和口水糊了脸，腿缝却在那条腿的研磨下痉挛着到了顶：“不要！那种事……明明讨厌的……啊啊啊！不行了……！”",
+                "UID_com_sex_legs_caress_C_Climax_5": "$self$的双腿本能地绞紧$target$的腿，理智被快感冲得散了架，只剩抽搐：“明明不想的……身体……擅自……哈啊啊……！”",
+                "UID_com_sex_legs_caress_C_Climax_2": "$self$猛地仰起头，脊背弓起来，股间被$target$的大腿压着研磨，阴蒂抖着把她送上了顶：“啊啊——！到了……要坏掉了……哈啊♡”",
+                "UID_com_sex_legs_caress_C_Climax_3": "$self$浑身颤抖地失神，口水顺着嘴角淌，双腿把$target$的腿夹得紧极了：“同时……哈啊……最喜欢了……呜哇♡”",
+                "UID_com_sex_legs_caress_C_Begin_1": "$self$顺从地分开双腿，让$target$的大腿挤进腿间贴住腿缝：“如果是你的话……也可以哦。”",
+                "UID_com_sex_legs_caress_C_Begin_2": "$self$主动抬起膝盖蹭了蹭$target$的腿根，稳稳坐好：“那就快点……我已经湿了。”",
+                "UID_com_sex_legs_caress_C_Begin_3": "$self$呼吸一顿，却没推开那条挤进腿间的大腿，脸颊迅速泛红：“等、等下……$target$？这里不行……会被人看到的……”",
+                "UID_com_sex_legs_caress_C_Begin_4": "$self$咬着下唇收紧指尖，任由那条腿抵了上来：“如果是你要求的……但我不知道该怎么做……”",
+                "UID_com_sex_legs_caress_C_Begin_5": "$self$颤抖着缩起肩膀，不敢看$target$：“我明白了……请别告诉别人……就这次……”",
+                "UID_com_sex_legs_caress_C_Begin_6": "$self$紧闭双眼，双腿被摆开架上了那条腿：“只要听话就不会有事对吧……我照做……”",
+                "UID_com_sex_legs_caress_C_1": "$self$发出轻微的鼾声，对腿间被压着研磨毫无察觉，只是偶尔痒得缩了缩肩，翻身时还蹭了蹭。",
                 "UID_com_sex_legs_caress_C_2": "$self$在睡梦里无意识地哼唧，腿间被按得发热，梦话里都带了鼻音，人没醒。",
                 "UID_com_sex_legs_caress_C_3": "$self$保持着原本的姿势定住，被反复挤压的腿缝已经红肿，爱液顺着腿根淌下来，她毫无所觉。",
-                "UID_com_sex_legs_caress_C_4": "$self$僵立不动，只有被碾压的股间随着$target$的腿变形，任由那片湿意蔓延，她没有任何反应。",
-                "UID_com_sex_legs_caress_C_10": "$self$冷冷地盯着$target$，只吐出两个字都不肯多给。\n\"滚。\"",
-                "UID_com_sex_legs_caress_C_11": "$self$猛地站起身，语气冰冷。\n\"请自重……再这样我就报警了。\"",
-                "UID_com_sex_legs_caress_C_6": "$self$惊恐地挣扎，推着压上来的重量。\n\"救命！你在干什么！放开我！\"",
-                "UID_com_sex_legs_caress_C_5": "$self$猛地惊醒，下意识把$target$踢开。\n\"你在干什么？！我在睡觉啊！\"",
-                "UID_com_sex_legs_caress_C_7": "$self$轻轻推了推$target$凑过来的大腿，翻了个身。\n\"今晚太累了……饶了我吧。\"",
-                "UID_com_sex_legs_caress_C_8": "$self$并拢双腿，隔开那条不老实的腿。\n\"不行，明天还要早起……别闹了。\"",
-                "UID_com_sex_legs_caress_C_9": "$self$尴尬地往后缩，把$target$的腿推开。\n\"哈哈……这玩笑有点过火了哦，$target$。\"",
-                "UID_com_sex_legs_caress_C_14": "$self$被吓醒想尖叫，看到$target$的眼神后立刻捂住嘴，抖着张开了腿。\n\"不要打我……我听话……呜呜……\"",
-                "UID_com_sex_legs_caress_C_12": "$self$迷迷糊糊哼了声，感受到腿间的挤压后反而本能地迎了上去。\n\"唔……是你吗？真是个坏心眼的家伙……嗯……~\"",
-                "UID_com_sex_legs_caress_C_13": "$self$惊愕地睁大眼，看清是$target$后，身体反而软了下来。\n\"是你……？既然已经这样了……那就轻点磨……\"",
-                "UID_com_sex_legs_caress_C_17": "$self$原本抗拒的手慢慢变成了抓紧$target$的衣服，眼神迷离。\n\"明明不应该这样的……但是……呜……好奇怪的感觉……\"",
-                "UID_com_sex_legs_caress_C_18": "$self$咬着手指想压住呻吟，腰却已经自己摆动起来。\n\"不行……要变得奇怪了……哈啊……停不下来……\"",
-                "UID_com_sex_legs_caress_C_15": "$self$的呼吸急促起来，大腿内侧痉挛着夹紧了$target$的腿。\n\"哈啊……就是那里……再用力点挤压……好舒服……♡\"",
-                "UID_com_sex_legs_caress_C_16": "$self$满脸潮红，环住$target$的脖子，下身配合着摩擦的节奏扭动。\n\"嗯……这种感觉……只是腿……也好舒服……♡\"",
-                "UID_com_sex_legs_caress_C_21": "$self$痛苦地啜泣，指甲掐进了掌心。\n\"好恶心……求求你快点结束……受不了了……\"",
-                "UID_com_sex_legs_caress_C_22": "$self$眼神空洞地望着前方，身子随着$target$的动作晃动，再没有别的反应。\n\"……随便你。\"",
-                "UID_com_sex_legs_caress_C_19": "$self$不适地挪了挪臀，眉头微蹙。\n\"这种姿势……摩擦得皮肉好痛……还没结束吗？\"",
-                "UID_com_sex_legs_caress_C_20": "$self$望着上方叹了口气，身子发僵。\n\"没什么感觉啊……要不直接算了吧。\"",
+                "UID_com_sex_legs_caress_C_4": "$self$一动不动地任由摆布，只有被碾压的股间随着$target$的腿变形，任由那片湿意蔓延，她没有任何反应。",
+                "UID_com_sex_legs_caress_C_10": "$self$冷冷地盯着$target$，只吐出两个字都不肯多给：“滚。”",
+                "UID_com_sex_legs_caress_C_11": "$self$猛地站起身，神色冷峻：“请自重……再这样我就报警了。”",
+                "UID_com_sex_legs_caress_C_6": "$self$惊恐地挣扎，推着压上来的重量：“救命！你在干什么！放开我！”",
+                "UID_com_sex_legs_caress_C_5": "$self$猛地惊醒，下意识把$target$踢开：“你在干什么？！我在睡觉啊！”",
+                "UID_com_sex_legs_caress_C_7": "$self$轻轻推了推$target$凑过来的大腿，翻了个身：“今晚太累了……饶了我吧。”",
+                "UID_com_sex_legs_caress_C_8": "$self$并拢双腿，隔开那条不老实的腿：“不行，明天还要早起……别闹了。”",
+                "UID_com_sex_legs_caress_C_9": "$self$尴尬地往后缩，把$target$的腿推开：“哈哈……这玩笑有点过火了哦，$target$。”",
+                "UID_com_sex_legs_caress_C_14": "$self$被吓醒想尖叫，看到$target$的眼神后立刻捂住嘴，抖着张开了腿：“不要打我……我听话……呜呜……”",
+                "UID_com_sex_legs_caress_C_12": "$self$迷迷糊糊哼了声，感受到腿间的挤压后反而本能地迎了上去：“唔……是你吗？真是个坏心眼的家伙……嗯……~”",
+                "UID_com_sex_legs_caress_C_13": "$self$惊愕地睁大眼，看清是$target$后，身体反而软了下来：“是你……？既然已经这样了……那就轻点磨……”",
+                "UID_com_sex_legs_caress_C_17": "$self$原本抗拒的手慢慢变成了抓紧$target$的肩膀，眼神迷离：“明明不应该这样的……但是……呜……好奇怪的感觉……”",
+                "UID_com_sex_legs_caress_C_18": "$self$咬着手指想压住呻吟，腰却已经自己摆动起来：“不行……要变得奇怪了……哈啊……停不下来……”",
+                "UID_com_sex_legs_caress_C_15": "$self$的呼吸急促起来，大腿内侧痉挛着夹紧了$target$的腿：“哈啊……就是那里……再用力点挤压……好舒服……♡”",
+                "UID_com_sex_legs_caress_C_16": "$self$满脸潮红，环住$target$的脖子，下身配合着摩擦的节奏扭动：“嗯……这种感觉……只是腿……也好舒服……♡”",
+                "UID_com_sex_legs_caress_C_21": "$self$痛苦地啜泣，指甲掐进了掌心：“好恶心……求求你快点结束……受不了了……”",
+                "UID_com_sex_legs_caress_C_22": "$self$眼神空洞地望着前方，身子随着$target$的动作晃动，再没有别的反应：“……随便你。”",
+                "UID_com_sex_legs_caress_C_19": "$self$不适地挪了挪身子，脸颊绷紧：“这种姿势……摩擦得皮肉好痛……还没结束吗？”",
+                "UID_com_sex_legs_caress_C_20": "$self$望着上方叹了口气，大腿内侧酸得直打颤：“没什么感觉啊……要不直接算了吧。”",
                 "UID_com_sex_legs_caress_C_Begin_Sleep_1": "$target$的大腿压进她熟睡中的腿间抵住腿缝慢慢研磨，$self$在梦里哼唧了一声，腿根无意识地夹了夹，却没醒。",
-                "UID_com_sex_legs_caress_C_Begin_Sleep_2": "股间被膝盖顶着按揉，被碾得发热的穴口渐渐渗出水，$self$皱着眉翻了个身，梦话里都带了鼻音。",
+                "UID_com_sex_legs_caress_C_Begin_Sleep_2": "股间被膝盖顶着按揉，被碾得发热的穴口渐渐渗出水，$self$迷糊地翻了个身，梦话里都带了鼻音。",
                 "UID_com_sex_legs_caress_C_Begin_Timestop_1": "$target$的大腿压进她定格的腿间抵住腿缝研磨，被碾得发热的穴口不受控地渗水，$self$张着的腰没有迎合。",
                 "UID_com_sex_legs_caress_C_Begin_Timestop_2": "股间被膝盖顶着按揉，爱液顺着腿根淌出亮痕，$self$搭在身侧的手悬着，指尖离地板还差半寸。",
-                "com_sex_legs_caress_C_Refuse_Receiver_1": "$self$用力推开了$target$，神色戒备。\n\"别碰我！我没同意做这种事。\"",
-                "com_sex_legs_caress_C_Refuse_Receiver_2": "$self$往后退开一步，冷冷地拒绝了$target$。\n\"现在不行，请离我远点。\""
+                "com_sex_legs_caress_C_Refuse_Receiver_1": "$self$用力推开了$target$，神色戒备：“别碰我！我没同意做这种事。”",
+                "com_sex_legs_caress_C_Refuse_Receiver_2": "$self$往后退开一步，冷冷地拒绝了$target$：“现在不行，请离我远点。”",
+                "UID_com_sex_legs_caress_C_Begin_7": "$self$双颊微红，轻轻调整坐姿让腿缝对准$target$的膝盖：“今天想用腿来欺负我吗……随你喜欢吧。”",
+                "UID_com_sex_legs_caress_C_23": "$self$按住$target$想挤进来的膝盖，无奈地摇摇头：“今天下面有点不舒服，改天再说好吗？”",
+                "UID_com_sex_legs_caress_C_24": "$self$略显烦躁地推了下$target$的膝盖，示意对方换个角度：“一直这样硬压着，骨头都要硌青了……”",
+                "UID_com_sex_legs_caress_C_25": "腿缝渗出的水意把膝盖濡湿，$self$在梦里轻喘了口气，双腿下意识收拢又慢慢松开。",
+                "UID_com_sex_legs_caress_C_26": "$self$想合拢双腿，却在膝盖再次顶上来时发出一声软绵绵的呜咽：“唔……别只盯着下面看……好羞耻……”",
+                "UID_com_sex_legs_caress_C_Begin_8": "$self$别过脸去，双腿却还是顺从地让开了空隙：“真拿你没办法……只能稍微碰一下哦。”",
+                "com_sex_legs_caress_C_Refuse_Receiver_3": "$self$并拢双腿往旁边挪开，眼神透着抗拒：“别拿脚乱碰，我没打算答应你。”",
+                "UID_com_sex_legs_caress_C_Begin_Timestop_3": "$self$的双腿被摆开架在$target$腿侧，静止的躯体毫无反抗，任由那条腿压着柔嫩的腿缝来回碾动。",
+                "UID_com_sex_legs_caress_C_27": "$self$刚清醒就感觉到腿间阵阵发麻，脸红着偏过头：“趁人睡着的时候弄这个……真是过分……唔……”",
+                "UID_com_sex_legs_caress_C_28": "$self$本来想推开，可下半身已经发软，只能抓紧身下的床单：“算了……既然都醒了，你就别停下啦……”",
+                "UID_com_sex_legs_caress_C_29": "$self$主动挺起腰胯迎合着膝盖的顶压，湿滑的黏液沾满了腿根：“啊……阴蒂被磨得发烫了……别停……♡”",
+                "UID_com_sex_legs_caress_C_Climax_6": "$self$脚尖绷直，大腿内侧疯狂痉挛着绞住$target$的膝盖，喷出一股热液：“不行……光是用腿磨就去了……啊♡”",
+                "UID_com_sex_legs_caress_C_30": "被顶弄的穴口张合着吐出清液，$self$凝固在原地的面庞连睫毛都没颤一下。",
+                "UID_com_sex_legs_caress_C_31": "$self$忍着股间的钝痛闭上眼睛，别过脸不愿再看$target$一眼：“……快点弄完滚开。”",
+                "UID_com_sex_legs_caress_C_32": "$self$惺忪地睁开眼，察觉到$target$的膝盖正抵在敏感处，慵懒地贴紧了些：“醒来就能这么舒服……再多蹭几下吧……”",
+                "UID_com_sex_legs_caress_C_33": "$self$发出一声带着睡意的鼻音，顺势把大腿搭上$target$的腰侧：“唔……还没睡饱呢，你就这么急吗……”",
+                "UID_com_sex_legs_caress_C_34": "$self$揉着发沉的眼皮合拢双腿，语气里带着起床气：“别趁我睡觉的时候乱蹭……现在太困了。”",
+                "UID_com_sex_legs_caress_C_35": "$self$打了个哈欠把身子转过去，护住腿间：“哪怕是你也不行啦……让我再睡一会儿。”",
+                "UID_com_sex_legs_caress_C_36": "$self$猛地喘过气来，察觉到腿间正被反复碾压，吓得浑身发抖却不敢合拢双腿：“求求你……别伤害我……我不动……”",
+                "UID_com_sex_legs_caress_C_37": "$self$眼角挂着泪珠缩起脖子，强忍着股间涌上的异样快感不敢出声：“呜……对不起……我会乖乖配合的……”",
+                "UID_com_sex_legs_caress_C_38": "$self$狠狠甩开凑过来的腿，厌恶地瞪了过去：“别拿你的脏腿碰我！”",
+                "UID_com_sex_legs_caress_C_39": "$self$夹紧双腿往后退了半步，耳根泛红：“唔……用脚碰那里什么的，也太让人害羞了，不要。”",
+                "UID_com_sex_legs_caress_C_40": "$self$轻轻挡住$target$的膝盖，小声拒绝：“抱歉……我还不想做到这一步。”",
+                "UID_com_sex_legs_caress_C_Climax_7": "$self$死命捂住嘴却还是漏出破碎的哭叫，股间被碾得不住喷水达到顶峰：“停下……别再磨了……呜啊啊……！”",
+                "UID_com_sex_legs_caress_C_Begin_Sleep_3": "温热的膝盖挤进$self$合拢的大腿之间慢慢顶弄，她只在枕边发出一声含糊的鼻音，呼吸依旧绵长。",
+                "UID_com_sex_legs_caress_C_Climax_8": "$self$的大腿内侧蹭满湿滑的爱液，越磨越热之下自己反而先夹紧双腿到达了顶峰：“哈啊……好烫……光用腿压着磨我也去了……♡”",
+                "UID_com_sex_legs_caress_C_Climax_9": "$self$喘着气停不住腿上的研磨，下半身一阵阵发麻，软绵绵地靠在$target$身上：“不行……太有感觉了……呜嗯……”",
+                "UID_com_sex_legs_caress_C_Begin_9": "$self$脸色发白，死咬着嘴唇任由$target$的大腿压进腿间：“……快点结束吧，别太用力……”",
+                "UID_com_sex_legs_caress_C_41": "$self$被腿间的异物感吓醒，猛地缩到床角：“走开！别靠近我！”",
+                "UID_com_sex_legs_caress_C_42": "$self$抓过身边的枕头砸向$target$，声音发颤：“居然趁人睡着做这种事……你疯了吗！”",
+                "com_sex_legs_caress_C_1": "腿缝渗出的水意把膝盖濡湿，$self$在梦里轻喘了口气，双腿下意识收拢又慢慢松开。",
+                "com_sex_legs_caress_C_2": "被顶弄的穴口张合着吐出清液，$self$凝固在原地的面庞连睫毛都没颤一下。",
+                "com_sex_legs_caress_C_3": "$self$刚清醒就感觉到腿间阵阵发麻，脸红着偏过头：“趁人睡着的时候弄这个……真是过分……唔……”",
+                "com_sex_legs_caress_C_4": "$self$本来想推开，可下半身已经发软，只能抓紧身下的床单：“算了……既然都醒了，你就别停下啦……”",
+                "com_sex_legs_caress_C_5": "$self$惺忪地睁开眼，察觉到$target$的膝盖正抵在敏感处，慵懒地贴紧了些：“醒来就能这么舒服……再多蹭几下吧……”",
+                "com_sex_legs_caress_C_6": "$self$发出一声带着睡意的鼻音，顺势把大腿搭上$target$的腰侧：“唔……还没睡饱呢，你就这么急吗……”",
+                "com_sex_legs_caress_C_7": "$self$猛地喘过气来，察觉到腿间正被反复碾压，吓得浑身发抖却不敢合拢双腿：“求求你……别伤害我……我不动……”",
+                "com_sex_legs_caress_C_8": "$self$眼角挂着泪珠缩起脖子，强忍着股间涌上的异样快感不敢出声：“呜……对不起……我会乖乖配合的……”",
+                "com_sex_legs_caress_C_9": "动弹不得的$self$吃痛地吸气，股间被粗暴的动作硌得生疼：“嘶……好痛……你是故意的吗……”",
+                "com_sex_legs_caress_C_10": "$self$紧绷着被缚的身子，腿根被摩擦得发红发涩，忍不住闷哼出声：“够了……这样蹭一点也不舒服……”",
+                "com_sex_legs_caress_C_11": "$self$厌烦地扭开腰想避开硬邦邦的膝盖，呼吸又急又沉：“快停下……皮都要磨破了。”",
+                "com_sex_legs_caress_C_12": "双手被绑住的$self$根本挡不住腿间的刺激，随着膝盖一下下顶弄，腰肢控制不住地轻颤起来：“唔……别一直磨那里……”",
+                "com_sex_legs_caress_C_13": "$self$被束缚着只能把头抵在身后喘息，大腿内侧发软地贴紧$target$的腿，顺着动作流下水来：“哈啊……好烫……”",
+                "com_sex_legs_caress_C_14": "越是挣扎腿缝越是被蹭得发麻，$self$眼神渐渐迷离，小声咽呜着迎合起那条腿的节奏。",
+                "com_sex_legs_caress_C_15": "$self$被腿间湿热的压迫感弄醒，迷糊地眨了眨眼才反应过来发生了什么：“唔……$target$？你一直这样磨着我吗……”",
+                "com_sex_legs_caress_C_16": "睡意刚散，$self$就感觉到股间发麻的快感，脸颊迅速发烫：“什么时候开始的……真是坏心眼……”",
+                "com_sex_legs_caress_C_17": "$self$喘了口气清醒过来，大腿内侧已经被蹭得一片濡湿：“哈啊……吵醒我就为了用腿欺负我吗……”",
+                "com_sex_legs_caress_C_18": "昏迷的$self$双腿瘫软，腿缝被$target$的大腿来回碾得发红渗水，她只发出一声无意识的低哼。",
+                "com_sex_legs_caress_C_19": "$self$仍未苏醒，股间却顺着膝盖的顶压分泌出黏腻的水液，湿润了大腿内侧。",
+                "com_sex_legs_caress_C_20": "腿心在持续的按揉下泛起阵阵热意，昏迷中的$self$呼吸略微急促了些，人却完全没有动静。",
+                "com_sex_legs_caress_C_21": "$self$随着节奏轻哼出声，股间与阴蒂被$target$分开双腿用膝盖顶弄股间得一阵发麻：“哈啊……好舒服……”",
+                "com_sex_legs_caress_C_22": "快感顺着股间与阴蒂迅速蔓延开来，$self$软着声音喘息道：“唔嗯……就是那里，别停……”",
+                "com_sex_legs_caress_C_23": "$self$微眯起眼迎合着$target$的动作，嗓音带着甜腻的颤意：“啊……再多弄一会儿……”",
+                "com_sex_legs_caress_C_24": "$self$微微蹙眉往后躲了躲，股间与阴蒂传来一阵不太舒服的刺痛：“嘶……太重了，轻一点……”",
+                "com_sex_legs_caress_C_25": "$self$有些不适地绷紧了身子，小声抱怨道：“唔……这样弄一点也不舒服……”",
+                "com_sex_legs_caress_C_26": "节奏没能对上，$self$略显烦躁地喘了口气：“……稍微注意一下力道啊。”",
+                "com_sex_legs_caress_C_27": "$self$随着节奏轻哼出声，股间与阴蒂被$target$分开双腿用膝盖顶弄股间得一阵发麻：“哈啊……好舒服……”",
+                "com_sex_legs_caress_C_28": "快感顺着股间与阴蒂迅速蔓延开来，$self$软着声音喘息道：“唔嗯……就是那里，别停……”",
+                "com_sex_legs_caress_C_29": "$self$微眯起眼迎合着$target$的动作，嗓音带着甜腻的颤意：“啊……再多弄一会儿……”",
+                "com_sex_legs_caress_C_Begin_1": "$self$毫无意识地躺在原地，双腿被$target$轻易分开，腿心泛红却没有任何躲避的反应。",
+                "com_sex_legs_caress_C_Begin_2": "昏迷中的$self$呼吸浅而急促，对腿间抵上来的膝盖毫无所觉，柔软的腿肉随压力凹陷下去。",
+                "com_sex_legs_caress_C_Begin_3": "$self$的眼睑紧闭着，任由$target$的大腿挤进她毫无防备的股间贴住腿缝。",
+                "com_sex_legs_caress_C_Begin_4": "$self$挣动着手腕上的束缚，却合不拢被架开的双腿，只能看着$target$的腿抵上股间：“别……用腿碰那里……”",
+                "com_sex_legs_caress_C_Begin_5": "绳索勒得$self$动弹不得，她喘息着偏过头，大腿根部却已经开始发烫：“要做什么……快点结束吧……”",
+                "com_sex_legs_caress_C_Begin_6": "$self$被迫敞开腿间任由$target$摆布，脚踝紧绷着往回缩，却根本躲不开压上来的膝盖。",
+                "com_sex_legs_caress_C_Begin_7": "$self$任由$target$靠近，自己被$target$分开双腿用膝盖顶弄股间，呼吸微微一滞。",
+                "com_sex_legs_caress_C_Begin_8": "$self$轻轻抿了抿唇，没有推开被$target$分开双腿用膝盖顶弄股间的$target$。",
+                "com_sex_legs_caress_C_Begin_9": "感受到股间与阴蒂传来的触碰，$self$下意识地轻颤了一下，顺势迎合上去。",
+                "com_sex_legs_caress_C_Ongoing_1": "$self$在旁人腿根的碾压下咬住下唇，余光瞥见一旁的$target$后更是羞得耳根通红：“别、别盯着下面看啊……”",
+                "com_sex_legs_caress_C_Ongoing_2": "腿间被顶弄出黏腻的水声，$self$双腿发软地晃了晃，求助般望向$target$：“唔……还在继续……好麻……”",
+                "com_sex_legs_caress_C_Ongoing_3": "$self$红着脸扭过头去躲避$target$的视线，呼吸却随着腿间的摩擦越来越乱：“嗯啊……别看过来……”",
+                "com_sex_legs_caress_C_Ongoing_4": "$self$还在被$target$分开双腿用膝盖顶弄股间，呼吸随着节奏一点点变得急促。",
+                "com_sex_legs_caress_C_Ongoing_5": "持续不断的刺激让$self$眼角泛起微红，只能任由$target$继续动作。",
+                "com_sex_legs_caress_C_Ongoing_6": "$self$轻喘着承受着股间与阴蒂传来的触感，身子微微发软。",
+                "com_sex_legs_caress_C_Ongoing_7": "$self$没有停下动作，继续用膝盖抵着对方腿心轻轻磨蹭。",
+                "com_sex_legs_caress_C_Ongoing_8": "湿热的气息在两人之间弥漫，$self$维持着节奏用膝盖抵着对方腿心轻轻磨蹭。",
+                "com_sex_legs_caress_C_Ongoing_9": "$self$微微喘息着，动作不停地用膝盖抵着对方腿心轻轻磨蹭。",
+                "com_sex_legs_caress_C_30": "$self$微微喘息着，一边用膝盖抵着对方腿心轻轻磨蹭，一边留意着$target$的反应。",
+                "com_sex_legs_caress_C_31": "空气渐渐升温，$self$放缓了节奏继续用膝盖抵着对方腿心轻轻磨蹭：“……感觉怎么样？”",
+                "com_sex_legs_caress_C_32": "$self$轻吐出一口气，顺从着眼前的状态继续用膝盖抵着对方腿心轻轻磨蹭。"
             }
         }
     }

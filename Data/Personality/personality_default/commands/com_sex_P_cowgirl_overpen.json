@@ -1,0 +1,1346 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_P_cowgirl_overpen_Climax",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireSelfDoer": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "cowgirl",
+                                        "climax"
+                                    ],
+                                    "_comment": "施方 com_sex_P_cowgirl_overpen 高潮 有允许",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_overpen_Climax_DoerPerm_1",
+                                        "com_sex_P_cowgirl_overpen_Climax_DoerPerm_2",
+                                        "com_sex_P_cowgirl_overpen_Climax_DoerPerm_3"
+                                    ]
+                                }
+                            ],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "cowgirl",
+                                "climax"
+                            ],
+                            "_comment": "施方 com_sex_P_cowgirl_overpen 高潮",
+                            "responses": [
+                                "com_sex_P_cowgirl_overpen_Climax_Doer_1",
+                                "com_sex_P_cowgirl_overpen_Climax_Doer_2",
+                                "com_sex_P_cowgirl_overpen_Climax_Doer_3"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 com_sex_P_cowgirl_overpen 高潮",
+                            "responses": [
+                                "com_sex_P_cowgirl_overpen_Climax_Recv_1",
+                                "com_sex_P_cowgirl_overpen_Climax_Recv_2",
+                                "com_sex_P_cowgirl_overpen_Climax_Recv_3",
+                                "com_sex_P_cowgirl_overpen_Climax_RecvCase_1",
+                                "com_sex_P_cowgirl_overpen_Climax_RecvCase_2",
+                                "com_sex_P_cowgirl_overpen_Climax_RecvCase_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（任何状态）",
+                            "responses": [
+                                "com_sex_P_cowgirl_overpen_Climax_Recv_1"
+                            ]
+                        }
+                    ],
+                    "template": "commandClimax"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_P_cowgirl_overpen_Begin",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "firstexp_V"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "cowgirl",
+                                                "doll",
+                                                "empty"
+                                            ],
+                                            "_comment": "初体验 开始 时停中",
+                                            "responses": [
+                                                "com_sex_P_cowgirl_overpen_Begin_FE_Timestop_1",
+                                                "com_sex_P_cowgirl_overpen_Begin_FE_Timestop_2",
+                                                "com_sex_P_cowgirl_overpen_Begin_FE_Timestop_3"
+                                            ]
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "cowgirl",
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "开始 时停中",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_overpen_Begin_Timestop_1",
+                                        "com_sex_P_cowgirl_overpen_Begin_Timestop_2",
+                                        "com_sex_P_cowgirl_overpen_Begin_Timestop_3",
+                                        "com_sex_P_cowgirl_overpen_Begin_TimestopCase_1",
+                                        "com_sex_P_cowgirl_overpen_Begin_TimestopCase_2",
+                                        "com_sex_P_cowgirl_overpen_Begin_TimestopCase_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "firstexp_V"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "cowgirl",
+                                                "sleeping",
+                                                "pain"
+                                            ],
+                                            "_comment": "初体验 开始 睡眠中",
+                                            "responses": [
+                                                "com_sex_P_cowgirl_overpen_Begin_FE_Sleep_1",
+                                                "com_sex_P_cowgirl_overpen_Begin_FE_Sleep_2",
+                                                "com_sex_P_cowgirl_overpen_Begin_FE_Sleep_3"
+                                            ]
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "cowgirl",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "开始 睡眠中",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_overpen_Begin_Sleep_1",
+                                        "com_sex_P_cowgirl_overpen_Begin_Sleep_2",
+                                        "com_sex_P_cowgirl_overpen_Begin_Sleep_3",
+                                        "com_sex_P_cowgirl_overpen_Begin_SleepCase_1",
+                                        "com_sex_P_cowgirl_overpen_Begin_SleepCase_2",
+                                        "com_sex_P_cowgirl_overpen_Begin_SleepCase_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "开始 昏迷（非睡眠）",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_overpen_Begin_Fainted_1",
+                                        "com_sex_P_cowgirl_overpen_Begin_Fainted_2",
+                                        "com_sex_P_cowgirl_overpen_Begin_Fainted_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "_comment": "开始 被束缚",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_overpen_Begin_Restrained_1",
+                                        "com_sex_P_cowgirl_overpen_Begin_Restrained_2",
+                                        "com_sex_P_cowgirl_overpen_Begin_Restrained_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_V"
+                                        ]
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "targetBaseID": "PLAYER"
+                                            },
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "requirePermission": true
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "doer",
+                                                        "cowgirl",
+                                                        "blush",
+                                                        "pain",
+                                                        "tearful",
+                                                        "love"
+                                                    ],
+                                                    "_comment": "初体验 玩家专用 有允许",
+                                                    "responses": [
+                                                        "com_sex_P_cowgirl_overpen_Begin_FE_Player_1",
+                                                        "com_sex_P_cowgirl_overpen_Begin_FE_Player_2",
+                                                        "com_sex_P_cowgirl_overpen_Begin_FE_Player_3"
+                                                    ]
+                                                }
+                                            ],
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "cowgirl",
+                                                "blush",
+                                                "pain",
+                                                "tearful",
+                                                "love"
+                                            ],
+                                            "_comment": "初体验 玩家专用",
+                                            "responses": [
+                                                "com_sex_P_cowgirl_overpen_Begin_FE_Player_1",
+                                                "com_sex_P_cowgirl_overpen_Begin_FE_Player_2",
+                                                "com_sex_P_cowgirl_overpen_Begin_FE_Player_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "cowgirl",
+                                                "blush",
+                                                "pain",
+                                                "tearful"
+                                            ],
+                                            "_comment": "初体验 开始 有允许",
+                                            "responses": [
+                                                "com_sex_P_cowgirl_overpen_Begin_FE_Perm_1",
+                                                "com_sex_P_cowgirl_overpen_Begin_FE_Perm_2",
+                                                "com_sex_P_cowgirl_overpen_Begin_FE_Perm_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAttitudeGTE": "Like"
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "cowgirl",
+                                                "blush",
+                                                "pain",
+                                                "tearful",
+                                                "shy"
+                                            ],
+                                            "_comment": "初体验 开始 未允许 好意",
+                                            "responses": [
+                                                "com_sex_P_cowgirl_overpen_Begin_FE_Like_1",
+                                                "com_sex_P_cowgirl_overpen_Begin_FE_Like_2",
+                                                "com_sex_P_cowgirl_overpen_Begin_FE_Like_3"
+                                            ]
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "cowgirl",
+                                        "fear",
+                                        "pain",
+                                        "tearful",
+                                        "trembling"
+                                    ],
+                                    "_comment": "初体验 开始 未允许 敌意",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_overpen_Begin_FE_Hostile_1",
+                                        "com_sex_P_cowgirl_overpen_Begin_FE_Hostile_2",
+                                        "com_sex_P_cowgirl_overpen_Begin_FE_Hostile_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "cowgirl",
+                                        "closed_eyes",
+                                        "blush",
+                                        "affectionate"
+                                    ],
+                                    "_comment": "开始 有允许",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_overpen_Begin_Perm_1",
+                                        "com_sex_P_cowgirl_overpen_Begin_Perm_2",
+                                        "com_sex_P_cowgirl_overpen_Begin_Perm_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "cowgirl",
+                                        "blush"
+                                    ],
+                                    "_comment": "开始 未允许 好意",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_overpen_Begin_Like_1",
+                                        "com_sex_P_cowgirl_overpen_Begin_Like_2",
+                                        "com_sex_P_cowgirl_overpen_Begin_Like_3"
+                                    ]
+                                }
+                            ],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "cowgirl",
+                                "fear",
+                                "trembling",
+                                "tearful",
+                                "pain"
+                            ],
+                            "_comment": "受方 开始 com_sex_P_cowgirl_overpen",
+                            "responses": [
+                                "com_sex_P_cowgirl_overpen_Begin_Hostile_1",
+                                "com_sex_P_cowgirl_overpen_Begin_Hostile_2",
+                                "com_sex_P_cowgirl_overpen_Begin_Hostile_3",
+                                "com_sex_P_cowgirl_overpen_Begin_AwakeCase_1",
+                                "com_sex_P_cowgirl_overpen_Begin_AwakeCase_2",
+                                "com_sex_P_cowgirl_overpen_Begin_AwakeCase_3"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_partner_V"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "cowgirl",
+                                        "surprised"
+                                    ],
+                                    "_comment": "对方初体验 开始",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_overpen_Begin_FE_Partner_1",
+                                        "com_sex_P_cowgirl_overpen_Begin_FE_Partner_2",
+                                        "com_sex_P_cowgirl_overpen_Begin_FE_Partner_3"
+                                    ]
+                                }
+                            ],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "cowgirl",
+                                "surprised"
+                            ],
+                            "_comment": "施方 开始 com_sex_P_cowgirl_overpen",
+                            "responses": [
+                                "com_sex_P_cowgirl_overpen_Begin_FE_Partner_1",
+                                "com_sex_P_cowgirl_overpen_Begin_FE_Partner_2",
+                                "com_sex_P_cowgirl_overpen_Begin_FE_Partner_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（接受，任何状态）",
+                            "responses": [
+                                "com_sex_P_cowgirl_overpen_Begin_Hostile_1"
+                            ]
+                        }
+                    ],
+                    "template": "commandAct",
+                    "templateExtras": [
+                        "firstexpPartnerV",
+                        "firstexpV"
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_P_cowgirl_overpen",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "firstexp_V"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "cowgirl",
+                                                "doll",
+                                                "empty"
+                                            ],
+                                            "_comment": "初体验 时停中",
+                                            "responses": [
+                                                "com_sex_P_cowgirl_overpen_FE_Timestop_1",
+                                                "com_sex_P_cowgirl_overpen_FE_Timestop_2",
+                                                "com_sex_P_cowgirl_overpen_FE_Timestop_3"
+                                            ]
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "cowgirl",
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "时停中 受方",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_overpen_Timestop_1",
+                                        "com_sex_P_cowgirl_overpen_Timestop_2",
+                                        "com_sex_P_cowgirl_overpen_Timestop_3",
+                                        "com_sex_P_cowgirl_overpen_TimestopCase_1",
+                                        "com_sex_P_cowgirl_overpen_TimestopCase_2",
+                                        "com_sex_P_cowgirl_overpen_TimestopCase_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "firstexp_V"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "cowgirl",
+                                                "sleeping",
+                                                "pain"
+                                            ],
+                                            "_comment": "初体验 睡眠中",
+                                            "responses": [
+                                                "com_sex_P_cowgirl_overpen_FE_Sleep_1",
+                                                "com_sex_P_cowgirl_overpen_FE_Sleep_2",
+                                                "com_sex_P_cowgirl_overpen_FE_Sleep_3"
+                                            ]
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "cowgirl",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "睡眠中 受方",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_overpen_Sleep_1",
+                                        "com_sex_P_cowgirl_overpen_Sleep_2",
+                                        "com_sex_P_cowgirl_overpen_Sleep_3",
+                                        "com_sex_P_cowgirl_overpen_SleepCase_1",
+                                        "com_sex_P_cowgirl_overpen_SleepCase_2",
+                                        "com_sex_P_cowgirl_overpen_SleepCase_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "昏迷（非睡眠） 受方",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_overpen_Fainted_1",
+                                        "com_sex_P_cowgirl_overpen_Fainted_2",
+                                        "com_sex_P_cowgirl_overpen_Fainted_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "targetBaseID": "PLAYER"
+                                            },
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "requirePermission": true
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "doer",
+                                                        "cowgirl",
+                                                        "sleep",
+                                                        "smile",
+                                                        "blush",
+                                                        "lazy"
+                                                    ],
+                                                    "_comment": "玩家专用 刚睡醒 有允许",
+                                                    "responses": [
+                                                        "com_sex_P_cowgirl_overpen_WokenPlayerPerm_1",
+                                                        "com_sex_P_cowgirl_overpen_WokenPlayerPerm_2",
+                                                        "com_sex_P_cowgirl_overpen_WokenPlayerPerm_3"
+                                                    ]
+                                                },
+                                                {
+                                                    "requirement": {
+                                                        "requireSelfAttitudeGTE": "Like"
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "doer",
+                                                        "cowgirl",
+                                                        "sleep",
+                                                        "smile",
+                                                        "blush",
+                                                        "lazy"
+                                                    ],
+                                                    "_comment": "玩家专用 刚睡醒 未允许 好意",
+                                                    "responses": [
+                                                        "com_sex_P_cowgirl_overpen_WokenPlayerLike_1",
+                                                        "com_sex_P_cowgirl_overpen_WokenPlayerLike_2",
+                                                        "com_sex_P_cowgirl_overpen_WokenPlayerLike_3"
+                                                    ]
+                                                }
+                                            ],
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "cowgirl",
+                                                "scared",
+                                                "submissive"
+                                            ],
+                                            "_comment": "玩家专用 刚睡醒 无允许 敌意",
+                                            "responses": [
+                                                "com_sex_P_cowgirl_overpen_WokenPlayerHostile_1",
+                                                "com_sex_P_cowgirl_overpen_WokenPlayerHostile_2",
+                                                "com_sex_P_cowgirl_overpen_WokenPlayerHostile_3"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "刚睡醒 受方",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_overpen_Woken_1",
+                                        "com_sex_P_cowgirl_overpen_Woken_2",
+                                        "com_sex_P_cowgirl_overpen_Woken_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "_comment": "受方（被束缚） 判定成功",
+                                            "responses": [
+                                                "com_sex_P_cowgirl_overpen_RestrainedSucc_1",
+                                                "com_sex_P_cowgirl_overpen_RestrainedSucc_2",
+                                                "com_sex_P_cowgirl_overpen_RestrainedSucc_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "firstexp_V"
+                                                ]
+                                            },
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "targetBaseID": "PLAYER"
+                                                    },
+                                                    "variants": [
+                                                        {
+                                                            "requirement": {
+                                                                "requirePermission": true
+                                                            },
+                                                            "extraSelfPortraitTags": [
+                                                                "sex",
+                                                                "doer",
+                                                                "cowgirl",
+                                                                "blush",
+                                                                "pain",
+                                                                "love"
+                                                            ],
+                                                            "_comment": "初体验 玩家专用 有允许",
+                                                            "responses": [
+                                                                "com_sex_P_cowgirl_overpen_FE_Player_1",
+                                                                "com_sex_P_cowgirl_overpen_FE_Player_2",
+                                                                "com_sex_P_cowgirl_overpen_FE_Player_3"
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "doer",
+                                                        "cowgirl",
+                                                        "blush",
+                                                        "pain",
+                                                        "love"
+                                                    ],
+                                                    "_comment": "初体验 玩家专用",
+                                                    "responses": [
+                                                        "com_sex_P_cowgirl_overpen_FE_Player_1",
+                                                        "com_sex_P_cowgirl_overpen_FE_Player_2",
+                                                        "com_sex_P_cowgirl_overpen_FE_Player_3"
+                                                    ]
+                                                },
+                                                {
+                                                    "requirement": {
+                                                        "requirePermission": true
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "doer",
+                                                        "cowgirl",
+                                                        "blush",
+                                                        "pain"
+                                                    ],
+                                                    "_comment": "初体验 有允许",
+                                                    "responses": [
+                                                        "com_sex_P_cowgirl_overpen_FE_Perm_1",
+                                                        "com_sex_P_cowgirl_overpen_FE_Perm_2",
+                                                        "com_sex_P_cowgirl_overpen_FE_Perm_3"
+                                                    ]
+                                                },
+                                                {
+                                                    "requirement": {
+                                                        "requireSelfAttitudeGTE": "Like"
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "doer",
+                                                        "cowgirl",
+                                                        "blush",
+                                                        "pain",
+                                                        "shy"
+                                                    ],
+                                                    "_comment": "初体验 未允许 好意",
+                                                    "responses": [
+                                                        "com_sex_P_cowgirl_overpen_FE_Like_1",
+                                                        "com_sex_P_cowgirl_overpen_FE_Like_2",
+                                                        "com_sex_P_cowgirl_overpen_FE_Like_3"
+                                                    ]
+                                                }
+                                            ],
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "cowgirl",
+                                                "pain",
+                                                "tearful",
+                                                "cry"
+                                            ],
+                                            "_comment": "初体验 未允许 敌意",
+                                            "responses": [
+                                                "com_sex_P_cowgirl_overpen_FE_Hostile_1",
+                                                "com_sex_P_cowgirl_overpen_FE_Hostile_2",
+                                                "com_sex_P_cowgirl_overpen_FE_Hostile_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "cowgirl",
+                                                "love",
+                                                "happy",
+                                                "relaxed"
+                                            ],
+                                            "_comment": "结果正面 有允许",
+                                            "responses": [
+                                                "com_sex_P_cowgirl_overpen_SuccPerm_1",
+                                                "com_sex_P_cowgirl_overpen_SuccPerm_2",
+                                                "com_sex_P_cowgirl_overpen_SuccPerm_3"
+                                            ]
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "cowgirl",
+                                        "blush",
+                                        "shy",
+                                        "surprised",
+                                        "happy",
+                                        "aroused"
+                                    ],
+                                    "_comment": "受方 结果正面",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_overpen_Succ_1",
+                                        "com_sex_P_cowgirl_overpen_Succ_2",
+                                        "com_sex_P_cowgirl_overpen_Succ_3",
+                                        "com_sex_P_cowgirl_overpen_SuccCase_1",
+                                        "com_sex_P_cowgirl_overpen_SuccCase_2",
+                                        "com_sex_P_cowgirl_overpen_SuccCase_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessLTE": "Failure"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "_comment": "受方（被束缚） 判定失败",
+                                            "responses": [
+                                                "com_sex_P_cowgirl_overpen_RestrainedFail_1",
+                                                "com_sex_P_cowgirl_overpen_RestrainedFail_2",
+                                                "com_sex_P_cowgirl_overpen_RestrainedFail_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "firstexp_V"
+                                                ]
+                                            },
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "targetBaseID": "PLAYER"
+                                                    },
+                                                    "variants": [
+                                                        {
+                                                            "requirement": {
+                                                                "requirePermission": true
+                                                            },
+                                                            "extraSelfPortraitTags": [
+                                                                "sex",
+                                                                "doer",
+                                                                "cowgirl",
+                                                                "blush",
+                                                                "pain",
+                                                                "love"
+                                                            ],
+                                                            "_comment": "初体验 玩家专用 有允许",
+                                                            "responses": [
+                                                                "com_sex_P_cowgirl_overpen_FE_Player_1",
+                                                                "com_sex_P_cowgirl_overpen_FE_Player_2",
+                                                                "com_sex_P_cowgirl_overpen_FE_Player_3"
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "doer",
+                                                        "cowgirl",
+                                                        "blush",
+                                                        "pain",
+                                                        "love"
+                                                    ],
+                                                    "_comment": "初体验 玩家专用",
+                                                    "responses": [
+                                                        "com_sex_P_cowgirl_overpen_FE_Player_1",
+                                                        "com_sex_P_cowgirl_overpen_FE_Player_2",
+                                                        "com_sex_P_cowgirl_overpen_FE_Player_3"
+                                                    ]
+                                                },
+                                                {
+                                                    "requirement": {
+                                                        "requirePermission": true
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "doer",
+                                                        "cowgirl",
+                                                        "blush",
+                                                        "pain"
+                                                    ],
+                                                    "_comment": "初体验 有允许",
+                                                    "responses": [
+                                                        "com_sex_P_cowgirl_overpen_FE_Perm_1",
+                                                        "com_sex_P_cowgirl_overpen_FE_Perm_2",
+                                                        "com_sex_P_cowgirl_overpen_FE_Perm_3"
+                                                    ]
+                                                },
+                                                {
+                                                    "requirement": {
+                                                        "requireSelfAttitudeGTE": "Like"
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "doer",
+                                                        "cowgirl",
+                                                        "blush",
+                                                        "pain",
+                                                        "shy"
+                                                    ],
+                                                    "_comment": "初体验 未允许 好意",
+                                                    "responses": [
+                                                        "com_sex_P_cowgirl_overpen_FE_Like_1",
+                                                        "com_sex_P_cowgirl_overpen_FE_Like_2",
+                                                        "com_sex_P_cowgirl_overpen_FE_Like_3"
+                                                    ]
+                                                }
+                                            ],
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "cowgirl",
+                                                "pain",
+                                                "tearful",
+                                                "cry"
+                                            ],
+                                            "_comment": "初体验 未允许 敌意",
+                                            "responses": [
+                                                "com_sex_P_cowgirl_overpen_FE_Hostile_1",
+                                                "com_sex_P_cowgirl_overpen_FE_Hostile_2",
+                                                "com_sex_P_cowgirl_overpen_FE_Hostile_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "cowgirl",
+                                                "pain",
+                                                "bored",
+                                                "doubt",
+                                                "disappointed"
+                                            ],
+                                            "_comment": "结果负面 有允许",
+                                            "responses": [
+                                                "com_sex_P_cowgirl_overpen_FailPerm_1",
+                                                "com_sex_P_cowgirl_overpen_FailPerm_2",
+                                                "com_sex_P_cowgirl_overpen_FailPerm_3"
+                                            ]
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "cowgirl",
+                                        "angry",
+                                        "cry",
+                                        "glare",
+                                        "disgust",
+                                        "pouting",
+                                        "sad",
+                                        "troubled",
+                                        "silence"
+                                    ],
+                                    "_comment": "受方 结果负面",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_overpen_Fail_1",
+                                        "com_sex_P_cowgirl_overpen_Fail_2",
+                                        "com_sex_P_cowgirl_overpen_Fail_3",
+                                        "com_sex_P_cowgirl_overpen_FailCase_1",
+                                        "com_sex_P_cowgirl_overpen_FailCase_2",
+                                        "com_sex_P_cowgirl_overpen_FailCase_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "受方 com_sex_P_cowgirl_overpen 结果",
+                            "responses": [
+                                "com_sex_P_cowgirl_overpen_Fail_1"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_partner_V"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "cowgirl"
+                                    ],
+                                    "_comment": "对方初体验",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_overpen_FE_Partner_1",
+                                        "com_sex_P_cowgirl_overpen_FE_Partner_2",
+                                        "com_sex_P_cowgirl_overpen_FE_Partner_3"
+                                    ]
+                                }
+                            ],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "cowgirl"
+                            ],
+                            "_comment": "施方 com_sex_P_cowgirl_overpen 结果",
+                            "responses": [
+                                "com_sex_P_cowgirl_overpen_FE_Partner_1",
+                                "com_sex_P_cowgirl_overpen_FE_Partner_2",
+                                "com_sex_P_cowgirl_overpen_FE_Partner_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（接受，任何状态）",
+                            "responses": [
+                                "com_sex_P_cowgirl_overpen_Fail_1"
+                            ]
+                        }
+                    ],
+                    "template": "commandResult",
+                    "templateExtras": [
+                        "firstexpPartnerV",
+                        "firstexpV"
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_P_cowgirl_overpen_Refuse",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireRefusalContext": "ReceiverDeclined",
+                            "useActiveTags": false,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "useActiveTags": false,
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ],
+                                        "requireEPSuccess": false
+                                    },
+                                    "_comment": "刚睡醒拒绝",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_overpen_Refuse_WokenCase_1",
+                                        "com_sex_P_cowgirl_overpen_Refuse_WokenCase_2",
+                                        "com_sex_P_cowgirl_overpen_Refuse_WokenCase_3"
+                                    ]
+                                },
+                                {
+                                    "useActiveTags": false,
+                                    "requirement": {
+                                        "requirePermission": true,
+                                        "requireEPSuccess": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy",
+                                        "tired"
+                                    ],
+                                    "_comment": "拒绝 有允许",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_overpen_Refuse_Perm_1",
+                                        "com_sex_P_cowgirl_overpen_Refuse_Perm_2",
+                                        "com_sex_P_cowgirl_overpen_Refuse_Perm_3"
+                                    ]
+                                }
+                            ],
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "_comment": "受方拒绝 com_sex_P_cowgirl_overpen",
+                            "responses": [
+                                "com_sex_P_cowgirl_overpen_Refuse_Hostile_1",
+                                "com_sex_P_cowgirl_overpen_Refuse_Hostile_2",
+                                "com_sex_P_cowgirl_overpen_Refuse_Hostile_3",
+                                "com_sex_P_cowgirl_overpen_Refuse_Case_1",
+                                "com_sex_P_cowgirl_overpen_Refuse_Case_2",
+                                "com_sex_P_cowgirl_overpen_Refuse_Case_3"
+                            ]
+                        },
+                        {
+                            "useActiveTags": false,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（拒绝）",
+                            "responses": [
+                                "com_sex_P_cowgirl_overpen_Refuse_Hostile_1"
+                            ]
+                        }
+                    ],
+                    "template": "commandRefuse"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_P_cowgirl_overpen_Ongoing",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "受方 → 玩家 ｜ 进行中",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_overpen_Ongoing_Player_1",
+                                        "com_sex_P_cowgirl_overpen_Ongoing_Player_2",
+                                        "com_sex_P_cowgirl_overpen_Ongoing_Player_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "受方 com_sex_P_cowgirl_overpen 进行中",
+                            "responses": [
+                                "com_sex_P_cowgirl_overpen_Ongoing_Player_1",
+                                "com_sex_P_cowgirl_overpen_Ongoing_Player_2",
+                                "com_sex_P_cowgirl_overpen_Ongoing_Player_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（接受，任何状态）",
+                            "responses": [
+                                "com_sex_P_cowgirl_overpen_Ongoing_Player_1"
+                            ]
+                        }
+                    ],
+                    "template": "commandAct"
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_sex_P_cowgirl_overpen_Climax_DoerPerm_1": "$self$猛地仰起头，十指抓紧$target$的肩膀，让前端直抵子宫最深处迎来了高潮：\"啊——！最里面去了……好喜欢你……！\"",
+                "com_sex_P_cowgirl_overpen_Climax_DoerPerm_2": "$self$眼前阵阵发白，宫口与内壁剧烈痉挛着吸紧体内的柱身，整个人瘫在$target$身上颤个不停：\"不行了……顶到子宫里去了……！\"",
+                "com_sex_P_cowgirl_overpen_Climax_DoerPerm_3": "滚烫的爱液顺着交合处涌出，$self$失神地捂着小腹伏在$target$胸前急促喘息：\"哈啊……连最深处都被顶开了……脑子都空白了……！\"",
+                "com_sex_P_cowgirl_overpen_Climax_Doer_1": "$self$咬住手背想压住呻吟，直透小腹深处的快感还是让她跌坐到底，在抽搐中流下泪来：\"不要……连最里面都……啊！这种事我不承认……！\"",
+                "com_sex_P_cowgirl_overpen_Climax_Doer_2": "$self$满脸屈辱，身体却在宫口被顶开的刺激下剧烈痉挛，内壁不受控地紧紧咬住侵入物：\"身体……擅自去了……哈啊……！\"",
+                "com_sex_P_cowgirl_overpen_Climax_Doer_3": "从深处炸开的酥麻让$self$再也撑不住腰，她捂着脸瘫倒在$target$身上剧烈颤抖：\"呜……顶得太深了……别看我……！\"",
+                "com_sex_P_cowgirl_overpen_Climax_Recv_1": "$self$扣紧$target$晃动的腰往下狠狠一按，前端直抵子宫深处，闷哼着射了出来：\"唔……！最里面吸得这么紧……全灌给你了！\"",
+                "com_sex_P_cowgirl_overpen_Climax_Recv_2": "被上方的宫口一阵紧似一阵地吮吸，$self$喘着粗气仰起脖子，把滚烫的精液尽数射进子宫：\"哈……！顶进最深处了……全部接住！\"",
+                "com_sex_P_cowgirl_overpen_Climax_Recv_3": "$self$按住$target$的臀部不让抬起，在深处紧窄的包裹中剧烈搏动着登上了顶峰：\"嗯……！子宫口咬得真紧……全给你了！\"",
+                "com_sex_P_cowgirl_overpen_Climax_RecvCase_1": "顶端被紧窄的宫口狠狠吮住的瞬间，$self$扣紧$target$的腰往下按实，闷哼着射进子宫深处：\"唔……！最里面夹得太紧了……全射进去了！\"",
+                "com_sex_P_cowgirl_overpen_Climax_RecvCase_2": "$self$腰腹猛地向上挺起，在上方直抵子宫的包裹中剧烈搏动着登上了顶峰：\"哈啊……！全灌进你最深处了……一滴都没剩！\"",
+                "com_sex_P_cowgirl_overpen_Climax_RecvCase_3": "一阵紧过一阵的收缩从前端传来，$self$抓着$target$的臀部喘息不止，将滚烫的精液尽数释放在深处：\"嗯……！被你坐到这么深的地方……实在忍不了了！\"",
+                "com_sex_P_cowgirl_overpen_Begin_FE_Timestop_1": "处女膜与宫口在凝固的时间里无声被顶开，鲜红顺着结合处渗出，$self$半阖的眼睫纹丝不动。",
+                "com_sex_P_cowgirl_overpen_Begin_FE_Timestop_2": "$self$脸上还停留着时停前的神情，对自己的第一次正被直接捅入子宫一无所知。",
+                "com_sex_P_cowgirl_overpen_Begin_FE_Timestop_3": "从未接纳过异物的小穴在静止中被贯穿到底，$self$定格的身体没有半分颤栗。",
+                "com_sex_P_cowgirl_overpen_Begin_Timestop_1": "顺着下沉的重心，小穴与宫口被一路撑开到底，$self$垂着的眼睫停在半阖的位置，毫无知觉。",
+                "com_sex_P_cowgirl_overpen_Begin_Timestop_2": "$self$像人偶一样被摆在上方，静止的子宫口被动包裹着侵入的前端，空气里只有交合处微湿的细响。",
+                "com_sex_P_cowgirl_overpen_Begin_Timestop_3": "停滞的时间里，$self$跨坐的身姿纹丝不动，对最深处已被填满的事实一无所知。",
+                "com_sex_P_cowgirl_overpen_Begin_TimestopCase_1": "停滞的时间里，$self$保持着仰卧的定格姿态，对下身被$target$坐到底顶入子宫一事毫无知觉。",
+                "com_sex_P_cowgirl_overpen_Begin_TimestopCase_2": "$self$静止的眼眸望向空处，哪怕顶端已被上方的宫口紧紧裹住，身体也没有半点反应。",
+                "com_sex_P_cowgirl_overpen_Begin_TimestopCase_3": "凝固的空气中，$self$像雕塑般任由$target$跨坐在腰间吞入最深处，连呼吸都停在原位。",
+                "com_sex_P_cowgirl_overpen_Begin_FE_Sleep_1": "睡梦中的$self$被一路顶进宫口，痛苦地皱起眉哼了一声，血丝顺着交合处淌了下来。",
+                "com_sex_P_cowgirl_overpen_Begin_FE_Sleep_2": "$self$的身子在沉睡中剧烈一抖，小腹本能地抽紧，毫不知情自己的第一次正被捅进最深处。",
+                "com_sex_P_cowgirl_overpen_Begin_FE_Sleep_3": "初次破瓜便被顶入子宫的痛意让熟睡的$self$无意识地夹了夹腿根，喉间漏出一声细微的呜咽。",
+                "com_sex_P_cowgirl_overpen_Begin_Sleep_1": "睡软的身子顺着重心往下沉，一直把侵入物吞进宫口，$self$只是皱了皱眉，伏在$target$身上没醒。",
+                "com_sex_P_cowgirl_overpen_Begin_Sleep_2": "最深处的软肉被前端顶开时，$self$在梦里溢出一声含糊的嘤咛，小腹本能地收紧，呼吸却依旧绵长。",
+                "com_sex_P_cowgirl_overpen_Begin_Sleep_3": "熟睡的$self$毫无防备地被摆成跨坐的姿势，连子宫口都被被动撑开包裹上去，眼帘始终安静地合着。",
+                "com_sex_P_cowgirl_overpen_Begin_SleepCase_1": "熟睡的$self$下身被从上往下套住直抵宫口，紧窄的包裹感让$self$在梦里发出一声低沉的鼻音。",
+                "com_sex_P_cowgirl_overpen_Begin_SleepCase_2": "顶端挤入深处温热软肉的瞬间，沉睡中的$self$腰腹无意识地绷了一下，呼吸依旧平稳。",
+                "com_sex_P_cowgirl_overpen_Begin_SleepCase_3": "$self$在睡梦中对跨坐在身上的人毫无察觉，只有下身在深处紧致的挤压下本能地发烫。",
+                "com_sex_P_cowgirl_overpen_Begin_Fainted_1": "彻底失去意识的$self$仰面躺着一动不动，任由$target$跨坐上来将下身一路吞入子宫。",
+                "com_sex_P_cowgirl_overpen_Begin_Fainted_2": "$self$人事不省，只有下身在本能的刺激下维持着充血，对顶端突破宫口的触感毫无知觉。",
+                "com_sex_P_cowgirl_overpen_Begin_Fainted_3": "昏迷中的$self$呼吸微弱，随着$target$重重坐到底的动作，身体只被动地晃了晃。",
+                "com_sex_P_cowgirl_overpen_Begin_Restrained_1": "手脚被束缚在下方动弹不得，$self$眼睁睁看着$target$跨坐上来一路吞进子宫，急促地喘了口气：\"唔……趁我被绑着直接坐到这么深……\"",
+                "com_sex_P_cowgirl_overpen_Begin_Restrained_2": "$self$挣了一下腕间的束缚，顶端已被温热紧窄的宫口包裹住，腰腹一阵紧绷：\"哈……吸得太紧了，先把我的手解开啊……\"",
+                "com_sex_P_cowgirl_overpen_Begin_Restrained_3": "被固定着无法调整腰位，突如其来直抵深处的包裹感让$self$闷哼出声，只能被动承受上方的下压。",
+                "com_sex_P_cowgirl_overpen_Begin_FE_Player_1": "\"第一次……就连最深处也给你了……好好看着我哦……\" 被顶开宫口的那一瞬疼得眼角泛泪，$self$还是对着$target$露出笑容。",
+                "com_sex_P_cowgirl_overpen_Begin_FE_Player_2": "\"我自己坐下来……你先别动，顶得太深了……\" $self$疼得腰身微颤，却把$target$的手握得更紧了。",
+                "com_sex_P_cowgirl_overpen_Begin_FE_Player_3": "温热的血丝顺着交合处滑下，$self$忍过直抵小腹深处的剧痛，低头贴向$target$：\"嗯……连最里面都被你填满了……\"",
+                "com_sex_P_cowgirl_overpen_Begin_FE_Perm_1": "\"我、我是第一次……一下就顶到最里面了，让我缓一缓……\" $self$疼得腰腿发颤，血丝顺着结合处淌了下来。",
+                "com_sex_P_cowgirl_overpen_Begin_FE_Perm_2": "\"明明做好心理准备了……怎么会深到这种地方……\" 破开宫口的痛楚让$self$急促地抽了口气，撑在$target$身上的手指用力收紧。",
+                "com_sex_P_cowgirl_overpen_Begin_FE_Perm_3": "$self$眼眶泛红地停住腰，捂着坠胀的小腹小声开口：\"唔……再给我一点时间适应这个深度……\"",
+                "com_sex_P_cowgirl_overpen_Begin_FE_Like_1": "\"这可是我的第一次……怎么直接顶进这么深的地方……\" 处女膜与深处被一并顶开的瞬间，$self$的眼泪一下子涌了出来。",
+                "com_sex_P_cowgirl_overpen_Begin_FE_Like_2": "\"……好疼……小腹里面像被顶穿了一样……\" $self$咬着下唇不敢再往下坐，指尖还在微微发抖。",
+                "com_sex_P_cowgirl_overpen_Begin_FE_Like_3": "$self$羞耻又慌乱地扶着$target$，直抵宫口的酸痛让她声音发颤：\"等、等等……先别往最里面顶……\"",
+                "com_sex_P_cowgirl_overpen_Begin_FE_Hostile_1": "\"不……我还是第一次……肚子里面要坏掉了……\" $self$疼得发不出完整的声音，僵着腰不敢再动。",
+                "com_sex_P_cowgirl_overpen_Begin_FE_Hostile_2": "\"……我不会原谅你的。\" $self$咬紧牙关，初次被贯穿到底的落红顺着交合处染在了$target$身上。",
+                "com_sex_P_cowgirl_overpen_Begin_FE_Hostile_3": "直捅进宫口的剧痛让$self$眼泪夺眶而出，她撑着身子拼命想往上抬腰：\"唔……太深了……别按我的腰……！\"",
+                "com_sex_P_cowgirl_overpen_Begin_Perm_1": "$self$双手撑着$target$的胸口，随着前端顶进宫口满足地叹了口气：\"哈啊……连最深处都吃进来了……\"",
+                "com_sex_P_cowgirl_overpen_Begin_Perm_2": "$self$低头按了按自己微凸的小腹，试探着沉下腰把整根吞进子宫口：\"准备好了吗？已经到最里面了哦。\"",
+                "com_sex_P_cowgirl_overpen_Begin_Perm_3": "$self$眼角带着笑意，主动把$target$的手拉到自己小腹上贴着：\"嗯……从上面坐到底，能摸到你顶在里面吧。\"",
+                "com_sex_P_cowgirl_overpen_Begin_Like_1": "$self$跨坐在上方，被直接顶进宫口的酸胀让她脸颊烫得厉害：\"这……这样也太深了吧？连肚子里面都被顶到了……\"",
+                "com_sex_P_cowgirl_overpen_Begin_Like_2": "$self$羞耻地遮住半张脸，不敢低头看$target$的眼睛，腰身却慢慢沉到了底：\"只、只有这次哦……别一直顶那么深的地方……\"",
+                "com_sex_P_cowgirl_overpen_Begin_Like_3": "宫口被撑开的充实感让$self$轻哼出声，腿根一阵发软：\"唔……居然让我自己坐到这么深，太乱来了……\"",
+                "com_sex_P_cowgirl_overpen_Begin_Hostile_1": "$self$咬着下唇，眼眶泛红，发着抖任由前端顶入宫口：\"我知道了……只要坐到最深处就可以了吧……\"",
+                "com_sex_P_cowgirl_overpen_Begin_Hostile_2": "$self$抓紧身下的支点，忍着小腹深处的坠痛接纳了侵入，声音冷硬：\"快点结束……顶到这种地方实在太痛了。\"",
+                "com_sex_P_cowgirl_overpen_Begin_Hostile_3": "被迫在上方吞到子宫口的屈辱让$self$偏过头去，身体僵直地沉下腰：\"……别按我的腰，已经到底了。\"",
+                "com_sex_P_cowgirl_overpen_Begin_AwakeCase_1": "感觉到上方温热湿滑的内壁一路吞到底，连顶端都挤进了紧窄的宫口，$self$扶住$target$的腰闷哼了一声：\"唔……一下坐到最深处了，里面吸得好紧……\"",
+                "com_sex_P_cowgirl_overpen_Begin_AwakeCase_2": "$self$仰躺着看$target$跨坐在身上把柱身一直吞进子宫，喘了口粗气：\"哈……连最里面的窄口都被你吃进去了。\"",
+                "com_sex_P_cowgirl_overpen_Begin_AwakeCase_3": "前端被滚烫的子宫口严密包裹，$self$搭在$target$髋部的手掌收紧了些：\"嗯……坐这么深，慢一点动。\"",
+                "com_sex_P_cowgirl_overpen_Begin_FE_Partner_1": "\"你……是第一次？居然直接坐到了最深处……\" 感觉到顶端破开阻碍直抵宫口，身下的$self$停了一下。",
+                "com_sex_P_cowgirl_overpen_Begin_FE_Partner_2": "\"……怎么不早说，第一次就吞这么深不怕伤着吗。\" 看到结合处渗出的血丝，$self$连忙扶住了$target$的腰。",
+                "com_sex_P_cowgirl_overpen_Begin_FE_Partner_3": "紧致湿热的包裹感一路延伸到最深处的窄口，$self$仰头看着上方的$target$：\"先停下来缓一缓，别硬往最里面压。\"",
+                "com_sex_P_cowgirl_overpen_FE_Player_1": "\"我第一次自己动……吞到这么深还好吗……？\" $self$抬眼看向$target$，眉头还因为深处的酸痛轻轻蹙着。",
+                "com_sex_P_cowgirl_overpen_FE_Player_2": "$self$撑着$target$的胸口慢慢起伏，脸颊红透：\"嗯……虽然还有点疼，但能感觉到你顶在最里面……\"",
+                "com_sex_P_cowgirl_overpen_FE_Player_3": "\"别笑我笨拙啊……毕竟第一次就被顶进那种地方……\" $self$握紧$target$的手，努力维持着深吞的节奏。",
+                "com_sex_P_cowgirl_overpen_FE_Perm_1": "\"还……还有点疼……不过好像慢慢习惯被顶到最里面了……\" $self$眉头微蹙，呼吸却渐渐软了下来。",
+                "com_sex_P_cowgirl_overpen_FE_Perm_2": "\"原来是这种感觉……连小腹最深处全被你填满了……\" $self$喘着气小幅起落着腰，脸红到了耳根。",
+                "com_sex_P_cowgirl_overpen_FE_Perm_3": "$self$扶着$target$的肩膀一点点试探着压到底的深度：\"唔……慢一点坐的话，里面就没有刚才那么痛了……\"",
+                "com_sex_P_cowgirl_overpen_FE_Like_1": "\"顶得这么深……我根本不知道该怎么动腰……\" $self$又疼又慌，始终找不到合适的节奏。",
+                "com_sex_P_cowgirl_overpen_FE_Like_2": "$self$红着眼眶撑在$target$身上，稍微动一下小腹深处就酸痛发麻：\"呜……第一次就进到这种地方，太乱来了……\"",
+                "com_sex_P_cowgirl_overpen_FE_Like_3": "\"别从下面突然往里撞啊……我还在痛……\" $self$慌乱地按住$target$的腰，双腿直发软。",
+                "com_sex_P_cowgirl_overpen_FE_Hostile_1": "\"……疼……别再往最里面顶了……\" 初次撕裂加上宫口被撞的剧痛让$self$眼泪一直没停过。",
+                "com_sex_P_cowgirl_overpen_FE_Hostile_2": "\"……快点结束。\" $self$盯着空处不肯看$target$，捂着小腹的手指一直在发抖。",
+                "com_sex_P_cowgirl_overpen_FE_Hostile_3": "每一次起伏都牵扯着最深处的刺痛，$self$撑着膝盖浑身颤栗：\"唔……肚子好痛，别再逼我坐下去了……\"",
+                "com_sex_P_cowgirl_overpen_WokenPlayerPerm_1": "$self$迷迷糊糊睁开眼，察觉到直抵宫口的充实感后慵懒地抱住$target$的脖子：\"嗯……趁我睡着顶这么深……你自己动吧……\"",
+                "com_sex_P_cowgirl_overpen_WokenPlayerPerm_2": "$self$发出软绵绵的鼻音，顺着$target$的动作懒洋洋地沉了沉腰：\"真不让人省心……连最里面都被你塞满了……哈啊……\"",
+                "com_sex_P_cowgirl_overpen_WokenPlayerPerm_3": "睡意还没散尽，$self$干脆贴在$target$肩头，深处的软肉温顺地收紧包裹：\"唔……还困着呢，轻一点顶……\"",
+                "com_sex_P_cowgirl_overpen_WokenPlayerLike_1": "$self$惊醒过来，看清身下是$target$后按住发胀的小腹，没有抽身离开：\"是你……？怎么趁我睡着顶到这么深的地方……\"",
+                "com_sex_P_cowgirl_overpen_WokenPlayerLike_2": "$self$在迷糊中喘息着，脸颊发烫地撑在$target$身上，试探着动了动腰：\"既然都已经进到最里面了……那你别乱动，我自己来……\"",
+                "com_sex_P_cowgirl_overpen_WokenPlayerLike_3": "刚醒的脑子还有些懵，$self$红着耳根按住$target$的肩膀：\"唔……一下子坐得太深了，让我缓口气……\"",
+                "com_sex_P_cowgirl_overpen_WokenPlayerHostile_1": "$self$被小腹深处的坠痛惊醒，恐惧地颤了一下，不敢反抗跨坐的姿势，眼泪无声滑落：\"别动手……我自己坐下去就是了……\"",
+                "com_sex_P_cowgirl_overpen_WokenPlayerHostile_2": "$self$闭上眼任由泪水滚下，忍着宫口被顶开的酸痛僵硬地起落腰身：\"反正反抗也没用……你满意了吧……\"",
+                "com_sex_P_cowgirl_overpen_WokenPlayerHostile_3": "刚睡醒的虚弱让$self$无力挣脱，只能发着抖撑在$target$身上，连喘息都不敢放声：\"呜……太深了，求你快点结束……\"",
+                "com_sex_P_cowgirl_overpen_Woken_1": "前端被紧窄宫口包裹挤压的刺激把$self$从沉睡中唤醒，睁开眼就看见整根吞到底的$target$：\"唔……？！你趁我睡着坐到了多深的地方……\"",
+                "com_sex_P_cowgirl_overpen_Woken_2": "$self$迷迷糊糊地醒过来，发觉$target$正骑在自己腰间将柱身吞入最深处，下意识扶住了对方的髋部：\"嗯……刚醒就夹得这么紧……\"",
+                "com_sex_P_cowgirl_overpen_Woken_3": "刚恢复意识就迎上一次直抵子宫的下坐，$self$倒抽一口气，声音还带着刚醒的沙哑：\"哈……至少等我醒过来再吞这么深啊……\"",
+                "com_sex_P_cowgirl_overpen_RestrainedSucc_1": "被绑住无法主动抽退，上方宫口紧窄湿热的包裹反而让快感直冲头顶，$self$绷紧腰腹粗喘：\"哈啊……趁我动不了吞得这么深……\"",
+                "com_sex_P_cowgirl_overpen_RestrainedSucc_2": "$self$攥紧被缚住的双手，仰头看着每次都坐到底的$target$，声音沙哑：\"唔……连最里面都在吸……要被你榨干了……\"",
+                "com_sex_P_cowgirl_overpen_RestrainedSucc_3": "束缚剥夺了退开的余地，$self$在直抵子宫的接连碾磨中闷哼连连，腰身不自觉地往上挺动。",
+                "com_sex_P_cowgirl_overpen_SuccPerm_1": "$self$双手撑在$target$身上，腰肢沉甸甸地起落，每次都让前端顶进宫口：\"哈啊……好深……连子宫里面都被填满了……\"",
+                "com_sex_P_cowgirl_overpen_SuccPerm_2": "$self$俯下身贴近$target$，压着腰碾磨着最深处的软肉，内壁不住地收缩吮吸：\"嗯……顶在最里面磨好舒服……再重一些……\"",
+                "com_sex_P_cowgirl_overpen_SuccPerm_3": "$self$仰起脖颈，一手按着自己微胀的小腹，上下颠动着腰肢停不下来：\"哈啊……每次坐下去都撞到最深处了……要受不了了……\"",
+                "com_sex_P_cowgirl_overpen_Succ_1": "$self$原本只想应付了事，被顶开宫口的酸麻却让起伏的腰不受控地快了起来：\"……怎么会……连那么深的地方都有感觉了……\"",
+                "com_sex_P_cowgirl_overpen_Succ_2": "$self$咬着唇，脸颊泛红，腰却诚实地往最深处坐，交合处水声啧啧：\"……唔……偏偏直接顶进那种地方……\"",
+                "com_sex_P_cowgirl_overpen_Succ_3": "深处被反复贯穿的快感让$self$眼神迷离，她扶着$target$喘息着压低腰身：\"哈啊……都怪你在下面顶得太深……停不下来了……\"",
+                "com_sex_P_cowgirl_overpen_SuccCase_1": "$self$托着$target$起落的腰臀，配合着下沉的节奏往上顶进子宫口，呼吸粗重：\"哈啊……每次坐下来都吞到最里面……吸得太紧了……\"",
+                "com_sex_P_cowgirl_overpen_SuccCase_2": "最深处的软肉随着起伏不断吮吸摩擦前端，$self$抓紧$target$的胯部闷哼：\"嗯……就是这样，连宫口都包上来了……\"",
+                "com_sex_P_cowgirl_overpen_SuccCase_3": "看着上方晃动的身影与交合处的水光，$self$喘息着挺腰顶住深处：\"唔……被你用最里面这样夹着，快要撑不住了……\"",
+                "com_sex_P_cowgirl_overpen_RestrainedFail_1": "双手被缚住没法扶正对方的腰，$self$被强行坐到底的角度折得生疼：\"嘶……别硬往下坐！顶偏了，快停下！\"",
+                "com_sex_P_cowgirl_overpen_RestrainedFail_2": "$self$挣扯着腕间的束缚，既躲不开也调整不了深度，难受得皱紧眉头：\"唔……先给我解开，这样重重压下来太痛了……\"",
+                "com_sex_P_cowgirl_overpen_RestrainedFail_3": "被动承受着毫无章法的深压，$self$腰胯酸痛，急促地喘着气喊停：\"够了……再这样硬往里顶会受伤的！\"",
+                "com_sex_P_cowgirl_overpen_FailPerm_1": "$self$放慢了起落的动作，捂着发酸的小腹看了看身下的$target$：\"……嗯，顶得太深了，肚子里面有点发胀。\"",
+                "com_sex_P_cowgirl_overpen_FailPerm_2": "$self$稍微抬高了些腰，不太适应直抵宫口的压迫感：\"……怎么说呢，一味往最深处顶反而有点难受。\"",
+                "com_sex_P_cowgirl_overpen_FailPerm_3": "$self$有气无力地伏下身，干脆停住腰肢缓了口气：\"……先别往最里面撞了，让我歇一会儿。\"",
+                "com_sex_P_cowgirl_overpen_Fail_1": "$self$皱着眉停下腰，小腹深处被顶得一抽一抽地疼：\"……太深了……你别往子宫里面硬撞。\"",
+                "com_sex_P_cowgirl_overpen_Fail_2": "$self$强忍着坠痛机械地起落，脸色发白：\"……这样总行了吧，快点结束。\"",
+                "com_sex_P_cowgirl_overpen_Fail_3": "宫口被反复顶撞的痛意让$self$直抽冷气，她撑着身子不肯再往下坐实：\"唔……肚子里面好痛，我坐不下去了。\"",
+                "com_sex_P_cowgirl_overpen_FailCase_1": "上方强行往下坐的角度偏斜，$self$前端被顶得一阵生疼，连忙按住$target$的腰：\"嘶……等一下，顶偏了，别硬往最深处坐！\"",
+                "com_sex_P_cowgirl_overpen_FailCase_2": "$self$被压得胯骨发酸，深处过于紧涩的阻力让节奏全乱了，无奈地叹了口气：\"唔……太紧了，这样硬顶两个人都难受，先停一下。\"",
+                "com_sex_P_cowgirl_overpen_FailCase_3": "错位的深压让下身一阵发痛，$self$托住$target$不让继续往下沉：\"慢点，别一味往最里面压，先抬起来一点。\"",
+                "com_sex_P_cowgirl_overpen_FE_Timestop_1": "血丝混着爱液从结合处溢出，定格的$self$神情没有半分变化。",
+                "com_sex_P_cowgirl_overpen_FE_Timestop_2": "初次被贯通到子宫的小穴在停滞的时间里被动包裹着柱身，$self$静止的眼眸毫无焦距。",
+                "com_sex_P_cowgirl_overpen_FE_Timestop_3": "$self$维持着跨坐到底的固定姿态，对正在最深处发生的初体验一无所知。",
+                "com_sex_P_cowgirl_overpen_Timestop_1": "$self$保持着被定格的姿势跨坐在$target$身上，子宫深处在毫无知觉的状态下被反复进出。",
+                "com_sex_P_cowgirl_overpen_Timestop_2": "凝固的时间里，$self$像没有生命的人偶一样被动承受着直抵宫口的颠簸，唯有结合处不断渗出透明的湿液。",
+                "com_sex_P_cowgirl_overpen_Timestop_3": "$self$的视线定在原处一动不动，连小腹被深顶撑起的细微弧度都显得寂静无声。",
+                "com_sex_P_cowgirl_overpen_TimestopCase_1": "$self$在凝固的时间里保持着仰躺的姿势，对下身在上方子宫口反复进出的触感毫无知觉。",
+                "com_sex_P_cowgirl_overpen_TimestopCase_2": "结合处溢出的湿液停留在定格的皮肤上，$self$静止的面容没有半分波动。",
+                "com_sex_P_cowgirl_overpen_TimestopCase_3": "任凭上方的$target$如何沉腰深吞，$self$被时停定住的身体都没有任何主动反应。",
+                "com_sex_P_cowgirl_overpen_FE_Sleep_1": "睡梦中的$self$眉头始终没有松开，初次被捅到宫口的地方还在隐隐渗血。",
+                "com_sex_P_cowgirl_overpen_FE_Sleep_2": "$self$在沉睡中随着深顶无意识地轻哼，破瓜后的深处软肉在梦里本能地收紧。",
+                "com_sex_P_cowgirl_overpen_FE_Sleep_3": "熟睡的$self$伏在$target$身上呼吸微促，对子宫初次被反复顶撞的痛楚毫无知觉。",
+                "com_sex_P_cowgirl_overpen_Sleep_1": "$self$伏在$target$身上发出均匀的呼吸声，偶尔因宫口被顶而皱眉轻哼，温热的内壁在梦里本能地包裹着。",
+                "com_sex_P_cowgirl_overpen_Sleep_2": "$self$毫无意识地维持着坐到底的姿势，随着下方的深顶被动摇晃，沉睡的眉眼没有醒来的迹象。",
+                "com_sex_P_cowgirl_overpen_Sleep_3": "熟睡中的$self$腿根放松地贴着$target$腰侧，交合处溢出的湿液打湿了皮肤，呼吸只是略微急促。",
+                "com_sex_P_cowgirl_overpen_SleepCase_1": "熟睡的$self$在上方持续的深吞中呼吸变得粗重，腰胯在梦里无意识地往上微挺，却没有醒来。",
+                "com_sex_P_cowgirl_overpen_SleepCase_2": "交合处的水声伴随着每一次坐到底的闷响，$self$在睡梦中皱了皱眉，下身被紧窄的宫口包裹着反复摩擦。",
+                "com_sex_P_cowgirl_overpen_SleepCase_3": "$self$睡得深沉，对身上人直抵子宫的起伏毫无知觉，只有额角沁出了一层薄汗。",
+                "com_sex_P_cowgirl_overpen_Fainted_1": "昏迷的$self$毫无知觉地躺在下方，任由$target$在身上沉腰将下身一次次吞入子宫。",
+                "com_sex_P_cowgirl_overpen_Fainted_2": "$self$依然人事不省，交合处流下的湿液沾湿了腿根，紧闭的眼帘没有半点动静。",
+                "com_sex_P_cowgirl_overpen_Fainted_3": "失去意识的$self$像具没有知觉的躯体般被动承受着深骑，只有微弱的胸膛起伏显出呼吸。",
+                "com_sex_P_cowgirl_overpen_FE_Partner_1": "\"别勉强……太深的话就稍微抬起来一点。\" 察觉到上方$target$动作的生涩，$self$放轻了声音。",
+                "com_sex_P_cowgirl_overpen_FE_Partner_2": "$self$托住$target$发抖的腰，没敢再往上狠顶：\"还疼的话就先停着，第一次不用急着吞到底。\"",
+                "com_sex_P_cowgirl_overpen_FE_Partner_3": "\"第一次就能把最深处打开，已经很厉害了。\" $self$放缓了往上迎合的幅度，替$target$稳住重心。",
+                "com_sex_P_cowgirl_overpen_Refuse_WokenCase_1": "$self$被身上的重量惊醒，看清跨坐在腰间的$target$后猛地把人推开：\"你在干什么？！趁我没醒乱来！\"",
+                "com_sex_P_cowgirl_overpen_Refuse_WokenCase_2": "刚醒过来的$self$慌忙撑起身子往后退，恼怒地瞪着$target$：\"快下来！谁准你随便坐上来的！\"",
+                "com_sex_P_cowgirl_overpen_Refuse_WokenCase_3": "$self$惊醒后一把按住$target$的腰推远，拉过衣摆挡住自己：\"疯了吗？离我远一点！\"",
+                "com_sex_P_cowgirl_overpen_Refuse_Perm_1": "$self$轻轻推开$target$伸过来的手，揉了揉小腹：\"不行，今天太累了，坐到那么深身体吃不消的。\"",
+                "com_sex_P_cowgirl_overpen_Refuse_Perm_2": "$self$亲了亲$target$的额头，顺势退开半步：\"饶了我吧，今天实在没力气吞那么深，下次再陪你。\"",
+                "com_sex_P_cowgirl_overpen_Refuse_Perm_3": "$self$按住$target$不安分的手指，摇了摇头：\"现在没那个心情……我们就安静待会儿好不好？\"",
+                "com_sex_P_cowgirl_overpen_Refuse_Hostile_1": "$self$猛地挥开$target$的手，退开两步怒视过去：\"你疯了吗？！离我远点！\"",
+                "com_sex_P_cowgirl_overpen_Refuse_Hostile_2": "$self$满眼鄙夷，冷冷地推开$target$：\"真令人作呕，别用你的脏手碰我。\"",
+                "com_sex_P_cowgirl_overpen_Refuse_Hostile_3": "$self$板起脸往后退开，声音冷硬：\"收起你那恶心的念头，再敢过来我绝不客气。\"",
+                "com_sex_P_cowgirl_overpen_Refuse_Case_1": "$self$按住$target$想要跨坐下来的腰，侧身避开：\"等等，直接坐到最深处太危险了，我现在不想做这个。\"",
+                "com_sex_P_cowgirl_overpen_Refuse_Case_2": "$self$伸手挡住$target$下沉的动作，摇了摇头：\"别乱来，这种深度的做法太勉强了。\"",
+                "com_sex_P_cowgirl_overpen_Refuse_Case_3": "$self$往后撤开身子，皱起眉头制止了$target$：\"停下，我没答应让你这样骑上来。\"",
+                "com_sex_P_cowgirl_overpen_Ongoing_Player_1": "被骑在身下一路吞进深处的$self$转头看见一旁注视的$target$，耳根微热地移开视线：\"唔……别在旁边一直盯着看啊……\"",
+                "com_sex_P_cowgirl_overpen_Ongoing_Player_2": "上方重重坐到底的水声和晃动让$self$无处遮掩，只能喘着气朝旁观的$target$投去窘迫的一瞥：\"哈……你在那边看够了没有……\"",
+                "com_sex_P_cowgirl_overpen_Ongoing_Player_3": "察觉到$target$的目光落在两人紧密相连的腿间，$self$扶着身上人的腰，呼吸在旁观视线下变得更加粗重。"
+            }
+        }
+    }
+}

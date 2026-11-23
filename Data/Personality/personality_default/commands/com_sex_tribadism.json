@@ -1,0 +1,486 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_tribadism_Climax",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 com_sex_tribadism 高潮",
+                            "responses": [
+                                "com_sex_tribadism_Climax_RecvCase_1",
+                                "com_sex_tribadism_Climax_RecvCase_2",
+                                "com_sex_tribadism_Climax_RecvCase_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（任何状态）",
+                            "responses": [
+                                "com_sex_tribadism_Climax_RecvCase_1"
+                            ]
+                        }
+                    ],
+                    "template": "commandClimax"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_tribadism_Begin",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "开始 时停中",
+                                    "responses": [
+                                        "com_sex_tribadism_Begin_TimestopCase_1",
+                                        "com_sex_tribadism_Begin_TimestopCase_2",
+                                        "com_sex_tribadism_Begin_TimestopCase_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "开始 睡眠中",
+                                    "responses": [
+                                        "com_sex_tribadism_Begin_SleepCase_1",
+                                        "com_sex_tribadism_Begin_SleepCase_2",
+                                        "com_sex_tribadism_Begin_SleepCase_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "开始 昏迷（非睡眠）",
+                                    "responses": [
+                                        "com_sex_tribadism_Begin_Fainted_1",
+                                        "com_sex_tribadism_Begin_Fainted_2",
+                                        "com_sex_tribadism_Begin_Fainted_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "_comment": "开始 被束缚",
+                                    "responses": [
+                                        "com_sex_tribadism_Begin_Restrained_1",
+                                        "com_sex_tribadism_Begin_Restrained_2",
+                                        "com_sex_tribadism_Begin_Restrained_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "受方 开始 com_sex_tribadism",
+                            "responses": [
+                                "com_sex_tribadism_Begin_AwakeCase_1",
+                                "com_sex_tribadism_Begin_AwakeCase_2",
+                                "com_sex_tribadism_Begin_AwakeCase_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（接受，任何状态）",
+                            "responses": [
+                                "com_sex_tribadism_Begin_AwakeCase_1"
+                            ]
+                        }
+                    ],
+                    "template": "commandAct"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_tribadism",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "时停中 受方",
+                                    "responses": [
+                                        "com_sex_tribadism_TimestopCase_1",
+                                        "com_sex_tribadism_TimestopCase_2",
+                                        "com_sex_tribadism_TimestopCase_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "睡眠中 受方",
+                                    "responses": [
+                                        "com_sex_tribadism_SleepCase_1",
+                                        "com_sex_tribadism_SleepCase_2",
+                                        "com_sex_tribadism_SleepCase_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "昏迷（非睡眠） 受方",
+                                    "responses": [
+                                        "com_sex_tribadism_Fainted_1",
+                                        "com_sex_tribadism_Fainted_2",
+                                        "com_sex_tribadism_Fainted_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "_comment": "刚睡醒 受方",
+                                    "responses": [
+                                        "com_sex_tribadism_Woken_1",
+                                        "com_sex_tribadism_Woken_2",
+                                        "com_sex_tribadism_Woken_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "_comment": "受方（被束缚） 判定成功",
+                                            "responses": [
+                                                "com_sex_tribadism_RestrainedSucc_1",
+                                                "com_sex_tribadism_RestrainedSucc_2",
+                                                "com_sex_tribadism_RestrainedSucc_3"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "受方 结果正面",
+                                    "responses": [
+                                        "com_sex_tribadism_SuccCase_1",
+                                        "com_sex_tribadism_SuccCase_2",
+                                        "com_sex_tribadism_SuccCase_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessLTE": "Failure"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "_comment": "受方（被束缚） 判定失败",
+                                            "responses": [
+                                                "com_sex_tribadism_RestrainedFail_1",
+                                                "com_sex_tribadism_RestrainedFail_2",
+                                                "com_sex_tribadism_RestrainedFail_3"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "受方 结果负面",
+                                    "responses": [
+                                        "com_sex_tribadism_FailCase_1",
+                                        "com_sex_tribadism_FailCase_2",
+                                        "com_sex_tribadism_FailCase_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "受方 com_sex_tribadism 结果",
+                            "responses": [
+                                "com_sex_tribadism_FailCase_1"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（接受，任何状态）",
+                            "responses": [
+                                "com_sex_tribadism_FailCase_1"
+                            ]
+                        }
+                    ],
+                    "template": "commandResult"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_tribadism_Ongoing",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "受方 → 玩家 ｜ 进行中",
+                                    "responses": [
+                                        "com_sex_tribadism_Ongoing_Player_1",
+                                        "com_sex_tribadism_Ongoing_Player_2",
+                                        "com_sex_tribadism_Ongoing_Player_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "受方 com_sex_tribadism 进行中",
+                            "responses": [
+                                "com_sex_tribadism_Ongoing_Player_1",
+                                "com_sex_tribadism_Ongoing_Player_2",
+                                "com_sex_tribadism_Ongoing_Player_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（接受，任何状态）",
+                            "responses": [
+                                "com_sex_tribadism_Ongoing_Player_1"
+                            ]
+                        }
+                    ],
+                    "template": "commandAct"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_tribadism_Refuse",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireRefusalContext": "ReceiverDeclined",
+                            "useActiveTags": false,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "useActiveTags": false,
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ],
+                                        "requireEPSuccess": false
+                                    },
+                                    "_comment": "刚睡醒拒绝",
+                                    "responses": [
+                                        "com_sex_tribadism_Refuse_WokenCase_1",
+                                        "com_sex_tribadism_Refuse_WokenCase_2",
+                                        "com_sex_tribadism_Refuse_WokenCase_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "受方拒绝 com_sex_tribadism",
+                            "responses": [
+                                "com_sex_tribadism_Refuse_Case_1",
+                                "com_sex_tribadism_Refuse_Case_2",
+                                "com_sex_tribadism_Refuse_Case_3"
+                            ]
+                        },
+                        {
+                            "useActiveTags": false,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（拒绝）",
+                            "responses": [
+                                "com_sex_tribadism_Refuse_Case_1"
+                            ]
+                        }
+                    ],
+                    "template": "commandRefuse"
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_sex_tribadism_Climax_RecvCase_1": "敏感的软肉被狠狠碾过的瞬间，$self$猛地绷紧脚背，抱紧$target$在剧烈的颤抖中达到了高潮：\"啊……！那里不行……去了……！\"",
+                "com_sex_tribadism_Climax_RecvCase_2": "$self$腰肢高高挺起，贴合处涌出滚烫的爱液，在黏腻的摩擦中失神地喘息着登上了顶峰：\"嗯啊……！太烫了……一起去了……！\"",
+                "com_sex_tribadism_Climax_RecvCase_3": "一阵紧过一阵的酥麻从交合处炸开，$self$把脸埋在$target$肩头，浑身瘫软地抽搐着：\"唔嗯……！被磨得……一点力气都没有了……！\"",
+                "com_sex_tribadism_Begin_TimestopCase_1": "停滞的时间里，$self$被分开双腿贴上摩挲，定格在脸上的神情没有半分变化。",
+                "com_sex_tribadism_Begin_TimestopCase_2": "$self$像人偶一样保持着时停前的姿态，对腿间正被紧紧挤压磨蹭的触感一无所知。",
+                "com_sex_tribadism_Begin_TimestopCase_3": "静止的空气里只有两具身体贴合摩擦的细响，$self$连眼睫都停在原处纹丝不动。",
+                "com_sex_tribadism_Begin_SleepCase_1": "熟睡的$self$腿间被温热的软肉贴住磨开，在梦里发出一声含糊的鼻音，大腿无意识地蹭了蹭。",
+                "com_sex_tribadism_Begin_SleepCase_2": "敏感处传来的摩擦感让$self$在睡梦中皱了皱眉，腰肢轻轻拧动了一下，呼吸却依旧绵长。",
+                "com_sex_tribadism_Begin_SleepCase_3": "$self$在沉睡中毫无防备地被压住腿间，唇间漏出一声细微的嘤咛，湿意顺着贴合处慢慢渗出。",
+                "com_sex_tribadism_Begin_Fainted_1": "彻底失去意识的$self$双腿瘫软地敞着，任由$target$贴上腿间摩挲，没有任何反应。",
+                "com_sex_tribadism_Begin_Fainted_2": "$self$人事不省地躺着，随着对方压上来的力道，毫无知觉的胯部只被动地陷下去半分。",
+                "com_sex_tribadism_Begin_Fainted_3": "昏迷中的$self$连呼吸都十分微弱，闭合的软肉被单方面挤压磨开，眼帘沉重地垂着。",
+                "com_sex_tribadism_Begin_Restrained_1": "手脚被缚住无法并拢双腿，$self$只能眼睁睁看着$target$欺身贴上来，难耐地扭了扭腰：\"唔……别趁我动不了这样磨……\"",
+                "com_sex_tribadism_Begin_Restrained_2": "$self$挣了一下被捆紧的手腕，腿间已被温热的软肉贴住，羞耻得偏过头去：\"哈啊……至少把绳子解开啊……\"",
+                "com_sex_tribadism_Begin_Restrained_3": "被固定住的姿势让敏感处无处躲闪，$self$在直接贴合的刺激下轻颤起来，呼吸一下子乱了节奏。",
+                "com_sex_tribadism_Begin_AwakeCase_1": "温热湿滑的软肉贴上来摩挲的瞬间，$self$腰背轻轻一颤，扶住$target$的肩膀溢出一声轻哼：\"嗯……贴得好紧……\"",
+                "com_sex_tribadism_Begin_AwakeCase_2": "$self$分开双腿迎合着交错贴上的胯部，感受着两处湿润粘腻的触感，脸颊泛起红晕：\"哈……刚贴上就这么烫……\"",
+                "com_sex_tribadism_Begin_AwakeCase_3": "敏感的软肉被正面挤压摩擦，$self$勾住$target$的腿弯，声音带着微颤：\"唔……慢一点磨……\"",
+                "com_sex_tribadism_Woken_1": "腿间酥麻的热意把$self$从沉睡中唤醒，她睁开眼看见交叠在身上的$target$，脸颊顿时红透：\"唔……？！你趁我睡着在做什么呀……\"",
+                "com_sex_tribadism_Woken_2": "$self$迷迷糊糊地醒过来，察觉到下身正与$target$紧紧贴合摩挲，忍不住轻喘了一声：\"嗯……怪不得梦里觉得这么热……\"",
+                "com_sex_tribadism_Woken_3": "刚恢复意识就被顶磨了一下敏感处，$self$哆嗦着扶住$target$的腰，声音还带着刚醒的软糯：\"哈啊……至少等我醒过来再动啊……\"",
+                "com_sex_tribadism_RestrainedSucc_1": "被缚住的双手攥紧，$self$在无处可逃的顶磨中腰肢乱颤，忍不住挺起胯部迎了上去：\"哈啊……那里……被磨得受不了了……\"",
+                "com_sex_tribadism_RestrainedSucc_2": "束缚让快感无处宣泄，$self$红着眼眶咬住下唇，腿间湿得一塌糊涂：\"呜……别光磨外面……身子都软了……\"",
+                "com_sex_tribadism_RestrainedSucc_3": "$self$挣动着腕间的束缚，随着每一次紧密的摩擦发出甜腻的呜咽：\"嗯哼……太烫了……要被你磨坏了……\"",
+                "com_sex_tribadism_SuccCase_1": "两处湿透的软肉磨得水声啧啧，$self$抱紧$target$的后背，主动挺起腰迎合着摩擦的节奏：\"哈啊……好舒服……正好磨到那里了……\"",
+                "com_sex_tribadism_SuccCase_2": "$self$大腿缠在$target$腰侧发着颤，滚烫的吐息喷在对方颈间：\"嗯……再压重一点……我们一起……\"",
+                "com_sex_tribadism_SuccCase_3": "粘腻的爱液把两人的交合处濡得一片湿滑，$self$眼神迷离地蹭着$target$，嘴里溢出甜腻的喘息：\"唔嗯……那里又麻又烫，停不下来了……\"",
+                "com_sex_tribadism_RestrainedFail_1": "双腿被固定着无法调整角度，$self$被磨得生疼，挣扎着往后缩腰：\"嘶……停下，磨得太用力了，好痛……\"",
+                "com_sex_tribadism_RestrainedFail_2": "$self$扯动着身上的束缚，既合不上腿又躲不开，委屈得眼眶泛红：\"唔……先给我解开，这样压着太难受了……\"",
+                "com_sex_tribadism_RestrainedFail_3": "僵硬的受缚姿势让髋骨酸痛不已，$self$偏过头喘着粗气：\"够了……根本对不上地方，别再硬磨了。\"",
+                "com_sex_tribadism_FailCase_1": "错位的摩擦让软肉一阵发痛，$self$皱着眉按住$target$的腰往后退了退：\"嘶……位置偏了，这样干磨有点疼……\"",
+                "com_sex_tribadism_FailCase_2": "$self$大腿酸得发紧，却始终没找准舒服的角度，无奈地叹了口气：\"等一下……节奏全乱了，歇会儿再试吧。\"",
+                "com_sex_tribadism_FailCase_3": "过度用力的挤压只带来酸胀的不适，$self$推了推$target$的肩膀：\"唔……太重了，这样磨根本提不起兴致。\"",
+                "com_sex_tribadism_TimestopCase_1": "$self$在凝固的时间里保持着被分开双腿的姿势，对腿间反复的顶磨毫无知觉。",
+                "com_sex_tribadism_TimestopCase_2": "贴合处溢出的湿意停留在定格的皮肤上，$self$静止的眼眸里没有一丝波澜。",
+                "com_sex_tribadism_TimestopCase_3": "任凭$target$如何用力摩挲，$self$被定住的身体都只是被动承受着挤压，神情依旧停在原处。",
+                "com_sex_tribadism_SleepCase_1": "熟睡的$self$在持续的摩擦中呼吸变得湿热，腿根无意识地轻轻抽动，却没有从梦里醒来。",
+                "com_sex_tribadism_SleepCase_2": "粘腻的水声在贴合处响着，$self$在睡梦中发出细碎的鼻音，微湿的软肉本能地顺着挤压轻轻收缩。",
+                "com_sex_tribadism_SleepCase_3": "$self$眉心微蹙，脸颊在睡意中泛起一层浅红，浑然不知自己的身体正被这样磨弄。",
+                "com_sex_tribadism_Fainted_1": "昏迷的$self$身子随着$target$磨蹭的动作被动晃动，湿液顺着毫无知觉的腿根滑落。",
+                "com_sex_tribadism_Fainted_2": "$self$依然人事不省，瘫软的下身任由对方挤压摩擦，没有发出半点声音。",
+                "com_sex_tribadism_Fainted_3": "失去意识的$self$对外界的刺激毫无反应，只有被磨得泛红的软肉显出交合的痕迹。",
+                "com_sex_tribadism_Ongoing_Player_1": "正被贴着腿间摩挲的$self$转头对上旁观的$target$的视线，羞得把脸埋进肩窝：\"唔……别在旁边盯着看我们这样啊……\"",
+                "com_sex_tribadism_Ongoing_Player_2": "两具身体交叠摩擦的水声清晰可闻，$self$眼角泛红地瞥了$target$一眼，声音发颤：\"哈啊……你在那边看够了没有……\"",
+                "com_sex_tribadism_Ongoing_Player_3": "察觉到$target$的目光落在交合的腿间，$self$难为情地咬住嘴唇，腰肢却随着对方的顶磨轻轻颤动。",
+                "com_sex_tribadism_Refuse_WokenCase_1": "$self$被下身的异样触感惊醒，看清压在腿间的$target$后猛地把人推开：\"你在干什么？！趁我没醒做这种事！\"",
+                "com_sex_tribadism_Refuse_WokenCase_2": "刚醒过来的$self$慌忙收拢双腿往后退，又羞又恼地瞪着$target$：\"快起来！谁准你随便碰我的！\"",
+                "com_sex_tribadism_Refuse_WokenCase_3": "$self$惊醒后一把按住$target$的肩膀推远，拉过衣摆挡住自己：\"疯了吗？离我远一点！\"",
+                "com_sex_tribadism_Refuse_Case_1": "$self$合拢双腿往后退开，伸手挡住贴过来的$target$：\"等等，我现在没心情做这种事。\"",
+                "com_sex_tribadism_Refuse_Case_2": "$self$偏过身避开$target$压过来的动作，脸颊微热地摇了摇头：\"别闹了，这种姿势太奇怪了，我不干。\"",
+                "com_sex_tribadism_Refuse_Case_3": "$self$按住$target$的肩膀把人推开半步，皱起眉头：\"停下，我没答应要和你这样磨。\""
+            }
+        }
+    }
+}

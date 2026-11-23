@@ -54,6 +54,14 @@
                             }
                         },
                         "displayName":"com_sex_finger_caress_A_displayName_1",
+                        "description_remove":{
+                            "Entries":[
+                                {
+                                    "keepLooking":true,
+                                    "texts":[ "com_sex_finger_caress_A_solo_description_remove_1", "com_sex_finger_caress_A_solo_description_remove_2", "com_sex_finger_caress_A_solo_description_remove_3" ]
+                                }
+                            ]
+                        },
                         "useBaseDescription": false,
                         "description_begin":{
                             "Entries":[
@@ -88,6 +96,14 @@
                             }
                         },
                         "displayName":"com_sex_finger_caress_A_displayName_2",
+                        "description_remove":{
+                            "Entries":[
+                                {
+                                    "keepLooking":true,
+                                    "texts":[ "com_sex_finger_caress_A_solo_group_description_remove_1", "com_sex_finger_caress_A_solo_group_description_remove_2", "com_sex_finger_caress_A_solo_group_description_remove_3" ]
+                                }
+                            ]
+                        },
                         "useBaseDescription": false,
                         "description_begin":{
                             "Entries":[
@@ -269,7 +285,13 @@
                 "com_sex_finger_caress_A_description_begin_12":"$doer.firstname$对着定格不动的$receiver.firstname$揉起后穴",
                 "com_sex_finger_caress_A_description_remove_4":"$receiver.firstname$的肛门上不再有手指按压",
                 "com_sex_finger_caress_A_description_remove_5":"$receiver.firstname$的屁眼从$doer.firstname$的手下露了出来",
-                "com_sex_finger_caress_A_description_remove_6":"$doer.firstname$的手指从$receiver.firstname$的后穴上离开了"
+                "com_sex_finger_caress_A_description_remove_6":"$doer.firstname$的手指从$receiver.firstname$的后穴上离开了",
+                "com_sex_finger_caress_A_solo_description_remove_1":"$doer.firstname$的手指从自己的肛门上移开了",
+                "com_sex_finger_caress_A_solo_description_remove_2":"$doer.firstname$把手从自己的屁眼上收了回来",
+                "com_sex_finger_caress_A_solo_description_remove_3":"$doer.firstname$松开了自己的后穴",
+                "com_sex_finger_caress_A_solo_group_description_remove_1":"$doer.firstname$的两只手从自己的肛门上移开了",
+                "com_sex_finger_caress_A_solo_group_description_remove_2":"$doer.firstname$把手从自己的屁眼收了回来",
+                "com_sex_finger_caress_A_solo_group_description_remove_3":"$doer.firstname$的指尖离开了各自的肛门"
 
             },
             "en-us":

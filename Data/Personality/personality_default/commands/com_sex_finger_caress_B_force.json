@@ -1,0 +1,506 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_finger_caress_B_force_Climax",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "template": "commandClimax",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
+                            "responses": [
+                                "com_sex_finger_caress_B_force_Climax_1",
+                                "com_sex_finger_caress_B_force_Climax_2",
+                                "com_sex_finger_caress_B_force_Climax_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（任何状态）",
+                            "responses": [
+                                "com_sex_finger_caress_B_force_Climax_4",
+                                "com_sex_finger_caress_B_force_Climax_5",
+                                "com_sex_finger_caress_B_force_Climax_6"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_finger_caress_B_force_Begin",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（时停中） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_sex_finger_caress_B_force_Begin_7",
+                                        "com_sex_finger_caress_B_force_Begin_8",
+                                        "com_sex_finger_caress_B_force_Begin_9"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（睡眠中） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_sex_finger_caress_B_force_Begin_4",
+                                        "com_sex_finger_caress_B_force_Begin_5",
+                                        "com_sex_finger_caress_B_force_Begin_6"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_sex_finger_caress_B_force_Begin_1",
+                                        "com_sex_finger_caress_B_force_Begin_2",
+                                        "com_sex_finger_caress_B_force_Begin_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
+                            "responses": [
+                                "com_sex_finger_caress_B_force_Begin_13",
+                                "com_sex_finger_caress_B_force_Begin_14",
+                                "com_sex_finger_caress_B_force_Begin_15"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_sex_finger_caress_B_force_Begin_10",
+                                        "com_sex_finger_caress_B_force_Begin_11",
+                                        "com_sex_finger_caress_B_force_Begin_12"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（接受，任何状态）",
+                            "responses": [
+                                "com_sex_finger_caress_B_force_Begin_16",
+                                "com_sex_finger_caress_B_force_Begin_17",
+                                "com_sex_finger_caress_B_force_Begin_18"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_finger_caress_B_force",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "template": "commandResult",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（时停中） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_sex_finger_caress_B_force_13",
+                                        "com_sex_finger_caress_B_force_14",
+                                        "com_sex_finger_caress_B_force_15"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（睡眠中） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_sex_finger_caress_B_force_10",
+                                        "com_sex_finger_caress_B_force_11",
+                                        "com_sex_finger_caress_B_force_12"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_sex_finger_caress_B_force_7",
+                                        "com_sex_finger_caress_B_force_8",
+                                        "com_sex_finger_caress_B_force_9"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 ｜ 接受",
+                            "responses": [
+                                "com_sex_finger_caress_B_force_25",
+                                "com_sex_finger_caress_B_force_26",
+                                "com_sex_finger_caress_B_force_27"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受·判定成功",
+                                    "responses": [
+                                        "com_sex_finger_caress_B_force_19",
+                                        "com_sex_finger_caress_B_force_20",
+                                        "com_sex_finger_caress_B_force_21"
+                                    ],
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受·判定成功",
+                                            "responses": [
+                                                "com_sex_finger_caress_B_force_1",
+                                                "com_sex_finger_caress_B_force_2",
+                                                "com_sex_finger_caress_B_force_3"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessLTE": "Failure"
+                                    },
+                                    "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受·判定失败",
+                                    "responses": [
+                                        "com_sex_finger_caress_B_force_22",
+                                        "com_sex_finger_caress_B_force_23",
+                                        "com_sex_finger_caress_B_force_24"
+                                    ],
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受·判定失败",
+                                            "responses": [
+                                                "com_sex_finger_caress_B_force_4",
+                                                "com_sex_finger_caress_B_force_5",
+                                                "com_sex_finger_caress_B_force_6"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_sex_finger_caress_B_force_16",
+                                        "com_sex_finger_caress_B_force_17",
+                                        "com_sex_finger_caress_B_force_18"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（接受，任何状态）",
+                            "responses": [
+                                "com_sex_finger_caress_B_force_28",
+                                "com_sex_finger_caress_B_force_29",
+                                "com_sex_finger_caress_B_force_30"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_finger_caress_B_force_Ongoing",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 对方 ｜ 接受",
+                            "responses": [
+                                "com_sex_finger_caress_B_force_Ongoing_4",
+                                "com_sex_finger_caress_B_force_Ongoing_5",
+                                "com_sex_finger_caress_B_force_Ongoing_6"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "对方是玩家",
+                                    "responses": [
+                                        "com_sex_finger_caress_B_force_Ongoing_1",
+                                        "com_sex_finger_caress_B_force_Ongoing_2",
+                                        "com_sex_finger_caress_B_force_Ongoing_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（接受，任何状态）",
+                            "responses": [
+                                "com_sex_finger_caress_B_force_Ongoing_7",
+                                "com_sex_finger_caress_B_force_Ongoing_8",
+                                "com_sex_finger_caress_B_force_Ongoing_9"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_finger_caress_B_force_Refuse",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "template": "commandRefuse",
+                    "variants": [
+                        {
+                            "requireRefusalContext": "ReceiverDeclined",
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "selfTags": [
+                                    "justWokenUp"
+                                ]
+                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
+                            "responses": [
+                                "com_sex_finger_caress_B_force_Refuse_1",
+                                "com_sex_finger_caress_B_force_Refuse_2",
+                                "com_sex_finger_caress_B_force_Refuse_3"
+                            ]
+                        },
+                        {
+                            "requireRefusalContext": "ReceiverDeclined",
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
+                            "responses": [
+                                "com_sex_finger_caress_B_force_Refuse_4",
+                                "com_sex_finger_caress_B_force_Refuse_5",
+                                "com_sex_finger_caress_B_force_Refuse_6"
+                            ]
+                        },
+                        {
+                            "useActiveTags": false,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（拒绝，任何状态）",
+                            "responses": [
+                                "com_sex_finger_caress_B_force_Refuse_7",
+                                "com_sex_finger_caress_B_force_Refuse_8",
+                                "com_sex_finger_caress_B_force_Refuse_9"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_sex_finger_caress_B_force_Climax_1": "光靠玩弄乳头就把她逼到了极限，$self$弓起腰猛地颤抖起来：“不行、要去了……！乳头好麻……嗯啊♡”",
+                "com_sex_finger_caress_B_force_Climax_2": "“别、别再捻了……要泄了……！”$self$抓紧$target$的衣袖，在急促的喘息里迎来了高潮。",
+                "com_sex_finger_caress_B_force_Climax_3": "酥麻感顺着乳尖炸开，$self$腿根发软地抖个不停，眼角泛起水光软倒在$target$怀里。",
+                "com_sex_finger_caress_B_force_Begin_1": "昏迷中的$self$毫无知觉，任由$target$用手指捻起她的乳头把玩，身体软软地塌在原地。",
+                "com_sex_finger_caress_B_force_Begin_2": "$self$紧闭着眼没有半点反应，只有胸口随着浅浅的呼吸微弱起伏。",
+                "com_sex_finger_caress_B_force_Begin_3": "失去意识的$self$既没有躲闪也没有出声，乳尖在反复揉捏下慢慢立了起来。",
+                "com_sex_finger_caress_B_force_Begin_4": "熟睡中的$self$被指尖捏上乳头，无意识地拧了下肩，嘴里含糊地咕哝了半声却没有醒来。",
+                "com_sex_finger_caress_B_force_Begin_5": "乳首在指腹揉搓下一点点挺立，$self$只是蜷了蜷指尖，呼吸仍保持着沉睡的平稳。",
+                "com_sex_finger_caress_B_force_Begin_6": "$self$沉在梦乡里毫无察觉，任由$target$把她胸前那一点敏感揉得发红。",
+                "com_sex_finger_caress_B_force_Begin_7": "时间冻结在这一瞬，$self$定在原处一动不动，连眼神都没偏移半分。",
+                "com_sex_finger_caress_B_force_Begin_8": "就算乳头被$target$捏在指间捻弄，$self$也像被定格一样毫无反应。",
+                "com_sex_finger_caress_B_force_Begin_9": "静止中的$self$保持着时间暂停前的姿态，对胸前的一切触碰一无所知。",
+                "com_sex_finger_caress_B_force_Begin_10": "手腕被绑着挡不住胸前，$self$在乳头被指尖捏住时绷紧了背：“……别光揪着乳尖不放！”",
+                "com_sex_finger_caress_B_force_Begin_11": "“唔……被绑着还要被这样玩弄乳头……”$self$咬住下唇仰起头，避开$target$的视线。",
+                "com_sex_finger_caress_B_force_Begin_12": "束缚让$self$无处可躲，她试着往后缩了缩肩，却还是躲不开$target$在乳头上揉弄的手指。",
+                "com_sex_finger_caress_B_force_Begin_13": "乳尖刚被指尖捏住，$self$便轻吸了一口气，往$target$那边微偏了偏身：“……轻点捻，那里很敏感。”",
+                "com_sex_finger_caress_B_force_Begin_14": "$self$低头看着$target$拨弄自己乳头的手指，喉咙动了一下：“刚一上来就只挑着乳尖弄啊。”",
+                "com_sex_finger_caress_B_force_Begin_15": "“别太用力扯……”$self$往后靠住支撑，任由$target$把玩自己已经慢慢变硬的乳首。",
+                "com_sex_finger_caress_B_force_1": "双手被绑着没法遮挡，乳尖的刺激直往脑子里冲，$self$喘得断断续续：“……哈啊、别再捏了……受不了了……”",
+                "com_sex_finger_caress_B_force_2": "$self$扯动着腕上的束缚仰起脖颈，泛红的乳头在指腹下不断发颤：“唔……要被你揉坏了……”",
+                "com_sex_finger_caress_B_force_3": "没地方躲也没法推开，$self$只能咬紧嘴唇忍住溢出喉咙的呻吟，腿根阵阵发软。",
+                "com_sex_finger_caress_B_force_4": "被绑着躲不开，$target$生涩的力道扯得乳头生疼，$self$吸了口气瞪过去：“好痛！别硬拽啊！”",
+                "com_sex_finger_caress_B_force_5": "“你指甲刮到我了……”$self$往后缩着肩，手腕上的绳索勒得发红，“不会玩弄就松手！”",
+                "com_sex_finger_caress_B_force_6": "粗鲁的拉扯全无半点快感，$self$别开脸忍着疼：“够了没有，别再瞎捏了。”",
+                "com_sex_finger_caress_B_force_7": "昏迷中的$self$依旧没有转醒，被玩弄得充血发硬的乳头静静立在空气里。",
+                "com_sex_finger_caress_B_force_8": "$self$毫无反应地躺着，连指尖都没动一下，任由$target$的手指在乳首上反复摩擦。",
+                "com_sex_finger_caress_B_force_9": "失去意识的$self$没有发出任何声响，只留下一片沉沉的安静。",
+                "com_sex_finger_caress_B_force_10": "乳头被捻弄得发肿挺立，$self$在睡梦里难耐地轻哼了一声，腿根夹紧了些却还是没醒。",
+                "com_sex_finger_caress_B_force_11": "梦里的$self$无意识地弓起一点背脊，随即又软绵绵地落回枕间，呼吸略微急促。",
+                "com_sex_finger_caress_B_force_12": "$self$仍沉睡未醒，胸前那两点被揉得泛红发亮，随着均匀的呼吸轻轻起伏。",
+                "com_sex_finger_caress_B_force_13": "时间仍未流动，$self$定格在原处，乳头却已在$target$指间被揉得红肿挺立。",
+                "com_sex_finger_caress_B_force_14": "$self$保持着原本的神情一动不动，根本不知道刚才乳首被怎样玩弄过。",
+                "com_sex_finger_caress_B_force_15": "静止的空气里没有半点声音，$self$连一根手指也没有偏移。",
+                "com_sex_finger_caress_B_force_16": "乳尖传来的尖锐酥麻把$self$弄醒，她迷糊地睁开眼看了看$target$，最终没推开：“……唔，醒来就捏这里啊？”",
+                "com_sex_finger_caress_B_force_17": "$self$揉了揉眼睛清醒过来，察觉乳头已经被捻得硬邦邦的，耳尖泛红：“……动作轻点。”",
+                "com_sex_finger_caress_B_force_18": "“……哈啊、难怪梦里一直觉得胸口发痒。”$self$声音还带着睡意，顺着$target$的指尖轻哼了一声。",
+                "com_sex_finger_caress_B_force_19": "乳头被指尖反复搓捻到又红又硬，$self$腿根发软地喘了口气：“……哈啊、别再这样揉乳尖了……”",
+                "com_sex_finger_caress_B_force_20": "“嗯……指甲别刮到……”酥麻感直往小腹窜，$self$抓紧$target$的胳膊才没滑下去。",
+                "com_sex_finger_caress_B_force_21": "$self$咬着唇压住喉咙里的轻哼，胸口随着急促的呼吸起伏，被玩弄过的乳首挺得发颤。",
+                "com_sex_finger_caress_B_force_22": "指甲不小心掐重了点，$self$倒抽一口气往后缩：“嘶……你掐疼我了！轻点行不行！”",
+                "com_sex_finger_caress_B_force_23": "“别硬拽啊……”$self$按住$target$的手腕停了下来，胸前火辣辣地发疼。",
+                "com_sex_finger_caress_B_force_24": "$target$生硬地拉扯了半天反倒弄得生疼，$self$沉下脸：“不会揉就别乱掐。”",
+                "com_sex_finger_caress_B_force_Ongoing_1": "乳头正被施方捏在指间捻弄，$self$余光瞄到$target$还在旁边看着，别开脸低声道：“……别盯着看。”",
+                "com_sex_finger_caress_B_force_Ongoing_2": "“看够了没有……”$self$忍着乳尖传来的阵阵麻意，顶着$target$的视线咬紧了下唇。",
+                "com_sex_finger_caress_B_force_Ongoing_3": "被当众揉弄乳头的羞耻让$self$耳根烧得发烫，她喘着气不敢再往$target$那边看。",
+                "com_sex_finger_caress_B_force_Refuse_1": "$self$痛得猛地惊醒，一把拍开$target$捏着自己乳头的手：“干什么呢？！趁我睡着乱掐！”",
+                "com_sex_finger_caress_B_force_Refuse_2": "“滚开！”刚醒过来的$self$护住胸前迅速往后缩，冷冷盯住$target$，“谁准你碰那里的！”",
+                "com_sex_finger_caress_B_force_Refuse_3": "睡意瞬间散得一干二净，$self$甩开$target$的手腕：“别碰我，出去。”",
+                "com_sex_finger_caress_B_force_Refuse_4": "$self$一把拍开$target$伸过来的手指，往后退开半步：“别乱掐我乳头！”",
+                "com_sex_finger_caress_B_force_Refuse_5": "“把手拿开，那里不是给你这么玩的。”$self$护住胸前，冷冷地盯着$target$。",
+                "com_sex_finger_caress_B_force_Refuse_6": "$self$直接侧身躲开$target$的触碰，语气硬得没有余地：“我没答应让你碰。”",
+                "com_sex_finger_caress_B_force_Climax_4": "强烈的刺激骤然冲上头顶，$self$浑身一颤，随即无力地软了下来。",
+                "com_sex_finger_caress_B_force_Climax_5": "积攒到极点的快感猛地炸开，$self$呼吸一滞，身体不受控制地轻颤不止。",
+                "com_sex_finger_caress_B_force_Climax_6": "$self$终究没能忍住，在急促的喘息声中彻底泄了力气。",
+                "com_sex_finger_caress_B_force_Begin_16": "$self$没有躲闪，任由动作就这么在胸前展开。",
+                "com_sex_finger_caress_B_force_Begin_17": "刚一接触，$self$便顺着这股力道微调了姿势，没有多说一句话。",
+                "com_sex_finger_caress_B_force_Begin_18": "$self$抬眼看了一眼，随即便安静地配合着当前的动作。",
+                "com_sex_finger_caress_B_force_25": "指尖终于松开些许，$self$轻喘着平复胸前火辣辣的麻意。",
+                "com_sex_finger_caress_B_force_26": "$self$低头看了一眼发红的乳尖，微微呼出一口气没有作声。",
+                "com_sex_finger_caress_B_force_27": "这阵揉捏暂告一段落，$self$略微挪开身子，胸口仍在轻轻起伏。",
+                "com_sex_finger_caress_B_force_28": "动作停了下来，$self$维持着原样，没有再多说什么。",
+                "com_sex_finger_caress_B_force_29": "$self$轻轻吐出一口气，目光从近处移开，神色恢复了平静。",
+                "com_sex_finger_caress_B_force_30": "触碰结束得干脆，$self$略微整了整姿态，一时间没有反应。",
+                "com_sex_finger_caress_B_force_Ongoing_4": "乳尖被反复捏弄得又麻又涨，$self$咬着唇压住喉咙里溢出的喘息。",
+                "com_sex_finger_caress_B_force_Ongoing_5": "$self$微微仰起颈项，指尖传来的锐利刺激让腿根一阵发软。",
+                "com_sex_finger_caress_B_force_Ongoing_6": "胸前一点被持续搓捻着，$self$只觉得连呼吸都跟着乱了拍子。",
+                "com_sex_finger_caress_B_force_Ongoing_7": "指间的动作仍未停下，$self$保持着此刻的姿态没有出声。",
+                "com_sex_finger_caress_B_force_Ongoing_8": "$self$没有打断眼前的拉扯，只是静静承受着接下来的触碰。",
+                "com_sex_finger_caress_B_force_Ongoing_9": "动作还在继续，$self$目光微垂，一时间没有别的动作。",
+                "com_sex_finger_caress_B_force_Refuse_7": "$self$往后退开半步，冷声道：“别碰那里。”",
+                "com_sex_finger_caress_B_force_Refuse_8": "$self$抬手挡住伸过来的手指，神色冷淡地回绝了这次触碰。",
+                "com_sex_finger_caress_B_force_Refuse_9": "“拿开。”$self$直接侧身避过，语气里没有半分商量的余地。"
+            }
+        }
+    }
+}

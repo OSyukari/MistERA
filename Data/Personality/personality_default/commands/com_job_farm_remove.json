@@ -9,7 +9,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
                             "responses": [
@@ -37,6 +38,16 @@
                                 "com_job_farm_remove_Ongoing_2",
                                 "com_job_farm_remove_Ongoing_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_job_farm_remove_Ongoing_Fallback_1",
+                                "com_job_farm_remove_Ongoing_Fallback_2"
+                            ]
                         }
                     ]
                 }
@@ -53,7 +64,10 @@
                                 "com_job_farm_remove_Join_1",
                                 "com_job_farm_remove_Join_2",
                                 "com_job_farm_remove_Join_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ]
                 }
@@ -129,6 +143,16 @@
                             "responses": [
                                 "com_job_farm_remove_Fallback_2"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_job_farm_remove_Fallback_3",
+                                "com_job_farm_remove_Fallback_4"
+                            ]
                         }
                     ]
                 }
@@ -145,7 +169,10 @@
                                 "com_job_farm_remove_Interrupt_1",
                                 "com_job_farm_remove_Interrupt_2",
                                 "com_job_farm_remove_Interrupt_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ]
                 }
@@ -165,6 +192,17 @@
                                 "com_job_farm_remove_Tryjoin_1",
                                 "com_job_farm_remove_Tryjoin_2",
                                 "com_job_farm_remove_Tryjoin_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_job_farm_remove_Tryjoin_Fallback_1",
+                                "com_job_farm_remove_Tryjoin_Fallback_2"
                             ]
                         }
                     ]
@@ -186,6 +224,17 @@
                                 "com_job_farm_remove_Joined_2",
                                 "com_job_farm_remove_Joined_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_job_farm_remove_Joined_Fallback_1",
+                                "com_job_farm_remove_Joined_Fallback_2"
+                            ]
                         }
                     ]
                 }
@@ -205,6 +254,17 @@
                                 "com_job_farm_remove_Join_Refused_1",
                                 "com_job_farm_remove_Join_Refused_2",
                                 "com_job_farm_remove_Join_Refused_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_job_farm_remove_Join_Refused_Fallback_1",
+                                "com_job_farm_remove_Join_Refused_Fallback_2"
                             ]
                         }
                     ]
@@ -227,6 +287,17 @@
                                 "com_job_farm_remove_Refuse_2",
                                 "com_job_farm_remove_Refuse_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_job_farm_remove_Refuse_Fallback_1",
+                                "com_job_farm_remove_Refuse_Fallback_2"
+                            ]
                         }
                     ]
                 }
@@ -243,7 +314,10 @@
                                 "com_job_farm_remove_Begin_1",
                                 "com_job_farm_remove_Begin_2",
                                 "com_job_farm_remove_Begin_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ]
                 }
@@ -293,7 +367,19 @@
                 "com_job_farm_remove_Begin_2": "$self$挽起袖口蹲下身，摸了摸泥土松紧：\"看着不算太死，应该能起得出来。\"",
                 "com_job_farm_remove_Begin_3": "\"清完这块就能腾出空地了，早点干完早收工。\" $self$活动了一下手指，埋头干了起来。",
                 "com_job_farm_remove_Fallback_1": "$self$点了点头，没有多说什么。",
-                "com_job_farm_remove_Fallback_2": "$self$点了点头，没有多说什么。"
+                "com_job_farm_remove_Fallback_2": "$self$点了点头，没有多说什么。",
+                "com_job_farm_remove_Join_Refused_Fallback_1": "\"成，那你自己慢慢清，我去忙别的了。\" $self$放下工具离开。",
+                "com_job_farm_remove_Join_Refused_Fallback_2": "$self$朝$target$点点头，拿着工具转身走开。",
+                "com_job_farm_remove_Ongoing_Fallback_1": "$self$握紧工具一下下刨着土里的残根，干得十分卖力。",
+                "com_job_farm_remove_Ongoing_Fallback_2": "$self$弯腰低头清理着地里的杂物，没怎么抬头看周围。",
+                "com_job_farm_remove_Tryjoin_Fallback_1": "$self$走到田边看了看进度，问$target$：\"看着还得折腾好久，我来一起清吧？\"",
+                "com_job_farm_remove_Tryjoin_Fallback_2": "$self$拿着工具走近问道：\"要不要我从另一头搭把手？\"",
+                "com_job_farm_remove_Fallback_3": "$self$直起腰拍掉裤脚的泥土，看着清理干净的地面呼了口气。",
+                "com_job_farm_remove_Fallback_4": "忙完这一片清理后，$self$把工具扛回肩上，擦了擦额头的汗。",
+                "com_job_farm_remove_Joined_Fallback_1": "\"行，那我从这边往里清。\" $self$选好位置蹲下动起手来。",
+                "com_job_farm_remove_Joined_Fallback_2": "$self$点点头，很快配合着开始清理杂物。",
+                "com_job_farm_remove_Refuse_Fallback_1": "$self$看了眼那片地，摇摇头说：\"我现在没力气去挖土，换别人吧。\"",
+                "com_job_farm_remove_Refuse_Fallback_2": "$self$摆摆手回绝道：\"这会儿有点累，先不去清了。\""
             }
         }
     }

@@ -589,44 +589,9 @@ public class TA_Renderer
             if ((string)who["situation"] is string situation && situation.Length > 0) sb.AppendLine("  · " + situation);
         }
         var needs = c["needs"] as JObject;
-        var phase = (string)c["phase"];
-        var outcome = (string)c["outcome"];
-        JObject placement = null;
-        if ((phase == "result" || phase == "orderedResult" || phase == "orderedSelf")
-            && (outcome == "success" || outcome == "failure") && needs != null)
-        {
-            var parent = (JObject)needs.DeepClone();
-            parent.Remove("order");
-            if (parent["requirement"] is JObject requirement)
-            {
-                requirement.Remove("requireEPSuccessGTE");
-                requirement.Remove("requireEPSuccessLTE");
-                if (!requirement.HasValues) parent.Remove("requirement");
-            }
-            var pair = id.Substring(0, id.LastIndexOf('.'));
-            var childReq = new JObject
-            {
-                [outcome == "success" ? "requireEPSuccessGTE" : "requireEPSuccessLTE"] = outcome == "success" ? "Success" : "Failure"
-            };
-            // Every variant is validated separately; propagate non-inherited runtime flags from the parent.
-            if (parent["requirement"] is JObject pr)
-            {
-                if ((bool?)pr["requireSelfAction"] == false) childReq["requireSelfAction"] = false;
-                if ((bool?)pr["requireTargetAction"] == false) childReq["requireTargetAction"] = false;
-            }
-            var child = new JObject { ["requirement"] = childReq };
-            if ((bool?)parent["requireSelfOnly"] == true) child["requireSelfOnly"] = true;
-            placement = new JObject
-            {
-                ["template"] = "commandResult", ["group"] = pair,
-                ["parentConditions"] = parent,
-                ["childConditions"] = child,
-                ["textDestination"] = outcome == "success" ? "successChild" : "failureChild",
-                ["otherCase"] = pair + (outcome == "success" ? ".failure" : ".success")
-            };
-        }
-        if (placement == null) sb.AppendLine(TA_Text.F(missing ? "doc.cases.kojoNewEntry" : "doc.cases.kojoNewBranch", "entry", entry));
-        else sb.AppendLine(TA_Text.F("doc.cases.kojoAssignmentEntry", "entry", entry));
+        var branchPath = c["branchPath"] as JArray;
+        var tplId = (string)c["template"];
+        sb.AppendLine(TA_Text.F(missing ? "doc.cases.kojoNewEntry" : "doc.cases.kojoNewBranch", "entry", entry));
         var targetKey = $"kojo|{pid}|{entry}|new|case:{id}";
         var m = new JObject
         {
@@ -643,13 +608,12 @@ public class TA_Renderer
             ["target"] = TA_DocBuilderBase.TargetId(targetKey),
             ["texts"] = new JArray(),
             ["writeTo"] = custom ? $"create entry {entry} in {pid} (copy every branch of {from} first, then add the branch for case {id})"
-                : placement != null ? $"create or reuse result parent in {pid} {entry}; place case {id} text in {placement["textDestination"]}"
                 : missing ? $"create entry {entry} in {pid}" : $"create branch in {pid} {entry} for {(string)c["text"]} (case {id})"
         };
         if (custom) m["customFrom"] = from;
-        if (placement != null) m["needs"] = placement["parentConditions"].DeepClone();
-        else if (needs != null) m["needs"] = needs.DeepClone();
-        if (placement != null) m["placement"] = placement;
+        if (!string.IsNullOrEmpty(tplId)) m["template"] = tplId;
+        if (branchPath != null && branchPath.Count > 0) m["branchPath"] = branchPath.DeepClone();
+        if (needs != null) m["needs"] = needs.DeepClone();
         var texts = Pending(m, m, "", true, pid, true);
         if (texts.Count < 1) FillLines();
         else for (int t = 0; t < texts.Count; t++) sb.AppendLine($"- {(string)texts[t]}");

@@ -13,7 +13,9 @@
                             "requireSelfDoer": true,
                             "_comment": "攻方 舔阴 高潮",
                             "responses": [
-                                "com_sex_oral_V_Climax_1"
+                                "com_sex_oral_V_Climax_1",
+                                "com_sex_oral_V_Climax_14",
+                                "com_sex_oral_V_Climax_15"
                             ]
                         },
                         {
@@ -74,124 +76,7 @@
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
-                                    "firstexp_M",
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "cunnilingus",
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "初体验 开始舔阴 睡眠中",
-                            "responses": [
-                                "com_sex_oral_V_Begin_FE_Sleep_1",
-                                "com_sex_oral_V_Begin_FE_Sleep_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "firstexp_M",
                                     "timestop"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "cunnilingus",
-                                "doll",
-                                "empty"
-                            ],
-                            "_comment": "初体验 开始舔阴 时停中",
-                            "responses": [
-                                "com_sex_oral_V_Begin_FE_Timestop_1",
-                                "com_sex_oral_V_Begin_FE_Timestop_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "selfTags": [
-                                    "firstexp_M"
-                                ]
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "targetBaseID": "PLAYER",
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "cunnilingus",
-                                        "blush",
-                                        "shy",
-                                        "love"
-                                    ],
-                                    "_comment": "初体验 玩家专用 开始舔阴 有允许",
-                                    "responses": [
-                                        "com_sex_oral_V_Begin_FE_Player_1",
-                                        "com_sex_oral_V_Begin_FE_Player_2"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "cunnilingus",
-                                        "blush",
-                                        "shy"
-                                    ],
-                                    "_comment": "初体验 开始舔阴 有允许",
-                                    "responses": [
-                                        "com_sex_oral_V_Begin_FE_1",
-                                        "com_sex_oral_V_Begin_FE_2"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAttitudeGTE": "Like"
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "cunnilingus",
-                                        "blush",
-                                        "shy",
-                                        "trembling"
-                                    ],
-                                    "_comment": "初体验 开始舔阴 未允许 好意",
-                                    "responses": [
-                                        "com_sex_oral_V_Begin_FE_3",
-                                        "com_sex_oral_V_Begin_FE_4"
-                                    ]
-                                }
-                            ],
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "cunnilingus",
-                                "fear",
-                                "trembling",
-                                "tearful"
-                            ],
-                            "_comment": "初体验 开始舔阴 未允许 敌意",
-                            "responses": [
-                                "com_sex_oral_V_Begin_FE_5",
-                                "com_sex_oral_V_Begin_FE_6"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "selfTags": [
-                                    "firstexp_partner_M"
                                 ]
                             },
                             "extraSelfPortraitTags": [
@@ -199,12 +84,38 @@
                                 "receiver",
                                 "cunnilingus",
                                 "spread_pussy",
-                                "surprised"
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
                             ],
-                            "_comment": "对方初体验 开始舔阴（被侍奉的一方）",
+                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
-                                "com_sex_oral_V_Begin_FE_Partner_1",
-                                "com_sex_oral_V_Begin_FE_Partner_2"
+                                "com_sex_oral_V_Begin_Timestop_1",
+                                "com_sex_oral_V_Begin_Timestop_2",
+                                "com_sex_oral_V_Begin_Timestop_3"
+                            ],
+                            "variants": [
+                                {
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "cunnilingus",
+                                        "doll",
+                                        "empty"
+                                    ],
+                                    "_comment": "初体验 开始舔阴 时停中",
+                                    "responses": [
+                                        "com_sex_oral_V_Begin_FE_Timestop_1",
+                                        "com_sex_oral_V_Begin_FE_Timestop_2",
+                                        "com_sex_oral_V_Begin_FE_Timestop_3"
+                                    ],
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_M"
+                                        ]
+                                    }
+                                }
                             ]
                         },
                         {
@@ -225,31 +136,81 @@
                             "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
                             "responses": [
                                 "com_sex_oral_V_Begin_Sleep_1",
-                                "com_sex_oral_V_Begin_Sleep_2"
+                                "com_sex_oral_V_Begin_Sleep_2",
+                                "com_sex_oral_V_Begin_Sleep_3"
+                            ],
+                            "variants": [
+                                {
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "cunnilingus",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "初体验 开始舔阴 睡眠中",
+                                    "responses": [
+                                        "com_sex_oral_V_Begin_FE_Sleep_1",
+                                        "com_sex_oral_V_Begin_FE_Sleep_2",
+                                        "com_sex_oral_V_Begin_FE_Sleep_3"
+                                    ],
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_M"
+                                        ]
+                                    }
+                                }
                             ]
                         },
                         {
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
-                                    "timestop"
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
                                 ]
                             },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "cunnilingus",
-                                "spread_pussy",
-                                "doll",
-                                "empty",
-                                "silence",
-                                "idle"
-                            ],
-                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
-                            "responses": [
-                                "com_sex_oral_V_Begin_Timestop_1",
-                                "com_sex_oral_V_Begin_Timestop_2"
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_V_Begin_19",
+                                        "com_sex_oral_V_Begin_20",
+                                        "com_sex_oral_V_Begin_21"
+                                    ]
+                                }
                             ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_V_Begin_22",
+                                        "com_sex_oral_V_Begin_23",
+                                        "com_sex_oral_V_Begin_24"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_oral_V_Begin_25",
+                                "com_sex_oral_V_Begin_26",
+                                "com_sex_oral_V_Begin_27"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            }
                         },
                         {
                             "requirement": {
@@ -314,31 +275,10 @@
                                 "com_sex_oral_V_Begin_16",
                                 "com_sex_oral_V_Begin_17",
                                 "com_sex_oral_V_Begin_18"
-                            ]
-                        }
-                    ],
-                    "template": "commandAct"
-                }
-            },
-            {
-                "ID": "personality_default",
-                "Entry": {
-                    "ID": "com_sex_oral_V",
-                    "tags": [
-                        "nsfw"
-                    ],
-                    "variants": [
-                        {
+                            ],
                             "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_player only version": {
-                                "requirement": {
-                                    "targetBaseID": "PLAYER"
-                                }
-                            },
-                            "_strong com variant": {
-                                "requireCOMStrongVariant": true
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
                             },
                             "variants": [
                                 {
@@ -352,11 +292,30 @@
                                             "requirement": {
                                                 "targetBaseID": "PLAYER"
                                             },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "cunnilingus",
+                                                "blush",
+                                                "shy",
+                                                "love"
+                                            ],
+                                            "_comment": "初体验 玩家专用 开始舔阴 有允许",
+                                            "responses": [
+                                                "com_sex_oral_V_Begin_FE_Player_1",
+                                                "com_sex_oral_V_Begin_FE_Player_2",
+                                                "com_sex_oral_V_Begin_FE_Player_3"
+                                            ],
                                             "variants": [
                                                 {
                                                     "requirement": {
                                                         "requirePermission": true
                                                     },
+                                                    "responses": [
+                                                        "com_sex_oral_V_Begin_FE_Player_1",
+                                                        "com_sex_oral_V_Begin_FE_Player_2",
+                                                        "com_sex_oral_V_Begin_FE_Player_3"
+                                                    ],
                                                     "extraSelfPortraitTags": [
                                                         "sex",
                                                         "doer",
@@ -365,16 +324,8 @@
                                                         "shy",
                                                         "love"
                                                     ],
-                                                    "_comment": "初体验 玩家专用 舔阴 有允许",
-                                                    "responses": [
-                                                        "com_sex_oral_V_FE_Player_1"
-                                                    ]
+                                                    "_comment": "初体验 玩家专用 开始舔阴 有允许"
                                                 }
-                                            ],
-                                            "_comment": "玩家专用（无允许兜底）",
-                                            "responses": [
-                                                "com_sex_oral_V_FE_4",
-                                                "com_sex_oral_V_FE_5"
                                             ]
                                         },
                                         {
@@ -388,10 +339,11 @@
                                                 "blush",
                                                 "shy"
                                             ],
-                                            "_comment": "初体验 舔阴 有允许（还不熟练）",
+                                            "_comment": "初体验 开始舔阴 有允许",
                                             "responses": [
-                                                "com_sex_oral_V_FE_1",
-                                                "com_sex_oral_V_FE_2"
+                                                "com_sex_oral_V_Begin_FE_1",
+                                                "com_sex_oral_V_Begin_FE_2",
+                                                "com_sex_oral_V_Begin_FE_9"
                                             ]
                                         },
                                         {
@@ -406,9 +358,11 @@
                                                 "shy",
                                                 "trembling"
                                             ],
-                                            "_comment": "初体验 舔阴 未允许 好意（还不熟练）",
+                                            "_comment": "初体验 开始舔阴 未允许 好意",
                                             "responses": [
-                                                "com_sex_oral_V_FE_3"
+                                                "com_sex_oral_V_Begin_FE_3",
+                                                "com_sex_oral_V_Begin_FE_4",
+                                                "com_sex_oral_V_Begin_FE_7"
                                             ]
                                         }
                                     ],
@@ -420,10 +374,11 @@
                                         "trembling",
                                         "tearful"
                                     ],
-                                    "_comment": "初体验 舔阴 未允许 敌意",
+                                    "_comment": "初体验 开始舔阴 未允许 敌意",
                                     "responses": [
-                                        "com_sex_oral_V_FE_4",
-                                        "com_sex_oral_V_FE_5"
+                                        "com_sex_oral_V_Begin_FE_5",
+                                        "com_sex_oral_V_Begin_FE_6",
+                                        "com_sex_oral_V_Begin_FE_8"
                                     ]
                                 },
                                 {
@@ -439,105 +394,334 @@
                                         "spread_pussy",
                                         "surprised"
                                     ],
-                                    "_comment": "对方初体验 舔阴（被侍奉的一方）",
+                                    "_comment": "对方初体验 开始舔阴（被侍奉的一方）",
                                     "responses": [
-                                        "com_sex_oral_V_FE_Partner_1"
+                                        "com_sex_oral_V_Begin_FE_Partner_1",
+                                        "com_sex_oral_V_Begin_FE_Partner_2",
+                                        "com_sex_oral_V_Begin_FE_Partner_3"
                                     ]
-                                },
+                                }
+                            ]
+                        }
+                    ],
+                    "template": "commandAct",
+                    "templateExtras": [
+                        "firstexpM",
+                        "firstexpPartnerM"
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_V",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "cunnilingus",
+                                "spread_pussy",
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "_comment": "2.3.1 时停中 被舔阴 口上文",
+                            "responses": [
+                                "com_sex_oral_V_7",
+                                "com_sex_oral_V_8",
+                                "com_sex_oral_V_9",
+                                "com_sex_oral_V_10",
+                                "com_sex_oral_V_11",
+                                "com_sex_oral_V_12"
+                            ],
+                            "variants": [
                                 {
                                     "requirement": {
-                                        "requireSelfAction": false,
                                         "selfTags": [
-                                            "sleeping"
+                                            "firstexp_M"
                                         ]
                                     },
                                     "extraSelfPortraitTags": [
                                         "sex",
-                                        "receiver",
+                                        "doer",
                                         "cunnilingus",
-                                        "spread_pussy",
+                                        "doll",
+                                        "empty"
+                                    ],
+                                    "_comment": "初体验 时停中 舔阴",
+                                    "responses": [
+                                        "com_sex_oral_V_FE_Timestop_1",
+                                        "com_sex_oral_V_FE_Timestop_2",
+                                        "com_sex_oral_V_FE_Timestop_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "cunnilingus",
+                                "spread_pussy",
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "_comment": "2.3.1 时停中 被舔阴 口上文",
+                            "responses": [
+                                "com_sex_oral_V_7",
+                                "com_sex_oral_V_8",
+                                "com_sex_oral_V_9",
+                                "com_sex_oral_V_10",
+                                "com_sex_oral_V_11",
+                                "com_sex_oral_V_12"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_M"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "cunnilingus",
+                                        "doll",
+                                        "empty"
+                                    ],
+                                    "_comment": "初体验 时停中 舔阴",
+                                    "responses": [
+                                        "com_sex_oral_V_FE_Timestop_1",
+                                        "com_sex_oral_V_FE_Timestop_4",
+                                        "com_sex_oral_V_FE_Timestop_5"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "cunnilingus",
+                                "spread_pussy",
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "_comment": "2.3.2 睡眠中 被舔阴 口上文",
+                            "responses": [
+                                "com_sex_oral_V_1",
+                                "com_sex_oral_V_2",
+                                "com_sex_oral_V_3",
+                                "com_sex_oral_V_4",
+                                "com_sex_oral_V_5",
+                                "com_sex_oral_V_6"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_M"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "cunnilingus",
                                         "sleeping",
                                         "relaxed"
                                     ],
-                                    "_comment": "2.3.2 睡眠中 被舔阴 口上文",
+                                    "_comment": "初体验 睡眠中 舔阴",
                                     "responses": [
-                                        "com_sex_oral_V_1",
-                                        "com_sex_oral_V_2",
-                                        "com_sex_oral_V_3",
-                                        "com_sex_oral_V_4",
-                                        "com_sex_oral_V_5",
-                                        "com_sex_oral_V_6"
+                                        "com_sex_oral_V_FE_Sleep_1",
+                                        "com_sex_oral_V_87",
+                                        "com_sex_oral_V_88"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "cunnilingus",
+                                "spread_pussy",
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "_comment": "2.3.2 睡眠中 被舔阴 口上文",
+                            "responses": [
+                                "com_sex_oral_V_1",
+                                "com_sex_oral_V_2",
+                                "com_sex_oral_V_3",
+                                "com_sex_oral_V_4",
+                                "com_sex_oral_V_5",
+                                "com_sex_oral_V_6"
+                            ],
+                            "variants": [
+                                {
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "cunnilingus",
+                                        "sleeping",
+                                        "relaxed"
                                     ],
+                                    "_comment": "初体验 睡眠中 舔阴",
+                                    "responses": [
+                                        "com_sex_oral_V_FE_Sleep_1",
+                                        "com_sex_oral_V_FE_Sleep_2",
+                                        "com_sex_oral_V_FE_Sleep_3"
+                                    ],
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_M"
+                                        ]
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_V_103",
+                                        "com_sex_oral_V_104",
+                                        "com_sex_oral_V_105"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
                                     "variants": [
                                         {
                                             "requirement": {
-                                                "requireSelfAction": false,
                                                 "selfTags": [
-                                                    "firstexp_M"
+                                                    "restrained"
                                                 ]
                                             },
-                                            "extraSelfPortraitTags": [
-                                                "sex",
-                                                "doer",
-                                                "cunnilingus",
-                                                "sleeping",
-                                                "relaxed"
-                                            ],
-                                            "_comment": "初体验 睡眠中 舔阴",
                                             "responses": [
-                                                "com_sex_oral_V_FE_Sleep_1"
+                                                "com_sex_oral_V_97",
+                                                "com_sex_oral_V_98",
+                                                "com_sex_oral_V_99"
                                             ]
                                         }
+                                    ],
+                                    "responses": [
+                                        "com_sex_oral_V_112",
+                                        "com_sex_oral_V_113",
+                                        "com_sex_oral_V_114"
                                     ]
                                 },
                                 {
                                     "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "timestop"
-                                        ]
+                                        "requireEPSuccessLTE": "Failure"
                                     },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "cunnilingus",
-                                        "spread_pussy",
-                                        "doll",
-                                        "empty",
-                                        "silence",
-                                        "idle"
-                                    ],
-                                    "_comment": "2.3.1 时停中 被舔阴 口上文",
-                                    "responses": [
-                                        "com_sex_oral_V_7",
-                                        "com_sex_oral_V_8",
-                                        "com_sex_oral_V_9",
-                                        "com_sex_oral_V_10",
-                                        "com_sex_oral_V_11",
-                                        "com_sex_oral_V_12"
-                                    ],
                                     "variants": [
                                         {
                                             "requirement": {
-                                                "requireSelfAction": false,
                                                 "selfTags": [
-                                                    "firstexp_M"
+                                                    "restrained"
                                                 ]
                                             },
-                                            "extraSelfPortraitTags": [
-                                                "sex",
-                                                "doer",
-                                                "cunnilingus",
-                                                "doll",
-                                                "empty"
-                                            ],
-                                            "_comment": "初体验 时停中 舔阴",
                                             "responses": [
-                                                "com_sex_oral_V_FE_Timestop_1"
+                                                "com_sex_oral_V_106",
+                                                "com_sex_oral_V_107",
+                                                "com_sex_oral_V_108"
                                             ]
                                         }
+                                    ],
+                                    "responses": [
+                                        "com_sex_oral_V_115",
+                                        "com_sex_oral_V_116",
+                                        "com_sex_oral_V_117"
                                     ]
                                 },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_V_100",
+                                        "com_sex_oral_V_101",
+                                        "com_sex_oral_V_102"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_oral_V_109",
+                                "com_sex_oral_V_110",
+                                "com_sex_oral_V_111"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            }
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "_player only version": {
+                                "requirement": {
+                                    "targetBaseID": "PLAYER"
+                                }
+                            },
+                            "_strong com variant": {
+                                "requireCOMStrongVariant": true
+                            },
+                            "variants": [
                                 {
                                     "requirement": {
                                         "targetBaseID": "PLAYER",
@@ -636,6 +820,118 @@
                                         "com_sex_oral_V_65",
                                         "com_sex_oral_V_66"
                                     ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_M"
+                                        ]
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "targetBaseID": "PLAYER"
+                                            },
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "requirePermission": true
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "doer",
+                                                        "cunnilingus",
+                                                        "blush",
+                                                        "shy",
+                                                        "love"
+                                                    ],
+                                                    "_comment": "初体验 玩家专用 舔阴 有允许",
+                                                    "responses": [
+                                                        "com_sex_oral_V_FE_Player_1",
+                                                        "com_sex_oral_V_FE_Player_2",
+                                                        "com_sex_oral_V_FE_Player_3"
+                                                    ]
+                                                }
+                                            ],
+                                            "_comment": "玩家专用（无允许兜底）",
+                                            "responses": [
+                                                "com_sex_oral_V_FE_4",
+                                                "com_sex_oral_V_FE_5",
+                                                "com_sex_oral_V_96"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "cunnilingus",
+                                                "blush",
+                                                "shy"
+                                            ],
+                                            "_comment": "初体验 舔阴 有允许（还不熟练）",
+                                            "responses": [
+                                                "com_sex_oral_V_FE_1",
+                                                "com_sex_oral_V_FE_2",
+                                                "com_sex_oral_V_FE_9"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAttitudeGTE": "Like"
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "cunnilingus",
+                                                "blush",
+                                                "shy",
+                                                "trembling"
+                                            ],
+                                            "_comment": "初体验 舔阴 未允许 好意（还不熟练）",
+                                            "responses": [
+                                                "com_sex_oral_V_FE_3",
+                                                "com_sex_oral_V_89",
+                                                "com_sex_oral_V_90"
+                                            ]
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "cunnilingus",
+                                        "fear",
+                                        "trembling",
+                                        "tearful"
+                                    ],
+                                    "_comment": "初体验 舔阴 未允许 敌意",
+                                    "responses": [
+                                        "com_sex_oral_V_FE_4",
+                                        "com_sex_oral_V_FE_5",
+                                        "com_sex_oral_V_85"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_partner_M"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "cunnilingus",
+                                        "spread_pussy",
+                                        "surprised"
+                                    ],
+                                    "_comment": "对方初体验 舔阴（被侍奉的一方）",
+                                    "responses": [
+                                        "com_sex_oral_V_FE_Partner_1",
+                                        "com_sex_oral_V_92",
+                                        "com_sex_oral_V_93"
+                                    ]
                                 }
                             ],
                             "_comment": "2.2.5 ($self$) 被舔阴 结果正面 未允许 口上文",
@@ -657,184 +953,6 @@
                                 "com_sex_oral_V_70",
                                 "com_sex_oral_V_71",
                                 "com_sex_oral_V_72"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "firstexp_M",
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "cunnilingus",
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "初体验 睡眠中 舔阴",
-                            "responses": [
-                                "com_sex_oral_V_FE_Sleep_1"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "selfTags": [
-                                    "firstexp_M"
-                                ]
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "targetBaseID": "PLAYER"
-                                    },
-                                    "variants": [
-                                        {
-                                            "requirement": {
-                                                "requirePermission": true
-                                            },
-                                            "extraSelfPortraitTags": [
-                                                "sex",
-                                                "doer",
-                                                "cunnilingus",
-                                                "blush",
-                                                "shy",
-                                                "love"
-                                            ],
-                                            "_comment": "初体验 玩家专用 舔阴 有允许",
-                                            "responses": [
-                                                "com_sex_oral_V_FE_Player_1"
-                                            ]
-                                        }
-                                    ],
-                                    "_comment": "玩家专用（无允许兜底）",
-                                    "responses": [
-                                        "com_sex_oral_V_FE_4",
-                                        "com_sex_oral_V_FE_5"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "cunnilingus",
-                                        "blush",
-                                        "shy"
-                                    ],
-                                    "_comment": "初体验 舔阴 有允许（还不熟练）",
-                                    "responses": [
-                                        "com_sex_oral_V_FE_1",
-                                        "com_sex_oral_V_FE_2"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAttitudeGTE": "Like"
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "cunnilingus",
-                                        "blush",
-                                        "shy",
-                                        "trembling"
-                                    ],
-                                    "_comment": "初体验 舔阴 未允许 好意（还不熟练）",
-                                    "responses": [
-                                        "com_sex_oral_V_FE_3"
-                                    ]
-                                }
-                            ],
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "cunnilingus",
-                                "fear",
-                                "trembling",
-                                "tearful"
-                            ],
-                            "_comment": "初体验 舔阴 未允许 敌意",
-                            "responses": [
-                                "com_sex_oral_V_FE_4",
-                                "com_sex_oral_V_FE_5"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "cunnilingus",
-                                "spread_pussy",
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "2.3.2 睡眠中 被舔阴 口上文",
-                            "responses": [
-                                "com_sex_oral_V_1",
-                                "com_sex_oral_V_2",
-                                "com_sex_oral_V_3",
-                                "com_sex_oral_V_4",
-                                "com_sex_oral_V_5",
-                                "com_sex_oral_V_6"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "timestop"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "cunnilingus",
-                                "spread_pussy",
-                                "doll",
-                                "empty",
-                                "silence",
-                                "idle"
-                            ],
-                            "_comment": "2.3.1 时停中 被舔阴 口上文",
-                            "responses": [
-                                "com_sex_oral_V_7",
-                                "com_sex_oral_V_8",
-                                "com_sex_oral_V_9",
-                                "com_sex_oral_V_10",
-                                "com_sex_oral_V_11",
-                                "com_sex_oral_V_12"
-                            ],
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "firstexp_M"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "cunnilingus",
-                                        "doll",
-                                        "empty"
-                                    ],
-                                    "_comment": "初体验 时停中 舔阴",
-                                    "responses": [
-                                        "com_sex_oral_V_FE_Timestop_1"
-                                    ]
-                                }
                             ]
                         },
                         {
@@ -914,80 +1032,185 @@
                             ]
                         },
                         {
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "cunnilingus",
-                                        "spread_pussy",
-                                        "pain",
-                                        "bored",
-                                        "doubt",
-                                        "disappointed"
-                                    ],
-                                    "_comment": "2.1.4 ($self$) 被舔阴 结果负面 有允许 口上文",
-                                    "responses": [
-                                        "com_sex_oral_V_73",
-                                        "com_sex_oral_V_74",
-                                        "com_sex_oral_V_75",
-                                        "com_sex_oral_V_76",
-                                        "com_sex_oral_V_77",
-                                        "com_sex_oral_V_78"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "selfTags": [
-                                            "firstexp_partner_M"
-                                        ],
-                                        "requireSelfAction": false,
-                                        "requireTargetAction": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "cunnilingus",
-                                        "spread_pussy",
-                                        "surprised"
-                                    ],
-                                    "_comment": "对方初体验 舔阴（被侍奉的一方）",
-                                    "responses": [
-                                        "com_sex_oral_V_FE_Partner_1"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.6 ($self$) 被舔阴 结果负面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "cunnilingus",
-                                "spread_pussy",
-                                "angry",
-                                "cry",
-                                "glare",
-                                "disgust",
-                                "pouting",
-                                "sad",
-                                "troubled",
-                                "silence"
-                            ],
-                            "responses": [
-                                "com_sex_oral_V_79",
-                                "com_sex_oral_V_80",
-                                "com_sex_oral_V_81",
-                                "com_sex_oral_V_82",
-                                "com_sex_oral_V_83",
-                                "com_sex_oral_V_84"
-                            ],
                             "requirement": {
                                 "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            }
+                                "requireTargetAction": false
+                            },
+                            "responses": [
+                                "com_sex_oral_V_118",
+                                "com_sex_oral_V_119",
+                                "com_sex_oral_V_120"
+                            ],
+                            "variants": [
+                                {
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "cunnilingus",
+                                                "spread_pussy",
+                                                "pain",
+                                                "bored",
+                                                "doubt",
+                                                "disappointed"
+                                            ],
+                                            "_comment": "2.1.4 ($self$) 被舔阴 结果负面 有允许 口上文",
+                                            "responses": [
+                                                "com_sex_oral_V_73",
+                                                "com_sex_oral_V_74",
+                                                "com_sex_oral_V_75",
+                                                "com_sex_oral_V_76",
+                                                "com_sex_oral_V_77",
+                                                "com_sex_oral_V_78"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "firstexp_M"
+                                                ]
+                                            },
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "targetBaseID": "PLAYER"
+                                                    },
+                                                    "variants": [
+                                                        {
+                                                            "requirement": {
+                                                                "requirePermission": true
+                                                            },
+                                                            "extraSelfPortraitTags": [
+                                                                "sex",
+                                                                "doer",
+                                                                "cunnilingus",
+                                                                "blush",
+                                                                "shy",
+                                                                "love"
+                                                            ],
+                                                            "_comment": "初体验 玩家专用 舔阴 有允许",
+                                                            "responses": [
+                                                                "com_sex_oral_V_FE_Player_1",
+                                                                "com_sex_oral_V_94",
+                                                                "com_sex_oral_V_95"
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "_comment": "玩家专用（无允许兜底）",
+                                                    "responses": [
+                                                        "com_sex_oral_V_FE_4",
+                                                        "com_sex_oral_V_FE_5",
+                                                        "com_sex_oral_V_FE_6"
+                                                    ]
+                                                },
+                                                {
+                                                    "requirement": {
+                                                        "requirePermission": true
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "doer",
+                                                        "cunnilingus",
+                                                        "blush",
+                                                        "shy"
+                                                    ],
+                                                    "_comment": "初体验 舔阴 有允许（还不熟练）",
+                                                    "responses": [
+                                                        "com_sex_oral_V_FE_1",
+                                                        "com_sex_oral_V_FE_2",
+                                                        "com_sex_oral_V_91"
+                                                    ]
+                                                },
+                                                {
+                                                    "requirement": {
+                                                        "requireSelfAttitudeGTE": "Like"
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "doer",
+                                                        "cunnilingus",
+                                                        "blush",
+                                                        "shy",
+                                                        "trembling"
+                                                    ],
+                                                    "_comment": "初体验 舔阴 未允许 好意（还不熟练）",
+                                                    "responses": [
+                                                        "com_sex_oral_V_FE_3",
+                                                        "com_sex_oral_V_FE_7",
+                                                        "com_sex_oral_V_FE_8"
+                                                    ]
+                                                }
+                                            ],
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "cunnilingus",
+                                                "fear",
+                                                "trembling",
+                                                "tearful"
+                                            ],
+                                            "_comment": "初体验 舔阴 未允许 敌意",
+                                            "responses": [
+                                                "com_sex_oral_V_FE_4",
+                                                "com_sex_oral_V_FE_5",
+                                                "com_sex_oral_V_86"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "firstexp_partner_M"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "cunnilingus",
+                                                "spread_pussy",
+                                                "surprised"
+                                            ],
+                                            "_comment": "对方初体验 舔阴（被侍奉的一方）",
+                                            "responses": [
+                                                "com_sex_oral_V_FE_Partner_1",
+                                                "com_sex_oral_V_FE_Partner_2",
+                                                "com_sex_oral_V_FE_Partner_3"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.6 ($self$) 被舔阴 结果负面 未允许 口上文",
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "cunnilingus",
+                                        "spread_pussy",
+                                        "angry",
+                                        "cry",
+                                        "glare",
+                                        "disgust",
+                                        "pouting",
+                                        "sad",
+                                        "troubled",
+                                        "silence"
+                                    ],
+                                    "responses": [
+                                        "com_sex_oral_V_79",
+                                        "com_sex_oral_V_80",
+                                        "com_sex_oral_V_81",
+                                        "com_sex_oral_V_82",
+                                        "com_sex_oral_V_83",
+                                        "com_sex_oral_V_84"
+                                    ],
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "requireTargetAction": false,
+                                        "allowRecording": true
+                                    }
+                                }
+                            ]
                         }
                     ],
                     "template": "commandResult",
@@ -1018,7 +1241,8 @@
                             "useActiveTags": false,
                             "responses": [
                                 "com_sex_oral_V_Refuse_Receiver_1",
-                                "com_sex_oral_V_Refuse_Receiver_2"
+                                "com_sex_oral_V_Refuse_Receiver_2",
+                                "com_sex_oral_V_Refuse_Receiver_3"
                             ]
                         },
                         {
@@ -1152,21 +1376,64 @@
                     ],
                     "template": "commandRefuse"
                 }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_V_Ongoing",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_V_Ongoing_1",
+                                        "com_sex_oral_V_Ongoing_2",
+                                        "com_sex_oral_V_Ongoing_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_oral_V_Ongoing_4",
+                                "com_sex_oral_V_Ongoing_5",
+                                "com_sex_oral_V_Ongoing_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "responses": [
+                                "com_sex_oral_V_Ongoing_7",
+                                "com_sex_oral_V_Ongoing_8",
+                                "com_sex_oral_V_Ongoing_9"
+                            ]
+                        }
+                    ],
+                    "template": "commandAct"
+                }
             }
         ]
     },
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "com_sex_oral_V_Climax_1": "$self$埋首在$target$腿间，舌尖在阴蒂上打着转，腰却因为莫名的兴奋痉挛着迎来了高潮。\n\"唔嗯……！光是这样……我也要去了……！\"",
+                "com_sex_oral_V_Climax_1": "$self$埋首在$target$腿间，舌尖在阴蒂上打着转，腰却因为莫名的兴奋痉挛着迎来了高潮：“唔嗯……！光是这样……我也要去了……！”",
                 "com_sex_oral_V_Climax_8": "$self$咬住手背想压住声音，快感却冲破了理智，在痉挛中崩溃，腿却夹得更紧。\n\"不要……别让我……啊啊啊！这种事……我不认……！\"",
                 "com_sex_oral_V_Climax_9": "$self$翻着白眼，身子剧烈弹动，在极度厌恶里迎来了可悲的极乐，腿却没合拢。\n\"呜……怎么会……明明不想的……啊啊！\"",
                 "com_sex_oral_V_Climax_10": "$self$拼命捂住嘴，破碎的呻吟还是从指缝漏出来，腰不受控地往上送。\n\"不要……明明不想的……为什么……啊啊啊！\"",
                 "com_sex_oral_V_Climax_11": "$self$流着泪，身体却背弃意志攀上了顶峰，腿还夹着$target$的头抽搐。\n\"被弄成这样……居然还会高潮……唔嗯嗯嗯！！\"",
-                "com_sex_oral_V_Climax_12": "$self$的身子僵住，眼神瞬间失焦，腰还在不由自主地往上抬。\n\"不……这种事……身体变得好奇怪……停不下来了！\"",
+                "com_sex_oral_V_Climax_12": "$self$的身子猛地一颤，眼神瞬间失焦，腰还在不由自主地往上抬：“不……这种事……身体变得好奇怪……停不下来了！”",
                 "com_sex_oral_V_Climax_13": "$self$闭上眼，快感却吞噬了最后的尊严，大腿痉挛着夹紧。\n\"啊……不行了……身体擅自……\"",
-                "com_sex_oral_V_Climax_2": "$self$猛地仰起头，双手死死扣住$target$的后背，腰不受控地往上抬。\n\"啊——！去了……！舌头别停……！\"",
-                "com_sex_oral_V_Climax_3": "$self$浑身剧烈颤抖，大腿死死夹住$target$的头，媚肉绞着那根舌头抽个不停。\n\"呜呜……太激烈了……脑子要坏掉了……！\"",
+                "com_sex_oral_V_Climax_2": "$self$猛地仰起头，双手用力扣住$target$的后背，腰不受控地往上抬：“啊——！去了……！舌头别停……！”",
+                "com_sex_oral_V_Climax_3": "$self$浑身剧烈颤抖，大腿紧紧夹住$target$的头，媚肉绞着那根舌头抽个不停：“呜呜……太激烈了……脑子要坏掉了……！”",
                 "com_sex_oral_V_Climax_4": "$self$翻着白眼，口水顺着嘴角淌下，整个人弓起来剧烈抽搐。\n\"哈啊……哈啊……明明只是被舔……为什么会……！\"",
                 "com_sex_oral_V_Climax_5": "$self$眼泪被舔出来，捂着脸却止不住腰往上送。\n\"不要……别看……啊……去了……！\"",
                 "com_sex_oral_V_Climax_6": "$self$脚趾紧紧蜷缩，背脊绷成弧度，呻吟断成了碎音。\n\"啊啊——！阴蒂……要被舔坏了……哈啊——！\"",
@@ -1177,7 +1444,7 @@
                 "com_sex_oral_V_Begin_4": "$self$没说话，只是用脚尖轻轻蹭了蹭$target$的脸颊，眼神里满是默许。\n\"……嗯哼。\"",
                 "com_sex_oral_V_Begin_5": "$self$深深吸了口气，闭眼微微仰头，彻底敞开了防备。\n\"正如我所愿……来吧。\"",
                 "com_sex_oral_V_Begin_6": "$self$宠溺地摸了摸$target$的头，往下按压，引着$target$埋进自己腿间。\n\"乖……先把这里弄湿。\"",
-                "com_sex_oral_V_Begin_7": "$self$全身僵在原地，双手不知所措地抓着衣角，却没推开。\n\"等等……不可以……那里……啊……\"",
+                "com_sex_oral_V_Begin_7": "$self$全身定在原地，双手不知所措地抓着床单，却没推开：“等等……不可以……那里……啊……”",
                 "com_sex_oral_V_Begin_8": "$self$惊讶地瞪大眼，看着埋首在自己腿间的$target$，脸瞬间涨得通红。\n\"你是认真的吗？……怎、怎么会……\"",
                 "com_sex_oral_V_Begin_9": "$self$嘴唇微张，似乎想说什么，可那湿热的触感贴上来后，只剩压抑的喘息。\n\"呃……这种事……太突然了……\"",
                 "com_sex_oral_V_Begin_10": "$self$身子微微发颤，视线游移不定，既羞耻又隐隐有些期待。\n\"明明是……为什么会……嗯……\"",
@@ -1186,22 +1453,22 @@
                 "com_sex_oral_V_Begin_13": "$self$瑟缩着，眼角挂着泪痕，绝望地分开了双腿。\n\"求你……快点结束……\"",
                 "com_sex_oral_V_Begin_14": "$self$害怕地捂住嘴，不敢发出任何声音，身子因为恐惧剧烈发抖。\n\"我知道了……我会听话的……别伤害我……\"",
                 "com_sex_oral_V_Begin_15": "$self$眼神空洞地看着前方，任由$target$摆布，放弃了所有尊严。\n\"这样就可以了吗……随你便吧。\"",
-                "com_sex_oral_V_Begin_16": "$self$屈辱地咬破了嘴唇，双手死死抓着自己的衣角，忍着那本该带来快感的侵犯。\n\"呜……不要……好恶心……\"",
+                "com_sex_oral_V_Begin_16": "$self$屈辱地咬破了嘴唇，双手紧紧抓着床单，忍着那本该带来快感的侵犯：“呜……不要……好恶心……”",
                 "com_sex_oral_V_Begin_17": "$self$抽泣着按$target$的命令抬起腰，脸上写满了无助和惊恐。\n\"对不起……对不起……不要打我……\"",
                 "com_sex_oral_V_Begin_18": "$self$紧闭双眼流下泪，试图在脑子里逃离这个现实。\n\"只要忍过去就好了……忍过去……\"",
-                "com_sex_oral_V_1": "$self$呼吸平稳绵长，彻底陷进深层睡眠，对腿间的侵犯毫无察觉，只是偶尔因为刺激轻轻皱眉。",
+                "com_sex_oral_V_1": "$self$呼吸平稳绵长，彻底陷进深层睡眠，对腿间的侵犯毫无察觉，只是偶尔因为刺激轻轻哼了一声。",
                 "com_sex_oral_V_2": "$self$静静躺着，即便腿间已经被舔得湿透，意识依旧沉在梦乡里，没有醒来的迹象。",
                 "com_sex_oral_V_3": "$self$发出轻微的鼾声，身子随着呼吸起伏，对$target$越来越过分的动作，只是无意识地翻了个身，反倒把腿张得更开。",
                 "com_sex_oral_V_4": "$self$毫无防备地睡着，任由$target$享用，偶尔几声梦呓让场面更加靡乱。",
                 "com_sex_oral_V_5": "$self$沉睡中的身子受到刺激，本能地做出微弱反应，腰轻轻扭了扭，脑子却依旧不省人事。",
                 "com_sex_oral_V_6": "$self$即使被舔到了敏感点，也只是在梦里难耐地哼了声，翻身夹住了腿，没醒过来。",
                 "com_sex_oral_V_7": "$self$保持着原本正在走路的姿势，眼神定格，根本不知道腿间正在被肆意侵犯，只有微张的腿间不断溢出爱液。",
-                "com_sex_oral_V_8": "$self$僵立在原地，毫无知觉地承受着$target$的舌头，腿间因为刺激本能地收缩、吐着爱液，本人却毫不知情。",
+                "com_sex_oral_V_8": "$self$定立在原地，毫无知觉地承受着$target$的舌头，腿间因为刺激本能地收缩、吐着爱液，本人却毫不知情。",
                 "com_sex_oral_V_9": "$self$维持着伸手拿书的动作，毫无防备的腿间彻底暴露在$target$面前，随着舔舐，她身子虽然动弹不得，腿间却已经湿透了。",
                 "com_sex_oral_V_10": "$self$定格在笑容满面的瞬间，根本不知道自己正被这静止的时空舔到腿软，腿间的软肉已经被舔得泛红、泛湿。",
-                "com_sex_oral_V_11": "$self$僵在原地，只有腿间在$target$的玩弄下不断抽搐、喷水，在这静止的世界里独自吐着爱液。",
+                "com_sex_oral_V_11": "$self$定在原地，只有腿间在$target$的玩弄下不断抽搐、喷水，在这静止的世界里独自吐着爱液。",
                 "com_sex_oral_V_12": "$self$保持着毫无防备的睡颜，丝毫没意识到有人正趁着时间停止，贪婪地品尝着她最私密的地方。",
-                "com_sex_oral_V_37": "$self$眼神冰冷地看着$target$，猛地推开。\n\"恶心。离我远点。\"",
+                "com_sex_oral_V_37": "$self$冷冷地看着$target$，猛地推开：“恶心。离我远点。”",
                 "com_sex_oral_V_38": "$self$毫不客气地甩开$target$的手，语气满是厌恶。\n\"你脑子有问题吗？我要喊人了。\"",
                 "com_sex_oral_V_39": "$self$嫌弃地拍打着被碰过的地方。\n\"别以为我不敢动手，滚！\"",
                 "com_sex_oral_V_40": "$self$猛地挥手甩开$target$，满脸嫌恶。\n\"你以为我是什么人？滚开。\"",
@@ -1213,10 +1480,10 @@
                 "com_sex_oral_V_22": "$self$裹紧身子往旁边躲，试图拉开距离。\n\"救命！有人吗！滚开啊！\"",
                 "com_sex_oral_V_23": "$self$拼命挣扎着，眼泪止不住地流。\n\"不要碰我！走开！快停下！\"",
                 "com_sex_oral_V_24": "$self$颤抖着蜷起身子，护住自己的腿间。\n\"滚……求你快出去……！\"",
-                "com_sex_oral_V_13": "$self$猛地惊醒，下意识合拢双腿躲开。\n\"你在干什么啊！让人睡觉行不行！\"",
-                "com_sex_oral_V_14": "$self$被吓到，紧紧抓着自己的衣角蜷起身子。\n\"别碰我……我很累了，这种玩笑不好笑。\"",
-                "com_sex_oral_V_15": "$self$皱着眉推开凑过来的$target$。\n\"停下……我现在只想睡觉，没心情做这个。\"",
-                "com_sex_oral_V_16": "$self$冷着脸坐起来，眼神冰冷。\n\"这种玩笑真不好笑。\"",
+                "com_sex_oral_V_13": "$self$猛地惊醒，下意识合拢双腿躲开：“你在干什么啊！让人睡觉行不行！”",
+                "com_sex_oral_V_14": "$self$被吓到，紧紧蜷起身子护住自己：“别碰我……我很累了，这种玩笑不好笑。”",
+                "com_sex_oral_V_15": "$self$恼火地推开凑过来的$target$：“停下……我现在只想睡觉，没心情做这个。”",
+                "com_sex_oral_V_16": "$self$冷着脸坐起来，目光沉静：“这种玩笑真不好笑。”",
                 "com_sex_oral_V_17": "$self$疲惫地摆了摆手。\n\"不要……好累……下次吧。\"",
                 "com_sex_oral_V_18": "$self$无力地挥了挥手想赶走$target$。\n\"走开啦……别吵我……\"",
                 "com_sex_oral_V_25": "$self$轻轻按住$target$的头，嗔怪地瞪了眼。\n\"不行啦，今天真的很累。\"",
@@ -1239,7 +1506,7 @@
                 "com_sex_oral_V_60": "$self$被异样感惊醒，感受到压制后只能呜咽出声。\n\"不要……求求你……好可怕……我会听话的……\"",
                 "com_sex_oral_V_43": "$self$迷迷糊糊睁开眼，感受到腿间的湿热后，慵懒地哼了声，顺从地张开了腿。\n\"嗯……偷袭吗？真坏……\"",
                 "com_sex_oral_V_44": "$self$在半梦半醒间发出舒服的呢喃，本能地抬起腰配合着$target$的动作。\n\"哈啊……是$target$啊……随你便吧……\"",
-                "com_sex_oral_V_45": "$self$睡眼惺忪地揉了揉眼，嘴角勾起困倦的笑。\n\"大半夜的兴致真好……嗯……那我也……\"",
+                "com_sex_oral_V_45": "$self$睡眼惺忪地揉了揉眼，露出困倦的笑：“大半夜的兴致真好……嗯……那我也……”",
                 "com_sex_oral_V_46": "$self$没彻底醒过来，只是在梦呓中抱住了$target$的头，发出满足的叹息。\n\"嗯……舒服……别停……\"",
                 "com_sex_oral_V_47": "$self$身子软绵绵地任由摆布，声音沙哑带着浓浓的鼻音。\n\"嗯……好舒服……不想醒过来……继续……\"",
                 "com_sex_oral_V_48": "$self$被快感唤醒，松开腿重新靠稳享受起来。\n\"哟，吓人……不过……嗯……可以哦。\"",
@@ -1253,7 +1520,7 @@
                 "com_sex_oral_V_68": "$self$眼里的抗拒早就散了，取而代之的是意乱情迷的水雾。\n\"这就是……被舔的感觉吗……嗯……停不下来了……\"",
                 "com_sex_oral_V_69": "$self$羞耻地用手臂遮住眼睛，身子却迎合着节奏摆动。\n\"如果你……真的那么想做的话……稍微……再多舔会儿也可以……\"",
                 "com_sex_oral_V_70": "$self$咬着手指，理智在快感的冲击下摇摇欲坠。\n\"哈啊……不行……会被奇怪的开关打开的……嗯哼……$target$……\"",
-                "com_sex_oral_V_71": "$self$原本僵硬的身子彻底软下来，甚至主动分开腿根方便$target$动作。\n\"真是……败给你了……嗯……那里再用力点……\"",
+                "com_sex_oral_V_71": "$self$原本紧绷的身子彻底软下来，甚至主动分开腿根方便$target$动作：“真是……败给你了……嗯……那里再用力点……”",
                 "com_sex_oral_V_72": "$self$喘息着看向$target$，眼神里多了份复杂的情愫。\n\"也许……这种关系……也不坏……哈啊……\"",
                 "com_sex_oral_V_61": "$self$满脸潮红，断断断续续的呻吟从齿缝间溢出，手指攥紧了$target$的头发。\n\"嗯嗯……太舒服了……受不了了……\"",
                 "com_sex_oral_V_62": "$self$难耐地扭动着腰肢，大腿内侧的肌肉开始微微痉挛。\n\"不、不行了……这太……嗯哼……$target$……好棒……\"",
@@ -1261,47 +1528,127 @@
                 "com_sex_oral_V_64": "$self$发出甜腻的鼻音，原本紧绷的脚背弓起漂亮的弧度。\n\"啊……那里……不要停……\"",
                 "com_sex_oral_V_65": "$self$满脸潮红，断断续续的呻吟从齿缝间溢出。\n\"嗯嗯……好舒服……那里再用力点……\"",
                 "com_sex_oral_V_66": "$self$全身泛起淡淡的粉色，汗水打湿了鬓角，彻底沉进了快感里。\n\"哈啊……哈啊……就是这样……再深点……\"",
-                "com_sex_oral_V_79": "$self$忍无可忍地想推开$target$的头，却被按住腰，只能皱着眉忍受那黏腻的舔舐。\n\"够了……全是口水，恶心死了……\"",
-                "com_sex_oral_V_80": "$self$身子僵着毫无快感，只有无尽的屈辱。\n\"还没结束吗……你要折磨我到什么时候……\"",
-                "com_sex_oral_V_81": "$self$冷漠地看着埋在自己腿间的$target$，眼神里只剩死寂。\n\"毫无感觉，只剩恶心……快点完事。\"",
-                "com_sex_oral_V_82": "$self$趁着$target$换气的间隙迅速并拢双腿蜷起来，却又被强行掰开。\n\"别碰我了！我真的想吐！\"",
-                "com_sex_oral_V_83": "$self$面无表情地由着$target$舔，眼神空洞。\n\"做完了吗？做完了就快滚。\"",
-                "com_sex_oral_V_84": "$self$痛苦地闭着眼，眼泪无声地滑落。\n\"我恨你……我永远不会原谅你……\"",
-                "com_sex_oral_V_73": "$self$有些不适地皱起眉，身子僵着。\n\"……还要多久？\"",
-                "com_sex_oral_V_74": "$self$轻轻拍了拍$target$的肩膀，语气里透着无奈。\n\"那个……感觉不太对，有点痛……轻点行吗……\"",
-                "com_sex_oral_V_75": "$self$忍耐地闭着眼，但放在身侧的手没去碰$target$。\n\"嗯……没什么感觉呢……\"",
-                "com_sex_oral_V_76": "$self$没发出什么声音，时不时低头看眼$target$，显得心不在焉。\n\"这技术……还需要练练啊。\"",
-                "com_sex_oral_V_77": "$self$干巴巴地叹了口气，稍微合拢了双腿。\n\"只有舌头在动吗？感觉有点无聊了。\"",
-                "com_sex_oral_V_78": "$self$脸上没有任何享受的表情，尴尬地擦了擦被口水沾湿的腿根。\n\"抱歉，$target$……我真的很难投入。\"",
+                "com_sex_oral_V_79": "$self$忍无可忍地想推开$target$的头，却被按住腰，只能咬牙忍受那黏腻的舔舐：“够了……全是口水，恶心死了……”",
+                "com_sex_oral_V_80": "$self$身子紧绷着毫无快感，只有无尽的屈辱：“还没结束吗……你要折磨我到什么时候……”",
+                "com_sex_oral_V_81": "$self$冷漠地看着埋在自己腿间的$target$，眼神里只剩死寂：“毫无感觉，只剩恶心……快点完事。”",
+                "com_sex_oral_V_82": "$self$趁着$target$换气的间隙迅速并拢双腿蜷起来，却又被强行掰开：“别碰我了！我真的想吐！”",
+                "com_sex_oral_V_83": "$self$神色木然地由着$target$舔，眼神空洞：“做完了吗？做完了就快滚。”",
+                "com_sex_oral_V_84": "$self$痛苦地闭着眼，眼泪无声地滑落：“我恨你……我永远不会原谅你……”",
+                "com_sex_oral_V_73": "$self$有些不适地偏过头，身子紧绷着：“……还要多久？”",
+                "com_sex_oral_V_74": "$self$轻轻拍了拍$target$的肩膀，语气里透着无奈：“那个……感觉不太对，有点痛……轻点行吗……”",
+                "com_sex_oral_V_75": "$self$忍耐地闭着眼，但放在身侧的手没去碰$target$：“嗯……没什么感觉呢……”",
+                "com_sex_oral_V_76": "$self$没发出什么声音，时不时低头看眼$target$，显得心不在焉：“这技术……还需要练练啊。”",
+                "com_sex_oral_V_77": "$self$干巴巴地叹了口气，稍微合拢了双腿：“只有舌头在动吗？感觉有点无聊了。”",
+                "com_sex_oral_V_78": "$self$脸上没有任何享受的表情，尴尬地擦了擦被口水沾湿的腿根：“抱歉，$target$……我真的很难投入。”",
                 "com_sex_oral_V_Begin_Sleep_1": "$target$分开她熟睡中的双腿埋头进去，舌尖碾上阴蒂轻轻打转，$self$在梦里哼了声，腰轻轻扭了扭，没醒。",
                 "com_sex_oral_V_Begin_Sleep_2": "穴口被舔得发亮，津水混着爱液越积越多，$self$只是难耐地夹了夹腿，又在梦里松开，睡得依旧很沉。",
                 "com_sex_oral_V_Begin_Timestop_1": "$target$掰开她定格的双腿埋头进去，舌尖碾上阴蒂打转，被舔弄得发亮的穴口不受控地收缩，津水混着爱液越积越多。",
                 "com_sex_oral_V_Begin_Timestop_2": "快感只到肉体为止——穴水顺着$self$的腿根淌出亮痕，她的脚踝还搭在$target$肩上，姿势纹丝未变。",
                 "com_sex_oral_V_Begin_FE_Sleep_1": "睡梦中的$self$不知道自己唇上沾了什么，只是无意识地咂了咂嘴，睡颜没有变化。",
-                "com_sex_oral_V_Begin_FE_Sleep_2": "$self$沉在梦乡里，唇边的湿热让她皱了皱眉，浑然不知自己的第一次口侍就耗在了这里。",
+                "com_sex_oral_V_Begin_FE_Sleep_2": "$self$沉在梦乡里，唇边的湿热让她轻哼了一声，浑然不知自己的第一次口侍就耗在了这里。",
                 "com_sex_oral_V_Begin_FE_Timestop_1": "凝固的世界里，$self$的舌尖停在腿间，初次的侍奉在毫无知觉中进行。",
                 "com_sex_oral_V_Begin_FE_Timestop_2": "$self$保持着埋首的姿势一动不动，对自己的第一次口侍正在发生一无所知。",
-                "com_sex_oral_V_Begin_FE_Player_1": "\"第一次用嘴……你、你别嫌我笨……\"\n\n$self$红着脸埋下头去，耳根都红透了。",
-                "com_sex_oral_V_Begin_FE_Player_2": "\"我没做过这个……做得不好你要告诉我……\"\n\n$self$深吸一口气，紧张地凑近了那处。",
-                "com_sex_oral_V_Begin_FE_1": "\"第一次舔这种地方……我、我真的下得去口吗……\"\n\n$self$的舌尖抖着碰了上去，紧张得整个人都僵了。",
-                "com_sex_oral_V_Begin_FE_2": "\"第一次做这种事……味道……好腥……\"\n\n$self$皱着眉头伸出舌头，脸颊红得发烫。",
-                "com_sex_oral_V_Begin_FE_3": "\"只、只有这次……不许跟别人说……\"\n\n$self$鼓起勇气埋下头，指尖抠着$target$的腿。",
-                "com_sex_oral_V_Begin_FE_4": "\"第一次用嘴侍奉……舌头都僵了……\"\n\n$self$笨拙地舔着，脖子已经酸得发麻。",
-                "com_sex_oral_V_Begin_FE_5": "\"不……不要让我舔那里……！\"\n\n$self$死死别着脸，浑身抖个不停。",
-                "com_sex_oral_V_Begin_FE_6": "\"把头按下去也没用……我记住你了……\"\n\n$self$含着屈辱把脸埋了下去，指甲掐进掌心。",
-                "com_sex_oral_V_Begin_FE_Partner_1": "\"你的舌头……在抖？第一次舔？\"\n\n感觉到生涩又小心的舔弄，$self$愣了一下。",
-                "com_sex_oral_V_Begin_FE_Partner_2": "\"……不用紧张，跟着感觉来就好。\"\n\n$self$伸手按了按对方的头顶，放软了声音。",
-                "com_sex_oral_V_FE_Sleep_1": "睡梦中的$self$的唇还沾着陌生的湿热，眉头轻轻皱着。",
+                "com_sex_oral_V_Begin_FE_Player_1": "$self$红着脸埋下头去，耳根都红透了：“第一次用嘴……你、你别嫌我笨……”",
+                "com_sex_oral_V_Begin_FE_Player_2": "$self$深吸一口气，紧张地凑近了那处：“我没做过这个……做得不好你要告诉我……”",
+                "com_sex_oral_V_Begin_FE_1": "$self$的舌尖抖着碰了上去，紧张得整个人都绷紧了：“第一次舔这种地方……我、我真的下得去口吗……”",
+                "com_sex_oral_V_Begin_FE_2": "$self$偏过视线伸出舌头，脸颊红得发烫：“第一次做这种事……味道……好腥……”",
+                "com_sex_oral_V_Begin_FE_3": "$self$鼓起勇气埋下头，指尖抠着$target$的腿：“只、只有这次……不许跟别人说……”",
+                "com_sex_oral_V_Begin_FE_4": "$self$笨拙地舔着，脖子已经酸得发麻：“第一次用嘴侍奉……舌头都不听使唤了……”",
+                "com_sex_oral_V_Begin_FE_5": "$self$拼命别着脸，浑身抖个不停：“不……不要让我舔那里……！”",
+                "com_sex_oral_V_Begin_FE_6": "$self$含着屈辱把脸埋了下去，指甲掐进掌心：“把头按下去也没用……我记住你了……”",
+                "com_sex_oral_V_Begin_FE_Partner_1": "感觉到生涩又小心的舔弄，$self$愣了一下：“你的舌头……在抖？第一次舔？”",
+                "com_sex_oral_V_Begin_FE_Partner_2": "$self$伸手按了按对方的头顶，放软了声音：“……不用紧张，跟着感觉来就好。”",
+                "com_sex_oral_V_FE_Sleep_1": "睡梦中的$self$的唇还沾着陌生的湿热，呼吸依旧绵长均匀。",
                 "com_sex_oral_V_FE_Timestop_1": "初次侍奉过的舌尖还停在原地，定格的$self$没有任何反应。",
-                "com_sex_oral_V_FE_Player_1": "\"我第一次舔……做得还行吗……\"\n\n$self$抬起头，唇上亮晶晶的，脸红得厉害。",
-                "com_sex_oral_V_FE_1": "\"唔……舌头好酸……我没做过这个……\"\n\n$self$的动作又生又慢，节奏全乱了。",
-                "com_sex_oral_V_FE_2": "\"第一次舔……原来这么累……\"\n\n$self$喘着气换了个角度，脖子酸得直不起来。",
-                "com_sex_oral_V_FE_3": "\"这样舔……对吗……我完全没经验……\"\n\n$self$又慌又窘，只能小心翼翼地试探。",
-                "com_sex_oral_V_FE_4": "\"……够了……我舔不动了……\"\n\n初次侍奉的酸楚让$self$的舌头又麻又僵，眼泪憋在眼眶里。",
-                "com_sex_oral_V_FE_5": "\"……快点结束。\"\n\n$self$面无表情地舔着，只有泛红的眼角泄了底。",
-                "com_sex_oral_V_FE_Partner_1": "\"别用牙齿……用舌头，慢一点。\"\n\n察觉到对方动作的生涩，$self$出声引导道。",
-                "com_sex_oral_V_Refuse_Receiver_1": "$self$用力推开了$target$，神色戒备。\n\"别碰我！我没同意做这种事。\"",
-                "com_sex_oral_V_Refuse_Receiver_2": "$self$往后退开一步，冷冷地拒绝了$target$。\n\"现在不行，请离我远点。\""
+                "com_sex_oral_V_FE_Player_1": "$self$抬起头，唇上亮晶晶的，脸红得厉害：“我第一次舔……做得还行吗……”",
+                "com_sex_oral_V_FE_1": "$self$的动作又生又慢，节奏全乱了：“唔……舌头好酸……我没做过这个……”",
+                "com_sex_oral_V_FE_2": "$self$喘着气换了个角度，脖子酸得直不起来：“第一次舔……原来这么累……”",
+                "com_sex_oral_V_FE_3": "$self$又慌又窘，只能小心翼翼地试探：“这样舔……对吗……我完全没经验……”",
+                "com_sex_oral_V_FE_4": "初次侍奉的酸楚让$self$的舌头又酸又麻，眼泪憋在眼眶里：“……够了……我舔不动了……”",
+                "com_sex_oral_V_FE_5": "$self$神色木然地舔着，只有泛红的眼角泄了底：“……快点结束。”",
+                "com_sex_oral_V_FE_Partner_1": "察觉到对方动作的生涩，$self$出声引导道：“别用牙齿……用舌头，慢一点。”",
+                "com_sex_oral_V_Refuse_Receiver_1": "$self$用力推开了$target$，神色戒备：“别碰我！我没同意做这种事。”",
+                "com_sex_oral_V_Refuse_Receiver_2": "$self$往后退开一步，冷冷地拒绝了$target$：“现在不行，请离我远点。”",
+                "com_sex_oral_V_Begin_FE_Sleep_3": "熟睡中的$self$鼻尖蹭在温热的腿根，呼吸依旧绵长均匀，嘴角沾着淡淡的水光。",
+                "com_sex_oral_V_FE_6": "$self$低着头急促地喘气，声音发哑：“居然让我舔这种地方……你满意了吗……”",
+                "com_sex_oral_V_FE_Partner_2": "$self$被磕绊的牙齿轻刮了下，倒也没有怪罪，只是摸了摸对方的头：“不用太紧张，顺着感觉来。”",
+                "com_sex_oral_V_FE_Partner_3": "感受到腿间温热却笨拙的舔弄，$self$放松腰胯低语：“嗯……对，就这样慢慢舔。”",
+                "com_sex_oral_V_Begin_FE_7": "$self$犹豫着凑到$target$腿间，声音小得像蚊子哼：“别告诉别人我做过这种事啊……”",
+                "com_sex_oral_V_FE_Sleep_2": "$self$沉在梦里没有醒来，嘴角沾着亮晶晶的津液，偶尔无意识地轻咽一口。",
+                "com_sex_oral_V_FE_Sleep_3": "熟睡中的$self$翻了个身，微湿的唇瓣蹭在枕头上，对刚才舔过$target$腿间的事一无所知。",
+                "com_sex_oral_V_Climax_14": "$self$一边含吮着$target$湿滑的花唇，一边控制不住地夹紧双腿抖着攀上顶峰：“哈啊……怎么光舔着你……我自己下面也湿透了……♡”",
+                "com_sex_oral_V_Climax_15": "$self$剧烈喘息着把脸埋进大腿内侧，喉咙里溢出断续的余韵：“不行……太兴奋了……居然自己去了……”",
+                "com_sex_oral_V_Begin_FE_Partner_3": "$self$感受到腿间笨拙却认真的触碰，轻声引导道：“不用太慌，随便舔舔就行。”",
+                "com_sex_oral_V_Begin_Sleep_3": "熟睡中的$self$呼吸平稳，任由温热的舌尖顶开穴口来回舔弄，只含混地砸了砸嘴。",
+                "com_sex_oral_V_FE_7": "$self$耳根通红地抬头瞥了一眼，口水顺着嘴角滑落：“好羞耻……第一次居然要做这种事……”",
+                "com_sex_oral_V_FE_8": "$self$咽了咽口水，生怕弄疼对方，只能用嘴唇小心包裹着：“嗯……有让你舒服一点吗……”",
+                "com_sex_oral_V_FE_9": "$self$小心翼翼地用舌尖绕过敏感处打转，耳根烫红：“唔……好像稍微掌握一点诀窍了……”",
+                "com_sex_oral_V_Begin_Timestop_3": "时间停滞在原地，$self$定格的瞳孔没有任何波动，任由软肉被唇舌肆意吸吮。",
+                "com_sex_oral_V_FE_Player_2": "$self$舔了舔唇角残留的湿意，脸颊红扑扑地小声问：“第一次舔这里……有让你舒服吗……”",
+                "com_sex_oral_V_FE_Player_3": "$self$扶着$target$的大腿轻轻喘息，眼里带着羞怯的笑意：“只要是你喜欢的话……我再多舔一会儿……”",
+                "com_sex_oral_V_FE_Timestop_2": "静止的时间里，$self$微张的唇角垂着银丝，眼神空洞地停在原处。",
+                "com_sex_oral_V_FE_Timestop_3": "$self$保持着原本的姿势一动不动，丝毫不知自己已经完成了第一次侍奉。",
+                "com_sex_oral_V_Begin_FE_Timestop_3": "时间停滞在原地，$self$柔嫩的唇瓣贴在陌生的花唇上，神情没有任何变化。",
+                "com_sex_oral_V_Refuse_Receiver_3": "$self$迅速并拢双腿往后挪开，眼神带着排斥：“别靠近我下面，我拒绝。”",
+                "com_sex_oral_V_FE_Timestop_4": "静止的时间里，$self$微张的唇角垂着银丝，眼神空洞地停在原处。",
+                "com_sex_oral_V_FE_Timestop_5": "$self$保持着原本的姿势一动不动，丝毫不知自己已经完成了第一次侍奉。",
+                "com_sex_oral_V_Begin_FE_Player_3": "$self$双手扶住$target$的大腿，试探着伸出舌尖：“既然是$target$的话……我会努力舔干净的……”",
+                "com_sex_oral_V_Begin_FE_8": "$self$紧闭着眼被按着后脑勺凑近那处，眼泪砸在腿根：“别碰我……第一次竟然要干这种事……！”",
+                "com_sex_oral_V_Begin_FE_9": "$self$小心翼翼地把唇贴上湿润的腿缝，呼吸急促而紧张：“没有经验……要是不舒服一定要说哦……”",
+                "com_sex_oral_V_85": "$self$强忍着喉头的干呕把头往后撤，声音带着哭腔：“……别再按着我了……”",
+                "com_sex_oral_V_86": "$self$强忍着喉头的干呕把头往后撤，声音带着哭腔：“……别再按着我了……”",
+                "com_sex_oral_V_87": "$self$沉在梦里没有醒来，嘴角沾着亮晶晶的津液，偶尔无意识地轻咽一口。",
+                "com_sex_oral_V_88": "熟睡中的$self$翻了个身，微湿的唇瓣蹭在枕头上，对刚才舔过$target$腿间的事一无所知。",
+                "com_sex_oral_V_89": "$self$耳根通红地抬头瞥了一眼，口水顺着嘴角滑落：“好羞耻……第一次居然要做这种事……”",
+                "com_sex_oral_V_90": "$self$咽了咽口水，生怕弄疼对方，只能用嘴唇小心包裹着：“嗯……有让你舒服一点吗……”",
+                "com_sex_oral_V_91": "$self$小心翼翼地用舌尖绕过敏感处打转，耳根烫红：“唔……好像稍微掌握一点诀窍了……”",
+                "com_sex_oral_V_92": "$self$被磕绊的牙齿轻刮了下，倒也没有怪罪，只是摸了摸对方的头：“不用太紧张，顺着感觉来。”",
+                "com_sex_oral_V_93": "感受到腿间温热却笨拙的舔弄，$self$放松腰胯低语：“嗯……对，就这样慢慢舔。”",
+                "com_sex_oral_V_94": "$self$舔了舔唇角残留的湿意，脸颊红扑扑地小声问：“第一次舔这里……有让你舒服吗……”",
+                "com_sex_oral_V_95": "$self$扶着$target$的大腿轻轻喘息，眼里带着羞怯的笑意：“只要是你喜欢的话……我再多舔一会儿……”",
+                "com_sex_oral_V_96": "$self$低着头急促地喘气，声音发哑：“居然让我舔这种地方……你满意了吗……”",
+                "com_sex_oral_V_97": "被缚住双手没法推开，$self$的阴蒂和穴口在温热唇舌的吮吸下又麻又胀：“哈啊……好烫……别总吸那里啊……”",
+                "com_sex_oral_V_98": "$self$仰起脖子喘息，爱液顺着腿根滑落，双腿不由自主地微微颤抖：“唔嗯……要被舔坏掉了……”",
+                "com_sex_oral_V_99": "绳索紧绷着，$self$却自觉微抬起腰肢迎合着舌尖的节奏：“不要停……再多舔一会儿……”",
+                "com_sex_oral_V_100": "$self$在腿间湿热的吮吸中迷糊转醒，低头看见$target$正埋首舔着自己的小穴：“唔……你趁我睡着在舔哪里呢……”",
+                "com_sex_oral_V_101": "睡意刚散，$self$就感觉到阴蒂传来的阵阵酥麻，脸颊发烫地轻哼了一声：“真是的……一大早就这么缠着不放吗……”",
+                "com_sex_oral_V_102": "$self$喘了口气清醒过来，声音带着刚睡醒的沙哑：“哈啊……把我弄醒了还舔个不停，太犯规了吧……”",
+                "com_sex_oral_V_103": "昏迷中的$self$依旧没有醒来，被反复吸吮舔弄的穴口泛红湿滑，顺从地渗出清液。",
+                "com_sex_oral_V_104": "$self$毫无知觉地躺在原地，随着$target$舔吮的节奏腰肢微微一颤，人却仍未转醒。",
+                "com_sex_oral_V_105": "失去意识的$self$喉咙里溢出一声极轻的喘息，腿间沾满亮晶晶的口水与爱液。",
+                "com_sex_oral_V_106": "动弹不得的$self$吃痛地嘶了声，敏感的阴唇被粗糙的牙齿磕得生疼：“好痛……！你想咬破那里吗！”",
+                "com_sex_oral_V_107": "$self$拧着眉想往后躲，奈何双手被捆着根本推不开埋在腿间的脑袋：“别乱啃了……一点也不舒服……”",
+                "com_sex_oral_V_108": "$self$喘着气忍受着腿间的刺痛，语气满是烦躁：“够了没有……快把嘴松开啊！”",
+                "com_sex_oral_V_109": "$self$随着节奏轻哼出声，花唇与阴蒂被$target$分开双腿用唇舌舔吮花唇与阴蒂得一阵发麻：“哈啊……好舒服……”",
+                "com_sex_oral_V_110": "快感顺着花唇与阴蒂迅速蔓延开来，$self$软着声音喘息道：“唔嗯……就是那里，别停……”",
+                "com_sex_oral_V_111": "$self$微眯起眼迎合着$target$的动作，嗓音带着甜腻的颤意：“啊……再多弄一会儿……”",
+                "com_sex_oral_V_112": "$self$随着节奏轻哼出声，花唇与阴蒂被$target$分开双腿用唇舌舔吮花唇与阴蒂得一阵发麻：“哈啊……好舒服……”",
+                "com_sex_oral_V_113": "快感顺着花唇与阴蒂迅速蔓延开来，$self$软着声音喘息道：“唔嗯……就是那里，别停……”",
+                "com_sex_oral_V_114": "$self$微眯起眼迎合着$target$的动作，嗓音带着甜腻的颤意：“啊……再多弄一会儿……”",
+                "com_sex_oral_V_115": "$self$微微蹙眉往后躲了躲，花唇与阴蒂传来一阵不太舒服的刺痛：“嘶……太重了，轻一点……”",
+                "com_sex_oral_V_116": "$self$有些不适地绷紧了身子，小声抱怨道：“唔……这样弄一点也不舒服……”",
+                "com_sex_oral_V_117": "节奏没能对上，$self$略显烦躁地喘了口气：“……稍微注意一下力道啊。”",
+                "com_sex_oral_V_Begin_19": "昏迷中的$self$毫无知觉地躺着，双腿被轻易分开，温热的舌尖直接抵上毫无防备的花唇。",
+                "com_sex_oral_V_Begin_20": "$self$合着眼皮没有任何反应，柔嫩的阴唇却在湿滑舌尖的拨弄下微微张开。",
+                "com_sex_oral_V_Begin_21": "失去意识的$self$呼吸平缓，任由$target$俯在腿间舔吻自己最私密的地方。",
+                "com_sex_oral_V_Begin_22": "$self$双手被捆着推不开俯到腿间的人，只能感觉湿热的舌尖抵住花唇舔了上来：“别、别舔那里啊……”",
+                "com_sex_oral_V_Begin_23": "绳索勒紧了手腕，$self$扭着腰想避开阴蒂上的撩拨，双腿却被架开：“唔……不要用舌头钻进来……”",
+                "com_sex_oral_V_Begin_24": "动弹不得的$self$耳根涨红，咬住嘴唇不敢看埋在腿间的$target$：“快停下……太羞耻了……”",
+                "com_sex_oral_V_Begin_25": "$self$任由$target$靠近，自己被$target$分开双腿用唇舌舔吮花唇与阴蒂，呼吸微微一滞。",
+                "com_sex_oral_V_Begin_26": "$self$轻轻抿了抿唇，没有推开被$target$分开双腿用唇舌舔吮花唇与阴蒂的$target$。",
+                "com_sex_oral_V_Begin_27": "感受到花唇与阴蒂传来的触碰，$self$下意识地轻颤了一下，顺势迎合上去。",
+                "com_sex_oral_V_Ongoing_1": "$self$的小穴正被旁人埋头细致舔吮着，余光瞥见站在旁边的$target$后顿时羞得满脸通红：“别、别盯着人家下面看啊……”",
+                "com_sex_oral_V_Ongoing_2": "腿间传出黏腻的吮吸水声，$self$咬住下唇不敢看$target$，湿润的穴口却越来越烫：“呜……这么色情的样子都被你看见了……”",
+                "com_sex_oral_V_Ongoing_3": "$self$红着脸扭过头去躲避$target$的视线，腰肢却随着口中的吸吮软得直颤：“唔啊……不要看过来……”",
+                "com_sex_oral_V_Ongoing_4": "$self$还在被$target$分开双腿用唇舌舔吮花唇与阴蒂，呼吸随着节奏一点点变得急促。",
+                "com_sex_oral_V_Ongoing_5": "持续不断的刺激让$self$眼角泛起微红，只能任由$target$继续动作。",
+                "com_sex_oral_V_Ongoing_6": "$self$轻喘着承受着花唇与阴蒂传来的触感，身子微微发软。",
+                "com_sex_oral_V_Ongoing_7": "$self$没有停下动作，继续贴近腿间用舌尖细细舔弄湿润的花唇。",
+                "com_sex_oral_V_Ongoing_8": "湿热的气息在两人之间弥漫，$self$维持着节奏贴近腿间用舌尖细细舔弄湿润的花唇。",
+                "com_sex_oral_V_Ongoing_9": "$self$微微喘息着，动作不停地贴近腿间用舌尖细细舔弄湿润的花唇。",
+                "com_sex_oral_V_118": "$self$微微喘息着，一边贴近腿间用舌尖细细舔弄湿润的花唇，一边留意着$target$的反应。",
+                "com_sex_oral_V_119": "空气渐渐升温，$self$放缓了节奏继续贴近腿间用舌尖细细舔弄湿润的花唇：“……感觉怎么样？”",
+                "com_sex_oral_V_120": "$self$轻吐出一口气，顺从着眼前的状态继续贴近腿间用舌尖细细舔弄湿润的花唇。"
             }
         }
     }

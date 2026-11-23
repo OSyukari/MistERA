@@ -13,7 +13,9 @@
                             "requireSelfReceiver": true,
                             "_comment": "受方 被乳交 高潮",
                             "responses": [
-                                "com_sex_breast_P_Climax_1"
+                                "com_sex_breast_P_Climax_1",
+                                "com_sex_breast_P_Climax_8",
+                                "com_sex_breast_P_Climax_9"
                             ]
                         },
                         {
@@ -32,7 +34,8 @@
                                     "_comment": "2.4.1 攻方 乳交 高潮 有允许 口上文",
                                     "responses": [
                                         "com_sex_breast_P_Climax_2",
-                                        "com_sex_breast_P_Climax_3"
+                                        "com_sex_breast_P_Climax_3",
+                                        "com_sex_breast_P_Climax_7"
                                     ]
                                 }
                             ],
@@ -45,7 +48,8 @@
                             "_comment": "2.4.2 攻方 乳交 高潮 无允许 口上文",
                             "responses": [
                                 "com_sex_breast_P_Climax_4",
-                                "com_sex_breast_P_Climax_5"
+                                "com_sex_breast_P_Climax_5",
+                                "com_sex_breast_P_Climax_6"
                             ]
                         }
                     ],
@@ -60,26 +64,6 @@
                         "nsfw"
                     ],
                     "variants": [
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "boobjob",
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
-                            "responses": [
-                                "com_sex_breast_P_Begin_Sleep_1",
-                                "com_sex_breast_P_Begin_Sleep_2"
-                            ]
-                        },
                         {
                             "requirement": {
                                 "requireSelfAction": false,
@@ -99,8 +83,80 @@
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_sex_breast_P_Begin_Timestop_1",
-                                "com_sex_breast_P_Begin_Timestop_2"
+                                "com_sex_breast_P_Begin_Timestop_2",
+                                "com_sex_breast_P_Begin_Timestop_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "boobjob",
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
+                            "responses": [
+                                "com_sex_breast_P_Begin_Sleep_1",
+                                "com_sex_breast_P_Begin_Sleep_2",
+                                "com_sex_breast_P_Begin_Sleep_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_sex_breast_P_Begin_10",
+                                        "com_sex_breast_P_Begin_11",
+                                        "com_sex_breast_P_Begin_12"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_sex_breast_P_Begin_13",
+                                        "com_sex_breast_P_Begin_14",
+                                        "com_sex_breast_P_Begin_15"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_breast_P_Begin_16",
+                                "com_sex_breast_P_Begin_17",
+                                "com_sex_breast_P_Begin_18"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            }
                         },
                         {
                             "requirement": {
@@ -134,7 +190,8 @@
                             "_comment": "2.2.1 开始乳交 未允许 好意 口上文",
                             "responses": [
                                 "com_sex_breast_P_Begin_4",
-                                "com_sex_breast_P_Begin_5"
+                                "com_sex_breast_P_Begin_5",
+                                "com_sex_breast_P_Begin_8"
                             ]
                         },
                         {
@@ -150,8 +207,13 @@
                             "_comment": "2.2.2 开始乳交 未允许 敌意 口上文",
                             "responses": [
                                 "com_sex_breast_P_Begin_6",
-                                "com_sex_breast_P_Begin_7"
-                            ]
+                                "com_sex_breast_P_Begin_7",
+                                "com_sex_breast_P_Begin_9"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            }
                         }
                     ],
                     "template": "commandAct"
@@ -167,6 +229,192 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "boobjob",
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "_comment": "2.3.1 时停中 乳交 口上文",
+                            "responses": [
+                                "com_sex_breast_P_3",
+                                "com_sex_breast_P_4",
+                                "com_sex_breast_P_33"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "boobjob",
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "_comment": "2.3.1 时停中 乳交 口上文",
+                            "responses": [
+                                "com_sex_breast_P_3",
+                                "com_sex_breast_P_4",
+                                "com_sex_breast_P_43"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "boobjob",
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "_comment": "2.3.2 睡眠中 乳交 口上文",
+                            "responses": [
+                                "com_sex_breast_P_1",
+                                "com_sex_breast_P_2",
+                                "com_sex_breast_P_44"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "boobjob",
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "_comment": "2.3.2 睡眠中 乳交 口上文",
+                            "responses": [
+                                "com_sex_breast_P_1",
+                                "com_sex_breast_P_2",
+                                "com_sex_breast_P_35"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_sex_breast_P_51",
+                                        "com_sex_breast_P_52",
+                                        "com_sex_breast_P_53"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessLTE": "Failure"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_sex_breast_P_54",
+                                                "com_sex_breast_P_55",
+                                                "com_sex_breast_P_56"
+                                            ]
+                                        }
+                                    ],
+                                    "responses": [
+                                        "com_sex_breast_P_63",
+                                        "com_sex_breast_P_64",
+                                        "com_sex_breast_P_65"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_sex_breast_P_57",
+                                                "com_sex_breast_P_58",
+                                                "com_sex_breast_P_59"
+                                            ]
+                                        }
+                                    ],
+                                    "responses": [
+                                        "com_sex_breast_P_66",
+                                        "com_sex_breast_P_67",
+                                        "com_sex_breast_P_68"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_sex_breast_P_48",
+                                        "com_sex_breast_P_49",
+                                        "com_sex_breast_P_50"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_breast_P_60",
+                                "com_sex_breast_P_61",
+                                "com_sex_breast_P_62"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            }
+                        },
+                        {
+                            "requirement": {
                                 "requireEPSuccessGTE": "Success"
                             },
                             "_player only version": {
@@ -178,48 +426,6 @@
                                 "requireCOMStrongVariant": true
                             },
                             "variants": [
-                                {
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "sleeping"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "boobjob",
-                                        "sleeping",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.3.2 睡眠中 乳交 口上文",
-                                    "responses": [
-                                        "com_sex_breast_P_1",
-                                        "com_sex_breast_P_2"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "timestop"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "boobjob",
-                                        "doll",
-                                        "empty",
-                                        "silence",
-                                        "idle"
-                                    ],
-                                    "_comment": "2.3.1 时停中 乳交 口上文",
-                                    "responses": [
-                                        "com_sex_breast_P_3",
-                                        "com_sex_breast_P_4"
-                                    ]
-                                },
                                 {
                                     "requirement": {
                                         "targetBaseID": "PLAYER",
@@ -245,7 +451,8 @@
                                             "_comment": "2.1.5  玩家专用的 刚睡醒时的 乳交 有允许 口上文",
                                             "responses": [
                                                 "com_sex_breast_P_16",
-                                                "com_sex_breast_P_17"
+                                                "com_sex_breast_P_17",
+                                                "com_sex_breast_P_46"
                                             ]
                                         },
                                         {
@@ -264,7 +471,8 @@
                                             "_comment": "2.2.7 玩家专用的 刚睡醒时的 乳交 无允许 好意 口上文",
                                             "responses": [
                                                 "com_sex_breast_P_18",
-                                                "com_sex_breast_P_19"
+                                                "com_sex_breast_P_19",
+                                                "com_sex_breast_P_45"
                                             ]
                                         }
                                     ],
@@ -278,7 +486,8 @@
                                     ],
                                     "responses": [
                                         "com_sex_breast_P_20",
-                                        "com_sex_breast_P_21"
+                                        "com_sex_breast_P_21",
+                                        "com_sex_breast_P_38"
                                     ]
                                 },
                                 {
@@ -314,49 +523,8 @@
                             ],
                             "responses": [
                                 "com_sex_breast_P_25",
-                                "com_sex_breast_P_26"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "boobjob",
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "2.3.2 睡眠中 乳交 口上文",
-                            "responses": [
-                                "com_sex_breast_P_1",
-                                "com_sex_breast_P_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "timestop"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "boobjob",
-                                "doll",
-                                "empty",
-                                "silence",
-                                "idle"
-                            ],
-                            "_comment": "2.3.1 时停中 乳交 口上文",
-                            "responses": [
-                                "com_sex_breast_P_3",
-                                "com_sex_breast_P_4"
+                                "com_sex_breast_P_26",
+                                "com_sex_breast_P_34"
                             ]
                         },
                         {
@@ -384,7 +552,8 @@
                                     "_comment": "2.1.5  玩家专用的 刚睡醒时的 乳交 有允许 口上文",
                                     "responses": [
                                         "com_sex_breast_P_16",
-                                        "com_sex_breast_P_17"
+                                        "com_sex_breast_P_17",
+                                        "com_sex_breast_P_37"
                                     ]
                                 },
                                 {
@@ -403,7 +572,8 @@
                                     "_comment": "2.2.7 玩家专用的 刚睡醒时的 乳交 无允许 好意 口上文",
                                     "responses": [
                                         "com_sex_breast_P_18",
-                                        "com_sex_breast_P_19"
+                                        "com_sex_breast_P_19",
+                                        "com_sex_breast_P_32"
                                     ]
                                 }
                             ],
@@ -417,55 +587,70 @@
                             ],
                             "responses": [
                                 "com_sex_breast_P_20",
-                                "com_sex_breast_P_21"
+                                "com_sex_breast_P_21",
+                                "com_sex_breast_P_47"
                             ]
                         },
                         {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "responses": [
+                                "com_sex_breast_P_69",
+                                "com_sex_breast_P_70",
+                                "com_sex_breast_P_71"
+                            ],
                             "variants": [
                                 {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "boobjob",
+                                                "pain",
+                                                "bored",
+                                                "doubt",
+                                                "disappointed"
+                                            ],
+                                            "_comment": "2.1.4 ($self$) 乳交 结果负面 有允许 口上文",
+                                            "responses": [
+                                                "com_sex_breast_P_27",
+                                                "com_sex_breast_P_28",
+                                                "com_sex_breast_P_29"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.6 ($self$) 乳交 结果负面 未允许 口上文",
                                     "extraSelfPortraitTags": [
                                         "sex",
                                         "doer",
                                         "boobjob",
-                                        "pain",
-                                        "bored",
-                                        "doubt",
-                                        "disappointed"
+                                        "angry",
+                                        "cry",
+                                        "glare",
+                                        "disgust",
+                                        "pouting",
+                                        "sad",
+                                        "troubled",
+                                        "silence"
                                     ],
-                                    "_comment": "2.1.4 ($self$) 乳交 结果负面 有允许 口上文",
                                     "responses": [
-                                        "com_sex_breast_P_27",
-                                        "com_sex_breast_P_28",
-                                        "com_sex_breast_P_29"
-                                    ]
+                                        "com_sex_breast_P_30",
+                                        "com_sex_breast_P_31",
+                                        "com_sex_breast_P_40"
+                                    ],
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "requireTargetAction": false,
+                                        "allowRecording": true
+                                    }
                                 }
-                            ],
-                            "_comment": "2.2.6 ($self$) 乳交 结果负面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "boobjob",
-                                "angry",
-                                "cry",
-                                "glare",
-                                "disgust",
-                                "pouting",
-                                "sad",
-                                "troubled",
-                                "silence"
-                            ],
-                            "responses": [
-                                "com_sex_breast_P_30",
-                                "com_sex_breast_P_31"
-                            ],
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            }
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -492,23 +677,8 @@
                             "useActiveTags": false,
                             "responses": [
                                 "com_sex_breast_P_Refuse_Receiver_3",
-                                "com_sex_breast_P_Refuse_Receiver_4"
-                            ]
-                        },
-                        {
-                            "requireSelfReceiver": true,
-                            "requirement": {
-                                "requireEPSuccess": false
-                            },
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "serious"
-                            ],
-                            "useActiveTags": false,
-                            "responses": [
-                                "com_sex_breast_P_Refuse_Receiver_1",
-                                "com_sex_breast_P_Refuse_Receiver_2"
+                                "com_sex_breast_P_Refuse_Receiver_4",
+                                "com_sex_breast_P_Refuse_Receiver_5"
                             ]
                         },
                         {
@@ -554,14 +724,16 @@
                                             "_comment": "2.1.6 刚睡醒时的 指令失败拒绝 乳交 口上文 有允许",
                                             "responses": [
                                                 "com_sex_breast_P_5",
-                                                "com_sex_breast_P_6"
+                                                "com_sex_breast_P_6",
+                                                "com_sex_breast_P_39"
                                             ]
                                         }
                                     ],
                                     "_comment": "2.2.9 刚睡醒时的 指令失败拒绝 乳交 口上文 无允许",
                                     "responses": [
                                         "com_sex_breast_P_7",
-                                        "com_sex_breast_P_8"
+                                        "com_sex_breast_P_8",
+                                        "com_sex_breast_P_41"
                                     ]
                                 },
                                 {
@@ -603,7 +775,8 @@
                                     "_comment": "2.2.3 指令失败拒绝 乳交 无允许 善意 口上文",
                                     "responses": [
                                         "com_sex_breast_P_12",
-                                        "com_sex_breast_P_13"
+                                        "com_sex_breast_P_13",
+                                        "com_sex_breast_P_42"
                                     ]
                                 }
                             ],
@@ -617,11 +790,55 @@
                             "useActiveTags": false,
                             "responses": [
                                 "com_sex_breast_P_14",
-                                "com_sex_breast_P_15"
+                                "com_sex_breast_P_15",
+                                "com_sex_breast_P_36"
                             ]
                         }
                     ],
                     "template": "commandRefuse"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_breast_P_Ongoing",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "responses": [
+                                        "com_sex_breast_P_Ongoing_1",
+                                        "com_sex_breast_P_Ongoing_2",
+                                        "com_sex_breast_P_Ongoing_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_breast_P_Ongoing_4",
+                                "com_sex_breast_P_Ongoing_5",
+                                "com_sex_breast_P_Ongoing_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "responses": [
+                                "com_sex_breast_P_Ongoing_7",
+                                "com_sex_breast_P_Ongoing_8",
+                                "com_sex_breast_P_Ongoing_9"
+                            ]
+                        }
+                    ],
+                    "template": "commandAct"
                 }
             }
         ]
@@ -629,57 +846,124 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "com_sex_breast_P_Climax_1": "$self$的腰弹起来，肉棒被那对柔软的乳肉裹着加速研磨，龟头胀得发亮，抖着射了出来。\n\"要射了……啊……去了……！\"",
-                "com_sex_breast_P_Climax_4": "$self$含着泪继续挤着奶子磨动，乳头却在摩擦下发硬，身体背弃了理智，抖着到了。\n\"不……明明是被逼着做的……为什么会……啊……！\"",
-                "com_sex_breast_P_Climax_5": "$self$死咬着牙想忍过去，还是在快感的冲刷里弓起了身，手里的奶子差点松脱。\n\"别看……别看我这副样子……呜呜……有什么坏掉了……啊……！\"",
-                "com_sex_breast_P_Climax_2": "$self$把奶子挤得更拢，乳肉裹着肉棒加速磨动，自己的乳头却硬得发疼，腿根抖着就这么到了。\n\"唔……明明是在给你夹……我怎么会先……♡\"",
-                "com_sex_breast_P_Climax_3": "$self$的腰软下去，看着肉棒在乳间进出的模样，小穴跟着收缩淌水，浑身酥到了顶。\n\"哈啊……看着这个……自己也好舒服……♡♡\"",
-                "com_sex_breast_P_Begin_1": "$self$双手把奶子挤拢，将$target$的肉棒夹进乳间慢慢磨动。\n\"想用这里了吧？忍很久了吧。\"",
-                "com_sex_breast_P_Begin_2": "$self$拉开领口，往乳间吐了口唾液当润滑，笑着把肉棒夹了进去。\n\"给你弄舒服点……好好享受。\"",
-                "com_sex_breast_P_Begin_3": "$self$把$target$按坐好，自己跪直了用乳肉裹住肉棒根部。\n\"别急着动……先让我夹好。\"",
-                "com_sex_breast_P_Begin_4": "$self$愣了下，红到耳根，却没推开被塞进乳间的肉棒。\n\"诶？这、这种事……只这次哦……\"",
-                "com_sex_breast_P_Begin_5": "$self$手足无措地把奶子往中间挤了挤，动作僵硬。\n\"真不敢相信我答应了……你、你轻点动……\"",
-                "com_sex_breast_P_Begin_6": "$self$颤抖着解开衣扣，把奶子露出来夹住那根肉棒，不敢抬头。\n\"我做就是了……求你别伤害我……\"",
-                "com_sex_breast_P_Begin_7": "$self$僵硬地并拢双臂，被掰开后乳间塞进了滚烫的肉棒。\n\"夹住了……这样你就满意了吧……快点结束……\"",
-                "com_sex_breast_P_1": "$self$呼吸绵长，肉棒被塞进乳间抽送也没醒，只是胸口发痒皱起眉，翻个身继续睡。",
+                "com_sex_breast_P_Climax_1": "$self$的腰弹起来，肉棒被那对柔软的乳肉裹着加速研磨，龟头胀得发亮，抖着射了出来：“要射了……啊……去了……！”",
+                "com_sex_breast_P_Climax_4": "$self$含着泪继续挤着奶子磨动，乳头却在摩擦下发硬，身体背弃了理智，抖着到了：“不……明明是被逼着做的……为什么会……啊……！”",
+                "com_sex_breast_P_Climax_5": "$self$紧咬着牙想忍过去，还是在快感的冲刷里弓起了身，手里的奶子差点松脱：“别看……别看我这副样子……呜呜……有什么坏掉了……啊……！”",
+                "com_sex_breast_P_Climax_2": "$self$把奶子挤得更拢，乳肉裹着肉棒加速磨动，自己的乳头却硬得发疼，腿根抖着就这么到了：“唔……明明是在给你夹……我怎么会先……♡”",
+                "com_sex_breast_P_Climax_3": "$self$的腰软下去，看着肉棒在乳间进出的模样，小穴跟着收缩淌水，浑身酥到了顶：“哈啊……看着这个……自己也好舒服……♡♡”",
+                "com_sex_breast_P_Begin_1": "$self$双手把奶子挤拢，将$target$的肉棒夹进乳间慢慢磨动：“想用这里了吧？忍很久了吧。”",
+                "com_sex_breast_P_Begin_2": "$self$往乳间抹了点唾液当润滑，笑着把肉棒夹了进去：“给你弄舒服点……好好享受。”",
+                "com_sex_breast_P_Begin_3": "$self$把$target$按坐好，自己跪直了用乳肉裹住肉棒根部：“别急着动……先让我夹好。”",
+                "com_sex_breast_P_Begin_4": "$self$愣了下，红到耳根，却没推开被塞进乳间的肉棒：“诶？这、这种事……只这次哦……”",
+                "com_sex_breast_P_Begin_5": "$self$手足无措地把奶子往中间挤了挤，动作有些生涩：“真不敢相信我答应了……你、你轻点动……”",
+                "com_sex_breast_P_Begin_6": "$self$颤抖着把奶子往中间挤拢夹住那根肉棒，不敢抬头：“我做就是了……求你别伤害我……”",
+                "com_sex_breast_P_Begin_7": "$self$绷紧双臂，被掰开后乳间塞进了滚烫的肉棒：“夹住了……这样你就满意了吧……快点结束……”",
+                "com_sex_breast_P_1": "$self$呼吸绵长，肉棒被塞进乳间抽送也没醒，只是鼻尖动了动，翻个身继续睡。",
                 "com_sex_breast_P_2": "$self$沉在梦乡里，身子随着乳间的抽动无意识地晃，喉咙里溢出几句含糊的梦呓。",
                 "com_sex_breast_P_3": "$self$定格在原本的姿势，乳肉被$target$的肉棒顶得来回变形，淫靡的水声在静止的世界里格外清楚。",
-                "com_sex_breast_P_4": "$self$僵立不动，眼神停在半空，乳间夹着的肉棒随意抽送，她没有任何反应。",
-                "com_sex_breast_P_14": "$self$厌恶地退开，拍掉那只手。\n\"离我远点！你这种想法真让人恶心！\"",
-                "com_sex_breast_P_15": "$self$毫不客气地甩开$target$。\n\"再碰我，我就报警了！说到做到！\"",
-                "com_sex_breast_P_7": "$self$惊恐地尖叫起来，手脚并用地踢打$target$。\n\"救命！滚开！谁来救救我！\"",
-                "com_sex_breast_P_8": "$self$抓起手边的东西就砸了过去。\n\"变态！你怎么敢！滚出去！\"",
-                "com_sex_breast_P_5": "$self$惊醒后坐起身，恼火地拍掉腰上的手。\n\"你疯了吗！让人好好睡觉行不行！\"",
-                "com_sex_breast_P_6": "$self$蜷起身子背过去，把胸口护住。\n\"很困啊……不要这样……明天再说……\"",
-                "com_sex_breast_P_9": "$self$轻轻推开凑过来的$target$，还在忙手里的活。\n\"还忙着呢……别闹啦，晚上再说。\"",
-                "com_sex_breast_P_10": "$self$捂住胸口，嗔怪地瞪了眼。\n\"今天胀得有点疼……下次吧好不好？\"",
-                "com_sex_breast_P_11": "$self$按住$target$的手，无奈地笑。\n\"我很累了……今天就抱抱，不做那个。\"",
-                "com_sex_breast_P_12": "$self$尴尬地笑笑，不动声色地拉开距离。\n\"哈哈……这玩笑有点过火了哦，$target$。\"",
-                "com_sex_breast_P_13": "$self$按住$target$的手，语气温和却坚决。\n\"我很喜欢你……但这条线，现在还不能过。\"",
-                "com_sex_breast_P_20": "$self$刚想尖叫就被捂住了嘴，只能流着泪任由乳间被使用，呜咽闷在掌下。\n\"呜唔……呜呜……轻点……求你……\"",
-                "com_sex_breast_P_21": "$self$看清局势后绝望地闭眼，放弃了挣扎。\n\"不要……求求你……轻点……我不动了……\"",
-                "com_sex_breast_P_16": "$self$迷迷糊糊睁眼，察觉乳间的热度后没躲，反而把奶子往中间挤了挤。\n\"唔……坏蛋……大半夜的……随你吧……~\"",
-                "com_sex_breast_P_17": "$self$半梦半醒地哼了声，顺从地用胸口夹住那根滚烫。\n\"好热……是你啊……那就……嗯……\"",
-                "com_sex_breast_P_18": "$self$惊讶地看着乳间的状况，脸慢慢红了，却默认了。\n\"天哪……怎么会……但是……嗯……\"",
-                "com_sex_breast_P_19": "$self$在背德感里没再反抗，闭眼配合着挤拢奶子。\n\"如果是梦的话……稍微放纵些也可以吧……\"",
-                "com_sex_breast_P_25": "$self$原本紧绷的肩膀慢慢放松，呼吸也急促起来。\n\"其实……并没有想象中那么讨厌……\"",
-                "com_sex_breast_P_26": "$self$羞耻地咬着唇，奶子却主动迎合着夹紧了肉棒。\n\"奇怪……身体为什么会这么热……唔……\"",
+                "com_sex_breast_P_4": "$self$一动不动地立在原处，眼神停在半空，乳间夹着的肉棒随意抽送，她没有任何反应。",
+                "com_sex_breast_P_14": "$self$厌恶地退开，拍掉那只手：“离我远点！你这种想法真让人恶心！”",
+                "com_sex_breast_P_15": "$self$毫不客气地甩开$target$：“再碰我，我就报警了！说到做到！”",
+                "com_sex_breast_P_7": "$self$惊恐地尖叫起来，手脚并用地踢打$target$：“救命！滚开！谁来救救我！”",
+                "com_sex_breast_P_8": "$self$抓起手边的东西就砸了过去：“变态！你怎么敢！滚出去！”",
+                "com_sex_breast_P_5": "$self$惊醒后坐起身，恼火地拍掉腰上的手：“你疯了吗！让人好好睡觉行不行！”",
+                "com_sex_breast_P_6": "$self$蜷起身子背过去，把胸口护住：“很困啊……不要这样……明天再说……”",
+                "com_sex_breast_P_9": "$self$轻轻推开凑过来的$target$：“还忙着呢……别闹啦，晚上再说。”",
+                "com_sex_breast_P_10": "$self$护住胸口，嗔怪地瞪了眼：“今天胀得有点疼……下次吧好不好？”",
+                "com_sex_breast_P_11": "$self$按住$target$的手，无奈地笑：“我很累了……今天就抱抱，不做那个。”",
+                "com_sex_breast_P_12": "$self$尴尬地笑笑，不动声色地拉开距离：“哈哈……这玩笑有点过火了哦，$target$。”",
+                "com_sex_breast_P_13": "$self$按住$target$的手，语气温和却坚决：“我很喜欢你……但这条线，现在还不能过。”",
+                "com_sex_breast_P_20": "$self$刚想尖叫就被捂住了嘴，只能流着泪任由乳间被使用，呜咽闷在掌下：“呜唔……呜呜……轻点……求你……”",
+                "com_sex_breast_P_21": "$self$看清局势后绝望地闭眼，放弃了挣扎：“不要……求求你……轻点……我不动了……”",
+                "com_sex_breast_P_16": "$self$迷迷糊糊睁眼，察觉乳间的热度后没躲，反而把奶子往中间挤了挤：“唔……坏蛋……大半夜的……随你吧……”",
+                "com_sex_breast_P_17": "$self$半梦半醒地哼了声，顺从地用胸口夹住那根滚烫：“好热……是你啊……那就继续吧……”",
+                "com_sex_breast_P_18": "$self$惊讶地看着乳间的状况，脸慢慢红了，却默认了：“天哪……怎么会……但是……嗯……”",
+                "com_sex_breast_P_19": "$self$在背德感里没再反抗，闭眼配合着挤拢奶子：“如果是梦的话……稍微放纵些也可以吧……”",
+                "com_sex_breast_P_25": "$self$原本紧绷的肩膀慢慢放松，呼吸也急促起来：“其实……并没有想象中那么讨厌……”",
+                "com_sex_breast_P_26": "$self$羞耻地咬着唇，奶子却主动迎合着夹紧了肉棒：“奇怪……身体为什么会这么热……唔……”",
                 "com_sex_breast_P_22": "$self$看着$target$享受的表情，把奶子夹得更紧，乳肉裹着肉棒加速磨动。\n\"你也变得好热……这种感觉还不赖吧？♡\"",
                 "com_sex_breast_P_23": "$self$卖力地收紧双臂，乳间发出黏腻的水声。\n\"虽然胳膊有点累……看你这么舒服，我也开心……♡\"",
                 "com_sex_breast_P_24": "$self$低下头，舌尖够着从乳间探出来的龟头舔了舔。\n\"喜欢吗？我会好好夹紧的……嗯……♡\"",
-                "com_sex_breast_P_30": "$self$盯着上方，眼里满是屈辱和不耐。\n\"还没完吗？真的够了……\"",
-                "com_sex_breast_P_31": "$self$恶心地想推开压上来的重量。\n\"我想吐……放开我……现在就放开！\"",
-                "com_sex_breast_P_27": "$self$皱着眉调整姿势，胳膊已经酸了。\n\"还要多久……手好酸。\"",
-                "com_sex_breast_P_28": "$self$的动作渐渐敷衍，眼神飘向了别处。\n\"差不多了吧……说实话有点无聊。\"",
-                "com_sex_breast_P_29": "$self$被顶得胸口发疼，往后撤了撤。\n\"太用力了……胸骨都疼了，轻点行不行。\"",
-                "com_sex_breast_P_Begin_Sleep_1": "$target$把肉棒塞进$self$熟睡中起伏的乳缝里，托着奶子往中间挤，她只是胸口发痒似的皱了皱眉，翻个身又睡沉了。",
+                "com_sex_breast_P_30": "$self$盯着上方，眼里满是屈辱和不耐：“还没完吗？真的够了……”",
+                "com_sex_breast_P_31": "$self$恶心地想推开压上来的重量：“我想吐……放开我……现在就放开！”",
+                "com_sex_breast_P_27": "$self$沉下脸调整姿势，胳膊已经酸了：“还要多久……手好酸。”",
+                "com_sex_breast_P_28": "$self$的动作渐渐敷衍，眼神飘向了别处：“差不多了吧……说实话有点无聊。”",
+                "com_sex_breast_P_29": "$self$被顶得胸口发疼，往后撤了撤：“太用力了……胸骨都疼了，轻点行不行。”",
+                "com_sex_breast_P_Begin_Sleep_1": "肉棒挤进$self$熟睡中起伏的乳缝里时，她只是胸口发痒似的拧了拧肩，翻个身又睡沉了。",
                 "com_sex_breast_P_Begin_Sleep_2": "乳肉被撑开又合拢裹住棒身，前液在乳沟里蹭出一片亮痕，$self$的呼吸绵长平稳，对胸前的动静毫无察觉。",
                 "com_sex_breast_P_Begin_Timestop_1": "肉棒挤进她并拢的乳缝里抽送，乳肉被顶得来回挤动，$self$的视线还锁在原来的落点上，睫毛都没眨。",
-                "com_sex_breast_P_Begin_Timestop_2": "$target$掐着她的奶子往中间按，被揉搓发热的乳肉泛起红，乳头遇着掌心的温度自己硬了起来，$self$却纹丝不动。",
+                "com_sex_breast_P_Begin_Timestop_2": "$target$按着她的奶子往中间挤，被揉搓发热的乳肉泛起红，乳头遇着掌心的温度立了起来，$self$却纹丝不动。",
                 "com_sex_breast_P_Refuse_Receiver_1": "$self$用力推开了$target$，神色戒备。\n\"别碰我！我没同意做这种事。\"",
                 "com_sex_breast_P_Refuse_Receiver_2": "$self$往后退开一步，冷冷地拒绝了$target$。\n\"现在不行，请离我远点。\"",
-                "com_sex_breast_P_Refuse_Receiver_3": "$self$用力推开了$target$，神色戒备。\n\"别碰我！我没同意做这种事。\"",
-                "com_sex_breast_P_Refuse_Receiver_4": "$self$往后退开一步，冷冷地拒绝了$target$。\n\"现在不行，请离我远点。\""
+                "com_sex_breast_P_Refuse_Receiver_3": "$self$用力推开了$target$，神色戒备：“别碰我！我没同意做这种事。”",
+                "com_sex_breast_P_Refuse_Receiver_4": "$self$往后退开一步，冷冷地拒绝了$target$：“现在不行，请离我远点。”",
+                "com_sex_breast_P_32": "刚睁眼的$self$怔了半拍，终究没把$target$推开：“真拿你没办法，轻点动。”",
+                "com_sex_breast_P_33": "时间尚未流动，$self$保持着凝固前的姿态，对胸前被顶弄的触感一无所知。",
+                "com_sex_breast_P_34": "乳肉被磨蹭得微微发麻，$self$忍不住轻哼了一声，随即慌忙别开视线。",
+                "com_sex_breast_P_35": "乳沟被蹭得发热，$self$在睡梦里无意识地抱紧双臂，呼吸仍旧平稳。",
+                "com_sex_breast_P_36": "“谁准你往这儿凑的？！”$self$冷冷盯住$target$，抬手拦在身前。",
+                "com_sex_breast_P_Begin_8": "“……用胸夹着真的能行吗。”$self$垂眼看着挤在乳肉间的滚烫，终究没往后退。",
+                "com_sex_breast_P_Climax_6": "$self$拼命偏过头不愿看乳间进出的肉棒，胸前磨蹭带来的酥麻却还是让她控制不住地颤抖着到达顶峰：“讨厌……不要这样……怎么会……啊……”",
+                "com_sex_breast_P_37": "刚醒过来的$self$揉了揉眼睛，看着夹在胸前的$target$轻笑了一声：“慢点蹭啊。”",
+                "com_sex_breast_P_Begin_9": "乳肉被硬生生挤开，$self$闭着眼发抖，只盼着这阵屈辱赶紧过去。",
+                "com_sex_breast_P_38": "睁眼便发现胸口被人夹着顶弄，$self$吓得往后缩却躲不开，只得小声抽气。",
+                "com_sex_breast_P_Climax_7": "$self$俯身用乳沟紧夹着阴茎上下搓揉，滚烫的触感顺着胸口窜遍全身，喘息间自己先攀上了顶峰：“不行了……光是用胸夹着磨就去了……♡”",
+                "com_sex_breast_P_39": "“才刚醒呢，别一上来就往胸前蹭。”$self$打了个哈欠，拉过被子裹紧自己。",
+                "com_sex_breast_P_Climax_8": "乳沟里湿热的挤压感把$self$逼到了极限，她弓起腰闷哼一声，精液一并射进了$target$胸前。",
+                "com_sex_breast_P_Climax_9": "$self$按住$target$的肩膀一阵发颤，积攒的热意冲破开关，在乳肉包夹间迎来了高潮。",
+                "com_sex_breast_P_40": "$self$咬紧牙关忍着胸前被撞得生疼的闷胀，只盼着$target$赶紧结束。",
+                "com_sex_breast_P_41": "睡意瞬间散光，$self$一把推开$target$往床角缩去：“别碰我！”",
+                "com_sex_breast_P_Refuse_Receiver_5": "“把手拿开，我不打算这么做。”$self$护住身前，语气生硬。",
+                "com_sex_breast_P_42": "“别闹了，这种事可不能随便做。”$self$红着脸往后退开半步。",
+                "com_sex_breast_P_Begin_Sleep_3": "$self$仍沉在睡梦里，乳肉顺着推挤微微晃动，却没有半点转醒的迹象。",
+                "com_sex_breast_P_Begin_Timestop_3": "时间静止在这一瞬，$self$保持着原本的姿势一动不动，对胸前被夹入肉棒的触感一无所知。",
+                "com_sex_breast_P_43": "时间尚未流动，$self$保持着凝固前的姿态，对胸前被顶弄的触感一无所知。",
+                "com_sex_breast_P_44": "乳沟被蹭得发热，$self$在睡梦里无意识地抱紧双臂，呼吸仍旧平稳。",
+                "com_sex_breast_P_45": "刚睁眼的$self$怔了半拍，终究没把$target$推开：“真拿你没办法，轻点动。”",
+                "com_sex_breast_P_46": "刚醒过来的$self$揉了揉眼睛，看着夹在胸前的$target$轻笑了一声：“慢点蹭啊。”",
+                "com_sex_breast_P_47": "睁眼便发现胸口被人夹着顶弄，$self$吓得往后缩却躲不开，只得小声抽气。",
+                "com_sex_breast_P_48": "乳间传来的温热挤压把$self$弄醒，她迷糊地睁开眼看了看$target$，最终没推开：“……趁人睡着就用胸夹上来啊？”",
+                "com_sex_breast_P_49": "$self$揉了揉眼睛清醒过来，察觉肉棒已经被软肉裹住，耳尖泛红：“……动作慢点，别磨太重。”",
+                "com_sex_breast_P_50": "“……唔、难怪梦里一直觉得胸前暖呼呼的。”$self$声音还带着睡意，放松了肩背由着$target$继续。",
+                "com_sex_breast_P_51": "昏迷中的$self$依旧没有转醒，被乳肉夹弄得硬挺发烫的肉棒静静贴在$target$胸前。",
+                "com_sex_breast_P_52": "$self$毫无反应地躺着，连指尖都没动一下，任由龟头渗出的前液蹭在对方乳沟里。",
+                "com_sex_breast_P_53": "失去意识的$self$没有发出任何声响，对身下的挤压摩擦一无所知。",
+                "com_sex_breast_P_54": "被绑着躲不开，肉棒在干燥的乳沟里被硬夹着摩擦得生疼，$self$吸了口气：“嘶……好干，别硬磨了！”",
+                "com_sex_breast_P_55": "“角度歪了，蹭得好难受……”$self$往后缩着腰，手腕上的绳索绷得紧紧的。",
+                "com_sex_breast_P_56": "生硬的挤压全无半点快感，$self$别开脸忍着气：“不会夹就松开。”",
+                "com_sex_breast_P_57": "没法用手去推，乳肉裹着棒身上下挤压的温热直往小腹窜，$self$喘得断断续续：“……别再这么夹着磨了……”",
+                "com_sex_breast_P_58": "$self$扯动着腕上的束缚仰起脖颈，被奶子包紧的肉棒越发滚烫：“唔……太软了……受不住……”",
+                "com_sex_breast_P_59": "躲不开也推不掉，$self$只能咬紧嘴唇忍住漏出来的轻哼，腿根阵阵发软。",
+                "com_sex_breast_P_60": "$self$随着节奏轻哼出声，肉棒把肉棒夹在$target$柔软的乳肉间抽动得一阵发麻：“哈啊……好舒服……”",
+                "com_sex_breast_P_61": "快感顺着肉棒迅速蔓延开来，$self$软着声音喘息道：“唔嗯……就是那里，别停……”",
+                "com_sex_breast_P_62": "$self$微眯起眼迎合着$target$的动作，嗓音带着甜腻的颤意：“啊……再多弄一会儿……”",
+                "com_sex_breast_P_63": "$self$微微蹙眉往后躲了躲，肉棒传来一阵不太舒服的刺痛：“嘶……太重了，轻一点……”",
+                "com_sex_breast_P_64": "$self$有些不适地绷紧了身子，小声抱怨道：“唔……这样弄一点也不舒服……”",
+                "com_sex_breast_P_65": "节奏没能对上，$self$略显烦躁地喘了口气：“……稍微注意一下力道啊。”",
+                "com_sex_breast_P_66": "$self$随着节奏轻哼出声，肉棒把肉棒夹在$target$柔软的乳肉间抽动得一阵发麻：“哈啊……好舒服……”",
+                "com_sex_breast_P_67": "快感顺着肉棒迅速蔓延开来，$self$软着声音喘息道：“唔嗯……就是那里，别停……”",
+                "com_sex_breast_P_68": "$self$微眯起眼迎合着$target$的动作，嗓音带着甜腻的颤意：“啊……再多弄一会儿……”",
+                "com_sex_breast_P_Ongoing_1": "施方还在用奶子夹着她的肉棒套弄，$self$余光瞄到$target$站在一旁看着，窘得把脸埋低：“……别盯着看。”",
+                "com_sex_breast_P_Ongoing_2": "“看够了没有……”$self$忍着身下传来的阵阵热意，顶着$target$的视线咬紧了下唇。",
+                "com_sex_breast_P_Ongoing_3": "被人当众用胸夹着肉棒摩擦，$self$耳根烧得发烫，喘着气不敢再往$target$那边看。",
+                "com_sex_breast_P_Ongoing_4": "$self$还在把肉棒夹在$target$柔软的乳肉间抽动，呼吸随着节奏一点点变得急促。",
+                "com_sex_breast_P_Ongoing_5": "持续不断的刺激让$self$眼角泛起微红，只能任由$target$继续动作。",
+                "com_sex_breast_P_Ongoing_6": "$self$轻喘着承受着肉棒传来的触感，身子微微发软。",
+                "com_sex_breast_P_Ongoing_7": "$self$没有停下动作，继续用双乳夹住滚烫的肉棒上下套弄。",
+                "com_sex_breast_P_Ongoing_8": "湿热的气息在两人之间弥漫，$self$维持着节奏用双乳夹住滚烫的肉棒上下套弄。",
+                "com_sex_breast_P_Ongoing_9": "$self$微微喘息着，动作不停地用双乳夹住滚烫的肉棒上下套弄。",
+                "com_sex_breast_P_Begin_10": "昏迷中的$self$毫无知觉，肉棒被柔软的乳肉裹住时，四肢仍软软地垂在原地。",
+                "com_sex_breast_P_Begin_11": "$self$紧闭着眼没有任何反应，只有胸口还维持着浅浅的起伏，任由$target$的奶子夹紧棒身。",
+                "com_sex_breast_P_Begin_12": "失去意识的$self$既没有躲闪也没有出声，安静得近乎沉寂。",
+                "com_sex_breast_P_Begin_13": "手腕被绑着挡不住身下，$self$在肉棒被奶子夹住时猛地绷紧了腰：“……别挤那么紧！”",
+                "com_sex_breast_P_Begin_14": "“被绑着还要被这样夹着蹭……”$self$咬住下唇偏过头，腕间的束缚跟着勒紧。",
+                "com_sex_breast_P_Begin_15": "束缚让$self$无处可躲，她只能绷直脊背，硬着头皮承受$target$胸前的挤压套弄。",
+                "com_sex_breast_P_Begin_16": "$self$任由$target$靠近，自己把肉棒夹在$target$柔软的乳肉间抽动，呼吸微微一滞。",
+                "com_sex_breast_P_Begin_17": "$self$轻轻抿了抿唇，没有推开把肉棒夹在$target$柔软的乳肉间抽动的$target$。",
+                "com_sex_breast_P_Begin_18": "感受到肉棒传来的触碰，$self$下意识地轻颤了一下，顺势迎合上去。",
+                "com_sex_breast_P_69": "$self$微微喘息着，一边用双乳夹住滚烫的肉棒上下套弄，一边留意着$target$的反应。",
+                "com_sex_breast_P_70": "空气渐渐升温，$self$放缓了节奏继续用双乳夹住滚烫的肉棒上下套弄：“……感觉怎么样？”",
+                "com_sex_breast_P_71": "$self$轻吐出一口气，顺从着眼前的状态继续用双乳夹住滚烫的肉棒上下套弄。"
             }
         }
     }

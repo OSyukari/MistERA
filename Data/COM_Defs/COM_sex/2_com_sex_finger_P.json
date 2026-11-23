@@ -53,6 +53,14 @@
                             }
                         },
                         "displayName":"com_sex_finger_P_displayName_1",
+                        "description_remove":{
+                            "Entries":[
+                                {
+                                    "keepLooking":true,
+                                    "texts":[ "com_sex_finger_P_solo_description_remove_1", "com_sex_finger_P_solo_description_remove_2", "com_sex_finger_P_solo_description_remove_3" ]
+                                }
+                            ]
+                        },
                         "useBaseDescription": false,
                         "description_begin":{
                             "Entries":[
@@ -78,6 +86,14 @@
                             }
                         },
                         "displayName":"com_sex_finger_P_displayName_2",
+                        "description_remove":{
+                            "Entries":[
+                                {
+                                    "keepLooking":true,
+                                    "texts":[ "com_sex_finger_P_solo_group_description_remove_1", "com_sex_finger_P_solo_group_description_remove_2", "com_sex_finger_P_solo_group_description_remove_3" ]
+                                }
+                            ]
+                        },
                         "useBaseDescription": false,
                         "description_begin":{
                             "Entries":[
@@ -231,7 +247,13 @@
                 "com_sex_finger_P_description_begin_12":"$doer.firstname$对着定格不动的$receiver.firstname$搓弄肉棒",
                 "com_sex_finger_P_description_remove_4":"$receiver.firstname$的肉棒上不再有手指圈着",
                 "com_sex_finger_P_description_remove_5":"$receiver.firstname$的肉棒从$doer.firstname$的手里脱了出来",
-                "com_sex_finger_P_description_remove_6":"$doer.firstname$的手指从$receiver.firstname$的鸡巴上离开了"
+                "com_sex_finger_P_description_remove_6":"$doer.firstname$的手指从$receiver.firstname$的鸡巴上离开了",
+                "com_sex_finger_P_solo_description_remove_1":"$doer.firstname$的手从自己的肉棒上松开了",
+                "com_sex_finger_P_solo_description_remove_2":"$doer.firstname$把手从自己的鸡巴上收了回来",
+                "com_sex_finger_P_solo_description_remove_3":"$doer.firstname$放开了自己的肉棒",
+                "com_sex_finger_P_solo_group_description_remove_1":"$doer.firstname$的手从自己的肉棒上松开了",
+                "com_sex_finger_P_solo_group_description_remove_2":"$doer.firstname$把手从自己的屌上收了回来",
+                "com_sex_finger_P_solo_group_description_remove_3":"$doer.firstname$不再套弄自己的肉棒"
 
             },
             "en-us":

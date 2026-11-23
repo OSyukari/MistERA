@@ -1,0 +1,481 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_kiss_tongue",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_kiss_tongue_7",
+                                        "com_sex_oral_kiss_tongue_8",
+                                        "com_sex_oral_kiss_tongue_9"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_kiss_tongue_4",
+                                        "com_sex_oral_kiss_tongue_5",
+                                        "com_sex_oral_kiss_tongue_6"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_kiss_tongue_19",
+                                        "com_sex_oral_kiss_tongue_20",
+                                        "com_sex_oral_kiss_tongue_21"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessLTE": "Failure"
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_kiss_tongue_1",
+                                        "com_sex_oral_kiss_tongue_2",
+                                        "com_sex_oral_kiss_tongue_3"
+                                    ],
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_sex_oral_kiss_tongue_13",
+                                                "com_sex_oral_kiss_tongue_14",
+                                                "com_sex_oral_kiss_tongue_15"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_kiss_tongue_10",
+                                        "com_sex_oral_kiss_tongue_11",
+                                        "com_sex_oral_kiss_tongue_12"
+                                    ],
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_sex_oral_kiss_tongue_22",
+                                                "com_sex_oral_kiss_tongue_23",
+                                                "com_sex_oral_kiss_tongue_24"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_kiss_tongue_16",
+                                        "com_sex_oral_kiss_tongue_17",
+                                        "com_sex_oral_kiss_tongue_18"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_oral_kiss_tongue_25",
+                                "com_sex_oral_kiss_tongue_26",
+                                "com_sex_oral_kiss_tongue_27"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            }
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "responses": [
+                                "com_sex_oral_kiss_tongue_28",
+                                "com_sex_oral_kiss_tongue_29",
+                                "com_sex_oral_kiss_tongue_30"
+                            ]
+                        }
+                    ],
+                    "template": "commandResult"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_kiss_tongue_Begin",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_kiss_tongue_Begin_10",
+                                        "com_sex_oral_kiss_tongue_Begin_11",
+                                        "com_sex_oral_kiss_tongue_Begin_12"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_kiss_tongue_Begin_1",
+                                        "com_sex_oral_kiss_tongue_Begin_2",
+                                        "com_sex_oral_kiss_tongue_Begin_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_kiss_tongue_Begin_7",
+                                        "com_sex_oral_kiss_tongue_Begin_8",
+                                        "com_sex_oral_kiss_tongue_Begin_9"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_kiss_tongue_Begin_4",
+                                        "com_sex_oral_kiss_tongue_Begin_5",
+                                        "com_sex_oral_kiss_tongue_Begin_6"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_oral_kiss_tongue_Begin_13",
+                                "com_sex_oral_kiss_tongue_Begin_14",
+                                "com_sex_oral_kiss_tongue_Begin_15"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "responses": [
+                                "com_sex_oral_kiss_tongue_Begin_16",
+                                "com_sex_oral_kiss_tongue_Begin_17",
+                                "com_sex_oral_kiss_tongue_Begin_18"
+                            ]
+                        }
+                    ],
+                    "template": "commandAct"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_kiss_tongue_Ongoing",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_kiss_tongue_Ongoing_1",
+                                        "com_sex_oral_kiss_tongue_Ongoing_2",
+                                        "com_sex_oral_kiss_tongue_Ongoing_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_oral_kiss_tongue_Ongoing_4",
+                                "com_sex_oral_kiss_tongue_Ongoing_5",
+                                "com_sex_oral_kiss_tongue_Ongoing_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "responses": [
+                                "com_sex_oral_kiss_tongue_Ongoing_7",
+                                "com_sex_oral_kiss_tongue_Ongoing_8",
+                                "com_sex_oral_kiss_tongue_Ongoing_9"
+                            ]
+                        }
+                    ],
+                    "template": "commandAct"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_kiss_tongue_Climax",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "responses": [
+                                "com_sex_oral_kiss_tongue_Climax_1",
+                                "com_sex_oral_kiss_tongue_Climax_2",
+                                "com_sex_oral_kiss_tongue_Climax_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "responses": [
+                                "com_sex_oral_kiss_tongue_Climax_4",
+                                "com_sex_oral_kiss_tongue_Climax_5",
+                                "com_sex_oral_kiss_tongue_Climax_6"
+                            ]
+                        }
+                    ],
+                    "template": "commandClimax"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_kiss_tongue_Refuse",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireRefusalContext": "ReceiverDeclined",
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "com_sex_oral_kiss_tongue_Refuse_1",
+                                "com_sex_oral_kiss_tongue_Refuse_2",
+                                "com_sex_oral_kiss_tongue_Refuse_3"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_kiss_tongue_Refuse_4",
+                                        "com_sex_oral_kiss_tongue_Refuse_5",
+                                        "com_sex_oral_kiss_tongue_Refuse_6"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "com_sex_oral_kiss_tongue_Refuse_7",
+                                "com_sex_oral_kiss_tongue_Refuse_8",
+                                "com_sex_oral_kiss_tongue_Refuse_9"
+                            ]
+                        }
+                    ],
+                    "template": "commandRefuse"
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_sex_oral_kiss_tongue_1": "$self$被横冲直撞的舌头顶得喉咙发痒，险些喘不过气地推开半寸：“咳……你别直接往喉咙里捅啊……”",
+                "com_sex_oral_kiss_tongue_2": "$self$恼火地抿紧嘴唇避开交缠，抹了把嘴角溢出的口水：“太粗鲁了……牙齿都磕到舌头了。”",
+                "com_sex_oral_kiss_tongue_3": "$self$厌烦地偏过脸大口喘气，语气满是抱怨：“……全都是口水，一点也不舒服。”",
+                "com_sex_oral_kiss_tongue_4": "熟睡中的$self$被吻得本能地轻咽着渡过来的唾液，舌尖在嘴里微微卷动迎合，却依旧沉睡不醒。",
+                "com_sex_oral_kiss_tongue_5": "$self$无意识地发出一声绵软的鼻音，嘴唇被吮得红润发亮，津液顺着下巴滑落下来。",
+                "com_sex_oral_kiss_tongue_6": "梦乡里的$self$微张着嘴任由$target$在口腔里肆意扫荡，没有醒来。",
+                "com_sex_oral_kiss_tongue_7": "时停中的$self$定格在原处，嘴唇与舌尖已被$target$舔吮得红肿湿滑，她却连半点喘息都没有。",
+                "com_sex_oral_kiss_tongue_8": "静止的时间里，$self$的口腔被侵入的舌头尽情翻搅，唇角挂着长长的银丝却纹丝不动。",
+                "com_sex_oral_kiss_tongue_9": "$self$丝毫不知自己此刻正被这样深吻着，等时间流动后恐怕立刻就会被满嘴的津液呛到。",
+                "com_sex_oral_kiss_tongue_10": "$self$与$target$唇舌交缠得难舍难分，交换的唾液从来不及吞咽的嘴角溢出来，她眼神迷离地喘息：“哈啊……舌头好烫……再多吸一会儿……♡”",
+                "com_sex_oral_kiss_tongue_11": "两条舌头在口腔里不断绞缠吮吸，$self$双腿发软地挂在对方身上：“唔嗯……嘴里全都是你的味道……好舒服……”",
+                "com_sex_oral_kiss_tongue_12": "$self$喘着热气主动把舌尖送进$target$嘴里，发出黏腻的啧啧水声：“嗯啊……亲得脑子都要化掉了……”",
+                "com_sex_oral_kiss_tongue_13": "动弹不得的$self$被顶得阵阵干呕，口水糊满下巴让她十分恼火：“咳……别往里捅了……恶心死了！”",
+                "com_sex_oral_kiss_tongue_14": "$self$拼命晃动被捆的身子想要躲开，眼里溢满屈辱与烦躁：“快把你的舌头拿出去……”",
+                "com_sex_oral_kiss_tongue_15": "$self$喘着粗气狠狠瞪着贴在眼前的人，喉咙里发出压抑的嘶气声：“……你到底要亲到什么时候！”",
+                "com_sex_oral_kiss_tongue_16": "$self$在口腔里湿热纠缠的舌吻中猛然惊醒，浑身一颤喘出声来：“唔……！$target$？！你趁我睡着把舌头伸进来多久了……”",
+                "com_sex_oral_kiss_tongue_17": "睡意瞬间被这过分的刺激冲散，$self$又羞又急地推了推对方：“亲得这么深……呼吸都要被抢光了……真是大坏蛋……”",
+                "com_sex_oral_kiss_tongue_18": "$self$红着脸抿住嘴唇，声音还带着刚醒的沙哑与发颤：“哈啊……别再吸了，我已经醒了啦……”",
+                "com_sex_oral_kiss_tongue_19": "昏迷中的$self$毫无反抗之力，被$target$含住吸吮的舌尖微微发红，口腔内溢满透明的津液。",
+                "com_sex_oral_kiss_tongue_20": "$self$躺在原地一动不动，软舌却随着$target$的纠缠和吮吸被反复拉扯。",
+                "com_sex_oral_kiss_tongue_21": "失去意识的$self$任由唇齿间传来黏腻的水声，眼皮始终没有睁开。",
+                "com_sex_oral_kiss_tongue_22": "被缚住手脚的$self$彻底失去了抵抗的力气，只能任由$target$卷住自己的舌头疯狂吸吮：“哈啊……舌头要被吸麻了……脑子转不动了……”",
+                "com_sex_oral_kiss_tongue_23": "绳索勒进皮肤，$self$却主动伸出舌尖缠了上去，声音甜腻发颤：“呜……不行……越是被这样深吻越停不下来……”",
+                "com_sex_oral_kiss_tongue_24": "$self$眼神迷离地大口喘息，腿根在黏腻的舌吻中止不住地颤抖：“嗯啊……再来……把口水都喂给我……”",
+                "com_sex_oral_kiss_tongue_25": "$self$随着节奏轻哼出声，口腔与舌尖被$target$撬开唇齿把舌头伸进口腔肆意搅弄得一阵发麻：“哈啊……好舒服……”",
+                "com_sex_oral_kiss_tongue_26": "快感顺着口腔与舌尖迅速蔓延开来，$self$软着声音喘息道：“唔嗯……就是那里，别停……”",
+                "com_sex_oral_kiss_tongue_27": "$self$微眯起眼迎合着$target$的动作，嗓音带着甜腻的颤意：“啊……再多弄一会儿……”",
+                "com_sex_oral_kiss_tongue_28": "$self$微微喘息着，一边强行撬开对方的牙关用舌尖在口腔里深入缠绕，一边留意着$target$的反应。",
+                "com_sex_oral_kiss_tongue_29": "空气渐渐升温，$self$放缓了动作继续强行撬开对方的牙关用舌尖在口腔里深入缠绕：“……感觉怎么样？”",
+                "com_sex_oral_kiss_tongue_30": "$self$轻吐出一口气，顺从着眼前的节奏继续强行撬开对方的牙关用舌尖在口腔里深入缠绕。",
+                "com_sex_oral_kiss_tongue_Begin_1": "熟睡中的$self$被撬开唇齿把舌头伸进去搅弄，她只在枕边发出一声含糊的鼻音，舌尖无意识地轻轻颤了下。",
+                "com_sex_oral_kiss_tongue_Begin_2": "$self$沉睡着毫无防备，软舌被$target$含住吮吸拉扯，呼吸略微急促了些却没醒。",
+                "com_sex_oral_kiss_tongue_Begin_3": "湿热的舌头在睡梦中人的口腔里翻搅，$self$不安地偏了下头，嘴角挂着一点晶莹的口水继续睡着。",
+                "com_sex_oral_kiss_tongue_Begin_4": "被绳索捆住的$self$推不开压近的脸，牙关被强硬地顶开，湿热的舌头瞬间缠了上来：“唔……！别往里顶……”",
+                "com_sex_oral_kiss_tongue_Begin_5": "$self$挣动着手腕却躲不开侵入的舌尖，口腔被搅出暧昧的水声：“呜嗯……喘不过气了……”",
+                "com_sex_oral_kiss_tongue_Begin_6": "动弹不得的$self$眼角泛红地仰着脖子，舌头被$target$勾住无力躲闪：“放、放开……舌头好麻……”",
+                "com_sex_oral_kiss_tongue_Begin_7": "昏迷中的$self$毫无知觉地躺着，松软的牙关被轻易撬开，任由$target$的舌头深入口腔肆意搅动。",
+                "com_sex_oral_kiss_tongue_Begin_8": "$self$紧闭着眼没有任何反应，柔软的舌头任人含住吮吸，口水顺着嘴角往下淌。",
+                "com_sex_oral_kiss_tongue_Begin_9": "失去意识的$self$呼吸浅缓，整个口腔都暴露在侵入的舌尖之下。",
+                "com_sex_oral_kiss_tongue_Begin_10": "时停中的$self$定格在原处，毫无知觉地被$target$撬开嘴唇把舌头伸到喉咙深处搅弄，连眼神都没有半点波动。",
+                "com_sex_oral_kiss_tongue_Begin_11": "凝固的空气里，$self$的舌头被拽出唇外细细舔吮，嘴角垂下银丝，她却毫不知情。",
+                "com_sex_oral_kiss_tongue_Begin_12": "$self$保持着原本的姿势纹丝不动，口腔里的津液任由$target$随意品尝交换。",
+                "com_sex_oral_kiss_tongue_Begin_13": "$self$被按住后颈，湿滑的舌头直接撬开牙关长驱直入，她发出一声含糊的闷哼：“唔嗯……一下就伸这么深……”",
+                "com_sex_oral_kiss_tongue_Begin_14": "$self$红着脸仰起头，张开唇瓣迎合着探进来的舌尖：“要、要缠上来了吗……轻点吸哦……”",
+                "com_sex_oral_kiss_tongue_Begin_15": "$self$双手扶住$target$的肩膀，感觉两条舌头在嘴里互相试探着勾缠：“唔……嘴里好烫……”",
+                "com_sex_oral_kiss_tongue_Begin_16": "$self$调整了一下呼吸，开始强行撬开对方的牙关用舌尖在口腔里深入缠绕。",
+                "com_sex_oral_kiss_tongue_Begin_17": "$self$贴近$target$，顺势强行撬开对方的牙关用舌尖在口腔里深入缠绕。",
+                "com_sex_oral_kiss_tongue_Begin_18": "随着动作落下，$self$与$target$之间的呼吸渐渐变得灼热起来，开始强行撬开对方的牙关用舌尖在口腔里深入缠绕。",
+                "com_sex_oral_kiss_tongue_Ongoing_1": "$self$正被旁人撬开嘴唇深吻着，余光瞥见一旁的$target$后顿时羞得偏过头：“唔……别、别看这边……”",
+                "com_sex_oral_kiss_tongue_Ongoing_2": "黏腻的舌吻水声在安静的房间里格外清晰，$self$腿根发软地颤抖着，不敢看$target$的眼睛：“太丢脸了……连这么色情的亲吻都被你看到了……”",
+                "com_sex_oral_kiss_tongue_Ongoing_3": "$self$咬着唇压抑着喉咙里的喘息，耳根烫得吓人：“唔嗯……不要一直盯着人家嘴看啊……”",
+                "com_sex_oral_kiss_tongue_Ongoing_4": "$self$还在被$target$撬开唇齿把舌头伸进口腔肆意搅弄，呼吸随着节奏一点点变得急促。",
+                "com_sex_oral_kiss_tongue_Ongoing_5": "持续不断的刺激让$self$眼角泛起微红，只能任由$target$继续动作。",
+                "com_sex_oral_kiss_tongue_Ongoing_6": "$self$轻喘着承受着口腔与舌尖传来的触感，身子微微发软。",
+                "com_sex_oral_kiss_tongue_Ongoing_7": "$self$没有停下动作，继续强行撬开对方的牙关用舌尖在口腔里深入缠绕。",
+                "com_sex_oral_kiss_tongue_Ongoing_8": "湿热的气息在两人之间弥漫，$self$维持着节奏强行撬开对方的牙关用舌尖在口腔里深入缠绕。",
+                "com_sex_oral_kiss_tongue_Ongoing_9": "$self$微微喘息着，动作不停地强行撬开对方的牙关用舌尖在口腔里深入缠绕。",
+                "com_sex_oral_kiss_tongue_Climax_1": "舌尖被猛地吸住吮弄，$self$的理智瞬间被冲垮，挂在$target$身上剧烈痉挛着到了顶：“唔嗯……！光靠舌吻就……去了……啊♡”",
+                "com_sex_oral_kiss_tongue_Climax_2": "$self$失神地吐出舌尖，大口喘息着浑身发抖，下面涌出一股热液：“不行了……脑子一片空白……好舒服……呜啊啊♡”",
+                "com_sex_oral_kiss_tongue_Climax_3": "唇齿间拉出晶莹的银丝，$self$软倒在怀里颤栗不止：“哈啊……被亲到高潮什么的……好丢人……♡”",
+                "com_sex_oral_kiss_tongue_Climax_4": "在持续的刺激下，$self$浑身猛地一颤，迎来了难以抑制的高潮。",
+                "com_sex_oral_kiss_tongue_Climax_5": "积攒的热意瞬间炸开，$self$仰起脖子发出一声短促的喘息，彻底攀上顶峰。",
+                "com_sex_oral_kiss_tongue_Climax_6": "$self$紧紧攥住身侧的布料，在绵延的快感中颤抖着达到高潮。",
+                "com_sex_oral_kiss_tongue_Refuse_1": "$self$猛地挣脱开$target$的控制，迅速捂住嘴唇往后退去：“疯了吗！把舌头伸进来什么的绝对不行！”",
+                "com_sex_oral_kiss_tongue_Refuse_2": "$self$满脸通红地瞪着$target$，声音因为气愤而微微拔高：“别开玩笑了！我才不要跟你这么亲热呢！”",
+                "com_sex_oral_kiss_tongue_Refuse_3": "$self$用力推开凑过来的$target$，神色坚决：“哪怕是你也不行，不准乱伸舌头！”",
+                "com_sex_oral_kiss_tongue_Refuse_4": "$self$被堵住嘴唇的窒息感狠狠惊醒，当即一把推开$target$抹着嘴往床边缩去：“滚开！趁我睡着居然把舌头伸进来！”",
+                "com_sex_oral_kiss_tongue_Refuse_5": "$self$脸色煞白地捂住嘴，又惊又怒地瞪着$target$：“你疯了吗？！快给我滚出去！”",
+                "com_sex_oral_kiss_tongue_Refuse_6": "$self$颤抖着扯过被子裹住上身，声音里满是抗拒与愤怒：“别碰我！再敢过来我就喊人了！”",
+                "com_sex_oral_kiss_tongue_Refuse_7": "$self$皱起眉偏开身体，直接拒绝了$target$的动作：“别这样，停下来。”",
+                "com_sex_oral_kiss_tongue_Refuse_8": "$self$伸手挡在身前，语气冷淡地回绝道：“……我现在不想继续这个。”",
+                "com_sex_oral_kiss_tongue_Refuse_9": "$self$往后退开半步拉开了距离，明确地摇了摇头：“不行，别碰这里。”"
+            }
+        }
+    }
+}

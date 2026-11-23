@@ -13,7 +13,9 @@
                             "requireSelfDoer": true,
                             "_comment": "攻方 舔乳头 高潮",
                             "responses": [
-                                "com_sex_oral_B_Climax_1"
+                                "com_sex_oral_B_Climax_1",
+                                "com_sex_oral_B_Climax_8",
+                                "com_sex_oral_B_Climax_9"
                             ]
                         },
                         {
@@ -66,26 +68,6 @@
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "breasts",
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
-                            "responses": [
-                                "com_sex_oral_B_Begin_Sleep_1",
-                                "com_sex_oral_B_Begin_Sleep_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
                                     "timestop"
                                 ]
                             },
@@ -101,8 +83,80 @@
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_sex_oral_B_Begin_Timestop_1",
-                                "com_sex_oral_B_Begin_Timestop_2"
+                                "com_sex_oral_B_Begin_Timestop_2",
+                                "com_sex_oral_B_Begin_Timestop_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "breasts",
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
+                            "responses": [
+                                "com_sex_oral_B_Begin_Sleep_1",
+                                "com_sex_oral_B_Begin_Sleep_2",
+                                "com_sex_oral_B_Begin_Sleep_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_B_Begin_13",
+                                        "com_sex_oral_B_Begin_14",
+                                        "com_sex_oral_B_Begin_15"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_B_Begin_10",
+                                        "com_sex_oral_B_Begin_11",
+                                        "com_sex_oral_B_Begin_12"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_oral_B_Begin_16",
+                                "com_sex_oral_B_Begin_17",
+                                "com_sex_oral_B_Begin_18"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            }
                         },
                         {
                             "requirement": {
@@ -155,7 +209,11 @@
                                 "com_sex_oral_B_Begin_7",
                                 "com_sex_oral_B_Begin_8",
                                 "com_sex_oral_B_Begin_9"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            }
                         }
                     ],
                     "template": "commandAct"
@@ -171,6 +229,192 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "breasts",
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "_comment": "2.3.1 时停中 被舔乳头 口上文",
+                            "responses": [
+                                "com_sex_oral_B_4",
+                                "com_sex_oral_B_5",
+                                "com_sex_oral_B_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "breasts",
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "_comment": "2.3.1 时停中 被舔乳头 口上文",
+                            "responses": [
+                                "com_sex_oral_B_4",
+                                "com_sex_oral_B_5",
+                                "com_sex_oral_B_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "breasts",
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "_comment": "2.3.2 睡眠中 被舔乳头 口上文",
+                            "responses": [
+                                "com_sex_oral_B_1",
+                                "com_sex_oral_B_2",
+                                "com_sex_oral_B_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "breasts",
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "_comment": "2.3.2 睡眠中 被舔乳头 口上文",
+                            "responses": [
+                                "com_sex_oral_B_1",
+                                "com_sex_oral_B_2",
+                                "com_sex_oral_B_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_B_52",
+                                        "com_sex_oral_B_53",
+                                        "com_sex_oral_B_54"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_sex_oral_B_49",
+                                                "com_sex_oral_B_50",
+                                                "com_sex_oral_B_51"
+                                            ]
+                                        }
+                                    ],
+                                    "responses": [
+                                        "com_sex_oral_B_61",
+                                        "com_sex_oral_B_62",
+                                        "com_sex_oral_B_63"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessLTE": "Failure"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_sex_oral_B_55",
+                                                "com_sex_oral_B_56",
+                                                "com_sex_oral_B_57"
+                                            ]
+                                        }
+                                    ],
+                                    "responses": [
+                                        "com_sex_oral_B_64",
+                                        "com_sex_oral_B_65",
+                                        "com_sex_oral_B_66"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_B_46",
+                                        "com_sex_oral_B_47",
+                                        "com_sex_oral_B_48"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_oral_B_58",
+                                "com_sex_oral_B_59",
+                                "com_sex_oral_B_60"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            }
+                        },
+                        {
+                            "requirement": {
                                 "requireEPSuccessGTE": "Success"
                             },
                             "_player only version": {
@@ -182,50 +426,6 @@
                                 "requireCOMStrongVariant": true
                             },
                             "variants": [
-                                {
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "sleeping"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "breasts",
-                                        "sleeping",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.3.2 睡眠中 被舔乳头 口上文",
-                                    "responses": [
-                                        "com_sex_oral_B_1",
-                                        "com_sex_oral_B_2",
-                                        "com_sex_oral_B_3"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "timestop"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "breasts",
-                                        "doll",
-                                        "empty",
-                                        "silence",
-                                        "idle"
-                                    ],
-                                    "_comment": "2.3.1 时停中 被舔乳头 口上文",
-                                    "responses": [
-                                        "com_sex_oral_B_4",
-                                        "com_sex_oral_B_5",
-                                        "com_sex_oral_B_6"
-                                    ]
-                                },
                                 {
                                     "requirement": {
                                         "targetBaseID": "PLAYER",
@@ -251,7 +451,8 @@
                                             "_comment": "2.1.5  玩家专用的 刚睡醒时的 被舔乳头 有允许 口上文",
                                             "responses": [
                                                 "com_sex_oral_B_19",
-                                                "com_sex_oral_B_20"
+                                                "com_sex_oral_B_20",
+                                                "com_sex_oral_B_39"
                                             ]
                                         },
                                         {
@@ -270,7 +471,8 @@
                                             "_comment": "2.2.7 玩家专用的 刚睡醒时的 被舔乳头 无允许 好意 口上文",
                                             "responses": [
                                                 "com_sex_oral_B_21",
-                                                "com_sex_oral_B_22"
+                                                "com_sex_oral_B_22",
+                                                "com_sex_oral_B_41"
                                             ]
                                         }
                                     ],
@@ -284,7 +486,8 @@
                                     ],
                                     "responses": [
                                         "com_sex_oral_B_23",
-                                        "com_sex_oral_B_24"
+                                        "com_sex_oral_B_24",
+                                        "com_sex_oral_B_37"
                                     ]
                                 },
                                 {
@@ -326,50 +529,6 @@
                         },
                         {
                             "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "breasts",
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "2.3.2 睡眠中 被舔乳头 口上文",
-                            "responses": [
-                                "com_sex_oral_B_1",
-                                "com_sex_oral_B_2",
-                                "com_sex_oral_B_3"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "timestop"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "breasts",
-                                "doll",
-                                "empty",
-                                "silence",
-                                "idle"
-                            ],
-                            "_comment": "2.3.1 时停中 被舔乳头 口上文",
-                            "responses": [
-                                "com_sex_oral_B_4",
-                                "com_sex_oral_B_5",
-                                "com_sex_oral_B_6"
-                            ]
-                        },
-                        {
-                            "requirement": {
                                 "targetBaseID": "PLAYER",
                                 "selfTags": [
                                     "justWokenUp"
@@ -393,7 +552,8 @@
                                     "_comment": "2.1.5  玩家专用的 刚睡醒时的 被舔乳头 有允许 口上文",
                                     "responses": [
                                         "com_sex_oral_B_19",
-                                        "com_sex_oral_B_20"
+                                        "com_sex_oral_B_20",
+                                        "com_sex_oral_B_45"
                                     ]
                                 },
                                 {
@@ -412,7 +572,8 @@
                                     "_comment": "2.2.7 玩家专用的 刚睡醒时的 被舔乳头 无允许 好意 口上文",
                                     "responses": [
                                         "com_sex_oral_B_21",
-                                        "com_sex_oral_B_22"
+                                        "com_sex_oral_B_22",
+                                        "com_sex_oral_B_43"
                                     ]
                                 }
                             ],
@@ -426,56 +587,70 @@
                             ],
                             "responses": [
                                 "com_sex_oral_B_23",
-                                "com_sex_oral_B_24"
+                                "com_sex_oral_B_24",
+                                "com_sex_oral_B_44"
                             ]
                         },
                         {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "responses": [
+                                "com_sex_oral_B_67",
+                                "com_sex_oral_B_68",
+                                "com_sex_oral_B_69"
+                            ],
                             "variants": [
                                 {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "breasts",
+                                                "pain",
+                                                "bored",
+                                                "doubt",
+                                                "disappointed"
+                                            ],
+                                            "_comment": "2.1.4 ($self$) 被舔乳头 结果负面 有允许 口上文",
+                                            "responses": [
+                                                "com_sex_oral_B_31",
+                                                "com_sex_oral_B_32",
+                                                "com_sex_oral_B_33"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.6 ($self$) 被舔乳头 结果负面 未允许 口上文",
                                     "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
                                         "breasts",
-                                        "pain",
-                                        "bored",
-                                        "doubt",
-                                        "disappointed"
+                                        "angry",
+                                        "cry",
+                                        "glare",
+                                        "disgust",
+                                        "pouting",
+                                        "sad",
+                                        "troubled",
+                                        "silence"
                                     ],
-                                    "_comment": "2.1.4 ($self$) 被舔乳头 结果负面 有允许 口上文",
                                     "responses": [
-                                        "com_sex_oral_B_31",
-                                        "com_sex_oral_B_32",
-                                        "com_sex_oral_B_33"
-                                    ]
+                                        "com_sex_oral_B_34",
+                                        "com_sex_oral_B_35",
+                                        "com_sex_oral_B_36"
+                                    ],
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "requireTargetAction": false,
+                                        "allowRecording": true
+                                    }
                                 }
-                            ],
-                            "_comment": "2.2.6 ($self$) 被舔乳头 结果负面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "breasts",
-                                "angry",
-                                "cry",
-                                "glare",
-                                "disgust",
-                                "pouting",
-                                "sad",
-                                "troubled",
-                                "silence"
-                            ],
-                            "responses": [
-                                "com_sex_oral_B_34",
-                                "com_sex_oral_B_35",
-                                "com_sex_oral_B_36"
-                            ],
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            }
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -502,7 +677,8 @@
                             "useActiveTags": false,
                             "responses": [
                                 "com_sex_oral_B_Refuse_Receiver_1",
-                                "com_sex_oral_B_Refuse_Receiver_2"
+                                "com_sex_oral_B_Refuse_Receiver_2",
+                                "com_sex_oral_B_Refuse_Receiver_3"
                             ]
                         },
                         {
@@ -548,14 +724,16 @@
                                             "_comment": "2.1.6 刚睡醒时的 指令失败拒绝 被舔乳头 口上文 有允许",
                                             "responses": [
                                                 "com_sex_oral_B_7",
-                                                "com_sex_oral_B_8"
+                                                "com_sex_oral_B_8",
+                                                "com_sex_oral_B_38"
                                             ]
                                         }
                                     ],
                                     "_comment": "2.2.9 刚睡醒时的 指令失败拒绝 被舔乳头 口上文 无允许",
                                     "responses": [
                                         "com_sex_oral_B_9",
-                                        "com_sex_oral_B_10"
+                                        "com_sex_oral_B_10",
+                                        "com_sex_oral_B_40"
                                     ]
                                 },
                                 {
@@ -597,7 +775,8 @@
                                     "_comment": "2.2.3 指令失败拒绝 被舔乳头 无允许 善意 口上文",
                                     "responses": [
                                         "com_sex_oral_B_14",
-                                        "com_sex_oral_B_15"
+                                        "com_sex_oral_B_15",
+                                        "com_sex_oral_B_42"
                                     ]
                                 }
                             ],
@@ -618,70 +797,169 @@
                     ],
                     "template": "commandRefuse"
                 }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_B_Ongoing",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_B_Ongoing_1",
+                                        "com_sex_oral_B_Ongoing_2",
+                                        "com_sex_oral_B_Ongoing_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_oral_B_Ongoing_4",
+                                "com_sex_oral_B_Ongoing_5",
+                                "com_sex_oral_B_Ongoing_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "responses": [
+                                "com_sex_oral_B_Ongoing_7",
+                                "com_sex_oral_B_Ongoing_8",
+                                "com_sex_oral_B_Ongoing_9"
+                            ]
+                        }
+                    ],
+                    "template": "commandAct"
+                }
             }
         ]
     },
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "com_sex_oral_B_Climax_1": "$self$把$target$的乳头含进嘴里吮吸，舌头绕着打转，吸着吸着自己先乱了呼吸，并拢的腿根哆嗦起来。\n\"唔嗯……明明是在给你舔……我怎么会先……♡\"",
+                "com_sex_oral_B_Climax_1": "$self$把$target$的乳头含进嘴里吮吸，舌头绕着打转，吸着吸着自己先乱了呼吸，并拢的腿根哆嗦起来：“唔嗯……明明是在给你舔……我怎么会先……♡”",
                 "com_sex_oral_B_Climax_5": "$self$咬着手背不肯出声，被吸住的乳头却硬得发胀，酥麻逼得她浑身发抖，小穴不受控地流水。\n\"不要……别吸了……啊啊……这种地方……才不是……！\"",
                 "com_sex_oral_B_Climax_6": "$self$哭着去推$target$的头，推到中途手指却蜷起来抓住了发丝，胸脯不受控地往上送。\n\"呜呜……明明讨厌的……乳头却……啊啊……不行了……♡\"",
                 "com_sex_oral_B_Climax_7": "$self$闭上眼认了命，乳尖在嘴里被卷着舔，酥麻攒到头顶，身子绷紧又散了架。\n\"啊……去了……被吸到去了……好丢人……\"",
                 "com_sex_oral_B_Climax_2": "$self$猛地弓起腰，手指插进$target$的发间把人往奶子上按，被含住的乳头吸得发挺，腰却软得撑不住。\n\"去了……！光被吸乳头就……嗯啊♡\"",
                 "com_sex_oral_B_Climax_3": "$self$整个人抖着瘫软下来，奶子还往前送着，被吸过的乳头敏感到不能再碰，小穴跟着收缩淌水。\n\"哈啊……小穴也在抽……好奇怪……♡♡\"",
                 "com_sex_oral_B_Climax_4": "$self$绷直了脚背，乳肉烫得厉害，吮吸的酥麻顺着胸口窜到腿根，爱液沿着腿缝往下淌。\n\"呜……吸得太狠了……要坏掉了……哈啊……\"",
-                "com_sex_oral_B_Begin_1": "$self$敞开胸前，托着奶子送到$target$嘴边，指腹先把乳头捻得半挺。\n\"饿了？张嘴吧……轻点咬。\"",
-                "com_sex_oral_B_Begin_2": "$self$往$target$怀里凑，把奶子贴上那张嘴，笑得慵懒。\n\"想要就直说嘛……嗯……尝吧。\"",
-                "com_sex_oral_B_Begin_3": "$self$俯身让奶子垂下来，乳头正好悬在$target$唇边。\n\"那就……从舔这里开始？\"",
-                "com_sex_oral_B_Begin_4": "$self$僵住，被舌尖卷过乳尖时呼吸都乱了，捧着$target$的脑袋想推开又舍不得用力。\n\"等、等等……那里……唔……别用牙……\"",
-                "com_sex_oral_B_Begin_5": "$self$低头看着含住自己乳头的$target$，脸腾地红了，声音发飘。\n\"你是小孩吗……多大的人了……还叼着不放……嗯……\"",
-                "com_sex_oral_B_Begin_6": "$self$缩了缩肩，没躲开那张嘴，手指虚虚搭在$target$背上。\n\"变态……就、就这次哦……不许吸出印子……\"",
+                "com_sex_oral_B_Begin_1": "$self$敞开胸前，托着奶子送到$target$嘴边，指腹先把乳头捻得半挺：“饿了？张嘴吧……轻点咬。”",
+                "com_sex_oral_B_Begin_2": "$self$往$target$怀里凑，把奶子贴上那张嘴，笑得慵懒：“想要就直说嘛……嗯……尝吧。”",
+                "com_sex_oral_B_Begin_3": "$self$俯身让奶子垂下来，乳头正好悬在$target$唇边：“那就……从舔这里开始？”",
+                "com_sex_oral_B_Begin_4": "$self$愣住，被舌尖卷过乳尖时呼吸都乱了，捧着$target$的脑袋想推开又舍不得用力：“等、等等……那里……唔……别用牙……”",
+                "com_sex_oral_B_Begin_5": "$self$低头看着含住自己乳头的$target$，脸腾地红了，声音发飘：“你是小孩吗……多大的人了……还叼着不放……嗯……”",
+                "com_sex_oral_B_Begin_6": "$self$缩了缩肩，没躲开那张嘴，手指虚虚搭在$target$背上：“变态……就、就这次哦……不许吸出印子……”",
                 "com_sex_oral_B_Begin_7": "$self$瑟缩着往后躲，奶子被攥住没法挣开，眼泪在眼眶里打转。\n\"求你……别这样……快点结束好吗……\"",
                 "com_sex_oral_B_Begin_8": "$self$吓得捂住嘴不敢出声，奶子被抓得生疼，身子抖个不停。\n\"我知道了……你放开我我不喊……别打我……\"",
                 "com_sex_oral_B_Begin_9": "$self$别开脸认命地挺着胸，眼神空落落的。\n\"想怎样随你……反正我说什么你也不会听。\"",
                 "com_sex_oral_B_1": "$self$睡得沉稳，被含住的乳头在嘴里慢慢发挺，她只是难耐地哼了声，往旁边蹭了蹭，没醒。",
-                "com_sex_oral_B_2": "$self$呼吸绵长，任由$target$在胸前又吸又舔，梦里的眉头轻轻皱着，腿根无意识地蹭着腿。",
+                "com_sex_oral_B_2": "$self$呼吸绵长，任由$target$在胸前又吸又舔，嘴角挂着一点睡梦里的鼻音，腿根无意识地蹭着腿。",
                 "com_sex_oral_B_3": "$self$陷在深层睡眠里，奶子被舔得发热泛红也毫无知觉，只有乳头自己在唇齿间立了起来。",
-                "com_sex_oral_B_4": "$self$定格在原本的姿势，乳头被吸得发硬也躲不开，僵住的身子任由唇舌摆布，本人毫无知觉。",
-                "com_sex_oral_B_5": "$self$僵在原地动弹不得，胸前被舔弄到发热泛红，乳头立在嘴里随吮吸颤动，她却什么都不知道。",
+                "com_sex_oral_B_4": "$self$定格在原本的姿势，乳头被吸得发硬也躲不开，一动不动的身子任由唇舌摆布，本人毫无知觉。",
+                "com_sex_oral_B_5": "$self$凝固在原地动弹不得，胸前被舔弄到发热泛红，乳头立在嘴里随吮吸颤动，她却什么都不知道。",
                 "com_sex_oral_B_6": "$self$的时间停着，奶子被$target$含在嘴里随意品尝，乳肉被吮出红印，等时间恢复她也不会记得这份酥麻。",
-                "com_sex_oral_B_16": "$self$抬手扇了过去，眼里满是厌恶。\n\"滚！敢再碰我试试！\"",
-                "com_sex_oral_B_17": "$self$猛地推开$target$，退开老远戒备着。\n\"你有病吧？信不信我喊人！\"",
-                "com_sex_oral_B_18": "$self$冷下脸抚平被扯开的衣襟。\n\"也不掂量掂量自己是什么货色，滚远点。\"",
-                "com_sex_oral_B_9": "$self$尖叫着弹起来，抄起手边的东西就砸了过去。\n\"变态！你对我奶子做了什么！滚出去！\"",
-                "com_sex_oral_B_10": "$self$惊醒后慌乱地退开，护住胸口浑身发抖。\n\"别过来！再靠近我就喊人了！\"",
-                "com_sex_oral_B_7": "$self$迷迷糊糊睁眼，胸口湿漉漉的，皱着眉把$target$的头推开。\n\"干嘛啊……大半夜叼着人乳头……让人睡觉行不行……\"",
-                "com_sex_oral_B_8": "$self$惊醒，捂着胸口往旁边缩，睡意还没散。\n\"别闹……好困……明早再说……\"",
-                "com_sex_oral_B_11": "$self$按住凑上来的头，失笑。\n\"现在不行啦，今天敏感得吓人……改天补偿你。\"",
-                "com_sex_oral_B_12": "$self$侧身避开那张嘴，拢了拢衣襟。\n\"先别……我还没洗澡呢，乖。\"",
-                "com_sex_oral_B_13": "$self$用掌心罩住乳头，拍开那只手。\n\"今天累坏了……换个地方摸行不行。\"",
-                "com_sex_oral_B_14": "$self$红着脸把$target$的脑袋掰开。\n\"这种事……我们还没到那步吧？算啦。\"",
-                "com_sex_oral_B_15": "$self$往后靠拉开距离，笑着打圆场。\n\"真是吓人……这种玩笑别乱开哦。\"",
-                "com_sex_oral_B_23": "$self$惊恐地睁开眼，看见$target$的瞬间僵住了，手抖着不敢推。\n\"你、你想怎样都行……别弄疼我……\"",
-                "com_sex_oral_B_24": "$self$吓得不敢动，眼泪打着转，奶子被攥着只能小声求。\n\"我不喊了……也别打我……你想吸就快点……\"",
-                "com_sex_oral_B_19": "$self$半梦半醒地哼了声，察觉胸口的湿热后没躲，反倒把$target$的头往怀里带了带。\n\"嗯……在梦里也这么馋……随你吧……\"",
-                "com_sex_oral_B_20": "$self$睡眼惺忪地垂眼看，见是$target$，懒懒地把奶子往前送了送。\n\"偷袭……真拿你没办法……轻点吸……~\"",
-                "com_sex_oral_B_21": "$self$惊醒后看清了人，捂着胸口的手慢慢松开，脸还红着。\n\"是、是你啊……吓死我了……那就……随你吧……别太用力……\"",
-                "com_sex_oral_B_22": "$self$迷迷糊糊感受到胸前的麻痒，缩了缩又认命地躺平。\n\"唔……做什么呢……算啦……轻点哦……\"",
+                "com_sex_oral_B_16": "$self$抬手扇了过去，眼里满是厌恶：“滚！敢再碰我试试！”",
+                "com_sex_oral_B_17": "$self$猛地推开$target$，退开老远戒备着：“你有病吧？信不信我喊人！”",
+                "com_sex_oral_B_18": "$self$冷下脸抱着双臂护住胸口：“也不掂量掂量自己是什么货色，滚远点。”",
+                "com_sex_oral_B_9": "$self$尖叫着弹起来，抄起手边的东西就砸了过去：“变态！你对我奶子做了什么！滚出去！”",
+                "com_sex_oral_B_10": "$self$惊醒后慌乱地退开，护住胸口浑身发抖：“别过来！再靠近我就喊人了！”",
+                "com_sex_oral_B_7": "$self$迷迷糊糊睁眼，胸口湿漉漉的，恼火地把$target$的头推开：“干嘛啊……大半夜叼着人乳头……让人睡觉行不行……”",
+                "com_sex_oral_B_8": "$self$惊醒，捂着胸口往旁边缩，睡意还没散：“别闹……好困……明早再说……”",
+                "com_sex_oral_B_11": "$self$按住凑上来的头，失笑：“现在不行啦，今天敏感得吓人……改天补偿你。”",
+                "com_sex_oral_B_12": "$self$侧身避开那张嘴，抬臂遮住胸口：“先别……我还没洗澡呢，乖。”",
+                "com_sex_oral_B_13": "$self$用掌心罩住乳头，拍开那只手：“今天累坏了……换个地方摸行不行。”",
+                "com_sex_oral_B_14": "$self$红着脸把$target$的脑袋掰开：“这种事……我们还没到那步吧？算啦。”",
+                "com_sex_oral_B_15": "$self$往后靠拉开距离，笑着打圆场：“真是吓人……这种玩笑别乱开哦。”",
+                "com_sex_oral_B_23": "$self$惊恐地睁开眼，看见$target$的瞬间整个人绷紧，手抖着不敢推：“你、你想怎样都行……别弄疼我……”",
+                "com_sex_oral_B_24": "$self$吓得不敢动，眼泪打着转，奶子被攥着只能小声求：“我不喊了……也别打我……你想吸就快点……”",
+                "com_sex_oral_B_19": "$self$半梦半醒地哼了声，察觉胸口的湿热后没躲，反倒把$target$的头往怀里带了带：“嗯……在梦里也这么馋……随你吧……”",
+                "com_sex_oral_B_20": "$self$睡眼惺忪地垂眼看，见是$target$，懒懒地把奶子往前送了送：“偷袭……真拿你没办法……轻点吸……~”",
+                "com_sex_oral_B_21": "$self$惊醒后看清了人，捂着胸口的手慢慢松开，脸还红着：“是、是你啊……吓死我了……那就……随你吧……别太用力……”",
+                "com_sex_oral_B_22": "$self$迷迷糊糊感受到胸前的麻痒，缩了缩又认命地躺平：“唔……做什么呢……算啦……轻点哦……”",
                 "com_sex_oral_B_28": "$self$嘴上推拒着手却抓紧了$target$的肩，被吸住的乳头硬得自己都害臊。\n\"都说了不行……哈啊……乳头要被你玩坏了……嗯……\"",
                 "com_sex_oral_B_29": "$self$偏着头不肯看胸前，奶子却胀得发热，腰身跟着吮吸的节奏扭起来。\n\"呜……明明讨厌的……身体却……啊……别停……可恶……\"",
                 "com_sex_oral_B_30": "$self$抓着$target$的手腕想掰开，掰到中途力气全散了，指尖泛着红。\n\"再、再吸下去……真的会去……呜嗯……♡\"",
                 "com_sex_oral_B_25": "$self$捧着$target$的后脑往怀里按，腰软得塌下去，被吮住的乳头又胀又麻。\n\"嗯啊……就是那里……再用力吸……♡\"",
                 "com_sex_oral_B_26": "$self$舒服得脚趾都蜷起来，空着的那侧乳头被自己捻着，两边的酥麻撞在胸口。\n\"哈啊……两边都……好胀……不、不行了……♡\"",
                 "com_sex_oral_B_27": "$self$喘着气挺起胸，主动把奶子往$target$嘴里喂，眼神都泡了水。\n\"唔嗯……咬……轻轻咬……就是这样……~\"",
-                "com_sex_oral_B_34": "$self$忍着乳头的刺疼，想合拢手臂护住胸口又被掰开。\n\"弄疼我了……你轻点会死吗……\"",
-                "com_sex_oral_B_35": "$self$面无表情地任人吸吮，胸口毫无波澜，只剩麻木。\n\"……完事了没？我等着呢。\"",
-                "com_sex_oral_B_36": "$self$扭过头无声流泪，奶子被蹂躏得生疼。\n\"够了……放开我……疼……\"",
-                "com_sex_oral_B_31": "$self$皱着眉往后撤了撤胸，被吸得发疼。\n\"哎……轻点，牙刮到了……疼。\"",
-                "com_sex_oral_B_32": "$self$拍了拍$target$的肩，语气无奈。\n\"换边吧……这边都吸麻了，没感觉了。\"",
-                "com_sex_oral_B_33": "$self$百无聊赖地望着上方，胸前的反应平平。\n\"……差不多可以了吧？我今晚真的没状态。\"",
+                "com_sex_oral_B_34": "$self$忍着乳头的刺疼，想合拢手臂护住胸口又被掰开：“弄疼我了……你轻点会死吗……”",
+                "com_sex_oral_B_35": "$self$神色木然地任人吸吮，胸口毫无波澜，只剩麻木：“……完事了没？我等着呢。”",
+                "com_sex_oral_B_36": "$self$扭过头无声流泪，奶子被蹂躏得生疼：“够了……放开我……疼……”",
+                "com_sex_oral_B_31": "$self$嘶地吸了口气往后撤了撤胸，被吸得发疼：“哎……轻点，牙刮到了……疼。”",
+                "com_sex_oral_B_32": "$self$拍了拍$target$的肩，语气无奈：“换边吧……这边都吸麻了，没感觉了。”",
+                "com_sex_oral_B_33": "$self$百无聊赖地望着上方，胸前的反应平平：“……差不多可以了吧？我今晚真的没状态。”",
                 "com_sex_oral_B_Begin_Sleep_1": "$target$含住她熟睡中起伏的乳头轻轻吮吸，$self$在梦里难耐地哼了声，往旁边蹭了蹭，却没醒。",
-                "com_sex_oral_B_Begin_Sleep_2": "乳晕被舔得发热泛红，乳头在唇齿间慢慢立起来，$self$只是皱着眉，腿根无意识地蹭了蹭，呼吸依旧绵长。",
+                "com_sex_oral_B_Begin_Sleep_2": "乳晕被舔得发热泛红，乳头在唇齿间慢慢立起来，$self$只是发出含糊的鼻音，腿根无意识地蹭了蹭，呼吸依旧绵长。",
                 "com_sex_oral_B_Begin_Timestop_1": "$target$含住她定格的乳头吮吸拉扯，被吮硬的乳珠在齿间自己立着，$self$抬着的胳膊还悬在半途。",
                 "com_sex_oral_B_Begin_Timestop_2": "$self$的乳晕被舔得发热泛红，口水顺着乳肉淌下悬在半空不落，静止的房间里只有吮咂的水声。",
-                "com_sex_oral_B_Refuse_Receiver_1": "$self$用力推开了$target$，神色戒备。\n\"别碰我！我没同意做这种事。\"",
-                "com_sex_oral_B_Refuse_Receiver_2": "$self$往后退开一步，冷冷地拒绝了$target$。\n\"现在不行，请离我远点。\""
+                "com_sex_oral_B_Refuse_Receiver_1": "$self$用力推开了$target$，神色戒备：“别碰我！我没同意做这种事。”",
+                "com_sex_oral_B_Refuse_Receiver_2": "$self$往后退开一步，冷冷地拒绝了$target$：“现在不行，请离我远点。”",
+                "com_sex_oral_B_37": "$self$捂住嘴不敢出声，身体因为恐惧缩成一团，任由$target$在胸前肆意吮咬：“呜……别伤害我……我不动就是了……”",
+                "com_sex_oral_B_38": "$self$翻了个身把胸前掩进臂弯里，含糊抱怨：“我现在只想睡觉，别吸我的胸啦……”",
+                "com_sex_oral_B_39": "$self$揉了揉眼睛，听着胸前发出的吮咂水声，嘴角翘起一点弧度：“一大早就黏着不放……真是的……”",
+                "com_sex_oral_B_40": "$self$猛地挣脱开$target$往床角缩去，眼圈泛红地怒视着对方：“滚开！趁人睡觉做这种事简直恶心！”",
+                "com_sex_oral_B_41": "$self$刚清醒就感觉到乳尖传来的湿滑吸吮，耳根迅速烫红：“趁人睡着弄这个……真是坏心眼……”",
+                "com_sex_oral_B_Climax_8": "$self$一边轻咬着那颗硬挺的乳珠，一边控制不住地夹紧大腿颤抖着攀上顶峰：“哈啊……怎么光舔着你……我自己下面也湿透了……♡”",
+                "com_sex_oral_B_Climax_9": "$self$在$target$胸前喘息着放慢动作，喉咙里溢出断续的余韵：“不行……太兴奋了……居然自己去了……”",
+                "com_sex_oral_B_42": "$self$轻推开凑近胸前的$target$，略显局促地偏过视线：“不行啦，现在做这种事还太早了……”",
+                "com_sex_oral_B_Begin_Timestop_3": "时间凝固在原地，$self$挺翘的乳肉被唇舌反复揉吮，她空洞的眸子连一眨都没有。",
+                "com_sex_oral_B_Refuse_Receiver_3": "$self$抬手护住胸前，语气带着明显的排斥：“别靠近我胸口，没门。”",
+                "com_sex_oral_B_Begin_Sleep_3": "熟睡中的$self$呼吸平稳，胸前被唇舌轻裹着吸吮，她微张着唇轻轻喘了口气，依旧沉在梦乡里。",
+                "com_sex_oral_B_43": "$self$刚清醒就感觉到乳尖传来的湿滑吸吮，耳根迅速烫红：“趁人睡着弄这个……真是坏心眼……”",
+                "com_sex_oral_B_44": "$self$捂住嘴不敢出声，身体因为恐惧缩成一团，任由$target$在胸前肆意吮咬：“呜……别伤害我……我不动就是了……”",
+                "com_sex_oral_B_45": "$self$揉了揉眼睛，听着胸前发出的吮咂水声，嘴角翘起一点弧度：“一大早就黏着不放……真是的……”",
+                "com_sex_oral_B_Begin_10": "$self$双手被捆着捂不住胸口，只能眼睁睁看着$target$凑近咬住自己的乳尖：“别、别直接含上去啊……”",
+                "com_sex_oral_B_Begin_11": "绳索勒紧了手腕，$self$扭着肩想避开胸前的湿热呼吸，胸脯却反而更明显地挺了起来：“唔……那里太敏感了……”",
+                "com_sex_oral_B_Begin_12": "动弹不得的$self$耳根涨红，咬住嘴唇不敢看$target$埋在自己胸前的脑袋：“至少……轻点舔啊……”",
+                "com_sex_oral_B_Begin_13": "昏迷中的$self$毫无知觉地躺着，胸前两团软肉任由$target$俯身含住乳头轻轻舔弄。",
+                "com_sex_oral_B_Begin_14": "$self$合着眼皮没有任何反应，乳尖却在温热湿滑的舌苔撩拨下渐渐变硬挺立。",
+                "com_sex_oral_B_Begin_15": "失去意识的$self$呼吸平缓，任由$target$的唇瓣贴上自己起伏的乳晕。",
+                "com_sex_oral_B_Begin_16": "$self$任由$target$靠近，自己被$target$俯身含住胸前的乳头舔弄，呼吸微微一滞。",
+                "com_sex_oral_B_Begin_17": "$self$轻轻抿了抿唇，没有推开被$target$俯身含住胸前的乳头舔弄的$target$。",
+                "com_sex_oral_B_Begin_18": "感受到胸口与乳尖传来的触碰，$self$下意识地轻颤了一下，顺势迎合上去。",
+                "com_sex_oral_B_46": "$self$在胸口传来的湿热吮吸中迷糊转醒，低头看见$target$正含着自己的乳头：“唔……你趁我睡着在吸哪里呢……”",
+                "com_sex_oral_B_47": "睡意刚散，$self$就感觉到乳尖传来的阵阵酥麻，脸颊发烫地轻哼了一声：“真是的……一大早就这么馋吗……”",
+                "com_sex_oral_B_48": "$self$喘了口气清醒过来，抬手虚虚按住$target$的发顶：“哈啊……把我弄醒了还吸个不停，太狡猾了吧……”",
+                "com_sex_oral_B_49": "被缚住双手没法推开，$self$的乳头在唇舌交替的吮舔下又麻又胀，声音一下子软了：“哈啊……吸得好舒服……别用牙轻轻磨啊……”",
+                "com_sex_oral_B_50": "$self$仰起脖子喘息，胸口在$target$的吸吮下泛起一片绯红，双腿止不住地并紧：“唔嗯……快感要从胸口窜到下面去了……”",
+                "com_sex_oral_B_51": "绳索紧绷着，$self$却自觉挺起胸脯把乳头往$target$嘴里送：“不要停……再多舔一会儿……”",
+                "com_sex_oral_B_52": "昏迷中的$self$依旧没有醒来，被反复吸吮的乳头已经肿得发红，乳肉上沾满亮晶晶的口水。",
+                "com_sex_oral_B_53": "$self$的胸脯随着吸吮的力道微微起伏，乳尖硬挺地立在$target$唇齿之间，人却毫不知情。",
+                "com_sex_oral_B_54": "失去意识的$self$喉咙里溢出一声极轻的喘息，两腿在床单上无意识地蹭了蹭。",
+                "com_sex_oral_B_55": "动弹不得的$self$吃痛地嘶了声，乳头被粗暴的牙齿磕得生疼：“好痛……！你是属狗的吗，快松口！”",
+                "com_sex_oral_B_56": "$self$拧着眉想往后躲，奈何双手被捆着根本推不开埋在胸前的头：“别乱啃了……一点也不舒服……”",
+                "com_sex_oral_B_57": "$self$喘着气忍受着胸前的钝痛，语气满是烦躁：“够了没有……光咬着扯好疼啊……”",
+                "com_sex_oral_B_58": "$self$随着节奏轻哼出声，胸口与乳尖被$target$俯身含住胸前的乳头舔弄得一阵发麻：“哈啊……好舒服……”",
+                "com_sex_oral_B_59": "快感顺着胸口与乳尖迅速蔓延开来，$self$软着声音喘息道：“唔嗯……就是那里，别停……”",
+                "com_sex_oral_B_60": "$self$微眯起眼迎合着$target$的动作，嗓音带着甜腻的颤意：“啊……再多弄一会儿……”",
+                "com_sex_oral_B_61": "$self$随着节奏轻哼出声，胸口与乳尖被$target$俯身含住胸前的乳头舔弄得一阵发麻：“哈啊……好舒服……”",
+                "com_sex_oral_B_62": "快感顺着胸口与乳尖迅速蔓延开来，$self$软着声音喘息道：“唔嗯……就是那里，别停……”",
+                "com_sex_oral_B_63": "$self$微眯起眼迎合着$target$的动作，嗓音带着甜腻的颤意：“啊……再多弄一会儿……”",
+                "com_sex_oral_B_64": "$self$微微蹙眉往后躲了躲，胸口与乳尖传来一阵不太舒服的刺痛：“嘶……太重了，轻一点……”",
+                "com_sex_oral_B_65": "$self$有些不适地绷紧了身子，小声抱怨道：“唔……这样弄一点也不舒服……”",
+                "com_sex_oral_B_66": "节奏没能对上，$self$略显烦躁地喘了口气：“……稍微注意一下力道啊。”",
+                "com_sex_oral_B_Ongoing_1": "$self$正被旁人吸吮着胸前的乳头，余光瞥见站在旁边的$target$后顿时羞得满脸通红：“别、别盯着人家胸口看啊……”",
+                "com_sex_oral_B_Ongoing_2": "胸前传出清晰的水声，$self$咬住下唇不敢看$target$，挺立的乳尖却越来越烫：“呜……这么色情的样子都被你看见了……”",
+                "com_sex_oral_B_Ongoing_3": "$self$红着脸扭过头去躲避$target$的视线，腰肢却随着胸前的吮吸软得直颤：“唔啊……不要看过来……”",
+                "com_sex_oral_B_Ongoing_4": "$self$还在被$target$俯身含住胸前的乳头舔弄，呼吸随着节奏一点点变得急促。",
+                "com_sex_oral_B_Ongoing_5": "持续不断的刺激让$self$眼角泛起微红，只能任由$target$继续动作。",
+                "com_sex_oral_B_Ongoing_6": "$self$轻喘着承受着胸口与乳尖传来的触感，身子微微发软。",
+                "com_sex_oral_B_Ongoing_7": "$self$没有停下动作，继续凑近胸口用唇舌细细舔吮乳尖。",
+                "com_sex_oral_B_Ongoing_8": "湿热的气息在两人之间弥漫，$self$维持着节奏凑近胸口用唇舌细细舔吮乳尖。",
+                "com_sex_oral_B_Ongoing_9": "$self$微微喘息着，动作不停地凑近胸口用唇舌细细舔吮乳尖。",
+                "com_sex_oral_B_67": "$self$微微喘息着，一边凑近胸口用唇舌细细舔吮乳尖，一边留意着$target$的反应。",
+                "com_sex_oral_B_68": "空气渐渐升温，$self$放缓了节奏继续凑近胸口用唇舌细细舔吮乳尖：“……感觉怎么样？”",
+                "com_sex_oral_B_69": "$self$轻吐出一口气，顺从着眼前的状态继续凑近胸口用唇舌细细舔吮乳尖。"
             }
         }
     }

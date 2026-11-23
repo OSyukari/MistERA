@@ -72,6 +72,16 @@
                             "responses": [
                                 "com_job_farm_cultivate_meat_Fallback_2"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_job_farm_cultivate_meat_Fallback_3",
+                                "com_job_farm_cultivate_meat_Fallback_4"
+                            ]
                         }
                     ]
                 }
@@ -88,7 +98,10 @@
                                 "com_job_farm_cultivate_meat_Interrupt_1",
                                 "com_job_farm_cultivate_meat_Interrupt_2",
                                 "com_job_farm_cultivate_meat_Interrupt_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ]
                 }
@@ -108,6 +121,17 @@
                                 "com_job_farm_cultivate_meat_Join_Refused_1",
                                 "com_job_farm_cultivate_meat_Join_Refused_2",
                                 "com_job_farm_cultivate_meat_Join_Refused_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_job_farm_cultivate_meat_Join_Refused_Fallback_1",
+                                "com_job_farm_cultivate_meat_Join_Refused_Fallback_2"
                             ]
                         }
                     ]
@@ -129,6 +153,17 @@
                                 "com_job_farm_cultivate_meat_Tryjoin_2",
                                 "com_job_farm_cultivate_meat_Tryjoin_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_job_farm_cultivate_meat_Tryjoin_Fallback_1",
+                                "com_job_farm_cultivate_meat_Tryjoin_Fallback_2"
+                            ]
                         }
                     ]
                 }
@@ -149,6 +184,16 @@
                                 "com_job_farm_cultivate_meat_Ongoing_2",
                                 "com_job_farm_cultivate_meat_Ongoing_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_job_farm_cultivate_meat_Ongoing_Fallback_1",
+                                "com_job_farm_cultivate_meat_Ongoing_Fallback_2"
+                            ]
                         }
                     ]
                 }
@@ -165,7 +210,10 @@
                                 "com_job_farm_cultivate_meat_Join_1",
                                 "com_job_farm_cultivate_meat_Join_2",
                                 "com_job_farm_cultivate_meat_Join_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ]
                 }
@@ -187,6 +235,17 @@
                                 "com_job_farm_cultivate_meat_Refuse_2",
                                 "com_job_farm_cultivate_meat_Refuse_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_job_farm_cultivate_meat_Refuse_Fallback_1",
+                                "com_job_farm_cultivate_meat_Refuse_Fallback_2"
+                            ]
                         }
                     ]
                 }
@@ -203,7 +262,10 @@
                                 "com_job_farm_cultivate_meat_Begin_1",
                                 "com_job_farm_cultivate_meat_Begin_2",
                                 "com_job_farm_cultivate_meat_Begin_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ]
                 }
@@ -216,7 +278,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
                             "responses": [
@@ -243,6 +306,17 @@
                                 "com_job_farm_cultivate_meat_Joined_1",
                                 "com_job_farm_cultivate_meat_Joined_2",
                                 "com_job_farm_cultivate_meat_Joined_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_job_farm_cultivate_meat_Joined_Fallback_1",
+                                "com_job_farm_cultivate_meat_Joined_Fallback_2"
                             ]
                         }
                     ]
@@ -293,7 +367,19 @@
                 "com_job_farm_cultivate_meat_Joined_2": "$self$点点头，顺手接过半桶饲料：\"那我紧着点弄，争取早点出去透气。\"",
                 "com_job_farm_cultivate_meat_Joined_3": "\"两个人的确快多了。\" $self$说完便弯腰打开了旁边的饲养箱。",
                 "com_job_farm_cultivate_meat_Fallback_1": "$self$点了点头，没有多说什么。",
-                "com_job_farm_cultivate_meat_Fallback_2": "$self$点了点头，没有多说什么。"
+                "com_job_farm_cultivate_meat_Fallback_2": "$self$点了点头，没有多说什么。",
+                "com_job_farm_cultivate_meat_Ongoing_Fallback_1": "$self$低头仔细添着饲料、清理栏位，手下动作麻利。",
+                "com_job_farm_cultivate_meat_Ongoing_Fallback_2": "$self$专心照料着饲养箱里的活物，顾不上多说话。",
+                "com_job_farm_cultivate_meat_Join_Refused_Fallback_1": "\"行，那你先忙着，我就不进去挤了。\" $self$放下工具走开。",
+                "com_job_farm_cultivate_meat_Join_Refused_Fallback_2": "$self$朝$target$点点头，转身去忙别的活了。",
+                "com_job_farm_cultivate_meat_Fallback_3": "$self$收拾好饲养区的工具，拍了拍手上的灰尘准备离开。",
+                "com_job_farm_cultivate_meat_Fallback_4": "忙完这一轮照料后，$self$检查了一遍围栏和饲料槽，这才松了口气。",
+                "com_job_farm_cultivate_meat_Joined_Fallback_1": "\"好，那我负责清理另一排。\" $self$拎起桶走了进去。",
+                "com_job_farm_cultivate_meat_Joined_Fallback_2": "$self$点点头，戴上手套很快动起手来。",
+                "com_job_farm_cultivate_meat_Refuse_Fallback_1": "$self$皱着眉摆了摆手：\"里头气味太冲了，我现在不想去弄。\"",
+                "com_job_farm_cultivate_meat_Refuse_Fallback_2": "$self$摇摇头回绝道：\"这活儿找别人干吧，我这会儿腾不出手。\"",
+                "com_job_farm_cultivate_meat_Tryjoin_Fallback_1": "$self$拎着工具走到饲养区门口，问$target$：\"活挺多的吧？我来搭把手？\"",
+                "com_job_farm_cultivate_meat_Tryjoin_Fallback_2": "$self$探头看了一眼里面，问道：\"需要我帮忙一起照料吗？\""
             }
         }
     }

@@ -7,42 +7,23 @@
                     "ID": "com_touch_back_Begin",
                     "variants": [
                         {
-                            "requireSelfReceiver": true,
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "selfTags": [
-                                            "restrained"
-                                        ]
-                                    },
-                                    "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
-                                    "responses": [
-                                        "com_touch_back_Begin_Restrained_1",
-                                        "com_touch_back_Begin_Restrained_2",
-                                        "com_touch_back_Begin_Restrained_3"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "unconscious"
-                                        ],
-                                        "excludeSelfTags": [
-                                            "sleeping"
-                                        ]
-                                    },
-                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
-                                    "responses": [
-                                        "com_touch_back_Begin_Fainted_1",
-                                        "com_touch_back_Begin_Fainted_2",
-                                        "com_touch_back_Begin_Fainted_3"
-                                    ]
-                                }
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
                             ],
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
+                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
-                                "com_touch_back_Begin_Receiver_1"
+                                "com_touch_back_Begin_Timestop_1",
+                                "com_touch_back_Begin_Timestop_2",
+                                "com_touch_back_Begin_Timestop_3"
                             ]
                         },
                         {
@@ -67,20 +48,47 @@
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
-                                    "timestop"
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
                                 ]
                             },
-                            "extraSelfPortraitTags": [
-                                "doll",
-                                "empty",
-                                "silence",
-                                "idle"
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_touch_back_Begin_Fainted_1",
+                                        "com_touch_back_Begin_Fainted_2",
+                                        "com_touch_back_Begin_Fainted_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_touch_back_Begin_Restrained_1",
+                                        "com_touch_back_Begin_Restrained_2",
+                                        "com_touch_back_Begin_Restrained_3"
+                                    ]
+                                }
                             ],
-                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
                             "responses": [
-                                "com_touch_back_Begin_Timestop_1",
-                                "com_touch_back_Begin_Timestop_2",
-                                "com_touch_back_Begin_Timestop_3"
+                                "com_touch_back_Begin_Receiver_1"
                             ]
                         },
                         {
@@ -143,6 +151,197 @@
                     "ID": "com_touch_back",
                     "variants": [
                         {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "_comment": "2.3.1 时停中 被抚摸背部 口上文",
+                            "responses": [
+                                "com_touch_back_7",
+                                "com_touch_back_8",
+                                "com_touch_back_9",
+                                "com_touch_back_10"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "_comment": "2.3.1 时停中 被抚摸背部 口上文",
+                            "responses": [
+                                "com_touch_back_7",
+                                "com_touch_back_8",
+                                "com_touch_back_9",
+                                "com_touch_back_10"
+                            ],
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.3.1 时停中 被抚摸背部 口上文",
+                                    "responses": [
+                                        "com_touch_back_7",
+                                        "com_touch_back_8",
+                                        "com_touch_back_9",
+                                        "com_touch_back_10"
+                                    ]
+                                },
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.3.1 时停中 被抚摸背部 口上文",
+                                    "responses": [
+                                        "com_touch_back_7",
+                                        "com_touch_back_8",
+                                        "com_touch_back_9",
+                                        "com_touch_back_10"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "_comment": "2.3.2 睡眠中 被抚摸背部 口上文",
+                            "responses": [
+                                "com_touch_back_1",
+                                "com_touch_back_2",
+                                "com_touch_back_3",
+                                "com_touch_back_4"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "_comment": "2.3.2 睡眠中 被抚摸背部 口上文",
+                            "responses": [
+                                "com_touch_back_1",
+                                "com_touch_back_2",
+                                "com_touch_back_3",
+                                "com_touch_back_4"
+                            ],
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.3.2 睡眠中 被抚摸背部 口上文",
+                                    "responses": [
+                                        "com_touch_back_1",
+                                        "com_touch_back_2",
+                                        "com_touch_back_3",
+                                        "com_touch_back_4"
+                                    ]
+                                },
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.3.2 睡眠中 被抚摸背部 口上文",
+                                    "responses": [
+                                        "com_touch_back_1",
+                                        "com_touch_back_2",
+                                        "com_touch_back_3",
+                                        "com_touch_back_4"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_touch_back_fainted_1",
+                                        "com_touch_back_fainted_2",
+                                        "com_touch_back_fainted_3"
+                                    ]
+                                },
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_touch_back_fainted_1",
+                                        "com_touch_back_fainted_2",
+                                        "com_touch_back_fainted_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
                             "requireSelfReceiver": true,
                             "variants": [
                                 {
@@ -158,22 +357,6 @@
                                         "requireCOMStrongVariant": true
                                     },
                                     "variants": [
-                                        {
-                                            "requirement": {
-                                                "requireSelfAction": false,
-                                                "selfTags": [
-                                                    "unconscious"
-                                                ],
-                                                "excludeSelfTags": [
-                                                    "sleeping"
-                                                ]
-                                            },
-                                            "responses": [
-                                                "com_touch_back_fainted_1",
-                                                "com_touch_back_fainted_2",
-                                                "com_touch_back_fainted_3"
-                                            ]
-                                        },
                                         {
                                             "requirement": {
                                                 "selfTags": [
@@ -196,46 +379,6 @@
                                                 "com_touch_back_woken_1",
                                                 "com_touch_back_woken_2",
                                                 "com_touch_back_woken_3"
-                                            ]
-                                        },
-                                        {
-                                            "requirement": {
-                                                "requireSelfAction": false,
-                                                "selfTags": [
-                                                    "sleeping"
-                                                ]
-                                            },
-                                            "extraSelfPortraitTags": [
-                                                "sleeping",
-                                                "relaxed"
-                                            ],
-                                            "_comment": "2.3.2 睡眠中 被抚摸背部 口上文",
-                                            "responses": [
-                                                "com_touch_back_1",
-                                                "com_touch_back_2",
-                                                "com_touch_back_3",
-                                                "com_touch_back_4"
-                                            ]
-                                        },
-                                        {
-                                            "requirement": {
-                                                "requireSelfAction": false,
-                                                "selfTags": [
-                                                    "timestop"
-                                                ]
-                                            },
-                                            "extraSelfPortraitTags": [
-                                                "doll",
-                                                "empty",
-                                                "silence",
-                                                "idle"
-                                            ],
-                                            "_comment": "2.3.1 时停中 被抚摸背部 口上文",
-                                            "responses": [
-                                                "com_touch_back_7",
-                                                "com_touch_back_8",
-                                                "com_touch_back_9",
-                                                "com_touch_back_10"
                                             ]
                                         },
                                         {
@@ -273,70 +416,28 @@
                                 },
                                 {
                                     "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "sleeping"
-                                        ]
+                                        "requireEPSuccessLTE": "Failure"
                                     },
-                                    "extraSelfPortraitTags": [
-                                        "sleeping",
-                                        "relaxed"
+                                    "_comment": "判定失败",
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_touch_back_restrained_fail_1",
+                                                "com_touch_back_restrained_fail_2",
+                                                "com_touch_back_restrained_fail_3"
+                                            ]
+                                        }
                                     ],
-                                    "_comment": "2.3.2 睡眠中 被抚摸背部 口上文",
                                     "responses": [
-                                        "com_touch_back_1",
-                                        "com_touch_back_2",
-                                        "com_touch_back_3",
-                                        "com_touch_back_4"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "timestop"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "doll",
-                                        "empty",
-                                        "silence",
-                                        "idle"
-                                    ],
-                                    "_comment": "2.3.1 时停中 被抚摸背部 口上文",
-                                    "responses": [
-                                        "com_touch_back_7",
-                                        "com_touch_back_8",
-                                        "com_touch_back_9",
-                                        "com_touch_back_10"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "unconscious"
-                                        ],
-                                        "excludeSelfTags": [
-                                            "sleeping"
-                                        ]
-                                    },
-                                    "responses": [
-                                        "com_touch_back_fainted_1",
-                                        "com_touch_back_fainted_2",
-                                        "com_touch_back_fainted_3"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "selfTags": [
-                                            "restrained"
-                                        ]
-                                    },
-                                    "responses": [
-                                        "com_touch_back_restrained_fail_1",
-                                        "com_touch_back_restrained_fail_2",
-                                        "com_touch_back_restrained_fail_3"
+                                        "com_touch_back_49",
+                                        "com_touch_back_50",
+                                        "com_touch_back_51",
+                                        "com_touch_back_52"
                                     ]
                                 },
                                 {
@@ -374,46 +475,6 @@
                             "variants": [
                                 {
                                     "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "sleeping"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sleeping",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.3.2 睡眠中 被抚摸背部 口上文",
-                                    "responses": [
-                                        "com_touch_back_1",
-                                        "com_touch_back_2",
-                                        "com_touch_back_3",
-                                        "com_touch_back_4"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "timestop"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "doll",
-                                        "empty",
-                                        "silence",
-                                        "idle"
-                                    ],
-                                    "_comment": "2.3.1 时停中 被抚摸背部 口上文",
-                                    "responses": [
-                                        "com_touch_back_7",
-                                        "com_touch_back_8",
-                                        "com_touch_back_9",
-                                        "com_touch_back_10"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
                                         "requirePermission": true
                                     },
                                     "extraSelfPortraitTags": [
@@ -443,46 +504,6 @@
                                 "com_touch_back_38",
                                 "com_touch_back_39",
                                 "com_touch_back_40"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "2.3.2 睡眠中 被抚摸背部 口上文",
-                            "responses": [
-                                "com_touch_back_1",
-                                "com_touch_back_2",
-                                "com_touch_back_3",
-                                "com_touch_back_4"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "timestop"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "doll",
-                                "empty",
-                                "silence",
-                                "idle"
-                            ],
-                            "_comment": "2.3.1 时停中 被抚摸背部 口上文",
-                            "responses": [
-                                "com_touch_back_7",
-                                "com_touch_back_8",
-                                "com_touch_back_9",
-                                "com_touch_back_10"
                             ]
                         },
                         {

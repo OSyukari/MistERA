@@ -13,7 +13,9 @@
                             "requireSelfDoer": true,
                             "_comment": "攻方 素股 高潮",
                             "responses": [
-                                "com_sex_P_V_outside_Climax_1"
+                                "com_sex_P_V_outside_Climax_1",
+                                "com_sex_P_V_outside_Climax_8",
+                                "com_sex_P_V_outside_Climax_9"
                             ]
                         },
                         {
@@ -66,26 +68,6 @@
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "intercrural",
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
-                            "responses": [
-                                "com_sex_P_V_outside_Begin_Sleep_1",
-                                "com_sex_P_V_outside_Begin_Sleep_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
                                     "timestop"
                                 ]
                             },
@@ -101,8 +83,80 @@
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_sex_P_V_outside_Begin_Timestop_1",
-                                "com_sex_P_V_outside_Begin_Timestop_2"
+                                "com_sex_P_V_outside_Begin_Timestop_2",
+                                "com_sex_P_V_outside_Begin_Timestop_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "intercrural",
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
+                            "responses": [
+                                "com_sex_P_V_outside_Begin_Sleep_1",
+                                "com_sex_P_V_outside_Begin_Sleep_2",
+                                "com_sex_P_V_outside_Begin_Sleep_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_sex_P_V_outside_Begin_10",
+                                        "com_sex_P_V_outside_Begin_11",
+                                        "com_sex_P_V_outside_Begin_12"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_sex_P_V_outside_Begin_13",
+                                        "com_sex_P_V_outside_Begin_14",
+                                        "com_sex_P_V_outside_Begin_15"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_P_V_outside_Begin_16",
+                                "com_sex_P_V_outside_Begin_17",
+                                "com_sex_P_V_outside_Begin_18"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            }
                         },
                         {
                             "requirement": {
@@ -155,7 +209,11 @@
                                 "com_sex_P_V_outside_Begin_7",
                                 "com_sex_P_V_outside_Begin_8",
                                 "com_sex_P_V_outside_Begin_9"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            }
                         }
                     ],
                     "template": "commandAct"
@@ -171,6 +229,192 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "intercrural",
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "_comment": "2.3.1 时停中 被素股 口上文",
+                            "responses": [
+                                "com_sex_P_V_outside_4",
+                                "com_sex_P_V_outside_5",
+                                "com_sex_P_V_outside_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "intercrural",
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "_comment": "2.3.1 时停中 被素股 口上文",
+                            "responses": [
+                                "com_sex_P_V_outside_4",
+                                "com_sex_P_V_outside_5",
+                                "com_sex_P_V_outside_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "intercrural",
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "_comment": "2.3.2 睡眠中 被素股 口上文",
+                            "responses": [
+                                "com_sex_P_V_outside_1",
+                                "com_sex_P_V_outside_2",
+                                "com_sex_P_V_outside_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "intercrural",
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "_comment": "2.3.2 睡眠中 被素股 口上文",
+                            "responses": [
+                                "com_sex_P_V_outside_1",
+                                "com_sex_P_V_outside_2",
+                                "com_sex_P_V_outside_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_sex_P_V_outside_43",
+                                        "com_sex_P_V_outside_44",
+                                        "com_sex_P_V_outside_45"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessLTE": "Failure"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_sex_P_V_outside_46",
+                                                "com_sex_P_V_outside_47",
+                                                "com_sex_P_V_outside_48"
+                                            ]
+                                        }
+                                    ],
+                                    "responses": [
+                                        "com_sex_P_V_outside_58",
+                                        "com_sex_P_V_outside_59",
+                                        "com_sex_P_V_outside_60"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_sex_P_V_outside_49",
+                                                "com_sex_P_V_outside_50",
+                                                "com_sex_P_V_outside_51"
+                                            ]
+                                        }
+                                    ],
+                                    "responses": [
+                                        "com_sex_P_V_outside_61",
+                                        "com_sex_P_V_outside_62",
+                                        "com_sex_P_V_outside_63"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_sex_P_V_outside_52",
+                                        "com_sex_P_V_outside_53",
+                                        "com_sex_P_V_outside_54"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_P_V_outside_55",
+                                "com_sex_P_V_outside_56",
+                                "com_sex_P_V_outside_57"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            }
+                        },
+                        {
+                            "requirement": {
                                 "requireEPSuccessGTE": "Success"
                             },
                             "_player only version": {
@@ -182,50 +426,6 @@
                                 "requireCOMStrongVariant": true
                             },
                             "variants": [
-                                {
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "sleeping"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "intercrural",
-                                        "sleeping",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.3.2 睡眠中 被素股 口上文",
-                                    "responses": [
-                                        "com_sex_P_V_outside_1",
-                                        "com_sex_P_V_outside_2",
-                                        "com_sex_P_V_outside_3"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "timestop"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "intercrural",
-                                        "doll",
-                                        "empty",
-                                        "silence",
-                                        "idle"
-                                    ],
-                                    "_comment": "2.3.1 时停中 被素股 口上文",
-                                    "responses": [
-                                        "com_sex_P_V_outside_4",
-                                        "com_sex_P_V_outside_5",
-                                        "com_sex_P_V_outside_6"
-                                    ]
-                                },
                                 {
                                     "requirement": {
                                         "targetBaseID": "PLAYER",
@@ -329,50 +529,6 @@
                         },
                         {
                             "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "intercrural",
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "2.3.2 睡眠中 被素股 口上文",
-                            "responses": [
-                                "com_sex_P_V_outside_1",
-                                "com_sex_P_V_outside_2",
-                                "com_sex_P_V_outside_3"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "timestop"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "intercrural",
-                                "doll",
-                                "empty",
-                                "silence",
-                                "idle"
-                            ],
-                            "_comment": "2.3.1 时停中 被素股 口上文",
-                            "responses": [
-                                "com_sex_P_V_outside_4",
-                                "com_sex_P_V_outside_5",
-                                "com_sex_P_V_outside_6"
-                            ]
-                        },
-                        {
-                            "requirement": {
                                 "targetBaseID": "PLAYER",
                                 "selfTags": [
                                     "justWokenUp"
@@ -436,52 +592,65 @@
                             ]
                         },
                         {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "responses": [
+                                "com_sex_P_V_outside_64",
+                                "com_sex_P_V_outside_65",
+                                "com_sex_P_V_outside_66"
+                            ],
                             "variants": [
                                 {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "intercrural",
+                                                "pain",
+                                                "bored",
+                                                "doubt",
+                                                "disappointed"
+                                            ],
+                                            "_comment": "2.1.4 ($self$) 被素股 结果负面 有允许 口上文",
+                                            "responses": [
+                                                "com_sex_P_V_outside_37",
+                                                "com_sex_P_V_outside_38",
+                                                "com_sex_P_V_outside_39"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.6 ($self$) 被素股 结果负面 未允许 口上文",
                                     "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
                                         "intercrural",
-                                        "pain",
-                                        "bored",
-                                        "doubt",
-                                        "disappointed"
+                                        "angry",
+                                        "cry",
+                                        "glare",
+                                        "disgust",
+                                        "pouting",
+                                        "sad",
+                                        "troubled",
+                                        "silence"
                                     ],
-                                    "_comment": "2.1.4 ($self$) 被素股 结果负面 有允许 口上文",
                                     "responses": [
-                                        "com_sex_P_V_outside_37",
-                                        "com_sex_P_V_outside_38",
-                                        "com_sex_P_V_outside_39"
-                                    ]
+                                        "com_sex_P_V_outside_40",
+                                        "com_sex_P_V_outside_41",
+                                        "com_sex_P_V_outside_42"
+                                    ],
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "requireTargetAction": false,
+                                        "allowRecording": true
+                                    }
                                 }
-                            ],
-                            "_comment": "2.2.6 ($self$) 被素股 结果负面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "intercrural",
-                                "angry",
-                                "cry",
-                                "glare",
-                                "disgust",
-                                "pouting",
-                                "sad",
-                                "troubled",
-                                "silence"
-                            ],
-                            "responses": [
-                                "com_sex_P_V_outside_40",
-                                "com_sex_P_V_outside_41",
-                                "com_sex_P_V_outside_42"
-                            ],
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            }
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -508,23 +677,8 @@
                             "useActiveTags": false,
                             "responses": [
                                 "com_sex_P_V_outside_Refuse_Receiver_3",
-                                "com_sex_P_V_outside_Refuse_Receiver_4"
-                            ]
-                        },
-                        {
-                            "requireSelfReceiver": true,
-                            "requirement": {
-                                "requireEPSuccess": false
-                            },
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "serious"
-                            ],
-                            "useActiveTags": false,
-                            "responses": [
-                                "com_sex_P_V_outside_Refuse_Receiver_1",
-                                "com_sex_P_V_outside_Refuse_Receiver_2"
+                                "com_sex_P_V_outside_Refuse_Receiver_4",
+                                "com_sex_P_V_outside_Refuse_Receiver_5"
                             ]
                         },
                         {
@@ -643,18 +797,61 @@
                     ],
                     "template": "commandRefuse"
                 }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_P_V_outside_Ongoing",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "responses": [
+                                        "com_sex_P_V_outside_Ongoing_1",
+                                        "com_sex_P_V_outside_Ongoing_2",
+                                        "com_sex_P_V_outside_Ongoing_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_P_V_outside_Ongoing_4",
+                                "com_sex_P_V_outside_Ongoing_5",
+                                "com_sex_P_V_outside_Ongoing_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "responses": [
+                                "com_sex_P_V_outside_Ongoing_7",
+                                "com_sex_P_V_outside_Ongoing_8",
+                                "com_sex_P_V_outside_Ongoing_9"
+                            ]
+                        }
+                    ],
+                    "template": "commandAct"
+                }
             }
         ]
     },
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "com_sex_P_V_outside_Climax_1": "$self$掐住$target$的大腿夹紧，腰顶着磨，磨到极处僵住射了出来。\n\"……嗯！全射你腿上了……！\"",
+                "com_sex_P_V_outside_Climax_1": "$self$掐住$target$的大腿夹紧，腰顶着磨，磨到极处绷紧身子射了出来：“……嗯！全射你腿上了……！”",
                 "com_sex_P_V_outside_Climax_5": "$self$捂住嘴不想承认，身体却还是弓起来，伴着剧烈颤抖达到了顶峰。\n\"呜……不要……明明不想的……为什么……\"",
                 "com_sex_P_V_outside_Climax_6": "$self$眼泪夺眶而出，在羞耻与快感的夹击下崩溃地尖叫出声。\n\"不要……不要看！呜呜呜……去了……竟然这样去了……\"",
                 "com_sex_P_V_outside_Climax_7": "$self$拼命想合拢双腿，却在快感袭来时无助地敞开了身子。\n\"啊……不行了……身体擅自……\"",
-                "com_sex_P_V_outside_Climax_2": "$self$猛地仰起脖颈，双手死死掐进$target$的后背，大腿痉挛着夹紧那根东西。\n\"啊！不行！就算没进去……也要丢了！去了啊啊啊！\"",
-                "com_sex_P_V_outside_Climax_3": "$self$大腿剧烈痉挛，死死夹住那根东西，浑身颤抖个不停。\n\"呜呜……太激烈了……脑子要坏掉了……高潮了！\"",
+                "com_sex_P_V_outside_Climax_2": "$self$猛地仰起脖颈，双手用力掐进$target$的后背，大腿痉挛着夹紧那根东西：“啊！不行！就算没进去……也要丢了！去了啊啊啊！”",
+                "com_sex_P_V_outside_Climax_3": "$self$大腿剧烈痉挛，紧紧夹住那根东西，浑身颤抖个不停：“呜呜……太激烈了……脑子要坏掉了……高潮了！”",
                 "com_sex_P_V_outside_Climax_4": "$self$失神地张着嘴，口水顺着嘴角流下，身子剧烈抽搐后软下来。\n\"哈啊……哈啊……明明只是素股……为什么会这么舒服……\"",
                 "com_sex_P_V_outside_Begin_1": "$self$笑着挺起胯部，主动用大腿夹住$target$那根热烫的东西。\n\"这种事……其实我也很喜欢呢。\"",
                 "com_sex_P_V_outside_Begin_2": "$self$双腿缠上$target$的腰，把湿润的地方贴住那根东西。\n\"就在外面蹭蹭吗？真坏……\"",
@@ -663,15 +860,15 @@
                 "com_sex_P_V_outside_Begin_5": "$self$不知所措地避开视线，脸颊瞬间涨红。\n\"既然是$target$的话……只、只是蹭蹭大概没关系……\"",
                 "com_sex_P_V_outside_Begin_6": "$self$犹豫着没合拢双腿，声音细若蚊蝇。\n\"这算是……特别服务吗？\"",
                 "com_sex_P_V_outside_Begin_7": "$self$浑身颤抖，紧紧咬着嘴唇不让自己哭出声，任由那根东西在腿间肆虐。\n\"求你……轻点……那里不行……\"",
-                "com_sex_P_V_outside_Begin_8": "$self$别过头不敢看$target$的眼睛，身子僵硬着。\n\"我知道了……请快点结束……\"",
+                "com_sex_P_V_outside_Begin_8": "$self$别过头不敢看$target$的眼睛，身子绷紧着：“我知道了……请快点结束……”",
                 "com_sex_P_V_outside_Begin_9": "$self$带着哭腔吸了吸鼻子，松开了抵抗的手。\n\"只要不进去……就可以了吗？\"",
-                "com_sex_P_V_outside_1": "$self$发出平稳的呼吸，对大腿间的摩擦毫无察觉，只是偶尔因为刺激不适地皱皱眉。",
+                "com_sex_P_V_outside_1": "$self$发出平稳的呼吸，对大腿间的摩擦毫无察觉，只是偶尔因为刺激不适地哼了一声。",
                 "com_sex_P_V_outside_2": "$self$毫无意识地任由摆布，身子随着摩擦的节奏被动地轻晃。",
                 "com_sex_P_V_outside_3": "$self$睡得死沉，就连敏感处被反复碾过也只发出几声含糊的梦呓。",
                 "com_sex_P_V_outside_4": "$self$保持着原本的姿势动也不动，对凝固世界里腿间正发生的摩擦毫无知觉。",
-                "com_sex_P_V_outside_5": "$self$僵在原本的姿态里，唯有大腿内侧被摩擦得泛红，对此却毫无反应。",
+                "com_sex_P_V_outside_5": "$self$定格在原本的姿态里，唯有大腿内侧被摩擦得泛红，对此却毫无反应。",
                 "com_sex_P_V_outside_6": "$self$毫无知觉地敞着身子，任由那根滚烫的东西在腿缝间进进出出。",
-                "com_sex_P_V_outside_19": "$self$眼神冰冷地看着$target$，猛地推开。\n\"恶心。离我远点。\"",
+                "com_sex_P_V_outside_19": "$self$冷冷地盯着$target$，猛地推开：“恶心。离我远点。”",
                 "com_sex_P_V_outside_20": "$self$毫不客气地甩开$target$的手，语气满是厌恶。\n\"你脑子有问题吗？我要喊人了。\"",
                 "com_sex_P_V_outside_21": "$self$嫌弃地拍打着被碰过的地方。\n\"别以为我不敢动手，滚！\"",
                 "com_sex_P_V_outside_10": "$self$尖叫起来，用力把$target$推开。\n\"变态！你想干什么！\"",
@@ -701,20 +898,67 @@
                 "com_sex_P_V_outside_31": "$self$的呼吸变得急促，大腿内侧的肌肉开始微微痉挛。\n\"哈啊……虽然没进去……但是……好舒服……\"",
                 "com_sex_P_V_outside_32": "$self$紧紧抓着$target$的肩膀，渗出的液体让摩擦变得更顺滑。\n\"嗯……别停……就这样……磨那里……\"",
                 "com_sex_P_V_outside_33": "$self$眼神迷离，主动加快了摆腰的频率。\n\"这算什么嘛……弄得人家越来越想要了……\"",
-                "com_sex_P_V_outside_40": "$self$眼角噙着泪，死死抓着$target$忍受着。\n\"够了吧……放开我……\"",
-                "com_sex_P_V_outside_41": "$self$面无表情，眼神空洞。\n\"快点结束……求你了……\"",
+                "com_sex_P_V_outside_40": "$self$眼角噙着泪，紧紧抓着$target$忍受着：“够了吧……放开我……”",
+                "com_sex_P_V_outside_41": "$self$眼神空洞，神色木然：“快点结束……求你了……”",
                 "com_sex_P_V_outside_42": "$self$极力忍耐着想要呕吐的冲动，身子因为厌恶而不断瑟缩。\n\"好恶心……只感到恶心……\"",
                 "com_sex_P_V_outside_37": "$self$有些不耐烦地推了推$target$的胸口。\n\"只是这样磨来磨去的，皮都要破了。\"",
-                "com_sex_P_V_outside_38": "$self$皱着眉，身子僵硬地承受着摩擦。\n\"有点疼……今天状态不太好，算了吧。\"",
+                "com_sex_P_V_outside_38": "$self$嘶地吸了口气，身子紧绷地承受着摩擦：“有点疼……今天状态不太好，算了吧。”",
                 "com_sex_P_V_outside_39": "$self$长叹了口气，松开了夹紧的双腿。\n\"除了痒什么感觉都没有。\"",
                 "com_sex_P_V_outside_Begin_Sleep_1": "$target$把肉棒挤进她熟睡中并拢的腿缝，贴着穴口缓缓来回磨蹭，$self$在梦里轻轻哼了声，膝盖无意识地夹紧了些，却没醒。",
-                "com_sex_P_V_outside_Begin_Sleep_2": "龟头蹭过阴蒂时$self$的呼吸乱了一拍，腿根渐渐被磨出湿意，她只是皱着眉往枕头里埋了埋脸，睡得依旧很沉。",
+                "com_sex_P_V_outside_Begin_Sleep_2": "龟头蹭过阴蒂时$self$的呼吸乱了一拍，腿根渐渐被磨出湿意，她只是往枕头里埋了埋脸，睡得依旧很沉。",
                 "com_sex_P_V_outside_Begin_Timestop_1": "滚烫的肉棒挤进她定格的腿缝贴着穴口来回碾磨，磨出的津液把腿根润得发亮，$self$的膝盖还保持着原本张开的距离。",
                 "com_sex_P_V_outside_Begin_Timestop_2": "龟头蹭过阴蒂时穴口不受控地渗出水，$self$的腿缝被磨得发红，静止的房间里只有黏腻的摩擦声在响。",
                 "com_sex_P_V_outside_Refuse_Receiver_1": "$self$用力推开了$target$，神色戒备。\n\"别碰我！我没同意做这种事。\"",
                 "com_sex_P_V_outside_Refuse_Receiver_2": "$self$往后退开一步，冷冷地拒绝了$target$。\n\"现在不行，请离我远点。\"",
-                "com_sex_P_V_outside_Refuse_Receiver_3": "$self$用力推开了$target$，神色戒备。\n\"别碰我！我没同意做这种事。\"",
-                "com_sex_P_V_outside_Refuse_Receiver_4": "$self$往后退开一步，冷冷地拒绝了$target$。\n\"现在不行，请离我远点。\""
+                "com_sex_P_V_outside_Refuse_Receiver_3": "$self$用力推开了$target$，神色戒备：“别碰我！我没同意做这种事。”",
+                "com_sex_P_V_outside_Refuse_Receiver_4": "$self$往后退开一步，冷冷地拒绝了$target$：“现在不行，请离我远点。”",
+                "com_sex_P_V_outside_Refuse_Receiver_5": "$self$迅速合拢双腿往后退去，眼神带着排斥：“这种事我拒绝，别靠这么近。”",
+                "com_sex_P_V_outside_Begin_Timestop_3": "时间停滞在原地，$self$并拢的大腿任由$target$将肉棒塞进来回抽送，神情纹丝不动。",
+                "com_sex_P_V_outside_Begin_Sleep_3": "熟睡中的$self$呼吸绵长，腿间被滚烫的阴茎顶着慢慢研磨，只含糊地咂了咂嘴。",
+                "com_sex_P_V_outside_Climax_8": "$self$喘着粗气加快了腿缝间的抽插，龟头蹭过软肉时猛地一抖，白浊顺着腿根淌了下来：“哈啊……忍不住了……射了……！”",
+                "com_sex_P_V_outside_Climax_9": "$self$扶住$target$的腰胯狠狠顶磨几下，炽热的精液随之喷洒在股间：“唔……腿缝夹得好紧……要泄出来了……！”",
+                "com_sex_P_V_outside_Begin_10": "昏迷中的$self$毫无知觉地躺着，并拢的腿缝被$target$挤入炽热的肉棒贴着花唇抵弄。",
+                "com_sex_P_V_outside_Begin_11": "$self$合着眼皮没有任何反应，腿间柔嫩的软肉随着肉棒的按压微微凹陷下去。",
+                "com_sex_P_V_outside_Begin_12": "失去意识的$self$呼吸平缓，任由$target$把粗硬的性器架在自己股间来回蹭动。",
+                "com_sex_P_V_outside_Begin_13": "$self$双手被捆着推不开压上来的人，只能感觉滚烫的肉棒抵进腿缝间来回磨蹭：“别、别往那里塞啊……”",
+                "com_sex_P_V_outside_Begin_14": "绳索勒紧了手腕，$self$扭着腰想避开龟头在穴口外的顶弄，双腿却合不拢：“唔……只是在外面蹭也不行……”",
+                "com_sex_P_V_outside_Begin_15": "动弹不得的$self$耳根涨红，咬住嘴唇不敢看跨在腿间的$target$：“至少……不准插进来啊……”",
+                "com_sex_P_V_outside_Begin_16": "$self$任由$target$靠近，自己被$target$用肉棒抵在腿间磨蹭花唇，呼吸微微一滞。",
+                "com_sex_P_V_outside_Begin_17": "$self$轻轻抿了抿唇，没有推开被$target$用肉棒抵在腿间磨蹭花唇的$target$。",
+                "com_sex_P_V_outside_Begin_18": "感受到腿缝与花唇传来的触碰，$self$下意识地轻颤了一下，顺势迎合上去。",
+                "com_sex_P_V_outside_43": "昏迷中的$self$依旧没有醒来，腿缝被肉棒反复研磨得泛红湿滑，穴口悄然渗出清液。",
+                "com_sex_P_V_outside_44": "$self$毫无知觉地躺在原地，柔软的大腿内侧随着$target$的抽动泛起阵阵热意。",
+                "com_sex_P_V_outside_45": "失去意识的$self$喉咙里溢出一声极轻的喘息，腿肉被磨得沾满亮晶晶的黏液。",
+                "com_sex_P_V_outside_46": "动弹不得的$self$吃痛地嘶了声，大腿内侧被干涩粗暴的顶弄磨得发红：“好痛……！皮都要被你蹭破了！”",
+                "com_sex_P_V_outside_47": "$self$拧着眉想往后躲，奈何双手被捆着根本推不开压在腿间的人：“别乱顶了……一点也不舒服……”",
+                "com_sex_P_V_outside_48": "$self$喘着气忍受着股间的钝痛，语气满是烦躁：“够了没有……光在外面硬磨好难受啊……”",
+                "com_sex_P_V_outside_49": "被缚住双手没法推开，$self$的阴蒂和穴口在滚烫肉棒的刮蹭下又麻又胀，声音一下子软了：“哈啊……好烫……别总蹭着阴蒂磨啊……”",
+                "com_sex_P_V_outside_50": "$self$仰起脖子喘息，分泌出的爱液把腿缝润得湿滑，双腿不由自主地夹紧：“唔嗯……快感要窜到里面去了……”",
+                "com_sex_P_V_outside_51": "绳索紧绷着，$self$却自觉微抬起胯部迎合着腿间的抽送：“不要停……再多蹭一会儿……”",
+                "com_sex_P_V_outside_52": "$self$在腿间湿热的摩擦感中迷糊转醒，低头看见$target$正用肉棒蹭着自己的腿缝：“唔……你趁我睡着在蹭哪里呢……”",
+                "com_sex_P_V_outside_53": "睡意刚散，$self$就感觉到股间传来的阵阵酥麻，脸颊发烫地轻哼了一声：“真是的……要弄就直接进来或者停下嘛……”",
+                "com_sex_P_V_outside_54": "$self$喘了口气清醒过来，大腿内侧已经被爱液和前液蹭得湿淋淋一片：“哈啊……把我弄醒了还磨个不停，太狡猾了吧……”",
+                "com_sex_P_V_outside_55": "$self$随着节奏轻哼出声，腿缝与花唇被$target$用肉棒抵在腿间磨蹭花唇得一阵发麻：“哈啊……好舒服……”",
+                "com_sex_P_V_outside_56": "快感顺着腿缝与花唇迅速蔓延开来，$self$软着声音喘息道：“唔嗯……就是那里，别停……”",
+                "com_sex_P_V_outside_57": "$self$微眯起眼迎合着$target$的动作，嗓音带着甜腻的颤意：“啊……再多弄一会儿……”",
+                "com_sex_P_V_outside_58": "$self$微微蹙眉往后躲了躲，腿缝与花唇传来一阵不太舒服的刺痛：“嘶……太重了，轻一点……”",
+                "com_sex_P_V_outside_59": "$self$有些不适地绷紧了身子，小声抱怨道：“唔……这样弄一点也不舒服……”",
+                "com_sex_P_V_outside_60": "节奏没能对上，$self$略显烦躁地喘了口气：“……稍微注意一下力道啊。”",
+                "com_sex_P_V_outside_61": "$self$随着节奏轻哼出声，腿缝与花唇被$target$用肉棒抵在腿间磨蹭花唇得一阵发麻：“哈啊……好舒服……”",
+                "com_sex_P_V_outside_62": "快感顺着腿缝与花唇迅速蔓延开来，$self$软着声音喘息道：“唔嗯……就是那里，别停……”",
+                "com_sex_P_V_outside_63": "$self$微眯起眼迎合着$target$的动作，嗓音带着甜腻的颤意：“啊……再多弄一会儿……”",
+                "com_sex_P_V_outside_Ongoing_1": "$self$的大腿间正被旁人的肉棒来回磨蹭着，余光瞥见站在旁边的$target$后顿时羞得满脸通红：“别、别盯着人家腿间看啊……”",
+                "com_sex_P_V_outside_Ongoing_2": "股间传出黏腻的摩擦水声，$self$咬住下唇不敢看$target$，湿润的穴口却越来越烫：“呜……这么色情的样子都被你看见了……”",
+                "com_sex_P_V_outside_Ongoing_3": "$self$红着脸扭过头去躲避$target$的视线，腰肢却随着腿缝间的抽动软得直颤：“唔啊……不要看过来……”",
+                "com_sex_P_V_outside_Ongoing_4": "$self$还在被$target$用肉棒抵在腿间磨蹭花唇，呼吸随着节奏一点点变得急促。",
+                "com_sex_P_V_outside_Ongoing_5": "持续不断的刺激让$self$眼角泛起微红，只能任由$target$继续动作。",
+                "com_sex_P_V_outside_Ongoing_6": "$self$轻喘着承受着腿缝与花唇传来的触感，身子微微发软。",
+                "com_sex_P_V_outside_Ongoing_7": "$self$没有停下动作，继续贴着腿缝摩擦着花唇与肉棒。",
+                "com_sex_P_V_outside_Ongoing_8": "湿热的气息在两人之间弥漫，$self$维持着节奏贴着腿缝摩擦着花唇与肉棒。",
+                "com_sex_P_V_outside_Ongoing_9": "$self$微微喘息着，动作不停地贴着腿缝摩擦着花唇与肉棒。",
+                "com_sex_P_V_outside_64": "$self$微微喘息着，一边贴着腿缝摩擦花唇与肉棒，一边留意着$target$的反应。",
+                "com_sex_P_V_outside_65": "空气渐渐升温，$self$放缓了节奏继续贴着腿缝摩擦花唇与肉棒：“……感觉怎么样？”",
+                "com_sex_P_V_outside_66": "$self$轻吐出一口气，顺从着眼前的状态继续贴着腿缝摩擦花唇与肉棒。"
             }
         }
     }

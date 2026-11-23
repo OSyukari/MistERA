@@ -193,6 +193,68 @@
                     "variants": [
                         {
                             "requireSelfReceiver": true,
+                            "requirement": {
+                                "variantID": 1
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_takeShower_Begin_1",
+                                        "com_furniture_takeShower_Begin_2",
+                                        "com_furniture_takeShower_Begin_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireRelationshipTypes": [
+                                            "relationship_marriage"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "kojo_shower_accept_receiver_marriage",
+                                        "kojo_shower_accept_receiver_marriage_1",
+                                        "kojo_shower_accept_receiver_marriage_2"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireRelationshipTypes": [
+                                            "relationship_couple"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "kojo_shower_accept_receiver_couple",
+                                        "kojo_shower_accept_receiver_couple_1",
+                                        "kojo_shower_accept_receiver_couple_2"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireRelationshipTypes": [
+                                            "relationship_fwb"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "kojo_shower_accept_receiver_fwb",
+                                        "kojo_shower_accept_receiver_fwb_1",
+                                        "kojo_shower_accept_receiver_fwb_2"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "kojo_shower_accept_receiver_fallback",
+                                "kojo_shower_accept_receiver_fallback_1",
+                                "kojo_shower_accept_receiver_fallback_2"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
                             "variants": [
                                 {
                                     "requirement": {
@@ -280,55 +342,6 @@
                                 "kojo_shower_accept_helper_fallback",
                                 "kojo_shower_accept_helper_fallback_1",
                                 "kojo_shower_accept_helper_fallback_2"
-                            ]
-                        },
-                        {
-                            "requireSelfReceiver": true,
-                            "requirement": {
-                                "variantID": 1
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requireRelationshipTypes": [
-                                            "relationship_marriage"
-                                        ]
-                                    },
-                                    "responses": [
-                                        "kojo_shower_accept_receiver_marriage",
-                                        "kojo_shower_accept_receiver_marriage_1",
-                                        "kojo_shower_accept_receiver_marriage_2"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireRelationshipTypes": [
-                                            "relationship_couple"
-                                        ]
-                                    },
-                                    "responses": [
-                                        "kojo_shower_accept_receiver_couple",
-                                        "kojo_shower_accept_receiver_couple_1",
-                                        "kojo_shower_accept_receiver_couple_2"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireRelationshipTypes": [
-                                            "relationship_fwb"
-                                        ]
-                                    },
-                                    "responses": [
-                                        "kojo_shower_accept_receiver_fwb",
-                                        "kojo_shower_accept_receiver_fwb_1",
-                                        "kojo_shower_accept_receiver_fwb_2"
-                                    ]
-                                }
-                            ],
-                            "responses": [
-                                "kojo_shower_accept_receiver_fallback",
-                                "kojo_shower_accept_receiver_fallback_1",
-                                "kojo_shower_accept_receiver_fallback_2"
                             ]
                         }
                     ],
@@ -1102,6 +1115,16 @@
                                 "com_furniture_takeShower_11",
                                 "com_furniture_takeShower_12"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_takeShower_Fallback_1",
+                                "com_furniture_takeShower_Fallback_2"
+                            ]
                         }
                     ]
                 }
@@ -1112,14 +1135,6 @@
                     "ID": "com_furniture_takeShower_Interrupt",
                     "template": "commandInterrupt",
                     "variants": [
-                        {
-                            "_comment": "当前动作中的 NPC → 新来的人 ｜ 接受",
-                            "responses": [
-                                "com_furniture_takeShower_Interrupt_1",
-                                "com_furniture_takeShower_Interrupt_2",
-                                "com_furniture_takeShower_Interrupt_3"
-                            ]
-                        },
                         {
                             "requireSelfDoer": true,
                             "_comment": "施方 → 新来的人 ｜ 接受",
@@ -1137,6 +1152,17 @@
                                 "com_furniture_takeShower_Interrupt_8",
                                 "com_furniture_takeShower_Interrupt_9"
                             ]
+                        },
+                        {
+                            "_comment": "当前动作中的 NPC → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_furniture_takeShower_Interrupt_1",
+                                "com_furniture_takeShower_Interrupt_2",
+                                "com_furniture_takeShower_Interrupt_3"
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ]
                 }
@@ -1175,6 +1201,16 @@
                                 "com_furniture_takeShower_Ongoing_4",
                                 "com_furniture_takeShower_Ongoing_5",
                                 "com_furniture_takeShower_Ongoing_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_takeShower_Ongoing_Fallback_2",
+                                "com_furniture_takeShower_Ongoing_Fallback_3"
                             ]
                         }
                     ]
@@ -1315,7 +1351,11 @@
                 "com_furniture_takeShower_12": "$self$把用完的洗漱用品归回架子上，偏头等$target$一起收拾。",
                 "com_furniture_takeShower_Refuse_Fallback_1": "$self$点了点头，没有多说什么。",
                 "com_furniture_takeShower_Begin_Fallback_1": "$self$点了点头，没有多说什么。",
-                "com_furniture_takeShower_Ongoing_Fallback_1": "$self$点了点头，没有多说什么。"
+                "com_furniture_takeShower_Ongoing_Fallback_1": "$self$点了点头，没有多说什么。",
+                "com_furniture_takeShower_Fallback_1": "$self$擦干身上的水珠换好干净衣服，神清气爽地走出浴室。",
+                "com_furniture_takeShower_Fallback_2": "$self$拧干滴水的发梢，洗去一身疲乏后舒坦地呼了口气。",
+                "com_furniture_takeShower_Ongoing_Fallback_2": "温热的水流顺着肩背滑落，$self$闭上眼安静地冲刷着。",
+                "com_furniture_takeShower_Ongoing_Fallback_3": "$self$站在水柱下仔细清洗着，水声掩盖了外头的动静。"
             },
             "en-us": {
                 "kojo_shower_accept_self": "$self$ agrees. \"Yes, I'll go take a shower.\"",

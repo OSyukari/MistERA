@@ -136,22 +136,19 @@
             },
             "variants":[
                 {
-                    "requirements":{ "requirement":{ "req_Receivers":{ "requireTimestopped":true } } },
-                    "displayName":"comManager_com_carry_timestop",
-                    "useBaseDescription": false,
-                    "description_begin":{ "Entries":[{"texts":["com_interaction_carry_timestop_begin_1", "com_interaction_carry_timestop_begin_2", "com_interaction_carry_timestop_begin_3"]}], "keepLooking":false },
-                    "description_ongoing":{ "Entries":[{"texts":["com_interaction_carry_timestop_ongoing_1"]}], "keepLooking":false }
-                },
-                {
                     "requirements":{ "requirement":{ } },
                     "displayName":"comManager_com_carry"
                 }
             ],
             "description_begin":{ "Entries":[
+                { "conditions":[{"validateChara":{"statID":"isTimestopped","operand":"eq","value":"true","target":"receiver"}}], "texts":["com_interaction_carry_timestop_begin_1", "com_interaction_carry_timestop_begin_2", "com_interaction_carry_timestop_begin_3"] },
                 { "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_interaction_carry_begin_ordered_1", "com_interaction_carry_begin_ordered_2", "com_interaction_carry_begin_ordered_3"] },
                 { "texts":["com_interaction_carry_begin_1", "com_interaction_carry_begin_2", "com_interaction_carry_begin_3"] }
             ], "keepLooking":false },
-            "description_ongoing":{ "Entries":[{"texts":["com_interaction_carry_ongoing_1"]}], "keepLooking":false },
+            "description_ongoing":{ "Entries":[
+                { "conditions":[{"validateChara":{"statID":"isTimestopped","operand":"eq","value":"true","target":"receiver"}}], "texts":["com_interaction_carry_timestop_ongoing_1"] },
+                { "texts":["com_interaction_carry_ongoing_1"] }
+            ], "keepLooking":false },
             "description_remove":{ "Entries":[{"texts":["com_interaction_carry_remove_1", "com_interaction_carry_remove_2", "com_interaction_carry_remove_3"]}], "keepLooking":false },
             "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_interaction_carry_onComplete_1", "com_interaction_carry_onComplete_2", "com_interaction_carry_onComplete_3"]}] }
         },
@@ -215,13 +212,6 @@
             },
             "variants":[
                 {
-                    "requirements":{ "requirement":{ "req_Receivers":{ "requireTimestopped":true } } },
-                    "displayName":"com_furniture_putDown_displayName",
-                    "useBaseDescription": false,
-                    "description_begin":{ "Entries":[{"texts":["com_furniture_putDown_timestop_begin_1", "com_furniture_putDown_timestop_begin_2", "com_furniture_putDown_timestop_begin_3"]}], "keepLooking":false },
-                    "description_ongoing":{ "Entries":[{"texts":["com_furniture_putDown_timestop_ongoing_1"]}], "keepLooking":false }
-                },
-                {
                     "requirements":{ "requirement":{ } },
                     "displayName":"com_furniture_putDown_displayName"
                 }
@@ -229,10 +219,14 @@
             "AcceptanceCheck": { "baseAcceptanceValue": 0, "alwaysAccept": true },
             "DifficultyCheck": { "baseD20Check": 0 },
             "description_begin":{ "Entries":[
+                { "conditions":[{"validateChara":{"statID":"isTimestopped","operand":"eq","value":"true","target":"receiver"}}], "texts":["com_furniture_putDown_timestop_begin_1", "com_furniture_putDown_timestop_begin_2", "com_furniture_putDown_timestop_begin_3"] },
                 { "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_furniture_putDown_begin_ordered_1", "com_furniture_putDown_begin_ordered_2", "com_furniture_putDown_begin_ordered_3"] },
                 { "texts":["com_furniture_putDown_begin_1", "com_furniture_putDown_begin_2", "com_furniture_putDown_begin_3"] }
             ], "keepLooking":false },
-            "description_ongoing":{ "Entries":[{"texts":["com_furniture_putDown_ongoing_1"]}], "keepLooking":false },
+            "description_ongoing":{ "Entries":[
+                { "conditions":[{"validateChara":{"statID":"isTimestopped","operand":"eq","value":"true","target":"receiver"}}], "texts":["com_furniture_putDown_timestop_ongoing_1"] },
+                { "texts":["com_furniture_putDown_ongoing_1"] }
+            ], "keepLooking":false },
             "description_remove":{ "Entries":[{"texts":["com_furniture_putDown_remove_1", "com_furniture_putDown_remove_2", "com_furniture_putDown_remove_3"]}], "keepLooking":false },
             "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_putDown_onComplete_1", "com_furniture_putDown_onComplete_2", "com_furniture_putDown_onComplete_3"]}] }
         },
@@ -259,13 +253,6 @@
             },
             "variants":[
                 {
-                    "requirements":{ "requirement":{ "req_Receivers":{ "requireTimestopped":true } } },
-                    "displayName":"com_player_putDownHere_displayName",
-                    "useBaseDescription": false,
-                    "description_begin":{ "Entries":[{"texts":["com_player_putDownHere_timestop_begin_1", "com_player_putDownHere_timestop_begin_2", "com_player_putDownHere_timestop_begin_3"]}], "keepLooking":false },
-                    "description_ongoing":{ "Entries":[{"texts":["com_player_putDownHere_timestop_ongoing_1"]}], "keepLooking":false }
-                },
-                {
                     "requirements":{ "requirement":{ } },
                     "displayName":"com_player_putDownHere_displayName"
                 }
@@ -273,10 +260,14 @@
             "AcceptanceCheck": { "baseAcceptanceValue": 0, "alwaysAccept": true },
             "DifficultyCheck": { "baseD20Check": 0 },
             "description_begin":{ "Entries":[
+                { "conditions":[{"validateChara":{"statID":"isTimestopped","operand":"eq","value":"true","target":"receiver"}}], "texts":["com_player_putDownHere_timestop_begin_1", "com_player_putDownHere_timestop_begin_2", "com_player_putDownHere_timestop_begin_3"] },
                 { "conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_player_putDownHere_begin_ordered_1", "com_player_putDownHere_begin_ordered_2", "com_player_putDownHere_begin_ordered_3"] },
                 { "texts":["com_player_putDownHere_begin_1", "com_player_putDownHere_begin_2", "com_player_putDownHere_begin_3"] }
             ], "keepLooking":false },
-            "description_ongoing":{ "Entries":[{"texts":["com_player_putDownHere_ongoing_1"]}], "keepLooking":false },
+            "description_ongoing":{ "Entries":[
+                { "conditions":[{"validateChara":{"statID":"isTimestopped","operand":"eq","value":"true","target":"receiver"}}], "texts":["com_player_putDownHere_timestop_ongoing_1"] },
+                { "texts":["com_player_putDownHere_ongoing_1"] }
+            ], "keepLooking":false },
             "description_remove":{ "Entries":[{"texts":["com_player_putDownHere_remove_1", "com_player_putDownHere_remove_2", "com_player_putDownHere_remove_3"]}], "keepLooking":false },
             "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_player_putDownHere_onComplete_1", "com_player_putDownHere_onComplete_2", "com_player_putDownHere_onComplete_3"]}] }
         },
@@ -701,15 +692,15 @@
                 "com_player_putDown_onComplete_2": "$doer.firstname$的怀里空了下来",
                 "com_player_putDown_onComplete_3": "$receiver.firstname$被$doer.firstname$安置好了",
 
-                "com_furniture_putDown_begin_ordered_1": "$doer.firstname$依言把$receiver.firstname$放了下来",
-                "com_furniture_putDown_begin_ordered_2": "$doer.firstname$照着吩咐把$receiver.firstname$放下",
-                "com_furniture_putDown_begin_ordered_3": "$doer.firstname$应下吩咐把$receiver.firstname$放了下来",
-                "com_furniture_putDown_remove_1": "$doer.firstname$把$receiver.firstname$重新抱回怀里",
-                "com_furniture_putDown_remove_2": "$doer.firstname$没有把$receiver.firstname$放下",
+                "com_furniture_putDown_begin_ordered_1": "$doer.firstname$依言把$receiver.firstname$放到$furniture$上",
+                "com_furniture_putDown_begin_ordered_2": "$doer.firstname$照着吩咐把$receiver.firstname$安放到$furniture$",
+                "com_furniture_putDown_begin_ordered_3": "$doer.firstname$应下吩咐把$receiver.firstname$放到$furniture$上",
+                "com_furniture_putDown_remove_1": "$doer.firstname$把$receiver.firstname$重新抱回怀里，没放到$furniture$上",
+                "com_furniture_putDown_remove_2": "$doer.firstname$没有把$receiver.firstname$放到$furniture$",
                 "com_furniture_putDown_remove_3": "$doer.firstname$的手臂重新托住了$receiver.firstname$",
-                "com_furniture_putDown_onComplete_1": "$receiver.firstname$被$doer.firstname$安置好了",
-                "com_furniture_putDown_onComplete_2": "$doer.firstname$把$receiver.firstname$放好之后松了手",
-                "com_furniture_putDown_onComplete_3": "$receiver.firstname$已经不在$doer.firstname$怀里",
+                "com_furniture_putDown_onComplete_1": "$receiver.firstname$被$doer.firstname$安置在$furniture$上",
+                "com_furniture_putDown_onComplete_2": "$doer.firstname$把$receiver.firstname$放到$furniture$上之后松了手",
+                "com_furniture_putDown_onComplete_3": "$doer.firstname$把$receiver.firstname$安顿在了$furniture$",
 
                 "com_player_putDownHere_begin_ordered_1": "$doer.firstname$依言把$receiver.firstname$放了下来",
                 "com_player_putDownHere_begin_ordered_2": "$doer.firstname$照着吩咐把$receiver.firstname$放下",
@@ -721,15 +712,15 @@
                 "com_player_putDownHere_onComplete_2": "$doer.firstname$的怀里空了下来",
                 "com_player_putDownHere_onComplete_3": "$receiver.firstname$被$doer.firstname$放到地上站着",
 
-                "com_furniture_combat_sim_description_begin_ordered_1": "$doer.firstname$依言开始模拟战斗",
-                "com_furniture_combat_sim_description_begin_ordered_2": "$doer.firstname$照着吩咐演练起模拟战斗",
-                "com_furniture_combat_sim_description_begin_ordered_3": "$doer.firstname$应下吩咐摆开架势打起模拟战",
-                "com_furniture_combat_sim_description_remove_1": "$doer.firstname$把摆开的架势收了起来",
-                "com_furniture_combat_sim_description_remove_2": "$doer.firstname$收起了演练的动作",
-                "com_furniture_combat_sim_description_remove_3": "$doer.firstname$松开架势停下手里的动作",
-                "com_furniture_combat_sim_description_onComplete_1": "$doer.firstname$把模拟战斗停了下来",
-                "com_furniture_combat_sim_description_onComplete_2": "$doer.firstname$停下了这套模拟战斗的动作",
-                "com_furniture_combat_sim_description_onComplete_3": "$doer.firstname$演练完毕收住了手脚",
+                "com_furniture_combat_sim_description_begin_ordered_1": "$doer.firstname$依言在$furniture$里开始模拟战斗",
+                "com_furniture_combat_sim_description_begin_ordered_2": "$doer.firstname$照着吩咐在$furniture$中演练起模拟战斗",
+                "com_furniture_combat_sim_description_begin_ordered_3": "$doer.firstname$应下吩咐，在$furniture$里摆开架势打起模拟战",
+                "com_furniture_combat_sim_description_remove_1": "$doer.firstname$在$furniture$里把摆开的架势收了起来",
+                "com_furniture_combat_sim_description_remove_2": "$doer.firstname$停下$furniture$的演练，收起了动作",
+                "com_furniture_combat_sim_description_remove_3": "$doer.firstname$在$furniture$中松开架势，停下了手里的动作",
+                "com_furniture_combat_sim_description_onComplete_1": "$doer.firstname$把$furniture$里的模拟战斗停了下来",
+                "com_furniture_combat_sim_description_onComplete_2": "$doer.firstname$在$furniture$中停下了这套模拟战斗的动作",
+                "com_furniture_combat_sim_description_onComplete_3": "$doer.firstname$在$furniture$里演练完毕，收住了手脚",
 
                 "com_furniture_mealPrep_description_begin_ordered_1": "$doer.firstname$依言动手准备餐点",
                 "com_furniture_mealPrep_description_begin_ordered_2": "$doer.firstname$照着吩咐张罗起餐点",
@@ -749,13 +740,13 @@
                 "com_interaction_carry_ongoing_1": "$doer.firstname$正在抱起$receiver.firstname$",
                 "comManager_com_putDown": "安放",
                 "com_furniture_putDown_displayName": "安放到$furniture$",
-                "com_furniture_putDown_begin_1": "$doer.firstname$把$receiver.firstname$轻轻放了下来",
-                "com_furniture_putDown_ongoing_1": "$doer.firstname$正在把$receiver.firstname$放下",
+                "com_furniture_putDown_begin_1": "$doer.firstname$把$receiver.firstname$轻轻放到$furniture$上",
+                "com_furniture_putDown_ongoing_1": "$doer.firstname$正在把$receiver.firstname$放到$furniture$上",
                 "comManager_com_carry_timestop": "携带（时停）",
                 "com_interaction_carry_timestop_begin_1": "$doer.firstname$把时间静止中的$receiver.firstname$抱了起来",
                 "com_interaction_carry_timestop_ongoing_1": "$doer.firstname$正在抱起时间静止中的$receiver.firstname$",
-                "com_furniture_putDown_timestop_begin_1": "$doer.firstname$把时间静止中的$receiver.firstname$放了下来",
-                "com_furniture_putDown_timestop_ongoing_1": "$doer.firstname$正在放下时间静止中的$receiver.firstname$",
+                "com_furniture_putDown_timestop_begin_1": "$doer.firstname$把时间静止中的$receiver.firstname$放到$furniture$上",
+                "com_furniture_putDown_timestop_ongoing_1": "$doer.firstname$正在把时间静止中的$receiver.firstname$放到$furniture$上",
                 "com_player_putDownHere_displayName": "就地放下",
                 "com_player_putDownHere_begin_1": "$doer.firstname$把$receiver.firstname$放了下来",
                 "com_player_putDownHere_ongoing_1": "$doer.firstname$正在把$receiver.firstname$放下",
@@ -798,8 +789,8 @@
 
                 "com_furniture_combat_sim_displayName_1":"模拟战斗",
                 "com_furniture_combat_sim_displayName_2":"一同模拟战斗",
-                "com_furniture_combat_sim_description_ongoing_1":"$doer.firstname$正在模拟战",
-                "com_furniture_combat_sim_description_begin_1":"$doer.firstname$开始模拟战斗",
+                "com_furniture_combat_sim_description_ongoing_1":"$doer.firstname$正在$furniture$里模拟战",
+                "com_furniture_combat_sim_description_begin_1":"$doer.firstname$在$furniture$里开始模拟战斗",
 
                 "com_furniture_mealPrep":"准备餐点。将下个小时设为饭点。",
                 "com_furniture_mealPrep_displayName":"准备餐点",
@@ -813,18 +804,18 @@
                 "com_interaction_talk_topic_ongoing_3": "$doer.firstname$和$receiver.firstname$的话头还没断",
                 "com_player_putDownHere_timestop_begin_2": "$doer.firstname$把时间静止中的$receiver.firstname$就势放在原地",
                 "com_player_putDownHere_timestop_begin_3": "$doer.firstname$松开手让时间静止中的$receiver.firstname$留在原地",
-                "com_furniture_combat_sim_description_begin_2": "$doer.firstname$动手演练起模拟战斗",
-                "com_furniture_combat_sim_description_begin_3": "$doer.firstname$摆开架势打起了模拟战",
+                "com_furniture_combat_sim_description_begin_2": "$doer.firstname$在$furniture$中动手演练起模拟战斗",
+                "com_furniture_combat_sim_description_begin_3": "$doer.firstname$在$furniture$里摆开架势打起了模拟战",
                 "com_interaction_partyInvite_begin_2": "$receiver.firstname$应下了$doer.firstname$的同行请求",
                 "com_interaction_partyInvite_begin_3": "$receiver.firstname$答应了与$doer.firstname$同行",
-                "com_furniture_putDown_begin_2": "$doer.firstname$弯下身把$receiver.firstname$放下",
-                "com_furniture_putDown_begin_3": "$doer.firstname$托着$receiver.firstname$的背把人放了下来",
+                "com_furniture_putDown_begin_2": "$doer.firstname$弯下身把$receiver.firstname$放到$furniture$",
+                "com_furniture_putDown_begin_3": "$doer.firstname$托着$receiver.firstname$的背把人安放到$furniture$上",
                 "com_interaction_carry_begin_2": "$doer.firstname$把$receiver.firstname$抱进了怀里",
                 "com_interaction_carry_begin_3": "$doer.firstname$用双臂把$receiver.firstname$抱了起来",
                 "com_interaction_carry_timestop_begin_2": "$doer.firstname$把时间静止中的$receiver.firstname$抱进了怀里",
                 "com_interaction_carry_timestop_begin_3": "$doer.firstname$用双臂抱起了时间静止中的$receiver.firstname$",
-                "com_furniture_putDown_timestop_begin_2": "$doer.firstname$弯下身把时间静止中的$receiver.firstname$放下",
-                "com_furniture_putDown_timestop_begin_3": "$doer.firstname$托着时间静止中的$receiver.firstname$把人放了下来",
+                "com_furniture_putDown_timestop_begin_2": "$doer.firstname$弯下身把时间静止中的$receiver.firstname$放到$furniture$",
+                "com_furniture_putDown_timestop_begin_3": "$doer.firstname$托着时间静止中的$receiver.firstname$把人安放到$furniture$上",
                 "com_player_putDownHere_begin_2": "$doer.firstname$把$receiver.firstname$从怀里放了下来",
                 "com_player_putDownHere_begin_3": "$doer.firstname$松开手臂把$receiver.firstname$放了下来",
                 "comManager_com_follow_stop_begin_2": "$receiver.firstname$不再跟着$doer.firstname$了",

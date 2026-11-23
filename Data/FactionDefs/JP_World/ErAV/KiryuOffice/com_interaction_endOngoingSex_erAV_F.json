@@ -18,7 +18,6 @@
                                 "relaxed",
                                 "affectionate"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.1 女演员 监督 好感/恋人关系 意犹未尽",
                             "responses": [
                                 "com_interaction_endOngoingSex_erAV_F_Warm_1",
@@ -35,7 +34,6 @@
                                 "professional",
                                 "blush"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.2 女演员 监督 普通同事关系 收工归位",
                             "responses": [
                                 "com_interaction_endOngoingSex_erAV_F_Dutiful_1",

@@ -3,11 +3,12 @@
   "id": "commandAct",
   "label": "指令开始 / 进行中口上",
   "inner": "interaction",
+  "beforeLevels": ["speakerStatus"],
   "bindCommand": ["_Begin", "_Ongoing"],
 
   "fallback": {
     "label": "兜底（接受，任何状态）",
-    "requirement": { "requireSelfAction": false, "requireTargetAction": false, "allowRecording": true }
+    "requirement": { "requireSelfAction": false, "requireTargetAction": false }
   },
 
   "levels": [

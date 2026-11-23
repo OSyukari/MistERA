@@ -8,36 +8,16 @@
                     "template": "commandResult",
                     "variants": [
                         {
-                            "requireSelfReceiver": true,
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
-                            "responses": [
-                                "com_furniture_medical_checkup_1",
-                                "com_furniture_medical_checkup_2",
-                                "com_furniture_medical_checkup_3"
-                            ],
+                            "requirement": {
+                                "selfTags": [
+                                    "sleeping"
+                                ],
+                                "requireSelfAction": false
+                            },
                             "variants": [
                                 {
+                                    "requireSelfReceiver": true,
                                     "requirement": {
-                                        "selfTags": [
-                                            "unconscious"
-                                        ],
-                                        "excludeSelfTags": [
-                                            "sleeping"
-                                        ],
-                                        "requireSelfAction": false
-                                    },
-                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
-                                    "responses": [
-                                        "com_furniture_medical_checkup_4",
-                                        "com_furniture_medical_checkup_5",
-                                        "com_furniture_medical_checkup_6"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "selfTags": [
-                                            "sleeping"
-                                        ],
                                         "requireSelfAction": false
                                     },
                                     "_comment": "受方（睡眠中） → 对方（玩家或 NPC） ｜ 接受",
@@ -46,7 +26,43 @@
                                         "com_furniture_medical_checkup_8",
                                         "com_furniture_medical_checkup_9"
                                     ]
-                                },
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ],
+                                "requireSelfAction": false
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_medical_checkup_4",
+                                        "com_furniture_medical_checkup_5",
+                                        "com_furniture_medical_checkup_6"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
+                            "responses": [
+                                "com_furniture_medical_checkup_1",
+                                "com_furniture_medical_checkup_2",
+                                "com_furniture_medical_checkup_3"
+                            ],
+                            "variants": [
                                 {
                                     "requirement": {
                                         "selfTags": [
@@ -74,6 +90,18 @@
                                     ]
                                 }
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_medical_checkup_Fallback_1",
+                                "com_furniture_medical_checkup_Fallback_2"
+                            ]
                         }
                     ]
                 }
@@ -91,7 +119,11 @@
                                 "com_furniture_medical_checkup_Interrupt_1",
                                 "com_furniture_medical_checkup_Interrupt_2",
                                 "com_furniture_medical_checkup_Interrupt_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "allowRecording": true
+                            }
                         },
                         {
                             "requireSelfDoer": true,
@@ -100,7 +132,11 @@
                                 "com_furniture_medical_checkup_Interrupt_4",
                                 "com_furniture_medical_checkup_Interrupt_5",
                                 "com_furniture_medical_checkup_Interrupt_6"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
                         }
                     ]
                 }
@@ -112,13 +148,16 @@
                     "template": "commandAct",
                     "variants": [
                         {
-                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "selfTags": [
+                                    "sleeping"
+                                ],
+                                "requireSelfAction": false
+                            },
                             "variants": [
                                 {
+                                    "requireSelfReceiver": true,
                                     "requirement": {
-                                        "selfTags": [
-                                            "sleeping"
-                                        ],
                                         "requireSelfAction": false
                                     },
                                     "_comment": "受方（睡眠中） → 对方（玩家或 NPC） ｜ 接受",
@@ -127,7 +166,37 @@
                                         "com_furniture_medical_checkup_Begin_2",
                                         "com_furniture_medical_checkup_Begin_3"
                                     ]
-                                },
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ],
+                                "requireSelfAction": false
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_medical_checkup_Begin_7",
+                                        "com_furniture_medical_checkup_Begin_8",
+                                        "com_furniture_medical_checkup_Begin_9"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
                                 {
                                     "requirement": {
                                         "selfTags": [
@@ -140,29 +209,24 @@
                                         "com_furniture_medical_checkup_Begin_5",
                                         "com_furniture_medical_checkup_Begin_6"
                                     ]
-                                },
-                                {
-                                    "requirement": {
-                                        "selfTags": [
-                                            "unconscious"
-                                        ],
-                                        "excludeSelfTags": [
-                                            "sleeping"
-                                        ],
-                                        "requireSelfAction": false
-                                    },
-                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
-                                    "responses": [
-                                        "com_furniture_medical_checkup_Begin_7",
-                                        "com_furniture_medical_checkup_Begin_8",
-                                        "com_furniture_medical_checkup_Begin_9"
-                                    ]
                                 }
                             ],
                             "responses": [
                                 "com_furniture_medical_checkup_Begin_10",
                                 "com_furniture_medical_checkup_Begin_11",
                                 "com_furniture_medical_checkup_Begin_12"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_medical_checkup_Begin_Fallback_1",
+                                "com_furniture_medical_checkup_Begin_Fallback_2"
                             ]
                         }
                     ]
@@ -183,6 +247,19 @@
                                 "com_furniture_medical_checkup_Joined_1",
                                 "com_furniture_medical_checkup_Joined_2",
                                 "com_furniture_medical_checkup_Joined_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_medical_checkup_Joined_Fallback_1",
+                                "com_furniture_medical_checkup_Joined_Fallback_2"
                             ]
                         }
                     ]
@@ -220,6 +297,18 @@
                                 "com_furniture_medical_checkup_Refuse_5",
                                 "com_furniture_medical_checkup_Refuse_6"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_medical_checkup_Refuse_Fallback_1",
+                                "com_furniture_medical_checkup_Refuse_Fallback_2"
+                            ]
                         }
                     ]
                 }
@@ -248,6 +337,18 @@
                             "responses": [
                                 "com_furniture_medical_checkup_Ongoing_Fallback_1"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_medical_checkup_Ongoing_Fallback_2",
+                                "com_furniture_medical_checkup_Ongoing_Fallback_3"
+                            ]
                         }
                     ]
                 }
@@ -261,7 +362,9 @@
                         {
                             "requireSelfDoer": true,
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
                             },
                             "_comment": "施方 → 未能加入的人 ｜ 未能加入",
                             "responses": [
@@ -273,7 +376,9 @@
                         {
                             "requireSelfReceiver": true,
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "requireSelfAction": false,
+                                "allowRecording": true
                             },
                             "_comment": "受方 → 未能加入的人 ｜ 未能加入",
                             "responses": [
@@ -298,7 +403,11 @@
                                 "com_furniture_medical_checkup_Join_1",
                                 "com_furniture_medical_checkup_Join_2",
                                 "com_furniture_medical_checkup_Join_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "allowRecording": true
+                            }
                         },
                         {
                             "requireSelfDoer": true,
@@ -307,7 +416,11 @@
                                 "com_furniture_medical_checkup_Join_4",
                                 "com_furniture_medical_checkup_Join_5",
                                 "com_furniture_medical_checkup_Join_6"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
                         }
                     ]
                 }
@@ -328,6 +441,19 @@
                                 "com_furniture_medical_checkup_Tryjoin_2",
                                 "com_furniture_medical_checkup_Tryjoin_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_medical_checkup_Tryjoin_Fallback_1",
+                                "com_furniture_medical_checkup_Tryjoin_Fallback_2"
+                            ]
                         }
                     ]
                 }
@@ -347,6 +473,19 @@
                                 "com_furniture_medical_checkup_Join_Refused_1",
                                 "com_furniture_medical_checkup_Join_Refused_2",
                                 "com_furniture_medical_checkup_Join_Refused_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_medical_checkup_Join_Refused_Fallback_1",
+                                "com_furniture_medical_checkup_Join_Refused_Fallback_2"
                             ]
                         }
                     ]
@@ -420,7 +559,21 @@
                 "com_furniture_medical_checkup_JoinFailed_4": "$self$朝门外的$target$摆摆手：\"人多了反而别扭，你在外头等着就行。\"",
                 "com_furniture_medical_checkup_JoinFailed_5": "\"没事，很快就能查完，不用挤进来。\" $self$躺在床上对$target$说。",
                 "com_furniture_medical_checkup_JoinFailed_6": "$self$冲$target$点点头：\"等出去了再聊。\"",
-                "com_furniture_medical_checkup_Ongoing_Fallback_1": "$self$点了点头，没有多说什么。"
+                "com_furniture_medical_checkup_Ongoing_Fallback_1": "$self$点了点头，没有多说什么。",
+                "com_furniture_medical_checkup_Fallback_1": "检查告一段落，$self$从检查床上坐起身，顺手理了理衣袖。",
+                "com_furniture_medical_checkup_Fallback_2": "$self$听完大致结果后点了点头，配合着结束了这次体检。",
+                "com_furniture_medical_checkup_Joined_Fallback_1": "\"行，我来帮着核对记录。\" $self$拿起夹板站到一旁。",
+                "com_furniture_medical_checkup_Joined_Fallback_2": "$self$点点头，接过记录单在旁边协助起来。",
+                "com_furniture_medical_checkup_Ongoing_Fallback_2": "$self$配合着保持姿势不动，安静地等着这一轮检查做完。",
+                "com_furniture_medical_checkup_Ongoing_Fallback_3": "$self$神色平稳地接受着检查，没有多说什么。",
+                "com_furniture_medical_checkup_Tryjoin_Fallback_1": "$self$走到检查床旁看了眼记录表，问$target$：\"需要我帮忙记一下数据吗？\"",
+                "com_furniture_medical_checkup_Tryjoin_Fallback_2": "$self$停在门边问了一句：\"这边忙得过来吗？要不要我搭把手？\"",
+                "com_furniture_medical_checkup_Refuse_Fallback_1": "$self$往后退了半步，直接回绝道：\"我现在不想做检查。\"",
+                "com_furniture_medical_checkup_Refuse_Fallback_2": "$self$摇了摇头：\"身体没什么不舒服的，用不着查。\"",
+                "com_furniture_medical_checkup_Join_Refused_Fallback_1": "\"好，那你自己看着弄就行。\" $self$放下笔退了出去。",
+                "com_furniture_medical_checkup_Join_Refused_Fallback_2": "$self$朝$target$摆摆手，没再挤在床边。",
+                "com_furniture_medical_checkup_Begin_Fallback_1": "$self$在检查床边坐稳，偏头示意可以开始检查了。",
+                "com_furniture_medical_checkup_Begin_Fallback_2": "$self$放松肩膀配合着检查姿势，安静地等着流程开始。"
             }
         }
     }

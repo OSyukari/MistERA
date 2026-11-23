@@ -147,7 +147,6 @@
                                 "tearful",
                                 "pain"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.4.5 被动接受（屈服） NPC正在执行行为时，他人请求加入…",
                             "responses": [
                                 "com_job_farm_cultivate_crop_Join_7",
@@ -163,7 +162,6 @@
                                 "blush",
                                 "affectionate"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.4.3 主动接受 NPC正在执行行为时，他人请求加入…",
                             "responses": [
                                 "com_job_farm_cultivate_crop_Join_5",
@@ -175,7 +173,6 @@
                             "extraSelfPortraitTags": [
                                 "blush"
                             ],
-                            "useActiveTags": false,
                             "_comment": "2.4.4 被动接受（惊讶不反感） NPC正在执行行为时，他人请求加入…",
                             "responses": [
                                 "com_job_farm_cultivate_crop_Join_9",

@@ -17,14 +17,6 @@
                             ]
                         },
                         {
-                            "_comment": "原参与者 NPC → 加入者 ｜ 接受",
-                            "responses": [
-                                "com_furniture_restroom_fix_Join_4",
-                                "com_furniture_restroom_fix_Join_5",
-                                "com_furniture_restroom_fix_Join_6"
-                            ]
-                        },
-                        {
                             "requireSelfDoer": true,
                             "_comment": "施方 → 加入者 ｜ 接受",
                             "responses": [
@@ -32,6 +24,17 @@
                                 "com_furniture_restroom_fix_Join_8",
                                 "com_furniture_restroom_fix_Join_9"
                             ]
+                        },
+                        {
+                            "_comment": "原参与者 NPC → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_furniture_restroom_fix_Join_4",
+                                "com_furniture_restroom_fix_Join_5",
+                                "com_furniture_restroom_fix_Join_6"
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ]
                 }
@@ -84,6 +87,16 @@
                                 "com_furniture_restroom_fix_11",
                                 "com_furniture_restroom_fix_12"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_restroom_fix_Fallback_1",
+                                "com_furniture_restroom_fix_Fallback_2"
+                            ]
                         }
                     ]
                 }
@@ -123,6 +136,16 @@
                                 "com_furniture_restroom_fix_Ongoing_5",
                                 "com_furniture_restroom_fix_Ongoing_6"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_restroom_fix_Ongoing_Fallback_2",
+                                "com_furniture_restroom_fix_Ongoing_Fallback_3"
+                            ]
                         }
                     ]
                 }
@@ -143,14 +166,6 @@
                             ]
                         },
                         {
-                            "_comment": "当前动作中的 NPC → 新来的人 ｜ 接受",
-                            "responses": [
-                                "com_furniture_restroom_fix_Interrupt_4",
-                                "com_furniture_restroom_fix_Interrupt_5",
-                                "com_furniture_restroom_fix_Interrupt_6"
-                            ]
-                        },
-                        {
                             "requireSelfReceiver": true,
                             "_comment": "受方 → 新来的人 ｜ 接受",
                             "responses": [
@@ -158,6 +173,17 @@
                                 "com_furniture_restroom_fix_Interrupt_8",
                                 "com_furniture_restroom_fix_Interrupt_9"
                             ]
+                        },
+                        {
+                            "_comment": "当前动作中的 NPC → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_furniture_restroom_fix_Interrupt_4",
+                                "com_furniture_restroom_fix_Interrupt_5",
+                                "com_furniture_restroom_fix_Interrupt_6"
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ]
                 }
@@ -202,6 +228,17 @@
                                 "com_furniture_restroom_fix_Refuse_5",
                                 "com_furniture_restroom_fix_Refuse_6"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_restroom_fix_Refuse_Fallback_2",
+                                "com_furniture_restroom_fix_Refuse_Fallback_3"
+                            ]
                         }
                     ]
                 }
@@ -225,17 +262,6 @@
                             ]
                         },
                         {
-                            "requirement": {
-                                "requireEPSuccess": false
-                            },
-                            "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
-                            "responses": [
-                                "com_furniture_restroom_fix_JoinFailed_4",
-                                "com_furniture_restroom_fix_JoinFailed_5",
-                                "com_furniture_restroom_fix_JoinFailed_6"
-                            ]
-                        },
-                        {
                             "requireSelfReceiver": true,
                             "requirement": {
                                 "requireEPSuccess": false
@@ -245,6 +271,18 @@
                                 "com_furniture_restroom_fix_JoinFailed_7",
                                 "com_furniture_restroom_fix_JoinFailed_8",
                                 "com_furniture_restroom_fix_JoinFailed_9"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_furniture_restroom_fix_JoinFailed_4",
+                                "com_furniture_restroom_fix_JoinFailed_5",
+                                "com_furniture_restroom_fix_JoinFailed_6"
                             ]
                         }
                     ]
@@ -278,6 +316,16 @@
                                 "com_furniture_restroom_fix_Begin_5",
                                 "com_furniture_restroom_fix_Begin_6"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_restroom_fix_Begin_Fallback_1",
+                                "com_furniture_restroom_fix_Begin_Fallback_2"
+                            ]
                         }
                     ]
                 }
@@ -297,6 +345,17 @@
                                 "com_furniture_restroom_fix_Joined_1",
                                 "com_furniture_restroom_fix_Joined_2",
                                 "com_furniture_restroom_fix_Joined_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_restroom_fix_Joined_Fallback_1",
+                                "com_furniture_restroom_fix_Joined_Fallback_2"
                             ]
                         }
                     ]
@@ -318,6 +377,17 @@
                                 "com_furniture_restroom_fix_Join_Refused_2",
                                 "com_furniture_restroom_fix_Join_Refused_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_restroom_fix_Join_Refused_Fallback_1",
+                                "com_furniture_restroom_fix_Join_Refused_Fallback_2"
+                            ]
                         }
                     ]
                 }
@@ -337,6 +407,17 @@
                                 "com_furniture_restroom_fix_Tryjoin_1",
                                 "com_furniture_restroom_fix_Tryjoin_2",
                                 "com_furniture_restroom_fix_Tryjoin_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_restroom_fix_Tryjoin_Fallback_1",
+                                "com_furniture_restroom_fix_Tryjoin_Fallback_2"
                             ]
                         }
                     ]
@@ -414,7 +495,21 @@
                 "com_furniture_restroom_fix_Ongoing_5": "知道$target$在旁边看着，$self$动作麻利了些，赶紧把扣子扣齐。",
                 "com_furniture_restroom_fix_Ongoing_6": "\"马上弄好，你要用的话稍等我半分钟。\" $self$回头对$target$说了一句。",
                 "com_furniture_restroom_fix_Ongoing_Fallback_1": "$self$点了点头，没有多说什么。",
-                "com_furniture_restroom_fix_Refuse_Fallback_1": "$self$点了点头，没有多说什么。"
+                "com_furniture_restroom_fix_Refuse_Fallback_1": "$self$点了点头，没有多说什么。",
+                "com_furniture_restroom_fix_Begin_Fallback_1": "$self$站到镜子前，抬手准备整理一下凌乱的衣角与头发。",
+                "com_furniture_restroom_fix_Begin_Fallback_2": "$self$凑近镜面看了看，开始动手打理起仪容来。",
+                "com_furniture_restroom_fix_Ongoing_Fallback_2": "$self$仔细地把衣领抚平，又对着镜子顺了顺鬓角。",
+                "com_furniture_restroom_fix_Ongoing_Fallback_3": "$self$站在洗手台前不紧不慢地整理着仪表。",
+                "com_furniture_restroom_fix_Tryjoin_Fallback_1": "$self$走到洗手间门口看了眼镜子，问$target$：\"能顺便借半边镜子理下仪表吗？\"",
+                "com_furniture_restroom_fix_Tryjoin_Fallback_2": "$self$在门旁停下问道：\"镜子够宽吧？我也一块儿整整衣服？\"",
+                "com_furniture_restroom_fix_Fallback_1": "$self$对着镜子确认仪表妥当，满意地点了点头便转身离开。",
+                "com_furniture_restroom_fix_Fallback_2": "整理好衣领和发梢后，$self$拍了拍袖口，神清气爽地走开。",
+                "com_furniture_restroom_fix_Joined_Fallback_1": "\"多谢，我占边上这一小块就行。\" $self$走过去理了理衣角。",
+                "com_furniture_restroom_fix_Joined_Fallback_2": "$self$点点头，站到镜面一侧整理起头发来。",
+                "com_furniture_restroom_fix_Join_Refused_Fallback_1": "\"行，那你先用着，我等会儿再来。\" $self$退开两步让出门口。",
+                "com_furniture_restroom_fix_Join_Refused_Fallback_2": "$self$朝$target$点点头，转身到一旁等着去了。",
+                "com_furniture_restroom_fix_Refuse_Fallback_2": "$self$摇了摇头：\"不用麻烦了，我现在这样挺好的。\"",
+                "com_furniture_restroom_fix_Refuse_Fallback_3": "$self$摆摆手走开：\"不整了，还有别的事要忙。\""
             }
         }
     }

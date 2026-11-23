@@ -55,20 +55,67 @@
                 {
                     "requirements":{
                         "requirement":{
-                            "req_Receivers":{ "minRevealingScore":2 }
+                            "req_Receivers":{ "minRevealingScore":1 }
                         }
                     },
 
-                    "displayName":"com_touch_butt_displayName_1"
+                    "displayName":"com_touch_butt_displayName_1",
+                    "description_begin":{
+                        "Entries":[
+                            {
+                                "keepLooking":true,
+                                "texts":[ "com_touch_butt_knead_begin_1", "com_touch_butt_knead_begin_2", "com_touch_butt_knead_begin_3" ]
+                            }
+                        ]
+                    },
+                    "description_ongoing":{
+                        "Entries":[
+                            {
+                                "keepLooking":true,
+                                "texts":[ "com_touch_butt_knead_ongoing_1", "com_touch_butt_knead_ongoing_2", "com_touch_butt_knead_ongoing_3" ]
+                            }
+                        ]
+                    },
+                    "description_remove":{
+                        "Entries":[
+                            {
+                                "keepLooking":true,
+                                "texts":[ "com_touch_butt_knead_remove_1", "com_touch_butt_knead_remove_2", "com_touch_butt_knead_remove_3" ]
+                            }
+                        ]
+                    }
                 },
                 {
                     "requirements":{
                         "requirement":{
-                            "req_Doers":{ "minRevealingScore":2 },
-                            "req_Receivers":{ "minRevealingScore":4 }
+                            "req_Receivers":{ "minRevealingScore":3 }
                         }
                     },
-                    "displayName":"com_touch_butt_displayName_2"
+                    "displayName":"com_touch_butt_displayName_2",
+                    "description_begin":{
+                        "Entries":[
+                            {
+                                "keepLooking":true,
+                                "texts":[ "com_touch_butt_stroke_begin_1", "com_touch_butt_stroke_begin_2", "com_touch_butt_stroke_begin_3" ]
+                            }
+                        ]
+                    },
+                    "description_ongoing":{
+                        "Entries":[
+                            {
+                                "keepLooking":true,
+                                "texts":[ "com_touch_butt_stroke_ongoing_1", "com_touch_butt_stroke_ongoing_2", "com_touch_butt_stroke_ongoing_3" ]
+                            }
+                        ]
+                    },
+                    "description_remove":{
+                        "Entries":[
+                            {
+                                "keepLooking":true,
+                                "texts":[ "com_touch_butt_stroke_remove_1", "com_touch_butt_stroke_remove_2", "com_touch_butt_stroke_remove_3" ]
+                            }
+                        ]
+                    }
                 }
             ],
             "_comment_actModifiers":"Provisional, untested new D20 bonuses. Relationships belong to the act owner toward the actual partner, not the master. Parent EP gates ordinary conscious, unrestrained, non-threat actual pairs; special, forced and group contexts stay unchanged.",
@@ -121,20 +168,67 @@
                     {
                         "requirement":
                         {
-                            "req_Receivers":{ "minRevealingScore":2 }
+                            "req_Receivers":{ "minRevealingScore":1 }
                         }
                     },
-                    "displayName":"com_touch_abdomen_displayName_1"
+                    "displayName":"com_touch_abdomen_displayName_1",
+                    "description_begin":{
+                        "Entries":[
+                            {
+                                "keepLooking":true,
+                                "texts":[ "com_touch_abdomen_knead_begin_1", "com_touch_abdomen_knead_begin_2", "com_touch_abdomen_knead_begin_3" ]
+                            }
+                        ]
+                    },
+                    "description_ongoing":{
+                        "Entries":[
+                            {
+                                "keepLooking":true,
+                                "texts":[ "com_touch_abdomen_knead_ongoing_1", "com_touch_abdomen_knead_ongoing_2", "com_touch_abdomen_knead_ongoing_3" ]
+                            }
+                        ]
+                    },
+                    "description_remove":{
+                        "Entries":[
+                            {
+                                "keepLooking":true,
+                                "texts":[ "com_touch_abdomen_knead_remove_1", "com_touch_abdomen_knead_remove_2", "com_touch_abdomen_knead_remove_3" ]
+                            }
+                        ]
+                    }
                 },
                 {
                     "requirements":{
                         "requirement":{
-                            "req_Doers":{ "minRevealingScore":2 },
-                            "req_Receivers":{ "minRevealingScore":4 }
+                            "req_Receivers":{ "minRevealingScore":3 }
                         }
                     },
 
-                    "displayName":"com_touch_abdomen_displayName_2"
+                    "displayName":"com_touch_abdomen_displayName_2",
+                    "description_begin":{
+                        "Entries":[
+                            {
+                                "keepLooking":true,
+                                "texts":[ "com_touch_abdomen_stroke_begin_1", "com_touch_abdomen_stroke_begin_2", "com_touch_abdomen_stroke_begin_3" ]
+                            }
+                        ]
+                    },
+                    "description_ongoing":{
+                        "Entries":[
+                            {
+                                "keepLooking":true,
+                                "texts":[ "com_touch_abdomen_stroke_ongoing_1", "com_touch_abdomen_stroke_ongoing_2", "com_touch_abdomen_stroke_ongoing_3" ]
+                            }
+                        ]
+                    },
+                    "description_remove":{
+                        "Entries":[
+                            {
+                                "keepLooking":true,
+                                "texts":[ "com_touch_abdomen_stroke_remove_1", "com_touch_abdomen_stroke_remove_2", "com_touch_abdomen_stroke_remove_3" ]
+                            }
+                        ]
+                    }
                 }
             ],
             "_comment_actModifiers":"Docs/Interactions/Plan_CommandProgression.md: com_touch_back profile (Goodwill 30 -> 90, Trust 20 -> 80).",
@@ -182,20 +276,67 @@
                 {
                     "requirements":{
                         "requirement":{
-                            "req_Receivers":{ "minRevealingScore":2 }
+                            "req_Receivers":{ "minRevealingScore":1 }
                         }
                     },
-                    "displayName":"com_touch_thigh_displayName_1"
+                    "displayName":"com_touch_thigh_displayName_1",
+                    "description_begin":{
+                        "Entries":[
+                            {
+                                "keepLooking":true,
+                                "texts":[ "com_touch_thigh_knead_begin_1", "com_touch_thigh_knead_begin_2", "com_touch_thigh_knead_begin_3" ]
+                            }
+                        ]
+                    },
+                    "description_ongoing":{
+                        "Entries":[
+                            {
+                                "keepLooking":true,
+                                "texts":[ "com_touch_thigh_knead_ongoing_1", "com_touch_thigh_knead_ongoing_2", "com_touch_thigh_knead_ongoing_3" ]
+                            }
+                        ]
+                    },
+                    "description_remove":{
+                        "Entries":[
+                            {
+                                "keepLooking":true,
+                                "texts":[ "com_touch_thigh_knead_remove_1", "com_touch_thigh_knead_remove_2", "com_touch_thigh_knead_remove_3" ]
+                            }
+                        ]
+                    }
                 },
                 {
                     "requirements":{
                         "requirement":{
-                            "req_Doers":{ "minRevealingScore":2 },
-                            "req_Receivers":{ "minRevealingScore":4 }
+                            "req_Receivers":{ "minRevealingScore":3 }
                         }
                     },
 
-                    "displayName":"com_touch_thigh_displayName_2"
+                    "displayName":"com_touch_thigh_displayName_2",
+                    "description_begin":{
+                        "Entries":[
+                            {
+                                "keepLooking":true,
+                                "texts":[ "com_touch_thigh_stroke_begin_1", "com_touch_thigh_stroke_begin_2", "com_touch_thigh_stroke_begin_3" ]
+                            }
+                        ]
+                    },
+                    "description_ongoing":{
+                        "Entries":[
+                            {
+                                "keepLooking":true,
+                                "texts":[ "com_touch_thigh_stroke_ongoing_1", "com_touch_thigh_stroke_ongoing_2", "com_touch_thigh_stroke_ongoing_3" ]
+                            }
+                        ]
+                    },
+                    "description_remove":{
+                        "Entries":[
+                            {
+                                "keepLooking":true,
+                                "texts":[ "com_touch_thigh_stroke_remove_1", "com_touch_thigh_stroke_remove_2", "com_touch_thigh_stroke_remove_3" ]
+                            }
+                        ]
+                    }
                 }
             ],
             "_comment_actModifiers":"Provisional, untested new D20 bonuses. Relationships belong to the act owner toward the actual partner, not the master. Parent EP gates ordinary conscious, unrestrained, non-threat actual pairs; special, forced and group contexts stay unchanged.",
@@ -244,19 +385,66 @@
                 {
                     "requirements":{
                         "requirement":{
-                            "req_Receivers":{ "minRevealingScore":2 }
+                            "req_Receivers":{ "minRevealingScore":1 }
                         }
                     },
-                    "displayName":"com_touch_back_displayName_1"
+                    "displayName":"com_touch_back_displayName_1",
+                    "description_begin":{
+                        "Entries":[
+                            {
+                                "keepLooking":true,
+                                "texts":[ "com_touch_back_knead_begin_1", "com_touch_back_knead_begin_2", "com_touch_back_knead_begin_3" ]
+                            }
+                        ]
+                    },
+                    "description_ongoing":{
+                        "Entries":[
+                            {
+                                "keepLooking":true,
+                                "texts":[ "com_touch_back_knead_ongoing_1", "com_touch_back_knead_ongoing_2", "com_touch_back_knead_ongoing_3" ]
+                            }
+                        ]
+                    },
+                    "description_remove":{
+                        "Entries":[
+                            {
+                                "keepLooking":true,
+                                "texts":[ "com_touch_back_knead_remove_1", "com_touch_back_knead_remove_2", "com_touch_back_knead_remove_3" ]
+                            }
+                        ]
+                    }
                 },
                 {
                     "requirements":{
                         "requirement":{
-                            "req_Doers":{ "minRevealingScore":2 },
-                            "req_Receivers":{ "minRevealingScore":4 }
+                            "req_Receivers":{ "minRevealingScore":3 }
                         }
                     },
-                    "displayName":"com_touch_back_displayName_2"
+                    "displayName":"com_touch_back_displayName_2",
+                    "description_begin":{
+                        "Entries":[
+                            {
+                                "keepLooking":true,
+                                "texts":[ "com_touch_back_stroke_begin_1", "com_touch_back_stroke_begin_2", "com_touch_back_stroke_begin_3" ]
+                            }
+                        ]
+                    },
+                    "description_ongoing":{
+                        "Entries":[
+                            {
+                                "keepLooking":true,
+                                "texts":[ "com_touch_back_stroke_ongoing_1", "com_touch_back_stroke_ongoing_2", "com_touch_back_stroke_ongoing_3" ]
+                            }
+                        ]
+                    },
+                    "description_remove":{
+                        "Entries":[
+                            {
+                                "keepLooking":true,
+                                "texts":[ "com_touch_back_stroke_remove_1", "com_touch_back_stroke_remove_2", "com_touch_back_stroke_remove_3" ]
+                            }
+                        ]
+                    }
                 }
             ],
             "_comment_actModifiers":"Provisional, untested new D20 bonuses. Relationships belong to the act owner toward the actual partner, not the master. Parent EP gates ordinary conscious, unrestrained, non-threat actual pairs; special, forced and group contexts stay unchanged.",
@@ -303,19 +491,66 @@
                 {
                     "requirements":{
                         "requirement":{
-                            "req_Receivers":{ "minRevealingScore":2 }
+                            "req_Receivers":{ "minRevealingScore":1 }
                         }
                     },
-                    "displayName":"com_touch_shoulders_displayName_1"
+                    "displayName":"com_touch_shoulders_displayName_1",
+                    "description_begin":{
+                        "Entries":[
+                            {
+                                "keepLooking":true,
+                                "texts":[ "com_touch_shoulders_knead_begin_1", "com_touch_shoulders_knead_begin_2", "com_touch_shoulders_knead_begin_3" ]
+                            }
+                        ]
+                    },
+                    "description_ongoing":{
+                        "Entries":[
+                            {
+                                "keepLooking":true,
+                                "texts":[ "com_touch_shoulders_knead_ongoing_1", "com_touch_shoulders_knead_ongoing_2", "com_touch_shoulders_knead_ongoing_3" ]
+                            }
+                        ]
+                    },
+                    "description_remove":{
+                        "Entries":[
+                            {
+                                "keepLooking":true,
+                                "texts":[ "com_touch_shoulders_knead_remove_1", "com_touch_shoulders_knead_remove_2", "com_touch_shoulders_knead_remove_3" ]
+                            }
+                        ]
+                    }
                 },
                 {
                     "requirements":{
                         "requirement":{
-                            "req_Doers":{ "minRevealingScore":2 },
-                            "req_Receivers":{ "minRevealingScore":4 }
+                            "req_Receivers":{ "minRevealingScore":3 }
                         }
                     },
-                    "displayName":"com_touch_shoulders_displayName_2"
+                    "displayName":"com_touch_shoulders_displayName_2",
+                    "description_begin":{
+                        "Entries":[
+                            {
+                                "keepLooking":true,
+                                "texts":[ "com_touch_shoulders_stroke_begin_1", "com_touch_shoulders_stroke_begin_2", "com_touch_shoulders_stroke_begin_3" ]
+                            }
+                        ]
+                    },
+                    "description_ongoing":{
+                        "Entries":[
+                            {
+                                "keepLooking":true,
+                                "texts":[ "com_touch_shoulders_stroke_ongoing_1", "com_touch_shoulders_stroke_ongoing_2", "com_touch_shoulders_stroke_ongoing_3" ]
+                            }
+                        ]
+                    },
+                    "description_remove":{
+                        "Entries":[
+                            {
+                                "keepLooking":true,
+                                "texts":[ "com_touch_shoulders_stroke_remove_1", "com_touch_shoulders_stroke_remove_2", "com_touch_shoulders_stroke_remove_3" ]
+                            }
+                        ]
+                    }
                 }
             ],
             "_comment_actModifiers":"Docs/Interactions/Plan_CommandProgression.md: com_touch_back profile (Goodwill 30 -> 90, Trust 20 -> 80).",
@@ -486,11 +721,106 @@
             "com_touch_back_displayName_2": "抚摸背部",
             "com_touch_shoulders_displayName_1": "揉捏肩部",
             "com_touch_shoulders_displayName_2": "抚摸肩部",
-            "com_touch_fingers_displayName_1": "撫摸手指",
-            "com_touch_ears_displayName_1": "撫摸耳朵",
+            "com_touch_fingers_displayName_1": "抚摸手指",
+            "com_touch_ears_displayName_1": "抚摸耳朵",
                             
-            "com_touch_foot_toes_displayName_1": "撫摸脚趾",
-            "com_touch_unsafe_base":"触摸类指令"
+            "com_touch_foot_toes_displayName_1": "抚摸脚趾",
+            "com_touch_unsafe_base":"触摸类指令",
+
+            "com_touch_butt_knead_begin_1": "$doer.firstname$揉捏起$receiver.firstname$的屁股",
+            "com_touch_butt_knead_begin_2": "$doer.firstname$用手掌揉捏$receiver.firstname$的屁股",
+            "com_touch_butt_knead_begin_3": "$doer.firstname$开始揉捏$receiver.firstname$的屁股",
+            "com_touch_butt_knead_ongoing_1": "$doer.firstname$还在揉捏$receiver.firstname$的屁股没有停手",
+            "com_touch_butt_knead_ongoing_2": "$doer.firstname$的手指还捏在$receiver.firstname$的屁股上",
+            "com_touch_butt_knead_ongoing_3": "$doer.firstname$揉捏着$receiver.firstname$的屁股",
+            "com_touch_butt_knead_remove_1": "$doer.firstname$立刻把手从$receiver.firstname$的屁股上撤了回来",
+            "com_touch_butt_knead_remove_2": "$doer.firstname$把手掌移开了$receiver.firstname$的屁股",
+            "com_touch_butt_knead_remove_3": "$doer.firstname$放开了$receiver.firstname$的屁股",
+            "com_touch_butt_stroke_begin_1": "$doer.firstname$抚摸起$receiver.firstname$的屁股",
+            "com_touch_butt_stroke_begin_2": "$doer.firstname$用手掌轻抚$receiver.firstname$的屁股",
+            "com_touch_butt_stroke_begin_3": "$doer.firstname$开始抚摸$receiver.firstname$的屁股",
+            "com_touch_butt_stroke_ongoing_1": "$doer.firstname$还在抚摸$receiver.firstname$的屁股没有停手",
+            "com_touch_butt_stroke_ongoing_2": "$doer.firstname$的手掌还停在$receiver.firstname$的屁股上",
+            "com_touch_butt_stroke_ongoing_3": "$doer.firstname$轻抚着$receiver.firstname$的屁股",
+            "com_touch_butt_stroke_remove_1": "$doer.firstname$立刻把手从$receiver.firstname$的屁股上撤了回来",
+            "com_touch_butt_stroke_remove_2": "$doer.firstname$把手掌移开了$receiver.firstname$的屁股",
+            "com_touch_butt_stroke_remove_3": "$doer.firstname$放开了$receiver.firstname$的屁股",
+
+            "com_touch_abdomen_knead_begin_1": "$doer.firstname$揉捏起$receiver.firstname$的腹部",
+            "com_touch_abdomen_knead_begin_2": "$doer.firstname$用手掌揉捏$receiver.firstname$的肚子",
+            "com_touch_abdomen_knead_begin_3": "$doer.firstname$开始揉捏$receiver.firstname$的腹部",
+            "com_touch_abdomen_knead_ongoing_1": "$doer.firstname$还在揉捏$receiver.firstname$的腹部没有停手",
+            "com_touch_abdomen_knead_ongoing_2": "$doer.firstname$的手掌还按在$receiver.firstname$的肚子上",
+            "com_touch_abdomen_knead_ongoing_3": "$doer.firstname$揉捏着$receiver.firstname$的腹部",
+            "com_touch_abdomen_knead_remove_1": "$doer.firstname$立刻把手从$receiver.firstname$的腹部撤了回来",
+            "com_touch_abdomen_knead_remove_2": "$doer.firstname$把手掌移开了$receiver.firstname$的肚子",
+            "com_touch_abdomen_knead_remove_3": "$doer.firstname$放开了$receiver.firstname$的腹部",
+            "com_touch_abdomen_stroke_begin_1": "$doer.firstname$抚摸起$receiver.firstname$的腹部",
+            "com_touch_abdomen_stroke_begin_2": "$doer.firstname$用手掌轻抚$receiver.firstname$的肚子",
+            "com_touch_abdomen_stroke_begin_3": "$doer.firstname$开始抚摸$receiver.firstname$的腹部",
+            "com_touch_abdomen_stroke_ongoing_1": "$doer.firstname$还在抚摸$receiver.firstname$的腹部没有停手",
+            "com_touch_abdomen_stroke_ongoing_2": "$doer.firstname$的手掌还停在$receiver.firstname$的肚子上",
+            "com_touch_abdomen_stroke_ongoing_3": "$doer.firstname$轻抚着$receiver.firstname$的腹部",
+            "com_touch_abdomen_stroke_remove_1": "$doer.firstname$立刻把手从$receiver.firstname$的腹部撤了回来",
+            "com_touch_abdomen_stroke_remove_2": "$doer.firstname$把手掌移开了$receiver.firstname$的肚子",
+            "com_touch_abdomen_stroke_remove_3": "$doer.firstname$放开了$receiver.firstname$的腹部",
+
+            "com_touch_thigh_knead_begin_1": "$doer.firstname$揉捏起$receiver.firstname$的大腿",
+            "com_touch_thigh_knead_begin_2": "$doer.firstname$用手掌揉捏$receiver.firstname$的大腿",
+            "com_touch_thigh_knead_begin_3": "$doer.firstname$开始揉捏$receiver.firstname$的大腿",
+            "com_touch_thigh_knead_ongoing_1": "$doer.firstname$还在揉捏$receiver.firstname$的大腿没有停手",
+            "com_touch_thigh_knead_ongoing_2": "$doer.firstname$的手掌还压着$receiver.firstname$的大腿",
+            "com_touch_thigh_knead_ongoing_3": "$doer.firstname$揉捏着$receiver.firstname$的大腿",
+            "com_touch_thigh_knead_remove_1": "$doer.firstname$立刻把手从$receiver.firstname$的大腿上撤了回来",
+            "com_touch_thigh_knead_remove_2": "$doer.firstname$把手掌移开了$receiver.firstname$的大腿",
+            "com_touch_thigh_knead_remove_3": "$doer.firstname$放开了$receiver.firstname$的大腿",
+            "com_touch_thigh_stroke_begin_1": "$doer.firstname$抚摸起$receiver.firstname$的大腿",
+            "com_touch_thigh_stroke_begin_2": "$doer.firstname$用手掌轻抚$receiver.firstname$的大腿",
+            "com_touch_thigh_stroke_begin_3": "$doer.firstname$开始抚摸$receiver.firstname$的大腿",
+            "com_touch_thigh_stroke_ongoing_1": "$doer.firstname$还在抚摸$receiver.firstname$的大腿没有停手",
+            "com_touch_thigh_stroke_ongoing_2": "$doer.firstname$的手掌还停在$receiver.firstname$的大腿上",
+            "com_touch_thigh_stroke_ongoing_3": "$doer.firstname$轻抚着$receiver.firstname$的大腿",
+            "com_touch_thigh_stroke_remove_1": "$doer.firstname$立刻把手从$receiver.firstname$的大腿上撤了回来",
+            "com_touch_thigh_stroke_remove_2": "$doer.firstname$把手掌移开了$receiver.firstname$的大腿",
+            "com_touch_thigh_stroke_remove_3": "$doer.firstname$放开了$receiver.firstname$的大腿",
+
+            "com_touch_back_knead_begin_1": "$doer.firstname$揉捏起$receiver.firstname$的腰部",
+            "com_touch_back_knead_begin_2": "$doer.firstname$用手掌揉捏$receiver.firstname$的后腰",
+            "com_touch_back_knead_begin_3": "$doer.firstname$开始揉捏$receiver.firstname$的腰部",
+            "com_touch_back_knead_ongoing_1": "$doer.firstname$还在揉捏$receiver.firstname$的腰部没有停手",
+            "com_touch_back_knead_ongoing_2": "$doer.firstname$的手掌还按在$receiver.firstname$的后腰上",
+            "com_touch_back_knead_ongoing_3": "$doer.firstname$揉捏着$receiver.firstname$的腰部",
+            "com_touch_back_knead_remove_1": "$doer.firstname$立刻把手从$receiver.firstname$的腰部撤了回来",
+            "com_touch_back_knead_remove_2": "$doer.firstname$把手掌移开了$receiver.firstname$的后腰",
+            "com_touch_back_knead_remove_3": "$doer.firstname$放开了$receiver.firstname$的腰部",
+            "com_touch_back_stroke_begin_1": "$doer.firstname$抚摸起$receiver.firstname$的背部",
+            "com_touch_back_stroke_begin_2": "$doer.firstname$用手掌轻抚$receiver.firstname$的后背",
+            "com_touch_back_stroke_begin_3": "$doer.firstname$开始抚摸$receiver.firstname$的背部",
+            "com_touch_back_stroke_ongoing_1": "$doer.firstname$还在抚摸$receiver.firstname$的背部没有停手",
+            "com_touch_back_stroke_ongoing_2": "$doer.firstname$的手掌还停在$receiver.firstname$的后背上",
+            "com_touch_back_stroke_ongoing_3": "$doer.firstname$轻抚着$receiver.firstname$的背部",
+            "com_touch_back_stroke_remove_1": "$doer.firstname$立刻把手从$receiver.firstname$的背部撤了回来",
+            "com_touch_back_stroke_remove_2": "$doer.firstname$把手掌移开了$receiver.firstname$的后背",
+            "com_touch_back_stroke_remove_3": "$doer.firstname$放开了$receiver.firstname$的背部",
+
+            "com_touch_shoulders_knead_begin_1": "$doer.firstname$揉捏起$receiver.firstname$的肩膀",
+            "com_touch_shoulders_knead_begin_2": "$doer.firstname$用手掌揉捏$receiver.firstname$的肩头",
+            "com_touch_shoulders_knead_begin_3": "$doer.firstname$开始揉捏$receiver.firstname$的肩膀",
+            "com_touch_shoulders_knead_ongoing_1": "$doer.firstname$还在揉捏$receiver.firstname$的肩膀没有停手",
+            "com_touch_shoulders_knead_ongoing_2": "$doer.firstname$的手掌还捏在$receiver.firstname$的肩膀上",
+            "com_touch_shoulders_knead_ongoing_3": "$doer.firstname$揉捏着$receiver.firstname$的肩膀",
+            "com_touch_shoulders_knead_remove_1": "$doer.firstname$立刻把手从$receiver.firstname$的肩膀上撤了回来",
+            "com_touch_shoulders_knead_remove_2": "$doer.firstname$把手掌移开了$receiver.firstname$的肩膀",
+            "com_touch_shoulders_knead_remove_3": "$doer.firstname$放开了$receiver.firstname$的肩膀",
+            "com_touch_shoulders_stroke_begin_1": "$doer.firstname$抚摸起$receiver.firstname$的肩膀",
+            "com_touch_shoulders_stroke_begin_2": "$doer.firstname$用手掌轻抚$receiver.firstname$的肩头",
+            "com_touch_shoulders_stroke_begin_3": "$doer.firstname$开始抚摸$receiver.firstname$的肩膀",
+            "com_touch_shoulders_stroke_ongoing_1": "$doer.firstname$还在抚摸$receiver.firstname$的肩膀没有停手",
+            "com_touch_shoulders_stroke_ongoing_2": "$doer.firstname$的手掌还停在$receiver.firstname$的肩膀上",
+            "com_touch_shoulders_stroke_ongoing_3": "$doer.firstname$轻抚着$receiver.firstname$的肩膀",
+            "com_touch_shoulders_stroke_remove_1": "$doer.firstname$立刻把手从$receiver.firstname$的肩膀上撤了回来",
+            "com_touch_shoulders_stroke_remove_2": "$doer.firstname$把手掌移开了$receiver.firstname$的肩膀",
+            "com_touch_shoulders_stroke_remove_3": "$doer.firstname$放开了$receiver.firstname$的肩膀"
         },
         "en-us":
         {

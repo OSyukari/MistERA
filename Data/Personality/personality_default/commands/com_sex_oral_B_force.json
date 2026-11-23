@@ -1,0 +1,481 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_B_force",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_B_force_4",
+                                        "com_sex_oral_B_force_5",
+                                        "com_sex_oral_B_force_6"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_B_force_1",
+                                        "com_sex_oral_B_force_2",
+                                        "com_sex_oral_B_force_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_B_force_16",
+                                        "com_sex_oral_B_force_17",
+                                        "com_sex_oral_B_force_18"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_sex_oral_B_force_7",
+                                                "com_sex_oral_B_force_8",
+                                                "com_sex_oral_B_force_9"
+                                            ]
+                                        }
+                                    ],
+                                    "responses": [
+                                        "com_sex_oral_B_force_10",
+                                        "com_sex_oral_B_force_11",
+                                        "com_sex_oral_B_force_12"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessLTE": "Failure"
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_B_force_13",
+                                        "com_sex_oral_B_force_14",
+                                        "com_sex_oral_B_force_15"
+                                    ],
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_sex_oral_B_force_22",
+                                                "com_sex_oral_B_force_23",
+                                                "com_sex_oral_B_force_24"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_B_force_19",
+                                        "com_sex_oral_B_force_20",
+                                        "com_sex_oral_B_force_21"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_oral_B_force_25",
+                                "com_sex_oral_B_force_26",
+                                "com_sex_oral_B_force_27"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            }
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "responses": [
+                                "com_sex_oral_B_force_28",
+                                "com_sex_oral_B_force_29",
+                                "com_sex_oral_B_force_30"
+                            ]
+                        }
+                    ],
+                    "template": "commandResult"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_B_force_Begin",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_B_force_Begin_13",
+                                        "com_sex_oral_B_force_Begin_14",
+                                        "com_sex_oral_B_force_Begin_15"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_B_force_Begin_1",
+                                        "com_sex_oral_B_force_Begin_2",
+                                        "com_sex_oral_B_force_Begin_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_B_force_Begin_4",
+                                        "com_sex_oral_B_force_Begin_5",
+                                        "com_sex_oral_B_force_Begin_6"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_B_force_Begin_10",
+                                        "com_sex_oral_B_force_Begin_11",
+                                        "com_sex_oral_B_force_Begin_12"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_oral_B_force_Begin_7",
+                                "com_sex_oral_B_force_Begin_8",
+                                "com_sex_oral_B_force_Begin_9"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "responses": [
+                                "com_sex_oral_B_force_Begin_16",
+                                "com_sex_oral_B_force_Begin_17",
+                                "com_sex_oral_B_force_Begin_18"
+                            ]
+                        }
+                    ],
+                    "template": "commandAct"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_B_force_Refuse",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireRefusalContext": "ReceiverDeclined",
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_B_force_Refuse_1",
+                                        "com_sex_oral_B_force_Refuse_2",
+                                        "com_sex_oral_B_force_Refuse_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_oral_B_force_Refuse_4",
+                                "com_sex_oral_B_force_Refuse_5",
+                                "com_sex_oral_B_force_Refuse_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "com_sex_oral_B_force_Refuse_7",
+                                "com_sex_oral_B_force_Refuse_8",
+                                "com_sex_oral_B_force_Refuse_9"
+                            ]
+                        }
+                    ],
+                    "template": "commandRefuse"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_B_force_Climax",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "responses": [
+                                "com_sex_oral_B_force_Climax_1",
+                                "com_sex_oral_B_force_Climax_2",
+                                "com_sex_oral_B_force_Climax_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "responses": [
+                                "com_sex_oral_B_force_Climax_4",
+                                "com_sex_oral_B_force_Climax_5",
+                                "com_sex_oral_B_force_Climax_6"
+                            ]
+                        }
+                    ],
+                    "template": "commandClimax"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_B_force_Ongoing",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_B_force_Ongoing_1",
+                                        "com_sex_oral_B_force_Ongoing_2",
+                                        "com_sex_oral_B_force_Ongoing_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_oral_B_force_Ongoing_4",
+                                "com_sex_oral_B_force_Ongoing_5",
+                                "com_sex_oral_B_force_Ongoing_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "responses": [
+                                "com_sex_oral_B_force_Ongoing_7",
+                                "com_sex_oral_B_force_Ongoing_8",
+                                "com_sex_oral_B_force_Ongoing_9"
+                            ]
+                        }
+                    ],
+                    "template": "commandAct"
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_sex_oral_B_force_1": "熟睡中的$self$被吸得乳肉发烫，两腿间悄悄沁出湿意，却依旧沉睡不醒。",
+                "com_sex_oral_B_force_2": "$self$无意识地发出一声绵软的鼻音，乳头被吮咬得充血肿胀，口水顺着乳沟滑落下来。",
+                "com_sex_oral_B_force_3": "梦乡里的$self$微微瘪了瘪嘴，任由湿热的口腔在胸前反复吮吸轻咬，没有醒来。",
+                "com_sex_oral_B_force_4": "时停中的$self$定格在原处，乳头已被$target$吸咬得又红又肿，她却连半点喘息都没有。",
+                "com_sex_oral_B_force_5": "静止的时间里，$self$的胸脯随着用力吮吸被扯出形变，唇角与指尖却纹丝不动。",
+                "com_sex_oral_B_force_6": "$self$丝毫不知自己胸前已被啃咬得湿淋淋一片，等时间流动后恐怕立刻就会痛呼出声。",
+                "com_sex_oral_B_force_7": "被缚住手脚的$self$彻底失去了抵抗的力气，只能随着胸前又吸又咬的刺激不住喘息：“哈啊……乳头被啃得好麻……要融化了……”",
+                "com_sex_oral_B_force_8": "绳索勒进皮肤，$self$却自己挺起胸膛迎合着$target$的嘴，声音甜腻发颤：“呜……不行……越是被这样用力吸越停不下来……”",
+                "com_sex_oral_B_force_9": "$self$眼神迷离地咬住嘴唇，腿根止不住地颤抖：“嗯啊……太舒服了……再多咬几下……”",
+                "com_sex_oral_B_force_10": "$self$仰起脖子大口喘息，乳头在$target$唇齿间被又吸又咬地玩弄，酥麻感直冲小腹：“哈啊……用力吸……牙齿再轻咬一下……♡”",
+                "com_sex_oral_B_force_11": "胸前被吮出清晰的红印，$self$双腿发软地夹紧，嘴角溢出一声甜腻的娇喘：“唔嗯……乳头硬得好难受……好舒服……”",
+                "com_sex_oral_B_force_12": "$self$迷离地低头看着埋在自己胸前的$target$，主动挺起胸脯往嘴里送：“啊……再吸得狠一点也没关系……”",
+                "com_sex_oral_B_force_13": "$self$吃痛地缩起肩，被狠狠咬住的乳头又肿又疼：“嘶……太重了！你想把那里咬破吗……”",
+                "com_sex_oral_B_force_14": "$self$恼火地推着埋在胸前的脑袋，语气满是抗拒：“停下……这样生拉硬拽一点也不舒服……”",
+                "com_sex_oral_B_force_15": "$self$忍着胸口传来的刺痛紧咬下唇，眼角泛起委屈的泪花：“……够了，快松嘴……”",
+                "com_sex_oral_B_force_16": "昏迷中的$self$毫无反抗之力，被$target$用力吮咬的乳头已经红肿挺立，胸前满是湿亮的吻痕。",
+                "com_sex_oral_B_force_17": "$self$躺在原地一动不动，饱满的乳肉却随着牙齿的拉扯与口腔的吸力不停晃动。",
+                "com_sex_oral_B_force_18": "失去意识的$self$任由胸前传来啧啧的水声，眼皮始终没有睁开。",
+                "com_sex_oral_B_force_19": "$self$在胸口传来的用力吸咬中猛然惊醒，浑身一颤喘出声来：“唔……！$target$？！你趁我睡着把我的乳头咬成什么样了……”",
+                "com_sex_oral_B_force_20": "睡意瞬间被这过分的刺激冲散，$self$又羞又急地撑起身子：“吸得这么用力……还用牙磨……真是个大色狼……”",
+                "com_sex_oral_B_force_21": "$self$红着脸抓紧床单，声音还带着刚醒的沙哑与发颤：“哈啊……别再啃了，我已经醒了啦……”",
+                "com_sex_oral_B_force_22": "动弹不得的$self$痛苦地闷哼，乳头被胡乱啃咬得又红又痛：“别再咬了……好疼……快松嘴！”",
+                "com_sex_oral_B_force_23": "$self$拼命晃动被捆的身子想要躲开，眼里溢满屈辱与烦躁：“恶心死了……这种野蛮的啃法谁会喜欢啊……”",
+                "com_sex_oral_B_force_24": "$self$喘着粗气狠狠瞪着埋在胸前的人，喉咙里发出压抑的嘶气声：“……你到底要折腾到什么时候！”",
+                "com_sex_oral_B_force_25": "$self$随着节奏轻哼出声，乳尖被$target$用力吸咬着胸前的乳头与乳肉得一阵发麻：“哈啊……好舒服……”",
+                "com_sex_oral_B_force_26": "快感顺着乳尖迅速蔓延开来，$self$软着声音喘息道：“唔嗯……就是那里，别停……”",
+                "com_sex_oral_B_force_27": "$self$微眯起眼迎合着$target$的动作，嗓音带着甜腻的颤意：“啊……再多弄一会儿……”",
+                "com_sex_oral_B_force_28": "$self$微微喘息着，一边狠狠叼住乳尖用力吸吮啃咬，一边留意着$target$的反应。",
+                "com_sex_oral_B_force_29": "空气渐渐升温，$self$放缓了动作继续狠狠叼住乳尖用力吸吮啃咬：“……感觉怎么样？”",
+                "com_sex_oral_B_force_30": "$self$轻吐出一口气，顺从着眼前的节奏继续狠狠叼住乳尖用力吸吮啃咬。",
+                "com_sex_oral_B_force_Begin_1": "熟睡中的$self$被$target$张嘴叼住乳头用力吸咬，她只在枕边发出一声含糊的轻哼，胸脯微微颤了颤。",
+                "com_sex_oral_B_force_Begin_2": "$self$沉睡着毫无防备，被咬住的乳肉在齿间渐渐发硬充血，呼吸略微急促却没醒。",
+                "com_sex_oral_B_force_Begin_3": "湿热的口腔用力裹住乳尖吮吸，$self$在梦里不安地挪了下身子，嘴唇微张地继续睡着。",
+                "com_sex_oral_B_force_Begin_4": "昏迷中的$self$毫无知觉地躺着，软绵的胸脯被$target$叼住乳尖用力吮咬，乳肉泛起一圈红印。",
+                "com_sex_oral_B_force_Begin_5": "$self$紧闭着眼没有任何反应，任由湿热的唇齿狠狠裹住乳头拉扯。",
+                "com_sex_oral_B_force_Begin_6": "失去意识的$self$呼吸浅缓，乳尖在牙齿的轻咬与舌尖的拨弄下被迫充血立起。",
+                "com_sex_oral_B_force_Begin_7": "$self$的胸脯被$target$按住，微挺的乳头直接被张口含住用力吸吮轻咬，她不由得倒抽一口气：“唔嗯……别一下子吸这么重……”",
+                "com_sex_oral_B_force_Begin_8": "$self$扶住$target$凑近胸前的脑袋，感觉牙齿轻轻磕在敏感的乳尖上：“等、等等……用咬的太刺激了……”",
+                "com_sex_oral_B_force_Begin_9": "$self$红着脸仰起头，任由$target$的唇齿重重叼住自己的乳珠拉扯：“啊……那边好敏感……轻点啃啦……”",
+                "com_sex_oral_B_force_Begin_10": "被绳索捆住的$self$无力遮挡胸口，只能感觉$target$重重含住自己的乳尖啃咬：“唔……！别用牙齿磨……好可怕……”",
+                "com_sex_oral_B_force_Begin_11": "$self$挣动着手腕却躲不开胸前的唇齿，乳头被狠狠吸扯的感觉让她浑身发颤：“等一下……太用力了……”",
+                "com_sex_oral_B_force_Begin_12": "动弹不得的$self$喘着气偏过头，胸口传来的刺麻让她脚趾绷紧：“啊……要被咬坏掉了……”",
+                "com_sex_oral_B_force_Begin_13": "时停中的$self$定格在原处，毫无知觉地被$target$叼住乳头用力吮咬拉扯，连眼神都没有半点波动。",
+                "com_sex_oral_B_force_Begin_14": "凝固的空气里，$self$胸前被啃咬出一圈清晰的牙印与红痕，她却毫不知情。",
+                "com_sex_oral_B_force_Begin_15": "$self$保持着原本的姿势纹丝不动，充血立起的乳珠任由唇齿肆意蹂躏。",
+                "com_sex_oral_B_force_Begin_16": "$self$调整了一下呼吸，开始狠狠叼住乳尖用力吸吮啃咬。",
+                "com_sex_oral_B_force_Begin_17": "$self$贴近$target$，顺势狠狠叼住乳尖用力吸吮啃咬。",
+                "com_sex_oral_B_force_Begin_18": "随着动作落下，$self$与$target$之间的呼吸渐渐变得灼热起来，开始狠狠叼住乳尖用力吸吮啃咬。",
+                "com_sex_oral_B_force_Refuse_1": "$self$被胸前的刺痛狠狠惊醒，当即一把推开$target$捂着胸口往床边缩去：“滚开！趁我睡着居然这么用力咬人！”",
+                "com_sex_oral_B_force_Refuse_2": "$self$脸色煞白地护住胸前，又惊又怒地瞪着$target$：“你疯了吗？！快给我滚出去！”",
+                "com_sex_oral_B_force_Refuse_3": "$self$颤抖着扯过被子裹住上身，声音里满是抗拒与愤怒：“别碰我！再敢过来我就喊人了！”",
+                "com_sex_oral_B_force_Refuse_4": "$self$猛地挣脱开$target$的手臂，迅速抱紧胸口往后退去：“疯了吗！那样咬着吸绝对不行！”",
+                "com_sex_oral_B_force_Refuse_5": "$self$满脸通红地瞪着$target$，声音因为气愤而微微拔高：“别开玩笑了！我才不要被你咬疼呢！”",
+                "com_sex_oral_B_force_Refuse_6": "$self$用力推开凑过来的$target$，神色坚决：“哪怕是你也不行，不准那么粗暴地碰我胸口！”",
+                "com_sex_oral_B_force_Refuse_7": "$self$皱起眉偏开身体，直接拒绝了$target$的动作：“别这样，停下来。”",
+                "com_sex_oral_B_force_Refuse_8": "$self$伸手挡在身前，语气冷淡地回绝道：“……我现在不想继续这个。”",
+                "com_sex_oral_B_force_Refuse_9": "$self$往后退开半步拉开了距离，明确地摇了摇头：“不行，别碰这里。”",
+                "com_sex_oral_B_force_Climax_1": "乳尖被牙齿轻咬着猛地一吸，$self$猛地弓起脊背到达了顶峰，下面疯狂涌出爱液：“去了……！胸口被咬着吸得去了……啊♡”",
+                "com_sex_oral_B_force_Climax_2": "$self$失神地仰起头，浑身剧烈痉挛着软在$target$怀里：“不行了……脑子一片空白……好舒服……呜啊啊♡”",
+                "com_sex_oral_B_force_Climax_3": "充血肿胀的乳头在$target$口腔里一阵阵轻颤，$self$大口喘息着抓紧对方的肩膀：“哈啊……光被吸咬乳头就高潮了……♡”",
+                "com_sex_oral_B_force_Climax_4": "在持续的刺激下，$self$浑身猛地一颤，迎来了难以抑制的高潮。",
+                "com_sex_oral_B_force_Climax_5": "积攒的热意瞬间炸开，$self$仰起脖子发出一声短促的喘息，彻底攀上顶峰。",
+                "com_sex_oral_B_force_Climax_6": "$self$紧紧攥住身侧的布料，在绵延的快感中颤抖着达到高潮。",
+                "com_sex_oral_B_force_Ongoing_1": "$self$的胸脯正被旁人用力吮咬着，余光瞥见一旁的$target$后顿时羞得偏过头：“呜……别、别看这里……”",
+                "com_sex_oral_B_force_Ongoing_2": "黏腻的吮吸声在安静的房间里格外清晰，$self$腿根发软地颤抖着，不敢看$target$的眼睛：“太丢脸了……乳头都被吸肿的样子被你看到了……”",
+                "com_sex_oral_B_force_Ongoing_3": "$self$咬着唇压抑着从胸口窜起的快感，耳根烫得吓人：“唔嗯……不要一直盯着人家胸口看啊……”",
+                "com_sex_oral_B_force_Ongoing_4": "$self$还在被$target$用力吸咬着胸前的乳头与乳肉，呼吸随着节奏一点点变得急促。",
+                "com_sex_oral_B_force_Ongoing_5": "持续不断的刺激让$self$眼角泛起微红，只能任由$target$继续动作。",
+                "com_sex_oral_B_force_Ongoing_6": "$self$轻喘着承受着乳尖传来的触感，身子微微发软。",
+                "com_sex_oral_B_force_Ongoing_7": "$self$没有停下动作，继续狠狠叼住乳尖用力吸吮啃咬。",
+                "com_sex_oral_B_force_Ongoing_8": "湿热的气息在两人之间弥漫，$self$维持着节奏狠狠叼住乳尖用力吸吮啃咬。",
+                "com_sex_oral_B_force_Ongoing_9": "$self$微微喘息着，动作不停地狠狠叼住乳尖用力吸吮啃咬。"
+            }
+        }
+    }
+}

@@ -7,7 +7,7 @@
 
   "fallback": {
     "label": "兜底（被撞见）",
-    "requirement": { "requireSelfAction": false, "requireTargetAction": false, "allowRecording": true }
+    "requirement": { "requireSelfAction": false, "requireTargetAction": false }
   },
 
   "levels": [

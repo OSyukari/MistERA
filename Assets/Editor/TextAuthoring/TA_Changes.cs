@@ -14,9 +14,9 @@ using Newtonsoft.Json.Linq;
 /// </summary>
 public static class TA_Changes
 {
-    public const string Pending = "pending", Approved = "approved", Rejected = "rejected", Applied = "applied",
-        HandedOff = "handedOff", Stale = "stale", Superseded = "superseded", Resolved = "resolved";
-    public const string FindingsBatch = "findings";
+    public const string Pending = "pending", Approved = "approved", Rejected = "rejected", WillNotFix = "willNotFix",
+        Applied = "applied", HandedOff = "handedOff", Stale = "stale", Superseded = "superseded", Resolved = "resolved";
+    public const string FindingsBatch = "findings", LegacyBatch = "legacy";
 
     public static string Dir { get { return Path.Combine(TA_Store.Root, "changes"); } }
     static string IndexPath { get { return Path.Combine(Dir, "index.json"); } }
@@ -61,6 +61,7 @@ public static class TA_Changes
     /// <summary>`by` of a record released from a deleted coder task: pending, and auto-approval leaves it alone.</summary>
     const string CoderTaskDeleted = "coder task deleted";
     static bool IsOpen(string state) { return state == Pending || state == Approved || state == HandedOff; }
+    static bool IsTerminal(string state) { return state == Applied || state == Rejected || state == Superseded || state == Resolved; }
 
     /// <summary>
     /// Records compete only inside a lane: text changes of one slot ("text|", or "text|&lt;pid&gt;" for kojo-fill records
@@ -133,10 +134,11 @@ public static class TA_Changes
     static string ReviewPath { get { return Path.Combine(TA_Store.Root, "review.json"); } }
 
     /// <summary>
-    /// Merges Store/review.json (written by store_viewer.html: { "&lt;id&gt;": { decision: approve|reject|reset|"", note, at } })
+    /// Merges Store/review.json (written by store_viewer.html: { "&lt;id&gt;": { decision: approve|reject|willNotFix|reset|"", note, at } })
     /// into the index; each entry applies once per `at` (recorded as the record's reviewAt). approve: pending → approved,
-    /// other open records on the same target → superseded; reject: pending / approved / stale → rejected; reset: approved /
-    /// rejected / stale / superseded → pending. A changed note is appended to the record's notes. Returns the entries applied.
+    /// other open records on the same target → superseded; reject / willNotFix: pending / approved / stale → rejected / willNotFix
+    /// (willNotFix is moved to the legacy batch across PurgeCompleted); reset: approved / rejected / willNotFix / stale / superseded → pending.
+    /// A changed note is appended to the record's notes. Returns the entries applied.
     /// </summary>
     public static int MergeReview(JObject index, StringBuilder log)
     {
@@ -156,7 +158,8 @@ public static class TA_Changes
             string next = null;
             if (decision == "approve" && state == Pending) next = Approved;
             else if (decision == "reject" && (state == Pending || state == Approved || state == Stale)) next = Rejected;
-            else if (decision == "reset" && (state == Approved || state == Rejected || state == Stale || state == Superseded)) next = Pending;
+            else if (decision == "willNotFix" && (state == Pending || state == Approved || state == Stale)) next = WillNotFix;
+            else if (decision == "reset" && (state == Approved || state == Rejected || state == WillNotFix || state == Stale || state == Superseded)) next = Pending;
             else if (decision != "") log?.AppendLine($"  review: {p.Name} {decision} ignored (record is {state})");
             if (next != null)
             {
@@ -478,9 +481,173 @@ public static class TA_Changes
             // a handed-off record closes too: the finding is gone whoever fixed it (a discarded coder task never reports)
             if (state == Pending || state == Approved || state == Stale || state == HandedOff) { e["state"] = Resolved; e["by"] = "finding gone"; e["updatedAt"] = Now(); resolved++; }
         }
+        int pruned = PruneMissingFindings(index, new HashSet<string>(byId.Keys, StringComparer.Ordinal));
         SaveIndex(index);
         var err = errors.Count > 0 ? $"\n  unreadable: {string.Join("; ", errors)}" : "";
-        return $"Findings -> changes: {records.Count} record(s), {added} new, {reopened} reopened, {resolved} resolved · {Summary(index)}{err}";
+        return $"Findings -> changes: {records.Count} record(s), {added} new, {reopened} reopened, {resolved} resolved{(pruned > 0 ? $", {pruned} pruned" : "")} · {Summary(index)}{err}";
+    }
+
+    static HashSet<string> LoadActiveFindingIds()
+    {
+        var batch = LoadBatch(FindingsBatch);
+        if (!(batch?["records"] is JArray recs)) return null;
+        var ids = new HashSet<string>(StringComparer.Ordinal);
+        for (int i = 0; i < recs.Count; i++)
+        {
+            var id = (string)recs[i]?["id"];
+            if (id != null) ids.Add(id);
+        }
+        return ids;
+    }
+
+    static int PruneMissingFindings(JObject index, HashSet<string> activeIds)
+    {
+        if (activeIds == null) return 0;
+        var toRemove = new List<string>();
+        var recs = Records(index);
+        foreach (var r in recs.Properties())
+        {
+            var e = (JObject)r.Value;
+            if ((string)e["batch"] != FindingsBatch || activeIds.Contains(r.Name)) continue;
+            var state = (string)e["state"];
+            if (state == Resolved || state == Applied) toRemove.Add(r.Name);
+        }
+        for (int i = 0; i < toRemove.Count; i++) recs.Remove(toRemove[i]);
+        return toRemove.Count;
+    }
+
+    /// <summary>
+    /// Removes completed run batches (no pending / approved / handedOff / stale records; willNotFix records are moved
+    /// into the "legacy" batch so they are kept until fixed while their original batch file is cleaned up) and deletes
+    /// their batch files, plus orphan batch files and resolved / applied findings no longer present in findings.json.
+    /// </summary>
+    public static string PurgeCompleted()
+    {
+        var index = LoadIndex();
+        int reviewed = MergeReview(index, null);
+        var recs = Records(index);
+        var byBatch = new Dictionary<string, List<string>>(StringComparer.Ordinal);
+        var hasOpenOrStale = new HashSet<string>(StringComparer.Ordinal);
+        var legacyTerminal = new List<string>();
+        bool hasLegacy = false;
+        foreach (var p in recs.Properties())
+        {
+            var e = (JObject)p.Value;
+            var batch = (string)e["batch"] ?? "";
+            var state = (string)e["state"];
+            if (batch == "" || batch == FindingsBatch) continue;
+            if (batch == LegacyBatch)
+            {
+                if (IsTerminal(state)) legacyTerminal.Add(p.Name);
+                else hasLegacy = true;
+                continue;
+            }
+            if (!byBatch.TryGetValue(batch, out var ids)) { ids = new List<string>(); byBatch[batch] = ids; }
+            ids.Add(p.Name);
+            if (!IsTerminal(state) && state != WillNotFix) hasOpenOrStale.Add(batch);
+        }
+
+        int purgedBatches = 0, purgedRecords = 0, movedWillNotFix = 0, orphanFiles = 0;
+        var movedRecords = new List<JObject>();
+        var keptFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "index.json", Path.GetFileName(BatchPath(FindingsBatch)) };
+        var now = Now();
+
+        foreach (var kv in byBatch)
+        {
+            var fileName = Path.GetFileName(BatchPath(kv.Key));
+            if (hasOpenOrStale.Contains(kv.Key)) { keptFiles.Add(fileName); continue; }
+
+            Dictionary<string, JObject> sourceById = null;
+            for (int i = 0; i < kv.Value.Count; i++)
+            {
+                var id = kv.Value[i];
+                var e = (JObject)recs[id];
+                if ((string)e["state"] == WillNotFix)
+                {
+                    if (sourceById == null) sourceById = IndexBatchRecords(LoadBatch(kv.Key));
+                    e["batch"] = LegacyBatch;
+                    e["updatedAt"] = now;
+                    if (sourceById.TryGetValue(id, out var raw))
+                    {
+                        var copy = (JObject)raw.DeepClone();
+                        copy["batch"] = LegacyBatch;
+                        movedRecords.Add(copy);
+                    }
+                    movedWillNotFix++;
+                    hasLegacy = true;
+                }
+                else
+                {
+                    recs.Remove(id);
+                    purgedRecords++;
+                }
+            }
+            purgedBatches++;
+            var path = BatchPath(kv.Key);
+            if (File.Exists(path)) File.Delete(path);
+        }
+
+        for (int i = 0; i < legacyTerminal.Count; i++)
+        {
+            recs.Remove(legacyTerminal[i]);
+            purgedRecords++;
+        }
+
+        if (movedRecords.Count > 0 || legacyTerminal.Count > 0)
+        {
+            var legacyRecords = new List<JObject>();
+            var seen = new HashSet<string>(StringComparer.Ordinal);
+            var existing = LoadBatch(LegacyBatch)?["records"] as JArray;
+            if (existing != null)
+            {
+                for (int i = 0; i < existing.Count; i++)
+                {
+                    if (!(existing[i] is JObject r)) continue;
+                    var id = (string)r["id"];
+                    if (string.IsNullOrEmpty(id) || !(recs[id] is JObject ie) || (string)ie["batch"] != LegacyBatch) continue;
+                    if (seen.Add(id)) legacyRecords.Add(r);
+                }
+            }
+            for (int i = 0; i < movedRecords.Count; i++)
+            {
+                var id = (string)movedRecords[i]["id"];
+                if (seen.Add(id)) legacyRecords.Add(movedRecords[i]);
+            }
+            if (legacyRecords.Count > 0) SaveBatch(LegacyBatch, LegacyBatch, legacyRecords);
+        }
+        if (hasLegacy) keptFiles.Add(Path.GetFileName(BatchPath(LegacyBatch)));
+
+        if (Directory.Exists(Dir))
+        {
+            var files = Directory.GetFiles(Dir, "*.json");
+            for (int i = 0; i < files.Length; i++)
+            {
+                if (keptFiles.Contains(Path.GetFileName(files[i]))) continue;
+                File.Delete(files[i]);
+                orphanFiles++;
+            }
+        }
+        int prunedFindings = PruneMissingFindings(index, LoadActiveFindingIds());
+        if (reviewed > 0 || purgedRecords > 0 || purgedBatches > 0 || movedWillNotFix > 0 || prunedFindings > 0) SaveIndex(index);
+        if (purgedBatches + purgedRecords + movedWillNotFix + prunedFindings + orphanFiles == 0)
+            return $"Nothing to purge · {Summary(index)}";
+        return $"Purged {purgedBatches} completed batch(es) ({purgedRecords} record(s))"
+            + (movedWillNotFix > 0 ? $", moved {movedWillNotFix} willNotFix to {LegacyBatch}" : "")
+            + $", {prunedFindings} stale finding(s)"
+            + (orphanFiles > 0 ? $", {orphanFiles} orphan file(s)" : "")
+            + $" · {Summary(index)}";
+    }
+
+    static Dictionary<string, JObject> IndexBatchRecords(JObject batch)
+    {
+        var map = new Dictionary<string, JObject>(StringComparer.Ordinal);
+        if (!(batch?["records"] is JArray arr)) return map;
+        for (int i = 0; i < arr.Count; i++)
+        {
+            if (arr[i] is JObject r && r["id"] is JValue v && v.Value is string id && id != "")
+                map[id] = r;
+        }
+        return map;
     }
 
     static void CollectFindings(string path, string unit, List<JObject> records, Dictionary<string, JObject> byId, List<string> errors)

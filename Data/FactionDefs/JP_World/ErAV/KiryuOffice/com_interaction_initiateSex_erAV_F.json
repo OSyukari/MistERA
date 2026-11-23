@@ -19,7 +19,6 @@
                                 "affectionate",
                                 "smile"
                             ],
-                            "useActiveTags": false,
                             "_comment": "1.1 女演员 监督 好感/恋人关系 甘愿配合",
                             "responses": [
                                 "com_interaction_initiateSex_erAV_F_Warm_1",
@@ -37,7 +36,6 @@
                                 "obedient",
                                 "blush"
                             ],
-                            "useActiveTags": false,
                             "_comment": "1.2 女演员 监督 普通同事关系 职责所在",
                             "responses": [
                                 "com_interaction_initiateSex_erAV_F_Dutiful_1",

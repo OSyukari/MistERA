@@ -192,6 +192,7 @@ public abstract partial class TA_DocBuilderBase
         countOnly = keepMode;
         resolvedViaSource = null;
 
+        var tpl = CaseTemplate(c);
         var o = new JObject
         {
             ["id"] = c.id, ["layer"] = "kojo", ["phase"] = c.phase, ["label"] = c.label, ["key"] = key,
@@ -202,6 +203,12 @@ public abstract partial class TA_DocBuilderBase
             ["cov"] = new JObject { ["own"] = own, ["inherited"] = inherited, ["noBranch"] = noBranch, ["missing"] = missing },
             ["authoring"] = authoring
         };
+        if (tpl != null)
+        {
+            o["template"] = tpl.id;
+            var bp = BranchPath(sDef, lDef, c, tpl);
+            if (bp.Count > 0) o["branchPath"] = bp;
+        }
         if (c.who != null) o["who"] = c.who;
         if (branchIn.Count > 0) o["branchIn"] = branchIn;
         if (lookupProvenance != null) o["lookupProvenance"] = lookupProvenance;
@@ -387,5 +394,167 @@ public abstract partial class TA_DocBuilderBase
         else if (c.listener == "player") req["targetBaseID"] = "PLAYER";
         if (req.Count > 0) n["requirement"] = req;
         return n;
+    }
+
+    /// <summary>
+    /// Template-aligned nesting path (outer → inner, one axis per variant) for a new branch covering this case.
+    /// Prevents templateMixed / templateDepth / templateOrder when a coder creates branches for multi-axis cases.
+    /// </summary>
+    static JArray BranchPath(JObject sDef, JObject lDef, KojoCaseSpec c, TA_KojoTemplate.Template tpl)
+    {
+        var path = new JArray();
+        var refLeaf = RefusalContextLeaf(c, tpl);
+        bool selfNoAct = sDef != null && !((bool?)sDef["canAct"] ?? true);
+        bool targetNoAct = c.listener != "self" && lDef != null && !((bool?)lDef["canAct"] ?? true);
+
+        JObject MakeReq(bool needSelfActionFlag, bool needTargetActionFlag)
+        {
+            var r = new JObject();
+            if (tpl.everyBranch != null) foreach (var p in tpl.everyBranch.Properties()) r[p.Name] = p.Value.DeepClone();
+            if (needSelfActionFlag && selfNoAct) r["requireSelfAction"] = false;
+            if (needTargetActionFlag && targetNoAct) r["requireTargetAction"] = false;
+            return r;
+        }
+
+        void AddNode(string axis, JObject variant, JObject req)
+        {
+            if (req != null && req.Count > 0) variant["requirement"] = req;
+            else if (tpl.everyBranch != null && tpl.everyBranch.Count > 0) variant["requirement"] = tpl.everyBranch.DeepClone();
+            path.Add(new JObject { ["axis"] = axis, ["variant"] = variant });
+        }
+
+        // Separate status tags from custom self/target tags using the template's own axis tag sets
+        HashSet<string> selfStatusTags = null, targetStatusTags = null, targetIdentityTags = null;
+        bool resultAllowsInsideSpeakerStatus = false;
+        int speakerStatusIdx = -1, roleIdx = -1;
+        for (int i = 0; i < tpl.axes.Count; i++)
+        {
+            var a = tpl.axes[i];
+            if (a.id == "speakerStatus") speakerStatusIdx = i;
+            else if (a.id == "role" || a.id == "refusalContext") { if (roleIdx < 0) roleIdx = i; }
+            if (a.kind == "selfStatus") selfStatusTags = a.tags;
+            else if (a.kind == "targetStatus") targetStatusTags = a.tags;
+            else if (a.kind == "target") targetIdentityTags = a.tags;
+            else if (a.id == "result" && a.allowInside.Contains("speakerStatus")) resultAllowsInsideSpeakerStatus = true;
+        }
+
+        var statusSelf = new JArray();
+        var customSelf = new JArray();
+        if (sDef?["tags"] is JArray st && st.Count > 0) statusSelf.Add(st[0]);
+        for (int i = 0; i < c.phaseSelfTags.Count; i++)
+        {
+            var tag = c.phaseSelfTags[i];
+            if (selfStatusTags != null && selfStatusTags.Contains(tag)) statusSelf.Add(tag);
+            else customSelf.Add(tag);
+        }
+
+        var statusTarget = new JArray();
+        var identityTarget = new JArray();
+        var customTarget = new JArray();
+        if (c.listener != "self" && lDef?["tags"] is JArray tt && tt.Count > 0) statusTarget.Add(tt[0]);
+        for (int i = 0; i < c.phaseTargetTags.Count; i++)
+        {
+            var tag = c.phaseTargetTags[i];
+            if (targetStatusTags != null && targetStatusTags.Contains(tag)) statusTarget.Add(tag);
+            else if (targetIdentityTags != null && targetIdentityTags.Contains(tag)) identityTarget.Add(tag);
+            else customTarget.Add(tag);
+        }
+
+        bool hasResult = c.outcome == "success" || c.outcome == "failure";
+        bool hasSpeakerStatus = statusSelf.Count > 0 || selfNoAct;
+        bool speakerStatusFirst = hasSpeakerStatus && selfNoAct && speakerStatusIdx >= 0 && (roleIdx < 0 || speakerStatusIdx < roleIdx);
+
+        void AddSpeakerStatusNode()
+        {
+            var r = MakeReq(true, false);
+            if (statusSelf.Count > 0) r["selfTags"] = statusSelf;
+            if (c.speakerState == "fainted") r["excludeSelfTags"] = new JArray("sleeping");
+            AddNode("speakerStatus", new JObject(), r);
+        }
+
+        void AddResultNode()
+        {
+            var r = MakeReq(true, true);
+            if (c.outcome == "success") r["requireEPSuccessGTE"] = "Success";
+            else r["requireEPSuccessLTE"] = "Failure";
+            AddNode("result", new JObject(), r);
+        }
+
+        // 0. When speaker cannot act and template puts speakerStatus first (e.g. commandAct / commandResult), emit speakerStatus at top level
+        if (speakerStatusFirst) AddSpeakerStatusNode();
+
+        // 1. EP role / refusalContext
+        var epReq = speakerStatusFirst ? MakeReq(true, false) : null;
+        if (refLeaf?.variant != null)
+        {
+            var v = new JObject();
+            foreach (var p in refLeaf.variant.Properties()) v[p.Name] = p.Value.DeepClone();
+            AddNode("refusalContext", v, epReq);
+        }
+        else if (c.speaker == "receiver") AddNode("role", new JObject { ["requireSelfReceiver"] = true }, epReq);
+        else if (c.speaker == "doer") AddNode("role", new JObject { ["requireSelfDoer"] = true }, epReq);
+        else if (c.listener == "self") AddNode("role", new JObject { ["requireSelfOnly"] = true }, epReq);
+
+        // 2. EP ordered
+        if (OrderedDoer(c) && refLeaf == null)
+            AddNode("ordered", new JObject { ["requireSelfNotMaster"] = true }, epReq);
+
+        // 3 & 4. EP result vs speakerStatus
+        if (speakerStatusFirst)
+        {
+            if (hasResult) AddResultNode();
+        }
+        else if (hasResult && hasSpeakerStatus && selfNoAct && resultAllowsInsideSpeakerStatus)
+        {
+            AddSpeakerStatusNode();
+            AddResultNode();
+        }
+        else
+        {
+            if (hasResult) AddResultNode();
+            if (hasSpeakerStatus) AddSpeakerStatusNode();
+        }
+
+        // 5. targetStatus
+        if (statusTarget.Count > 0 || targetNoAct)
+        {
+            var r = MakeReq(true, true);
+            if (statusTarget.Count > 0) r["targetTags"] = statusTarget;
+            AddNode("targetStatus", new JObject(), r);
+        }
+
+        // 6. target
+        string baseId = !string.IsNullOrEmpty(c.phaseTargetBaseID) ? c.phaseTargetBaseID : (c.listener == "player" ? "PLAYER" : null);
+        if (!string.IsNullOrEmpty(baseId) || identityTarget.Count > 0)
+        {
+            var r = MakeReq(true, true);
+            if (!string.IsNullOrEmpty(baseId)) r["targetBaseID"] = baseId;
+            if (identityTarget.Count > 0) r["targetTags"] = identityTarget;
+            AddNode("target", new JObject(), r);
+        }
+
+        // 7. relationship
+        if (c.phaseRelationshipTypes.Count > 0)
+        {
+            var r = MakeReq(true, true);
+            r["requireRelationshipTypes"] = new JArray(c.phaseRelationshipTypes.ToArray());
+            AddNode("relationship", new JObject(), r);
+        }
+
+        // 8. custom (e.g. justWokenUp or exclude tags)
+        var exSelf = new JArray();
+        for (int i = 0; i < c.phaseExcludeSelfTags.Count; i++)
+            if (!(c.speakerState == "fainted" && c.phaseExcludeSelfTags[i] == "sleeping")) exSelf.Add(c.phaseExcludeSelfTags[i]);
+        if (customSelf.Count > 0 || customTarget.Count > 0 || exSelf.Count > 0 || c.phaseExcludeTargetTags.Count > 0)
+        {
+            var r = MakeReq(true, true);
+            if (customSelf.Count > 0) r["selfTags"] = customSelf;
+            if (exSelf.Count > 0) r["excludeSelfTags"] = exSelf;
+            if (customTarget.Count > 0) r["targetTags"] = customTarget;
+            if (c.phaseExcludeTargetTags.Count > 0) r["excludeTargetTags"] = new JArray(c.phaseExcludeTargetTags.ToArray());
+            AddNode("custom", new JObject(), r);
+        }
+
+        return path;
     }
 }

@@ -13,7 +13,9 @@
                             "requireSelfDoer": true,
                             "_comment": "攻方 舔肛 高潮",
                             "responses": [
-                                "com_sex_oral_A_Climax_1"
+                                "com_sex_oral_A_Climax_1",
+                                "com_sex_oral_A_Climax_8",
+                                "com_sex_oral_A_Climax_9"
                             ]
                         },
                         {
@@ -70,137 +72,47 @@
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
-                                    "firstexp_M",
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "rimjob",
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "初体验 开始舔肛 睡眠中",
-                            "responses": [
-                                "com_sex_oral_A_Begin_FE_Sleep_1",
-                                "com_sex_oral_A_Begin_FE_Sleep_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "firstexp_M",
                                     "timestop"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "rimjob",
-                                "doll",
-                                "empty"
-                            ],
-                            "_comment": "初体验 开始舔肛 时停中",
-                            "responses": [
-                                "com_sex_oral_A_Begin_FE_Timestop_1",
-                                "com_sex_oral_A_Begin_FE_Timestop_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "selfTags": [
-                                    "firstexp_M"
-                                ]
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "targetBaseID": "PLAYER",
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "rimjob",
-                                        "blush",
-                                        "shy",
-                                        "love"
-                                    ],
-                                    "_comment": "初体验 玩家专用 开始舔肛 有允许",
-                                    "responses": [
-                                        "com_sex_oral_A_Begin_FE_Player_1",
-                                        "com_sex_oral_A_Begin_FE_Player_2"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "rimjob",
-                                        "blush",
-                                        "shy"
-                                    ],
-                                    "_comment": "初体验 开始舔肛 有允许",
-                                    "responses": [
-                                        "com_sex_oral_A_Begin_FE_1",
-                                        "com_sex_oral_A_Begin_FE_2"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAttitudeGTE": "Like"
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "rimjob",
-                                        "blush",
-                                        "shy",
-                                        "trembling"
-                                    ],
-                                    "_comment": "初体验 开始舔肛 未允许 好意",
-                                    "responses": [
-                                        "com_sex_oral_A_Begin_FE_3",
-                                        "com_sex_oral_A_Begin_FE_4"
-                                    ]
-                                }
-                            ],
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "rimjob",
-                                "fear",
-                                "trembling",
-                                "tearful"
-                            ],
-                            "_comment": "初体验 开始舔肛 未允许 敌意",
-                            "responses": [
-                                "com_sex_oral_A_Begin_FE_5",
-                                "com_sex_oral_A_Begin_FE_6"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "selfTags": [
-                                    "firstexp_partner_M"
                                 ]
                             },
                             "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
                                 "rimjob",
+                                "spread_pussy",
                                 "spread_ass",
-                                "surprised"
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
                             ],
-                            "_comment": "对方初体验 开始舔肛（被侍奉的一方）",
+                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
-                                "com_sex_oral_A_Begin_FE_Partner_1",
-                                "com_sex_oral_A_Begin_FE_Partner_2"
+                                "com_sex_oral_A_Begin_Timestop_1",
+                                "com_sex_oral_A_Begin_Timestop_2",
+                                "com_sex_oral_A_Begin_Timestop_3"
+                            ],
+                            "variants": [
+                                {
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "rimjob",
+                                        "doll",
+                                        "empty"
+                                    ],
+                                    "_comment": "初体验 开始舔肛 时停中",
+                                    "responses": [
+                                        "com_sex_oral_A_Begin_FE_Timestop_1",
+                                        "com_sex_oral_A_Begin_FE_Timestop_2",
+                                        "com_sex_oral_A_Begin_FE_Timestop_3"
+                                    ],
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_M"
+                                        ]
+                                    }
+                                }
                             ]
                         },
                         {
@@ -222,32 +134,81 @@
                             "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
                             "responses": [
                                 "com_sex_oral_A_Begin_Sleep_1",
-                                "com_sex_oral_A_Begin_Sleep_2"
+                                "com_sex_oral_A_Begin_Sleep_2",
+                                "com_sex_oral_A_Begin_Sleep_3"
+                            ],
+                            "variants": [
+                                {
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "rimjob",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "初体验 开始舔肛 睡眠中",
+                                    "responses": [
+                                        "com_sex_oral_A_Begin_FE_Sleep_1",
+                                        "com_sex_oral_A_Begin_FE_Sleep_2",
+                                        "com_sex_oral_A_Begin_FE_Sleep_3"
+                                    ],
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_M"
+                                        ]
+                                    }
+                                }
                             ]
                         },
                         {
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
-                                    "timestop"
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
                                 ]
                             },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "rimjob",
-                                "spread_pussy",
-                                "spread_ass",
-                                "doll",
-                                "empty",
-                                "silence",
-                                "idle"
-                            ],
-                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
-                            "responses": [
-                                "com_sex_oral_A_Begin_Timestop_1",
-                                "com_sex_oral_A_Begin_Timestop_2"
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_A_Begin_10",
+                                        "com_sex_oral_A_Begin_11",
+                                        "com_sex_oral_A_Begin_12"
+                                    ]
+                                }
                             ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_A_Begin_13",
+                                        "com_sex_oral_A_Begin_14",
+                                        "com_sex_oral_A_Begin_15"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_oral_A_Begin_16",
+                                "com_sex_oral_A_Begin_17",
+                                "com_sex_oral_A_Begin_18"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            }
                         },
                         {
                             "requirement": {
@@ -306,10 +267,140 @@
                                 "com_sex_oral_A_Begin_7",
                                 "com_sex_oral_A_Begin_8",
                                 "com_sex_oral_A_Begin_9"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_M"
+                                        ]
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "targetBaseID": "PLAYER"
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "rimjob",
+                                                "blush",
+                                                "shy",
+                                                "love"
+                                            ],
+                                            "_comment": "初体验 玩家专用 开始舔肛 有允许",
+                                            "responses": [
+                                                "com_sex_oral_A_Begin_FE_Player_1",
+                                                "com_sex_oral_A_Begin_FE_Player_2",
+                                                "com_sex_oral_A_Begin_FE_Player_3"
+                                            ],
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "requirePermission": true
+                                                    },
+                                                    "responses": [
+                                                        "com_sex_oral_A_Begin_FE_Player_1",
+                                                        "com_sex_oral_A_Begin_FE_Player_2",
+                                                        "com_sex_oral_A_Begin_FE_Player_3"
+                                                    ],
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "doer",
+                                                        "rimjob",
+                                                        "blush",
+                                                        "shy",
+                                                        "love"
+                                                    ],
+                                                    "_comment": "初体验 玩家专用 开始舔肛 有允许"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "rimjob",
+                                                "blush",
+                                                "shy"
+                                            ],
+                                            "_comment": "初体验 开始舔肛 有允许",
+                                            "responses": [
+                                                "com_sex_oral_A_Begin_FE_1",
+                                                "com_sex_oral_A_Begin_FE_2",
+                                                "com_sex_oral_A_Begin_FE_8"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAttitudeGTE": "Like"
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "rimjob",
+                                                "blush",
+                                                "shy",
+                                                "trembling"
+                                            ],
+                                            "_comment": "初体验 开始舔肛 未允许 好意",
+                                            "responses": [
+                                                "com_sex_oral_A_Begin_FE_3",
+                                                "com_sex_oral_A_Begin_FE_4",
+                                                "com_sex_oral_A_Begin_FE_7"
+                                            ]
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "rimjob",
+                                        "fear",
+                                        "trembling",
+                                        "tearful"
+                                    ],
+                                    "_comment": "初体验 开始舔肛 未允许 敌意",
+                                    "responses": [
+                                        "com_sex_oral_A_Begin_FE_5",
+                                        "com_sex_oral_A_Begin_FE_6",
+                                        "com_sex_oral_A_Begin_FE_9"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_partner_M"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "rimjob",
+                                        "spread_ass",
+                                        "surprised"
+                                    ],
+                                    "_comment": "对方初体验 开始舔肛（被侍奉的一方）",
+                                    "responses": [
+                                        "com_sex_oral_A_Begin_FE_Partner_1",
+                                        "com_sex_oral_A_Begin_FE_Partner_2",
+                                        "com_sex_oral_A_Begin_FE_Partner_3"
+                                    ]
+                                }
                             ]
                         }
                     ],
-                    "template": "commandAct"
+                    "template": "commandAct",
+                    "templateExtras": [
+                        "firstexpM",
+                        "firstexpPartnerM"
+                    ]
                 }
             },
             {
@@ -321,52 +412,63 @@
                     ],
                     "variants": [
                         {
-                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "rimjob",
+                                "spread_pussy",
+                                "spread_ass",
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "_comment": "2.3.1 时停中 被舔肛 口上文",
+                            "responses": [
+                                "com_sex_oral_A_4",
+                                "com_sex_oral_A_5",
+                                "com_sex_oral_A_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "rimjob",
+                                "spread_pussy",
+                                "spread_ass",
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "_comment": "2.3.1 时停中 被舔肛 口上文",
+                            "responses": [
+                                "com_sex_oral_A_4",
+                                "com_sex_oral_A_5",
+                                "com_sex_oral_A_6"
+                            ],
                             "variants": [
                                 {
+                                    "requireSelfDoer": true,
                                     "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "sleeping"
-                                        ]
+                                        "requireSelfAction": false
                                     },
                                     "variants": [
                                         {
                                             "requirement": {
-                                                "requireSelfAction": false,
-                                                "selfTags": [
-                                                    "firstexp_M"
-                                                ]
-                                            },
-                                            "extraSelfPortraitTags": [
-                                                "sex",
-                                                "doer",
-                                                "rimjob",
-                                                "sleeping",
-                                                "relaxed"
-                                            ],
-                                            "_comment": "初体验 睡眠中 舔肛",
-                                            "responses": [
-                                                "com_sex_oral_A_FE_Sleep_1"
-                                            ]
-                                        }
-                                    ],
-                                    "_comment": "sleeping",
-                                    "responses": [
-                                        "com_sex_oral_A_FE_Sleep_1"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "timestop"
-                                        ]
-                                    },
-                                    "variants": [
-                                        {
-                                            "requirement": {
-                                                "requireSelfAction": false,
                                                 "selfTags": [
                                                     "firstexp_M"
                                                 ]
@@ -380,15 +482,130 @@
                                             ],
                                             "_comment": "初体验 时停中 舔肛",
                                             "responses": [
-                                                "com_sex_oral_A_FE_Timestop_1"
+                                                "com_sex_oral_A_45",
+                                                "com_sex_oral_A_46",
+                                                "com_sex_oral_A_47"
                                             ]
                                         }
                                     ],
                                     "_comment": "timestop",
                                     "responses": [
-                                        "com_sex_oral_A_FE_Timestop_1"
+                                        "com_sex_oral_A_FE_Timestop_1",
+                                        "com_sex_oral_A_FE_Timestop_2",
+                                        "com_sex_oral_A_FE_Timestop_3"
                                     ]
-                                },
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "rimjob",
+                                "spread_pussy",
+                                "spread_ass",
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "_comment": "2.3.2 睡眠中 被舔肛 口上文",
+                            "responses": [
+                                "com_sex_oral_A_1",
+                                "com_sex_oral_A_2",
+                                "com_sex_oral_A_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "rimjob",
+                                "spread_pussy",
+                                "spread_ass",
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "_comment": "2.3.2 睡眠中 被舔肛 口上文",
+                            "responses": [
+                                "com_sex_oral_A_1",
+                                "com_sex_oral_A_2",
+                                "com_sex_oral_A_3"
+                            ],
+                            "variants": [
+                                {
+                                    "requireSelfDoer": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "firstexp_M"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "rimjob",
+                                                "sleeping",
+                                                "relaxed"
+                                            ],
+                                            "_comment": "初体验 睡眠中 舔肛",
+                                            "responses": [
+                                                "com_sex_oral_A_FE_Sleep_1",
+                                                "com_sex_oral_A_FE_Sleep_2",
+                                                "com_sex_oral_A_FE_Sleep_3"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "sleeping",
+                                    "responses": [
+                                        "com_sex_oral_A_FE_Sleep_1",
+                                        "com_sex_oral_A_49",
+                                        "com_sex_oral_A_50"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_A_54",
+                                        "com_sex_oral_A_55",
+                                        "com_sex_oral_A_56"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "variants": [
                                 {
                                     "requirement": {
                                         "selfTags": [
@@ -415,14 +632,17 @@
                                                     ],
                                                     "_comment": "初体验 玩家专用 舔肛 有允许",
                                                     "responses": [
-                                                        "com_sex_oral_A_FE_Player_1"
+                                                        "com_sex_oral_A_FE_Player_1",
+                                                        "com_sex_oral_A_FE_Player_2",
+                                                        "com_sex_oral_A_FE_Player_3"
                                                     ]
                                                 }
                                             ],
                                             "_comment": "玩家专用（无允许兜底）",
                                             "responses": [
                                                 "com_sex_oral_A_FE_4",
-                                                "com_sex_oral_A_FE_5"
+                                                "com_sex_oral_A_FE_5",
+                                                "com_sex_oral_A_48"
                                             ]
                                         },
                                         {
@@ -439,7 +659,8 @@
                                             "_comment": "初体验 舔肛 有允许（还不熟练）",
                                             "responses": [
                                                 "com_sex_oral_A_FE_1",
-                                                "com_sex_oral_A_FE_2"
+                                                "com_sex_oral_A_FE_2",
+                                                "com_sex_oral_A_FE_9"
                                             ]
                                         },
                                         {
@@ -456,7 +677,9 @@
                                             ],
                                             "_comment": "初体验 舔肛 未允许 好意（还不熟练）",
                                             "responses": [
-                                                "com_sex_oral_A_FE_3"
+                                                "com_sex_oral_A_FE_3",
+                                                "com_sex_oral_A_FE_7",
+                                                "com_sex_oral_A_FE_8"
                                             ]
                                         }
                                     ],
@@ -471,7 +694,8 @@
                                     "_comment": "初体验 舔肛 未允许 敌意",
                                     "responses": [
                                         "com_sex_oral_A_FE_4",
-                                        "com_sex_oral_A_FE_5"
+                                        "com_sex_oral_A_FE_5",
+                                        "com_sex_oral_A_FE_6"
                                     ]
                                 }
                             ],
@@ -482,8 +706,88 @@
                                 "rimjob"
                             ],
                             "responses": [
-                                "com_sex_oral_A_doer_variant"
-                            ]
+                                "com_sex_oral_A_doer_variant",
+                                "com_sex_oral_A_doer_variant_1",
+                                "com_sex_oral_A_doer_variant_2"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            }
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_sex_oral_A_51",
+                                                "com_sex_oral_A_52",
+                                                "com_sex_oral_A_53"
+                                            ]
+                                        }
+                                    ],
+                                    "responses": [
+                                        "com_sex_oral_A_66",
+                                        "com_sex_oral_A_67",
+                                        "com_sex_oral_A_68"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessLTE": "Failure"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_sex_oral_A_60",
+                                                "com_sex_oral_A_61",
+                                                "com_sex_oral_A_62"
+                                            ]
+                                        }
+                                    ],
+                                    "responses": [
+                                        "com_sex_oral_A_69",
+                                        "com_sex_oral_A_70",
+                                        "com_sex_oral_A_71"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_A_57",
+                                        "com_sex_oral_A_58",
+                                        "com_sex_oral_A_59"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_oral_A_63",
+                                "com_sex_oral_A_64",
+                                "com_sex_oral_A_65"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            }
                         },
                         {
                             "requirement": {
@@ -498,72 +802,6 @@
                                 "requireCOMStrongVariant": true
                             },
                             "variants": [
-                                {
-                                    "requirement": {
-                                        "selfTags": [
-                                            "firstexp_partner_M"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "rimjob",
-                                        "spread_ass",
-                                        "surprised"
-                                    ],
-                                    "_comment": "对方初体验 舔肛（被侍奉的一方）",
-                                    "responses": [
-                                        "com_sex_oral_A_FE_Partner_1"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "sleeping"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "rimjob",
-                                        "spread_pussy",
-                                        "spread_ass",
-                                        "sleeping",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.3.2 睡眠中 被舔肛 口上文",
-                                    "responses": [
-                                        "com_sex_oral_A_1",
-                                        "com_sex_oral_A_2",
-                                        "com_sex_oral_A_3"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "timestop"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "rimjob",
-                                        "spread_pussy",
-                                        "spread_ass",
-                                        "doll",
-                                        "empty",
-                                        "silence",
-                                        "idle"
-                                    ],
-                                    "_comment": "2.3.1 时停中 被舔肛 口上文",
-                                    "responses": [
-                                        "com_sex_oral_A_4",
-                                        "com_sex_oral_A_5",
-                                        "com_sex_oral_A_6"
-                                    ]
-                                },
                                 {
                                     "requirement": {
                                         "targetBaseID": "PLAYER",
@@ -654,6 +892,26 @@
                                         "com_sex_oral_A_32",
                                         "com_sex_oral_A_33"
                                     ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_partner_M"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "rimjob",
+                                        "spread_ass",
+                                        "surprised"
+                                    ],
+                                    "_comment": "对方初体验 舔肛（被侍奉的一方）",
+                                    "responses": [
+                                        "com_sex_oral_A_FE_Partner_1",
+                                        "com_sex_oral_A_43",
+                                        "com_sex_oral_A_44"
+                                    ]
                                 }
                             ],
                             "_comment": "2.2.5 ($self$) 被舔肛 结果正面 未允许 口上文",
@@ -673,72 +931,6 @@
                                 "com_sex_oral_A_34",
                                 "com_sex_oral_A_35",
                                 "com_sex_oral_A_36"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "selfTags": [
-                                    "firstexp_partner_M"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "rimjob",
-                                "spread_ass",
-                                "surprised"
-                            ],
-                            "_comment": "对方初体验 舔肛（被侍奉的一方）",
-                            "responses": [
-                                "com_sex_oral_A_FE_Partner_1"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "rimjob",
-                                "spread_pussy",
-                                "spread_ass",
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "2.3.2 睡眠中 被舔肛 口上文",
-                            "responses": [
-                                "com_sex_oral_A_1",
-                                "com_sex_oral_A_2",
-                                "com_sex_oral_A_3"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "timestop"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "rimjob",
-                                "spread_pussy",
-                                "spread_ass",
-                                "doll",
-                                "empty",
-                                "silence",
-                                "idle"
-                            ],
-                            "_comment": "2.3.1 时停中 被舔肛 口上文",
-                            "responses": [
-                                "com_sex_oral_A_4",
-                                "com_sex_oral_A_5",
-                                "com_sex_oral_A_6"
                             ]
                         },
                         {
@@ -812,56 +1004,89 @@
                             ]
                         },
                         {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "responses": [
+                                "com_sex_oral_A_72",
+                                "com_sex_oral_A_73",
+                                "com_sex_oral_A_74"
+                            ],
                             "variants": [
                                 {
                                     "requirement": {
-                                        "requirePermission": true
+                                        "selfTags": [
+                                            "firstexp_partner_M"
+                                        ]
                                     },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "rimjob",
+                                        "spread_ass",
+                                        "surprised"
+                                    ],
+                                    "_comment": "对方初体验 舔肛（被侍奉的一方）",
+                                    "responses": [
+                                        "com_sex_oral_A_FE_Partner_1",
+                                        "com_sex_oral_A_FE_Partner_2",
+                                        "com_sex_oral_A_FE_Partner_3"
+                                    ]
+                                },
+                                {
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "rimjob",
+                                                "spread_pussy",
+                                                "spread_ass",
+                                                "pain",
+                                                "bored",
+                                                "doubt",
+                                                "disappointed"
+                                            ],
+                                            "_comment": "2.1.4 ($self$) 被舔肛 结果负面 有允许 口上文",
+                                            "responses": [
+                                                "com_sex_oral_A_37",
+                                                "com_sex_oral_A_38",
+                                                "com_sex_oral_A_39"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.6 ($self$) 被舔肛 结果负面 未允许 口上文",
                                     "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
                                         "rimjob",
                                         "spread_pussy",
                                         "spread_ass",
-                                        "pain",
-                                        "bored",
-                                        "doubt",
-                                        "disappointed"
+                                        "angry",
+                                        "cry",
+                                        "glare",
+                                        "disgust",
+                                        "pouting",
+                                        "sad",
+                                        "troubled",
+                                        "silence"
                                     ],
-                                    "_comment": "2.1.4 ($self$) 被舔肛 结果负面 有允许 口上文",
                                     "responses": [
-                                        "com_sex_oral_A_37",
-                                        "com_sex_oral_A_38",
-                                        "com_sex_oral_A_39"
-                                    ]
+                                        "com_sex_oral_A_40",
+                                        "com_sex_oral_A_41",
+                                        "com_sex_oral_A_42"
+                                    ],
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "requireTargetAction": false,
+                                        "allowRecording": true
+                                    }
                                 }
-                            ],
-                            "_comment": "2.2.6 ($self$) 被舔肛 结果负面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "rimjob",
-                                "spread_pussy",
-                                "spread_ass",
-                                "angry",
-                                "cry",
-                                "glare",
-                                "disgust",
-                                "pouting",
-                                "sad",
-                                "troubled",
-                                "silence"
-                            ],
-                            "responses": [
-                                "com_sex_oral_A_40",
-                                "com_sex_oral_A_41",
-                                "com_sex_oral_A_42"
-                            ],
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            }
+                            ]
                         }
                     ],
                     "template": "commandResult",
@@ -892,7 +1117,8 @@
                             "useActiveTags": false,
                             "responses": [
                                 "com_sex_oral_A_Refuse_Receiver_1",
-                                "com_sex_oral_A_Refuse_Receiver_2"
+                                "com_sex_oral_A_Refuse_Receiver_2",
+                                "com_sex_oral_A_Refuse_Receiver_3"
                             ]
                         },
                         {
@@ -1011,44 +1237,87 @@
                     ],
                     "template": "commandRefuse"
                 }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_A_Ongoing",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_A_Ongoing_1",
+                                        "com_sex_oral_A_Ongoing_2",
+                                        "com_sex_oral_A_Ongoing_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_oral_A_Ongoing_4",
+                                "com_sex_oral_A_Ongoing_5",
+                                "com_sex_oral_A_Ongoing_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "responses": [
+                                "com_sex_oral_A_Ongoing_7",
+                                "com_sex_oral_A_Ongoing_8",
+                                "com_sex_oral_A_Ongoing_9"
+                            ]
+                        }
+                    ],
+                    "template": "commandAct"
+                }
             }
         ]
     },
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "com_sex_oral_A_Climax_1": "$self$埋首在$target$身后，舌头在菊穴上打着转，腰却因为莫名的兴奋抽搐着迎来了高潮。\n\"唔……明明是我在舔……怎么会先到……\"",
+                "com_sex_oral_A_Climax_1": "$self$埋首在$target$身后，舌头在菊穴上打着转，腰却因为莫名的兴奋抽搐着迎来了高潮：“唔……明明是我在舔……怎么会先到……”",
                 "com_sex_oral_A_Climax_5": "$self$咬着手背想压住声音，屁穴却在舌头的搅弄下痉挛着迎来了高潮，小穴吐出好多爱液。\n\"不要……别让我……啊啊……这种地方……才没有感觉……！\"",
                 "com_sex_oral_A_Climax_6": "$self$流着泪把脸埋进臂弯，身体却背弃意志攀上了顶峰，腿根抖个不停。\n\"呜……被舔这种地方……居然还会到……好丢脸……\"",
                 "com_sex_oral_A_Climax_7": "$self$闭上眼，快感冲垮了最后的抵抗，菊穴绞着软肉抽搐起来。\n\"啊……不行了……身体擅自……呜嗯……！\"",
                 "com_sex_oral_A_Climax_2": "$self$猛地绷直了背，屁穴咬住$target$的舌头收缩起来，小穴也跟着喷出爱液。\n\"去了……！后面被舔……居然也会去……！\"",
                 "com_sex_oral_A_Climax_3": "$self$整个人趴伏下去，腰肢剧烈地抖着，菊穴随着舌头的抽送痉挛不止，爱液顺着腿根往下淌。\n\"呜呜……不行了……连后面都……啊……\"",
                 "com_sex_oral_A_Climax_4": "$self$浑身瘫软下来，大口喘着气，臀瓣还往后追着$target$的嘴。\n\"哈啊……哈啊……后穴也会……这么舒服……\"",
-                "com_sex_oral_A_Begin_1": "$self$主动趴伏下去，双手扒开臀瓣，把菊穴露给$target$。\n\"想舔就舔吧……轻点哦。\"",
-                "com_sex_oral_A_Begin_2": "$self$回头看$target$趴到身后，抿着笑摆好了姿势。\n\"洗得很干净哦……尝尝吗？\"",
-                "com_sex_oral_A_Begin_3": "$self$有些不好意思地撅起腰，脸偏向旁边。\n\"那就……拜托你了。\"",
-                "com_sex_oral_A_Begin_4": "$self$僵在原地，被扒开的臀瓣暴露着菊穴，脸腾地红了。\n\"等、等等……那里……不可以……啊……\"",
-                "com_sex_oral_A_Begin_5": "$self$惊讶地回头，看着贴上自己身后的$target$，声音发颤。\n\"你是认真的吗？那里……很脏的……唔……\"",
-                "com_sex_oral_A_Begin_6": "$self$想往前躲，又被拉了回来，只好把脸埋进手臂里。\n\"变态……只这次哦……不许告诉别人……\"",
+                "com_sex_oral_A_Begin_1": "$self$主动趴伏下去，双手扒开臀瓣，把菊穴露给$target$：“想舔就舔吧……轻点哦。”",
+                "com_sex_oral_A_Begin_2": "$self$回头看$target$趴到身后，抿着笑摆好了姿势：“洗得很干净哦……尝尝吗？”",
+                "com_sex_oral_A_Begin_3": "$self$有些不好意思地撅起腰，脸偏向旁边：“那就……拜托你了。”",
+                "com_sex_oral_A_Begin_4": "$self$缩在原地，被扒开的臀瓣暴露着菊穴，脸腾地红了：“等、等等……那里……不可以……啊……”",
+                "com_sex_oral_A_Begin_5": "$self$惊讶地回头，看着贴上自己身后的$target$，声音发颤：“你是认真的吗？那里……很脏的……唔……”",
+                "com_sex_oral_A_Begin_6": "$self$想往前躲，又被拉了回来，只好把脸埋进手臂里：“变态……只这次哦……不许告诉别人……”",
                 "com_sex_oral_A_Begin_7": "$self$瑟缩着，眼角挂着泪，绝望地趴了下去。\n\"求你……快点结束……\"",
                 "com_sex_oral_A_Begin_8": "$self$害怕地捂住嘴不敢出声，身子抖个不停。\n\"我知道了……我会听话的……别伤害我……\"",
                 "com_sex_oral_A_Begin_9": "$self$眼神空洞地趴着，任由$target$摆布。\n\"这样就可以了吗……随你便吧。\"",
-                "com_sex_oral_A_doer_variant": "$self$的脸埋在$target$的臀缝里，舌头绕着菊穴打转舔弄。\n\"唔嗯……味道……还行吗……\"",
+                "com_sex_oral_A_doer_variant": "$self$的脸埋在$target$的臀缝里，舌头绕着菊穴打转舔弄：“唔嗯……味道……还行吗……”",
                 "com_sex_oral_A_1": "$self$呼吸平稳绵长，对身后的舔舐毫无察觉，只是偶尔因为舌尖碰到敏感处，臀肉轻轻缩了缩。",
                 "com_sex_oral_A_2": "$self$沉在梦乡里，被舔得菊穴不断收缩也醒不过来，只有腿缝渐渐变得湿滑。",
                 "com_sex_oral_A_3": "$self$睡着的样子毫无防备，被舌头钻进屁穴也只是难耐地哼了声，腰轻轻扭了扭，没醒。",
                 "com_sex_oral_A_4": "$self$定格在原本的姿势，眼神空洞地望着前方，不知道菊穴正被舌头肆意搅弄，只有穴肉本能地收缩着。",
-                "com_sex_oral_A_5": "$self$僵在原地动弹不得，屁穴随着舔舐不断收缩，腿间的软肉泛红吐水，本人却毫不知情。",
+                "com_sex_oral_A_5": "$self$一动不动地留在原地，屁穴随着舔舐不断收缩，腿间的软肉泛红吐水，本人却毫不知情。",
                 "com_sex_oral_A_6": "$self$保持着弯腰的姿势，任由$target$在身后享用，时间恢复之前，她都不会知道自己被舔成了什么样。",
-                "com_sex_oral_A_19": "$self$眼神冰冷地看着$target$，猛地推开。\n\"恶心。离我远点。\"",
-                "com_sex_oral_A_20": "$self$毫不客气地甩开$target$的手，语气满是厌恶。\n\"你脑子有问题吗？我要喊人了。\"",
-                "com_sex_oral_A_21": "$self$嫌弃地拍打着被碰过的地方。\n\"别以为我不敢动手，滚！\"",
+                "com_sex_oral_A_19": "$self$冷冷地盯着$target$，猛地推开：“恶心。离我远点。”",
+                "com_sex_oral_A_20": "$self$毫不客气地甩开$target$的手，语气满是厌恶：“你脑子有问题吗？我要喊人了。”",
+                "com_sex_oral_A_21": "$self$嫌弃地拍打着被碰过的地方：“别以为我不敢动手，滚！”",
                 "com_sex_oral_A_10": "$self$发出尖叫，手脚并用地推开$target$。\n\"变态！你怎么敢！滚出去！\"",
                 "com_sex_oral_A_11": "$self$惊慌失措地往后缩，满脸戒备。\n\"别过来！再过来我就喊人了！\"",
                 "com_sex_oral_A_12": "$self$愤怒地挥手砸了过去。\n\"滚开！恶心的东西！\"",
-                "com_sex_oral_A_7": "$self$猛地惊醒，下意识往前躲开了身后的湿热。\n\"你在干什么啊！让人睡觉行不行！\"",
-                "com_sex_oral_A_8": "$self$被吓醒，缩起身子抓着衣服。\n\"别碰那里……我很累了，这种玩笑不好笑。\"",
-                "com_sex_oral_A_9": "$self$皱着眉推开凑上来的$target$。\n\"停下……我现在只想睡觉，没心情做这个。\"",
+                "com_sex_oral_A_7": "$self$猛地惊醒，下意识往前躲开了身后的湿热：“你在干什么啊！让人睡觉行不行！”",
+                "com_sex_oral_A_8": "$self$被吓醒，缩起身子护住自己：“别碰那里……我很累了，这种玩笑不好笑。”",
+                "com_sex_oral_A_9": "$self$恼火地推开凑上来的$target$：“停下……我现在只想睡觉，没心情做这个。”",
                 "com_sex_oral_A_13": "$self$轻轻按住$target$的头，嗔怪地瞪了眼。\n\"不行啦……那里不行，今天真的很累。\"",
                 "com_sex_oral_A_14": "$self$扭腰避开了凑上来的脸。\n\"别闹了，那里很脏的……下次吧。\"",
                 "com_sex_oral_A_15": "$self$把臀瓣从手里挣脱出来，摇了摇头。\n\"这种事最讨厌了，换个地方吧。\"",
@@ -1070,41 +1339,117 @@
                 "com_sex_oral_A_31": "$self$满脸潮红，趴伏着扭动腰肢，屁穴追着舌头收缩。\n\"嗯嗯……后面……好舒服……不要停……\"",
                 "com_sex_oral_A_32": "$self$难耐地把脸埋进臂弯，臀瓣迎合着往后送。\n\"哈啊……连那里都被开发出来了……唔……$target$……\"",
                 "com_sex_oral_A_33": "$self$咬着下唇，断续的呻吟还是从齿缝漏出来，小穴也淌着水。\n\"不行……前面也变湿了……好丢脸……嗯……\"",
-                "com_sex_oral_A_40": "$self$忍无可忍地想爬开，被按住腰又拖了回来，只能皱眉忍受黏腻的舔弄。\n\"够了……全是口水……恶心死了……\"",
-                "com_sex_oral_A_41": "$self$身子绷着毫无快感，只有无尽的屈辱。\n\"还没结束吗……舔这种地方……你到底想怎样……\"",
-                "com_sex_oral_A_42": "$self$痛苦地闭着眼，眼泪无声滑落。\n\"我恨你……我永远不会原谅你……\"",
-                "com_sex_oral_A_37": "$self$有些不适地皱起眉，臀肉绷得紧紧的。\n\"……还要多久？痒痒的……没什么感觉。\"",
-                "com_sex_oral_A_38": "$self$轻轻拍了拍$target$的手，语气里透着无奈。\n\"那个……能不能换个地方？这里真的喜欢不来。\"",
-                "com_sex_oral_A_39": "$self$干巴巴地叹了口气，把臀瓣并了并。\n\"抱歉，$target$……这种事我真的投入不了。\"",
+                "com_sex_oral_A_40": "$self$忍无可忍地想爬开，被按住腰又拖了回来，只能咬牙忍受黏腻的舔弄：“够了……全是口水……恶心死了……”",
+                "com_sex_oral_A_41": "$self$身子绷着毫无快感，只有无尽的屈辱：“还没结束吗……舔这种地方……你到底想怎样……”",
+                "com_sex_oral_A_42": "$self$痛苦地闭着眼，眼泪无声滑落：“我恨你……我永远不会原谅你……”",
+                "com_sex_oral_A_37": "$self$有些不适地偏过头，臀肉绷得紧紧的：“……还要多久？痒痒的……没什么感觉。”",
+                "com_sex_oral_A_38": "$self$轻轻拍了拍$target$的手，语气里透着无奈：“那个……能不能换个地方？这里真的喜欢不来。”",
+                "com_sex_oral_A_39": "$self$干巴巴地叹了口气，把臀瓣并了并：“抱歉，$target$……这种事我真的投入不了。”",
                 "com_sex_oral_A_Begin_Sleep_1": "$target$掰开她熟睡中松软的臀瓣，舌尖抵上菊穴轻轻舔弄，$self$在梦里臀肉缩了缩，喉咙里哼出含糊的鼻音，没醒。",
                 "com_sex_oral_A_Begin_Sleep_2": "穴口的褶皱被舔得发红张开，$self$的腰无意识地扭了扭，腿缝渐渐变得湿滑，她依旧沉在梦乡里。",
                 "com_sex_oral_A_Begin_Timestop_1": "$target$掰开她定格的臀瓣，舌尖抵上菊穴舔弄钻搅，穴口的褶皱被舔得发红张开，$self$的腰窝没有塌。",
                 "com_sex_oral_A_Begin_Timestop_2": "$self$的菊穴被舌尖顶着收缩吮住，津液顺着会阴淌下悬成丝，她的手指保持着摊开的形状没动。",
                 "com_sex_oral_A_Begin_FE_Sleep_1": "睡梦中的$self$的唇贴在那处，无意识地咂了咂嘴，对沾到的气味毫无所觉。",
-                "com_sex_oral_A_Begin_FE_Sleep_2": "$self$沉在梦乡里，眉头轻轻皱着，浑然不知自己的第一次口侍就耗在了这种地方。",
+                "com_sex_oral_A_Begin_FE_Sleep_2": "$self$沉在梦乡里，呼吸均匀绵长，浑然不知自己的第一次口侍就耗在了这种地方。",
                 "com_sex_oral_A_Begin_FE_Timestop_1": "凝固的世界里，$self$的脸埋在臀间纹丝不动，初次的侍奉在毫无知觉中进行。",
                 "com_sex_oral_A_Begin_FE_Timestop_2": "$self$保持着埋首的姿势，对自己的第一次口侍正在这种地方发生一无所知。",
-                "com_sex_oral_A_Begin_FE_Player_1": "\"后面……真的要舔吗……第一次就……\"\n\n$self$红着脸埋下头，紧张得闭紧了眼。",
-                "com_sex_oral_A_Begin_FE_Player_2": "\"我没做过……不许笑我……\"\n\n$self$深吸一口气，颤抖着凑近了那处。",
-                "com_sex_oral_A_Begin_FE_1": "\"第一次就舔这里……我、我是洗过的……\"\n\n$self$的舌尖抖着碰上去，整个人僵成一块。",
-                "com_sex_oral_A_Begin_FE_2": "\"第一次做这种事……居然是这里……\"\n\n$self$皱紧了眉头，脸颊烫得吓人。",
-                "com_sex_oral_A_Begin_FE_3": "\"只、只有这次……第一次也是最后一次……\"\n\n$self$鼓起勇气埋下头，指尖抠着$target$的臀瓣。",
-                "com_sex_oral_A_Begin_FE_4": "\"第一次用嘴……就用在这种地方……\"\n\n$self$笨拙地舔着，脸上全是蒸出来的红。",
-                "com_sex_oral_A_Begin_FE_5": "\"不……不要让我舔那里……脏……！\"\n\n$self$死死别着脸，浑身抖个不停。",
-                "com_sex_oral_A_Begin_FE_6": "\"把头按下去也改变不了什么……我恨你……\"\n\n$self$含着屈辱把脸埋下去，眼泪砸在了床单上。",
-                "com_sex_oral_A_Begin_FE_Partner_1": "\"舌尖抖成这样……第一次舔后面？\"\n\n感觉到小心翼翼的舔弄，$self$回头看了眼。",
-                "com_sex_oral_A_Begin_FE_Partner_2": "\"……不用勉强，点到为止就好。\"\n\n$self$看出了对方的生涩，出声说道。",
-                "com_sex_oral_A_FE_Sleep_1": "睡梦中的$self$的唇上还沾着那种地方的气味，眉头始终没有松开。",
-                "com_sex_oral_A_FE_Timestop_1": "初次侍奉过的舌尖还停在原处，定格的$self$没有任何反应。",
-                "com_sex_oral_A_FE_Player_1": "\"我第一次舔后面……做得还行吗……\"\n\n$self$抬起头，满脸通红地小声问。",
-                "com_sex_oral_A_FE_1": "\"唔……我不会舔这种地方……你别动……\"\n\n$self$的动作又生又僵，节奏全乱了。",
-                "com_sex_oral_A_FE_2": "\"第一次侍奉……就是这种地方……\"\n\n$self$喘着气，舌头已经酸得发麻。",
-                "com_sex_oral_A_FE_3": "\"这样……可以吗……我完全没有经验……\"\n\n$self$又慌又窘，只能小心翼翼地试探。",
-                "com_sex_oral_A_FE_4": "\"……够了……我不行了……\"\n\n初次侍奉的酸楚和屈辱让$self$的眼泪一直憋在眼眶里。",
-                "com_sex_oral_A_FE_5": "\"……快点结束。\"\n\n$self$面无表情地完成着动作，只有泛红的眼角泄了底。",
-                "com_sex_oral_A_FE_Partner_1": "\"别憋气……放松，慢慢舔。\"\n\n察觉到对方的僵硬，$self$出声引导道。",
-                "com_sex_oral_A_Refuse_Receiver_1": "$self$用力推开了$target$，神色戒备。\n\"别碰我！我没同意做这种事。\"",
-                "com_sex_oral_A_Refuse_Receiver_2": "$self$往后退开一步，冷冷地拒绝了$target$。\n\"现在不行，请离我远点。\""
+                "com_sex_oral_A_Begin_FE_Player_1": "$self$红着脸埋下头，紧张得闭紧了眼：“后面……真的要舔吗……第一次就……”",
+                "com_sex_oral_A_Begin_FE_Player_2": "$self$深吸一口气，颤抖着凑近了那处：“我没做过……不许笑我……”",
+                "com_sex_oral_A_Begin_FE_1": "$self$的舌尖抖着碰上去，整个人紧绷着：“第一次就舔这里……我、我是洗过的……”",
+                "com_sex_oral_A_Begin_FE_2": "$self$偏过视线喘了口气，脸颊烫得吓人：“第一次做这种事……居然是这里……”",
+                "com_sex_oral_A_Begin_FE_3": "$self$鼓起勇气埋下头，指尖抠着$target$的臀瓣：“只、只有这次……第一次也是最后一次……”",
+                "com_sex_oral_A_Begin_FE_4": "$self$笨拙地舔着，脸上全是蒸出来的红：“第一次用嘴……就用在这种地方……”",
+                "com_sex_oral_A_Begin_FE_5": "$self$拼命别着脸，浑身抖个不停：“不……不要让我舔那里……脏……！”",
+                "com_sex_oral_A_Begin_FE_6": "$self$含着屈辱把脸埋下去，眼泪砸在了床单上：“把头按下去也改变不了什么……我恨你……”",
+                "com_sex_oral_A_Begin_FE_Partner_1": "感觉到小心翼翼的舔弄，$self$回头看了眼：“舌尖抖成这样……第一次舔后面？”",
+                "com_sex_oral_A_Begin_FE_Partner_2": "$self$看出了对方的生涩，出声说道：“……不用勉强，点到为止就好。”",
+                "com_sex_oral_A_FE_Sleep_1": "睡梦中的$self$的唇上还沾着那种地方的气味，呼吸却依旧绵长均匀。",
+                "com_sex_oral_A_FE_Timestop_1": "侍奉过的舌尖还停在原处，定格的$self$没有任何反应。",
+                "com_sex_oral_A_FE_Player_1": "$self$抬起头，满脸通红地小声问：“我第一次舔后面……做得还行吗……”",
+                "com_sex_oral_A_FE_1": "$self$的动作又生疏又笨拙，节奏全乱了：“唔……我不会舔这种地方……你别动……”",
+                "com_sex_oral_A_FE_2": "$self$喘着气，舌头已经酸得发麻：“第一次侍奉……就是这种地方……”",
+                "com_sex_oral_A_FE_3": "$self$又慌又窘，只能小心翼翼地试探：“这样……可以吗……我完全没有经验……”",
+                "com_sex_oral_A_FE_4": "初次侍奉的酸楚和屈辱让$self$的眼泪一直憋在眼眶里：“……够了……我不行了……”",
+                "com_sex_oral_A_FE_5": "$self$木然地完成着动作，只有泛红的眼角泄了底：“……快点结束。”",
+                "com_sex_oral_A_FE_Partner_1": "察觉到对方的生涩，$self$出声引导道：“别憋气……放松，慢慢舔。”",
+                "com_sex_oral_A_Refuse_Receiver_1": "$self$用力推开了$target$，神色戒备：“别碰我！我没同意做这种事。”",
+                "com_sex_oral_A_Refuse_Receiver_2": "$self$往后退开一步，冷冷地拒绝了$target$：“现在不行，请离我远点。”",
+                "com_sex_oral_A_Begin_FE_Sleep_3": "熟睡中的$self$鼻尖抵在$target$温热的臀缝间，嘴唇随着浅浅的呼吸无意识地轻蹭着。",
+                "com_sex_oral_A_FE_Timestop_2": "$self$凝固在跪趴在地的姿态上，微张的唇角挂着细细的口水，一动也不动。",
+                "com_sex_oral_A_FE_Timestop_3": "时间停滞让$self$保持着仰头贴近臀缝的动作，空洞的眸子里没有任何波澜。",
+                "com_sex_oral_A_FE_Partner_2": "$self$被磕绊的舌尖蹭得轻哼了声，回头安抚道：“不用太慌，顺着感觉来就好。”",
+                "com_sex_oral_A_FE_Partner_3": "感受到身后笨拙却认真的舔舐，$self$松开紧绷的肩背：“嗯……比刚才好多了，就这样。”",
+                "com_sex_oral_A_Begin_FE_7": "$self$犹豫着凑到$target$身后，声音小得像蚊子哼：“别告诉别人我做过这种事啊……”",
+                "com_sex_oral_A_FE_Sleep_2": "$self$沉在梦里没有醒来，嘴角沾着湿润的津液，偶尔无意识地轻哼一声。",
+                "com_sex_oral_A_FE_Sleep_3": "熟睡中的$self$翻了个身，鼻尖蹭在枕头上，对刚才用嘴侍奉过$target$后面的事一无所知。",
+                "com_sex_oral_A_doer_variant_1": "$self$熟练地用舌尖顶开微紧的穴口褶皱，含糊地轻笑：“这里一舔就会缩紧呢……真敏感。”",
+                "com_sex_oral_A_doer_variant_2": "$self$双手扶住$target$的腰臀，唇舌贴着后穴吸吮出清脆的水声：“再多舔一会儿……把你舔软为止。”",
+                "com_sex_oral_A_Begin_FE_Player_3": "$self$双手扶住$target$的臀肉，耳根烫得厉害，试探着伸出舌尖：“既然是你要求的……我会努力舔干净的……”",
+                "com_sex_oral_A_Climax_8": "$self$一边含吮着$target$的后穴，一边控制不住地夹紧双腿抖着攀上顶峰：“哈啊……好烫……光用舔的我就去了……”",
+                "com_sex_oral_A_Climax_9": "$self$剧烈喘息着把脸埋进臀肉间，喉咙里溢出断断续续的余韵：“不行……太兴奋了……下面湿透了……”",
+                "com_sex_oral_A_FE_Player_2": "$self$抿了抿沾着口水的唇瓣，眼神带着羞怯的期待：“虽然是第一次……但只要是$target$的话，我愿意学的……”",
+                "com_sex_oral_A_FE_Player_3": "$self$舔了舔发酸的舌尖，小声确认道：“没、没有弄疼你吧……第一次舔这种地方好紧张……”",
+                "com_sex_oral_A_Begin_FE_Timestop_3": "时间静止的瞬间，$self$微张的唇瓣被按在陌生的后穴上，眼神空洞地定格在原处。",
+                "com_sex_oral_A_Begin_Sleep_3": "熟睡中的$self$呼吸均匀，任由温热的舌面贴上后穴来回扫过，只含混地砸了砸嘴。",
+                "com_sex_oral_A_Begin_Timestop_3": "$self$的臀瓣被拨开露出粉嫩的皱褶，舌面压上去时她连睫毛都没动一下。",
+                "com_sex_oral_A_FE_6": "$self$强忍着喉头的干呕把头往后仰，声音带着哭腔：“……别再按我的头了……”",
+                "com_sex_oral_A_Refuse_Receiver_3": "$self$拉紧衣摆护住身后，警惕地瞪着$target$：“想舔那里什么的……少胡说八道了！”",
+                "com_sex_oral_A_Begin_FE_Partner_3": "$self$感受到身后生疏又急促的呼吸，轻轻挪了挪身子：“不用这么紧张，随便舔两下就行。”",
+                "com_sex_oral_A_Begin_FE_8": "$self$小心翼翼地把唇贴上那处褶皱，呼吸急促而紧张：“没有经验……要是不舒服的话一定要告诉我哦……”",
+                "com_sex_oral_A_Begin_FE_9": "$self$紧闭着眼被按着后脑勺凑近那处，喉咙里发出压抑的干呕声：“别碰我……第一次竟然要干这种事……！”",
+                "com_sex_oral_A_FE_7": "$self$耳根通红地抬头瞥了一眼，小声嘀咕：“好羞耻……第一次居然要舔后面……”",
+                "com_sex_oral_A_FE_8": "$self$咽了咽口水，生怕动作太重惹恼对方，只能用舌尖轻轻点触：“嗯……味道比想象中要干净呢……”",
+                "com_sex_oral_A_FE_9": "$self$涨红了脸轻轻舔吻那处褶皱，呼吸乱成一团：“这样……有让你觉得舒服一点吗……”",
+                "com_sex_oral_A_43": "$self$被磕绊的舌尖蹭得轻哼了声，回头安抚道：“不用太慌，顺着感觉来就好。”",
+                "com_sex_oral_A_44": "感受到身后笨拙却认真的舔舐，$self$松开紧绷的肩背：“嗯……比刚才好多了，就这样。”",
+                "com_sex_oral_A_45": "初次侍奉过的舌尖还停在原处，定格的$self$没有任何反应。",
+                "com_sex_oral_A_46": "时间静止的空气里，$self$依旧保持着凑近$target$后穴的姿势，眼神空洞茫然。",
+                "com_sex_oral_A_47": "$self$的唇瓣贴在微湿的褶皱旁纹丝不动，丝毫不知自己完成了第一次口侍。",
+                "com_sex_oral_A_48": "$self$低着头急促地喘气，声音发哑：“居然让我用嘴舔那种地方……你满意了吗……”",
+                "com_sex_oral_A_49": "$self$在梦乡里无意识地砸了砸嘴，被舔弄过的舌尖微微收回唇内，人没醒。",
+                "com_sex_oral_A_50": "均匀的呼吸声在房间里响起，$self$沉睡着，嘴边残留的水迹在空气里渐渐发凉。",
+                "com_sex_oral_A_Begin_10": "昏迷中的$self$毫无知觉地趴伏着，任由$target$掰开臀瓣，将舌尖抵上她毫无防备的后穴。",
+                "com_sex_oral_A_Begin_11": "$self$紧闭双眼没有半点反应，温热的臀肉随着$target$的拨弄轻轻陷下去。",
+                "com_sex_oral_A_Begin_12": "失去意识的$self$呼吸浅缓，肛门周围的褶皱在舌尖的触碰下微微一缩。",
+                "com_sex_oral_A_Begin_13": "$self$双手被捆在身后，根本捂不住暴露出来的臀肉，只能羞愤地偏过头：“不、别舔那里……太脏了……”",
+                "com_sex_oral_A_Begin_14": "绳索勒得$self$动弹不得，她感觉到身后的湿热气息，紧张得腰背绷紧：“等一下……不要把舌头伸过来啊……”",
+                "com_sex_oral_A_Begin_15": "$self$被迫撅起屁股任由$target$摆布，脚踝挣动着却躲不开抵上菊穴的唇舌：“唔……那种地方怎么能舔……”",
+                "com_sex_oral_A_Begin_16": "$self$任由$target$靠近，自己被$target$掰开臀瓣用舌尖舔弄后穴，呼吸微微一滞。",
+                "com_sex_oral_A_Begin_17": "$self$轻轻抿了抿唇，没有推开被$target$掰开臀瓣用舌尖舔弄后穴的$target$。",
+                "com_sex_oral_A_Begin_18": "感受到后穴传来的触碰，$self$下意识地轻颤了一下，顺势迎合上去。",
+                "com_sex_oral_A_51": "被缚住手脚的$self$逃无可逃，后穴被舌头舔得又麻又痒，声音不由自主地软了下来：“呜……别再往里钻了……好奇怪……”",
+                "com_sex_oral_A_52": "$self$把脸埋进臂弯喘息，身体在绳索的束缚下轻颤，腰肢却悄悄往后送了半分：“哈啊……怎么连后面也会有感觉……”",
+                "com_sex_oral_A_53": "黏腻的舔舐声不断响起，$self$的腿根越夹越紧，喉咙里溢出压抑不住的低吟：“不行……要被舔坏掉了……”",
+                "com_sex_oral_A_54": "昏迷中的$self$依然没有转醒，后穴却在舌头的反复舔弄下泛红湿润，顺从地微微张合。",
+                "com_sex_oral_A_55": "$self$沉沉地伏在原地，随着$target$舌尖的挑逗，小穴也跟着悄悄渗出清液。",
+                "com_sex_oral_A_56": "没有任何意识的$self$任由身后传来黏腻的水声，只是臀肉偶尔本能地紧缩一下。",
+                "com_sex_oral_A_57": "$self$被身后湿热的舔舐弄醒，迷糊地眨了眨眼，随即整张脸涨得通红：“唔……$target$？你趁我睡着在舔哪里啊……”",
+                "com_sex_oral_A_58": "睡意瞬间消散，$self$感觉到后穴传来的阵阵酥麻，又羞又恼地缩起腰：“真是的……刚醒就干这种事……”",
+                "com_sex_oral_A_59": "$self$喘了口气清醒过来，声音带着刚睡醒的沙哑：“哈啊……别趁人睡着偷偷舔后面啊，太犯规了……”",
+                "com_sex_oral_A_60": "动弹不得的$self$烦躁地扭动着被捆的身子，湿冷的口水糊在臀缝里让她十分难受：“够了没有……光舔得湿答答的恶心死了……”",
+                "com_sex_oral_A_61": "$self$咬着牙忍受身后粗糙的舔弄，语气里满是抵触：“快把嘴拿开……一点也不舒服……”",
+                "com_sex_oral_A_62": "$self$被绳索勒得喘不过气，面对$target$胡乱的舔舐只想躲开：“别再用牙齿磕到了……痛死了……”",
+                "com_sex_oral_A_63": "$self$随着节奏轻哼出声，后穴被$target$掰开臀瓣用舌尖舔弄后穴得一阵发麻：“哈啊……好舒服……”",
+                "com_sex_oral_A_64": "快感顺着后穴迅速蔓延开来，$self$软着声音喘息道：“唔嗯……就是那里，别停……”",
+                "com_sex_oral_A_65": "$self$微眯起眼迎合着$target$的动作，嗓音带着甜腻的颤意：“啊……再多弄一会儿……”",
+                "com_sex_oral_A_66": "$self$随着节奏轻哼出声，后穴被$target$掰开臀瓣用舌尖舔弄后穴得一阵发麻：“哈啊……好舒服……”",
+                "com_sex_oral_A_67": "快感顺着后穴迅速蔓延开来，$self$软着声音喘息道：“唔嗯……就是那里，别停……”",
+                "com_sex_oral_A_68": "$self$微眯起眼迎合着$target$的动作，嗓音带着甜腻的颤意：“啊……再多弄一会儿……”",
+                "com_sex_oral_A_69": "$self$微微蹙眉往后躲了躲，后穴传来一阵不太舒服的刺痛：“嘶……太重了，轻一点……”",
+                "com_sex_oral_A_70": "$self$有些不适地绷紧了身子，小声抱怨道：“唔……这样弄一点也不舒服……”",
+                "com_sex_oral_A_71": "节奏没能对上，$self$略显烦躁地喘了口气：“……稍微注意一下力道啊。”",
+                "com_sex_oral_A_Ongoing_1": "$self$正被旁人按着舔弄后穴，余光瞥见站在一旁的$target$后顿时羞得浑身发烫：“别、别看这边啊……”",
+                "com_sex_oral_A_Ongoing_2": "身后传来清晰的水声，$self$咬着唇不敢与$target$对视，腿根却不住地打颤：“呜……连被舔后面的样子都被你看见了……”",
+                "com_sex_oral_A_Ongoing_3": "$self$红着脸扭过头去，在$target$的注视下后穴反而缩得更紧：“唔啊……不要盯着那里看……好丢人……”",
+                "com_sex_oral_A_Ongoing_4": "$self$还在被$target$掰开臀瓣用舌尖舔弄后穴，呼吸随着节奏一点点变得急促。",
+                "com_sex_oral_A_Ongoing_5": "持续不断的刺激让$self$眼角泛起微红，只能任由$target$继续动作。",
+                "com_sex_oral_A_Ongoing_6": "$self$轻喘着承受着后穴传来的触感，身子微微发软。",
+                "com_sex_oral_A_Ongoing_7": "$self$没有停下动作，继续俯身分开臀肉舔弄着后穴褶皱。",
+                "com_sex_oral_A_Ongoing_8": "湿热的气息在两人之间弥漫，$self$维持着节奏俯身分开臀肉舔弄着后穴褶皱。",
+                "com_sex_oral_A_Ongoing_9": "$self$微微喘息着，动作不停地俯身分开臀肉舔弄着后穴褶皱。",
+                "com_sex_oral_A_72": "$self$微微喘息着，一边俯身分开臀肉舔弄着后穴褶皱，一边留意着$target$的反应。",
+                "com_sex_oral_A_73": "空气渐渐升温，$self$放缓了节奏继续俯身分开臀肉舔弄着后穴褶皱：“……感觉怎么样？”",
+                "com_sex_oral_A_74": "$self$轻吐出一口气，顺从着眼前的状态继续俯身分开臀肉舔弄着后穴褶皱。"
             }
         }
     }

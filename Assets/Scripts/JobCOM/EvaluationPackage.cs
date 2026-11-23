@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -1031,6 +1031,7 @@ public partial class EvaluationPackage : I_ResultStorage
             if (s.Contains("$DEFAULT$")) s = s.Replace("$DEFAULT$", Package.job.ep_begin);
             UtilityEX.StringReplace(this, ref s);
             s = targetCOM.Replace(s);
+            if (Package != null) s = Package.keyReplace(s);
             return s; } }
     [JsonIgnore] public string Description_Ongoing { get {
             // an AP that failed Validate() (e.g. agent-mode aborted-at-completion, recorded via ActionPackageRecords) has no variant
@@ -1039,6 +1040,7 @@ public partial class EvaluationPackage : I_ResultStorage
             if (s.Contains("$DEFAULT$")) s = s.Replace("$DEFAULT$", Package.job.ep_ongoing);
             UtilityEX.StringReplace(this, ref s);
             s = targetCOM.Replace(s);
+            if (Package != null) s = Package.keyReplace(s);
             return s;
     } }
 
@@ -1048,6 +1050,7 @@ public partial class EvaluationPackage : I_ResultStorage
             if (s.Contains("$DEFAULT$")) s = s.Replace("$DEFAULT$", Package.job.ep_abort);
             UtilityEX.StringReplace(this, ref s);
             s = targetCOM.Replace(s);
+            if (Package != null) s = Package.keyReplace(s);
             return s;
 
         } }
@@ -1056,6 +1059,7 @@ public partial class EvaluationPackage : I_ResultStorage
             if (s.Contains("$DEFAULT$")) s = s.Replace("$DEFAULT$", "");
             UtilityEX.StringReplace(this, ref s);
             s = targetCOM.Replace(s);
+            if (Package != null) s = Package.keyReplace(s);
             return s;
         } }
 

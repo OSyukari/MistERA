@@ -86,8 +86,8 @@ public static class TA_Apply
         public readonly Dictionary<string, string> newKeys = new Dictionary<string, string>();
         /// <summary>Keys already given a new text by an earlier record of this plan: key → record id.</summary>
         public readonly Dictionary<string, string> editedKeys = new Dictionary<string, string>();
-        /// <summary>Dictionary key → commands whose definition lists it in a `texts` list (built on first use).</summary>
-        public Dictionary<string, HashSet<string>> keyUsers;
+        /// <summary>Dictionary key → reference count across commands (`texts`) and kojo (`responses`), built on first use.</summary>
+        public Dictionary<string, int> keyRefCounts;
         public Outcome current;
     }
 
@@ -380,18 +380,18 @@ public static class TA_Apply
         if (dictFile == null && !literal) dictFile = file;
 
         bool sharedList = false;
-        for (int i = 0; i < items.Count && !sharedList; i++) sharedList = IsKey(p, items[i]) && UsedElsewhere(p, items[i], ownerCom);
+        for (int i = 0; i < items.Count && !sharedList; i++) sharedList = IsKey(p, items[i]) && IsSharedKey(p, items[i]);
 
         int shared = Math.Min(items.Count, newLines.Count);
         for (int i = 0; i < shared; i++)
         {
             if (Norm(current[i]) == Norm(newLines[i])) continue;
-            if (IsKey(p, items[i]) && UsedElsewhere(p, items[i], ownerCom))
+            if (IsKey(p, items[i]) && IsSharedKey(p, items[i]))
             {
                 var own = NewKey(p, keyBase);
                 AddDict(p, dictFile, own, newLines[i]);
                 p.files.Get(file).Replace($"{listPath}[{i}]", TA_JsonEdit.Str(own));
-                Change(p, file, $"{listPath}[{i}]", "own key (" + items[i] + " is shared with another command)", items[i], own);
+                Change(p, file, $"{listPath}[{i}]", "own key (" + items[i] + " is shared)", items[i], own);
             }
             else if (IsKey(p, items[i])) SetDict(p, items[i], current[i], newLines[i]);
             else
@@ -651,44 +651,44 @@ public static class TA_Apply
     }
 
     /// <summary>
-    /// Whether a command other than ownerCom lists key in its definition's narration (`texts` anywhere in the command:
-    /// fields, variants, generator templates, item overrides). Rewriting it in place would change that command's text too.
+    /// Whether key is referenced in more than one narration/kojo list across commands (`texts`) and kojo entries
+    /// (`responses`), or was already edited earlier in this plan. Rewriting it in place would clobber other slots.
     /// </summary>
-    static bool UsedElsewhere(Planner p, string key, string ownerCom)
+    static bool IsSharedKey(Planner p, string key)
     {
-        if (ownerCom == null) return false;
-        if (p.keyUsers == null)
+        if (p.editedKeys.ContainsKey(key)) return true;
+        if (p.keyRefCounts == null)
         {
-            p.keyUsers = new Dictionary<string, HashSet<string>>();
+            p.keyRefCounts = new Dictionary<string, int>();
             foreach (var kv in p.data.coms)
                 for (int i = 0; i < kv.Value.Count; i++)
-                    if (!kv.Value[i].isPatch) CollectTextKeys(p.data.GetRaw(kv.Value[i]), kv.Key, p.keyUsers);
+                    if (!kv.Value[i].isPatch) CollectKeyRefs(p.data.GetRaw(kv.Value[i]), "texts", p.keyRefCounts);
+            foreach (var kv in p.data.kojoEntries)
+                for (int i = 0; i < kv.Value.Count; i++)
+                    if (!kv.Value[i].isPatch) CollectKeyRefs(p.data.GetRaw(kv.Value[i]), "responses", p.keyRefCounts);
         }
-        if (!p.keyUsers.TryGetValue(key, out var users)) return false;
-        foreach (var u in users) if (u != ownerCom) return true;
-        return false;
+        return p.keyRefCounts.TryGetValue(key, out int count) && count > 1;
     }
 
-    static void CollectTextKeys(JToken t, string com, Dictionary<string, HashSet<string>> into)
+    static void CollectKeyRefs(JToken t, string listField, Dictionary<string, int> into)
     {
         if (t is JObject o)
         {
             foreach (var prop in o.Properties())
             {
-                if (prop.Name == "texts" && prop.Value is JArray a)
+                if (prop.Name == listField && prop.Value is JArray a)
                 {
                     for (int i = 0; i < a.Count; i++)
                     {
                         if (a[i].Type != JTokenType.String) continue;
                         var k = (string)a[i];
-                        if (!into.TryGetValue(k, out var set)) into[k] = set = new HashSet<string>();
-                        set.Add(com);
+                        into[k] = (into.TryGetValue(k, out int n) ? n : 0) + 1;
                     }
                 }
-                else CollectTextKeys(prop.Value, com, into);
+                else CollectKeyRefs(prop.Value, listField, into);
             }
         }
-        else if (t is JArray arr) for (int i = 0; i < arr.Count; i++) CollectTextKeys(arr[i], com, into);
+        else if (t is JArray arr) for (int i = 0; i < arr.Count; i++) CollectKeyRefs(arr[i], listField, into);
     }
 
     /// <summary>Base of new key names: the list's last key without its trailing number, else the entry / command name.</summary>
@@ -1012,12 +1012,38 @@ public static class TA_Apply
                 sb.AppendLine("- New lines:");
                 for (int k = 0; k < nl.Count; k++) sb.AppendLine($"  - {(string)nl[k]}");
             }
-            // a command case (Plan_CommandCases.md K6): the new entry's exact conditions / the new branch's fields
+            // a command case (Plan_CommandCases.md K6): the new entry's exact conditions / the new branch's template-aligned path
             if ((string)r["case"] != null) sb.AppendLine($"- Case: `{(string)r["case"]}`");
             // records from other origins may carry location/entry/notes as plain values - index only JObjects
             if ((r["entry"] as JObject)?["conditions"] is JArray conds) sb.AppendLine("- Entry conditions (exact, use as `conditions`): `" + conds.ToString(Formatting.None) + "`");
-            if ((r["location"] as JObject)?["needs"] is JObject needs) sb.AppendLine("- Branch needs (exact, set on the new variant): `" + needs.ToString(Formatting.None) + "`");
-            if (r["location"] is JObject loc) sb.AppendLine("- Location: `" + loc.ToString(Formatting.None) + "`");
+            var locObj = r["location"] as JObject;
+            var tplId = (string)locObj?["template"];
+            if (!string.IsNullOrEmpty(tplId))
+            {
+                var tpl = TA_KojoTemplate.Find(tplId);
+                if (tpl != null)
+                {
+                    var axisOrder = new List<string>();
+                    for (int k = 0; k < tpl.axes.Count; k++) axisOrder.Add(tpl.axes[k].id);
+                    sb.AppendLine($"- Template: `{tpl.id}` (axis order: `{string.Join(" → ", axisOrder)}`; fallback requirement: `{tpl.fallbackRequirement.ToString(Formatting.None)}`)");
+                    var wt = (string)r["writeTo"] ?? "";
+                    if (wt.StartsWith("create entry ", StringComparison.Ordinal))
+                        sb.AppendLine($"- New entry requirement: set `\"template\": \"{tpl.id}\"` and append a top-level fallback variant at the end with `requirement: {tpl.fallbackRequirement.ToString(Formatting.None)}` and its own lines.");
+                }
+                else sb.AppendLine($"- Template: `{tplId}`");
+            }
+            if (locObj?["branchPath"] is JArray branchPath && branchPath.Count > 0)
+            {
+                sb.AppendLine("- Branch path (nest outer → inner, ONE axis per variant; reuse matching outer branch, never repeat outer role/master flags on inner children, and ensure every EP parent with children has its own fallback responses):");
+                for (int k = 0; k < branchPath.Count; k++)
+                {
+                    var step = branchPath[k] as JObject;
+                    if (step == null) continue;
+                    sb.AppendLine($"  {k + 1}. [{(string)step["axis"]}]: `{(step["variant"] ?? new JObject()).ToString(Formatting.None)}`");
+                }
+            }
+            else if (locObj?["needs"] is JObject needs) sb.AppendLine("- Branch needs (exact, set on the new variant): `" + needs.ToString(Formatting.None) + "`");
+            if (locObj != null) sb.AppendLine("- Location: `" + locObj.ToString(Formatting.None) + "`");
             else if (r["location"] is JValue locV && locV.Type != JTokenType.Null) sb.AppendLine($"- Location: {(string)locV}");
             if (r["ops"] is JArray ops) sb.AppendLine("- Ops: `" + ops.ToString(Formatting.None) + "`");
             if (r["notes"] is JArray notes)

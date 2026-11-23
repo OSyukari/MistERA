@@ -17,6 +17,17 @@
                                 "com_furniture_changeOutfit_Tryjoin_2",
                                 "com_furniture_changeOutfit_Tryjoin_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_changeOutfit_Tryjoin_Fallback_1",
+                                "com_furniture_changeOutfit_Tryjoin_Fallback_2"
+                            ]
                         }
                     ]
                 }
@@ -69,6 +80,16 @@
                                 "com_furniture_changeOutfit_8",
                                 "com_furniture_changeOutfit_9"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_changeOutfit_Fallback_1",
+                                "com_furniture_changeOutfit_Fallback_2"
+                            ]
                         }
                     ]
                 }
@@ -103,7 +124,10 @@
                                 "com_furniture_changeOutfit_Interrupt_7",
                                 "com_furniture_changeOutfit_Interrupt_8",
                                 "com_furniture_changeOutfit_Interrupt_9"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ]
                 }
@@ -137,6 +161,16 @@
                                     ]
                                 }
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_changeOutfit_Begin_Fallback_1",
+                                "com_furniture_changeOutfit_Begin_Fallback_2"
+                            ]
                         }
                     ]
                 }
@@ -147,17 +181,6 @@
                     "ID": "com_furniture_changeOutfit_JoinFailed",
                     "template": "commandJoinFailed",
                     "variants": [
-                        {
-                            "requirement": {
-                                "requireEPSuccess": false
-                            },
-                            "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
-                            "responses": [
-                                "com_furniture_changeOutfit_JoinFailed_1",
-                                "com_furniture_changeOutfit_JoinFailed_2",
-                                "com_furniture_changeOutfit_JoinFailed_3"
-                            ]
-                        },
                         {
                             "requireSelfReceiver": true,
                             "requirement": {
@@ -180,6 +203,18 @@
                                 "com_furniture_changeOutfit_JoinFailed_7",
                                 "com_furniture_changeOutfit_JoinFailed_8",
                                 "com_furniture_changeOutfit_JoinFailed_9"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_furniture_changeOutfit_JoinFailed_1",
+                                "com_furniture_changeOutfit_JoinFailed_2",
+                                "com_furniture_changeOutfit_JoinFailed_3"
                             ]
                         }
                     ]
@@ -225,6 +260,17 @@
                             "responses": [
                                 "com_furniture_changeOutfit_Refuse_Fallback_1"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_changeOutfit_Refuse_Fallback_2",
+                                "com_furniture_changeOutfit_Refuse_Fallback_3"
+                            ]
                         }
                     ]
                 }
@@ -259,7 +305,10 @@
                                 "com_furniture_changeOutfit_Join_7",
                                 "com_furniture_changeOutfit_Join_8",
                                 "com_furniture_changeOutfit_Join_9"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ]
                 }
@@ -280,6 +329,17 @@
                                 "com_furniture_changeOutfit_Join_Refused_2",
                                 "com_furniture_changeOutfit_Join_Refused_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_changeOutfit_Join_Refused_Fallback_1",
+                                "com_furniture_changeOutfit_Join_Refused_Fallback_2"
+                            ]
                         }
                     ]
                 }
@@ -290,17 +350,6 @@
                     "ID": "com_furniture_changeOutfit_Ongoing",
                     "template": "commandAct",
                     "variants": [
-                        {
-                            "requirement": {
-                                "targetBaseID": "PLAYER"
-                            },
-                            "_comment": "自己（单人） → 玩家 ｜ 接受",
-                            "responses": [
-                                "com_furniture_changeOutfit_Ongoing_1",
-                                "com_furniture_changeOutfit_Ongoing_2",
-                                "com_furniture_changeOutfit_Ongoing_3"
-                            ]
-                        },
                         {
                             "requireSelfReceiver": true,
                             "variants": [
@@ -318,6 +367,27 @@
                             ],
                             "responses": [
                                 "com_furniture_changeOutfit_Ongoing_Fallback_1"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "自己（单人） → 玩家 ｜ 接受",
+                            "responses": [
+                                "com_furniture_changeOutfit_Ongoing_1",
+                                "com_furniture_changeOutfit_Ongoing_2",
+                                "com_furniture_changeOutfit_Ongoing_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_changeOutfit_Ongoing_Fallback_2",
+                                "com_furniture_changeOutfit_Ongoing_Fallback_3"
                             ]
                         }
                     ]
@@ -338,6 +408,17 @@
                                 "com_furniture_changeOutfit_Joined_1",
                                 "com_furniture_changeOutfit_Joined_2",
                                 "com_furniture_changeOutfit_Joined_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_changeOutfit_Joined_Fallback_1",
+                                "com_furniture_changeOutfit_Joined_Fallback_2"
                             ]
                         }
                     ]
@@ -415,7 +496,21 @@
                 "com_furniture_changeOutfit_Refuse_5": "\"换来换去麻烦得很，今天就这样吧。\" $self$站在原地没动弹。",
                 "com_furniture_changeOutfit_Refuse_6": "$self$干脆地回绝了：\"那套我不想穿，你自己看着办。\"",
                 "com_furniture_changeOutfit_Refuse_Fallback_1": "$self$点了点头，没有多说什么。",
-                "com_furniture_changeOutfit_Ongoing_Fallback_1": "$self$点了点头，没有多说什么。"
+                "com_furniture_changeOutfit_Ongoing_Fallback_1": "$self$点了点头，没有多说什么。",
+                "com_furniture_changeOutfit_Joined_Fallback_1": "\"多谢，我很快就好。\" $self$站到一旁抖开衣物换了起来。",
+                "com_furniture_changeOutfit_Joined_Fallback_2": "$self$点点头，找了处空位开始整理自己的替换衣物。",
+                "com_furniture_changeOutfit_Refuse_Fallback_2": "$self$按住衣角摇了摇头：\"我现在不想换衣服，就这样吧。\"",
+                "com_furniture_changeOutfit_Refuse_Fallback_3": "$self$往后退开半步，神色平静地回绝道：\"这身挺好的，不用换。\"",
+                "com_furniture_changeOutfit_Fallback_1": "$self$整理好身上的衣领，确认穿着妥当后便收回了手。",
+                "com_furniture_changeOutfit_Fallback_2": "$self$低头顺了顺衣摆，换好衣服后神色如常地点了点头。",
+                "com_furniture_changeOutfit_Tryjoin_Fallback_1": "$self$抱着替换的衣物走近几步，开口问道：\"方便的话，我也一块儿换身衣服？\"",
+                "com_furniture_changeOutfit_Tryjoin_Fallback_2": "$self$看了看$target$手里的衣物，轻声问：\"能一起在这边更衣吗？\"",
+                "com_furniture_changeOutfit_Ongoing_Fallback_2": "$self$一边拉平衣袖，一边留意着身旁的动静，动作稳当。",
+                "com_furniture_changeOutfit_Ongoing_Fallback_3": "$self$正专心系着衣扣，没有多说什么。",
+                "com_furniture_changeOutfit_Begin_Fallback_1": "$self$抬手解开原来的扣子，准备配合着把衣服换上。",
+                "com_furniture_changeOutfit_Begin_Fallback_2": "$self$拿过替换的衣物抖了抖，准备开始更衣。",
+                "com_furniture_changeOutfit_Join_Refused_Fallback_1": "\"行，那我等会儿再来。\" $self$抱着衣服退开几步。",
+                "com_furniture_changeOutfit_Join_Refused_Fallback_2": "$self$点了点头，没再多说，拿着衣物转身走开。"
             }
         }
     }

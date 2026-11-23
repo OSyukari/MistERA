@@ -37,6 +37,8 @@ public static class TA_KojoTemplate
         public List<Leaf> leaves = new List<Leaf>();
         /// <summary>Suggested branches as written in the template (viewer: template tab, empty slots).</summary>
         public JArray examples;
+        /// <summary>Index in raw["levels"] for EP levels (-1 for inner axes).</summary>
+        public int levelIndex = -1;
     }
 
     /// <summary>One value of an EP level (role doer, ordered, D20 success …): variant flags and / or requirement fields.</summary>
@@ -76,6 +78,7 @@ public static class TA_KojoTemplate
     public class Template
     {
         public string id, label, placeholder, inner;
+        public List<string> beforeLevels = new List<string>();
         public List<string> bind = new List<string>();
         /// <summary>Command kojo suffixes this template claims ("" = the command's own key).</summary>
         public List<string> bindCommand = new List<string>();
@@ -84,7 +87,7 @@ public static class TA_KojoTemplate
         /// <summary>Requirement fields every branch must carry (refusal keys: requireEPSuccess false).</summary>
         public JObject everyBranch;
         public List<Axis> axes = new List<Axis>();
-        /// <summary>The first epCount axes are this template's EP levels.</summary>
+        /// <summary>The first epCount axes are this template's EP levels (when beforeLevels is empty).</summary>
         public int epCount;
         public List<Extra> extras = new List<Extra>();
         public List<Misplaced> misplaced = new List<Misplaced>();
@@ -94,7 +97,7 @@ public static class TA_KojoTemplate
 
         public Axis FindLevel(string levelId)
         {
-            for (int i = 0; i < epCount; i++) if (axes[i].id == levelId) return axes[i];
+            for (int i = 0; i < axes.Count; i++) if (axes[i].kind == "ep" && axes[i].id == levelId) return axes[i];
             return null;
         }
 
@@ -187,10 +190,11 @@ public static class TA_KojoTemplate
                 };
                 if (o["bind"] is JArray b) for (int k = 0; k < b.Count; k++) t.bind.Add((string)b[k]);
                 if (o["bindCommand"] is JArray bc) for (int k = 0; k < bc.Count; k++) t.bindCommand.Add((string)bc[k]);
+                if (o["beforeLevels"] is JArray bl) for (int k = 0; k < bl.Count; k++) t.beforeLevels.Add((string)bl[k]);
                 if (o["levels"] is JArray levels)
                     for (int k = 0; k < levels.Count; k++)
                     {
-                        var a = new Axis { id = (string)levels[k]["id"], kind = "ep", label = (string)levels[k]["label"] ?? "" };
+                        var a = new Axis { id = (string)levels[k]["id"], kind = "ep", label = (string)levels[k]["label"] ?? "", levelIndex = k };
                         if (levels[k]["allowInside"] is JArray ai) for (int g = 0; g < ai.Count; g++) a.allowInside.Add((string)ai[g]);
                         if (levels[k]["forRoles"] is JArray fr) for (int g = 0; g < fr.Count; g++) a.forRoles.Add((string)fr[g]);
                         if (levels[k]["when"] is JArray lw) for (int g = 0; g < lw.Count; g++) a.when.Add((string)lw[g]);
@@ -238,12 +242,25 @@ public static class TA_KojoTemplate
             }
             catch (Exception e) { warnings.Add($"{Path.GetFileName(files[i])}: {e.Message}"); }
         }
-        // composition: a template with `inner` gets the inner template's axes after its own levels, and its extras
+        // composition: a template with `inner` gets the inner template's axes after its own levels (except axes listed in
+        // `beforeLevels`, which are placed before `levels`), and its extras
         foreach (var t in templates.Values)
         {
             if (string.IsNullOrEmpty(t.inner)) continue;
             if (!templates.TryGetValue(t.inner, out var inner) || !string.IsNullOrEmpty(inner.inner)) { warnings.Add($"{t.id}: inner template `{t.inner}` missing or itself composed"); continue; }
-            t.axes.AddRange(inner.axes);
+            if (t.beforeLevels.Count > 0)
+            {
+                var before = new List<Axis>();
+                var after = new List<Axis>();
+                for (int i = 0; i < inner.axes.Count; i++)
+                {
+                    if (t.beforeLevels.Contains(inner.axes[i].id)) before.Add(inner.axes[i]);
+                    else after.Add(inner.axes[i]);
+                }
+                t.axes.InsertRange(0, before);
+                t.axes.AddRange(after);
+            }
+            else t.axes.AddRange(inner.axes);
             t.stamp = TA_DocBuilderBase.Sha1Hex(t.stamp + inner.stamp).Substring(0, 8);
         }
         // extras after the axes are complete (a block with axis fields is rejected); a composed template has its own + the inner's
@@ -310,7 +327,7 @@ public static class TA_KojoTemplate
                         var leaf = a.leaves[l];
                         var block = new JObject();
                         if (leaf.variant != null) foreach (var p in leaf.variant.Properties()) block[p.Name] = p.Value;
-                        if (leaf.requirement != null && leaf.requirement.Count > 0) block["requirement"] = t.raw["levels"]?[k]?["leaves"]?[leaf.id]?["requirement"]?.DeepClone() ?? leaf.requirement.DeepClone();
+                        if (leaf.requirement != null && leaf.requirement.Count > 0) block["requirement"] = t.raw["levels"]?[a.levelIndex]?["leaves"]?[leaf.id]?["requirement"]?.DeepClone() ?? leaf.requirement.DeepClone();
                         slots.Add(new JObject { ["id"] = leaf.id, ["label"] = leaf.label, ["block"] = block });
                     }
                 else if (a.examples != null)
@@ -324,7 +341,7 @@ public static class TA_KojoTemplate
                         if (group != null && groups?[group] is JArray types) block["requirement"] = new JObject { ["requireRelationshipTypes"] = types.DeepClone() };
                         slots.Add(new JObject { ["label"] = (string)ex["label"] ?? "", ["group"] = group, ["block"] = block });
                     }
-                var ax = new JObject { ["id"] = a.id, ["label"] = a.label, ["kind"] = a.kind, ["ep"] = k < t.epCount, ["slots"] = slots };
+                var ax = new JObject { ["id"] = a.id, ["label"] = a.label, ["kind"] = a.kind, ["ep"] = a.kind == "ep", ["slots"] = slots };
                 if (a.tags.Count > 0) ax["tags"] = new JArray(new List<string>(a.tags).ToArray());
                 if (a.aliasSelfTags.Count > 0) ax["alias"] = new JArray(new List<string>(a.aliasSelfTags).ToArray());
                 axes.Add(ax);
@@ -501,13 +518,17 @@ public static class TA_KojoTemplate
     }
 
     /// <summary>Requirement fields whose value differs from the extra's block (with defaults): "field: should / is".</summary>
-    static List<string> DiffExtra(Extra x, ResponseEntry.Variant v)
+    static List<string> DiffExtra(Extra x, ResponseEntry.Variant v, bool ancestorNoSelfAction = false, bool ancestorNoTargetAction = false)
     {
         var diff = new List<string>();
         var cur = Req(v);
         foreach (var p in x.expected.Properties())
+        {
+            if (p.Name == "requireSelfAction" && ancestorNoSelfAction && (bool)p.Value && !(bool)cur[p.Name]) continue;
+            if (p.Name == "requireTargetAction" && ancestorNoTargetAction && (bool)p.Value && !(bool)cur[p.Name]) continue;
             if (!JToken.DeepEquals(p.Value, cur[p.Name]))
                 diff.Add($"{p.Name}: 应为 {p.Value.ToString(Formatting.None)}（现为 {cur[p.Name]?.ToString(Formatting.None) ?? "-"}）");
+        }
         return diff;
     }
 
@@ -534,7 +555,7 @@ public static class TA_KojoTemplate
     /// a branch of no axis is the writer's customization (T-D5) and stays in its parent's slot. Disabled branches (no
     /// possible output, E2) are skipped like the engine skips them.
     /// </summary>
-    static void Level(Ctx c, List<ResponseEntry.Variant> list, string prefix, int parentAxis)
+    static void Level(Ctx c, List<ResponseEntry.Variant> list, string prefix, int parentAxis, bool ancestorNoSelfAction = false, bool ancestorNoTargetAction = false)
     {
         if (list == null) return;
         var tpl = c.tpl; var provider = c.provider; var entryID = c.entryID; var into = c.into; var map = c.map; var counts = c.counts;
@@ -568,14 +589,14 @@ public static class TA_KojoTemplate
                 if (!c.written.ContainsKey(extra.id)) c.written[extra.id] = path;
                 if (prefix == "") into.Add(Finding("templateExtraOutside", provider, entryID, path, "template", tpl.id, "extra", extra.label));
                 if (!c.enabled.Contains(extra.id)) into.Add(Finding("templateExtraNotEnabled", provider, entryID, path, "template", tpl.id, "extra", extra.label, "extraID", extra.id));
-                var diff = DiffExtra(extra, v);
+                var diff = DiffExtra(extra, v, ancestorNoSelfAction, ancestorNoTargetAction);
                 if (diff.Count > 0) into.Add(Finding("templateExtraFields", provider, entryID, path, "template", tpl.id, "extra", extra.label,
                     "fields", string.Join("；", diff), "block", extra.block.ToString(Formatting.None)));
             }
             else if (axis >= 0)
             {
                 map[path] = tpl.axes[axis].label;
-                if (axis < tpl.epCount)
+                if (tpl.axes[axis].kind == "ep")
                     for (int k = 0; k < tpl.axes[axis].leaves.Count; k++)
                         if (LeafMatches(tpl.axes[axis].leaves[k], v)) { c.leaves[path] = tpl.axes[axis].leaves[k].id; break; }
                 for (int k = 0; k < axes.Count; k++) counts[tpl.axes[axes[k]].id] = (int)counts[tpl.axes[axes[k]].id] + 1;
@@ -586,7 +607,11 @@ public static class TA_KojoTemplate
                     if (extra != null) names.Add("扩展分支「" + extra.label + "」");
                     into.Add(Finding("templateMixed", provider, entryID, path, "axes", string.Join("、", names), "template", tpl.id));
                 }
-                if (parentAxis >= 0 && axis <= parentAxis && !tpl.axes[axis].allowInside.Contains(tpl.axes[parentAxis].id))
+                // canAct:true speakerStatus (e.g. restrained/carried) may nest inside EP levels; unaware states (timestop/sleeping/unconscious) belong at top level.
+                bool canActSelfStatus = parentAxis >= 0 && tpl.axes[axis].kind == "selfStatus" && tpl.axes[parentAxis].kind == "ep"
+                    && (v.requirement == null || v.requirement.requireSelfAction)
+                    && !Any(v.requirement?.selfTags, UnawareSelfStatusTags);
+                if (parentAxis >= 0 && axis <= parentAxis && !tpl.axes[axis].allowInside.Contains(tpl.axes[parentAxis].id) && !canActSelfStatus)
                     into.Add(Finding("templateDepth", provider, entryID, path, "axis", tpl.axes[axis].label,
                         "parent", prefix, "parentAxis", tpl.axes[parentAxis].label, "template", tpl.id));
                 if (axis < highest)
@@ -594,7 +619,7 @@ public static class TA_KojoTemplate
                         "after", highestPath, "afterAxis", tpl.axes[highest].label, "template", tpl.id));
                 else if (axis > highest) { highest = axis; highestPath = path; }
                 // an EP branch is a full inner tree: its own lines are that tree's fallback
-                if (axis < tpl.epCount && v.variants != null && v.variants.Count > 0 && !HasOwnLines(v))
+                if (tpl.axes[axis].kind == "ep" && v.variants != null && v.variants.Count > 0 && !HasOwnLines(v))
                     into.Add(Finding("templateLeafNoFallback", provider, entryID, path, "axis", tpl.axes[axis].label, "template", tpl.id));
             }
             else if (prefix == "")
@@ -603,7 +628,9 @@ public static class TA_KojoTemplate
                 into.Add(Finding("templateOutside", provider, entryID, path, "template", tpl.id));
             }
             else map[path] = "custom";
-            Level(c, v.variants, path, axis >= 0 ? axis : parentAxis);
+            bool nextNoSelf = ancestorNoSelfAction || (v.requirement != null && !v.requirement.requireSelfAction);
+            bool nextNoTarget = ancestorNoTargetAction || (v.requirement != null && !v.requirement.requireTargetAction);
+            Level(c, v.variants, path, axis >= 0 ? axis : parentAxis, nextNoSelf, nextNoTarget);
         }
     }
 
@@ -737,19 +764,22 @@ public static class TA_KojoTemplate
         }
     }
 
+    static readonly HashSet<string> UnawareSelfStatusTags = new HashSet<string> { "timestop", "timestopped", "sleeping", "unconscious" };
+
     /// <summary>A leaf of the template's "role" level (doer / receiver / self).</summary>
     static bool IsRoleLeaf(Template tpl, string id)
     {
-        for (int i = 0; i < tpl.epCount; i++)
-            if (tpl.axes[i].id == "role")
+        for (int i = 0; i < tpl.axes.Count; i++)
+            if (tpl.axes[i].kind == "ep" && tpl.axes[i].id == "role")
                 for (int k = 0; k < tpl.axes[i].leaves.Count; k++) if (tpl.axes[i].leaves[k].id == id) return true;
         return false;
     }
 
     static Leaf FindLeaf(Template tpl, string id)
     {
-        for (int i = 0; i < tpl.epCount; i++)
-            for (int k = 0; k < tpl.axes[i].leaves.Count; k++) if (tpl.axes[i].leaves[k].id == id) return tpl.axes[i].leaves[k];
+        for (int i = 0; i < tpl.axes.Count; i++)
+            if (tpl.axes[i].kind == "ep")
+                for (int k = 0; k < tpl.axes[i].leaves.Count; k++) if (tpl.axes[i].leaves[k].id == id) return tpl.axes[i].leaves[k];
         return null;
     }
 
@@ -762,7 +792,7 @@ public static class TA_KojoTemplate
             var v = list[i];
             if (v == null || v.disabled || MatchMisplaced(tpl, v) != null) continue;
             var axes = Classify(tpl, v);
-            if (axes.Count == 0 || axes[0] >= tpl.epCount) continue;    // the inner tree: no EP leaves below
+            if (axes.Count == 0 || tpl.axes[axes[0]].kind != "ep") continue;    // the inner tree: no EP leaves below
             if (LeafMatches(leaves[idx], v))
             {
                 if (idx == leaves.Count - 1) { if (HasOwnLines(v)) return true; }
@@ -901,6 +931,9 @@ public static class TA_KojoTemplate
         foreach (var p in Req(v).Properties())
         {
             if (tpl.fallbackRequirement[p.Name] != null) continue;
+            // allowRecording: true is strictly more permissive than default false (and only consulted on Interrupt playback),
+            // so existing fallback branches that carry it remain valid fallbacks.
+            if (p.Name == "allowRecording" && p.Value.Type == JTokenType.Boolean && (bool)p.Value) continue;
             var d = defaultRequirement[p.Name];
             if (d != null && !JToken.DeepEquals(d, p.Value)) return false;
         }

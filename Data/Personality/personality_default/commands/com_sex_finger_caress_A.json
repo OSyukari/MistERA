@@ -108,105 +108,165 @@
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "spread_pussy",
-                                "spread_ass",
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
-                            "responses": [
-                                "com_sex_finger_caress_A_Begin_Sleep_1",
-                                "com_sex_finger_caress_A_Begin_Sleep_2"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "spread_pussy",
-                                "spread_ass",
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "2.5.7 开始 睡眠中 独自A自慰 口上文（睡梦中自己开始）",
-                            "responses": [
-                                "com_sex_finger_caress_A_Begin_Self_Sleep_1",
-                                "com_sex_finger_caress_A_Begin_Self_Sleep_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
                                     "timestop"
                                 ]
                             },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "spread_pussy",
-                                "spread_ass",
-                                "doll",
-                                "empty",
-                                "silence",
-                                "idle"
-                            ],
-                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
-                            "responses": [
-                                "com_sex_finger_caress_A_Begin_Timestop_1",
-                                "com_sex_finger_caress_A_Begin_Timestop_2"
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "spread_pussy",
+                                        "spread_ass",
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
+                                    "responses": [
+                                        "com_sex_finger_caress_A_Begin_Timestop_1",
+                                        "com_sex_finger_caress_A_Begin_Timestop_2"
+                                    ]
+                                }
                             ]
                         },
                         {
                             "requirement": {
-                                "requirePermission": true
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
                             },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "spread_pussy",
-                                "spread_ass",
-                                "closed_eyes",
-                                "blush",
-                                "affectionate"
-                            ],
-                            "_comment": "2.1.1 开始被A抚摸 有允许 口上文",
-                            "responses": [
-                                "com_sex_finger_caress_A_Begin_1",
-                                "com_sex_finger_caress_A_Begin_2"
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "spread_pussy",
+                                        "spread_ass",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
+                                    "responses": [
+                                        "com_sex_finger_caress_A_Begin_Sleep_1",
+                                        "com_sex_finger_caress_A_Begin_Sleep_2"
+                                    ]
+                                },
+                                {
+                                    "requireSelfOnly": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "spread_pussy",
+                                        "spread_ass",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.5.7 开始 睡眠中 独自A自慰 口上文（睡梦中自己开始）",
+                                    "responses": [
+                                        "com_sex_finger_caress_A_Begin_Self_Sleep_1",
+                                        "com_sex_finger_caress_A_Begin_Self_Sleep_2"
+                                    ]
+                                }
                             ]
                         },
                         {
                             "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
                             },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "spread_pussy",
-                                "spread_ass",
-                                "blush"
-                            ],
-                            "_comment": "2.2.1 开始被A抚摸 未允许 好意 口上文",
-                            "responses": [
-                                "com_sex_finger_caress_A_Begin_3",
-                                "com_sex_finger_caress_A_Begin_4"
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_sex_finger_caress_A_Begin_8",
+                                        "com_sex_finger_caress_A_Begin_9",
+                                        "com_sex_finger_caress_A_Begin_10"
+                                    ]
+                                }
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
+                            "_comment": "2.2.2 开始被A抚摸 未允许 敌意 口上文",
+                            "responses": [
+                                "com_sex_finger_caress_A_Begin_5",
+                                "com_sex_finger_caress_A_Begin_6",
+                                "com_sex_finger_caress_A_Begin_7"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_sex_finger_caress_A_Begin_11",
+                                        "com_sex_finger_caress_A_Begin_12",
+                                        "com_sex_finger_caress_A_Begin_13"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "spread_pussy",
+                                        "spread_ass",
+                                        "closed_eyes",
+                                        "blush",
+                                        "affectionate"
+                                    ],
+                                    "_comment": "2.1.1 开始被A抚摸 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_finger_caress_A_Begin_1",
+                                        "com_sex_finger_caress_A_Begin_2"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "spread_pussy",
+                                        "spread_ass",
+                                        "blush"
+                                    ],
+                                    "_comment": "2.2.1 开始被A抚摸 未允许 好意 口上文",
+                                    "responses": [
+                                        "com_sex_finger_caress_A_Begin_3",
+                                        "com_sex_finger_caress_A_Begin_4"
+                                    ]
+                                }
+                            ],
                             "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
@@ -216,47 +276,7 @@
                                 "trembling",
                                 "tearful",
                                 "pain"
-                            ],
-                            "_comment": "2.2.2 开始被A抚摸 未允许 敌意 口上文",
-                            "responses": [
-                                "com_sex_finger_caress_A_Begin_5",
-                                "com_sex_finger_caress_A_Begin_6",
-                                "com_sex_finger_caress_A_Begin_7"
                             ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requirePermission": true
-                            },
-                            "_comment": "2.5.3 开始独自A自慰 有允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
-                            "responses": [
-                                "com_sex_finger_caress_A_Begin_Self_M_1",
-                                "com_sex_finger_caress_A_Begin_Self_M_2"
-                            ],
-                            "requireMaster": true,
-                            "requireSelfNotMaster": true
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requirePermission": true
-                            },
-                            "_comment": "2.5.3 开始独自A自慰 有允许 口上文",
-                            "responses": [
-                                "com_sex_finger_caress_A_Begin_Self_1",
-                                "com_sex_finger_caress_A_Begin_Self_2"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "_comment": "2.5.4 开始独自A自慰 无允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
-                            "responses": [
-                                "com_sex_finger_caress_A_Begin_Self_M_3",
-                                "com_sex_finger_caress_A_Begin_Self_M_4"
-                            ],
-                            "requireMaster": true,
-                            "requireSelfNotMaster": true
                         },
                         {
                             "requireSelfOnly": true,
@@ -264,6 +284,52 @@
                             "responses": [
                                 "com_sex_finger_caress_A_Begin_Self_3",
                                 "com_sex_finger_caress_A_Begin_Self_4"
+                            ],
+                            "variants": [
+                                {
+                                    "requireMaster": true,
+                                    "requireSelfNotMaster": true,
+                                    "_comment": "2.5.4 开始独自A自慰 无允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
+                                    "responses": [
+                                        "com_sex_finger_caress_A_Begin_Self_M_3",
+                                        "com_sex_finger_caress_A_Begin_Self_M_4"
+                                    ],
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "_comment": "2.5.3 开始独自A自慰 有允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
+                                            "responses": [
+                                                "com_sex_finger_caress_A_Begin_Self_M_1",
+                                                "com_sex_finger_caress_A_Begin_Self_M_2"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "_comment": "2.5.3 开始独自A自慰 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_finger_caress_A_Begin_Self_1",
+                                        "com_sex_finger_caress_A_Begin_Self_2"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（接受，任何状态）",
+                            "responses": [
+                                "com_sex_finger_caress_A_Begin_14",
+                                "com_sex_finger_caress_A_Begin_15",
+                                "com_sex_finger_caress_A_Begin_16"
                             ]
                         }
                     ],
@@ -278,6 +344,207 @@
                         "nsfw"
                     ],
                     "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfOnly": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "spread_pussy",
+                                        "spread_ass",
+                                        "doll",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.5.6 时停中 独自A自慰 口上文",
+                                    "responses": [
+                                        "com_sex_finger_caress_A_Self_3",
+                                        "com_sex_finger_caress_A_Self_4"
+                                    ]
+                                },
+                                {
+                                    "requireSelfOnly": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "spread_pussy",
+                                        "spread_ass",
+                                        "doll",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.5.6 时停中 独自A自慰 口上文",
+                                    "responses": [
+                                        "com_sex_finger_caress_A_Self_3",
+                                        "com_sex_finger_caress_A_Self_4"
+                                    ]
+                                },
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "spread_pussy",
+                                        "spread_ass",
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.3.1 时停中 被A抚摸 口上文",
+                                    "responses": [
+                                        "com_sex_finger_caress_A_3",
+                                        "com_sex_finger_caress_A_4"
+                                    ]
+                                },
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "spread_pussy",
+                                        "spread_ass",
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.3.1 时停中 被A抚摸 口上文",
+                                    "responses": [
+                                        "com_sex_finger_caress_A_3",
+                                        "com_sex_finger_caress_A_4"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfOnly": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "spread_pussy",
+                                        "spread_ass",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.5.5 睡眠中 独自A自慰 口上文",
+                                    "responses": [
+                                        "com_sex_finger_caress_A_Self_1",
+                                        "com_sex_finger_caress_A_Self_2"
+                                    ]
+                                },
+                                {
+                                    "requireSelfOnly": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "spread_pussy",
+                                        "spread_ass",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.5.5 睡眠中 独自A自慰 口上文",
+                                    "responses": [
+                                        "com_sex_finger_caress_A_Self_1",
+                                        "com_sex_finger_caress_A_Self_2"
+                                    ]
+                                },
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "spread_pussy",
+                                        "spread_ass",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.3.2 睡眠中 被A抚摸 口上文",
+                                    "responses": [
+                                        "com_sex_finger_caress_A_1",
+                                        "com_sex_finger_caress_A_2"
+                                    ]
+                                },
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "spread_pussy",
+                                        "spread_ass",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.3.2 睡眠中 被A抚摸 口上文",
+                                    "responses": [
+                                        "com_sex_finger_caress_A_1",
+                                        "com_sex_finger_caress_A_2"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_sex_finger_caress_A_27",
+                                        "com_sex_finger_caress_A_28",
+                                        "com_sex_finger_caress_A_29"
+                                    ]
+                                }
+                            ]
+                        },
                         {
                             "requireSelfOnly": true,
                             "variants": [
@@ -336,48 +603,6 @@
                                     "variants": [
                                         {
                                             "requirement": {
-                                                "requireSelfAction": false,
-                                                "selfTags": [
-                                                    "sleeping"
-                                                ]
-                                            },
-                                            "extraSelfPortraitTags": [
-                                                "sex",
-                                                "doer",
-                                                "spread_pussy",
-                                                "spread_ass",
-                                                "sleeping",
-                                                "relaxed"
-                                            ],
-                                            "_comment": "2.5.5 睡眠中 独自A自慰 口上文",
-                                            "responses": [
-                                                "com_sex_finger_caress_A_Self_1",
-                                                "com_sex_finger_caress_A_Self_2"
-                                            ]
-                                        },
-                                        {
-                                            "requirement": {
-                                                "requireSelfAction": false,
-                                                "selfTags": [
-                                                    "timestop"
-                                                ]
-                                            },
-                                            "extraSelfPortraitTags": [
-                                                "sex",
-                                                "doer",
-                                                "spread_pussy",
-                                                "spread_ass",
-                                                "doll",
-                                                "idle"
-                                            ],
-                                            "_comment": "2.5.6 时停中 独自A自慰 口上文",
-                                            "responses": [
-                                                "com_sex_finger_caress_A_Self_3",
-                                                "com_sex_finger_caress_A_Self_4"
-                                            ]
-                                        },
-                                        {
-                                            "requirement": {
                                                 "requirePermission": true
                                             },
                                             "_comment": "2.5.9 独自A自慰 结果正面 有允许 口上文",
@@ -386,48 +611,6 @@
                                                 "com_sex_finger_caress_A_Self_10"
                                             ]
                                         }
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "sleeping"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "spread_pussy",
-                                        "spread_ass",
-                                        "sleeping",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.5.5 睡眠中 独自A自慰 口上文",
-                                    "responses": [
-                                        "com_sex_finger_caress_A_Self_1",
-                                        "com_sex_finger_caress_A_Self_2"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "timestop"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "spread_pussy",
-                                        "spread_ass",
-                                        "doll",
-                                        "idle"
-                                    ],
-                                    "_comment": "2.5.6 时停中 独自A自慰 口上文",
-                                    "responses": [
-                                        "com_sex_finger_caress_A_Self_3",
-                                        "com_sex_finger_caress_A_Self_4"
                                     ]
                                 },
                                 {
@@ -448,60 +631,174 @@
                             "_comment": "2.5.12 独自A自慰 尝试但结果负面 无允许 口上文"
                         },
                         {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_player only version": {
-                                "requirement": {
-                                    "targetBaseID": "PLAYER"
-                                }
-                            },
-                            "_strong com variant": {
-                                "requireCOMStrongVariant": true
-                            },
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 ｜ 接受",
+                            "responses": [
+                                "com_sex_finger_caress_A_39",
+                                "com_sex_finger_caress_A_40",
+                                "com_sex_finger_caress_A_41"
+                            ],
                             "variants": [
                                 {
                                     "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "sleeping"
-                                        ]
+                                        "requireEPSuccessGTE": "Success"
                                     },
+                                    "_player only version": {
+                                        "requirement": {
+                                            "targetBaseID": "PLAYER"
+                                        }
+                                    },
+                                    "_strong com variant": {
+                                        "requireCOMStrongVariant": true
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受·判定成功",
+                                            "responses": [
+                                                "com_sex_finger_caress_A_21",
+                                                "com_sex_finger_caress_A_22",
+                                                "com_sex_finger_caress_A_23"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "targetBaseID": "PLAYER",
+                                                "selfTags": [
+                                                    "justWokenUp"
+                                                ]
+                                            },
+                                            "_comment1": "玩家专用 刚睡醒时的 A抚摸口上文",
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "requirePermission": true
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "receiver",
+                                                        "spread_pussy",
+                                                        "spread_ass",
+                                                        "sleep",
+                                                        "smile",
+                                                        "blush",
+                                                        "lazy"
+                                                    ],
+                                                    "_comment": "2.1.5  玩家专用的 刚睡醒时的 被A抚摸 有允许 口上文",
+                                                    "responses": [
+                                                        "com_sex_finger_caress_A_12"
+                                                    ]
+                                                },
+                                                {
+                                                    "requirement": {
+                                                        "requireSelfAttitudeGTE": "Like"
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "receiver",
+                                                        "spread_pussy",
+                                                        "spread_ass",
+                                                        "sleep",
+                                                        "smile",
+                                                        "blush",
+                                                        "lazy"
+                                                    ],
+                                                    "_comment": "2.2.7 玩家专用的 刚睡醒时的 被A抚摸 无允许 好意 口上文",
+                                                    "responses": [
+                                                        "com_sex_finger_caress_A_13"
+                                                    ]
+                                                }
+                                            ],
+                                            "_comment": "2.2.8 玩家专用 刚睡醒时的 被A抚摸 无允许 敌意 口上文",
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "spread_pussy",
+                                                "spread_ass",
+                                                "scared",
+                                                "submissive"
+                                            ],
+                                            "responses": [
+                                                "com_sex_finger_caress_A_14"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "justWokenUp"
+                                                ]
+                                            },
+                                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
+                                            "responses": [
+                                                "com_sex_finger_caress_A_30",
+                                                "com_sex_finger_caress_A_31",
+                                                "com_sex_finger_caress_A_32"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "spread_pussy",
+                                                "spread_ass",
+                                                "love",
+                                                "happy",
+                                                "relaxed"
+                                            ],
+                                            "_comment": "2.1.3 ($self$) 被A抚摸 结果正面 有允许 口上文",
+                                            "responses": [
+                                                "com_sex_finger_caress_A_15",
+                                                "com_sex_finger_caress_A_16"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.5 ($self$) 被A抚摸 结果正面 未允许 口上文",
                                     "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
                                         "spread_pussy",
                                         "spread_ass",
-                                        "sleeping",
-                                        "relaxed"
+                                        "blush",
+                                        "shy",
+                                        "surprised",
+                                        "happy",
+                                        "aroused"
                                     ],
-                                    "_comment": "2.3.2 睡眠中 被A抚摸 口上文",
                                     "responses": [
-                                        "com_sex_finger_caress_A_1",
-                                        "com_sex_finger_caress_A_2"
+                                        "com_sex_finger_caress_A_17"
                                     ]
                                 },
                                 {
                                     "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "timestop"
-                                        ]
+                                        "requireEPSuccessLTE": "Failure"
                                     },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "spread_pussy",
-                                        "spread_ass",
-                                        "doll",
-                                        "empty",
-                                        "silence",
-                                        "idle"
-                                    ],
-                                    "_comment": "2.3.1 时停中 被A抚摸 口上文",
+                                    "_comment": "受方 ｜ 接受·判定失败",
                                     "responses": [
-                                        "com_sex_finger_caress_A_3",
-                                        "com_sex_finger_caress_A_4"
+                                        "com_sex_finger_caress_A_36",
+                                        "com_sex_finger_caress_A_37",
+                                        "com_sex_finger_caress_A_38"
+                                    ],
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受·判定失败",
+                                            "responses": [
+                                                "com_sex_finger_caress_A_24",
+                                                "com_sex_finger_caress_A_25",
+                                                "com_sex_finger_caress_A_26"
+                                            ]
+                                        }
                                     ]
                                 },
                                 {
@@ -567,143 +864,17 @@
                                 },
                                 {
                                     "requirement": {
-                                        "requirePermission": true
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
                                     },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "spread_pussy",
-                                        "spread_ass",
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.1.3 ($self$) 被A抚摸 结果正面 有允许 口上文",
+                                    "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
                                     "responses": [
-                                        "com_sex_finger_caress_A_15",
-                                        "com_sex_finger_caress_A_16"
+                                        "com_sex_finger_caress_A_33",
+                                        "com_sex_finger_caress_A_34",
+                                        "com_sex_finger_caress_A_35"
                                     ]
                                 }
-                            ],
-                            "_comment": "2.2.5 ($self$) 被A抚摸 结果正面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "spread_pussy",
-                                "spread_ass",
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": [
-                                "com_sex_finger_caress_A_17"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "spread_pussy",
-                                "spread_ass",
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "2.3.2 睡眠中 被A抚摸 口上文",
-                            "responses": [
-                                "com_sex_finger_caress_A_1",
-                                "com_sex_finger_caress_A_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "timestop"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "spread_pussy",
-                                "spread_ass",
-                                "doll",
-                                "empty",
-                                "silence",
-                                "idle"
-                            ],
-                            "_comment": "2.3.1 时停中 被A抚摸 口上文",
-                            "responses": [
-                                "com_sex_finger_caress_A_3",
-                                "com_sex_finger_caress_A_4"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "targetBaseID": "PLAYER",
-                                "selfTags": [
-                                    "justWokenUp"
-                                ]
-                            },
-                            "_comment1": "玩家专用 刚睡醒时的 A抚摸口上文",
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "spread_pussy",
-                                        "spread_ass",
-                                        "sleep",
-                                        "smile",
-                                        "blush",
-                                        "lazy"
-                                    ],
-                                    "_comment": "2.1.5  玩家专用的 刚睡醒时的 被A抚摸 有允许 口上文",
-                                    "responses": [
-                                        "com_sex_finger_caress_A_12"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAttitudeGTE": "Like"
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "spread_pussy",
-                                        "spread_ass",
-                                        "sleep",
-                                        "smile",
-                                        "blush",
-                                        "lazy"
-                                    ],
-                                    "_comment": "2.2.7 玩家专用的 刚睡醒时的 被A抚摸 无允许 好意 口上文",
-                                    "responses": [
-                                        "com_sex_finger_caress_A_13"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.8 玩家专用 刚睡醒时的 被A抚摸 无允许 敌意 口上文",
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "spread_pussy",
-                                "spread_ass",
-                                "scared",
-                                "submissive"
-                            ],
-                            "responses": [
-                                "com_sex_finger_caress_A_14"
                             ]
                         },
                         {
@@ -915,6 +1086,53 @@
                     ],
                     "template": "commandRefuse"
                 }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_finger_caress_A_Ongoing",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 对方 ｜ 接受",
+                            "responses": [
+                                "com_sex_finger_caress_A_Ongoing_4",
+                                "com_sex_finger_caress_A_Ongoing_5",
+                                "com_sex_finger_caress_A_Ongoing_6"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "对方是玩家",
+                                    "responses": [
+                                        "com_sex_finger_caress_A_Ongoing_1",
+                                        "com_sex_finger_caress_A_Ongoing_2",
+                                        "com_sex_finger_caress_A_Ongoing_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（接受，任何状态）",
+                            "responses": [
+                                "com_sex_finger_caress_A_Ongoing_7",
+                                "com_sex_finger_caress_A_Ongoing_8",
+                                "com_sex_finger_caress_A_Ongoing_9"
+                            ]
+                        }
+                    ]
+                }
             }
         ]
     },
@@ -1000,7 +1218,46 @@
                 "com_sex_finger_caress_A_Begin_Timestop_2": "$self$的穴口被揉得不受控地收缩吮住指尖，臀肉被搓出指印又弹回原状，房间里只有皮肉被拿捏的轻响。",
                 "com_sex_finger_caress_A_Begin_7": "$self$浑身僵硬，眼泪在眼眶里打转，只能把哀求压进喉咙。\n\"求、求你轻一点……我什么都听你的……\"",
                 "com_sex_finger_caress_A_Refuse_Receiver_1": "$self$冷着脸推开$target$的手。\n\"别碰这里，我现在没心情。\"",
-                "com_sex_finger_caress_A_Refuse_Receiver_2": "$self$往后退开，避开了$target$的动作。\n\"不要……别这样碰我。\""
+                "com_sex_finger_caress_A_Refuse_Receiver_2": "$self$往后退开，避开了$target$的动作。\n\"不要……别这样碰我。\"",
+                "com_sex_finger_caress_A_Ongoing_1": "后穴正被指尖轻轻揉按着，$self$余光瞥见$target$还在旁边看着，咬紧嘴唇别开视线。",
+                "com_sex_finger_caress_A_Ongoing_2": "“别、别一直盯着看……”$self$忍着后穴传来的阵阵发胀感，顶着$target$的目光绷紧了肩。",
+                "com_sex_finger_caress_A_Ongoing_3": "被当面揉弄后穴的羞耻让$self$耳根发烫，只能死死忍住不发出声音。",
+                "com_sex_finger_caress_A_Begin_8": "昏迷中的$self$毫无知觉，任由$target$的手指在后穴外围轻轻打转揉按。",
+                "com_sex_finger_caress_A_Begin_9": "$self$紧闭着眼没有半点反应，后穴在指腹反复摩挲下渐渐软了下来。",
+                "com_sex_finger_caress_A_Begin_10": "失去意识的$self$既没有躲闪也没有出声，呼吸依旧微弱而平稳。",
+                "com_sex_finger_caress_A_Begin_11": "手腕被束缚着没法挡开，$self$感觉到指尖贴上后穴时猛地绷紧了背：“……别乱碰那里！”",
+                "com_sex_finger_caress_A_Begin_12": "“唔……被绑着还要被这样弄后面……”$self$咬住下唇别开脸，躲不开$target$的手指。",
+                "com_sex_finger_caress_A_Begin_13": "束缚让$self$无处可退，只能硬着头皮承受后穴外围慢慢落下的揉弄。",
+                "com_sex_finger_caress_A_21": "双手被绑着躲不开，后穴传来的酥麻让$self$喘得断断续续：“……别再揉那里了……”",
+                "com_sex_finger_caress_A_22": "$self$扯动腕上的束缚仰起脖颈，随着指腹在后穴边沿的打转轻轻颤抖起来。",
+                "com_sex_finger_caress_A_23": "没法推开$target$的手，$self$只能咬紧嘴唇忍住喉咙里溢出的轻哼。",
+                "com_sex_finger_caress_A_24": "被绑着避不开，$target$生涩的力道弄得后穴有些发疼，$self$皱眉瞪过去：“好痛！别硬戳！”",
+                "com_sex_finger_caress_A_25": "“你指甲刮到我了……”$self$往后缩着腰，手腕上的绳索勒得发红，“不会弄就松手！”",
+                "com_sex_finger_caress_A_26": "粗鲁的按揉半点不舒服，$self$别开脸忍着刺痛：“够了没有，别再瞎揉了。”",
+                "com_sex_finger_caress_A_27": "昏迷中的$self$依旧没有转醒，后穴在手指反复揉弄下微微发红发软。",
+                "com_sex_finger_caress_A_28": "$self$毫无反应地躺着，连指尖都没动一下，任由$target$在后穴外围摩挲。",
+                "com_sex_finger_caress_A_29": "失去意识的$self$没有发出任何声响，只留下一片沉沉的安静。",
+                "com_sex_finger_caress_A_30": "后穴传来的异样酥麻把$self$弄醒，她迷糊地睁开眼看了看$target$，最终没推开：“……唔，醒来就弄那里啊？”",
+                "com_sex_finger_caress_A_31": "$self$揉了揉眼睛清醒过来，察觉后面的指尖还在轻轻揉按，耳尖微红：“……轻点。”",
+                "com_sex_finger_caress_A_32": "“……哈啊、难怪睡梦里觉得后面怪怪的。”$self$声音还带着睡意，顺着指尖的力道轻喘了声。",
+                "com_sex_finger_caress_A_33": "$self$刚睁开眼就察觉后穴被$target$的手指抵着揉弄，顿时僵了一下：“……你趁我睡着在干什么？”",
+                "com_sex_finger_caress_A_34": "睡意瞬间散了大半，$self$皱着眉往后挪了半寸：“刚醒就碰这种地方，分寸呢？”",
+                "com_sex_finger_caress_A_35": "$self$还没完全清醒，只觉得后面一阵发胀，忍不住低声抱怨了一句：“……别乱动。”",
+                "com_sex_finger_caress_A_Begin_14": "$self$察觉到动作已经开始，眼神落向一旁没有多说什么。",
+                "com_sex_finger_caress_A_Begin_15": "指尖刚一落定，$self$便顺着这股力道微微调整了重心。",
+                "com_sex_finger_caress_A_Begin_16": "$self$没有阻拦，只是静静看着接下来的动作如何展开。",
+                "com_sex_finger_caress_A_36": "笨拙的按揉没带来多少舒服，反而让$self$皱起眉往后缩了半寸：“……太生硬了。”",
+                "com_sex_finger_caress_A_37": "$self$被后穴处突兀的力道弄得有些不适，轻吸了口气别开视线。",
+                "com_sex_finger_caress_A_38": "指尖的节奏全不对劲，$self$忍不住绷紧身体：“……别乱戳。”",
+                "com_sex_finger_caress_A_39": "后穴处的触感渐渐缓了下来，$self$轻吐出一口气，身体仍有些发紧。",
+                "com_sex_finger_caress_A_40": "$self$垂下眼睫，感受着方才指腹揉按后留下的余温。",
+                "com_sex_finger_caress_A_41": "触碰告一段落，$self$微微挪动了一下身体，没有再多说什么。",
+                "com_sex_finger_caress_A_Ongoing_4": "$self$感觉到指尖还在后穴周围打转，下意识绷紧了腰身。",
+                "com_sex_finger_caress_A_Ongoing_5": "后穴传来的触感让$self$呼吸微微一乱，只是咬住嘴唇没有出声。",
+                "com_sex_finger_caress_A_Ongoing_6": "$self$偏过头去，任由那根手指在后穴边沿不紧不慢地揉按着。",
+                "com_sex_finger_caress_A_Ongoing_7": "指尖的动作还在继续，$self$随着呼吸的节奏微微调整着姿态。",
+                "com_sex_finger_caress_A_Ongoing_8": "$self$没有打断眼前的触碰，只是安静地感受着指腹传来的温度。",
+                "com_sex_finger_caress_A_Ongoing_9": "动作仍在持续，$self$保持着原本的姿势，一时间没有别的反应。"
             }
         }
     }

@@ -7,137 +7,175 @@
                     "ID": "com_touch_head_Begin",
                     "variants": [
                         {
-                            "requireSelfDoer": true,
-                            "requirement": {
-                                "requireTargetAction": false,
-                                "requirePermission": true
-                            },
-                            "extraSelfPortraitTags": [
-                                "smile",
-                                "relaxed"
-                            ],
-                            "_comment": "开始摸头 施方 有允许",
-                            "responses": [
-                                "com_touch_head_Begin_Doer_Permission_1",
-                                "com_touch_head_Begin_Doer_Permission_2",
-                                "com_touch_head_Begin_Doer_Permission_3"
-                            ]
-                        },
-                        {
-                            "requireSelfDoer": true,
-                            "requirement": {
-                                "requireTargetAction": false,
-                                "requireSelfAttitudeGTE": "Like"
-                            },
-                            "extraSelfPortraitTags": [
-                                "smile"
-                            ],
-                            "_comment": "开始摸头 施方 未允许 好意",
-                            "responses": [
-                                "com_touch_head_Begin_Doer_Like_1",
-                                "com_touch_head_Begin_Doer_Like_2",
-                                "com_touch_head_Begin_Doer_Like_3"
-                            ]
-                        },
-                        {
-                            "requireSelfDoer": true,
-                            "requirement": {
-                                "requireTargetAction": false
-                            },
-                            "_comment": "开始摸头 施方 通用",
-                            "responses": [
-                                "com_touch_head_Begin_Doer_1",
-                                "com_touch_head_Begin_Doer_2",
-                                "com_touch_head_Begin_Doer_3"
-                            ]
-                        },
-                        {
-                            "requireSelfReceiver": true,
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
-                            "responses": [
-                                "com_touch_head_Begin_Sleep_1",
-                                "com_touch_head_Begin_Sleep_2",
-                                "com_touch_head_Begin_Sleep_3"
-                            ]
-                        },
-                        {
-                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
                                     "timestop"
                                 ]
                             },
-                            "extraSelfPortraitTags": [
-                                "doll",
-                                "empty",
-                                "silence",
-                                "idle"
-                            ],
-                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
-                            "responses": [
-                                "com_touch_head_Begin_Timestop_1",
-                                "com_touch_head_Begin_Timestop_2",
-                                "com_touch_head_Begin_Timestop_3"
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
+                                    "responses": [
+                                        "com_touch_head_Begin_Timestop_1",
+                                        "com_touch_head_Begin_Timestop_2",
+                                        "com_touch_head_Begin_Timestop_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
+                                    "responses": [
+                                        "com_touch_head_Begin_Sleep_1",
+                                        "com_touch_head_Begin_Sleep_2",
+                                        "com_touch_head_Begin_Sleep_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_touch_head_Begin_1",
+                                        "com_touch_head_Begin_2",
+                                        "com_touch_head_Begin_3"
+                                    ]
+                                }
                             ]
                         },
                         {
                             "requireSelfReceiver": true,
                             "requirement": {
-                                "requirePermission": true
+                                "requireSelfAction": false,
+                                "allowRecording": true
                             },
-                            "extraSelfPortraitTags": [
-                                "closed_eyes",
-                                "blush",
-                                "affectionate"
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_touch_head_Begin_4",
+                                        "com_touch_head_Begin_5",
+                                        "com_touch_head_Begin_6"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "_comment": "2.1.1 开始被摸头 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_head_Begin_A_1",
+                                        "com_touch_head_Begin_A_2",
+                                        "com_touch_head_Begin_A_3",
+                                        "com_touch_head_Begin_A_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "_comment": "2.2.1 开始被摸头 未允许 好意 口上文",
+                                    "responses": [
+                                        "com_touch_head_Begin_B_1",
+                                        "com_touch_head_Begin_B_2",
+                                        "com_touch_head_Begin_B_3",
+                                        "com_touch_head_Begin_B_4"
+                                    ]
+                                }
                             ],
-                            "_comment": "2.1.1 开始被摸头 有允许 口上文",
-                            "responses": [
-                                "com_touch_head_Begin_A_1",
-                                "com_touch_head_Begin_A_2",
-                                "com_touch_head_Begin_A_3",
-                                "com_touch_head_Begin_A_4"
-                            ]
-                        },
-                        {
-                            "requireSelfReceiver": true,
-                            "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
-                            },
-                            "extraSelfPortraitTags": [
-                                "blush"
-                            ],
-                            "_comment": "2.2.1 开始被摸头 未允许 好意 口上文",
-                            "responses": [
-                                "com_touch_head_Begin_B_1",
-                                "com_touch_head_Begin_B_2",
-                                "com_touch_head_Begin_B_3",
-                                "com_touch_head_Begin_B_4"
-                            ]
-                        },
-                        {
-                            "requireSelfReceiver": true,
-                            "extraSelfPortraitTags": [
-                                "fear",
-                                "trembling"
-                            ],
-                            "_comment": "2.2.2 开始被摸头 未允许 敌意 口上文",
                             "responses": [
                                 "com_touch_head_Begin_C_1",
                                 "com_touch_head_Begin_C_2",
                                 "com_touch_head_Begin_C_3",
                                 "com_touch_head_Begin_C_4"
-                            ]
+                            ],
+                            "_comment": "2.2.2 开始被摸头 未允许 敌意 口上文"
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireTargetAction": false,
+                                        "requirePermission": true
+                                    },
+                                    "_comment": "开始摸头 施方 有允许",
+                                    "responses": [
+                                        "com_touch_head_Begin_Doer_Permission_1",
+                                        "com_touch_head_Begin_Doer_Permission_2",
+                                        "com_touch_head_Begin_Doer_Permission_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireTargetAction": false,
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "_comment": "开始摸头 施方 未允许 好意",
+                                    "responses": [
+                                        "com_touch_head_Begin_Doer_Like_1",
+                                        "com_touch_head_Begin_Doer_Like_2",
+                                        "com_touch_head_Begin_Doer_Like_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireTargetAction": false
+                                    },
+                                    "_comment": "开始摸头 施方 通用",
+                                    "responses": [
+                                        "com_touch_head_Begin_Doer_1",
+                                        "com_touch_head_Begin_Doer_2",
+                                        "com_touch_head_Begin_Doer_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_touch_head_Begin_7",
+                                "com_touch_head_Begin_8"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandAct"
@@ -149,11 +187,98 @@
                     "ID": "com_touch_head",
                     "variants": [
                         {
-                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireSelfAction": false,
-                                "allowRecording": true
+                                "selfTags": [
+                                    "timestop"
+                                ]
                             },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.3.1 时停中 被摸头 口上文",
+                                    "responses": [
+                                        "com_touch_head_E_1",
+                                        "com_touch_head_E_2",
+                                        "com_touch_head_E_3",
+                                        "com_touch_head_E_4"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.3.2 睡眠中 被摸头 口上文",
+                                    "responses": [
+                                        "com_touch_head_D_1",
+                                        "com_touch_head_D_2",
+                                        "com_touch_head_D_3",
+                                        "com_touch_head_D_4"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_touch_head_fainted_1",
+                                        "com_touch_head_fainted_2",
+                                        "com_touch_head_fainted_3"
+                                    ]
+                                },
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_touch_head_fainted_1",
+                                        "com_touch_head_fainted_2",
+                                        "com_touch_head_fainted_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
                             "variants": [
                                 {
                                     "requirement": {
@@ -168,22 +293,6 @@
                                         "requireCOMStrongVariant": true
                                     },
                                     "variants": [
-                                        {
-                                            "requirement": {
-                                                "requireSelfAction": false,
-                                                "selfTags": [
-                                                    "unconscious"
-                                                ],
-                                                "excludeSelfTags": [
-                                                    "sleeping"
-                                                ]
-                                            },
-                                            "responses": [
-                                                "com_touch_head_fainted_1",
-                                                "com_touch_head_fainted_2",
-                                                "com_touch_head_fainted_3"
-                                            ]
-                                        },
                                         {
                                             "requirement": {
                                                 "selfTags": [
@@ -243,30 +352,26 @@
                                 },
                                 {
                                     "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "unconscious"
-                                        ],
-                                        "excludeSelfTags": [
-                                            "sleeping"
-                                        ]
+                                        "requireEPSuccessLTE": "Failure"
                                     },
+                                    "_comment": "判定失败",
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_touch_head_restrained_fail_1",
+                                                "com_touch_head_restrained_fail_2",
+                                                "com_touch_head_restrained_fail_3"
+                                            ]
+                                        }
+                                    ],
                                     "responses": [
-                                        "com_touch_head_fainted_1",
-                                        "com_touch_head_fainted_2",
-                                        "com_touch_head_fainted_3"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "selfTags": [
-                                            "restrained"
-                                        ]
-                                    },
-                                    "responses": [
-                                        "com_touch_head_restrained_fail_1",
-                                        "com_touch_head_restrained_fail_2",
-                                        "com_touch_head_restrained_fail_3"
+                                        "com_touch_head_Receiver_fb_1",
+                                        "com_touch_head_Receiver_fb_2"
                                     ]
                                 },
                                 {
@@ -280,31 +385,15 @@
                                         "com_touch_head_woken_2",
                                         "com_touch_head_woken_3"
                                     ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "sleeping"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sleeping",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.3.2 睡眠中 被摸头 口上文",
-                                    "responses": [
-                                        "com_touch_head_D_1",
-                                        "com_touch_head_D_2",
-                                        "com_touch_head_D_3",
-                                        "com_touch_head_D_4"
-                                    ]
                                 }
                             ],
                             "responses": [
                                 "com_touch_head_Receiver_fb_1",
                                 "com_touch_head_Receiver_fb_2"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false
+                            }
                         },
                         {
                             "requireSelfDoer": true,
@@ -341,26 +430,9 @@
                             "requireSelfReceiver": true,
                             "requirement": {
                                 "requireSelfAction": false,
-                                "selfTags": [
-                                    "timestop"
-                                ]
+                                "requireTargetAction": false,
+                                "allowRecording": true
                             },
-                            "extraSelfPortraitTags": [
-                                "doll",
-                                "empty",
-                                "silence",
-                                "idle"
-                            ],
-                            "_comment": "2.3.1 时停中 被摸头 口上文",
-                            "responses": [
-                                "com_touch_head_E_1",
-                                "com_touch_head_E_2",
-                                "com_touch_head_E_3",
-                                "com_touch_head_E_4"
-                            ]
-                        },
-                        {
-                            "requireSelfReceiver": true,
                             "variants": [
                                 {
                                     "requirement": {
@@ -397,12 +469,7 @@
                                 "com_touch_head_L_2",
                                 "com_touch_head_L_3",
                                 "com_touch_head_L_4"
-                            ],
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            }
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -514,6 +581,88 @@
                     ],
                     "template": "commandRefuse"
                 }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_touch_head_Interrupt",
+                    "template": "commandInterrupt",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_touch_head_Interrupt_4",
+                                "com_touch_head_Interrupt_5",
+                                "com_touch_head_Interrupt_6"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_touch_head_Interrupt_1",
+                                "com_touch_head_Interrupt_2",
+                                "com_touch_head_Interrupt_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_touch_head_Interrupt_7",
+                                "com_touch_head_Interrupt_8"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_touch_head_Ongoing",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "受方 → 玩家 ｜ 接受",
+                                    "responses": [
+                                        "com_touch_head_Ongoing_4",
+                                        "com_touch_head_Ongoing_5",
+                                        "com_touch_head_Ongoing_6"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_touch_head_Ongoing_1",
+                                "com_touch_head_Ongoing_2",
+                                "com_touch_head_Ongoing_3"
+                            ],
+                            "_comment": "受方 → NPC ｜ 接受"
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_touch_head_Ongoing_7",
+                                "com_touch_head_Ongoing_8"
+                            ]
+                        }
+                    ]
+                }
             }
         ]
     },
@@ -607,7 +756,31 @@
                 "com_touch_head_Refuse_woken_2": "睡意瞬间消散，$self$皱着眉往后挪开：\"别趁人睡着的时候乱碰。\"",
                 "com_touch_head_Refuse_woken_3": "$self$警惕地护住头顶，眼神还没完全清明就先冷下了脸：\"谁准你碰我的？\"",
                 "com_touch_head_Refuse_fb_1": "$self$偏头躲开，冷冷看着$target$。\n\"别随便碰我的头。\"",
-                "com_touch_head_Refuse_fb_2": "$self$皱起眉后退一步。\n\"我不喜欢这样，拿开你的手。\""
+                "com_touch_head_Refuse_fb_2": "$self$皱起眉后退一步。\n\"我不喜欢这样，拿开你的手。\"",
+                "com_touch_head_Interrupt_1": "$self$手上的动作停在半空，神色坦然地转头看向$target$：\"来得正好，找我们有事？\"",
+                "com_touch_head_Interrupt_2": "见$target$走了过来，$self$顺势收回手，随口解释道：\"只是顺手安抚一下，别盯着看了。\"",
+                "com_touch_head_Interrupt_3": "$self$冲门口的$target$挑了下眉，不紧不慢地把手收了回来：\"怎么，站那儿看半天了？\"",
+                "com_touch_head_Interrupt_4": "听见动静的瞬间，$self$立刻偏开脑袋躲开那只手，有些局促地看向$target$：\"那个……你什么时候来的？\"",
+                "com_touch_head_Interrupt_5": "$self$抬手胡乱按了按发顶，神色略显不自然地朝$target$招呼：\"咳，找我有事吗？\"",
+                "com_touch_head_Interrupt_6": "见$target$撞见这一幕，$self$的脸微微发烫，干咳一声站直了身子：\"……别误会，没什么事。\"",
+                "com_touch_head_Begin_1": "$self$毫无知觉地歪着头，发顶任由$target$的掌心落下，眼皮连颤都没颤一下。",
+                "com_touch_head_Begin_2": "昏迷中的$self$对外界的触碰全无反应，只有脑袋随着手掌的力道微微晃了晃。",
+                "com_touch_head_Begin_3": "$self$的呼吸又浅又慢，头顶被碰触时依旧毫无动静，整个人软绵绵地沉在黑暗里。",
+                "com_touch_head_Ongoing_1": "$self$抬手拨顺有些乱了的发丝，朝$target$笑了笑：\"行了，真当我是小孩子呢。\"",
+                "com_touch_head_Ongoing_2": "等$target$收回手，$self$才轻轻呼出一口气：\"……手艺还行，下不为例啊。\"",
+                "com_touch_head_Ongoing_3": "$self$整理好头顶翘起的几缕头发，朝$target$点点头：\"感觉好多了，谢啦。\"",
+                "com_touch_head_Ongoing_4": "$self$任由对方摸着头，余光瞥见站在旁边的$target$，嘴角微微抿了一下：\"……看什么呢。\"",
+                "com_touch_head_Ongoing_5": "$self$不太自在地抬眼看向旁观的$target$，耳朵尖悄悄红了：\"别在旁边干看着啊。\"",
+                "com_touch_head_Ongoing_6": "被人摸着头还被$target$盯着看，$self$索性把视线移开，假装没注意到那边的目光。",
+                "com_touch_head_Begin_4": "$self$被绑着动弹不得，只能偏过头躲开$target$的视线：\"别拿这种哄小孩的动作敷衍人……\"",
+                "com_touch_head_Begin_5": "束缚让$self$无处可退，手腕勒出紧绷的痕，她咬着牙把头往旁边别开。",
+                "com_touch_head_Begin_6": "\"把手拿开。\" $self$挣不开身上的束缚，只能盯着$target$冷冷出声。",
+                "com_touch_head_Begin_7": "衣物收拾妥当后，$self$低头整理了一下衣角，神情平静。",
+                "com_touch_head_Begin_8": "$self$顺了顺衣摆，朝$target$微微点头示意。",
+                "com_touch_head_Interrupt_7": "衣物收拾妥当后，$self$低头整理了一下衣角，神情平静。",
+                "com_touch_head_Interrupt_8": "$self$顺了顺衣摆，朝$target$微微点头示意。",
+                "com_touch_head_Ongoing_7": "$self$感受着头顶传来的动作，神色平静地待在原地。",
+                "com_touch_head_Ongoing_8": "见$target$还在继续，$self$只是微微偏了偏头，没有多说什么。"
             },
             "en-us": {
                 "com_touch_head_Begin_Doer_Permission_1": "$self$ smiles and rests a hand on $target$'s head, gently smoothing their hair with her palm.",

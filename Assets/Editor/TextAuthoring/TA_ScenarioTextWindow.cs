@@ -239,6 +239,11 @@ public class TA_ScenarioTextWindow : EditorWindow
             }
             if (GUILayout.Button(new GUIContent("Apply previewed", "Write the previewed plan (only if nothing changed since the preview); backs every file up to Store/backup/<time>/")))
                 lastResult = ConfirmApply();
+            if (GUILayout.Button(new GUIContent("Purge completed", "Remove completed run batches (no pending/approved/handedOff/stale records; willNotFix records move to legacy.json) and resolved/applied findings no longer in findings.json")))
+            {
+                lastResult = TA_Changes.PurgeCompleted();
+                ReloadStore();
+            }
         }
 
         EditorGUILayout.Space();

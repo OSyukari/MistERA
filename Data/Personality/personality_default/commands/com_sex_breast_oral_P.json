@@ -13,7 +13,9 @@
                             "requireSelfReceiver": true,
                             "_comment": "受方 被乳交口交 高潮",
                             "responses": [
-                                "com_sex_breast_oral_P_Climax_1"
+                                "com_sex_breast_oral_P_Climax_1",
+                                "com_sex_breast_oral_P_Climax_8",
+                                "com_sex_breast_oral_P_Climax_9"
                             ]
                         },
                         {
@@ -33,7 +35,8 @@
                                     "_comment": "2.4.1 攻方 乳交口交 高潮 有允许 口上文",
                                     "responses": [
                                         "com_sex_breast_oral_P_Climax_2",
-                                        "com_sex_breast_oral_P_Climax_3"
+                                        "com_sex_breast_oral_P_Climax_3",
+                                        "com_sex_breast_oral_P_Climax_7"
                                     ]
                                 }
                             ],
@@ -47,7 +50,8 @@
                             "_comment": "2.4.2 攻方 乳交口交 高潮 无允许 口上文",
                             "responses": [
                                 "com_sex_breast_oral_P_Climax_4",
-                                "com_sex_breast_oral_P_Climax_5"
+                                "com_sex_breast_oral_P_Climax_5",
+                                "com_sex_breast_oral_P_Climax_6"
                             ]
                         }
                     ],
@@ -62,170 +66,6 @@
                         "nsfw"
                     ],
                     "variants": [
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "firstexp_M",
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "blowjob",
-                                "boobjob",
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "初体验 开始乳交口交 睡眠中",
-                            "responses": [
-                                "com_sex_breast_oral_P_Begin_FE_Sleep_1",
-                                "com_sex_breast_oral_P_Begin_FE_Sleep_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "firstexp_M",
-                                    "timestop"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "blowjob",
-                                "boobjob",
-                                "doll",
-                                "empty"
-                            ],
-                            "_comment": "初体验 开始乳交口交 时停中",
-                            "responses": [
-                                "com_sex_breast_oral_P_Begin_FE_Timestop_1",
-                                "com_sex_breast_oral_P_Begin_FE_Timestop_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "selfTags": [
-                                    "firstexp_M"
-                                ]
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "targetBaseID": "PLAYER",
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "blowjob",
-                                        "boobjob",
-                                        "blush",
-                                        "shy",
-                                        "love"
-                                    ],
-                                    "_comment": "初体验 玩家专用 开始乳交口交 有允许",
-                                    "responses": [
-                                        "com_sex_breast_oral_P_Begin_FE_Player_1",
-                                        "com_sex_breast_oral_P_Begin_FE_Player_2"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "blowjob",
-                                        "boobjob",
-                                        "blush",
-                                        "shy"
-                                    ],
-                                    "_comment": "初体验 开始乳交口交 有允许",
-                                    "responses": [
-                                        "com_sex_breast_oral_P_Begin_FE_1",
-                                        "com_sex_breast_oral_P_Begin_FE_2"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAttitudeGTE": "Like"
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "blowjob",
-                                        "boobjob",
-                                        "blush",
-                                        "shy",
-                                        "trembling"
-                                    ],
-                                    "_comment": "初体验 开始乳交口交 未允许 好意",
-                                    "responses": [
-                                        "com_sex_breast_oral_P_Begin_FE_3",
-                                        "com_sex_breast_oral_P_Begin_FE_4"
-                                    ]
-                                }
-                            ],
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "blowjob",
-                                "boobjob",
-                                "fear",
-                                "trembling",
-                                "tearful"
-                            ],
-                            "_comment": "初体验 开始乳交口交 未允许 敌意",
-                            "responses": [
-                                "com_sex_breast_oral_P_Begin_FE_5",
-                                "com_sex_breast_oral_P_Begin_FE_6"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "selfTags": [
-                                    "firstexp_partner_M"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "blowjob",
-                                "boobjob",
-                                "surprised"
-                            ],
-                            "_comment": "对方初体验 开始乳交口交（被侍奉的一方）",
-                            "responses": [
-                                "com_sex_breast_oral_P_Begin_FE_Partner_1",
-                                "com_sex_breast_oral_P_Begin_FE_Partner_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "blowjob",
-                                "boobjob",
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
-                            "responses": [
-                                "com_sex_breast_oral_P_Begin_Sleep_1",
-                                "com_sex_breast_oral_P_Begin_Sleep_2"
-                            ]
-                        },
                         {
                             "requirement": {
                                 "requireSelfAction": false,
@@ -246,8 +86,127 @@
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_sex_breast_oral_P_Begin_Timestop_1",
-                                "com_sex_breast_oral_P_Begin_Timestop_2"
+                                "com_sex_breast_oral_P_Begin_Timestop_2",
+                                "com_sex_breast_oral_P_Begin_Timestop_3"
+                            ],
+                            "variants": [
+                                {
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "boobjob",
+                                        "doll",
+                                        "empty"
+                                    ],
+                                    "_comment": "初体验 开始乳交口交 时停中",
+                                    "responses": [
+                                        "com_sex_breast_oral_P_Begin_FE_Timestop_1",
+                                        "com_sex_breast_oral_P_Begin_FE_Timestop_2",
+                                        "com_sex_breast_oral_P_Begin_FE_Timestop_3"
+                                    ],
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_M"
+                                        ]
+                                    }
+                                }
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "boobjob",
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
+                            "responses": [
+                                "com_sex_breast_oral_P_Begin_Sleep_1",
+                                "com_sex_breast_oral_P_Begin_Sleep_2",
+                                "com_sex_breast_oral_P_Begin_Sleep_3"
+                            ],
+                            "variants": [
+                                {
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "boobjob",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "初体验 开始乳交口交 睡眠中",
+                                    "responses": [
+                                        "com_sex_breast_oral_P_Begin_FE_Sleep_1",
+                                        "com_sex_breast_oral_P_Begin_FE_Sleep_2",
+                                        "com_sex_breast_oral_P_Begin_FE_Sleep_3"
+                                    ],
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_M"
+                                        ]
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_sex_breast_oral_P_Begin_11",
+                                        "com_sex_breast_oral_P_Begin_12",
+                                        "com_sex_breast_oral_P_Begin_13"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_sex_breast_oral_P_Begin_14",
+                                        "com_sex_breast_oral_P_Begin_15",
+                                        "com_sex_breast_oral_P_Begin_16"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_breast_oral_P_Begin_17",
+                                "com_sex_breast_oral_P_Begin_18",
+                                "com_sex_breast_oral_P_Begin_19"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            }
                         },
                         {
                             "requirement": {
@@ -266,8 +225,7 @@
                             "responses": [
                                 "com_sex_breast_oral_P_Begin_1",
                                 "com_sex_breast_oral_P_Begin_2",
-                                "com_sex_breast_oral_P_Begin_3",
-                                "com_sex_breast_oral_P_Begin_4"
+                                "com_sex_breast_oral_P_Begin_3"
                             ]
                         },
                         {
@@ -284,7 +242,8 @@
                             "_comment": "2.2.1 开始乳交口交 未允许 好意 口上文",
                             "responses": [
                                 "com_sex_breast_oral_P_Begin_5",
-                                "com_sex_breast_oral_P_Begin_6"
+                                "com_sex_breast_oral_P_Begin_6",
+                                "com_sex_breast_oral_P_Begin_10"
                             ]
                         },
                         {
@@ -301,11 +260,147 @@
                             "_comment": "2.2.2 开始乳交口交 未允许 敌意 口上文",
                             "responses": [
                                 "com_sex_breast_oral_P_Begin_7",
-                                "com_sex_breast_oral_P_Begin_8"
+                                "com_sex_breast_oral_P_Begin_8",
+                                "com_sex_breast_oral_P_Begin_9"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_M"
+                                        ]
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "targetBaseID": "PLAYER"
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "blowjob",
+                                                "boobjob",
+                                                "blush",
+                                                "shy",
+                                                "love"
+                                            ],
+                                            "_comment": "初体验 玩家专用 开始乳交口交 有允许",
+                                            "responses": [
+                                                "com_sex_breast_oral_P_Begin_FE_Player_1",
+                                                "com_sex_breast_oral_P_Begin_FE_Player_2",
+                                                "com_sex_breast_oral_P_Begin_FE_Player_3"
+                                            ],
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "requirePermission": true
+                                                    },
+                                                    "responses": [
+                                                        "com_sex_breast_oral_P_Begin_FE_Player_1",
+                                                        "com_sex_breast_oral_P_Begin_FE_Player_2",
+                                                        "com_sex_breast_oral_P_Begin_FE_Player_3"
+                                                    ],
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "doer",
+                                                        "blowjob",
+                                                        "boobjob",
+                                                        "blush",
+                                                        "shy",
+                                                        "love"
+                                                    ],
+                                                    "_comment": "初体验 玩家专用 开始乳交口交 有允许"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "blowjob",
+                                                "boobjob",
+                                                "blush",
+                                                "shy"
+                                            ],
+                                            "_comment": "初体验 开始乳交口交 有允许",
+                                            "responses": [
+                                                "com_sex_breast_oral_P_Begin_FE_1",
+                                                "com_sex_breast_oral_P_Begin_FE_2",
+                                                "com_sex_breast_oral_P_Begin_FE_8"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAttitudeGTE": "Like"
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "blowjob",
+                                                "boobjob",
+                                                "blush",
+                                                "shy",
+                                                "trembling"
+                                            ],
+                                            "_comment": "初体验 开始乳交口交 未允许 好意",
+                                            "responses": [
+                                                "com_sex_breast_oral_P_Begin_FE_3",
+                                                "com_sex_breast_oral_P_Begin_FE_4",
+                                                "com_sex_breast_oral_P_Begin_FE_9"
+                                            ]
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "boobjob",
+                                        "fear",
+                                        "trembling",
+                                        "tearful"
+                                    ],
+                                    "_comment": "初体验 开始乳交口交 未允许 敌意",
+                                    "responses": [
+                                        "com_sex_breast_oral_P_Begin_FE_5",
+                                        "com_sex_breast_oral_P_Begin_FE_6",
+                                        "com_sex_breast_oral_P_Begin_FE_7"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_partner_M"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "blowjob",
+                                        "boobjob",
+                                        "surprised"
+                                    ],
+                                    "_comment": "对方初体验 开始乳交口交（被侍奉的一方）",
+                                    "responses": [
+                                        "com_sex_breast_oral_P_Begin_FE_Partner_1",
+                                        "com_sex_breast_oral_P_Begin_FE_Partner_2",
+                                        "com_sex_breast_oral_P_Begin_FE_Partner_3"
+                                    ]
+                                }
                             ]
                         }
                     ],
-                    "template": "commandAct"
+                    "template": "commandAct",
+                    "templateExtras": [
+                        "firstexpM",
+                        "firstexpPartnerM"
+                    ]
                 }
             },
             {
@@ -316,6 +411,288 @@
                         "nsfw"
                     ],
                     "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "boobjob",
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "_comment": "2.3.1 时停中 乳交口交 口上文",
+                            "responses": [
+                                "com_sex_breast_oral_P_11",
+                                "com_sex_breast_oral_P_12",
+                                "com_sex_breast_oral_P_52"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_M"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "boobjob",
+                                        "doll",
+                                        "empty"
+                                    ],
+                                    "_comment": "初体验 时停中 乳交口交",
+                                    "responses": [
+                                        "com_sex_breast_oral_P_FE_Timestop_1",
+                                        "com_sex_breast_oral_P_FE_Timestop_2",
+                                        "com_sex_breast_oral_P_FE_Timestop_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "boobjob",
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "_comment": "2.3.1 时停中 乳交口交 口上文",
+                            "responses": [
+                                "com_sex_breast_oral_P_11",
+                                "com_sex_breast_oral_P_12",
+                                "com_sex_breast_oral_P_43"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_M"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "boobjob",
+                                        "doll",
+                                        "empty"
+                                    ],
+                                    "_comment": "初体验 时停中 乳交口交",
+                                    "responses": [
+                                        "com_sex_breast_oral_P_FE_Timestop_1",
+                                        "com_sex_breast_oral_P_FE_Timestop_4",
+                                        "com_sex_breast_oral_P_FE_Timestop_5"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "boobjob",
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "_comment": "2.3.2 睡眠中 乳交口交 口上文",
+                            "responses": [
+                                "com_sex_breast_oral_P_9",
+                                "com_sex_breast_oral_P_10",
+                                "com_sex_breast_oral_P_51"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_M"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "boobjob",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "初体验 睡眠中 乳交口交",
+                                    "responses": [
+                                        "com_sex_breast_oral_P_FE_Sleep_1",
+                                        "com_sex_breast_oral_P_59",
+                                        "com_sex_breast_oral_P_60"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "boobjob",
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "_comment": "2.3.2 睡眠中 乳交口交 口上文",
+                            "responses": [
+                                "com_sex_breast_oral_P_9",
+                                "com_sex_breast_oral_P_10",
+                                "com_sex_breast_oral_P_47"
+                            ],
+                            "variants": [
+                                {
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "boobjob",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "初体验 睡眠中 乳交口交",
+                                    "responses": [
+                                        "com_sex_breast_oral_P_FE_Sleep_1",
+                                        "com_sex_breast_oral_P_FE_Sleep_2",
+                                        "com_sex_breast_oral_P_FE_Sleep_3"
+                                    ],
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_M"
+                                        ]
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_sex_breast_oral_P_4",
+                                        "com_sex_breast_oral_P_5",
+                                        "com_sex_breast_oral_P_6"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessLTE": "Failure"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_sex_breast_oral_P_1",
+                                                "com_sex_breast_oral_P_2",
+                                                "com_sex_breast_oral_P_3"
+                                            ]
+                                        }
+                                    ],
+                                    "responses": [
+                                        "com_sex_breast_oral_P_77",
+                                        "com_sex_breast_oral_P_78",
+                                        "com_sex_breast_oral_P_79"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_sex_breast_oral_P_7",
+                                                "com_sex_breast_oral_P_8",
+                                                "com_sex_breast_oral_P_70"
+                                            ]
+                                        }
+                                    ],
+                                    "responses": [
+                                        "com_sex_breast_oral_P_80",
+                                        "com_sex_breast_oral_P_81",
+                                        "com_sex_breast_oral_P_82"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_sex_breast_oral_P_71",
+                                        "com_sex_breast_oral_P_72",
+                                        "com_sex_breast_oral_P_73"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_breast_oral_P_74",
+                                "com_sex_breast_oral_P_75",
+                                "com_sex_breast_oral_P_76"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            }
+                        },
                         {
                             "requirement": {
                                 "requireEPSuccessGTE": "Success"
@@ -329,6 +706,93 @@
                                 "requireCOMStrongVariant": true
                             },
                             "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER",
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "_comment1": "玩家专用 刚睡醒时的 乳交口交口上文",
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "blowjob",
+                                                "boobjob",
+                                                "sleep",
+                                                "smile",
+                                                "blush",
+                                                "lazy"
+                                            ],
+                                            "_comment": "2.1.5  玩家专用的 刚睡醒时的 乳交口交 有允许 口上文",
+                                            "responses": [
+                                                "com_sex_breast_oral_P_24",
+                                                "com_sex_breast_oral_P_25",
+                                                "com_sex_breast_oral_P_69"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAttitudeGTE": "Like"
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "blowjob",
+                                                "boobjob",
+                                                "sleep",
+                                                "smile",
+                                                "blush",
+                                                "lazy"
+                                            ],
+                                            "_comment": "2.2.7 玩家专用的 刚睡醒时的 乳交口交 无允许 好意 口上文",
+                                            "responses": [
+                                                "com_sex_breast_oral_P_26",
+                                                "com_sex_breast_oral_P_27",
+                                                "com_sex_breast_oral_P_40"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.8 玩家专用 刚睡醒时的 乳交口交 无允许 敌意 口上文",
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "boobjob",
+                                        "scared",
+                                        "submissive"
+                                    ],
+                                    "responses": [
+                                        "com_sex_breast_oral_P_28",
+                                        "com_sex_breast_oral_P_29",
+                                        "com_sex_breast_oral_P_50"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "boobjob",
+                                        "love",
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.1.3 ($self$) 乳交口交 结果正面 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_breast_oral_P_30",
+                                        "com_sex_breast_oral_P_31",
+                                        "com_sex_breast_oral_P_32"
+                                    ]
+                                },
                                 {
                                     "requirement": {
                                         "selfTags": [
@@ -356,14 +820,17 @@
                                                     ],
                                                     "_comment": "初体验 玩家专用 乳交口交 有允许",
                                                     "responses": [
-                                                        "com_sex_breast_oral_P_FE_Player_1"
+                                                        "com_sex_breast_oral_P_FE_Player_1",
+                                                        "com_sex_breast_oral_P_FE_Player_2",
+                                                        "com_sex_breast_oral_P_FE_Player_3"
                                                     ]
                                                 }
                                             ],
                                             "_comment": "玩家专用（无允许兜底）",
                                             "responses": [
                                                 "com_sex_breast_oral_P_FE_4",
-                                                "com_sex_breast_oral_P_FE_5"
+                                                "com_sex_breast_oral_P_53",
+                                                "com_sex_breast_oral_P_54"
                                             ]
                                         },
                                         {
@@ -381,7 +848,8 @@
                                             "_comment": "初体验 乳交口交 有允许（还不熟练）",
                                             "responses": [
                                                 "com_sex_breast_oral_P_FE_1",
-                                                "com_sex_breast_oral_P_FE_2"
+                                                "com_sex_breast_oral_P_FE_2",
+                                                "com_sex_breast_oral_P_64"
                                             ]
                                         },
                                         {
@@ -399,7 +867,9 @@
                                             ],
                                             "_comment": "初体验 乳交口交 未允许 好意（还不熟练）",
                                             "responses": [
-                                                "com_sex_breast_oral_P_FE_3"
+                                                "com_sex_breast_oral_P_FE_3",
+                                                "com_sex_breast_oral_P_FE_7",
+                                                "com_sex_breast_oral_P_FE_8"
                                             ]
                                         }
                                     ],
@@ -415,7 +885,8 @@
                                     "_comment": "初体验 乳交口交 未允许 敌意",
                                     "responses": [
                                         "com_sex_breast_oral_P_FE_4",
-                                        "com_sex_breast_oral_P_FE_5"
+                                        "com_sex_breast_oral_P_FE_5",
+                                        "com_sex_breast_oral_P_FE_6"
                                     ]
                                 },
                                 {
@@ -433,179 +904,9 @@
                                     ],
                                     "_comment": "对方初体验 乳交口交（被侍奉的一方）",
                                     "responses": [
-                                        "com_sex_breast_oral_P_FE_Partner_1"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "sleeping"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "blowjob",
-                                        "boobjob",
-                                        "sleeping",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.3.2 睡眠中 乳交口交 口上文",
-                                    "responses": [
-                                        "com_sex_breast_oral_P_9",
-                                        "com_sex_breast_oral_P_10"
-                                    ],
-                                    "variants": [
-                                        {
-                                            "requirement": {
-                                                "requireSelfAction": false,
-                                                "selfTags": [
-                                                    "firstexp_M"
-                                                ]
-                                            },
-                                            "extraSelfPortraitTags": [
-                                                "sex",
-                                                "doer",
-                                                "blowjob",
-                                                "boobjob",
-                                                "sleeping",
-                                                "relaxed"
-                                            ],
-                                            "_comment": "初体验 睡眠中 乳交口交",
-                                            "responses": [
-                                                "com_sex_breast_oral_P_FE_Sleep_1"
-                                            ]
-                                        }
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "timestop"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "blowjob",
-                                        "boobjob",
-                                        "doll",
-                                        "empty",
-                                        "silence",
-                                        "idle"
-                                    ],
-                                    "_comment": "2.3.1 时停中 乳交口交 口上文",
-                                    "responses": [
-                                        "com_sex_breast_oral_P_11",
-                                        "com_sex_breast_oral_P_12"
-                                    ],
-                                    "variants": [
-                                        {
-                                            "requirement": {
-                                                "requireSelfAction": false,
-                                                "selfTags": [
-                                                    "firstexp_M"
-                                                ]
-                                            },
-                                            "extraSelfPortraitTags": [
-                                                "sex",
-                                                "doer",
-                                                "blowjob",
-                                                "boobjob",
-                                                "doll",
-                                                "empty"
-                                            ],
-                                            "_comment": "初体验 时停中 乳交口交",
-                                            "responses": [
-                                                "com_sex_breast_oral_P_FE_Timestop_1"
-                                            ]
-                                        }
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "targetBaseID": "PLAYER",
-                                        "selfTags": [
-                                            "justWokenUp"
-                                        ]
-                                    },
-                                    "_comment1": "玩家专用 刚睡醒时的 乳交口交口上文",
-                                    "variants": [
-                                        {
-                                            "requirement": {
-                                                "requirePermission": true
-                                            },
-                                            "extraSelfPortraitTags": [
-                                                "sex",
-                                                "doer",
-                                                "blowjob",
-                                                "boobjob",
-                                                "sleep",
-                                                "smile",
-                                                "blush",
-                                                "lazy"
-                                            ],
-                                            "_comment": "2.1.5  玩家专用的 刚睡醒时的 乳交口交 有允许 口上文",
-                                            "responses": [
-                                                "com_sex_breast_oral_P_24",
-                                                "com_sex_breast_oral_P_25"
-                                            ]
-                                        },
-                                        {
-                                            "requirement": {
-                                                "requireSelfAttitudeGTE": "Like"
-                                            },
-                                            "extraSelfPortraitTags": [
-                                                "sex",
-                                                "doer",
-                                                "blowjob",
-                                                "boobjob",
-                                                "sleep",
-                                                "smile",
-                                                "blush",
-                                                "lazy"
-                                            ],
-                                            "_comment": "2.2.7 玩家专用的 刚睡醒时的 乳交口交 无允许 好意 口上文",
-                                            "responses": [
-                                                "com_sex_breast_oral_P_26",
-                                                "com_sex_breast_oral_P_27"
-                                            ]
-                                        }
-                                    ],
-                                    "_comment": "2.2.8 玩家专用 刚睡醒时的 乳交口交 无允许 敌意 口上文",
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "blowjob",
-                                        "boobjob",
-                                        "scared",
-                                        "submissive"
-                                    ],
-                                    "responses": [
-                                        "com_sex_breast_oral_P_28",
-                                        "com_sex_breast_oral_P_29"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "blowjob",
-                                        "boobjob",
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.1.3 ($self$) 乳交口交 结果正面 有允许 口上文",
-                                    "responses": [
-                                        "com_sex_breast_oral_P_30",
-                                        "com_sex_breast_oral_P_31",
-                                        "com_sex_breast_oral_P_32"
+                                        "com_sex_breast_oral_P_FE_Partner_1",
+                                        "com_sex_breast_oral_P_FE_Partner_2",
+                                        "com_sex_breast_oral_P_FE_Partner_3"
                                     ]
                                 }
                             ],
@@ -623,183 +924,8 @@
                             ],
                             "responses": [
                                 "com_sex_breast_oral_P_33",
-                                "com_sex_breast_oral_P_34"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "firstexp_M",
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "blowjob",
-                                "boobjob",
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "初体验 睡眠中 乳交口交",
-                            "responses": [
-                                "com_sex_breast_oral_P_FE_Sleep_1"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "selfTags": [
-                                    "firstexp_M"
-                                ]
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "targetBaseID": "PLAYER"
-                                    },
-                                    "variants": [
-                                        {
-                                            "requirement": {
-                                                "requirePermission": true
-                                            },
-                                            "extraSelfPortraitTags": [
-                                                "sex",
-                                                "doer",
-                                                "blowjob",
-                                                "boobjob",
-                                                "blush",
-                                                "shy",
-                                                "love"
-                                            ],
-                                            "_comment": "初体验 玩家专用 乳交口交 有允许",
-                                            "responses": [
-                                                "com_sex_breast_oral_P_FE_Player_1"
-                                            ]
-                                        }
-                                    ],
-                                    "_comment": "玩家专用（无允许兜底）",
-                                    "responses": [
-                                        "com_sex_breast_oral_P_FE_4",
-                                        "com_sex_breast_oral_P_FE_5"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "blowjob",
-                                        "boobjob",
-                                        "blush",
-                                        "shy"
-                                    ],
-                                    "_comment": "初体验 乳交口交 有允许（还不熟练）",
-                                    "responses": [
-                                        "com_sex_breast_oral_P_FE_1",
-                                        "com_sex_breast_oral_P_FE_2"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAttitudeGTE": "Like"
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "blowjob",
-                                        "boobjob",
-                                        "blush",
-                                        "shy",
-                                        "trembling"
-                                    ],
-                                    "_comment": "初体验 乳交口交 未允许 好意（还不熟练）",
-                                    "responses": [
-                                        "com_sex_breast_oral_P_FE_3"
-                                    ]
-                                }
-                            ],
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "blowjob",
-                                "boobjob",
-                                "fear",
-                                "trembling",
-                                "tearful"
-                            ],
-                            "_comment": "初体验 乳交口交 未允许 敌意",
-                            "responses": [
-                                "com_sex_breast_oral_P_FE_4",
-                                "com_sex_breast_oral_P_FE_5"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "blowjob",
-                                "boobjob",
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "2.3.2 睡眠中 乳交口交 口上文",
-                            "responses": [
-                                "com_sex_breast_oral_P_9",
-                                "com_sex_breast_oral_P_10"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "timestop"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "blowjob",
-                                "boobjob",
-                                "doll",
-                                "empty",
-                                "silence",
-                                "idle"
-                            ],
-                            "_comment": "2.3.1 时停中 乳交口交 口上文",
-                            "responses": [
-                                "com_sex_breast_oral_P_11",
-                                "com_sex_breast_oral_P_12"
-                            ],
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "firstexp_M"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "blowjob",
-                                        "boobjob",
-                                        "doll",
-                                        "empty"
-                                    ],
-                                    "_comment": "初体验 时停中 乳交口交",
-                                    "responses": [
-                                        "com_sex_breast_oral_P_FE_Timestop_1"
-                                    ]
-                                }
+                                "com_sex_breast_oral_P_34",
+                                "com_sex_breast_oral_P_46"
                             ]
                         },
                         {
@@ -828,7 +954,8 @@
                                     "_comment": "2.1.5  玩家专用的 刚睡醒时的 乳交口交 有允许 口上文",
                                     "responses": [
                                         "com_sex_breast_oral_P_24",
-                                        "com_sex_breast_oral_P_25"
+                                        "com_sex_breast_oral_P_25",
+                                        "com_sex_breast_oral_P_49"
                                     ]
                                 },
                                 {
@@ -848,7 +975,8 @@
                                     "_comment": "2.2.7 玩家专用的 刚睡醒时的 乳交口交 无允许 好意 口上文",
                                     "responses": [
                                         "com_sex_breast_oral_P_26",
-                                        "com_sex_breast_oral_P_27"
+                                        "com_sex_breast_oral_P_27",
+                                        "com_sex_breast_oral_P_61"
                                     ]
                                 }
                             ],
@@ -863,77 +991,188 @@
                             ],
                             "responses": [
                                 "com_sex_breast_oral_P_28",
-                                "com_sex_breast_oral_P_29"
+                                "com_sex_breast_oral_P_29",
+                                "com_sex_breast_oral_P_66"
                             ]
                         },
                         {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "responses": [
+                                "com_sex_breast_oral_P_83",
+                                "com_sex_breast_oral_P_84",
+                                "com_sex_breast_oral_P_85"
+                            ],
                             "variants": [
                                 {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "blowjob",
+                                                "boobjob",
+                                                "pain",
+                                                "bored",
+                                                "doubt",
+                                                "disappointed"
+                                            ],
+                                            "_comment": "2.1.4 ($self$) 乳交口交 结果负面 有允许 口上文",
+                                            "responses": [
+                                                "com_sex_breast_oral_P_35",
+                                                "com_sex_breast_oral_P_36",
+                                                "com_sex_breast_oral_P_37"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "firstexp_M"
+                                                ]
+                                            },
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "targetBaseID": "PLAYER"
+                                                    },
+                                                    "variants": [
+                                                        {
+                                                            "requirement": {
+                                                                "requirePermission": true
+                                                            },
+                                                            "extraSelfPortraitTags": [
+                                                                "sex",
+                                                                "doer",
+                                                                "blowjob",
+                                                                "boobjob",
+                                                                "blush",
+                                                                "shy",
+                                                                "love"
+                                                            ],
+                                                            "_comment": "初体验 玩家专用 乳交口交 有允许",
+                                                            "responses": [
+                                                                "com_sex_breast_oral_P_FE_Player_1",
+                                                                "com_sex_breast_oral_P_57",
+                                                                "com_sex_breast_oral_P_58"
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "_comment": "玩家专用（无允许兜底）",
+                                                    "responses": [
+                                                        "com_sex_breast_oral_P_FE_4",
+                                                        "com_sex_breast_oral_P_67",
+                                                        "com_sex_breast_oral_P_68"
+                                                    ]
+                                                },
+                                                {
+                                                    "requirement": {
+                                                        "requirePermission": true
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "doer",
+                                                        "blowjob",
+                                                        "boobjob",
+                                                        "blush",
+                                                        "shy"
+                                                    ],
+                                                    "_comment": "初体验 乳交口交 有允许（还不熟练）",
+                                                    "responses": [
+                                                        "com_sex_breast_oral_P_FE_1",
+                                                        "com_sex_breast_oral_P_FE_2",
+                                                        "com_sex_breast_oral_P_FE_9"
+                                                    ]
+                                                },
+                                                {
+                                                    "requirement": {
+                                                        "requireSelfAttitudeGTE": "Like"
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "doer",
+                                                        "blowjob",
+                                                        "boobjob",
+                                                        "blush",
+                                                        "shy",
+                                                        "trembling"
+                                                    ],
+                                                    "_comment": "初体验 乳交口交 未允许 好意（还不熟练）",
+                                                    "responses": [
+                                                        "com_sex_breast_oral_P_FE_3",
+                                                        "com_sex_breast_oral_P_55",
+                                                        "com_sex_breast_oral_P_56"
+                                                    ]
+                                                }
+                                            ],
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "blowjob",
+                                                "boobjob",
+                                                "fear",
+                                                "trembling",
+                                                "tearful"
+                                            ],
+                                            "_comment": "初体验 乳交口交 未允许 敌意",
+                                            "responses": [
+                                                "com_sex_breast_oral_P_FE_4",
+                                                "com_sex_breast_oral_P_FE_5",
+                                                "com_sex_breast_oral_P_65"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "firstexp_partner_M"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "blowjob",
+                                                "boobjob",
+                                                "surprised"
+                                            ],
+                                            "_comment": "对方初体验 乳交口交（被侍奉的一方）",
+                                            "responses": [
+                                                "com_sex_breast_oral_P_FE_Partner_1",
+                                                "com_sex_breast_oral_P_62",
+                                                "com_sex_breast_oral_P_63"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.6 ($self$) 乳交口交 结果负面 未允许 口上文",
                                     "extraSelfPortraitTags": [
                                         "sex",
                                         "doer",
                                         "blowjob",
                                         "boobjob",
-                                        "pain",
-                                        "bored",
-                                        "doubt",
-                                        "disappointed"
+                                        "angry",
+                                        "cry",
+                                        "glare",
+                                        "disgust",
+                                        "pouting",
+                                        "sad",
+                                        "troubled",
+                                        "silence"
                                     ],
-                                    "_comment": "2.1.4 ($self$) 乳交口交 结果负面 有允许 口上文",
                                     "responses": [
-                                        "com_sex_breast_oral_P_35",
-                                        "com_sex_breast_oral_P_36",
-                                        "com_sex_breast_oral_P_37"
-                                    ]
-                                },
-                                {
+                                        "com_sex_breast_oral_P_38",
+                                        "com_sex_breast_oral_P_39",
+                                        "com_sex_breast_oral_P_41"
+                                    ],
                                     "requirement": {
-                                        "selfTags": [
-                                            "firstexp_partner_M"
-                                        ],
                                         "requireSelfAction": false,
-                                        "requireTargetAction": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "blowjob",
-                                        "boobjob",
-                                        "surprised"
-                                    ],
-                                    "_comment": "对方初体验 乳交口交（被侍奉的一方）",
-                                    "responses": [
-                                        "com_sex_breast_oral_P_FE_Partner_1"
-                                    ]
+                                        "requireTargetAction": false,
+                                        "allowRecording": true
+                                    }
                                 }
-                            ],
-                            "_comment": "2.2.6 ($self$) 乳交口交 结果负面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "blowjob",
-                                "boobjob",
-                                "angry",
-                                "cry",
-                                "glare",
-                                "disgust",
-                                "pouting",
-                                "sad",
-                                "troubled",
-                                "silence"
-                            ],
-                            "responses": [
-                                "com_sex_breast_oral_P_38",
-                                "com_sex_breast_oral_P_39"
-                            ],
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            }
+                            ]
                         }
                     ],
                     "template": "commandResult",
@@ -964,23 +1203,8 @@
                             "useActiveTags": false,
                             "responses": [
                                 "com_sex_breast_oral_P_Refuse_Receiver_3",
-                                "com_sex_breast_oral_P_Refuse_Receiver_4"
-                            ]
-                        },
-                        {
-                            "requireSelfReceiver": true,
-                            "requirement": {
-                                "requireEPSuccess": false
-                            },
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "serious"
-                            ],
-                            "useActiveTags": false,
-                            "responses": [
-                                "com_sex_breast_oral_P_Refuse_Receiver_1",
-                                "com_sex_breast_oral_P_Refuse_Receiver_2"
+                                "com_sex_breast_oral_P_Refuse_Receiver_4",
+                                "com_sex_breast_oral_P_Refuse_Receiver_5"
                             ]
                         },
                         {
@@ -1026,14 +1250,16 @@
                                             "_comment": "2.1.6 刚睡醒时的 指令失败拒绝 乳交口交 口上文 有允许",
                                             "responses": [
                                                 "com_sex_breast_oral_P_13",
-                                                "com_sex_breast_oral_P_14"
+                                                "com_sex_breast_oral_P_14",
+                                                "com_sex_breast_oral_P_42"
                                             ]
                                         }
                                     ],
                                     "_comment": "2.2.9 刚睡醒时的 指令失败拒绝 乳交口交 口上文 无允许",
                                     "responses": [
                                         "com_sex_breast_oral_P_15",
-                                        "com_sex_breast_oral_P_16"
+                                        "com_sex_breast_oral_P_16",
+                                        "com_sex_breast_oral_P_44"
                                     ]
                                 },
                                 {
@@ -1075,7 +1301,8 @@
                                     "_comment": "2.2.3 指令失败拒绝 乳交口交 无允许 善意 口上文",
                                     "responses": [
                                         "com_sex_breast_oral_P_20",
-                                        "com_sex_breast_oral_P_21"
+                                        "com_sex_breast_oral_P_21",
+                                        "com_sex_breast_oral_P_45"
                                     ]
                                 }
                             ],
@@ -1089,11 +1316,55 @@
                             "useActiveTags": false,
                             "responses": [
                                 "com_sex_breast_oral_P_22",
-                                "com_sex_breast_oral_P_23"
+                                "com_sex_breast_oral_P_23",
+                                "com_sex_breast_oral_P_48"
                             ]
                         }
                     ],
                     "template": "commandRefuse"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_breast_oral_P_Ongoing",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "responses": [
+                                        "com_sex_breast_oral_P_Ongoing_1",
+                                        "com_sex_breast_oral_P_Ongoing_2",
+                                        "com_sex_breast_oral_P_Ongoing_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_breast_oral_P_Ongoing_4",
+                                "com_sex_breast_oral_P_Ongoing_5",
+                                "com_sex_breast_oral_P_Ongoing_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "responses": [
+                                "com_sex_breast_oral_P_Ongoing_7",
+                                "com_sex_breast_oral_P_Ongoing_8",
+                                "com_sex_breast_oral_P_Ongoing_9"
+                            ]
+                        }
+                    ],
+                    "template": "commandAct"
                 }
             }
         ]
@@ -1101,81 +1372,183 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "com_sex_breast_oral_P_Climax_1": "$self$的腰塌下去，肉棒被乳肉裹着研磨、顶端被舌头卷住，抖着射在了$target$嘴里。\n\"要去了……别吸了……啊……！\"",
-                "com_sex_breast_oral_P_Climax_4": "$self$心里抗拒着，舌头却把龟头卷得更紧，身体随着乳间的抽动抖着到了。\n\"唔……别……这种事……啊……！\"",
-                "com_sex_breast_oral_P_Climax_5": "$self$绝望地闭上眼，泪水混着口水淌下来，身体还是被快感冲垮了。\n\"不要……身体……好奇怪……呜呜……\"",
-                "com_sex_breast_oral_P_Climax_2": "$self$夹着肉棒加速磨动，舌头还在龟头上打着圈，自己的腿根却先抖起来，就这么到了。\n\"唔……在给你舔……我怎么会先……♡\"",
-                "com_sex_breast_oral_P_Climax_3": "$self$含着从乳间探出的龟头吸吮，口水淌进乳缝里，小穴收缩着淌水，浑身酥到了顶。\n\"哈啊……嘴里……胸口……都好舒服……♡♡\"",
-                "com_sex_breast_oral_P_Begin_1": "$self$笑着解开衣扣，把奶子挤拢夹住肉棒，低头先在龟头上亲了口。\n\"既然你这么想要……那就两边同时伺候。\"",
-                "com_sex_breast_oral_P_Begin_2": "$self$跨坐好，双手托起奶子夹住肉棒根部，张嘴含住了探出来的顶端。\n\"这里……很暖和吧？\"",
-                "com_sex_breast_oral_P_Begin_3": "$self$往乳间吐了口唾液抹匀，把肉棒埋进去，舌尖绕着龟头画圈。\n\"好好享受……我会让你舒服的。\"",
+                "com_sex_breast_oral_P_Climax_1": "$self$的腰塌下去，肉棒被乳肉裹着研磨、顶端被舌头卷住，抖着射在了$target$嘴里：“要去了……别吸了……啊……！”",
+                "com_sex_breast_oral_P_Climax_4": "$self$原本抗拒地缩着肩，舌头却把龟头卷得更紧，身体随着乳间的抽动抖着到了：“唔……别……这种事……啊……！”",
+                "com_sex_breast_oral_P_Climax_5": "$self$绝望地闭上眼，泪水混着口水淌下来，身体还是被快感冲垮了：“不要……身体……好奇怪……呜呜……”",
+                "com_sex_breast_oral_P_Climax_2": "$self$夹着肉棒加速磨动，舌头还在龟头上打着圈，自己的腿根却先抖起来，就这么到了：“唔……在给你舔……我怎么会先……♡”",
+                "com_sex_breast_oral_P_Climax_3": "$self$含着从乳间探出的龟头吸吮，口水淌进乳缝里，小穴收缩着淌水，浑身酥到了顶：“哈啊……嘴里……胸口……都好舒服……♡♡”",
+                "com_sex_breast_oral_P_Begin_1": "$self$笑着把奶子挤拢夹住肉棒，低头先在龟头上亲了口：“既然你这么想要……那就两边同时伺候。”",
+                "com_sex_breast_oral_P_Begin_2": "$self$跨坐好，双手托起奶子夹住肉棒根部，张嘴含住了探出来的顶端：“这里……很暖和吧？”",
+                "com_sex_breast_oral_P_Begin_3": "$self$往乳间抹了点唾液，把肉棒埋进去，舌尖绕着龟头画圈：“好好享受……我会让你舒服的。”",
                 "com_sex_breast_oral_P_Begin_4": "$self$边在$target$颈侧落着吻，边用奶子把肉棒裹紧，慢慢开始磨动。\n\"先热热身……急什么。\"",
-                "com_sex_breast_oral_P_Begin_5": "$self$瞪大眼，僵着任由肉棒被塞进乳间，又被按着后脑凑向龟头。\n\"这、这如果是你的请求的话……就这次……\"",
-                "com_sex_breast_oral_P_Begin_6": "$self$手足无措地涨红脸，还是被引导着张开了嘴。\n\"只、只有这次哦……轻点……\"",
-                "com_sex_breast_oral_P_Begin_7": "$self$含着泪在$target$的注视下解开衣领，把奶子挤了上去。\n\"求求你……能不能别告诉别人……\"",
-                "com_sex_breast_oral_P_Begin_8": "$self$闭着眼发抖，被按着脑袋含住了龟头，奶子也被拢住夹紧。\n\"我知道了……会照做的……别伤害我。\"",
+                "com_sex_breast_oral_P_Begin_5": "$self$瞪大眼，绷紧身子任由肉棒被塞进乳间，又被按着后脑凑向龟头：“这、这如果是你的请求的话……就这次……”",
+                "com_sex_breast_oral_P_Begin_6": "$self$手足无措地涨红脸，还是被引导着张开了嘴：“只、只有这次哦……轻点……”",
+                "com_sex_breast_oral_P_Begin_7": "$self$含着泪在$target$的注视下把奶子挤了上去：“求求你……能不能别告诉别人……”",
+                "com_sex_breast_oral_P_Begin_8": "$self$闭着眼发抖，被按着脑袋含住了龟头，奶子也被拢住夹紧：“我知道了……会照做的……别伤害我。”",
                 "com_sex_breast_oral_P_9": "$self$呼吸均匀，把顶到唇边的龟头当成了梦里的什么，无意识地轻轻吮着，乳间的肉棒也没能弄醒她。",
                 "com_sex_breast_oral_P_10": "$self$沉在梦乡里，任由乳间被抽送、唇齿间被进占，偶尔溢出几句含糊的梦呓。",
                 "com_sex_breast_oral_P_11": "$self$保持着原本的姿势定住，口中含着的部分停在半途，乳肉随着抽送变形，她毫无所觉。",
-                "com_sex_breast_oral_P_12": "$self$僵立不动，乳间和嘴里同时被占着，口水顺着定格的嘴角淌下来，她没有任何反应。",
-                "com_sex_breast_oral_P_22": "$self$厌恶地拍开那只手。\n\"你有病吧？离我远点！\"",
-                "com_sex_breast_oral_P_23": "$self$厉声呵斥，把衣领攥紧。\n\"再敢碰我，我就报警了！\"",
-                "com_sex_breast_oral_P_15": "$self$踹开$target$，抓起手边的东西就砸。\n\"你疯了吗？！滚出去！\"",
-                "com_sex_breast_oral_P_16": "$self$尖叫着缩起身子，捂住嘴。\n\"你是谁？！再过来我叫人了！\"",
-                "com_sex_breast_oral_P_13": "$self$被惊醒，坐起身恼火地推开$target$。\n\"你在干什么啊！让人好好睡觉行不行！\"",
-                "com_sex_breast_oral_P_14": "$self$烦躁地翻身背过去，抹着嘴。\n\"嘴里全是那个味道……别闹了，真的很困……\"",
-                "com_sex_breast_oral_P_17": "$self$轻轻推开$target$的手，带着歉意。\n\"今天胸部胀得疼……嘴也累，改天好吗。\"",
-                "com_sex_breast_oral_P_18": "$self$把领口拢好，摇了摇头。\n\"下次吧……现在来不及了。\"",
-                "com_sex_breast_oral_P_19": "$self$叹口气，把头靠上$target$的肩。\n\"我很累了……这种高难度的玩法，留到周末行不行。\"",
-                "com_sex_breast_oral_P_20": "$self$尴尬地笑笑，不动声色地退开半步。\n\"那个……这玩笑有点过火了哦。\"",
-                "com_sex_breast_oral_P_21": "$self$按住$target$伸来的手，温和却坚决。\n\"我很喜欢你……但这种事，再等等。\"",
-                "com_sex_breast_oral_P_28": "$self$想尖叫却被捂住嘴，惊恐地瞪着眼，被迫开始侍奉。\n\"呜呜……别按……我自己会动……唔……\"",
-                "com_sex_breast_oral_P_29": "$self$在黑暗中瑟瑟发抖，怕挨打不敢有动作。\n\"我不躲了……轻点……求你……\"",
-                "com_sex_breast_oral_P_24": "$self$迷迷糊糊睁眼，乳间的异样没让她生气，反倒环住了$target$的脖子。\n\"嗯……大半夜的……真拿你没办法……~\"",
-                "com_sex_breast_oral_P_25": "$self$半梦半醒地哼唧着，顺从地张开嘴含住递过来的东西。\n\"唔……早安吻吗……那就……嗯……\"",
-                "com_sex_breast_oral_P_26": "$self$惊醒后先愣住，随即脸红了，最后竟顺从地配合。\n\"既然都这样了……也没办法了呢……\"",
-                "com_sex_breast_oral_P_27": "$self$看着身上的$target$，眼神闪了闪，闭眼默许。\n\"如果是你的话……也许不坏。\"",
-                "com_sex_breast_oral_P_33": "$self$原本抗拒的手慢慢搭上了$target$的腿，眼角带着意外的情动。\n\"没想到……感觉并没有那么讨厌……\"",
-                "com_sex_breast_oral_P_34": "$self$眼神涣散，喉咙里漏出无意识的呜咽。\n\"唔嗯……好奇怪……停不下来……\"",
-                "com_sex_breast_oral_P_30": "$self$看着$target$享受的表情，把奶子收得更紧，舌头卷着龟头加力。\n\"看来你很喜欢……那就再用力点♡\"",
-                "com_sex_breast_oral_P_31": "$self$感觉到口中的跳动，眼神迷离，吞吐的速度自己快了起来。\n\"唔……变大了……要出来了吗……♡\"",
-                "com_sex_breast_oral_P_32": "$self$没有停下的意思，甜腻的鼻音混着水声，自己也乐在其中。\n\"嗯唔……两边都热热的……好开心……~\"",
-                "com_sex_breast_oral_P_38": "$self$眼角挂着泪，机械地重复动作，满心屈辱。\n\"快点结束吧……求你了……\"",
-                "com_sex_breast_oral_P_39": "$self$趁换气的间隙干呕了下，看向$target$的眼神满是厌恶。\n\"恶心……除了这个词我想不到别的。\"",
-                "com_sex_breast_oral_P_35": "$self$维持着姿势，眼神时不时飘向别处。\n\"还有多久才结束……脖子好酸。\"",
-                "com_sex_breast_oral_P_36": "$self$微微皱眉，吞吐的动作渐渐机械。\n\"唔……嘴巴有点麻了。\"",
-                "com_sex_breast_oral_P_37": "$self$还在继续，却不再有眼神交流，只是单纯完成着差事。\n\"……快些完事吧，胳膊也酸了。\"",
+                "com_sex_breast_oral_P_12": "$self$一动不动地立在原处，乳间和嘴里同时被占着，口水顺着定格的嘴角淌下来，她没有任何反应。",
+                "com_sex_breast_oral_P_22": "$self$厌恶地拍开那只手：“你有病吧？离我远点！”",
+                "com_sex_breast_oral_P_23": "$self$厉声呵斥，往后退开两步：“再敢碰我，我就报警了！”",
+                "com_sex_breast_oral_P_15": "$self$踹开$target$，抓起手边的东西就砸：“你疯了吗？！滚出去！”",
+                "com_sex_breast_oral_P_16": "$self$尖叫着缩起身子，捂住嘴：“你是谁？！再过来我叫人了！”",
+                "com_sex_breast_oral_P_13": "$self$被惊醒，坐起身恼火地推开$target$：“你在干什么啊！让人好好睡觉行不行！”",
+                "com_sex_breast_oral_P_14": "$self$烦躁地翻身背过去，抹着嘴：“嘴里全是那个味道……别闹了，真的很困……”",
+                "com_sex_breast_oral_P_17": "$self$轻轻推开$target$的手，带着歉意：“今天胸部胀得疼……嘴也累，改天好吗。”",
+                "com_sex_breast_oral_P_18": "$self$往后退开半步，摇了摇头：“下次吧……现在真没力气。”",
+                "com_sex_breast_oral_P_19": "$self$叹口气，把头靠上$target$的肩：“我很累了……这种玩法，留到有空再说行不行。”",
+                "com_sex_breast_oral_P_20": "$self$尴尬地笑笑，不动声色地退开半步：“那个……这玩笑有点过火了哦。”",
+                "com_sex_breast_oral_P_21": "$self$按住$target$伸来的手，温和却坚决：“我很喜欢你……但这种事，再等等。”",
+                "com_sex_breast_oral_P_28": "$self$想尖叫却被捂住嘴，惊恐地瞪着眼，被迫开始侍奉：“呜呜……别按……我自己会动……唔……”",
+                "com_sex_breast_oral_P_29": "$self$在慌乱中瑟瑟发抖，怕挨打不敢有动作：“我不躲了……轻点……求你……”",
+                "com_sex_breast_oral_P_24": "$self$迷迷糊糊睁眼，乳间的异样没让她生气，反倒环住了$target$的脖子：“嗯……大半夜的……真拿你没办法……”",
+                "com_sex_breast_oral_P_25": "$self$半梦半醒地哼唧着，顺从地张开嘴含住递过来的东西：“唔……早安吻吗……那就继续吧……”",
+                "com_sex_breast_oral_P_26": "$self$惊醒后先愣住，随即脸红了，最后竟顺从地配合：“既然都这样了……也没办法了呢……”",
+                "com_sex_breast_oral_P_27": "$self$看着身上的$target$，闭眼默许：“如果是你的话……也许不坏。”",
+                "com_sex_breast_oral_P_33": "$self$原本抗拒的手慢慢搭上了$target$的腿，眼角带着意外的情动：“没想到……感觉并没有那么讨厌……”",
+                "com_sex_breast_oral_P_34": "$self$眼神涣散，喉咙里漏出无意识的呜咽：“唔嗯……好奇怪……停不下来……”",
+                "com_sex_breast_oral_P_30": "$self$看着$target$享受的表情，把奶子收得更紧，舌头卷着龟头加力：“看来你很喜欢……那就再用力点♡”",
+                "com_sex_breast_oral_P_31": "$self$感觉到口中的跳动，吞吐的速度自己快了起来：“唔……变大了……要出来了吗……♡”",
+                "com_sex_breast_oral_P_32": "$self$没有停下的意思，甜腻的鼻音混着水声，自己也乐在其中：“嗯唔……两边都热热的……好开心……”",
+                "com_sex_breast_oral_P_38": "$self$眼角挂着泪，机械地重复动作，满心屈辱：“快点结束吧……求你了……”",
+                "com_sex_breast_oral_P_39": "$self$趁换气的间隙干呕了下，看向$target$的眼神满是厌恶：“恶心……除了这个词我想不到别的。”",
+                "com_sex_breast_oral_P_35": "$self$维持着姿势，眼神时不时飘向别处：“还有多久才结束……脖子好酸。”",
+                "com_sex_breast_oral_P_36": "$self$沉下脸，吞吐的动作渐渐机械：“唔……嘴巴有点麻了。”",
+                "com_sex_breast_oral_P_37": "$self$还在继续，却不再有眼神交流，只是单纯完成着差事：“……快些完事吧，胳膊也酸了。”",
                 "com_sex_breast_oral_P_Begin_Sleep_1": "肉棒埋进$self$熟睡中的乳缝抽送，探出的龟头抵上她微张的唇，她在梦里无意识地抿了抿，把那东西当成了什么含住了一点。",
-                "com_sex_breast_oral_P_Begin_Sleep_2": "$self$睡得很沉，乳间被挤着抽动，唇边被顶开渡进腥热的气味，她只是皱了皱眉，喉咙里溢出一句含糊的梦呓。",
+                "com_sex_breast_oral_P_Begin_Sleep_2": "$self$睡得很沉，乳间被挤着抽动，唇边被顶开渡进腥热的气味，她只是拧了拧肩，喉咙里溢出一句含糊的梦呓。",
                 "com_sex_breast_oral_P_Begin_Timestop_1": "肉棒埋进她并拢的乳缝抽送，探出的龟头又抵开$self$微张的唇，渡进来的津液满到从嘴角溢出，也不见她咽。",
                 "com_sex_breast_oral_P_Begin_Timestop_2": "$self$的舌面被龟头碾着顶了几下，软腭蹭得发红，瞳孔停在原来的位置，乳缝里的水声照旧响着。",
                 "com_sex_breast_oral_P_Begin_FE_Sleep_1": "睡梦中的$self$的唇被抵着，无意识地轻吮了下，对口中突然的热度只是哼了声。",
                 "com_sex_breast_oral_P_Begin_FE_Sleep_2": "$self$沉在梦乡里，含糊地咂了咂嘴，浑然不知自己的第一次口侍就在唇齿间开始了。",
                 "com_sex_breast_oral_P_Begin_FE_Timestop_1": "凝固的世界里，$self$微张的唇被龟头顶开，初次的口侍在毫无知觉中进行。",
                 "com_sex_breast_oral_P_Begin_FE_Timestop_2": "$self$保持着低头的姿势一动不动，对自己的第一次口交正在发生一无所知。",
-                "com_sex_breast_oral_P_Begin_FE_Player_1": "\"第一次用嘴……搭配着胸口一起……会喜欢吗……\"\n\n$self$红着脸低下头，舌尖都在发抖。",
-                "com_sex_breast_oral_P_Begin_FE_Player_2": "\"我没用嘴含过……做得不好你要说……\"\n\n$self$紧张地张开唇，闭眼凑了上去。",
-                "com_sex_breast_oral_P_Begin_FE_1": "\"第一次含这种东西……好烫……\"\n\n$self$小心地用唇裹住顶端，紧张得牙关打颤。",
-                "com_sex_breast_oral_P_Begin_FE_2": "\"第一次口侍……舌头完全不知道往哪放……\"\n\n$self$笨拙地舔着，腮帮子都红了。",
-                "com_sex_breast_oral_P_Begin_FE_3": "\"只、只有这次……第一次做这种事，别笑话我……\"\n\n$self$颤抖着含了进去，指尖掐着$target$的腿。",
-                "com_sex_breast_oral_P_Begin_FE_4": "\"第一次用嘴……连呼吸都不会了……\"\n\n$self$屏着气含弄，眉头皱个不停。",
-                "com_sex_breast_oral_P_Begin_FE_5": "\"不……不要按我的头……我是第一次……！\"\n\n$self$被顶得干呕，眼泪一下子涌了出来。",
-                "com_sex_breast_oral_P_Begin_FE_6": "\"含着这种东西……我一辈子都记得你……\"\n\n$self$含着屈辱张开嘴，眼泪大颗大颗地掉。",
-                "com_sex_breast_oral_P_Begin_FE_Partner_1": "\"口中这么生涩……第一次用嘴？\"\n\n感觉到青涩的吮吸，$self$愣了一下。",
-                "com_sex_breast_oral_P_Begin_FE_Partner_2": "\"……牙齿包住，别露出来。\"\n\n$self$低头看着对方笨拙的样子，出声提醒道。",
-                "com_sex_breast_oral_P_FE_Sleep_1": "睡梦中的$self$的唇边还残留着那股味道，眉头轻轻皱着。",
+                "com_sex_breast_oral_P_Begin_FE_Player_1": "$self$红着脸低下头，舌尖都在发抖：“第一次用嘴……搭配着胸口一起……会喜欢吗……”",
+                "com_sex_breast_oral_P_Begin_FE_Player_2": "$self$紧张地张开唇，闭眼凑了上去：“我没用嘴含过……做得不好你要说……”",
+                "com_sex_breast_oral_P_Begin_FE_1": "$self$小心地用唇裹住顶端，紧张得牙关打颤：“第一次含这种东西……好烫……”",
+                "com_sex_breast_oral_P_Begin_FE_2": "$self$笨拙地舔着，腮帮子都红了：“第一次口侍……舌头完全不知道往哪放……”",
+                "com_sex_breast_oral_P_Begin_FE_3": "$self$颤抖着含了进去，指尖掐着$target$的腿：“只、只有这次……第一次做这种事，别笑话我……”",
+                "com_sex_breast_oral_P_Begin_FE_4": "$self$屏着气含弄，脸颊烧得通红：“第一次用嘴……连呼吸都不会了……”",
+                "com_sex_breast_oral_P_Begin_FE_5": "$self$被顶得干呕，眼泪一下子涌了出来：“不……不要按我的头……我是第一次……！”",
+                "com_sex_breast_oral_P_Begin_FE_6": "$self$含着屈辱张开嘴，眼泪大颗大颗地掉：“含着这种东西……我一辈子都记得你……”",
+                "com_sex_breast_oral_P_Begin_FE_Partner_1": "感觉到青涩的吮吸，$self$愣了一下：“口中这么生涩……第一次用嘴？”",
+                "com_sex_breast_oral_P_Begin_FE_Partner_2": "$self$低头看着对方笨拙的样子，出声提醒道：“……牙齿包住，别露出来。”",
+                "com_sex_breast_oral_P_FE_Sleep_1": "睡梦中的$self$唇边还残留着湿意，鼻尖轻动了一下，却没有醒。",
                 "com_sex_breast_oral_P_FE_Timestop_1": "初次含过的唇还保持着微张的形状，定格的$self$没有任何反应。",
-                "com_sex_breast_oral_P_FE_Player_1": "\"我第一次用嘴……做得还好吗……？\"\n\n$self$松开嘴喘气，红着脸抬头问。",
-                "com_sex_breast_oral_P_FE_1": "\"唔……嘴和胸口一起……我顾不过来……\"\n\n$self$手忙脚乱地两处兼顾，节奏乱七八糟。",
-                "com_sex_breast_oral_P_FE_2": "\"第一次用嘴……原来这么难……\"\n\n$self$含着喘气，嘴角已经酸得发麻。",
-                "com_sex_breast_oral_P_FE_3": "\"这样含……对吗……我完全没经验……\"\n\n$self$又慌又窘，只能小心翼翼地吞吐。",
-                "com_sex_breast_oral_P_FE_4": "\"……不行了……嘴巴酸得厉害……\"\n\n初次口侍的酸楚让$self$的动作又慢又僵，眼泪憋在眼眶里。",
-                "com_sex_breast_oral_P_FE_5": "\"……快点结束。\"\n\n$self$面无表情地含着，只有泛红的眼角泄了底。",
-                "com_sex_breast_oral_P_FE_Partner_1": "\"别紧张……用舌尖，慢慢来。\"\n\n察觉到对方口中的生涩，$self$放轻了声音。",
+                "com_sex_breast_oral_P_FE_Player_1": "$self$松开嘴喘气，红着脸抬头问：“我第一次用嘴……做得还好吗……？”",
+                "com_sex_breast_oral_P_FE_1": "$self$手忙脚乱地两处兼顾，节奏乱七八糟：“唔……嘴和胸口一起……我顾不过来……”",
+                "com_sex_breast_oral_P_FE_2": "$self$含着喘气，嘴角已经酸得发麻：“第一次用嘴……原来这么难……”",
+                "com_sex_breast_oral_P_FE_3": "$self$又慌又窘，只能小心翼翼地吞吐：“这样含……对吗……我完全没经验……”",
+                "com_sex_breast_oral_P_FE_4": "初次口侍的酸楚让$self$的动作又慢又涩，眼泪憋在眼眶里：“……不行了……嘴巴酸得厉害……”",
+                "com_sex_breast_oral_P_FE_5": "$self$别开脸忍着屈辱含着，只有泛红的眼角泄了底：“……快点结束。”",
+                "com_sex_breast_oral_P_FE_Partner_1": "察觉到对方口中的生涩，$self$放轻了声音：“别紧张……用舌尖，慢慢来。”",
                 "com_sex_breast_oral_P_Refuse_Receiver_1": "$self$用力推开了$target$，神色戒备。\n\"别碰我！我没同意做这种事。\"",
                 "com_sex_breast_oral_P_Refuse_Receiver_2": "$self$往后退开一步，冷冷地拒绝了$target$。\n\"现在不行，请离我远点。\"",
-                "com_sex_breast_oral_P_Refuse_Receiver_3": "$self$用力推开了$target$，神色戒备。\n\"别碰我！我没同意做这种事。\"",
-                "com_sex_breast_oral_P_Refuse_Receiver_4": "$self$往后退开一步，冷冷地拒绝了$target$。\n\"现在不行，请离我远点。\""
+                "com_sex_breast_oral_P_Refuse_Receiver_3": "$self$用力推开了$target$，神色戒备：“别碰我！我没同意做这种事。”",
+                "com_sex_breast_oral_P_Refuse_Receiver_4": "$self$往后退开一步，冷冷地拒绝了$target$：“现在不行，请离我远点。”",
+                "com_sex_breast_oral_P_40": "刚睁开眼的$self$怔了半拍，终究没把人推开：“轻点顶就是了……”",
+                "com_sex_breast_oral_P_41": "嘴巴和胸口都又酸又麻，$self$忍着反胃把头偏开半分，只盼着快点完事。",
+                "com_sex_breast_oral_P_FE_6": "嘴里和胸口都被迫用来讨好对方，$self$只能闭紧眼睛硬熬着。",
+                "com_sex_breast_oral_P_42": "“才刚醒呢，别一上来就凑这么近。”$self$打了个哈欠，拉过被子裹紧自己。",
+                "com_sex_breast_oral_P_Begin_FE_7": "第一次就被迫同时用嘴和胸口侍奉，$self$吓得直发抖，只能闭上眼硬撑。",
+                "com_sex_breast_oral_P_FE_Timestop_2": "时间仍未流动，$self$对自己的第一次口侍已经被这样夺走毫无所觉。",
+                "com_sex_breast_oral_P_FE_Timestop_3": "静止中的$self$眼神定在原地，嘴角沾着一点湿润的亮痕。",
+                "com_sex_breast_oral_P_Begin_Timestop_3": "时间静止在这一瞬，$self$定在原处，连眼睫都没有晃动半分。",
+                "com_sex_breast_oral_P_FE_7": "“……牙齿没磕着你吧？”$self$腮帮子鼓鼓的，一边夹紧胸口一边抬头确认。",
+                "com_sex_breast_oral_P_FE_8": "第一次做这种事让$self$动作很生涩，却还是配合着把乳肉贴得更紧。",
+                "com_sex_breast_oral_P_43": "静止的空气里只剩水声，$self$连呼吸和眨眼都停在原地。",
+                "com_sex_breast_oral_P_Begin_9": "害怕惹恼对方，$self$只能忍着委屈张开嘴，用双臂夹紧胸前配合着动作。",
+                "com_sex_breast_oral_P_Begin_FE_8": "“这样夹着同时用嘴……手忙脚乱的。”$self$呼了口气，试着贴紧乳肉慢慢找节奏。",
+                "com_sex_breast_oral_P_Begin_Sleep_3": "熟睡中的$self$对嘴边和胸前的动作毫无防备，只随着呼吸微微动了动唇瓣。",
+                "com_sex_breast_oral_P_Begin_10": "“……同时用胸和嘴也太难了。”$self$红着耳根贴近过来，小心地张唇迎上去。",
+                "com_sex_breast_oral_P_Climax_6": "$self$紧咬下唇试图忍耐，双乳夹着肉棒摩擦带来的酥麻却让她控制不住地颤抖着到达顶峰：“明明不想的……怎么会……啊……”",
+                "com_sex_breast_oral_P_44": "睡意瞬间散光，$self$一把推开$target$往床角缩去：“别碰我！”",
+                "com_sex_breast_oral_P_Climax_7": "$self$用软肉紧贴着阴茎上下搓弄，喘息间自己先攀上了顶峰，腰肢无力地软在$target$怀里：“不行了……光是用胸和嘴侍奉就去了……♡”",
+                "com_sex_breast_oral_P_FE_Sleep_2": "$self$仍在沉睡里，唇齿间被初次顶入的异样感只换来一声含糊的梦呓。",
+                "com_sex_breast_oral_P_FE_Sleep_3": "均匀的呼吸声没有被打断，$self$在睡梦里无意识地咽了咽，浑然不觉刚才发生了什么。",
+                "com_sex_breast_oral_P_45": "“别闹了，这种事可不能随便做。”$self$红着脸往后避开半寸。",
+                "com_sex_breast_oral_P_46": "被胸口和唇舌同时伺候的节奏带乱了呼吸，$self$耳根发烫地加快了吮吸。",
+                "com_sex_breast_oral_P_FE_Player_2": "“嘴和胸口一起动有点累呢。”$self$舔了舔唇角，眼神期待地看向$target$。",
+                "com_sex_breast_oral_P_FE_Player_3": "$self$小心地把乳肉往中间挤紧，又含住顶端轻轻吮吸了一下：“这样……还算合格吗？”",
+                "com_sex_breast_oral_P_Begin_FE_Partner_3": "“别那么紧张，慢慢舔就行。”$self$呼了口气，手掌轻轻按在对方肩上稳住。",
+                "com_sex_breast_oral_P_FE_Partner_2": "“牙齿收好，别刮到上面。”$self$呼了口气，手掌顺着对方的脊背安抚着。",
+                "com_sex_breast_oral_P_FE_Partner_3": "看着$target$一边夹紧胸部一边笨拙吞吐，$self$不禁弯起眼角：“第一次就能做到这样，已经很不错了。”",
+                "com_sex_breast_oral_P_FE_9": "“等、等下我换口气！”$self$稍微抬头喘息一声，又赶紧低下头去舔弄顶端。",
+                "com_sex_breast_oral_P_Begin_FE_Timestop_3": "时间静止在这一瞬，$self$定在原处，连睫毛也没有晃动半分。",
+                "com_sex_breast_oral_P_Begin_FE_9": "“……还要用胸夹着啊。”$self$别开视线没敢直视$target$，终究还是张开了嘴。",
+                "com_sex_breast_oral_P_FE_Timestop_4": "时间仍未流动，$self$对自己的第一次口侍已经被这样夺走毫无所觉。",
+                "com_sex_breast_oral_P_FE_Timestop_5": "静止中的$self$眼神定在原地，嘴角沾着一点湿润的亮痕。",
+                "com_sex_breast_oral_P_47": "梦里的$self$往暖处偏了偏头，乳肉仍旧软软地包着棒身。",
+                "com_sex_breast_oral_P_48": "“谁准你往这儿凑的？！”$self$冷冷盯住$target$，抬手拦在身前。",
+                "com_sex_breast_oral_P_49": "刚醒过来的$self$声音还带着睡意，揉了揉眼睛便又合拢乳肉贴了上去。",
+                "com_sex_breast_oral_P_50": "刚醒过来就发现嘴里和胸前都被占着，$self$吓得眼泪直掉，只得顺从地吞吐。",
+                "com_sex_breast_oral_P_Begin_FE_Player_3": "“……别突然顶太深哦。”$self$握住$target$的腿侧深吸了口气，小心地把龟头含进嘴里。",
+                "com_sex_breast_oral_P_51": "梦里的$self$往暖处偏了偏头，乳肉仍旧软软地包着棒身。",
+                "com_sex_breast_oral_P_Begin_FE_Sleep_3": "梦里的$self$往枕边偏了偏头，唇瓣微张着任由龟头抵入，呼吸仍然平稳。",
+                "com_sex_breast_oral_P_Climax_8": "口腔和胸口双重的挤压感把$self$逼到了极限，她弓起腰闷哼一声，精液尽数射进了$target$口中。",
+                "com_sex_breast_oral_P_Climax_9": "$self$按住$target$的肩膀一阵发颤，积攒的热意冲破开关，在舔弄与包夹间迎来了高潮。",
+                "com_sex_breast_oral_P_Refuse_Receiver_5": "“把手拿开，我不打算这么做。”$self$护住身前，语气生硬。",
+                "com_sex_breast_oral_P_52": "静止的空气里只剩水声，$self$连呼吸和眨眼都停在原地。",
+                "com_sex_breast_oral_P_53": "$self$别开视线忍着酸痛含着，只有泛红的眼角泄了底：“……快点结束。”",
+                "com_sex_breast_oral_P_54": "“唔……别顶那么深……”$self$被呛得咳了一声，只能勉强继续用胸夹紧。",
+                "com_sex_breast_oral_P_55": "“……牙齿没磕着你吧？”$self$腮帮子鼓鼓的，一边夹紧胸口一边抬头确认。",
+                "com_sex_breast_oral_P_56": "第一次做这种事让$self$动作很生涩，却还是配合着把乳肉贴得更紧。",
+                "com_sex_breast_oral_P_57": "“嘴和胸口一起动有点累呢。”$self$舔了舔唇角，眼神期待地看向$target$。",
+                "com_sex_breast_oral_P_58": "$self$小心地把乳肉往中间挤紧，又含住顶端轻轻吮吸了一下：“这样……还算合格吗？”",
+                "com_sex_breast_oral_P_59": "$self$仍在沉睡里，唇齿间被初次顶入的异样感只换来一声含糊的梦呓。",
+                "com_sex_breast_oral_P_60": "均匀的呼吸声没有被打断，$self$在睡梦里无意识地咽了咽，浑然不觉刚才发生了什么。",
+                "com_sex_breast_oral_P_61": "刚睁开眼的$self$怔了半拍，终究没把人推开：“轻点顶就是了……”",
+                "com_sex_breast_oral_P_62": "“牙齿收好，别刮到上面。”$self$呼了口气，手掌顺着对方的脊背安抚着。",
+                "com_sex_breast_oral_P_63": "看着$target$一边夹紧胸部一边笨拙吞吐，$self$不禁弯起眼角：“第一次就能做到这样，已经很不错了。”",
+                "com_sex_breast_oral_P_64": "“等、等下我换口气！”$self$稍微抬头喘息一声，又赶紧低下头去舔弄顶端。",
+                "com_sex_breast_oral_P_65": "嘴里和胸口都被迫用来讨好对方，$self$只能闭紧眼睛硬熬着。",
+                "com_sex_breast_oral_P_66": "刚醒过来就发现嘴里和胸前都被占着，$self$吓得眼泪直掉，只得顺从地吞吐。",
+                "com_sex_breast_oral_P_67": "$self$别开视线忍着酸痛含着，只有泛红的眼角泄了底：“……快点结束。”",
+                "com_sex_breast_oral_P_68": "“唔……别顶那么深……”$self$被呛得咳了一声，只能勉强继续用胸夹紧。",
+                "com_sex_breast_oral_P_69": "刚醒过来的$self$声音还带着睡意，揉了揉眼睛便又合拢乳肉贴了上去。",
+                "com_sex_breast_oral_P_Begin_11": "昏迷中的$self$毫无知觉，肉棒被柔软的乳肉夹住并抵开唇瓣时，四肢仍软软地垂在原地。",
+                "com_sex_breast_oral_P_Begin_12": "$self$紧闭着眼没有任何反应，只有胸口还维持着浅浅的起伏，任由$target$的胸口与嘴唇贴上来。",
+                "com_sex_breast_oral_P_Begin_13": "失去意识的$self$既没有躲闪也没有出声，安静得近乎沉寂。",
+                "com_sex_breast_oral_P_Begin_14": "手腕被绑着挡不住身下，$self$在肉棒被奶子夹住又被含住顶端时绷紧了腰：“……别舔那么重！”",
+                "com_sex_breast_oral_P_Begin_15": "“被绑着还要被这样用胸和嘴一起弄……”$self$咬住下唇偏过头，腕间的束缚跟着勒紧。",
+                "com_sex_breast_oral_P_Begin_16": "束缚让$self$无处可躲，她只能绷直脊背，硬着头皮承受$target$胸前与唇舌的双重夹击。",
+                "com_sex_breast_oral_P_Begin_17": "$self$任由$target$靠近，自己被$target$一边乳交一边含弄肉棒，呼吸微微一滞。",
+                "com_sex_breast_oral_P_Begin_18": "$self$轻轻抿了抿唇，没有推开被$target$一边乳交一边含弄肉棒的$target$。",
+                "com_sex_breast_oral_P_Begin_19": "感受到肉棒传来的触碰，$self$下意识地轻颤了一下，顺势迎合上去。",
+                "com_sex_breast_oral_P_Ongoing_1": "施方还在用奶子和嘴同时套弄她的肉棒，$self$余光瞄到$target$站在一旁看着，窘得把脸埋低：“……别盯着看。”",
+                "com_sex_breast_oral_P_Ongoing_2": "“看够了没有……”$self$忍着身下传来的阵阵麻意，顶着$target$的视线咬紧了下唇。",
+                "com_sex_breast_oral_P_Ongoing_3": "被人当众这样夹着舔弄，$self$耳根烧得发烫，喘着气不敢再往$target$那边看。",
+                "com_sex_breast_oral_P_Ongoing_4": "$self$还在被$target$一边乳交一边含弄肉棒，呼吸随着节奏一点点变得急促。",
+                "com_sex_breast_oral_P_Ongoing_5": "持续不断的刺激让$self$眼角泛起微红，只能任由$target$继续动作。",
+                "com_sex_breast_oral_P_Ongoing_6": "$self$轻喘着承受着肉棒传来的触感，身子微微发软。",
+                "com_sex_breast_oral_P_Ongoing_7": "$self$没有停下动作，继续用胸口夹紧肉棒并用唇舌舔吮顶端。",
+                "com_sex_breast_oral_P_Ongoing_8": "湿热的气息在两人之间弥漫，$self$维持着节奏用胸口夹紧肉棒并用唇舌舔吮顶端。",
+                "com_sex_breast_oral_P_Ongoing_9": "$self$微微喘息着，动作不停地用胸口夹紧肉棒并用唇舌舔吮顶端。",
+                "com_sex_breast_oral_P_1": "被绑着躲不开，肉棒在乳沟里被硬磨又被牙齿磕到顶端，$self$吸了口气：“嘶……别用牙咬啊！”",
+                "com_sex_breast_oral_P_2": "“角度歪了，蹭得好难受……”$self$往后缩着腰，手腕上的绳索绷得紧紧的。",
+                "com_sex_breast_oral_P_3": "生硬的挤压和磕碰全无半点快感，$self$别开脸忍着气：“不会弄就松开。”",
+                "com_sex_breast_oral_P_4": "昏迷中的$self$依旧没有转醒，被乳肉和唇舌伺候得硬挺发烫的肉棒静静贴在$target$面前。",
+                "com_sex_breast_oral_P_5": "$self$毫无反应地躺着，连指尖都没动一下，任由龟头在对方湿热的口腔里抵弄。",
+                "com_sex_breast_oral_P_6": "失去意识的$self$没有发出任何声响，对身下被乳交与口交同时刺激的事一无所知。",
+                "com_sex_breast_oral_P_7": "没法用手去推，乳肉包裹与舌尖舔舐的双重热意直往小腹窜，$self$喘得断断续续：“……别一边夹一边吸……”",
+                "com_sex_breast_oral_P_8": "$self$扯动着腕上的束缚仰起脖颈，被含住的龟头越发滚烫：“唔……受不住了……”",
+                "com_sex_breast_oral_P_70": "躲不开也推不掉，$self$只能咬紧嘴唇忍住漏出来的轻哼，腿根阵阵发软。",
+                "com_sex_breast_oral_P_71": "乳间与顶端同时传来的湿热触感把$self$弄醒，她迷糊地睁开眼看了看$target$，最终没推开：“……趁人睡着就这么伺候啊？”",
+                "com_sex_breast_oral_P_72": "$self$揉了揉眼睛清醒过来，察觉肉棒已经被软肉和嘴唇同时包住，耳尖泛红：“……动作慢点，别吸太重。”",
+                "com_sex_breast_oral_P_73": "“……唔、难怪梦里一直觉得又暖又湿。”$self$声音还带着睡意，放松了肩背由着$target$继续。",
+                "com_sex_breast_oral_P_74": "$self$随着节奏轻哼出声，肉棒被$target$一边乳交一边含弄肉棒得一阵发麻：“哈啊……好舒服……”",
+                "com_sex_breast_oral_P_75": "快感顺着肉棒迅速蔓延开来，$self$软着声音喘息道：“唔嗯……就是那里，别停……”",
+                "com_sex_breast_oral_P_76": "$self$微眯起眼迎合着$target$的动作，嗓音带着甜腻的颤意：“啊……再多弄一会儿……”",
+                "com_sex_breast_oral_P_77": "$self$微微蹙眉往后躲了躲，肉棒传来一阵不太舒服的刺痛：“嘶……太重了，轻一点……”",
+                "com_sex_breast_oral_P_78": "$self$有些不适地绷紧了身子，小声抱怨道：“唔……这样弄一点也不舒服……”",
+                "com_sex_breast_oral_P_79": "节奏没能对上，$self$略显烦躁地喘了口气：“……稍微注意一下力道啊。”",
+                "com_sex_breast_oral_P_80": "$self$随着节奏轻哼出声，肉棒被$target$一边乳交一边含弄肉棒得一阵发麻：“哈啊……好舒服……”",
+                "com_sex_breast_oral_P_81": "快感顺着肉棒迅速蔓延开来，$self$软着声音喘息道：“唔嗯……就是那里，别停……”",
+                "com_sex_breast_oral_P_82": "$self$微眯起眼迎合着$target$的动作，嗓音带着甜腻的颤意：“啊……再多弄一会儿……”",
+                "com_sex_breast_oral_P_83": "$self$微微喘息着，一边用胸口夹紧肉棒并用唇舌舔吮顶端，一边留意着$target$的反应。",
+                "com_sex_breast_oral_P_84": "空气渐渐升温，$self$放缓了节奏继续用胸口夹紧肉棒并用唇舌舔吮顶端：“……感觉怎么样？”",
+                "com_sex_breast_oral_P_85": "$self$轻吐出一口气，顺从着眼前的状态继续用胸口夹紧肉棒并用唇舌舔吮顶端。"
             }
         }
     }

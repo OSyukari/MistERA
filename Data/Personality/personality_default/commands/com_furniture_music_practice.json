@@ -17,6 +17,17 @@
                                 "com_furniture_music_practice_Tryjoin_2",
                                 "com_furniture_music_practice_Tryjoin_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_music_practice_Tryjoin_Fallback_1",
+                                "com_furniture_music_practice_Tryjoin_Fallback_2"
+                            ]
                         }
                     ]
                 }
@@ -33,7 +44,10 @@
                                 "com_furniture_music_practice_Interrupt_1",
                                 "com_furniture_music_practice_Interrupt_2",
                                 "com_furniture_music_practice_Interrupt_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ]
                 }
@@ -44,6 +58,28 @@
                     "ID": "com_furniture_music_practice",
                     "template": "commandResult",
                     "variants": [
+                        {
+                            "requireSelfOnly": true,
+                            "_comment": "自己（单人） → 自己",
+                            "responses": [
+                                "com_furniture_music_practice_7",
+                                "com_furniture_music_practice_8",
+                                "com_furniture_music_practice_9"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "自己（单人） → 自己 ｜ 接受·判定成功",
+                                    "responses": [
+                                        "com_furniture_music_practice_10",
+                                        "com_furniture_music_practice_11",
+                                        "com_furniture_music_practice_12"
+                                    ]
+                                }
+                            ]
+                        },
                         {
                             "requirement": {
                                 "requireEPSuccessLTE": "Failure"
@@ -89,25 +125,13 @@
                             ]
                         },
                         {
-                            "requireSelfOnly": true,
-                            "_comment": "自己（单人） → 自己",
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
                             "responses": [
-                                "com_furniture_music_practice_7",
-                                "com_furniture_music_practice_8",
-                                "com_furniture_music_practice_9"
-                            ],
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requireEPSuccessGTE": "Success"
-                                    },
-                                    "_comment": "自己（单人） → 自己 ｜ 接受·判定成功",
-                                    "responses": [
-                                        "com_furniture_music_practice_10",
-                                        "com_furniture_music_practice_11",
-                                        "com_furniture_music_practice_12"
-                                    ]
-                                }
+                                "com_furniture_music_practice_Fallback_3",
+                                "com_furniture_music_practice_Fallback_4"
                             ]
                         }
                     ]
@@ -129,6 +153,17 @@
                                 "com_furniture_music_practice_Joined_2",
                                 "com_furniture_music_practice_Joined_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_music_practice_Joined_Fallback_1",
+                                "com_furniture_music_practice_Joined_Fallback_2"
+                            ]
                         }
                     ]
                 }
@@ -148,6 +183,16 @@
                                 "com_furniture_music_practice_Ongoing_1",
                                 "com_furniture_music_practice_Ongoing_2",
                                 "com_furniture_music_practice_Ongoing_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_music_practice_Ongoing_Fallback_1",
+                                "com_furniture_music_practice_Ongoing_Fallback_2"
                             ]
                         }
                     ]
@@ -170,6 +215,17 @@
                                 "com_furniture_music_practice_Refuse_2",
                                 "com_furniture_music_practice_Refuse_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_music_practice_Refuse_Fallback_1",
+                                "com_furniture_music_practice_Refuse_Fallback_2"
+                            ]
                         }
                     ]
                 }
@@ -182,7 +238,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
                             "responses": [
@@ -206,7 +263,10 @@
                                 "com_furniture_music_practice_Begin_1",
                                 "com_furniture_music_practice_Begin_2",
                                 "com_furniture_music_practice_Begin_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ]
                 }
@@ -223,7 +283,10 @@
                                 "com_furniture_music_practice_Join_1",
                                 "com_furniture_music_practice_Join_2",
                                 "com_furniture_music_practice_Join_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ]
                 }
@@ -243,6 +306,17 @@
                                 "com_furniture_music_practice_Join_Refused_1",
                                 "com_furniture_music_practice_Join_Refused_2",
                                 "com_furniture_music_practice_Join_Refused_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_music_practice_Join_Refused_Fallback_1",
+                                "com_furniture_music_practice_Join_Refused_Fallback_2"
                             ]
                         }
                     ]
@@ -293,7 +367,19 @@
                 "com_furniture_music_practice_11": "\"这段总算顺过来了，明天不用再从头磨。\" $self$在谱纸边角折了个记号。",
                 "com_furniture_music_practice_12": "最后一个音落稳，紧绷的肩膀跟着松了下来，今天的手感确实在线。",
                 "com_furniture_music_practice_Fallback_1": "$self$点了点头，没有多说什么。",
-                "com_furniture_music_practice_Fallback_2": "$self$点了点头，没有多说什么。"
+                "com_furniture_music_practice_Fallback_2": "$self$点了点头，没有多说什么。",
+                "com_furniture_music_practice_Refuse_Fallback_1": "$self$摆了摆手，没有去碰乐器：\"今天没什么兴致，不练了。\"",
+                "com_furniture_music_practice_Refuse_Fallback_2": "$self$摇摇头回绝道：\"手有点累，先歇着吧。\"",
+                "com_furniture_music_practice_Tryjoin_Fallback_1": "$self$站在门边听了一小段，走近问$target$：\"能一起合着练一会儿吗？\"",
+                "com_furniture_music_practice_Tryjoin_Fallback_2": "$self$拿上自己的乐器走过来，问道：\"方不方便一块儿练习？\"",
+                "com_furniture_music_practice_Join_Refused_Fallback_1": "\"行，那你先练，我不打扰了。\" $self$收起乐器退开。",
+                "com_furniture_music_practice_Join_Refused_Fallback_2": "$self$朝$target$示意了一下，转身去了别处。",
+                "com_furniture_music_practice_Fallback_3": "$self$收住最后一个音符，轻轻呼出一口气，把乐器放回原位。",
+                "com_furniture_music_practice_Fallback_4": "练完这一轮后，$self$活动了下发酸的手腕，神情放松了些。",
+                "com_furniture_music_practice_Ongoing_Fallback_1": "$self$专注地跟随着拍子练习，指尖在乐器上稳稳落下。",
+                "com_furniture_music_practice_Ongoing_Fallback_2": "$self$沉浸在旋律里，反复顺着刚才那一段的节奏。",
+                "com_furniture_music_practice_Joined_Fallback_1": "\"好，那我跟着你的拍子起头。\" $self$找好位置站定。",
+                "com_furniture_music_practice_Joined_Fallback_2": "$self$点点头，调好音准后顺势接进了旋律里。"
             }
         }
     }

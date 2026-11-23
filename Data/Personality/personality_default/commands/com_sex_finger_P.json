@@ -13,7 +13,9 @@
                             "requireSelfReceiver": true,
                             "_comment": "受方 被手淫 高潮",
                             "responses": [
-                                "com_sex_finger_P_Climax_1"
+                                "com_sex_finger_P_Climax_1",
+                                "com_sex_finger_P_Climax_8",
+                                "com_sex_finger_P_Climax_9"
                             ]
                         },
                         {
@@ -134,102 +136,164 @@
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "handjob",
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
-                            "responses": [
-                                "com_sex_finger_P_Begin_Sleep_1",
-                                "com_sex_finger_P_Begin_Sleep_2"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "handjob",
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "2.5.7 开始 睡眠中 独自撸管 口上文（睡梦中自己开始）",
-                            "responses": [
-                                "com_sex_finger_P_Begin_Self_Sleep_1",
-                                "com_sex_finger_P_Begin_Self_Sleep_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
                                     "timestop"
                                 ]
                             },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "handjob",
-                                "doll",
-                                "empty",
-                                "silence",
-                                "idle"
-                            ],
-                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
-                            "responses": [
-                                "com_sex_finger_P_Begin_Timestop_1",
-                                "com_sex_finger_P_Begin_Timestop_2"
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "handjob",
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
+                                    "responses": [
+                                        "com_sex_finger_P_Begin_Timestop_1",
+                                        "com_sex_finger_P_Begin_Timestop_2",
+                                        "com_sex_finger_P_Begin_Timestop_3"
+                                    ]
+                                }
                             ]
                         },
                         {
                             "requirement": {
-                                "requirePermission": true
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
                             },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "handjob",
-                                "closed_eyes",
-                                "blush",
-                                "affectionate"
-                            ],
-                            "_comment": "2.1.1 开始手淫 有允许 口上文",
-                            "responses": [
-                                "com_sex_finger_P_Begin_1",
-                                "com_sex_finger_P_Begin_2",
-                                "com_sex_finger_P_Begin_3"
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "handjob",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
+                                    "responses": [
+                                        "com_sex_finger_P_Begin_Sleep_1",
+                                        "com_sex_finger_P_Begin_Sleep_2",
+                                        "com_sex_finger_P_Begin_Sleep_3"
+                                    ]
+                                },
+                                {
+                                    "requireSelfOnly": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "handjob",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.5.7 开始 睡眠中 独自撸管 口上文（睡梦中自己开始）",
+                                    "responses": [
+                                        "com_sex_finger_P_Begin_Self_Sleep_1",
+                                        "com_sex_finger_P_Begin_Self_Sleep_2"
+                                    ]
+                                }
                             ]
                         },
                         {
                             "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
                             },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "handjob",
-                                "blush"
-                            ],
-                            "_comment": "2.2.1 开始手淫 未允许 好意 口上文",
-                            "responses": [
-                                "com_sex_finger_P_Begin_4",
-                                "com_sex_finger_P_Begin_5",
-                                "com_sex_finger_P_Begin_6"
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_sex_finger_P_Begin_13",
+                                        "com_sex_finger_P_Begin_14",
+                                        "com_sex_finger_P_Begin_15"
+                                    ]
+                                }
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
+                            "_comment": "2.2.2 开始手淫 未允许 敌意 口上文",
+                            "responses": [
+                                "com_sex_finger_P_Begin_7",
+                                "com_sex_finger_P_Begin_8",
+                                "com_sex_finger_P_Begin_9"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_sex_finger_P_Begin_10",
+                                        "com_sex_finger_P_Begin_11",
+                                        "com_sex_finger_P_Begin_12"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "handjob",
+                                        "closed_eyes",
+                                        "blush",
+                                        "affectionate"
+                                    ],
+                                    "_comment": "2.1.1 开始手淫 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_finger_P_Begin_1",
+                                        "com_sex_finger_P_Begin_2",
+                                        "com_sex_finger_P_Begin_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "handjob",
+                                        "blush"
+                                    ],
+                                    "_comment": "2.2.1 开始手淫 未允许 好意 口上文",
+                                    "responses": [
+                                        "com_sex_finger_P_Begin_4",
+                                        "com_sex_finger_P_Begin_5",
+                                        "com_sex_finger_P_Begin_6"
+                                    ]
+                                }
+                            ],
                             "extraSelfPortraitTags": [
                                 "sex",
                                 "doer",
@@ -238,80 +302,72 @@
                                 "trembling",
                                 "tearful",
                                 "pain"
-                            ],
-                            "_comment": "2.2.2 开始手淫 未允许 敌意 口上文",
-                            "responses": [
-                                "com_sex_finger_P_Begin_7",
-                                "com_sex_finger_P_Begin_8",
-                                "com_sex_finger_P_Begin_9"
                             ]
                         },
                         {
                             "requireSelfOnly": true,
-                            "requirement": {
-                                "requirePermission": true
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "handjob",
-                                "composed"
-                            ],
-                            "_comment": "2.5.3 开始独自撸管 有允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
-                            "responses": [
-                                "com_sex_finger_P_Begin_Self_M_1",
-                                "com_sex_finger_P_Begin_Self_M_2"
-                            ],
-                            "requireMaster": true,
-                            "requireSelfNotMaster": true
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requirePermission": true
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "handjob",
-                                "composed"
-                            ],
-                            "_comment": "2.5.3 开始独自撸管 有允许 口上文",
-                            "responses": [
-                                "com_sex_finger_P_Begin_Self_1",
-                                "com_sex_finger_P_Begin_Self_2"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "handjob",
-                                "blush",
-                                "shy"
-                            ],
-                            "_comment": "2.5.4 开始独自撸管 无允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
-                            "responses": [
-                                "com_sex_finger_P_Begin_Self_M_3",
-                                "com_sex_finger_P_Begin_Self_M_4"
-                            ],
-                            "requireMaster": true,
-                            "requireSelfNotMaster": true
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "handjob",
-                                "blush",
-                                "shy"
-                            ],
                             "_comment": "2.5.4 开始独自撸管 无允许 口上文",
                             "responses": [
                                 "com_sex_finger_P_Begin_Self_3",
                                 "com_sex_finger_P_Begin_Self_4"
+                            ],
+                            "variants": [
+                                {
+                                    "requireMaster": true,
+                                    "requireSelfNotMaster": true,
+                                    "_comment": "2.5.4 开始独自撸管 无允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
+                                    "responses": [
+                                        "com_sex_finger_P_Begin_Self_M_3",
+                                        "com_sex_finger_P_Begin_Self_M_4"
+                                    ],
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "handjob",
+                                                "composed"
+                                            ],
+                                            "_comment": "2.5.3 开始独自撸管 有允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
+                                            "responses": [
+                                                "com_sex_finger_P_Begin_Self_M_1",
+                                                "com_sex_finger_P_Begin_Self_M_2"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "handjob",
+                                        "composed"
+                                    ],
+                                    "_comment": "2.5.3 开始独自撸管 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_finger_P_Begin_Self_1",
+                                        "com_sex_finger_P_Begin_Self_2"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（接受，任何状态）",
+                            "responses": [
+                                "com_sex_finger_P_Begin_16",
+                                "com_sex_finger_P_Begin_17",
+                                "com_sex_finger_P_Begin_18"
                             ]
                         }
                     ],
@@ -326,6 +382,203 @@
                         "nsfw"
                     ],
                     "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfOnly": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "handjob",
+                                        "doll",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.5.6 时停中 独自撸管 口上文",
+                                    "responses": [
+                                        "com_sex_finger_P_Self_3",
+                                        "com_sex_finger_P_Self_4"
+                                    ]
+                                },
+                                {
+                                    "requireSelfOnly": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "handjob",
+                                        "doll",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.5.6 时停中 独自撸管 口上文",
+                                    "responses": [
+                                        "com_sex_finger_P_Self_3",
+                                        "com_sex_finger_P_Self_4"
+                                    ]
+                                },
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "handjob",
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.3.1 时停中 手淫 口上文",
+                                    "responses": [
+                                        "com_sex_finger_P_3",
+                                        "com_sex_finger_P_4",
+                                        "com_sex_finger_P_41"
+                                    ]
+                                },
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "handjob",
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.3.1 时停中 手淫 口上文",
+                                    "responses": [
+                                        "com_sex_finger_P_3",
+                                        "com_sex_finger_P_4",
+                                        "com_sex_finger_P_56"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfOnly": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "handjob",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.5.5 睡眠中 独自撸管 口上文",
+                                    "responses": [
+                                        "com_sex_finger_P_Self_1",
+                                        "com_sex_finger_P_Self_2"
+                                    ]
+                                },
+                                {
+                                    "requireSelfOnly": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "handjob",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.5.5 睡眠中 独自撸管 口上文",
+                                    "responses": [
+                                        "com_sex_finger_P_Self_1",
+                                        "com_sex_finger_P_Self_2"
+                                    ]
+                                },
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "handjob",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.3.2 睡眠中 手淫 口上文",
+                                    "responses": [
+                                        "com_sex_finger_P_1",
+                                        "com_sex_finger_P_2",
+                                        "com_sex_finger_P_42"
+                                    ]
+                                },
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "handjob",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.3.2 睡眠中 手淫 口上文",
+                                    "responses": [
+                                        "com_sex_finger_P_1",
+                                        "com_sex_finger_P_2",
+                                        "com_sex_finger_P_39"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_sex_finger_P_50",
+                                        "com_sex_finger_P_51",
+                                        "com_sex_finger_P_52"
+                                    ]
+                                }
+                            ]
+                        },
                         {
                             "requireSelfOnly": true,
                             "variants": [
@@ -421,46 +674,6 @@
                                     "variants": [
                                         {
                                             "requirement": {
-                                                "requireSelfAction": false,
-                                                "selfTags": [
-                                                    "sleeping"
-                                                ]
-                                            },
-                                            "extraSelfPortraitTags": [
-                                                "sex",
-                                                "doer",
-                                                "handjob",
-                                                "sleeping",
-                                                "relaxed"
-                                            ],
-                                            "_comment": "2.5.5 睡眠中 独自撸管 口上文",
-                                            "responses": [
-                                                "com_sex_finger_P_Self_1",
-                                                "com_sex_finger_P_Self_2"
-                                            ]
-                                        },
-                                        {
-                                            "requirement": {
-                                                "requireSelfAction": false,
-                                                "selfTags": [
-                                                    "timestop"
-                                                ]
-                                            },
-                                            "extraSelfPortraitTags": [
-                                                "sex",
-                                                "doer",
-                                                "handjob",
-                                                "doll",
-                                                "idle"
-                                            ],
-                                            "_comment": "2.5.6 时停中 独自撸管 口上文",
-                                            "responses": [
-                                                "com_sex_finger_P_Self_3",
-                                                "com_sex_finger_P_Self_4"
-                                            ]
-                                        },
-                                        {
-                                            "requirement": {
                                                 "requirePermission": true
                                             },
                                             "extraSelfPortraitTags": [
@@ -476,46 +689,6 @@
                                                 "com_sex_finger_P_Self_10"
                                             ]
                                         }
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "sleeping"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "handjob",
-                                        "sleeping",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.5.5 睡眠中 独自撸管 口上文",
-                                    "responses": [
-                                        "com_sex_finger_P_Self_1",
-                                        "com_sex_finger_P_Self_2"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "timestop"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "handjob",
-                                        "doll",
-                                        "idle"
-                                    ],
-                                    "_comment": "2.5.6 时停中 独自撸管 口上文",
-                                    "responses": [
-                                        "com_sex_finger_P_Self_3",
-                                        "com_sex_finger_P_Self_4"
                                     ]
                                 },
                                 {
@@ -550,58 +723,178 @@
                             ]
                         },
                         {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_player only version": {
-                                "requirement": {
-                                    "targetBaseID": "PLAYER"
-                                }
-                            },
-                            "_strong com variant": {
-                                "requireCOMStrongVariant": true
-                            },
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 ｜ 接受",
+                            "responses": [
+                                "com_sex_finger_P_62",
+                                "com_sex_finger_P_63",
+                                "com_sex_finger_P_64"
+                            ],
                             "variants": [
                                 {
                                     "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "sleeping"
-                                        ]
+                                        "requireEPSuccessGTE": "Success"
                                     },
+                                    "_player only version": {
+                                        "requirement": {
+                                            "targetBaseID": "PLAYER"
+                                        }
+                                    },
+                                    "_strong com variant": {
+                                        "requireCOMStrongVariant": true
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受·判定成功",
+                                            "responses": [
+                                                "com_sex_finger_P_44",
+                                                "com_sex_finger_P_45",
+                                                "com_sex_finger_P_46"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "targetBaseID": "PLAYER",
+                                                "selfTags": [
+                                                    "justWokenUp"
+                                                ]
+                                            },
+                                            "_comment1": "玩家专用 刚睡醒时的 手淫口上文",
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "requirePermission": true
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "doer",
+                                                        "handjob",
+                                                        "sleep",
+                                                        "smile",
+                                                        "blush",
+                                                        "lazy"
+                                                    ],
+                                                    "_comment": "2.1.5  玩家专用的 刚睡醒时的 手淫 有允许 口上文",
+                                                    "responses": [
+                                                        "com_sex_finger_P_19",
+                                                        "com_sex_finger_P_20",
+                                                        "com_sex_finger_P_21"
+                                                    ]
+                                                },
+                                                {
+                                                    "requirement": {
+                                                        "requireSelfAttitudeGTE": "Like"
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "doer",
+                                                        "handjob",
+                                                        "sleep",
+                                                        "smile",
+                                                        "blush",
+                                                        "lazy"
+                                                    ],
+                                                    "_comment": "2.2.7 玩家专用的 刚睡醒时的 手淫 无允许 好意 口上文",
+                                                    "responses": [
+                                                        "com_sex_finger_P_22",
+                                                        "com_sex_finger_P_23",
+                                                        "com_sex_finger_P_43"
+                                                    ]
+                                                }
+                                            ],
+                                            "_comment": "2.2.8 玩家专用 刚睡醒时的 手淫 无允许 敌意 口上文",
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "handjob",
+                                                "scared",
+                                                "submissive"
+                                            ],
+                                            "responses": [
+                                                "com_sex_finger_P_24",
+                                                "com_sex_finger_P_25",
+                                                "com_sex_finger_P_40"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "justWokenUp"
+                                                ]
+                                            },
+                                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
+                                            "responses": [
+                                                "com_sex_finger_P_53",
+                                                "com_sex_finger_P_54",
+                                                "com_sex_finger_P_55"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "handjob",
+                                                "love",
+                                                "happy",
+                                                "relaxed"
+                                            ],
+                                            "_comment": "2.1.3 ($self$) 手淫 结果正面 有允许 口上文",
+                                            "responses": [
+                                                "com_sex_finger_P_26",
+                                                "com_sex_finger_P_27",
+                                                "com_sex_finger_P_28"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.5 ($self$) 手淫 结果正面 未允许 口上文",
                                     "extraSelfPortraitTags": [
                                         "sex",
                                         "doer",
                                         "handjob",
-                                        "sleeping",
-                                        "relaxed"
+                                        "blush",
+                                        "shy",
+                                        "surprised",
+                                        "happy",
+                                        "aroused"
                                     ],
-                                    "_comment": "2.3.2 睡眠中 手淫 口上文",
                                     "responses": [
-                                        "com_sex_finger_P_1",
-                                        "com_sex_finger_P_2"
+                                        "com_sex_finger_P_29",
+                                        "com_sex_finger_P_30",
+                                        "com_sex_finger_P_31"
                                     ]
                                 },
                                 {
                                     "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "timestop"
-                                        ]
+                                        "requireEPSuccessLTE": "Failure"
                                     },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "handjob",
-                                        "doll",
-                                        "empty",
-                                        "silence",
-                                        "idle"
-                                    ],
-                                    "_comment": "2.3.1 时停中 手淫 口上文",
+                                    "_comment": "受方 ｜ 接受·判定失败",
                                     "responses": [
-                                        "com_sex_finger_P_3",
-                                        "com_sex_finger_P_4"
+                                        "com_sex_finger_P_59",
+                                        "com_sex_finger_P_60",
+                                        "com_sex_finger_P_61"
+                                    ],
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受·判定失败",
+                                            "responses": [
+                                                "com_sex_finger_P_47",
+                                                "com_sex_finger_P_48",
+                                                "com_sex_finger_P_49"
+                                            ]
+                                        }
                                     ]
                                 },
                                 {
@@ -649,7 +942,8 @@
                                             "_comment": "2.2.7 玩家专用的 刚睡醒时的 手淫 无允许 好意 口上文",
                                             "responses": [
                                                 "com_sex_finger_P_22",
-                                                "com_sex_finger_P_23"
+                                                "com_sex_finger_P_23",
+                                                "com_sex_finger_P_58"
                                             ]
                                         }
                                     ],
@@ -663,148 +957,23 @@
                                     ],
                                     "responses": [
                                         "com_sex_finger_P_24",
-                                        "com_sex_finger_P_25"
+                                        "com_sex_finger_P_25",
+                                        "com_sex_finger_P_57"
                                     ]
                                 },
                                 {
                                     "requirement": {
-                                        "requirePermission": true
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
                                     },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "handjob",
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.1.3 ($self$) 手淫 结果正面 有允许 口上文",
+                                    "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
                                     "responses": [
-                                        "com_sex_finger_P_26",
-                                        "com_sex_finger_P_27",
-                                        "com_sex_finger_P_28"
+                                        "com_sex_finger_P_53",
+                                        "com_sex_finger_P_54",
+                                        "com_sex_finger_P_55"
                                     ]
                                 }
-                            ],
-                            "_comment": "2.2.5 ($self$) 手淫 结果正面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "handjob",
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": [
-                                "com_sex_finger_P_29",
-                                "com_sex_finger_P_30",
-                                "com_sex_finger_P_31"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "handjob",
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "2.3.2 睡眠中 手淫 口上文",
-                            "responses": [
-                                "com_sex_finger_P_1",
-                                "com_sex_finger_P_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "timestop"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "handjob",
-                                "doll",
-                                "empty",
-                                "silence",
-                                "idle"
-                            ],
-                            "_comment": "2.3.1 时停中 手淫 口上文",
-                            "responses": [
-                                "com_sex_finger_P_3",
-                                "com_sex_finger_P_4"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "targetBaseID": "PLAYER",
-                                "selfTags": [
-                                    "justWokenUp"
-                                ]
-                            },
-                            "_comment1": "玩家专用 刚睡醒时的 手淫口上文",
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "handjob",
-                                        "sleep",
-                                        "smile",
-                                        "blush",
-                                        "lazy"
-                                    ],
-                                    "_comment": "2.1.5  玩家专用的 刚睡醒时的 手淫 有允许 口上文",
-                                    "responses": [
-                                        "com_sex_finger_P_19",
-                                        "com_sex_finger_P_20",
-                                        "com_sex_finger_P_21"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAttitudeGTE": "Like"
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "handjob",
-                                        "sleep",
-                                        "smile",
-                                        "blush",
-                                        "lazy"
-                                    ],
-                                    "_comment": "2.2.7 玩家专用的 刚睡醒时的 手淫 无允许 好意 口上文",
-                                    "responses": [
-                                        "com_sex_finger_P_22",
-                                        "com_sex_finger_P_23"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.8 玩家专用 刚睡醒时的 手淫 无允许 敌意 口上文",
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "handjob",
-                                "scared",
-                                "submissive"
-                            ],
-                            "responses": [
-                                "com_sex_finger_P_24",
-                                "com_sex_finger_P_25"
                             ]
                         },
                         {
@@ -880,7 +1049,8 @@
                             "useActiveTags": false,
                             "responses": [
                                 "com_sex_finger_P_Refuse_Receiver_1",
-                                "com_sex_finger_P_Refuse_Receiver_2"
+                                "com_sex_finger_P_Refuse_Receiver_2",
+                                "com_sex_finger_P_Refuse_Receiver_3"
                             ]
                         },
                         {
@@ -967,7 +1137,8 @@
                                     "_comment": "2.2.9 刚睡醒时的 指令失败拒绝 手淫 口上文 无允许",
                                     "responses": [
                                         "com_sex_finger_P_8",
-                                        "com_sex_finger_P_9"
+                                        "com_sex_finger_P_9",
+                                        "com_sex_finger_P_38"
                                     ]
                                 },
                                 {
@@ -1031,13 +1202,60 @@
                     ],
                     "template": "commandRefuse"
                 }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_finger_P_Ongoing",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 对方 ｜ 接受",
+                            "responses": [
+                                "com_sex_finger_P_Ongoing_4",
+                                "com_sex_finger_P_Ongoing_5",
+                                "com_sex_finger_P_Ongoing_6"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "对方是玩家",
+                                    "responses": [
+                                        "com_sex_finger_P_Ongoing_1",
+                                        "com_sex_finger_P_Ongoing_2",
+                                        "com_sex_finger_P_Ongoing_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（接受，任何状态）",
+                            "responses": [
+                                "com_sex_finger_P_Ongoing_7",
+                                "com_sex_finger_P_Ongoing_8",
+                                "com_sex_finger_P_Ongoing_9"
+                            ]
+                        }
+                    ]
+                }
             }
         ]
     },
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "com_sex_finger_P_Climax_1": "$self$的腰猛地弹起来，肉棒被$target$的手攥着加速套弄，龟头胀得发亮，精液抖着喷了出来。\n\"要射了……啊……去了……！\"",
+                "com_sex_finger_P_Climax_1": "$self$的腰猛地弹起来，肉棒被$target$的手攥着加速套弄，龟头胀得发亮，精液抖着喷了出来：“要射了……啊……去了……！”",
                 "com_sex_finger_P_Climax_5": "$self$含着屈辱的泪套弄着$target$，脊背却自己弓起来，脚趾蜷紧，在羞耻里到了。\n\"不要……明明是被逼着做的……为什么我会……啊……！\"",
                 "com_sex_finger_P_Climax_6": "$self$咬着下唇想压住声音，还是在剧烈的抽搐里崩溃了，手里的动作乱得没了章法。\n\"呜……停下来……让我停下……啊……！\"",
                 "com_sex_finger_P_Climax_7": "$self$哭着加速手里的撸动，耻丘被自己的爱液弄得狼藉，快感和羞耻同时炸开。\n\"骗子……说好只是用手……呜呜……去了……！\"",
@@ -1072,14 +1290,14 @@
                 "com_sex_finger_P_1": "$self$睡得沉，肉棒被握住套弄也没醒，只是腰窝浅浅地陷了下。",
                 "com_sex_finger_P_2": "$self$在梦里哼了声，腿根绷了绷，被握着的肉棒慢慢硬起来，人还沉在梦乡。",
                 "com_sex_finger_P_3": "$self$定格在原地，肉棒被$target$的手攥住套弄，飞溅的液体悬在半空，她毫无知觉。",
-                "com_sex_finger_P_4": "$self$僵立不动，硬起来的肉棒被随意撸动，龟头渗出的水光她自己也看不见。",
+                "com_sex_finger_P_4": "$self$一动不动地立在原处，硬起来的肉棒被随意撸动，龟头渗出的水光她自己也看不见。",
                 "com_sex_finger_P_16": "$self$猛地甩开那只手，眼神冷下来。\n\"请自重！我在你眼里就是这种人吗？\"",
                 "com_sex_finger_P_17": "$self$厌恶地退开，拍着被碰过的地方。\n\"别碰我！真恶心！\"",
                 "com_sex_finger_P_18": "$self$抬手拍落那只手，冷笑。\n\"想挨揍的话直说。\"",
-                "com_sex_finger_P_8": "$self$尖叫着惊醒，抄起手边的东西砸过去。\n\"变态！谁准你碰那里的！滚出去！\"",
-                "com_sex_finger_P_9": "$self$惊恐地缩起来，双手捂住腿间。\n\"别过来！我喊人了啊！\"",
+                "com_sex_finger_P_8": "$self$尖叫着惊醒，抄起手边的东西砸过去：“变态！谁准你碰那里的！滚出去！”",
+                "com_sex_finger_P_9": "$self$惊恐地缩起来，双手捂住腿间：“别过来！我喊人了啊！”",
                 "com_sex_finger_P_5": "$self$拍开腰间的手，翻身背过去。\n\"唔……困死了……别闹……\"",
-                "com_sex_finger_P_6": "$self$皱着眉把$target$的手推回去。\n\"睡觉……这种事明天再说……\"",
+                "com_sex_finger_P_6": "$self$拧起肩把$target$的手推回去：“睡觉……这种事明天再说……”",
                 "com_sex_finger_P_7": "$self$迷迷糊糊睁眼，护住腿间。\n\"不管是几次……现在绝对不行……\"",
                 "com_sex_finger_P_10": "$self$按住$target$不规矩的手，轻声哄。\n\"今晚太累了……抱抱着睡好吗？\"",
                 "com_sex_finger_P_11": "$self$把腰侧过去避开那只手。\n\"不行哦，明天还要早起呢，快睡觉。\"",
@@ -1087,20 +1305,20 @@
                 "com_sex_finger_P_13": "$self$尴尬地笑着挪开半步，举起双手。\n\"那个……这种玩笑有点过了哦。\"",
                 "com_sex_finger_P_14": "$self$轻轻拨开$target$的手，语气放软。\n\"我不讨厌你……但这种事，再等等。\"",
                 "com_sex_finger_P_15": "$self$有些慌乱地转移话题。\n\"啊，对了……正事还没聊完呢……\"",
-                "com_sex_finger_P_24": "$self$被惊醒，在$target$的压迫感下不敢挣扎，含泪忍受腿间的撸动。\n\"呜……我不动了……轻点……求你……\"",
-                "com_sex_finger_P_25": "$self$浑身僵硬地躺着，任由$target$摆布。\n\"……想做就做吧，别弄疼我……呜……\"",
+                "com_sex_finger_P_24": "$self$被惊醒，在$target$的压迫感下不敢挣扎，含泪忍受腿间的撸动：“呜……我不动了……轻点……求你……”",
+                "com_sex_finger_P_25": "$self$绷紧身子躺在原地，任由$target$摆布：“……想做就做吧，别弄疼我……呜……”",
                 "com_sex_finger_P_19": "$self$迷迷糊糊睁眼，察觉腿间的热度后也没躲。\n\"唔……坏蛋……想撸直说嘛……嗯……~\"",
                 "com_sex_finger_P_20": "$self$半梦半醒地往$target$手边送了送腰。\n\"哈啊……大清早就这么有精神……随你……~\"",
                 "com_sex_finger_P_21": "$self$揉着惺忪的睡眼，还是把腿张开了些。\n\"真拿你没办法……轻点撸……~\"",
-                "com_sex_finger_P_22": "$self$惊醒后看清是$target$，想叫又咽了回去，脸慢慢红了。\n\"是你啊……吓死我……那就……继续也行……\"",
-                "com_sex_finger_P_23": "$self$僵着没动，等腰上的手握稳了才小声开口。\n\"什么时候开始的……唔……先别停……\"",
+                "com_sex_finger_P_22": "$self$惊醒后看清是$target$，想叫又咽了回去，脸慢慢红了：“是你啊……吓死我……那就……继续也行……”",
+                "com_sex_finger_P_23": "$self$按住腿根没动，等腰上的手握稳了才小声开口：“什么时候开始的……唔……先别停……”",
                 "com_sex_finger_P_29": "$self$原本抗拒地撇着脸，手里的肉棒却烫得发硬。\n\"没想到……握着握着就……哼……♡\"",
                 "com_sex_finger_P_30": "$self$的指尖主动绕上龟头打磨，动作越来越顺。\n\"如果是你的话……似乎也不坏……嗯……♡\"",
                 "com_sex_finger_P_31": "$self$脸上带着潮红，不再回避视线，手上的力道加重了。\n\"再教你点别的……老实受着……~\"",
                 "com_sex_finger_P_26": "$self$观察着$target$迷乱的神情，手上的动作越发卖力。\n\"看来你很喜欢这样……再忍耐下哦♡\"",
                 "com_sex_finger_P_27": "$self$凑过去吻住$target$，手上的套弄没停。\n\"唔……表情真可爱……想让你更舒服点♡\"",
                 "com_sex_finger_P_28": "$self$的手腕酸了也不肯慢下来，掌心专门磨着龟头。\n\"快了吧……想射就别忍着……♡\"",
-                "com_sex_finger_P_35": "$self$皱着眉忍着不适，指尖只用最小的气力捏着。\n\"还没完吗……难受……\"",
+                "com_sex_finger_P_35": "$self$沉下脸忍着不适，指尖只用最小的气力捏着：“还没完吗……难受……”",
                 "com_sex_finger_P_36": "$self$偏过头屏住呼吸，敷衍地撸着。\n\"……快点结束，我等着呢。\"",
                 "com_sex_finger_P_37": "$self$胃里翻腾，干呕的冲动压了又压。\n\"呕……快些完事……求你了……\"",
                 "com_sex_finger_P_32": "$self$甩了甩酸痛的手腕，动作慢了下来。\n\"还得多久呀……手好酸。\"",
@@ -1130,14 +1348,64 @@
                 "com_sex_finger_P_Self_M_16": "$self$的手停在肉棒上，僵着不肯再动。\n\"够了没有……够了吧……我不想再撸了。\"",
                 "com_sex_finger_P_Self_15": "$self$麻木地撸动着，脸上没什么表情。\n\"……没感觉，白撸了。\"",
                 "com_sex_finger_P_Self_16": "$self$放开自己的肉棒，懒得再动。\n\"……不撸了，没意思。\"",
-                "com_sex_finger_P_Begin_Sleep_1": "$target$的手握住$self$睡梦中软垂的肉棒慢慢套弄，没几下就搓得硬挺起来，她在梦里哼了声，腿根绷了绷，没醒。",
+                "com_sex_finger_P_Begin_Sleep_1": "手掌握住$self$睡梦中软垂的肉棒慢慢套弄，没几下就搓得硬挺起来，她在梦里哼了声，腿根绷了绷，没醒。",
                 "com_sex_finger_P_Begin_Sleep_2": "掌心裹着棒身上下撸动，龟头渗出的前液拉出亮丝，$self$只是翻了个身，呼吸稍稍乱了些，人还沉在梦乡。",
                 "com_sex_finger_P_Begin_Self_Sleep_1": "$self$在睡梦中翻了个身，手无意识地探进腿间握住了自己的肉棒，慢慢撸动起来，呼吸也跟着变沉。",
                 "com_sex_finger_P_Begin_Self_Sleep_2": "梦里不知想到了什么，$self$的手掌贴上自己腿间缓缓收紧，软着的肉棒在掌心一点点挺起来，她始终没醒。",
                 "com_sex_finger_P_Begin_Timestop_1": "$target$握住她腿间软垂的肉棒套弄，几下就搓得硬挺，龟头渗出的前液拉出丝，$self$的手还搭在膝上没挪。",
                 "com_sex_finger_P_Begin_Timestop_2": "肉棒在掌心里胀大发烫，$self$定格的腿间大开任人摆弄，只有棒身不受控地跳了两下。",
-                "com_sex_finger_P_Refuse_Receiver_1": "$self$冷着脸推开$target$的手。\n\"别碰这里，我现在没心情。\"",
-                "com_sex_finger_P_Refuse_Receiver_2": "$self$往后退开，避开了$target$的动作。\n\"不要……别这样碰我。\""
+                "com_sex_finger_P_Refuse_Receiver_1": "$self$冷着脸推开$target$的手：“别碰这里，我现在没心情。”",
+                "com_sex_finger_P_Refuse_Receiver_2": "$self$往后退开，避开了$target$的动作：“不要……别这样碰我。”",
+                "com_sex_finger_P_Refuse_Receiver_3": "“把手拿开，我不打算让你碰。”$self$侧过身挡在身前，语气生硬。",
+                "com_sex_finger_P_Climax_8": "指腹重重刮过冠状沟，$self$脚背绷直地颤了起来，抓紧$target$的胳膊在急促喘息里迎来了射精。",
+                "com_sex_finger_P_Climax_9": "积攒的热意顺着棒身直冲顶端，$self$弓起脊背控制不住地抖着泄了出来，精液沾满了$target$的手心。",
+                "com_sex_finger_P_38": "睡意瞬间散光，$self$一把拍开$target$的手：“趁人睡着动手动脚，滚开！”",
+                "com_sex_finger_P_Begin_Timestop_3": "时间静止在这一瞬，$self$保持着原本的神情一动不动，对身下的套弄一无所知。",
+                "com_sex_finger_P_39": "梦里的$self$往暖处蹭了蹭，依旧没有转醒的迹象。",
+                "com_sex_finger_P_40": "睁眼便发现下身被人握在手里，$self$吓得声音发颤：“别抓太重……求你了……”",
+                "com_sex_finger_P_41": "时间尚未恢复流动，$self$保持着凝固前的姿态，连眼神都没有变化。",
+                "com_sex_finger_P_42": "梦里的$self$蜷起脚趾往暖处蹭了蹭，呼吸仍然均匀平稳。",
+                "com_sex_finger_P_Begin_Sleep_3": "$self$仍沉沉睡着，被握在掌心里的肉棒无意识地跳了两下，她却没有睁眼。",
+                "com_sex_finger_P_43": "刚睁开眼的$self$怔了半拍，感受到手心的温度后低声嘀咕：“真拿你没办法……”",
+                "com_sex_finger_P_Ongoing_1": "施方还在手握着她的肉棒套弄，$self$余光瞄到$target$站在一旁看着，窘得把脸埋低：“……别盯着看。”",
+                "com_sex_finger_P_Ongoing_2": "“看够了没有……”$self$忍着身下传来的阵阵麻意，顶着$target$的视线咬紧了下唇。",
+                "com_sex_finger_P_Ongoing_3": "被人当众用手撸着，$self$耳根烧得发烫，喘着气不敢再往$target$那边看。",
+                "com_sex_finger_P_Begin_10": "手腕被绑着挡不住腿间，$self$在肉棒被握住的瞬间绷紧了腰：“……别抓那么重！”",
+                "com_sex_finger_P_Begin_11": "“被绑着还要被这样撸……”$self$咬住下唇偏过头，腕间的束缚跟着勒紧。",
+                "com_sex_finger_P_Begin_12": "束缚让$self$无处可躲，她只能收紧腿根，硬着头皮承受$target$掌心的套弄。",
+                "com_sex_finger_P_Begin_13": "昏迷中的$self$毫无知觉，肉棒被手掌裹住套弄时，四肢仍软软地垂在原地。",
+                "com_sex_finger_P_Begin_14": "$self$紧闭着眼没有任何反应，只有胸口还维持着浅浅的起伏，任由$target$的手指在棒身上摩挲。",
+                "com_sex_finger_P_Begin_15": "失去意识的$self$既没有躲闪也没有出声，安静得近乎沉寂。",
+                "com_sex_finger_P_44": "没法用手去挡，掌心贴着龟头打磨的麻意直往小腹窜，$self$喘得断断续续：“……别老搓前面……”",
+                "com_sex_finger_P_45": "$self$扯动着腕上的束缚仰起脖颈，被握住的肉棒越发滚烫：“唔……这样撸太犯规了……”",
+                "com_sex_finger_P_46": "躲不开也推不掉，$self$只能咬紧嘴唇忍住漏出来的轻哼，腿根阵阵发软。",
+                "com_sex_finger_P_47": "被绑着躲不开，干涩的棒身被胡乱抓搓得生疼，$self$吸了口气：“嘶……别硬扯了，好痛！”",
+                "com_sex_finger_P_48": "“指甲刮到肉了……”$self$往后缩着腰，手腕上的绳索绷得紧紧的。",
+                "com_sex_finger_P_49": "粗鲁的套弄全无半点快感，$self$别开脸忍着气：“不会撸就松手。”",
+                "com_sex_finger_P_50": "昏迷中的$self$依旧没有转醒，被反复套弄得硬挺发烫的肉棒静静立在$target$掌心里。",
+                "com_sex_finger_P_51": "$self$毫无反应地躺着，连指尖都没动一下，任由龟头渗出的前液沾湿对方手指。",
+                "com_sex_finger_P_52": "失去意识的$self$没有发出任何声响，对身下的撸动一无所知。",
+                "com_sex_finger_P_53": "腿间传来的套弄把$self$弄醒，她迷糊地睁开眼看了看$target$，最终没推开：“……趁人睡着撸这个啊？”",
+                "com_sex_finger_P_54": "$self$揉了揉眼睛清醒过来，察觉肉棒已经硬在对方手里，耳尖泛红：“……动作轻点。”",
+                "com_sex_finger_P_55": "“……唔、难怪梦里一直觉得发胀。”$self$声音还带着睡意，放松了腿根由着$target$继续。",
+                "com_sex_finger_P_56": "时间仍未流动，$self$保持着静止的呼吸，对身下的触碰一无所知。",
+                "com_sex_finger_P_57": "睁眼便发现下身被人攥住，$self$吓得往后缩却躲不开，只把脸埋进臂弯小声抽气。",
+                "com_sex_finger_P_58": "刚醒过来的$self$嗓音软绵绵的，由着$target$在掌心套弄：“动作轻点就是了。”",
+                "com_sex_finger_P_Begin_16": "$self$没有闪躲，任由动作就这么直接开始。",
+                "com_sex_finger_P_Begin_17": "刚一上手，$self$便微微放松了肩背，没有多说什么。",
+                "com_sex_finger_P_Begin_18": "$self$目光微沉，安静地配合着接下来的节奏。",
+                "com_sex_finger_P_59": "握得太死反倒有点磨得生疼，$self$皱起眉抽了口气：“……轻点，太用力了。”",
+                "com_sex_finger_P_60": "$self$被生硬的手法弄得有些扫兴，别开视线没有吭声。",
+                "com_sex_finger_P_61": "节奏完全不对，$self$忍不住往后退了半步：“……别瞎捋了。”",
+                "com_sex_finger_P_62": "手掌松开后，$self$轻吐出一口气，缓缓平复着下身残留的燥热。",
+                "com_sex_finger_P_63": "$self$垂下眼帘调整着呼吸，体表还留着刚才触碰的余温。",
+                "com_sex_finger_P_64": "套弄告一段落，$self$微微整了整姿态，没有再说什么。",
+                "com_sex_finger_P_Ongoing_4": "下身正被手指握住上下套弄着，$self$呼吸一紧，别开脸没有看过去。",
+                "com_sex_finger_P_Ongoing_5": "$self$绷紧了腰腹，竭力压住从喉咙里翻涌上来的喘息。",
+                "com_sex_finger_P_Ongoing_6": "掌心包裹着敏感处反复摩挲，$self$攥紧拳头勉强维持着镇定。",
+                "com_sex_finger_P_Ongoing_7": "套弄的动作还在继续，$self$保持着原本的姿势没有作声。",
+                "com_sex_finger_P_Ongoing_8": "$self$垂下视线，顺着当前的节奏安静地待在原地。",
+                "com_sex_finger_P_Ongoing_9": "动作仍在持续，$self$没有出声打断，一时间没有别的反应。"
             }
         }
     }

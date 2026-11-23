@@ -1671,15 +1671,15 @@
                 "com_furniture_restroom_description_remove_2": "$doer.firstname$停下手把衣物整理回去",
                 "com_furniture_restroom_description_remove_3": "$doer.firstname$把解开的衣物重新提好",
 
-                "com_furniture_rest_required_description_begin_ordered_1": "$doer.firstname$依言躺下来静养",
-                "com_furniture_rest_required_description_begin_ordered_2": "$doer.firstname$照着吩咐躺下静养",
-                "com_furniture_rest_required_description_begin_ordered_3": "$doer.firstname$应下吩咐躺平了身子",
-                "com_furniture_rest_required_description_remove_1": "$doer.firstname$把躺着的姿势撑了起来",
-                "com_furniture_rest_required_description_remove_2": "$doer.firstname$撑着手臂坐起身",
-                "com_furniture_rest_required_description_remove_3": "$doer.firstname$收了静养的姿势坐起来",
-                "com_furniture_rest_required_description_onComplete_1": "$doer.firstname$把卧床静养停了下来",
-                "com_furniture_rest_required_description_onComplete_2": "$doer.firstname$从躺着的姿势坐起身子",
-                "com_furniture_rest_required_description_onComplete_3": "$doer.firstname$撑着身子坐了起来",
+                "com_furniture_rest_required_description_begin_ordered_1": "$doer.firstname$依言躺到了$furniture$上静养",
+                "com_furniture_rest_required_description_begin_ordered_2": "$doer.firstname$照着吩咐在$furniture$上躺下静养",
+                "com_furniture_rest_required_description_begin_ordered_3": "$doer.firstname$应下吩咐，在$furniture$上躺平了身子",
+                "com_furniture_rest_required_description_remove_1": "$doer.firstname$从$furniture$上把躺着的姿势撑了起来",
+                "com_furniture_rest_required_description_remove_2": "$doer.firstname$在$furniture$上撑着手臂坐起身",
+                "com_furniture_rest_required_description_remove_3": "$doer.firstname$从$furniture$上收了静养的姿势坐起来",
+                "com_furniture_rest_required_description_onComplete_1": "$doer.firstname$在$furniture$上把卧床静养停了下来",
+                "com_furniture_rest_required_description_onComplete_2": "$doer.firstname$从$furniture$上躺着的姿势坐起身子",
+                "com_furniture_rest_required_description_onComplete_3": "$doer.firstname$从$furniture$上撑着身子坐了起来",
 
                 "com_furniture_takeShower_description_begin_ordered_1": "$doer.firstname$依言开始洗澡",
                 "com_furniture_takeShower_description_begin_ordered_2": "$doer.firstname$照着吩咐站到水下冲洗",
@@ -1869,8 +1869,8 @@
                 "com_furniture_takingLongBreak_displayName_2": "一起长休",
                 "com_furniture_rest_required": "因分娩、产后或术后等状况，必须卧床静养时才能执行",
                 "com_furniture_rest_required_displayName_1": "卧床静养",
-                "com_furniture_rest_required_description_begin_1": "$doer.firstname$躺下静养",
-                "com_furniture_rest_required_description_ongoing_1": "$doer.firstname$还在卧床静养",
+                "com_furniture_rest_required_description_begin_1": "$doer.firstname$躺到了$furniture$上静养",
+                "com_furniture_rest_required_description_ongoing_1": "$doer.firstname$还在$furniture$上卧床静养",
                 
                 "com_furniture_playVideoGames_displayName_1": "打游戏",
                 "com_furniture_playVideoGames_displayName_2": "一起打游戏",
@@ -2060,8 +2060,8 @@
                 "com_furniture_cryosleep_remove_ongoing_3": "$doer.firstname$还在$furniture$前调整解除休眠的设置",
                 "com_furniture_cryosleep_remove_onComplete_2": "$receiver.firstname$从$furniture$的休眠里缓过神来",
                 "com_furniture_cryosleep_remove_onComplete_3": "$receiver.firstname$的身体在$furniture$里慢慢动了起来",
-                "com_furniture_rest_required_description_begin_2": "$doer.firstname$躺下来开始静养",
-                "com_furniture_rest_required_description_begin_3": "$doer.firstname$躺平了身子开始静养",
+                "com_furniture_rest_required_description_begin_2": "$doer.firstname$在$furniture$上躺下来开始静养",
+                "com_furniture_rest_required_description_begin_3": "$doer.firstname$在$furniture$上躺平了身子开始静养",
                 "com_furniture_prison_remove_begin_2": "$doer.firstname$在$furniture$的门前摆弄起锁具",
                 "com_furniture_prison_remove_begin_3": "$doer.firstname$伸手尝试打开$furniture$的锁",
                 "com_furniture_changeOutfit_ongoing_2": "$doer.firstname$换衣服的事还没有完",
@@ -2094,8 +2094,8 @@
                 "com_furniture_cryosleep_add_begin_3": "$doer.firstname$在$furniture$前设置起休眠",
                 "com_furniture_takeShower_description_ongoing_5": "$doer.firstname$手上的冲洗一直没有停",
                 "com_furniture_takeShower_description_ongoing_6": "$doer.firstname$还在给$receiver.firstname$冲洗",
-                "com_furniture_rest_required_description_ongoing_2": "$doer.firstname$仍然躺着没有起身",
-                "com_furniture_rest_required_description_ongoing_3": "$doer.firstname$静养的事一直没有停"
+                "com_furniture_rest_required_description_ongoing_2": "$doer.firstname$仍然躺在$furniture$上没有起身",
+                "com_furniture_rest_required_description_ongoing_3": "$doer.firstname$在$furniture$上静养的事一直没有停"
 
             },
             "en-us":

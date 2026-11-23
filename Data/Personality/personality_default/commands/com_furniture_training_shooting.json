@@ -9,7 +9,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
                             "responses": [
@@ -37,6 +38,16 @@
                                 "com_furniture_training_shooting_Ongoing_2",
                                 "com_furniture_training_shooting_Ongoing_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_training_shooting_Ongoing_Fallback_1",
+                                "com_furniture_training_shooting_Ongoing_Fallback_2"
+                            ]
                         }
                     ]
                 }
@@ -56,6 +67,17 @@
                                 "com_furniture_training_shooting_Join_Refused_1",
                                 "com_furniture_training_shooting_Join_Refused_2",
                                 "com_furniture_training_shooting_Join_Refused_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_training_shooting_Join_Refused_Fallback_1",
+                                "com_furniture_training_shooting_Join_Refused_Fallback_2"
                             ]
                         }
                     ]
@@ -77,6 +99,17 @@
                                 "com_furniture_training_shooting_Tryjoin_2",
                                 "com_furniture_training_shooting_Tryjoin_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_training_shooting_Tryjoin_Fallback_1",
+                                "com_furniture_training_shooting_Tryjoin_Fallback_2"
+                            ]
                         }
                     ]
                 }
@@ -87,28 +120,6 @@
                     "ID": "com_furniture_training_shooting",
                     "template": "commandResult",
                     "variants": [
-                        {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_comment": "判定成功",
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "targetBaseID": "PLAYER"
-                                    },
-                                    "_comment": "自己（单人） → 玩家 ｜ 接受·判定成功",
-                                    "responses": [
-                                        "com_furniture_training_shooting_1",
-                                        "com_furniture_training_shooting_2",
-                                        "com_furniture_training_shooting_3"
-                                    ]
-                                }
-                            ],
-                            "responses": [
-                                "com_furniture_training_shooting_Fallback_1"
-                            ]
-                        },
                         {
                             "requireSelfOnly": true,
                             "_comment": "自己（单人） → 自己",
@@ -133,6 +144,28 @@
                         },
                         {
                             "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "_comment": "判定成功",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "自己（单人） → 玩家 ｜ 接受·判定成功",
+                                    "responses": [
+                                        "com_furniture_training_shooting_1",
+                                        "com_furniture_training_shooting_2",
+                                        "com_furniture_training_shooting_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_training_shooting_Fallback_1"
+                            ]
+                        },
+                        {
+                            "requirement": {
                                 "requireEPSuccessLTE": "Failure"
                             },
                             "_comment": "判定失败",
@@ -151,6 +184,16 @@
                             ],
                             "responses": [
                                 "com_furniture_training_shooting_Fallback_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_training_shooting_Fallback_3",
+                                "com_furniture_training_shooting_Fallback_4"
                             ]
                         }
                     ]
@@ -173,6 +216,17 @@
                                 "com_furniture_training_shooting_Refuse_2",
                                 "com_furniture_training_shooting_Refuse_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_training_shooting_Refuse_Fallback_1",
+                                "com_furniture_training_shooting_Refuse_Fallback_2"
+                            ]
                         }
                     ]
                 }
@@ -189,7 +243,10 @@
                                 "com_furniture_training_shooting_Join_1",
                                 "com_furniture_training_shooting_Join_2",
                                 "com_furniture_training_shooting_Join_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ]
                 }
@@ -210,6 +267,17 @@
                                 "com_furniture_training_shooting_Joined_2",
                                 "com_furniture_training_shooting_Joined_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_training_shooting_Joined_Fallback_1",
+                                "com_furniture_training_shooting_Joined_Fallback_2"
+                            ]
                         }
                     ]
                 }
@@ -226,7 +294,10 @@
                                 "com_furniture_training_shooting_Begin_1",
                                 "com_furniture_training_shooting_Begin_2",
                                 "com_furniture_training_shooting_Begin_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ]
                 }
@@ -243,7 +314,10 @@
                                 "com_furniture_training_shooting_Interrupt_1",
                                 "com_furniture_training_shooting_Interrupt_2",
                                 "com_furniture_training_shooting_Interrupt_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ]
                 }
@@ -293,7 +367,19 @@
                 "com_furniture_training_shooting_Interrupt_2": "$self$确认保险扣上才转身看向$target$：\"找我有事？先到安全线后面站着。\"",
                 "com_furniture_training_shooting_Interrupt_3": "\"声音太大了差点没听见你进来。\" $self$把枪搁在台面上，抬眼看向$target$。",
                 "com_furniture_training_shooting_Fallback_1": "$self$点了点头，没有多说什么。",
-                "com_furniture_training_shooting_Fallback_2": "$self$点了点头，没有多说什么。"
+                "com_furniture_training_shooting_Fallback_2": "$self$点了点头，没有多说什么。",
+                "com_furniture_training_shooting_Join_Refused_Fallback_1": "\"行，那你专心练，我先走开。\" $self$收起护具退出了靶场。",
+                "com_furniture_training_shooting_Join_Refused_Fallback_2": "$self$朝$target$点点头，没再逗留，转身离开。",
+                "com_furniture_training_shooting_Tryjoin_Fallback_1": "$self$停在安全线外等枪声歇了，走近问$target$：\"旁边靶道空着，能一起打两轮吗？\"",
+                "com_furniture_training_shooting_Tryjoin_Fallback_2": "$self$拿着耳罩走过来问道：\"方不方便一块儿上靶道练练？\"",
+                "com_furniture_training_shooting_Joined_Fallback_1": "\"谢了，那我站旁边那道。\" $self$戴好护具站进靶位。",
+                "com_furniture_training_shooting_Joined_Fallback_2": "$self$点点头，核对好安全线后迅速进入状态。",
+                "com_furniture_training_shooting_Refuse_Fallback_1": "$self$没有去拿护具，只摇了摇头：\"今天手不够稳，先不打靶了。\"",
+                "com_furniture_training_shooting_Refuse_Fallback_2": "$self$摆摆手回绝道：\"现在没心思练枪，改天吧。\"",
+                "com_furniture_training_shooting_Fallback_3": "$self$卸下弹匣拉空枪机，摘下护目镜长舒了一口气。",
+                "com_furniture_training_shooting_Fallback_4": "打完这一轮靶后，$self$收好武器，揉了揉有些发酸的虎口。",
+                "com_furniture_training_shooting_Ongoing_Fallback_1": "$self$屏住呼吸稳稳扣动扳机，目光紧盯着前方的靶标。",
+                "com_furniture_training_shooting_Ongoing_Fallback_2": "$self$站在靶位里沉着瞄准，一枪接一枪地调整着弹道。"
             }
         }
     }

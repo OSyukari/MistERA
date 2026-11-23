@@ -1,0 +1,1421 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_P_Force_deep_Climax",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 com_sex_oral_P_Force_deep 高潮",
+                            "responses": [
+                                "com_sex_oral_P_Force_deep_Climax_Doer_1",
+                                "com_sex_oral_P_Force_deep_Climax_Doer_2",
+                                "com_sex_oral_P_Force_deep_Climax_Doer_3"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "irrumatio",
+                                        "blowjob",
+                                        "forced",
+                                        "climax"
+                                    ],
+                                    "_comment": "受方 com_sex_oral_P_Force_deep 高潮 有允许",
+                                    "responses": [
+                                        "com_sex_oral_P_Force_deep_Climax_Perm_1",
+                                        "com_sex_oral_P_Force_deep_Climax_Perm_2",
+                                        "com_sex_oral_P_Force_deep_Climax_Perm_3"
+                                    ]
+                                }
+                            ],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "irrumatio",
+                                "blowjob",
+                                "forced",
+                                "climax"
+                            ],
+                            "_comment": "受方 com_sex_oral_P_Force_deep 高潮",
+                            "responses": [
+                                "com_sex_oral_P_Force_deep_Climax_Recv_1",
+                                "com_sex_oral_P_Force_deep_Climax_Recv_2",
+                                "com_sex_oral_P_Force_deep_Climax_Recv_3",
+                                "com_sex_oral_P_Force_deep_Climax_RecvCase_1",
+                                "com_sex_oral_P_Force_deep_Climax_RecvCase_2",
+                                "com_sex_oral_P_Force_deep_Climax_RecvCase_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（任何状态）",
+                            "responses": [
+                                "com_sex_oral_P_Force_deep_Climax_Recv_1"
+                            ]
+                        }
+                    ],
+                    "template": "commandClimax"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_P_Force_deep_Begin",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "firstexp_M"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "irrumatio",
+                                                "blowjob",
+                                                "forced",
+                                                "doll",
+                                                "empty"
+                                            ],
+                                            "_comment": "初体验 开始 时停中",
+                                            "responses": [
+                                                "com_sex_oral_P_Force_deep_Begin_FE_Timestop_1",
+                                                "com_sex_oral_P_Force_deep_Begin_FE_Timestop_2",
+                                                "com_sex_oral_P_Force_deep_Begin_FE_Timestop_3"
+                                            ]
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "irrumatio",
+                                        "blowjob",
+                                        "forced",
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "开始 时停中",
+                                    "responses": [
+                                        "com_sex_oral_P_Force_deep_Begin_Timestop_1",
+                                        "com_sex_oral_P_Force_deep_Begin_Timestop_2",
+                                        "com_sex_oral_P_Force_deep_Begin_Timestop_3",
+                                        "com_sex_oral_P_Force_deep_Begin_TimestopCase_1",
+                                        "com_sex_oral_P_Force_deep_Begin_TimestopCase_2",
+                                        "com_sex_oral_P_Force_deep_Begin_TimestopCase_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "firstexp_M"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "irrumatio",
+                                                "blowjob",
+                                                "forced",
+                                                "sleeping",
+                                                "pain"
+                                            ],
+                                            "_comment": "初体验 开始 睡眠中",
+                                            "responses": [
+                                                "com_sex_oral_P_Force_deep_Begin_FE_Sleep_1",
+                                                "com_sex_oral_P_Force_deep_Begin_FE_Sleep_2",
+                                                "com_sex_oral_P_Force_deep_Begin_FE_Sleep_3"
+                                            ]
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "irrumatio",
+                                        "blowjob",
+                                        "forced",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "开始 睡眠中",
+                                    "responses": [
+                                        "com_sex_oral_P_Force_deep_Begin_Sleep_1",
+                                        "com_sex_oral_P_Force_deep_Begin_Sleep_2",
+                                        "com_sex_oral_P_Force_deep_Begin_Sleep_3",
+                                        "com_sex_oral_P_Force_deep_Begin_SleepCase_1",
+                                        "com_sex_oral_P_Force_deep_Begin_SleepCase_2",
+                                        "com_sex_oral_P_Force_deep_Begin_SleepCase_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "开始 昏迷（非睡眠）",
+                                    "responses": [
+                                        "com_sex_oral_P_Force_deep_Begin_Fainted_1",
+                                        "com_sex_oral_P_Force_deep_Begin_Fainted_2",
+                                        "com_sex_oral_P_Force_deep_Begin_Fainted_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "_comment": "开始 被束缚",
+                                    "responses": [
+                                        "com_sex_oral_P_Force_deep_Begin_Restrained_1",
+                                        "com_sex_oral_P_Force_deep_Begin_Restrained_2",
+                                        "com_sex_oral_P_Force_deep_Begin_Restrained_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_M"
+                                        ]
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "targetBaseID": "PLAYER"
+                                            },
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "requirePermission": true
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "receiver",
+                                                        "irrumatio",
+                                                        "blowjob",
+                                                        "forced",
+                                                        "blush",
+                                                        "pain",
+                                                        "tearful"
+                                                    ],
+                                                    "_comment": "初体验 玩家专用 有允许",
+                                                    "responses": [
+                                                        "com_sex_oral_P_Force_deep_Begin_FE_Player_1",
+                                                        "com_sex_oral_P_Force_deep_Begin_FE_Player_2",
+                                                        "com_sex_oral_P_Force_deep_Begin_FE_Player_3"
+                                                    ]
+                                                }
+                                            ],
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "irrumatio",
+                                                "blowjob",
+                                                "forced",
+                                                "blush",
+                                                "pain",
+                                                "tearful"
+                                            ],
+                                            "_comment": "初体验 玩家专用",
+                                            "responses": [
+                                                "com_sex_oral_P_Force_deep_Begin_FE_Player_1",
+                                                "com_sex_oral_P_Force_deep_Begin_FE_Player_2",
+                                                "com_sex_oral_P_Force_deep_Begin_FE_Player_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "irrumatio",
+                                                "blowjob",
+                                                "forced",
+                                                "blush",
+                                                "pain",
+                                                "tearful"
+                                            ],
+                                            "_comment": "初体验 开始 有允许",
+                                            "responses": [
+                                                "com_sex_oral_P_Force_deep_Begin_FE_Perm_1",
+                                                "com_sex_oral_P_Force_deep_Begin_FE_Perm_2",
+                                                "com_sex_oral_P_Force_deep_Begin_FE_Perm_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAttitudeGTE": "Like"
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "irrumatio",
+                                                "blowjob",
+                                                "forced",
+                                                "blush",
+                                                "pain",
+                                                "trembling"
+                                            ],
+                                            "_comment": "初体验 开始 未允许 好意",
+                                            "responses": [
+                                                "com_sex_oral_P_Force_deep_Begin_FE_Like_1",
+                                                "com_sex_oral_P_Force_deep_Begin_FE_Like_2",
+                                                "com_sex_oral_P_Force_deep_Begin_FE_Like_3"
+                                            ]
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "irrumatio",
+                                        "blowjob",
+                                        "forced",
+                                        "fear",
+                                        "pain",
+                                        "tearful",
+                                        "trembling"
+                                    ],
+                                    "_comment": "初体验 开始 未允许 敌意",
+                                    "responses": [
+                                        "com_sex_oral_P_Force_deep_Begin_FE_Hostile_1",
+                                        "com_sex_oral_P_Force_deep_Begin_FE_Hostile_2",
+                                        "com_sex_oral_P_Force_deep_Begin_FE_Hostile_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "irrumatio",
+                                        "blowjob",
+                                        "forced",
+                                        "closed_eyes",
+                                        "blush",
+                                        "affectionate"
+                                    ],
+                                    "_comment": "开始 有允许",
+                                    "responses": [
+                                        "com_sex_oral_P_Force_deep_Begin_Perm_1",
+                                        "com_sex_oral_P_Force_deep_Begin_Perm_2",
+                                        "com_sex_oral_P_Force_deep_Begin_Perm_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "irrumatio",
+                                        "blowjob",
+                                        "forced",
+                                        "blush"
+                                    ],
+                                    "_comment": "开始 未允许 好意",
+                                    "responses": [
+                                        "com_sex_oral_P_Force_deep_Begin_Like_1",
+                                        "com_sex_oral_P_Force_deep_Begin_Like_2",
+                                        "com_sex_oral_P_Force_deep_Begin_Like_3"
+                                    ]
+                                }
+                            ],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "irrumatio",
+                                "blowjob",
+                                "forced",
+                                "fear",
+                                "trembling",
+                                "tearful",
+                                "pain"
+                            ],
+                            "_comment": "受方 开始 com_sex_oral_P_Force_deep",
+                            "responses": [
+                                "com_sex_oral_P_Force_deep_Begin_Hostile_1",
+                                "com_sex_oral_P_Force_deep_Begin_Hostile_2",
+                                "com_sex_oral_P_Force_deep_Begin_Hostile_3",
+                                "com_sex_oral_P_Force_deep_Begin_AwakeCase_1",
+                                "com_sex_oral_P_Force_deep_Begin_AwakeCase_2",
+                                "com_sex_oral_P_Force_deep_Begin_AwakeCase_3"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_partner_M"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "irrumatio",
+                                        "blowjob",
+                                        "forced",
+                                        "surprised"
+                                    ],
+                                    "_comment": "对方初体验 开始",
+                                    "responses": [
+                                        "com_sex_oral_P_Force_deep_Begin_FE_Partner_1",
+                                        "com_sex_oral_P_Force_deep_Begin_FE_Partner_2",
+                                        "com_sex_oral_P_Force_deep_Begin_FE_Partner_3"
+                                    ]
+                                }
+                            ],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "irrumatio",
+                                "blowjob",
+                                "forced",
+                                "surprised"
+                            ],
+                            "_comment": "施方 开始 com_sex_oral_P_Force_deep",
+                            "responses": [
+                                "com_sex_oral_P_Force_deep_Begin_FE_Partner_1",
+                                "com_sex_oral_P_Force_deep_Begin_FE_Partner_2",
+                                "com_sex_oral_P_Force_deep_Begin_FE_Partner_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（接受，任何状态）",
+                            "responses": [
+                                "com_sex_oral_P_Force_deep_Begin_Hostile_1"
+                            ]
+                        }
+                    ],
+                    "template": "commandAct",
+                    "templateExtras": [
+                        "firstexpM",
+                        "firstexpPartnerM"
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_P_Force_deep",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "firstexp_M"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "irrumatio",
+                                                "blowjob",
+                                                "forced",
+                                                "doll",
+                                                "empty"
+                                            ],
+                                            "_comment": "初体验 时停中",
+                                            "responses": [
+                                                "com_sex_oral_P_Force_deep_FE_Timestop_1",
+                                                "com_sex_oral_P_Force_deep_FE_Timestop_2",
+                                                "com_sex_oral_P_Force_deep_FE_Timestop_3"
+                                            ]
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "irrumatio",
+                                        "blowjob",
+                                        "forced",
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "时停中 受方",
+                                    "responses": [
+                                        "com_sex_oral_P_Force_deep_Timestop_1",
+                                        "com_sex_oral_P_Force_deep_Timestop_2",
+                                        "com_sex_oral_P_Force_deep_Timestop_3",
+                                        "com_sex_oral_P_Force_deep_TimestopCase_1",
+                                        "com_sex_oral_P_Force_deep_TimestopCase_2",
+                                        "com_sex_oral_P_Force_deep_TimestopCase_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "firstexp_M"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "irrumatio",
+                                                "blowjob",
+                                                "forced",
+                                                "sleeping",
+                                                "pain"
+                                            ],
+                                            "_comment": "初体验 睡眠中",
+                                            "responses": [
+                                                "com_sex_oral_P_Force_deep_FE_Sleep_1",
+                                                "com_sex_oral_P_Force_deep_FE_Sleep_2",
+                                                "com_sex_oral_P_Force_deep_FE_Sleep_3"
+                                            ]
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "irrumatio",
+                                        "blowjob",
+                                        "forced",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "睡眠中 受方",
+                                    "responses": [
+                                        "com_sex_oral_P_Force_deep_Sleep_1",
+                                        "com_sex_oral_P_Force_deep_Sleep_2",
+                                        "com_sex_oral_P_Force_deep_Sleep_3",
+                                        "com_sex_oral_P_Force_deep_SleepCase_1",
+                                        "com_sex_oral_P_Force_deep_SleepCase_2",
+                                        "com_sex_oral_P_Force_deep_SleepCase_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "昏迷（非睡眠） 受方",
+                                    "responses": [
+                                        "com_sex_oral_P_Force_deep_Fainted_1",
+                                        "com_sex_oral_P_Force_deep_Fainted_2",
+                                        "com_sex_oral_P_Force_deep_Fainted_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "targetBaseID": "PLAYER"
+                                            },
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "requirePermission": true
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "receiver",
+                                                        "irrumatio",
+                                                        "blowjob",
+                                                        "forced",
+                                                        "sleep",
+                                                        "smile",
+                                                        "blush",
+                                                        "lazy"
+                                                    ],
+                                                    "_comment": "玩家专用 刚睡醒 有允许",
+                                                    "responses": [
+                                                        "com_sex_oral_P_Force_deep_WokenPlayerPerm_1",
+                                                        "com_sex_oral_P_Force_deep_WokenPlayerPerm_2",
+                                                        "com_sex_oral_P_Force_deep_WokenPlayerPerm_3"
+                                                    ]
+                                                },
+                                                {
+                                                    "requirement": {
+                                                        "requireSelfAttitudeGTE": "Like"
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "receiver",
+                                                        "irrumatio",
+                                                        "blowjob",
+                                                        "forced",
+                                                        "sleep",
+                                                        "smile",
+                                                        "blush",
+                                                        "lazy"
+                                                    ],
+                                                    "_comment": "玩家专用 刚睡醒 未允许 好意",
+                                                    "responses": [
+                                                        "com_sex_oral_P_Force_deep_WokenPlayerLike_1",
+                                                        "com_sex_oral_P_Force_deep_WokenPlayerLike_2",
+                                                        "com_sex_oral_P_Force_deep_WokenPlayerLike_3"
+                                                    ]
+                                                }
+                                            ],
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "irrumatio",
+                                                "blowjob",
+                                                "forced",
+                                                "scared",
+                                                "submissive"
+                                            ],
+                                            "_comment": "玩家专用 刚睡醒 无允许 敌意",
+                                            "responses": [
+                                                "com_sex_oral_P_Force_deep_WokenPlayerHostile_1",
+                                                "com_sex_oral_P_Force_deep_WokenPlayerHostile_2",
+                                                "com_sex_oral_P_Force_deep_WokenPlayerHostile_3"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "刚睡醒 受方",
+                                    "responses": [
+                                        "com_sex_oral_P_Force_deep_Woken_1",
+                                        "com_sex_oral_P_Force_deep_Woken_2",
+                                        "com_sex_oral_P_Force_deep_Woken_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "_comment": "受方（被束缚） 判定成功",
+                                            "responses": [
+                                                "com_sex_oral_P_Force_deep_RestrainedSucc_1",
+                                                "com_sex_oral_P_Force_deep_RestrainedSucc_2",
+                                                "com_sex_oral_P_Force_deep_RestrainedSucc_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "firstexp_M"
+                                                ]
+                                            },
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "targetBaseID": "PLAYER"
+                                                    },
+                                                    "variants": [
+                                                        {
+                                                            "requirement": {
+                                                                "requirePermission": true
+                                                            },
+                                                            "extraSelfPortraitTags": [
+                                                                "sex",
+                                                                "receiver",
+                                                                "irrumatio",
+                                                                "blowjob",
+                                                                "forced",
+                                                                "blush",
+                                                                "pain",
+                                                                "tearful"
+                                                            ],
+                                                            "_comment": "初体验 玩家专用 有允许",
+                                                            "responses": [
+                                                                "com_sex_oral_P_Force_deep_FE_Player_1",
+                                                                "com_sex_oral_P_Force_deep_FE_Player_2",
+                                                                "com_sex_oral_P_Force_deep_FE_Player_3"
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "receiver",
+                                                        "irrumatio",
+                                                        "blowjob",
+                                                        "forced",
+                                                        "blush",
+                                                        "pain",
+                                                        "tearful"
+                                                    ],
+                                                    "_comment": "初体验 玩家专用",
+                                                    "responses": [
+                                                        "com_sex_oral_P_Force_deep_FE_Player_1",
+                                                        "com_sex_oral_P_Force_deep_FE_Player_2",
+                                                        "com_sex_oral_P_Force_deep_FE_Player_3"
+                                                    ]
+                                                },
+                                                {
+                                                    "requirement": {
+                                                        "requirePermission": true
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "receiver",
+                                                        "irrumatio",
+                                                        "blowjob",
+                                                        "forced",
+                                                        "blush",
+                                                        "pain"
+                                                    ],
+                                                    "_comment": "初体验 有允许",
+                                                    "responses": [
+                                                        "com_sex_oral_P_Force_deep_FE_Perm_1",
+                                                        "com_sex_oral_P_Force_deep_FE_Perm_2",
+                                                        "com_sex_oral_P_Force_deep_FE_Perm_3"
+                                                    ]
+                                                },
+                                                {
+                                                    "requirement": {
+                                                        "requireSelfAttitudeGTE": "Like"
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "receiver",
+                                                        "irrumatio",
+                                                        "blowjob",
+                                                        "forced",
+                                                        "blush",
+                                                        "pain",
+                                                        "shy"
+                                                    ],
+                                                    "_comment": "初体验 未允许 好意",
+                                                    "responses": [
+                                                        "com_sex_oral_P_Force_deep_FE_Like_1",
+                                                        "com_sex_oral_P_Force_deep_FE_Like_2",
+                                                        "com_sex_oral_P_Force_deep_FE_Like_3"
+                                                    ]
+                                                }
+                                            ],
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "irrumatio",
+                                                "blowjob",
+                                                "forced",
+                                                "pain",
+                                                "tearful",
+                                                "cry"
+                                            ],
+                                            "_comment": "初体验 未允许 敌意",
+                                            "responses": [
+                                                "com_sex_oral_P_Force_deep_FE_Hostile_1",
+                                                "com_sex_oral_P_Force_deep_FE_Hostile_2",
+                                                "com_sex_oral_P_Force_deep_FE_Hostile_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "irrumatio",
+                                                "blowjob",
+                                                "forced",
+                                                "love",
+                                                "happy",
+                                                "relaxed"
+                                            ],
+                                            "_comment": "结果正面 有允许",
+                                            "responses": [
+                                                "com_sex_oral_P_Force_deep_SuccPerm_1",
+                                                "com_sex_oral_P_Force_deep_SuccPerm_2",
+                                                "com_sex_oral_P_Force_deep_SuccPerm_3"
+                                            ]
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "irrumatio",
+                                        "blowjob",
+                                        "forced",
+                                        "blush",
+                                        "shy",
+                                        "surprised",
+                                        "happy",
+                                        "aroused"
+                                    ],
+                                    "_comment": "受方 结果正面",
+                                    "responses": [
+                                        "com_sex_oral_P_Force_deep_Succ_1",
+                                        "com_sex_oral_P_Force_deep_Succ_2",
+                                        "com_sex_oral_P_Force_deep_Succ_3",
+                                        "com_sex_oral_P_Force_deep_SuccCase_1",
+                                        "com_sex_oral_P_Force_deep_SuccCase_2",
+                                        "com_sex_oral_P_Force_deep_SuccCase_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessLTE": "Failure"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "_comment": "受方（被束缚） 判定失败",
+                                            "responses": [
+                                                "com_sex_oral_P_Force_deep_RestrainedFail_1",
+                                                "com_sex_oral_P_Force_deep_RestrainedFail_2",
+                                                "com_sex_oral_P_Force_deep_RestrainedFail_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "firstexp_M"
+                                                ]
+                                            },
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "targetBaseID": "PLAYER"
+                                                    },
+                                                    "variants": [
+                                                        {
+                                                            "requirement": {
+                                                                "requirePermission": true
+                                                            },
+                                                            "extraSelfPortraitTags": [
+                                                                "sex",
+                                                                "receiver",
+                                                                "irrumatio",
+                                                                "blowjob",
+                                                                "forced",
+                                                                "blush",
+                                                                "pain",
+                                                                "tearful"
+                                                            ],
+                                                            "_comment": "初体验 玩家专用 有允许",
+                                                            "responses": [
+                                                                "com_sex_oral_P_Force_deep_FE_Player_1",
+                                                                "com_sex_oral_P_Force_deep_FE_Player_2",
+                                                                "com_sex_oral_P_Force_deep_FE_Player_3"
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "receiver",
+                                                        "irrumatio",
+                                                        "blowjob",
+                                                        "forced",
+                                                        "blush",
+                                                        "pain",
+                                                        "tearful"
+                                                    ],
+                                                    "_comment": "初体验 玩家专用",
+                                                    "responses": [
+                                                        "com_sex_oral_P_Force_deep_FE_Player_1",
+                                                        "com_sex_oral_P_Force_deep_FE_Player_2",
+                                                        "com_sex_oral_P_Force_deep_FE_Player_3"
+                                                    ]
+                                                },
+                                                {
+                                                    "requirement": {
+                                                        "requirePermission": true
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "receiver",
+                                                        "irrumatio",
+                                                        "blowjob",
+                                                        "forced",
+                                                        "blush",
+                                                        "pain"
+                                                    ],
+                                                    "_comment": "初体验 有允许",
+                                                    "responses": [
+                                                        "com_sex_oral_P_Force_deep_FE_Perm_1",
+                                                        "com_sex_oral_P_Force_deep_FE_Perm_2",
+                                                        "com_sex_oral_P_Force_deep_FE_Perm_3"
+                                                    ]
+                                                },
+                                                {
+                                                    "requirement": {
+                                                        "requireSelfAttitudeGTE": "Like"
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "receiver",
+                                                        "irrumatio",
+                                                        "blowjob",
+                                                        "forced",
+                                                        "blush",
+                                                        "pain",
+                                                        "shy"
+                                                    ],
+                                                    "_comment": "初体验 未允许 好意",
+                                                    "responses": [
+                                                        "com_sex_oral_P_Force_deep_FE_Like_1",
+                                                        "com_sex_oral_P_Force_deep_FE_Like_2",
+                                                        "com_sex_oral_P_Force_deep_FE_Like_3"
+                                                    ]
+                                                }
+                                            ],
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "irrumatio",
+                                                "blowjob",
+                                                "forced",
+                                                "pain",
+                                                "tearful",
+                                                "cry"
+                                            ],
+                                            "_comment": "初体验 未允许 敌意",
+                                            "responses": [
+                                                "com_sex_oral_P_Force_deep_FE_Hostile_1",
+                                                "com_sex_oral_P_Force_deep_FE_Hostile_2",
+                                                "com_sex_oral_P_Force_deep_FE_Hostile_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "irrumatio",
+                                                "blowjob",
+                                                "forced",
+                                                "pain",
+                                                "bored",
+                                                "doubt",
+                                                "disappointed"
+                                            ],
+                                            "_comment": "结果负面 有允许",
+                                            "responses": [
+                                                "com_sex_oral_P_Force_deep_FailPerm_1",
+                                                "com_sex_oral_P_Force_deep_FailPerm_2",
+                                                "com_sex_oral_P_Force_deep_FailPerm_3"
+                                            ]
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "irrumatio",
+                                        "blowjob",
+                                        "forced",
+                                        "angry",
+                                        "cry",
+                                        "glare",
+                                        "disgust",
+                                        "pouting",
+                                        "sad",
+                                        "troubled",
+                                        "silence"
+                                    ],
+                                    "_comment": "受方 结果负面",
+                                    "responses": [
+                                        "com_sex_oral_P_Force_deep_Fail_1",
+                                        "com_sex_oral_P_Force_deep_Fail_2",
+                                        "com_sex_oral_P_Force_deep_Fail_3",
+                                        "com_sex_oral_P_Force_deep_FailCase_1",
+                                        "com_sex_oral_P_Force_deep_FailCase_2",
+                                        "com_sex_oral_P_Force_deep_FailCase_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "受方 com_sex_oral_P_Force_deep 结果",
+                            "responses": [
+                                "com_sex_oral_P_Force_deep_Fail_1"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_partner_M"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "irrumatio",
+                                        "blowjob",
+                                        "forced"
+                                    ],
+                                    "_comment": "对方初体验",
+                                    "responses": [
+                                        "com_sex_oral_P_Force_deep_FE_Partner_1",
+                                        "com_sex_oral_P_Force_deep_FE_Partner_2",
+                                        "com_sex_oral_P_Force_deep_FE_Partner_3"
+                                    ]
+                                }
+                            ],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "irrumatio",
+                                "blowjob",
+                                "forced"
+                            ],
+                            "_comment": "施方 com_sex_oral_P_Force_deep 结果",
+                            "responses": [
+                                "com_sex_oral_P_Force_deep_FE_Partner_1",
+                                "com_sex_oral_P_Force_deep_FE_Partner_2",
+                                "com_sex_oral_P_Force_deep_FE_Partner_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（接受，任何状态）",
+                            "responses": [
+                                "com_sex_oral_P_Force_deep_Fail_1"
+                            ]
+                        }
+                    ],
+                    "template": "commandResult",
+                    "templateExtras": [
+                        "firstexpM",
+                        "firstexpPartnerM"
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_P_Force_deep_Refuse",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireRefusalContext": "ReceiverDeclined",
+                            "useActiveTags": false,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "useActiveTags": false,
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ],
+                                        "requireEPSuccess": false
+                                    },
+                                    "_comment": "刚睡醒拒绝",
+                                    "responses": [
+                                        "com_sex_oral_P_Force_deep_Refuse_WokenCase_1",
+                                        "com_sex_oral_P_Force_deep_Refuse_WokenCase_2",
+                                        "com_sex_oral_P_Force_deep_Refuse_WokenCase_3"
+                                    ]
+                                },
+                                {
+                                    "useActiveTags": false,
+                                    "requirement": {
+                                        "requirePermission": true,
+                                        "requireEPSuccess": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy",
+                                        "tired"
+                                    ],
+                                    "_comment": "拒绝 有允许",
+                                    "responses": [
+                                        "com_sex_oral_P_Force_deep_Refuse_Perm_1",
+                                        "com_sex_oral_P_Force_deep_Refuse_Perm_2",
+                                        "com_sex_oral_P_Force_deep_Refuse_Perm_3"
+                                    ]
+                                }
+                            ],
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "_comment": "受方拒绝 com_sex_oral_P_Force_deep",
+                            "responses": [
+                                "com_sex_oral_P_Force_deep_Refuse_Hostile_1",
+                                "com_sex_oral_P_Force_deep_Refuse_Hostile_2",
+                                "com_sex_oral_P_Force_deep_Refuse_Hostile_3",
+                                "com_sex_oral_P_Force_deep_Refuse_Case_1",
+                                "com_sex_oral_P_Force_deep_Refuse_Case_2",
+                                "com_sex_oral_P_Force_deep_Refuse_Case_3"
+                            ]
+                        },
+                        {
+                            "useActiveTags": false,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（拒绝）",
+                            "responses": [
+                                "com_sex_oral_P_Force_deep_Refuse_Hostile_1"
+                            ]
+                        }
+                    ],
+                    "template": "commandRefuse"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_P_Force_deep_Ongoing",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "受方 → 玩家 ｜ 进行中",
+                                    "responses": [
+                                        "com_sex_oral_P_Force_deep_Ongoing_Player_1",
+                                        "com_sex_oral_P_Force_deep_Ongoing_Player_2",
+                                        "com_sex_oral_P_Force_deep_Ongoing_Player_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "受方 com_sex_oral_P_Force_deep 进行中",
+                            "responses": [
+                                "com_sex_oral_P_Force_deep_Ongoing_Player_1",
+                                "com_sex_oral_P_Force_deep_Ongoing_Player_2",
+                                "com_sex_oral_P_Force_deep_Ongoing_Player_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（接受，任何状态）",
+                            "responses": [
+                                "com_sex_oral_P_Force_deep_Ongoing_Player_1"
+                            ]
+                        }
+                    ],
+                    "template": "commandAct"
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_sex_oral_P_Force_deep_Climax_Doer_1": "$self$按住$target$的后脑，腰往前顶进咽喉最深处，闷哼着射了出来：\"……嗯！全咽下去。\"",
+                "com_sex_oral_P_Force_deep_Climax_Doer_2": "$self$扣紧$target$的脑袋抵在腹前不让退开，喘着粗气把精液直接灌进喉底：\"哈……一滴都别漏，乖乖吞掉。\"",
+                "com_sex_oral_P_Force_deep_Climax_Doer_3": "$self$埋在$target$紧窄的喉道里一阵剧烈搏动，舒爽地长出一口气：\"唔……嗓子眼吸得真紧，全都喂给你了。\"",
+                "com_sex_oral_P_Force_deep_Climax_Perm_1": "$self$眼泪被直接顶了出来，咽喉却主动放松迎合着深喉抽插，在剧烈的颤抖中迎来了高潮：\"唔……嗯！好深……去了……！\"",
+                "com_sex_oral_P_Force_deep_Climax_Perm_2": "$self$的眼泪和津液混着往下淌，喉道被顶得发酸，身子却在窒息般的快感中抽搐着登上了顶峰：\"呜……连喉咙底都被填满了……去了……！\"",
+                "com_sex_oral_P_Force_deep_Climax_Perm_3": "$self$喉咙深处发出咕啾的水声，双手抓紧$target$的衣角，整个人瘫软着颤抖：\"嗯啊……！脑子……一片空白了……！\"",
+                "com_sex_oral_P_Force_deep_Climax_Recv_1": "$self$拼命想挣脱，却被按住头深顶到喉底，身子违背心意剧烈哆嗦着迎来了高潮：\"呜……不……为什么偏偏在这时候……！\"",
+                "com_sex_oral_P_Force_deep_Climax_Recv_2": "$self$满脸屈辱的泪水，腰腿却不听使唤地一阵阵抽紧，在窒息般的深喉顶弄中到了顶峰：\"呜……好丢人……别看我……！\"",
+                "com_sex_oral_P_Force_deep_Climax_Recv_3": "$self$喉咙里漏出破碎的呜咽，在$target$的按压下不受控地哆嗦着迎来了高潮：\"啊……不行了……快停下……！\"",
+                "com_sex_oral_P_Force_deep_Climax_RecvCase_1": "咽喉被顶到最深处的瞬间，$self$眼角涌出泪水，全身剧烈哆嗦着在窒息感中迎来了高潮：\"唔……嗯！太深了……去了……！\"",
+                "com_sex_oral_P_Force_deep_Climax_RecvCase_2": "$self$喉道紧缩着包裹住深入的柱身，下身在一阵紧过一阵的抽搐中直达顶峰：\"呜……明明只是喉咙被顶着……却去了……！\"",
+                "com_sex_oral_P_Force_deep_Climax_RecvCase_3": "喉底发出咕啾的吞咽声，$self$抓紧$target$的衣摆，在深喉的冲击下浑身瘫软地颤抖：\"嗯啊……！连脑子都……一片空白了……！\"",
+                "com_sex_oral_P_Force_deep_Begin_FE_Timestop_1": "初次的深喉侵入在静止的口腔里进行，$self$被一路顶到喉底，连眼睫都没颤动半分。",
+                "com_sex_oral_P_Force_deep_Begin_FE_Timestop_2": "$self$定格的表情纹丝不动，涎水顺着被撑开的嘴角悬着，对自己的第一次一无所知。",
+                "com_sex_oral_P_Force_deep_Begin_FE_Timestop_3": "从未含过异物的喉道在停滞的时间里被直接贯通，$self$的视线仍停在空处，毫无知觉。",
+                "com_sex_oral_P_Force_deep_Begin_Timestop_1": "定格的咽喉被一路顶开，$self$被撑大的嘴唇停在原位，喉道没有任何收缩反应。",
+                "com_sex_oral_P_Force_deep_Begin_Timestop_2": "$self$的眼皮定在半阖的位置，口水顺着撑开的嘴角淌成细线，悬在静止的空气里。",
+                "com_sex_oral_P_Force_deep_Begin_Timestop_3": "停滞的时间里，$self$像人偶一样被动吞到根部，连微微凸起的喉咙都保持着定格的弧度。",
+                "com_sex_oral_P_Force_deep_Begin_TimestopCase_1": "停滞的时间里，$self$从唇齿到咽喉被一路顶开，定格的眉眼没有任何知觉。",
+                "com_sex_oral_P_Force_deep_Begin_TimestopCase_2": "$self$保持着时停前的神情，被塞满到喉底的口腔里津液悬在唇边，滴落不下。",
+                "com_sex_oral_P_Force_deep_Begin_TimestopCase_3": "静止的喉道像没有生命的软套一样被径直撑开，$self$连一根睫毛都没有颤动。",
+                "com_sex_oral_P_Force_deep_Begin_FE_Sleep_1": "睡梦中的$self$被直接顶到喉咙深处，挤出难受的呜咽，嘴角淌下涎水却没醒过来。",
+                "com_sex_oral_P_Force_deep_Begin_FE_Sleep_2": "$self$在睡梦中不安地挣了挣，初次被塞满的喉道发出含糊的哽咽，浑然不知自己的第一次正被夺走。",
+                "com_sex_oral_P_Force_deep_Begin_FE_Sleep_3": "从未承受过侵入的咽喉在梦里无意识地抽紧，$self$鼻间溢出一声闷哼，眉头痛苦地拧起。",
+                "com_sex_oral_P_Force_deep_Begin_Sleep_1": "咽喉深处被骤然撑开，$self$在梦里难受地呜咽了一声，却没醒过来。",
+                "com_sex_oral_P_Force_deep_Begin_Sleep_2": "喉道被前端抵住碾转，$self$眉头拧起，口水顺着撑开的嘴角淌下，睡梦里只本能地吞咽着。",
+                "com_sex_oral_P_Force_deep_Begin_Sleep_3": "熟睡的$self$呼吸被堵了一瞬，鼻翼轻轻翕动，温热的喉肉无意识地裹紧了侵入的柱身。",
+                "com_sex_oral_P_Force_deep_Begin_SleepCase_1": "熟睡的$self$喉道被蓦然撑开，在梦里发出一声沉闷的哽咽，眉头皱起却没醒来。",
+                "com_sex_oral_P_Force_deep_Begin_SleepCase_2": "温热的软肉在睡梦中本能地裹住深入喉底的异物，$self$嘴角淌下一缕涎水，鼻息变得微促。",
+                "com_sex_oral_P_Force_deep_Begin_SleepCase_3": "$self$在沉睡中无意识地动了动喉头，被动吞纳着顶进咽喉深处的东西，眼帘依旧合着。",
+                "com_sex_oral_P_Force_deep_Begin_Fainted_1": "彻底失去意识的$self$牙关松弛，任由异物长驱直入捅进咽喉，连吞咽反射都毫无动静。",
+                "com_sex_oral_P_Force_deep_Begin_Fainted_2": "$self$垂着脑袋人事不省，被强行贯通的喉道里只有湿软的内壁被动贴合着侵入物。",
+                "com_sex_oral_P_Force_deep_Begin_Fainted_3": "昏迷中的$self$没有任何抗拒，随着$target$按压后脑的力道，软绵绵地把整根吞到了底。",
+                "com_sex_oral_P_Force_deep_Begin_Restrained_1": "双手被缚住无法推拒，$self$只能仰着脖子任由异物直捅进喉咙深处，鼻间挤出闷哼：\"唔……太深了，松开我……\"",
+                "com_sex_oral_P_Force_deep_Begin_Restrained_2": "$self$挣动了一下被捆紧的手腕，后脑又被按住往前压，被迫整根吞进咽喉：\"呜……别趁我动不了顶这么深……\"",
+                "com_sex_oral_P_Force_deep_Begin_Restrained_3": "身子被束缚在原地无处可躲，$self$被深喉顶得眼角泛红，急促地从鼻腔里倒着气。",
+                "com_sex_oral_P_Force_deep_Begin_FE_Player_1": "\"呜……第一次就被顶到这么深……唔……\" $self$含着眼泪，顺着按下来的力道被迫吞到喉底。",
+                "com_sex_oral_P_Force_deep_Begin_FE_Player_2": "\"轻点……我是第一次……会吐出来的……\" $self$红着眼眶，喉咙颤抖着包裹住顶进来的前端。",
+                "com_sex_oral_P_Force_deep_Begin_FE_Player_3": "$self$被直接顶进喉咙，眼角瞬间泛起泪花，扶着$target$的膝盖小声呜咽：\"唔……太深了，我还没用嘴做过……\"",
+                "com_sex_oral_P_Force_deep_Begin_FE_Perm_1": "\"呜……我是第一次……别一下顶到底……\" $self$含混地哀求着，眼泪顺着脸颊往下淌。",
+                "com_sex_oral_P_Force_deep_Begin_FE_Perm_2": "\"第一次做这种事……喉咙要坏掉了……\" $self$干呕着，手指紧紧攥住自己的衣角。",
+                "com_sex_oral_P_Force_deep_Begin_FE_Perm_3": "$self$被迫仰起脖子把整根吞进咽喉，呛出的泪水糊湿了眼睫：\"唔……太深了，喘不上气……\"",
+                "com_sex_oral_P_Force_deep_Begin_FE_Like_1": "\"第一次……就要被你捅到喉咙里吗……\" $self$含着哭腔被按下去，肩膀直发抖。",
+                "com_sex_oral_P_Force_deep_Begin_FE_Like_2": "\"呜……我是第一次……别顶那么深……\" 径直抵到喉底的异物感让$self$剧烈干呕，眼泪糊了满脸。",
+                "com_sex_oral_P_Force_deep_Begin_FE_Like_3": "$self$慌乱地抵着$target$的腿，喉咙被塞得发不出完整声音：\"唔、咳……至少让我先适应一下啊……\"",
+                "com_sex_oral_P_Force_deep_Begin_FE_Hostile_1": "\"唔唔……不要……呕……！\" $self$拼命往后仰头想躲，还是被硬按着捅进了喉咙深处。",
+                "com_sex_oral_P_Force_deep_Begin_FE_Hostile_2": "\"我会杀了你的……唔……！\" $self$被顶得咽喉剧痛，指甲狠狠掐进了掌心。",
+                "com_sex_oral_P_Force_deep_Begin_FE_Hostile_3": "初次被异物粗暴捅进喉底，$self$呛出眼泪，鼻腔里挤出抗拒的闷哼：\"唔……拿出去……！\"",
+                "com_sex_oral_P_Force_deep_Begin_Perm_1": "$self$顺着按下来的力道扶住$target$的膝盖，放松喉咙把整根吞了进去：\"嗯……深一点也没关系，全部交给你。\"",
+                "com_sex_oral_P_Force_deep_Begin_Perm_2": "$self$没有抵抗后脑的手掌，温顺地仰起下巴打开喉道，让前端顺畅地顶进深处：\"……唔嗯。\"",
+                "com_sex_oral_P_Force_deep_Begin_Perm_3": "$self$配合着把脸贴向$target$的腹股沟，鼻尖蹭着皮肤，从鼻腔里逸出顺从的闷哼：\"嗯哼……到底了……\"",
+                "com_sex_oral_P_Force_deep_Begin_Like_1": "$self$瞪大眼看着$target$直捅进喉咙的动作，手悬在半空没推开：\"等、咳……一下这么深，你认真的吗？\"",
+                "com_sex_oral_P_Force_deep_Begin_Like_2": "$self$被按得鼻子都贴上了$target$的小腹，脸颊烧得通红，忍着呕意含住了：\"这……也太深了……\"",
+                "com_sex_oral_P_Force_deep_Begin_Like_3": "头顶传来的压力让$self$无处可退，她眼角沁出泪花，含混地从鼻间哼道：\"……我含住就是了，别按那么狠。\"",
+                "com_sex_oral_P_Force_deep_Begin_Hostile_1": "$self$发着抖被按住后脑，喉咙被直接捅开，眼泪在眼眶里打转却不敢合拢牙齿：\"呜呜……不要这么深……求你……\"",
+                "com_sex_oral_P_Force_deep_Begin_Hostile_2": "$self$闭紧双眼，被顶到喉底的窒息感逼出两行泪水，屈辱地任由摆布：\"咳、唔……我听话……\"",
+                "com_sex_oral_P_Force_deep_Begin_Hostile_3": "$self$发出恐惧的哽咽，双手攥紧衣角，在力气差距下放弃了挣扎，被迫吞到最深处：\"别弄疼我……我做……\"",
+                "com_sex_oral_P_Force_deep_Begin_AwakeCase_1": "咽喉在一瞬间被径直顶开，$self$眼角沁出泪花，鼻尖贴上$target$的腹股沟发出一声闷哼：\"唔……一下就到最里面了……\"",
+                "com_sex_oral_P_Force_deep_Begin_AwakeCase_2": "$self$扶住$target$的双腿稳住身子，仰起脖子努力放松喉道，把整根吞了进去：\"嗯……慢一点，我用鼻子换气……\"",
+                "com_sex_oral_P_Force_deep_Begin_AwakeCase_3": "喉底被严严实实地堵满，$self$喉头上下滑动着包裹住侵入的前端，从鼻腔里逸出湿热的喘息。",
+                "com_sex_oral_P_Force_deep_Begin_FE_Partner_1": "\"喉咙这么紧……你是第一次？\" 感觉到咽喉深处紧缩的软肉，$self$停顿了一下。",
+                "com_sex_oral_P_Force_deep_Begin_FE_Partner_2": "\"……第一次就被我直接顶到喉底，委屈你了。\" $self$低头看着满脸泪水的$target$，放缓了按压的力道。",
+                "com_sex_oral_P_Force_deep_Begin_FE_Partner_3": "$self$按着$target$后脑的手松了半分，声音低了些：\"以前没含过？把嗓子眼放松，别硬抗。\"",
+                "com_sex_oral_P_Force_deep_FE_Player_1": "\"唔……我第一次含这么深……做得还行吗……\" $self$含混地抬眼看向$target$，眼眶红红的。",
+                "com_sex_oral_P_Force_deep_FE_Player_2": "$self$趁着抽退的空隙急促换了口气，眼角挂着泪珠：\"咳、呜……第一次被顶进喉咙里，嗓子都酸了……\"",
+                "com_sex_oral_P_Force_deep_FE_Player_3": "\"唔嗯……没呛着你吧……\" $self$扶着$target$的大腿，勉强吞咽着涌上喉头的津液。",
+                "com_sex_oral_P_Force_deep_FE_Perm_1": "\"呜……顶到嗓子眼了……我还不习惯……\" $self$的手抵着$target$的腿，喉咙里发出干呕声。",
+                "com_sex_oral_P_Force_deep_FE_Perm_2": "\"第一次被这样深喉……嘴和喉咙都要麻了……\" $self$费力地用鼻子喘着气，涎水顺着下巴拉成了丝。",
+                "com_sex_oral_P_Force_deep_FE_Perm_3": "$self$被顶得眼眶湿红，生涩地仰着脖子不敢乱动：\"唔……慢一点，我快换不上气了……\"",
+                "com_sex_oral_P_Force_deep_FE_Like_1": "\"我不知道……喉咙深处该怎么放松……\" $self$又呛又抖，眼泪一直往下掉。",
+                "com_sex_oral_P_Force_deep_FE_Like_2": "$self$红着脸抓紧$target$的衣摆，声音被堵在喉底支离破碎：\"唔……第一次就捅这么深，太欺负人了……\"",
+                "com_sex_oral_P_Force_deep_FE_Like_3": "\"咳、唔……别一直往嗓子里面顶……\" $self$被呛得满脸通红，却还是没把头撤开。",
+                "com_sex_oral_P_Force_deep_FE_Hostile_1": "\"……呃……够、够了……\" 初次被捅穿咽喉的胀痛让$self$剧烈干呕，眼泪鼻涕糊了一脸。",
+                "com_sex_oral_P_Force_deep_FE_Hostile_2": "\"……快点结束。\" $self$麻木地张着发酸的嘴，任由喉咙被反复顶开，眼角不断渗出泪水。",
+                "com_sex_oral_P_Force_deep_FE_Hostile_3": "$self$指甲抠着地面，被彻底堵住的喉道里溢出断续的呛咳：\"呕……拿出去……\"",
+                "com_sex_oral_P_Force_deep_WokenPlayerPerm_1": "$self$迷迷糊糊哼了声，在半梦半醒间顺从地放松了喉咙：\"唔……是你啊……顶这么深……\"",
+                "com_sex_oral_P_Force_deep_WokenPlayerPerm_2": "$self$揉着眼睛睁开一条缝，看清是$target$后乖巧地仰起脖子配合：\"嗯……一醒来就这么激烈……\"",
+                "com_sex_oral_P_Force_deep_WokenPlayerPerm_3": "$self$在睡意中发出慵懒的鼻音，顺着头顶熟悉的压力吞到了底：\"好困……你自己动吧……\"",
+                "com_sex_oral_P_Force_deep_WokenPlayerLike_1": "$self$惊醒过来，看清面前是$target$后慢慢放下了抬起的手，红着脸放松了咽喉：\"既然是你……我就不喊了……\"",
+                "com_sex_oral_P_Force_deep_WokenPlayerLike_2": "$self$在迷茫中瞪圆了眼，认出$target$后化作羞赧的默许，忍着喉头的异物感贴紧了舌尖：\"欸……趁我睡着顶这么深……\"",
+                "com_sex_oral_P_Force_deep_WokenPlayerLike_3": "$self$脑子还没彻底清醒，被填满喉咙的压迫感让她脸颊发烫，含混地从鼻间哼了一声：\"唔……至少等我醒透啊……\"",
+                "com_sex_oral_P_Force_deep_WokenPlayerHostile_1": "$self$在喉咙被堵住的窒息感中惊醒，刚想挣扎就被按住后脑，含着泪不敢乱动：\"不……别动手……呜呜……\"",
+                "com_sex_oral_P_Force_deep_WokenPlayerHostile_2": "$self$惊恐地呜咽着，刚睡醒的虚弱让她只能流着泪任由喉底被顶开：\"我听话……求你别发火……\"",
+                "com_sex_oral_P_Force_deep_WokenPlayerHostile_3": "$self$浑身发抖，满眼惧意地被迫吞到最深处，连用鼻子换气都小心翼翼：\"呜呜……好怕……\"",
+                "com_sex_oral_P_Force_deep_Woken_1": "$self$被直抵喉底的窒息感弄醒，睁开眼看见贴在面前的$target$，呛出一声含混的惊喘：\"唔、咳……？！怎么直接捅到喉咙里了……\"",
+                "com_sex_oral_P_Force_deep_Woken_2": "咽喉被撑满的异物感把$self$从沉睡中拽了回来，她茫然地眨着泪眼，嘴里被塞得说不出完整的话：\"呜……趁我没醒顶这么深……\"",
+                "com_sex_oral_P_Force_deep_Woken_3": "$self$刚恢复意识就发觉喉道正被深深占用，下意识扶住$target$的腿用鼻子急促换气：\"唔嗯……慢一点，我刚醒过来……\"",
+                "com_sex_oral_P_Force_deep_RestrainedSucc_1": "被缚住的双手无力地攥紧，$self$在无法逃避的深喉顶弄中红了眼尾，咽喉顺从地收缩吮吸：\"唔嗯……顶到最里面了……\"",
+                "com_sex_oral_P_Force_deep_RestrainedSucc_2": "动弹不得的处境让窒息与快感交织在一起，$self$呜咽着放松了喉道，任由$target$整根没入：\"呜……连嗓子眼都被填满了……\"",
+                "com_sex_oral_P_Force_deep_RestrainedSucc_3": "$self$被捆着的身子轻轻发颤，眼神湿润迷离，连嘴角淌下的涎水都顾不上，只顾着配合深吞。",
+                "com_sex_oral_P_Force_deep_SuccPerm_1": "$self$趁着抽出的间隙舔了舔嘴角的津液，眼眶湿润地看向$target$：\"虽然顶得喉咙发酸，但只要你舒服就好……\"",
+                "com_sex_oral_P_Force_deep_SuccPerm_2": "$self$眼角因为深喉泛起泪光，双手环住$target$的腰，主动用咽喉软肉配合着吞咽：\"嗯哼……再往里顶也没关系……\"",
+                "com_sex_oral_P_Force_deep_SuccPerm_3": "$self$鼻尖贴着$target$的小腹发出呜呜的闷哼，用温热的脸颊蹭了蹭对方的手掌：\"唔嗯……整根都吞进来了……\"",
+                "com_sex_oral_P_Force_deep_Succ_1": "$self$有些失神地含到根部，喉头不自觉地顺着顶弄轻轻吞咽：\"明明不该顺着你的……可是被顶到这么深……\"",
+                "com_sex_oral_P_Force_deep_Succ_2": "$self$原本推拒的双手抓住$target$的衣摆，在窒息般的深顶中眼神渐渐变得湿润迷离：\"呜……连喉咙都发麻了……\"",
+                "com_sex_oral_P_Force_deep_Succ_3": "$self$的咽喉渐渐适应了粗暴的抽插节奏，主动收紧软肉包裹上去：\"嗯……呼吸都烫起来了……\"",
+                "com_sex_oral_P_Force_deep_SuccCase_1": "$self$眼角挂着被顶出来的泪珠，咽喉却顺着抽插的节奏主动收缩吞咽：\"唔嗯……好深……连喉咙都习惯你的形状了……\"",
+                "com_sex_oral_P_Force_deep_SuccCase_2": "鼻尖反复蹭着$target$的小腹，$self$呼吸滚烫，在深喉的压迫感中眼神渐趋迷离：\"嗯哼……再往里顶一点也可以……\"",
+                "com_sex_oral_P_Force_deep_SuccCase_3": "$self$扶着$target$的腰配合着把整根吞到底，趁着换气的空隙含混低喃：\"呜……嘴里被填得好满……\"",
+                "com_sex_oral_P_Force_deep_RestrainedFail_1": "手脚被束缚着没法推开，$self$被直接顶到喉底剧烈干呕，眼泪顺着脸颊往下淌：\"咳、呜……快拔出去……要吐了……\"",
+                "com_sex_oral_P_Force_deep_RestrainedFail_2": "$self$拼命挣扯着身上的束缚，被堵严的咽喉发出难受的呛咳，眼神里满是委屈与狼狈。",
+                "com_sex_oral_P_Force_deep_RestrainedFail_3": "无法用手支撑让$self$承受了全部深顶的力道，她脖子发酸，趁着空隙哑声哀求：\"唔……松开我，喉咙受不了了……\"",
+                "com_sex_oral_P_Force_deep_FailPerm_1": "$self$捂着发痛的脖子干呕了几声，眼角渗出泪花：\"太粗暴了……再这样往喉咙里硬捅，我真的要生气了。\"",
+                "com_sex_oral_P_Force_deep_FailPerm_2": "$self$难受地拍打着$target$的大腿，咽喉深处发出剧烈的呛咳声，泪水沾湿了睫毛：\"呜……太深了，真的喘不过气……\"",
+                "com_sex_oral_P_Force_deep_FailPerm_3": "$self$趁着换气的间隙偏过头大口喘息，委屈地皱起眉：\"够了……嗓子都被顶肿了，不想继续了。\"",
+                "com_sex_oral_P_Force_deep_Fail_1": "$self$憋得脸色发白，强忍着喉头翻涌的呕意，眼泪鼻涕糊了满脸：\"好恶心……放开我……\"",
+                "com_sex_oral_P_Force_deep_Fail_2": "$self$狼狈地呛咳着，嘴角挂着来不及吞咽的粘稠唾液，闭着眼忍受深喉的折磨：\"呜……到底什么时候才肯停……\"",
+                "com_sex_oral_P_Force_deep_Fail_3": "$self$因为持续的干呕而肩膀剧烈抽动，空洞地盯着地面：\"……快从我喉咙里拿出去。\"",
+                "com_sex_oral_P_Force_deep_FailCase_1": "咽喉被反复顶撞得一阵阵发紧，$self$推着$target$的大腿干呕出声，眼泪顺着脸颊滑落：\"咳、呜……太深了，喘不上气……\"",
+                "com_sex_oral_P_Force_deep_FailCase_2": "$self$趁着抽退的间隙偏过头急促喘息，捂着发酸的脖子皱起眉：\"唔……别按那么重，嗓子疼得受不了了。\"",
+                "com_sex_oral_P_Force_deep_FailCase_3": "来不及吞咽的津液顺着下巴淌湿了衣领，$self$被呛得满脸通红，委屈地往后缩了缩：\"够了……再这样顶真的会吐出来……\"",
+                "com_sex_oral_P_Force_deep_FE_Timestop_1": "初次被贯通的喉咙深处还含着异物，定格的$self$没有任何反应。",
+                "com_sex_oral_P_Force_deep_FE_Timestop_2": "唾液顺着初次被撑到极限的唇角悬在半空，$self$静止的眼眸里映不出半分波澜。",
+                "com_sex_oral_P_Force_deep_FE_Timestop_3": "$self$在停滞的时间里维持着被深喉顶开的口型，对这场初体验毫无知觉。",
+                "com_sex_oral_P_Force_deep_Timestop_1": "$self$保持着静止的姿态，嘴角被撑到最大，唾液顺着无法闭合的唇边悬停。",
+                "com_sex_oral_P_Force_deep_Timestop_2": "$self$维持着原本的姿势一动不动，眼神没有焦距，脑袋随着$target$深顶的动作被动摇晃。",
+                "com_sex_oral_P_Force_deep_Timestop_3": "$self$毫无知觉地张着嘴，只有被顶得微微凸起的喉部轮廓显出正在发生的事。",
+                "com_sex_oral_P_Force_deep_TimestopCase_1": "$self$在凝固的时间里保持着张嘴的姿态，咽喉深处被反复撑开，眼神没有半分焦距。",
+                "com_sex_oral_P_Force_deep_TimestopCase_2": "大量唾液顺着$self$无法闭合的嘴角悬停在半空，定格的身体随着$target$的动作被动晃动。",
+                "com_sex_oral_P_Force_deep_TimestopCase_3": "$self$对喉底正在发生的侵犯毫无知觉，只有微微凸起的颈部线条显出侵入的深度。",
+                "com_sex_oral_P_Force_deep_FE_Sleep_1": "睡梦中的$self$喉咙发出细小的哽咽，初次被深顶占用的嘴角还挂着涎水。",
+                "com_sex_oral_P_Force_deep_FE_Sleep_2": "$self$在梦里难受地偏了偏头，被反复捅入的咽喉一阵发紧，呼吸断断续续。",
+                "com_sex_oral_P_Force_deep_FE_Sleep_3": "熟睡的$self$双唇被磨得泛红，喉头无意识地上下滑动，没能从沉睡中醒来。",
+                "com_sex_oral_P_Force_deep_Sleep_1": "$self$发出沉闷的鼻息，在睡梦中无意识地吞咽着，毫不知情喉咙正被深深侵犯。",
+                "com_sex_oral_P_Force_deep_Sleep_2": "$self$呼吸略显急促，没意识到嘴里正在发生的事，偶尔因为喉底的压迫感皱起眉。",
+                "com_sex_oral_P_Force_deep_Sleep_3": "$self$毫无防备地熟睡着，温热的咽喉被动地包裹着柱身，嘴角溢出一缕透明的津液。",
+                "com_sex_oral_P_Force_deep_SleepCase_1": "熟睡的$self$鼻间发出沉闷的呼吸声，咽喉在梦里无意识地顺着顶弄做着吞咽动作。",
+                "com_sex_oral_P_Force_deep_SleepCase_2": "$self$在睡梦中因为喉底的压迫感皱紧眉头，嘴角溢出的涎水打湿了鬓角，人却没有醒来。",
+                "com_sex_oral_P_Force_deep_SleepCase_3": "温热的喉道被动包裹着往复进出的柱身，$self$睡得深沉，只有喉头随着抽插微微起伏。",
+                "com_sex_oral_P_Force_deep_Fainted_1": "昏迷的$self$脑袋随着深喉抽插的力道被动摇晃，来不及吞咽的津液顺着毫无血色的唇角淌下。",
+                "com_sex_oral_P_Force_deep_Fainted_2": "$self$依然人事不省，只有咽喉在被顶到底时被动撑圆，微弱的鼻息断断续续。",
+                "com_sex_oral_P_Force_deep_Fainted_3": "失去知觉的$self$软绵绵地任由摆布，湿热的喉道被反复贯通，眼帘始终沉重地合着。",
+                "com_sex_oral_P_Force_deep_FE_Partner_1": "\"别收紧牙关……把喉咙打开。\" 察觉到$target$咽喉的僵硬，$self$放缓了深顶的幅度。",
+                "com_sex_oral_P_Force_deep_FE_Partner_2": "$self$按着$target$发抖的后脑，低声提醒：\"用鼻子呼吸，喉咙越绷着越容易呛到。\"",
+                "com_sex_oral_P_Force_deep_FE_Partner_3": "\"第一次就能吞到根部，已经很能忍了。\" $self$擦掉$target$眼角呛出来的泪水，继续往深处顶弄。",
+                "com_sex_oral_P_Force_deep_Refuse_WokenCase_1": "$self$在窒息般的压迫感中惊醒，猛地偏开头推拒$target$，捂着脖子剧烈咳嗽：\"咳、咳……你疯了吗？！趁我睡着往喉咙里捅！\"",
+                "com_sex_oral_P_Force_deep_Refuse_WokenCase_2": "刚醒过来的$self$吓得往后急退，拍开$target$按在头顶的手，眼眶泛红地瞪过去：\"干什么！快把那东西拿远点！\"",
+                "com_sex_oral_P_Force_deep_Refuse_WokenCase_3": "$self$被弄醒后慌乱地挣脱开，大口喘着气擦掉嘴角，满脸恼怒：\"别碰我！谁允许你趁人之危做这种事的！\"",
+                "com_sex_oral_P_Force_deep_Refuse_Perm_1": "$self$偏过头避开$target$的手，脸颊微红：\"别……今天嗓子有点不舒服，顶那么深受不了的。\"",
+                "com_sex_oral_P_Force_deep_Refuse_Perm_2": "$self$双手抵住$target$的身侧，向后仰起脖子挣脱开：\"不行……今天真的不想深喉，太难受了。\"",
+                "com_sex_oral_P_Force_deep_Refuse_Perm_3": "$self$皱起眉，伸手按住$target$的手腕：\"停下，我知道你想做什么，但我现在没心情。\"",
+                "com_sex_oral_P_Force_deep_Refuse_Hostile_1": "$self$猛地甩开$target$的手，沉下脸盯着对方：\"你要是敢再往前一步，我就喊人了。滚开！\"",
+                "com_sex_oral_P_Force_deep_Refuse_Hostile_2": "$self$厌恶地拍开$target$伸来的手，后退一步冷冷看着：\"别碰我！你以为你是谁？\"",
+                "com_sex_oral_P_Force_deep_Refuse_Hostile_3": "$self$板起脸挡开$target$，声音里满是警告：\"再敢动手动脚，我绝不客气。收起你那恶心的念头。\"",
+                "com_sex_oral_P_Force_deep_Refuse_Case_1": "$self$偏过头避开$target$按过来的手，抬手挡在嘴前：\"不行，直接捅进喉咙太难受了，我不要。\"",
+                "com_sex_oral_P_Force_deep_Refuse_Case_2": "$self$抓住$target$的手腕往外推开，皱着眉后退半步：\"别乱来，这种深度的做法我接受不了。\"",
+                "com_sex_oral_P_Force_deep_Refuse_Case_3": "$self$闭紧嘴唇仰起脖子挣脱开，没好气地瞪了$target$一眼：\"停下！说了不想做这种事，别硬按着我。\"",
+                "com_sex_oral_P_Force_deep_Ongoing_Player_1": "被按着头深喉吞吐的$self$余光瞥见一旁看着的$target$，羞耻得耳根通红，含着泪移开视线：\"唔……别在旁边盯着看啊……\"",
+                "com_sex_oral_P_Force_deep_Ongoing_Player_2": "$self$连咽喉都被塞得满满当当，呛出泪水的眼睛望向旁观的$target$，鼻腔里漏出断续的呜咽：\"呜……唔……\"",
+                "com_sex_oral_P_Force_deep_Ongoing_Player_3": "察觉到$target$正看着自己整根吞入的狼狈模样，$self$难堪地闭紧眼，只能被动承受着眼前的深顶。"
+            }
+        }
+    }
+}

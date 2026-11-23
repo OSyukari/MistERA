@@ -1,0 +1,651 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_instrument_practice_outdoor_Interrupt",
+                    "template": "commandInterrupt",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_instrument_practice_outdoor_Interrupt_1",
+                                "com_instrument_practice_outdoor_Interrupt_2",
+                                "com_instrument_practice_outdoor_Interrupt_3"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_instrument_practice_outdoor_Interrupt_4",
+                                "com_instrument_practice_outdoor_Interrupt_5",
+                                "com_instrument_practice_outdoor_Interrupt_6"
+                            ]
+                        },
+                        {
+                            "_comment": "当前动作中的 NPC → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_instrument_practice_outdoor_Interrupt_7",
+                                "com_instrument_practice_outdoor_Interrupt_8",
+                                "com_instrument_practice_outdoor_Interrupt_9"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_instrument_practice_outdoor_Begin",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_instrument_practice_outdoor_Begin_4",
+                                        "com_instrument_practice_outdoor_Begin_5",
+                                        "com_instrument_practice_outdoor_Begin_6"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_instrument_practice_outdoor_Begin_1",
+                                "com_instrument_practice_outdoor_Begin_2",
+                                "com_instrument_practice_outdoor_Begin_3"
+                            ],
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受"
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_instrument_practice_outdoor_Begin_7",
+                                "com_instrument_practice_outdoor_Begin_8"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_instrument_practice_outdoor",
+                    "template": "commandResult",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessLTE": "Failure"
+                                    },
+                                    "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受·判定失败",
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受·判定失败",
+                                            "responses": [
+                                                "com_instrument_practice_outdoor_13",
+                                                "com_instrument_practice_outdoor_14",
+                                                "com_instrument_practice_outdoor_15"
+                                            ]
+                                        }
+                                    ],
+                                    "responses": [
+                                        "com_instrument_practice_outdoor_7",
+                                        "com_instrument_practice_outdoor_8",
+                                        "com_instrument_practice_outdoor_9"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受·判定成功",
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受·判定成功",
+                                            "responses": [
+                                                "com_instrument_practice_outdoor_16",
+                                                "com_instrument_practice_outdoor_17",
+                                                "com_instrument_practice_outdoor_18"
+                                            ]
+                                        }
+                                    ],
+                                    "responses": [
+                                        "com_instrument_practice_outdoor_22",
+                                        "com_instrument_practice_outdoor_23",
+                                        "com_instrument_practice_outdoor_24"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_instrument_practice_outdoor_22"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "_comment": "自己（单人） → 自己 ｜ 接受",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessLTE": "Failure"
+                                    },
+                                    "_comment": "自己（单人） → 自己 ｜ 接受·判定失败",
+                                    "responses": [
+                                        "com_instrument_practice_outdoor_1",
+                                        "com_instrument_practice_outdoor_2",
+                                        "com_instrument_practice_outdoor_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "自己（单人） → 自己 ｜ 接受·判定成功",
+                                    "responses": [
+                                        "com_instrument_practice_outdoor_10",
+                                        "com_instrument_practice_outdoor_11",
+                                        "com_instrument_practice_outdoor_12"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_instrument_practice_outdoor_10"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "_comment": "判定成功",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "自己（单人） → 玩家 ｜ 接受·判定成功",
+                                    "responses": [
+                                        "com_instrument_practice_outdoor_4",
+                                        "com_instrument_practice_outdoor_5",
+                                        "com_instrument_practice_outdoor_6"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_instrument_practice_outdoor_25"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessLTE": "Failure"
+                            },
+                            "_comment": "判定失败",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "自己（单人） → 玩家 ｜ 接受·判定失败",
+                                    "responses": [
+                                        "com_instrument_practice_outdoor_19",
+                                        "com_instrument_practice_outdoor_20",
+                                        "com_instrument_practice_outdoor_21"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_instrument_practice_outdoor_26"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_instrument_practice_outdoor_27",
+                                "com_instrument_practice_outdoor_28"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_instrument_practice_outdoor_Refuse",
+                    "template": "commandRefuse",
+                    "variants": [
+                        {
+                            "requireRefusalContext": "DeclinedOrder",
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "自己（单人） → 玩家 ｜ 拒绝",
+                                    "responses": [
+                                        "com_instrument_practice_outdoor_Refuse_1",
+                                        "com_instrument_practice_outdoor_Refuse_2",
+                                        "com_instrument_practice_outdoor_Refuse_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_instrument_practice_outdoor_Refuse_7",
+                                "com_instrument_practice_outdoor_Refuse_8"
+                            ]
+                        },
+                        {
+                            "requireRefusalContext": "ReceiverDeclined",
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
+                            "responses": [
+                                "com_instrument_practice_outdoor_Refuse_4",
+                                "com_instrument_practice_outdoor_Refuse_5",
+                                "com_instrument_practice_outdoor_Refuse_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_instrument_practice_outdoor_Refuse_9",
+                                "com_instrument_practice_outdoor_Refuse_10"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_instrument_practice_outdoor_Join",
+                    "template": "commandJoin",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_instrument_practice_outdoor_Join_4",
+                                "com_instrument_practice_outdoor_Join_5",
+                                "com_instrument_practice_outdoor_Join_6"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_instrument_practice_outdoor_Join_1",
+                                "com_instrument_practice_outdoor_Join_2",
+                                "com_instrument_practice_outdoor_Join_3"
+                            ]
+                        },
+                        {
+                            "_comment": "原参与者 NPC → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_instrument_practice_outdoor_Join_7",
+                                "com_instrument_practice_outdoor_Join_8",
+                                "com_instrument_practice_outdoor_Join_9"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_instrument_practice_outdoor_Ongoing",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "受方 → 玩家 ｜ 接受",
+                                    "responses": [
+                                        "com_instrument_practice_outdoor_Ongoing_4",
+                                        "com_instrument_practice_outdoor_Ongoing_5",
+                                        "com_instrument_practice_outdoor_Ongoing_6"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_instrument_practice_outdoor_Ongoing_1",
+                                "com_instrument_practice_outdoor_Ongoing_2",
+                                "com_instrument_practice_outdoor_Ongoing_3"
+                            ],
+                            "_comment": "受方 → NPC ｜ 接受"
+                        },
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "自己（单人） → 玩家 ｜ 接受",
+                            "responses": [
+                                "com_instrument_practice_outdoor_Ongoing_7",
+                                "com_instrument_practice_outdoor_Ongoing_8",
+                                "com_instrument_practice_outdoor_Ongoing_9"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_instrument_practice_outdoor_Ongoing_10",
+                                "com_instrument_practice_outdoor_Ongoing_11"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_instrument_practice_outdoor_JoinFailed",
+                    "template": "commandJoinFailed",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "受方 → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_instrument_practice_outdoor_JoinFailed_7",
+                                "com_instrument_practice_outdoor_JoinFailed_8",
+                                "com_instrument_practice_outdoor_JoinFailed_9"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方 → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_instrument_practice_outdoor_JoinFailed_1",
+                                "com_instrument_practice_outdoor_JoinFailed_2",
+                                "com_instrument_practice_outdoor_JoinFailed_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_instrument_practice_outdoor_JoinFailed_4",
+                                "com_instrument_practice_outdoor_JoinFailed_5",
+                                "com_instrument_practice_outdoor_JoinFailed_6"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_instrument_practice_outdoor_Joined",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入成功",
+                            "responses": [
+                                "com_instrument_practice_outdoor_Joined_1",
+                                "com_instrument_practice_outdoor_Joined_2",
+                                "com_instrument_practice_outdoor_Joined_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_instrument_practice_outdoor_Joined_4",
+                                "com_instrument_practice_outdoor_Joined_5"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_instrument_practice_outdoor_Tryjoin",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 尝试加入",
+                            "responses": [
+                                "com_instrument_practice_outdoor_Tryjoin_1",
+                                "com_instrument_practice_outdoor_Tryjoin_2",
+                                "com_instrument_practice_outdoor_Tryjoin_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_instrument_practice_outdoor_Tryjoin_4",
+                                "com_instrument_practice_outdoor_Tryjoin_5"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_instrument_practice_outdoor_Join_Refused",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入被拒绝",
+                            "responses": [
+                                "com_instrument_practice_outdoor_Join_Refused_1",
+                                "com_instrument_practice_outdoor_Join_Refused_2",
+                                "com_instrument_practice_outdoor_Join_Refused_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_instrument_practice_outdoor_Join_Refused_4",
+                                "com_instrument_practice_outdoor_Join_Refused_5"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_instrument_practice_outdoor_Interrupt_1": "$self$看见$target$走近，朝他摆了摆手：\"这儿正练着呢，坐下一起听？\"",
+                "com_instrument_practice_outdoor_Interrupt_2": "\"怎么过来了？\" $self$压低声音问$target$，怕打断旁边的演奏。",
+                "com_instrument_practice_outdoor_Interrupt_3": "$self$朝刚来的$target$点点头，示意自己正在当听众。",
+                "com_instrument_practice_outdoor_Begin_1": "$self$在长椅另一头坐好，朝$target$摆手示意：\"你只管练你的，我在旁边听着。\"",
+                "com_instrument_practice_outdoor_Begin_2": "\"音色听着挺顺的。\" $self$托着下巴笑了笑，示意$target$继续。",
+                "com_instrument_practice_outdoor_Begin_3": "$self$找了个舒服的姿势靠在椅背上，准备听$target$练习。",
+                "com_instrument_practice_outdoor_1": "$self$停下来叹了口气，后半段还是老样子，一到转调就容易出错。",
+                "com_instrument_practice_outdoor_2": "\"手还是太僵了，怎么总在这儿卡住。\" $self$揉了揉手指，有些懊恼。",
+                "com_instrument_practice_outdoor_3": "$self$看着乐器撇了撇嘴，今天状态实在一般，越急越容易出错。",
+                "com_instrument_practice_outdoor_Refuse_1": "$self$摇了摇头，把话挡了回去：\"我现在不想练乐器，手累着呢。\"",
+                "com_instrument_practice_outdoor_Refuse_2": "\"在大庭广众之下练这个？还是免了吧。\" $self$抱着胳膊，没有坐上长椅的意思。",
+                "com_instrument_practice_outdoor_Refuse_3": "$self$干脆地回绝了$target$：\"今天没那个兴致，你自己去练吧。\"",
+                "com_instrument_practice_outdoor_Join_1": "$self$朝$target$点点头：\"想听还是想一起练？长椅那头还有空位。\"",
+                "com_instrument_practice_outdoor_Join_2": "\"来得正好，帮我听听这段节奏对不对。\" $self$笑着招呼$target$坐下。",
+                "com_instrument_practice_outdoor_Join_3": "$self$停顿了一下，对$target$示意：\"坐吧，我正练到一半呢。\"",
+                "com_instrument_practice_outdoor_Ongoing_1": "$self$对$target$点点头：\"练得挺扎实的，歇会儿喝口水吧。\"",
+                "com_instrument_practice_outdoor_Ongoing_2": "\"辛苦了，最后那段收得很稳。\" $self$顺手帮$target$扶了扶旁边的东西，语气轻松。",
+                "com_instrument_practice_outdoor_Ongoing_3": "$self$站起身伸了个懒腰，朝$target$笑笑：\"今天练到这儿差不多了吧？\"",
+                "com_instrument_practice_outdoor_4": "$self$收住尾音，转头问$target$：\"我刚才那段顺多了吧？你那边练得怎么样？\"",
+                "com_instrument_practice_outdoor_5": "\"总算把这首啃下来了。\" $self$朝$target$扬了扬手里的乐器，神情轻快。",
+                "com_instrument_practice_outdoor_6": "$self$呼出一口气，冲$target$笑笑：\"有个人在旁边一起练，时间过得还挺快。\"",
+                "com_instrument_practice_outdoor_7": "$self$忍不住笑了一声：\"刚才那段是不是抢拍了？再来一遍吧。\"",
+                "com_instrument_practice_outdoor_8": "\"中间好像跑调了一点点……\" $self$摸了摸鼻子，朝$target$比了个重来的手势。",
+                "com_instrument_practice_outdoor_9": "$self$听出那几下错音，替$target$捏了把汗：\"别急，慢半拍练熟了再提速。\"",
+                "com_instrument_practice_outdoor_10": "$self$把乐器抱回怀里歇了口气，刚才卡住的那个小节总算顺下来了。",
+                "com_instrument_practice_outdoor_11": "\"嗯，今天手感不错，节奏稳多了。\" $self$满意地轻哼着刚才的调子。",
+                "com_instrument_practice_outdoor_12": "$self$甩了甩有些发酸的手腕，心里踏实了不少，这趟没白练。",
+                "com_instrument_practice_outdoor_Ongoing_4": "$self$听着乐声，瞥见旁边站着的$target$，轻声招呼：\"坐下一起听会儿？\"",
+                "com_instrument_practice_outdoor_Ongoing_5": "$self$朝$target$比了个嘘声的手势，示意别打断正在专心练习的人。",
+                "com_instrument_practice_outdoor_Ongoing_6": "注意到$target$在旁边看着，$self$往椅边挪了挪，给他留出一点视线。",
+                "com_instrument_practice_outdoor_Refuse_4": "$self$摇摇头站起身：\"我就不坐这儿旁听了，你自己练吧。\"",
+                "com_instrument_practice_outdoor_Refuse_5": "\"现在没心情听乐器，先走了。\" $self$摆摆手，没有留下。",
+                "com_instrument_practice_outdoor_Refuse_6": "$self$皱了皱眉往后退开：\"太吵了，找个没人的地方练去。\"",
+                "com_instrument_practice_outdoor_JoinFailed_1": "$self$朝$target$摆了摆手：\"长椅挤不下那么多人，我还要再练会儿。\"",
+                "com_instrument_practice_outdoor_JoinFailed_2": "\"抱歉，现在不太方便加人进来。\" $self$说完便把注意力转回了乐器上。",
+                "com_instrument_practice_outdoor_JoinFailed_3": "$self$抬眼看了看$target$：\"等我练完这一轮再说吧，这会儿先不了。\"",
+                "com_instrument_practice_outdoor_Ongoing_7": "$self$余光扫见站在旁边的$target$，手上的节拍稍微顿了一瞬：\"……找我有事吗？\"",
+                "com_instrument_practice_outdoor_Ongoing_8": "\"还没练熟呢，别一直盯着我看啊。\" $self$说着低下头继续按着指法。",
+                "com_instrument_practice_outdoor_Ongoing_9": "注意到$target$在旁观，$self$故作镇定地清了清嗓子，把注意力拉回手上的乐器。",
+                "com_instrument_practice_outdoor_13": "刺耳的错音一出来，$self$便不耐烦地甩了甩头：\"弹成这样还敢拉着人听？放我走。\"",
+                "com_instrument_practice_outdoor_14": "$self$被绑着没法捂耳朵，只能黑着脸盯住$target$：\"你是故意用噪音折磨人吗？\"",
+                "com_instrument_practice_outdoor_15": "\"难听死了，别练了。\" $self$咬紧牙关，眼里的烦躁丝毫没有掩饰。",
+                "com_instrument_practice_outdoor_Joined_1": "\"谢啦，那我坐这边。\" $self$在长椅空处落座，放松地靠向椅背。",
+                "com_instrument_practice_outdoor_Joined_2": "$self$点点头坐了下来，朝$target$比了个手势：\"你继续，不用管我。\"",
+                "com_instrument_practice_outdoor_Joined_3": "\"正好我也想趁这会儿练练手。\" $self$说着在$target$身旁坐稳。",
+                "com_instrument_practice_outdoor_JoinFailed_4": "$self$看着$target$笑了笑：\"长椅就这么长，这会儿坐不开了，待会儿再说吧。\"",
+                "com_instrument_practice_outdoor_JoinFailed_5": "\"抱歉啊，我想一个人再顺几遍，先不加人了。\" $self$朝$target$点点头。",
+                "com_instrument_practice_outdoor_JoinFailed_6": "$self$收了声对$target$说：\"这边位置有限，下次再一起吧。\"",
+                "com_instrument_practice_outdoor_Join_4": "$self$往旁边挪了挪位置，朝$target$招手：\"来吧，正好这里还宽敞。\"",
+                "com_instrument_practice_outdoor_Join_5": "\"你也来听啊？\" $self$对$target$笑了笑，\"坐这边就行。\"",
+                "com_instrument_practice_outdoor_Join_6": "$self$朝$target$点头示意：\"一起坐着听吧，别客气。\"",
+                "com_instrument_practice_outdoor_Interrupt_4": "$self$停下手里的练习，抬头看向走来的$target$：\"来得正好，找我有事？\"",
+                "com_instrument_practice_outdoor_Interrupt_5": "\"抱歉，练得正入神没注意你过来。\" $self$扶稳乐器，朝$target$招呼了一声。",
+                "com_instrument_practice_outdoor_Interrupt_6": "$self$把乐器挪到腿边，看向$target$：\"要紧事吗？不急的话等我练完这段。\"",
+                "com_instrument_practice_outdoor_Tryjoin_1": "$self$走到长椅旁看了看，问$target$：\"我也坐这儿听会儿，或者一起练？\"",
+                "com_instrument_practice_outdoor_Tryjoin_2": "\"这边还有空位吧？\" $self$朝$target$示意了一下长椅另一端。",
+                "com_instrument_practice_outdoor_Tryjoin_3": "$self$停在$target$面前，语气轻松：\"介意多个人一起待着吗？\"",
+                "com_instrument_practice_outdoor_Interrupt_7": "$self$猛地按住乐器停下声音，略有些局促地看向$target$：\"咳……你什么时候来的？\"",
+                "com_instrument_practice_outdoor_Interrupt_8": "\"我只是随便练练，刚才走音了吧？\" $self$有些不好意思地朝$target$笑了笑。",
+                "com_instrument_practice_outdoor_Interrupt_9": "$self$停下手中的节奏，朝$target$点头致意：\"找我有事？\"",
+                "com_instrument_practice_outdoor_Join_7": "$self$往长椅一侧让了让：\"坐吧，不过我还在找手感，可能不太好听。\"",
+                "com_instrument_practice_outdoor_Join_8": "\"你也过来坐？\" $self$朝$target$笑了笑，把乐器往怀里拢了拢。",
+                "com_instrument_practice_outdoor_Join_9": "$self$点点头：\"行啊，有个人在旁边听着，我正好练得认真些。\"",
+                "com_instrument_practice_outdoor_16": "听完这一段，$self$紧绷的肩膀不知不觉松了些，嘴上还是不肯服软：\"……也就勉强能听吧。\"",
+                "com_instrument_practice_outdoor_17": "旋律顺畅地收住时，$self$别开视线轻哼了一声，没再像刚才那样硬邦邦地顶嘴。",
+                "com_instrument_practice_outdoor_18": "$self$靠着长椅缓了口气，难得没对$target$冷嘲热讽：\"……行了，练完就赶紧把我解开。\"",
+                "com_instrument_practice_outdoor_19": "$self$有些不好意思地朝$target$摆摆手：\"刚才那下错得太明显了，别见笑啊。\"",
+                "com_instrument_practice_outdoor_20": "\"今天手感真不行，老是慢半拍。\" $self$苦笑着摇摇头，停下来喘了口气。",
+                "com_instrument_practice_outdoor_21": "$self$揉着发酸的手腕对$target$说：\"算了，越练越乱，我先歇会儿。\"",
+                "com_instrument_practice_outdoor_22": "$self$轻轻拍了两下手：\"这段衔接得很稳嘛，比刚才顺多了。\"",
+                "com_instrument_practice_outdoor_23": "\"听着挺舒服的。\" $self$舒了口气，朝$target$点点头，\"再多练几遍肯定更熟。\"",
+                "com_instrument_practice_outdoor_24": "$self$随着最后几个音的余韵微微点头：\"不错，这次没卡壳。\"",
+                "com_instrument_practice_outdoor_Join_Refused_1": "\"行，那我不打扰你专心练了。\" $self$点点头，转身走开。",
+                "com_instrument_practice_outdoor_Join_Refused_2": "$self$耸耸肩：\"明白了，那我去别处逛逛，你慢慢练。\"",
+                "com_instrument_practice_outdoor_Join_Refused_3": "\"好吧，下回再说。\" $self$摆摆手，没有再往长椅那边凑。",
+                "com_instrument_practice_outdoor_Begin_4": "$self$被绑着动弹不得，只能冷眼看着$target$摆弄乐器：\"……真是好兴致。\"",
+                "com_instrument_practice_outdoor_Begin_5": "听见试音的声响，$self$烦躁地偏开脸：\"别在我耳朵边上吵。\"",
+                "com_instrument_practice_outdoor_Begin_6": "$self$试着挣了一下手腕上的束缚，没挣开，干脆闭上嘴不再看$target$。",
+                "com_instrument_practice_outdoor_JoinFailed_7": "$self$看了眼长椅剩下的空档，对$target$抱歉地笑笑：\"这儿坐不太下了，下回吧。\"",
+                "com_instrument_practice_outdoor_JoinFailed_8": "\"现在这边不太方便加人，你先去忙别的吧。\" $self$朝$target$摆了摆手。",
+                "com_instrument_practice_outdoor_JoinFailed_9": "$self$回头对$target$示意了一下：\"等这段练完再聊，这会儿先不挤了。\"",
+                "com_instrument_practice_outdoor_Begin_7": "$self$拿起乐器试了试音，随即开始认真练习起来。",
+                "com_instrument_practice_outdoor_Begin_8": "$self$调整好呼吸与指法，在户外找了个合适的位置奏响了第一个音。",
+                "com_instrument_practice_outdoor_25": "一曲奏完，音色比预想中还要顺畅，$self$满意地收起乐器。",
+                "com_instrument_practice_outdoor_26": "中间还是卡了一下节奏，$self$停下来叹了口气。",
+                "com_instrument_practice_outdoor_27": "一曲练完，$self$缓缓收起乐器，静静体会着刚才的余韵。",
+                "com_instrument_practice_outdoor_28": "$self$呼出一口气，擦了擦乐器表面，神情专注而满足。",
+                "com_instrument_practice_outdoor_Refuse_7": "$self$抱着乐器摇了摇头：\"今天状态不太对，先不练了。\"",
+                "com_instrument_practice_outdoor_Refuse_8": "\"抱歉，这会儿不太想碰乐器。\" $self$把乐器收了回去。",
+                "com_instrument_practice_outdoor_Refuse_9": "$self$抱着乐器摇了摇头：\"今天状态不太对，先不练了。\"",
+                "com_instrument_practice_outdoor_Refuse_10": "\"抱歉，这会儿不太想碰乐器。\" $self$把乐器收了回去。",
+                "com_instrument_practice_outdoor_Ongoing_10": "$self$专注地沉浸在练习的旋律里，手指稳稳地配合着节奏。",
+                "com_instrument_practice_outdoor_Ongoing_11": "微风拂过，$self$一边演奏一边留神调整着音准与气息。",
+                "com_instrument_practice_outdoor_Joined_4": "$self$调好音后站到一旁，顺着目前的节拍加入了合奏。",
+                "com_instrument_practice_outdoor_Joined_5": "\"那我从这一段跟进来吧。\" $self$说着抬手准备演奏。",
+                "com_instrument_practice_outdoor_Tryjoin_4": "$self$拎着乐器走近，朝$target$笑了笑：\"一起合奏一段吗？\"",
+                "com_instrument_practice_outdoor_Tryjoin_5": "\"听起来不错，能加我一个吗？\" $self$站在旁边问道。",
+                "com_instrument_practice_outdoor_Join_Refused_4": "\"好吧，那我就在旁边安静听一会儿。\" $self$收起乐器退开半步。",
+                "com_instrument_practice_outdoor_Join_Refused_5": "$self$点点头：\"没关系，你们先练，我待会儿再自己找时间。\""
+            }
+        }
+    }
+}

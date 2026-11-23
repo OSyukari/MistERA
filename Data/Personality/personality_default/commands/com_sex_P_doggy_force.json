@@ -1,0 +1,1346 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_P_doggy_force_Climax",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 com_sex_P_doggy_force 高潮",
+                            "responses": [
+                                "com_sex_P_doggy_force_Climax_Doer_1",
+                                "com_sex_P_doggy_force_Climax_Doer_2",
+                                "com_sex_P_doggy_force_Climax_Doer_3"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "doggy",
+                                        "climax"
+                                    ],
+                                    "_comment": "受方 com_sex_P_doggy_force 高潮 有允许",
+                                    "responses": [
+                                        "com_sex_P_doggy_force_Climax_Perm_1",
+                                        "com_sex_P_doggy_force_Climax_Perm_2",
+                                        "com_sex_P_doggy_force_Climax_Perm_3"
+                                    ]
+                                }
+                            ],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "doggy",
+                                "climax"
+                            ],
+                            "_comment": "受方 com_sex_P_doggy_force 高潮",
+                            "responses": [
+                                "com_sex_P_doggy_force_Climax_Recv_1",
+                                "com_sex_P_doggy_force_Climax_Recv_2",
+                                "com_sex_P_doggy_force_Climax_Recv_3",
+                                "com_sex_P_doggy_force_Climax_RecvCase_1",
+                                "com_sex_P_doggy_force_Climax_RecvCase_2",
+                                "com_sex_P_doggy_force_Climax_RecvCase_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（任何状态）",
+                            "responses": [
+                                "com_sex_P_doggy_force_Climax_Recv_1"
+                            ]
+                        }
+                    ],
+                    "template": "commandClimax"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_P_doggy_force_Begin",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "firstexp_V"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "doggy",
+                                                "doll",
+                                                "empty"
+                                            ],
+                                            "_comment": "初体验 开始 时停中",
+                                            "responses": [
+                                                "com_sex_P_doggy_force_Begin_FE_Timestop_1",
+                                                "com_sex_P_doggy_force_Begin_FE_Timestop_2",
+                                                "com_sex_P_doggy_force_Begin_FE_Timestop_3"
+                                            ]
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "doggy",
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "开始 时停中",
+                                    "responses": [
+                                        "com_sex_P_doggy_force_Begin_Timestop_1",
+                                        "com_sex_P_doggy_force_Begin_Timestop_2",
+                                        "com_sex_P_doggy_force_Begin_Timestop_3",
+                                        "com_sex_P_doggy_force_Begin_TimestopCase_1",
+                                        "com_sex_P_doggy_force_Begin_TimestopCase_2",
+                                        "com_sex_P_doggy_force_Begin_TimestopCase_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "firstexp_V"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "doggy",
+                                                "sleeping",
+                                                "pain"
+                                            ],
+                                            "_comment": "初体验 开始 睡眠中",
+                                            "responses": [
+                                                "com_sex_P_doggy_force_Begin_FE_Sleep_1",
+                                                "com_sex_P_doggy_force_Begin_FE_Sleep_2",
+                                                "com_sex_P_doggy_force_Begin_FE_Sleep_3"
+                                            ]
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "doggy",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "开始 睡眠中",
+                                    "responses": [
+                                        "com_sex_P_doggy_force_Begin_Sleep_1",
+                                        "com_sex_P_doggy_force_Begin_Sleep_2",
+                                        "com_sex_P_doggy_force_Begin_Sleep_3",
+                                        "com_sex_P_doggy_force_Begin_SleepCase_1",
+                                        "com_sex_P_doggy_force_Begin_SleepCase_2",
+                                        "com_sex_P_doggy_force_Begin_SleepCase_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "开始 昏迷（非睡眠）",
+                                    "responses": [
+                                        "com_sex_P_doggy_force_Begin_Fainted_1",
+                                        "com_sex_P_doggy_force_Begin_Fainted_2",
+                                        "com_sex_P_doggy_force_Begin_Fainted_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "_comment": "开始 被束缚",
+                                    "responses": [
+                                        "com_sex_P_doggy_force_Begin_Restrained_1",
+                                        "com_sex_P_doggy_force_Begin_Restrained_2",
+                                        "com_sex_P_doggy_force_Begin_Restrained_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_V"
+                                        ]
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "targetBaseID": "PLAYER"
+                                            },
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "requirePermission": true
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "receiver",
+                                                        "doggy",
+                                                        "blush",
+                                                        "pain",
+                                                        "tearful",
+                                                        "love"
+                                                    ],
+                                                    "_comment": "初体验 玩家专用 有允许",
+                                                    "responses": [
+                                                        "com_sex_P_doggy_force_Begin_FE_Player_1",
+                                                        "com_sex_P_doggy_force_Begin_FE_Player_2",
+                                                        "com_sex_P_doggy_force_Begin_FE_Player_3"
+                                                    ]
+                                                }
+                                            ],
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "doggy",
+                                                "blush",
+                                                "pain",
+                                                "tearful",
+                                                "love"
+                                            ],
+                                            "_comment": "初体验 玩家专用",
+                                            "responses": [
+                                                "com_sex_P_doggy_force_Begin_FE_Player_1",
+                                                "com_sex_P_doggy_force_Begin_FE_Player_2",
+                                                "com_sex_P_doggy_force_Begin_FE_Player_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "doggy",
+                                                "blush",
+                                                "pain",
+                                                "tearful"
+                                            ],
+                                            "_comment": "初体验 开始 有允许",
+                                            "responses": [
+                                                "com_sex_P_doggy_force_Begin_FE_Perm_1",
+                                                "com_sex_P_doggy_force_Begin_FE_Perm_2",
+                                                "com_sex_P_doggy_force_Begin_FE_Perm_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAttitudeGTE": "Like"
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "doggy",
+                                                "blush",
+                                                "pain",
+                                                "tearful",
+                                                "shy"
+                                            ],
+                                            "_comment": "初体验 开始 未允许 好意",
+                                            "responses": [
+                                                "com_sex_P_doggy_force_Begin_FE_Like_1",
+                                                "com_sex_P_doggy_force_Begin_FE_Like_2",
+                                                "com_sex_P_doggy_force_Begin_FE_Like_3"
+                                            ]
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "doggy",
+                                        "fear",
+                                        "pain",
+                                        "tearful",
+                                        "trembling"
+                                    ],
+                                    "_comment": "初体验 开始 未允许 敌意",
+                                    "responses": [
+                                        "com_sex_P_doggy_force_Begin_FE_Hostile_1",
+                                        "com_sex_P_doggy_force_Begin_FE_Hostile_2",
+                                        "com_sex_P_doggy_force_Begin_FE_Hostile_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "doggy",
+                                        "closed_eyes",
+                                        "blush",
+                                        "affectionate"
+                                    ],
+                                    "_comment": "开始 有允许",
+                                    "responses": [
+                                        "com_sex_P_doggy_force_Begin_Perm_1",
+                                        "com_sex_P_doggy_force_Begin_Perm_2",
+                                        "com_sex_P_doggy_force_Begin_Perm_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "doggy",
+                                        "blush"
+                                    ],
+                                    "_comment": "开始 未允许 好意",
+                                    "responses": [
+                                        "com_sex_P_doggy_force_Begin_Like_1",
+                                        "com_sex_P_doggy_force_Begin_Like_2",
+                                        "com_sex_P_doggy_force_Begin_Like_3"
+                                    ]
+                                }
+                            ],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "doggy",
+                                "fear",
+                                "trembling",
+                                "tearful",
+                                "pain"
+                            ],
+                            "_comment": "受方 开始 com_sex_P_doggy_force",
+                            "responses": [
+                                "com_sex_P_doggy_force_Begin_Hostile_1",
+                                "com_sex_P_doggy_force_Begin_Hostile_2",
+                                "com_sex_P_doggy_force_Begin_Hostile_3",
+                                "com_sex_P_doggy_force_Begin_AwakeCase_1",
+                                "com_sex_P_doggy_force_Begin_AwakeCase_2",
+                                "com_sex_P_doggy_force_Begin_AwakeCase_3"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_partner_V"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "doggy",
+                                        "surprised"
+                                    ],
+                                    "_comment": "对方初体验 开始",
+                                    "responses": [
+                                        "com_sex_P_doggy_force_Begin_FE_Partner_1",
+                                        "com_sex_P_doggy_force_Begin_FE_Partner_2",
+                                        "com_sex_P_doggy_force_Begin_FE_Partner_3"
+                                    ]
+                                }
+                            ],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "doggy",
+                                "surprised"
+                            ],
+                            "_comment": "施方 开始 com_sex_P_doggy_force",
+                            "responses": [
+                                "com_sex_P_doggy_force_Begin_FE_Partner_1",
+                                "com_sex_P_doggy_force_Begin_FE_Partner_2",
+                                "com_sex_P_doggy_force_Begin_FE_Partner_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（接受，任何状态）",
+                            "responses": [
+                                "com_sex_P_doggy_force_Begin_Hostile_1"
+                            ]
+                        }
+                    ],
+                    "template": "commandAct",
+                    "templateExtras": [
+                        "firstexpPartnerV",
+                        "firstexpV"
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_P_doggy_force",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "firstexp_V"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "doggy",
+                                                "doll",
+                                                "empty"
+                                            ],
+                                            "_comment": "初体验 时停中",
+                                            "responses": [
+                                                "com_sex_P_doggy_force_FE_Timestop_1",
+                                                "com_sex_P_doggy_force_FE_Timestop_2",
+                                                "com_sex_P_doggy_force_FE_Timestop_3"
+                                            ]
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "doggy",
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "时停中 受方",
+                                    "responses": [
+                                        "com_sex_P_doggy_force_Timestop_1",
+                                        "com_sex_P_doggy_force_Timestop_2",
+                                        "com_sex_P_doggy_force_Timestop_3",
+                                        "com_sex_P_doggy_force_TimestopCase_1",
+                                        "com_sex_P_doggy_force_TimestopCase_2",
+                                        "com_sex_P_doggy_force_TimestopCase_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "firstexp_V"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "doggy",
+                                                "sleeping",
+                                                "pain"
+                                            ],
+                                            "_comment": "初体验 睡眠中",
+                                            "responses": [
+                                                "com_sex_P_doggy_force_FE_Sleep_1",
+                                                "com_sex_P_doggy_force_FE_Sleep_2",
+                                                "com_sex_P_doggy_force_FE_Sleep_3"
+                                            ]
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "doggy",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "睡眠中 受方",
+                                    "responses": [
+                                        "com_sex_P_doggy_force_Sleep_1",
+                                        "com_sex_P_doggy_force_Sleep_2",
+                                        "com_sex_P_doggy_force_Sleep_3",
+                                        "com_sex_P_doggy_force_SleepCase_1",
+                                        "com_sex_P_doggy_force_SleepCase_2",
+                                        "com_sex_P_doggy_force_SleepCase_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "昏迷（非睡眠） 受方",
+                                    "responses": [
+                                        "com_sex_P_doggy_force_Fainted_1",
+                                        "com_sex_P_doggy_force_Fainted_2",
+                                        "com_sex_P_doggy_force_Fainted_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "targetBaseID": "PLAYER"
+                                            },
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "requirePermission": true
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "receiver",
+                                                        "doggy",
+                                                        "sleep",
+                                                        "smile",
+                                                        "blush",
+                                                        "lazy"
+                                                    ],
+                                                    "_comment": "玩家专用 刚睡醒 有允许",
+                                                    "responses": [
+                                                        "com_sex_P_doggy_force_WokenPlayerPerm_1",
+                                                        "com_sex_P_doggy_force_WokenPlayerPerm_2",
+                                                        "com_sex_P_doggy_force_WokenPlayerPerm_3"
+                                                    ]
+                                                },
+                                                {
+                                                    "requirement": {
+                                                        "requireSelfAttitudeGTE": "Like"
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "receiver",
+                                                        "doggy",
+                                                        "sleep",
+                                                        "smile",
+                                                        "blush",
+                                                        "lazy"
+                                                    ],
+                                                    "_comment": "玩家专用 刚睡醒 未允许 好意",
+                                                    "responses": [
+                                                        "com_sex_P_doggy_force_WokenPlayerLike_1",
+                                                        "com_sex_P_doggy_force_WokenPlayerLike_2",
+                                                        "com_sex_P_doggy_force_WokenPlayerLike_3"
+                                                    ]
+                                                }
+                                            ],
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "doggy",
+                                                "scared",
+                                                "submissive"
+                                            ],
+                                            "_comment": "玩家专用 刚睡醒 无允许 敌意",
+                                            "responses": [
+                                                "com_sex_P_doggy_force_WokenPlayerHostile_1",
+                                                "com_sex_P_doggy_force_WokenPlayerHostile_2",
+                                                "com_sex_P_doggy_force_WokenPlayerHostile_3"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "刚睡醒 受方",
+                                    "responses": [
+                                        "com_sex_P_doggy_force_Woken_1",
+                                        "com_sex_P_doggy_force_Woken_2",
+                                        "com_sex_P_doggy_force_Woken_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "_comment": "受方（被束缚） 判定成功",
+                                            "responses": [
+                                                "com_sex_P_doggy_force_RestrainedSucc_1",
+                                                "com_sex_P_doggy_force_RestrainedSucc_2",
+                                                "com_sex_P_doggy_force_RestrainedSucc_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "firstexp_V"
+                                                ]
+                                            },
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "targetBaseID": "PLAYER"
+                                                    },
+                                                    "variants": [
+                                                        {
+                                                            "requirement": {
+                                                                "requirePermission": true
+                                                            },
+                                                            "extraSelfPortraitTags": [
+                                                                "sex",
+                                                                "receiver",
+                                                                "doggy",
+                                                                "blush",
+                                                                "pain",
+                                                                "love"
+                                                            ],
+                                                            "_comment": "初体验 玩家专用 有允许",
+                                                            "responses": [
+                                                                "com_sex_P_doggy_force_FE_Player_1",
+                                                                "com_sex_P_doggy_force_FE_Player_2",
+                                                                "com_sex_P_doggy_force_FE_Player_3"
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "receiver",
+                                                        "doggy",
+                                                        "blush",
+                                                        "pain",
+                                                        "love"
+                                                    ],
+                                                    "_comment": "初体验 玩家专用",
+                                                    "responses": [
+                                                        "com_sex_P_doggy_force_FE_Player_1",
+                                                        "com_sex_P_doggy_force_FE_Player_2",
+                                                        "com_sex_P_doggy_force_FE_Player_3"
+                                                    ]
+                                                },
+                                                {
+                                                    "requirement": {
+                                                        "requirePermission": true
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "receiver",
+                                                        "doggy",
+                                                        "blush",
+                                                        "pain"
+                                                    ],
+                                                    "_comment": "初体验 有允许",
+                                                    "responses": [
+                                                        "com_sex_P_doggy_force_FE_Perm_1",
+                                                        "com_sex_P_doggy_force_FE_Perm_2",
+                                                        "com_sex_P_doggy_force_FE_Perm_3"
+                                                    ]
+                                                },
+                                                {
+                                                    "requirement": {
+                                                        "requireSelfAttitudeGTE": "Like"
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "receiver",
+                                                        "doggy",
+                                                        "blush",
+                                                        "pain",
+                                                        "shy"
+                                                    ],
+                                                    "_comment": "初体验 未允许 好意",
+                                                    "responses": [
+                                                        "com_sex_P_doggy_force_FE_Like_1",
+                                                        "com_sex_P_doggy_force_FE_Like_2",
+                                                        "com_sex_P_doggy_force_FE_Like_3"
+                                                    ]
+                                                }
+                                            ],
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "doggy",
+                                                "pain",
+                                                "tearful",
+                                                "cry"
+                                            ],
+                                            "_comment": "初体验 未允许 敌意",
+                                            "responses": [
+                                                "com_sex_P_doggy_force_FE_Hostile_1",
+                                                "com_sex_P_doggy_force_FE_Hostile_2",
+                                                "com_sex_P_doggy_force_FE_Hostile_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "doggy",
+                                                "love",
+                                                "happy",
+                                                "relaxed"
+                                            ],
+                                            "_comment": "结果正面 有允许",
+                                            "responses": [
+                                                "com_sex_P_doggy_force_SuccPerm_1",
+                                                "com_sex_P_doggy_force_SuccPerm_2",
+                                                "com_sex_P_doggy_force_SuccPerm_3"
+                                            ]
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "doggy",
+                                        "blush",
+                                        "shy",
+                                        "surprised",
+                                        "happy",
+                                        "aroused"
+                                    ],
+                                    "_comment": "受方 结果正面",
+                                    "responses": [
+                                        "com_sex_P_doggy_force_Succ_1",
+                                        "com_sex_P_doggy_force_Succ_2",
+                                        "com_sex_P_doggy_force_Succ_3",
+                                        "com_sex_P_doggy_force_SuccCase_1",
+                                        "com_sex_P_doggy_force_SuccCase_2",
+                                        "com_sex_P_doggy_force_SuccCase_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessLTE": "Failure"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "_comment": "受方（被束缚） 判定失败",
+                                            "responses": [
+                                                "com_sex_P_doggy_force_RestrainedFail_1",
+                                                "com_sex_P_doggy_force_RestrainedFail_2",
+                                                "com_sex_P_doggy_force_RestrainedFail_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "firstexp_V"
+                                                ]
+                                            },
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "targetBaseID": "PLAYER"
+                                                    },
+                                                    "variants": [
+                                                        {
+                                                            "requirement": {
+                                                                "requirePermission": true
+                                                            },
+                                                            "extraSelfPortraitTags": [
+                                                                "sex",
+                                                                "receiver",
+                                                                "doggy",
+                                                                "blush",
+                                                                "pain",
+                                                                "love"
+                                                            ],
+                                                            "_comment": "初体验 玩家专用 有允许",
+                                                            "responses": [
+                                                                "com_sex_P_doggy_force_FE_Player_1",
+                                                                "com_sex_P_doggy_force_FE_Player_2",
+                                                                "com_sex_P_doggy_force_FE_Player_3"
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "receiver",
+                                                        "doggy",
+                                                        "blush",
+                                                        "pain",
+                                                        "love"
+                                                    ],
+                                                    "_comment": "初体验 玩家专用",
+                                                    "responses": [
+                                                        "com_sex_P_doggy_force_FE_Player_1",
+                                                        "com_sex_P_doggy_force_FE_Player_2",
+                                                        "com_sex_P_doggy_force_FE_Player_3"
+                                                    ]
+                                                },
+                                                {
+                                                    "requirement": {
+                                                        "requirePermission": true
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "receiver",
+                                                        "doggy",
+                                                        "blush",
+                                                        "pain"
+                                                    ],
+                                                    "_comment": "初体验 有允许",
+                                                    "responses": [
+                                                        "com_sex_P_doggy_force_FE_Perm_1",
+                                                        "com_sex_P_doggy_force_FE_Perm_2",
+                                                        "com_sex_P_doggy_force_FE_Perm_3"
+                                                    ]
+                                                },
+                                                {
+                                                    "requirement": {
+                                                        "requireSelfAttitudeGTE": "Like"
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "receiver",
+                                                        "doggy",
+                                                        "blush",
+                                                        "pain",
+                                                        "shy"
+                                                    ],
+                                                    "_comment": "初体验 未允许 好意",
+                                                    "responses": [
+                                                        "com_sex_P_doggy_force_FE_Like_1",
+                                                        "com_sex_P_doggy_force_FE_Like_2",
+                                                        "com_sex_P_doggy_force_FE_Like_3"
+                                                    ]
+                                                }
+                                            ],
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "doggy",
+                                                "pain",
+                                                "tearful",
+                                                "cry"
+                                            ],
+                                            "_comment": "初体验 未允许 敌意",
+                                            "responses": [
+                                                "com_sex_P_doggy_force_FE_Hostile_1",
+                                                "com_sex_P_doggy_force_FE_Hostile_2",
+                                                "com_sex_P_doggy_force_FE_Hostile_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "doggy",
+                                                "pain",
+                                                "bored",
+                                                "doubt",
+                                                "disappointed"
+                                            ],
+                                            "_comment": "结果负面 有允许",
+                                            "responses": [
+                                                "com_sex_P_doggy_force_FailPerm_1",
+                                                "com_sex_P_doggy_force_FailPerm_2",
+                                                "com_sex_P_doggy_force_FailPerm_3"
+                                            ]
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "doggy",
+                                        "angry",
+                                        "cry",
+                                        "glare",
+                                        "disgust",
+                                        "pouting",
+                                        "sad",
+                                        "troubled",
+                                        "silence"
+                                    ],
+                                    "_comment": "受方 结果负面",
+                                    "responses": [
+                                        "com_sex_P_doggy_force_Fail_1",
+                                        "com_sex_P_doggy_force_Fail_2",
+                                        "com_sex_P_doggy_force_Fail_3",
+                                        "com_sex_P_doggy_force_FailCase_1",
+                                        "com_sex_P_doggy_force_FailCase_2",
+                                        "com_sex_P_doggy_force_FailCase_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "受方 com_sex_P_doggy_force 结果",
+                            "responses": [
+                                "com_sex_P_doggy_force_Fail_1"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_partner_V"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "doggy"
+                                    ],
+                                    "_comment": "对方初体验",
+                                    "responses": [
+                                        "com_sex_P_doggy_force_FE_Partner_1",
+                                        "com_sex_P_doggy_force_FE_Partner_2",
+                                        "com_sex_P_doggy_force_FE_Partner_3"
+                                    ]
+                                }
+                            ],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "doggy"
+                            ],
+                            "_comment": "施方 com_sex_P_doggy_force 结果",
+                            "responses": [
+                                "com_sex_P_doggy_force_FE_Partner_1",
+                                "com_sex_P_doggy_force_FE_Partner_2",
+                                "com_sex_P_doggy_force_FE_Partner_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（接受，任何状态）",
+                            "responses": [
+                                "com_sex_P_doggy_force_Fail_1"
+                            ]
+                        }
+                    ],
+                    "template": "commandResult",
+                    "templateExtras": [
+                        "firstexpPartnerV",
+                        "firstexpV"
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_P_doggy_force_Refuse",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireRefusalContext": "ReceiverDeclined",
+                            "useActiveTags": false,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "useActiveTags": false,
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ],
+                                        "requireEPSuccess": false
+                                    },
+                                    "_comment": "刚睡醒拒绝",
+                                    "responses": [
+                                        "com_sex_P_doggy_force_Refuse_WokenCase_1",
+                                        "com_sex_P_doggy_force_Refuse_WokenCase_2",
+                                        "com_sex_P_doggy_force_Refuse_WokenCase_3"
+                                    ]
+                                },
+                                {
+                                    "useActiveTags": false,
+                                    "requirement": {
+                                        "requirePermission": true,
+                                        "requireEPSuccess": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy",
+                                        "tired"
+                                    ],
+                                    "_comment": "拒绝 有允许",
+                                    "responses": [
+                                        "com_sex_P_doggy_force_Refuse_Perm_1",
+                                        "com_sex_P_doggy_force_Refuse_Perm_2",
+                                        "com_sex_P_doggy_force_Refuse_Perm_3"
+                                    ]
+                                }
+                            ],
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "_comment": "受方拒绝 com_sex_P_doggy_force",
+                            "responses": [
+                                "com_sex_P_doggy_force_Refuse_Hostile_1",
+                                "com_sex_P_doggy_force_Refuse_Hostile_2",
+                                "com_sex_P_doggy_force_Refuse_Hostile_3",
+                                "com_sex_P_doggy_force_Refuse_Case_1",
+                                "com_sex_P_doggy_force_Refuse_Case_2",
+                                "com_sex_P_doggy_force_Refuse_Case_3"
+                            ]
+                        },
+                        {
+                            "useActiveTags": false,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（拒绝）",
+                            "responses": [
+                                "com_sex_P_doggy_force_Refuse_Hostile_1"
+                            ]
+                        }
+                    ],
+                    "template": "commandRefuse"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_P_doggy_force_Ongoing",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "受方 → 玩家 ｜ 进行中",
+                                    "responses": [
+                                        "com_sex_P_doggy_force_Ongoing_Player_1",
+                                        "com_sex_P_doggy_force_Ongoing_Player_2",
+                                        "com_sex_P_doggy_force_Ongoing_Player_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "受方 com_sex_P_doggy_force 进行中",
+                            "responses": [
+                                "com_sex_P_doggy_force_Ongoing_Player_1",
+                                "com_sex_P_doggy_force_Ongoing_Player_2",
+                                "com_sex_P_doggy_force_Ongoing_Player_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（接受，任何状态）",
+                            "responses": [
+                                "com_sex_P_doggy_force_Ongoing_Player_1"
+                            ]
+                        }
+                    ],
+                    "template": "commandAct"
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_sex_P_doggy_force_Climax_Doer_1": "$self$扣住$target$的腰从后方紧紧抵住那块软肉，埋在痉挛的内壁里剧烈搏动着射了出来：\"哈啊……顶着你的弱点全射给你了……！\"",
+                "com_sex_P_doggy_force_Climax_Doer_2": "$self$把$target$的胯部往自己怀里狠狠一带，压着敏感点闷哼着将精液尽数灌入：\"唔……！那块地方夹得这么紧……全部接住！\"",
+                "com_sex_P_doggy_force_Climax_Doer_3": "$self$俯身压在$target$背上喘着粗气，在敏感软肉一阵紧似一阵的收缩中释放到底：\"嗯……！里面吸得太狠了，一滴都没忍住……\"",
+                "com_sex_P_doggy_force_Climax_Perm_1": "$self$仰起脖颈，腰肢彻底塌了下去，在敏感软肉被狠狠碾过的瞬间腿根剧烈颤个不停：\"啊啊——！那里不行……要去了！全部射进来……！\"",
+                "com_sex_P_doggy_force_Climax_Perm_2": "$self$侧头回望身后的$target$，小穴在绝顶中一阵阵抽紧，把体内的柱身箍得结结实实：\"好准……从后面被磨得去了……哈啊……！\"",
+                "com_sex_P_doggy_force_Climax_Perm_3": "滚烫的爱液顺着交合处涌出，$self$双臂一软趴倒下去，只剩臀部还被扶着轻轻抽搐：\"嗯啊……！那块地方要被你顶坏了……！\"",
+                "com_sex_P_doggy_force_Climax_Recv_1": "$self$拼命咬着牙想忍住，脚趾却紧紧蜷起，身体违背心意在针对弱点的顶磨中迎来了高潮：\"不要……别一直顶那里……怎么会……啊……！\"",
+                "com_sex_P_doggy_force_Climax_Recv_2": "$self$眼泪夺眶而出，把脸埋进臂弯，内壁却不受控地剧烈收缩着登上了顶峰：\"明明讨厌这样被按着的……身体却被磨得停不下来……！\"",
+                "com_sex_P_doggy_force_Climax_Recv_3": "屈辱与从敏感点炸开的酥麻一同袭来，$self$双腿发软地塌下腰，在失神的哆嗦中呜咽出声：\"呜……好丢人……快放开我……！\"",
+                "com_sex_P_doggy_force_Climax_RecvCase_1": "内壁最敏感的那块软肉被从后方狠狠碾过的瞬间，$self$仰起脖子，塌下腰在剧烈的痉挛中迎来了高潮：\"啊……！那里不行……去了……！\"",
+                "com_sex_P_doggy_force_Climax_RecvCase_2": "$self$双臂发软地伏倒下去，小穴一阵紧过一阵地吸紧体内的柱身，失神地喘息着登上了顶峰：\"嗯啊……！从后面一直磨那一点……脑子都一片空白了……！\"",
+                "com_sex_P_doggy_force_Climax_RecvCase_3": "灭顶的酥麻从敏感点炸开，$self$腿根剧烈打颤，滚烫的爱液顺着结合处涌出：\"唔嗯……！太刺激了……整个人都要散架了……！\"",
+                "com_sex_P_doggy_force_Begin_FE_Timestop_1": "处女膜在凝固的时间里无声破开，前端直抵深处那块软肉，$self$保持着趴伏的姿势纹丝不动，鲜红缓缓渗出。",
+                "com_sex_P_doggy_force_Begin_FE_Timestop_2": "$self$定格的神情没有任何变化，对自己的第一次正从身后被顶住敏感处夺走一无所知。",
+                "com_sex_P_doggy_force_Begin_FE_Timestop_3": "从未接纳过异物的小穴在静止中被从后方撑开顶住G点，$self$定格的腰背没有半分颤栗。",
+                "com_sex_P_doggy_force_Begin_Timestop_1": "从后方被撑开的小穴深处那块软肉被动贴合着前端，$self$的眼神停在半空，毫无知觉。",
+                "com_sex_P_doggy_force_Begin_Timestop_2": "抵住敏感点时，$self$垂在身侧的手还定格在原处，静止的空气里只有交合处微湿的细响。",
+                "com_sex_P_doggy_force_Begin_Timestop_3": "停滞的时间里，$self$保持着被摆出的后背位姿势，对体内敏感处已被顶住的事实一无所知。",
+                "com_sex_P_doggy_force_Begin_TimestopCase_1": "停滞的时间里，$self$保持着跪趴的定格姿态，对身后捅入并抵住敏感软肉的侵入物毫无知觉。",
+                "com_sex_P_doggy_force_Begin_TimestopCase_2": "$self$静止的眼眸望向空处，哪怕内壁深处那一点已被从后方紧紧顶住，身体也没有半点颤动。",
+                "com_sex_P_doggy_force_Begin_TimestopCase_3": "凝固的空气中只有软肉被挤压的细微水声，$self$像人偶般维持着时停前的姿势。",
+                "com_sex_P_doggy_force_Begin_FE_Sleep_1": "睡梦中的$self$被从后方破开并顶住内壁深处的敏感软肉，身子猛地一颤，血丝顺着结合处淌了下来。",
+                "com_sex_P_doggy_force_Begin_FE_Sleep_2": "$self$不安地往前缩了缩腰，无意识地夹紧腿根，毫不知情自己的第一次正被顶着敏感点夺走。",
+                "com_sex_P_doggy_force_Begin_FE_Sleep_3": "初次破瓜便被抵住前壁软肉的酸痛让熟睡的$self$皱起眉头，把脸往枕边埋得更深，喉间漏出一声细微的呜咽。",
+                "com_sex_P_doggy_force_Begin_Sleep_1": "内壁深处的软肉从后方被前端抵住时，$self$只是在睡梦中把脸往臂弯里埋了埋，没有醒来。",
+                "com_sex_P_doggy_force_Begin_Sleep_2": "敏感点被顶住的瞬间，$self$在梦里皱了皱眉，喉咙里哼出一声含糊的鼻音，温热的内壁本能地收拢包裹。",
+                "com_sex_P_doggy_force_Begin_Sleep_3": "熟睡的$self$维持着跪趴的姿势，随着身后的侵入轻轻晃了晃，呼吸依旧绵长平稳。",
+                "com_sex_P_doggy_force_Begin_SleepCase_1": "熟睡的$self$在跪趴姿势下被从后方顶住内壁软肉，在梦里发出一声含糊的嘤咛，腰肢无意识地颤了一下。",
+                "com_sex_P_doggy_force_Begin_SleepCase_2": "敏感点被前端抵住的瞬间，沉睡中的$self$小穴本能地收拢包裹上去，呼吸变得微促。",
+                "com_sex_P_doggy_force_Begin_SleepCase_3": "$self$把脸埋在枕间沉睡着，对身后已经精准抵住敏感处的侵入毫无察觉。",
+                "com_sex_P_doggy_force_Begin_Fainted_1": "彻底失去意识的$self$软绵绵地趴伏着，任由$target$扶起臀部从后方将柱身捅入并抵住深处软肉。",
+                "com_sex_P_doggy_force_Begin_Fainted_2": "$self$人事不省，被摆成跪趴的身体随着后方顶入的力道被动往前滑了半寸，没有任何反应。",
+                "com_sex_P_doggy_force_Begin_Fainted_3": "昏迷中的$self$呼吸微弱，闭合的小穴与敏感内壁被单方面从背后撑开贴合，眼帘沉重地合着。",
+                "com_sex_P_doggy_force_Begin_Restrained_1": "双手被缚住无法挪动分毫，$self$只能跪趴着承受从后方精准抵住敏感软肉的刺激，溢出一声闷哼：\"唔……趁我被绑着专门顶那里……\"",
+                "com_sex_P_doggy_force_Begin_Restrained_2": "$self$挣了一下腕间的束缚，既躲不开也合不上腿，内壁最敏感的一点已被前端紧紧抵住：\"哈啊……太麻了，先把绳子解开啊……\"",
+                "com_sex_P_doggy_force_Begin_Restrained_3": "被固定住的趴伏姿势让体内弱点无处躲闪，$self$在被顶住G点的瞬间腰肢剧颤，呼吸一下子乱了节奏。",
+                "com_sex_P_doggy_force_Begin_FE_Player_1": "\"从后面……唔，刚进来就顶在奇怪的地方了……\" 破开的痛楚混着内壁的酸麻让$self$腰身一软，声音里带着哭腔。",
+                "com_sex_P_doggy_force_Begin_FE_Player_2": "\"我是第一次……你、你先别顶那里……\" $self$疼得往前颤了一下，手指抓紧了身下的支点。",
+                "com_sex_P_doggy_force_Begin_FE_Player_3": "温热的血丝顺着腿根滑落，$self$侧过脸努力回望身后的$target$：\"嗯……虽然又疼又麻，但已经全部进来了……\"",
+                "com_sex_P_doggy_force_Begin_FE_Perm_1": "\"等、等一下……我是第一次，怎么一进来就顶着那块地方……\" $self$疼得腰塌了下去，眼泪一下子涌了出来。",
+                "com_sex_P_doggy_force_Begin_FE_Perm_2": "\"呜……从后面进来……正好顶在最敏感的地方了……\" 初次被撑开的地方火辣辣的，混着异样的酥麻让$self$用力咬住了手臂。",
+                "com_sex_P_doggy_force_Begin_FE_Perm_3": "$self$撑着身子发着抖，缓过破瓜那阵尖锐的痛感与内壁的酸胀才小声开口：\"唔……先停一下，让我适应一下……\"",
+                "com_sex_P_doggy_force_Begin_FE_Like_1": "\"这是我的第一次……你怎么从后面专门顶那种地方……\" $self$趴伏着，撑在身前的手指微微发抖。",
+                "com_sex_P_doggy_force_Begin_FE_Like_2": "\"疼……里面那块地方被顶得好酸……\" $self$把脸埋进臂弯，肩膀止不住地轻颤。",
+                "com_sex_P_doggy_force_Begin_FE_Like_3": "看不到身后动作的不安混着破瓜的疼痛与酥麻，$self$红着眼眶往前缩了缩腰：\"等、等等……先别往那一点上压啊……\"",
+                "com_sex_P_doggy_force_Begin_FE_Hostile_1": "\"不……别从后面……我还是第一次，别顶着里面乱磨……！\" $self$疼得发出呜咽，想往前爬开却被按在原地。",
+                "com_sex_P_doggy_force_Begin_FE_Hostile_2": "\"……我记住你了。\" 落红顺着腿根淌下来，$self$咬紧牙关攥紧了拳头。",
+                "com_sex_P_doggy_force_Begin_FE_Hostile_3": "从背后被强行破开并顶住敏感处的剧痛让$self$眼泪夺眶而出，她撑着膝盖拼命挣扎：\"唔……滚出去……别碰我……！\"",
+                "com_sex_P_doggy_force_Begin_Perm_1": "$self$顺从地塌下腰背，迎合着从后方精准顶住敏感软肉的柱身：\"嗯……从后面一下子就顶到最舒服的地方了……\"",
+                "com_sex_P_doggy_force_Begin_Perm_2": "$self$侧过头往后看了一眼，把臀部微微抬高方便对方顶紧那一点：\"轻点哦……这个角度正好磨在上面呢。\"",
+                "com_sex_P_doggy_force_Begin_Perm_3": "内壁软肉被从背后抵住的瞬间，$self$舒服地喟叹出声，手指抓紧了身前的支点：\"哈啊……那块地方被你顶得发麻了。\"",
+                "com_sex_P_doggy_force_Begin_Like_1": "$self$撑在原处没敢乱动，敏感处被直接抵住的酸麻让她浑身一颤：\"等、等等……从后面怎么正好顶在那种地方……\"",
+                "com_sex_P_doggy_force_Begin_Like_2": "$self$脸颊涨得通红，羞耻得不敢回头，腰却在那阵酥麻中软了下去：\"一进来就顶那里……太犯规了……\"",
+                "com_sex_P_doggy_force_Begin_Like_3": "身后传来的热意与顶在弱点上的触感让$self$轻喘出声，她把滚烫的脸埋进臂弯：\"唔……既然是你，这次就随你吧……\"",
+                "com_sex_P_doggy_force_Begin_Hostile_1": "$self$发着抖咬住嘴唇，被迫跪趴着承受直抵敏感处的侵入：\"我知道了……我听话就是了……别故意顶那里……\"",
+                "com_sex_P_doggy_force_Begin_Hostile_2": "$self$紧闭双眼，眼泪顺着眼角滑落，屈辱地伏着身子任由摆布：\"做完这个就可以了吧……求你快点结束……\"",
+                "com_sex_P_doggy_force_Begin_Hostile_3": "看不到身后的恐惧让$self$肩膀紧绷，内壁软肉被强行抵住时溢出一声压抑的闷哼：\"唔……别往那边按……\"",
+                "com_sex_P_doggy_force_Begin_AwakeCase_1": "从后方顶入的前端径直抵在内壁深处那块敏感软肉上，$self$腰背一颤，撑着的手臂顿时软了半分：\"唔……从后面一下就顶住最敏感的地方了……\"",
+                "com_sex_P_doggy_force_Begin_AwakeCase_2": "$self$跪趴着塌下腰，感受着前壁软肉被滚烫前端按压的酥麻，呼吸急促起来：\"哈啊……这个角度正好压在上面……慢一点磨哦……\"",
+                "com_sex_P_doggy_force_Begin_AwakeCase_3": "最敏感的一点被从背后严密抵住，$self$抓紧身前的支点，喉间溢出一声甜腻的轻哼。",
+                "com_sex_P_doggy_force_Begin_FE_Partner_1": "\"你……是第一次？\" 感觉到前端破开阻碍抵上那块敏感软肉，$self$停顿了一下。",
+                "com_sex_P_doggy_force_Begin_FE_Partner_2": "\"……怎么不早说，从后面进得太急了。\" 看到结合处渗出的血丝，$self$停下了往前顶磨的腰。",
+                "com_sex_P_doggy_force_Begin_FE_Partner_3": "紧致湿热的内壁夹杂着破瓜的颤抖，$self$扶住$target$发颤的腰侧：\"先放松一点，我等你不那么疼了再动。\"",
+                "com_sex_P_doggy_force_FE_Player_1": "\"还是有点疼……不过你一直顶着那块地方，好像慢慢变舒服了……\" $self$侧过头看了身后的$target$一眼，红着脸小声说道。",
+                "com_sex_P_doggy_force_FE_Player_2": "$self$撑着手臂努力稳住发抖的腰，声音软糯：\"嗯……从后面专门磨那里，腰都使不上力了……\"",
+                "com_sex_P_doggy_force_FE_Player_3": "\"因为是第一次被顶到那里，里面吸得很紧吧……\" $self$反手握住$target$扶在自己腰侧的手，呼吸渐渐变得温热。",
+                "com_sex_P_doggy_force_FE_Perm_1": "\"别一直顶那一点……我、我还不习惯从后面被这样磨……\" $self$的腰下意识往前躲了躲，腿根还在发抖。",
+                "com_sex_P_doggy_force_FE_Perm_2": "\"原来被从后面顶住那里是这种感觉……每次蹭过去都又酸又麻……\" $self$喘着气，脸颊红得发烫。",
+                "com_sex_P_doggy_force_FE_Perm_3": "$self$趴在臂弯里慢慢调整着呼吸，等痛意化作陌生的酥麻：\"唔……慢一点磨的话，就没刚才那么疼了……\"",
+                "com_sex_P_doggy_force_FE_Like_1": "\"一直顶着那里……我根本不知道该怎么配合了……\" $self$又疼又麻，只能趴着不敢乱动。",
+                "com_sex_P_doggy_force_FE_Like_2": "$self$红着眼眶把脸埋低，身后针对敏感处的顶磨让她声音发颤：\"呜……第一次就从后面专门欺负那种地方……\"",
+                "com_sex_P_doggy_force_FE_Like_3": "\"别突然用力蹭那里啊……里面又痛又奇怪……\" $self$慌乱地反手按住$target$搭在自己胯上的手，双腿直发软。",
+                "com_sex_P_doggy_force_FE_Hostile_1": "\"……疼……别再磨那里了……\" 初次撕裂的地方火辣辣地痛，敏感处又被强行刮蹭，$self$的眼泪把臂弯都浸湿了。",
+                "com_sex_P_doggy_force_FE_Hostile_2": "\"……快点结束。\" $self$盯着身前不肯回头，只有发抖的手指攥紧了支点。",
+                "com_sex_P_doggy_force_FE_Hostile_3": "每一次从背后的顶磨都牵扯着伤口与酸麻的软肉，$self$膝盖发软地往前滑了半寸：\"唔……别再抓着我的腰往后拽了……\"",
+                "com_sex_P_doggy_force_WokenPlayerPerm_1": "$self$迷迷糊糊哼了声，察觉到身后正抵着那块敏感软肉磨弄，顺从地塌了塌腰：\"嗯……是你啊……趁我睡着从后面专门顶那里……\"",
+                "com_sex_P_doggy_force_WokenPlayerPerm_2": "$self$在睡意中发出软绵绵的鼻音，顺势把臀部往后迎了迎：\"哈……刚醒就被你弄得腿软……随你喜欢吧……\"",
+                "com_sex_P_doggy_force_WokenPlayerPerm_3": "$self$懒洋洋地趴在枕上没起来，任由身后的人继续顶磨：\"唔……还困着呢，轻一点蹭那里哦……\"",
+                "com_sex_P_doggy_force_WokenPlayerLike_1": "$self$被内壁深处的酥麻唤醒，回头看清是$target$后红着脸又把头埋了回去：\"……是你？怎么趁我睡着从后面一直顶那种地方……\"",
+                "com_sex_P_doggy_force_WokenPlayerLike_2": "$self$刚醒的身子被针对弱点的刮蹭弄得一阵发软，羞赧地抓紧了身下的支点：\"呀……！等一下……还没清醒就被磨得没力气了……\"",
+                "com_sex_P_doggy_force_WokenPlayerLike_3": "迷糊中从那一点涌上来的热意让$self$漏出一声轻喘，她没有挣扎，只是小声抱怨：\"唔……至少等我醒透了再弄那里啊……\"",
+                "com_sex_P_doggy_force_WokenPlayerHostile_1": "$self$在敏感处被顶磨的刺激中惊醒，发觉自己正被从身后按着侵犯，吓得不敢动弹：\"我不乱动……我听话……求你轻点……\"",
+                "com_sex_P_doggy_force_WokenPlayerHostile_2": "$self$把脸埋进臂弯无声呜咽，在恐惧中放弃了挣扎：\"呜……只要不反抗，就不会动手打我了吧……\"",
+                "com_sex_P_doggy_force_WokenPlayerHostile_3": "刚睡醒的无力感加上弱点被反复碾压让$self$浑身发抖，只能咬着唇忍受身后的动作：\"……求你快点结束……\"",
+                "com_sex_P_doggy_force_Woken_1": "内壁深处那块软肉被反复顶磨的酥麻把$self$从沉睡中弄醒，她撑起手回头看见身后的$target$，惊喘出声：\"唔……？！你趁我睡着从后面顶哪里呢……\"",
+                "com_sex_P_doggy_force_Woken_2": "$self$迷迷糊糊地醒过来，发觉自己正被摆成跪趴的姿势专门摩擦敏感点，脸颊顿时红透：\"嗯……怪不得梦里觉得腰这么酸……\"",
+                "com_sex_P_doggy_force_Woken_3": "刚恢复意识就迎上一次针对弱点的重重刮蹭，$self$腰肢一软又趴了回去，声音还带着刚醒的沙哑：\"哈啊……至少等我醒过来再磨那里啊……\"",
+                "com_sex_P_doggy_force_RestrainedSucc_1": "双手被缚住无法往前躲闪，$self$上半身完全塌下去，每一次从后方的顶磨都精准碾在敏感软肉上：\"哈啊……绑着被追着那里顶……受不了了……\"",
+                "com_sex_P_doggy_force_RestrainedSucc_2": "动弹不得的处境让弱点被玩弄的快感成倍放大，$self$把滚烫的脸贴在身前，发出甜腻的呜咽：\"唔嗯……那里都被你磨烫了……慢一点……\"",
+                "com_sex_P_doggy_force_RestrainedSucc_3": "$self$扯动着腕间的束缚，臀部却在酥麻中不由自主地往后迎合：\"嗯……明明被绑着动不了，里面却自己把你吸紧了……\"",
+                "com_sex_P_doggy_force_SuccPerm_1": "$self$塌着腰，随着身后针对那块软肉的顶磨前后晃动，呼吸越来越急促：\"哈啊……好准……从后面每次都顶在那一点上……\"",
+                "com_sex_P_doggy_force_SuccPerm_2": "$self$侧过头，眼神湿润迷离地望向身后的$target$，主动往后送着腰迎合研磨：\"嗯……再重一些……这样蹭着里面好舒服……\"",
+                "com_sex_P_doggy_force_SuccPerm_3": "交合处的水声在身后连成一片，$self$双手撑不住发软的身子，整个人伏低下去，小穴一缩一缩地裹紧柱身：\"唔嗯……那里要被你磨化了……\"",
+                "com_sex_P_doggy_force_Succ_1": "$self$原本紧绷抗拒的腰背渐渐软了下去，压不住的喘息从唇间溢出：\"不……怎么会……被从后面追着那里磨得这么舒服……\"",
+                "com_sex_P_doggy_force_Succ_2": "$self$咬着下唇把红透的脸藏在臂弯里，臀部却不由自主地往后迎合着针对敏感点的抽插：\"……奇怪……明明不该顺着你的……\"",
+                "com_sex_P_doggy_force_Succ_3": "弱点被反复刮蹭的酥麻让$self$腿根发颤，内壁不受控地吸紧了体内的柱身：\"哈啊……别一直顶着那里……腰都直不起来了……\"",
+                "com_sex_P_doggy_force_SuccCase_1": "每一次从后方的抽插都狠狠蹭过那块敏感软肉，$self$塌着腰迎合着节奏，呼吸滚烫：\"哈啊……好准……每次都磨在最舒服的地方了……\"",
+                "com_sex_P_doggy_force_SuccCase_2": "$self$侧过脸湿润地回望$target$，内壁随着针对那一点的顶磨一缩一缩地吮住柱身：\"嗯……再重一点……从后面蹭那里实在太舒服了……\"",
+                "com_sex_P_doggy_force_SuccCase_3": "交合处的水声伴随着直窜腰眼儿的酥麻，$self$双臂发软地伏低身子，任由身后的人追着敏感点顶弄：\"唔嗯……那里要被你磨化了……\"",
+                "com_sex_P_doggy_force_RestrainedFail_1": "手臂被绑住没法调整姿势，$self$被身后一味硬顶内壁的动作磨得生疼：\"嘶……等一下，我躲不开，别光往一个地方硬撞！\"",
+                "com_sex_P_doggy_force_RestrainedFail_2": "$self$挣扎着想稳住重心，被固定住的腰臀却只能承受错位的刮蹭，委屈地偏过头喘息：\"唔……先把束缚解开，这样硬磨太难受了……\"",
+                "com_sex_P_doggy_force_RestrainedFail_3": "僵硬的跪趴受缚姿势让内壁被磨得火辣辣地痛，$self$眼角泛起泪花喊停：\"够了……角度不对，里面撞得好疼。\"",
+                "com_sex_P_doggy_force_FailPerm_1": "$self$皱着眉往前缩了缩腰，额角渗出冷汗：\"停一下……别光盯着一个地方硬磨，里面都磨痛了……\"",
+                "com_sex_P_doggy_force_FailPerm_2": "$self$有气无力地随着撞击被动晃动，膝盖和手腕都撑得发酸：\"……你只顾着自己在后面乱顶，位置都偏了。\"",
+                "com_sex_P_doggy_force_FailPerm_3": "杂乱的摩擦始终没对准舒服的点，$self$回头看了$target$一眼，轻轻叹了口气：\"唔……慢一点吧，这样干磨着不太舒服。\"",
+                "com_sex_P_doggy_force_Fail_1": "$self$痛苦地皱起眉，每次被从背后硬顶内壁都难受得想往前躲：\"快停下……把这东西拿出去……\"",
+                "com_sex_P_doggy_force_Fail_2": "$self$的身子随着粗暴的顶磨被动晃动，眼神空洞地盯着前方：\"随便你吧……反正你也只当我是发泄的工具。\"",
+                "com_sex_P_doggy_force_Fail_3": "同一处内壁被粗糙刮蹭的刺痛让$self$屈辱地咬紧牙关，指甲抠着身前，一声不吭地盼着结束。",
+                "com_sex_P_doggy_force_FailCase_1": "从背后硬往内壁同一处撞击的力道过猛，$self$被磨得火辣辣地发疼，连忙往前缩腰：\"嘶……等一下，别光盯着一个地方硬顶，里面都磨痛了！\"",
+                "com_sex_P_doggy_force_FailCase_2": "$self$撑着身子的手臂直打颤，错位的刮蹭让她难受得皱起眉：\"唔……位置偏了，这样干磨着一点都不舒服……\"",
+                "com_sex_P_doggy_force_FailCase_3": "杂乱的抽插始终没对准角度，$self$回头看向$target$叹了口气：\"先停一下，节奏全乱了，歇会儿再动吧。\"",
+                "com_sex_P_doggy_force_FE_Timestop_1": "血丝混着爱液从身后的结合处溢出，定格的$self$没有任何反应。",
+                "com_sex_P_doggy_force_FE_Timestop_2": "初次被侵入的小穴在停滞的时间里被反复摩擦深处软肉，$self$静止的眼眸毫无焦距。",
+                "com_sex_P_doggy_force_FE_Timestop_3": "$self$维持着跪趴的固定姿态，对体内敏感处正在发生的初体验一无所知。",
+                "com_sex_P_doggy_force_Timestop_1": "$self$保持着被定格的跪趴姿势，只有身体随着$target$从后方针对G点的顶磨被动摇晃，毫无知觉。",
+                "com_sex_P_doggy_force_Timestop_2": "$self$维持着时间冻结前的神情，对静止世界里正反复刮蹭敏感软肉的侵犯毫无反应。",
+                "com_sex_P_doggy_force_Timestop_3": "$self$的视线停在定格的一瞬，内壁被动地承接着反复摩擦，交合处不断渗出透明的湿液。",
+                "com_sex_P_doggy_force_TimestopCase_1": "$self$在凝固的时间里保持着跪趴的姿势，对身后在敏感软肉上反复顶磨的动作毫无知觉。",
+                "com_sex_P_doggy_force_TimestopCase_2": "结合处渗出的湿液停在定格的腿根上，$self$静止的眉眼没有半分波动。",
+                "com_sex_P_doggy_force_TimestopCase_3": "任凭身后的$target$如何压着腰刮蹭那一点，$self$被定住的身体都只是被动承受着冲击。",
+                "com_sex_P_doggy_force_FE_Sleep_1": "睡梦中的$self$眉头紧蹙着，初次被撑开的地方还在隐隐渗血。",
+                "com_sex_P_doggy_force_FE_Sleep_2": "$self$在沉睡中随着针对敏感软肉的顶磨无意识地轻哼，破瓜后的小穴在梦里本能地收紧。",
+                "com_sex_P_doggy_force_FE_Sleep_3": "熟睡的$self$趴在原处呼吸微促，对身后初次被反复摩擦G点的刺激毫无知觉。",
+                "com_sex_P_doggy_force_Sleep_1": "$self$发出均匀的呼吸声，对身后针对敏感点的顶磨毫无察觉，身子随着撞击的节奏被动地前后轻晃。",
+                "com_sex_P_doggy_force_Sleep_2": "$self$睡得很沉，偶尔因内壁软肉被蹭过而发出含糊的梦呓，温热的小穴在睡梦中本能地收缩着。",
+                "com_sex_P_doggy_force_Sleep_3": "$self$眉头轻蹙又舒展开，熟睡的身体在持续的研磨下溢出微热的鼻息，却没有醒来。",
+                "com_sex_P_doggy_force_SleepCase_1": "熟睡的$self$在身后针对敏感软肉的顶磨下被动地前后晃动，梦里溢出微促的鼻息，却没有醒来。",
+                "com_sex_P_doggy_force_SleepCase_2": "内壁在沉睡中随着每一次刮蹭本能地收缩包裹，$self$偶尔皱了皱眉，把脸埋在臂弯里。",
+                "com_sex_P_doggy_force_SleepCase_3": "交合处被磨出的湿液顺着熟睡的$self$腿根滑落，她的腰肢在梦里无意识地顺着研磨轻轻颤动。",
+                "com_sex_P_doggy_force_Fainted_1": "昏迷的$self$维持着被扶住腰的趴伏姿势，软绵绵的躯体随着身后针对深处软肉的抽插被动晃动。",
+                "com_sex_P_doggy_force_Fainted_2": "$self$依然人事不省，交合处溢出的湿液顺着大腿根滑下，沉寂的面容没有半点知觉。",
+                "com_sex_P_doggy_force_Fainted_3": "失去意识的$self$对内壁敏感处被反复顶磨毫无反应，只有腰臀在身后一次次撞击下发出闷响。",
+                "com_sex_P_doggy_force_FE_Partner_1": "\"别硬撑……受不了刺激的话我就放轻一点。\" 察觉到身前$target$每次被顶到软肉时的颤抖，$self$放缓了力道。",
+                "com_sex_P_doggy_force_FE_Partner_2": "$self$俯下身贴了贴$target$微颤的后背，放慢了研磨的节奏：\"还疼的话就说一声，不用勉强忍着。\"",
+                "com_sex_P_doggy_force_FE_Partner_3": "\"第一次就这么敏感，慢慢适应就好。\" $self$扶稳$target$的腰侧，克制着顶磨那一点的幅度。",
+                "com_sex_P_doggy_force_Refuse_WokenCase_1": "$self$被身后的动作惊醒，发觉$target$正贴在背后，猛地反手把人推开：\"你在干什么？！趁我没醒从后面乱来！\"",
+                "com_sex_P_doggy_force_Refuse_WokenCase_2": "刚醒过来的$self$慌忙往前爬开两步，转过身又羞又恼地瞪着$target$：\"快停下！谁准你趁我睡着碰我的！\"",
+                "com_sex_P_doggy_force_Refuse_WokenCase_3": "$self$惊醒后一把拍开腰后的手，拉过衣摆护住自己：\"疯了吗？离我远一点！\"",
+                "com_sex_P_doggy_force_Refuse_Perm_1": "$self$有些抗拒地并拢双腿，避开了$target$按过来的手：\"不要……今天腰好酸，经不起从后面一直顶那里。\"",
+                "com_sex_P_doggy_force_Refuse_Perm_2": "$self$难为情地转回身面向$target$，轻轻摇头：\"从后面被那样磨太刺激了，我今天不想做那个。\"",
+                "com_sex_P_doggy_force_Refuse_Perm_3": "$self$按住$target$搭在自己腰侧的手，叹了口气：\"现在实在没力气趴着撑那么久，饶了我吧。\"",
+                "com_sex_P_doggy_force_Refuse_Hostile_1": "$self$回头瞪着$target$，眼里满是厌恶：\"别用你的脏手碰我，恶心透了。\"",
+                "com_sex_P_doggy_force_Refuse_Hostile_2": "$self$猛地甩开$target$按在腰上的手，后退两步：\"你发什么疯？给我滚远点！\"",
+                "com_sex_P_doggy_force_Refuse_Hostile_3": "$self$板起脸转过身挡开$target$，声音冷硬：\"再敢从背后动手动脚，我绝不客气。\"",
+                "com_sex_P_doggy_force_Refuse_Case_1": "$self$并拢双腿往前挪开半步，避开$target$贴过来的动作：\"不行，我现在没心情从后面做这种事。\"",
+                "com_sex_P_doggy_force_Refuse_Case_2": "$self$转回身挡住$target$，摇了摇头：\"别闹了，今天腰酸得很，不想让你从后面折腾。\"",
+                "com_sex_P_doggy_force_Refuse_Case_3": "$self$拍开$target$扶在腰上的手，皱眉后退半步：\"停下，我没答应让你这样做。\"",
+                "com_sex_P_doggy_force_Ongoing_Player_1": "跪趴着被从后方追着敏感点顶磨的$self$抬头对上旁观的$target$的视线，羞得连忙把脸埋进臂弯：\"唔……别在前面盯着我看啊……\"",
+                "com_sex_P_doggy_force_Ongoing_Player_2": "身后腻人的水声与拍击声清晰可闻，$self$眼角泛红地望向旁观的$target$，声音被撞得断断续续：\"哈啊……你、你在旁边看够了没有……\"",
+                "com_sex_P_doggy_force_Ongoing_Player_3": "察觉到$target$正看着自己每次被顶到弱点时腰肢乱颤的模样，$self$难堪地咬住下唇，耳根一直红到了脖颈。"
+            }
+        }
+    }
+}

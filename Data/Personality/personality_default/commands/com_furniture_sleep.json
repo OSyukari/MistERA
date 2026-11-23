@@ -453,14 +453,17 @@
                     "template": "commandResult",
                     "variants": [
                         {
-                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
                             "variants": [
                                 {
+                                    "requireSelfOnly": true,
                                     "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "timestop"
-                                        ]
+                                        "requireSelfAction": false
                                     },
                                     "_comment": "自己（单人·时停中） → 自己 ｜ 接受",
                                     "responses": [
@@ -469,53 +472,6 @@
                                         "com_furniture_sleep_Result_Self_Timestop_3"
                                     ]
                                 },
-                                {
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "sleeping"
-                                        ]
-                                    },
-                                    "_comment": "自己（单人·睡眠中） → 自己 ｜ 接受",
-                                    "responses": [
-                                        "com_furniture_sleep_Result_Self_Sleep_1",
-                                        "com_furniture_sleep_Result_Self_Sleep_2",
-                                        "com_furniture_sleep_Result_Self_Sleep_3"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "unconscious"
-                                        ],
-                                        "excludeSelfTags": [
-                                            "sleeping"
-                                        ]
-                                    },
-                                    "_comment": "自己（单人·昏迷（非睡眠）） → 自己 ｜ 接受",
-                                    "responses": [
-                                        "com_furniture_sleep_Result_Self_Fainted_1",
-                                        "com_furniture_sleep_Result_Self_Fainted_2",
-                                        "com_furniture_sleep_Result_Self_Fainted_3"
-                                    ]
-                                }
-                            ],
-                            "_comment": "自己（单人） → 自己 ｜ 接受",
-                            "responses": [
-                                "com_furniture_sleep_Result_Self_1",
-                                "com_furniture_sleep_Result_Self_2",
-                                "com_furniture_sleep_Result_Self_3"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "timestop"
-                                ]
-                            },
-                            "variants": [
                                 {
                                     "requirement": {
                                         "targetBaseID": "PLAYER",
@@ -542,6 +498,18 @@
                                 ]
                             },
                             "variants": [
+                                {
+                                    "requireSelfOnly": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "自己（单人·睡眠中） → 自己 ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_sleep_Result_Self_Sleep_1",
+                                        "com_furniture_sleep_Result_Self_Sleep_2",
+                                        "com_furniture_sleep_Result_Self_Sleep_3"
+                                    ]
+                                },
                                 {
                                     "requirement": {
                                         "targetBaseID": "PLAYER",
@@ -572,6 +540,18 @@
                             },
                             "variants": [
                                 {
+                                    "requireSelfOnly": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "自己（单人·昏迷（非睡眠）） → 自己 ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_sleep_Result_Self_Fainted_1",
+                                        "com_furniture_sleep_Result_Self_Fainted_2",
+                                        "com_furniture_sleep_Result_Self_Fainted_3"
+                                    ]
+                                },
+                                {
                                     "requirement": {
                                         "targetBaseID": "PLAYER",
                                         "requireSelfAction": false
@@ -587,6 +567,16 @@
                             "_comment": "自己（unconscious）",
                             "responses": [
                                 "com_furniture_sleep_unconscious_1"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "variants": [],
+                            "_comment": "自己（单人） → 自己 ｜ 接受",
+                            "responses": [
+                                "com_furniture_sleep_Result_Self_1",
+                                "com_furniture_sleep_Result_Self_2",
+                                "com_furniture_sleep_Result_Self_3"
                             ]
                         },
                         {

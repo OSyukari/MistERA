@@ -1,0 +1,725 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_condom_onTarget_hand_Begin",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（时停中） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_condom_onTarget_hand_Begin_4",
+                                        "com_condom_onTarget_hand_Begin_5",
+                                        "com_condom_onTarget_hand_Begin_6"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（睡眠中） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_condom_onTarget_hand_Begin_1",
+                                        "com_condom_onTarget_hand_Begin_2",
+                                        "com_condom_onTarget_hand_Begin_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_condom_onTarget_hand_Begin_13",
+                                        "com_condom_onTarget_hand_Begin_14",
+                                        "com_condom_onTarget_hand_Begin_15"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_condom_onTarget_hand_Begin_10",
+                                        "com_condom_onTarget_hand_Begin_11",
+                                        "com_condom_onTarget_hand_Begin_12"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_condom_onTarget_hand_Begin_7",
+                                "com_condom_onTarget_hand_Begin_8",
+                                "com_condom_onTarget_hand_Begin_9"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（接受，任何状态）",
+                            "responses": [
+                                "com_condom_onTarget_hand_Begin_16",
+                                "com_condom_onTarget_hand_Begin_17",
+                                "com_condom_onTarget_hand_Begin_18"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_condom_onTarget_hand",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "template": "commandResult",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（时停中） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_condom_onTarget_hand_4",
+                                        "com_condom_onTarget_hand_5",
+                                        "com_condom_onTarget_hand_6"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（睡眠中） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_condom_onTarget_hand_13",
+                                        "com_condom_onTarget_hand_14",
+                                        "com_condom_onTarget_hand_15"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_condom_onTarget_hand_16",
+                                        "com_condom_onTarget_hand_17",
+                                        "com_condom_onTarget_hand_18"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受·判定成功",
+                                    "responses": [
+                                        "com_condom_onTarget_hand_7",
+                                        "com_condom_onTarget_hand_8",
+                                        "com_condom_onTarget_hand_9"
+                                    ],
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受·判定成功",
+                                            "responses": [
+                                                "com_condom_onTarget_hand_10",
+                                                "com_condom_onTarget_hand_11",
+                                                "com_condom_onTarget_hand_12"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "justWokenUp"
+                                                ]
+                                            },
+                                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
+                                            "responses": [
+                                                "com_condom_onTarget_hand_19",
+                                                "com_condom_onTarget_hand_20",
+                                                "com_condom_onTarget_hand_21"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessLTE": "Failure"
+                                    },
+                                    "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受·判定失败",
+                                    "responses": [
+                                        "com_condom_onTarget_hand_22",
+                                        "com_condom_onTarget_hand_23",
+                                        "com_condom_onTarget_hand_24"
+                                    ],
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受·判定失败",
+                                            "responses": [
+                                                "com_condom_onTarget_hand_1",
+                                                "com_condom_onTarget_hand_2",
+                                                "com_condom_onTarget_hand_3"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_condom_onTarget_hand_28",
+                                "com_condom_onTarget_hand_29",
+                                "com_condom_onTarget_hand_30"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（接受，任何状态）",
+                            "responses": [
+                                "com_condom_onTarget_hand_31",
+                                "com_condom_onTarget_hand_32",
+                                "com_condom_onTarget_hand_33"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_condom_onTarget_hand_Refuse",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "template": "commandRefuse",
+                    "variants": [
+                        {
+                            "requireRefusalContext": "ReceiverDeclined",
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "selfTags": [
+                                    "justWokenUp"
+                                ]
+                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
+                            "responses": [
+                                "com_condom_onTarget_hand_Refuse_1",
+                                "com_condom_onTarget_hand_Refuse_2",
+                                "com_condom_onTarget_hand_Refuse_3"
+                            ]
+                        },
+                        {
+                            "requireRefusalContext": "ReceiverDeclined",
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
+                            "responses": [
+                                "com_condom_onTarget_hand_Refuse_4",
+                                "com_condom_onTarget_hand_Refuse_5",
+                                "com_condom_onTarget_hand_Refuse_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_condom_onTarget_hand_Refuse_7",
+                                "com_condom_onTarget_hand_Refuse_8",
+                                "com_condom_onTarget_hand_Refuse_9"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_condom_onTarget_hand_Ongoing",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 ｜ 接受",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "受方 → 玩家 ｜ 接受",
+                                    "responses": [
+                                        "com_condom_onTarget_hand_Ongoing_1",
+                                        "com_condom_onTarget_hand_Ongoing_2",
+                                        "com_condom_onTarget_hand_Ongoing_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_condom_onTarget_hand_Ongoing_4",
+                                "com_condom_onTarget_hand_Ongoing_5",
+                                "com_condom_onTarget_hand_Ongoing_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（接受，任何状态）",
+                            "responses": [
+                                "com_condom_onTarget_hand_Ongoing_7",
+                                "com_condom_onTarget_hand_Ongoing_8",
+                                "com_condom_onTarget_hand_Ongoing_9"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_condom_onTarget_hand_Interrupt",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "template": "commandInterrupt",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_condom_onTarget_hand_Interrupt_4",
+                                "com_condom_onTarget_hand_Interrupt_5",
+                                "com_condom_onTarget_hand_Interrupt_6"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_condom_onTarget_hand_Interrupt_1",
+                                "com_condom_onTarget_hand_Interrupt_2",
+                                "com_condom_onTarget_hand_Interrupt_3"
+                            ],
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_condom_onTarget_hand_Join",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "template": "commandJoin",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_condom_onTarget_hand_Join_4",
+                                "com_condom_onTarget_hand_Join_5",
+                                "com_condom_onTarget_hand_Join_6"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_condom_onTarget_hand_Join_1",
+                                "com_condom_onTarget_hand_Join_2",
+                                "com_condom_onTarget_hand_Join_3"
+                            ],
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_condom_onTarget_hand_JoinFailed",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "template": "commandJoinFailed",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireSelfAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "受方 → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_condom_onTarget_hand_JoinFailed_1",
+                                "com_condom_onTarget_hand_JoinFailed_2",
+                                "com_condom_onTarget_hand_JoinFailed_3"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "施方 → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_condom_onTarget_hand_JoinFailed_4",
+                                "com_condom_onTarget_hand_JoinFailed_5",
+                                "com_condom_onTarget_hand_JoinFailed_6"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_condom_onTarget_hand_Tryjoin",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 尝试加入",
+                            "responses": [
+                                "com_condom_onTarget_hand_Tryjoin_1",
+                                "com_condom_onTarget_hand_Tryjoin_2",
+                                "com_condom_onTarget_hand_Tryjoin_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_condom_onTarget_hand_Tryjoin_4",
+                                "com_condom_onTarget_hand_Tryjoin_5",
+                                "com_condom_onTarget_hand_Tryjoin_6"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_condom_onTarget_hand_Joined",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入成功",
+                            "responses": [
+                                "com_condom_onTarget_hand_Joined_1",
+                                "com_condom_onTarget_hand_Joined_2",
+                                "com_condom_onTarget_hand_Joined_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_condom_onTarget_hand_Joined_4",
+                                "com_condom_onTarget_hand_Joined_5",
+                                "com_condom_onTarget_hand_Joined_6"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_condom_onTarget_hand_Join_Refused",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入被拒绝",
+                            "responses": [
+                                "com_condom_onTarget_hand_Join_Refused_1",
+                                "com_condom_onTarget_hand_Join_Refused_2",
+                                "com_condom_onTarget_hand_Join_Refused_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底",
+                            "responses": [
+                                "com_condom_onTarget_hand_Join_Refused_4",
+                                "com_condom_onTarget_hand_Join_Refused_5",
+                                "com_condom_onTarget_hand_Join_Refused_6"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ],
+        "zh-cn": {
+            "com_condom_onTarget_hand_Begin_1": "睡梦里的$self$似乎察觉到身侧的动静，含糊地咕哝了半声，翻了个微小的角度又沉回枕间。",
+            "com_condom_onTarget_hand_Begin_2": "$self$仍沉沉睡着，只是在冷意靠近时本能地往被褥里缩了半寸，眼皮动了动却没有睁开。",
+            "com_condom_onTarget_hand_Begin_3": "均匀的呼吸声没有被打断，$self$毫无防备地敞着身子，由着$target$的手靠过来。",
+            "com_condom_onTarget_hand_Begin_4": "时间静止在这一瞬，$self$保持着原本的站姿一动不动，连视线落点都没有偏移半分。",
+            "com_condom_onTarget_hand_Begin_5": "$self$的呼吸和动作全被定在原处，像一尊有体温的雕像般任由$target$靠近。",
+            "com_condom_onTarget_hand_Begin_6": "静止中的$self$对近在咫尺的触碰毫无所觉，表情仍停在时间冻结前的那一刻。",
+            "com_condom_onTarget_hand_Begin_7": "$self$低头看了眼$target$手里的东西，往后靠了靠让出位置：“行，你慢点弄，别扯着。”",
+            "com_condom_onTarget_hand_Begin_8": "“我自己也能戴，非要你动手啊。”$self$嘴上嘟囔了一句，还是配合地没再乱动。",
+            "com_condom_onTarget_hand_Begin_9": "$self$垂眼看着$target$凑近的手，呼吸放缓了些，安静等着橡胶贴上来的触感。",
+            "com_condom_onTarget_hand_Begin_10": "手腕被绑着躲不开，$self$只能偏过头盯紧$target$：“……动作轻点。”",
+            "com_condom_onTarget_hand_Begin_11": "束缚让$self$使不上力，她试着往后缩了缩腰，最终还是闷着声停在原地由着$target$动手。",
+            "com_condom_onTarget_hand_Begin_12": "“反正我也动不了，要戴就快点。”$self$仰起下巴避开视线，语气里带着几分认命般的别扭。",
+            "com_condom_onTarget_hand_Begin_13": "$self$仍处于昏迷中，四肢软软地垂在原地，对$target$的靠近没有给出任何回应。",
+            "com_condom_onTarget_hand_Begin_14": "胸口只剩下浅浅的起伏，$self$紧闭着眼，任由$target$拨开阻碍把东西凑近。",
+            "com_condom_onTarget_hand_Begin_15": "昏沉中的$self$毫无知觉，皮肤被微凉的指尖碰到时也只是僵直地停在原处。",
+            "com_condom_onTarget_hand_1": "没戴稳的套子滑落到半途，被绑着动弹不得的$self$恼火地抬起视线：“连这个都能弄砸，你是故意的吗？”",
+            "com_condom_onTarget_hand_2": "“别乱扯了，好痛……”$self$挣动了一下没能躲开，只能缩起腿根避开$target$笨拙的手指。",
+            "com_condom_onTarget_hand_3": "橡胶圈歪斜着卡在半截，$self$叹了口气：“算了，松开我让我自己弄，或者重拿一个。”",
+            "com_condom_onTarget_hand_4": "避孕套已经妥帖地包覆在原处，可时间仍未流动，$self$甚至不知道刚才发生了什么。",
+            "com_condom_onTarget_hand_5": "$self$依旧定格在最初的姿态里，脸上没有多余的表情，仿佛一切都还没开始。",
+            "com_condom_onTarget_hand_6": "静止的空气里没有半点声音，$self$连一根手指也没有偏移。",
+            "com_condom_onTarget_hand_7": "橡胶圈顺利滑到底端贴紧皮肤，$self$呼了口气，低头确认了眼：“手法还挺稳的嘛。”",
+            "com_condom_onTarget_hand_8": "$target$的手指抽离时带起一点微痒，$self$不自在地挪了挪腿：“……戴好了就把手拿开吧。”",
+            "com_condom_onTarget_hand_9": "“还挺合身的。”$self$感受着那层薄薄的束缚感，抬眼看向$target$，“那接下来呢？”",
+            "com_condom_onTarget_hand_10": "束缚下的$self$避无可避，只能任由那层橡胶一路裹紧到底，她咬住下唇没让自己哼出声。",
+            "com_condom_onTarget_hand_11": "“……好了没有？”套子贴合后带来的微凉让$self$绷紧了腰腹，被绑住的手腕跟着扯动了一下。",
+            "com_condom_onTarget_hand_12": "$self$偏过头喘了口气，等$target$抽手后才低声开口：“既然戴好了，就别磨磨蹭蹭的。”",
+            "com_condom_onTarget_hand_13": "被套上避孕套的$self$在睡梦里轻轻动了下腿根，嘴里发出几不可闻的鼻音，随即又安稳地睡了过去。",
+            "com_condom_onTarget_hand_14": "橡胶包裹带来的轻微紧绷感让$self$无意识地蜷起脚趾，呼吸重了两拍后很快恢复平稳。",
+            "com_condom_onTarget_hand_15": "$self$仍旧合着眼没有醒来，只有胸口随着浅眠的节奏缓缓起伏。",
+            "com_condom_onTarget_hand_16": "避孕套已经套好，昏迷中的$self$依旧没有转醒的迹象，身体软软地塌在原地。",
+            "com_condom_onTarget_hand_17": "$self$对贴合上去的异物感全无反应，睫毛静静垂在眼睑上，连手指都没有动弹一下。",
+            "com_condom_onTarget_hand_18": "失去意识的$self$既没有反抗也没有回应，只留下一片沉沉的安静。",
+            "com_condom_onTarget_hand_19": "$self$迷迷糊糊睁开眼，低头看清$target$正在做的事后顿了顿：“……趁人睡着弄这个，你倒是挺自觉。”",
+            "com_condom_onTarget_hand_20": "下身的触感把$self$彻底弄醒，她揉了揉眼睛没推开$target$：“算了，既然都在戴了……动作轻点。”",
+            "com_condom_onTarget_hand_21": "“唔……醒了醒了。”$self$支起半边身子看了眼套到一半的避孕套，含糊地应了声，“你继续吧。”",
+            "com_condom_onTarget_hand_22": "橡胶圈在半截打滑卡住了，$self$嘶了一声往后仰：“喂，扯到皮了……你到底会不会弄啊？”",
+            "com_condom_onTarget_hand_23": "“正反都套反了，卷不下去。”$self$无奈地低头看着卡在顶端的套子，拍了拍$target$的手背。",
+            "com_condom_onTarget_hand_24": "$target$忙活半天还是没能套妥当，$self$干脆自己伸手按住：“算了算了，别硬扯，弄坏了还得重拆。”",
+            "com_condom_onTarget_hand_Refuse_1": "$self$猛地惊醒过来，看清$target$的手正往自己身上凑，抬脚就往后缩：“你在干什么？！把手拿开！”",
+            "com_condom_onTarget_hand_Refuse_2": "“趁我睡着的时候动手动脚，像话吗？”$self$一把拍开$target$的手，拉过被子挡在身前。",
+            "com_condom_onTarget_hand_Refuse_3": "刚醒过来的$self$眼里还带着睡意，语气却冷了下来：“别碰我，出去。”",
+            "com_condom_onTarget_hand_Refuse_4": "$self$一把按住$target$伸过来的手腕，直接推开：“别碰，不需要你帮我戴。”",
+            "com_condom_onTarget_hand_Refuse_5": "“拿开，我自己会处理。”$self$往后退开一步拉出安全距离，脸色沉了下来。",
+            "com_condom_onTarget_hand_Refuse_6": "$self$侧身避开$target$的触碰，语气干脆：“我没答应让你碰这里。”",
+            "com_condom_onTarget_hand_Ongoing_1": "被另一个人帮着戴套本就够别扭了，$self$余光瞄到$target$还在旁边看着，索性扭过脸不去看那边。",
+            "com_condom_onTarget_hand_Ongoing_2": "“……看什么看。”$self$配合着施方调整姿势，冲站在一旁看热闹的$target$低声抱怨了句。",
+            "com_condom_onTarget_hand_Ongoing_3": "$self$耳根微微发烫，趁施方还在往下推橡胶圈时瞥了$target$一眼：“你就打算一直站在那儿当观众？”",
+            "com_condom_onTarget_hand_Ongoing_4": "$self$低头看了眼戴妥当的避孕套，抬头冲$target$点了下头：“谢了，弄得挺顺的。”",
+            "com_condom_onTarget_hand_Ongoing_5": "“总算戴好了。”$self$松开刚才一直紧绷的肩线，朝$target$靠近了些，“手没弄脏吧？”",
+            "com_condom_onTarget_hand_Ongoing_6": "$target$刚一收手，$self$便顺势伸手把边缘又抚平了一遍：“嗯，这样应该不会滑掉了。”",
+            "com_condom_onTarget_hand_Interrupt_1": "$self$手里还捏着避孕套边缘，听见动静后转头看向门口的$target$：“门没锁也不代表能直接闯进来吧？”",
+            "com_condom_onTarget_hand_Interrupt_2": "“先避一避，这边正忙着呢。”$self$稍微侧过身挡住受方，朝$target$抬了抬下巴示意出去。",
+            "com_condom_onTarget_hand_Interrupt_3": "被撞个正着让$self$手上一顿，她索性停下来看着$target$：“要加入还是出去，给句痛快话。”",
+            "com_condom_onTarget_hand_Interrupt_4": "视线突然和刚进来的$target$撞上，$self$下意识往后缩了缩腰：“……等、等一下，你怎么进来了！”",
+            "com_condom_onTarget_hand_Interrupt_5": "$self$脸颊一下子热了起来，伸手想去挡又顾忌着正在戴套的动作，只好冲$target$喊道：“先别看这边！”",
+            "com_condom_onTarget_hand_Interrupt_6": "“现在没空招呼你，”$self$硬着头皮迎上$target$的视线，语气有点僵，“有事出去等。”",
+            "com_condom_onTarget_hand_Join_1": "$self$往旁边让出些空位，朝$target$点点头：“行，你帮我扶稳这边，省得打滑。”",
+            "com_condom_onTarget_hand_Join_2": "“来得正好，这边正差点手。”$self$看了一眼$target$，手里没停地继续往下推着套子。",
+            "com_condom_onTarget_hand_Join_3": "见$target$靠过来，$self$顺势把备用的套子递过去一个：“自己找位置搭把手吧。”",
+            "com_condom_onTarget_hand_Join_4": "见$target$也凑了过来，$self$往旁边挪了半寸：“多一双手也好，你们俩别弄乱了就行。”",
+            "com_condom_onTarget_hand_Join_5": "“连你也要一起帮忙吗？”$self$看了$target$一眼，耳尖有点发红，还是顺从地没动。",
+            "com_condom_onTarget_hand_Join_6": "$self$抬眼迎上$target$，小声叮嘱了句：“轻点啊，别一前一后扯着我。”",
+            "com_condom_onTarget_hand_JoinFailed_1": "$self$朝$target$摆了摆手：“这边人够多了，你先在旁边等等吧。”",
+            "com_condom_onTarget_hand_JoinFailed_2": "“戴个套而已，用不着这么多人围着。”$self$看了$target$一眼，示意对方退开些。",
+            "com_condom_onTarget_hand_JoinFailed_3": "$self$稍微合拢了些腿，跟$target$说道：“这次插不进手，等下再说吧。”",
+            "com_condom_onTarget_hand_JoinFailed_4": "$self$没停下手上的活，只偏头冲$target$说了句：“这边腾不出手带人，你先看着。”",
+            "com_condom_onTarget_hand_JoinFailed_5": "“地方挤不下了，别往里凑。”$self$稳住动作，示意$target$往后站。",
+            "com_condom_onTarget_hand_JoinFailed_6": "$self$朝$target$摇摇头：“这步我一个人弄得过来，不用插手。”",
+            "com_condom_onTarget_hand_Tryjoin_1": "$self$走近几步，看了眼$target$正在帮人戴套的动作：“需要搭把手吗？我也来帮忙。”",
+            "com_condom_onTarget_hand_Tryjoin_2": "“看你们好像挺忙的，介意多我一个吗？”$self$停在$target$身旁，目光落在你们之间。",
+            "com_condom_onTarget_hand_Tryjoin_3": "$self$顺手摸过旁边备用的包装袋，冲$target$挑了下眉：“光你一个人弄多慢，算我一个？”",
+            "com_condom_onTarget_hand_Joined_1": "“那我就不客气了。”$self$在$target$身侧蹲下或靠过来，顺手接过了一半准备。",
+            "com_condom_onTarget_hand_Joined_2": "$self$朝$target$点了点头，跟着凑上前去：“行，我来帮你扶着点。”",
+            "com_condom_onTarget_hand_Joined_3": "“人多好办事嘛。”$self$站到顺手的位置，配合着$target$的动作一起动起手来。",
+            "com_condom_onTarget_hand_Join_Refused_1": "“行吧，那你们自己弄。”$self$把伸出去的手收回来，退开两步。",
+            "com_condom_onTarget_hand_Join_Refused_2": "$self$听罢也不勉强，站在原地抱起胳膊：“那我就在旁边看着好了。”",
+            "com_condom_onTarget_hand_Join_Refused_3": "“好心帮忙还不领情。”$self$小声嘀咕了一句，转身挪到不碍事的地方。",
+            "com_condom_onTarget_hand_Begin_16": "$self$捏住刚拆开的避孕套边缘，靠向$target$低声道：“别乱动，我帮你戴上。”",
+            "com_condom_onTarget_hand_Begin_17": "“稍微配合一下。”$self$指尖沾了点润滑液，顺势往$target$身前凑近。",
+            "com_condom_onTarget_hand_Begin_18": "$self$把包装袋搁到一旁，眼神落在$target$身上，稳稳展开橡胶圈准备动手。",
+            "com_condom_onTarget_hand_28": "$self$低头看了眼贴合好的避孕套，呼吸微微一滞，抬眼迎上$target$的视线。",
+            "com_condom_onTarget_hand_29": "“……弄好了？”$self$感受着那层薄薄的紧绷感，不自在地挪了挪腿根。",
+            "com_condom_onTarget_hand_30": "微凉的橡胶紧贴着敏感的皮肤，$self$抿了抿唇，没再多说什么。",
+            "com_condom_onTarget_hand_31": "$self$把避孕套一路推到底端抚平，确认贴合后才抽回手。",
+            "com_condom_onTarget_hand_32": "“好了，戴稳了。”$self$用纸巾擦了擦指尖，抬头看了$target$一眼。",
+            "com_condom_onTarget_hand_33": "隔着指尖能感觉到$target$的温度，$self$确认边缘没有卷边后才松开手。",
+            "com_condom_onTarget_hand_Refuse_7": "$self$直接推开面前的手，脸色沉了下来：“我不答应，别碰。”",
+            "com_condom_onTarget_hand_Refuse_8": "“这种事没得商量。”$self$往后退开一步拉出距离，语气干脆利落。",
+            "com_condom_onTarget_hand_Refuse_9": "$self$把避孕套搁回一旁，冷淡地盯着$target$：“自己解决，别指望我。”",
+            "com_condom_onTarget_hand_Ongoing_7": "$self$指尖稳稳捏着橡胶圈往下推，动作轻重有度，生怕扯到$target$的皮肤。",
+            "com_condom_onTarget_hand_Ongoing_8": "“快好了，别急。”$self$低头专注地抚平套壁上的褶皱，气息平稳。",
+            "com_condom_onTarget_hand_Ongoing_9": "$self$一边调整着避孕套的位置，一边留神看着$target$的反应。",
+            "com_condom_onTarget_hand_Tryjoin_4": "$self$走近几步，看了眼$target$正在帮人戴套的动作：“需要搭把手吗？我也来帮忙。”",
+            "com_condom_onTarget_hand_Tryjoin_5": "“看你们好像挺忙的，介意多我一个吗？”$self$停在$target$身旁，目光落在你们之间。",
+            "com_condom_onTarget_hand_Tryjoin_6": "$self$顺手摸过旁边备用的包装袋，冲$target$挑了下眉：“光你一个人弄多慢，算我一个？”",
+            "com_condom_onTarget_hand_Joined_4": "“那我就不客气了。”$self$在$target$身侧靠过来，顺手接过了一半准备。",
+            "com_condom_onTarget_hand_Joined_5": "$self$朝$target$点了点头，跟着凑上前去：“行，我来帮你扶着点。”",
+            "com_condom_onTarget_hand_Joined_6": "“人多好办事嘛。”$self$站到顺手的位置，配合着$target$的动作一起动起手来。",
+            "com_condom_onTarget_hand_Join_Refused_4": "“行吧，那你们自己弄。”$self$把伸出去的手收回来，退开两步。",
+            "com_condom_onTarget_hand_Join_Refused_5": "$self$听罢也不勉强，站在原地抱起胳膊：“那我就在旁边看着好了。”",
+            "com_condom_onTarget_hand_Join_Refused_6": "“好心帮忙还不领情。”$self$小声嘀咕了一句，转身挪到不碍事的地方。"
+        },
+        "en-us": {}
+    }
+}

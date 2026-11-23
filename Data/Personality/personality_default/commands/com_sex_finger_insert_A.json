@@ -13,7 +13,9 @@
                             "requireSelfDoer": true,
                             "_comment": "攻方 A指入 高潮",
                             "responses": [
-                                "com_sex_finger_insert_A_Climax_1"
+                                "com_sex_finger_insert_A_Climax_1",
+                                "com_sex_finger_insert_A_Climax_14",
+                                "com_sex_finger_insert_A_Climax_15"
                             ]
                         },
                         {
@@ -118,118 +120,183 @@
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "fingering",
-                                "spread_pussy",
-                                "spread_ass",
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
-                            "responses": [
-                                "com_sex_finger_insert_A_Begin_Sleep_1",
-                                "com_sex_finger_insert_A_Begin_Sleep_2"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "fingering",
-                                "spread_pussy",
-                                "spread_ass",
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "2.5.7 开始 睡眠中 独自A指入自慰 口上文（睡梦中自己开始）",
-                            "responses": [
-                                "com_sex_finger_insert_A_Begin_Self_Sleep_1",
-                                "com_sex_finger_insert_A_Begin_Self_Sleep_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
                                     "timestop"
                                 ]
                             },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "fingering",
-                                "spread_pussy",
-                                "spread_ass",
-                                "doll",
-                                "empty",
-                                "silence",
-                                "idle"
-                            ],
-                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
-                            "responses": [
-                                "com_sex_finger_insert_A_Begin_Timestop_1",
-                                "com_sex_finger_insert_A_Begin_Timestop_2"
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "fingering",
+                                        "spread_pussy",
+                                        "spread_ass",
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
+                                    "responses": [
+                                        "com_sex_finger_insert_A_Begin_Timestop_1",
+                                        "com_sex_finger_insert_A_Begin_Timestop_2",
+                                        "com_sex_finger_insert_A_Begin_Timestop_3"
+                                    ]
+                                }
                             ]
                         },
                         {
                             "requirement": {
-                                "requirePermission": true
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
                             },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "fingering",
-                                "spread_pussy",
-                                "spread_ass",
-                                "closed_eyes",
-                                "blush",
-                                "affectionate"
-                            ],
-                            "_comment": "2.1.1 开始被A指入 有允许 口上文",
-                            "responses": [
-                                "com_sex_finger_insert_A_Begin_1",
-                                "com_sex_finger_insert_A_Begin_2",
-                                "com_sex_finger_insert_A_Begin_3",
-                                "com_sex_finger_insert_A_Begin_4",
-                                "com_sex_finger_insert_A_Begin_5",
-                                "com_sex_finger_insert_A_Begin_6"
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "fingering",
+                                        "spread_pussy",
+                                        "spread_ass",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
+                                    "responses": [
+                                        "com_sex_finger_insert_A_Begin_Sleep_1",
+                                        "com_sex_finger_insert_A_Begin_Sleep_2",
+                                        "com_sex_finger_insert_A_Begin_Sleep_3"
+                                    ]
+                                },
+                                {
+                                    "requireSelfOnly": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "fingering",
+                                        "spread_pussy",
+                                        "spread_ass",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.5.7 开始 睡眠中 独自A指入自慰 口上文（睡梦中自己开始）",
+                                    "responses": [
+                                        "com_sex_finger_insert_A_Begin_Self_Sleep_1",
+                                        "com_sex_finger_insert_A_Begin_Self_Sleep_2"
+                                    ]
+                                }
                             ]
                         },
                         {
                             "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
                             },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "fingering",
-                                "spread_pussy",
-                                "spread_ass",
-                                "blush"
-                            ],
-                            "_comment": "2.2.1 开始被A指入 未允许 好意 口上文",
-                            "responses": [
-                                "com_sex_finger_insert_A_Begin_7",
-                                "com_sex_finger_insert_A_Begin_8",
-                                "com_sex_finger_insert_A_Begin_9",
-                                "com_sex_finger_insert_A_Begin_10",
-                                "com_sex_finger_insert_A_Begin_11",
-                                "com_sex_finger_insert_A_Begin_12"
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_sex_finger_insert_A_Begin_19",
+                                        "com_sex_finger_insert_A_Begin_20",
+                                        "com_sex_finger_insert_A_Begin_21"
+                                    ]
+                                }
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
+                            "_comment": "2.2.2 开始被A指入 未允许 敌意 口上文",
+                            "responses": [
+                                "com_sex_finger_insert_A_Begin_13",
+                                "com_sex_finger_insert_A_Begin_14",
+                                "com_sex_finger_insert_A_Begin_15",
+                                "com_sex_finger_insert_A_Begin_16",
+                                "com_sex_finger_insert_A_Begin_17",
+                                "com_sex_finger_insert_A_Begin_18"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_sex_finger_insert_A_Begin_22",
+                                        "com_sex_finger_insert_A_Begin_23",
+                                        "com_sex_finger_insert_A_Begin_24"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "fingering",
+                                        "spread_pussy",
+                                        "spread_ass",
+                                        "closed_eyes",
+                                        "blush",
+                                        "affectionate"
+                                    ],
+                                    "_comment": "2.1.1 开始被A指入 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_finger_insert_A_Begin_1",
+                                        "com_sex_finger_insert_A_Begin_2",
+                                        "com_sex_finger_insert_A_Begin_3",
+                                        "com_sex_finger_insert_A_Begin_4",
+                                        "com_sex_finger_insert_A_Begin_5",
+                                        "com_sex_finger_insert_A_Begin_6"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "fingering",
+                                        "spread_pussy",
+                                        "spread_ass",
+                                        "blush"
+                                    ],
+                                    "_comment": "2.2.1 开始被A指入 未允许 好意 口上文",
+                                    "responses": [
+                                        "com_sex_finger_insert_A_Begin_7",
+                                        "com_sex_finger_insert_A_Begin_8",
+                                        "com_sex_finger_insert_A_Begin_9",
+                                        "com_sex_finger_insert_A_Begin_10",
+                                        "com_sex_finger_insert_A_Begin_11",
+                                        "com_sex_finger_insert_A_Begin_12"
+                                    ]
+                                }
+                            ],
                             "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
@@ -240,50 +307,7 @@
                                 "trembling",
                                 "tearful",
                                 "pain"
-                            ],
-                            "_comment": "2.2.2 开始被A指入 未允许 敌意 口上文",
-                            "responses": [
-                                "com_sex_finger_insert_A_Begin_13",
-                                "com_sex_finger_insert_A_Begin_14",
-                                "com_sex_finger_insert_A_Begin_15",
-                                "com_sex_finger_insert_A_Begin_16",
-                                "com_sex_finger_insert_A_Begin_17",
-                                "com_sex_finger_insert_A_Begin_18"
                             ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requirePermission": true
-                            },
-                            "_comment": "2.5.3 开始独自A指入自慰 有允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
-                            "responses": [
-                                "com_sex_finger_insert_A_Begin_Self_M_1",
-                                "com_sex_finger_insert_A_Begin_Self_M_2"
-                            ],
-                            "requireMaster": true,
-                            "requireSelfNotMaster": true
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requirePermission": true
-                            },
-                            "_comment": "2.5.3 开始独自A指入自慰 有允许 口上文",
-                            "responses": [
-                                "com_sex_finger_insert_A_Begin_Self_1",
-                                "com_sex_finger_insert_A_Begin_Self_2"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "_comment": "2.5.4 开始独自A指入自慰 无允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
-                            "responses": [
-                                "com_sex_finger_insert_A_Begin_Self_M_3",
-                                "com_sex_finger_insert_A_Begin_Self_M_4"
-                            ],
-                            "requireMaster": true,
-                            "requireSelfNotMaster": true
                         },
                         {
                             "requireSelfOnly": true,
@@ -291,6 +315,52 @@
                             "responses": [
                                 "com_sex_finger_insert_A_Begin_Self_3",
                                 "com_sex_finger_insert_A_Begin_Self_4"
+                            ],
+                            "variants": [
+                                {
+                                    "requireMaster": true,
+                                    "requireSelfNotMaster": true,
+                                    "_comment": "2.5.4 开始独自A指入自慰 无允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
+                                    "responses": [
+                                        "com_sex_finger_insert_A_Begin_Self_M_3",
+                                        "com_sex_finger_insert_A_Begin_Self_M_4"
+                                    ],
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "_comment": "2.5.3 开始独自A指入自慰 有允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
+                                            "responses": [
+                                                "com_sex_finger_insert_A_Begin_Self_M_1",
+                                                "com_sex_finger_insert_A_Begin_Self_M_2"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "_comment": "2.5.3 开始独自A指入自慰 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_finger_insert_A_Begin_Self_1",
+                                        "com_sex_finger_insert_A_Begin_Self_2"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（接受，任何状态）",
+                            "responses": [
+                                "com_sex_finger_insert_A_Begin_25",
+                                "com_sex_finger_insert_A_Begin_26",
+                                "com_sex_finger_insert_A_Begin_27"
                             ]
                         }
                     ],
@@ -305,6 +375,231 @@
                         "nsfw"
                     ],
                     "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfOnly": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "fingering",
+                                        "spread_pussy",
+                                        "spread_ass",
+                                        "doll",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.5.6 时停中 独自A指入自慰 口上文",
+                                    "responses": [
+                                        "com_sex_finger_insert_A_Self_3",
+                                        "com_sex_finger_insert_A_Self_4"
+                                    ]
+                                },
+                                {
+                                    "requireSelfOnly": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "fingering",
+                                        "spread_pussy",
+                                        "spread_ass",
+                                        "doll",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.5.6 时停中 独自A指入自慰 口上文",
+                                    "responses": [
+                                        "com_sex_finger_insert_A_Self_3",
+                                        "com_sex_finger_insert_A_Self_4"
+                                    ]
+                                },
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "fingering",
+                                        "spread_pussy",
+                                        "spread_ass",
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.3.1 时停中 被A指入 口上文",
+                                    "responses": [
+                                        "com_sex_finger_insert_A_7",
+                                        "com_sex_finger_insert_A_8",
+                                        "com_sex_finger_insert_A_9",
+                                        "com_sex_finger_insert_A_10",
+                                        "com_sex_finger_insert_A_11",
+                                        "com_sex_finger_insert_A_12"
+                                    ]
+                                },
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "fingering",
+                                        "spread_pussy",
+                                        "spread_ass",
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.3.1 时停中 被A指入 口上文",
+                                    "responses": [
+                                        "com_sex_finger_insert_A_7",
+                                        "com_sex_finger_insert_A_8",
+                                        "com_sex_finger_insert_A_9",
+                                        "com_sex_finger_insert_A_10",
+                                        "com_sex_finger_insert_A_11",
+                                        "com_sex_finger_insert_A_12"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfOnly": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "fingering",
+                                        "spread_pussy",
+                                        "spread_ass",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.5.5 睡眠中 独自A指入自慰 口上文",
+                                    "responses": [
+                                        "com_sex_finger_insert_A_Self_1",
+                                        "com_sex_finger_insert_A_Self_2"
+                                    ]
+                                },
+                                {
+                                    "requireSelfOnly": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "fingering",
+                                        "spread_pussy",
+                                        "spread_ass",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.5.5 睡眠中 独自A指入自慰 口上文",
+                                    "responses": [
+                                        "com_sex_finger_insert_A_Self_1",
+                                        "com_sex_finger_insert_A_Self_2"
+                                    ]
+                                },
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "fingering",
+                                        "spread_pussy",
+                                        "spread_ass",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.3.2 睡眠中 被A指入 口上文",
+                                    "responses": [
+                                        "com_sex_finger_insert_A_1",
+                                        "com_sex_finger_insert_A_2",
+                                        "com_sex_finger_insert_A_3",
+                                        "com_sex_finger_insert_A_4",
+                                        "com_sex_finger_insert_A_5",
+                                        "com_sex_finger_insert_A_6"
+                                    ]
+                                },
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "fingering",
+                                        "spread_pussy",
+                                        "spread_ass",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.3.2 睡眠中 被A指入 口上文",
+                                    "responses": [
+                                        "com_sex_finger_insert_A_1",
+                                        "com_sex_finger_insert_A_2",
+                                        "com_sex_finger_insert_A_3",
+                                        "com_sex_finger_insert_A_4",
+                                        "com_sex_finger_insert_A_5",
+                                        "com_sex_finger_insert_A_6"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_sex_finger_insert_A_91",
+                                        "com_sex_finger_insert_A_92",
+                                        "com_sex_finger_insert_A_93"
+                                    ]
+                                }
+                            ]
+                        },
                         {
                             "requireSelfOnly": true,
                             "variants": [
@@ -363,50 +658,6 @@
                                     "variants": [
                                         {
                                             "requirement": {
-                                                "requireSelfAction": false,
-                                                "selfTags": [
-                                                    "sleeping"
-                                                ]
-                                            },
-                                            "extraSelfPortraitTags": [
-                                                "sex",
-                                                "doer",
-                                                "fingering",
-                                                "spread_pussy",
-                                                "spread_ass",
-                                                "sleeping",
-                                                "relaxed"
-                                            ],
-                                            "_comment": "2.5.5 睡眠中 独自A指入自慰 口上文",
-                                            "responses": [
-                                                "com_sex_finger_insert_A_Self_1",
-                                                "com_sex_finger_insert_A_Self_2"
-                                            ]
-                                        },
-                                        {
-                                            "requirement": {
-                                                "requireSelfAction": false,
-                                                "selfTags": [
-                                                    "timestop"
-                                                ]
-                                            },
-                                            "extraSelfPortraitTags": [
-                                                "sex",
-                                                "doer",
-                                                "fingering",
-                                                "spread_pussy",
-                                                "spread_ass",
-                                                "doll",
-                                                "idle"
-                                            ],
-                                            "_comment": "2.5.6 时停中 独自A指入自慰 口上文",
-                                            "responses": [
-                                                "com_sex_finger_insert_A_Self_3",
-                                                "com_sex_finger_insert_A_Self_4"
-                                            ]
-                                        },
-                                        {
-                                            "requirement": {
                                                 "requirePermission": true
                                             },
                                             "_comment": "2.5.9 独自A指入自慰 结果正面 有允许 口上文",
@@ -415,50 +666,6 @@
                                                 "com_sex_finger_insert_A_Self_10"
                                             ]
                                         }
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "sleeping"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "fingering",
-                                        "spread_pussy",
-                                        "spread_ass",
-                                        "sleeping",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.5.5 睡眠中 独自A指入自慰 口上文",
-                                    "responses": [
-                                        "com_sex_finger_insert_A_Self_1",
-                                        "com_sex_finger_insert_A_Self_2"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "timestop"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "fingering",
-                                        "spread_pussy",
-                                        "spread_ass",
-                                        "doll",
-                                        "idle"
-                                    ],
-                                    "_comment": "2.5.6 时停中 独自A指入自慰 口上文",
-                                    "responses": [
-                                        "com_sex_finger_insert_A_Self_3",
-                                        "com_sex_finger_insert_A_Self_4"
                                     ]
                                 },
                                 {
@@ -479,70 +686,203 @@
                             "_comment": "2.5.12 独自A指入自慰 尝试但结果负面 无允许 口上文"
                         },
                         {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_player only version": {
-                                "requirement": {
-                                    "targetBaseID": "PLAYER"
-                                }
-                            },
-                            "_strong com variant": {
-                                "requireCOMStrongVariant": true
-                            },
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 ｜ 接受",
+                            "responses": [
+                                "com_sex_finger_insert_A_100",
+                                "com_sex_finger_insert_A_101",
+                                "com_sex_finger_insert_A_102"
+                            ],
                             "variants": [
                                 {
                                     "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "sleeping"
-                                        ]
+                                        "requireEPSuccessGTE": "Success"
                                     },
+                                    "_player only version": {
+                                        "requirement": {
+                                            "targetBaseID": "PLAYER"
+                                        }
+                                    },
+                                    "_strong com variant": {
+                                        "requireCOMStrongVariant": true
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受·判定成功",
+                                            "responses": [
+                                                "com_sex_finger_insert_A_85",
+                                                "com_sex_finger_insert_A_86",
+                                                "com_sex_finger_insert_A_87"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "targetBaseID": "PLAYER",
+                                                "selfTags": [
+                                                    "justWokenUp"
+                                                ]
+                                            },
+                                            "_comment1": "玩家专用 刚睡醒时的 A指入口上文",
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "requirePermission": true
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "receiver",
+                                                        "fingering",
+                                                        "spread_pussy",
+                                                        "spread_ass",
+                                                        "sleep",
+                                                        "smile",
+                                                        "blush",
+                                                        "lazy"
+                                                    ],
+                                                    "_comment": "2.1.5  玩家专用的 刚睡醒时的 被A指入 有允许 口上文",
+                                                    "responses": [
+                                                        "com_sex_finger_insert_A_43",
+                                                        "com_sex_finger_insert_A_44",
+                                                        "com_sex_finger_insert_A_45",
+                                                        "com_sex_finger_insert_A_46",
+                                                        "com_sex_finger_insert_A_47",
+                                                        "com_sex_finger_insert_A_48"
+                                                    ]
+                                                },
+                                                {
+                                                    "requirement": {
+                                                        "requireSelfAttitudeGTE": "Like"
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "receiver",
+                                                        "fingering",
+                                                        "spread_pussy",
+                                                        "spread_ass",
+                                                        "sleep",
+                                                        "smile",
+                                                        "blush",
+                                                        "lazy"
+                                                    ],
+                                                    "_comment": "2.2.7 玩家专用的 刚睡醒时的 被A指入 无允许 好意 口上文",
+                                                    "responses": [
+                                                        "com_sex_finger_insert_A_49",
+                                                        "com_sex_finger_insert_A_50",
+                                                        "com_sex_finger_insert_A_51",
+                                                        "com_sex_finger_insert_A_52",
+                                                        "com_sex_finger_insert_A_53",
+                                                        "com_sex_finger_insert_A_54"
+                                                    ]
+                                                }
+                                            ],
+                                            "_comment": "2.2.8 玩家专用 刚睡醒时的 被A指入 无允许 敌意 口上文",
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "fingering",
+                                                "spread_pussy",
+                                                "spread_ass",
+                                                "scared",
+                                                "submissive"
+                                            ],
+                                            "responses": [
+                                                "com_sex_finger_insert_A_55",
+                                                "com_sex_finger_insert_A_56",
+                                                "com_sex_finger_insert_A_57",
+                                                "com_sex_finger_insert_A_58",
+                                                "com_sex_finger_insert_A_59",
+                                                "com_sex_finger_insert_A_60"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "justWokenUp"
+                                                ]
+                                            },
+                                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
+                                            "responses": [
+                                                "com_sex_finger_insert_A_94",
+                                                "com_sex_finger_insert_A_95",
+                                                "com_sex_finger_insert_A_96"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "fingering",
+                                                "spread_pussy",
+                                                "spread_ass",
+                                                "love",
+                                                "happy",
+                                                "relaxed"
+                                            ],
+                                            "_comment": "2.1.3 ($self$) 被A指入 结果正面 有允许 口上文",
+                                            "responses": [
+                                                "com_sex_finger_insert_A_61",
+                                                "com_sex_finger_insert_A_62",
+                                                "com_sex_finger_insert_A_63",
+                                                "com_sex_finger_insert_A_64",
+                                                "com_sex_finger_insert_A_65",
+                                                "com_sex_finger_insert_A_66"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.5 ($self$) 被A指入 结果正面 未允许 口上文",
                                     "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
                                         "fingering",
                                         "spread_pussy",
                                         "spread_ass",
-                                        "sleeping",
-                                        "relaxed"
+                                        "blush",
+                                        "shy",
+                                        "surprised",
+                                        "happy",
+                                        "aroused"
                                     ],
-                                    "_comment": "2.3.2 睡眠中 被A指入 口上文",
                                     "responses": [
-                                        "com_sex_finger_insert_A_1",
-                                        "com_sex_finger_insert_A_2",
-                                        "com_sex_finger_insert_A_3",
-                                        "com_sex_finger_insert_A_4",
-                                        "com_sex_finger_insert_A_5",
-                                        "com_sex_finger_insert_A_6"
+                                        "com_sex_finger_insert_A_67",
+                                        "com_sex_finger_insert_A_68",
+                                        "com_sex_finger_insert_A_69",
+                                        "com_sex_finger_insert_A_70",
+                                        "com_sex_finger_insert_A_71",
+                                        "com_sex_finger_insert_A_72"
                                     ]
                                 },
                                 {
                                     "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "timestop"
-                                        ]
+                                        "requireEPSuccessLTE": "Failure"
                                     },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "fingering",
-                                        "spread_pussy",
-                                        "spread_ass",
-                                        "doll",
-                                        "empty",
-                                        "silence",
-                                        "idle"
-                                    ],
-                                    "_comment": "2.3.1 时停中 被A指入 口上文",
+                                    "_comment": "受方 ｜ 接受·判定失败",
                                     "responses": [
-                                        "com_sex_finger_insert_A_7",
-                                        "com_sex_finger_insert_A_8",
-                                        "com_sex_finger_insert_A_9",
-                                        "com_sex_finger_insert_A_10",
-                                        "com_sex_finger_insert_A_11",
-                                        "com_sex_finger_insert_A_12"
+                                        "com_sex_finger_insert_A_97",
+                                        "com_sex_finger_insert_A_98",
+                                        "com_sex_finger_insert_A_99"
+                                    ],
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受·判定失败",
+                                            "responses": [
+                                                "com_sex_finger_insert_A_88",
+                                                "com_sex_finger_insert_A_89",
+                                                "com_sex_finger_insert_A_90"
+                                            ]
+                                        }
                                     ]
                                 },
                                 {
@@ -626,182 +966,17 @@
                                 },
                                 {
                                     "requirement": {
-                                        "requirePermission": true
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
                                     },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "fingering",
-                                        "spread_pussy",
-                                        "spread_ass",
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.1.3 ($self$) 被A指入 结果正面 有允许 口上文",
+                                    "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
                                     "responses": [
-                                        "com_sex_finger_insert_A_61",
-                                        "com_sex_finger_insert_A_62",
-                                        "com_sex_finger_insert_A_63",
-                                        "com_sex_finger_insert_A_64",
-                                        "com_sex_finger_insert_A_65",
-                                        "com_sex_finger_insert_A_66"
+                                        "com_sex_finger_insert_A_94",
+                                        "com_sex_finger_insert_A_95",
+                                        "com_sex_finger_insert_A_96"
                                     ]
                                 }
-                            ],
-                            "_comment": "2.2.5 ($self$) 被A指入 结果正面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "fingering",
-                                "spread_pussy",
-                                "spread_ass",
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": [
-                                "com_sex_finger_insert_A_67",
-                                "com_sex_finger_insert_A_68",
-                                "com_sex_finger_insert_A_69",
-                                "com_sex_finger_insert_A_70",
-                                "com_sex_finger_insert_A_71",
-                                "com_sex_finger_insert_A_72"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "fingering",
-                                "spread_pussy",
-                                "spread_ass",
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "2.3.2 睡眠中 被A指入 口上文",
-                            "responses": [
-                                "com_sex_finger_insert_A_1",
-                                "com_sex_finger_insert_A_2",
-                                "com_sex_finger_insert_A_3",
-                                "com_sex_finger_insert_A_4",
-                                "com_sex_finger_insert_A_5",
-                                "com_sex_finger_insert_A_6"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "timestop"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "fingering",
-                                "spread_pussy",
-                                "spread_ass",
-                                "doll",
-                                "empty",
-                                "silence",
-                                "idle"
-                            ],
-                            "_comment": "2.3.1 时停中 被A指入 口上文",
-                            "responses": [
-                                "com_sex_finger_insert_A_7",
-                                "com_sex_finger_insert_A_8",
-                                "com_sex_finger_insert_A_9",
-                                "com_sex_finger_insert_A_10",
-                                "com_sex_finger_insert_A_11",
-                                "com_sex_finger_insert_A_12"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "targetBaseID": "PLAYER",
-                                "selfTags": [
-                                    "justWokenUp"
-                                ]
-                            },
-                            "_comment1": "玩家专用 刚睡醒时的 A指入口上文",
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "fingering",
-                                        "spread_pussy",
-                                        "spread_ass",
-                                        "sleep",
-                                        "smile",
-                                        "blush",
-                                        "lazy"
-                                    ],
-                                    "_comment": "2.1.5  玩家专用的 刚睡醒时的 被A指入 有允许 口上文",
-                                    "responses": [
-                                        "com_sex_finger_insert_A_43",
-                                        "com_sex_finger_insert_A_44",
-                                        "com_sex_finger_insert_A_45",
-                                        "com_sex_finger_insert_A_46",
-                                        "com_sex_finger_insert_A_47",
-                                        "com_sex_finger_insert_A_48"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAttitudeGTE": "Like"
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "fingering",
-                                        "spread_pussy",
-                                        "spread_ass",
-                                        "sleep",
-                                        "smile",
-                                        "blush",
-                                        "lazy"
-                                    ],
-                                    "_comment": "2.2.7 玩家专用的 刚睡醒时的 被A指入 无允许 好意 口上文",
-                                    "responses": [
-                                        "com_sex_finger_insert_A_49",
-                                        "com_sex_finger_insert_A_50",
-                                        "com_sex_finger_insert_A_51",
-                                        "com_sex_finger_insert_A_52",
-                                        "com_sex_finger_insert_A_53",
-                                        "com_sex_finger_insert_A_54"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.8 玩家专用 刚睡醒时的 被A指入 无允许 敌意 口上文",
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "fingering",
-                                "spread_pussy",
-                                "spread_ass",
-                                "scared",
-                                "submissive"
-                            ],
-                            "responses": [
-                                "com_sex_finger_insert_A_55",
-                                "com_sex_finger_insert_A_56",
-                                "com_sex_finger_insert_A_57",
-                                "com_sex_finger_insert_A_58",
-                                "com_sex_finger_insert_A_59",
-                                "com_sex_finger_insert_A_60"
                             ]
                         },
                         {
@@ -887,7 +1062,8 @@
                             "useActiveTags": false,
                             "responses": [
                                 "com_sex_finger_insert_A_Refuse_Receiver_1",
-                                "com_sex_finger_insert_A_Refuse_Receiver_2"
+                                "com_sex_finger_insert_A_Refuse_Receiver_2",
+                                "com_sex_finger_insert_A_Refuse_Receiver_3"
                             ]
                         },
                         {
@@ -1047,13 +1223,60 @@
                     ],
                     "template": "commandRefuse"
                 }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_finger_insert_A_Ongoing",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 对方 ｜ 接受",
+                            "responses": [
+                                "com_sex_finger_insert_A_Ongoing_4",
+                                "com_sex_finger_insert_A_Ongoing_5",
+                                "com_sex_finger_insert_A_Ongoing_6"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "对方是玩家",
+                                    "responses": [
+                                        "com_sex_finger_insert_A_Ongoing_1",
+                                        "com_sex_finger_insert_A_Ongoing_2",
+                                        "com_sex_finger_insert_A_Ongoing_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底（接受，任何状态）",
+                            "responses": [
+                                "com_sex_finger_insert_A_Ongoing_7",
+                                "com_sex_finger_insert_A_Ongoing_8",
+                                "com_sex_finger_insert_A_Ongoing_9"
+                            ]
+                        }
+                    ]
+                }
             }
         ]
     },
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "com_sex_finger_insert_A_Climax_1": "$self$的手指在$target$的菊穴里抽送着，自己的呼吸却先乱了，腿根蹭来蹭去，忽然抖着泄了。\n\"唔……明明插的是你……我怎么会先到……\"",
+                "com_sex_finger_insert_A_Climax_1": "$self$的手指在$target$的菊穴里抽送着，自己的呼吸却先乱了，腿根蹭来蹭去，忽然抖着泄了：“唔……明明插的是你……我怎么会先到……”",
                 "com_sex_finger_insert_A_Climax_8": "$self$绝望地摇头，菊穴却把手指咬得紧，被顶出了最淫荡的反应。\n\"不要……明明只是后面……为什么会……啊啊！！\"",
                 "com_sex_finger_insert_A_Climax_9": "$self$咬着手背想压住声音，穴肉却痉挛着泄了，小穴跟着淌水。\n\"呜呜……被手指弄到……太丢脸了……！\"",
                 "com_sex_finger_insert_A_Climax_10": "$self$的眼泪甩出去，腿却夹着$target$的手抖个不停。\n\"骗子……说好只碰外面……啊啊……去了……！\"",
@@ -1172,7 +1395,7 @@
                 "com_sex_finger_insert_A_64": "$self$的腿根打着颤，前面的阴蒂被指根蹭得发红。\n\"连前面都……被蹭到了……哈啊……♡\"",
                 "com_sex_finger_insert_A_65": "$self$回头索吻，穴肉收缩着绞紧手指。\n\"唔……边动边亲我……嗯……♡\"",
                 "com_sex_finger_insert_A_66": "$self$舒服得脚趾蜷紧，腰软得直往下塌。\n\"再加……再加根手指也行……哈啊……♡\"",
-                "com_sex_finger_insert_A_79": "$self$抓着身下能抓的东西，疼得指节发白。\n\"好痛……拔出去……求你了！\"",
+                "com_sex_finger_insert_A_79": "$self$抓着身下能抓的东西，疼得手背绷紧：“好痛……拔出去……求你了！”",
                 "com_sex_finger_insert_A_80": "$self$咬着牙忍受干涩的摩擦，眼泪直打转。\n\"还没结束吗……难受死了……\"",
                 "com_sex_finger_insert_A_81": "$self$僵着身子数着时间，穴肉毫无反应。\n\"……你弄你的，别指望我出声。\"",
                 "com_sex_finger_insert_A_82": "$self$嫌恶地想合拢腿，被膝盖抵住分不开。\n\"恶心……快点拿出去……\"",
@@ -1208,14 +1431,55 @@
                 "com_sex_finger_insert_A_Self_M_16": "$self$的手指停在穴口，僵着不肯再动。\n\"够了没有……够了吧……我不想再插了。\"",
                 "com_sex_finger_insert_A_Self_15": "$self$机械地抽送着手指，菊穴干涩得发疼。\n\"……没感觉，还疼。\"",
                 "com_sex_finger_insert_A_Self_16": "$self$把手指从菊穴抽出来，懒得再动。\n\"……不插了，没感觉。\"",
-                "com_sex_finger_insert_A_Begin_Sleep_1": "$target$掰开她熟睡中松软的臀瓣，手指挤进菊穴缓缓没入，$self$在梦里皱紧了眉，腿根绷了绷，却没醒。",
+                "com_sex_finger_insert_A_Begin_Sleep_1": "手指挤进菊穴缓缓没入时，熟睡中的$self$在梦里不安地拧了下肩，腿根绷了绷，却没醒。",
                 "com_sex_finger_insert_A_Begin_Sleep_2": "指尖按到深处的软肉时$self$的腰轻轻抖了下，穴肉含住指根本能地咬紧，她喉咙里哼出细碎的鼻音，人还沉在梦乡。",
                 "com_sex_finger_insert_A_Begin_Self_Sleep_1": "$self$在睡梦中翻了个身，手无意识地探进臀缝，指尖抵着菊穴一点点挤了进去，呼吸也跟着变沉。",
                 "com_sex_finger_insert_A_Begin_Self_Sleep_2": "梦里不知想到了什么，$self$的手指在自己的后穴口进进退退，喉咙里溢出细碎的哼声，始终没醒。",
-                "com_sex_finger_insert_A_Begin_Timestop_1": "$target$的手指挤进她定格的菊穴缓缓没入，穴肉含住指根不受控地咬紧，$self$的臀瓣被掰开着也没颤。",
-                "com_sex_finger_insert_A_Begin_Timestop_2": "指尖按到深处软肉时穴口缩了缩，抽出时带出细微的水声，$self$的手还维持着摊开的姿势。",
-                "com_sex_finger_insert_A_Refuse_Receiver_1": "$self$冷着脸推开$target$的手。\n\"别碰这里，我现在没心情。\"",
-                "com_sex_finger_insert_A_Refuse_Receiver_2": "$self$往后退开，避开了$target$的动作。\n\"不要……别这样碰我。\""
+                "com_sex_finger_insert_A_Begin_Timestop_1": "$target$的手指挤进她定格的菊穴缓缓没入，穴肉含住指根不受控地咬紧，$self$的臀瓣没有半点躲闪。",
+                "com_sex_finger_insert_A_Begin_Timestop_2": "指尖按到深处软肉时穴口缩了缩，$self$的手却还维持着时间冻结前的姿势，一动不动。",
+                "com_sex_finger_insert_A_Refuse_Receiver_1": "$self$冷着脸推开$target$的手：“别碰这里，我现在没心情。”",
+                "com_sex_finger_insert_A_Refuse_Receiver_2": "$self$往后退开，避开了$target$的动作：“不要……别这样碰我。”",
+                "com_sex_finger_insert_A_Begin_Sleep_3": "$self$仍沉沉睡着，后穴在异物侵入下微微收缩，呼吸稍沉了半拍又很快恢复平稳。",
+                "com_sex_finger_insert_A_Begin_Timestop_3": "时间静止在这一瞬，$self$保持着原本的神情，对身后被指尖钻入的触感一无所知。",
+                "com_sex_finger_insert_A_Climax_14": "指节还在$target$紧致的后穴里进出，听着对方的喘息，$self$小腹一阵收紧竟跟着迎来了高潮：“哈啊……太犯规了……”",
+                "com_sex_finger_insert_A_Climax_15": "$self$没入$target$身后的手指猛地停住，膝盖一软撑在身侧，急促喘息着泄了出来。",
+                "com_sex_finger_insert_A_Refuse_Receiver_3": "“把手拿开，别想往后面伸。”$self$侧过身挡在身前，语气硬得没有余地。",
+                "com_sex_finger_insert_A_Ongoing_1": "施方的手指还在她的后穴里抽送，$self$余光瞄到$target$站在一旁看着，窘得把脸埋低：“……别盯着看。”",
+                "com_sex_finger_insert_A_Ongoing_2": "“看够了没有……”$self$忍着身后传来的异样胀感，顶着$target$的视线咬紧了下唇。",
+                "com_sex_finger_insert_A_Ongoing_3": "被人当众用手指插着后面，$self$耳根烧得发烫，喘着气不敢再往$target$那边看。",
+                "com_sex_finger_insert_A_Begin_19": "昏迷中的$self$毫无知觉，手指抵开后穴挤入时，四肢仍软软地垂在原地。",
+                "com_sex_finger_insert_A_Begin_20": "$self$紧闭着眼没有任何反应，只有胸口还维持着浅浅的起伏，任由$target$的手指缓缓没入。",
+                "com_sex_finger_insert_A_Begin_21": "失去意识的$self$既没有躲闪也没有出声，安静得近乎沉寂。",
+                "com_sex_finger_insert_A_Begin_22": "手腕被绑着挡不住身后，$self$在指尖顶开后穴时猛地绷紧腰：“……慢点、好胀！”",
+                "com_sex_finger_insert_A_Begin_23": "“被绑着还要被手指捅后面……”$self$咬住下唇偏过头，腕间的束缚跟着勒紧。",
+                "com_sex_finger_insert_A_Begin_24": "束缚让$self$无处可躲，她只能收紧臀肉，硬着头皮承受指节一点点挤进来。",
+                "com_sex_finger_insert_A_85": "没法用手去挡，指腹在后穴深处按揉带来的麻意直往小腹窜，$self$喘得断断续续：“……别老按那个地方……”",
+                "com_sex_finger_insert_A_86": "$self$扯动着腕上的束缚仰起脖颈，后穴含着指根越发软热：“唔……这样顶着太犯规了……”",
+                "com_sex_finger_insert_A_87": "躲不开也推不掉，$self$只能咬紧嘴唇忍住漏出来的轻哼，腿根阵阵发软。",
+                "com_sex_finger_insert_A_88": "被绑着躲不开，干涩的菊穴被手指硬往里顶得生疼，$self$吸了口气：“嘶……拔出去，痛死了！”",
+                "com_sex_finger_insert_A_89": "“指甲刮到里面了……”$self$往后缩着腰，手腕上的绳索绷得紧紧的。",
+                "com_sex_finger_insert_A_90": "粗鲁的抽插全无半点快感，$self$别开脸忍着气：“不会弄就别硬塞。”",
+                "com_sex_finger_insert_A_91": "昏迷中的$self$依旧没有转醒，被手指插得微微张开的菊穴只剩下本能的收缩。",
+                "com_sex_finger_insert_A_92": "$self$毫无反应地躺着，连指尖都没动一下，任由$target$的手指在后穴里进出。",
+                "com_sex_finger_insert_A_93": "失去意识的$self$没有发出任何声响，对身后的抽送一无所知。",
+                "com_sex_finger_insert_A_94": "身后传来的胀意把$self$弄醒，她迷糊地睁开眼看了看$target$，最终没推开：“……趁人睡着捅后面啊？”",
+                "com_sex_finger_insert_A_95": "$self$揉了揉眼睛清醒过来，察觉后穴已经含着手指，耳尖泛红：“……慢点动，别太深。”",
+                "com_sex_finger_insert_A_96": "“……唔、难怪觉得后面又胀又麻。”$self$声音还带着睡意，趴回原处由着$target$继续。",
+                "com_sex_finger_insert_A_Begin_25": "$self$微微吸了口气，没有阻止接下来的动作。",
+                "com_sex_finger_insert_A_Begin_26": "动作刚一开始，$self$便配合着放松了些许，没有多说什么。",
+                "com_sex_finger_insert_A_Begin_27": "$self$目光微垂，任由眼前的触碰顺势展开。",
+                "com_sex_finger_insert_A_97": "生硬的顶弄让后穴一阵发疼，$self$倒抽口冷气：“唔……别往里硬戳！”",
+                "com_sex_finger_insert_A_98": "$self$被毫无章法的抽插弄得有些难受，拧着眉往后缩开。",
+                "com_sex_finger_insert_A_99": "异物感混着隐隐的刺痛传来，$self$按住$target$的手腕：“……太粗鲁了。”",
+                "com_sex_finger_insert_A_100": "手指终于退了出去，$self$撑着身体轻喘了半声，后穴仍残留着空落落的麻意。",
+                "com_sex_finger_insert_A_101": "$self$缓缓吐出一口浊气，垂下眼帘平复着方才的紧绷。",
+                "com_sex_finger_insert_A_102": "抽插暂告一段落，$self$略微调整了一下站姿，没有再开口。",
+                "com_sex_finger_insert_A_Ongoing_4": "手指还在后穴里缓缓抽动着，$self$绷紧腰背，连呼吸都变得有些艰难。",
+                "com_sex_finger_insert_A_Ongoing_5": "$self$抓紧身旁的支撑，忍着后穴传来的异物感与阵阵酸麻。",
+                "com_sex_finger_insert_A_Ongoing_6": "深处被不断顶弄的触感让$self$耳根发烫，只能死死咬住嘴唇。",
+                "com_sex_finger_insert_A_Ongoing_7": "动作仍在继续，$self$保持着此刻的姿势没有多动。",
+                "com_sex_finger_insert_A_Ongoing_8": "$self$微微垂下视线，顺着当前的节奏安静地待在原地。",
+                "com_sex_finger_insert_A_Ongoing_9": "指间的抽插没有停下，$self$一时间没有发出别的声响。"
             }
         }
     }

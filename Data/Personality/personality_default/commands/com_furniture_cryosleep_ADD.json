@@ -14,7 +14,11 @@
                                 "com_furniture_cryosleep_ADD_Join_1",
                                 "com_furniture_cryosleep_ADD_Join_2",
                                 "com_furniture_cryosleep_ADD_Join_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
                         },
                         {
                             "requireSelfReceiver": true,
@@ -23,7 +27,11 @@
                                 "com_furniture_cryosleep_ADD_Join_4",
                                 "com_furniture_cryosleep_ADD_Join_5",
                                 "com_furniture_cryosleep_ADD_Join_6"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "allowRecording": true
+                            }
                         }
                     ]
                 }
@@ -44,6 +52,19 @@
                                 "com_furniture_cryosleep_ADD_Joined_2",
                                 "com_furniture_cryosleep_ADD_Joined_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_cryosleep_ADD_Joined_Fallback_1",
+                                "com_furniture_cryosleep_ADD_Joined_Fallback_2"
+                            ]
                         }
                     ]
                 }
@@ -55,13 +76,16 @@
                     "template": "commandResult",
                     "variants": [
                         {
-                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "selfTags": [
+                                    "sleeping"
+                                ],
+                                "requireSelfAction": false
+                            },
                             "variants": [
                                 {
+                                    "requireSelfReceiver": true,
                                     "requirement": {
-                                        "selfTags": [
-                                            "sleeping"
-                                        ],
                                         "requireSelfAction": false
                                     },
                                     "_comment": "受方（睡眠中） → 对方（玩家或 NPC） ｜ 接受",
@@ -70,7 +94,37 @@
                                         "com_furniture_cryosleep_ADD_2",
                                         "com_furniture_cryosleep_ADD_3"
                                     ]
-                                },
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ],
+                                "requireSelfAction": false
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_cryosleep_ADD_10",
+                                        "com_furniture_cryosleep_ADD_11",
+                                        "com_furniture_cryosleep_ADD_12"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
                                 {
                                     "requirement": {
                                         "selfTags": [
@@ -83,29 +137,24 @@
                                         "com_furniture_cryosleep_ADD_8",
                                         "com_furniture_cryosleep_ADD_9"
                                     ]
-                                },
-                                {
-                                    "requirement": {
-                                        "selfTags": [
-                                            "unconscious"
-                                        ],
-                                        "excludeSelfTags": [
-                                            "sleeping"
-                                        ],
-                                        "requireSelfAction": false
-                                    },
-                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
-                                    "responses": [
-                                        "com_furniture_cryosleep_ADD_10",
-                                        "com_furniture_cryosleep_ADD_11",
-                                        "com_furniture_cryosleep_ADD_12"
-                                    ]
                                 }
                             ],
                             "responses": [
                                 "com_furniture_cryosleep_ADD_4",
                                 "com_furniture_cryosleep_ADD_5",
                                 "com_furniture_cryosleep_ADD_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_cryosleep_ADD_Fallback_1",
+                                "com_furniture_cryosleep_ADD_Fallback_2"
                             ]
                         }
                     ]
@@ -118,13 +167,16 @@
                     "template": "commandAct",
                     "variants": [
                         {
-                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "selfTags": [
+                                    "sleeping"
+                                ],
+                                "requireSelfAction": false
+                            },
                             "variants": [
                                 {
+                                    "requireSelfReceiver": true,
                                     "requirement": {
-                                        "selfTags": [
-                                            "sleeping"
-                                        ],
                                         "requireSelfAction": false
                                     },
                                     "_comment": "受方（睡眠中） → 对方（玩家或 NPC） ｜ 接受",
@@ -133,15 +185,23 @@
                                         "com_furniture_cryosleep_ADD_Begin_2",
                                         "com_furniture_cryosleep_ADD_Begin_3"
                                     ]
-                                },
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ],
+                                "requireSelfAction": false
+                            },
+                            "variants": [
                                 {
+                                    "requireSelfReceiver": true,
                                     "requirement": {
-                                        "selfTags": [
-                                            "unconscious"
-                                        ],
-                                        "excludeSelfTags": [
-                                            "sleeping"
-                                        ],
                                         "requireSelfAction": false
                                     },
                                     "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
@@ -151,11 +211,27 @@
                                         "com_furniture_cryosleep_ADD_Begin_6"
                                     ]
                                 }
-                            ],
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [],
                             "responses": [
                                 "com_furniture_cryosleep_ADD_Begin_7",
                                 "com_furniture_cryosleep_ADD_Begin_8",
                                 "com_furniture_cryosleep_ADD_Begin_9"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_cryosleep_ADD_Begin_Fallback_1",
+                                "com_furniture_cryosleep_ADD_Begin_Fallback_2"
                             ]
                         }
                     ]
@@ -184,6 +260,18 @@
                             ],
                             "responses": [
                                 "com_furniture_cryosleep_ADD_Ongoing_Fallback_1"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_cryosleep_ADD_Ongoing_Fallback_2",
+                                "com_furniture_cryosleep_ADD_Ongoing_Fallback_3"
                             ]
                         }
                     ]
@@ -221,6 +309,18 @@
                                 "com_furniture_cryosleep_ADD_Refuse_5",
                                 "com_furniture_cryosleep_ADD_Refuse_6"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_cryosleep_ADD_Refuse_Fallback_1",
+                                "com_furniture_cryosleep_ADD_Refuse_Fallback_2"
+                            ]
                         }
                     ]
                 }
@@ -234,7 +334,9 @@
                         {
                             "requireSelfReceiver": true,
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "requireSelfAction": false,
+                                "allowRecording": true
                             },
                             "_comment": "受方 → 未能加入的人 ｜ 未能加入",
                             "responses": [
@@ -246,7 +348,9 @@
                         {
                             "requireSelfDoer": true,
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
                             },
                             "_comment": "施方 → 未能加入的人 ｜ 未能加入",
                             "responses": [
@@ -271,7 +375,11 @@
                                 "com_furniture_cryosleep_ADD_Interrupt_1",
                                 "com_furniture_cryosleep_ADD_Interrupt_2",
                                 "com_furniture_cryosleep_ADD_Interrupt_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "allowRecording": true
+                            }
                         },
                         {
                             "requireSelfDoer": true,
@@ -280,7 +388,11 @@
                                 "com_furniture_cryosleep_ADD_Interrupt_4",
                                 "com_furniture_cryosleep_ADD_Interrupt_5",
                                 "com_furniture_cryosleep_ADD_Interrupt_6"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
                         }
                     ]
                 }
@@ -301,6 +413,19 @@
                                 "com_furniture_cryosleep_ADD_Tryjoin_2",
                                 "com_furniture_cryosleep_ADD_Tryjoin_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_cryosleep_ADD_Tryjoin_Fallback_1",
+                                "com_furniture_cryosleep_ADD_Tryjoin_Fallback_2"
+                            ]
                         }
                     ]
                 }
@@ -320,6 +445,19 @@
                                 "com_furniture_cryosleep_ADD_Join_Refused_1",
                                 "com_furniture_cryosleep_ADD_Join_Refused_2",
                                 "com_furniture_cryosleep_ADD_Join_Refused_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_cryosleep_ADD_Join_Refused_Fallback_1",
+                                "com_furniture_cryosleep_ADD_Join_Refused_Fallback_2"
                             ]
                         }
                     ]
@@ -387,7 +525,21 @@
                 "com_furniture_cryosleep_ADD_Join_4": "$self$朝刚凑过来的$target$点点头：\"你们动作快点啊，里头已经开始凉了。\"",
                 "com_furniture_cryosleep_ADD_Join_5": "\"你也来帮忙？记得帮我把舱门检查严实些。\" $self$躺着叮嘱了一句。",
                 "com_furniture_cryosleep_ADD_Join_6": "$self$看着$target$站到操作台边，安心地闭上了眼睛。",
-                "com_furniture_cryosleep_ADD_Ongoing_Fallback_1": "$self$点了点头，没有多说什么。"
+                "com_furniture_cryosleep_ADD_Ongoing_Fallback_1": "$self$点了点头，没有多说什么。",
+                "com_furniture_cryosleep_ADD_Fallback_1": "舱门平稳合拢，低温缓缓漫开，$self$在休眠舱内逐渐归于沉静。",
+                "com_furniture_cryosleep_ADD_Fallback_2": "$self$安静地留在休眠舱中，随着程序启动慢慢闭上了眼睛。",
+                "com_furniture_cryosleep_ADD_Refuse_Fallback_1": "$self$撑着舱沿摇了摇头：\"我现在还不打算进休眠舱。\"",
+                "com_furniture_cryosleep_ADD_Refuse_Fallback_2": "$self$往后退开一步，避开了舱门：\"算了，我不进去。\"",
+                "com_furniture_cryosleep_ADD_Begin_Fallback_1": "$self$在休眠舱内调整好躺姿，等着外部参数设置完成。",
+                "com_furniture_cryosleep_ADD_Begin_Fallback_2": "寒意尚未完全降下，$self$安静地躺平，等待休眠程序开始。",
+                "com_furniture_cryosleep_ADD_Tryjoin_Fallback_1": "$self$走到操作面板旁停下，问$target$：\"需要我帮忙盯着休眠参数吗？\"",
+                "com_furniture_cryosleep_ADD_Tryjoin_Fallback_2": "$self$看了一眼面板上的流程，开口问道：\"要不要我搭把手一起安置？\"",
+                "com_furniture_cryosleep_ADD_Joined_Fallback_1": "\"好，我来核对这边的指示灯。\" $self$站到操作台旁帮着确认起来。",
+                "com_furniture_cryosleep_ADD_Joined_Fallback_2": "$self$点头应下，伸手协助检查舱门的密封状态。",
+                "com_furniture_cryosleep_ADD_Ongoing_Fallback_2": "$self$隔着舱盖留意着外头的读数变化，安静地配合着流程。",
+                "com_furniture_cryosleep_ADD_Ongoing_Fallback_3": "$self$留在舱内保持姿势不动，等着程序一步步走完。",
+                "com_furniture_cryosleep_ADD_Join_Refused_Fallback_1": "\"行，那你一个人照看就行。\" $self$收回手，退到一旁。",
+                "com_furniture_cryosleep_ADD_Join_Refused_Fallback_2": "$self$朝$target$点点头，没再插手，转身忙别的事去了。"
             }
         }
     }

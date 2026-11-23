@@ -1,0 +1,658 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "checkup_examination_Ongoing",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "受方 → 玩家 ｜ 接受",
+                                    "responses": [
+                                        "checkup_examination_Ongoing_1",
+                                        "checkup_examination_Ongoing_2",
+                                        "checkup_examination_Ongoing_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "checkup_examination_Ongoing_4",
+                                "checkup_examination_Ongoing_5"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "checkup_examination_Ongoing_6",
+                                "checkup_examination_Ongoing_7"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "checkup_examination_Refuse",
+                    "template": "commandRefuse",
+                    "variants": [
+                        {
+                            "requireRefusalContext": "ReceiverDeclined",
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
+                                    "responses": [
+                                        "checkup_examination_Refuse_1",
+                                        "checkup_examination_Refuse_2",
+                                        "checkup_examination_Refuse_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "checkup_examination_Refuse_4",
+                                "checkup_examination_Refuse_5",
+                                "checkup_examination_Refuse_6"
+                            ],
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝"
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "checkup_examination_Refuse_7",
+                                "checkup_examination_Refuse_8"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "checkup_examination_Tryjoin",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 尝试加入",
+                            "responses": [
+                                "checkup_examination_Tryjoin_1",
+                                "checkup_examination_Tryjoin_2",
+                                "checkup_examination_Tryjoin_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "checkup_examination_Tryjoin_4",
+                                "checkup_examination_Tryjoin_5"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "checkup_examination_Begin",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（时停中） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "checkup_examination_Begin_4",
+                                        "checkup_examination_Begin_5",
+                                        "checkup_examination_Begin_6"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（睡眠中） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "checkup_examination_Begin_1",
+                                        "checkup_examination_Begin_2",
+                                        "checkup_examination_Begin_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "checkup_examination_Begin_13",
+                                        "checkup_examination_Begin_14",
+                                        "checkup_examination_Begin_15"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "checkup_examination_Begin_7",
+                                        "checkup_examination_Begin_8",
+                                        "checkup_examination_Begin_9"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "checkup_examination_Begin_10",
+                                "checkup_examination_Begin_11",
+                                "checkup_examination_Begin_12"
+                            ],
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受"
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "checkup_examination_Begin_16",
+                                "checkup_examination_Begin_17"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "checkup_examination",
+                    "template": "commandResult",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（时停中） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "checkup_examination_7",
+                                        "checkup_examination_8",
+                                        "checkup_examination_9"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（睡眠中） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "checkup_examination_1",
+                                        "checkup_examination_2",
+                                        "checkup_examination_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "checkup_examination_13",
+                                        "checkup_examination_14",
+                                        "checkup_examination_15"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "checkup_examination_10",
+                                        "checkup_examination_11",
+                                        "checkup_examination_12"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "checkup_examination_16",
+                                        "checkup_examination_17",
+                                        "checkup_examination_18"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "checkup_examination_4",
+                                "checkup_examination_5",
+                                "checkup_examination_6"
+                            ],
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受"
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "checkup_examination_19",
+                                "checkup_examination_20"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "checkup_examination_Join_Refused",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入被拒绝",
+                            "responses": [
+                                "checkup_examination_Join_Refused_1",
+                                "checkup_examination_Join_Refused_2",
+                                "checkup_examination_Join_Refused_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "checkup_examination_Join_Refused_4",
+                                "checkup_examination_Join_Refused_5"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "checkup_examination_Interrupt",
+                    "template": "commandInterrupt",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 新来的人 ｜ 接受",
+                            "responses": [
+                                "checkup_examination_Interrupt_1",
+                                "checkup_examination_Interrupt_2",
+                                "checkup_examination_Interrupt_3"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 → 新来的人 ｜ 接受",
+                            "responses": [
+                                "checkup_examination_Interrupt_4",
+                                "checkup_examination_Interrupt_5",
+                                "checkup_examination_Interrupt_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "checkup_examination_Interrupt_7",
+                                "checkup_examination_Interrupt_8"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "checkup_examination_Join",
+                    "template": "commandJoin",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 加入者 ｜ 接受",
+                            "responses": [
+                                "checkup_examination_Join_1",
+                                "checkup_examination_Join_2",
+                                "checkup_examination_Join_3"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 → 加入者 ｜ 接受",
+                            "responses": [
+                                "checkup_examination_Join_4",
+                                "checkup_examination_Join_5",
+                                "checkup_examination_Join_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "checkup_examination_Join_7",
+                                "checkup_examination_Join_8"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "checkup_examination_JoinFailed",
+                    "template": "commandJoinFailed",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "受方 → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "checkup_examination_JoinFailed_1",
+                                "checkup_examination_JoinFailed_2",
+                                "checkup_examination_JoinFailed_3"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方 → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "checkup_examination_JoinFailed_4",
+                                "checkup_examination_JoinFailed_5",
+                                "checkup_examination_JoinFailed_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "checkup_examination_JoinFailed_7",
+                                "checkup_examination_JoinFailed_8"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "checkup_examination_Joined",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入成功",
+                            "responses": [
+                                "checkup_examination_Joined_1",
+                                "checkup_examination_Joined_2",
+                                "checkup_examination_Joined_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "checkup_examination_Joined_4",
+                                "checkup_examination_Joined_5"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "checkup_examination_Ongoing_1": "检查做到一半，$self$瞥见站在一旁的$target$，耳根微微发热：\"你一直盯着看干嘛……\"",
+                "checkup_examination_Ongoing_2": "$self$一边配合检查，一边朝旁边的$target$摆摆手：\"快结束了，用不着这么干站着看。\"",
+                "checkup_examination_Ongoing_3": "注意到$target$的视线，$self$不太自在地扯了扯衣角，把脸转向另一边。",
+                "checkup_examination_Refuse_1": "$self$猛地惊醒过来，一把推开$target$的手坐起身：\"你在干什么！趁我睡着乱动？\"",
+                "checkup_examination_Refuse_2": "睡意瞬间散了个干净，$self$拉紧领口往床边退开：\"谁准你碰我的？\"",
+                "checkup_examination_Refuse_3": "\"别碰我！\" $self$皱着眉护住自己，眼神里满是警惕和不满。",
+                "checkup_examination_Tryjoin_1": "$self$走到检查床边看了看，问$target$：\"需要我过来搭把手，顺便也做个检查吗？\"",
+                "checkup_examination_Tryjoin_2": "\"既然你也在忙体检，算我一个吧？\" $self$站在门口朝$target$问了一句。",
+                "checkup_examination_Tryjoin_3": "$self$敲了敲门框，看向$target$：\"这边能加个人一起吗？\"",
+                "checkup_examination_Begin_1": "$self$在睡梦中呼吸均匀，被扶正姿势时只是含糊地咕哝了半声，并没有醒来。",
+                "checkup_examination_Begin_2": "周围的动静没能吵醒$self$，她合着眼，肩颈随着$target$的动作微微一动。",
+                "checkup_examination_Begin_3": "$self$沉沉睡着，对即将开始的检查毫无察觉，眼皮半点也没动。",
+                "checkup_examination_1": "检查结束了，$self$依然沉沉睡着，只是在被褥微动时翻了个身。",
+                "checkup_examination_2": "$self$嘴里含糊地嘟囔了一句听不清的梦话，呼吸平稳地继续睡着。",
+                "checkup_examination_3": "$self$自始至终没有睁眼，脸上神情安稳，完全不知道自己刚做完一轮检查。",
+                "checkup_examination_Begin_4": "$self$的视线和呼吸一同定格在原处，对$target$走近检查的举动毫无察觉。",
+                "checkup_examination_Begin_5": "停滞的时间里，$self$保持着原本的姿态一动不动，连眼睫都没颤一下。",
+                "checkup_examination_Begin_6": "$self$如同静止的塑像般毫无反应，房间里只剩下$target$那边的动静。",
+                "checkup_examination_Begin_7": "$self$挣了挣手腕上的束缚，冷眼盯着$target$：\"绑着人做什么体检？别碰我。\"",
+                "checkup_examination_Begin_8": "行动受限让$self$无处可躲，她偏过头避开$target$的视线，呼吸沉了几分。",
+                "checkup_examination_Begin_9": "\"先把这个解开。\" $self$咬着牙扬了扬被缚住的手腕，语气里满是戒备。",
+                "checkup_examination_Join_Refused_1": "\"行吧，那我不打扰你们了。\" $self$点点头，退后一步转身离开。",
+                "checkup_examination_Join_Refused_2": "$self$应了一声：\"知道了，等你们查完我再过来。\"",
+                "checkup_examination_Join_Refused_3": "\"好，那我先去忙别的，有需要再喊我。\" $self$说完便带上了门。",
+                "checkup_examination_4": "$self$活动了一下肩颈坐起身，问$target$：\"怎么样，各项指标都还正常吗？\"",
+                "checkup_examination_5": "\"辛苦你了，比我想的要快。\" $self$整了整袖口，朝$target$露出客气的笑。",
+                "checkup_examination_6": "$self$轻轻呼出一口气，顺势理好衣领：\"下次复查是什么时候，记我一声就行。\"",
+                "checkup_examination_Interrupt_1": "门响时$self$下意识拉了拉衣领，朝门口的$target$干咳一声：\"那个……我们在做体检，稍等一下。\"",
+                "checkup_examination_Interrupt_2": "看见$target$进来，$self$有些局促地坐直了些：\"有事找我吗？等我这边检查完。\"",
+                "checkup_examination_Interrupt_3": "$self$没想到会有人推门进来，略微尴尬地朝$target$摆了摆手：\"咳，只是例行检查而已。\"",
+                "checkup_examination_Interrupt_4": "$self$停下手里的活，抬头对$target$说道：\"正在做体检呢，有事的话等一会儿再来找我们。\"",
+                "checkup_examination_Interrupt_5": "见$target$推门进来，$self$指了指门外：\"先出去等几分钟吧，这儿正做着检查。\"",
+                "checkup_examination_Interrupt_6": "$self$朝$target$示意了一下，语气平静：\"很快就好，不急的话在外头等会。\"",
+                "checkup_examination_7": "$self$依旧定格在最初的表情上，刚才经历的一切检查仿佛从未发生过。",
+                "checkup_examination_8": "停滞的时间里，$self$连呼吸都维持在原地，对$target$完成检查毫无所觉。",
+                "checkup_examination_9": "检查结束后，$self$的眼神依然空茫地停在一点，身体保持着静止的弧度。",
+                "checkup_examination_Refuse_4": "$self$往后退了半步，干脆地摆摆手：\"不用了，我自己的身体我自己清楚。\"",
+                "checkup_examination_Refuse_5": "\"今天不太方便做检查，改天再说吧。\" $self$拉紧衣襟，没有上前的意思。",
+                "checkup_examination_Refuse_6": "$self$看了眼检查床，摇摇头回绝了$target$：\"我没哪里不舒服，别折腾了。\"",
+                "checkup_examination_Begin_10": "$self$理了理衣角，对$target$点点头：\"麻烦你了，需要我怎么配合直接说就行。\"",
+                "checkup_examination_Begin_11": "$self$朝$target$伸出手臂，语气平和：\"最近身体没什么大毛病，例行查一下也好。\"",
+                "checkup_examination_Begin_12": "\"轻一点哦，我有点怕凉。\" $self$半开玩笑地提醒了$target$一句，随后放松了肩膀。",
+                "checkup_examination_Join_1": "$self$挪了挪位置，朝$target$招呼道：\"来吧，刚好一起把检查做完。\"",
+                "checkup_examination_Join_2": "\"你也来体检吗？\" $self$朝$target$点点头，\"那我往旁边让一点。\"",
+                "checkup_examination_Join_3": "见$target$进来一起参与，$self$松了口气：\"人多点倒没那么无聊了。\"",
+                "checkup_examination_10": "折腾完这一通，$self$冷着脸别开视线：\"查够了没有？够了就把我松开。\"",
+                "checkup_examination_11": "$self$被束缚着动弹不得，只能咬紧牙关忍下那股不适，眼神满是抵触。",
+                "checkup_examination_12": "\"真有你的，连这种状态都要按着人检查。\" $self$喘了口气，语气冷硬。",
+                "checkup_examination_13": "体检收尾时，$self$依旧没能恢复意识，眉头浅蹙了一下便没了动静。",
+                "checkup_examination_14": "$self$软绵绵地躺着，对检查结束毫无反应，只有胸口随着浅浅的呼吸起伏。",
+                "checkup_examination_15": "$target$收起器械时，$self$仍陷在昏迷里，指尖和眼皮都没有任何反应。",
+                "checkup_examination_JoinFailed_1": "$self$朝$target$摆了摆手：\"这里空间不太够，等我们查完你再进来吧。\"",
+                "checkup_examination_JoinFailed_2": "\"这次先不用加人了，马上就好。\" $self$对$target$示意了一下。",
+                "checkup_examination_JoinFailed_3": "$self$回头看了$target$一眼：\"抱歉啊，现在这边不太方便挤进来。\"",
+                "checkup_examination_Begin_13": "$self$毫无知觉地闭着眼，整个人软绵绵地任由$target$摆弄姿势。",
+                "checkup_examination_Begin_14": "昏迷中的$self$对外界全无反应，呼吸又浅又慢，脸色发白。",
+                "checkup_examination_Begin_15": "$self$的手臂无力地垂在身侧，面对$target$的检查没有给出任何回应。",
+                "checkup_examination_Joined_1": "\"好，那我也来一起。\" $self$点点头，顺手往里走了两步。",
+                "checkup_examination_Joined_2": "$self$应了一声，在旁边找好位置站定：\"需要我先做什么，你直接说就行。\"",
+                "checkup_examination_Joined_3": "\"行，那大家一并把检查做了省事。\" $self$说着便走了进来。",
+                "checkup_examination_Join_4": "$self$朝$target$抬了抬下巴：\"来得正好，过来搭把手，顺便一会儿也给你查一下。\"",
+                "checkup_examination_Join_5": "\"行，进来吧。\" $self$让开半步，对$target$说：\"正好按顺序一起处理。\"",
+                "checkup_examination_Join_6": "$self$点头应下：\"多个人帮忙快多了，你站这边就行。\"",
+                "checkup_examination_JoinFailed_4": "$self$朝$target$摇摇头：\"检查床这边站不开，等下一轮吧。\"",
+                "checkup_examination_JoinFailed_5": "\"现在不需要再加人了，你先去忙别的。\" $self$简短地回了一句。",
+                "checkup_examination_JoinFailed_6": "$self$头也不抬地对$target$说：\"这边人手够了，有需要再叫你。\"",
+                "checkup_examination_16": "$self$迷迷糊糊地睁开眼，看清面前的$target$后愣了一下：\"……唔，已经查完了吗？\"",
+                "checkup_examination_17": "意识渐渐回笼，$self$撑着身子坐起，揉了揉惺忪的睡眼：\"怎么不早点叫醒我。\"",
+                "checkup_examination_18": "$self$打了个哈欠，声音还有些沙哑：\"刚才好像睡过去了，结果没什么问题吧？\"",
+                "checkup_examination_Ongoing_4": "检查还在继续，$self$配合着维持姿势，偶尔抬眼看向一旁。",
+                "checkup_examination_Ongoing_5": "$self$安静地等着检查进度往前推进，没有出声打扰。",
+                "checkup_examination_Ongoing_6": "检查还在继续，$self$配合着维持姿势，偶尔抬眼看向一旁。",
+                "checkup_examination_Ongoing_7": "$self$安静地等着检查进度往前推进，没有出声打扰。",
+                "checkup_examination_Refuse_7": "$self$皱起眉往后退了一步：\"现在不做检查，请回吧。\"",
+                "checkup_examination_Refuse_8": "\"我今天状态挺好的，不用查了。\" $self$摆摆手婉拒道。",
+                "checkup_examination_Tryjoin_4": "$self$走到检查台旁看了看：\"这边需要多个人一起吗？\"",
+                "checkup_examination_Tryjoin_5": "\"要不顺便也帮我看看？\" $self$朝$target$问了一句。",
+                "checkup_examination_Begin_16": "$self$点点头，配合地坐到检查位上：\"开始吧。\"",
+                "checkup_examination_Begin_17": "\"麻烦你了。\" $self$调整好姿势，准备接受接下来的检查。",
+                "checkup_examination_19": "检查告一段落，$self$呼出一口气，伸手整理了一下衣领。",
+                "checkup_examination_20": "\"已经结束了吗？\" $self$站起身活动了一下肩膀，神情轻松。",
+                "checkup_examination_Join_Refused_4": "\"行，那我等会儿再来。\" $self$说完便退出了检查室。",
+                "checkup_examination_Join_Refused_5": "$self$点点头：\"知道了，你们先忙，我不打扰了。\"",
+                "checkup_examination_Interrupt_7": "衣物收拾妥当后，$self$低头整理了一下衣角，神情平静。",
+                "checkup_examination_Interrupt_8": "$self$顺了顺衣摆，朝$target$微微点头示意。",
+                "checkup_examination_Join_7": "衣物收拾妥当后，$self$低头整理了一下衣角，神情平静。",
+                "checkup_examination_Join_8": "$self$顺了顺衣摆，朝$target$微微点头示意。",
+                "checkup_examination_JoinFailed_7": "衣物收拾妥当后，$self$低头整理了一下衣角，神情平静。",
+                "checkup_examination_JoinFailed_8": "$self$顺了顺衣摆，朝$target$微微点头示意。",
+                "checkup_examination_Joined_4": "$self$走进检查区站好：\"我也过来一起做个检查。\"",
+                "checkup_examination_Joined_5": "\"算我一个吧。\" $self$说着在旁边找了个位置。"
+            }
+        }
+    }
+}

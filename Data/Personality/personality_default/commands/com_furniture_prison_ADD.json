@@ -8,44 +8,16 @@
                     "template": "commandAct",
                     "variants": [
                         {
-                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "selfTags": [
+                                    "timestop"
+                                ],
+                                "requireSelfAction": false
+                            },
                             "variants": [
                                 {
+                                    "requireSelfReceiver": true,
                                     "requirement": {
-                                        "selfTags": [
-                                            "unconscious"
-                                        ],
-                                        "excludeSelfTags": [
-                                            "sleeping"
-                                        ],
-                                        "requireSelfAction": false
-                                    },
-                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
-                                    "responses": [
-                                        "com_furniture_prison_ADD_Begin_1",
-                                        "com_furniture_prison_ADD_Begin_2",
-                                        "com_furniture_prison_ADD_Begin_3"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "selfTags": [
-                                            "sleeping"
-                                        ],
-                                        "requireSelfAction": false
-                                    },
-                                    "_comment": "受方（睡眠中） → 对方（玩家或 NPC） ｜ 接受",
-                                    "responses": [
-                                        "com_furniture_prison_ADD_Begin_4",
-                                        "com_furniture_prison_ADD_Begin_5",
-                                        "com_furniture_prison_ADD_Begin_6"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "selfTags": [
-                                            "timestop"
-                                        ],
                                         "requireSelfAction": false
                                     },
                                     "_comment": "受方（时停中） → 对方（玩家或 NPC） ｜ 接受",
@@ -55,11 +27,74 @@
                                         "com_furniture_prison_ADD_Begin_12"
                                     ]
                                 }
-                            ],
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "selfTags": [
+                                    "sleeping"
+                                ],
+                                "requireSelfAction": false
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（睡眠中） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_prison_ADD_Begin_4",
+                                        "com_furniture_prison_ADD_Begin_5",
+                                        "com_furniture_prison_ADD_Begin_6"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ],
+                                "requireSelfAction": false
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_prison_ADD_Begin_1",
+                                        "com_furniture_prison_ADD_Begin_2",
+                                        "com_furniture_prison_ADD_Begin_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [],
                             "responses": [
                                 "com_furniture_prison_ADD_Begin_7",
                                 "com_furniture_prison_ADD_Begin_8",
                                 "com_furniture_prison_ADD_Begin_9"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_prison_ADD_Begin_Fallback_1",
+                                "com_furniture_prison_ADD_Begin_Fallback_2"
                             ]
                         }
                     ]
@@ -78,7 +113,11 @@
                                 "com_furniture_prison_ADD_Interrupt_1",
                                 "com_furniture_prison_ADD_Interrupt_2",
                                 "com_furniture_prison_ADD_Interrupt_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
                         },
                         {
                             "requireSelfReceiver": true,
@@ -87,7 +126,11 @@
                                 "com_furniture_prison_ADD_Interrupt_4",
                                 "com_furniture_prison_ADD_Interrupt_5",
                                 "com_furniture_prison_ADD_Interrupt_6"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "allowRecording": true
+                            }
                         }
                     ]
                 }
@@ -98,6 +141,75 @@
                     "ID": "com_furniture_prison_ADD",
                     "template": "commandResult",
                     "variants": [
+                        {
+                            "requirement": {
+                                "selfTags": [
+                                    "timestop"
+                                ],
+                                "requireSelfAction": false
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（时停中） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_prison_ADD_13",
+                                        "com_furniture_prison_ADD_14",
+                                        "com_furniture_prison_ADD_15"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "selfTags": [
+                                    "sleeping"
+                                ],
+                                "requireSelfAction": false
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（睡眠中） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_prison_ADD_10",
+                                        "com_furniture_prison_ADD_11",
+                                        "com_furniture_prison_ADD_12"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ],
+                                "requireSelfAction": false
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_prison_ADD_7",
+                                        "com_furniture_prison_ADD_8",
+                                        "com_furniture_prison_ADD_9"
+                                    ]
+                                }
+                            ]
+                        },
                         {
                             "requireSelfReceiver": true,
                             "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
@@ -119,52 +231,19 @@
                                         "com_furniture_prison_ADD_5",
                                         "com_furniture_prison_ADD_6"
                                     ]
-                                },
-                                {
-                                    "requirement": {
-                                        "selfTags": [
-                                            "unconscious"
-                                        ],
-                                        "excludeSelfTags": [
-                                            "sleeping"
-                                        ],
-                                        "requireSelfAction": false
-                                    },
-                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
-                                    "responses": [
-                                        "com_furniture_prison_ADD_7",
-                                        "com_furniture_prison_ADD_8",
-                                        "com_furniture_prison_ADD_9"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "selfTags": [
-                                            "sleeping"
-                                        ],
-                                        "requireSelfAction": false
-                                    },
-                                    "_comment": "受方（睡眠中） → 对方（玩家或 NPC） ｜ 接受",
-                                    "responses": [
-                                        "com_furniture_prison_ADD_10",
-                                        "com_furniture_prison_ADD_11",
-                                        "com_furniture_prison_ADD_12"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "selfTags": [
-                                            "timestop"
-                                        ],
-                                        "requireSelfAction": false
-                                    },
-                                    "_comment": "受方（时停中） → 对方（玩家或 NPC） ｜ 接受",
-                                    "responses": [
-                                        "com_furniture_prison_ADD_13",
-                                        "com_furniture_prison_ADD_14",
-                                        "com_furniture_prison_ADD_15"
-                                    ]
                                 }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_prison_ADD_Fallback_1",
+                                "com_furniture_prison_ADD_Fallback_2"
                             ]
                         }
                     ]
@@ -186,6 +265,19 @@
                                 "com_furniture_prison_ADD_Join_Refused_2",
                                 "com_furniture_prison_ADD_Join_Refused_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_prison_ADD_Join_Refused_Fallback_1",
+                                "com_furniture_prison_ADD_Join_Refused_Fallback_2"
+                            ]
                         }
                     ]
                 }
@@ -203,7 +295,11 @@
                                 "com_furniture_prison_ADD_Join_1",
                                 "com_furniture_prison_ADD_Join_2",
                                 "com_furniture_prison_ADD_Join_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "allowRecording": true
+                            }
                         },
                         {
                             "requireSelfDoer": true,
@@ -212,7 +308,11 @@
                                 "com_furniture_prison_ADD_Join_4",
                                 "com_furniture_prison_ADD_Join_5",
                                 "com_furniture_prison_ADD_Join_6"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
                         }
                     ]
                 }
@@ -249,6 +349,18 @@
                                 "com_furniture_prison_ADD_Refuse_5",
                                 "com_furniture_prison_ADD_Refuse_6"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_prison_ADD_Refuse_Fallback_1",
+                                "com_furniture_prison_ADD_Refuse_Fallback_2"
+                            ]
                         }
                     ]
                 }
@@ -262,7 +374,9 @@
                         {
                             "requireSelfReceiver": true,
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "requireSelfAction": false,
+                                "allowRecording": true
                             },
                             "_comment": "受方 → 未能加入的人 ｜ 未能加入",
                             "responses": [
@@ -274,7 +388,9 @@
                         {
                             "requireSelfDoer": true,
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
                             },
                             "_comment": "施方 → 未能加入的人 ｜ 未能加入",
                             "responses": [
@@ -310,6 +426,18 @@
                             "responses": [
                                 "com_furniture_prison_ADD_Ongoing_Fallback_1"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_prison_ADD_Ongoing_Fallback_2",
+                                "com_furniture_prison_ADD_Ongoing_Fallback_3"
+                            ]
                         }
                     ]
                 }
@@ -330,6 +458,19 @@
                                 "com_furniture_prison_ADD_Tryjoin_2",
                                 "com_furniture_prison_ADD_Tryjoin_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_prison_ADD_Tryjoin_Fallback_1",
+                                "com_furniture_prison_ADD_Tryjoin_Fallback_2"
+                            ]
                         }
                     ]
                 }
@@ -349,6 +490,19 @@
                                 "com_furniture_prison_ADD_Joined_1",
                                 "com_furniture_prison_ADD_Joined_2",
                                 "com_furniture_prison_ADD_Joined_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_prison_ADD_Joined_Fallback_1",
+                                "com_furniture_prison_ADD_Joined_Fallback_2"
                             ]
                         }
                     ]
@@ -422,7 +576,21 @@
                 "com_furniture_prison_ADD_Begin_10": "时间静止中的$self$凝固在原地，连眨眼都没有，像座雕像一样被挪了进去。",
                 "com_furniture_prison_ADD_Begin_11": "$self$保持着前一刻的姿势一动不动，对周遭的一切毫无感知。",
                 "com_furniture_prison_ADD_Begin_12": "静止的空气里，$self$既没有呼吸的起伏，也没有任何反抗的动作。",
-                "com_furniture_prison_ADD_Ongoing_Fallback_1": "$self$点了点头，没有多说什么。"
+                "com_furniture_prison_ADD_Ongoing_Fallback_1": "$self$点了点头，没有多说什么。",
+                "com_furniture_prison_ADD_Fallback_1": "铁门落锁的声音响起，$self$靠着墙边坐下，沉默地望向门外。",
+                "com_furniture_prison_ADD_Fallback_2": "门锁扣严后，$self$在狭小的空间里找了个角落待着。",
+                "com_furniture_prison_ADD_Begin_Fallback_1": "$self$看了一眼里面，没再多说什么，顺着动静往里走去。",
+                "com_furniture_prison_ADD_Begin_Fallback_2": "$self$抿了抿唇，迈步跨进了牢门。",
+                "com_furniture_prison_ADD_Refuse_Fallback_1": "$self$一把抵住门框，冷声道：\"别想把我关进这里面！\"",
+                "com_furniture_prison_ADD_Refuse_Fallback_2": "$self$猛地往后挣开半步，坚决地摇了摇头：\"我不进去！\"",
+                "com_furniture_prison_ADD_Ongoing_Fallback_2": "$self$站在门内等着外头把锁扣好，神色沉静。",
+                "com_furniture_prison_ADD_Ongoing_Fallback_3": "$self$看着门锁一点点合上，没有额外的动作。",
+                "com_furniture_prison_ADD_Tryjoin_Fallback_1": "$self$走到门前停下，问$target$：\"一个人按不住吧？要不要我搭把手？\"",
+                "com_furniture_prison_ADD_Tryjoin_Fallback_2": "$self$看了眼门锁，开口问道：\"需要我帮忙看着点这边吗？\"",
+                "com_furniture_prison_ADD_Joined_Fallback_1": "\"行，我来扶着门扇准备落锁。\" $self$站到门侧卡好位置。",
+                "com_furniture_prison_ADD_Joined_Fallback_2": "$self$点头应下，伸手帮着把门往里带紧。",
+                "com_furniture_prison_ADD_Join_Refused_Fallback_1": "\"成，那你自己处理吧。\" $self$退开两步，转身走出了走廊。",
+                "com_furniture_prison_ADD_Join_Refused_Fallback_2": "$self$收回手，没再插手这边的事。"
             }
         }
     }

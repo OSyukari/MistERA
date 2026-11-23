@@ -11,17 +11,166 @@
                     ],
                     "variants": [
                         {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_P_lick_13",
+                                        "com_sex_oral_P_lick_14",
+                                        "com_sex_oral_P_lick_15"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_P_lick_19",
+                                        "com_sex_oral_P_lick_20",
+                                        "com_sex_oral_P_lick_21"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_P_lick_7",
+                                        "com_sex_oral_P_lick_8",
+                                        "com_sex_oral_P_lick_9"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
                             "requireSelfReceiver": true,
-                            "extraSelfPortraitTags": ["sex", "receiver", "blowjob"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "blowjob"
+                            ],
                             "_comment": "受方 被舔肉棒",
-                            "responses": ["com_sex_oral_P_lick_receiver_1"]
+                            "responses": [
+                                "com_sex_oral_P_lick_receiver_1",
+                                "com_sex_oral_P_lick_receiver_2",
+                                "com_sex_oral_P_lick_receiver_3"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_sex_oral_P_lick_10",
+                                                "com_sex_oral_P_lick_11",
+                                                "com_sex_oral_P_lick_12"
+                                            ]
+                                        }
+                                    ],
+                                    "responses": [
+                                        "com_sex_oral_P_lick_22",
+                                        "com_sex_oral_P_lick_23",
+                                        "com_sex_oral_P_lick_24"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessLTE": "Failure"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_sex_oral_P_lick_16",
+                                                "com_sex_oral_P_lick_17",
+                                                "com_sex_oral_P_lick_18"
+                                            ]
+                                        }
+                                    ],
+                                    "responses": [
+                                        "com_sex_oral_P_lick_28",
+                                        "com_sex_oral_P_lick_29",
+                                        "com_sex_oral_P_lick_30"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_P_lick_25",
+                                        "com_sex_oral_P_lick_26",
+                                        "com_sex_oral_P_lick_27"
+                                    ]
+                                }
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            }
                         },
                         {
                             "requireSelfDoer": true,
                             "requirement": {
-                                "targetTags": ["condom_filled"]
+                                "targetTags": [
+                                    "condom_filled"
+                                ],
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
                             },
-                            "extraSelfPortraitTags": ["sex", "doer", "blowjob", "blush"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "blush"
+                            ],
                             "_comment": "攻方 舔戴着装满精液的避孕套的肉棒",
                             "responses": [
                                 "com_sex_oral_P_lick_condomFilled_1",
@@ -31,26 +180,291 @@
                         },
                         {
                             "requireSelfDoer": true,
-                            "requirement": {
-                                "requirePermission": true
-                            },
-                            "extraSelfPortraitTags": ["sex", "doer", "blowjob", "blush"],
-                            "_comment": "攻方 舔肉棒 有允许",
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "disgusted"
+                            ],
+                            "_comment": "攻方 舔肉棒 无允许",
                             "responses": [
-                                "com_sex_oral_P_lick_1",
-                                "com_sex_oral_P_lick_2"
+                                "com_sex_oral_P_lick_3",
+                                "com_sex_oral_P_lick_5",
+                                "com_sex_oral_P_lick_6"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true,
+                                        "requireSelfAction": false,
+                                        "requireTargetAction": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "blush"
+                                    ],
+                                    "_comment": "攻方 舔肉棒 有允许",
+                                    "responses": [
+                                        "com_sex_oral_P_lick_1",
+                                        "com_sex_oral_P_lick_2",
+                                        "com_sex_oral_P_lick_4"
+                                    ]
+                                }
                             ]
                         },
                         {
-                            "requireSelfDoer": true,
-                            "extraSelfPortraitTags": ["sex", "doer", "blowjob", "disgusted"],
-                            "_comment": "攻方 舔肉棒 无允许",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
                             "responses": [
-                                "com_sex_oral_P_lick_3"
+                                "com_sex_oral_P_lick_31",
+                                "com_sex_oral_P_lick_32",
+                                "com_sex_oral_P_lick_33"
                             ]
                         }
                     ],
                     "template": "commandResult"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_P_lick_Refuse",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireRefusalContext": "ReceiverDeclined",
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_P_lick_Refuse_1",
+                                        "com_sex_oral_P_lick_Refuse_2",
+                                        "com_sex_oral_P_lick_Refuse_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_oral_P_lick_Refuse_4",
+                                "com_sex_oral_P_lick_Refuse_5",
+                                "com_sex_oral_P_lick_Refuse_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "com_sex_oral_P_lick_Refuse_7",
+                                "com_sex_oral_P_lick_Refuse_8",
+                                "com_sex_oral_P_lick_Refuse_9"
+                            ]
+                        }
+                    ],
+                    "template": "commandRefuse"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_P_lick_Climax",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "responses": [
+                                "com_sex_oral_P_lick_Climax_1",
+                                "com_sex_oral_P_lick_Climax_2",
+                                "com_sex_oral_P_lick_Climax_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "responses": [
+                                "com_sex_oral_P_lick_Climax_4",
+                                "com_sex_oral_P_lick_Climax_5",
+                                "com_sex_oral_P_lick_Climax_6"
+                            ]
+                        }
+                    ],
+                    "template": "commandClimax"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_P_lick_Begin",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_P_lick_Begin_7",
+                                        "com_sex_oral_P_lick_Begin_8",
+                                        "com_sex_oral_P_lick_Begin_9"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_P_lick_Begin_4",
+                                        "com_sex_oral_P_lick_Begin_5",
+                                        "com_sex_oral_P_lick_Begin_6"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_P_lick_Begin_1",
+                                        "com_sex_oral_P_lick_Begin_2",
+                                        "com_sex_oral_P_lick_Begin_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_P_lick_Begin_10",
+                                        "com_sex_oral_P_lick_Begin_11",
+                                        "com_sex_oral_P_lick_Begin_12"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_oral_P_lick_Begin_13",
+                                "com_sex_oral_P_lick_Begin_14",
+                                "com_sex_oral_P_lick_Begin_15"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "responses": [
+                                "com_sex_oral_P_lick_Begin_16",
+                                "com_sex_oral_P_lick_Begin_17",
+                                "com_sex_oral_P_lick_Begin_18"
+                            ]
+                        }
+                    ],
+                    "template": "commandAct"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_P_lick_Ongoing",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "responses": [
+                                        "com_sex_oral_P_lick_Ongoing_1",
+                                        "com_sex_oral_P_lick_Ongoing_2",
+                                        "com_sex_oral_P_lick_Ongoing_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_oral_P_lick_Ongoing_4",
+                                "com_sex_oral_P_lick_Ongoing_5",
+                                "com_sex_oral_P_lick_Ongoing_6"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "responses": [
+                                "com_sex_oral_P_lick_Ongoing_7",
+                                "com_sex_oral_P_lick_Ongoing_8",
+                                "com_sex_oral_P_lick_Ongoing_9"
+                            ]
+                        }
+                    ],
+                    "template": "commandAct"
                 }
             }
         ]
@@ -58,13 +472,87 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "com_sex_oral_P_lick_receiver_1": "$self$被$target$的舌头舔得一阵发麻，忍不住挺了挺腰。",
+                "com_sex_oral_P_lick_receiver_1": "$self$被$target$的舌头舔得一阵发麻，忍不住挺了挺腰：“唔……别只舔那里，好痒……”",
                 "com_sex_oral_P_lick_condomFilled_1": "$self$隔着鼓胀的避孕套舔了舔，舌尖碰到了里面还温热的精液。\n\"……都射了这么多了，还想要吗？\"",
                 "com_sex_oral_P_lick_condomFilled_2": "$self$用指尖捏了捏套子前端那一团，红着脸把舌头贴了上去。\n\"满满的……全是你的味道。\"",
                 "com_sex_oral_P_lick_condomFilled_3": "$self$看着那只装满精液、还挂在肉棒上的避孕套，犹豫了一下，还是伸出舌头慢慢舔着。\n\"真是的……都不先摘下来。\"",
-                "com_sex_oral_P_lick_1": "$self$伸出舌头，从根部一路舔到顶端。\n\"这样舒服吗？\"",
-                "com_sex_oral_P_lick_2": "$self$一边抬眼观察$target$的反应，一边用舌尖细细地打着圈。\n\"嗯……这里比较敏感？\"",
-                "com_sex_oral_P_lick_3": "$self$皱着眉，勉强伸出舌头碰了碰。\n\"……只是舔一下而已。\""
+                "com_sex_oral_P_lick_1": "$self$伸出舌头，从根部一路舔到顶端：“这样舒服吗？”",
+                "com_sex_oral_P_lick_2": "$self$一边抬眼观察$target$的反应，一边用舌尖细细地打着圈：“嗯……这里比较敏感？”",
+                "com_sex_oral_P_lick_3": "$self$拧着眉，勉强伸出舌头碰了碰：“……只是舔一下而已。”",
+                "com_sex_oral_P_lick_receiver_2": "湿热的舌尖沿着柱身缓缓滑过，$self$喘息着抓紧了身下的床单：“哈啊……舌头好软……再多舔几下……”",
+                "com_sex_oral_P_lick_receiver_3": "$self$低头看着正在舔弄自己肉棒的$target$，耳根泛起热意：“呜嗯……这么认真地舔……怪让人不好意思的……”",
+                "com_sex_oral_P_lick_4": "$self$张嘴含住龟头边缘轻轻舔过，嘴角沾着晶莹的津液：“变硬了呢……我继续舔咯？”",
+                "com_sex_oral_P_lick_5": "$self$偏过头嫌弃地抿了抿嘴，敷衍地用舌尖蹭过柱身：“……快点结束吧，味道好怪。”",
+                "com_sex_oral_P_lick_6": "$self$憋着气草草舔了两下便往后退开，眼神带着抗拒：“这样总行了吧……”",
+                "com_sex_oral_P_lick_7": "昏迷中的$self$毫无反抗之力，被$target$舔满口水的肉棒高高挺立，在空气里微微跳动。",
+                "com_sex_oral_P_lick_8": "$self$躺在原地一动不动，龟头却随着舌苔的反复舔弄渗出越来越多黏液。",
+                "com_sex_oral_P_lick_9": "失去意识的$self$任由胯间传来濡湿的水声，眼皮始终没有睁开。",
+                "com_sex_oral_P_lick_10": "被缚住手脚的$self$逃无可逃，肉棒在$target$湿热舌尖的缠绕下爽得直跳：“哈啊……被舔得受不了了……好舒服……”",
+                "com_sex_oral_P_lick_11": "绳索勒紧腕部，$self$却自己挺起腰肢把龟头往$target$舌头上送：“唔……别只舔系带啊……要坏掉了……”",
+                "com_sex_oral_P_lick_12": "$self$眼神迷离地喘着粗气，腿根止不住地发颤：“嗯啊……再用力舔几下……”",
+                "com_sex_oral_P_lick_13": "时停中的$self$定格在原处，肉棒已被$target$舔得通红发亮，她却连半点喘息都没有。",
+                "com_sex_oral_P_lick_14": "静止的时间里，$self$充血的龟头随着舌尖的挑逗微微渗水，神情却纹丝不动。",
+                "com_sex_oral_P_lick_15": "$self$丝毫不知自己胯下正被如此仔细地舔弄，等时间流动后恐怕立刻就会泄出来。",
+                "com_sex_oral_P_lick_16": "动弹不得的$self$被生硬的舌头蹭得有些生疼，恼火地扭开腰：“嘶……你别用牙齿刮到啊……”",
+                "com_sex_oral_P_lick_17": "$self$拧着身子想躲开湿冷的口水，语气满是抗拒：“够了……糊了一腿口水好难受……”",
+                "com_sex_oral_P_lick_18": "$self$喘着粗气狠狠瞪着俯在胯间的人，声音发紧：“……一点也不舒服，快停下！”",
+                "com_sex_oral_P_lick_19": "熟睡中的$self$被舔得肉棒硬挺发烫，顶端不断溢出透明前液，人却依旧沉睡不醒。",
+                "com_sex_oral_P_lick_20": "$self$在梦里发出一声绵软的鼻音，胯部随着舌尖的刮蹭无意识地轻顶了下。",
+                "com_sex_oral_P_lick_21": "梦乡里的$self$微张着唇呼吸，任由湿热的舌头在阴茎上反复舔吮，没有醒来。",
+                "com_sex_oral_P_lick_22": "$self$仰起头大口喘气，肉棒被$target$灵巧的舌尖舔弄得不断跳动渗液：“哈啊……就是那里……舌头好舒服……♡”",
+                "com_sex_oral_P_lick_23": "湿滑的口水顺着柱身淌到腿根，$self$双腿发软地迎合着舔舐节奏：“唔嗯……马眼被舔得发麻了……别停……”",
+                "com_sex_oral_P_lick_24": "$self$迷离地低头看着埋在自己腿间的$target$，手指插进对方发间轻轻按住：“啊……再多舔一会儿……”",
+                "com_sex_oral_P_lick_25": "$self$在胯间湿滑的舔舐中迷糊转醒，低头看见$target$正舔着自己的肉棒：“唔……你趁我睡着在舔哪里呢……”",
+                "com_sex_oral_P_lick_26": "睡意瞬间散了大半，$self$感觉到龟头传来的麻痒，耳根迅速发烫：“真是的……一大早就这么缠着不放吗……”",
+                "com_sex_oral_P_lick_27": "$self$喘了口气清醒过来，声音带着刚睡醒的沙哑：“哈啊……把我弄醒了还舔个不停，太犯规了吧……”",
+                "com_sex_oral_P_lick_28": "$self$微微蹙眉往后躲了躲，肉棒传来一阵不太舒服的刺痛：“嘶……太重了，轻一点……”",
+                "com_sex_oral_P_lick_29": "$self$有些不适地绷紧了身子，小声抱怨道：“唔……这样弄一点也不舒服……”",
+                "com_sex_oral_P_lick_30": "节奏没能对上，$self$略显烦躁地喘了口气：“……稍微注意一下力道啊。”",
+                "com_sex_oral_P_lick_Refuse_1": "$self$被胯间的湿热触感狠狠惊醒，当即一把推开$target$往床角缩去：“滚开！趁我睡着居然舔那种地方！”",
+                "com_sex_oral_P_lick_Refuse_2": "$self$脸色煞白地捂住下身，又惊又怒地瞪着$target$：“你疯了吗？！快给我滚出去！”",
+                "com_sex_oral_P_lick_Refuse_3": "$self$颤抖着扯过被子遮住身体，声音里满是抗拒与愤怒：“别碰我！再敢过来我就喊人了！”",
+                "com_sex_oral_P_lick_Refuse_4": "$self$猛地往后缩去护住胯间，脸色涨红地瞪着$target$：“别靠近我下面！我没答应让你舔！”",
+                "com_sex_oral_P_lick_Refuse_5": "$self$一把推开凑过来的$target$，语气带着明显的排斥：“少做这种奇怪的事，离我远点！”",
+                "com_sex_oral_P_lick_Refuse_6": "$self$迅速并拢双腿拉开距离，神色戒备：“不行就是不行，别乱碰！”",
+                "com_sex_oral_P_lick_Refuse_7": "$self$皱起眉偏开身体，直接拒绝了$target$的动作：“别这样，停下来。”",
+                "com_sex_oral_P_lick_Refuse_8": "$self$伸手挡在身前，语气冷淡地回绝道：“……我现在不想继续这个。”",
+                "com_sex_oral_P_lick_Refuse_9": "$self$往后退开半步拉开了距离，明确地摇了摇头：“不行，别碰这里。”",
+                "com_sex_oral_P_lick_Climax_1": "舌尖在敏感的龟头上快速打转，$self$猛地挺起腰肢到达顶峰，一股股精液喷溅出来：“去了……！被舔得要射了……啊♡”",
+                "com_sex_oral_P_lick_Climax_2": "$self$失神地仰起头，浑身剧烈痉挛着将白浊射在$target$脸上：“不行了……舌头好软……射出来了……呜啊啊♡”",
+                "com_sex_oral_P_lick_Climax_3": "肉棒在温热的舌苔舔弄下剧烈抽搐，$self$大口喘息着软倒下来：“哈啊……光是用舔的就射了这么多……♡”",
+                "com_sex_oral_P_lick_Climax_4": "在持续的刺激下，$self$浑身猛地一颤，迎来了难以抑制的高潮。",
+                "com_sex_oral_P_lick_Climax_5": "积攒的热意瞬间炸开，$self$仰起脖子发出一声短促的喘息，彻底攀上顶峰。",
+                "com_sex_oral_P_lick_Climax_6": "$self$紧紧攥住身侧的布料，在绵延的快感中颤抖着达到高潮。",
+                "com_sex_oral_P_lick_Begin_1": "昏迷中的$self$毫无知觉地躺着，软软的肉棒任由$target$伸出舌头细细舔吻。",
+                "com_sex_oral_P_lick_Begin_2": "$self$合着眼皮没有任何反应，龟头却在湿滑舌尖的撩拨下渐渐沁出透明清液。",
+                "com_sex_oral_P_lick_Begin_3": "失去意识的$self$呼吸浅缓，胯下那根逐渐变硬的性器完全暴露在$target$面前。",
+                "com_sex_oral_P_lick_Begin_4": "熟睡中的$self$被$target$用舌尖沿着肉棒来回舔弄，她只在枕边发出一声含糊的鼻音，胯部微微一颤。",
+                "com_sex_oral_P_lick_Begin_5": "$self$沉睡着毫无防备，软垂的阴茎在湿热的舔舐下渐渐充血抬起，呼吸却依旧绵长。",
+                "com_sex_oral_P_lick_Begin_6": "温暖的舌面贴着敏感的系带滑过，$self$不安地偏了下头，嘴唇微张地继续睡着。",
+                "com_sex_oral_P_lick_Begin_7": "时停中的$self$定格在原处，毫无知觉地被$target$用舌头舔遍整根肉棒，连眼神都没有半点波动。",
+                "com_sex_oral_P_lick_Begin_8": "凝固的空气里，$self$充血发硬的阴茎上沾满亮晶晶的口水，她却毫不知情。",
+                "com_sex_oral_P_lick_Begin_9": "$self$保持着原本的姿势纹丝不动，滚烫的龟头任由舌尖反复打圈逗弄。",
+                "com_sex_oral_P_lick_Begin_10": "被绳索捆住的$self$遮不住胯间，只能感觉$target$凑近用舌头舔上自己的肉棒：“别、别这样舔啊……”",
+                "com_sex_oral_P_lick_Begin_11": "$self$挣动着手腕却躲不开那条湿热的舌尖，腰肢不由自主地绷紧：“唔……好痒……别舔龟头……”",
+                "com_sex_oral_P_lick_Begin_12": "动弹不得的$self$羞红了脸偏过头，喘息随着舌苔的刮蹭越来越乱：“啊……怎么这么湿……”",
+                "com_sex_oral_P_lick_Begin_13": "$self$看着$target$俯下身来将温热的舌尖贴上自己的肉棒，不由得屏住呼吸：“唔……要、要用嘴舔这里吗……”",
+                "com_sex_oral_P_lick_Begin_14": "$self$扶住$target$凑近股间的脑袋，耳根泛红地挺了挺腰：“别一下子舔到最敏感的地方啊……”",
+                "com_sex_oral_P_lick_Begin_15": "$self$咽了口唾沫，任由湿滑的舌苔从阴茎根部缓缓向上刮过：“哈啊……好烫……”",
+                "com_sex_oral_P_lick_Begin_16": "$self$调整了一下呼吸，开始伸出舌尖从根部到顶端细细舔舐肉棒。",
+                "com_sex_oral_P_lick_Begin_17": "$self$贴近$target$，顺势伸出舌尖从根部到顶端细细舔舐肉棒。",
+                "com_sex_oral_P_lick_Begin_18": "随着动作落下，$self$与$target$之间的呼吸渐渐变得灼热起来，开始伸出舌尖从根部到顶端细细舔舐肉棒。",
+                "com_sex_oral_P_lick_Ongoing_1": "$self$的肉棒正被旁人细致地舔弄着，余光瞥见一旁的$target$后顿时羞得偏过脸：“呜……别、别看这里……”",
+                "com_sex_oral_P_lick_Ongoing_2": "黏腻的舔舐水声在安静的房间里格外清晰，$self$腿根发软地颤抖着，不敢看$target$的眼睛：“太丢脸了……连这种样子都被你看到了……”",
+                "com_sex_oral_P_lick_Ongoing_3": "$self$咬着唇压抑着胯间涌上的快感，耳根烫得吓人：“唔嗯……不要一直盯着人家下面看啊……”",
+                "com_sex_oral_P_lick_Ongoing_4": "$self$还在被$target$伸出舌头沿着肉棒来回舔弄，呼吸随着节奏一点点变得急促。",
+                "com_sex_oral_P_lick_Ongoing_5": "持续不断的刺激让$self$眼角泛起微红，只能任由$target$继续动作。",
+                "com_sex_oral_P_lick_Ongoing_6": "$self$轻喘着承受着肉棒传来的触感，身子微微发软。",
+                "com_sex_oral_P_lick_Ongoing_7": "$self$没有停下动作，继续伸出舌尖从根部到顶端细细舔舐肉棒。",
+                "com_sex_oral_P_lick_Ongoing_8": "湿热的气息在两人之间弥漫，$self$维持着节奏伸出舌尖从根部到顶端细细舔舐肉棒。",
+                "com_sex_oral_P_lick_Ongoing_9": "$self$微微喘息着，动作不停地伸出舌尖从根部到顶端细细舔舐肉棒。",
+                "com_sex_oral_P_lick_31": "$self$微微喘息着，一边顺着动作继续互动，一边留意着$target$的反应。",
+                "com_sex_oral_P_lick_32": "空气渐渐升温，$self$放缓了节奏继续顺着动作继续互动：“……感觉怎么样？”",
+                "com_sex_oral_P_lick_33": "$self$轻吐出一口气，顺从着眼前的状态继续顺着动作继续互动。"
             }
         }
     }

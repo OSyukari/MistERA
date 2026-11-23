@@ -8,28 +8,6 @@
                     "template": "commandResult",
                     "variants": [
                         {
-                            "requirement": {
-                                "requireEPSuccessLTE": "Failure"
-                            },
-                            "_comment": "判定失败",
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "targetBaseID": "PLAYER"
-                                    },
-                                    "_comment": "自己（单人） → 玩家 ｜ 接受·判定失败",
-                                    "responses": [
-                                        "com_furniture_training_melee_1",
-                                        "com_furniture_training_melee_2",
-                                        "com_furniture_training_melee_3"
-                                    ]
-                                }
-                            ],
-                            "responses": [
-                                "com_furniture_training_melee_Fallback_1"
-                            ]
-                        },
-                        {
                             "requireSelfOnly": true,
                             "_comment": "自己（单人） → 自己",
                             "variants": [
@@ -53,6 +31,28 @@
                         },
                         {
                             "requirement": {
+                                "requireEPSuccessLTE": "Failure"
+                            },
+                            "_comment": "判定失败",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "自己（单人） → 玩家 ｜ 接受·判定失败",
+                                    "responses": [
+                                        "com_furniture_training_melee_1",
+                                        "com_furniture_training_melee_2",
+                                        "com_furniture_training_melee_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_training_melee_Fallback_1"
+                            ]
+                        },
+                        {
+                            "requirement": {
                                 "requireEPSuccessGTE": "Success"
                             },
                             "_comment": "判定成功",
@@ -72,6 +72,16 @@
                             "responses": [
                                 "com_furniture_training_melee_Fallback_2"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_training_melee_Fallback_3",
+                                "com_furniture_training_melee_Fallback_4"
+                            ]
                         }
                     ]
                 }
@@ -88,7 +98,10 @@
                                 "com_furniture_training_melee_Begin_1",
                                 "com_furniture_training_melee_Begin_2",
                                 "com_furniture_training_melee_Begin_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ]
                 }
@@ -109,6 +122,17 @@
                                 "com_furniture_training_melee_Tryjoin_2",
                                 "com_furniture_training_melee_Tryjoin_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_training_melee_Tryjoin_Fallback_1",
+                                "com_furniture_training_melee_Tryjoin_Fallback_2"
+                            ]
                         }
                     ]
                 }
@@ -125,7 +149,10 @@
                                 "com_furniture_training_melee_Interrupt_1",
                                 "com_furniture_training_melee_Interrupt_2",
                                 "com_furniture_training_melee_Interrupt_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ]
                 }
@@ -146,6 +173,16 @@
                                 "com_furniture_training_melee_Ongoing_2",
                                 "com_furniture_training_melee_Ongoing_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_training_melee_Ongoing_Fallback_1",
+                                "com_furniture_training_melee_Ongoing_Fallback_2"
+                            ]
                         }
                     ]
                 }
@@ -165,6 +202,17 @@
                                 "com_furniture_training_melee_Joined_1",
                                 "com_furniture_training_melee_Joined_2",
                                 "com_furniture_training_melee_Joined_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_training_melee_Joined_Fallback_1",
+                                "com_furniture_training_melee_Joined_Fallback_2"
                             ]
                         }
                     ]
@@ -187,6 +235,17 @@
                                 "com_furniture_training_melee_Refuse_2",
                                 "com_furniture_training_melee_Refuse_3"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_training_melee_Refuse_Fallback_1",
+                                "com_furniture_training_melee_Refuse_Fallback_2"
+                            ]
                         }
                     ]
                 }
@@ -199,7 +258,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
                             "responses": [
@@ -223,7 +283,10 @@
                                 "com_furniture_training_melee_Join_1",
                                 "com_furniture_training_melee_Join_2",
                                 "com_furniture_training_melee_Join_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ]
                 }
@@ -243,6 +306,17 @@
                                 "com_furniture_training_melee_Join_Refused_1",
                                 "com_furniture_training_melee_Join_Refused_2",
                                 "com_furniture_training_melee_Join_Refused_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "兜底分支",
+                            "responses": [
+                                "com_furniture_training_melee_Join_Refused_Fallback_1",
+                                "com_furniture_training_melee_Join_Refused_Fallback_2"
                             ]
                         }
                     ]
@@ -293,7 +367,19 @@
                 "com_furniture_training_melee_11": "\"刚才那几下衔接挺顺的，总算找到点感觉了。\" $self$拿毛巾擦了擦脖子。",
                 "com_furniture_training_melee_12": "$self$活动着发酸的肩膀，朝$target$抬下巴示意：\"先歇两分钟吧，汗都要进眼睛里了。\"",
                 "com_furniture_training_melee_Fallback_1": "$self$点了点头，没有多说什么。",
-                "com_furniture_training_melee_Fallback_2": "$self$点了点头，没有多说什么。"
+                "com_furniture_training_melee_Fallback_2": "$self$点了点头，没有多说什么。",
+                "com_furniture_training_melee_Joined_Fallback_1": "\"好，那我站这边，注意分寸。\" $self$快步进场拉开架势。",
+                "com_furniture_training_melee_Joined_Fallback_2": "$self$点点头，找好空位后很快投入了训练。",
+                "com_furniture_training_melee_Tryjoin_Fallback_1": "$self$走到训练场边活动了两下手腕，问$target$：\"能一起练两手吗？\"",
+                "com_furniture_training_melee_Tryjoin_Fallback_2": "$self$停在场外问道：\"地方还宽敞，一块儿对练几招？\"",
+                "com_furniture_training_melee_Ongoing_Fallback_1": "$self$稳住下盘接连出招，动作干脆利落。",
+                "com_furniture_training_melee_Ongoing_Fallback_2": "$self$全神贯注地练习着近身动作，呼吸匀称。",
+                "com_furniture_training_melee_Refuse_Fallback_1": "$self$摇了摇头：\"今天身上还有点乏，不想做近身训练。\"",
+                "com_furniture_training_melee_Refuse_Fallback_2": "$self$摆摆手回绝道：\"先歇会儿吧，这会儿打不起精神。\"",
+                "com_furniture_training_melee_Fallback_3": "$self$收住架势吐出一口浊气，抹了把额角的汗水。",
+                "com_furniture_training_melee_Fallback_4": "练完这一轮后，$self$放松双肩活动了下筋骨，停下来歇口气。",
+                "com_furniture_training_melee_Join_Refused_Fallback_1": "\"行，那你先练着，我不打扰了。\" $self$摆摆手退回场外。",
+                "com_furniture_training_melee_Join_Refused_Fallback_2": "$self$点了点头，收起架势转身离开。"
             }
         }
     }

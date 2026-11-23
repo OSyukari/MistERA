@@ -8,14 +8,17 @@
                     "template": "commandResult",
                     "variants": [
                         {
-                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
                             "variants": [
                                 {
+                                    "requireSelfReceiver": true,
                                     "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "timestop"
-                                        ]
+                                        "requireSelfAction": false
                                     },
                                     "_comment": "受方（时停中） → 对方（玩家或 NPC） ｜ 接受",
                                     "responses": [
@@ -23,13 +26,21 @@
                                         "com_player_putDownHere_Result_Timestop_2",
                                         "com_player_putDownHere_Result_Timestop_3"
                                     ]
-                                },
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
                                 {
+                                    "requireSelfReceiver": true,
                                     "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "sleeping"
-                                        ]
+                                        "requireSelfAction": false
                                     },
                                     "_comment": "受方（睡眠中） → 对方（玩家或 NPC） ｜ 接受",
                                     "responses": [
@@ -37,16 +48,24 @@
                                         "com_player_putDownHere_Result_Sleep_2",
                                         "com_player_putDownHere_Result_Sleep_3"
                                     ]
-                                },
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
                                 {
+                                    "requireSelfReceiver": true,
                                     "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "unconscious"
-                                        ],
-                                        "excludeSelfTags": [
-                                            "sleeping"
-                                        ]
+                                        "requireSelfAction": false
                                     },
                                     "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
                                     "responses": [
@@ -54,7 +73,12 @@
                                         "com_player_putDownHere_Result_Fainted_2",
                                         "com_player_putDownHere_Result_Fainted_3"
                                     ]
-                                },
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
                                 {
                                     "requirement": {
                                         "selfTags": [
@@ -110,14 +134,17 @@
                     "template": "commandAct",
                     "variants": [
                         {
-                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
                             "variants": [
                                 {
+                                    "requireSelfReceiver": true,
                                     "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "timestop"
-                                        ]
+                                        "requireSelfAction": false
                                     },
                                     "_comment": "受方（时停中） → 对方（玩家或 NPC） ｜ 接受",
                                     "responses": [
@@ -125,13 +152,21 @@
                                         "com_player_putDownHere_Begin_Timestop_2",
                                         "com_player_putDownHere_Begin_Timestop_3"
                                     ]
-                                },
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
                                 {
+                                    "requireSelfReceiver": true,
                                     "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "sleeping"
-                                        ]
+                                        "requireSelfAction": false
                                     },
                                     "_comment": "受方（睡眠中） → 对方（玩家或 NPC） ｜ 接受",
                                     "responses": [
@@ -139,16 +174,24 @@
                                         "com_player_putDownHere_Begin_Sleep_2",
                                         "com_player_putDownHere_Begin_Sleep_3"
                                     ]
-                                },
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "variants": [
                                 {
+                                    "requireSelfReceiver": true,
                                     "requirement": {
-                                        "requireSelfAction": false,
-                                        "selfTags": [
-                                            "unconscious"
-                                        ],
-                                        "excludeSelfTags": [
-                                            "sleeping"
-                                        ]
+                                        "requireSelfAction": false
                                     },
                                     "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
                                     "responses": [
@@ -156,7 +199,12 @@
                                         "com_player_putDownHere_Begin_Fainted_2",
                                         "com_player_putDownHere_Begin_Fainted_3"
                                     ]
-                                },
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
                                 {
                                     "requirement": {
                                         "selfTags": [

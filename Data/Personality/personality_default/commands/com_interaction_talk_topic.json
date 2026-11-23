@@ -38,15 +38,28 @@
                                 },
                                 {
                                     "requirement": {
-                                        "selfTags": [
-                                            "restrained"
-                                        ]
+                                        "requireEPSuccessLTE": "Failure"
                                     },
-                                    "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受·判定失败",
+                                    "_comment": "判定失败",
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受·判定失败",
+                                            "responses": [
+                                                "com_interaction_talk_topic_Result_Restrained_Fail_1",
+                                                "com_interaction_talk_topic_Result_Restrained_Fail_2",
+                                                "com_interaction_talk_topic_Result_Restrained_Fail_3"
+                                            ]
+                                        }
+                                    ],
                                     "responses": [
-                                        "com_interaction_talk_topic_Result_Restrained_Fail_1",
-                                        "com_interaction_talk_topic_Result_Restrained_Fail_2",
-                                        "com_interaction_talk_topic_Result_Restrained_Fail_3"
+                                        "com_interaction_talk_topic_Result_Fail_1",
+                                        "com_interaction_talk_topic_Result_Fail_2",
+                                        "com_interaction_talk_topic_Result_Fail_3"
                                     ]
                                 }
                             ],

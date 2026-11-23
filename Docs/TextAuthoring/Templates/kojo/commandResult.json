@@ -3,12 +3,13 @@
   "id": "commandResult",
   "label": "指令结果口上",
   "inner": "interaction",
+  "beforeLevels": ["speakerStatus"],
   "bindCommand": [""],
 
   "_comment_fallback": "Accepted results only: requireEPSuccess keeps its default (true) so a refusal never reaches the accept fallback. The receiver can be asleep / time-stopped, the target time-stopped.",
   "fallback": {
     "label": "兜底（接受，任何状态）",
-    "requirement": { "requireSelfAction": false, "requireTargetAction": false, "allowRecording": true }
+    "requirement": { "requireSelfAction": false, "requireTargetAction": false }
   },
 
   "levels": [

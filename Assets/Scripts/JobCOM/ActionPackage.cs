@@ -3540,8 +3540,11 @@ public abstract class ActionPackage
     /// </summary>
     [JsonIgnore] public bool IsAgentRun { get { return trackCapture; } }
 
-    string keyReplace(string s)
+    internal string keyReplace(string s)
     {
+        if (string.IsNullOrEmpty(s)) return s;
+        if (s.IndexOf("$furniture$", StringComparison.Ordinal) >= 0 && job is Job_Furniture jf && jf.ParentInstance != null)
+            s = s.Replace("$furniture$", jf.ParentInstance.DisplayName);
         if (keyReplaceDictionary == null || keyReplaceDictionary.Count < 1) return s;
 
         foreach(var kvp in keyReplaceDictionary)

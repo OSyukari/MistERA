@@ -7,7 +7,7 @@
 
   "fallback": {
     "label": "兜底（拒绝）",
-    "requirement": { "requireTargetAction": false, "requireEPSuccess": false, "allowRecording": true }
+    "requirement": { "requireTargetAction": false, "requireEPSuccess": false }
   },
   "everyBranch": { "requirement": { "requireEPSuccess": false } },
 

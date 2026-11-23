@@ -44,7 +44,12 @@
                     "description_doer_1_n":"comDescription_1_n_doer_passive",
                     "description_receiver_n_1":"comDescription_n_1_receiver_passive",
                     "useBaseDescription":false,
-                    "description_begin":{ "Entries":[{"texts":["com_interaction_initiateSex_description_begin_1"]}] },
+                    "description_begin":{ "Entries":[
+                        {"conditions":[{"validateChara":{"statID":"isTimestopped","operand":"eq","value":"true","target":"receiver"}}], "texts":["com_interaction_initiateSex_description_begin_9"]},
+                        {"conditions":[{"validateChara":{"statID":"isUnconscious","operand":"eq","value":"true","target":"receiver"}}], "texts":["com_interaction_initiateSex_description_begin_10"]},
+                        {"conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_interaction_initiateSex_description_begin_11"]},
+                        {"texts":["com_interaction_initiateSex_description_begin_1"]}
+                    ] },
                     "description_ongoing":{ "Entries":[{"texts":["com_interaction_initiateSex_description_ongoing_1"]}] },
                     "description_onComplete":{ "Entries":[{"texts":["com_interaction_initiateSex_description_onComplete_1"]}] }
                 },
@@ -56,7 +61,12 @@
                     "description_doer_1_n":"comDescription_1_n_doer_passive",
                     "description_receiver_n_1":"comDescription_n_1_receiver_passive",
                     "useBaseDescription":false,
-                    "description_begin":{ "Entries":[{"texts":["com_interaction_initiateSex_description_begin_2"]}] },
+                    "description_begin":{ "Entries":[
+                        {"conditions":[{"validateChara":{"statID":"isTimestopped","operand":"eq","value":"true","target":"receiver"}}], "texts":["com_interaction_initiateSex_description_begin_9"]},
+                        {"conditions":[{"validateChara":{"statID":"isUnconscious","operand":"eq","value":"true","target":"receiver"}}], "texts":["com_interaction_initiateSex_description_begin_10"]},
+                        {"conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_interaction_initiateSex_description_begin_11"]},
+                        {"texts":["com_interaction_initiateSex_description_begin_2"]}
+                    ] },
                     "description_ongoing":{ "Entries":[{"texts":["com_interaction_initiateSex_description_ongoing_2"]}] },
                     "description_onComplete":{ "Entries":[{"texts":["com_interaction_initiateSex_description_onComplete_2"]}] }
                 },
@@ -70,7 +80,10 @@
                     },
                     "displayName":"com_interaction_initiateSex_displayName_3",
                     "useBaseDescription":false,
-                    "description_begin":{ "Entries":[{"texts":["com_interaction_initiateSex_description_begin_3"]}] },
+                    "description_begin":{ "Entries":[
+                        {"conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_interaction_initiateSex_description_begin_11"]},
+                        {"texts":["com_interaction_initiateSex_description_begin_3"]}
+                    ] },
                     "description_ongoing":{ "Entries":[{"texts":["com_interaction_initiateSex_description_ongoing_3"]}] },
                     "description_onComplete":{ "Entries":[{"texts":["com_interaction_initiateSex_description_onComplete_3"]}] }
                 },
@@ -84,7 +97,10 @@
                     },
                     "displayName":"com_interaction_initiateSex_displayName_4",
                     "useBaseDescription":false,
-                    "description_begin":{ "Entries":[{"texts":["com_interaction_initiateSex_description_begin_4"]}] },
+                    "description_begin":{ "Entries":[
+                        {"conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_interaction_initiateSex_description_begin_11"]},
+                        {"texts":["com_interaction_initiateSex_description_begin_4"]}
+                    ] },
                     "description_ongoing":{ "Entries":[{"texts":["com_interaction_initiateSex_description_ongoing_4"]}] },
                     "description_onComplete":{ "Entries":[{"texts":["com_interaction_initiateSex_description_onComplete_4"]}] }
                 },
@@ -100,7 +116,12 @@
                     "description_doer_1_n":"comDescription_n_n_doer_passive",
                     "description_receiver_n_1":"comDescription_n_n_receiver_passive",
                     "useBaseDescription":false,
-                    "description_begin":{ "Entries":[{"texts":["com_interaction_initiateSex_description_begin_5"]}] },
+                    "description_begin":{ "Entries":[
+                        {"conditions":[{"validateChara":{"statID":"isTimestopped","operand":"eq","value":"true","target":"receiver"}}], "texts":["com_interaction_initiateSex_description_begin_9"]},
+                        {"conditions":[{"validateChara":{"statID":"isUnconscious","operand":"eq","value":"true","target":"receiver"}}], "texts":["com_interaction_initiateSex_description_begin_10"]},
+                        {"conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_interaction_initiateSex_description_begin_11"]},
+                        {"texts":["com_interaction_initiateSex_description_begin_5"]}
+                    ] },
                     "description_ongoing":{ "Entries":[{"texts":["com_interaction_initiateSex_description_ongoing_5"]}] },
                     "description_onComplete":{ "Entries":[{"texts":["com_interaction_initiateSex_description_onComplete_5"]}] }
                 },
@@ -112,7 +133,12 @@
                     "description_doer_1_n":"comDescription_n_n_doer_passive",
                     "description_receiver_n_1":"comDescription_n_n_receiver_passive",
                     "useBaseDescription":false,
-                    "description_begin":{ "Entries":[{"texts":["com_interaction_initiateSex_description_begin_6"]}] },
+                    "description_begin":{ "Entries":[
+                        {"conditions":[{"validateChara":{"statID":"isTimestopped","operand":"eq","value":"true","target":"receiver"}}], "texts":["com_interaction_initiateSex_description_begin_9"]},
+                        {"conditions":[{"validateChara":{"statID":"isUnconscious","operand":"eq","value":"true","target":"receiver"}}], "texts":["com_interaction_initiateSex_description_begin_10"]},
+                        {"conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_interaction_initiateSex_description_begin_11"]},
+                        {"texts":["com_interaction_initiateSex_description_begin_6"]}
+                    ] },
                     "description_ongoing":{ "Entries":[{"texts":["com_interaction_initiateSex_description_ongoing_6"]}] },
                     "description_onComplete":{ "Entries":[{"texts":["com_interaction_initiateSex_description_onComplete_6"]}] }
                 },
@@ -126,7 +152,10 @@
                     },
                     "displayName":"com_interaction_initiateSex_displayName_7",
                     "useBaseDescription":false,
-                    "description_begin":{ "Entries":[{"texts":["com_interaction_initiateSex_description_begin_7"]}] },
+                    "description_begin":{ "Entries":[
+                        {"conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_interaction_initiateSex_description_begin_11"]},
+                        {"texts":["com_interaction_initiateSex_description_begin_7"]}
+                    ] },
                     "description_ongoing":{ "Entries":[{"texts":["com_interaction_initiateSex_description_ongoing_7"]}] },
                     "description_onComplete":{ "Entries":[{"texts":["com_interaction_initiateSex_description_onComplete_7"]}] }
                 },
@@ -140,7 +169,10 @@
                     },
                     "displayName":"com_interaction_initiateSex_displayName_8",
                     "useBaseDescription":false,
-                    "description_begin":{ "Entries":[{"texts":["com_interaction_initiateSex_description_begin_8"]}] },
+                    "description_begin":{ "Entries":[
+                        {"conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_interaction_initiateSex_description_begin_11"]},
+                        {"texts":["com_interaction_initiateSex_description_begin_8"]}
+                    ] },
                     "description_ongoing":{ "Entries":[{"texts":["com_interaction_initiateSex_description_ongoing_8"]}] },
                     "description_onComplete":{ "Entries":[{"texts":["com_interaction_initiateSex_description_onComplete_8"]}] }
                 },
@@ -157,7 +189,12 @@
                     "description_doer_1_n":"com_interaction_initiateSex_request_join_doer",
                     "description_receiver_n_1":"com_interaction_initiateSex_request_join_receiver",
                     "useBaseDescription":false,
-                    "description_begin":{ "Entries":[{"texts":["com_interaction_initiateSex_description_begin_join"]}] },
+                    "description_begin":{ "Entries":[
+                        {"conditions":[{"validateChara":{"statID":"isTimestopped","operand":"eq","value":"true","target":"receiver"}}], "texts":["com_interaction_initiateSex_description_begin_9"]},
+                        {"conditions":[{"validateChara":{"statID":"isUnconscious","operand":"eq","value":"true","target":"receiver"}}], "texts":["com_interaction_initiateSex_description_begin_10"]},
+                        {"conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_interaction_initiateSex_description_begin_11"]},
+                        {"texts":["com_interaction_initiateSex_description_begin_join"]}
+                    ] },
                     "description_ongoing":{ "Entries":[{"texts":["com_interaction_initiateSex_description_begin_join"]}] },
                     "description_onComplete":{ "Entries":[{"texts":["com_interaction_initiateSex_description_onComplete_join"]}] },
                     "description_remove":{ "Entries":[{"texts":["com_interaction_initiateSex_description_remove_join"]}] }
@@ -174,7 +211,12 @@
                     "description_doer_1_n":"comDescription_1_n_doer_passive",
                     "description_receiver_n_1":"comDescription_n_1_receiver_passive",
                     "useBaseDescription":false,
-                    "description_begin":{ "Entries":[{"texts":["com_interaction_initiateSex_description_begin_join_2"]}] },
+                    "description_begin":{ "Entries":[
+                        {"conditions":[{"validateChara":{"statID":"isTimestopped","operand":"eq","value":"true","target":"receiver"}}], "texts":["com_interaction_initiateSex_description_begin_9"]},
+                        {"conditions":[{"validateChara":{"statID":"isUnconscious","operand":"eq","value":"true","target":"receiver"}}], "texts":["com_interaction_initiateSex_description_begin_10"]},
+                        {"conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_interaction_initiateSex_description_begin_11"]},
+                        {"texts":["com_interaction_initiateSex_description_begin_join_2"]}
+                    ] },
                     "description_ongoing":{ "Entries":[{"texts":["com_interaction_initiateSex_description_ongoing_join_2"]}] },
                     "description_onComplete":{ "Entries":[{"texts":["com_interaction_initiateSex_description_onComplete_join_2"]}] }
                 },
@@ -189,7 +231,10 @@
                     },
                     "displayName":"com_interaction_initiateSex_displayName_join_3",
                     "useBaseDescription":false,
-                    "description_begin":{ "Entries":[{"texts":["com_interaction_initiateSex_description_begin_join_3"]}] },
+                    "description_begin":{ "Entries":[
+                        {"conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_interaction_initiateSex_description_begin_11"]},
+                        {"texts":["com_interaction_initiateSex_description_begin_join_3"]}
+                    ] },
                     "description_ongoing":{ "Entries":[{"texts":["com_interaction_initiateSex_description_ongoing_join_3"]}] },
                     "description_onComplete":{ "Entries":[{"texts":["com_interaction_initiateSex_description_onComplete_join_3"]}] }
                 },
@@ -204,7 +249,10 @@
                     },
                     "displayName":"com_interaction_initiateSex_displayName_join_4",
                     "useBaseDescription":false,
-                    "description_begin":{ "Entries":[{"texts":["com_interaction_initiateSex_description_begin_join_4"]}] },
+                    "description_begin":{ "Entries":[
+                        {"conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_interaction_initiateSex_description_begin_11"]},
+                        {"texts":["com_interaction_initiateSex_description_begin_join_4"]}
+                    ] },
                     "description_ongoing":{ "Entries":[{"texts":["com_interaction_initiateSex_description_ongoing_join_4"]}] },
                     "description_onComplete":{ "Entries":[{"texts":["com_interaction_initiateSex_description_onComplete_join_4"]}] }
                 }
